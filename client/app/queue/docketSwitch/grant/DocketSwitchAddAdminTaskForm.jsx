@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 import { Controller, useFormContext } from 'react-hook-form';
@@ -26,12 +26,18 @@ const { capitalizeFirst, snakeCaseToCamelCase } = StringUtil;
 
 export const DocketSwitchAddAdminTaskForm = ({ baseName, item, onRemove }) => {
   const { control, errors, register } = useFormContext();
+  const selectRef = useRef();
 
   const handleRemove = () => onRemove();
 
   // We need to submit an actual task name, so reformatting is necessary
   const formatTaskName = (taskStr) =>
     `${capitalizeFirst(snakeCaseToCamelCase(taskStr))}ColocatedTask`;
+
+  useEffect(() => {
+    console.log('useEffect', selectRef.current);
+    selectRef?.current?.focus();
+  }, [selectRef.current]);
 
   return (
     <>
@@ -40,12 +46,17 @@ export const DocketSwitchAddAdminTaskForm = ({ baseName, item, onRemove }) => {
           name={`${baseName}.type`}
           control={control}
           defaultValue={item.type}
+          // onFocus={() => selectRef.current.focus()}
           render={({ onChange, ...rest }) => (
             <SearchableDropdown
               {...rest}
               label="Select the type of task you'd like to open:"
               options={actionOptions}
               onChange={(valObj) => onChange(formatTaskName(valObj?.value))}
+              inputRef={(e) => {
+                console.log('ref', e);
+                selectRef.current = e;
+              }}
             />
           )}
         />
