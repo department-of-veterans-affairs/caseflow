@@ -289,10 +289,9 @@ describe TaskSorter, :all_dbs do
             first_name = task.appeal.veteran_first_name.split(" ").first.upcase
             "#{last_name}, #{first_name}"
           end
-          expect(subject.map(&:appeal_id)).to eq(
-            expected_order.map(&:appeal_id),
-            expected_order.map { |t| "#{t.appeal.veteran.last_name}, #{t.appeal.veteran.first_name}" }
-          )
+          # To help diagnose flaky test, print veteran names on failure
+          ordered_vets = expected_order.map { |t| "#{t.appeal.veteran.last_name}, #{t.appeal.veteran.first_name}" }
+          expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id)), ordered_vets.to_s
         end
       end
 
