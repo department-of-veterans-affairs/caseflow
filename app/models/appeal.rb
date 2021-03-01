@@ -549,14 +549,9 @@ class Appeal < DecisionReview
     false
   end
 
-  # This method connects the docket switch object to the old appeal stream
+  # This method allows the old appeal stream to access the docket_switch object
   def switched_docket
     DocketSwitch.find_by(old_docket_stream_id: self.id)
-  end
-
-  # A docket switch object belongs to the old appeal stream and new appeal stream
-  def new_appeal_stream
-    self.switched_docket&.new_docket_stream
   end
 
   private
