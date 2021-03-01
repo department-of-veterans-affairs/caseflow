@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import COPY from 'app/../COPY';
 import Alert from 'app/components/Alert';
-import { useParams } from 'react-router';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 const DocketSwitchAlertBanner = ({ appeal }) => {
@@ -10,24 +9,26 @@ const DocketSwitchAlertBanner = ({ appeal }) => {
 
   const fullGrantSuccessMessage = <div>
     {COPY.DOCKET_SWITCH_FULL_GRANTED_LABEL}
-      <Link
-        name="appeal-stream"
-        to={`${appeal.newAppealStream?.uuid}`}>
-        switched appeal stream.</Link>
-  </div>
+    <Link
+      name="appeal-stream"
+      to={`${appeal.newAppealStream?.uuid}`}>
+      switched appeal stream.</Link>
+  </div>;
+
   const partialGrantOldDocketSuccessMessage = <div>
     {COPY.DOCKET_SWITCH_PARTIAL_GRANTED_LABEL_OLD_DOCKET}
-      <Link
-        name="appeal-stream"
-        to={`${appeal.newAppealStream?.uuid}`}>
-        switched appeal stream.</Link>
-  </div>
+    <Link
+      name="appeal-stream"
+      to={`${appeal.newAppealStream?.uuid}`}>
+      switched appeal stream.</Link>
+  </div>;
+
   const partialGrantNewDocketSuccessMessage = <div>
     {COPY.DOCKET_SWITCH_PARTIAL_GRANTED_LABEL_NEW_DOCKET}
-      <Link
-        name="appeal-stream"
-        to={`${appeal.oldAppealStream?.uuid}`}>
-         other appeal stream.</Link>
+    <Link
+      name="appeal-stream"
+      to={`${appeal.oldAppealStream?.uuid}`}>
+      other appeal stream.</Link>
   </div>;
 
   if (docketSwitch.disposition === 'granted') {
