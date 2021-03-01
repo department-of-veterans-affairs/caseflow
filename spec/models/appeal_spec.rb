@@ -1240,18 +1240,19 @@ describe Appeal, :all_dbs do
       let(:receipt_date) { 7.days.ago }
 
       it "if timely issue without exemption becomes untimely" do
-        subject
         expect(subject[:affected_issues].first.id).to eq(1)
+      end
+
+      it "but exempt issues should still be timely" do
         expect(subject[:unaffected_issues].first.id).to eq(2)
       end
     end
 
-    context "should pass validation" do
-      let(:receipt_date) { 391.days.ago }
+    context "should fail validation" do
+      let(:receipt_date) { 3.years.ago }
 
-      it "if untimely issue has exemption status" do
-        subject
-        expect(subject).to be_nil
+      it "if receipt date is before decision date regardless of exemption" do
+        expect(subject[:affected_issues].count).to eq(2)
       end
     end
   end

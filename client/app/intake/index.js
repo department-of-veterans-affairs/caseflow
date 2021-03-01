@@ -36,7 +36,7 @@ export const reducer = combineReducers({
   higherLevelReview: higherLevelReviewReducer,
   appeal: appealReducer,
   featureToggles: featureToggleReducer,
-  addClaimantSlice: addClaimantReducer,
+  addClaimant: addClaimantReducer,
 });
 
 export const generateInitialState = (props) => ({

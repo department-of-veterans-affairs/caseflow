@@ -25,6 +25,10 @@ class CavcRemandsController < ApplicationController
     :updated_by_id
   ].freeze
 
+  MDR_REQUIRED_PARAMS = [
+    :federal_circuit
+  ].freeze
+
   JMR_REQUIRED_PARAMS = [
     :judgement_date,
     :mandate_date
@@ -33,6 +37,7 @@ class CavcRemandsController < ApplicationController
   PERMITTED_PARAMS = [
     REMAND_REQUIRED_PARAMS,
     JMR_REQUIRED_PARAMS,
+    MDR_REQUIRED_PARAMS,
     :remand_subtype
   ].flatten.freeze
 
@@ -80,7 +85,7 @@ class CavcRemandsController < ApplicationController
     when Constants.CAVC_DECISION_TYPES.remand
       case params["remand_subtype"]
       when Constants.CAVC_REMAND_SUBTYPES.mdr
-        REMAND_REQUIRED_PARAMS
+        REMAND_REQUIRED_PARAMS + MDR_REQUIRED_PARAMS
       else
         REMAND_REQUIRED_PARAMS + JMR_REQUIRED_PARAMS
       end

@@ -88,9 +88,14 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           fill_in "docket-number", with: docket_number
           click_dropdown(text: judge_name)
           fill_in "decision-date", with: date
-          fill_in "judgement-date", with: date
-          fill_in "mandate-date", with: date
           fill_in "context-and-instructions-textBox", with: "Please process this remand"
+
+          # unselect an issue
+          find(".checkbox-wrapper-issuesList").find("label[for=\"2\"]").click
+          expect(page).to have_content COPY::JMR_SELECTION_ISSUE_INFO_BANNER
+          # select the issue; all issues must be selected for JMR
+          find(".checkbox-wrapper-issuesList").find("label[for=\"2\"]").click
+          expect(page).to_not have_content COPY::JMR_SELECTION_ISSUE_INFO_BANNER
 
           page.find("button", text: "Submit").click
 
@@ -121,14 +126,71 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           visit "queue/appeals/#{appeal.external_id}"
           page.find("button", text: "+ Add CAVC Remand").click
 
-          # unselect an issue
+          fill_in "docket-number", with: docket_number
+          click_dropdown(text: judge_name)
+          find("label", text: "Joint Motion for Partial Remand (JMPR)").click
+
+          # manually fill in judgement and mandate dates
+          fill_in "decision-date", with: date
+          find(".checkbox-wrapper-mandate-dates-same-toggle").find("label[for=\"mandate-dates-same-toggle\"]").click
+          fill_in "judgement-date", with: date
+          fill_in "mandate-date", with: date
+
+          # unselect all issues
+          find(".checkbox-wrapper-issuesList").find("label[for=\"1\"]").click
+          expect(page).to_not have_content COPY::JMPR_SELECTION_ISSUE_INFO_BANNER
+          find(".checkbox-wrapper-issuesList").find("label[for=\"2\"]").click
+          expect(page).to_not have_content COPY::JMPR_SELECTION_ISSUE_INFO_BANNER
+          find(".checkbox-wrapper-issuesList").find("label[for=\"3\"]").click
+          expect(page).to have_content COPY::JMPR_SELECTION_ISSUE_INFO_BANNER
+
+          # only need one issue selected for JMPR
+          find(".checkbox-wrapper-issuesList").find("label[for=\"2\"]").click
+          expect(page).to_not have_content COPY::JMPR_SELECTION_ISSUE_INFO_BANNER
+
+          fill_in "context-and-instructions-textBox", with: "Please process this remand"
+
+          page.find("button", text: "Submit").click
+
+          expect(page).to have_content COPY::CAVC_REMAND_CREATED_TITLE
+          expect(page).to have_content COPY::CAVC_REMAND_CREATED_DETAIL
+        end
+
+        step "cavc user confirms data on case details page" do
+          expect(page).to have_content "APPEAL STREAM TYPE\nCAVC"
+          expect(page).to have_content "DOCKET\nE\n#{appeal.docket_number}"
+          expect(page).to have_content "TASK\n#{SendCavcRemandProcessedLetterTask.label}"
+          expect(page).to have_content "ASSIGNED TO\n#{CavcLitigationSupport.singleton.name}"
+
+          expect(page).to have_content "CAVC Remand"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DOCKET_NUMBER}: #{docket_number}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_ATTORNEY}: Yes"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGE}: #{judge_name}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_PROCEDURE}: #{remand_decision_type}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_TYPE}: #{Constants.CAVC_REMAND_SUBTYPE_NAMES.jmpr}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DECISION_DATE}: #{date}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGEMENT_DATE}: #{date}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_MANDATE_DATE}: #{date}"
+        end
+      end
+
+      it "allows the user to intake a JMPR cavc remand while toggling dates" do
+        step "cavc user inputs cavc data" do
+          visit "queue/appeals/#{appeal.external_id}"
+          page.find("button", text: "+ Add CAVC Remand").click
+
+          # unselect an issue and manually fill in judgement and mandate dates
           fill_in "docket-number", with: docket_number
           click_dropdown(text: judge_name)
           find("label", text: "Joint Motion for Partial Remand (JMPR)").click
           fill_in "decision-date", with: date
-          fill_in "judgement-date", with: date
-          fill_in "mandate-date", with: date
-          find(".checkbox-wrapper-undefined").find("label[for=\"3\"]").click
+          find(".checkbox-wrapper-mandate-dates-same-toggle").find("label[for=\"mandate-dates-same-toggle\"]").click
+          # we expect these dates to be ignored as we're toggling the judgment & mandate checkbox
+          # again on line 171
+          fill_in "judgement-date", with: later_date
+          fill_in "mandate-date", with: later_date
+          find(".checkbox-wrapper-mandate-dates-same-toggle").find("label[for=\"mandate-dates-same-toggle\"]").click
+          find(".checkbox-wrapper-issuesList").find("label[for=\"3\"]").click
           fill_in "context-and-instructions-textBox", with: "Please process this remand"
 
           page.find("button", text: "Submit").click
@@ -160,13 +222,31 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           visit "queue/appeals/#{appeal.external_id}"
           page.find("button", text: "+ Add CAVC Remand").click
 
-          # unselect an issue and don't fill in judgement date or mandate date
           fill_in "docket-number", with: docket_number
           click_dropdown(text: judge_name)
           find("label", text: "Memorandum Decision on Remand (MDR)").click
+
+          expect(page).to have_content COPY::MDR_SELECTION_ALERT_BANNER
+          expect(page).to have_content COPY::CAVC_FEDERAL_CIRCUIT_HEADER
+          expect(page).to have_content COPY::CAVC_FEDERAL_CIRCUIT_LABEL
+
+          # don't fill in judgement date or mandate date
           fill_in "decision-date", with: date
-          find(".checkbox-wrapper-undefined").find("label[for=\"3\"]").click
+
+          # unselect all issues
+          find(".checkbox-wrapper-issuesList").find("label[for=\"1\"]").click
+          expect(page).to_not have_content COPY::MDR_SELECTION_ISSUE_INFO_BANNER
+          find(".checkbox-wrapper-issuesList").find("label[for=\"2\"]").click
+          expect(page).to_not have_content COPY::MDR_SELECTION_ISSUE_INFO_BANNER
+          find(".checkbox-wrapper-issuesList").find("label[for=\"3\"]").click
+          expect(page).to have_content COPY::MDR_SELECTION_ISSUE_INFO_BANNER
+
+          # only need one issue selected for MDR
+          find(".checkbox-wrapper-issuesList").find("label[for=\"3\"]").click
+          expect(page).to_not have_content COPY::MDR_SELECTION_ISSUE_INFO_BANNER
+
           fill_in "context-and-instructions-textBox", with: instructions
+          find("label", text: "Yes, this case has been appealed to the Federal Circuit").click
           page.find("button", text: "Submit").click
 
           expect(page).to have_content COPY::CAVC_REMAND_CREATED_TITLE
@@ -188,6 +268,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DECISION_DATE}: #{date}"
           expect(page.has_no_content?("#{COPY::CASE_DETAILS_CAVC_JUDGEMENT_DATE}:")).to eq(true)
           expect(page.has_no_content?("#{COPY::CASE_DETAILS_CAVC_MANDATE_DATE}:")).to eq(true)
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_FEDERAL_CIRCUIT}: Yes"
 
           find(".cf-select__control", text: "Select an action").click
           expect(page).to have_content Constants.TASK_ACTIONS.END_TIMED_HOLD.label
@@ -251,9 +332,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           click_dropdown(text: judge_name)
           find("label", text: "Straight Reversal").click
           fill_in "decision-date", with: date
-          fill_in "judgement-date", with: date
-          fill_in "mandate-date", with: date
-          find(".checkbox-wrapper-undefined").find("label[for=\"2\"]").click
+          find(".checkbox-wrapper-issuesList").find("label[for=\"2\"]").click
           fill_in "context-and-instructions-textBox", with: instructions
           page.find("button", text: "Submit").click
 
@@ -289,7 +368,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           page.all(".cf-form-radio-inline")[1].find("label[for=\"remand-provided-toggle_false\"]").click
           expect(page).to have_content COPY::CAVC_REMAND_NO_MANDATE_TEXT
           fill_in "decision-date", with: date
-          find(".checkbox-wrapper-undefined").find("label[for=\"2\"]").click
+          find(".checkbox-wrapper-issuesList").find("label[for=\"2\"]").click
           fill_in "context-and-instructions-textBox", with: instructions
           page.find("button", text: "Submit").click
 
@@ -324,8 +403,6 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           click_dropdown(text: judge_name)
           find("label", text: "Death Dismissal").click
           fill_in "decision-date", with: date
-          fill_in "judgement-date", with: date
-          fill_in "mandate-date", with: date
           fill_in "context-and-instructions-textBox", with: instructions
           page.find("button", text: "Submit").click
 
