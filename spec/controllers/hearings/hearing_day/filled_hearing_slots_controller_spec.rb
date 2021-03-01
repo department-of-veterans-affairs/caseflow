@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe Hearings::HearingDay::FilledHearingSlotsController, :all_dbs, type: :controller do
-  let!(:user) { User.authenticate! }
+RSpec.describe Hearings::HearingDay::FilledHearingSlotsController, type: :controller do
+  let!(:user) { User.authenticate!(roles: ["Edit HearSched", "Build HearSched"]) }
 
   describe "#index" do
     context "with invalid params" do

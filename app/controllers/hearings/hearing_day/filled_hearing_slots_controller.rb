@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 class Hearings::HearingDay::FilledHearingSlotsController < ApplicationController
+  include HearingsConcerns::VerifyAccess
+
+  before_action :verify_edit_hearing_schedule_access
+
   def index
-    hearing_day = HearingDay.find_by(id: params[:hearing_day_id])
+    hearing_day = ::HearingDay.find_by(id: params[:hearing_day_id])
 
     render json: { filled_hearing_slots: filled_hearing_slots(hearing_day) }
   end
