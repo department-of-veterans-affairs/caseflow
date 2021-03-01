@@ -492,45 +492,30 @@ export const setTimeSlots = (hearings) => {
 
   // Establish the time period and increment to create time slots between (15:00 - 8:00 and add 1 to include 15:00)
   const hoursInPeriod = 8;
-  const incrementAmount = 30;
-  const startTime = 8;
+  const startTime = '08:30';
 
   // Safe assign the hearings array in case there are no scheduled hearings
   const scheduledHearings = hearings || [];
 
   // Store a list of the filled times to compare against when creating the time slots
   const filledTimes = scheduledHearings.map((hearing) => {
-    const [hour, minute] = hearing.hearingTime.split(':');
-
-    // Return the time value with the hours and minutes for the time
-    return new Date(`01/01/1900 ${hour}:${minute}`);
+    return moment(hearing.hearingTime, 'HH:mm');
   });
 
   // Loop up to the number of hours in the period to get the available times
   const availableTimes = _.compact(_.times(hoursInPeriod).map((index) => {
     // Add the index to the start time so we assign 1 value per hour
-    const hour = startTime + index;
+    const availableTime = moment(startTime, 'HH:mm').add(index, 'hours');
 
-    // Convert the hour and increment amount to a date so we can compare
-    const availableTime = new Date(`01/01/1900 ${hour}:${incrementAmount}`);
-
-    // Get the difference between the time available and the scheduled times
-    const filled = filledTimes.filter((time) => {
-      // Calculate the time difference then divide by the number of seconds and divide by 60 to get minutes
-      const interval = Math.floor((availableTime - time) / 1000 / 60);
-
-      // Return true if the scheduled time is within an hour of the time slot
-      return interval >= 0 && interval <= 60;
+    // Is availableTime at least 60min after time? then we want to discard this slot
+    // because it's 'full'
+    const filled = filledTimes.some((time) => {
+      return availableTime.isSameOrAfter(time.add(60, 'minutes'));
     });
 
-    // Return nul if there is a filled time slot
-    if (filled.length) {
-      return null;
-    }
-
-    // Return the time string appending 0 if the number is less than 10
-    return {
-      hearingTime: `${hour < 10 ? 0 : ''}${hour}:${incrementAmount}`,
+    // Return null if there is a filled time slot, otherwise return the hearingTime
+    return filled ? null : {
+      hearingTime: availableTime.format('HH:mm'),
       full: false
     };
   }));

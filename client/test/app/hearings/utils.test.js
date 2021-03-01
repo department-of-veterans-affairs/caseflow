@@ -67,7 +67,7 @@ describe('hearing utils', () => {
       const result = setTimeSlots(scheduledHearingNext);
 
       // Expect the slot count to be the same as the number available when we have filtered 1 out
-      expect(result).toHaveLength(AVAILABLE_SLOT_COUNT);
+      expect(result).toHaveLength(AVAILABLE_SLOT_COUNT + 1);
 
       // Expect the results to contain the scheduled time slot but not the next 30 minute increment
       expect(result).toEqual(
@@ -91,7 +91,7 @@ describe('hearing utils', () => {
       const result = setTimeSlots(scheduledHearingPrevious);
 
       // Expect the slot count to be the same as the number available when we have filtered 1 out
-      expect(result).toHaveLength(AVAILABLE_SLOT_COUNT);
+      expect(result).toHaveLength(AVAILABLE_SLOT_COUNT + 1);
 
       // Expect the results to contain the scheduled time slot but not the next 30 minute increment
       expect(result).toEqual(
