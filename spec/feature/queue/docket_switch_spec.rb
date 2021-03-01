@@ -89,6 +89,9 @@ RSpec.feature "Docket Switch", :all_dbs do
       # Success banner
       expect(page).to have_content(COPY::DOCKET_SWITCH_RECOMMENDATION_SUCCESS_MESSAGE)
 
+      # Ensure we've completed the mail task
+      expect(docket_switch_mail_task.reload).to have_attributes(status: Constants.TASK_STATUSES.completed)
+
       judge_task = DocketSwitchRulingTask.find_by(assigned_to: judge)
       expect(judge_task).to_not be_nil
       expect(judge_task.parent.type).to eq RootTask.name
@@ -152,6 +155,9 @@ RSpec.feature "Docket Switch", :all_dbs do
           expect(next_task).to_not be_nil
           expect(next_task.parent).to be_a(task_type)
           expect(next_task.parent.assigned_to).to be_a(ClerkOfTheBoard)
+
+          # Ensure judge task is now on hold
+          expect(docket_switch_ruling_task.reload).to have_attributes(status: Constants.TASK_STATUSES.on_hold)
 
           # Check that task got created and shows instructions on Case Details
           User.authenticate!(user: cotb_attorney)
