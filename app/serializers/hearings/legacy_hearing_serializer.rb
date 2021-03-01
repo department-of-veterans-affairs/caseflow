@@ -88,4 +88,5 @@ class LegacyHearingSerializer
   attribute :was_virtual, &:was_virtual?
   attribute :hearing_disposition_task_id, &:open_hearing_disposition_task_id
   attribute :witness
+  attribute :veteran_date_of_death_info, &:rescue_and_check_toggle_veteran_date_of_death_info
 end

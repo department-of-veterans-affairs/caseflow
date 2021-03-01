@@ -625,6 +625,7 @@ class RequestIssue < CaseflowRecord
 
   def timely_issue?(receipt_date)
     return true unless receipt_date && decision_date
+    return false if receipt_date < decision_date
     return true if untimely_exemption
 
     decision_date >= (receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
