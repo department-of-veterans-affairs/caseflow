@@ -32,8 +32,6 @@ const DocketSwitchAlertBanner = ({ appeal }) => {
       other appeal stream.</Link>
   </div>;
 
-  debugger
-
   if (docketSwitch.disposition === 'granted') {
     return (
       <div>
