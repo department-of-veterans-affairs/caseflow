@@ -185,7 +185,7 @@ describe Distribution, :all_dbs do
           expect(subject.distributed_cases.where(priority: true,
                                                  docket: Constants.AMA_DOCKETS.direct_review).count).to eq(1)
           expect(subject.distributed_cases.where(docket: "legacy").count).to be >= 8
-          expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.direct_review).count).to be >= 2
+          expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.direct_review).count).to be >= 1
           expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.evidence_submission).count).to eq(0)
         end
       end
@@ -420,7 +420,7 @@ describe Distribution, :all_dbs do
         # Proportion for hearings and evidence submission dockets
         let(:other_dockets_proportion) { (1 - DocketCoordinator::MAXIMUM_DIRECT_REVIEW_PROPORTION) / 2 }
 
-        it "fills the AMA dockets", :focus => true do
+        it "fills the AMA dockets" do
           evidence_submission_cases[0...2].each do |appeal|
             appeal.tasks
               .find_by(type: EvidenceSubmissionWindowTask.name)
