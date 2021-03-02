@@ -92,15 +92,14 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
   def when_child_task_created(child_task)
     if same_task_type_assigned_to_user(child_task)
       # Move any open TimedHoldTask to the child_task
-      timed_hold_tasks = children.open.where(type: :TimedHoldTask).find_each do |timed_hold_task|
+      children.open.where(type: :TimedHoldTask).find_each do |timed_hold_task|
         timed_hold_task.update!(parent_id: child_task.id)
       end
 
-      child_task.update!(status: :on_hold) if timed_hold_tasks.any?
+      child_task.update!(status: :on_hold) if child_task.children.open.any?
     end
 
     put_on_hold_due_to_new_child_task
-    # binding.pry
   end
 
   private
