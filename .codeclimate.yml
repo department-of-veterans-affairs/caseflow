@@ -70,7 +70,7 @@ plugins:
     exclude_patterns:
     - 'db/migrate/*'
   rubocop:
-    enabled: false
+    enabled: true
     channel: rubocop-0-79
   scss-lint:
     enabled: true
