@@ -417,16 +417,16 @@ describe Distribution, :all_dbs do
         let!(:legacy_nonpriority_cases) { [] }
         let!(:same_judge_nonpriority_hearings) { [] }
         let!(:other_judge_hearings) { [] }
+        # Proportion for hearings and evidence submission dockets
+        let(:other_dockets_proportion) { (1 - DocketCoordinator::MAXIMUM_DIRECT_REVIEW_PROPORTION) / 2 }
 
-        it "fills the AMA dockets" do
+        it "fills the AMA dockets", :focus => true do
           evidence_submission_cases[0...2].each do |appeal|
             appeal.tasks
               .find_by(type: EvidenceSubmissionWindowTask.name)
               .update!(status: :completed)
           end
           subject.distribute!
-          # Proportion for hearings and evidence submission dockets
-          let(:other_dockets_proportion) { (1 - DocketCoordinator::MAXIMUM_DIRECT_REVIEW_PROPORTION) / 2 }
           expect(subject.valid?).to eq(true)
           expect(subject.status).to eq("completed")
           expect(subject.statistics["batch_size"]).to eq(15)
