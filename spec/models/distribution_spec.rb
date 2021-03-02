@@ -146,16 +146,18 @@ describe Distribution, :all_dbs do
         end
       end
 
-      context "when min legacy proportion and max direct review proportion are set and used"
+      context "when min legacy proportion and max direct review proportion are set and used" do
+        let(:other_dockets_proportion) {
+          (1 - DocketCoordinator::MINIMUM_LEGACY_PROPORTION - DocketCoordinator::MAXIMUM_DIRECT_REVIEW_PROPORTION) / 2
+        }
+
         it "correctly distributes cases" do
           evidence_submission_cases[0...2].each do |appeal|
             appeal.tasks
               .find_by(type: EvidenceSubmissionWindowTask.name)
               .update!(status: :completed)
           end          # Proportion for hearings and evidence submission dockets
-          let(:other_dockets_proportion) {
-            (1 - DocketCoordinator::MINIMUM_LEGACY_PROPORTION - DocketCoordinator::MAXIMUM_DIRECT_REVIEW_PROPORTION) / 2
-          }
+
           subject.distribute!
           expect(subject.valid?).to eq(true)
           expect(subject.priority_push).to eq(false)
@@ -176,7 +178,7 @@ describe Distribution, :all_dbs do
           expect(subject.distributed_cases.first.docket).to eq("legacy")
           expect(subject.distributed_cases.first.ready_at).to eq(2.days.ago.beginning_of_day)
           expect(subject.distributed_cases.where(priority: true).count).to eq(5)
-          expect(subject.distributed_cases.where(genpop: true).count).to eq(7)
+          expect(subject.distributed_cases.where(genpop: true).count).to be_within(1).of(7)
           expect(subject.distributed_cases.where(priority: true, genpop: false).count).to eq(2)
           expect(subject.distributed_cases.where(priority: false, genpop_query: "not_genpop").count).to eq(0)
           expect(subject.distributed_cases.where(priority: false, genpop_query: "any").map(&:docket_index).max).to eq(35)
