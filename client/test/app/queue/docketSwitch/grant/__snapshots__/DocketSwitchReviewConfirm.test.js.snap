@@ -126,6 +126,13 @@ exports[`DocketSwitchReviewConfirm renders correctly 1`] = `
                 <tr>
                   <td>
                     <div>
+                      <em />
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div>
                       1. Task Type A
                     </div>
                     <div>
@@ -332,6 +339,13 @@ exports[`DocketSwitchReviewConfirm with alternate claimant renders the claimant 
               class="usa-table-borderless"
             >
               <tbody>
+                <tr>
+                  <td>
+                    <div>
+                      <em />
+                    </div>
+                  </td>
+                </tr>
                 <tr>
                   <td>
                     <div>

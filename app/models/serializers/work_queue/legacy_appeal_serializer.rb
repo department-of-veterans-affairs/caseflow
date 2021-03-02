@@ -33,6 +33,8 @@ class WorkQueue::LegacyAppealSerializer
   attribute :assigned_to_location
   attribute :vbms_id, &:sanitized_vbms_id
   attribute :veteran_full_name
+  attribute :veteran_death_date
+  attribute :veteran_appellant_deceased, &:veteran_appellant_deceased?
   # Aliasing the vbms_id to make it clear what we're returning.
   attribute :veteran_file_number, &:sanitized_vbms_id
   attribute :external_id, &:vacols_id

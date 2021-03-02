@@ -36,18 +36,24 @@ class DocketSwitch < CaseflowRecord
 
   def process_granted!
     transaction do
-      update!(new_docket_stream: old_docket_stream.create_stream(:original))
-
+      new_stream = old_docket_stream.create_stream(:original).tap do |stream|
+        stream.update!(docket_type: docket_type)
+      end
+      update!(new_docket_stream: new_stream)
       copy_granted_request_issues!
 
       DocketSwitch::TaskHandler.new(
         docket_switch: self,
         selected_task_ids: selected_task_ids,
-        new_admin_actions: new_admin_actions
+        new_admin_actions: admin_actions_params
       ).call
 
       task.update(status: Constants.TASK_STATUSES.completed)
     end
+  end
+
+  def admin_actions_params
+    (new_admin_actions || []).map { |data| data.permit(:instructions, :type).merge(assigned_by: task.assigned_to) }
   end
 
   def request_issues_for_switch
