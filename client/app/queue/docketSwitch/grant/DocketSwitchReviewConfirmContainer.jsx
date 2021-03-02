@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router';
+import { unwrapResult } from '@reduxjs/toolkit';
 import { parseISO } from 'date-fns';
 import StringUtil from 'app/util/StringUtil';
 import { appealWithDetailSelector } from 'app/queue/selectors';
@@ -83,11 +84,12 @@ export const DocketSwitchReviewConfirmContainer = () => {
     };
 
     try {
-      await dispatch(completeDocketSwitchGranted(docketSwitch));
+      const resultAction = await dispatch(completeDocketSwitchGranted(docketSwitch));
+      const { newAppealId } = unwrapResult(resultAction);
 
       dispatch(showSuccessMessage(successMessage));
       dispatch(stepForward());
-      push(`/queue/appeals/${appealId}`);
+      push(`/queue/appeals/${newAppealId}`);
     } catch (error) {
       // Perhaps show an alert that indicates error, advise trying again...?
       console.error('Error Granting Docket Switch', error);
