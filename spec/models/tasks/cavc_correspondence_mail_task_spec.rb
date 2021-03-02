@@ -24,16 +24,6 @@ describe CavcCorrespondenceMailTask do
       [
         Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
         Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
-        Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
-        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
-      ]
-    end
-
-    # organization-level-tasks-for-cavc-correspondence-task
-    let(:mail_task_limited_actions) do
-      [
-        Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
-        Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
         Constants.TASK_ACTIONS.CANCEL_TASK.to_h
       ]
     end
@@ -66,25 +56,21 @@ describe CavcCorrespondenceMailTask do
       context "a CAVC Litigation Support team user" do
         let(:user) { cavc_lit_user }
 
-        context "when type is CavcCorrespondenceMailTask" do
-          let(:type) { "CavcCorrespondenceMailTask" }
+        context "who is a team admin" do
+          let(:expected_actions) { mail_task_actions }
 
-          context "who is a team admin" do
-            let(:expected_actions) { mail_task_limited_actions }
+          before { OrganizationsUser.make_user_admin(user, CavcLitigationSupport.singleton) }
 
-            before { OrganizationsUser.make_user_admin(user, CavcLitigationSupport.singleton) }
-
-            it "has actions" do
-              subject
-            end
+          it "has actions" do
+            subject
           end
+        end
 
-          context "who is a team member" do
-            let(:expected_actions) { mail_task_limited_actions }
+        context "who is a team member" do
+          let(:expected_actions) { mail_task_actions }
 
-            it "has actions" do
-              subject
-            end
+          it "has actions" do
+            subject
           end
         end
       end

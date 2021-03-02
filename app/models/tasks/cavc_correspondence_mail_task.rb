@@ -27,9 +27,7 @@ class CavcCorrespondenceMailTask < MailTask
 
     return user_task_actions if user_task_assigned_to_cavc_lit_support
 
-    return organization_task_actions if !organization_assigned_cavc_mail_task
-
-    return limited_organization_task_actions if organization_assigned_cavc_mail_task
+    return organization_task_actions if assigned_to_type == "Organization"
 
     []
   end
@@ -58,17 +56,12 @@ class CavcCorrespondenceMailTask < MailTask
     [
       Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
       Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
-      Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
       Constants.TASK_ACTIONS.CANCEL_TASK.to_h
     ]
   end
 
   def limited_organization_task_actions
-    [
-      Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
-      Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
-      Constants.TASK_ACTIONS.CANCEL_TASK.to_h
-    ]
+    organization_task_actions - [Constants.TASK_ACTIONS.MARK_COMPLETE.to_h]
   end
 
   def user_task_actions
@@ -83,10 +76,6 @@ class CavcCorrespondenceMailTask < MailTask
 
   def user_task_assigned_to_cavc_lit_support
     assigned_to_type == "User" && assigned_to_cavc_lit_team_member
-  end
-
-  def organization_assigned_cavc_mail_task
-    assigned_to_type == "Organization" && type == "CavcCorrespondenceMailTask"
   end
 
   def assigned_to_cavc_lit_team_member
