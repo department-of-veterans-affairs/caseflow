@@ -27,7 +27,8 @@ export class SearchableDropdown extends React.Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.value !== prevState.value) {
+    // Unless clearOnSelect is set, we want to update our state's value with the new one from props
+    if (nextProps.value !== prevState.value && !nextProps.clearOnSelect) {
       return { value: nextProps.value };
     }
 
@@ -54,6 +55,7 @@ export class SearchableDropdown extends React.Component {
     }
     // don't set value in state if creatable is true
     if (!selfManageValueState) {
+      console.log('clearOnSelect', this.state.value, newValue);
       this.setState({ value: clearOnSelect ? null : newValue });
     }
 
