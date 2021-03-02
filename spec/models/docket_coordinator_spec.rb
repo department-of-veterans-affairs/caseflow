@@ -117,7 +117,7 @@ describe DocketCoordinator do
     end
 
     context "lever settings for minimum legacy and maximum direct review proportions" do
-      it "do not sum to more than 1", :focus => true do
+      it "do not sum to more than 1" do
         expect(DocketCoordinator::MINIMUM_LEGACY_PROPORTION +
           DocketCoordinator::MAXIMUM_DIRECT_REVIEW_PROPORTION).to be <= 1
       end
