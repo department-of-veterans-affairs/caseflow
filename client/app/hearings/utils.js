@@ -513,8 +513,8 @@ export const setTimeSlots = (hearings) => {
 
     // This slot is not available (full) if there's a scheduled hearing less than an hour before it.
     // A 10:45 appointment will:
-    // - Stop a 11:30 slot from displaying (it's full)
-    // - Show a 10:30 slot
+    // - Hide a 11:30 slot (it's full, so we return null)
+    // - Show a 10:30 slot (return the timeslot)
     const slot_full = scheduledHearingTimes.some((scheduledHearingTime) => {
       return slotTime.isAfter(scheduledHearingTime) &&
         slotTime.diff(scheduledHearingTime, 'minutes') <= 60;
