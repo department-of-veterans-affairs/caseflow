@@ -490,20 +490,25 @@ export const setTimeSlots = (hearings) => {
   // Default to using EST for all times before conversion
   moment.tz.setDefault('America/New_York');
 
-  // Establish the time period and increment to create time slots between (15:00 - 8:00 and add 1 to include 15:00)
-  const hoursInPeriod = 8;
-  const startTime = '08:30';
-
   // Safe assign the hearings array in case there are no scheduled hearings
   const scheduledHearings = hearings || [];
 
-  // Store a list of the filled times to compare against when creating the time slots
-  const filledTimes = scheduledHearings.map((hearing) => {
+  // Store a list of the scheduled times 
+  const scheduledHearingTimes = scheduledHearings.map((hearing) => {
     return moment(hearing.hearingTime, 'HH:mm');
   });
 
-  // Loop up to the number of hours in the period to get the available times
-  const availableTimes = _.compact(_.times(hoursInPeriod).map((index) => {
+  // This works because:
+  // - There is one possible slot per hour: 8:30, 9:30, 10:30, ...
+  // - That means that the 'slotCount' === 'numberOfHours'
+  // - We want 8 hours of slots: 8 = 8:30 - 15:30 + 1
+  const slotCount = 8;
+  // Don't convert startTime to moment here, moment mutates when you 'add'
+  const startTime = '08:30';
+
+  // For each possible slot, check if it's available by comparing to the
+  // scheduledHearingTimes.
+  const availableTimes = _.compact(_.times(slotCount).map((index) => {
     // Add the index to the start time so we assign 1 value per hour
     const slotTime = moment(startTime, 'HH:mm').add(index, 'hours');
 
@@ -511,13 +516,13 @@ export const setTimeSlots = (hearings) => {
     // A 10:45 appointment will:
     // - Stop a 11:30 slot from displaying (it's full)
     // - Show a 10:30 slot
-    const filled = filledTimes.some((scheduled_time) => {
-      return slotTime.isAfter(scheduled_time) &&
-        slotTime.diff(scheduled_time, 'minutes') <= 60;
+    const slot_full = scheduledHearingTimes.some((scheduledHearingTime) => {
+      return slotTime.isAfter(scheduledHearingTime) &&
+        slotTime.diff(scheduledHearingTime, 'minutes') <= 60;
     });
 
     // Return null if there is a filled time slot, otherwise return the hearingTime
-    return filled ? null : {
+    return slot_full ? null : {
       hearingTime: slotTime.format('HH:mm'),
       full: false
     };
