@@ -1,15 +1,14 @@
 import { setTimeSlots } from 'app/hearings/utils';
-import { defaultHearing } from 'test/data/hearings';
 
 // Create a pair of scheduled and next to ensure the next is filtered
 const timeSlot1 = {
   scheduled: '08:45',
-  next: '09:30',
+  hiddenSlot: '09:30',
 };
 
 // Create a pair of scheduled and previous to ensure the previous still displays
 const timeSlot2 = {
-  previous: '10:30',
+  shownSlot: '10:30',
   scheduled: '10:45',
 };
 
@@ -25,21 +24,18 @@ const scheduledHearingAfterTime = '16:45';
 const emptyHearings = [];
 const scheduledHearingNext = [
   {
-    //...defaultHearing,
     hearingTime: timeSlot1.scheduled
   }
 ];
 
 const scheduledHearingPrevious = [
   {
-    //...defaultHearing,
     hearingTime: timeSlot2.scheduled
   }
 ];
 
 const scheduledHearingAfter = [
   {
-    //...defaultHearing,
     hearingTime: scheduledHearingAfterTime
   }
 ];
@@ -77,7 +73,7 @@ describe('hearing utils', () => {
             hearingTime: timeSlot1.scheduled
           }),
           expect.not.objectContaining({
-            hearingTime: timeSlot1.next
+            hearingTime: timeSlot1.hiddenSlot
           })
         ])
       );
@@ -102,7 +98,7 @@ describe('hearing utils', () => {
           }),
           expect.objectContaining({
             full: false,
-            hearingTime: timeSlot2.previous
+            hearingTime: timeSlot2.shownSlot
           })
         ])
       );
