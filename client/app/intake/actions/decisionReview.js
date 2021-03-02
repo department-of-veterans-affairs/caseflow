@@ -58,6 +58,62 @@ export const submitReview = (intakeId, intakeData, intakeType) => (dispatch) => 
   );
 };
 
+export const submitReviewUnListedClaimant = (intakeId, intakeData, intakeType, claimant, poa) => (dispatch) => {
+   dispatch({
+    type: ACTIONS.SUBMIT_REVIEW_START,
+    meta: { analytics }
+  });
+
+  const validationErrors = validateReviewData(intakeData, intakeType);
+
+  if (validationErrors) {
+    dispatch({
+      type: ACTIONS.SUBMIT_REVIEW_FAIL,
+      payload: { responseErrorCodes: validationErrors },
+      meta: { analytics }
+    });
+
+    return Promise.reject();
+  }
+
+  const data = prepareReviewData(intakeData, intakeType);
+  data.unlisted_claimant = claimant; 
+  data.unlisted_poa = poa;
+
+  return ApiUtil.patch(`/intake/${intakeId}/review`, { data }, ENDPOINT_NAMES.REVIEW_INTAKE).then(
+    (response) => {
+      dispatch({
+        type: ACTIONS.SUBMIT_REVIEW_SUCCEED,
+        payload: {
+          intake: response.body
+        },
+        meta: { analytics }
+      });
+
+      return true;
+    },
+    (error) => {
+      const responseObject = error.response.body;
+      const responseErrorCodes = responseObject.error_codes;
+
+      dispatch({
+        type: ACTIONS.SUBMIT_REVIEW_FAIL,
+        payload: {
+          errorUUID: responseObject.error_uuid,
+          responseErrorCodes
+        },
+        meta: {
+          analytics: analyticsCallback
+        }
+      });
+
+      throw error;
+    }
+  );
+
+}
+
+
 export const completeIntake = (intakeId, intakeData) => (dispatch) => {
   dispatch({
     type: ACTIONS.COMPLETE_INTAKE_START,

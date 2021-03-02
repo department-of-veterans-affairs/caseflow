@@ -30,6 +30,7 @@ import TaskSnapshot from './TaskSnapshot';
 import UserAlerts from '../components/UserAlerts';
 import VeteranCasesView from './VeteranCasesView';
 import VeteranDetail from './VeteranDetail';
+import AppellantPOADetail from './AppellantPOADetail';
 import { startPolling } from '../hearings/utils';
 import FnodBanner from './components/FnodBanner';
 
@@ -73,8 +74,6 @@ export const CaseDetailsView = (props) => {
     resetState,
     props
   });
-
-  const { claimant, poa } = useSelector((state) => state.addClaimant);
 
   useEffect(() => {
     window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
@@ -155,11 +154,11 @@ export const CaseDetailsView = (props) => {
           )}
           {!_.isNull(appeal.cavcRemand) && appeal.cavcRemand &&
           (<CavcDetail title="CAVC Remand" {...appeal.cavcRemand} />)}
-          <VeteranDetail title="About the Appellant" appealId={appealId} />
+          <AppellantPOADetail title="About the Appellant" appealId={appealId} />
           {(appeal.hearings.length || appeal.completedHearingOnPreviousAppeal) && (
             <CaseHearingsDetail title="Hearings" appeal={appeal} />
           )}
-          <VeteranDetail title="Appellant's Power of Attorney" appealId={appealId} />
+          <AppellantPOADetail title="Appellant's Power of Attorney" appealId={appealId} />
           {(appeal.hearings.length || appeal.completedHearingOnPreviousAppeal) && (
             <CaseHearingsDetail title="Hearings" appeal={appeal} />
           )}
@@ -186,9 +185,7 @@ CaseDetailsView.propTypes = {
   userCanScheduleVirtualHearings: PropTypes.bool,
   scheduledHearingId: PropTypes.string,
   pollHearing: PropTypes.bool,
-  stopPollingHearing: PropTypes.func,
-  claimant: PropTypes.object,
-  poa: PropTypes.object
+  stopPollingHearing: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
