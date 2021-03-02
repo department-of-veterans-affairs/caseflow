@@ -22,6 +22,8 @@ const partialGrantDocketSwitch = {
   old_docket_stream_id: '3'
 }
 
+const switchedDockets = [partialGrantDocketSwitch]
+
 const appeal = {
   externalId: '1',
   docketSwitch: fullGrantDocketSwitch
@@ -34,7 +36,7 @@ const appeal2 = {
 
 const appeal3 = {
   externalId: '3',
-  switchedDocket: partialGrantDocketSwitch
+  switchedDockets: switchedDockets
 };
 
 export default {

@@ -533,7 +533,7 @@ class Appeal < DecisionReview
     false
   end
 
-  # This method allows the old appeal stream to access the docket_switch object
+  # This method allows the old appeal stream to access the docket_switch objects
   # rubocop:disable all
   def switched_dockets
     DocketSwitch.where(old_docket_stream_id: self.id)
