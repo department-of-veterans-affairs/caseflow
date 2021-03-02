@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_22_214631) do
+ActiveRecord::Schema.define(version: 2021_03_02_165940) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1457,13 +1457,13 @@ ActiveRecord::Schema.define(version: 2021_02_22_214631) do
     t.index ["updated_at"], name: "index_user_quotas_on_updated_at"
   end
 
-  create_table "users", id: :serial, force: :cascade do |t|
+  create_table "users", id: :serial, comment: "Authenticated Caseflow users", force: :cascade do |t|
     t.datetime "created_at"
     t.string "css_id", null: false
     t.datetime "efolder_documents_fetched_at", comment: "Date when efolder documents were cached in s3 for this user"
     t.string "email"
     t.string "full_name"
-    t.datetime "last_login_at"
+    t.datetime "last_login_at", comment: "The last time the user-agent (browser) provided session credentials; see User.from_session for precision"
     t.string "roles", array: true
     t.string "selected_regional_office"
     t.string "station_id", null: false
