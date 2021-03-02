@@ -14,7 +14,6 @@ import { RESET_VIRTUAL_HEARING } from './contexts/HearingsFormContext';
 import HEARING_REQUEST_TYPES from '../../constants/HEARING_REQUEST_TYPES';
 import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP';
 
-
 export const isPreviouslyScheduledHearing = (hearing) =>
   hearing?.disposition === HEARING_DISPOSITION_TYPES.postponed ||
   hearing?.disposition === HEARING_DISPOSITION_TYPES.cancelled;
@@ -480,7 +479,82 @@ export const formatChangeRequestType = (type) => {
   }
 };
 
-export const dispositionLabel = (disposition) => HEARING_DISPOSITION_TYPE_TO_LABEL_MAP[disposition] ?? 'None'
+export const dispositionLabel = (disposition) => HEARING_DISPOSITION_TYPE_TO_LABEL_MAP[disposition] ?? 'None';
 
+/**
+ * Method to set the available time slots based on the hearings scheduled
+ * @param {array} hearings -- List of hearings scheduled for a specific date
+ */
+export const setTimeSlots = (hearings) => {
+  // Default to using EST for all times before conversion
+  moment.tz.setDefault('America/New_York');
+
+  // Establish the time period and increment to create time slots between (15:00 - 8:00 and add 1 to include 15:00)
+  const hoursInPeriod = 8;
+  const incrementAmount = 30;
+  const startTime = 8;
+
+  // Safe assign the hearings array in case there are no scheduled hearings
+  const scheduledHearings = hearings || [];
+
+  // Store a list of the filled times to compare against when creating the time slots
+  const filledTimes = scheduledHearings.map((hearing) => {
+    const [hour, minute] = hearing.hearingTime.split(':');
+
+    // Return the time value with the hours and minutes for the time
+    return new Date(`01/01/1900 ${hour}:${minute}`);
+  });
+
+  // Loop up to the number of hours in the period to get the available times
+  const availableTimes = _.compact(_.times(hoursInPeriod).map((index) => {
+    // Add the index to the start time so we assign 1 value per hour
+    const hour = startTime + index;
+
+    // Convert the hour and increment amount to a date so we can compare
+    const availableTime = new Date(`01/01/1900 ${hour}:${incrementAmount}`);
+
+    // Get the difference between the time available and the scheduled times
+    const filled = filledTimes.filter((time) => {
+      // Calculate the time difference then divide by the number of seconds and divide by 60 to get minutes
+      const interval = Math.floor((availableTime - time) / 1000 / 60);
+
+      // Return true if the scheduled time is within an hour of the time slot
+      return interval >= 0 && interval < 60;
+    });
+
+    // Return nul if there is a filled time slot
+    if (filled.length) {
+      return null;
+    }
+
+    // Return the time string appending 0 if the number is less than 10
+    return {
+      hearingTime: `${hour < 10 ? 0 : ''}${hour}:${incrementAmount}`,
+      full: false
+    };
+  }));
+
+  // Transform the values into the available slots
+  const slots = [...availableTimes, ...scheduledHearings].map((slot) => ({
+    ...slot,
+    key: `${slot?.externalId}-${slot?.hearingTime}`,
+    full: slot?.full !== false,
+    hearingTime: slot?.hearingTime
+  }));
+
+  // Return the time slots sorted by time
+  return _.sortBy(slots, 'hearingTime');
+};
+
+export const formatTimeSlotLabel = (time, zone) => {
+  const coTime = zoneName(time, COMMON_TIMEZONES[3], 'z');
+  const roTime = zoneName(time, zone, 'z');
+
+  if (roTime === coTime) {
+    return coTime;
+  }
+
+  return `${coTime} (${roTime})`;
+};
 
 /* eslint-enable camelcase */
