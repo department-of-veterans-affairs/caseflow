@@ -132,6 +132,28 @@ describe('hearing utils', () => {
       expect(result[result.length - 1].hearingTime).toEqual(scheduledHearingAfterTime);
     });
 
+    test('With a scheduled hearing at 10:30, displays a slot for 09:30 and 11:30', () => {
+      const result = setTimeSlots([{ hearingTime: '10:30' }]);
+
+      expect(result).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            full: false,
+            hearingTime: '09:30',
+          }),
+          expect.objectContaining({
+            full: true,
+            hearingTime: '10:30',
+          }),
+          expect.objectContaining({
+            full: false,
+            hearingTime: '11:30',
+          })
+        ])
+      );
+
+    });
+
   });
 
 })
