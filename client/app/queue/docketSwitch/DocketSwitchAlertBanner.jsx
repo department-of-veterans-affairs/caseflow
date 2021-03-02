@@ -6,7 +6,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 
 const DocketSwitchAlertBanner = ({ appeal, docketSwitch }) => {
   // This variable gives us the Docket Switch object on both the old and new appeal case details page
-  const docketSwitchAlert = appeal.docketSwitch ? appeal.docketSwitch : docketSwitch
+  const docketSwitchAlert = appeal.docketSwitch ? appeal.docketSwitch : docketSwitch;
 
   const fullGrantSuccessMessage = <div>
     {COPY.DOCKET_SWITCH_FULL_GRANTED_LABEL}
@@ -61,7 +61,8 @@ const DocketSwitchAlertBanner = ({ appeal, docketSwitch }) => {
 };
 
 DocketSwitchAlertBanner.propTypes = {
-  appeal: PropTypes.object.isRequired
+  appeal: PropTypes.object.isRequired,
+  docketSwitch: PropTypes.object
 };
 
 export default DocketSwitchAlertBanner;

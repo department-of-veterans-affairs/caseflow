@@ -59,7 +59,9 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
         }
       </div>
       <div {...alertStyling} {...sectionSegmentStyling}>
-        { appeal.switchedDockets.map((docketSwitch) => <DocketSwitchAlertBanner appeal={appeal} docketSwitch={docketSwitch}/>)}
+        { appeal.switchedDockets.map((docketSwitch) => 
+          <DocketSwitchAlertBanner appeal={appeal} docketSwitch={docketSwitch}/>)
+        }
       </div>
       <div {...sectionSegmentStyling}>{sectionBody}</div>
     </div>
