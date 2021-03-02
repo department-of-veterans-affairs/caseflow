@@ -579,6 +579,38 @@ describe User, :all_dbs do
         expect(subject).to eq user
         expect(user.reload.last_login_at).to eq Time.zone.now - 1.minute
       end
+
+      describe "check SQL queries are only called when needed" do
+        before do
+          Timecop.freeze(Time.zone.now - time_ago) do
+            user = create(:user)
+            session["user"]["pg_user_id"] = user.id
+            User.from_session(session)
+          end
+        end
+        context "last_login_at was more than 5 minutes ago" do
+          let(:time_ago) { 6.minutes }
+
+          it "executes SQL UPDATE" do
+            query_data = SqlTracker.track do
+              expect(subject).to eq user
+            end
+            update_queries = query_data.values.select { |o| o[:sql].start_with?("UPDATE \"users\"") }
+            expect(update_queries.pluck(:count).max).to eq 1
+          end
+        end
+        context "last_login_at was less than 5 minutes ago" do
+          let(:time_ago) { 4.minutes }
+
+          it "does not execute SQL UPDATE" do
+            query_data = SqlTracker.track do
+              expect(subject).to eq user
+            end
+            update_queries = query_data.values.select { |o| o[:sql].start_with?("UPDATE \"users\"") }
+            expect(update_queries).to be_empty
+          end
+        end
+      end
     end
 
     context "returns nil when no user in session" do
