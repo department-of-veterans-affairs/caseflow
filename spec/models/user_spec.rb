@@ -565,6 +565,20 @@ describe User, :all_dbs do
         expect(subject).to eq user
         expect(session["user"]["pg_user_id"]).to eq user.id
       end
+
+      it "updates last_login_at if it was more than 5 minutes ago" do
+        user = create(:user, last_login_at: Time.zone.now - 10.minutes)
+        session["user"]["pg_user_id"] = user.id
+        expect(subject).to eq user
+        expect(user.reload.last_login_at).to eq Time.zone.now
+      end
+
+      it "does not update last_login_at if it was less than 5 minutes ago" do
+        user = create(:user, last_login_at: Time.zone.now - 1.minute)
+        session["user"]["pg_user_id"] = user.id
+        expect(subject).to eq user
+        expect(user.reload.last_login_at).to eq Time.zone.now - 1.minute
+      end
     end
 
     context "returns nil when no user in session" do
