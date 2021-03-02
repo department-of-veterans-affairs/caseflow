@@ -505,17 +505,20 @@ export const setTimeSlots = (hearings) => {
   // Loop up to the number of hours in the period to get the available times
   const availableTimes = _.compact(_.times(hoursInPeriod).map((index) => {
     // Add the index to the start time so we assign 1 value per hour
-    const availableTime = moment(startTime, 'HH:mm').add(index, 'hours');
+    const slotTime = moment(startTime, 'HH:mm').add(index, 'hours');
 
-    // Is availableTime at least 60min after time? then we want to discard this slot
-    // because it's 'full'
-    const filled = filledTimes.some((time) => {
-      return availableTime.isSameOrAfter(time.add(60, 'minutes'));
+    // This slot is not available (full) if there's a scheduled hearing less than an hour before it.
+    // A 10:45 appointment will:
+    // - Stop a 11:30 slot from displaying (it's full)
+    // - Show a 10:30 slot
+    const filled = filledTimes.some((scheduled_time) => {
+      return slotTime.isAfter(scheduled_time) &&
+        slotTime.diff(scheduled_time, 'minutes') <= 60;
     });
 
     // Return null if there is a filled time slot, otherwise return the hearingTime
     return filled ? null : {
-      hearingTime: availableTime.format('HH:mm'),
+      hearingTime: slotTime.format('HH:mm'),
       full: false
     };
   }));

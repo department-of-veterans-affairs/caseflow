@@ -25,21 +25,21 @@ const scheduledHearingAfterTime = '16:45';
 const emptyHearings = [];
 const scheduledHearingNext = [
   {
-    ...defaultHearing,
+    //...defaultHearing,
     hearingTime: timeSlot1.scheduled
   }
 ];
 
 const scheduledHearingPrevious = [
   {
-    ...defaultHearing,
+    //...defaultHearing,
     hearingTime: timeSlot2.scheduled
   }
 ];
 
 const scheduledHearingAfter = [
   {
-    ...defaultHearing,
+    //...defaultHearing,
     hearingTime: scheduledHearingAfterTime
   }
 ];
@@ -64,16 +64,7 @@ describe('hearing utils', () => {
 
     test('Skips the next available slot if a hearing is scheduled within an hour', () => {
       // Call the function and assign to the results object for inspection
-      // Slots with no scheduled apts are like this
-      // [8:30, 9:30, 10:30, 11:30,
-      //  12:30, 1:30, 2:30, 3:30]
-      // With the scheduledHearingNext apts:
-      // [8:30, 8:45, 10:30, 11:30, <- 8:45 instead of 9:30
-      //  12:30, 1:30, 2:30, 3:30]
-      const result = setTimeSlots([{
-        ...defaultHearing,
-        hearingTime: '8:45'
-      }]);
+      const result = setTimeSlots(scheduledHearingNext);
 
       // Expect the slot count to be the same as the number available when we have filtered 1 out
       expect(result).toHaveLength(AVAILABLE_SLOT_COUNT);
