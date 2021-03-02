@@ -500,13 +500,13 @@ export const setTimeSlots = (hearings) => {
 
   // This works because:
   // - There is one possible slot per hour: 8:30, 9:30, 10:30, ...
-  // - We want 8 hours of slots: 8 = 08:30 - 15:30 + 1
+  // - We want 8 hours of slots: 8 = 15:30 - 08:30 + 1
   const slotCount = 8;
   // Don't convert startTime to moment here, moment mutates when you 'add'
   const startTime = '08:30';
 
   // For each possible slot, return it only if it's available. Availability is
-  // determined by comparing to the scheduledHearingTimes. 
+  // determined by comparing to the scheduledHearingTimes.
   const availableSlots = _.compact(_.times(slotCount).map((index) => {
     // Add the index to the start time so we assign 1 value per hour
     const slotTime = moment(startTime, 'HH:mm').add(index, 'hours');
