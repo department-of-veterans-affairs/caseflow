@@ -1,4 +1,5 @@
 import { setTimeSlots } from 'app/hearings/utils';
+import { uniq } from 'lodash';
 
 // Create a pair of scheduled and next to ensure the next is filtered
 const timeSlot1 = {
@@ -154,7 +155,11 @@ describe('hearing utils', () => {
 
     });
 
-  });
+    test('Key is unique for all slots', () => {
+      const result = setTimeSlots([{ hearingTime: '10:30' }]);
+      const dedupResult = uniq(result.map((slot) => slot.key));
 
-})
-;
+      expect(result.length).toEqual(dedupResult.length);
+    });
+  });
+});

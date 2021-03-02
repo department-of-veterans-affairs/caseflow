@@ -521,6 +521,7 @@ export const setTimeSlots = (hearings) => {
 
     // Return null if there is a filled time slot, otherwise return the hearingTime
     return slotFull ? null : {
+      slotId: index,
       hearingTime: slotTime.format('HH:mm'),
       full: false
     };
@@ -529,6 +530,7 @@ export const setTimeSlots = (hearings) => {
   // Transform the values into the available slots
   const slots = [...availableSlots, ...scheduledHearings].map((slot) => ({
     ...slot,
+    key: `${slot?.externalId || slot?.slotId}-${slot?.hearingTime}`,
     full: slot?.full !== false,
     hearingTime: slot?.hearingTime
   }));
