@@ -6,7 +6,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 
 const DocketSwitchAlertBanner = ({ appeal }) => {
   // This variable gives us the Docket Switch object on both the old and new appeal case details page
-  const docketSwitch = appeal.docketSwitch ? appeal.docketSwitch : appeal.switchedDocket;
+  const docketSwitch = appeal.docketSwitch ? appeal.docketSwitch : appeal.switchedDockets[0];
 
   const fullGrantSuccessMessage = <div>
     {COPY.DOCKET_SWITCH_FULL_GRANTED_LABEL}
@@ -31,6 +31,8 @@ const DocketSwitchAlertBanner = ({ appeal }) => {
       to={`${docketSwitch.old_appeal_uuid}`}>
       other appeal stream.</Link>
   </div>;
+
+  debugger
 
   if (docketSwitch.disposition === 'granted') {
     return (

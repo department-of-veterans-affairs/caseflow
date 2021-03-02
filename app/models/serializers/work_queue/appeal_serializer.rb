@@ -161,9 +161,9 @@ class WorkQueue::AppealSerializer
     end
   end
 
-  attribute :switched_docket do |object|
-    if object.switched_docket
-      WorkQueue::DocketSwitchSerializer.new(object.switched_docket).serializable_hash[:data][:attributes]
+  attribute :switched_dockets do |object|
+    object.switched_dockets.map do |docket_switch|
+      WorkQueue::DocketSwitchSerializer.new(docket_switch).serializable_hash[:data][:attributes]
     end
   end
 end
