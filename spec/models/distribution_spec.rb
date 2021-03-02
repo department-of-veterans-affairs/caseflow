@@ -167,8 +167,6 @@ describe Distribution, :all_dbs do
         expect(subject.statistics["direct_review_proportion"]).to eq(0.2)
         expect(subject.statistics["evidence_submission_proportion"]).to eq(0.2)
         expect(subject.statistics["hearing_proportion"]).to eq(0.2)
-        expect(subject.statistics["pacesetting_direct_review_proportion"]).to eq(0.1)
-        expect(subject.statistics["interpolated_minimum_direct_review_proportion"]).to eq(0.067)
         expect(subject.statistics["nonpriority_iterations"]).to be_between(2, 3)
         expect(subject.distributed_cases.count).to eq(15)
         expect(subject.distributed_cases.first.docket).to eq("legacy")
@@ -429,8 +427,6 @@ describe Distribution, :all_dbs do
           expect(subject.statistics["direct_review_proportion"]).to be_within(0.01).of(0.13)
           expect(subject.statistics["evidence_submission_proportion"]).to be_within(0.01).of(0.43)
           expect(subject.statistics["hearing_proportion"]).to be_within(0.01).of(0.43)
-          expect(subject.statistics["pacesetting_direct_review_proportion"]).to eq(0.1)
-          expect(subject.statistics["interpolated_minimum_direct_review_proportion"]).to eq(0.067)
           expect(subject.statistics["nonpriority_iterations"]).to be_between(2, 3)
           expect(subject.distributed_cases.count).to eq(15)
         end
