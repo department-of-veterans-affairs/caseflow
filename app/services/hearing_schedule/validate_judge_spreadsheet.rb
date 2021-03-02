@@ -50,10 +50,13 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     out_of_range_dates.map { |date| date.strftime("%m/%d/%Y") }
   end
 
-  def judge_name_matches(row)
-    vacols_judges[row["vlj_id"]] &&
-      vacols_judges[row["vlj_id"]][:first_name].casecmp(row["name"].split(", ")[1].strip.downcase).zero? &&
-      vacols_judges[row["vlj_id"]][:last_name].casecmp(row["name"].split(", ")[0].strip.downcase).zero?
+  def judge_name_matches(row, vacols_judges)
+    row_vlj_id = row["vlj_id"]
+    row_last, row_first = row["name"].split(", ").map { |name_part| name_part.strip.downcase }
+
+    vacols_judges[row_vlj_id] &&
+      vacols_judges[row_vlj_id][:first_name].casecmp(row_first).zero? &&
+      vacols_judges[row_vlj_id][:last_name].casecmp(row_last).zero?
   end
 
   def filter_judges
@@ -63,7 +66,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
       vacols_judges[row["vlj_id"]]
     end.pluck("vlj_id")
     judges_name_not_in_db = @spreadsheet_data.reject do |row|
-      judge_name_matches(row)
+      judge_name_matches(row, vacols_judges)
     end.pluck("vlj_id")
 
     [judges_id_not_in_db, judges_name_not_in_db]
