@@ -60,10 +60,6 @@ class CavcCorrespondenceMailTask < MailTask
     ]
   end
 
-  def limited_organization_task_actions
-    organization_task_actions - [Constants.TASK_ACTIONS.MARK_COMPLETE.to_h]
-  end
-
   def user_task_actions
     [
       Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
