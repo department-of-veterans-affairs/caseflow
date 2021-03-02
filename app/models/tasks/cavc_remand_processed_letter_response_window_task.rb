@@ -84,6 +84,7 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
     []
   end
 
+  # :reek:FeatureEnvy
   def same_task_type_assigned_to_user(child_task)
     child_task.type == type && child_task.assigned_to_type == "User"
   end
@@ -91,7 +92,7 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
   def when_child_task_created(child_task)
     if same_task_type_assigned_to_user(child_task)
       # Move any open TimedHoldTask to the child_task
-      timed_hold_tasks = children.open.where(type: :TimedHoldTask).each do |timed_hold_task|
+      timed_hold_tasks = children.open.where(type: :TimedHoldTask).find_each do |timed_hold_task|
         timed_hold_task.update!(parent_id: child_task.id)
       end
 
