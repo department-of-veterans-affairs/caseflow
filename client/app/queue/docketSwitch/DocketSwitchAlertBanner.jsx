@@ -4,15 +4,15 @@ import COPY from 'app/../COPY';
 import Alert from 'app/components/Alert';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
-const DocketSwitchAlertBanner = ({ appeal }) => {
+const DocketSwitchAlertBanner = ({ appeal, docketSwitch }) => {
   // This variable gives us the Docket Switch object on both the old and new appeal case details page
-  const docketSwitch = appeal.docketSwitch ? appeal.docketSwitch : appeal.switchedDockets[0];
+  const docketSwitchAlert = appeal.docketSwitch ? appeal.docketSwitch : docketSwitch
 
   const fullGrantSuccessMessage = <div>
     {COPY.DOCKET_SWITCH_FULL_GRANTED_LABEL}
     <Link
       name="appeal-stream"
-      to={`${docketSwitch.new_appeal_uuid}`}>
+      to={`${docketSwitchAlert.new_appeal_uuid}`}>
       switched appeal stream.</Link>
   </div>;
 
@@ -20,7 +20,7 @@ const DocketSwitchAlertBanner = ({ appeal }) => {
     {COPY.DOCKET_SWITCH_PARTIAL_GRANTED_LABEL_OLD_DOCKET}
     <Link
       name="appeal-stream"
-      to={`${docketSwitch.new_appeal_uuid}`}>
+      to={`${docketSwitchAlert.new_appeal_uuid}`}>
       switched appeal stream.</Link>
   </div>;
 
@@ -28,11 +28,11 @@ const DocketSwitchAlertBanner = ({ appeal }) => {
     {COPY.DOCKET_SWITCH_PARTIAL_GRANTED_LABEL_NEW_DOCKET}
     <Link
       name="appeal-stream"
-      to={`${docketSwitch.old_appeal_uuid}`}>
+      to={`${docketSwitchAlert.old_appeal_uuid}`}>
       other appeal stream.</Link>
   </div>;
 
-  if (docketSwitch.disposition === 'granted') {
+  if (docketSwitchAlert.disposition === 'granted') {
     return (
       <div>
         <Alert
