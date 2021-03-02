@@ -12,7 +12,7 @@ const DocketSwitchAlertBanner = ({ appeal }) => {
     {COPY.DOCKET_SWITCH_FULL_GRANTED_LABEL}
     <Link
       name="appeal-stream"
-      to={`${appeal.newAppealStream?.uuid}`}>
+      to={`${docketSwitch.new_appeal_uuid}`}>
       switched appeal stream.</Link>
   </div>;
 
@@ -20,7 +20,7 @@ const DocketSwitchAlertBanner = ({ appeal }) => {
     {COPY.DOCKET_SWITCH_PARTIAL_GRANTED_LABEL_OLD_DOCKET}
     <Link
       name="appeal-stream"
-      to={`${appeal.newAppealStream?.uuid}`}>
+      to={`${docketSwitch.new_appeal_uuid}`}>
       switched appeal stream.</Link>
   </div>;
 
@@ -28,9 +28,11 @@ const DocketSwitchAlertBanner = ({ appeal }) => {
     {COPY.DOCKET_SWITCH_PARTIAL_GRANTED_LABEL_NEW_DOCKET}
     <Link
       name="appeal-stream"
-      to={`${appeal.oldAppealStream?.uuid}`}>
+      to={`${docketSwitch.old_appeal_uuid}`}>
       other appeal stream.</Link>
   </div>;
+
+  debugger
 
   if (docketSwitch.disposition === 'granted') {
     return (

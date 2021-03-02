@@ -155,15 +155,15 @@ class WorkQueue::AppealSerializer
 
   attribute :readable_original_hearing_request_type, &:readable_original_hearing_request_type
 
-  attribute :docket_switch
-
-  attribute :switched_docket
-
-  attribute :old_appeal_stream do |object|
-    object.docket_switch&.old_docket_stream
+  attribute :docket_switch do |object|
+    if object.docket_switch
+      WorkQueue::DocketSwitchSerializer.new(object.docket_switch).serializable_hash[:data][:attributes]
+    end
   end
 
-  attribute :new_appeal_stream do |object|
-    object.switched_docket&.new_docket_stream
+  attribute :switched_docket do |object|
+    if object.switched_docket
+      WorkQueue::DocketSwitchSerializer.new(object.switched_docket).serializable_hash[:data][:attributes]
+    end
   end
 end
