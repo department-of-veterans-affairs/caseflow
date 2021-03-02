@@ -493,9 +493,9 @@ export const setTimeSlots = (hearings) => {
   const scheduledHearings = hearings || [];
 
   // Store a list of the scheduled times
-  const scheduledHearingTimes = scheduledHearings.map((hearing) => {
-    return moment(hearing.hearingTime, 'HH:mm');
-  });
+  const scheduledHearingTimes = scheduledHearings.map((hearing) =>
+    moment(hearing.hearingTime, 'HH:mm')
+  );
 
   // This works because:
   // - There is one possible slot per hour: 8:30, 9:30, 10:30, ...
@@ -514,13 +514,13 @@ export const setTimeSlots = (hearings) => {
     // A 10:45 appointment will:
     // - Hide a 11:30 slot (it's full, so we return null)
     // - Show a 10:30 slot (return the timeslot)
-    const slot_full = scheduledHearingTimes.some((scheduledHearingTime) => {
-      return slotTime.isAfter(scheduledHearingTime) &&
-        slotTime.diff(scheduledHearingTime, 'minutes') <= 60;
-    });
+    const slotFull = scheduledHearingTimes.some((scheduledHearingTime) =>
+      slotTime.isAfter(scheduledHearingTime) &&
+        slotTime.diff(scheduledHearingTime, 'minutes') <= 60
+    );
 
     // Return null if there is a filled time slot, otherwise return the hearingTime
-    return slot_full ? null : {
+    return slotFull ? null : {
       hearingTime: slotTime.format('HH:mm'),
       full: false
     };
