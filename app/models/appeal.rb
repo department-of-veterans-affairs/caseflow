@@ -550,8 +550,8 @@ class Appeal < DecisionReview
   end
 
   # This method allows the old appeal stream to access the docket_switch object
-  def switched_docket
-    DocketSwitch.find_by(old_docket_stream_id: self.id)
+  def switched_dockets
+    DocketSwitch.where(old_docket_stream_id: self.id)
   end
 
   private
