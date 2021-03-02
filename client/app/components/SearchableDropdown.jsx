@@ -55,7 +55,6 @@ export class SearchableDropdown extends React.Component {
     }
     // don't set value in state if creatable is true
     if (!selfManageValueState) {
-      console.log('clearOnSelect', this.state.value, newValue);
       this.setState({ value: clearOnSelect ? null : newValue });
     }
 
