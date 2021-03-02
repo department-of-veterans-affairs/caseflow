@@ -6,6 +6,7 @@ import { AddClaimantPage } from './AddClaimantPage';
 import ReduxBase from 'app/components/ReduxBase';
 import { reducer, generateInitialState } from 'app/intake';
 import { PAGE_PATHS } from '../constants';
+import { performQuery } from './AddClaimantForm.stories';
 
 const RouterDecorator = (Story) => (
   <MemoryRouter initialEntries={[PAGE_PATHS.ADD_CLAIMANT]}>
@@ -23,7 +24,9 @@ export default {
   title: 'Intake/Add Claimant/AddClaimantPage',
   component: AddClaimantPage,
   decorators: [ReduxDecorator, RouterDecorator],
-  parameters: {},
+  args: {
+    onAttorneySearch: performQuery,
+  },
   argTypes: {
     onCancel: { action: 'cancel' },
     onSubmit: { action: 'submit' },

@@ -235,14 +235,6 @@ class Appeal < DecisionReview
     tasks.select { |t| t.type == "DistributionTask" }.map(&:assigned_at).max
   end
 
-  def veteran_is_deceased
-    veteran_death_date.present?
-  end
-
-  def veteran_death_date
-    veteran&.date_of_death
-  end
-
   delegate :address_line_1,
            :address_line_2,
            :address_line_3,
@@ -331,16 +323,8 @@ class Appeal < DecisionReview
     !!veteran_is_not_claimant
   end
 
-  def appellant_is_veteran
-    !veteran_is_not_claimant
-  end
-
   def veteran_middle_initial
     veteran_middle_name&.first
-  end
-
-  def veteran_appellant_deceased?
-    veteran_is_deceased && appellant_is_veteran
   end
 
   # matches Legacy behavior

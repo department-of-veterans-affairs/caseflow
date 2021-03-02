@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_05_194714) do
+ActiveRecord::Schema.define(version: 2021_02_22_214631) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -276,6 +276,7 @@ ActiveRecord::Schema.define(version: 2021_02_05_194714) do
     t.bigint "created_by_id", null: false, comment: "User that created this record"
     t.date "decision_date", null: false, comment: "Date CAVC issued a decision, according to the CAVC"
     t.bigint "decision_issue_ids", default: [], comment: "Decision issues being remanded; IDs refer to decision_issues table. For a JMR, all decision issues on the previous appeal will be remanded. For a JMPR, only some", array: true
+    t.boolean "federal_circuit", comment: "Whether the case has been appealed to the US Court of Appeals for the Federal Circuit"
     t.string "instructions", null: false, comment: "Instructions and context provided upon creation of the remand record"
     t.date "judgement_date", comment: "Date CAVC issued a judgement, according to the CAVC"
     t.date "mandate_date", comment: "Date that CAVC reported the mandate was given"
