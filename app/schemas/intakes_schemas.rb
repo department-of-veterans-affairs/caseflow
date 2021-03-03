@@ -35,6 +35,7 @@ class IntakesSchemas
         string :claimant_notes, optional: true, nullable: true, doc: "Appeals only"
         nested :unlisted_claimant, optional: true, nullable: true
         nested :unlisted_poa, optional: true, nullable: true
+        string :poa_participant_id, optional: true, nullable: true
       end
     end
   end
