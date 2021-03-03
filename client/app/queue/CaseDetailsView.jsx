@@ -154,11 +154,7 @@ export const CaseDetailsView = (props) => {
           )}
           {!_.isNull(appeal.cavcRemand) && appeal.cavcRemand &&
           (<CavcDetail title="CAVC Remand" {...appeal.cavcRemand} />)}
-          <AppellantPOADetail title="About the Appellant" appealId={appealId} />
-          {(appeal.hearings.length || appeal.completedHearingOnPreviousAppeal) && (
-            <CaseHearingsDetail title="Hearings" appeal={appeal} />
-          )}
-          <AppellantPOADetail title="Appellant's Power of Attorney" appealId={appealId} />
+          <AppellantPOADetail title="Appellant's Power of Attorney" appeal={appeal} />
           {(appeal.hearings.length || appeal.completedHearingOnPreviousAppeal) && (
             <CaseHearingsDetail title="Hearings" appeal={appeal} />
           )}

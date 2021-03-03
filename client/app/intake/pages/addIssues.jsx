@@ -278,7 +278,7 @@ class AddIssuesPage extends React.Component {
       } else if (poaClaimant.partyType === 'individual') {
         fields = `${poaClaimant.firstName} ${poaClaimant.lastName}`;
       } else if (poaClaimant.listedAttorney) {
-        fields = `${poaClaimant.listedAttorney}`;
+        fields = `${poaClaimant.listedAttorney.label}`;
       }
 
       return fields;

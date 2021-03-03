@@ -11,7 +11,6 @@ class IntakesSchemas
       end
     end
 
-    # rubocop:disable Metrics/MethodLength
     def review
       ControllerSchema.json do
         date :receipt_date
@@ -35,8 +34,8 @@ class IntakesSchemas
         # applicable when :claimant_type is "other"
         string :claimant_notes, optional: true, nullable: true, doc: "Appeals only"
         nested :unlisted_claimant, optional: true, nullable: true
+        nested :unlisted_poa, optional: true, nullable: true
       end
     end
-    # rubocop:enable Metrics/MethodLength
   end
 end

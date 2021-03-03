@@ -132,7 +132,7 @@ export const SelectClaimant = (props) => {
     const claimantOptions = () => {
       if (boolValue && nonVeteranClaimants) {
         field = 'other';
-      } else if (boolValue && !nonVeteranClaimants) {
+      } else if (boolValue) {
         field = 'dependent';
       } else {
         field = 'veteran';

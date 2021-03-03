@@ -117,6 +117,11 @@ class WorkQueue::AppealSerializer
   attribute :regional_office do
   end
 
+  attribute :unlisted_claimant do |object, params|
+    # binding.pry
+    # object.claimant&.save_unrecognized_details!(params[:unlisted_claimant])
+  end
+
   attribute :caseflow_veteran_id do |object|
     object.veteran ? object.veteran.id : nil
   end
