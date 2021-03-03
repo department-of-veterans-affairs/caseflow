@@ -822,6 +822,8 @@ RSpec.feature "Case details", :all_dbs do
       it "should display alert banner on old appeal stream page" do
         visit "/queue/appeals/#{full_grant_docket_switch.old_docket_stream.uuid}"
         expect(page).to have_content COPY::DOCKET_SWITCH_FULL_GRANTED_TITLE
+        click_link "switched appeal stream."
+        expect(page).to have_current_path("/queue/appeals/#{full_grant_docket_switch.new_docket_stream.uuid}")
       end
     end
 
@@ -829,11 +831,15 @@ RSpec.feature "Case details", :all_dbs do
       it "should display alert banner on old appeal stream page" do
         visit "/queue/appeals/#{partial_grant_docket_switch.old_docket_stream.uuid}"
         expect(page).to have_content COPY::DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_OLD_DOCKET
+        click_link "switched appeal stream."
+        expect(page).to have_current_path("/queue/appeals/#{partial_grant_docket_switch.new_docket_stream.uuid}")
       end
 
       it "should display alert banner on new appeal stream page" do
         visit "/queue/appeals/#{partial_grant_docket_switch.new_docket_stream.uuid}"
         expect(page).to have_content COPY::DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_NEW_DOCKET
+        click_link "other appeal stream."
+        expect(page).to have_current_path("/queue/appeals/#{partial_grant_docket_switch.old_docket_stream.uuid}")
       end
     end
   end
