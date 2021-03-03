@@ -81,6 +81,7 @@ $cf-select-text-color: #323a45;
 
   .usa-input-error & {
     border: 3px solid $color-secondary-dark;
+
     .cf-select--is-disabled {
       input { width: 1px; }
     }
