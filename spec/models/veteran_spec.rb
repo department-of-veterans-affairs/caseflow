@@ -77,8 +77,8 @@ describe Veteran, :all_dbs do
           expect(subject.first_name).to be_nil
         end
 
-        it "returns nil and no errors when accessing zip_code" do
-          expect(subject.zip_code).to eq nil
+        it "returns nil when accessing zip_code" do
+          expect(subject.zip_code).to be_nil
         end
       end
     end
