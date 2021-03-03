@@ -42,3 +42,18 @@ Basic.parameters = {
       'Used by attorney in Clerk of the Board office to complete a grant of a docket switch checkout flow ',
   },
 };
+
+export const NoExistingTasks = Template.bind({});
+NoExistingTasks.args = {
+  taskListing: [],
+};
+
+export const PreviouslyFilled = Template.bind({});
+PreviouslyFilled.args = {
+  defaultValues: {
+    taskIds: [1, 3],
+    newTasks: [
+      { type: 'AojColocatedTask', instructions: 'Lorem ipsum and whatnot' },
+    ],
+  },
+};

@@ -121,7 +121,7 @@ describe Veteran, :all_dbs do
     end
 
     context "exists in BGS with different name than in Caseflow" do
-      let!(:veteran) { create(:veteran, file_number: file_number) }
+      let!(:veteran) { create(:veteran, last_name: "Smith", file_number: file_number) }
 
       before do
         Fakes::BGSService.edit_veteran_record(file_number, :last_name, "Changed")
@@ -621,7 +621,7 @@ describe Veteran, :all_dbs do
   describe ".find_by_file_number_or_ssn" do
     let(:file_number) { "123456789" }
     let(:ssn) { "666660000" }
-    let!(:veteran) { create(:veteran, file_number: file_number, ssn: ssn) }
+    let!(:veteran) { create(:veteran, last_name: "Smith", file_number: file_number, ssn: ssn) }
 
     it "fetches based on file_number" do
       expect(described_class.find_by_file_number_or_ssn(file_number)).to eq(veteran)
@@ -743,7 +743,7 @@ describe Veteran, :all_dbs do
     end
 
     context "exists in BGS with different name than in Caseflow" do
-      let!(:veteran) { create(:veteran, file_number: file_number, ssn: ssn) }
+      let!(:veteran) { create(:veteran, last_name: "Smith", file_number: file_number, ssn: ssn) }
 
       before do
         Fakes::BGSService.edit_veteran_record(veteran.file_number, :last_name, "Changed")
@@ -851,6 +851,10 @@ describe Veteran, :all_dbs do
 
       it "is true" do
         is_expected.to eq(true)
+      end
+
+      it "updates date_of_death_death_reported_at" do
+        expect(veteran.date_of_death_reported_at).to eq(Time.zone.now)
       end
     end
 

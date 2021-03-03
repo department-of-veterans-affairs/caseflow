@@ -6,12 +6,11 @@ class WorkQueue::LegacyAppealSerializer
 
   attribute :assigned_attorney
   attribute :assigned_judge
-  attribute :readable_hearing_request_type do |object|
-    object.current_hearing_request_type(readable: true)
-  end
-  attribute :readable_original_hearing_request_type do |object|
-    object.original_hearing_request_type(readable: true)
-  end
+
+  attribute :readable_hearing_request_type, &:readable_current_hearing_request_type
+
+  attribute :readable_original_hearing_request_type, &:readable_original_hearing_request_type
+
   attribute :issues do |object|
     object.issues.map do |issue|
       WorkQueue::LegacyIssueSerializer.new(issue).serializable_hash[:data][:attributes]
@@ -34,6 +33,8 @@ class WorkQueue::LegacyAppealSerializer
   attribute :assigned_to_location
   attribute :vbms_id, &:sanitized_vbms_id
   attribute :veteran_full_name
+  attribute :veteran_death_date
+  attribute :veteran_appellant_deceased, &:veteran_appellant_deceased?
   # Aliasing the vbms_id to make it clear what we're returning.
   attribute :veteran_file_number, &:sanitized_vbms_id
   attribute :external_id, &:vacols_id

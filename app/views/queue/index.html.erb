@@ -14,10 +14,12 @@
     flash: flash,
     buildDate: build_date,
     hasCaseDetailsRole: current_user.roles.include?('Case Details'),
+    userCanAssignHearingSchedule: current_user.can_assign_hearing_schedule?,
     userCanViewHearingSchedule: current_user.can_view_hearing_schedule?,
     userCanViewOvertimeStatus: current_user.can_view_overtime_status?,
     userCanViewEditNodDate: current_user.can_view_edit_nod_date?,
     featureToggles: {
+      enable_hearing_time_slots: FeatureToggle.enabled?(:enable_hearing_time_slots, user: current_user),
       schedule_veteran_virtual_hearing: FeatureToggle.enabled?(:schedule_veteran_virtual_hearing, user: current_user),
       special_issues_revamp: FeatureToggle.enabled?(:special_issues_revamp, user: current_user),
       overtime_revamp: FeatureToggle.enabled?(:overtime_revamp, user: current_user),
@@ -27,7 +29,8 @@
       dismissal_cavc_remand: FeatureToggle.enabled?(:dismissal_cavc_remand, user: current_user),
       editNodDate: FeatureToggle.enabled?(:edit_nod_date, user: current_user),
       fnod_badge: FeatureToggle.enabled?(:fnod_badge, user: current_user),
-      fnod_banner: FeatureToggle.enabled?(:fnod_banner, user: current_user)
+      fnod_banner: FeatureToggle.enabled?(:fnod_banner, user: current_user),
+      view_nod_date_updates: FeatureToggle.enabled?(:view_nod_date_updates, user: current_user)
     }
   }) %>
 <% end %>

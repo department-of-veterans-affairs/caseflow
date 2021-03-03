@@ -10,6 +10,7 @@ class AppealHearingSerializer
     hearing.judge.present? ? hearing.judge.full_name : ""
   end
   attribute :is_virtual, &:virtual?
+  attribute :notes
   attribute :type, &:readable_request_type
   # this assumes only the assigned judge will view the hearing worksheet. otherwise,
   # we should check `hearing.hearing_views.map(&:user_id).include? judge.css_id`

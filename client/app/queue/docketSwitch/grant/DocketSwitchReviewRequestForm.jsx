@@ -39,9 +39,11 @@ const docketTypeRadioOptions = [
 ];
 
 export const DocketSwitchReviewRequestForm = ({
+  defaultValues,
   onSubmit,
   onCancel,
   appellantName,
+  docketFrom,
   issues,
 }) => {
   const {
@@ -55,6 +57,7 @@ export const DocketSwitchReviewRequestForm = ({
     resolver: yupResolver(schema),
     mode: 'onChange',
     reValidateMode: 'onChange',
+    defaultValues,
   });
   const sectionStyle = css({ marginBottom: '24px' });
 
@@ -76,6 +79,16 @@ export const DocketSwitchReviewRequestForm = ({
     []
   );
 
+  // We want to prevent accidental selection of the same docket type
+  const filteredDocketTypeOpts = useMemo(() => {
+    return docketTypeRadioOptions.map(({ value, displayText }) => ({
+      value,
+      displayText:
+        value === docketFrom ? `${displayText} (current docket)` : displayText,
+      disabled: value === docketFrom,
+    }));
+  }, [docketTypeRadioOptions, docketFrom]);
+
   const watchDisposition = watch('disposition');
 
   // Ensure that we trigger revalidation whenever disposition changes
@@ -83,22 +96,43 @@ export const DocketSwitchReviewRequestForm = ({
     trigger();
   }, [watchDisposition]);
 
-  const [issue, setIssues] = useState({});
+  const [issueVals, setIssueVals] = useState({});
 
   // We have to do a bit of manual manipulation for issue IDs due to nature of CheckboxGroup
   const handleIssueChange = (evt) => {
-    const newIssues = { ...issue, [evt.target.name]: evt.target.checked };
+    const newIssues = { ...issueVals, [evt.target.name]: evt.target.checked };
 
-    setIssues(newIssues);
+    setIssueVals(newIssues);
 
     // Form wants to track only the selected issue IDs
     return Object.keys(newIssues).filter((key) => newIssues[key]);
   };
 
+  // Handle prepopulating issue checkboxes if defaultValues are present
+  useEffect(() => {
+    if (defaultValues?.issueIds) {
+      const newIssues = { ...issueVals };
+
+      for (const id of defaultValues.issueIds) {
+        newIssues[id] = true;
+      }
+      setIssueVals(newIssues);
+    }
+  }, [defaultValues]);
+
+  // Need a bit of extra handling before passing along
+  const formatFormData = (formData) => {
+    // Ensure that all issue IDs are selected if full grant is chosen
+    if (formData.disposition === 'granted') {
+      formData.issueIds = issues.map((item) => String(item.id));
+    }
+    onSubmit?.(formData);
+  };
+
   return (
     <form
       className="docket-switch-granted-request"
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(formatFormData)}
       aria-label="Grant Docket Switch Request"
     >
       <AppSegment filledBackground>
@@ -128,7 +162,6 @@ export const DocketSwitchReviewRequestForm = ({
           <Controller
             name="issueIds"
             control={control}
-            defaultValue={[]}
             render={({ onChange: onCheckChange }) => {
               return (
                 <CheckboxGroup
@@ -137,6 +170,7 @@ export const DocketSwitchReviewRequestForm = ({
                   strongLabel
                   options={issueOptions}
                   onChange={(event) => onCheckChange(handleIssueChange(event))}
+                  values={issueVals}
                 />
               );
             }}
@@ -147,7 +181,7 @@ export const DocketSwitchReviewRequestForm = ({
           <RadioField
             name="docketType"
             label="Which docket will the issue(s) be switched to?"
-            options={docketTypeRadioOptions}
+            options={filteredDocketTypeOpts}
             inputRef={register}
             strongLabel
             vertical
@@ -158,7 +192,7 @@ export const DocketSwitchReviewRequestForm = ({
         <CheckoutButtons
           disabled={!formState.isValid}
           onCancel={onCancel}
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit(formatFormData)}
         />
       </div>
     </form>
@@ -169,5 +203,14 @@ DocketSwitchReviewRequestForm.propTypes = {
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
   appellantName: PropTypes.string.isRequired,
+  docketFrom: PropTypes.string.isRequired,
   issues: PropTypes.array,
+  defaultValues: PropTypes.shape({
+    disposition: PropTypes.string,
+    receiptDate: PropTypes.string,
+    docketType: PropTypes.string,
+    issueIds: PropTypes.arrayOf(
+      PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    ),
+  }),
 };

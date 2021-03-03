@@ -2,6 +2,8 @@ import { ACTIONS } from './actionTypes';
 import { update } from '../../util/ReducerUtil';
 
 export const initialState = {
+  scheduledHearingsList: [],
+  fetchingHearings: false,
   dropdowns: {
     judges: {},
     hearingCoordinators: {},
@@ -13,9 +15,11 @@ export const initialState = {
   // Used to handle communication between Case Details/ScheduleVeteran
   scheduledHearing: {
     taskId: null,
+    action: null,
     disposition: null,
     externalId: null,
     polling: false,
+    notes: null
   }
 };
 
@@ -158,6 +162,17 @@ const commonComponentsReducer = (state = initialState, action = {}) => {
         $set: formsReducer(state.forms, action)
       }
     });
+  case ACTIONS.REQUEST_SCHEDULED_HEARINGS:
+    return {
+      ...state,
+      fetchingHearings: true
+    };
+  case ACTIONS.SET_SCHEDULED_HEARINGS:
+    return {
+      ...state,
+      fetchingHearings: false,
+      scheduledHearingsList: action.payload
+    };
   case ACTIONS.SET_SCHEDULE_HEARING_PAYLOAD:
   case ACTIONS.STOP_POLLING:
   case ACTIONS.START_POLLING:

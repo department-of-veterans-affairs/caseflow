@@ -2,9 +2,9 @@
 
 exports[`AddClaimantPage renders default state correctly 1`] = `
 <div>
-  <section
+  <div
     class="cf-app-segment"
-    role="main"
+    role="progressbar"
   >
     <div
       class="cf-progress-bar"
@@ -57,7 +57,7 @@ exports[`AddClaimantPage renders default state correctly 1`] = `
         </div>
       </div>
     </div>
-  </section>
+  </div>
   <section
     class="cf-app-segment cf-app-segment--alt"
     role="main"
@@ -162,10 +162,9 @@ exports[`AddClaimantPage renders default state correctly 1`] = `
       </form>
     </div>
   </section>
-  <section
-    class="cf-app-segment"
-    data-css-syjz65=""
-    role="main"
+  <nav
+    class="cf-app-segment css-syjz65"
+    role="navigation"
   >
     <div>
       <button
@@ -196,6 +195,6 @@ exports[`AddClaimantPage renders default state correctly 1`] = `
         </button>
       </span>
     </div>
-  </section>
+  </nav>
 </div>
 `;

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import * as React from 'react';
 
-import FnodBadge from './FnodBadge';
+import QueueFnodBadge from './QueueFnodBadge';
 import HearingBadge from './HearingBadge';
 import OvertimeBadge from './OvertimeBadge';
 import { mostRecentHeldHearingForAppeal } from '../utils';
@@ -17,7 +17,11 @@ import { mostRecentHeldHearingForAppeal } from '../utils';
  * e.g.,
  *   <BadgeArea appeal={appeal} />
  *   <BadgeArea task={task} />
- */
+ **
+ * These badges were created in the queue application, CASEFLOW-432 adds the FnodBadge to the hearings application
+ * To do that the QueueFnodBadge was added, this is a container component which provides the queue state to the
+ * FnodBadge component. This allows hearings to use FnodBadge with different feature toggle and tooltip state.
+ **/
 class BadgeArea extends React.PureComponent {
   render = () => {
     const { appeal, isHorizontal, task } = this.props;
@@ -26,13 +30,13 @@ class BadgeArea extends React.PureComponent {
 
     if (appeal) {
       badges = <React.Fragment>
-        <FnodBadge appeal={appeal} />
+        <QueueFnodBadge appeal={appeal} />
         <HearingBadge hearing={mostRecentHeldHearingForAppeal(appeal)} />
         <OvertimeBadge appeal={appeal} />
       </React.Fragment>;
     } else {
       badges = <React.Fragment>
-        <FnodBadge appeal={task.appeal} />
+        <QueueFnodBadge appeal={task.appeal} />
         <HearingBadge task={task} />
         <OvertimeBadge appeal={task.appeal} />
       </React.Fragment>;

@@ -265,6 +265,16 @@ FactoryBot.define do
     end
 
     ## Appeal with a realistic task tree
+    ## The appeal has finished waiting for a CAVC Response
+    trait :cavc_response_window_complete do
+      cavc_response_window_open
+      after(:create) do |appeal, _evaluator|
+        timed_hold_task = appeal.reload.tasks.find { |task| task.is_a?(TimedHoldTask) }
+        timed_hold_task.completed!
+      end
+    end
+
+    ## Appeal with a realistic task tree
     ## The appeal would be ready for distribution by the ACD except there is a blocking mail task
     trait :mail_blocking_distribution do
       ready_for_distribution
@@ -354,6 +364,7 @@ FactoryBot.define do
     end
 
     trait :with_straight_vacate_stream do
+      dispatched
       after(:create) do |appeal, evaluator|
         mail_task = create(
           :vacate_motion_mail_task,
@@ -374,6 +385,7 @@ FactoryBot.define do
           assigned_to_id: evaluator.associated_attorney.id
         }
         PostDecisionMotionUpdater.new(addr_task, params).process
+        mail_task.completed!
       end
     end
   end
