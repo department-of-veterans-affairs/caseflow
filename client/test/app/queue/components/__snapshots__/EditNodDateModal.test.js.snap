@@ -12,6 +12,9 @@ exports[`EditNodDateModal renders correctly 1`] = `
       "value": "new_info",
     }
   }
+  setBadDate={[MockFunction]}
+  setBadReason={[MockFunction]}
+  setReasonErrorMessage={[MockFunction]}
   showTimelinessError={false}
 >
   <Modal
