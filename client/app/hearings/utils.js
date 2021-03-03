@@ -485,7 +485,7 @@ export const dispositionLabel = (disposition) => HEARING_DISPOSITION_TYPE_TO_LAB
  * Method to set the available time slots based on the hearings scheduled
  * @param {array} hearings -- List of hearings scheduled for a specific date
  */
-export const setTimeSlots = (hearings) => {
+export const setTimeSlots = (hearings, hearingType) => {
   // Default to using EST for all times before conversion
   moment.tz.setDefault('America/New_York');
 
@@ -502,7 +502,7 @@ export const setTimeSlots = (hearings) => {
   // - We want 8 hours of slots: 8 = 15:30 - 08:30 + 1
   const slotCount = 8;
   // Don't convert startTime to moment here, moment mutates when you 'add'
-  const startTime = '08:30';
+  const startTime = hearingType === 'C' ? '09:00' : '08:30';
 
   // For each possible slot, return it only if it's available. Availability is
   // determined by comparing to the scheduledHearingTimes.

@@ -381,11 +381,18 @@
   font-size: medium;
 }
 
-.time-slot-container.usa-width-one-third {
+.time-slot-button-container {
   display: flex;
-  height: 350px;
+  width: 800px;
+}
+
+.time-slot-container {
+  flex: 0;
+  max-width: 46rem;
+  display: flex;
   flex-direction: column;
   flex-wrap: wrap;
+  line-height: normal;
 
   > span {
     margin: 5px;
