@@ -45,7 +45,6 @@ export const DocketSwitchAddAdminTaskForm = ({ baseName, item, onRemove }) => {
           name={`${baseName}.type`}
           control={control}
           defaultValue={item.type}
-          // onFocus={() => selectRef.current.focus()}
           render={({ onChange, ...rest }) => (
             <SearchableDropdown
               {...rest}
