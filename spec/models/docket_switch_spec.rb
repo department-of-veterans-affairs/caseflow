@@ -83,6 +83,7 @@ RSpec.describe DocketSwitch, type: :model do
           # Docket switch task has been copied to new appeal stream
           new_completed_task = DocketSwitchGrantedTask.find_by(appeal: docket_switch.new_docket_stream)
           expect(new_completed_task).to_not be_nil
+          expect(new_completed_task).to be_completed
         end
       end
 
@@ -111,6 +112,7 @@ RSpec.describe DocketSwitch, type: :model do
           # Docket switch task has been copied to new appeal stream
           new_completed_task = DocketSwitchGrantedTask.find_by(appeal: docket_switch.new_docket_stream)
           expect(new_completed_task).to_not be_nil
+          expect(new_completed_task).to be_completed
 
           # To do: Check for correct appeal status after task handling logic is implemented
         end
