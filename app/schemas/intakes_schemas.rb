@@ -11,6 +11,7 @@ class IntakesSchemas
       end
     end
 
+    # rubocop:disable Metrics/MethodLength
     def review
       ControllerSchema.json do
         date :receipt_date
@@ -38,5 +39,6 @@ class IntakesSchemas
         string :poa_participant_id, optional: true, nullable: true
       end
     end
+    # rubocop:enable Metrics/MethodLength
   end
 end

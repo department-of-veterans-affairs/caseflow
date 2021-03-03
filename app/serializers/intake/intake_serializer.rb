@@ -33,6 +33,12 @@ class Intake::IntakeSerializer
   end
 
   attribute :claimantType do |object|
+    binding.pry
     object.detail&.try(:claimant_type)
+  end
+
+  attribute :unlisted_claimant do |object, params|
+    binding.pry
+    object.detail&.try(:claimant).save_unrecognized_details!(params[:unlisted_claimant])
   end
 end

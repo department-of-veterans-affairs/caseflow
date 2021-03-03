@@ -100,7 +100,7 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
       higher_level_review.establish!
     end
 
-    it "shows each established end product label" do
+    fit "shows each established end product label" do
       visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
 
       # First shows issues on end products, in ascending order by EP code (nonrating before rating)
@@ -119,6 +119,7 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
 
       # Shows issues not on end products (single row)
       row = find("#table-row-12")
+      binding.pry
       expect(row).to have_content(/Requested issues\n3. #{ineligible_request_issue.description}/i)
 
       # Shows withdrawn issues last (single row)
