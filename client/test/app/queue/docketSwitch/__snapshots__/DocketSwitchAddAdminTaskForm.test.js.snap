@@ -6,19 +6,19 @@ exports[`DocketSwitchAddAdminTaskForm renders correctly 1`] = `
     class="css-78wbnw"
   >
     <div
-      class="cf-form-dropdown dropdown-newTasks[0].type"
+      class=""
     >
-      <label
-        class="question-label"
-        for="newTasks[0].type"
-      >
-        <span>
-          Select the type of task you'd like to open:
-        </span>
-      </label>
       <div
-        class=""
+        class="cf-form-dropdown dropdown-newTasks[0].type"
       >
+        <label
+          class="question-label"
+          for="newTasks[0].type"
+        >
+          <span>
+            Select the type of task you'd like to open:
+          </span>
+        </label>
         <div
           class="cf-select"
         >
