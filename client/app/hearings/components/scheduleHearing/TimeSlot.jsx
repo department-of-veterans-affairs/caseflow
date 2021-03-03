@@ -81,7 +81,7 @@ export const TimeSlot = ({
                 ))}
               </div>
               <div className="time-slot-container">
-                {slots.slice(slots.length / 2, slots.length - 1).map((slot) => (
+                {slots.slice(slots.length / 2, slots.length).map((slot) => (
                   <TimeSlotButton
                     {...slot}
                     key={slot.key}
