@@ -1107,14 +1107,14 @@ unrecognized_party_details,state,string ∗,x,,,,,
 unrecognized_party_details,suffix,string,,,,,,
 unrecognized_party_details,updated_at,datetime ∗,x,,,,,
 unrecognized_party_details,zip,string ∗,x,,,,,
-users,,,,,,,,
+users,,,,,,,,Authenticated Caseflow users
 users,created_at,datetime,,,,,,
 users,css_id,string ∗,x,,,,,
 users,efolder_documents_fetched_at,datetime,,,,,,Date when efolder documents were cached in s3 for this user
 users,email,string,,,,,,
 users,full_name,string,,,,,,
 users,id,integer PK,x,x,,,,
-users,last_login_at,datetime,,,,,,
+users,last_login_at,datetime,,,,,,The last time the user-agent (browser) provided session credentials; see User.from_session for precision
 users,roles,string,,,,,,
 users,selected_regional_office,string,,,,,,
 users,station_id,string ∗,x,,,,,
