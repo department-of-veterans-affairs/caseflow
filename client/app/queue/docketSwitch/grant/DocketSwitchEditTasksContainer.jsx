@@ -22,8 +22,8 @@ export const DocketSwitchEditTasksContainer = () => {
     getAllTasksForAppeal(state, { appealId })
   );
 
-  const docketType = useSelector(
-    (state) => state.docketSwitch.formData.docketType
+  const { docketType, taskIds, newTasks } = useSelector(
+    (state) => state.docketSwitch.formData
   );
 
   const handleCancel = () => {
@@ -46,8 +46,13 @@ export const DocketSwitchEditTasksContainer = () => {
 
     // Move to next step
     dispatch(stepForward());
-    push(`/queue/appeals/${appealId}/tasks/${taskId}/docket_switch/checkout/grant/confirm`);
+    push(
+      `/queue/appeals/${appealId}/tasks/${taskId}/docket_switch/checkout/grant/confirm`
+    );
   };
+
+  // eslint-disable-next-line no-undefined
+  const defaultValues = taskIds ? { taskIds, newTasks } : undefined;
 
   return (
     <>
@@ -58,6 +63,7 @@ export const DocketSwitchEditTasksContainer = () => {
         taskListing={switchableTasks}
         onBack={handleBack}
         docketTo={docketType}
+        defaultValues={defaultValues}
       />
     </>
   );
