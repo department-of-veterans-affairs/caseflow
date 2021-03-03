@@ -119,7 +119,7 @@ export const EditNodDateModal = ({
   setBadDate,
   setBadReason,
   setReasonErrorMessage
- }) => {
+}) => {
   const [receiptDate, setReceiptDate] = useState(nodDate);
   const [changeReason, setChangeReason] = useState(reason);
   const [dateErrorMessage, setDateErrorMessage] = useState(null);
@@ -306,5 +306,9 @@ EditNodDateModal.propTypes = {
   reason: PropTypes.object,
   appealId: PropTypes.string.isRequired,
   showTimelinessError: PropTypes.bool.isRequired,
-  issues: PropTypes.object
+  issues: PropTypes.object,
+  reasonErrorMessage: PropTypes.string,
+  setBadDate: PropTypes.func,
+  setBadReason: PropTypes.func,
+  setReasonErrorMessage: PropTypes.func
 };
