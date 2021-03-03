@@ -16,6 +16,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   has_one :vacols_user, class_name: "CachedUser", foreign_key: :sdomainid, primary_key: :css_id
 
   BOARD_STATION_ID = "101"
+  LAST_LOGIN_PRECISION = 5.minutes
 
   # Ephemeral values obtained from CSS on auth. Stored in user's session
   attr_writer :regional_office
@@ -487,7 +488,9 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
       attrs = attrs_from_session(session, user_session)
 
       user ||= create!(attrs.merge(css_id: css_id.upcase))
-      user.update!(attrs.merge(last_login_at: Time.zone.now))
+      now = Time.zone.now
+      attrs[:last_login_at] = now if !user.last_login_at || now - user.last_login_at > LAST_LOGIN_PRECISION
+      user.update!(attrs)
       user_session["pg_user_id"] = user.id
       user
     end
