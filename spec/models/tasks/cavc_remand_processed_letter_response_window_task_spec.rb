@@ -155,9 +155,21 @@ describe CavcRemandProcessedLetterResponseWindowTask, :postgres do
     end
 
     context "when assigning task to person" do
-      it "open TimedHoldTask child exists under newly created child task" do
-        timed_hold_task = subject.children.open.where(type: :TimedHoldTask).first
-        expect(timed_hold_task.status).to eq "assigned"
+      context "open TimedHoldTask child exists" do
+        it "has open TimedHoldTask child exists under newly created child task" do
+          timed_hold_task = subject.children.open.where(type: :TimedHoldTask).first
+          expect(timed_hold_task.status).to eq "assigned"
+        end
+      end
+      context "no open TimedHoldTask child exists" do
+        before do
+          timed_hold_task = window_task.children.open.where(type: :TimedHoldTask).first
+          timed_hold_task.cancelled!
+        end
+        it "does not have TimedHoldTask child under newly created child task" do
+          timed_hold_task = subject.children.open.where(type: :TimedHoldTask).first
+          expect(timed_hold_task).to eq nil
+        end
       end
     end
   end
