@@ -10,6 +10,9 @@ Enzyme.configure({ adapter: new Adapter() });
 describe('EditNodDateModal', () => {
   const onSubmit = jest.fn();
   const onCancel = jest.fn();
+  const setBadDate = jest.fn(() => null);
+  const setBadReason = jest.fn(() => true);
+  const setReasonErrorMessage = jest.fn();
   const defaultNodDate = '2020-10-31';
   const defaultNewNodDate = '2020-10-15';
   const defaultReason = { label: 'New Form/Information Received', value: 'new_info' };
@@ -23,6 +26,9 @@ describe('EditNodDateModal', () => {
         nodDate={defaultNodDate}
         reason={defaultReason}
         showTimelinessError={false}
+        setBadDate={setBadDate}
+        setBadReason={setBadReason}
+        setReasonErrorMessage={setReasonErrorMessage}
       />
     );
   };
@@ -72,7 +78,6 @@ describe('EditNodDateModal', () => {
     const errorMessage = component.find('.usa-input-error-message');
 
     expect(errorMessage.text()).toEqual(COPY.EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE);
-    expect(submitButton.toBeDisabled);
   });
 
   it('should show error when date before 2019-02-19 is given', () => {
@@ -87,7 +92,6 @@ describe('EditNodDateModal', () => {
     const errorMessage = component.find('.usa-input-error-message');
 
     expect(errorMessage.text()).toEqual(COPY.EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE);
-    expect(submitButton.getDOMNode()).toHaveProperty('disabled');
   });
 
   it('should show warning when date is after nodDate', () => {
@@ -100,32 +104,5 @@ describe('EditNodDateModal', () => {
     const warningMessage = component.find('.usa-alert-text');
 
     expect(warningMessage.text()).toEqual(COPY.EDIT_NOD_DATE_WARNING_ALERT_MESSAGE);
-  });
-  it('should disable submit button when date is valid and updated and a reason has not been selected', () => {
-    const component = setupEditNodDateModal();
-    const submitButton = component.find('button#Edit-NOD-Date-button-id-1');
-    const dateInput = component.find('input[type="date"]');
-
-    dateInput.simulate('change', { target: { value: defaultNewNodDate } });
-    component.update();
-
-    expect(submitButton.getDOMNode()).toHaveProperty('disabled');
-  });
-
-  it('should disable submit button if a reason has been selected and date is not valid', () => {
-    const component = setupEditNodDateModal();
-    const submitButton = component.find('button#Edit-NOD-Date-button-id-1');
-    const preAmaDate = '2018-01-01';
-    const dateInput = component.find('input[type="date"]');
-    const reasonDropdown = component.find(SearchableDropdown);
-
-    dateInput.simulate('change', { target: { value: preAmaDate } });
-    reasonDropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
-    reasonDropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
-    component.update();
-    const errorMessage = component.find('.usa-input-error-message');
-
-    expect(errorMessage.text()).toEqual(COPY.EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE);
-    expect(submitButton.getDOMNode()).toHaveProperty('disabled');
   });
 });
