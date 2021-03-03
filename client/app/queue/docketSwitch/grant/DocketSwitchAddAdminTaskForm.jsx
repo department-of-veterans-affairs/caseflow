@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import { Controller, useFormContext } from 'react-hook-form';
@@ -22,7 +22,7 @@ const actionOptions = Object.entries(colocatedAdminActions).map(
   ([value, label]) => ({ label, value })
 );
 
-const { capitalizeFirst, snakeCaseToCamelCase } = StringUtil;
+const { capitalizeFirst, snakeCaseToCamelCase, camelCaseToSnakeCase } = StringUtil;
 
 export const DocketSwitchAddAdminTaskForm = ({ baseName, item, onRemove }) => {
   const { control, errors, register } = useFormContext();
@@ -32,6 +32,17 @@ export const DocketSwitchAddAdminTaskForm = ({ baseName, item, onRemove }) => {
   // We need to submit an actual task name, so reformatting is necessary
   const formatTaskName = (taskStr) =>
     `${capitalizeFirst(snakeCaseToCamelCase(taskStr))}ColocatedTask`;
+
+  // Used for populating the SearchableDropdown if a value already exists (likely via defaultValues on the parent form)
+  const defaultVal = useMemo(() => {
+    if (!item?.type) {
+      return;
+    }
+
+    const value = camelCaseToSnakeCase(item.type).replace(/^_|_colocated_task/g, '');
+
+    return actionOptions.find((opt) => opt.value === value);
+  });
 
   return (
     <>
@@ -46,6 +57,7 @@ export const DocketSwitchAddAdminTaskForm = ({ baseName, item, onRemove }) => {
               label="Select the type of task you'd like to open:"
               options={actionOptions}
               onChange={(valObj) => onChange(formatTaskName(valObj?.value))}
+              defaultValue={defaultVal}
             />
           )}
         />
