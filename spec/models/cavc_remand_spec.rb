@@ -27,6 +27,7 @@ describe CavcRemand do
       )
     end
     let(:decision_issue_ids) { decision_issues.map(&:id) }
+    let(:federal_circuit) { nil }
     let(:instructions) { "Instructions!" }
 
     let(:params) do
@@ -43,6 +44,7 @@ describe CavcRemand do
         judgement_date: judgement_date,
         mandate_date: mandate_date,
         decision_issue_ids: decision_issue_ids,
+        federal_circuit: federal_circuit,
         instructions: instructions
       }
     end
@@ -130,6 +132,7 @@ describe CavcRemand do
     shared_examples "works for all remand subtypes" do
       context "when remand subtype is MDR" do
         let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.mdr }
+        let(:federal_circuit) { false }
 
         it "creates the record" do
           expect { subject }.not_to raise_error
@@ -163,6 +166,107 @@ describe CavcRemand do
       let(:judgement_date) {}
 
       include_examples "works for all remand subtypes"
+    end
+  end
+
+  describe ".update!" do
+    let(:remand_appeal_id) { cavc_remand.remand_appeal_id }
+    let(:remand_appeal_uuid) { Appeal.find(cavc_remand.remand_appeal_id).uuid }
+    let(:judgement_date) { 2.days.ago }
+    let(:mandate_date) { 2.days.ago }
+    let(:instructions) { "Do this!" }
+    let(:params) do
+      {
+        judgement_date: judgement_date,
+        mandate_date: mandate_date,
+        instructions: instructions
+      }
+    end
+
+    subject { cavc_remand.update(params) }
+
+    context "on a JMR appeal" do
+      let(:cavc_remand) { create(:cavc_remand) }
+      it "throws an error" do
+        expect { subject }.to raise_error(Caseflow::Error::CannotUpdateMandatedRemands)
+      end
+    end
+
+    context "on an MDR appeal" do
+      let!(:cavc_remand) { create(:cavc_remand, :mdr) }
+
+      it "updates the cavc remand" do
+        old_instructions = cavc_remand.instructions
+        expect(cavc_remand.judgement_date).to be(nil)
+        expect(cavc_remand.mandate_date).to be(nil)
+
+        expect { subject }.not_to raise_error
+
+        expect(cavc_remand.reload.instructions).to include(old_instructions)
+        expect(cavc_remand.reload.instructions).to include(instructions)
+        expect(cavc_remand.reload.judgement_date).to eq(judgement_date.to_date)
+        expect(cavc_remand.reload.mandate_date).to eq(mandate_date.to_date)
+      end
+
+      it "completes the MDR hold" do
+        cavc_task = CavcTask.find_by(appeal_id: remand_appeal_id)
+        mdr_task = MdrTask.find_by(appeal_id: remand_appeal_id)
+        hold_task = TimedHoldTask.find_by(appeal_id: remand_appeal_id)
+
+        expect(cavc_task.open?).to be(true)
+        expect(mdr_task.open?).to be(true)
+        expect(hold_task.open?).to be(true)
+
+        expect { subject }.not_to raise_error
+
+        expect(cavc_task.reload.open?).to be(true)
+        expect(mdr_task.reload.open?).to be(false)
+        expect(hold_task.reload.open?).to be(false)
+      end
+
+      it "opens a CAVC Send Letter task" do
+        expect { subject }.not_to raise_error
+        expect(SendCavcRemandProcessedLetterTask.find_by(appeal_id: remand_appeal_id).open?).to be(true)
+      end
+    end
+
+    shared_examples "shared straight reversal death dismissal flow" do |type|
+      context "that had mandate" do
+        let(:cavc_remand) { create(:cavc_remand, type) }
+        it "throws an error" do
+          expect { subject }.to raise_error(Caseflow::Error::CannotUpdateMandatedRemands)
+        end
+      end
+
+      context "without mandate" do
+        let!(:cavc_remand) { create(:cavc_remand, type, :no_mandate) }
+        it "sends the appeal to distribution" do
+          dist_task = DistributionTask.find_by(appeal_id: remand_appeal_id)
+          cavc_task = CavcTask.find_by(appeal_id: remand_appeal_id)
+          mandate_hold_task = MandateHoldTask.find_by(appeal_id: remand_appeal_id)
+          hold_task = TimedHoldTask.find_by(appeal_id: remand_appeal_id)
+
+          expect(dist_task.open?).to be(true)
+          expect(cavc_task.open?).to be(true)
+          expect(mandate_hold_task.open?).to be(true)
+          expect(hold_task.open?).to be(true)
+
+          expect { subject }.not_to raise_error
+
+          expect(dist_task.reload.active?).to be(true)
+          expect(cavc_task.reload.open?).to be(false)
+          expect(mandate_hold_task.reload.open?).to be(false)
+          expect(hold_task.reload.open?).to be(false)
+        end
+      end
+    end
+
+    context "on a Straight Reversal appeal" do
+      include_examples "shared straight reversal death dismissal flow", :straight_reversal
+    end
+
+    context "on a Death Dismissal appeal" do
+      include_examples "shared straight reversal death dismissal flow", :death_dismissal
     end
   end
 end

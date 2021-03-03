@@ -8,6 +8,7 @@ import {
   DOCKET_SWITCH_GRANTED_REQUEST_INSTRUCTIONS,
 } from 'app/../COPY';
 import { sprintf } from 'sprintf-js';
+import { formatISO } from 'date-fns';
 
 describe('DocketSwitchReviewRequestForm', () => {
   const onSubmit = jest.fn();
@@ -17,16 +18,18 @@ describe('DocketSwitchReviewRequestForm', () => {
     { id: 1, program: 'compensation', description: 'PTSD denied' },
     { id: 2, program: 'compensation', description: 'Left  knee denied' },
   ];
-  const defaults = { onSubmit, onCancel, appellantName, issues };
+  const docketFrom = 'evidence_submission';
+  const defaults = { onSubmit, onCancel, appellantName, docketFrom, issues };
+
+  const setup = (props) =>
+    render(<DocketSwitchReviewRequestForm {...defaults} {...props} />);
 
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it('renders correctly', () => {
-    const { container } = render(
-      <DocketSwitchReviewRequestForm {...defaults} />
-    );
+    const { container } = setup();
 
     expect(container).toMatchSnapshot();
 
@@ -40,8 +43,26 @@ describe('DocketSwitchReviewRequestForm', () => {
     ).toBeInTheDocument();
   });
 
+  it('disables current docket', async () => {
+    setup();
+
+    // Set disposition to show docket selection
+    await userEvent.click(
+      screen.getByRole('radio', { name: /grant all issues/i })
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('Evidence Submission (current docket)')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('radio', { name: /evidence submission/i })
+      ).toBeDisabled();
+    });
+  });
+
   it('fires onCancel', async () => {
-    render(<DocketSwitchReviewRequestForm {...defaults} />);
+    setup();
     expect(onCancel).not.toHaveBeenCalled();
     expect(screen.getByText('Grant all issues')).toBeInTheDocument();
 
@@ -51,11 +72,9 @@ describe('DocketSwitchReviewRequestForm', () => {
 
   describe('form validation for all granted issues', () => {
     const receiptDate = '2020-10-01';
-    const disposition = 'granted';
-    const docketType = 'direct_review';
 
     it('fires onSubmit with correct values', async () => {
-      render(<DocketSwitchReviewRequestForm {...defaults} />);
+      setup();
 
       const submit = screen.getByRole('button', { name: /Continue/i });
 
@@ -71,7 +90,9 @@ describe('DocketSwitchReviewRequestForm', () => {
 
       // Wait for docketType to show up
       await waitFor(() => {
-        expect(screen.getByRole('radio', { name: /direct review/i })).toBeInTheDocument();
+        expect(
+          screen.getByRole('radio', { name: /direct review/i })
+        ).toBeInTheDocument();
       });
 
       //   Set docketType
@@ -86,7 +107,7 @@ describe('DocketSwitchReviewRequestForm', () => {
       await userEvent.click(submit);
 
       await waitFor(() => {
-        expect(onSubmit).toHaveBeenCalled()
+        expect(onSubmit).toHaveBeenCalled();
       });
     });
   });
@@ -95,7 +116,7 @@ describe('DocketSwitchReviewRequestForm', () => {
     const receiptDate = '2020-10-01';
     const disposition = 'partially_granted';
     const docketType = 'direct_review';
-    const issueIds = ['1']
+    const issueIds = ['1'];
     const fillForm = async () => {
       //   Set receipt date
       await fireEvent.change(screen.getByLabelText(/receipt date/i), {
@@ -109,7 +130,7 @@ describe('DocketSwitchReviewRequestForm', () => {
     };
 
     it('fires onSubmit with correct values', async () => {
-      render(<DocketSwitchReviewRequestForm {...defaults} />);
+      setup();
 
       const submit = screen.getByRole('button', { name: /Continue/i });
 
@@ -125,7 +146,9 @@ describe('DocketSwitchReviewRequestForm', () => {
 
       // Wait for docketType to show up
       await waitFor(() => {
-        expect(screen.getByRole('radio', { name: /direct review/i })).toBeInTheDocument();
+        expect(
+          screen.getByRole('radio', { name: /direct review/i })
+        ).toBeInTheDocument();
       });
 
       //   Set docketType
@@ -149,7 +172,72 @@ describe('DocketSwitchReviewRequestForm', () => {
       await userEvent.click(submit);
 
       await waitFor(() => {
-        expect(onSubmit).toHaveBeenCalled()
+        expect(onSubmit).toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('default values', () => {
+    let defaultValues;
+
+    beforeEach(() => {
+      defaultValues = {
+        receiptDate: '2021-02-15',
+        disposition: 'granted',
+        docketType: 'hearing',
+      };
+    });
+
+    describe('full grant', () => {
+      it('populates with default values', async () => {
+        const { container } = setup({ defaultValues });
+
+        expect(container).toMatchSnapshot();
+
+        const submit = screen.getByRole('button', { name: /Continue/i });
+
+        expect(submit).toBeEnabled();
+        await userEvent.click(submit);
+        await waitFor(() => {
+          expect(onSubmit).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+              disposition: defaultValues.disposition,
+              docketType: defaultValues.docketType,
+              issueIds: issues.map((item) => `${item.id}`),
+              // receiptDate: new Date(defaultValues.receiptDate), // commented due to TZ weirdness
+            })
+          );
+        });
+      });
+    });
+
+    describe('partial grant', () => {
+      it('populates with default values', async () => {
+        const newDefaults = {
+          ...defaultValues,
+          disposition: 'partially_granted',
+          issueIds: [2],
+        };
+        const { container } = setup({
+          defaultValues: newDefaults,
+        });
+
+        expect(container).toMatchSnapshot();
+
+        const submit = screen.getByRole('button', { name: /Continue/i });
+
+        expect(submit).toBeEnabled();
+        await userEvent.click(submit);
+        await waitFor(() => {
+          expect(onSubmit).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+              disposition: newDefaults.disposition,
+              docketType: newDefaults.docketType,
+              issueIds: ['2'],
+              // receiptDate: new Date(defaultValues.receiptDate), // commented due to TZ weirdness
+            })
+          );
+        });
       });
     });
   });

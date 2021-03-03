@@ -34,26 +34,42 @@ class Reader::DocumentsController < Reader::ApplicationController
   helper_method :appeal
 
   def annotations
-    appeal.document_fetcher.find_or_create_documents!.flat_map(&:annotations).map(&:to_hash)
+    Annotation.where(document_id: document_ids).map(&:to_hash)
+  end
+
+  def document_ids
+    @document_ids ||= appeal.document_fetcher.find_or_create_documents!.pluck(:id)
   end
 
   delegate :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :appeal
 
   def documents
-    document_ids = appeal.document_fetcher.find_or_create_documents!.map(&:id)
-
     # Create a hash mapping each document_id that has been read to true
     read_documents_hash = current_user.document_views.where(document_id: document_ids)
       .each_with_object({}) do |document_view, object|
       object[document_view.document_id] = true
     end
 
+    tags_by_doc_id = load_tags_by_doc_id
+
     @documents = appeal.document_fetcher.find_or_create_documents!.map do |document|
       document.to_hash.tap do |object|
         object[:opened_by_current_user] = read_documents_hash[document.id] || false
-        object[:tags] = document.tags
+        object[:tags] = tags_by_doc_id[document.id].to_a
       end
     end
+  end
+
+  def load_tags_by_doc_id
+    tags_by_doc_id = Hash[document_ids.map { |key, _| [key, Set[]] }]
+    Tag.includes(:documents_tags).where(documents_tags: { document_id: document_ids }).each do |tag|
+      # tag.documents_tags returns extraneous documents outside document_ids, so
+      # only capture tags associated with docs associated with document_ids
+      (tag.documents_tags.pluck(:document_id) & document_ids).each do |doc_id|
+        tags_by_doc_id[doc_id].add(tag)
+      end
+    end
+    tags_by_doc_id
   end
 
   def appeal_id

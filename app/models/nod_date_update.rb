@@ -6,6 +6,8 @@ class NodDateUpdate < CaseflowRecord
 
   validates :appeal, :user, :old_date, :new_date, :change_reason, presence: true
 
+  delegate :request_issues, to: :appeal
+
   enum change_reason: {
     entry_error: "entry_error",
     new_info: "new_info"

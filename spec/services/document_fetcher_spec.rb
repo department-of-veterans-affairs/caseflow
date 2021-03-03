@@ -305,6 +305,20 @@ describe DocumentFetcher, :postgres do
             )
           end
         end
+        let(:doc_tag) { Generators::Tag.create(text: "existing tag") }
+        let!(:older_documents_with_metadata) do
+          Array.new(13) do |i|
+            fetched_document = documents[(i * 2) + 1]
+            # same series_id but different vbms_document_id indicate different versions of same document
+            doc = Generators::Document.create(
+              type: "Form 9",
+              series_id: fetched_document.series_id,
+              vbms_document_id: fetched_document.vbms_document_id + ".old"
+            )
+            Generators::Annotation.create(document_id: doc.id, comment: "existing comment", x: rand(100), y: rand(100))
+            DocumentsTag.create(document_id: doc.id, tag_id: doc_tag.id)
+          end
+        end
         it "efficiently creates and updates documents" do
           expect(Document.distinct.pluck(:type)).to eq(["Form 9"])
 
@@ -318,7 +332,16 @@ describe DocumentFetcher, :postgres do
           # pp query_data.values.pluck(:sql, :count)
           doc_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"documents\"") }
           expect(doc_insert_queries.pluck(:count).max).to eq 1
-          expect(query_data.values.select { |o| o[:sql].start_with?("UPDATE") }).to be_empty
+
+          # When metadata exists for a previous version of a document, queries remain inefficient
+          annotns_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"annotations\"") }
+          expect(annotns_insert_queries.pluck(:count).max).to eq older_documents_with_metadata.count
+
+          doctags_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"documents_tags") }
+          expect(doctags_insert_queries.pluck(:count).max).to eq older_documents_with_metadata.count
+
+          doc_update_queries = query_data.values.select { |o| o[:sql].start_with?("UPDATE \"documents\"") }
+          expect(doc_update_queries.pluck(:count).max).to eq older_documents_with_metadata.count
         end
 
         context "when there are duplicate documents returned from document_service" do
@@ -333,7 +356,7 @@ describe DocumentFetcher, :postgres do
           it "deduplicates, sends warning to Sentry, and does not fail bulk upsert" do
             expect(documents.map(&:vbms_document_id).count).to eq(53)
             expect(documents.map(&:vbms_document_id).uniq.count).to eq(50)
-            expect(Document.count).to eq 20
+            expect(Document.count).to eq(saved_documents.count + older_documents_with_metadata.count)
             expect(Document.find_by(vbms_document_id: documents.first.vbms_document_id)).not_to be_nil
             expect(Document.find_by(vbms_document_id: documents.second.vbms_document_id)).to be_nil
             expect(Document.find_by(vbms_document_id: documents.third.vbms_document_id)).not_to be_nil
@@ -351,7 +374,8 @@ describe DocumentFetcher, :postgres do
             # pp query_data.values.pluck(:sql, :count)
             doc_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"documents\"") }
             expect(doc_insert_queries.pluck(:count).max).to eq 1
-            expect(query_data.values.select { |o| o[:sql].start_with?("UPDATE") }).to be_empty
+            expect(query_data.values.select { |o| o[:sql].start_with?("UPDATE \"documents\"") }.pluck(:count).max)
+              .to eq(older_documents_with_metadata.count)
           end
         end
       end

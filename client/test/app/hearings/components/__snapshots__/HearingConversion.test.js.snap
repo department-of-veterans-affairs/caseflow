@@ -4703,7 +4703,6 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
           >
             <SearchableDropdown
               clearOnSelect={false}
-              hideLabel={false}
               label="Hearing Time"
               loading={false}
               name="optionalHearingTime0"

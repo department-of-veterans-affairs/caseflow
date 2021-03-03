@@ -97,10 +97,6 @@ class ScheduleHearingTask < Task
   def available_actions(user)
     hearing_admin_actions = available_hearing_user_actions(user)
 
-    if user.can_change_hearing_request_type? && appeal.changed_request_type != HearingDay::REQUEST_TYPES[:virtual]
-      hearing_admin_actions.push(Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.to_h)
-    end
-
     if (assigned_to &.== user) || HearingsManagement.singleton.user_has_access?(user)
       schedule_hearing_action = if FeatureToggle.enabled?(:schedule_veteran_virtual_hearing, user: user)
                                   Constants.TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE
@@ -118,7 +114,44 @@ class ScheduleHearingTask < Task
     hearing_admin_actions
   end
 
+  # Override the available user actions to inject change hearing request type tasks
+  def available_hearing_user_actions(user)
+    # Capture the parent user actions
+    parent_admin_actions = super(user)
+
+    # Apply the change hearing request type tasks if allowed
+    if user.can_change_hearing_request_type?
+      return parent_admin_actions | change_hearing_request_type_actions
+    end
+
+    # Default return the parent user actions
+    parent_admin_actions
+  end
+
   private
+
+  # Method to return the user actions for changing the hearing request type
+  def change_hearing_request_type_actions
+    case appeal.current_hearing_request_type
+    when :central, :central_office
+      [
+        Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO.to_h,
+        Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.to_h
+      ]
+    when :video, nil
+      [
+        Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_CENTRAL.to_h,
+        Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.to_h
+      ]
+    when :virtual
+      [
+        Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO.to_h,
+        Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_CENTRAL.to_h
+      ]
+    else
+      []
+    end
+  end
 
   # Method to create the appropriate schedule hearing tasks based on the status
   def create_schedule_hearing_tasks(params)
@@ -152,14 +185,14 @@ class ScheduleHearingTask < Task
 
   # Method to change the hearing request type on an appeal
   def change_hearing_request_type(params, current_user)
-    changed_request_type = ChangeHearingRequestTypeTask.create!(
+    change_hearing_request_type_task = ChangeHearingRequestTypeTask.create!(
       appeal: appeal,
       assigned_to: current_user,
       parent: self
     )
 
     # Call the child method so that we follow that workflow when changing the hearing request type
-    changed_request_type.update_from_params(params, current_user)
+    change_hearing_request_type_task.update_from_params(params, current_user)
   end
 
   def cancel_parent_task(parent)

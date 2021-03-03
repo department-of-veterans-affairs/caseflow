@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_15_212305) do
+ActiveRecord::Schema.define(version: 2021_03_02_165940) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -107,6 +107,7 @@ ActiveRecord::Schema.define(version: 2021_01_15_212305) do
     t.datetime "establishment_processed_at", comment: "Timestamp for when the establishment has succeeded in processing."
     t.datetime "establishment_submitted_at", comment: "Timestamp for when the the intake was submitted for asynchronous processing."
     t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review."
+    t.string "original_request_type", comment: "The hearing type preference for an appellant before any changes were made in Caseflow"
     t.string "poa_participant_id", comment: "Used to identify the power of attorney (POA) at the time the appeal was dispatched to BVA. Sometimes the POA changes in BGS after the fact, and BGS only returns the current representative."
     t.date "receipt_date", comment: "Receipt date of the appeal form. Used to determine which issues are within the timeliness window to be appealed. Only issues decided prior to the receipt date will show up as contestable issues."
     t.string "stream_docket_number", comment: "Multiple appeals with the same docket number indicate separate appeal streams, mimicking the structure of legacy appeals."
@@ -275,6 +276,7 @@ ActiveRecord::Schema.define(version: 2021_01_15_212305) do
     t.bigint "created_by_id", null: false, comment: "User that created this record"
     t.date "decision_date", null: false, comment: "Date CAVC issued a decision, according to the CAVC"
     t.bigint "decision_issue_ids", default: [], comment: "Decision issues being remanded; IDs refer to decision_issues table. For a JMR, all decision issues on the previous appeal will be remanded. For a JMPR, only some", array: true
+    t.boolean "federal_circuit", comment: "Whether the case has been appealed to the US Court of Appeals for the Federal Circuit"
     t.string "instructions", null: false, comment: "Instructions and context provided upon creation of the remand record"
     t.date "judgement_date", comment: "Date CAVC issued a judgement, according to the CAVC"
     t.date "mandate_date", comment: "Date that CAVC reported the mandate was given"
@@ -417,7 +419,7 @@ ActiveRecord::Schema.define(version: 2021_01_15_212305) do
     t.date "end_product_last_action_date", comment: "After an end product gets synced with a status of CLR (cleared), the end product's last_action_date is saved on any decision issues that are created as a result. This is used as a proxy for decision date for non-rating issues that are processed in VBMS because they don't have a rating profile date, and the exact decision date is not available."
     t.string "participant_id", null: false, comment: "The Veteran's participant id."
     t.string "percent_number", comment: "percent_number from RatingIssue (prcntNo from Rating Profile)"
-    t.string "rating_issue_reference_id", comment: "Identifies the specific issue on the rating that resulted from the decision issue (a rating can have multiple issues). This is unique per rating issue."
+    t.string "rating_issue_reference_id", comment: "Identifies the specific issue on the rating that resulted from the decision issue (a rating issue can be connected to multiple contentions)."
     t.datetime "rating_profile_date", comment: "The profile date of the rating that a decision issue resulted in (if applicable). The profile_date is used as an identifier for the rating, and is the date that most closely maps to what the Veteran writes down as the decision date."
     t.datetime "rating_promulgation_date", comment: "The promulgation date of the rating that a decision issue resulted in (if applicable). It is used for calculating whether a decision issue is within the timeliness window to be appealed or get a higher level review."
     t.text "subject_text", comment: "subject_text from RatingIssue (subjctTxt from Rating Profile)"
@@ -425,7 +427,7 @@ ActiveRecord::Schema.define(version: 2021_01_15_212305) do
     t.index ["decision_review_id", "decision_review_type"], name: "index_decision_issues_decision_review"
     t.index ["deleted_at"], name: "index_decision_issues_on_deleted_at"
     t.index ["disposition"], name: "index_decision_issues_on_disposition"
-    t.index ["rating_issue_reference_id", "disposition", "participant_id"], name: "decision_issues_uniq_by_disposition_and_ref_id", unique: true
+    t.index ["rating_issue_reference_id"], name: "index_decision_issues_on_rating_issue_reference_id"
     t.index ["updated_at"], name: "index_decision_issues_on_updated_at"
   end
 
@@ -898,7 +900,7 @@ ActiveRecord::Schema.define(version: 2021_01_15_212305) do
 
   create_table "legacy_appeals", force: :cascade do |t|
     t.bigint "appeal_series_id"
-    t.string "changed_request_type", comment: "The new hearing type preference for an appellant that had previously requested a travel board hearing"
+    t.string "changed_request_type", comment: "The new hearing type preference for an appellant that needs a hearing scheduled"
     t.string "closest_regional_office"
     t.boolean "contaminated_water_at_camp_lejeune", default: false
     t.datetime "created_at"
@@ -917,6 +919,7 @@ ActiveRecord::Schema.define(version: 2021_01_15_212305) do
     t.boolean "mustard_gas", default: false
     t.boolean "national_cemetery_administration", default: false
     t.boolean "nonrating_issue", default: false
+    t.string "original_request_type", comment: "The hearing type preference for an appellant before any changes were made in Caseflow"
     t.boolean "pension_united_states", default: false
     t.boolean "private_attorney_or_agent", default: false
     t.boolean "radiation", default: false
@@ -1436,7 +1439,7 @@ ActiveRecord::Schema.define(version: 2021_01_15_212305) do
     t.string "last_name"
     t.string "middle_name"
     t.string "name", null: false, comment: "Name of organization, or first name or mononym of person"
-    t.string "party_type", null: false, comment: "The type of this party. Allowed values: person, organization"
+    t.string "party_type", null: false, comment: "The type of this party. Allowed values: individual, organization"
     t.string "phone_number"
     t.string "state", null: false
     t.string "suffix"
@@ -1454,13 +1457,13 @@ ActiveRecord::Schema.define(version: 2021_01_15_212305) do
     t.index ["updated_at"], name: "index_user_quotas_on_updated_at"
   end
 
-  create_table "users", id: :serial, force: :cascade do |t|
+  create_table "users", id: :serial, comment: "Authenticated Caseflow users", force: :cascade do |t|
     t.datetime "created_at"
     t.string "css_id", null: false
     t.datetime "efolder_documents_fetched_at", comment: "Date when efolder documents were cached in s3 for this user"
     t.string "email"
     t.string "full_name"
-    t.datetime "last_login_at"
+    t.datetime "last_login_at", comment: "The last time the user-agent (browser) provided session credentials; see User.from_session for precision"
     t.string "roles", array: true
     t.string "selected_regional_office"
     t.string "station_id", null: false
@@ -1507,6 +1510,7 @@ ActiveRecord::Schema.define(version: 2021_01_15_212305) do
     t.string "closest_regional_office"
     t.datetime "created_at"
     t.date "date_of_death", comment: "Date of Death reported by BGS, cached locally"
+    t.datetime "date_of_death_reported_at", comment: "The datetime that date_of_death last changed for veteran."
     t.string "file_number", null: false
     t.string "first_name"
     t.string "last_name"

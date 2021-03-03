@@ -11,7 +11,7 @@ describe Seeds::MTV do
 
     it "creates all kinds of motions to vacate" do
       expect { subject }.to_not raise_error
-      expect(BvaDispatchTask.count).to eq(6)
+      expect(BvaDispatchTask.count).to eq(86)
     end
   end
 end

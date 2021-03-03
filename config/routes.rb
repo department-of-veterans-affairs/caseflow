@@ -130,6 +130,7 @@ Rails.application.routes.draw do
       get 'tasks', to: "tasks#for_appeal"
       patch 'update'
       post 'work_mode', to: "work_modes#create"
+      patch 'cavc_remand', to: "cavc_remands#update"
       post 'cavc_remand', to: "cavc_remands#create"
       patch 'nod_date_update', to: "nod_date_updates#update"
     end
@@ -149,6 +150,9 @@ Rails.application.routes.draw do
     resources :schedule_periods, only: [:index, :create]
     resources :schedule_periods, only: [:show, :update, :download], param: :schedule_period_id
     resources :hearing_day, only: [:update, :show], param: :hearing_key
+    namespace :hearing_day do
+      get '/:hearing_day_id/filled_hearing_slots', to: "filled_hearing_slots#index"
+    end
   end
   get '/hearings/dockets', to: redirect("/hearings/schedule")
   get 'hearings/schedule', to: "hearings/hearing_day#index"
@@ -239,6 +243,7 @@ Rails.application.routes.draw do
   scope path: '/queue' do
     get '/', to: 'queue#index'
     get '/appeals/:vacols_id', to: 'queue#index'
+    get '/appeals/:vacols_id/tasks/:task_id/schedule_veteran', to: 'queue#index' # Allow direct navigation from the Hearings App
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
@@ -317,6 +322,7 @@ Rails.application.routes.draw do
   post "post_decision_motions/return_to_judge", to: "post_decision_motions#return_to_judge"
   post "post_decision_motions", to: "post_decision_motions#create"
   post "docket_switches", to: "docket_switches#create"
+  post "docket_switches/address_ruling", to: "docket_switches#address_ruling"
 
   # :nocov:
   namespace :test do
