@@ -79,6 +79,10 @@ RSpec.describe DocketSwitch, type: :model do
 
           # Appeal Status API shows original stream's status of archived
           expect(appeal.status.to_sym).to eq :archived
+
+          # Docket switch task has been copied to new appeal stream
+          new_completed_task = DocketSwitchGrantedTask.find_by(appeal: docket_switch.new_docket_stream)
+          expect(new_completed_task).to_not be_nil
         end
       end
 
@@ -103,6 +107,10 @@ RSpec.describe DocketSwitch, type: :model do
 
           # Docket switch task gets completed
           expect(docket_switch_task).to be_completed
+
+          # Docket switch task has been copied to new appeal stream
+          new_completed_task = DocketSwitchGrantedTask.find_by(appeal: docket_switch.new_docket_stream)
+          expect(new_completed_task).to_not be_nil
 
           # To do: Check for correct appeal status after task handling logic is implemented
         end

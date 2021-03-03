@@ -48,6 +48,8 @@ class DocketSwitch < CaseflowRecord
         new_admin_actions: admin_actions_params
       ).call
 
+      copy_ds_tasks_to_new_stream
+
       task.update(status: Constants.TASK_STATUSES.completed)
     end
   end
@@ -78,5 +80,11 @@ class DocketSwitch < CaseflowRecord
         "is required for partially_granted disposition"
       )
     end
+  end
+
+  # We want the granted/denied tasks to be visible on the new stream as well as the old to give user context
+  def copy_ds_tasks_to_new_stream
+    new_completed_task = DocketSwitchGrantedTask.find_by(appeal: old_docket_stream).clone
+    new_completed_task.update!(appeal: new_docket_stream, parent: new_docket_stream.root_task)
   end
 end
