@@ -74,10 +74,19 @@ describe HearingSchedule::ValidateJudgeSpreadsheet, :all_dbs do
     end
 
     it "returns one JudgeNameNotInDatabase and one JudgeIdNotInDatabase" do
-      # I also want to expect that this error has the vlj_id "862" in it
-      expect(subject).to include(HearingSchedule::ValidateJudgeSpreadsheet::JudgeIdNotInDatabase)
-      # I also want to expect that this error has the vlj_id "860" in it
-      expect(subject).to include HearingSchedule::ValidateJudgeSpreadsheet::JudgeNameDoesNotMatchIdInDatabase
+      # Should produce one error with the judge vlj_id 862
+      errors = subject.find_all do |e|
+        e.instance_of?(HearingSchedule::ValidateJudgeSpreadsheet::JudgeIdNotInDatabase)
+      end
+      expect(errors.length).to eq 1
+      expect(errors.first.to_s).to match(/862/)
+
+      # Should produce one error with the judge vlj_id 860
+      errors = subject.find_all do |e|
+        e.instance_of?(HearingSchedule::ValidateJudgeSpreadsheet::JudgeNameDoesNotMatchIdInDatabase)
+      end
+      expect(errors.length).to eq 1
+      expect(errors.first.to_s).to match(/860/)
     end
   end
 
