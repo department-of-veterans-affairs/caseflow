@@ -26,14 +26,10 @@ export class SearchableDropdown extends React.Component {
     };
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    // Unless clearOnSelect is set, we want to update our state's value with the new one from props
-    if (nextProps.value !== prevState.value && !nextProps.clearOnSelect) {
-      return { value: nextProps.value };
-    }
-
-    return null;
-  }
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillReceiveProps = (nextProps) => {
+    this.setState({ value: nextProps.value });
+  };
 
   onChange = (value) => {
     let newValue = value;
