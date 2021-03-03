@@ -26,7 +26,8 @@ import {
   onReceiveTransitioningAlert,
   transitionAlert,
   startPollingHearing,
-  setScheduledHearing
+  setScheduledHearing,
+  fetchScheduledHearings
 } from '../../components/common/actions';
 import { ScheduleVeteranForm } from './ScheduleVeteranForm';
 import ApiUtil from '../../util/ApiUtil';
@@ -41,6 +42,9 @@ export const ScheduleVeteran = ({
   appeal,
   scheduledHearing,
   taskId,
+  fetchingHearings,
+  userCanViewTimeSlots,
+  scheduledHearingsList,
   ...props
 }) => {
   // Create and manage the loading state
@@ -343,6 +347,10 @@ export const ScheduleVeteran = ({
         )}
         {openHearing && !reschedule ? <Alert title="Open Hearing" type="error">{openHearingDayError}</Alert> : (
           <ScheduleVeteranForm
+            fetchScheduledHearings={props.fetchScheduledHearings}
+            scheduledHearingsList={scheduledHearingsList}
+            fetchingHearings={fetchingHearings}
+            userCanViewTimeSlots={userCanViewTimeSlots}
             initialHearingDate={selectedHearingDay?.hearingDate}
             initialRegionalOffice={initialRegionalOffice}
             errors={errors}
@@ -429,9 +437,15 @@ ScheduleVeteran.propTypes = {
   selectedRegionalOffice: PropTypes.object,
   error: PropTypes.object,
   scheduledHearing: PropTypes.object,
+  userCanViewTimeSlots: PropTypes.bool,
+  scheduledHearingsList: PropTypes.array,
+  fetchingHearings: PropTypes.bool,
+  fetchScheduledHearings: PropTypes.func,
 };
 
 const mapStateToProps = (state, ownProps) => ({
+  scheduledHearingsList: state.components.scheduledHearingsList,
+  fetchingHearings: state.components.fetchingHearings,
   scheduledHearing: state.components.scheduledHearing,
   scheduleHearingTask: scheduleHearingTasksForAppeal(state, {
     appealId: ownProps.appealId,
@@ -450,6 +464,7 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
+      fetchScheduledHearings,
       onReceiveAlerts,
       onReceiveTransitioningAlert,
       transitionAlert,

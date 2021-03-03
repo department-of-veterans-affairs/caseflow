@@ -119,3 +119,11 @@ export const setScheduledHearing = (payload) => ({
   type: ACTIONS.SET_SCHEDULE_HEARING_PAYLOAD,
   payload
 });
+
+export const fetchScheduledHearings = () => (dispatch) => {
+  // Dispatch the action to set the pending state for the hearing time
+  dispatch({ type: ACTIONS.REQUEST_SCHEDULED_HEARINGS });
+
+  // This will be wrapped in a future PR to handle the backend request
+  dispatch({ type: ACTIONS.SET_SCHEDULED_HEARINGS, payload: [] });
+};

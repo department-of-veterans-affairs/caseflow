@@ -14,7 +14,6 @@ import { RESET_VIRTUAL_HEARING } from './contexts/HearingsFormContext';
 import HEARING_REQUEST_TYPES from '../../constants/HEARING_REQUEST_TYPES';
 import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP';
 
-
 export const isPreviouslyScheduledHearing = (hearing) =>
   hearing?.disposition === HEARING_DISPOSITION_TYPES.postponed ||
   hearing?.disposition === HEARING_DISPOSITION_TYPES.cancelled;
@@ -480,7 +479,75 @@ export const formatChangeRequestType = (type) => {
   }
 };
 
-export const dispositionLabel = (disposition) => HEARING_DISPOSITION_TYPE_TO_LABEL_MAP[disposition] ?? 'None'
+export const dispositionLabel = (disposition) => HEARING_DISPOSITION_TYPE_TO_LABEL_MAP[disposition] ?? 'None';
 
+/**
+ * Method to set the available time slots based on the hearings scheduled
+ * @param {array} hearings -- List of hearings scheduled for a specific date
+ */
+export const setTimeSlots = (hearings) => {
+  // Default to using EST for all times before conversion
+  moment.tz.setDefault('America/New_York');
+
+  // Safe assign the hearings array in case there are no scheduled hearings
+  const scheduledHearings = hearings || [];
+
+  // Store a list of the scheduled times
+  const scheduledHearingTimes = scheduledHearings.map((hearing) =>
+    moment(hearing.hearingTime, 'HH:mm')
+  );
+
+  // This works because:
+  // - There is one possible slot per hour: 8:30, 9:30, 10:30, ...
+  // - We want 8 hours of slots: 8 = 15:30 - 08:30 + 1
+  const slotCount = 8;
+  // Don't convert startTime to moment here, moment mutates when you 'add'
+  const startTime = '08:30';
+
+  // For each possible slot, return it only if it's available. Availability is
+  // determined by comparing to the scheduledHearingTimes.
+  const availableSlots = _.compact(_.times(slotCount).map((index) => {
+    // Add the index to the start time so we assign 1 value per hour
+    const slotTime = moment(startTime, 'HH:mm').add(index, 'hours');
+
+    // This slot is not available (full) if there's a scheduled hearing less than an hour before it.
+    // A 10:45 appointment will:
+    // - Hide a 11:30 slot (it's full, so we return null)
+    // - Show a 10:30 slot (return the timeslot)
+    const slotFull = scheduledHearingTimes.some((scheduledHearingTime) =>
+      slotTime.isAfter(scheduledHearingTime) &&
+        slotTime.diff(scheduledHearingTime, 'minutes') < 60
+    );
+
+    // Return null if there is a filled time slot, otherwise return the hearingTime
+    return slotFull ? null : {
+      slotId: index,
+      hearingTime: slotTime.format('HH:mm'),
+      full: false
+    };
+  }));
+
+  // Transform the values into the available slots
+  const slots = [...availableSlots, ...scheduledHearings].map((slot) => ({
+    ...slot,
+    key: `${slot?.externalId || slot?.slotId}-${slot?.hearingTime}`,
+    full: slot?.full !== false,
+    hearingTime: slot?.hearingTime
+  }));
+
+  // Return the time slots sorted by time
+  return _.sortBy(slots, 'hearingTime');
+};
+
+export const formatTimeSlotLabel = (time, zone) => {
+  const coTime = zoneName(time, COMMON_TIMEZONES[3], 'z');
+  const roTime = zoneName(time, zone, 'z');
+
+  if (roTime === coTime) {
+    return coTime;
+  }
+
+  return `${coTime} (${roTime})`;
+};
 
 /* eslint-enable camelcase */
