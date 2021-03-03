@@ -1016,27 +1016,27 @@ exports[`Fields Matches snapshot with default props 1`] = `
           value={null}
         >
           <div
-            className="cf-form-dropdown dropdown-appellantTz"
-            data-css-1gh7024=""
+            className=""
           >
-            <label
-              className="question-label"
-              htmlFor="appellantTz"
-            >
-              <strong>
-                <span>
-                  Veteran Timezone
-                  <span
-                    className="cf-required"
-                  >
-                    Required
-                  </span>
-                </span>
-              </strong>
-            </label>
             <div
-              className=""
+              className="cf-form-dropdown dropdown-appellantTz"
+              data-css-1gh7024=""
             >
+              <label
+                className="question-label"
+                htmlFor="appellantTz"
+              >
+                <strong>
+                  <span>
+                    Veteran Timezone
+                    <span
+                      className="cf-required"
+                    >
+                      Required
+                    </span>
+                  </span>
+                </strong>
+              </label>
               <div
                 className="cf-select"
               >
@@ -16187,27 +16187,27 @@ exports[`Fields Matches snapshot with default props 1`] = `
           value={null}
         >
           <div
-            className="cf-form-dropdown dropdown-representativeTz"
-            data-css-1gh7024=""
+            className=""
           >
-            <label
-              className="question-label"
-              htmlFor="representativeTz"
-            >
-              <strong>
-                <span>
-                  POA/Representative Timezone
-                  <span
-                    className="cf-required"
-                  >
-                    Required
-                  </span>
-                </span>
-              </strong>
-            </label>
             <div
-              className=""
+              className="cf-form-dropdown dropdown-representativeTz"
+              data-css-1gh7024=""
             >
+              <label
+                className="question-label"
+                htmlFor="representativeTz"
+              >
+                <strong>
+                  <span>
+                    POA/Representative Timezone
+                    <span
+                      className="cf-required"
+                    >
+                      Required
+                    </span>
+                  </span>
+                </strong>
+              </label>
               <div
                 className="cf-select"
               >

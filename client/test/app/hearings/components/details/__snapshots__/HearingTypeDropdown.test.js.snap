@@ -61,21 +61,21 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
     }
   >
     <div
-      className="cf-form-dropdown dropdown-hearingType"
+      className=""
     >
-      <label
-        className="question-label"
-        htmlFor="hearingType"
-      >
-        <strong>
-          <span>
-            Hearing Type
-          </span>
-        </strong>
-      </label>
       <div
-        className=""
+        className="cf-form-dropdown dropdown-hearingType"
       >
+        <label
+          className="question-label"
+          htmlFor="hearingType"
+        >
+          <strong>
+            <span>
+              Hearing Type
+            </span>
+          </strong>
+        </label>
         <div
           className="cf-select"
         >
@@ -1519,21 +1519,21 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
     }
   >
     <div
-      className="cf-form-dropdown dropdown-hearingType"
+      className=""
     >
-      <label
-        className="question-label"
-        htmlFor="hearingType"
-      >
-        <strong>
-          <span>
-            Hearing Type
-          </span>
-        </strong>
-      </label>
       <div
-        className=""
+        className="cf-form-dropdown dropdown-hearingType"
       >
+        <label
+          className="question-label"
+          htmlFor="hearingType"
+        >
+          <strong>
+            <span>
+              Hearing Type
+            </span>
+          </strong>
+        </label>
         <div
           className="cf-select"
         >
@@ -3010,21 +3010,21 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
     }
   >
     <div
-      className="cf-form-dropdown dropdown-hearingType"
+      className=""
     >
-      <label
-        className="question-label"
-        htmlFor="hearingType"
-      >
-        <strong>
-          <span>
-            Hearing Type
-          </span>
-        </strong>
-      </label>
       <div
-        className=""
+        className="cf-form-dropdown dropdown-hearingType"
       >
+        <label
+          className="question-label"
+          htmlFor="hearingType"
+        >
+          <strong>
+            <span>
+              Hearing Type
+            </span>
+          </strong>
+        </label>
         <div
           className="cf-select"
         >
@@ -4516,21 +4516,21 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
     }
   >
     <div
-      className="cf-form-dropdown dropdown-hearingType"
+      className=""
     >
-      <label
-        className="question-label"
-        htmlFor="hearingType"
-      >
-        <strong>
-          <span>
-            Hearing Type
-          </span>
-        </strong>
-      </label>
       <div
-        className=""
+        className="cf-form-dropdown dropdown-hearingType"
       >
+        <label
+          className="question-label"
+          htmlFor="hearingType"
+        >
+          <strong>
+            <span>
+              Hearing Type
+            </span>
+          </strong>
+        </label>
         <div
           className="cf-select"
         >
