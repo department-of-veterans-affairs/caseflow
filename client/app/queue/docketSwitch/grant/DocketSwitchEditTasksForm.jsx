@@ -40,6 +40,7 @@ const schema = yup.object().shape({
 });
 
 export const DocketSwitchEditTasksForm = ({
+  defaultValues,
   docketFrom,
   docketTo,
   onBack,
@@ -51,7 +52,8 @@ export const DocketSwitchEditTasksForm = ({
     resolver: yupResolver(schema),
     mode: 'onChange',
     defaultValues: {
-      taskIds: taskListing.map((task) => task.id),
+      taskIds: defaultValues?.taskIds ?? taskListing.map((task) => task.id),
+      newTasks: defaultValues?.newTasks ?? []
     },
   });
   const { handleSubmit, control, formState, setValue } = methods;
@@ -75,11 +77,19 @@ export const DocketSwitchEditTasksForm = ({
   useEffect(() => {
     const newValues = {};
 
-    taskListing.forEach((item) => (newValues[item.taskId] = true));
+    if (defaultValues?.taskIds) {
+      defaultValues?.taskIds.forEach((taskId) => (newValues[taskId] = true));
+    } else {
+      taskListing.forEach((item) => (newValues[item.taskId] = true));
+    }
+
     setTasks(newValues);
 
-    setValue('taskIds', taskListing.map((task) => task.taskId));
-  }, [taskOptions]);
+    setValue(
+      'taskIds',
+      defaultValues?.taskIds ?? taskListing.map((task) => task.taskId)
+    );
+  }, [taskOptions, defaultValues]);
 
   // Used for display of mandatory tasks
   const mandatoryTaskOptions = useMemo(() => {
@@ -172,14 +182,14 @@ export const DocketSwitchEditTasksForm = ({
           <Controller
             name="taskIds"
             control={control}
-            render={({ name, onChange: onCheckChange }) => {
+            render={({ name }) => {
               return (
                 <CheckboxGroup
                   name={name}
                   label="Please unselect any tasks you would like to remove:"
                   strongLabel
                   options={taskOptions}
-                  onChange={(event) => onCheckChange(handleTaskChange(event))}
+                  onChange={(event) => handleTaskChange(event)}
                   styling={css({ marginBottom: '0' })}
                   values={tasks}
                 />
@@ -254,4 +264,15 @@ DocketSwitchEditTasksForm.propTypes = {
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
   taskListing: PropTypes.array,
+  defaultValues: PropTypes.shape({
+    taskIds: PropTypes.arrayOf(
+      PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    ),
+    newTasks: PropTypes.arrayOf(
+      PropTypes.shape({
+        type: PropTypes.string,
+        instructions: PropTypes.string,
+      })
+    ),
+  }),
 };
