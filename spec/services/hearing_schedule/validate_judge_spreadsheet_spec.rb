@@ -45,7 +45,7 @@ describe HearingSchedule::ValidateJudgeSpreadsheet, :all_dbs do
 
     it "returns JudgeIdNotInDatabase (not JudgeNameNotInDatabase)" do
       expect(subject).to include HearingSchedule::ValidateJudgeSpreadsheet::JudgeIdNotInDatabase
-      expect(subject).not_to include HearingSchedule::ValidateJudgeSpreadsheet::JudgeNameNotInDatabase
+      expect(subject).not_to include HearingSchedule::ValidateJudgeSpreadsheet::JudgeNameDoesNotMatchIdInDatabase
     end
   end
 
@@ -60,7 +60,24 @@ describe HearingSchedule::ValidateJudgeSpreadsheet, :all_dbs do
 
     it "returns JudgeNameNotInDatabase (not JudgeIdNotInDatabase)" do
       expect(subject).not_to include HearingSchedule::ValidateJudgeSpreadsheet::JudgeIdNotInDatabase
-      expect(subject).to include HearingSchedule::ValidateJudgeSpreadsheet::JudgeNameNotInDatabase
+      expect(subject).to include HearingSchedule::ValidateJudgeSpreadsheet::JudgeNameDoesNotMatchIdInDatabase
+    end
+  end
+
+  context "when one judges id is not in the db, and one judges name is not in the db" do
+    subject do
+      HearingSchedule::ValidateJudgeSpreadsheet.new(
+        Roo::Spreadsheet.open("spec/support/judgeOneIdAndOneNameNotInDb.xlsx", extension: :xlsx),
+        Date.parse("01/01/2018"),
+        Date.parse("01/06/2018")
+      ).validate
+    end
+
+    it "returns one JudgeNameNotInDatabase and one JudgeIdNotInDatabase" do
+      # I also want to expect that this error has the vlj_id "862" in it
+      expect(subject).to include(HearingSchedule::ValidateJudgeSpreadsheet::JudgeIdNotInDatabase)
+      # I also want to expect that this error has the vlj_id "860" in it
+      expect(subject).to include HearingSchedule::ValidateJudgeSpreadsheet::JudgeNameDoesNotMatchIdInDatabase
     end
   end
 

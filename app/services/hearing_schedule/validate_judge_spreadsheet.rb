@@ -13,7 +13,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   class JudgeDatesNotUnique < StandardError; end
   class JudgeDatesNotInRange < StandardError; end
   class JudgeIdNotInDatabase < StandardError; end
-  class JudgeNameNotInDatabase < StandardError; end
+  class JudgeNameDoesNotMatchIdInDatabase < StandardError; end
 
   def initialize(spreadsheet, start_date, end_date)
     get_spreadsheet_data = HearingSchedule::GetSpreadsheetData.new(spreadsheet)
@@ -70,6 +70,16 @@ class HearingSchedule::ValidateJudgeSpreadsheet
       judge_name_matches(row, vacols_judges)
     end.pluck("vlj_id")
 
+    # Without this a name error will always happen for any judge with an id error
+    judges_name_not_in_db -= judges_id_not_in_db
+    # Retrieve for the names for any judges with name errors for display
+    judges_name_not_in_db  = judges_name_not_in_db.map do |vlj_id|
+      {
+        vlj_id: vlj_id,
+        name: "#{vacols_judges[vlj_id][:first_name]} #{vacols_judges[vlj_id][:last_name]}"
+       }
+    end
+
     [judges_id_not_in_db, judges_name_not_in_db]
   end
 
@@ -94,9 +104,11 @@ class HearingSchedule::ValidateJudgeSpreadsheet
       @errors << JudgeIdNotInDatabase.new(
         "These judges ids are not in the database: " + judges_id_not_in_db.to_s
       )
-    elsif judges_name_not_in_db.count > 0
-      @errors << JudgeNameNotInDatabase.new(
-        "These judges names do not match the database for this id: " + judges_name_not_in_db.to_s
+    end
+    if judges_name_not_in_db.count > 0
+      @errors << JudgeNameDoesNotMatchIdInDatabase.new(
+        "These judges names do not match the database: " +
+          judges_name_not_in_db.map { |judge| "id: #{judge[:vlj_id]}, name: #{judge[:name]}" }.to_s
       )
     end
   end
