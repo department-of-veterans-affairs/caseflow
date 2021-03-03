@@ -174,11 +174,11 @@ export class SearchableDropdown extends React.Component {
     );
 
     return (
-      <div className={dropdownClasses} {...dropdownStyling}>
-        <label className={labelClasses} htmlFor={name}>
-          {strongLabel ? <strong>{labelContents}</strong> : labelContents}
-        </label>
-        <div className={errorMessage ? 'usa-input-error' : ''}>
+      <div className={errorMessage ? 'usa-input-error' : ''}>
+        <div className={dropdownClasses} {...dropdownStyling}>
+          <label className={labelClasses} htmlFor={name}>
+            {strongLabel ? <strong>{labelContents}</strong> : labelContents}
+          </label>
           {errorMessage && (
             <span className="usa-input-error-message">{errorMessage}</span>
           )}
