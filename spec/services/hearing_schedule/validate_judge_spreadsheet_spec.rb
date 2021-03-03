@@ -87,6 +87,8 @@ describe HearingSchedule::ValidateJudgeSpreadsheet, :all_dbs do
       end
       expect(errors.length).to eq 1
       expect(errors.first.to_s).to match(/860/)
+      expect(errors).to eq false
+
     end
   end
 
