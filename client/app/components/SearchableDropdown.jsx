@@ -34,12 +34,7 @@ export class SearchableDropdown extends React.Component {
   onChange = (value) => {
     let newValue = value;
     let deletedValue = null;
-    let {
-      clearOnSelect,
-      multi,
-      onChange,
-      selfManageValueState,
-    } = this.props;
+    let { clearOnSelect, multi, onChange, selfManageValueState } = this.props;
 
     /*
      * this is a temp fix for react-select value backspace
@@ -103,6 +98,7 @@ export class SearchableDropdown extends React.Component {
       defaultValue,
       filterOption,
       isClearable,
+      inputRef,
       loading,
       placeholder,
       errorMessage,
@@ -205,6 +201,7 @@ export class SearchableDropdown extends React.Component {
               isSearchable={!readOnly}
               cache={false}
               onBlurResetsInput={false}
+              ref={inputRef}
               shouldKeyDownEventCreateNewOption={
                 this.shouldKeyDownEventCreateNewOption
               }
@@ -242,10 +239,23 @@ SearchableDropdown.propTypes = {
     formatCreateLabel: PropTypes.func,
   }),
   defaultOptions: PropTypes.oneOfType([SelectOpts, PropTypes.bool]),
-  defaultValue: PropTypes.oneOfType([PropTypes.object, PropTypes.arrayOf(PropTypes.object)]),
+  defaultValue: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.arrayOf(PropTypes.object),
+  ]),
   dropdownStyling: PropTypes.object,
   errorMessage: PropTypes.string,
   filterOption: PropTypes.func,
+
+  /**
+   * Pass a ref to the underlying React Select element
+   */
+  inputRef: PropTypes.oneOfType([
+    // Either a function
+    PropTypes.func,
+    // Or the instance of a DOM native element (see the note about SSR)
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+  ]),
   label: PropTypes.string,
   strongLabel: PropTypes.bool,
   hideLabel: PropTypes.bool,
@@ -254,8 +264,8 @@ SearchableDropdown.propTypes = {
   name: PropTypes.string.isRequired,
 
   /**
- * react-select will by default set noResultsText to say "No options" unless the prop is explicitly defined
- */
+   * react-select will by default set noResultsText to say "No options" unless the prop is explicitly defined
+   */
   noResultsText: PropTypes.string,
   onChange: PropTypes.func,
   options: SelectOpts,
