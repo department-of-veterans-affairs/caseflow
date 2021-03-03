@@ -39,6 +39,8 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
     COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL
   );
 
+  debugger
+
   return (
     <div className="usa-grid" id="currently-active-tasks" {...css({ marginTop: '3rem' })}>
       <h2 {...sectionHeadingStyling}>
@@ -59,9 +61,9 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
         }
       </div>
       <div {...alertStyling} {...sectionSegmentStyling}>
-        { appeal.switchedDockets.map((docketSwitch) =>
+        {!!appeal.switchedDockets ? appeal.switchedDockets.map((docketSwitch) =>
           <DocketSwitchAlertBanner appeal={appeal} docketSwitch={docketSwitch} />
-        )}
+        ) : ''}
       </div>
       <div {...sectionSegmentStyling}>{sectionBody}</div>
     </div>
