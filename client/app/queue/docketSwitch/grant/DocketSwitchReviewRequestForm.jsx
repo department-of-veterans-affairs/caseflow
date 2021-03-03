@@ -162,7 +162,6 @@ export const DocketSwitchReviewRequestForm = ({
           <Controller
             name="issueIds"
             control={control}
-            // defaultValue={[]}
             render={({ onChange: onCheckChange }) => {
               return (
                 <CheckboxGroup
