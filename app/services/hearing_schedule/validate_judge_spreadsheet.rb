@@ -50,6 +50,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     out_of_range_dates.map { |date| date.strftime("%m/%d/%Y") }
   end
 
+  # This method smells of :reek:UtilityFunction
   def judge_name_matches(row, vacols_judges)
     row_vlj_id = row["vlj_id"]
     row_last, row_first = row["name"].split(", ").map { |name_part| name_part.strip.downcase }
