@@ -47,7 +47,7 @@ module Seeds
     def hearing_day_for_ro(ro_key:, scheduled_for:)
       HearingDay.create!(
         regional_office: (ro_key == "C" || ro_key == "R") ? nil : ro_key,
-        room: ro_key == "R" ? nil : Constants::HEARING_ROOMS_LIST.keys.sample,
+        room: (ro_key == "R") ? nil : Constants::HEARING_ROOMS_LIST.keys.sample,
         judge: random_judge_user,
         request_type: request_type_by_ro_key(ro_key),
         scheduled_for: scheduled_for,
@@ -61,17 +61,17 @@ module Seeds
         HearingDay::REQUEST_TYPES[:central]
       elsif ro_key == "R"
         HearingDay::REQUEST_TYPES[:virtual]
-      else
+      elsif ro_key.starts_with?("RO")
         HearingDay::REQUEST_TYPES[:video]
       end
     end
 
     def random_judge_user
-      User.find_by_css_id(["BVAAABSHIRE", "BVARERDMAN", "BVAEBECKER", "BVAKKEELING", "BVAAWAKEFIELD"].sample)
+      User.find_by_css_id(%w[BVAAABSHIRE BVARERDMAN BVAEBECKER BVAKKEELING BVAAWAKEFIELD].sample)
     end
 
     def create_ama_appeal(issue_count: 1)
-      appeal = create(
+      create(
         :appeal,
         veteran_file_number: create_veteran.file_number,
         docket_type: Constants.AMA_DOCKETS.hearing,
@@ -122,13 +122,15 @@ module Seeds
     end
 
     def create_legacy_appeal(hearing_day)
+      @bfkey += 1
+      @bfcorkey += 1
       vacols_case = create(
         :case,
-        bfkey: "#{@bfkey += 1}",
-        bfcorkey: "#{@bfcorkey += 1}",
-        bfac: ["1", "3"].sample, # original or Post remand,
+        bfkey: @bfkey.t_s,
+        bfcorkey: @bfcorkey.to_s,
+        bfac: %w[1 3].sample, # original or Post remand,
         bfregoff: hearing_day.regional_office,
-        correspondent: create(:correspondent, stafkey: "#{@bfcorkey}")
+        correspondent: create(:correspondent, stafkey: @bfcorkey.to_s)
       )
 
       file_number = LegacyAppeal.veteran_file_number_from_bfcorlid(vacols_case.bfcorlid)
@@ -146,9 +148,9 @@ module Seeds
     def create_legacy_hearing(day:, scheduled_time_string_est:)
       appeal = create_legacy_appeal(day)
       scheduled_date = day.scheduled_for
-      scheduled_for = Time
-                        .parse(scheduled_time_string_est)
-                        .change(day: scheduled_date.day, month: scheduled_date.month, year: scheduled_date.year)
+      scheduled_for = Time.zone
+        .parse(scheduled_time_string_est)
+        .change(day: scheduled_date.day, month: scheduled_date.month, year: scheduled_date.year)
 
       case_hearing = create(
         :case_hearing,
@@ -169,6 +171,7 @@ module Seeds
       @created_by_user ||= User.find_or_create_by(css_id: "BVASYELLOW", station_id: "101")
     end
 
+    # rubocop:disable Metrics/MethodLength
     def create_hearing_subtree(appeal:, hearing:)
       root_task = create(:root_task, appeal: appeal)
       distribution_task = create(
@@ -203,6 +206,7 @@ module Seeds
         hearing_task: parent_hearing_task
       )
     end
+    # rubocop:enable Metrics/MethodLength
 
     def create_request_issues(issue_count)
       description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
@@ -239,12 +243,14 @@ module Seeds
     end
 
     def create_travel_board_vacols_case
+      @bfkey += 1
+      @bfcorkey += 1
       create(
         :case,
         :travel_board_hearing,
-        bfkey: "#{@bfkey += 1}",
-        bfcorkey: "#{@bfcorkey += 1}",
-        correspondent: create(:correspondent, stafkey: "#{@bfcorkey}")
+        bfkey: @bfkey.to_s,
+        bfcorkey: @bfcorkey.to_s,
+        correspondent: create(:correspondent, stafkey: @bfcorkey.to_s)
       )
     end
 
