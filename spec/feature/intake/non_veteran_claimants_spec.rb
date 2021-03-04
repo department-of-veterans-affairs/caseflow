@@ -28,6 +28,8 @@ feature "Non-veteran claimants", :postgres do
     }
   end
 
+  let(:decision_date) { 3.months.ago.mdY }
+
   context "with non_veteran_claimants feature toggle" do
     before { FeatureToggle.enable!(:non_veteran_claimants) }
     after { FeatureToggle.disable!(:non_veteran_claimants) }
@@ -183,6 +185,25 @@ feature "Non-veteran claimants", :postgres do
 
       # Submission currently out of scope; consider stub as next path might be conditional
       expect(page).to have_current_path("/intake/add_issues")
+      expect(page).to have_content("Claimant's Poa")
+      expect(page).to have_content(new_individual_claimant[:first_name])
+
+      # Add request issues
+      click_intake_add_issue
+      add_intake_nonrating_issue(date: decision_date)
+      expect(page).to have_content("Active Duty Adjustments")
+      click_intake_finish
+      expect(page).to have_current_path("/intake/completed")
+
+      # verify that current intake with claimant_type other was created
+      expect(Intake.last.detail.claimant_type).to eq("other")
+      appeal = Appeal.find_by(docket_type: "evidence_submission")
+
+      # Case details page
+      visit "queue/appeals/#{appeal.uuid}"
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+      expect(page).to have_content(new_individual_claimant[:first_name])
+      expect(page).to have_content("Relation to Veteran: other")
     end
   end
 

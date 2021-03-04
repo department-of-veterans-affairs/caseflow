@@ -156,7 +156,7 @@ export const SelectClaimant = (props) => {
     });
   };
   const handleSelectNonVeteran = (value) => {
-    const claimantOptions = nonVeteranClaimants && !attorneyFees ? 'other' : 'dependent';
+    const claimantOptions = formType === 'appeal' && nonVeteranClaimants ? 'other' : 'dependent';
 
     if (newClaimant && value === newClaimant.value) {
       setClaimant({

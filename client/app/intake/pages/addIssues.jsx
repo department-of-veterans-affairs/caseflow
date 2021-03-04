@@ -521,7 +521,8 @@ AddIssuesPage.propTypes = {
 };
 
 export const IntakeAddIssuesPage = connect(
-  ({ intake, higherLevelReview, supplementalClaim, appeal, featureToggles, activeIssue, addingIssue, addClaimant }) => ({
+  ({ intake, higherLevelReview, supplementalClaim,
+    appeal, featureToggles, activeIssue, addingIssue, addClaimant }) => ({
     intakeForms: {
       higher_level_review: higherLevelReview,
       supplemental_claim: supplementalClaim,
