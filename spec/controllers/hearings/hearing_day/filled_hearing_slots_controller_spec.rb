@@ -41,7 +41,7 @@ RSpec.describe Hearings::HearingDay::FilledHearingSlotsController, type: :contro
         )
       end
 
-      let(:expected_keys) { %w[hearing_time issue_count docket_number docket_name poa_name] }
+      let(:expected_keys) { %w[external_id hearing_time issue_count docket_number docket_name poa_name] }
 
       it "returns correct data", :aggregate_failures do
         get :index, params: { hearing_day_id: hearing_day.id }, as: :json
