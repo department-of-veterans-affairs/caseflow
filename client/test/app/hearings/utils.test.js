@@ -1,15 +1,15 @@
 import { setTimeSlots } from 'app/hearings/utils';
-import { defaultHearing } from 'test/data/hearings';
+import { uniq } from 'lodash';
 
 // Create a pair of scheduled and next to ensure the next is filtered
 const timeSlot1 = {
   scheduled: '08:45',
-  next: '09:30',
+  hiddenSlot: '09:30',
 };
 
 // Create a pair of scheduled and previous to ensure the previous still displays
 const timeSlot2 = {
-  previous: '10:30',
+  shownSlot: '10:30',
   scheduled: '10:45',
 };
 
@@ -25,21 +25,18 @@ const scheduledHearingAfterTime = '16:45';
 const emptyHearings = [];
 const scheduledHearingNext = [
   {
-    ...defaultHearing,
     hearingTime: timeSlot1.scheduled
   }
 ];
 
 const scheduledHearingPrevious = [
   {
-    ...defaultHearing,
     hearingTime: timeSlot2.scheduled
   }
 ];
 
 const scheduledHearingAfter = [
   {
-    ...defaultHearing,
     hearingTime: scheduledHearingAfterTime
   }
 ];
@@ -77,7 +74,7 @@ describe('hearing utils', () => {
             hearingTime: timeSlot1.scheduled
           }),
           expect.not.objectContaining({
-            hearingTime: timeSlot1.next
+            hearingTime: timeSlot1.hiddenSlot
           })
         ])
       );
@@ -102,7 +99,7 @@ describe('hearing utils', () => {
           }),
           expect.objectContaining({
             full: false,
-            hearingTime: timeSlot2.previous
+            hearingTime: timeSlot2.shownSlot
           })
         ])
       );
@@ -136,7 +133,33 @@ describe('hearing utils', () => {
       expect(result[result.length - 1].hearingTime).toEqual(scheduledHearingAfterTime);
     });
 
-  });
+    test('With a scheduled hearing at 10:30, displays a slot for 09:30 and 11:30', () => {
+      const result = setTimeSlots([{ hearingTime: '10:30' }]);
 
-})
-;
+      expect(result).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            full: false,
+            hearingTime: '09:30',
+          }),
+          expect.objectContaining({
+            full: true,
+            hearingTime: '10:30',
+          }),
+          expect.objectContaining({
+            full: false,
+            hearingTime: '11:30',
+          })
+        ])
+      );
+
+    });
+
+    test('Key is unique for all slots', () => {
+      const result = setTimeSlots([{ hearingTime: '10:30' }]);
+      const dedupResult = uniq(result.map((slot) => slot.key));
+
+      expect(result.length).toEqual(dedupResult.length);
+    });
+  });
+});
