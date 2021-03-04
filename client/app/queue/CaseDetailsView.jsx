@@ -30,7 +30,6 @@ import TaskSnapshot from './TaskSnapshot';
 import UserAlerts from '../components/UserAlerts';
 import VeteranCasesView from './VeteranCasesView';
 import VeteranDetail from './VeteranDetail';
-import AppellantPOADetail from './AppellantPOADetail';
 import { startPolling } from '../hearings/utils';
 import FnodBanner from './components/FnodBanner';
 
@@ -154,10 +153,6 @@ export const CaseDetailsView = (props) => {
           )}
           {!_.isNull(appeal.cavcRemand) && appeal.cavcRemand &&
           (<CavcDetail title="CAVC Remand" {...appeal.cavcRemand} />)}
-          <AppellantPOADetail title="Appellant's Power of Attorney" appeal={appeal} />
-          {(appeal.hearings.length || appeal.completedHearingOnPreviousAppeal) && (
-            <CaseHearingsDetail title="Hearings" appeal={appeal} />
-          )}
           <CaseTimeline title="Case Timeline" appeal={appeal} />
         </StickyNavContentArea>
         {props.pollHearing && pollHearing()}

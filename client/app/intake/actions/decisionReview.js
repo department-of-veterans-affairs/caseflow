@@ -105,7 +105,8 @@ data.unlisted_poa = {
     zip: poa.zip,
     country: poa.country,
     phone_number: poa.phoneNumber,
-    email_address: poa.email
+    email_address: poa.email,
+    listed_attorney: poa.listedAttorney
   }
 
   return ApiUtil.patch(`/intake/${intakeId}/review`, { data }, ENDPOINT_NAMES.REVIEW_INTAKE).then(
