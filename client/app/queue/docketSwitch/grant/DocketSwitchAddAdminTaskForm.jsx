@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 import { Controller, useFormContext } from 'react-hook-form';
@@ -26,12 +26,18 @@ const { capitalizeFirst, snakeCaseToCamelCase, camelCaseToSnakeCase } = StringUt
 
 export const DocketSwitchAddAdminTaskForm = ({ baseName, item, onRemove }) => {
   const { control, errors, register } = useFormContext();
+  const selectRef = useRef();
 
   const handleRemove = () => onRemove();
 
   // We need to submit an actual task name, so reformatting is necessary
   const formatTaskName = (taskStr) =>
     `${capitalizeFirst(snakeCaseToCamelCase(taskStr))}ColocatedTask`;
+
+  // Ensure we focus the SearchableDropdown when component is mounted (and ref is hooked up)
+  useEffect(() => {
+    selectRef?.current?.focus();
+  }, [selectRef.current]);
 
   // Used for populating the SearchableDropdown if a value already exists (likely via defaultValues on the parent form)
   const defaultVal = useMemo(() => {
@@ -57,6 +63,9 @@ export const DocketSwitchAddAdminTaskForm = ({ baseName, item, onRemove }) => {
               label="Select the type of task you'd like to open:"
               options={actionOptions}
               onChange={(valObj) => onChange(formatTaskName(valObj?.value))}
+              inputRef={(ref) => {
+                selectRef.current = ref;
+              }}
               defaultValue={defaultVal}
             />
           )}

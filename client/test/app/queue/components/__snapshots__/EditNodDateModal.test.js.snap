@@ -12,6 +12,9 @@ exports[`EditNodDateModal renders correctly 1`] = `
       "value": "new_info",
     }
   }
+  setBadDate={[MockFunction]}
+  setBadReason={[MockFunction]}
+  setReasonErrorMessage={[MockFunction]}
   showTimelinessError={false}
 >
   <Modal
@@ -30,7 +33,6 @@ exports[`EditNodDateModal renders correctly 1`] = `
             "usa-button",
             "usa-button-primary",
           ],
-          "disabled": true,
           "name": "Submit",
           "onClick": [Function],
         },
@@ -324,21 +326,21 @@ exports[`EditNodDateModal renders correctly 1`] = `
                   }
                 >
                   <div
-                    className="cf-form-dropdown dropdown-reason"
+                    className=""
                   >
-                    <label
-                      className="question-label"
-                      htmlFor="reason"
-                    >
-                      <strong>
-                        <span>
-                          Reason for edit
-                        </span>
-                      </strong>
-                    </label>
                     <div
-                      className=""
+                      className="cf-form-dropdown dropdown-reason"
                     >
+                      <label
+                        className="question-label"
+                        htmlFor="reason"
+                      >
+                        <strong>
+                          <span>
+                            Reason for edit
+                          </span>
+                        </strong>
+                      </label>
                       <div
                         className="cf-select"
                       >
@@ -1822,7 +1824,6 @@ exports[`EditNodDateModal renders correctly 1`] = `
                 "cf-push-right",
               ]
             }
-            disabled={true}
             id="Edit-NOD-Date-button-id-1"
             key="1"
             linkStyling={false}
@@ -1834,8 +1835,7 @@ exports[`EditNodDateModal renders correctly 1`] = `
           >
             <span>
               <button
-                className="cf-push-right usa-button-disabled usa-button"
-                disabled={true}
+                className="usa-button usa-button-primary cf-push-right usa-button"
                 id="Edit-NOD-Date-button-id-1"
                 onClick={[Function]}
                 type="button"
