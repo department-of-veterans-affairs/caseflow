@@ -205,11 +205,13 @@ Rails.application.routes.draw do
 
   resources :higher_level_reviews, param: :claim_id, only: [:edit] do
     patch 'update', on: :member
+    post 'edit_ep', on: :member
   end
   match '/higher_level_reviews/:claim_id/edit/:any' => 'higher_level_reviews#edit', via: [:get]
 
   resources :supplemental_claims, param: :claim_id, only: [:edit] do
     patch 'update', on: :member
+    post 'edit_ep', on: :member
   end
   match '/supplemental_claims/:claim_id/edit/:any' => 'supplemental_claims#edit', via: [:get]
 
