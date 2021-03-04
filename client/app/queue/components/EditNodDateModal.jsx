@@ -143,7 +143,7 @@ export const EditNodDateModal = ({
       oneOf(changeReasons.map((changeReason) => changeReason.value))
   });
 
-  const { register, errors, watch, control, handleSubmit, formState } = useForm(
+  const { register, errors, control, handleSubmit } = useForm(
     {
       defaultValues: { nodDate, reason },
       resolver: yupResolver(schema),
@@ -165,7 +165,6 @@ export const EditNodDateModal = ({
   buttons.push({
     classNames: ['usa-button', 'usa-button-primary'],
     name: showTimelinessError ? 'Close' : 'Submit',
-    disabled: !formState.isValid,
     onClick: showTimelinessError ? onCancel : handleSubmit(onSubmit)
   });
 

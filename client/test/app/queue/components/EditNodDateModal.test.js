@@ -1,6 +1,11 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { act } from 'react-dom/test-utils';
 import Enzyme, { mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
+import { formatDateStr, getDate } from '../../../../app/util/DateUtil';
 import { EditNodDateModal } from 'app/queue/components/EditNodDateModal';
 import COPY from 'app/../COPY';
 import SearchableDropdown from 'app/components/SearchableDropdown';
@@ -11,130 +16,143 @@ describe('EditNodDateModal', () => {
   const onSubmit = jest.fn();
   const onCancel = jest.fn();
   const defaultNodDate = '2020-10-31';
-  const defaultNewNodDate = '2020-10-15';
-  const defaultReason = { label: 'New Form/Information Received', value: 'new_info' };
-
-  const setupEditNodDateModal = () => {
-    return mount(
-      <EditNodDateModal
-        appealId="tb78ti7in77n"
-        onCancel={onCancel}
-        onSubmit={onSubmit}
-        nodDate={defaultNodDate}
-        reason={defaultReason}
-        showTimelinessError={false}
-      />
-    );
+  const appealId = 'tb78ti7in77n';
+  const showTimelinessError = false;
+  const defaults = {
+    appealId,
+    onSubmit,
+    onCancel,
+    nodDate: defaultNodDate,
+    showTimelinessError
   };
 
-  afterEach(() => {
+  beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it('renders correctly', () => {
-    const component = setupEditNodDateModal();
+    const { component } = render(<EditNodDateModal {...defaults} />);
 
     expect(component).toMatchSnapshot();
   });
 
-  it('should fire cancel event', () => {
-    const component = setupEditNodDateModal();
-    const cancelLink = component.find('button#Edit-NOD-Date-button-id-0');
+  it('should fire cancel event', async () => {
+    render(<EditNodDateModal {...defaults} />);
 
-    cancelLink.simulate('click');
+    expect(onCancel).not.toHaveBeenCalled();
+
+    await userEvent.click(screen.getByRole('button', { name: /cancel/i }));
+
     expect(onCancel).toHaveBeenCalled();
   });
 
-  it('should submit event', async () => {
-    const component = setupEditNodDateModal();
-    const dateInput = component.find('input[type="date"]');
-    const reasonDropdown = component.find(SearchableDropdown);
-    const submitButton = component.find('button#Edit-NOD-Date-button-id-1');
+  describe('form validation & submission', () => {
+    const defaultNewNodDate = '2020-10-15';
+    const defaultReason = { label: 'New Form/Information Received', value: 'new_info' };
+    const fillForm = async () => {
+      //   Set NOD Date
+      await fireEvent.change(screen.getByPlaceholderText('mm/dd/yyyy'), { target: { value: defaultNewNodDate } });
 
-    dateInput.simulate('change', { target: { value: defaultNewNodDate } });
-    reasonDropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
-    reasonDropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
+      //   Enter Reason
+      await fireEvent.change(screen.getByLabelText(/reason for edit/i), { target: { value: defaultReason } });
+    };
 
-    component.update();
-    submitButton.simulate('click');
+    it('fires onSubmit with correct values', async () => {
 
-    expect(onSubmit).toHaveBeenCalledWith(defaultNewNodDate, defaultReason);
+      render(<EditNodDateModal {...defaults} />);
+
+      const submit = screen.getByRole('button', { name: /submit/i });
+
+      await fillForm();
+
+      await userEvent.click(submit);
+
+      await waitFor(() => {
+        expect(onSubmit).toHaveBeenCalledWith({
+          defaultNewNodDate,
+          defaultReason,
+        });
+      });
+    });
+
+    it('should give error when future date is given and not submit', async () => {
+      render(<EditNodDateModal {...defaults} />);
+      // const dateInput = component.find('input[type="date"]');
+      const today = new Date();
+      const futureDate = getDate(today.setDate(today.getDate() + 2));
+      const formattedFutureDate = formatDateStr(futureDate);
+
+      const submit = screen.getByRole('button', { name: /submit/i });
+
+      await fireEvent.change(screen.getByPlaceholderText('mm/dd/yyyy'), { target: { value: formattedFutureDate } });
+
+      await fillForm();
+
+      await userEvent.click(submit);
+
+      await waitFor(() => {
+        expect(screen.getByText(COPY.EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE)).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should give error when future date is given', () => {
-    const component = setupEditNodDateModal();
-    const dateInput = component.find('input[type="date"]');
-    const newFutureDate = '2021-12-19';
-    const submitButton = component.find('button#Edit-NOD-Date-button-id-1');
+  // it('should show error when date before 2019-02-19 is given', () => {
+  //   const component = setupEditNodDateModal();
+  //   const submitButton = component.find('button#Edit-NOD-Date-button-id-1');
 
-    dateInput.simulate('change', { target: { value: newFutureDate } });
-    component.update();
-    const errorMessage = component.find('.usa-input-error-message');
+  //   const dateInput = component.find('input[type="date"]');
+  //   const preAmaDate = '2018-01-01';
 
-    expect(errorMessage.text()).toEqual(
-      COPY.EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE
-    );
-    // eslint-disable-next-line jest/valid-expect
-    expect(submitButton.toBeDisabled);
-  });
+  //   dateInput.simulate('change', { target: { value: preAmaDate } });
+  //   component.update();
+  //   const errorMessage = component.find('.usa-input-error-message');
 
-  it('should show error when date before 2019-02-19 is given', () => {
-    const component = setupEditNodDateModal();
-    const submitButton = component.find('button#Edit-NOD-Date-button-id-1');
+  //   expect(errorMessage.text()).toEqual(COPY.EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE);
+  //   expect(submitButton.getDOMNode()).toHaveProperty('disabled');
+  // });
 
-    const dateInput = component.find('input[type="date"]');
-    const preAmaDate = '2018-01-01';
+  // it('should show warning when date is after nodDate', () => {
+  //   const component = setupEditNodDateModal();
+  //   const dateInput = component.find('input[type="date"]');
+  //   const laterThanNodDate = '2021-01-21';
 
-    dateInput.simulate('change', { target: { value: preAmaDate } });
-    component.update();
-    const errorMessage = component.find('.usa-input-error-message');
+  //   dateInput.simulate('change', { target: { value: laterThanNodDate } });
+  //   component.update();
+  //   const warningMessage = component.find('.usa-alert-text');
 
-    expect(errorMessage.text()).toEqual(COPY.EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE);
-    expect(submitButton.getDOMNode()).toHaveProperty('disabled');
-  });
+  //   expect(warningMessage.text()).toEqual(
+  //     COPY.EDIT_NOD_DATE_WARNING_ALERT_MESSAGE
+  //   );
+  // });
+  // it('should disable submit button when date is valid and updated and a reason has not been selected', () => {
+  //   const component = setupEditNodDateModal();
+  //   const submitButton = component.find('button#Edit-NOD-Date-button-id-1');
+  //   const dateInput = component.find('input[type="date"]');
 
-  it('should show warning when date is after nodDate', () => {
-    const component = setupEditNodDateModal();
-    const dateInput = component.find('input[type="date"]');
-    const laterThanNodDate = '2021-01-21';
+  //   dateInput.simulate('change', { target: { value: defaultNewNodDate } });
+  //   component.update();
 
-    dateInput.simulate('change', { target: { value: laterThanNodDate } });
-    component.update();
-    const warningMessage = component.find('.usa-alert-text');
+  //   expect(submitButton.getDOMNode()).toHaveProperty('disabled');
+  // });
 
-    expect(warningMessage.text()).toEqual(
-      COPY.EDIT_NOD_DATE_WARNING_ALERT_MESSAGE
-    );
-  });
-  it('should disable submit button when date is valid and updated and a reason has not been selected', () => {
-    const component = setupEditNodDateModal();
-    const submitButton = component.find('button#Edit-NOD-Date-button-id-1');
-    const dateInput = component.find('input[type="date"]');
+  // it('should disable submit button if a reason has been selected and date is not valid', () => {
+  //   const component = setupEditNodDateModal();
+  //   const submitButton = component.find('button#Edit-NOD-Date-button-id-1');
+  //   const preAmaDate = '2018-01-01';
+  //   const dateInput = component.find('input[type="date"]');
+  //   const reasonDropdown = component.find(SearchableDropdown);
 
-    dateInput.simulate('change', { target: { value: defaultNewNodDate } });
-    component.update();
+  //   dateInput.simulate('change', { target: { value: preAmaDate } });
+  //   reasonDropdown.
+  //     find('Select').
+  //     simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
+  //   reasonDropdown.
+  //     find('Select').
+  //     simulate('keyDown', { key: 'Enter', keyCode: 13 });
+  //   component.update();
+  //   const errorMessage = component.find('.usa-input-error-message');
 
-    expect(submitButton.getDOMNode()).toHaveProperty('disabled');
-  });
-
-  it('should disable submit button if a reason has been selected and date is not valid', () => {
-    const component = setupEditNodDateModal();
-    const submitButton = component.find('button#Edit-NOD-Date-button-id-1');
-    const preAmaDate = '2018-01-01';
-    const dateInput = component.find('input[type="date"]');
-    const reasonDropdown = component.find(SearchableDropdown);
-
-    dateInput.simulate('change', { target: { value: preAmaDate } });
-    reasonDropdown.
-      find('Select').
-      simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
-    reasonDropdown.
-      find('Select').
-      simulate('keyDown', { key: 'Enter', keyCode: 13 });
-    component.update();
-    const errorMessage = component.find('.usa-input-error-message');
-
-    expect(errorMessage.text()).toEqual(COPY.EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE);
-    expect(submitButton.getDOMNode()).toHaveProperty('disabled');
-  });
+  //   expect(errorMessage.text()).toEqual(COPY.EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE);
+  //   expect(submitButton.getDOMNode()).toHaveProperty('disabled');
+  // });
 });
