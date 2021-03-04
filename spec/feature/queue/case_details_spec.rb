@@ -815,9 +815,10 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
 
-  describe "Appeal has switched dockets" do
+  describe "Appeal has requested to switch dockets" do
     let!(:full_grant_docket_switch) { create(:docket_switch) }
     let!(:partial_grant_docket_switch) { create(:docket_switch, :partially_granted) }
+    let!(:denied_docket_switch) { create(:docket_switch, :denied) }
     context "appeal has received full grant docket switch" do
       it "should display alert banner on old appeal stream page" do
         visit "/queue/appeals/#{full_grant_docket_switch.old_docket_stream.uuid}"
@@ -840,6 +841,13 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to have_content COPY::DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_NEW_DOCKET
         click_link "other appeal stream."
         expect(page).to have_current_path("/queue/appeals/#{partial_grant_docket_switch.old_docket_stream.uuid}")
+      end
+    end
+
+    context "appeal has been denied request to switch dockets" do
+      it "should not display alert banner" do
+        visit "/queue/appeals/#{denied_docket_switch.old_docket_stream.uuid}"
+        expect(page).to_not have_content COPY::DOCKET_SWITCH_FULL_GRANTED_TITLE
       end
     end
   end
