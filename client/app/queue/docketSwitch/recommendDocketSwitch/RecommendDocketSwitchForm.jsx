@@ -19,7 +19,7 @@ import RadioField from '../../../components/RadioField';
 import SearchableDropdown from '../../../components/SearchableDropdown';
 
 const schema = yup.object().shape({
-  summary: yup.string(),
+  summary: yup.string().required(),
   timely: yup.string().required(),
   disposition: yup.
     mixed().

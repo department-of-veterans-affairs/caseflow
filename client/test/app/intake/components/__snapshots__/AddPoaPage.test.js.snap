@@ -74,21 +74,21 @@ exports[`AddPoaPage renders default state correctly 1`] = `
           Representative
         </h2>
         <div
-          class="cf-form-dropdown dropdown-listedAttorney"
+          class=""
         >
-          <label
-            class="question-label"
-            for="listedAttorney"
-          >
-            <strong>
-              <span>
-                Representative's name
-              </span>
-            </strong>
-          </label>
           <div
-            class=""
+            class="cf-form-dropdown dropdown-listedAttorney"
           >
+            <label
+              class="question-label"
+              for="listedAttorney"
+            >
+              <strong>
+                <span>
+                  Representative's name
+                </span>
+              </strong>
+            </label>
             <div
               class="cf-select"
             >

@@ -440,21 +440,21 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
               value="03:30"
             >
               <div
-                className="cf-form-dropdown dropdown-optionalHearingTime0"
+                className=""
               >
-                <label
-                  className="question-label usa-sr-only"
-                  htmlFor="optionalHearingTime0"
-                >
-                  <strong>
-                    <span>
-                      Hearing Time
-                    </span>
-                  </strong>
-                </label>
                 <div
-                  className=""
+                  className="cf-form-dropdown dropdown-optionalHearingTime0"
                 >
+                  <label
+                    className="question-label usa-sr-only"
+                    htmlFor="optionalHearingTime0"
+                  >
+                    <strong>
+                      <span>
+                        Hearing Time
+                      </span>
+                    </strong>
+                  </label>
                   <div
                     className="cf-select"
                   >
@@ -4703,7 +4703,6 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
           >
             <SearchableDropdown
               clearOnSelect={false}
-              hideLabel={false}
               label="Hearing Time"
               loading={false}
               name="optionalHearingTime0"
@@ -4857,21 +4856,21 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
               value="03:30"
             >
               <div
-                className="cf-form-dropdown dropdown-optionalHearingTime0"
+                className=""
               >
-                <label
-                  className="question-label"
-                  htmlFor="optionalHearingTime0"
-                >
-                  <strong>
-                    <span>
-                      Hearing Time
-                    </span>
-                  </strong>
-                </label>
                 <div
-                  className=""
+                  className="cf-form-dropdown dropdown-optionalHearingTime0"
                 >
+                  <label
+                    className="question-label"
+                    htmlFor="optionalHearingTime0"
+                  >
+                    <strong>
+                      <span>
+                        Hearing Time
+                      </span>
+                    </strong>
+                  </label>
                   <div
                     className="cf-select"
                   >
@@ -9487,27 +9486,27 @@ SAN FRANCISCO, CA 94103
                   value={null}
                 >
                   <div
-                    className="cf-form-dropdown dropdown-appellantTz"
-                    data-css-1gh7024=""
+                    className=""
                   >
-                    <label
-                      className="question-label"
-                      htmlFor="appellantTz"
-                    >
-                      <strong>
-                        <span>
-                          Veteran Timezone
-                          <span
-                            className="cf-required"
-                          >
-                            Required
-                          </span>
-                        </span>
-                      </strong>
-                    </label>
                     <div
-                      className=""
+                      className="cf-form-dropdown dropdown-appellantTz"
+                      data-css-1gh7024=""
                     >
+                      <label
+                        className="question-label"
+                        htmlFor="appellantTz"
+                      >
+                        <strong>
+                          <span>
+                            Veteran Timezone
+                            <span
+                              className="cf-required"
+                            >
+                              Required
+                            </span>
+                          </span>
+                        </strong>
+                      </label>
                       <div
                         className="cf-select"
                       >
@@ -24834,27 +24833,27 @@ SAN FRANCISCO, CA 94103
                   value={null}
                 >
                   <div
-                    className="cf-form-dropdown dropdown-representativeTz"
-                    data-css-1gh7024=""
+                    className=""
                   >
-                    <label
-                      className="question-label"
-                      htmlFor="representativeTz"
-                    >
-                      <strong>
-                        <span>
-                          POA/Representative Timezone
-                          <span
-                            className="cf-required"
-                          >
-                            Required
-                          </span>
-                        </span>
-                      </strong>
-                    </label>
                     <div
-                      className=""
+                      className="cf-form-dropdown dropdown-representativeTz"
+                      data-css-1gh7024=""
                     >
+                      <label
+                        className="question-label"
+                        htmlFor="representativeTz"
+                      >
+                        <strong>
+                          <span>
+                            POA/Representative Timezone
+                            <span
+                              className="cf-required"
+                            >
+                              Required
+                            </span>
+                          </span>
+                        </strong>
+                      </label>
                       <div
                         className="cf-select"
                       >
@@ -39259,21 +39258,21 @@ SAN FRANCISCO, CA 94103
                   }
                 >
                   <div
-                    className="cf-form-dropdown dropdown-judgeDropdown"
+                    className=""
                   >
-                    <label
-                      className="question-label"
-                      htmlFor="judgeDropdown"
-                    >
-                      <strong>
-                        <span>
-                          VLJ
-                        </span>
-                      </strong>
-                    </label>
                     <div
-                      className=""
+                      className="cf-form-dropdown dropdown-judgeDropdown"
                     >
+                      <label
+                        className="question-label"
+                        htmlFor="judgeDropdown"
+                      >
+                        <strong>
+                          <span>
+                            VLJ
+                          </span>
+                        </strong>
+                      </label>
                       <div
                         className="cf-select"
                       >

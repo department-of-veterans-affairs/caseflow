@@ -181,21 +181,21 @@ exports[`RecommendDocketSwitchForm renders correctly 1`] = `
         style="max-width: 35rem;"
       >
         <div
-          class="cf-form-dropdown dropdown-judge"
+          class=""
         >
-          <label
-            class="question-label"
-            for="judge"
-          >
-            <strong>
-              <span>
-                Assign to judge
-              </span>
-            </strong>
-          </label>
           <div
-            class=""
+            class="cf-form-dropdown dropdown-judge"
           >
+            <label
+              class="question-label"
+              for="judge"
+            >
+              <strong>
+                <span>
+                  Assign to judge
+                </span>
+              </strong>
+            </label>
             <div
               class="cf-select"
             >

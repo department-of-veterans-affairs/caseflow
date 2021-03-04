@@ -15,6 +15,9 @@ Enzyme.configure({ adapter: new Adapter() });
 describe('EditNodDateModal', () => {
   const onSubmit = jest.fn();
   const onCancel = jest.fn();
+  const setBadDate = jest.fn(() => null);
+  const setBadReason = jest.fn(() => true);
+  const setReasonErrorMessage = jest.fn();
   const defaultNodDate = '2020-10-31';
   const appealId = 'tb78ti7in77n';
   const showTimelinessError = false;

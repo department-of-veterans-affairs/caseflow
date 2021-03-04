@@ -38,6 +38,9 @@ export const EditNodDateModalContainer = ({ onCancel,
   reason: origReason }) => {
   const [showTimelinessError, setTimelinessError] = useState(false);
   const [issues, setIssues] = useState(null);
+  const [reasonErrorMessage, setReasonErrorMessage] = useState(null);
+  const [badDate, setBadDate] = useState(null);
+  const [badReason, setBadReason] = useState(true);
 
   const dispatch = useDispatch();
   const appeal = useSelector((state) =>
@@ -99,7 +102,11 @@ export const EditNodDateModalContainer = ({ onCancel,
       appealId={appealId}
       appellantName={appeal.appellantFullName}
       showTimelinessError={showTimelinessError}
+      reasonErrorMessage={reasonErrorMessage}
       issues={issues}
+      setBadDate={setBadDate}
+      setBadReason={setBadReason}
+      setReasonErrorMessage={setReasonErrorMessage}
     />
   );
 };
@@ -139,6 +146,7 @@ export const EditNodDateModal = ({
       required(),
     reason: yup.
       string().
+      typeError('Required').
       required().
       oneOf(changeReasons.map((changeReason) => changeReason.value))
   });
@@ -193,7 +201,7 @@ export const EditNodDateModal = ({
         })}
       </ul>
 
-      <strong>Unaffected Issue(s)</strong>
+      { issues.unaffectedIssues.length > 0 && <strong>Unaffected Issue(s)</strong> }
       <ul>
         {issues.unaffectedIssues.map((issue) => {
 
@@ -280,5 +288,9 @@ EditNodDateModal.propTypes = {
   reason: PropTypes.object,
   appealId: PropTypes.string.isRequired,
   showTimelinessError: PropTypes.bool.isRequired,
-  issues: PropTypes.object
+  issues: PropTypes.object,
+  reasonErrorMessage: PropTypes.string,
+  setBadDate: PropTypes.func,
+  setBadReason: PropTypes.func,
+  setReasonErrorMessage: PropTypes.func
 };

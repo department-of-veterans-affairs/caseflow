@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_05_194714) do
+ActiveRecord::Schema.define(version: 2021_03_02_165940) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -276,6 +276,7 @@ ActiveRecord::Schema.define(version: 2021_02_05_194714) do
     t.bigint "created_by_id", null: false, comment: "User that created this record"
     t.date "decision_date", null: false, comment: "Date CAVC issued a decision, according to the CAVC"
     t.bigint "decision_issue_ids", default: [], comment: "Decision issues being remanded; IDs refer to decision_issues table. For a JMR, all decision issues on the previous appeal will be remanded. For a JMPR, only some", array: true
+    t.boolean "federal_circuit", comment: "Whether the case has been appealed to the US Court of Appeals for the Federal Circuit"
     t.string "instructions", null: false, comment: "Instructions and context provided upon creation of the remand record"
     t.date "judgement_date", comment: "Date CAVC issued a judgement, according to the CAVC"
     t.date "mandate_date", comment: "Date that CAVC reported the mandate was given"
@@ -1456,13 +1457,13 @@ ActiveRecord::Schema.define(version: 2021_02_05_194714) do
     t.index ["updated_at"], name: "index_user_quotas_on_updated_at"
   end
 
-  create_table "users", id: :serial, force: :cascade do |t|
+  create_table "users", id: :serial, comment: "Authenticated Caseflow users", force: :cascade do |t|
     t.datetime "created_at"
     t.string "css_id", null: false
     t.datetime "efolder_documents_fetched_at", comment: "Date when efolder documents were cached in s3 for this user"
     t.string "email"
     t.string "full_name"
-    t.datetime "last_login_at"
+    t.datetime "last_login_at", comment: "The last time the user-agent (browser) provided session credentials; see User.from_session for precision"
     t.string "roles", array: true
     t.string "selected_regional_office"
     t.string "station_id", null: false
