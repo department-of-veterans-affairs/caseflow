@@ -38,7 +38,7 @@ import {
   toggleLegacyOptInModal,
   toggleCorrectionTypeModal
 } from '../actions/addIssues';
-import { editEpClaimLabel } from '../../intakeEdit/actions/edit.js';
+import { editEpClaimLabel } from '../../intakeEdit/actions/edit';
 import COPY from '../../../COPY';
 import { EditClaimLabelModal } from '../../intakeEdit/components/EditClaimLabelModal';
 import { ConfirmClaimLabelModal } from '../../intakeEdit/components/ConfirmClaimLabelModal';
