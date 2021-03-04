@@ -39,6 +39,9 @@ class HearingSchedule::GenerateHearingDaysSchedule
     @holidays = Holidays.between(schedule_period.start_date, schedule_period.end_date, :federal_reserve)
     @available_days = filter_non_availability_days(schedule_period.start_date, schedule_period.end_date)
 
+    # Calculate the maximum hearings to allocate per day
+    @max_per_date = schedule_period.allocations.sum(:allocated_days_without_room).to_i / @available_days.count
+
     assign_and_filter_ro_days(schedule_period)
   end
 
@@ -321,7 +324,15 @@ class HearingSchedule::GenerateHearingDaysSchedule
   def allocations_by_month(ro_key)
     # Ignore room constraints if specified
     if @with_rooms == false
-      if @ros[ro_key][:available_days].count == 0
+      # Calculate the requested days for this date
+      requested_days_per_date = @ros[ro_key][:allocated_days_without_room].to_i / @ros[ro_key][:available_days].count
+
+      if requested_days_per_date > @max_per_date
+        fail HearingSchedule::Errors::NotEnoughAvailableDays.new(
+          "Not enough available hearing days for #{ro_key}",
+          ro_key: ro_key
+        )
+      elsif @ros[ro_key][:available_days].count == 0
         fail HearingSchedule::Errors::NotEnoughAvailableDays.new(
           "No available hearing days for #{ro_key}",
           ro_key: ro_key

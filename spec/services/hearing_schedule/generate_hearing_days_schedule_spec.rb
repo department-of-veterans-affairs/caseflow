@@ -183,6 +183,14 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
   end
 
   context "RO hearing days allocation" do
+    let(:short_schedule_period) do
+      create(:invalid_ro_schedule_period)
+    end
+
+    let(:generate_invalid_hearing_days_schedule) do
+      HearingSchedule::GenerateHearingDaysSchedule.new(short_schedule_period)
+    end
+
     let(:ro_schedule_period) { create(:ro_schedule_period) }
 
     let(:generate_hearing_days_schedule) do
@@ -287,6 +295,14 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
             expect(rooms.values.inject(:+)).to eq(allocations[ro_key].ceil)
           end
         end
+      end
+    end
+
+    fcontext "with too many requested dates per day" do
+      subject { generate_invalid_hearing_days_schedule.allocate_hearing_days_to_ros(false) }
+
+      it "fails if the number of requested days exceeds the available days within the date range" do
+        expect { subject }.to raise_error(HearingSchedule::Errors::NotEnoughAvailableDays)
       end
     end
 
