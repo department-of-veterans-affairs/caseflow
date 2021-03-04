@@ -45,6 +45,15 @@ Basic.parameters = {
 
 export const NoExistingTasks = Template.bind({});
 NoExistingTasks.args = {
-  taskListing: []
+  taskListing: [],
 };
 
+export const PreviouslyFilled = Template.bind({});
+PreviouslyFilled.args = {
+  defaultValues: {
+    taskIds: [1, 3],
+    newTasks: [
+      { type: 'AojColocatedTask', instructions: 'Lorem ipsum and whatnot' },
+    ],
+  },
+};

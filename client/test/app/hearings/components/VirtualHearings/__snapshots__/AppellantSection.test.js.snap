@@ -943,27 +943,27 @@ SAN FRANCISCO, CA 94103
             value={null}
           >
             <div
-              className="cf-form-dropdown dropdown-appellantTz"
-              data-css-1gh7024=""
+              className=""
             >
-              <label
-                className="question-label"
-                htmlFor="appellantTz"
-              >
-                <strong>
-                  <span>
-                    Veteran Timezone
-                    <span
-                      className="cf-required"
-                    >
-                      Required
-                    </span>
-                  </span>
-                </strong>
-              </label>
               <div
-                className=""
+                className="cf-form-dropdown dropdown-appellantTz"
+                data-css-1gh7024=""
               >
+                <label
+                  className="question-label"
+                  htmlFor="appellantTz"
+                >
+                  <strong>
+                    <span>
+                      Veteran Timezone
+                      <span
+                        className="cf-required"
+                      >
+                        Required
+                      </span>
+                    </span>
+                  </strong>
+                </label>
                 <div
                   className="cf-select"
                 >
@@ -16222,27 +16222,27 @@ SAN FRANCISCO, CA 94103
             value={null}
           >
             <div
-              className="cf-form-dropdown dropdown-appellantTz"
-              data-css-1gh7024=""
+              className=""
             >
-              <label
-                className="question-label"
-                htmlFor="appellantTz"
-              >
-                <strong>
-                  <span>
-                    Veteran Timezone
-                    <span
-                      className="cf-required"
-                    >
-                      Required
-                    </span>
-                  </span>
-                </strong>
-              </label>
               <div
-                className=""
+                className="cf-form-dropdown dropdown-appellantTz"
+                data-css-1gh7024=""
               >
+                <label
+                  className="question-label"
+                  htmlFor="appellantTz"
+                >
+                  <strong>
+                    <span>
+                      Veteran Timezone
+                      <span
+                        className="cf-required"
+                      >
+                        Required
+                      </span>
+                    </span>
+                  </strong>
+                </label>
                 <div
                   className="cf-select"
                 >
@@ -31514,27 +31514,27 @@ SAN FRANCISCO, CA 94103
             value={null}
           >
             <div
-              className="cf-form-dropdown dropdown-appellantTz"
-              data-css-1gh7024=""
+              className=""
             >
-              <label
-                className="question-label"
-                htmlFor="appellantTz"
-              >
-                <strong>
-                  <span>
-                    Veteran Timezone
-                    <span
-                      className="cf-required"
-                    >
-                      Required
-                    </span>
-                  </span>
-                </strong>
-              </label>
               <div
-                className=""
+                className="cf-form-dropdown dropdown-appellantTz"
+                data-css-1gh7024=""
               >
+                <label
+                  className="question-label"
+                  htmlFor="appellantTz"
+                >
+                  <strong>
+                    <span>
+                      Veteran Timezone
+                      <span
+                        className="cf-required"
+                      >
+                        Required
+                      </span>
+                    </span>
+                  </strong>
+                </label>
                 <div
                   className="cf-select"
                 >
