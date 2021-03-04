@@ -153,27 +153,44 @@ exports[`DocketSwitchEditTasksForm default values populates with default values 
           class="css-78wbnw"
         >
           <div
-            class="cf-form-dropdown dropdown-newTasks[0].type"
+            class=""
           >
-            <label
-              class="question-label"
-              for="newTasks[0].type"
-            >
-              <span>
-                Select the type of task you'd like to open:
-              </span>
-            </label>
             <div
-              class=""
+              class="cf-form-dropdown dropdown-newTasks[0].type"
             >
+              <label
+                class="question-label"
+                for="newTasks[0].type"
+              >
+                <span>
+                  Select the type of task you'd like to open:
+                </span>
+              </label>
               <div
                 class="cf-select"
               >
                 <div
                   class=" css-2b097c-container"
                 >
+                  <span
+                    aria-live="polite"
+                    class="css-1laao21-a11yText"
+                  >
+                    <p
+                      id="aria-selection-event"
+                    >
+                       
+                      
+                    </p>
+                    <p
+                      id="aria-context"
+                    >
+                       
+                        0 results available. Select is focused ,type to refine list, press Down to open the menu, 
+                    </p>
+                  </span>
                   <div
-                    class="cf-select__control css-yk16xz-control"
+                    class="cf-select__control cf-select__control--is-focused css-1pahdxg-control"
                   >
                     <div
                       class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
@@ -216,7 +233,7 @@ exports[`DocketSwitchEditTasksForm default values populates with default values 
                       />
                       <div
                         aria-hidden="true"
-                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-1gtu0rj-indicatorContainer"
                       >
                         <svg
                           aria-hidden="true"
