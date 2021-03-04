@@ -1,4 +1,5 @@
 import React from 'react';
+import { format, sub } from 'date-fns';
 
 import { DocketSwitchReviewRequestForm } from './DocketSwitchReviewRequestForm';
 
@@ -34,5 +35,25 @@ Basic.parameters = {
   docs: {
     storyDescription:
       'Used by attorney in Clerk of the Board office to complete a grant of a docket switch checkout flow ',
+  },
+};
+
+export const PreviouslyFilled = Template.bind({});
+PreviouslyFilled.args = {
+  defaultValues: {
+    receiptDate: format(sub(new Date(), { days: 4 }), 'yyyy-MM-dd'),
+    disposition: 'granted',
+    docketType: 'hearing',
+    issueIds: [],
+  },
+};
+
+export const PreviouslyFilledPartial = Template.bind({});
+PreviouslyFilledPartial.args = {
+  defaultValues: {
+    receiptDate: format(sub(new Date(), { days: 4 }), 'yyyy-MM-dd'),
+    disposition: 'partially_granted',
+    docketType: 'hearing',
+    issueIds: ['2'],
   },
 };
