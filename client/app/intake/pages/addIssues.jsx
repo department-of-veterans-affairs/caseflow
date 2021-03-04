@@ -287,9 +287,9 @@ class AddIssuesPage extends React.Component {
     const claimantFields = () => {
       let fields;
 
-      if (claimant.partyType === 'organization') {
+      if (intakeData.claimantType === 'other' && claimant.partyType === 'organization') {
         fields = `${claimant.organization}`;
-      } else if (claimant.partyType === 'individual') {
+      } else if (intakeData.claimantType === 'other' && claimant.partyType === 'individual') {
         fields = `${claimant.firstName} ${claimant.lastName}`;
       }
 
@@ -308,7 +308,7 @@ class AddIssuesPage extends React.Component {
     const claimantType = intakeData.claimantType;
     const claimantDisplayText = claimantMap[claimantType ?? 'veteran']?.();
 
-    if (claimantType) {
+    if (formType === 'appeal' || formType === 'higher_level_review' || formType === 'supplemental_claim') {
       fieldsForFormType = fieldsForFormType.concat({
         field: 'Claimant',
         content: claimantDisplayText || claimantFields()
