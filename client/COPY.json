@@ -196,7 +196,7 @@
   "EDIT_NOD_DATE_WARNING_ALERT_MESSAGE": "The new NOD date entered is later than the original date. Changing the NOD date to a later date may negatively affect the time it takes for a Veteran to receive a response to their appeal.",
   "EDIT_NOD_DATE_TIMELINESS_ERROR_MESSAGE": "The NOD Date has not been edited because the new date affects the eligibility of one or more issues. See below for more information.",
   "EDIT_NOD_DATE_TIMELINESS_ALERT_TITLE": "New NOD Date Not Saved",
-  "EDIT_NOD_DATE_TIMELINESS_COB_MESSAGE": "*If you believe this information needs to be updated, please reach out to the Clerk of the Board.*",
+  "EDIT_NOD_DATE_TIMELINESS_COB_MESSAGE": "*If you believe this information needs to be updated, please reach out to the Clerk of the Board at [BVA.Clerk@va.gov](mailto:BVA.Clerk@va.gov).*",
 
   "DROPDOWN_LABEL_JUDGE": "VLJ",
   "DROPDOWN_LABEL_HEARING_COORDINATOR": "Hearing Coordinator",

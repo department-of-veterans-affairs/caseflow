@@ -3,19 +3,19 @@
 exports[`SearchableDropdown renders correctly 1`] = `
 <div>
   <div
-    class="cf-form-dropdown dropdown-menuTest"
+    class=""
   >
-    <label
-      class="question-label"
-      for="menuTest"
-    >
-      <span>
-        menuTest
-      </span>
-    </label>
     <div
-      class=""
+      class="cf-form-dropdown dropdown-menuTest"
     >
+      <label
+        class="question-label"
+        for="menuTest"
+      >
+        <span>
+          menuTest
+        </span>
+      </label>
       <div
         class="cf-select"
       >

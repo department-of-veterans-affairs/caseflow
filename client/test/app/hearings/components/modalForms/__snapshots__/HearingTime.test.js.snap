@@ -277,21 +277,21 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
     value="08:15"
   >
     <div
-      className="cf-form-dropdown dropdown-optionalHearingTime0"
+      className=""
     >
-      <label
-        className="question-label usa-sr-only"
-        htmlFor="optionalHearingTime0"
-      >
-        <strong>
-          <span>
-            Hearing Time
-          </span>
-        </strong>
-      </label>
       <div
-        className=""
+        className="cf-form-dropdown dropdown-optionalHearingTime0"
       >
+        <label
+          className="question-label usa-sr-only"
+          htmlFor="optionalHearingTime0"
+        >
+          <strong>
+            <span>
+              Hearing Time
+            </span>
+          </strong>
+        </label>
         <div
           className="cf-select"
         >
@@ -4375,21 +4375,21 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
     value="13:45"
   >
     <div
-      className="cf-form-dropdown dropdown-optionalHearingTime0"
+      className=""
     >
-      <label
-        className="question-label usa-sr-only"
-        htmlFor="optionalHearingTime0"
-      >
-        <strong>
-          <span>
-            Hearing Time
-          </span>
-        </strong>
-      </label>
       <div
-        className=""
+        className="cf-form-dropdown dropdown-optionalHearingTime0"
       >
+        <label
+          className="question-label usa-sr-only"
+          htmlFor="optionalHearingTime0"
+        >
+          <strong>
+            <span>
+              Hearing Time
+            </span>
+          </strong>
+        </label>
         <div
           className="cf-select"
         >
@@ -8347,21 +8347,21 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
     strongLabel={true}
   >
     <div
-      className="cf-form-dropdown dropdown-optionalHearingTime0"
+      className=""
     >
-      <label
-        className="question-label usa-sr-only"
-        htmlFor="optionalHearingTime0"
-      >
-        <strong>
-          <span>
-            Hearing Time
-          </span>
-        </strong>
-      </label>
       <div
-        className=""
+        className="cf-form-dropdown dropdown-optionalHearingTime0"
       >
+        <label
+          className="question-label usa-sr-only"
+          htmlFor="optionalHearingTime0"
+        >
+          <strong>
+            <span>
+              Hearing Time
+            </span>
+          </strong>
+        </label>
         <div
           className="cf-select"
         >
@@ -12276,21 +12276,21 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
     strongLabel={true}
   >
     <div
-      className="cf-form-dropdown dropdown-optionalHearingTime0"
+      className=""
     >
-      <label
-        className="question-label usa-sr-only"
-        htmlFor="optionalHearingTime0"
-      >
-        <strong>
-          <span>
-            Hearing Time
-          </span>
-        </strong>
-      </label>
       <div
-        className=""
+        className="cf-form-dropdown dropdown-optionalHearingTime0"
       >
+        <label
+          className="question-label usa-sr-only"
+          htmlFor="optionalHearingTime0"
+        >
+          <strong>
+            <span>
+              Hearing Time
+            </span>
+          </strong>
+        </label>
         <div
           className="cf-select"
         >

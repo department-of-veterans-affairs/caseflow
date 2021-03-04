@@ -25,6 +25,9 @@ export default {
   args: {
     options,
   },
+  argTypes: {
+    onChange: { action: 'onChange' },
+  }
 };
 
 const Template = (args) => <SearchableDropdown {...args} />;
@@ -61,7 +64,10 @@ export const Controlled = (args) => {
   // eslint-disable-next-line no-unused-vars
   const [_args, updateArgs] = useArgs();
 
-  const handleChange = (val) => updateArgs({ value: val });
+  const handleChange = (val) => {
+    updateArgs({ value: val });
+    args.onChange(val);
+  };
 
   return <SearchableDropdown {...args} onChange={handleChange} />;
 };
@@ -73,7 +79,7 @@ Controlled.args = {
 
 export const ClearOnSelect = (args) => {
   const handleChange = (val) => {
-    action('onChange')(val);
+    args.onChange(val);
   };
 
   return <SearchableDropdown {...args} onChange={handleChange} />;

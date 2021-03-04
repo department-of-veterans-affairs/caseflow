@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 describe OtherClaimant, :postgres do
-  let(:claimant) { create(:claimant, type: "OtherClaimant") }
-  let(:first_name) { nil }
-  let(:last_name) { nil }
-  let(:name) { nil }
-
   describe "#save_unrecognized_details!" do
+    let(:claimant) { create(:claimant, type: "OtherClaimant") }
+    let(:first_name) { "John" }
+    let(:last_name) { nil }
+    let(:name) { nil }
+    let(:relationship) { "spouse" }
+    let(:party_type) { "individual" }
     let(:params) do
       ActionController::Parameters.new(
         relationship: relationship,
@@ -19,11 +20,13 @@ describe OtherClaimant, :postgres do
         state: "NY",
         zip: "12345",
         country: "USA",
-        poa_form: false
+        poa_form: poa_params.present? || poa_participant_id.present?
       )
     end
+    let(:poa_params) { nil }
+    let(:poa_participant_id) { nil }
 
-    subject { claimant.save_unrecognized_details!(params) }
+    subject { claimant.save_unrecognized_details!(params, poa_params, poa_participant_id) }
 
     context "when appellant is an unlisted individual" do
       let(:relationship) { "child" }
@@ -57,6 +60,37 @@ describe OtherClaimant, :postgres do
           party_type: "organization",
           name: "American Legion"
         )
+      end
+    end
+
+    context "when unlisted POA is given" do
+      let(:poa_params) do
+        ActionController::Parameters.new(
+          party_type: "organization",
+          name: "POA Name",
+          address_line_1: "123 1st Cir",
+          city: "Springfield",
+          state: "AL",
+          zip: "54321",
+          country: "USA"
+        )
+      end
+
+      it "saves the unlisted POA" do
+        expect(subject.unrecognized_power_of_attorney).to have_attributes(
+          party_type: "organization",
+          name: "POA Name"
+        )
+        expect(subject.poa_participant_id).to be_nil
+      end
+    end
+
+    context "when CorpDB POA is given" do
+      let(:poa_participant_id) { "13579" }
+
+      it "saves the CorpDB POA" do
+        expect(subject.poa_participant_id).to eq(poa_participant_id)
+        expect(subject.unrecognized_power_of_attorney).to be_nil
       end
     end
   end

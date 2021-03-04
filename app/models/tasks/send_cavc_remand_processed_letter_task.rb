@@ -21,7 +21,6 @@ class SendCavcRemandProcessedLetterTask < Task
 
   # Actions that can be taken on both organization and user tasks
   TASK_ACTIONS = [
-    Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
     Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.to_h,
     Constants.TASK_ACTIONS.SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION.to_h,
     Constants.TASK_ACTIONS.SEND_TO_PRIVACY_TEAM_BLOCKING_DISTRIBUTION.to_h,
@@ -31,6 +30,7 @@ class SendCavcRemandProcessedLetterTask < Task
 
   # Actions a user can take on a task assigned to someone on their team
   USER_ACTIONS = [
+    Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
     Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
   ].concat(TASK_ACTIONS).freeze
 

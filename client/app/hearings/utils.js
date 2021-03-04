@@ -489,55 +489,48 @@ export const setTimeSlots = (hearings) => {
   // Default to using EST for all times before conversion
   moment.tz.setDefault('America/New_York');
 
-  // Establish the time period and increment to create time slots between (15:00 - 8:00 and add 1 to include 15:00)
-  const hoursInPeriod = 8;
-  const incrementAmount = 30;
-  const startTime = 8;
-
   // Safe assign the hearings array in case there are no scheduled hearings
   const scheduledHearings = hearings || [];
 
-  // Store a list of the filled times to compare against when creating the time slots
-  const filledTimes = scheduledHearings.map((hearing) => {
-    const [hour, minute] = hearing.hearingTime.split(':');
+  // Store a list of the scheduled times
+  const scheduledHearingTimes = scheduledHearings.map((hearing) =>
+    moment(hearing.hearingTime, 'HH:mm')
+  );
 
-    // Return the time value with the hours and minutes for the time
-    return new Date(`01/01/1900 ${hour}:${minute}`);
-  });
+  // This works because:
+  // - There is one possible slot per hour: 8:30, 9:30, 10:30, ...
+  // - We want 8 hours of slots: 8 = 15:30 - 08:30 + 1
+  const slotCount = 8;
+  // Don't convert startTime to moment here, moment mutates when you 'add'
+  const startTime = '08:30';
 
-  // Loop up to the number of hours in the period to get the available times
-  const availableTimes = _.compact(_.times(hoursInPeriod).map((index) => {
+  // For each possible slot, return it only if it's available. Availability is
+  // determined by comparing to the scheduledHearingTimes.
+  const availableSlots = _.compact(_.times(slotCount).map((index) => {
     // Add the index to the start time so we assign 1 value per hour
-    const hour = startTime + index;
+    const slotTime = moment(startTime, 'HH:mm').add(index, 'hours');
 
-    // Convert the hour and increment amount to a date so we can compare
-    const availableTime = new Date(`01/01/1900 ${hour}:${incrementAmount}`);
+    // This slot is not available (full) if there's a scheduled hearing less than an hour before it.
+    // A 10:45 appointment will:
+    // - Hide a 11:30 slot (it's full, so we return null)
+    // - Show a 10:30 slot (return the timeslot)
+    const slotFull = scheduledHearingTimes.some((scheduledHearingTime) =>
+      slotTime.isAfter(scheduledHearingTime) &&
+        slotTime.diff(scheduledHearingTime, 'minutes') < 60
+    );
 
-    // Get the difference between the time available and the scheduled times
-    const filled = filledTimes.filter((time) => {
-      // Calculate the time difference then divide by the number of seconds and divide by 60 to get minutes
-      const interval = Math.floor((availableTime - time) / 1000 / 60);
-
-      // Return true if the scheduled time is within an hour of the time slot
-      return interval >= 0 && interval < 60;
-    });
-
-    // Return nul if there is a filled time slot
-    if (filled.length) {
-      return null;
-    }
-
-    // Return the time string appending 0 if the number is less than 10
-    return {
-      hearingTime: `${hour < 10 ? 0 : ''}${hour}:${incrementAmount}`,
+    // Return null if there is a filled time slot, otherwise return the hearingTime
+    return slotFull ? null : {
+      slotId: index,
+      hearingTime: slotTime.format('HH:mm'),
       full: false
     };
   }));
 
   // Transform the values into the available slots
-  const slots = [...availableTimes, ...scheduledHearings].map((slot) => ({
+  const slots = [...availableSlots, ...scheduledHearings].map((slot) => ({
     ...slot,
-    key: `${slot?.externalId}-${slot?.hearingTime}`,
+    key: `${slot?.externalId || slot?.slotId}-${slot?.hearingTime}`,
     full: slot?.full !== false,
     hearingTime: slot?.hearingTime
   }));
