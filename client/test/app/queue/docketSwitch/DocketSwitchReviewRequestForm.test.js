@@ -143,20 +143,6 @@ describe('DocketSwitchReviewRequestForm', () => {
 
   describe('form validation for granted partial issues', () => {
     const receiptDate = '2020-10-01';
-    // const disposition = 'partially_granted';
-    // const docketType = 'direct_review';
-    // const issueIds = ['1'];
-    // const fillForm = async () => {
-    //   //   Set receipt date
-    //   await fireEvent.change(screen.getByLabelText(/receipt date/i), {
-    //     target: { value: receiptDate },
-    //   });
-
-    //   //   Enter context/instructions
-    //   await fireEvent.change(screen.getByLabelText(/grant a partial switch/i), {
-    //     target: { value: disposition },
-    //   });
-    // };
 
     it('fires onSubmit with correct values', async () => {
       render(<DocketSwitchReviewRequestForm {...defaults} />);
