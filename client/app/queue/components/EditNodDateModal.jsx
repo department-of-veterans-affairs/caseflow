@@ -30,6 +30,9 @@ export const changeReasons = [
 export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealId, reason }) => {
   const [showTimelinessError, setTimelinessError] = useState(false);
   const [issues, setIssues] = useState(null);
+  const [reasonErrorMessage, setReasonErrorMessage] = useState(null);
+  const [badDate, setBadDate] = useState(null);
+  const [badReason, setBadReason] = useState(true);
 
   const dispatch = useDispatch();
   const appeal = useSelector((state) =>
@@ -41,6 +44,13 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
   }, []);
 
   const handleSubmit = (receiptDate, changeReason) => {
+    if (badReason) {
+      setReasonErrorMessage('Required');
+    }
+    if (badReason || badDate) {
+      return;
+    }
+
     const alertInfo = {
       appellantName: (appeal.appellantFullName),
       nodDateStr: formatDateStr(nodDate, 'YYYY-MM-DD', 'MM/DD/YYYY'),
@@ -89,18 +99,31 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
       appealId={appealId}
       appellantName={appeal.appellantFullName}
       showTimelinessError={showTimelinessError}
+      reasonErrorMessage={reasonErrorMessage}
       issues={issues}
+      setBadDate={setBadDate}
+      setBadReason={setBadReason}
+      setReasonErrorMessage={setReasonErrorMessage}
     />
   );
 };
 
-export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTimelinessError, issues }) => {
+export const EditNodDateModal = ({
+  onCancel,
+  onSubmit,
+  nodDate,
+  reason,
+  reasonErrorMessage,
+  showTimelinessError,
+  issues,
+  setBadDate,
+  setBadReason,
+  setReasonErrorMessage
+}) => {
   const [receiptDate, setReceiptDate] = useState(nodDate);
   const [changeReason, setChangeReason] = useState(reason);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [dateErrorMessage, setDateErrorMessage] = useState(null);
   const [showWarning, setWarningMessage] = useState(false);
-  const [badDate, setBadDate] = useState(null);
-  const [badReason, setBadReason] = useState(true);
 
   const buttons = [];
 
@@ -115,7 +138,6 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
   buttons.push({
     classNames: ['usa-button', 'usa-button-primary'],
     name: showTimelinessError ? 'Close' : 'Submit',
-    disabled: (badDate || badReason),
     onClick: showTimelinessError ? onCancel : () => onSubmit(receiptDate, changeReason)
   });
 
@@ -144,22 +166,22 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
   const handleDateChange = (value) => {
     if (isFutureDate(value)) {
       setWarningMessage(false);
-      setErrorMessage(COPY.EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE);
+      setDateErrorMessage(COPY.EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE);
       setReceiptDate(value);
       setBadDate(true);
     } else if (isPreAmaDate(value)) {
       setWarningMessage(false);
-      setErrorMessage(COPY.EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE);
+      setDateErrorMessage(COPY.EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE);
       setReceiptDate(value);
       setBadDate(true);
     } else if (isLaterThanNodDate(value)) {
       setWarningMessage(true);
-      setErrorMessage(null);
+      setDateErrorMessage(null);
       setReceiptDate(value);
       setBadDate(false);
     } else {
       setWarningMessage(false);
-      setErrorMessage(null);
+      setDateErrorMessage(null);
       setReceiptDate(value);
       setBadDate(null);
     }
@@ -168,9 +190,11 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
   const handleChangeReason = (value) => {
     if (!value === null) {
       setBadReason(true);
+      setReasonErrorMessage('Required');
     } else {
       setChangeReason(value);
       setBadReason(null);
+      setReasonErrorMessage(null);
     }
   };
 
@@ -231,7 +255,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
       <DateSelector
         style={marginTop}
         name="nodDate"
-        errorMessage={errorMessage}
+        errorMessage={dateErrorMessage}
         label={COPY.EDIT_NOD_DATE_LABEL}
         strongLabel
         type="date"
@@ -241,6 +265,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
       <SearchableDropdown
         name="reason"
         label="Reason for edit"
+        errorMessage={reasonErrorMessage}
         searchable={false}
         placeholder="Select the reason..."
         value={changeReason}
@@ -281,5 +306,9 @@ EditNodDateModal.propTypes = {
   reason: PropTypes.object,
   appealId: PropTypes.string.isRequired,
   showTimelinessError: PropTypes.bool.isRequired,
-  issues: PropTypes.object
+  issues: PropTypes.object,
+  reasonErrorMessage: PropTypes.string,
+  setBadDate: PropTypes.func,
+  setBadReason: PropTypes.func,
+  setReasonErrorMessage: PropTypes.func
 };
