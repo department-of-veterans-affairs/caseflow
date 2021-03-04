@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ClaimReviewController < ApplicationController
+  include ValidationConcern
+
   before_action :verify_access, :react_routed, :set_application
 
   EDIT_ERRORS = {
@@ -24,6 +26,7 @@ class ClaimReviewController < ApplicationController
     end
   end
 
+  validates :edit_ep, using: ClaimReviewSchemas.edit_ep
   def edit_ep
     epe = claim_review.end_product_establishments.find_by(code: params[:previous_code])
     render json: { error_code: "EP not found" }, status: :not_found if epe.nil?
