@@ -76,11 +76,12 @@ module Seeds
       create_poa(claimant_participant_id: claimant_participant_id)
       create(
         :appeal,
+        :with_request_issues,
         veteran_file_number: veteran.file_number,
         docket_type: Constants.AMA_DOCKETS.hearing,
         stream_type: Constants.AMA_STREAM_TYPES.original,
         veteran_is_not_claimant: Faker::Boolean.boolean,
-        request_issues: create_request_issues(issue_count),
+        issue_count: issue_count,
         claimants: [create(:claimant, participant_id: claimant_participant_id)]
       )
     end
@@ -210,15 +211,6 @@ module Seeds
       )
     end
     # rubocop:enable Metrics/MethodLength
-
-    def create_request_issues(issue_count)
-      description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
-      notes = "Pain disorder with 100\% evaluation per examination"
-
-      create_list(
-        :request_issue, issue_count, :rating, contested_issue_description: description, notes: notes
-      )
-    end
 
     # creates fake veteran given a file number
     def create_veteran(veteran_file_number: nil)
