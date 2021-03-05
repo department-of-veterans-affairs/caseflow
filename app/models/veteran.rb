@@ -459,7 +459,7 @@ class Veteran < CaseflowRecord
       Raven.capture_exception(error)
       # if veteran could not be found. Raise exception and don't return, just ignore.
     rescue Errno::ECONNRESET, Savon::HTTPError
-      # no nothing
+      # do nothing
     end
   end
 
