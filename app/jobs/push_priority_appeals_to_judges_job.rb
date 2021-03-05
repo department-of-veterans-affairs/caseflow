@@ -45,7 +45,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
       add_stuck_appeals_to_report(report, appeals_not_distributed)
     end
 
-    report << "#{@updated_veterans.count} veterans have been refreshed"
+    report << "Attributes for #{@updated_veterans.count} veterans have been refreshed"
 
     report
   end
