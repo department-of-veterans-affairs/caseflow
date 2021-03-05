@@ -938,16 +938,67 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
   end
 
   context ".warm_veteran_attribs_for_priority_distributions" do
+    # A non-genpop case..
+    let(:ready_priority_bfkey) { "12345" }
+    let(:ready_priority_uuid) { "bece6907-3b6f-4c49-a580-6d5f2e1ca65c" }
+    let!(:judge_with_ready_priority_cases) do
+      create(:user).tap do |judge|
+        create(:staff, :judge_role, user: judge)
+        veteran = create(:veteran)
+        appeal = create(
+          :appeal,
+          :ready_for_distribution,
+          :advanced_on_docket_due_to_age,
+          uuid: ready_priority_uuid,
+          docket_type: Constants.AMA_DOCKETS.hearing,
+          veteran: veteran
+        )
+        most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
+        hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
+        hearing.update!(judge: judge)
+      end
+    end
+
+    let(:eligible_judges) do
+      [
+        judge_with_ready_priority_cases
+      ]
+    end
+
+    # A few genpop cases..
+    let!(:ready_priority_direct_cases) do
+      (1..3).map do |i|
+        veteran = create(:veteran)
+        appeal = create(:appeal,
+                        :with_post_intake_tasks,
+                        :advanced_on_docket_due_to_age,
+                        docket_type: Constants.AMA_DOCKETS.direct_review,
+                        receipt_date: 1.month.ago,
+                        veteran: veteran)
+        appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.month.ago)
+        appeal
+      end
+    end
+
     let!(:job) { PushPriorityAppealsToJudgesJob.new }
-    let(:distributed_cases_2) { DistributedCase.where(distribution: job) }
+
     let(:non_genpop_distro_cases) do
-      DistributedCase.where(distribution_id: distributed_cases_2.pluck(:id))
+      DistributedCase.where(distribution: job.distribute_non_genpop_priority_appeals)
     end
     let(:genpop_distro_cases) do
-      DistributedCase.where(distribution_id: distributed_cases_2.pluck(:id))
+      DistributedCase.where(distribution_id: job.distribute_genpop_priority_appeals)
     end
 
     before do
+      allow_any_instance_of(DirectReviewDocket)
+        .to receive(:nonpriority_receipts_per_year)
+        .and_return(100)
+
+      allow(Docket)
+        .to receive(:nonpriority_decisions_per_year)
+        .and_return(1000)
+      allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:eligible_judges).and_return(eligible_judges)
+
       job.instance_variable_set(:@tied_distributions, non_genpop_distro_cases)
       job.instance_variable_set(:@genpop_distributions, genpop_distro_cases)
     end
@@ -955,7 +1006,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     subject { job.warm_veteran_attribs_for_priority_distributions }
 
     it "calls warm_veteran_cache_for_appeals with list of case ids" do
-      expect(subject).to eq([])
+      expect(subject.count).to eq(4)
     end
   end
 end
