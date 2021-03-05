@@ -97,7 +97,7 @@ module Seeds
 
       maybe_create_virtual_hearing(hearing)
 
-      create_hearing_subtree(appeal: appeal, hearing: hearing)
+      create_hearing_subtree(appeal, hearing)
     end
 
     def create_virtual_hearing(hearing)
