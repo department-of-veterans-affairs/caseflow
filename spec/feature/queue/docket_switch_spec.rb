@@ -367,6 +367,12 @@ RSpec.feature "Docket Switch", :all_dbs do
 
       expect(docket_switch.disposition).to eq "granted"
       expect(docket_switch.docket_type).to eq "direct_review"
+
+      new_completed_task = DocketSwitchGrantedTask.find_by(
+        appeal: docket_switch.new_docket_stream,
+        assigned_to_type: "User"
+      )
+      expect(new_completed_task).to_not be_nil
     end
 
     it "allows attorney to complete a partial docket switch" do
@@ -576,6 +582,12 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(docket_switch).to_not be_nil
       expect(docket_switch.new_docket_stream.docket_type).to eq(docket_switch.docket_type)
       expect(page).to have_current_path("/queue/appeals/#{docket_switch.new_docket_stream.uuid}")
+
+      new_completed_task = DocketSwitchGrantedTask.find_by(
+        appeal: docket_switch.new_docket_stream,
+        assigned_to_type: "User"
+      )
+      expect(new_completed_task).to_not be_nil
     end
   end
 end
