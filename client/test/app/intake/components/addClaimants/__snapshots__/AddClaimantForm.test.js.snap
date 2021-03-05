@@ -10,21 +10,21 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
   </p>
   <form>
     <div
-      class="cf-form-dropdown dropdown-relationship"
+      class=""
     >
-      <label
-        class="question-label"
-        for="relationship"
-      >
-        <strong>
-          <span>
-            Relationship to the Veteran
-          </span>
-        </strong>
-      </label>
       <div
-        class=""
+        class="cf-form-dropdown dropdown-relationship"
       >
+        <label
+          class="question-label"
+          for="relationship"
+        >
+          <strong>
+            <span>
+              Relationship to the Veteran
+            </span>
+          </strong>
+        </label>
         <div
           class="cf-select"
         >
@@ -336,21 +336,21 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
         />
       </div>
       <div
-        class="cf-form-dropdown dropdown-state"
+        class=""
       >
-        <label
-          class="question-label"
-          for="state"
-        >
-          <strong>
-            <span>
-              State
-            </span>
-          </strong>
-        </label>
         <div
-          class=""
+          class="cf-form-dropdown dropdown-state"
         >
+          <label
+            class="question-label"
+            for="state"
+          >
+            <strong>
+              <span>
+                State
+              </span>
+            </strong>
+          </label>
           <div
             class="cf-select"
           >
@@ -589,21 +589,21 @@ exports[`AddClaimantForm renders default state correctly 1`] = `
   </p>
   <form>
     <div
-      class="cf-form-dropdown dropdown-relationship"
+      class=""
     >
-      <label
-        class="question-label"
-        for="relationship"
-      >
-        <strong>
-          <span>
-            Relationship to the Veteran
-          </span>
-        </strong>
-      </label>
       <div
-        class=""
+        class="cf-form-dropdown dropdown-relationship"
       >
+        <label
+          class="question-label"
+          for="relationship"
+        >
+          <strong>
+            <span>
+              Relationship to the Veteran
+            </span>
+          </strong>
+        </label>
         <div
           class="cf-select"
         >

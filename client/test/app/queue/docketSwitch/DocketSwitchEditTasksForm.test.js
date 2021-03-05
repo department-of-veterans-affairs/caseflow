@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, within, act } from '@testing-library/react';
+import { render, screen, within, act, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import selectEvent from 'react-select-event';
 import { DocketSwitchEditTasksForm } from 'app/queue/docketSwitch/grant/DocketSwitchEditTasksForm';
@@ -292,6 +292,38 @@ describe('DocketSwitchEditTasksForm', () => {
           instructions: 'foo bar',
         })
       );
+    });
+  });
+
+  describe('default values', () => {
+    let defaultValues;
+
+    beforeEach(() => {
+      defaultValues = {
+        taskIds: ['1', '3'],
+        newTasks: [
+          { type: 'AojColocatedTask', instructions: 'Lorem ipsum and whatnot' },
+        ],
+      };
+    });
+
+    it('populates with default values', async () => {
+      const { container } = setup({ defaultValues });
+
+      expect(container).toMatchSnapshot();
+
+      const submit = screen.getByRole('button', { name: /Continue/i });
+
+      expect(submit).toBeEnabled();
+      await userEvent.click(submit);
+      await waitFor(() => {
+        expect(onSubmit).toHaveBeenLastCalledWith(
+          expect.objectContaining({
+            ...defaultValues
+          }),
+          expect.anything()
+        );
+      });
     });
   });
 });

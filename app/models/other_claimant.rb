@@ -29,19 +29,35 @@ class OtherClaimant < Claimant
     unrecognized_appellant&.relationship || "Other"
   end
 
-  def save_unrecognized_details!(params)
+  def save_unrecognized_details!(params, poa_params, poa_participant_id)
     params.permit!
+    poa_form = params.delete(:poa_form)
+    appellant = create_appellant!(params)
+    if poa_form
+      if poa_params.present?
+        poa_params.permit!
+        appellant.update!(unrecognized_power_of_attorney: create_party_detail!(poa_params))
+      elsif poa_participant_id.present?
+        appellant.update!(poa_participant_id: poa_participant_id)
+      end
+    end
+    appellant
+  end
+
+  private
+
+  def create_appellant!(params)
     relationship = params.delete(:relationship)
-    first_name = params.delete(:first_name)
-    params.delete(:poa_form) # Use or save this when intake supports user-supplied POAs
-    params[:name] = first_name if params[:party_type] == "individual"
     UnrecognizedAppellant.create!(
       relationship: relationship,
       claimant_id: id,
-      unrecognized_party_detail: UnrecognizedPartyDetail.create!(params),
-      # Update the next two lines when intake supports user-supplied POAs
-      poa_participant_id: nil,
-      unrecognized_power_of_attorney: nil
+      unrecognized_party_detail: create_party_detail!(params)
     )
+  end
+
+  def create_party_detail!(params)
+    first_name = params.delete(:first_name)
+    params[:name] = first_name if params[:party_type] == "individual"
+    UnrecognizedPartyDetail.create!(params)
   end
 end
