@@ -38,9 +38,6 @@ export const EditNodDateModalContainer = ({ onCancel,
   reason: origReason }) => {
   const [showTimelinessError, setTimelinessError] = useState(false);
   const [issues, setIssues] = useState(null);
-  const [reasonErrorMessage, setReasonErrorMessage] = useState(null);
-  const [badDate, setBadDate] = useState(null);
-  const [badReason, setBadReason] = useState(true);
 
   const dispatch = useDispatch();
   const appeal = useSelector((state) =>
@@ -102,11 +99,7 @@ export const EditNodDateModalContainer = ({ onCancel,
       appealId={appealId}
       appellantName={appeal.appellantFullName}
       showTimelinessError={showTimelinessError}
-      reasonErrorMessage={reasonErrorMessage}
       issues={issues}
-      setBadDate={setBadDate}
-      setBadReason={setBadReason}
-      setReasonErrorMessage={setReasonErrorMessage}
     />
   );
 };
@@ -139,14 +132,14 @@ export const EditNodDateModal = ({
   const schema = yup.object().shape({
     nodDate: yup.
       date().
-      min('2019-02-19', COPY.EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE).
+      min('2018-01-01', COPY.EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE).
       max(new Date(), COPY.EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE).
       isLater().
       typeError('Invalid date.').
       required(),
     reason: yup.
       string().
-      typeError('Required').
+      typeError('Required.').
       required().
       oneOf(changeReasons.map((changeReason) => changeReason.value))
   });
@@ -247,6 +240,7 @@ export const EditNodDateModal = ({
             <SearchableDropdown
               {...rest}
               label="Reason for edit"
+              errorMessage={errors.reason?.message}
               placeholder="Select the reason..."
               options={changeReasons}
               debounce={250}
@@ -288,9 +282,5 @@ EditNodDateModal.propTypes = {
   reason: PropTypes.object,
   appealId: PropTypes.string.isRequired,
   showTimelinessError: PropTypes.bool.isRequired,
-  issues: PropTypes.object,
-  reasonErrorMessage: PropTypes.string,
-  setBadDate: PropTypes.func,
-  setBadReason: PropTypes.func,
-  setReasonErrorMessage: PropTypes.func
+  issues: PropTypes.object
 };
