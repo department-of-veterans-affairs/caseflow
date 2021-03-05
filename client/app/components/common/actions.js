@@ -134,5 +134,11 @@ export const fetchScheduledHearings = (hearingDay) => (dispatch) => {
         ApiUtil.convertToCamelCase(body.filled_hearing_slots)
       ),
     });
-  });
+  }).
+    catch(() => {
+      dispatch({
+        type: ACTIONS.SET_SCHEDULED_HEARINGS,
+        payload: [],
+      });
+    });
 };
