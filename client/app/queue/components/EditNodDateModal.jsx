@@ -116,8 +116,8 @@ export const EditNodDateModal = ({
 
   yup.addMethod(yup.date, 'isLater', function () {
     return this.test((value) => {
-      const formattedValue = formatDateStr(value);
-      const formattedNodDate = formatDateStr(nodDate);
+      const formattedValue = formatDateStr(value, 'YYYY-MM-DD', 'YYYY-MM-DD');
+      const formattedNodDate = formatDateStr(nodDate, 'YYYY-MM-DD', 'YYYY-MM-DD');
 
       if (formattedValue > formattedNodDate) {
         setWarning(true);
