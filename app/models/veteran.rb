@@ -369,10 +369,6 @@ class Veteran < CaseflowRecord
       end
     end
 
-    def update_veteran_attribs_service
-      @update_veteran_attribs_service ||= UpdateVeteranAttribsService.new
-    end
-
     private
 
     def find_or_create_by_ssn(ssn, sync_name: false)
