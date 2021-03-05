@@ -1,5 +1,5 @@
 // External Dependencies
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 // Local Dependencies
@@ -15,8 +15,8 @@ export const TimeSlot = ({
   roTimezone,
   onChange,
   hearing,
-  fetchScheduledHearings,
   fetchingHearings,
+  ro
 }) => {
   // Create local state to hold the selected time before saving
   const [selected, setSelected] = useState('');
@@ -25,7 +25,7 @@ export const TimeSlot = ({
   const [custom, setCustom] = useState(false);
 
   // Filter the available time slots to fill in the hearings
-  const slots = setTimeSlots(scheduledHearingsList);
+  const slots = setTimeSlots(scheduledHearingsList, ro);
 
   // Setup the click handler for each time slot
   const handleClick = (time) => {
@@ -39,14 +39,13 @@ export const TimeSlot = ({
   // Create a hearing Time ID to associate the label with the appropriate form element
   const hearingTimeId = `hearing-time-${hearing?.scheduledTimeString}`;
 
-  useEffect(() => {
-    fetchScheduledHearings();
-  }, []);
+  // Determine the column length to evenly distribute the time slots
+  const columnLength = Math.ceil(slots.length / 2);
 
   return (
     <React.Fragment>
       <label className="time-slot-label" htmlFor={hearingTimeId}>
-               Hearing Time
+         Hearing Time
       </label>
       {fetchingHearings ? (
         <SmallLoader spinnerColor={LOGO_COLORS.QUEUE.ACCENT} message="Loading Hearing Times" />
@@ -72,12 +71,9 @@ export const TimeSlot = ({
               value={hearing?.scheduledTimeString}
             />
           ) : (
-            <React.Fragment>
-              <div
-                id={hearingTimeId}
-                className="usa-width-one-third time-slot-container"
-              >
-                {slots.map((slot) => (
+            <div className="time-slot-button-container">
+              <div className="time-slot-container" >
+                {slots.slice(0, columnLength).map((slot) => (
                   <TimeSlotButton
                     {...slot}
                     key={slot.key}
@@ -87,7 +83,18 @@ export const TimeSlot = ({
                   />
                 ))}
               </div>
-            </React.Fragment>
+              <div className="time-slot-container">
+                {slots.slice(columnLength, slots.length).map((slot) => (
+                  <TimeSlotButton
+                    {...slot}
+                    key={slot.key}
+                    roTimezone={roTimezone}
+                    selected={selected === slot.hearingTime}
+                    onClick={() => handleClick(slot.hearingTime)}
+                  />
+                ))}
+              </div>
+            </div>
           )}
         </React.Fragment>
       )}
@@ -96,10 +103,10 @@ export const TimeSlot = ({
 };
 
 TimeSlot.propTypes = {
-  fetchScheduledHearings: PropTypes.func,
   fetchingHearings: PropTypes.bool,
   hearing: PropTypes.object,
   onChange: PropTypes.func,
   scheduledHearingsList: PropTypes.array,
   roTimezone: PropTypes.string,
+  ro: PropTypes.string,
 };
