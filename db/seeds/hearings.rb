@@ -71,14 +71,17 @@ module Seeds
     end
 
     def create_ama_appeal(issue_count: 1)
+      veteran = create_veteran
+      claimant_participant_id = "RANDOM_CLAIMANT_PID#{veteran.file_number}"
+      create_poa(claimant_participant_id: claimant_participant_id)
       create(
         :appeal,
-        veteran_file_number: create_veteran.file_number,
+        veteran_file_number: veteran.file_number,
         docket_type: Constants.AMA_DOCKETS.hearing,
         stream_type: Constants.AMA_STREAM_TYPES.original,
         veteran_is_not_claimant: Faker::Boolean.boolean,
         request_issues: create_request_issues(issue_count),
-        claimants: [create(:claimant, participant_id: "FAKE_CLAIMANT_WITH_POA_PID")]
+        claimants: [create(:claimant, participant_id: claimant_participant_id)]
       )
     end
 
@@ -97,24 +100,25 @@ module Seeds
       create_hearing_subtree(appeal: appeal, hearing: hearing)
     end
 
-    def create_vitual_hearing(hearing)
+    def create_virtual_hearing(hearing)
       create(:virtual_hearing, :initialized, :all_emails_sent, hearing: hearing, status: :active)
     end
 
     def maybe_create_virtual_hearing(hearing)
       if hearing.hearing_day.request_type == HearingDay::REQUEST_TYPES[:virtual]
-        create_vitual_hearing(hearing)
+        create_virtual_hearing(hearing)
       elsif hearing.hearing_day.request_type == HearingDay::REQUEST_TYPES[:video]
-        [0, 1].sample.times { create_vitual_hearing(hearing) }
+        [0, 1].sample.times { create_virtual_hearing(hearing) }
       end
     end
 
-    def create_poa(file_number)
+    def create_poa(veteran_file_number: nil, claimant_participant_id: nil)
       fake_poa = Fakes::BGSServicePOA.random_poa_org[:power_of_attorney]
 
       create(
         :bgs_power_of_attorney,
-        file_number: file_number,
+        file_number: veteran_file_number,
+        claimant_participant_id: claimant_participant_id,
         representative_name: fake_poa[:nm],
         poa_participant_id: fake_poa[:ptcpnt_id],
         representative_type: BGS_REP_TYPE_TO_REP_TYPE[fake_poa[:org_type_nm]]
@@ -126,16 +130,15 @@ module Seeds
       @bfcorkey += 1
       vacols_case = create(
         :case,
-        bfkey: @bfkey.t_s,
+        bfkey: @bfkey.to_s,
         bfcorkey: @bfcorkey.to_s,
         bfac: %w[1 3].sample, # original or Post remand,
-        bfregoff: hearing_day.regional_office,
         correspondent: create(:correspondent, stafkey: @bfcorkey.to_s)
       )
 
       file_number = LegacyAppeal.veteran_file_number_from_bfcorlid(vacols_case.bfcorlid)
       create_veteran(veteran_file_number: file_number)
-      create_poa(file_number)
+      create_poa(veteran_file_number: file_number)
 
       create(
         :legacy_appeal,
@@ -147,10 +150,11 @@ module Seeds
 
     def create_legacy_hearing(day:, scheduled_time_string_est:)
       appeal = create_legacy_appeal(day)
-      scheduled_date = day.scheduled_for
-      scheduled_for = Time.zone
-        .parse(scheduled_time_string_est)
-        .change(day: scheduled_date.day, month: scheduled_date.month, year: scheduled_date.year)
+
+      scheduled_for = HearingTimeService.legacy_formatted_scheduled_for(
+        scheduled_for: day.scheduled_for.in_time_zone,
+        scheduled_time_string: scheduled_time_string_est
+      )
 
       case_hearing = create(
         :case_hearing,
@@ -160,11 +164,10 @@ module Seeds
         vdkey: day.id,
         board_member: day.judge.vacols_attorney_id.to_i
       )
-      hearing = create(:legacy_hearing, case_hearing: case_hearing)
 
+      hearing = create(:legacy_hearing, case_hearing: case_hearing, hearing_day: day, appeal: appeal)
       maybe_create_virtual_hearing(hearing)
-
-      create_hearing_subtree(appeal: appeal, hearing: hearing)
+      create_hearing_subtree(appeal, hearing)
     end
 
     def created_by_user
@@ -172,7 +175,7 @@ module Seeds
     end
 
     # rubocop:disable Metrics/MethodLength
-    def create_hearing_subtree(appeal:, hearing:)
+    def create_hearing_subtree(appeal, hearing)
       root_task = create(:root_task, appeal: appeal)
       distribution_task = create(
         :distribution_task,

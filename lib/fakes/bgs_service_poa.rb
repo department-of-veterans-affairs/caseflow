@@ -59,7 +59,7 @@ class Fakes::BGSServicePOA
         power_of_attorney: {
           legacy_poa_cd: "073",
           nm: Faker::Name.name,
-          org_type_nm: POA_NATIONAL_ORGANIZATION,
+          org_type_nm: ["POA Attorney", "POA Agent"].sample,
           ptcpnt_id: "073"
         }
       }

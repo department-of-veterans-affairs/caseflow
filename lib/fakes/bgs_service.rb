@@ -224,7 +224,7 @@ class Fakes::BGSService
         ssn_nbr: "666003333",
         email_address: "clarence.darrow@caseflow.gov"
       }
-    elsif participant_id == "FAKE_CLAIMANT_WITH_POA_PID"
+    elsif participant_id.starts_with?("RANDOM_CLAIMANT_PID")
       first_name = Faker::Name.first_name
       last_name = Faker::Name.last_name
       {
@@ -308,8 +308,6 @@ class Fakes::BGSService
                   org_type_nm: Fakes::BGSServicePOA::POA_NATIONAL_ORGANIZATION,
                   ptcpnt_id: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_PARTICIPANT_ID
                 }
-              elsif participant_id.starts_with?("FAKE_CLAIMANT_WITH_POA_PID")
-                Fakes::BGSServicePOA.random_poa_org[:power_of_attorney]
               else
                 {
                   legacy_poa_cd: "100",
