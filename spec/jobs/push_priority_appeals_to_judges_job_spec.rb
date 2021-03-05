@@ -939,7 +939,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
   context ".warm_veteran_attribs_for_priority_distributions" do
     # A non-genpop case..
-    let(:ready_priority_bfkey) { "12345" }
     let(:ready_priority_uuid) { "bece6907-3b6f-4c49-a580-6d5f2e1ca65c" }
     let!(:judge_with_ready_priority_cases) do
       create(:user).tap do |judge|
