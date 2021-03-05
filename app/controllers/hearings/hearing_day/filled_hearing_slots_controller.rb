@@ -30,6 +30,7 @@ class Hearings::HearingDay::FilledHearingSlotsController < ApplicationController
 
     open_hearings.map do |hearing|
       {
+        external_id: hearing.external_id,
         hearing_time: hearing.scheduled_time_string,
         issue_count: hearing.current_issue_count,
         docket_number: hearing.docket_number,
