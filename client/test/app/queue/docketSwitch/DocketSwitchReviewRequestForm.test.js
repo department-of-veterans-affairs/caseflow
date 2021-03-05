@@ -8,10 +8,8 @@ import {
   DOCKET_SWITCH_GRANTED_REQUEST_INSTRUCTIONS,
   DOCKET_SWITCH_REVIEW_REQUEST_PRIOR_TO_RAMP_DATE_ERROR,
   DOCKET_SWITCH_REVIEW_REQUEST_FUTURE_DATE_ERROR
-
 } from 'app/../COPY';
 import { sprintf } from 'sprintf-js';
-import { formatISO } from 'date-fns';
 
 describe('DocketSwitchReviewRequestForm', () => {
   const onSubmit = jest.fn();
@@ -83,6 +81,11 @@ describe('DocketSwitchReviewRequestForm', () => {
       await fireEvent.change(screen.getByLabelText(/receipt date/i), {
         target: { value: priorToRampReceiptDate },
       });
+
+      //   Set disposition
+      await userEvent.click(
+        screen.getByRole('radio', { name: /grant all issues/i })
+      );
 
       expect(
         screen.getByText(DOCKET_SWITCH_REVIEW_REQUEST_PRIOR_TO_RAMP_DATE_ERROR)
