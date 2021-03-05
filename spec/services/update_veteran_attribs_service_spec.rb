@@ -3,8 +3,8 @@
 describe UpdateVeteranAttribsService do
   let(:veteranBob) { create(:veteran) }
   let(:veteranSam) { create(:veteran) }
-  let(:appeal) { create(:appeal, veteran_file_number: veteranBob.file_number) }
-  let(:appeal2) { create(:appeal, veteran_file_number: veteranSam.file_number) }
+  let(:appeal) { create(:appeal, veteran: veteranBob) }
+  let(:appeal2) { create(:appeal, veteran: veteranSam) }
   let(:appeal_ids) { [appeal.uuid, appeal2.uuid] }
 
   context "with new veteran data in bgs" do
