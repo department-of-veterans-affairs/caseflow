@@ -82,9 +82,12 @@ describe('DocketSwitchReviewRequestForm', () => {
         target: { value: priorToRampReceiptDate },
       });
 
-      expect(
-        screen.getByText(DOCKET_SWITCH_REVIEW_REQUEST_PRIOR_TO_RAMP_DATE_ERROR)
-      ).toBeInTheDocument();
+      await waitFor(() => {
+        expect(
+          screen.getByText(DOCKET_SWITCH_REVIEW_REQUEST_PRIOR_TO_RAMP_DATE_ERROR)
+        ).toBeInTheDocument();
+      });
+
     });
 
     it('throws error for receipt date in future', async () => {
@@ -94,9 +97,11 @@ describe('DocketSwitchReviewRequestForm', () => {
         target: { value: futureDate },
       });
 
-      expect(
-        screen.getByText(DOCKET_SWITCH_REVIEW_REQUEST_FUTURE_DATE_ERROR)
-      ).toBeInTheDocument();
+      await waitFor(() => {
+        expect(
+          screen.getByText(DOCKET_SWITCH_REVIEW_REQUEST_FUTURE_DATE_ERROR)
+        ).toBeInTheDocument();
+      });
     });
   });
 
