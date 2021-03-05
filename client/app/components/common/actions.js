@@ -128,7 +128,6 @@ export const fetchScheduledHearings = (hearingDay) => (dispatch) => {
   ApiUtil.get(
     `/hearings/hearing_day/${hearingDay?.hearingId}/filled_hearing_slots`
   ).then(({ body }) => {
-    // This will be wrapped in a future PR to handle the backend request
     dispatch({
       type: ACTIONS.SET_SCHEDULED_HEARINGS,
       payload: Object.values(
