@@ -82,11 +82,6 @@ describe('DocketSwitchReviewRequestForm', () => {
         target: { value: priorToRampReceiptDate },
       });
 
-      //   Set disposition
-      await userEvent.click(
-        screen.getByRole('radio', { name: /grant all issues/i })
-      );
-
       expect(
         screen.getByText(DOCKET_SWITCH_REVIEW_REQUEST_PRIOR_TO_RAMP_DATE_ERROR)
       ).toBeInTheDocument();
