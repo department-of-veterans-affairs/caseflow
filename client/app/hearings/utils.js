@@ -515,7 +515,7 @@ export const setTimeSlots = (hearings, hearingType) => {
     // - Hide a 11:30 slot (it's full, so we return null)
     // - Show a 10:30 slot (return the timeslot)
     const slotFull = scheduledHearingTimes.some((scheduledHearingTime) =>
-      slotTime.isAfter(scheduledHearingTime) &&
+      slotTime.isSameOrAfter(scheduledHearingTime) &&
         slotTime.diff(scheduledHearingTime, 'minutes') < 60
     );
 
