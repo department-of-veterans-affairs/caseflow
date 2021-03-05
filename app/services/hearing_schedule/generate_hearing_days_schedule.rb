@@ -29,18 +29,20 @@ class HearingSchedule::GenerateHearingDaysSchedule
     @availability_coocurrence = {}
     @co_non_availability_days = []
     @date_allocated = {}
-    @number_to_allocate = 1
     @ro_non_available_days = {}
     @ros = {}
-    @with_rooms = true
 
     extract_non_available_days
 
     @holidays = Holidays.between(schedule_period.start_date, schedule_period.end_date, :federal_reserve)
     @available_days = filter_non_availability_days(schedule_period.start_date, schedule_period.end_date)
 
-    # Calculate the maximum hearings to allocate per day
-    @max_per_date = schedule_period.allocations.sum(:allocated_days_without_room).to_i / @available_days.count
+    # Store the total rooms, max per date and RO index to evenly distribute hearing days
+    @total_requested_hearing_days = schedule_period.allocations.sum(:allocated_days_without_room).to_i
+    @max_per_date = @total_requested_hearing_days / @available_days.count
+    @ro_index = 0
+    @with_rooms = true
+    @number_to_allocate = 1
 
     assign_and_filter_ro_days(schedule_period)
   end
@@ -181,11 +183,127 @@ class HearingSchedule::GenerateHearingDaysSchedule
       h
     end
 
-    ros = @ros.each_key do |ro_key|
-      allocate_all_ro_monthly_hearing_days(ro_key)
-    end
+    ros = if @with_rooms == false
+            allocate_ro_hearing_days
+          else
+            @ros.each_key do |ro_key|
+              allocate_all_ro_monthly_hearing_days(ro_key)
+            end
+          end
 
     ros
+  end
+
+  def allocate_ro_hearing_days
+    # Set the start index for the loop
+    start_index = 0
+
+    # Loop through each of the requested days and determine to which date we should assign them
+    while start_index <= @total_requested_hearing_days
+      # Calculate the index to get the next date
+      index = get_index_for_hearing_day(@available_days, distribution_offset, start_index)
+
+      # Filter the next RO for this date
+      next_date = next_ro_key(index)
+
+      @date_allocated[next_date[:date]].push(room_num: nil, ro_key: next_date[:ro_key])
+
+      # Decrement the available days for this RO
+      @ros[next_date[:ro_key]][:allocated_days_without_room] -= 1.0
+
+      # Add the hearing day for this RO
+      @ros[next_date[:ro_key]][:allocated_dates].values.reduce({}, :merge)[next_date[:date]].push(room_num: nil)
+
+      # Check whether we have allocated the number to allocate for each day
+      if @date_allocated.values.count { |day| day.count == @number_to_allocate } == available_days.count
+        # Update the number to allocate
+        @number_to_allocate += 1
+      end
+
+      # Move to the next index
+      start_index += 1
+    end
+
+    # Return the updated list of ROs
+    @ros
+  end
+
+  def next_ro_key(start_index)
+    # Get the current date to assign a room
+    current_date = @available_days[start_index]
+
+    # Filter the list of ROs by the current date and allocated days without room
+    ro_list = @ros.reduce([]) do |list, (ro_key, ro_info)|
+      if ro_info[:available_days].include?(current_date) && ro_info[:allocated_days_without_room].to_i > 0
+        list.push(ro_key)
+      end
+      list
+    end
+
+    # Find the next index to schedule the RO
+    if ro_list.empty?
+      next_ro_key(get_index_for_hearing_day(@available_days, distribution_offset, start_index + 1))
+    else
+      # Locate the next available RO for this date beginning at the first RO
+      ro_index = get_next_ro_index(@date_allocated[current_date], ro_list, 0)
+
+      # Return the ro key at the index that matches the next available day
+      { ro_key: ro_list[ro_index], date: current_date }
+    end
+  end
+
+  def get_next_ro_index(date, ro_list, current_index)
+    index = current_index % ro_list.length
+
+    # Store the count of scheduled hearings per day to compare
+    count_per_day = date.count { |value| value.include?(room_num: nil, ro_key: ro_list[index]) }
+
+    # Locat the next RO index when theb date contains scheduled hearings
+    # and the count for this day is the same as number to allocate
+    if !date.empty? && count_per_day == @number_to_allocate
+      get_next_ro_index(date, ro_list, current_index + 1)
+    else
+      index
+    end
+  end
+
+  # Method to determine how far to space scheduling hearing days
+  def distribution_offset
+    if @total_requested_hearing_days > @available_days.length
+      # Take the total over requested days when larger
+      @total_requested_hearing_days / @available_days.length
+    elsif @total_requested_hearing_days < @available_days.length
+      # Take the requested over total days when larger
+      @available_days.length / @total_requested_hearing_days
+    else
+      # Use 1 less than the total available as the offset when equal to prevent bunching
+      @available_days.length - 1
+    end
+  end
+
+  def get_index_for_hearing_day(available_days, distribution_offset, index)
+    # Calculate the offset based on the distribution offset and the current index
+    offset = distribution_offset + index
+
+    # Calculate the new index with the offset accounting for when the offset exceeds the available days
+    get_index_offset(available_days, offset)
+  end
+
+  # Method to get the index offset for an array ensuring we go around the array instead of getting out of bounds
+  def get_index_offset(available_days, offset)
+    offset_index = offset % available_days.length
+
+    # Instantiate this date if it does not exist
+    @date_allocated[available_days[offset_index]] = @date_allocated[available_days[offset_index]] || []
+
+    # Check if there is a hearing day already allocated
+    if @date_allocated[available_days[offset_index]].count == @number_to_allocate
+      # Recursively get the index offset adding 1 until we find a date with fewer hearing days than number to allocate
+      get_index_offset(available_days, offset_index + 1)
+    else
+      # Once we have found an index that has fewer days than needed, return that index
+      offset_index
+    end
   end
 
   # Allocate RO for each month within the schedule period
@@ -221,93 +339,88 @@ class HearingSchedule::GenerateHearingDaysSchedule
     # {[4, 2018]=>20, [9, 2018]=>20..}
     monthly_allocations = allocations_by_month(ro_key)
 
-    # Assign rooms differently if we are not constraining by room
-    if @with_rooms == false
-      assign_hearing_days_without_rooms_to_individual_ro(ro_key, monthly_allocations)
-    else
-      # iterate over each day starting from the first of the month till the 31st (max day a month can have)
-      # Allocate max number of days for the 1st of each month based on remaining monthly allocations for that month
-      # and available days
-      # Allocate max number of days for the 2nd of each month...
-      # Allocate max number of days for the 3rd of each month...
-      # ...until we go through all days in a month (31) or exhaust total allocations
-      # results are stored in @ros[ro_key][:allocated_dates]
-      while i < 31 && monthly_allocations.values.inject(:+) != 0
-        i += 1
-        allocate_hearing_days_to_individual_ro(
-          ro_key,
-          monthly_allocations,
-          date_index
-        )
-        date_index += 1
-      end
+    # iterate over each day starting from the first of the month till the 31st (max day a month can have)
+    # Allocate max number of days for the 1st of each month based on remaining monthly allocations for that month
+    # and available days
+    # Allocate max number of days for the 2nd of each month...
+    # Allocate max number of days for the 3rd of each month...
+    # ...until we go through all days in a month (31) or exhaust total allocations
+    # results are stored in @ros[ro_key][:allocated_dates]
+    while i < 31 && monthly_allocations.values.inject(:+) != 0
+      i += 1
+      allocate_hearing_days_to_individual_ro(
+        ro_key,
+        monthly_allocations,
+        date_index
+      )
+      date_index += 1
     end
   end
 
   # Method to assign hearing days for each roomless hearing day requested
-  def assign_hearing_days_without_rooms_to_individual_ro(ro_key, monthly_allocations)
-    # Loop the available alocations for this RO
-    monthly_allocations.each do |month, allocated_days|
-      # Get the available days for this RO this month
-      available_days = @ros[ro_key][:allocated_dates][month]
+  # def assign_hearing_days_without_rooms_to_individual_ro(ro_key, monthly_allocations)
+  #   # Loop the available alocations for this RO
+  #   monthly_allocations.each do |month, allocated_days|
+  #     # Get the available days for this RO this month
+  #     available_days = @ros[ro_key][:allocated_dates][month]
 
-      # Skip if there are no requested days or available days
-      next if available_days.count == 0 || allocated_days == 0
+  #     # Skip if there are no requested days or available days
+  #     next if available_days.count == 0 || allocated_days == 0
 
-      # Determine the difference between the requested and available to use as an offset when requested is greater
-      remaining = allocated_days % available_days.count
+  #     # Determine the difference between the requested and available to use as an offset when requested is greater
+  #     remaining = allocated_days % available_days.count
 
-      # Determine the divisor to use with the offset calculation
-      offset_divisor = (allocated_days < available_days.count) ? allocated_days : remaining
+  #     # Determine the divisor to use with the offset calculation
+  #     offset_divisor = (allocated_days < available_days.count) ? allocated_days : remaining
 
-      # Determine whether there is an offset by dividing available by the above calculation
-      offset = (remaining == 0) ? 0 : available_days.count / offset_divisor
+  #     # Determine whether there is an offset by dividing available by the above calculation
+  #     offset = (remaining == 0) ? 0 : available_days.count / offset_divisor
 
-      # Initialize the calculated index
-      offset_index = 0
+  #     # Initialize the calculated index
+  #     offset_index = 0
 
-      # Set the number allocated to 1 initially
-      @number_to_allocate = 1
+  #     # Set the number allocated to 1 initially
+  #     @number_to_allocate = 1
 
-      # Loop through the requested number to distribute the hearing days evenly
-      allocated_days.times do
-        # Check whether we have allocated the number to allocate for each day
-        if available_days.values.count { |day| day.count == @number_to_allocate } == available_days.count
-          # Update the number to allocate
-          @number_to_allocate += 1
-        end
+  #     # Loop through the requested number to distribute the hearing days evenly
+  #     allocated_days.times do
+  #       # Check whether we have allocated the number to allocate for each day
+  #       if available_days.values.count { |day| day.count == @number_to_allocate } == available_days.count
+  #         # Update the number to allocate
+  #         @number_to_allocate += 1
+  #       end
 
-        # Determine the index of the date on which we should assign this hearing day
-        offset_index = get_index_for_hearing_day(available_days, offset, offset_index)
+  #       # Determine the index of the date on which we should assign this hearing day
+  #       offset_index = get_index_for_hearing_day(available_days, offset, offset_index)
 
-        # Add a new hearing day at the index that was calcualted above
-        available_days[available_days.keys[offset_index]].push(room_num: nil)
-      end
-    end
-  end
+  #       # Add a new hearing day at the index that was calcualted above
+  #       available_days[available_days.keys[offset_index]].push(room_num: nil)
+  #     end
+  #   end
+  # end
 
-  # Gets the hearing day index ensuring an even spread of hearing days
-  def get_index_for_hearing_day(available_days, distribution_offset, index)
-    # Calculate the offset based on the distribution offset and the current index
-    offset = distribution_offset + index
+  # # Gets the hearing day index ensuring an even spread of hearing days
+  # def get_index_for_hearing_day(available_days, distribution_offset, index)
+  #   # Calculate the offset based on the distribution offset and the current index
+  #   offset = distribution_offset + index
 
-    # Calculate the new index with the offset accounting for when the offset exceeds the available days
-    get_index_offset(available_days, offset)
-  end
+  #   # Calculate the new index with the offset accounting for when the offset exceeds the available days
+  #   get_index_offset(available_days, offset)
+  # end
 
-  # Method to get the index offset for an array ensuring we go around the array instead of getting out of bounds
-  def get_index_offset(available_days, offset)
-    offset_index = offset % available_days.length
+  # # Method to get the index offset for an array ensuring we go around the array instead of getting out of bounds
+  # def get_index_offset(available_days, offset)
+  #   offset_index = offset % available_days.length
 
-    # Check if there is a hearing day already allocated
-    if available_days[available_days.keys[offset_index]].count == @number_to_allocate
-      # Recursively get the index offset adding 1 until we find a date with fewer hearing days than number to allocate
-      get_index_offset(available_days, offset_index + 1)
-    else
-      # Once we have found an index that has fewer days than needed, return that index
-      offset_index
-    end
-  end
+  #   # Check if there is a hearing day already allocated
+  #   if available_days[available_days.keys[offset_index]].count == @number_to_allocate
+  #     # Recursively get the index offset adding 1 until we find a date with fewer hearing days than number to allocate
+  #     get_index_offset(available_days, offset_index + 1)
+  #   else
+  #     # Once we have found an index that has fewer days than needed, return that index
+  #     offset_index
+  #   end
+  # end
 
   def allocated_days_for_ro(ro_key)
     @ros[ro_key][:allocated_days].ceil
