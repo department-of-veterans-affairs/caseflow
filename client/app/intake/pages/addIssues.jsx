@@ -38,6 +38,7 @@ import {
   toggleLegacyOptInModal,
   toggleCorrectionTypeModal
 } from '../actions/addIssues';
+import { editEpClaimLabel } from '../../intakeEdit/actions/edit';
 import COPY from '../../../COPY';
 import { EditClaimLabelModal } from '../../intakeEdit/components/EditClaimLabelModal';
 import { ConfirmClaimLabelModal } from '../../intakeEdit/components/ConfirmClaimLabelModal';
@@ -172,6 +173,12 @@ class AddIssuesPage extends React.Component {
   submitClaimLabelEdit = () => {
     // eslint-disable-next-line no-console
     console.log(`Submitting request to switch from ${this.state.previousEpCode} to ${this.state.selectedEpCode}...`);
+    this.props.editEpClaimLabel(
+      this.props.intakeForms[this.props.formType].claimId,
+      this.props.formType,
+      this.state.previousEpCode,
+      this.state.selectedEpCode,
+    );
     this.setState({
       showConfirmClaimLabelModal: false,
       previousEpCode: null,
@@ -581,7 +588,8 @@ export const EditAddIssuesPage = connect(
         setIssueWithdrawalDate,
         correctIssue,
         undoCorrection,
-        toggleUnidentifiedIssuesModal
+        toggleUnidentifiedIssuesModal,
+        editEpClaimLabel,
       },
       dispatch
     )

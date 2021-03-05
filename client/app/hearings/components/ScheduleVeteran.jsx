@@ -27,7 +27,6 @@ import {
   transitionAlert,
   startPollingHearing,
   setScheduledHearing,
-  fetchScheduledHearings
 } from '../../components/common/actions';
 import { ScheduleVeteranForm } from './ScheduleVeteranForm';
 import ApiUtil from '../../util/ApiUtil';
@@ -347,7 +346,6 @@ export const ScheduleVeteran = ({
         )}
         {openHearing && !reschedule ? <Alert title="Open Hearing" type="error">{openHearingDayError}</Alert> : (
           <ScheduleVeteranForm
-            fetchScheduledHearings={props.fetchScheduledHearings}
             scheduledHearingsList={scheduledHearingsList}
             fetchingHearings={fetchingHearings}
             userCanViewTimeSlots={userCanViewTimeSlots}
@@ -440,7 +438,6 @@ ScheduleVeteran.propTypes = {
   userCanViewTimeSlots: PropTypes.bool,
   scheduledHearingsList: PropTypes.array,
   fetchingHearings: PropTypes.bool,
-  fetchScheduledHearings: PropTypes.func,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -464,7 +461,6 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      fetchScheduledHearings,
       onReceiveAlerts,
       onReceiveTransitioningAlert,
       transitionAlert,
