@@ -1416,9 +1416,10 @@ RSpec.feature "Case details", :all_dbs do
         let(:nod_date) { "11/11/2020" }
         let(:later_nod_date) { Time.zone.now.next_year(2).mdY }
         let(:before_earliest_date) { "12/31/2017" }
-        let(:succesCopy) {'The NOD date for Bobby Winters\'s case has been updated from 01/03/2019 to 11/11/2020.'\
-                          ' There have been no changes to the eligibility of issues.'
-                        }
+        let(:succesCopy) {
+          'The NOD date for Bobby Winters\'s case has been updated from 01/03/2019 to 11/11/2020.'\
+          ' There have been no changes to the eligibility of issues.'
+        }
         before { FeatureToggle.enable!(:edit_nod_date) }
         after { FeatureToggle.disable!(:edit_nod_date) }
 
