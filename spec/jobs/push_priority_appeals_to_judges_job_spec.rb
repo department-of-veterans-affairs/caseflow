@@ -986,7 +986,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       DistributedCase.where(distribution: job.distribute_non_genpop_priority_appeals)
     end
     let(:genpop_distro_cases) do
-      DistributedCase.where(distribution_id: job.distribute_genpop_priority_appeals)
+      DistributedCase.where(distribution: job.distribute_genpop_priority_appeals)
     end
 
     before do
