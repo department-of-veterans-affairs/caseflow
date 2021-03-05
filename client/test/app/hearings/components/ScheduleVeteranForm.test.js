@@ -14,7 +14,6 @@ import {
   AppealHearingLocationsDropdown,
 } from 'app/components/DataDropdowns';
 import { AddressLine } from 'app/hearings/components/details/Address';
-import { HearingTime } from 'app/hearings/components/modalForms/HearingTime';
 import { AppellantSection } from 'app/hearings/components/VirtualHearings/AppellantSection';
 import { RepresentativeSection } from 'app/hearings/components/VirtualHearings/RepresentativeSection';
 import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
@@ -42,7 +41,8 @@ describe('ScheduleVeteranForm', () => {
 
     // Assertions
     expect(
-      scheduleVeteran.find(ReadOnly).first().prop('text').props
+      scheduleVeteran.find(ReadOnly).first().
+        prop('text').props
     ).toMatchObject(
       {
         addressLine1: amaAppeal.appellantAddress.address_line_1,
@@ -80,7 +80,6 @@ describe('ScheduleVeteranForm', () => {
     // Assertions
     expect(scheduleVeteran.find(AppealHearingLocationsDropdown)).toHaveLength(1);
     expect(scheduleVeteran.find(HearingDateDropdown)).toHaveLength(1);
-    expect(scheduleVeteran.find(HearingTime)).toHaveLength(1);
     expect(scheduleVeteran.find(AddressLine)).toHaveLength(1);
 
     expect(scheduleVeteran.find(AppellantSection)).toHaveLength(0);

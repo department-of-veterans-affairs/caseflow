@@ -155,6 +155,16 @@ describe('hearing utils', () => {
 
     });
 
+    test('With a scheduled hearing at 09:30, dont display slot for 09:30', () => {
+      const result = setTimeSlots([{ hearingTime: '09:30' }]);
+
+      const nineThirtySlotExists = result.some((slot) =>
+        slot.hearingTime === '09:30' && slot.full === false
+      );
+
+      expect(nineThirtySlotExists).toEqual(false);
+    });
+
     test('Key is unique for all slots', () => {
       const result = setTimeSlots([{ hearingTime: '10:30' }]);
       const dedupResult = uniq(result.map((slot) => slot.key));
