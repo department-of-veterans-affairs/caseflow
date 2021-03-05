@@ -39,6 +39,9 @@ export const TimeSlot = ({
   // Create a hearing Time ID to associate the label with the appropriate form element
   const hearingTimeId = `hearing-time-${hearing?.scheduledTimeString}`;
 
+  // Determine the column length to evenly distribute the time slots
+  const columnLength = Math.ceil(slots.length / 2);
+
   return (
     <React.Fragment>
       <label className="time-slot-label" htmlFor={hearingTimeId}>
@@ -70,7 +73,7 @@ export const TimeSlot = ({
           ) : (
             <div className="time-slot-button-container">
               <div className="time-slot-container" >
-                {slots.slice(0, slots.length / 2).map((slot) => (
+                {slots.slice(0, columnLength).map((slot) => (
                   <TimeSlotButton
                     {...slot}
                     key={slot.key}
@@ -81,7 +84,7 @@ export const TimeSlot = ({
                 ))}
               </div>
               <div className="time-slot-container">
-                {slots.slice(slots.length / 2, slots.length).map((slot) => (
+                {slots.slice(columnLength, slots.length).map((slot) => (
                   <TimeSlotButton
                     {...slot}
                     key={slot.key}

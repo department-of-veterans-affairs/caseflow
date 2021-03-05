@@ -345,9 +345,10 @@
 }
 
 .time-slot-button {
-  height: 60px;
-  width: 325px;
+  height: 75px;
+  width: 350px;
   text-align: left;
+  padding-left: 25px;
 
   > div:first-child {
     display: flex;
@@ -379,6 +380,11 @@
 .time-slot-details {
   font-weight: 400;
   font-size: medium;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 295px;
+  margin-top: 5px;
 }
 
 .time-slot-button-container {

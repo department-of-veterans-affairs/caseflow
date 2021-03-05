@@ -60,6 +60,8 @@ RSpec.describe Hearings::HearingDay::FilledHearingSlotsController, type: :contro
           .to match_array([ama_hearing.docket_name, legacy_hearing.docket_name])
         expect(response_body["filled_hearing_slots"].map { |res| res["poa_name"] })
           .to match_array([ama_poa_name, legacy_poa_name])
+        expect(response_body["filled_hearing_slots"].map { |res| res["external_id"] })
+          .to match_array([ama_hearing.external_id, legacy_hearing.external_id])
       end
     end
   end
