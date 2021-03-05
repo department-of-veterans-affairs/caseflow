@@ -1413,13 +1413,10 @@ RSpec.feature "Case details", :all_dbs do
           User.authenticate!(user: judge_user)
         end
 
+        let(:veteran_full_name) { veteran.first_name + veteran.last_name }
         let(:nod_date) { "11/11/2020" }
         let(:later_nod_date) { Time.zone.now.next_year(2).mdY }
         let(:before_earliest_date) { "12/31/2017" }
-        let(:succesCopy) {
-          'The NOD date for Bobby Winters\'s case has been updated from 01/03/2019 to 11/11/2020.'\
-          ' There have been no changes to the eligibility of issues.'
-        }
         before { FeatureToggle.enable!(:edit_nod_date) }
         after { FeatureToggle.disable!(:edit_nod_date) }
 
@@ -1473,7 +1470,10 @@ RSpec.feature "Case details", :all_dbs do
           find(".cf-form-dropdown", text: "Reason for edit").click
           find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
           click_on "Submit"
-          expect(page).to have_content succesCopy
+          expect(page).to have_content(format(COPY::EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE.tr("(", "{").gsub(")s", "}"),
+          appellantName: "Bobby Winters",
+          nodDateStr: "01/03/2019",
+          receiptDateStr: nod_date))
         end
 
         it "user enters a valid NOD Date but no reason" do
