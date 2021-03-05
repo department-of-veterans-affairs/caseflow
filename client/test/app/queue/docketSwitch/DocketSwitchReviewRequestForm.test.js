@@ -10,6 +10,7 @@ import {
   DOCKET_SWITCH_REVIEW_REQUEST_FUTURE_DATE_ERROR
 } from 'app/../COPY';
 import { sprintf } from 'sprintf-js';
+import { add, format } from 'date-fns';
 
 describe('DocketSwitchReviewRequestForm', () => {
   const onSubmit = jest.fn();
@@ -73,7 +74,7 @@ describe('DocketSwitchReviewRequestForm', () => {
 
   describe('form validation for receipt date', () => {
     const priorToRampReceiptDate = '2017-10-31';
-    const futureDate = new Date().getDate() + 1;
+    const futureDate = format(add(new Date(), { days: 5 }), 'yyyy-MM-dd');
 
     it('throws error for prior-to-RAMP receipt date', async () => {
       render(<DocketSwitchReviewRequestForm {...defaults} />);
@@ -81,6 +82,8 @@ describe('DocketSwitchReviewRequestForm', () => {
       await fireEvent.change(screen.getByLabelText(/receipt date/i), {
         target: { value: priorToRampReceiptDate },
       });
+      // Use blur to trigger value to be touched
+      await fireEvent.blur(screen.getByLabelText(/receipt date/i));
 
       await waitFor(() => {
         expect(
@@ -96,6 +99,8 @@ describe('DocketSwitchReviewRequestForm', () => {
       await fireEvent.change(screen.getByLabelText(/receipt date/i), {
         target: { value: futureDate },
       });
+      // Use blur to trigger value to be touched
+      await fireEvent.blur(screen.getByLabelText(/receipt date/i));
 
       await waitFor(() => {
         expect(
