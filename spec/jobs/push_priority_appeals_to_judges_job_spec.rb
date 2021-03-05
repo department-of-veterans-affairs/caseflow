@@ -947,7 +947,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
           :appeal,
           :ready_for_distribution,
           :advanced_on_docket_due_to_age,
-          uuid: ready_priority_uuid,
           docket_type: Constants.AMA_DOCKETS.hearing,
           veteran: veteran
         )
