@@ -139,4 +139,38 @@ describe CavcRemandProcessedLetterResponseWindowTask, :postgres do
       include_examples "has correct actions"
     end
   end
+
+  describe "#when_child_task_created" do
+    let!(:window_task) do
+      send_task = create(:send_cavc_remand_processed_letter_task)
+      send_task.update_from_params({ status: Constants.TASK_STATUSES.completed }, org_nonadmin)
+      send_task.appeal.tasks.where(type: CRPLRWindowTask.name).first
+    end
+
+    subject do
+      # simulates "Assign to person", which creates child task
+      CavcRemandProcessedLetterResponseWindowTask.create!(parent: window_task,
+                                                          appeal: window_task.appeal,
+                                                          assigned_to: org_nonadmin)
+    end
+
+    context "when assigning task to person" do
+      context "open TimedHoldTask child exists" do
+        it "has open TimedHoldTask child under newly created child task" do
+          timed_hold_task = subject.children.open.where(type: :TimedHoldTask).first
+          expect(timed_hold_task.status).to eq "assigned"
+        end
+      end
+      context "no open TimedHoldTask child exists" do
+        before do
+          timed_hold_task = window_task.children.open.where(type: :TimedHoldTask).first
+          timed_hold_task.cancelled!
+        end
+        it "does not have TimedHoldTask child under newly created child task" do
+          timed_hold_task = subject.children.open.where(type: :TimedHoldTask).first
+          expect(timed_hold_task).to eq nil
+        end
+      end
+    end
+  end
 end
