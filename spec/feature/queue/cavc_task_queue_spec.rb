@@ -753,7 +753,19 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
       end
 
       it "allows users to process CavcRemandProcessedLetterResponseWindowTask" do
-        task.update!(assigned_to: org_nonadmin)
+        step "admin assigns task to user" do
+          # Logged in as CAVC Lit Support admin
+          User.authenticate!(user: org_admin)
+          visit "queue/appeals/#{task.appeal.external_id}"
+          find(".cf-select__control", text: "Select an action").click
+
+          find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label).click
+          find(".cf-select__control", text: org_admin.full_name).click
+          find("div", class: "cf-select__option", text: org_nonadmin.full_name).click
+          fill_in "taskInstructions", with: "Assigning to user."
+          click_on "Submit"
+          expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin.full_name
+        end
 
         step "assigned user adds schedule hearing task" do
           # Logged in as assignee
@@ -807,12 +819,30 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           expect(page).to have_content "#{CavcGrantedExtensionRequestTask.name} completed"
         end
 
+        step "reassign to another user" do
+          timed_hold_task = task.appeal.tasks.open.where(type: :TimedHoldTask).first
+          expect(timed_hold_task.parent.assigned_to).to eq org_nonadmin
+
+          click_dropdown(text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.label)
+          find(".cf-select__control", text: COPY::ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER).click
+          find("div", class: "cf-select__option", text: org_nonadmin2.full_name).click
+          fill_in "taskInstructions", with: "Reassigning to org_nonadmin3 to check that TimedHoldTask moves."
+          click_on "Submit"
+          expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin2.full_name
+
+          # open timed_hold_task is moved to new parent task assigned to org_nonadmin2
+          expect(timed_hold_task.reload.parent.assigned_to).to eq org_nonadmin2
+        end
+
         step "assigned user completes task" do
+          User.authenticate!(user: org_nonadmin2)
+          visit "queue/appeals/#{task.appeal.external_id}"
+
           click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
           click_on "Submit"
 
           find(".cf-select__control", text: "Select an action").click
-          response_window_task_row = page.find("#currently-active-tasks").find_all("tr")[2]
+          response_window_task_row = page.find("#currently-active-tasks").find_all("tr")[0]
           expect(response_window_task_row).to have_content("TASK\n#{COPY::CRP_LETTER_RESP_WINDOW_TASK_LABEL}")
           expect(response_window_task_row.find_all(".cf-select__option").length).to eq 9
 

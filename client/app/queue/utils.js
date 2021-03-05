@@ -385,7 +385,8 @@ export const prepareAppealForStore = (appeals) => {
       caseReviewId: appeal.attributes.attorney_case_review_id,
       canEditDocumentId: appeal.attributes.can_edit_document_id,
       attorneyCaseRewriteDetails: appeal.attributes.attorney_case_rewrite_details,
-      unlistedClaimants: appeal.attributes.unlisted_claimant
+      docketSwitch: appeal.attributes.docket_switch,
+      switchedDockets: appeal.attributes.switched_dockets
     };
 
     return accumulator;
