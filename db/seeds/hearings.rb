@@ -262,9 +262,11 @@ module Seeds
       16.times do
         vacols_case = create_travel_board_vacols_case
 
-        create_veteran(
+        veteran = create_veteran(
           veteran_file_number: LegacyAppeal.veteran_file_number_from_bfcorlid(vacols_case.bfcorlid)
         )
+
+        create_poa(veteran_file_number: veteran.file_number)
 
         create(
           :schedule_hearing_task,
