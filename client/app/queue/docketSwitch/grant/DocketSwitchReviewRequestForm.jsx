@@ -7,6 +7,8 @@ import { CheckoutButtons } from './CheckoutButtons';
 import {
   DOCKET_SWITCH_GRANTED_REQUEST_LABEL,
   DOCKET_SWITCH_GRANTED_REQUEST_INSTRUCTIONS,
+  DOCKET_SWITCH_REVIEW_REQUEST_PRIOR_TO_RAMP_DATE_ERROR,
+  DOCKET_SWITCH_REVIEW_REQUEST_FUTURE_DATE_ERROR
 } from 'app/../COPY';
 import { sprintf } from 'sprintf-js';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -18,7 +20,11 @@ import CheckboxGroup from 'app/components/CheckboxGroup';
 import DISPOSITIONS from 'constants/DOCKET_SWITCH_DISPOSITIONS';
 
 const schema = yup.object().shape({
-  receiptDate: yup.date().required(),
+  receiptDate: yup.date().required().
+    nullable().
+    transform((value, originalValue) => originalValue === '' ? null : value).
+    min('2017-11-01', DOCKET_SWITCH_REVIEW_REQUEST_PRIOR_TO_RAMP_DATE_ERROR).
+    max(new Date(), DOCKET_SWITCH_REVIEW_REQUEST_FUTURE_DATE_ERROR),
   disposition: yup.
     mixed().
     oneOf(Object.keys(DISPOSITIONS)).
@@ -53,12 +59,15 @@ export const DocketSwitchReviewRequestForm = ({
     formState,
     trigger,
     watch,
+    errors
   } = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues,
   });
+  const { touched } = formState;
+
   const sectionStyle = css({ marginBottom: '24px' });
 
   const issueOptions = useMemo(
@@ -144,6 +153,7 @@ export const DocketSwitchReviewRequestForm = ({
         <DateSelector
           inputRef={register}
           type="date"
+          errorMessage={touched.receiptDate && errors.receiptDate?.message}
           name="receiptDate"
           label="What is the Receipt Date of the docket switch request?"
           strongLabel
