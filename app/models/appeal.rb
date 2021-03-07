@@ -94,19 +94,6 @@ class Appeal < DecisionReview
     end
   end
 
-  def self.find_appeal_by_uuid_or_find_legacy_appeal_by_vacols_id(id)
-    if UUID_REGEX.match?(id)
-      find_by_uuid!(id)
-    else
-      begin
-        LegacyAppeal.find_by!(vacols_id: id)
-      rescue ActiveRecord::RecordNotFound => error
-        # if appeal could not be found raise exception and don't return, just ignore.
-        Raven.capture_exception(error)
-      end
-    end
-  end
-
   def ui_hash
     Intake::AppealSerializer.new(self).serializable_hash[:data][:attributes]
   end
