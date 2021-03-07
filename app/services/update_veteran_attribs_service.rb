@@ -7,7 +7,7 @@ class UpdateVeteranAttribsService
     appeals = Appeal.includes(:veterans).where(id: ama_ids)
     appeals << LegacyAppeal.includes(:veterans).where(id: legacy_ids)
 
-    appeals.each{|appeal| update_veteran_for_appeal(appeal)}
+    appeals.each { |appeal| update_veteran_for_appeal(appeal) }
   end
 
   private
