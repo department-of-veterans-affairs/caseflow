@@ -443,8 +443,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                         "value": "Panel",
                       },
                       Object {
-                        "label": "Per Curium",
-                        "value": "Per Curium",
+                        "label": "Per curiam",
+                        "value": "Per curiam",
                       },
                       Object {
                         "label": "Alan G. Lance, Sr.",
@@ -529,21 +529,21 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   value={null}
                 >
                   <div
-                    className="cf-form-dropdown dropdown-judge-dropdown"
+                    className=""
                   >
-                    <label
-                      className="question-label"
-                      htmlFor="judge-dropdown"
-                    >
-                      <strong>
-                        <span>
-                          What is the CAVC judge's name?
-                        </span>
-                      </strong>
-                    </label>
                     <div
-                      className=""
+                      className="cf-form-dropdown dropdown-judge-dropdown"
                     >
+                      <label
+                        className="question-label"
+                        htmlFor="judge-dropdown"
+                      >
+                        <strong>
+                          <span>
+                            What is the CAVC judge's name?
+                          </span>
+                        </strong>
+                      </label>
                       <div
                         className="cf-select"
                       >
@@ -570,8 +570,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                 "value": "Panel",
                               },
                               Object {
-                                "label": "Per Curium",
-                                "value": "Per Curium",
+                                "label": "Per curiam",
+                                "value": "Per curiam",
                               },
                               Object {
                                 "label": "Alan G. Lance, Sr.",
@@ -710,8 +710,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                   "value": "Panel",
                                 },
                                 Object {
-                                  "label": "Per Curium",
-                                  "value": "Per Curium",
+                                  "label": "Per curiam",
+                                  "value": "Per curiam",
                                 },
                                 Object {
                                   "label": "Alan G. Lance, Sr.",
@@ -832,8 +832,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                     "value": "Panel",
                                   },
                                   Object {
-                                    "label": "Per Curium",
-                                    "value": "Per Curium",
+                                    "label": "Per curiam",
+                                    "value": "Per curiam",
                                   },
                                   Object {
                                     "label": "Alan G. Lance, Sr.",
@@ -967,8 +967,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                       "value": "Panel",
                                     },
                                     Object {
-                                      "label": "Per Curium",
-                                      "value": "Per Curium",
+                                      "label": "Per curiam",
+                                      "value": "Per curiam",
                                     },
                                     Object {
                                       "label": "Alan G. Lance, Sr.",
@@ -1139,8 +1139,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                           "value": "Panel",
                                         },
                                         Object {
-                                          "label": "Per Curium",
-                                          "value": "Per Curium",
+                                          "label": "Per curiam",
+                                          "value": "Per curiam",
                                         },
                                         Object {
                                           "label": "Alan G. Lance, Sr.",
@@ -1274,8 +1274,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                             "value": "Panel",
                                           },
                                           Object {
-                                            "label": "Per Curium",
-                                            "value": "Per Curium",
+                                            "label": "Per curiam",
+                                            "value": "Per curiam",
                                           },
                                           Object {
                                             "label": "Alan G. Lance, Sr.",
@@ -1454,8 +1454,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                 "value": "Panel",
                                               },
                                               Object {
-                                                "label": "Per Curium",
-                                                "value": "Per Curium",
+                                                "label": "Per curiam",
+                                                "value": "Per curiam",
                                               },
                                               Object {
                                                 "label": "Alan G. Lance, Sr.",
@@ -1589,8 +1589,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                   "value": "Panel",
                                                 },
                                                 Object {
-                                                  "label": "Per Curium",
-                                                  "value": "Per Curium",
+                                                  "label": "Per curiam",
+                                                  "value": "Per curiam",
                                                 },
                                                 Object {
                                                   "label": "Alan G. Lance, Sr.",
@@ -1756,8 +1756,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                       "value": "Panel",
                                                     },
                                                     Object {
-                                                      "label": "Per Curium",
-                                                      "value": "Per Curium",
+                                                      "label": "Per curiam",
+                                                      "value": "Per curiam",
                                                     },
                                                     Object {
                                                       "label": "Alan G. Lance, Sr.",
@@ -1891,8 +1891,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                         "value": "Panel",
                                                       },
                                                       Object {
-                                                        "label": "Per Curium",
-                                                        "value": "Per Curium",
+                                                        "label": "Per curiam",
+                                                        "value": "Per curiam",
                                                       },
                                                       Object {
                                                         "label": "Alan G. Lance, Sr.",
@@ -2106,8 +2106,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                         "value": "Panel",
                                                       },
                                                       Object {
-                                                        "label": "Per Curium",
-                                                        "value": "Per Curium",
+                                                        "label": "Per curiam",
+                                                        "value": "Per curiam",
                                                       },
                                                       Object {
                                                         "label": "Alan G. Lance, Sr.",
@@ -2354,8 +2354,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                 "value": "Panel",
                                               },
                                               Object {
-                                                "label": "Per Curium",
-                                                "value": "Per Curium",
+                                                "label": "Per curiam",
+                                                "value": "Per curiam",
                                               },
                                               Object {
                                                 "label": "Alan G. Lance, Sr.",
@@ -2489,8 +2489,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                   "value": "Panel",
                                                 },
                                                 Object {
-                                                  "label": "Per Curium",
-                                                  "value": "Per Curium",
+                                                  "label": "Per curiam",
+                                                  "value": "Per curiam",
                                                 },
                                                 Object {
                                                   "label": "Alan G. Lance, Sr.",
@@ -2651,8 +2651,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                       "value": "Panel",
                                                     },
                                                     Object {
-                                                      "label": "Per Curium",
-                                                      "value": "Per Curium",
+                                                      "label": "Per curiam",
+                                                      "value": "Per curiam",
                                                     },
                                                     Object {
                                                       "label": "Alan G. Lance, Sr.",
@@ -2786,8 +2786,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                         "value": "Panel",
                                                       },
                                                       Object {
-                                                        "label": "Per Curium",
-                                                        "value": "Per Curium",
+                                                        "label": "Per curiam",
+                                                        "value": "Per curiam",
                                                       },
                                                       Object {
                                                         "label": "Alan G. Lance, Sr.",
@@ -2959,8 +2959,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                       "value": "Panel",
                                                     },
                                                     Object {
-                                                      "label": "Per Curium",
-                                                      "value": "Per Curium",
+                                                      "label": "Per curiam",
+                                                      "value": "Per curiam",
                                                     },
                                                     Object {
                                                       "label": "Alan G. Lance, Sr.",
@@ -3094,8 +3094,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                         "value": "Panel",
                                                       },
                                                       Object {
-                                                        "label": "Per Curium",
-                                                        "value": "Per Curium",
+                                                        "label": "Per curiam",
+                                                        "value": "Per curiam",
                                                       },
                                                       Object {
                                                         "label": "Alan G. Lance, Sr.",

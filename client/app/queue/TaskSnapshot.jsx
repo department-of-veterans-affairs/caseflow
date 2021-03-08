@@ -8,6 +8,7 @@ import TaskRows from './components/TaskRows';
 import COPY from '../../COPY';
 import { sectionSegmentStyling, sectionHeadingStyling, anchorJumpLinkStyling } from './StickyNavContentArea';
 import { PulacCerulloReminderAlert } from './pulacCerullo/PulacCerulloReminderAlert';
+import DocketSwitchAlertBanner from './docketSwitch/DocketSwitchAlertBanner';
 
 const tableStyling = css({
   width: '100%',
@@ -21,6 +22,7 @@ const alertStyling = css({
 
 export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAlert }) => {
   const canEditNodDate = useSelector((state) => state.ui.canEditNodDate);
+  const docketSwitchDisposition = appeal.docketSwitch?.disposition;
 
   const sectionBody = tasks.length ? (
     <table {...tableStyling} summary="layout table">
@@ -50,6 +52,18 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
           <PulacCerulloReminderAlert />
         </div>
       )}
+      <div {...alertStyling} {...sectionSegmentStyling}>
+        { docketSwitchDisposition === 'partially_granted' &&
+          <DocketSwitchAlertBanner appeal={appeal} />
+        }
+      </div>
+      <div {...alertStyling} {...sectionSegmentStyling}>
+        { appeal.switchedDockets ? appeal.switchedDockets.map((docketSwitch) =>
+          docketSwitch.disposition === 'denied' ? '' :
+            <DocketSwitchAlertBanner appeal={appeal} docketSwitch={docketSwitch} />) :
+          ''
+        }
+      </div>
       <div {...sectionSegmentStyling}>{sectionBody}</div>
     </div>
   );

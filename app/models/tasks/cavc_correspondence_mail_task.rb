@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 ##
-# Task created by the mail team when mail arrives for a CAVC Appeal which is in processing with the CAVC Litigation Support
-# team. May or not end up being related to CAVC response.
+# Task created by the mail team when mail arrives for a CAVC Appeal which is in processing with the CAVC Litigation
+# Support team. May or not end up being related to CAVC response.
 #
 # Expected Parent Task: RootTask
 #
@@ -56,7 +56,6 @@ class CavcCorrespondenceMailTask < MailTask
     [
       Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
       Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
-      Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
       Constants.TASK_ACTIONS.CANCEL_TASK.to_h
     ]
   end

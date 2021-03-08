@@ -32,7 +32,7 @@ describe('TimeSlot', () => {
     expect(button.getAllByRole('button')).toHaveLength(slotCount + 1);
     expect(document.getElementsByClassName('time-slot-button-toggle')).toHaveLength(1);
     expect(document.getElementById(`hearing-time-${time}`)).toBeNull();
-    expect(document.getElementsByClassName('time-slot-container')).toHaveLength(1);
+    expect(document.getElementsByClassName('time-slot-container')).toHaveLength(2);
     expect(button).toMatchSnapshot();
   });
 
@@ -62,7 +62,7 @@ describe('TimeSlot', () => {
     // Check that the correct elements are displayed
     expect(timeSlot.getAllByRole('button')).toHaveLength(slotCount + 1);
     expect(document.getElementsByClassName('time-slot-button-toggle')).toHaveLength(1);
-    expect(document.getElementsByClassName('time-slot-container')).toHaveLength(1);
+    expect(document.getElementsByClassName('time-slot-container')).toHaveLength(2);
 
     expect(timeSlot).toMatchSnapshot();
   });
