@@ -58,6 +58,29 @@ class ExternalApi::BGSService
       end
   end
 
+  def update_benefit_claim(veteran_file_number:, payee_code:, claim_date:, benefit_type_code:, modifier:, new_code:)
+    DBService.release_db_connections
+
+    MetricsService.record("BGS: update benefit claim: \
+                          file_number = #{veteran_file_number}, \
+                          payee_code = #{payee_code}, \
+                          claim_date = #{claim_date}, \
+                          benefit_claim_type = #{benefit_type_code}, \
+                          modifier = #{modifier}, \
+                          code = #{new_code}",
+                          service: :bgs,
+                          name: "claims.update_benefit_claim") do
+      client.claims.update_benefit_claim(
+        file_number: veteran_file_number,
+        payee_code: payee_code,
+        claim_date: claim_date.strftime("%m/%d/%Y"),
+        benefit_claim_type: benefit_type_code,
+        modifier: modifier,
+        code: new_code
+      )
+    end
+  end
+
   def fetch_veteran_info(vbms_id)
     DBService.release_db_connections
 
