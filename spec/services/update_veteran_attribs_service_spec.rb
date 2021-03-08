@@ -16,7 +16,7 @@ describe UpdateVeteranAttribsService do
       Fakes::BGSService.edit_veteran_record(veteranSam.file_number, :date_of_death, date_of_death)
     end
 
-    subject { Veteran.update_veteran_attribs_service.update_veterans_for_appeals(appeal_ids) }
+    subject { UpdateVeteranAttribsService.update_veterans_for_appeals(appeal_ids) }
 
     it "updates our veteran_records date_of_death" do
       expect { subject }.not_to raise_error
