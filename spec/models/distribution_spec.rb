@@ -187,8 +187,10 @@ describe Distribution, :all_dbs do
           expect(subject.distributed_cases.where(priority: true,
                                                  docket: Constants.AMA_DOCKETS.direct_review).count).to eq(1)
           expect(subject.distributed_cases.where(docket: "legacy").count).to be >= 8
-          expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.direct_review).count).to be >= 1
-          expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.evidence_submission).count).to eq(0)
+          expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.direct_review).count)
+            .to be_within(1).of(1)
+          expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.evidence_submission).count)
+            .to be_within(1).of(0)
         end
       end
 
