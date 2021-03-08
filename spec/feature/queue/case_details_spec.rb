@@ -1471,9 +1471,9 @@ RSpec.feature "Case details", :all_dbs do
           find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
           click_on "Submit"
           expect(page).to have_content(format(COPY::EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE.tr("(", "{").gsub(")s", "}"),
-          appellantName: "Bobby Winters",
-          nodDateStr: "01/03/2019",
-          receiptDateStr: nod_date))
+            appellantName: "Bobby Winters",
+            nodDateStr: "01/03/2019",
+            receiptDateStr: nod_date))
         end
 
         it "user enters a valid NOD Date but no reason" do
