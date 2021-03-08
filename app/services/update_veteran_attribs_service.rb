@@ -2,7 +2,7 @@
 
 class UpdateVeteranAttribsService
   def initialize
-    @appeals ||= []
+    @appeals = []
   end
 
   def update_veterans_for_appeals(appeal_ids)
