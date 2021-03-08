@@ -1,9 +1,34 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import Alert from 'app/components/Alert';
+import { axe } from 'jest-axe';
 
 describe('Alert', () => {
   const title = 'This is a title';
+
+  it('renders correctly', () => {
+    const props = {
+      title,
+      type: 'info'
+    };
+
+    const { component } = render(<Alert {...props} />);
+
+    expect(component).toMatchSnapshot();
+  });
+
+  it('passes a11y testing', async () => {
+    const props = {
+      title,
+      type: 'info'
+    };
+
+    const { container } = render(<Alert {...props} />);
+
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
+  });
 
   describe('shows correct alert type', () => {
 
@@ -79,7 +104,7 @@ describe('Alert', () => {
   });
 
   describe('scroll to prop', () => {
-    it('scrolls to window top', () => {
+    it('scrolls to window top when set to true', () => {
       const props = {
         title,
         type: 'info'
