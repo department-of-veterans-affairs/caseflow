@@ -41,7 +41,9 @@ module Seeds
     end
 
     def create_hearing_days_with_hearings
+      # For Central, Virtual (R), and five other R0s
       %w[C R RO17 RO19 RO31 RO43 RO45].each do |ro_key|
+        # Note: The multiples of '11'.days below are likely unimportant. Keeping them b/c that's how it was.
         day = hearing_day_for_ro(ro_key: ro_key, scheduled_for: Time.zone.today)
         create_ama_hearings_for_day(day)
 
