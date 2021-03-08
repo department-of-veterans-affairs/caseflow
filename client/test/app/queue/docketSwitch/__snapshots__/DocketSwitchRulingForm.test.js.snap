@@ -195,21 +195,21 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
         style="max-width: 35rem;"
       >
         <div
-          class="cf-form-dropdown dropdown-attorney"
+          class=""
         >
-          <label
-            class="question-label"
-            for="attorney"
-          >
-            <strong>
-              <span>
-                Assign to Office of the Clerk of the Board
-              </span>
-            </strong>
-          </label>
           <div
-            class=""
+            class="cf-form-dropdown dropdown-attorney"
           >
+            <label
+              class="question-label"
+              for="attorney"
+            >
+              <strong>
+                <span>
+                  Assign to Office of the Clerk of the Board
+                </span>
+              </strong>
+            </label>
             <div
               class="cf-select"
             >

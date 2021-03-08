@@ -154,4 +154,16 @@ class WorkQueue::AppealSerializer
   attribute :readable_hearing_request_type, &:readable_current_hearing_request_type
 
   attribute :readable_original_hearing_request_type, &:readable_original_hearing_request_type
+
+  attribute :docket_switch do |object|
+    if object.docket_switch
+      WorkQueue::DocketSwitchSerializer.new(object.docket_switch).serializable_hash[:data][:attributes]
+    end
+  end
+
+  attribute :switched_dockets do |object|
+    object.switched_dockets.map do |docket_switch|
+      WorkQueue::DocketSwitchSerializer.new(docket_switch).serializable_hash[:data][:attributes]
+    end
+  end
 end

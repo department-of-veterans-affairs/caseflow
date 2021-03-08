@@ -6,20 +6,24 @@ import Modal from 'app/components/Modal';
 import DateSelector from 'app/components/DateSelector';
 import COPY from 'app/../COPY';
 import { useDispatch, useSelector } from 'react-redux';
-import { resetSuccessMessages, showSuccessMessage } from '../uiReducer/uiActions';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import {
+  resetSuccessMessages,
+  showSuccessMessage,
+} from '../uiReducer/uiActions';
 import { editAppeal, editNodDateUpdates } from '../QueueActions';
 import ApiUtil from '../../util/ApiUtil';
-import moment from 'moment';
 import { sprintf } from 'sprintf-js';
 import { formatDateStr, DateString } from '../../util/DateUtil';
 import { appealWithDetailSelector } from '../selectors';
 import Alert from 'app/components/Alert';
 import SearchableDropdown from 'app/components/SearchableDropdown';
-import { marginTop } from '../constants';
 
 const alertStyling = css({
   marginBottom: '2em',
-  '& .usa-alert-text': { lineHeight: '1' }
+  '& .usa-alert-text': { lineHeight: '1' },
 });
 
 export const changeReasons = [
@@ -27,7 +31,11 @@ export const changeReasons = [
   { label: 'Data Entry Error', value: 'entry_error' },
 ];
 
-export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealId, reason }) => {
+export const EditNodDateModalContainer = ({ onCancel,
+  onSubmit,
+  nodDate: origNodDate,
+  appealId,
+  reason: origReason }) => {
   const [showTimelinessError, setTimelinessError] = useState(false);
   const [issues, setIssues] = useState(null);
 
@@ -40,15 +48,17 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
     dispatch(resetSuccessMessages());
   }, []);
 
-  const handleSubmit = (receiptDate, changeReason) => {
+  const handleCancel = () => onCancel();
+
+  const handleSubmit = ({ nodDate, reason }) => {
     const alertInfo = {
-      appellantName: (appeal.appellantFullName),
-      nodDateStr: formatDateStr(nodDate, 'YYYY-MM-DD', 'MM/DD/YYYY'),
-      receiptDateStr: formatDateStr(receiptDate, 'YYYY-MM-DD', 'MM/DD/YYYY')
+      appellantName: appeal.appellantFullName,
+      nodDateStr: formatDateStr(origNodDate, 'YYYY-MM-DD', 'MM/DD/YYYY'),
+      receiptDateStr: formatDateStr(nodDate, 'YYYY-MM-DD', 'MM/DD/YYYY'),
     };
 
     const title = COPY.EDIT_NOD_DATE_SUCCESS_ALERT_TITLE;
-    const detail = (sprintf(COPY.EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE, alertInfo));
+    const detail = sprintf(COPY.EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE, alertInfo);
 
     const successMessage = {
       title,
@@ -56,9 +66,9 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
     };
     const payload = {
       data: {
-        receipt_date: receiptDate,
-        change_reason: changeReason.value
-      }
+        receipt_date: nodDate,
+        change_reason: reason,
+      },
     };
 
     ApiUtil.patch(`/appeals/${appealId}/nod_date_update`, payload).then((data) => {
@@ -82,10 +92,10 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
 
   return (
     <EditNodDateModal
-      onCancel={onCancel}
+      onCancel={handleCancel}
       onSubmit={handleSubmit}
-      nodDate={nodDate}
-      reason={reason}
+      nodDate={origNodDate}
+      reason={origReason}
       appealId={appealId}
       appellantName={appeal.appellantFullName}
       showTimelinessError={showTimelinessError}
@@ -94,13 +104,54 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
   );
 };
 
-export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTimelinessError, issues }) => {
-  const [receiptDate, setReceiptDate] = useState(nodDate);
-  const [changeReason, setChangeReason] = useState(reason);
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [showWarning, setWarningMessage] = useState(false);
-  const [badDate, setBadDate] = useState(null);
-  const [badReason, setBadReason] = useState(true);
+export const EditNodDateModal = ({
+  onCancel,
+  onSubmit,
+  nodDate,
+  reason,
+  showTimelinessError,
+  issues
+}) => {
+  const [showWarning, setWarning] = useState(false);
+
+  yup.addMethod(yup.date, 'isLater', function () {
+    return this.test((value) => {
+      const formattedValue = formatDateStr(value, 'YYYY-MM-DD', 'YYYY-MM-DD');
+      const formattedNodDate = formatDateStr(nodDate, 'YYYY-MM-DD', 'YYYY-MM-DD');
+
+      if (formattedValue > formattedNodDate) {
+        setWarning(true);
+      } else {
+        setWarning(false);
+      }
+
+      return value;
+    });
+  });
+
+  const schema = yup.object().shape({
+    nodDate: yup.
+      date().
+      min('2018-01-01', COPY.EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE).
+      max(new Date(), COPY.EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE).
+      isLater().
+      typeError('Invalid date.').
+      required(),
+    reason: yup.
+      string().
+      typeError('Required.').
+      required().
+      oneOf(changeReasons.map((changeReason) => changeReason.value))
+  });
+
+  const { register, errors, control, handleSubmit } = useForm(
+    {
+      defaultValues: { nodDate, reason },
+      resolver: yupResolver(schema),
+      mode: 'onChange',
+      reValidateMode: 'onChange'
+    }
+  );
 
   const buttons = [];
 
@@ -115,64 +166,8 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
   buttons.push({
     classNames: ['usa-button', 'usa-button-primary'],
     name: showTimelinessError ? 'Close' : 'Submit',
-    disabled: (badDate || badReason),
-    onClick: showTimelinessError ? onCancel : () => onSubmit(receiptDate, changeReason)
+    onClick: showTimelinessError ? onCancel : handleSubmit(onSubmit)
   });
-
-  const isFutureDate = (newDate) => {
-    const today = new Date();
-    const todaysDate = moment(today.toISOString());
-    const date = moment(newDate);
-
-    return (date > todaysDate);
-  };
-
-  const isPreAmaDate = (newDate) => {
-    const formattedNewDate = moment(newDate);
-    const amaDate = moment('2019-02-19');
-
-    return (formattedNewDate < amaDate);
-  };
-
-  const isLaterThanNodDate = (newDate) => {
-    const formattedNewDate = moment(newDate);
-    const formattedNodDate = moment(nodDate);
-
-    return (formattedNewDate > formattedNodDate);
-  };
-
-  const handleDateChange = (value) => {
-    if (isFutureDate(value)) {
-      setWarningMessage(false);
-      setErrorMessage(COPY.EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE);
-      setReceiptDate(value);
-      setBadDate(true);
-    } else if (isPreAmaDate(value)) {
-      setWarningMessage(false);
-      setErrorMessage(COPY.EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE);
-      setReceiptDate(value);
-      setBadDate(true);
-    } else if (isLaterThanNodDate(value)) {
-      setWarningMessage(true);
-      setErrorMessage(null);
-      setReceiptDate(value);
-      setBadDate(false);
-    } else {
-      setWarningMessage(false);
-      setErrorMessage(null);
-      setReceiptDate(value);
-      setBadDate(null);
-    }
-  };
-
-  const handleChangeReason = (value) => {
-    if (!value === null) {
-      setBadReason(true);
-    } else {
-      setChangeReason(value);
-      setBadReason(null);
-    }
-  };
 
   let modalContent;
 
@@ -228,27 +223,33 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
         type="info"
         scrollOnAlert={false}
       /> : null }
-      <DateSelector
-        style={marginTop}
-        name="nodDate"
-        errorMessage={errorMessage}
-        label={COPY.EDIT_NOD_DATE_LABEL}
-        strongLabel
-        type="date"
-        value={receiptDate}
-        onChange={handleDateChange}
-      />
-      <SearchableDropdown
-        name="reason"
-        label="Reason for edit"
-        searchable={false}
-        placeholder="Select the reason..."
-        value={changeReason}
-        options={changeReasons}
-        onChange={handleChangeReason}
-        debounce={250}
-        strongLabel
-      />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <DateSelector
+          inputRef={register}
+          name="nodDate"
+          errorMessage={errors.nodDate?.message}
+          label={COPY.EDIT_NOD_DATE_LABEL}
+          strongLabel
+          type="date"
+        />
+        <Controller
+          name="reason"
+          control={control}
+          defaultValue={null}
+          render={({ onChange, ...rest }) => (
+            <SearchableDropdown
+              {...rest}
+              label="Reason for edit"
+              errorMessage={errors.reason?.message}
+              placeholder="Select the reason..."
+              options={changeReasons}
+              debounce={250}
+              strongLabel
+              onChange={(valObj) => onChange(valObj?.value)}
+            />
+          )}
+        />
+      </form>
     </div>;
   }
 
@@ -270,7 +271,7 @@ EditNodDateModalContainer.propTypes = {
   onClose: PropTypes.func,
   nodDate: PropTypes.string.isRequired,
   reason: PropTypes.object,
-  appealId: PropTypes.string.isRequired
+  appealId: PropTypes.string.isRequired,
 };
 
 EditNodDateModal.propTypes = {
