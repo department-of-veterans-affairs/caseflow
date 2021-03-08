@@ -21,26 +21,38 @@ module Seeds
 
     private
 
+    def create_ama_hearings_for_day(day)
+      create_ama_hearing(day: day, scheduled_time_string_utc: "14:00", issue_count: 1) # 9:00AM ET
+      create_ama_hearing(day: day, scheduled_time_string_utc: "15:00", issue_count: 3) # 10:00AM ET
+      create_ama_hearing(day: day, scheduled_time_string_utc: "16:15", issue_count: 4) # 11:15AM ET
+    end
+
+    def create_legacy_hearings_for_day(day)
+      create_legacy_hearing(day: day, scheduled_time_string_est: "8:15") # 8:30AM ET
+      create_legacy_hearing(day: day, scheduled_time_string_est: "9:30") # 9:30AM ET
+      create_legacy_hearing(day: day, scheduled_time_string_est: "10:15") # 10:30AM ET
+    end
+
+    def create_mixed_legacy_ama_for_day(day)
+      create_ama_hearing(day: day, scheduled_time_string_utc: "13:30", issue_count: 4) # 8:30AM ET
+      create_ama_hearing(day: day, scheduled_time_string_utc: "15:15", issue_count: 12) # 10:15AM ET
+      create_legacy_hearing(day: day, scheduled_time_string_est: "13:00") # 1:00PM ET
+      create_legacy_hearing(day: day, scheduled_time_string_est: "14:00") # 2:00PM ET
+    end
+
     def create_hearing_days_with_hearings
       %w[C R RO17 RO19 RO31 RO43 RO45].each do |ro_key|
-        (1..5).each do |index|
-          day = hearing_day_for_ro(ro_key: ro_key, scheduled_for: Time.zone.today + (index * 11).days)
-          case index
-          when 1
-            create_ama_hearing(day: day, scheduled_time_string_utc: "14:00", issue_count: index) # 9:00AM ET
-            create_ama_hearing(day: day, scheduled_time_string_utc: "15:00", issue_count: index * 3) # 10:00AM ET
-            create_ama_hearing(day: day, scheduled_time_string_utc: "16:15", issue_count: index * 4) # 11:15AM ET
-          when 2
-            create_legacy_hearing(day: day, scheduled_time_string_est: "8:15") # 8:30AM ET
-            create_legacy_hearing(day: day, scheduled_time_string_est: "9:30") # 9:30AM ET
-            create_legacy_hearing(day: day, scheduled_time_string_est: "10:15") # 10:30AM ET
-          when 3
-            create_ama_hearing(day: day, scheduled_time_string_utc: "13:30", issue_count: index) # 8:30AM ET
-            create_ama_hearing(day: day, scheduled_time_string_utc: "15:15", issue_count: index * 3) # 10:15AM ET
-            create_legacy_hearing(day: day, scheduled_time_string_est: "13:00") # 1:00PM ET
-            create_legacy_hearing(day: day, scheduled_time_string_est: "14:00") # 2:00PM ET
-          end
-        end
+        day = hearing_day_for_ro(ro_key: ro_key, scheduled_for: Time.zone.today)
+        create_ama_hearings_for_day(day)
+
+        day = hearing_day_for_ro(ro_key: ro_key, scheduled_for: Time.zone.today + 11.days)
+        create_legacy_hearings_for_day(day)
+
+        day = hearing_day_for_ro(ro_key: ro_key, scheduled_for: Time.zone.today + 22.days)
+        create_mixed_legacy_ama_for_day(day)
+
+        hearing_day_for_ro(ro_key: ro_key, scheduled_for: Time.zone.today + 33.days)
+        hearing_day_for_ro(ro_key: ro_key, scheduled_for: Time.zone.today + 44.days)
       end
     end
 
