@@ -12,7 +12,7 @@ describe('Alert', () => {
       type: 'info'
     };
 
-    const { component } = render(<Alert {...props} />);
+    const component = render(<Alert {...props} />);
 
     expect(component).toMatchSnapshot();
   });
