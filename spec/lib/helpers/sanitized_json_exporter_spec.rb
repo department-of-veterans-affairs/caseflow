@@ -3,7 +3,7 @@
 require "helpers/sanitized_json_exporter.rb"
 require "helpers/sanitized_json_importer.rb"
 
-describe "SanitizedJsonExporter" do
+describe "SanitizedJsonExporter/Importer" do
   let(:veteran) { create(:veteran, file_number: "111447777") }
   let(:appeal) do
     create(:appeal,
@@ -14,7 +14,7 @@ describe "SanitizedJsonExporter" do
   end
   let(:sje) { SanitizedJsonExporter.new(appeal) }
 
-  # temporary method of debugging
+  # temporary method for debugging
   def print_things
     pp appeal
     appeal.treee
@@ -35,8 +35,9 @@ describe "SanitizedJsonExporter" do
         appeal.veteran.ssn
       ]
     end
+      
     it "exports appeal" do
-      # Check PII values will be mapped to fake values
+        # Check PII values will be mapped to fake values
       expect(sje.value_mapping.keys).to include(*pii_values)
       expect(sje.value_mapping.values).not_to include(*pii_values)
 
@@ -60,6 +61,7 @@ describe "SanitizedJsonExporter" do
 
     before { sji.metadata }
 
+    # for debugging
     def show_diffs(appeal, record_hash, imp_appeal)
       orig_appeal_hash = SanitizedJsonExporter.to_hash(appeal)
       imported_appeal_hash = SanitizedJsonExporter.to_hash(imp_appeal)
@@ -76,6 +78,7 @@ describe "SanitizedJsonExporter" do
       # binding.pry
     end
 
+    # temporary method for debugging
     def print_imported_things
       imp_appeal = sji.imported_records[Appeal.name]
       imp_veteran = sji.imported_records[Veteran.name]
@@ -93,12 +96,16 @@ describe "SanitizedJsonExporter" do
       expect(Appeal.count).to eq 1
       expect(Veteran.count).to eq 1
       expect(Claimant.count).to eq 2
+      expect(User.count).to eq 0
 
-      sji.import_all
+      sji.records_hash[Appeal.name]["id"]=22222
+      sji.import
       expect(Appeal.count).to eq 2
-      expect(Veteran.count).to eq 2
-      expect(Claimant.count).to be >= 3
+      expect(Veteran.count).to eq 1  # reuse identify Veteran
+      expect(Claimant.count).to eq 4
+      expect(User.count).to eq 0
 
+      # TODO: diff other record types
       imp_appeal = sji.imported_records[Appeal.name]
       expect(SanitizedJsonImporter.diff_records(appeal, imp_appeal, ignore_id_offset: false)).not_to be_empty
       expect(SanitizedJsonImporter.diff_records(appeal, imp_appeal).map(&:first)).to include "veteran_file_number"
@@ -119,10 +126,10 @@ describe "SanitizedJsonExporter" do
       end
 
       it "imports json" do
-        print_things
+        # print_things
 
-        sji.import_all
-        print_imported_things
+        sji.import
+        # print_imported_things
       end
     end
   end

@@ -4,8 +4,9 @@ class SanitizedJsonExporter
   attr_accessor :value_mapping
   attr_accessor :records_hash
 
-  def initialize(record)
+  def initialize(record, sanitize: true)
     @record = record
+    @sanitize = sanitize
     @value_mapping = {}
 
     @records_hash = { "metadata" => { "exported_at": Time.zone.now } }
@@ -19,8 +20,9 @@ class SanitizedJsonExporter
     @records_hash["tasks"] =
       record.tasks.order(:id).map { |task| sanitize(task) }
 
-    @records_hash["users"] = record.tasks.where(assigned_to_type: "User").order(:id)
-      .map(&:assigned_to).uniq.map { |user| sanitize(user) }
+    assigned_to_users = record.tasks.where(assigned_to_type: "User").order(:id).map(&:assigned_to) +
+                        record.tasks.order(:id).map(&:assigned_by).compact
+    @records_hash["users"] = assigned_to_users.uniq.map { |user| sanitize(user) }
 
     @records_hash["organizations"] = record.tasks.where(assigned_to_type: "Organization").order(:id)
       .map(&:assigned_to).uniq.map { |org| sanitize(org) }
@@ -49,6 +51,7 @@ class SanitizedJsonExporter
 
   def sanitize(record)
     obj_hash = self.class.to_hash(record)
+    return obj_hash unless @sanitize
 
     case record
     when Appeal
@@ -101,7 +104,7 @@ class SanitizedJsonExporter
   end
 
   def ssn_field?(field_name)
-    %w[ssn file_number].include?(field_name)
+    %w[ssn file_number veteran_file_number].include?(field_name)
   end
 
   def create_person_name(field_name)

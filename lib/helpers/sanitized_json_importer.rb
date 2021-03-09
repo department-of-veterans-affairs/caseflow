@@ -4,11 +4,15 @@ class SanitizedJsonImporter
   attr_accessor :imported_records
   attr_accessor :records_hash
 
-  def initialize(input, id_offset: 2_000_000_000)
-    file_contents = File.exist?(input) ? File.read(input) : input
+  def self.from_file(filename)
+    self.new(File.read(filename))
+  end
+
+  def initialize(file_contents, id_offset: ID_OFFSET)
     @records_hash = JSON.parse(file_contents)
     @imported_records = {}
     @imported_users = {}
+    @imported_orgs = {}
 
     @id_offset = id_offset
   end
@@ -17,25 +21,33 @@ class SanitizedJsonImporter
     @records_hash["metadata"]
   end
 
-  def import_all(all_claimants: true)
-    appeal = import(Appeal)
-    import(Veteran)
-    if all_claimants
-      import_array(Claimant, "claimants")
-    else
-      import(Claimant) # associated to appellant via participant id
-    end
-    import_array(User, "users")
-    import_array(Organization, "organizations")
-    import_array(Task, "tasks")
+  def import(all_claimants: true)
+    ActiveRecord::Base.transaction do
+      appeal = import_record(Appeal)
+      import_record(Veteran)
 
-    appeal
+      unless appeal
+        Rails.logger.warn "No appeal imported, aborting import of remaining records"
+        return nil
+      end
+
+      if all_claimants
+        import_array(Claimant, "claimants")
+      else
+        import_record(Claimant) # associated to appellant via participant id
+      end
+      import_array(User, "users")
+      import_array(Organization, "organizations")
+      import_array(Task, "tasks")
+
+      appeal
+    end
   end
 
   def import_array(clazz, key)
     obj_hash_array = @records_hash[key]
     obj_hash_array.map do |obj_hash|
-      import(clazz, obj_hash: obj_hash)
+      import_record(clazz, obj_hash: obj_hash)
     end
   end
 
@@ -56,16 +68,29 @@ class SanitizedJsonImporter
     end
   end
 
-  def import(clazz, key: clazz.name, obj_hash: @records_hash[key])
+  # Classes that shouldn't be imported if a record with the same unique attributes already exists
+  NONDUPLICATE_TYPES = [ Organization, User, Veteran ]
+
+  def import_record(clazz, key: clazz.name, obj_hash: @records_hash[key])
     fail "No JSON data for key '#{key}'.  Keys: #{@records_hash.keys}" unless obj_hash
+
+    existing_record = existing_record(clazz, obj_hash)
+    # Don't import if it already exists
+    return if existing_record && NONDUPLICATE_TYPES.include?(clazz)
 
     case clazz.name
     when Organization.name
-      # Don't import if it already exists
-      return if Organization.find_by(url: obj_hash["url"])
 
-      # Try to create the singleton
-      return if obj_hash["type"].constantize.singleton
+      if Organization.find_by(url: obj_hash["url"])
+        obj_hash["url"] = obj_hash["url"] + "_imported"
+        Rails.logger.warn "Importing duplicate organization with different unique url because record id is different: #{obj_hash}"
+      elsif Organization.find_by(id: obj_hash["id"]).nil?
+        # Try to create the singleton with the same id
+        # return if obj_hash["type"].constantize.singleton
+        # obj_hash["name"] = obj_hash["name"] + "_imported" if Organization.find_by(name: obj_hash["name"])
+        puts "Creating #{clazz} with original id #{obj_hash['id']} #{obj_hash['type']} '#{obj_hash['name']}' #{obj_hash.select{|k,v| k.include?('_id')}}"
+        return clazz.create!(obj_hash).tap { |new_record| imported_records[key] = new_record }
+      end
     when User.name
       # Change CSS_ID if it already exists
       obj_hash["css_id"] = obj_hash["css_id"] + "_imported" if User.find_by(css_id: obj_hash["css_id"])
@@ -74,6 +99,8 @@ class SanitizedJsonImporter
     orig_id = obj_hash["id"]
     adjust_ids(clazz, obj_hash)
     reassociate(clazz, obj_hash)
+
+    puts "Creating #{clazz} #{obj_hash['id']} #{obj_hash['type']} #{obj_hash.select{|k,v| k.include?('_id')}}"
     case clazz.name
     when Task.name
       # Create the task without validation or callbacks
@@ -83,6 +110,10 @@ class SanitizedJsonImporter
       new_task
     when User.name
       @imported_users[orig_id] = obj_hash["id"]
+      clazz.create!(obj_hash).tap { |new_record| imported_records[key] = new_record }
+    when Organization.name
+      # Create org with different id
+      @imported_orgs[orig_id] = obj_hash["id"]
       clazz.create!(obj_hash).tap { |new_record| imported_records[key] = new_record }
     else
       clazz.create!(obj_hash).tap { |new_record| imported_records[key] = new_record }
@@ -96,6 +127,7 @@ class SanitizedJsonImporter
     when Task.name
       obj_hash["appeal_id"] = imported_records[Appeal.name].id
       obj_hash["assigned_to_id"] = @imported_users[obj_hash["assigned_to_id"]] if obj_hash["assigned_to_type"] == "User" && @imported_users[obj_hash["assigned_to_id"]]
+      obj_hash["assigned_to_id"] = @imported_orgs[obj_hash["assigned_to_id"]] if obj_hash["assigned_to_type"] == "Organization" && @imported_users[obj_hash["assigned_to_id"]]
       obj_hash["assigned_by_id"] = @imported_users[obj_hash["assigned_by_id"]] if @imported_users[obj_hash["assigned_by_id"]]
     end
   end
@@ -113,7 +145,7 @@ class SanitizedJsonImporter
     end
   end
 
-  ID_OFFSET = 2_000_000_000
+  ID_OFFSET = 1_000_000_000
 
   def self.diff_records(record1, record2, **kwargs)
     hash1 = SanitizedJsonExporter.to_hash(record1)
@@ -144,6 +176,24 @@ class SanitizedJsonImporter
   end
 
   private
+
+  def existing_record(clazz, obj_hash)
+    existing_record = clazz.find_by_id(obj_hash["id"])
+    existing_record if existing_record && same_unique_attributes?(existing_record, obj_hash)
+  end
+
+  def same_unique_attributes?(existing_record, obj_hash)
+    case existing_record
+    when Organization
+      existing_record.url == obj_hash["url"]
+    when User
+      existing_record.css_id == obj_hash["css_id"]
+    when Claimant
+      obj_hash["decision_review_id"] == imported_records[Appeal.name].id
+    end
+
+    existing_record
+  end
 
   def adjust_ids(clazz, obj_hash)
     obj_hash["id"] += @id_offset
