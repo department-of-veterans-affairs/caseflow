@@ -13,9 +13,16 @@ export default {
   },
   args: {
     options: [
-      { value: 'option1', displayText: 'Option 1', checked: true },
-      { value: 'option2', displayText: 'Option 2', checked: false },
-      { value: 'option3', displayText: 'Option 3', checked: false }
+      {
+        displayText: 'Attorney Legacy Tasks',
+        value: 'AttorneyLegacyTask',
+        checked: true,
+      },
+      {
+        displayText: 'Establish Claim',
+        value: 'EstablishClaim',
+        checked: false,
+      },
     ],
   },
   argTypes: { setSelectedValue: { action: 'clicked' } }
