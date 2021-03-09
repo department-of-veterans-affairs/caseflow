@@ -155,7 +155,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     start_time = Time.zone.now
     distro_case_ids = DistributedCase.where(distribution_id: (@tied_distributions + @genpop_distributions).pluck(:id))
       .pluck(:case_id)
-    veterans_refreshed = Update_veteran_attribs_service.update_for_appeals(distro_case_ids)
+    veterans_refreshed = UpdateVeteranAttribsService.update_veterans_for_appeals(distro_case_ids)
     datadog_report_time_segment(segment: "warm_veteran_attribs_for_priority_distributions", start_time: start_time)
     veterans_refreshed.uniq
   end
