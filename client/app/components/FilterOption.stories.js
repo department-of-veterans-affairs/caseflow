@@ -29,10 +29,13 @@ export default {
 };
 
 export const Controlled = (args) => {
+  // The usage of _args and updateArgs here allows storybook to check/uncheck
+  // when you click on the checkboxes
   // eslint-disable-next-line no-unused-vars
   const [_args, updateArgs] = useArgs();
 
   const handleChange = (val) => {
+    // Check or uncheck the box when you click on an option
     const newOptions = args.options.map((opt) => opt.value === val ? { ...opt, checked: !opt.checked } : opt);
 
     updateArgs({ options: newOptions });
