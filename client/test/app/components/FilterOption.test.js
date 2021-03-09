@@ -39,6 +39,32 @@ describe('FilterOption', () => {
     expect(results).toHaveNoViolations();
   });
 
+  it('correctly sets checkbox status when all are unchecked', () => {
+    const uncheckedOptions = props.options.map((opt) => {
+      return { ...opt, checked: false };
+    });
+    const allFalseOptionsProps = { ...props, options: uncheckedOptions };
+
+    const component = render(<FilterOption {...allFalseOptionsProps} />);
+    const options = component.getAllByRole('checkbox');
+    const checked = options.filter((el) => el.checked);
+
+    expect(checked.length).toBe(0);
+  });
+
+  it('correctly sets checkbox status when all are checked', () => {
+    const checkedOptions = props.options.map((opt) => {
+      return { ...opt, checked: true };
+    });
+    const allTrueOptionsProps = { ...props, options: checkedOptions };
+
+    const component = render(<FilterOption {...allTrueOptionsProps} />);
+    const options = component.getAllByRole('checkbox');
+    const checked = options.filter((el) => el.checked);
+
+    expect(checked.length).toBe(options.length);
+  });
+
   it('correctly calls setSelectedValue', async () => {
     const component = render(<FilterOption {...props} />);
 
