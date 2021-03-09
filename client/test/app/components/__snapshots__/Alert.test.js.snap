@@ -20,7 +20,7 @@ Object {
           <div
             class="usa-alert-text"
           >
-            This
+            This is a message
           </div>
         </div>
       </div>
@@ -42,7 +42,7 @@ Object {
         <div
           class="usa-alert-text"
         >
-          This
+          This is a message
         </div>
       </div>
     </div>
@@ -121,7 +121,7 @@ Object {
           <div
             class="usa-alert-text"
           >
-            This
+            This is a message
           </div>
         </div>
       </div>
@@ -143,7 +143,7 @@ Object {
         <div
           class="usa-alert-text"
         >
-          This
+          This is a message
         </div>
       </div>
     </div>
@@ -222,7 +222,7 @@ Object {
           <div
             class="usa-alert-text"
           >
-            This
+            This is a message
           </div>
         </div>
       </div>
@@ -244,7 +244,7 @@ Object {
         <div
           class="usa-alert-text"
         >
-          This
+          This is a message
         </div>
       </div>
     </div>
@@ -323,7 +323,7 @@ Object {
           <div
             class="usa-alert-text"
           >
-            This
+            This is a message
           </div>
         </div>
       </div>
@@ -345,7 +345,7 @@ Object {
         <div
           class="usa-alert-text"
         >
-          This
+          This is a message
         </div>
       </div>
     </div>

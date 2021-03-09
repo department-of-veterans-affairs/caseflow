@@ -5,8 +5,15 @@ import { axe } from 'jest-axe';
 
 describe('Alert', () => {
   const title = 'This is a title';
-  const message = 'This';
+  const message = 'This is a message';
   const types = ['error', 'info', 'success', 'warning'];
+  const scrollToSpy = jest.fn();
+
+  global.window.scrollTo = scrollToSpy;
+
+  beforeEach(() => {
+    scrollToSpy.mockClear();
+  });
 
   describe.each(types)(' type: %s', (type) => {
     const props = { title, message, type };
@@ -37,9 +44,26 @@ describe('Alert', () => {
       expect(screen.getByText(props.message)).toBeTruthy();
     });
 
-    it('scrolls to window top when scroll to top set to true by default', () => {
+    it('shows without message content', () => {
+      const modifiedProps = { ...props };
+
+      delete modifiedProps.message;
+      render(<Alert {...modifiedProps} />);
+
+      expect(screen.queryByText(props.message)).not.toBeInTheDocument();
+    });
+
+    it('scrolls to window top when scrollOnAlert set to true', () => {
       render(<Alert {...props} />);
       expect(window.scrollTo).toHaveBeenCalledWith(0, 0);
+    });
+
+    it('does not scroll to window top when scrollOnAlert set to false', () => {
+      const modifiedProps = { ...props };
+
+      modifiedProps.scrollOnAlert = false;
+      render(<Alert {...modifiedProps} />);
+      expect(window.scrollTo).toHaveBeenCalledTimes(0);
     });
   });
 });
