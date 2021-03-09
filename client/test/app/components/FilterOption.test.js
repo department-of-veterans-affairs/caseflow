@@ -40,9 +40,9 @@ describe('FilterOption', () => {
   });
 
   it('correctly calls setSelectedValue', async () => {
-    const utils = render(<FilterOption {...props} />);
+    const component = render(<FilterOption {...props} />);
 
-    const options = utils.getAllByRole('checkbox');
+    const options = component.getAllByRole('checkbox');
     const opt = props.options[1];
     const checkedBefore = options.filter((el) => el.checked);
 
