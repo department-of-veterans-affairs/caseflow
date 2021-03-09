@@ -1,23 +1,28 @@
 import React from 'react';
+
 import { render, screen } from '@testing-library/react';
-import FilterOption from 'app/components/FilterOption';
+import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
 
+import FilterOption from 'app/components/FilterOption';
+
 describe('FilterOption', () => {
+  const setSelectedValue = jest.fn();
+
   const props = {
     options: [
       {
         displayText: 'Attorney Legacy Tasks',
         value: 'AttorneyLegacyTask',
-        checked: false,
+        checked: true,
       },
       {
         displayText: 'Establish Claim',
         value: 'EstablishClaim',
-        checked: false
-      }
+        checked: false,
+      },
     ],
-    setSelectedValue: () => {},
+    setSelectedValue
   };
 
   it('renders correctly', () => {
@@ -34,16 +39,26 @@ describe('FilterOption', () => {
     expect(results).toHaveNoViolations();
   });
 
-  it('shows all options as unchecked initially', async () => {
-    await render(<FilterOption {...props} />);
+  it('correctly calls setSelectedValue', async () => {
+    const utils = render(<FilterOption {...props} />);
 
-    const options = props.options;
+    const options = utils.getAllByRole('checkbox');
+    const opt = props.options[1];
+    const checkedBefore = options.filter((el) => el.checked);
 
-    options.forEach((opt) => {
-      const option = screen.queryByText(opt.displayText);
+    expect(checkedBefore.length).toBe(1);
 
-      expect(option).not.toBeNull();
-      expect(option.checked).toBeFalsy();
-    });
+    await userEvent.click(screen.getByLabelText(opt.displayText));
+
+    // Calls onChange handler
+    expect(setSelectedValue).toHaveBeenCalledTimes(1);
+
+    // While we aren't updating value, handleChange is still getting called
+    expect(setSelectedValue).toHaveBeenLastCalledWith(opt.value);
+
+    const checkedAfter = options.filter((el) => el.checked);
+
+    // Value should not have been updated, since we're not doing that
+    expect(checkedAfter.length).toBe(1);
   });
 });

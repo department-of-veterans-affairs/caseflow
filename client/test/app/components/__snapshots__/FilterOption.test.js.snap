@@ -10,6 +10,7 @@ exports[`FilterOption renders correctly 1`] = `
       data-css-ewovsq=""
     >
       <input
+        checked=""
         id="0-AttorneyLegacyTask"
         type="checkbox"
         value="AttorneyLegacyTask"
