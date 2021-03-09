@@ -6,12 +6,25 @@ import { axe } from 'jest-axe';
 describe('FilterOption', () => {
   const props = {
     options: [
-      { value: 'option1', displayText: 'Option 1', checked: true },
-      { value: 'option2', displayText: 'Option 2', checked: false },
-      { value: 'option3', displayText: 'Option 3', checked: false }
+      {
+        displayText: 'Attorney Legacy Tasks',
+        value: 'AttorneyLegacyTask',
+        checked: false,
+      },
+      {
+        displayText: 'Establish Claim',
+        value: 'EstablishClaim',
+        checked: false
+      }
     ],
     setSelectedValue: () => {},
   };
+
+  it('renders correctly', () => {
+    const { container } = render(<FilterOption {...props} />);
+
+    expect(container).toMatchSnapshot();
+  });
 
   it('passes a11y testing', async () => {
     const { container } = render(<FilterOption {...props} />);
@@ -21,13 +34,16 @@ describe('FilterOption', () => {
     expect(results).toHaveNoViolations();
   });
 
-  it('shows all options', async () => {
+  it('shows all options as unchecked initially', async () => {
     await render(<FilterOption {...props} />);
 
     const options = props.options;
 
     options.forEach((opt) => {
-      expect(screen.queryByText(opt.displayText)).not.toBeNull();
+      const option = screen.queryByText(opt.displayText);
+
+      expect(option).not.toBeNull();
+      expect(option.checked).toBeFalsy();
     });
   });
 });
