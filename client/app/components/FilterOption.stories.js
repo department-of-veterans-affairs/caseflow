@@ -1,4 +1,5 @@
 import React from 'react';
+import { useArgs } from '@storybook/client-api';
 
 import FilterOption from './FilterOption';
 
@@ -16,15 +17,20 @@ export default {
       { value: 'option2', displayText: 'Option 2', checked: false },
       { value: 'option3', displayText: 'Option 3', checked: false }
     ],
-    setSelectedValue: () => {},
   },
+  argTypes: { setSelectedValue: { action: 'clicked' } }
 };
 
-// I don't understand how to update state in here
-// client/app/components/SearchableDropdown.stories.js
-// This seems like my best bet for figuring this out?
-export const Template = (args) => {
-  return <FilterOption {...args} />;
-};
+export const Controlled = (args) => {
+  // eslint-disable-next-line no-unused-vars
+  const [_args, updateArgs] = useArgs();
 
-export const Something = Template.bind({});
+  const handleChange = (val) => {
+    const newOptions = args.options.map((opt) => opt.value === val ? { ...opt, checked: !opt.checked } : opt);
+
+    updateArgs({ options: newOptions });
+    args.setSelectedValue(val);
+  };
+
+  return <FilterOption {...args} setSelectedValue={handleChange} />;
+};
