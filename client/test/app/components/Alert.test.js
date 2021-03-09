@@ -5,111 +5,39 @@ import { axe } from 'jest-axe';
 
 describe('Alert', () => {
   const title = 'This is a title';
+  const message = 'This';
+  const types = ['error', 'info', 'success', 'warning'];
 
-  it('renders correctly', () => {
-    const props = {
-      title,
-      type: 'info'
-    };
+  describe.each(types)(' type: %s', (type) => {
+    const props = { title, message, type };
 
-    const component = render(<Alert {...props} />);
+    it(`renders correctly for ${type} alert`, () => {
+      const component = render(<Alert {...props} />);
 
-    expect(component).toMatchSnapshot();
-  });
-
-  it('passes a11y testing', async () => {
-    const props = {
-      title,
-      type: 'info'
-    };
-
-    const { container } = render(<Alert {...props} />);
-
-    const results = await axe(container);
-
-    expect(results).toHaveNoViolations();
-  });
-
-  describe('shows correct alert type', () => {
-
-    it('shows info banner', () => {
-      const props = {
-        title,
-        type: 'info'
-      };
-
-      render(<Alert {...props} />);
-
-      expect(screen.getByRole('alert')).toHaveClass('usa-alert-info');
+      expect(component).toMatchSnapshot();
     });
 
-    it('shows warning banner', () => {
-      const props = {
-        title,
-        type: 'warning'
-      };
+    it('passes a11y testing', async () => {
+      const { container } = render(<Alert {...props} />);
 
-      render(<Alert {...props} />);
+      const results = await axe(container);
 
-      expect(screen.getByRole('alert')).toHaveClass('usa-alert-warning');
+      expect(results).toHaveNoViolations();
     });
 
-    it('shows error banner', () => {
-      const props = {
-        title,
-        type: 'error'
-      };
-
+    it(`shows ${type} banner`, () => {
       render(<Alert {...props} />);
 
-      expect(screen.getByRole('alert')).toHaveClass('usa-alert-error');
+      expect(screen.getByRole('alert')).toHaveClass(`usa-alert-${type}`);
     });
 
-    it('shows success banner', () => {
-      const props = {
-        title,
-        type: 'success'
-      };
-
-      render(<Alert {...props} />);
-
-      expect(screen.getByRole('alert')).toHaveClass('usa-alert-success');
-    });
-  });
-
-  describe('shows text content', () => {
-
-    it('shows title in banner', () => {
-      const props = {
-        title,
-        type: 'info'
-      };
-
-      render(<Alert {...props} />);
-
-      expect(screen.getByText(title)).toBeTruthy();
-    });
-
-    it('shows message in banner', () => {
-      const props = {
-        title,
-        type: 'info',
-        message: 'Message content below title'
-      };
-
+    it('shows message content', () => {
       render(<Alert {...props} />);
 
       expect(screen.getByText(props.message)).toBeTruthy();
     });
-  });
 
-  describe('scroll to prop', () => {
-    it('scrolls to window top when set to true', () => {
-      const props = {
-        title,
-        type: 'info'
-      };
-
+    it('scrolls to window top when scroll to top set to true by default', () => {
       render(<Alert {...props} />);
       expect(window.scrollTo).toHaveBeenCalledWith(0, 0);
     });
