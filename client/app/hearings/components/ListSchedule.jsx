@@ -169,6 +169,7 @@ class ListSchedule extends React.Component {
     return [
       {
         header: 'Date',
+        name: 'Date',
         align: 'left',
         valueName: 'scheduledFor',
         valueFunction: (row) => <Link to={`/schedule/docket/${row.id}`}>
@@ -180,6 +181,7 @@ class ListSchedule extends React.Component {
       },
       {
         header: 'Type',
+        name: 'Type',
         cellClass: 'type-column',
         align: 'left',
         tableData: hearingScheduleRows,
@@ -210,6 +212,7 @@ class ListSchedule extends React.Component {
       },
       {
         header: 'Room',
+        name: 'Room',
         align: 'left',
         valueName: 'room',
         tableData: hearingScheduleRows,
