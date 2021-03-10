@@ -919,7 +919,7 @@ describe Veteran, :all_dbs do
       let(:new_date_of_death) { Date.new(2021, 3, 8) }
       let(:bgs_date_of_death) { "03/08/2021" }
       before do
-        allow(veteran).to receive(:fetch_bgs_record).and_return({date_of_death: bgs_date_of_death})
+        allow(veteran).to receive(:fetch_bgs_record).and_return(date_of_death: bgs_date_of_death)
       end
 
       subject { veteran.date_of_death }
