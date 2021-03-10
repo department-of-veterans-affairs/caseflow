@@ -245,7 +245,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
     end
 
     let!(:expected_alert) do
-      COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_FROM_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
+      COPY::VIRTUAL_HEARING_SUCCESS_ALERTS["CHANGED_FROM_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
     end
 
     scenario "email notification history displays email addresses for previously sent emails" do
