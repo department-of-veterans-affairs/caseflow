@@ -4,13 +4,15 @@ class SanitizedJsonExporter
   attr_accessor :value_mapping
   attr_accessor :records_hash
 
-  def initialize(record, sanitize: true)
-    @record = record
+  def initialize(*appeals, sanitize: true)
     @sanitize = sanitize
     @value_mapping = {}
 
     @records_hash = { "metadata" => { "exported_at": Time.zone.now } }
-    @records_hash[record.class.name] = sanitize(record)
+
+    @records_hash["appeals"] = appeals.uniq.map { |appeal| sanitize(appeal) }
+
+    record = appeals.first
     @records_hash[record.veteran.class.name] = sanitize(record.veteran)
 
     @records_hash[Claimant.name] = sanitize(record.claimant)
@@ -60,14 +62,11 @@ class SanitizedJsonExporter
       VETERAN_PII_FIELDS.each do |field|
         find_or_create_mapped_value_for(obj_hash, field)
       end
-    when Claimant
-    when Task
-      ## TODO: Re-associate during import
-      # obj_hash["decision_review_id"] = @record.id
     when User
       # User#attributes includes `display_name`; don't need it when importing so leave it out
       obj_hash.delete(:display_name)
-    when Organization
+    when Organization, Claimant, Task
+      # nothing to sanitize
     else
       fail "Unsupported object type: #{record.class.name}"
     end
@@ -87,9 +86,12 @@ class SanitizedJsonExporter
 
   SSN_REGEX = /^\d{9}$/.freeze
   NAME_REGEX = /_name$/.freeze
+  EMAIL_REGEX = /email$/.freeze
 
   def find_or_create_mapped_value(orig_value, field_name = nil)
     return value_mapping[orig_value] if value_mapping[orig_value]
+
+    return value_mapping[orig_value] = Faker::Internet.email if orig_value.match?(EMAIL_REGEX)
 
     return value_mapping[orig_value] if (value_mapping[orig_value] = create_person_name(field_name))
 

@@ -80,7 +80,7 @@ describe "SanitizedJsonExporter/Importer" do
 
     # temporary method for debugging
     def print_imported_things
-      imp_appeal = sji.imported_records[Appeal.name]
+      imp_appeal = sji.imported_records["appeals"].first
       imp_veteran = sji.imported_records[Veteran.name]
       imp_claimant = sji.imported_records[Claimant.name]
 
@@ -89,7 +89,7 @@ describe "SanitizedJsonExporter/Importer" do
       pp imp_veteran
       pp imp_claimant
 
-      show_diffs(appeal, sji.records_hash[Appeal.name], imp_appeal)
+      show_diffs(appeal, sji.records_hash["appeals"].first, imp_appeal)
     end
 
     it "imports json" do
@@ -98,20 +98,24 @@ describe "SanitizedJsonExporter/Importer" do
       expect(Claimant.count).to eq 2
       expect(User.count).to eq 0
 
-      sji.records_hash[Appeal.name]["id"]=22222
-      sji.import
+      # map to new id so importer doesn't skip creating appeal
+      # sji.mapped_appeal_ids[appeal.id]=22222
+
+      appeals = sji.import
+      expect(appeals.size).to eq 1
+
       expect(Appeal.count).to eq 2
       expect(Veteran.count).to eq 1  # reuse identify Veteran
       expect(Claimant.count).to eq 4
       expect(User.count).to eq 0
 
       # TODO: diff other record types
-      imp_appeal = sji.imported_records[Appeal.name]
+      imp_appeal = sji.imported_records["appeals"].first
       expect(SanitizedJsonImporter.diff_records(appeal, imp_appeal, ignore_id_offset: false)).not_to be_empty
       expect(SanitizedJsonImporter.diff_records(appeal, imp_appeal).map(&:first)).to include "veteran_file_number"
 
       # Not necessarily true: expect(imp_veteran.participant_id).to eq imp_claimant.participant_id
-      imp_claimant = sji.imported_records[Claimant.name]
+      imp_claimant = sji.imported_records["claimants"].last
       expect(imp_claimant.decision_review).to eq imp_appeal
     end
 

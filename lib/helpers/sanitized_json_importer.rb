@@ -4,6 +4,8 @@ class SanitizedJsonImporter
   attr_accessor :imported_records
   attr_accessor :records_hash
 
+  attr_accessor :mapped_appeal_ids
+
   def self.from_file(filename)
     self.new(File.read(filename))
   end
@@ -11,8 +13,10 @@ class SanitizedJsonImporter
   def initialize(file_contents, id_offset: ID_OFFSET)
     @records_hash = JSON.parse(file_contents)
     @imported_records = {}
-    @imported_users = {}
-    @imported_orgs = {}
+
+    @mapped_appeal_ids = {}
+    @mapped_user_ids = {}
+    @mapped_org_ids = {}
 
     @id_offset = id_offset
   end
@@ -23,10 +27,13 @@ class SanitizedJsonImporter
 
   def import(all_claimants: true)
     ActiveRecord::Base.transaction do
-      appeal = import_record(Appeal)
-      import_record(Veteran)
+      appeals = import_array(Appeal, "appeals")      
 
-      unless appeal
+      import_record(Veteran)
+      imported_records[Veteran.name] = import_record(Veteran)
+
+      if appeals.blank?
+        puts "WARN: No appeal imported, aborting import of remaining records"
         Rails.logger.warn "No appeal imported, aborting import of remaining records"
         return nil
       end
@@ -34,21 +41,23 @@ class SanitizedJsonImporter
       if all_claimants
         import_array(Claimant, "claimants")
       else
-        import_record(Claimant) # associated to appellant via participant id
+        # Claimant associated to appellant via participant id
+        imported_records[Claimant.name] = import_record(Claimant)
       end
       import_array(User, "users")
       import_array(Organization, "organizations")
       import_array(Task, "tasks")
 
-      appeal
+      appeals
     end
   end
 
   def import_array(clazz, key)
     obj_hash_array = @records_hash[key]
-    obj_hash_array.map do |obj_hash|
+    new_records = obj_hash_array.map do |obj_hash|
       import_record(clazz, obj_hash: obj_hash)
     end
+    imported_records[key] = new_records
   end
 
   # Using this approach: https://mattpruitt.com/articles/skip-callbacks/
@@ -76,7 +85,10 @@ class SanitizedJsonImporter
 
     existing_record = existing_record(clazz, obj_hash)
     # Don't import if it already exists
-    return if existing_record && NONDUPLICATE_TYPES.include?(clazz)
+    if existing_record && NONDUPLICATE_TYPES.include?(clazz)
+      puts "Using existing #{clazz} instead of importing: #{obj_hash['id']} #{obj_hash['type']} #{obj_hash.select{|k,v| k.include?('_id')}}"
+      return
+    end
 
     case clazz.name
     when Organization.name
@@ -89,11 +101,11 @@ class SanitizedJsonImporter
         # return if obj_hash["type"].constantize.singleton
         # obj_hash["name"] = obj_hash["name"] + "_imported" if Organization.find_by(name: obj_hash["name"])
         puts "Creating #{clazz} with original id #{obj_hash['id']} #{obj_hash['type']} '#{obj_hash['name']}' #{obj_hash.select{|k,v| k.include?('_id')}}"
-        return clazz.create!(obj_hash).tap { |new_record| imported_records[key] = new_record }
+        return clazz.create!(obj_hash)
       end
     when User.name
       # Change CSS_ID if it already exists
-      obj_hash["css_id"] = obj_hash["css_id"] + "_imported" if User.find_by(css_id: obj_hash["css_id"])
+      obj_hash["css_id"] = obj_hash["css_id"] + "_imported" if User.find_by_css_id(obj_hash["css_id"])
     end
 
     orig_id = obj_hash["id"]
@@ -102,33 +114,40 @@ class SanitizedJsonImporter
 
     puts "Creating #{clazz} #{obj_hash['id']} #{obj_hash['type']} #{obj_hash.select{|k,v| k.include?('_id')}}"
     case clazz.name
+    when Appeal.name
+      @mapped_appeal_ids[orig_id] = obj_hash["id"]
     when Task.name
       # Create the task without validation or callbacks
       new_task = Task.new(obj_hash)
       new_task.extend(SkipCallbacks) # patch only this in-memory instance of the task
       new_task.save(validate: false)
-      new_task
+      return new_task
     when User.name
-      @imported_users[orig_id] = obj_hash["id"]
-      clazz.create!(obj_hash).tap { |new_record| imported_records[key] = new_record }
+      @mapped_user_ids[orig_id] = obj_hash["id"]
     when Organization.name
       # Create org with different id
-      @imported_orgs[orig_id] = obj_hash["id"]
-      clazz.create!(obj_hash).tap { |new_record| imported_records[key] = new_record }
+      @mapped_org_ids[orig_id] = obj_hash["id"]
     else
-      clazz.create!(obj_hash).tap { |new_record| imported_records[key] = new_record }
+      if clazz == Claimant
+        # Per appeal, set of participant_ids must be unique
+        # pp Claimant.pluck(:id, :type, :participant_id, :decision_review_type, :decision_review_id)
+        # binding.pry 
+      end
     end
+
+    new_record = clazz.create!(obj_hash)
   end
 
   def reassociate(clazz, obj_hash)
+    # pp "Reassociate #{clazz}"
     case clazz.name
-    when Claimant.name
-      obj_hash["decision_review_id"] = imported_records[Appeal.name].id
+    when Claimant.name, VeteranClaimant.name
+      obj_hash["decision_review_id"] = @mapped_appeal_ids[obj_hash["decision_review_id"]] if @mapped_appeal_ids[obj_hash["decision_review_id"]] && obj_hash["decision_review_type"] == "Appeal"
     when Task.name
-      obj_hash["appeal_id"] = imported_records[Appeal.name].id
-      obj_hash["assigned_to_id"] = @imported_users[obj_hash["assigned_to_id"]] if obj_hash["assigned_to_type"] == "User" && @imported_users[obj_hash["assigned_to_id"]]
-      obj_hash["assigned_to_id"] = @imported_orgs[obj_hash["assigned_to_id"]] if obj_hash["assigned_to_type"] == "Organization" && @imported_users[obj_hash["assigned_to_id"]]
-      obj_hash["assigned_by_id"] = @imported_users[obj_hash["assigned_by_id"]] if @imported_users[obj_hash["assigned_by_id"]]
+      obj_hash["appeal_id"] = @mapped_appeal_ids[obj_hash["appeal_id"]] if @mapped_appeal_ids[obj_hash["appeal_id"]]
+      obj_hash["assigned_to_id"] = @mapped_user_ids[obj_hash["assigned_to_id"]] if obj_hash["assigned_to_type"] == "User" && @mapped_user_ids[obj_hash["assigned_to_id"]]
+      obj_hash["assigned_to_id"] = @mapped_org_ids[obj_hash["assigned_to_id"]] if obj_hash["assigned_to_type"] == "Organization" && @mapped_user_ids[obj_hash["assigned_to_id"]]
+      obj_hash["assigned_by_id"] = @mapped_user_ids[obj_hash["assigned_by_id"]] if @mapped_user_ids[obj_hash["assigned_by_id"]]
     end
   end
 
@@ -189,7 +208,9 @@ class SanitizedJsonImporter
     when User
       existing_record.css_id == obj_hash["css_id"]
     when Claimant
-      obj_hash["decision_review_id"] == imported_records[Appeal.name].id
+      # check if claimant is associated with appeal we just imported
+      new_appeal_id = @mapped_appeal_ids[obj_hash["decision_review_id"]]
+      existing_record.decision_review_id == new_appeal_id
     end
 
     existing_record
@@ -199,6 +220,8 @@ class SanitizedJsonImporter
     obj_hash["id"] += @id_offset
 
     case clazz.name
+    when Claimant.name
+      # obj_hash["decision_review_id"] += @id_offset if obj_hash["parent_id"]
     when Task.name
       obj_hash["parent_id"] += @id_offset if obj_hash["parent_id"]
     end
