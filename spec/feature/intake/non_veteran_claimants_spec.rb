@@ -114,7 +114,7 @@ feature "Non-veteran claimants", :postgres do
       expect(page).to have_current_path("/intake/add_issues")
     end
 
-    it "allows selecting claimant not listed goes to and add_power_of_attorney path" do
+    fit "allows selecting claimant not listed goes to and add_power_of_attorney path" do
       start_appeal(veteran)
       visit "/intake"
 
@@ -198,7 +198,7 @@ feature "Non-veteran claimants", :postgres do
       # verify that current intake with claimant_type other was created
       expect(Intake.last.detail.claimant_type).to eq("other")
       appeal = Appeal.find_by(docket_type: "evidence_submission")
-
+       binding.pry
       # Case details page
       visit "queue/appeals/#{appeal.uuid}"
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")

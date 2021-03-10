@@ -182,6 +182,12 @@ export const commonStateFromServerIntake = (serverIntake) => {
     claimantType: {
       $set: serverIntake.claimantType
     },
+    claimantName: {
+      $set: serverIntake.claimantName
+    },
+    powerOfAttorneyName: {
+     $set: serverIntake.powerOfAttorneyName
+    },
     payeeCode: {
       $set: serverIntake.payeeCode
     },

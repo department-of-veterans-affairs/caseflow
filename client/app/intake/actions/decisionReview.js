@@ -1,7 +1,7 @@
 import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { analyticsCallback, submitIntakeCompleteRequest } from './intake';
-import { validateReviewData, prepareReviewData } from '../util';
+import { validateReviewData, prepareReviewData, formatUnlistedClaimant } from '../util';
 import { formatIssues } from '../util/issues';
 
 const analytics = true;
@@ -77,6 +77,7 @@ export const submitReviewUnListedClaimant = (intakeId, intakeData, intakeType, c
   }
 
 const data = prepareReviewData(intakeData, intakeType);
+
 data.unlisted_claimant = {
     relationship: claimant.relationship,
     party_type: claimant.partyType,
@@ -93,10 +94,15 @@ data.unlisted_claimant = {
     country: claimant.country,
     phone_number: claimant.phoneNumber,
     email_address: claimant.email,
-    poa_form: false}
+    poa_form: true
+  }
+
 data.unlisted_poa = { 
     party_type: poa.partyType,
-    name: poa.name,
+    name: poa.organization,
+    first_name: poa.firstName,
+    middle_name: poa.middleName,
+    last_name: poa.lastName,
     address_line_1: poa.address1,
     address_line_2: poa.address2,
     address_line_3: poa.address3,
@@ -105,9 +111,11 @@ data.unlisted_poa = {
     zip: poa.zip,
     country: poa.country,
     phone_number: poa.phoneNumber,
-    email_address: poa.email,
-    listed_attorney: poa.listedAttorney
+    email_address: poa.email
   }
+
+  data.poa_participant_id = poa.listedAttorney?.value
+  
 
   return ApiUtil.patch(`/intake/${intakeId}/review`, { data }, ENDPOINT_NAMES.REVIEW_INTAKE).then(
     (response) => {

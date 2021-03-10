@@ -58,4 +58,8 @@ class Intake::DecisionReviewSerializer
       ssn: object.veteran&.ssn
     }
   end
+
+  attribute :power_of_attorney_name do |object|
+    object.claimant&.power_of_attorney&.name
+  end
 end

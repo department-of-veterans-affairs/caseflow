@@ -48,9 +48,9 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
 
   const toggleConfirm = () => setConfirmModal((val) => !val);
   const handleConfirm = () => {
-    // TODO - trigger action to submit data to backend
+
     dispatch(submitReviewUnListedClaimant(intakeId, intakeData, selectedForm.formName, claimant, poa));
-    // Redirect to next step (likely needs conditional on review type)
+
     if (selectedForm.formName === 'appeal') {
       push('/add_issues');
     }

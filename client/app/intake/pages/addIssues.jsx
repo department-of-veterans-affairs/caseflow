@@ -194,8 +194,8 @@ class AddIssuesPage extends React.Component {
       editPage,
       addingIssue,
       userCanWithdrawIssues,
-      claimant,
-      poaClaimant } = this.props;
+      claimant
+    } = this.props;
     const intakeData = intakeForms[formType];
     const { useAmaActivationDate, editEpClaimLabels } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
@@ -277,56 +277,30 @@ class AddIssuesPage extends React.Component {
 
     const columns = [{ valueName: 'field' }, { valueName: 'content' }];
 
-    const poaFields = () => {
-      let fields;
-
-      if (poaClaimant.partyType === 'organization') {
-        fields = `${poaClaimant.organization}`;
-      } else if (poaClaimant.partyType === 'individual') {
-        fields = `${poaClaimant.firstName} ${poaClaimant.lastName}`;
-      } else if (poaClaimant.listedAttorney) {
-        fields = `${poaClaimant.listedAttorney.label}`;
-      }
-
-      return fields;
-    };
-
-    const claimantFields = () => {
-      let fields;
-
-      if (intakeData.claimantType === 'other' && claimant.partyType === 'organization') {
-        fields = `${claimant.organization}`;
-      } else if (intakeData.claimantType === 'other' && claimant.partyType === 'individual') {
-        fields = `${claimant.firstName} ${claimant.lastName}`;
-      }
-
-      return fields;
-    };
-
     let fieldsForFormType = getAddIssuesFields(formType, veteran, intakeData);
 
     const claimantMap = {
       veteran: () => veteran.name,
       dependent: () => getDependentClaimant(intakeData),
       attorney: () => `${intakeData.claimantName}, Attorney`,
-      other: () => intakeData.claimantNotes
+      other: () => intakeData.claimantName
     };
 
     const claimantType = intakeData.claimantType;
     const claimantDisplayText = claimantMap[claimantType ?? 'veteran']?.();
 
-    if (formType === 'appeal' || formType === 'higher_level_review' || formType === 'supplemental_claim') {
-      fieldsForFormType = fieldsForFormType.concat({
-        field: 'Claimant',
-        content: claimantDisplayText || claimantFields()
-      });
-    }
+    fieldsForFormType = fieldsForFormType.concat({
+      field: 'Claimant',
+      content: claimantDisplayText
+    });
 
-    if (!editPage && (formType === 'appeal' && poaClaimant)) {
+    console.log('data', claimantDisplayText);
+
+    if (intakeData.powerOfAttorneyName) {
 
       fieldsForFormType = fieldsForFormType.concat({
         field: 'Claimant\'s Poa',
-        content: claimant.vaForm === 'false' ? COPY.ADD_CLAIMANT_CONFIRM_MODAL_NO_POA : poaFields()
+        content: claimant.vaForm === 'false' ? COPY.ADD_CLAIMANT_CONFIRM_MODAL_NO_POA : intakeData.powerOfAttorneyName
       });
     }
 
@@ -528,8 +502,8 @@ AddIssuesPage.propTypes = {
 };
 
 export const IntakeAddIssuesPage = connect(
-  ({ intake, higherLevelReview, supplementalClaim,
-    appeal, featureToggles, activeIssue, addingIssue, addClaimant }) => ({
+  ({ intake, higherLevelReview, supplementalClaim, appeal, featureToggles,
+      activeIssue, addingIssue, addClaimant }) => ({
     intakeForms: {
       higher_level_review: higherLevelReview,
       supplemental_claim: supplementalClaim,
