@@ -280,21 +280,28 @@ class AddIssuesPage extends React.Component {
 
     const claimantMap = {
       veteran: () => veteran.name,
-      dependent: () => getDependentClaimant(intakeData),
+      dependent: () => getDependentClaimant(intakeData), 
       attorney: () => `${intakeData.claimantName}, Attorney`,
       other: () => intakeData.claimantName
     };
-
+   
     const claimantType = intakeData.claimantType;
-    const claimantDisplayText = claimantMap[claimantType ?? 'veteran']?.();
+    // const claimantDisplayText = claimantMap[claimantType ?? 'veteran']?.();
+    const claimantDisplayText = () => {
+      const relationship = intakeData.claimantRelationship;
+      if(relationship !== 'Veteran') {
+        return [intakeData.claimantName, relationship].filter(Boolean).join(', ')
+       } 
+      return relationship
+    };
 
     fieldsForFormType = fieldsForFormType.concat({
       field: 'Claimant',
-      content: claimantDisplayText
+      content: claimantDisplayText()
     });
 
     fieldsForFormType = fieldsForFormType.concat({
-      field: 'Claimant\'s Poa',
+      field: 'Claimant\'s POA',
       content: intakeData.powerOfAttorneyName || COPY.ADD_CLAIMANT_CONFIRM_MODAL_NO_POA
     });
 

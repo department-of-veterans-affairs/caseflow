@@ -42,6 +42,7 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     claimantError: null,
     payeeCode: null,
     claimantName: null,
+    claimantRelationship: null,
     claimantNotes: null,
     claimantType: null,
     powerOfAttorneyName: null,

@@ -12,6 +12,14 @@ class Intake::DecisionReviewIntakeSerializer < Intake::IntakeSerializer
     object.detail&.claimant_participant_id
   end
 
+   attribute :claimant_name do |object|
+    object.detail&.claimant&.name
+  end
+
+  attribute :claimant_relationship do |object|
+    object.detail&.claimant&.relationship&.titleize
+  end
+
   attribute :veteran_is_not_claimant do |object|
     object.detail&.veteran_is_not_claimant
   end
