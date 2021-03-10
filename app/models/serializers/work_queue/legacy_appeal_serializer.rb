@@ -65,9 +65,9 @@ class WorkQueue::LegacyAppealSerializer
 
   attribute :regional_office do |object|
     {
-      key: object.regional_office.key,
-      city: object.regional_office.city,
-      state: object.regional_office.state
+      key: object.regional_office&.key,
+      city: object.regional_office&.city,
+      state: object.regional_office&.state
     }
   end
 
