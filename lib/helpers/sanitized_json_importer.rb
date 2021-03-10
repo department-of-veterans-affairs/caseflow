@@ -139,7 +139,7 @@ class SanitizedJsonImporter
     id_mapping[id_mapping_key] ||= {}
     id_mapping[id_mapping_key][orig_id] = new_id
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity:
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
 
   private
 
@@ -207,11 +207,24 @@ class SanitizedJsonImporter
       klass.create!(obj_hash)
     end
 
-    new_record = clazz.create!(obj_hash)
+    clazz.create!(obj_hash)
+  end
+
+  def mapped_appeal_ids
+    @mapped_ids[Appeal.name.underscore]
+  end
+
+  def mapped_user_ids
+    @mapped_ids[User.name.underscore]
   end
 
   def reassociate_type_table_fields
     @reassociate_type_table_fields ||= @configuration.reassociate_fields[:type].transform_keys(&:table_name).freeze
+  end
+  # rubocop:enable Metrics/PerceivedComplexity
+
+  def reassociate(obj_hash, id_field, id_mapping)
+    obj_hash[id_field] = id_mapping[obj_hash[id_field]] if id_mapping[obj_hash[id_field]]
   end
 
   def reassociate_table_fields_hash
