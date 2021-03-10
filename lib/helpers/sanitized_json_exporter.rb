@@ -108,6 +108,7 @@ class SanitizedJsonExporter
   end
 
   class << self
+    # :reek:RepeatedConditionals
     def random_email(field_name, _field_value)
       # puts "random_email"
       case field_name

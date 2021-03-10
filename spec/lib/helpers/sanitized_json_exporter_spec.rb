@@ -35,9 +35,9 @@ describe "SanitizedJsonExporter/Importer" do
         appeal.veteran.ssn
       ]
     end
-      
+
     it "exports appeal" do
-        # Check PII values will be mapped to fake values
+      # Check PII values will be mapped to fake values
       expect(sje.value_mapping.keys).to include(*pii_values)
       expect(sje.value_mapping.values).not_to include(*pii_values)
 
@@ -63,8 +63,8 @@ describe "SanitizedJsonExporter/Importer" do
 
     # for debugging
     def show_diffs(appeal, record_hash, imp_appeal)
-      orig_appeal_hash = SanitizedJsonExporter.to_hash(appeal)
-      imported_appeal_hash = SanitizedJsonExporter.to_hash(imp_appeal)
+      orig_appeal_hash = SanitizedJsonExporter.record_to_hash(appeal)
+      imported_appeal_hash = SanitizedJsonExporter.record_to_hash(imp_appeal)
 
       pp "======== show_diffs: orig_appeal_hash, imported_appeal_hash,   ignore_id_offset: false"
       pp SanitizedJsonImporter.diff_hashes(orig_appeal_hash, imported_appeal_hash, ignore_id_offset: false)
@@ -127,10 +127,10 @@ describe "SanitizedJsonExporter/Importer" do
       end
 
       it "imports json" do
-        # print_things
+        print_things
 
         sji.import
-        # print_imported_things
+        print_imported_things
       end
     end
   end

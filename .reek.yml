@@ -52,6 +52,7 @@ detectors:
     exclude:
       - HearingSerializerBase
       - LegacyDocket
+      - SanitizedJsonImporter
       - Seeds::Tasks
       - TaskTreeRenderModule
   DuplicateMethodCall:
@@ -170,6 +171,7 @@ detectors:
       - QueueConfig
       - RequestIssue
       - BulkTaskReassignment
+      - SanitizedJsonImporter
       - Seeds::Hearings
       - Task
       - UpdateCachedAppealsAttributesJob

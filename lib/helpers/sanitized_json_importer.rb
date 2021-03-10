@@ -127,11 +127,11 @@ class SanitizedJsonImporter
   def import_record(clazz, key: clazz.name, obj_hash: @records_hash[key])
     fail "No JSON data for key '#{key}'.  Keys: #{@records_hash.keys}" unless obj_hash
 
-    obj_description = "#{obj_hash['id']} #{obj_hash['type']} " \
+    obj_description = "#{obj_hash['type']} " \
                       "#{obj_hash.select { |obj_key, _v| obj_key.include?('_id') }}"
     # Don't import if certain types of records already exists
     if NONDUPLICATE_TYPES.include?(clazz) && existing_record(clazz, obj_hash)
-      puts "Using existing #{clazz} instead of importing: #{obj_description}"
+      puts "Using existing #{clazz} instead of importing: #{obj_hash['id']} #{obj_description}"
       return
     end
 
@@ -142,14 +142,14 @@ class SanitizedJsonImporter
 
     # Handle Organization type specially because each organization has a `singleton`
     if clazz == Organization && !org_already_exists?(obj_hash)
-      puts "Creating #{clazz} '#{obj_hash['name']}' with original id #{obj_description}"
+      puts "Creating #{clazz} '#{obj_hash['name']}' with original id #{obj_hash['id']} #{obj_description}"
       return clazz.create!(obj_hash)
     end
 
     adjust_ids_by_offset(clazz, obj_hash)
     reassociate_with_imported_records(clazz, obj_hash)
 
-    puts "Creating #{clazz} #{obj_description}"
+    puts "Creating #{clazz} #{obj_hash['id']} #{obj_description}"
     create_new_record(orig_id, clazz, obj_hash)
   end
 
@@ -187,19 +187,12 @@ class SanitizedJsonImporter
     # Record new id for certain record types
     @id_mapping[clazz.name.underscore][orig_id] = obj_hash["id"] if ID_MAPPING_TYPES.include?(clazz)
 
-    case clazz.name
-    when Task.name
+    if clazz <= Task
       # Create the task without validation or callbacks
       new_task = Task.new(obj_hash)
       new_task.extend(SkipCallbacks) # patch only this in-memory instance of the task
       new_task.save(validate: false)
       return new_task
-    else
-      if clazz == Claimant
-        # Per appeal, set of participant_ids must be unique
-        # pp Claimant.pluck(:id, :type, :participant_id, :decision_review_type, :decision_review_id)
-        # binding.pry
-      end
     end
 
     clazz.create!(obj_hash)
