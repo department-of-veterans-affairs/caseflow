@@ -210,12 +210,12 @@ class SanitizedJsonImporter
     clazz.create!(obj_hash)
   end
 
-  def mapped_appeal_ids
-    @mapped_ids[Appeal.name.underscore]
+  def appeal_id_mapping
+    @id_mapping[Appeal.name.underscore]
   end
 
-  def mapped_user_ids
-    @mapped_ids[User.name.underscore]
+  def user_id_mapping
+    @id_mapping[User.name.underscore]
   end
 
   def reassociate_type_table_fields
@@ -223,8 +223,8 @@ class SanitizedJsonImporter
   end
   # rubocop:enable Metrics/PerceivedComplexity
 
-  def reassociate(obj_hash, id_field, id_mapping)
-    obj_hash[id_field] = id_mapping[obj_hash[id_field]] if id_mapping[obj_hash[id_field]]
+  def reassociate(obj_hash, id_field, record_id_mapping)
+    obj_hash[id_field] = record_id_mapping[obj_hash[id_field]] if record_id_mapping[obj_hash[id_field]]
   end
 
   def reassociate_table_fields_hash
