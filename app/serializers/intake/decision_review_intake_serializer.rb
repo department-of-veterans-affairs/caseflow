@@ -54,4 +54,8 @@ class Intake::DecisionReviewIntakeSerializer < Intake::IntakeSerializer
   attribute :edit_issues_url do |object|
     object.detail&.reload&.caseflow_only_edit_issues_url
   end
+
+   attribute :power_of_attorney_name do |object|
+   object.detail&.claimant&.power_of_attorney&.representative_name
+  end
 end

@@ -19,7 +19,7 @@ import { AddClaimantConfirmationModal } from '../addClaimant/AddClaimantConfirma
 import { formatAddress } from '../addClaimant/utils';
 import { FORM_TYPES } from '../constants';
 // eslint-disable-next-line no-unused-vars
-import { submitReviewUnListedClaimant } from '../actions/decisionReview';
+import { submitReviewUnlistedClaimant } from '../actions/decisionReview';
 
 const partyTypeOpts = [
   { displayText: 'Organization', value: 'organization' },
@@ -92,13 +92,8 @@ export const AddPoaPage = () => {
 
   const toggleConfirm = () => setConfirmModal((val) => !val);
   const handleConfirm = () => {
-    // TODO - trigger action to submit data to backend
-    // dispatch(submitReview(intakeId, intakeData, selectedForm.formName));
-    dispatch(submitReviewUnListedClaimant(intakeId, intakeData, selectedForm.formName, claimant, poa));
-    // Redirect to next step (likely needs conditional on review type)
-    if (selectedForm.formName === 'appeal') {
-      push('/add_issues');
-    }
+    dispatch(submitReviewUnlistedClaimant(intakeId, intakeData, selectedForm.formName, claimant, poa));
+    push('/add_issues');
   };
 
   const onSubmit = (formData) => {

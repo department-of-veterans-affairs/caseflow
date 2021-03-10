@@ -58,7 +58,7 @@ export const submitReview = (intakeId, intakeData, intakeType) => (dispatch) => 
   );
 };
 
-export const submitReviewUnListedClaimant = (intakeId, intakeData, intakeType, claimant, poa) => (dispatch) => {
+export const submitReviewUnlistedClaimant = (intakeId, intakeData, intakeType, claimant, poa) => (dispatch) => {
    dispatch({
     type: ACTIONS.SUBMIT_REVIEW_START,
     meta: { analytics }

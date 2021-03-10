@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { REVIEW_OPTIONS, REVIEW_DATA_FIELDS, CLAIMANT_ERRORS, REVIEW_UNLISTED_DATA_FIELDS } from '../constants';
+import { REVIEW_OPTIONS, REVIEW_DATA_FIELDS, CLAIMANT_ERRORS } from '../constants';
 import DATES from '../../../constants/DATES';
 import { formatDateStr } from '../../util/DateUtil';
 

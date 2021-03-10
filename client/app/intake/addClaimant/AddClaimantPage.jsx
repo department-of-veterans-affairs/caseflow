@@ -16,7 +16,7 @@ import { IntakeLayout } from '../components/IntakeLayout';
 import { AddClaimantButtons } from './AddClaimantButtons';
 import { useAddClaimantForm, fetchAttorneys } from './utils';
 // eslint-disable-next-line no-unused-vars
-import { submitReviewUnListedClaimant } from '../actions/decisionReview';
+import { submitReviewUnlistedClaimant } from '../actions/decisionReview';
 import { FORM_TYPES } from '../constants';
 
 export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
@@ -49,12 +49,8 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
   const toggleConfirm = () => setConfirmModal((val) => !val);
   const handleConfirm = () => {
 
-    dispatch(submitReviewUnListedClaimant(intakeId, intakeData, selectedForm.formName, claimant, poa));
-
-    if (selectedForm.formName === 'appeal') {
-      push('/add_issues');
-    }
-
+    dispatch(submitReviewUnlistedClaimant(intakeId, intakeData, selectedForm.formName, claimant, poa));
+    push('/add_issues');
   };
 
   const onSubmit = (formData) => {

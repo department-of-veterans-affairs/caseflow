@@ -186,8 +186,8 @@ feature "Non-veteran claimants", :postgres do
       # Submission currently out of scope; consider stub as next path might be conditional
       expect(page).to have_current_path("/intake/add_issues")
       expect(page).to have_content("Claimant's Poa")
-      expect(page).to have_content(new_individual_claimant[:first_name])
-
+      binding.pry
+      # expect(page).to have_content(new_individual_claimant[:first_name])
       # Add request issues
       click_intake_add_issue
       add_intake_nonrating_issue(date: decision_date)
@@ -197,6 +197,8 @@ feature "Non-veteran claimants", :postgres do
 
       # verify that current intake with claimant_type other was created
       expect(Intake.last.detail.claimant_type).to eq("other")
+      claimant = Claimant.find_by(type: "OtherClaimant")
+      expect(claimant.power_of_attorney.name).to eq("Attorney's Law Firm")
       appeal = Appeal.find_by(docket_type: "evidence_submission")
        binding.pry
       # Case details page

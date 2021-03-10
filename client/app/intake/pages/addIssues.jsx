@@ -193,8 +193,7 @@ class AddIssuesPage extends React.Component {
       featureToggles,
       editPage,
       addingIssue,
-      userCanWithdrawIssues,
-      claimant
+      userCanWithdrawIssues
     } = this.props;
     const intakeData = intakeForms[formType];
     const { useAmaActivationDate, editEpClaimLabels } = featureToggles;
@@ -294,15 +293,10 @@ class AddIssuesPage extends React.Component {
       content: claimantDisplayText
     });
 
-    console.log('data', claimantDisplayText);
-
-    if (intakeData.powerOfAttorneyName) {
-
-      fieldsForFormType = fieldsForFormType.concat({
-        field: 'Claimant\'s Poa',
-        content: claimant.vaForm === 'false' ? COPY.ADD_CLAIMANT_CONFIRM_MODAL_NO_POA : intakeData.powerOfAttorneyName
-      });
-    }
+    fieldsForFormType = fieldsForFormType.concat({
+      field: 'Claimant\'s Poa',
+      content: intakeData.powerOfAttorneyName || COPY.ADD_CLAIMANT_CONFIRM_MODAL_NO_POA
+    });
 
     let issueChangeClassname = () => {
       // no-op unless the issue banner needs to be displayed
@@ -496,14 +490,11 @@ AddIssuesPage.propTypes = {
   undoCorrection: PropTypes.func,
   veteran: PropTypes.object,
   withdrawIssue: PropTypes.func,
-  userCanWithdrawIssues: PropTypes.bool,
-  poaClaimant: PropTypes.object,
-  claimant: PropTypes.object
+  userCanWithdrawIssues: PropTypes.bool
 };
 
 export const IntakeAddIssuesPage = connect(
-  ({ intake, higherLevelReview, supplementalClaim, appeal, featureToggles,
-      activeIssue, addingIssue, addClaimant }) => ({
+  ({ intake, higherLevelReview, supplementalClaim, appeal, featureToggles, activeIssue, addingIssue }) => ({
     intakeForms: {
       higher_level_review: higherLevelReview,
       supplemental_claim: supplementalClaim,
@@ -511,8 +502,6 @@ export const IntakeAddIssuesPage = connect(
     },
     formType: intake.formType,
     veteran: intake.veteran,
-    claimant: addClaimant.claimant,
-    poaClaimant: addClaimant.poa,
     featureToggles,
     activeIssue,
     addingIssue

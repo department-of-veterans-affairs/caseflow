@@ -179,6 +179,7 @@ export const REVIEW_DATA_FIELDS = {
     claimant: { key: 'claimant' },
     claimant_notes: { key: 'claimantNotes' },
     claimant_type: { key: 'claimantType', required: true },
+    power_of_attorney_name: { key: 'powerOfAttorneyName' },
     payee_code: { key: 'payeeCode' },
     legacy_opt_in_approved: { key: 'legacyOptInApproved', required: true },
   },
