@@ -191,6 +191,8 @@ class SanitizedJsonImporter
     else
       klass.create!(obj_hash)
     end
+
+    new_record = clazz.create!(obj_hash)
   end
 
   def reassociate_type_table_fields
