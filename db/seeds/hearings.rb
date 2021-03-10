@@ -60,7 +60,7 @@ module Seeds
 
     def hearing_day_for_ro(ro_key:, scheduled_for:)
       HearingDay.create!(
-        regional_office: (ro_key == "C" || ro_key == "R") ? nil : ro_key,
+        regional_office: %w[C R].include? ro_key ? nil : ro_key,
         room: (ro_key == "R") ? nil : Constants::HEARING_ROOMS_LIST.keys.sample,
         judge: random_judge_user,
         request_type: request_type_by_ro_key(ro_key),
