@@ -6,9 +6,11 @@ import { DocketSwitchReviewRequestForm } from 'app/queue/docketSwitch/grant/Dock
 import {
   DOCKET_SWITCH_GRANTED_REQUEST_LABEL,
   DOCKET_SWITCH_GRANTED_REQUEST_INSTRUCTIONS,
+  DOCKET_SWITCH_REVIEW_REQUEST_PRIOR_TO_RAMP_DATE_ERROR,
+  DOCKET_SWITCH_REVIEW_REQUEST_FUTURE_DATE_ERROR
 } from 'app/../COPY';
 import { sprintf } from 'sprintf-js';
-import { formatISO } from 'date-fns';
+import { add, format } from 'date-fns';
 
 describe('DocketSwitchReviewRequestForm', () => {
   const onSubmit = jest.fn();
@@ -70,6 +72,44 @@ describe('DocketSwitchReviewRequestForm', () => {
     expect(onCancel).toHaveBeenCalled();
   });
 
+  describe('form validation for receipt date', () => {
+    const priorToRampReceiptDate = '2017-10-31';
+    const futureDate = format(add(new Date(), { days: 5 }), 'yyyy-MM-dd');
+
+    it('throws error for prior-to-RAMP receipt date', async () => {
+      render(<DocketSwitchReviewRequestForm {...defaults} />);
+
+      await fireEvent.change(screen.getByLabelText(/receipt date/i), {
+        target: { value: priorToRampReceiptDate },
+      });
+      // Use blur to trigger value to be touched
+      await fireEvent.blur(screen.getByLabelText(/receipt date/i));
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(DOCKET_SWITCH_REVIEW_REQUEST_PRIOR_TO_RAMP_DATE_ERROR)
+        ).toBeInTheDocument();
+      });
+
+    });
+
+    it('throws error for receipt date in future', async () => {
+      render(<DocketSwitchReviewRequestForm {...defaults} />);
+
+      await fireEvent.change(screen.getByLabelText(/receipt date/i), {
+        target: { value: futureDate },
+      });
+      // Use blur to trigger value to be touched
+      await fireEvent.blur(screen.getByLabelText(/receipt date/i));
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(DOCKET_SWITCH_REVIEW_REQUEST_FUTURE_DATE_ERROR)
+        ).toBeInTheDocument();
+      });
+    });
+  });
+
   describe('form validation for all granted issues', () => {
     const receiptDate = '2020-10-01';
 
@@ -114,20 +154,6 @@ describe('DocketSwitchReviewRequestForm', () => {
 
   describe('form validation for granted partial issues', () => {
     const receiptDate = '2020-10-01';
-    const disposition = 'partially_granted';
-    const docketType = 'direct_review';
-    const issueIds = ['1'];
-    const fillForm = async () => {
-      //   Set receipt date
-      await fireEvent.change(screen.getByLabelText(/receipt date/i), {
-        target: { value: receiptDate },
-      });
-
-      //   Enter context/instructions
-      await fireEvent.change(screen.getByLabelText(/grant a partial switch/i), {
-        target: { value: disposition },
-      });
-    };
 
     it('fires onSubmit with correct values', async () => {
       setup();

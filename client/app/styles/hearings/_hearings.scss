@@ -345,9 +345,10 @@
 }
 
 .time-slot-button {
-  height: 60px;
-  width: 325px;
+  height: 75px;
+  width: 350px;
   text-align: left;
+  padding-left: 25px;
 
   > div:first-child {
     display: flex;
@@ -379,13 +380,25 @@
 .time-slot-details {
   font-weight: 400;
   font-size: medium;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 295px;
+  margin-top: 5px;
 }
 
-.time-slot-container.usa-width-one-third {
+.time-slot-button-container {
   display: flex;
-  height: 350px;
+  width: 800px;
+}
+
+.time-slot-container {
+  flex: 0;
+  max-width: 46rem;
+  display: flex;
   flex-direction: column;
   flex-wrap: wrap;
+  line-height: normal;
 
   > span {
     margin: 5px;

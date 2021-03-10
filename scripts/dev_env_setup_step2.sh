@@ -3,6 +3,11 @@
 # Continuation of Developer Setup at
 # https://github.com/department-of-veterans-affairs/caseflow/blob/master/README.md#install-ruby-dependencies
 
+function detectVersion(){
+	# https://stackoverflow.com/questions/3466166/how-to-check-if-running-in-cygwin-mac-or-linux
+	version="$(sw_vers -productVersion)"
+	echo ${version}
+}
 echo "==> Installing Ruby dependencies"
 rbenv install $(cat .ruby-version)
 rbenv rehash
@@ -16,6 +21,15 @@ if [ $? == 0 ]; then
 	# this means you have not propertly configured your rbenv.
 	# Debug.
 	# !! Do *not* proceed by running sudo gem install bundler. !!
+
+	VERSION=$(detectVersion)
+	echo "==> Detected OS Version $VERSION"
+
+	if [[ "$VERSION" == "10.15"* ]]; then
+		brew install v8@3.15
+		bundle config build.libv8 --with-system-v8
+		bundle config build.therubyracer --with-v8-dir=$(brew --prefix v8@3.15)
+	fi
 
 	bundle install
 fi
