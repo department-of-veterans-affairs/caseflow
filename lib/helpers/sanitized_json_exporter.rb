@@ -4,6 +4,7 @@ class SanitizedJsonExporter
   attr_accessor :value_mapping
   attr_accessor :records_hash
 
+  # :reek:BooleanParameter
   def initialize(*appeals, sanitize: true)
     @sanitize = sanitize
     @value_mapping = {}
@@ -24,6 +25,7 @@ class SanitizedJsonExporter
   end
 
   # temporary method; delete for final PR
+  # :reek:BooleanParameter
   def self.record_to_hash(record, call_attributes: true)
     return record.attributes if call_attributes
 
