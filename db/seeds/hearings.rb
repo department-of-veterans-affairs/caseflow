@@ -60,7 +60,7 @@ module Seeds
 
     def hearing_day_for_ro(ro_key:, scheduled_for:)
       HearingDay.create!(
-        regional_office: %w[C R].include? ro_key ? nil : ro_key,
+        regional_office: %w[C R].include?(ro_key) ? nil : ro_key,
         room: (ro_key == "R") ? nil : Constants::HEARING_ROOMS_LIST.keys.sample,
         judge: random_judge_user,
         request_type: request_type_by_ro_key(ro_key),
@@ -264,7 +264,6 @@ module Seeds
     end
 
     def create_former_travel_currently_virtual_requested_legacy_appeals
-      ro_key = "R" # virtual
       16.times do
         vacols_case = create_travel_board_vacols_case
 
@@ -280,7 +279,7 @@ module Seeds
             :legacy_appeal,
             :with_veteran,
             vacols_case: vacols_case,
-            closest_regional_office: ro_key,
+            closest_regional_office: nil,
             changed_request_type: "R"
           )
         )
