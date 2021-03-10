@@ -70,7 +70,7 @@ class SanitizedJsonImporter
     diff_hashes(hash1, hash2, **kwargs)
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity:
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
   def self.diff_hashes(hash1, hash2, ignore_id_offset: true, convert_timestamps: true)
     # https://stackoverflow.com/questions/4928789/how-do-i-compare-two-hashes
     array_diff = (hash2.to_a - hash1.to_a) + (hash1.to_a - hash2.to_a)
@@ -92,21 +92,9 @@ class SanitizedJsonImporter
       next diffs << [key, hash1[key], hash2[key]]
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity:
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
 
   private
-
-  def mapped_appeal_ids
-    @mapped_ids[Appeal.name.underscore]
-  end
-
-  def mapped_user_ids
-    @mapped_ids[User.name.underscore]
-  end
-
-  def mapped_org_ids
-    @mapped_ids[Organization.name.underscore]
-  end
 
   def import_array(clazz, key)
     obj_hash_array = @records_hash[key]
@@ -140,39 +128,50 @@ class SanitizedJsonImporter
   def import_record(clazz, key: clazz.name, obj_hash: @records_hash[key])
     fail "No JSON data for key '#{key}'.  Keys: #{@records_hash.keys}" unless obj_hash
 
-    existing_record = existing_record(clazz, obj_hash)
+    obj_description = "#{obj_hash['id']} #{obj_hash['type']} #{obj_hash.select { |k, _v| k.include?('_id') }}"
     # Don't import if it already exists
-    if existing_record && NONDUPLICATE_TYPES.include?(clazz)
-      puts "Using existing #{clazz} instead of importing: #{obj_hash['id']} #{obj_hash['type']} #{obj_hash.select { |k, _v| k.include?('_id') }}"
+    if existing_record(clazz, obj_hash) && NONDUPLICATE_TYPES.include?(clazz)
+      puts "Using existing #{clazz} instead of importing: #{obj_description}"
       return
     end
 
-    case clazz.name
-    when Organization.name
+    # Record original id in case it changes in the following lines
+    orig_id = obj_hash["id"]
 
-      if Organization.find_by(url: obj_hash["url"])
-        obj_hash["url"] = obj_hash["url"] + "_imported"
-        Rails.logger.warn "Importing duplicate organization with different unique url because record id is different: #{obj_hash}"
-      elsif Organization.find_by(id: obj_hash["id"]).nil?
-        # Try to create the singleton with the same id
-        # return if obj_hash["type"].constantize.singleton
-        # obj_hash["name"] = obj_hash["name"] + "_imported" if Organization.find_by(name: obj_hash["name"])
-        puts "Creating #{clazz} with original id #{obj_hash['id']} #{obj_hash['type']} '#{obj_hash['name']}' #{obj_hash.select { |k, _v| k.include?('_id') }}"
-        return clazz.create!(obj_hash)
-      end
-    when User.name
-      # Change CSS_ID if it already exists for a user with different user.id
-      obj_hash["css_id"] = obj_hash["css_id"] + "_imported" if User.find_by_css_id(obj_hash["css_id"])
+    adjust_unique_identifiers(clazz, obj_hash)
+
+    if clazz == Organization && !org_already_exists?(obj_hash)
+      puts "Creating #{clazz} '#{obj_hash['name']}' with original id #{obj_description}"
+      return clazz.create!(obj_hash)
     end
 
-    orig_id = obj_hash["id"]
     adjust_ids(clazz, obj_hash)
-    reassociate(clazz, obj_hash)
+    reassociate_with_imported_records(clazz, obj_hash)
+    puts "Creating #{clazz} #{obj_description}"
+    create_new_record(orig_id, clazz, obj_hash)
+  end
 
-    puts "Creating #{clazz} #{obj_hash['id']} #{obj_hash['type']} #{obj_hash.select { |k, _v| k.include?('_id') }}"
+  def org_already_exists?(obj_hash)
+    Organization.find_by(url: obj_hash["url"]) || Organization.find_by(id: obj_hash["id"])
+  end
+
+  def adjust_unique_identifiers(clazz, obj_hash)
+    label = if clazz <= Organization
+              obj_hash["url"] += "_imported" if Organization.find_by(url: obj_hash["url"])
+            elsif clazz <= User
+              # Change CSS_ID if it already exists for a user with different user.id
+              obj_hash["css_id"] += "_imported" if User.find_by_css_id(obj_hash["css_id"])
+            end
+    if label
+      puts "Importing duplicate #{clazz} #{label} with different unique attributes " \
+           "because existing record's id is different: #{obj_hash}"
+    end
+  end
+
+  def create_new_record(orig_id, clazz, obj_hash)
     case clazz.name
     when Appeal.name
-      @mapped_ids[clazz.name.underscore][orig_id] = obj_hash["id"]
+      @mapped_ids[Appeal.name.underscore][orig_id] = obj_hash["id"]
     when Task.name
       # Create the task without validation or callbacks
       new_task = Task.new(obj_hash)
@@ -180,10 +179,10 @@ class SanitizedJsonImporter
       new_task.save(validate: false)
       return new_task
     when User.name
-      mapped_user_ids[orig_id] = obj_hash["id"]
+      @mapped_ids[User.name.underscore][orig_id] = obj_hash["id"]
     when Organization.name
       # Create org with different id
-      mapped_org_ids[orig_id] = obj_hash["id"]
+      @mapped_ids[Organization.name.underscore][orig_id] = obj_hash["id"]
     else
       if clazz == Claimant
         # Per appeal, set of participant_ids must be unique
@@ -192,20 +191,45 @@ class SanitizedJsonImporter
       end
     end
 
-    new_record = clazz.create!(obj_hash)
+    clazz.create!(obj_hash)
   end
 
-  def reassociate(clazz, obj_hash)
+  def mapped_appeal_ids
+    @mapped_ids[Appeal.name.underscore]
+  end
+
+  def mapped_user_ids
+    @mapped_ids[User.name.underscore]
+  end
+
+  def mapped_org_ids
+    @mapped_ids[Organization.name.underscore]
+  end
+
+  # rubocop:disable Metrics/PerceivedComplexity
+  def reassociate_with_imported_records(clazz, obj_hash)
     # pp "Reassociate #{clazz}"
-    case clazz.name
-    when Claimant.name, VeteranClaimant.name
-      obj_hash["decision_review_id"] = mapped_appeal_ids[obj_hash["decision_review_id"]] if mapped_appeal_ids[obj_hash["decision_review_id"]] && obj_hash["decision_review_type"] == "Appeal"
-    when Task.name
-      obj_hash["appeal_id"] = mapped_appeal_ids[obj_hash["appeal_id"]] if mapped_appeal_ids[obj_hash["appeal_id"]]
-      obj_hash["assigned_to_id"] = mapped_user_ids[obj_hash["assigned_to_id"]] if obj_hash["assigned_to_type"] == "User" && mapped_user_ids[obj_hash["assigned_to_id"]]
-      obj_hash["assigned_to_id"] = mapped_org_ids[obj_hash["assigned_to_id"]] if obj_hash["assigned_to_type"] == "Organization" && mapped_org_ids[obj_hash["assigned_to_id"]]
-      obj_hash["assigned_by_id"] = mapped_user_ids[obj_hash["assigned_by_id"]] if mapped_user_ids[obj_hash["assigned_by_id"]]
+    if clazz <= Claimant
+      if obj_hash["decision_review_type"] == "Appeal"
+        reassociate(obj_hash, "decision_review_id", mapped_appeal_ids)
+      else
+        puts "To-do: HLR, SC, LegacyAppeal"
+      end
+    elsif clazz <= Task
+      reassociate(obj_hash, "appeal_id", mapped_appeal_ids)
+      reassociate(obj_hash, "assigned_by_id", mapped_user_ids)
+
+      if obj_hash["assigned_to_type"] == "User"
+        reassociate(obj_hash, "assigned_to_id", mapped_user_ids)
+      elsif obj_hash["assigned_to_type"] == "Organization"
+        reassociate(obj_hash, "assigned_to_id", mapped_org_ids)
+      end
     end
+  end
+  # rubocop:enable Metrics/PerceivedComplexity
+
+  def reassociate(obj_hash, id_field, id_mapping)
+    obj_hash[id_field] = id_mapping[obj_hash[id_field]] if id_mapping[obj_hash[id_field]]
   end
 
   def existing_record(clazz, obj_hash)
@@ -229,8 +253,7 @@ class SanitizedJsonImporter
   def adjust_ids(clazz, obj_hash)
     obj_hash["id"] += @id_offset
 
-    case clazz.name
-    when Task.name
+    if clazz <= Task
       obj_hash["parent_id"] += @id_offset if obj_hash["parent_id"]
     end
   end
