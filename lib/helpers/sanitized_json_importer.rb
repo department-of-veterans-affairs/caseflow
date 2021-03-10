@@ -139,6 +139,21 @@ class SanitizedJsonImporter
     id_mapping[id_mapping_key] ||= {}
     id_mapping[id_mapping_key][orig_id] = new_id
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity:
+
+  private
+
+  def mapped_appeal_ids
+    @mapped_ids[Appeal.name.underscore]
+  end
+
+  def mapped_user_ids
+    @mapped_ids[User.name.underscore]
+  end
+
+  def mapped_org_ids
+    @mapped_ids[Organization.name.underscore]
+  end
 
   # :reek:FeatureEnvy
   def adjust_ids_by_offset(klass, obj_hash)
