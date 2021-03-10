@@ -9,25 +9,9 @@ class SanitizedJsonExporter
     @value_mapping = {}
 
     @records_hash = { "metadata" => { "exported_at": Time.zone.now } }
-
     @records_hash["appeals"] = appeals.uniq.map { |appeal| sanitize(appeal) }
-
-    record = appeals.first
-    @records_hash[record.veteran.class.name] = sanitize(record.veteran)
-
-    @records_hash[Claimant.name] = sanitize(record.claimant)
-    @records_hash["claimants"] =
-      record.claimants.order(:id).map { |claimant| sanitize(claimant) }
-
-    @records_hash["tasks"] =
-      record.tasks.order(:id).map { |task| sanitize(task) }
-
-    assigned_to_users = record.tasks.where(assigned_to_type: "User").order(:id).map(&:assigned_to) +
-                        record.tasks.order(:id).map(&:assigned_by).compact
-    @records_hash["users"] = assigned_to_users.uniq.map { |user| sanitize(user) }
-
-    @records_hash["organizations"] = record.tasks.where(assigned_to_type: "Organization").order(:id)
-      .map(&:assigned_to).uniq.map { |org| sanitize(org) }
+    export_claimants(appeals)
+    export_tasks(appeals)
   end
 
   def save(filename, purpose: nil)
@@ -39,8 +23,9 @@ class SanitizedJsonExporter
     JSON.pretty_generate(@records_hash)
   end
 
-  def self.to_hash(record)
-    return record.attributes if true
+  # temporary method; delete for final PR
+  def self.record_to_hash(record, call_attributes: true)
+    return record.attributes if call_attributes
 
     # Alternative implementation
     json_string = record.to_json(methods: :type)
@@ -49,10 +34,27 @@ class SanitizedJsonExporter
 
   private
 
+  def export_claimants(appeals)
+    @records_hash["veterans"] = appeals.map(&:veteran).uniq.map { |veteran| sanitize(veteran) }
+    @records_hash["claimants"] = appeals.map(&:claimants).flatten.sort_by(&:id).map { |claimant| sanitize(claimant) }
+  end
+
+  def export_tasks(appeals)
+    tasks = appeals.map(&:tasks).flatten.sort_by(&:id)
+    @records_hash["tasks"] = tasks.map { |task| sanitize(task) }
+
+    users = tasks.sort_by(&:id).map(&:assigned_by).compact +
+            tasks.select { |task| task.assigned_to_type == "User" }.sort_by(&:id).map(&:assigned_to)
+    @records_hash["users"] = users.uniq.map { |user| sanitize(user) }
+
+    @records_hash["organizations"] = tasks.select { |task| task.assigned_to_type == "Organization" }.sort_by(&:id)
+      .map(&:assigned_to).uniq.map { |org| sanitize(org) }
+  end
+
   VETERAN_PII_FIELDS = %w[first_name last_name middle_name file_number ssn].freeze
 
   def sanitize(record)
-    obj_hash = self.class.to_hash(record)
+    obj_hash = self.class.record_to_hash(record)
     return obj_hash unless @sanitize
 
     case record
@@ -65,8 +67,15 @@ class SanitizedJsonExporter
     when User
       # User#attributes includes `display_name`; don't need it when importing so leave it out
       obj_hash.delete(:display_name)
+      find_or_create_mapped_value_for(obj_hash, "css_id")
+      find_or_create_mapped_value_for(obj_hash, "full_name")
+      find_or_create_mapped_value_for(obj_hash, "email")
+
+      # obj_hash["my_name"]="AAA BBB"
+      # find_or_create_mapped_value_for(obj_hash, "my_name")
     when Organization, Claimant, Task
       # nothing to sanitize
+      obj_hash
     else
       fail "Unsupported object type: #{record.class.name}"
     end
@@ -74,49 +83,77 @@ class SanitizedJsonExporter
     obj_hash
   end
 
-  def find_or_create_mapped_value_for(obj_hash, fieldname)
-    return unless obj_hash[fieldname]
+  def find_or_create_mapped_value_for(obj_hash, field_name)
+    return unless obj_hash[field_name]
 
-    # Ensure value_mapping has different values for different keys
+    # Loop to ensure value_mapping has different values for different keys
     loop do
-      obj_hash[fieldname] = find_or_create_mapped_value(obj_hash[fieldname], fieldname)
+      obj_hash[field_name] = find_or_create_mapped_value(obj_hash[field_name], field_name)
       break if value_mapping.values.uniq.size == value_mapping.size
+
+      puts "Value '#{obj_hash[field_name]}' for field #{field_name} is already used; trying again"
     end
   end
 
-  SSN_REGEX = /^\d{9}$/.freeze
-  NAME_REGEX = /_name$/.freeze
-  EMAIL_REGEX = /email$/.freeze
+  TRANSFORM_METHODS = [:mixup_css_id, :random_person_name, :invalid_ssn, :random_email].freeze
 
   def find_or_create_mapped_value(orig_value, field_name = nil)
-    return value_mapping[orig_value] if value_mapping[orig_value]
+    mapped_value = value_mapping.fetch(orig_value) do
+      TRANSFORM_METHODS.find { |method| value_mapping[orig_value] = self.class.send(method, field_name, orig_value) }
+      value_mapping[orig_value]
+    end
+    mapped_value || fail("Don't know how to map value '#{orig_value}' for field '#{field_name}'")
+  end
 
-    return value_mapping[orig_value] = Faker::Internet.email if orig_value.match?(EMAIL_REGEX)
-
-    return value_mapping[orig_value] if (value_mapping[orig_value] = create_person_name(field_name))
-
-    return value_mapping[orig_value] = Faker::Name.first_name if orig_value.match?(NAME_REGEX)
-
-    if ssn_field?(field_name) || orig_value.match?(SSN_REGEX)
-      # https://github.com/faker-ruby/faker/blob/master/doc/default/id_number.md
-      return value_mapping[orig_value] = Faker::IDNumber.invalid.delete("-")
+  class << self
+    def random_email(field_name, _field_value)
+      # puts "random_email"
+      case field_name
+      when /email$/
+        Faker::Internet.email
+      end
     end
 
-    fail "Don't know how to map value '#{orig_value}' for field '#{field_name}'"
-  end
+    # https://github.com/faker-ruby/faker/blob/master/doc/default/id_number.md
+    def invalid_ssn(field_name, field_value)
+      # puts "invalid_ssn #{field_name} #{field_value}"
+      case field_name
+      when "ssn", "file_number", "veteran_file_number"
+        Faker::IDNumber.invalid.delete("-")
+      else
+        case field_value
+        when /^\d{9}$/
+          Faker::IDNumber.invalid.delete("-")
+        when /^\d{3}-\d{2}-\d{4}$/
+          Faker::IDNumber.invalid
+        end
+      end
+    end
 
-  def ssn_field?(field_name)
-    %w[ssn file_number veteran_file_number].include?(field_name)
-  end
+    def random_person_name(field_name, _field_value)
+      # puts "random_person_name #{field_name} #{_field_value}"
+      case field_name
+      when "full_name"
+        "#{Faker::Name.first_name} #{Faker::Name.last_name}"
+      when "last_name"
+        Faker::Name.last_name
+      when "middle_name"
+        Faker::Name.initials(number: 1)
+      when "first_name"
+        Faker::Name.first_name
+      when /_name$/
+        # puts "NAME_REGEX for #{field_name}"
+        Faker::Name.first_name
+      end
+    end
 
-  def create_person_name(field_name)
-    case field_name
-    when "first_name"
-      Faker::Name.first_name
-    when "last_name"
-      Faker::Name.last_name
-    when "middle_name"
-      Faker::Name.initials(number: 1)
+    # Keep field value recognizable but different to reduce risk of exploitation (e.g., username scraping)
+    def mixup_css_id(field_name, field_value)
+      # puts "mixup_css_id #{field_name} #{field_value}"
+      case field_name
+      when "css_id"
+        field_value[4..-1] + field_value[0..3]
+      end
     end
   end
 end

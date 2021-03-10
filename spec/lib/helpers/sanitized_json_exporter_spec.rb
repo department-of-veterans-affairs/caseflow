@@ -52,7 +52,7 @@ describe "SanitizedJsonExporter/Importer" do
       expect(sje.file_contents).to include(*sje.value_mapping.values)
 
       # After import, Check associations
-      expect(sje.records_hash[Claimant.name]["decision_review_id"]).to eq appeal.id
+      expect(sje.records_hash["claimants"].first["decision_review_id"]).to eq appeal.id
     end
   end
 
@@ -98,14 +98,11 @@ describe "SanitizedJsonExporter/Importer" do
       expect(Claimant.count).to eq 2
       expect(User.count).to eq 0
 
-      # map to new id so importer doesn't skip creating appeal
-      # sji.mapped_appeal_ids[appeal.id]=22222
-
-      appeals = sji.import
+      appeals = sji.import["appeals"]
       expect(appeals.size).to eq 1
 
       expect(Appeal.count).to eq 2
-      expect(Veteran.count).to eq 1  # reuse identify Veteran
+      expect(Veteran.count).to eq 2
       expect(Claimant.count).to eq 4
       expect(User.count).to eq 0
 
