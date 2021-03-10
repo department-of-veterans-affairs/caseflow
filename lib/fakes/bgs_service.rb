@@ -229,7 +229,7 @@ class Fakes::BGSService
       last_name = Faker::Name.last_name
       {
         birth_date: Faker::Date.birthday(min_age: 35, max_age: 80).to_s,
-        fist_name: first_name,
+        first_name: first_name,
         middle_name: "",
         last_name: last_name,
         ssn_nbr: "666005555",
