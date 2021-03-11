@@ -678,4 +678,21 @@ describe "SanitizedJsonExporter/Importer" do
       expect(diffs.values.flatten).to be_empty
     end
   end
+  # context "" do
+  #   let(:cavc_appeal) do
+  #     create(:appeal,
+  #            :type_cavc_remand,
+  #            veteran: veteran)
+  #   end
+  #   let(:appeal) do
+  #     cavc_appeal.cavc_remand.source_appeal
+  #   end
+
+  #   it "imports json" do
+  #     print_things
+
+  #     sji.import
+  #     print_imported_things
+  #   end
+  # end
 end
