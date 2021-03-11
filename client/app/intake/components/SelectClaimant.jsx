@@ -130,7 +130,7 @@ export const SelectClaimant = (props) => {
     const boolValue = convertStringToBoolean(value);
     let field;
     const claimantOptions = () => {
-      if (boolValue && nonVeteranClaimants) {
+      if (nonVeteranClaimants) {
         field = 'other';
       } else if (boolValue) {
         field = 'dependent';
@@ -156,7 +156,7 @@ export const SelectClaimant = (props) => {
     });
   };
   const handleSelectNonVeteran = (value) => {
-    const claimantOptions = nonVeteranClaimants ? 'other' : 'dependent';
+    const claimantOptions = value === 'claimant_not_listed' ? 'other' : 'dependent';
 
     if (newClaimant && value === newClaimant.value) {
       setClaimant({
@@ -166,7 +166,8 @@ export const SelectClaimant = (props) => {
         claimantType: newClaimant.claimantType,
       });
     } else {
-      setClaimant({ claimant: value, claimantType: claimantOptions });
+      setClaimant({ claimant: value,
+        claimantType: claimantOptions });
     }
   };
   const handleAddClaimant = ({

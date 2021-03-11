@@ -19,7 +19,7 @@ import DateSelector from '../../components/DateSelector';
 import ErrorAlert from '../components/ErrorAlert';
 import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES, FORM_TYPES } from '../constants';
 import EP_CLAIM_TYPES from '../../../constants/EP_CLAIM_TYPES';
-import { formatAddedIssues, getAddIssuesFields, formatIssuesBySection, getDependentClaimant } from '../util/issues';
+import { formatAddedIssues, getAddIssuesFields, formatIssuesBySection } from '../util/issues';
 import Table from '../../components/Table';
 import IssueList from '../components/IssueList';
 
@@ -278,21 +278,22 @@ class AddIssuesPage extends React.Component {
 
     let fieldsForFormType = getAddIssuesFields(formType, veteran, intakeData);
 
-    const claimantMap = {
-      veteran: () => veteran.name,
-      dependent: () => getDependentClaimant(intakeData), 
-      attorney: () => `${intakeData.claimantName}, Attorney`,
-      other: () => intakeData.claimantName
-    };
-   
-    const claimantType = intakeData.claimantType;
-    // const claimantDisplayText = claimantMap[claimantType ?? 'veteran']?.();
+    // const claimantMap = {
+    //   veteran: () => veteran.name,
+    //   dependent: () => getDependentClaimant(intakeData),
+    //   attorney: () => `${intakeData.claimantName}, Attorney`,
+    //   other: () => intakeData.claimantName
+    // };
+
+    // const claimantType = intakeData.claimantType;
     const claimantDisplayText = () => {
       const relationship = intakeData.claimantRelationship;
-      if(relationship !== 'Veteran') {
-        return [intakeData.claimantName, relationship].filter(Boolean).join(', ')
-       } 
-      return relationship
+
+      if (relationship !== 'Veteran') {
+        return [intakeData.claimantName, relationship].filter(Boolean).join(', ');
+      }
+
+      return relationship;
     };
 
     fieldsForFormType = fieldsForFormType.concat({
