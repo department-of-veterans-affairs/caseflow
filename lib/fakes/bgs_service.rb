@@ -224,6 +224,17 @@ class Fakes::BGSService
         ssn_nbr: "666003333",
         email_address: "clarence.darrow@caseflow.gov"
       }
+    elsif participant_id.starts_with?("RANDOM_CLAIMANT_PID")
+      first_name = Faker::Name.first_name
+      last_name = Faker::Name.last_name
+      {
+        birth_date: Faker::Date.birthday(min_age: 35, max_age: 80).to_s,
+        first_name: first_name,
+        middle_name: "",
+        last_name: last_name,
+        ssn_nbr: "666005555",
+        email_address: "#{first_name}.#{last_name}@email.com"
+      }
     else
       {
         birth_date: "Sat, 05 Sep 1998 00:00:00 -0500",
