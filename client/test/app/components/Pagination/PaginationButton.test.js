@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { axe } from 'jest-axe';
@@ -34,9 +34,8 @@ describe('PaginationButton', () => {
 
     // The currentPageClass with _table.scss styling makes this a filled, primary, button
     it('has the current page class', () => {
-      const { container } = setup({ currentPage: 0 });
-
-      expect(container.getElementsByClassName(currentPageClass)).toHaveLength(1);
+      setup({ currentPage: 0 });
+      expect(screen.getByRole('button')).toHaveClass(currentPageClass);
     });
   });
 
@@ -57,9 +56,8 @@ describe('PaginationButton', () => {
 
     // The lack of class and _table.scss styling renders an unfilled button
     it('has no classes', () => {
-      const { container } = setup({ currentPage: 1 });
-
-      expect(container.getElementsByClassName(currentPageClass)).toHaveLength(0);
+      setup({ currentPage: 1 });
+      expect(screen.getByRole('button')).not.toHaveClass(currentPageClass);
     });
   });
 
