@@ -25,9 +25,17 @@ describe "SanitizedJsonExporter/Importer" do
   describe ".random_email" do
     let(:orig_value) { "yoom@caseflow.va.gov" }
     let(:field_prefix) { ["", ("a".."z").to_a.sample(rand(9)).join].sample }
-    subject { SanitizedJsonExporter.random_email("#{field_prefix}email", orig_value) }
-    context "given fieldname ending with email" do
-      it "returns generated email" do
+    subject { SanitizedJsonExporter.random_email(field_name, orig_value) }
+    context "given fieldname ending with 'email'" do
+      let(:field_name) { "#{field_prefix}email" }
+      it "returns fake email" do
+        expect(subject).not_to eq orig_value
+        expect(subject.length).to be > 0
+      end
+    end
+    context "given email value" do
+      let(:field_name) { nil }
+      it "returns fake email" do
         expect(subject).not_to eq orig_value
         expect(subject.length).to be > 0
       end
@@ -39,7 +47,7 @@ describe "SanitizedJsonExporter/Importer" do
     let(:field_prefix) { ["full", "first", "last", "middle", ("a".."z").to_a.sample(rand(9)).join].sample }
     subject { SanitizedJsonExporter.random_person_name("#{field_prefix}_name", orig_value) }
     context "given fieldname ending with _name" do
-      it "returns generated name" do
+      it "returns fake name" do
         expect(subject).not_to eq orig_value
         expect(subject.length).to be > 0
       end
@@ -57,6 +65,20 @@ describe "SanitizedJsonExporter/Importer" do
     end
   end
 
+  describe ".obfuscate_sentence" do
+    subject { SanitizedJsonExporter.obfuscate_sentence(nil, sentence) }
+    context "given CSS_ID" do
+      let(:sentence) { "No PII, just potentially sensitive!" }
+      it "returns sentence without any of the original longer words" do
+        obf_words = subject.split
+        sentence.split.select { |word| word.length > 2 }.each do |word|
+          expect(subject).not_to include word
+          obf_words.each { |obf_word| expect(obf_word.chars).not_to match_array word.chars }
+        end
+      end
+    end
+  end
+
   let(:veteran) { create(:veteran, file_number: "111447777", middle_name: "Middle") }
   let(:appeal) do
     create(:appeal,
@@ -70,7 +92,9 @@ describe "SanitizedJsonExporter/Importer" do
   let(:cavc_appeal) do
     create(:appeal,
            :type_cavc_remand,
-           veteran: veteran)
+           veteran: veteran).tap do |_appeal|
+             User.all.each { |user| user.update(email: "sensitive#{rand(9)}@va.gov") }
+           end
   end
   let(:cavc_source_appeal) do
     cavc_appeal.cavc_remand.source_appeal
@@ -121,13 +145,14 @@ describe "SanitizedJsonExporter/Importer" do
     end
 
     let(:pii_values) do
-      [
-        appeal.veteran_file_number,
-        appeal.veteran.file_number,
-        appeal.veteran.first_name,
-        appeal.veteran.last_name,
-        appeal.veteran.ssn
-      ].uniq
+      (task_users.pluck(:full_name, :email, :css_id).flatten +
+        [
+          appeal.veteran_file_number,
+          appeal.veteran.file_number,
+          appeal.veteran.first_name,
+          appeal.veteran.last_name,
+          appeal.veteran.ssn
+        ]).uniq
     end
 
     context "when sanitize=false (for debugging)" do
@@ -164,10 +189,11 @@ describe "SanitizedJsonExporter/Importer" do
   end
 
   context "Importer" do
+    subject { sji.import }
     context "when given empty JSON to import" do
       let(:sji) { SanitizedJsonImporter.new("{}") }
       it "returns nil" do
-        expect(sji.import).to be_nil
+        expect(subject).to be_nil
         expect(Appeal.count).to eq 0
         expect(Veteran.count).to eq 0
         expect(Claimant.count).to eq 0
@@ -218,7 +244,7 @@ describe "SanitizedJsonExporter/Importer" do
       # Cause a new organization to be created instead of using existing same-named org
       sji.records_hash["organizations"].first["id"] = 100
 
-      appeals = sji.import["appeals"]
+      appeals = subject["appeals"]
       expect(appeals.size).to eq 1
 
       expect(Appeal.count).to eq 2
@@ -236,11 +262,18 @@ describe "SanitizedJsonExporter/Importer" do
       expect(imp_claimant.decision_review).to eq imp_appeal
     end
 
-    it "manual testing" do
-      # print_things
+    context "when exporting CAVC remand appeal" do
+      let(:sje) { SanitizedJsonExporter.new(cavc_appeal) }
 
-      sji.import
-      # print_imported_things
+      it "imports CAVC and source appeal" do
+        # print_things
+
+        subject
+        expect(sji.imported_records["appeals"].size).to eq 2
+        # binding.pry
+        # sji.import
+        # print_imported_things
+      end
     end
   end
 end

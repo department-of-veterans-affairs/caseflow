@@ -82,9 +82,9 @@ class SanitizedJsonExporter
     when User
       # User#attributes includes `display_name`; don't need it when importing so leave it out
       obj_hash.delete(:display_name)
-      find_or_create_mapped_value_for(obj_hash, "css_id")
       find_or_create_mapped_value_for(obj_hash, "full_name")
       find_or_create_mapped_value_for(obj_hash, "email")
+      find_or_create_mapped_value_for(obj_hash, "css_id")
 
       # obj_hash["my_name"]="AAA BBB"
       # find_or_create_mapped_value_for(obj_hash, "my_name")
@@ -122,10 +122,15 @@ class SanitizedJsonExporter
 
   class << self
     # :reek:RepeatedConditionals
-    def random_email(field_name, _field_value)
+    def random_email(field_name, field_value)
       case field_name
       when /email$/
         Faker::Internet.email
+      else
+        case field_value
+        when /\A([\w+\-].?)+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
+          Faker::Internet.email
+        end
       end
     end
 
@@ -166,6 +171,10 @@ class SanitizedJsonExporter
       when "css_id"
         field_value[4..-1] + field_value[0..3]
       end
+    end
+
+    def obfuscate_sentence(field_name, field_value)
+      field_value.split.map{|w| w[0..1]}.join(" ")
     end
   end
 end

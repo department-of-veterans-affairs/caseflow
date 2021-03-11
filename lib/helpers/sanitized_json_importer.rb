@@ -11,7 +11,7 @@ class SanitizedJsonImporter
     new(File.read(filename))
   end
 
-  ID_OFFSET = 1_000_000_000
+  ID_OFFSET = 2_000_000_000
 
   def initialize(file_contents, id_offset: ID_OFFSET)
     @records_hash = JSON.parse(file_contents)

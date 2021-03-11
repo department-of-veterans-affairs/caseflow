@@ -6,7 +6,6 @@ FactoryBot.define do
 
     station_id { User::BOARD_STATION_ID }
     full_name { "Lauren Roth" }
-    email { Faker::Internet.email }
 
     transient do
       vacols_uniq_id { nil }
