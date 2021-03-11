@@ -4,7 +4,35 @@ require "helpers/sanitized_json_exporter.rb"
 require "helpers/sanitized_json_importer.rb"
 
 describe "SanitizedJsonExporter/Importer" do
-  let(:veteran) { create(:veteran, file_number: "111447777") }
+  describe ".invalid_ssn" do
+    subject { SanitizedJsonExporter.invalid_ssn(nil, ssn) }
+    context "given 9-digit number" do
+      let(:ssn) { "123456789" }
+      it "returns fake SSN" do
+        expect(subject).not_to eq ssn
+        expect(subject).to match(/^\d{9}$/)
+      end
+    end
+    context "given SSN" do
+      let(:ssn) { "123-45-6789" }
+      it "returns fake SSN" do
+        expect(subject).not_to eq ssn
+        expect(subject).to match(/^\d{3}-\d{2}-\d{4}$/)
+      end
+    end
+  end
+
+  describe ".random_person_name" do
+    subject { SanitizedJsonExporter.random_person_name("common_name", "Yoom") }
+    context "given fieldname ending with _name" do
+      it "returns fake SSN" do
+        expect(subject).not_to eq "Yoom"
+        expect(subject.length).to be > 0
+      end
+    end
+  end
+
+  let(:veteran) { create(:veteran, file_number: "111447777", middle_name: "Middle") }
   let(:appeal) do
     create(:appeal,
            :advanced_on_docket_due_to_motion,
@@ -134,4 +162,21 @@ describe "SanitizedJsonExporter/Importer" do
       end
     end
   end
+  # context "" do
+  #   let(:cavc_appeal) do
+  #     create(:appeal,
+  #            :type_cavc_remand,
+  #            veteran: veteran)
+  #   end
+  #   let(:appeal) do
+  #     cavc_appeal.cavc_remand.source_appeal
+  #   end
+
+  #   it "imports json" do
+  #     print_things
+
+  #     sji.import
+  #     print_imported_things
+  #   end
+  # end
 end
