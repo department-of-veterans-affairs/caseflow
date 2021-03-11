@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 
 import { axe } from 'jest-axe';
 
-import PaginationButton from 'app/components/PaginationButton';
+import PaginationButton from 'app/components/Pagination/PaginationButton';
 
 describe('PaginationButton', () => {
   const handleChange = jest.fn();
