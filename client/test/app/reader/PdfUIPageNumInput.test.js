@@ -1,19 +1,19 @@
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent, { specialChars } from '@testing-library/user-event';
 import { PdfUIPageNumInput } from '../../../app/reader/PdfUIPageNumInput';
 
 describe('PdfUIPageNumInput', () => {
   const jumpToPage = jest.fn();
 
-  const props = {
+  const defaultProps = {
     jumpToPage,
     numPages: 20,
     docId: 42
   };
 
-  const setupTestComponent = () => {
-    return render(<PdfUIPageNumInput {...props} />);
+  const setupTestComponent = (props = {}) => {
+    return render(<PdfUIPageNumInput {...defaultProps} {...props} />);
   };
 
   beforeEach(() => {
@@ -21,20 +21,20 @@ describe('PdfUIPageNumInput', () => {
   });
 
   it('renders properly', () => {
-    const component = setupTestComponent(props);
+    const component = setupTestComponent();
 
     expect(component).toMatchSnapshot();
   });
 
-  it('shows current page number', () => {
-    setupTestComponent(props);
+  it('shows default page number of 1', () => {
+    setupTestComponent();
 
     expect(screen.getByLabelText('Page').value).toEqual('1');
   });
 
   describe('jump to page', () => {
     it('jumps to new page when different page number input', () => {
-      setupTestComponent(props);
+      setupTestComponent();
       const input = screen.getByLabelText('Page');
 
       userEvent.type(input, `${specialChars.backspace}3${specialChars.enter}`);
@@ -44,7 +44,7 @@ describe('PdfUIPageNumInput', () => {
     });
 
     it('parses non int input to int and jumps to that page', () => {
-      setupTestComponent(props);
+      setupTestComponent();
       const input = screen.getByLabelText('Page');
 
       userEvent.type(input, `${specialChars.backspace}2.5${specialChars.enter}`);
@@ -54,10 +54,19 @@ describe('PdfUIPageNumInput', () => {
     });
 
     it('does not jump to new page if input is greater than number of pages', () => {
-      setupTestComponent(props);
+      setupTestComponent();
       const input = screen.getByLabelText('Page');
 
       userEvent.type(input, `${specialChars.backspace}100${specialChars.enter}`);
+
+      expect(jumpToPage).toHaveBeenCalledTimes(0);
+    });
+
+    it('does not jump to new page if input is not a number', () => {
+      setupTestComponent();
+      const input = screen.getByLabelText('Page');
+
+      userEvent.type(input, `${specialChars.backspace}foo${specialChars.enter}`);
 
       expect(jumpToPage).toHaveBeenCalledTimes(0);
     });
