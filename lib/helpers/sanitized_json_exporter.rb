@@ -173,8 +173,8 @@ class SanitizedJsonExporter
       end
     end
 
-    def obfuscate_sentence(field_name, field_value)
-      field_value.split.map{|w| w[0..1]}.join(" ")
+    def obfuscate_sentence(_field_name, field_value)
+      field_value.split.map { |word| word[0..1] }.join(" ")
     end
   end
 end
