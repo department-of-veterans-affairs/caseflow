@@ -12,7 +12,7 @@ class Intake::DecisionReviewIntakeSerializer < Intake::IntakeSerializer
     object.detail&.claimant_participant_id
   end
 
-   attribute :claimant_name do |object|
+  attribute :claimant_name do |object|
     object.detail&.claimant&.name
   end
 
@@ -63,7 +63,7 @@ class Intake::DecisionReviewIntakeSerializer < Intake::IntakeSerializer
     object.detail&.reload&.caseflow_only_edit_issues_url
   end
 
-   attribute :power_of_attorney_name do |object|
-   object.detail&.claimant&.power_of_attorney&.representative_name
+  attribute :power_of_attorney_name do |object|
+    object.detail&.claimant&.power_of_attorney&.representative_name
   end
 end
