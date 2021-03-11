@@ -5,7 +5,7 @@ import moment from 'moment';
 
 import Button from '../../components/Button';
 import Table from '../../components/Table';
-import EasyPagination from '../../components/EasyPagination';
+import EasyPagination from '../../components/Pagination/EasyPagination';
 
 import ApiUtil from '../../util/ApiUtil';
 

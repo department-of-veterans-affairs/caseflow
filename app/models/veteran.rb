@@ -279,7 +279,11 @@ class Veteran < CaseflowRecord
     return cached_date_of_death if cached_date_of_death.present? || RequestStore.store[:current_user]&.vso_employee?
 
     dod = bgs_record[:date_of_death] if bgs_record_found?
-    dod && Date.strptime(dod, "%m/%d/%Y")
+    if dod.present?
+      dod = Date.strptime(dod, "%m/%d/%Y")
+      update(date_of_death: dod)
+    end
+    dod
   rescue ArgumentError
     nil
   end
