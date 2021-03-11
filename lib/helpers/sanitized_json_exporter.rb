@@ -8,11 +8,22 @@ class SanitizedJsonExporter
   def initialize(*appeals, sanitize: true)
     @sanitize = sanitize
     @value_mapping = {}
-
     @records_hash = { "metadata" => { "exported_at": Time.zone.now } }
-    @records_hash["appeals"] = appeals.uniq.map { |appeal| sanitize(appeal) }
-    export_claimants(appeals)
-    export_tasks(appeals)
+
+    appeals.uniq!
+    @records_hash["appeals"] = appeals.map { |appeal| sanitize(appeal) }
+
+    other_appeals = appeals.map { |appeal| associated_appeals(appeal) }.flatten.uniq.compact
+    @records_hash["appeals"] += other_appeals.map { |appeal| sanitize(appeal) }
+
+    relevant_appeals = appeals + other_appeals
+    export_claimants(relevant_appeals)
+    export_tasks(relevant_appeals)
+  end
+
+  def associated_appeals(appeal)
+    appeal.cavc_remand&.source_appeal
+    # To-do: include other source appeals, e.g., those with the same docket number
   end
 
   def save(filename, purpose: nil)
@@ -38,7 +49,9 @@ class SanitizedJsonExporter
 
   def export_claimants(appeals)
     @records_hash["veterans"] = appeals.map(&:veteran).uniq.map { |veteran| sanitize(veteran) }
-    @records_hash["claimants"] = appeals.map(&:claimants).flatten.sort_by(&:id).map { |claimant| sanitize(claimant) }
+    @records_hash["claimants"] = appeals.map(&:claimants).flatten.uniq.sort_by(&:id).map do |claimant|
+      sanitize(claimant)
+    end
   end
 
   def export_tasks(appeals)
@@ -110,7 +123,6 @@ class SanitizedJsonExporter
   class << self
     # :reek:RepeatedConditionals
     def random_email(field_name, _field_value)
-      # puts "random_email"
       case field_name
       when /email$/
         Faker::Internet.email
@@ -119,7 +131,6 @@ class SanitizedJsonExporter
 
     # https://github.com/faker-ruby/faker/blob/master/doc/default/id_number.md
     def invalid_ssn(field_name, field_value)
-      # puts "invalid_ssn #{field_name} #{field_value}"
       case field_name
       when "ssn", "file_number", "veteran_file_number"
         Faker::IDNumber.invalid.delete("-")
@@ -134,7 +145,6 @@ class SanitizedJsonExporter
     end
 
     def random_person_name(field_name, _field_value)
-      # puts "random_person_name #{field_name} #{_field_value}"
       case field_name
       when "full_name"
         "#{Faker::Name.first_name} #{Faker::Name.last_name}"
@@ -152,7 +162,6 @@ class SanitizedJsonExporter
 
     # Keep field value recognizable but different to reduce risk of exploitation (e.g., username scraping)
     def mixup_css_id(field_name, field_value)
-      # puts "mixup_css_id #{field_name} #{field_value}"
       case field_name
       when "css_id"
         field_value[4..-1] + field_value[0..3]

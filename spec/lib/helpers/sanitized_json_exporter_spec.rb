@@ -22,12 +22,37 @@ describe "SanitizedJsonExporter/Importer" do
     end
   end
 
-  describe ".random_person_name" do
-    subject { SanitizedJsonExporter.random_person_name("common_name", "Yoom") }
-    context "given fieldname ending with _name" do
-      it "returns fake SSN" do
-        expect(subject).not_to eq "Yoom"
+  describe ".random_email" do
+    let(:orig_value) { "yoom@caseflow.va.gov" }
+    let(:field_prefix) { ["", ("a".."z").to_a.sample(rand(9)).join].sample }
+    subject { SanitizedJsonExporter.random_email("#{field_prefix}email", orig_value) }
+    context "given fieldname ending with email" do
+      it "returns generated email" do
+        expect(subject).not_to eq orig_value
         expect(subject.length).to be > 0
+      end
+    end
+  end
+
+  describe ".random_person_name" do
+    let(:orig_value) { "Yoom" }
+    let(:field_prefix) { ["full", "first", "last", "middle", ("a".."z").to_a.sample(rand(9)).join].sample }
+    subject { SanitizedJsonExporter.random_person_name("#{field_prefix}_name", orig_value) }
+    context "given fieldname ending with _name" do
+      it "returns generated name" do
+        expect(subject).not_to eq orig_value
+        expect(subject.length).to be > 0
+      end
+    end
+  end
+
+  describe ".mixup_css_id" do
+    subject { SanitizedJsonExporter.mixup_css_id("css_id", css_id) }
+    context "given CSS_ID" do
+      let(:css_id) { create(:intake_user).css_id }
+      it "returns mixed-up CSS_ID" do
+        expect(subject).not_to eq css_id
+        expect(subject.chars.sort).to eq css_id.chars.sort
       end
     end
   end
@@ -42,6 +67,15 @@ describe "SanitizedJsonExporter/Importer" do
   end
   let(:sje) { SanitizedJsonExporter.new(appeal) }
 
+  let(:cavc_appeal) do
+    create(:appeal,
+           :type_cavc_remand,
+           veteran: veteran)
+  end
+  let(:cavc_source_appeal) do
+    cavc_appeal.cavc_remand.source_appeal
+  end
+
   # temporary method for debugging
   def print_things
     pp appeal
@@ -54,40 +88,95 @@ describe "SanitizedJsonExporter/Importer" do
     pp sje.records_hash
   end
 
-  context "export" do
+  context "Exporter" do
+    shared_examples "exports appeals" do
+      let(:relevant_appeals) { (appeals + [cavc_source_appeal]).uniq }
+      let(:claimants) { relevant_appeals.map(&:claimants).flatten.uniq }
+      let(:veterans) { relevant_appeals.map(&:veteran).uniq }
+      let(:tasks) { relevant_appeals.map(&:tasks).flatten }
+      let(:assigned_by_users) { tasks.map(&:assigned_by).uniq.compact }
+      let(:assigned_to_users) { tasks.select { |task| task.assigned_to_type == "User" }.map(&:assigned_to).uniq }
+      let(:assigned_to_orgs) { tasks.select { |task| task.assigned_to_type == "Organization" }.map(&:assigned_to).uniq }
+      let(:task_users) { (assigned_by_users + assigned_to_users).uniq }
+
+      it "includes all associated records" do
+        expect(sje.records_hash["appeals"].size).to eq relevant_appeals.size
+        expect(sje.records_hash["veterans"].size).to eq veterans.size
+        expect(sje.records_hash["claimants"].size).to eq claimants.size
+
+        expect(sje.records_hash["tasks"].size).to eq tasks.size
+        expect(sje.records_hash["users"].size).to eq task_users.size
+        expect(sje.records_hash["organizations"].size).to eq assigned_to_orgs.size
+
+        # Check associations
+        relevant_appeal_ids = relevant_appeals.pluck(:id)
+        expect(sje.records_hash["claimants"].pluck("decision_review_id").uniq).to match_array relevant_appeal_ids
+        expect(sje.records_hash["tasks"].pluck("appeal_id").uniq).to match_array tasks.pluck(:appeal_id).uniq
+        sanitized_vet_file_numbers = sje.records_hash["veterans"].pluck("file_number").uniq
+        expect(sje.records_hash["appeals"].pluck("veteran_file_number").uniq).to match_array sanitized_vet_file_numbers
+
+        # To-do: Issues
+        # To-do: Hearings
+      end
+    end
+
     let(:pii_values) do
       [
         appeal.veteran_file_number,
+        appeal.veteran.file_number,
         appeal.veteran.first_name,
         appeal.veteran.last_name,
         appeal.veteran.ssn
-      ]
+      ].uniq
     end
 
-    it "exports appeal" do
-      # Check PII values will be mapped to fake values
-      expect(sje.value_mapping.keys).to include(*pii_values)
-      expect(sje.value_mapping.values).not_to include(*pii_values)
+    context "when sanitize=false (for debugging)" do
+      let(:appeals) { [appeal, cavc_appeal, create(:appeal)] }
+      let(:sje) { SanitizedJsonExporter.new(*appeals, sanitize: false) }
 
-      expect(sje.records_hash["claimants"].size).to eq appeal.claimants.size
-      expect(sje.records_hash["tasks"].size).to eq appeal.tasks.size
+      include_examples "exports appeals"
 
-      expect(sje.records_hash["claimants"].size).to eq appeal.claimants.size
+      it "includes PII in file_contents" do
+        # Check PII values are in file_contents
+        expect(sje.file_contents).to include(*pii_values)
+        # No values are mapped
+        expect(sje.value_mapping).to be_empty
+      end
+    end
 
-      # Check PII values are not in file_contents
-      expect(sje.file_contents).not_to include(*pii_values)
-      # Check file_contents uses fake values
-      expect(sje.file_contents).to include(*sje.value_mapping.values)
+    context "when exporting normally" do
+      let(:appeals) { [appeal, cavc_appeal, create(:appeal)] }
+      let(:sje) { SanitizedJsonExporter.new(*appeals) }
 
-      # After import, Check associations
-      expect(sje.records_hash["claimants"].first["decision_review_id"]).to eq appeal.id
+      include_examples "exports appeals"
+
+      it "does not include PII in file_contents" do
+        # Check PII values will be mapped to fake values
+        expect(sje.value_mapping.keys).to include(*pii_values)
+        expect(sje.value_mapping.values).not_to include(*pii_values)
+
+        # Check PII values are in file_contents
+        expect(sje.file_contents).not_to include(*pii_values)
+        # Check file_contents uses fake values instead of PII values
+        expect(sje.file_contents).to include(*sje.value_mapping.values)
+      end
     end
   end
 
-  context "import" do
-    let(:sji) { SanitizedJsonImporter.new(sje.file_contents) }
+  context "Importer" do
+    context "when given empty JSON to import" do
+      let(:sji) { SanitizedJsonImporter.new("{}") }
+      it "returns nil" do
+        expect(sji.import).to be_nil
+        expect(Appeal.count).to eq 0
+        expect(Veteran.count).to eq 0
+        expect(Claimant.count).to eq 0
+        expect(User.count).to eq 0
+        expect(Task.count).to eq 0
+      end
+    end
 
-    before { sji.metadata }
+    let!(:sji) { SanitizedJsonImporter.new(sje.file_contents) }
 
     # for debugging
     def show_diffs(appeal, record_hash, imp_appeal)
@@ -126,6 +215,9 @@ describe "SanitizedJsonExporter/Importer" do
       expect(Claimant.count).to eq 2
       expect(User.count).to eq 0
 
+      # Cause a new organization to be created instead of using existing same-named org
+      sji.records_hash["organizations"].first["id"] = 100
+
       appeals = sji.import["appeals"]
       expect(appeals.size).to eq 1
 
@@ -144,39 +236,11 @@ describe "SanitizedJsonExporter/Importer" do
       expect(imp_claimant.decision_review).to eq imp_appeal
     end
 
-    context "when appeal has task assigned to users" do
-      let(:cavc_appeal) do
-        create(:appeal,
-               :type_cavc_remand,
-               veteran: veteran)
-      end
-      let(:appeal) do
-        cavc_appeal.cavc_remand.source_appeal
-      end
+    it "manual testing" do
+      # print_things
 
-      it "imports json" do
-        print_things
-
-        sji.import
-        print_imported_things
-      end
+      sji.import
+      # print_imported_things
     end
   end
-  # context "" do
-  #   let(:cavc_appeal) do
-  #     create(:appeal,
-  #            :type_cavc_remand,
-  #            veteran: veteran)
-  #   end
-  #   let(:appeal) do
-  #     cavc_appeal.cavc_remand.source_appeal
-  #   end
-
-  #   it "imports json" do
-  #     print_things
-
-  #     sji.import
-  #     print_imported_things
-  #   end
-  # end
 end

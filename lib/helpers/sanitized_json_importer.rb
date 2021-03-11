@@ -34,15 +34,14 @@ class SanitizedJsonImporter
   def import
     ActiveRecord::Base.transaction do
       import_array(Appeal, "appeals").tap do |appeals|
-        import_array(Veteran, "veterans")
-
         if appeals.blank?
-          puts "WARN: No appeal imported, aborting import of remaining records"
-          Rails.logger.warn "No appeal imported, aborting import of remaining records"
+          puts "Warning: No appeal imported, aborting import of remaining records"
           return nil
         end
 
+        import_array(Veteran, "veterans")
         import_array(Claimant, "claimants")
+
         import_array(User, "users")
         import_array(Organization, "organizations")
         import_array(Task, "tasks")
@@ -97,7 +96,7 @@ class SanitizedJsonImporter
   private
 
   def import_array(clazz, key)
-    obj_hash_array = @records_hash[key]
+    obj_hash_array = @records_hash.fetch(key, [])
     new_records = obj_hash_array.map do |obj_hash|
       import_record(clazz, obj_hash: obj_hash)
     end
@@ -112,7 +111,7 @@ class SanitizedJsonImporter
   module SkipCallbacks
     def run_callbacks(kind, *args, &block)
       if [:save, :create].include?(kind)
-        # puts "==== Skipping callbacks for #{kind}: #{args}"
+        # puts "(Skipping callbacks for #{kind}: #{args})"
         nil
       else
         super
@@ -127,11 +126,11 @@ class SanitizedJsonImporter
   def import_record(clazz, key: clazz.name, obj_hash: @records_hash[key])
     fail "No JSON data for key '#{key}'.  Keys: #{@records_hash.keys}" unless obj_hash
 
-    obj_description = "#{obj_hash['type']} " \
+    obj_description = "\n\t#{obj_hash['type']} " \
                       "#{obj_hash.select { |obj_key, _v| obj_key.include?('_id') }}"
     # Don't import if certain types of records already exists
     if NONDUPLICATE_TYPES.include?(clazz) && existing_record(clazz, obj_hash)
-      puts "Using existing #{clazz} instead of importing: #{obj_hash['id']} #{obj_description}"
+      puts "  = Using existing #{clazz} instead of importing: #{obj_hash['id']} #{obj_description}"
       return
     end
 
@@ -141,15 +140,16 @@ class SanitizedJsonImporter
     adjust_unique_identifiers(clazz, obj_hash)
 
     # Handle Organization type specially because each organization has a `singleton`
+    # To-do: update dev's seed data to match prod's Organization#singleton record ids
     if clazz == Organization && !org_already_exists?(obj_hash)
-      puts "Creating #{clazz} '#{obj_hash['name']}' with original id #{obj_hash['id']} #{obj_description}"
+      puts "  + Creating #{clazz} '#{obj_hash['name']}' with its original id #{obj_hash['id']} #{obj_description}"
       return clazz.create!(obj_hash)
     end
 
     adjust_ids_by_offset(clazz, obj_hash)
     reassociate_with_imported_records(clazz, obj_hash)
 
-    puts "Creating #{clazz} #{obj_hash['id']} #{obj_description}"
+    puts "  + Creating #{clazz} #{obj_hash['id']} #{obj_description}"
     create_new_record(orig_id, clazz, obj_hash)
   end
 
@@ -166,8 +166,8 @@ class SanitizedJsonImporter
               obj_hash["css_id"] += "_imported" if User.find_by_css_id(obj_hash["css_id"])
             end
     if label
-      puts "Importing duplicate #{clazz} #{label} with different unique attributes " \
-           "because existing record's id is different: #{obj_hash}"
+      puts "  * Will import duplicate #{clazz} '#{label}' with different unique attributes " \
+           "because existing record's id is different: \n\t#{obj_hash}"
     end
   end
 
