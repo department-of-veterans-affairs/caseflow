@@ -293,7 +293,7 @@ class AddIssuesPage extends React.Component {
       const otherClaimant = [intakeData.claimantName, relationship].filter(Boolean).join(', ');
       const displayText = relationship === 'Other' ? otherClaimant : intakeData.claimantName;
 
-      if (relationship === 'Other') {
+      if (relationship !== 'Veteran') {
         return displayText;
       }
 

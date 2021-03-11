@@ -205,7 +205,7 @@ feature "Non-veteran claimants", :postgres do
       visit "queue/appeals/#{appeal.uuid}"
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
       expect(page).to have_content(new_individual_claimant[:first_name])
-      expect(page).to have_content("Relation to Veteran: Other")
+      expect(claimant.relationship).to eq("Other")
     end
   end
 

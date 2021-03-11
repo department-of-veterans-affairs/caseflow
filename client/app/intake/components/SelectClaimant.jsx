@@ -128,23 +128,11 @@ export const SelectClaimant = (props) => {
 
   const handleVeteranIsNotClaimantChange = (value) => {
     const boolValue = convertStringToBoolean(value);
-    let field;
-    const claimantOptions = () => {
-      if (nonVeteranClaimants) {
-        field = 'other';
-      } else if (boolValue) {
-        field = 'dependent';
-      } else {
-        field = 'veteran';
-      }
-
-      return field;
-    };
 
     setVeteranIsNotClaimant(boolValue);
     setClaimant({
       claimant: null,
-      claimantType: claimantOptions(),
+      claimantType: boolValue ? 'dependent' : 'veteran',
     });
   };
   const handleRemove = () => {

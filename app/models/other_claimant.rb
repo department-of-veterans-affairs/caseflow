@@ -26,7 +26,7 @@ class OtherClaimant < Claimant
   end
 
   def relationship
-    unrecognized_appellant&.relationship || "Other"
+    unrecognized_appellant&.relationship&.titleize || "Other"
   end
 
   def save_unrecognized_details!(params, poa_params, poa_participant_id)
