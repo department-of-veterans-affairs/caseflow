@@ -278,19 +278,13 @@ class AddIssuesPage extends React.Component {
 
     let fieldsForFormType = getAddIssuesFields(formType, veteran, intakeData);
 
-    // const claimantMap = {
-    //   veteran: () => veteran.name,
-    //   dependent: () => getDependentClaimant(intakeData),
-    //   attorney: () => `${intakeData.claimantName}, Attorney`,
-    //   other: () => intakeData.claimantName
-    // };
-
-    // const claimantType = intakeData.claimantType;
     const claimantDisplayText = () => {
       const relationship = intakeData.claimantRelationship;
+      const otherClaimant = [intakeData.claimantName, relationship].filter(Boolean).join(', ');
+      const displayText = relationship === 'Other' ? otherClaimant : intakeData.claimantName;
 
       if (relationship !== 'Veteran') {
-        return [intakeData.claimantName, relationship].filter(Boolean).join(', ');
+        return displayText;
       }
 
       return relationship;
@@ -301,10 +295,12 @@ class AddIssuesPage extends React.Component {
       content: claimantDisplayText()
     });
 
-    fieldsForFormType = fieldsForFormType.concat({
-      field: 'Claimant\'s POA',
-      content: intakeData.powerOfAttorneyName || COPY.ADD_CLAIMANT_CONFIRM_MODAL_NO_POA
-    });
+    if (intakeData.claimantRelationship === 'Other') {
+      fieldsForFormType = fieldsForFormType.concat({
+        field: 'Claimant\'s POA',
+        content: intakeData.powerOfAttorneyName || COPY.ADD_CLAIMANT_CONFIRM_MODAL_NO_POA
+      });
+    }
 
     let issueChangeClassname = () => {
       // no-op unless the issue banner needs to be displayed

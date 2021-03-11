@@ -114,7 +114,7 @@ feature "Non-veteran claimants", :postgres do
       expect(page).to have_current_path("/intake/add_issues")
     end
 
-    fit "allows selecting claimant not listed goes to and add_power_of_attorney path" do
+    it "allows selecting claimant not listed goes to and add_power_of_attorney path" do
       start_appeal(veteran)
       visit "/intake"
 
@@ -185,9 +185,9 @@ feature "Non-veteran claimants", :postgres do
 
       # Submission currently out of scope; consider stub as next path might be conditional
       expect(page).to have_current_path("/intake/add_issues")
-      expect(page).to have_content("Claimant's Poa")
-      binding.pry
-      # expect(page).to have_content(new_individual_claimant[:first_name])
+      expect(page).to have_content("Claimant's POA")
+      expect(page).to have_content(new_individual_claimant[:first_name])
+
       # Add request issues
       click_intake_add_issue
       add_intake_nonrating_issue(date: decision_date)
@@ -200,7 +200,7 @@ feature "Non-veteran claimants", :postgres do
       claimant = Claimant.find_by(type: "OtherClaimant")
       expect(claimant.power_of_attorney.name).to eq("Attorney's Law Firm")
       appeal = Appeal.find_by(docket_type: "evidence_submission")
-       binding.pry
+
       # Case details page
       visit "queue/appeals/#{appeal.uuid}"
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
