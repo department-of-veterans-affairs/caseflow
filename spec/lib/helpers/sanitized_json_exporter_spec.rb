@@ -79,6 +79,18 @@ describe "SanitizedJsonExporter/Importer" do
     end
   end
 
+  describe ".random_email" do
+    let(:orig_value) { "yoom@caseflow.va.gov" }
+    let(:field_prefix) { ["", ("a".."z").to_a.sample(rand(9)).join].sample }
+    subject { SanitizedJsonExporter.random_email("#{field_prefix}email", orig_value) }
+    context "given fieldname ending with email" do
+      it "returns generated email" do
+        expect(subject).not_to eq orig_value
+        expect(subject.length).to be > 0
+      end
+    end
+  end
+
   describe ".random_person_name" do
     let(:orig_value) { "Yoom" }
     let(:field_prefix) { ["full", "first", "last", "middle", ("a".."z").to_a.sample(rand(9)).join].sample }
@@ -292,6 +304,17 @@ describe "SanitizedJsonExporter/Importer" do
       it "returns empty array" do
         expect { subject }.to output(/WARNING: Don't know how to map value/).to_stdout
         expect(subject).to eq []
+      end
+    end
+  end
+
+  describe ".mixup_css_id" do
+    subject { SanitizedJsonExporter.mixup_css_id("css_id", css_id) }
+    context "given CSS_ID" do
+      let(:css_id) { create(:intake_user).css_id }
+      it "returns mixed-up CSS_ID" do
+        expect(subject).not_to eq css_id
+        expect(subject.chars.sort).to eq css_id.chars.sort
       end
     end
   end
@@ -678,21 +701,4 @@ describe "SanitizedJsonExporter/Importer" do
       expect(diffs.values.flatten).to be_empty
     end
   end
-  # context "" do
-  #   let(:cavc_appeal) do
-  #     create(:appeal,
-  #            :type_cavc_remand,
-  #            veteran: veteran)
-  #   end
-  #   let(:appeal) do
-  #     cavc_appeal.cavc_remand.source_appeal
-  #   end
-
-  #   it "imports json" do
-  #     print_things
-
-  #     sji.import
-  #     print_imported_things
-  #   end
-  # end
 end
