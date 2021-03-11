@@ -10,11 +10,8 @@ class SanitizedJsonExporter
     @value_mapping = {}
     @records_hash = { "metadata" => { "exported_at": Time.zone.now } }
 
-    appeals.uniq!
-    @records_hash["appeals"] = appeals.map { |appeal| sanitize(appeal) }
-
     other_appeals = appeals.map { |appeal| associated_appeals(appeal) }.flatten.uniq.compact
-    @records_hash["appeals"] += other_appeals.map { |appeal| sanitize(appeal) }
+    @records_hash["appeals"] = (appeals + other_appeals).uniq.sort_by(&:id).map { |appeal| sanitize(appeal) }
 
     relevant_appeals = appeals + other_appeals
     export_claimants(relevant_appeals)
@@ -48,7 +45,7 @@ class SanitizedJsonExporter
   private
 
   def export_claimants(appeals)
-    @records_hash["veterans"] = appeals.map(&:veteran).uniq.map { |veteran| sanitize(veteran) }
+    @records_hash["veterans"] = appeals.map(&:veteran).uniq.sort_by(&:id).map { |veteran| sanitize(veteran) }
     @records_hash["claimants"] = appeals.map(&:claimants).flatten.uniq.sort_by(&:id).map do |claimant|
       sanitize(claimant)
     end

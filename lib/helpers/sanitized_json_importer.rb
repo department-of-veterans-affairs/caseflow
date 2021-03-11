@@ -14,6 +14,7 @@ class SanitizedJsonImporter
   ID_OFFSET = 2_000_000_000
 
   def initialize(file_contents, id_offset: ID_OFFSET)
+    @id_offset = id_offset
     @records_hash = JSON.parse(file_contents)
     @imported_records = {}
 
@@ -23,8 +24,6 @@ class SanitizedJsonImporter
       User.name.underscore => {},
       Organization.name.underscore => {}
     }
-
-    @id_offset = id_offset
   end
 
   def metadata
@@ -52,19 +51,23 @@ class SanitizedJsonImporter
 
   # TODO: These 3 diff_* methods will be refactored later
   # Compare tasks
-  def self.diff_task_hashes(task_list, appeal)
-    a3_tasks = JSON.parse(appeal.tasks.order(:id).to_json(methods: :type))
-    a3_hash = a3_tasks.index_by { |task| task["id"] }
+  def self.diff_task_hashes(appeal, imported_appeal, **kwargs)
+    # appeal_tasks = JSON.parse(appeal.tasks.order(:id).to_json(methods: :type))
+    # appeal_tasks_by_id = appeal_tasks.sor_by { |task| task["id"] }
 
-    task_list.map do |task|
-      diff_hashes(task.to_h, a3_hash[task_hash["id"]])
+    # task_list.map do |task|
+    #   diff_hashes(task.to_h, appeal_tasks_by_id[task_hash["id"]])
+    # end
+
+    appeal.tasks.order(:id).zip(imported_appeal.tasks.order(:id)).map do |task, imported_task|
+      diff_records(task, imported_task, **kwargs)
     end
   end
 
   def self.diff_records(record_a, record_b, **kwargs)
     hash_a = SanitizedJsonExporter.record_to_hash(record_a)
     hash_b = SanitizedJsonExporter.record_to_hash(record_b)
-    diff_hashes(hash_a, hash_b, **kwargs)
+    diff_hashes(hash_a, hash_b, { ignore_id_offset: false }.merge(kwargs))
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
@@ -190,7 +193,7 @@ class SanitizedJsonImporter
     if clazz <= Task
       # Create the task without validation or callbacks
       new_task = Task.new(obj_hash)
-      new_task.extend(SkipCallbacks) # patch only this in-memory instance of the task
+      new_task.extend(SkipCallbacks) # monkeypatch only this in-memory instance of the task
       new_task.save(validate: false)
       return new_task
     end
