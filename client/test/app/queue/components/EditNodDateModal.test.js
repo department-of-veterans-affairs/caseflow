@@ -26,9 +26,9 @@ describe('EditNodDateModal', () => {
   });
 
   it('renders correctly', () => {
-    const { component } = render(<EditNodDateModal {...defaults} />);
+    const { container } = render(<EditNodDateModal {...defaults} />);
 
-    expect(component).toMatchSnapshot();
+    expect(container).toMatchSnapshot();
   });
 
   it('should fire cancel event', async () => {
