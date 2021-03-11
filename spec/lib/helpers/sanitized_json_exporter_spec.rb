@@ -82,9 +82,17 @@ describe "SanitizedJsonExporter/Importer" do
   describe ".random_email" do
     let(:orig_value) { "yoom@caseflow.va.gov" }
     let(:field_prefix) { ["", ("a".."z").to_a.sample(rand(9)).join].sample }
-    subject { SanitizedJsonExporter.random_email("#{field_prefix}email", orig_value) }
-    context "given fieldname ending with email" do
-      it "returns generated email" do
+    subject { SanitizedJsonExporter.random_email(field_name, orig_value) }
+    context "given fieldname ending with 'email'" do
+      let(:field_name) { "#{field_prefix}email" }
+      it "returns fake email" do
+        expect(subject).not_to eq orig_value
+        expect(subject.length).to be > 0
+      end
+    end
+    context "given email value" do
+      let(:field_name) { nil }
+      it "returns fake email" do
         expect(subject).not_to eq orig_value
         expect(subject.length).to be > 0
       end
@@ -315,6 +323,20 @@ describe "SanitizedJsonExporter/Importer" do
       it "returns mixed-up CSS_ID" do
         expect(subject).not_to eq css_id
         expect(subject.chars.sort).to eq css_id.chars.sort
+      end
+    end
+  end
+
+  describe ".obfuscate_sentence" do
+    subject { SanitizedJsonExporter.obfuscate_sentence(nil, sentence) }
+    context "given CSS_ID" do
+      let(:sentence) { "No PII, just potentially sensitive!" }
+      it "returns sentence without any of the original longer words" do
+        obf_words = subject.split
+        sentence.split.select { |word| word.length > 2 }.each do |word|
+          expect(subject).not_to include word
+          obf_words.each { |obf_word| expect(obf_word.chars).not_to match_array word.chars }
+        end
       end
     end
   end
