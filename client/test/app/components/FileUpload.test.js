@@ -1,15 +1,18 @@
 import React from 'react';
-import { expect } from 'chai';
-import { mount, shallow } from 'enzyme';
+import { render, screen, cleanup } from '@testing-library/react';
 
 import FileUpload from '../../../app/components/FileUpload';
 
 describe('FileUpload', () => {
   let onChange = () => true;
 
-  context('display text', () => {
+  describe('display text', () => {
+
+    afterEach(() => {
+      cleanup();
+    });
     it('displays formatted value when set', () => {
-      let wrapper = shallow(
+      render(
         <FileUpload
           onChange={onChange}
           id="testing-file-upload"
@@ -19,11 +22,13 @@ describe('FileUpload', () => {
         />
       );
 
-      expect(wrapper.text()).to.include('uploadedFile.pdf');
+      const file = screen.getByText('uploadedFile.pdf');
+
+      expect(file).toBeInTheDocument();
     });
 
     it('displays postUploadText when value is set', () => {
-      let wrapper = mount(
+      render(
         <FileUpload
           onChange={onChange}
           id="testing-file-upload"
@@ -33,11 +38,13 @@ describe('FileUpload', () => {
         />
       );
 
-      expect(wrapper.text()).to.include('Choose a different file');
+      const text = screen.getByText('Choose a different file');
+
+      expect(text).toBeInTheDocument();
     });
 
     it('displays preUploadText when value is not set', () => {
-      let wrapper = mount(
+      render(
         <FileUpload
           onChange={onChange}
           id="testing-file-upload"
@@ -47,7 +54,9 @@ describe('FileUpload', () => {
         />
       );
 
-      expect(wrapper.text()).to.include('Select a file for upload');
+      const text = screen.getByText('Select a file for upload');
+
+      expect(text).toBeInTheDocument();
     });
   });
 });
