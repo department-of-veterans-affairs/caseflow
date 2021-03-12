@@ -5,6 +5,7 @@ import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 
 import OvertimeBadge from './OvertimeBadge';
+import { setCanViewOvertimeStatus } from 'app/queue/uiReducer/uiActions';
 
 export default {
   title: 'Commons/Components/Badges/OT Badge',
@@ -15,16 +16,18 @@ export default {
   args: {
     appeal: {
       overtime: true,
-      canViewOvertimeStatus: true, 
+      canViewOvertimeStatus: true,
     },
     featureToggles: {
       overtime_revamp: true
     },
+    canViewOvertimeStatus: true, 
   }
 };
 
 const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
 const store = getStore();
+store.dispatch(setCanViewOvertimeStatus(true));
 
 const Template = (args) => (
   <Provider store={store}>
@@ -33,4 +36,3 @@ const Template = (args) => (
 );
 
 export const OTBadge = Template.bind({});
-

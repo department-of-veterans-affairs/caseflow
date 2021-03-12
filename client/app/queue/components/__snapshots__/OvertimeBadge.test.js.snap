@@ -1,0 +1,101 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OvertimeBadge renders correctly 1`] = `
+<Provider
+  store={
+    Object {
+      "dispatch": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+      Symbol(observable): [Function],
+    }
+  }
+>
+  <Connect(OvertimeBadge)
+    appeal={
+      Object {
+        "canViewOvertimeStatus": true,
+        "overtime": true,
+      }
+    }
+  >
+    <OvertimeBadge
+      appeal={
+        Object {
+          "canViewOvertimeStatus": true,
+          "overtime": true,
+        }
+      }
+      canViewOvertimeStatus={true}
+      dispatch={[Function]}
+    >
+      <Badge
+        color="#323a45"
+        displayName="OT"
+        name="overtime"
+        tooltipText={
+          <div>
+            This case has been approved to be worked in overtime hours
+          </div>
+        }
+      >
+        <div
+          className="cf-overtime-badge"
+        >
+          <Tooltip
+            id="badge-undefined"
+            position="bottom"
+            text={
+              <div>
+                This case has been approved to be worked in overtime hours
+              </div>
+            }
+          >
+            <span
+              aria-describedby="badge-undefined"
+              data-event="focus mouseenter"
+              data-event-off="keydown mouseleave"
+              data-for="badge-undefined"
+              data-tip={true}
+              role="tooltip"
+              tabIndex={0}
+            >
+              <span
+                data-css-13kydni=""
+              >
+                OT
+              </span>
+            </span>
+            <span
+              data-css-1urwbxe=""
+            >
+              <ReactTooltip
+                clickable={false}
+                effect="solid"
+                id="badge-undefined"
+                insecure={true}
+                multiline={true}
+                offset={Object {}}
+                place="bottom"
+                resizeHide={true}
+                wrapper="div"
+              >
+                <div
+                  className="__react_component_tooltip place-bottom type-dark "
+                  data-id="tooltip"
+                  id="badge-undefined"
+                >
+                  <div>
+                    This case has been approved to be worked in overtime hours
+                  </div>
+                </div>
+              </ReactTooltip>
+            </span>
+          </Tooltip>
+        </div>
+      </Badge>
+    </OvertimeBadge>
+  </Connect(OvertimeBadge)>
+</Provider>
+`;

@@ -4,7 +4,6 @@ import rootReducer from '../reducers';
 import thunk from 'redux-thunk';
 import OvertimeBadge from 'app/queue/components/OvertimeBadge';
 import { Provider } from 'react-redux';
-import { render } from '@testing-library/react';
 import { mount } from 'enzyme';
 import { setCanViewOvertimeStatus } from 'app/queue/uiReducer/uiActions';
 
