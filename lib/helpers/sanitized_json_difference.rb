@@ -7,8 +7,9 @@ module SanitizedJsonDifference
     Veteran => %w[id file_number first_name middle_name last_name ssn],
     Claimant => %w[id decision_review_id],
     User => %w[id file_number first_name middle_name last_name ssn css_id email full_name] + [:display_name],
-    Task => %w[id appeal_id parent_id assigned_by_id assigned_to_id],
-    TaskTimer => %w[id task_id]
+    Task => %w[id appeal_id parent_id assigned_by_id assigned_to_id instructions],
+    TaskTimer => %w[id task_id],
+    CavcRemand => %w[instructions]
   }.freeze
 
   # :reek:BooleanParameter
@@ -27,11 +28,11 @@ module SanitizedJsonDifference
       TaskTimer => TaskTimer.where(task_id: orig_tasks.map(&:id)).sort_by(&:id)
     }.each_with_object({}) do |(clazz, orig_records), result| # https://blog.arkency.com/inject-vs-each-with-object/
       key = clazz.table_name
-      result[key] = diff_record_lists(orig_records, imported_records[key], mapped_fields[clazz])
+      result[key] = SanitizedJsonDifference.diff_record_lists(orig_records, imported_records[key], mapped_fields[clazz])
     end
   end
 
-  def diff_record_lists(orig_records, imported_records, ignored_fields)
+  def self.diff_record_lists(orig_records, imported_records, ignored_fields)
     orig_records.zip(imported_records).map do |original, imported|
       SanitizedJsonDifference.diff_records(original, imported, ignored_fields: ignored_fields)
     end

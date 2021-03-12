@@ -97,11 +97,11 @@ class SanitizedJsonExporter
 
       # obj_hash["my_name"]="AAA BBB"
       # find_or_create_mapped_value_for(obj_hash, "my_name")
-    when Organization, Claimant, Task, TaskTimer
-      # nothing to sanitize
-      obj_hash
     when Task
       find_or_create_mapped_value_for(obj_hash, "instructions")
+    when Organization, Claimant, TaskTimer
+      # nothing to sanitize
+      obj_hash
     when CavcRemand
       find_or_create_mapped_value_for(obj_hash, "cavc_judge_full_name")
       find_or_create_mapped_value_for(obj_hash, "instructions")
@@ -121,7 +121,6 @@ class SanitizedJsonExporter
       break if @value_mapping.values.uniq.size == @value_mapping.size
 
       puts "Value '#{obj_hash[field_name]}' for field #{field_name} is already used; trying again"
-      binding.pry
     end
   end
 

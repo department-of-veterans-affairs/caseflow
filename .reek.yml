@@ -25,6 +25,7 @@ detectors:
       - LegacyDocket#distribute_appeals
       - SanitizedJsonExporter
       - SanitizedJsonImporter
+      - SanitizedJsonDifference
       - Seeds::Tasks#create_legacy_case_with_open_schedule_hearing_task
       - SlackService#pick_color
       - Task#actions_allowable?
