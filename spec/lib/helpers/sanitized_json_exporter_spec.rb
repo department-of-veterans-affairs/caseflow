@@ -328,7 +328,7 @@ describe "SanitizedJsonExporter/Importer" do
   end
 
   describe ".obfuscate_sentence" do
-    subject { SanitizedJsonExporter.obfuscate_sentence(nil, sentence) }
+    subject { SanitizedJsonExporter.obfuscate_sentence("instructions", sentence) }
     context "given CSS_ID" do
       let(:sentence) { "No PII, just potentially sensitive!" }
       it "returns sentence without any of the original longer words" do
