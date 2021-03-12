@@ -668,8 +668,11 @@
   "USER_MANAGEMENT_REMOVE_USER_FROM_ORG_BUTTON_TEXT": "Remove from team",
 
   "ACCESS_DENIED_TITLE": "Additional access needed",
+  "INFORMATION_CANNOT_BE_FOUND": "Information cannot be found",
   "UNAUTHORIZED_PAGE_ACCESS_MESSAGE": "You aren't authorized to use this part of Caseflow yet.",
   "CASE_DETAILS_LOADING_FAILURE_TITLE": "Unable to load this case",
+  "SLOW_LOADING_MESSAGE": "Loading is taking longer than usual...",
+  "DEFAULT_UNKNOWN_ERROR_MESSAGE": "An unknown error occured.",
   "FAILED_HEARING_UPDATE": "There was an error updating the hearing",
 
   "CASE_MOVEMENT_TASK_LABEL": "Case Movement",
