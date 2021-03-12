@@ -66,7 +66,7 @@ module SanitizedJsonDifference
           next diffs << [key, time_a, time_b]
         end
       rescue ArgumentError
-        # occurs when `to_time` is called on a string that is a UUID 
+        # occurs when `to_time` is called on a string that is a UUID
       end
 
       next diffs << [key, hash_a[key], hash_b[key]]

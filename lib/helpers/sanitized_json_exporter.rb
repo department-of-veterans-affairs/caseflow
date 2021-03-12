@@ -16,6 +16,7 @@ class SanitizedJsonExporter
     end
   end
 
+  # rubocop:disable Metrics/AbcSize
   def records_to_export(initial_appeals)
     associated_appeals = initial_appeals.map { |appeal| appeals_associated_with(appeal) }.flatten.uniq.compact
     appeals = (initial_appeals + associated_appeals).uniq
@@ -34,10 +35,10 @@ class SanitizedJsonExporter
         cavc_remands.map { |cavc_remand| [cavc_remand.created_by, cavc_remand.updated_by] }.flatten.uniq +
         appeals.map(&:intake).compact.map(&:user).uniq,
       Organization => tasks.assigned_to_org.map(&:assigned_to),
-
       CavcRemand => cavc_remands
     }
   end
+  # rubocop:enable Metrics/AbcSize
 
   def appeals_associated_with(appeal)
     appeal.cavc_remand&.source_appeal
@@ -82,6 +83,7 @@ class SanitizedJsonExporter
 
   VETERAN_PII_FIELDS = %w[first_name last_name middle_name file_number ssn].freeze
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
   def sanitize(record)
     obj_hash = self.class.record_to_hash(record)
     return obj_hash unless @sanitize
@@ -99,9 +101,6 @@ class SanitizedJsonExporter
       find_or_create_mapped_value_for(obj_hash, "full_name")
       find_or_create_mapped_value_for(obj_hash, "email")
       find_or_create_mapped_value_for(obj_hash, "css_id")
-
-      # obj_hash["my_name"]="AAA BBB"
-      # find_or_create_mapped_value_for(obj_hash, "my_name")
     when Task
       find_or_create_mapped_value_for(obj_hash, "instructions")
     when Organization, Claimant, TaskTimer
@@ -117,6 +116,7 @@ class SanitizedJsonExporter
 
     obj_hash
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
 
   def find_or_create_mapped_value_for(obj_hash, field_name)
     return unless obj_hash[field_name]

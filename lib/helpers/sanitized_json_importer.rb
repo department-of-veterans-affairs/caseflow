@@ -21,7 +21,7 @@ class SanitizedJsonImporter
   def initialize(file_contents, id_offset: ID_OFFSET)
     @id_offset = id_offset
     @records_hash = JSON.parse(file_contents)
-    @metadata = @records_hash.except!["metadata"]
+    @metadata = @records_hash.delete("metadata")
     @imported_records = {}
 
     # Keep track of id mappings for these record types to reassociate to newly imported records
@@ -59,7 +59,7 @@ class SanitizedJsonImporter
       import_record(clazz, obj_hash: obj_hash)
     end
     imported_records[key] = new_records
-    @records_hash.except!(key)
+    @records_hash.delete(key)
   end
 
   # Classes that shouldn't be imported if a record with the same unique attributes already exists
@@ -79,7 +79,10 @@ class SanitizedJsonImporter
     # Record original id in case it changes in the following lines
     orig_id = obj_hash["id"]
 
-    adjust_unique_identifiers(clazz, obj_hash)
+    adjust_unique_identifiers(clazz, obj_hash).tap do |label|
+      puts "  * Will import duplicate #{clazz} '#{label}' with different unique attributes " \
+           "because existing record's id is different: \n\t#{obj_hash}" if label
+    end
 
     # Handle Organization type specially because each organization has a `singleton`
     # To-do: update dev's seed data to match prod's Organization#singleton record ids
@@ -101,21 +104,18 @@ class SanitizedJsonImporter
 
   # :reek:FeatureEnvy
   def adjust_unique_identifiers(clazz, obj_hash)
-    label = if clazz <= Organization
-              obj_hash["url"] += "_imported" if Organization.find_by(url: obj_hash["url"])
-            elsif clazz <= User
-              # Change CSS_ID if it already exists for a user with different user.id
-              obj_hash["css_id"] += "_imported" if User.find_by_css_id(obj_hash["css_id"])
-            elsif clazz <= CavcRemand
-              # Avoid "Validation failed: Cavc judge full name is not included in the list"
-              # obj_hash["cavc_judge_full_name"] = Constants::CAVC_JUDGE_FULL_NAMES.sample
-            end
-    if label
-      puts "  * Will import duplicate #{clazz} '#{label}' with different unique attributes " \
-           "because existing record's id is different: \n\t#{obj_hash}"
+    if clazz <= Organization
+      obj_hash["url"] += "_imported" if Organization.find_by(url: obj_hash["url"])
+    elsif clazz <= User
+      # Change CSS_ID if it already exists for a user with different user.id
+      obj_hash["css_id"] += "_imported" if User.find_by_css_id(obj_hash["css_id"])
+    elsif clazz <= CavcRemand
+      # Avoid "Validation failed: Cavc judge full name is not included in the list"
+      # obj_hash["cavc_judge_full_name"] = Constants::CAVC_JUDGE_FULL_NAMES.sample
     end
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   # :reek:FeatureEnvy
   def adjust_ids_by_offset(clazz, obj_hash)
     obj_hash["id"] += @id_offset
@@ -136,6 +136,7 @@ class SanitizedJsonImporter
       obj_hash["decision_issue_ids"] = obj_hash["decision_issue_ids"].map { |id| id + @id_offset }
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   # Using this approach: https://mattpruitt.com/articles/skip-callbacks/
   # Other resources:
@@ -184,6 +185,7 @@ class SanitizedJsonImporter
     @id_mapping[Organization.name.underscore]
   end
 
+  # rubocop:disable Metrics/PerceivedComplexity
   # :reek:FeatureEnvy
   def reassociate_with_imported_records(clazz, obj_hash)
     # pp "Reassociate #{clazz}"
@@ -202,6 +204,7 @@ class SanitizedJsonImporter
       reassociate(obj_hash, "updated_by_id", user_id_mapping)
     end
   end
+  # rubocop:enable Metrics/PerceivedComplexity
 
   def reassociate(obj_hash, id_field, record_id_mapping)
     obj_hash[id_field] = record_id_mapping[obj_hash[id_field]] if record_id_mapping[obj_hash[id_field]]
