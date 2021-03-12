@@ -139,17 +139,17 @@ class SanitizedJsonExporter
       end
     end
 
-    # https://github.com/faker-ruby/faker/blob/master/doc/default/id_number.md
     def invalid_ssn(field_name, field_value)
+      # instead of using Faker::IDNumber.invalid, make the SSN obviously fake by starting with '000'
       case field_name
       when "ssn", "file_number", "veteran_file_number"
-        Faker::IDNumber.invalid.delete("-")
+        "000#{Faker::Number.number(digits: 6)}"
       else
         case field_value
         when /^\d{9}$/
-          Faker::IDNumber.invalid.delete("-")
+          "000#{Faker::Number.number(digits: 6)}"
         when /^\d{3}-\d{2}-\d{4}$/
-          Faker::IDNumber.invalid
+          ["000", Faker::Number.number(digits: 2), Faker::Number.number(digits: 4)].join("-")
         end
       end
     end

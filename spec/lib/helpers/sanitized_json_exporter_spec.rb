@@ -10,14 +10,14 @@ describe "SanitizedJsonExporter/Importer" do
       let(:ssn) { "123456789" }
       it "returns fake SSN" do
         expect(subject).not_to eq ssn
-        expect(subject).to match(/^\d{9}$/)
+        expect(subject).to match(/^000\d{6}$/)
       end
     end
     context "given SSN" do
       let(:ssn) { "123-45-6789" }
       it "returns fake SSN" do
         expect(subject).not_to eq ssn
-        expect(subject).to match(/^\d{3}-\d{2}-\d{4}$/)
+        expect(subject).to match(/^000-\d{2}-\d{4}$/)
       end
     end
   end
