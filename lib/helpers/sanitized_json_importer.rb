@@ -42,6 +42,7 @@ class SanitizedJsonImporter
           return nil
         end
 
+        import_array_of(AppealIntake)
         import_array_of(Veteran)
         import_array_of(Claimant)
 
@@ -131,6 +132,9 @@ class SanitizedJsonImporter
       obj_hash["decision_review_id"] += @id_offset
     elsif clazz <= TaskTimer
       obj_hash["task_id"] += @id_offset
+    elsif clazz <= AppealIntake
+      obj_hash["detail_id"] += @id_offset
+
     elsif clazz <= CavcRemand
       obj_hash["source_appeal_id"] += @id_offset
       obj_hash["remand_appeal_id"] += @id_offset
@@ -197,6 +201,8 @@ class SanitizedJsonImporter
       elsif obj_hash["assigned_to_type"] == "Organization"
         reassociate(obj_hash, "assigned_to_id", org_id_mapping)
       end
+    elsif clazz <= AppealIntake
+      reassociate(obj_hash, "user_id", user_id_mapping)
     elsif clazz <= CavcRemand
       reassociate(obj_hash, "created_by_id", user_id_mapping)
       reassociate(obj_hash, "updated_by_id", user_id_mapping)

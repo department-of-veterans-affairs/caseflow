@@ -24,13 +24,15 @@ class SanitizedJsonExporter
 
     {
       Appeal => appeals,
+      AppealIntake => appeals.map(&:intake),
       Veteran => appeals.map(&:veteran),
       Claimant => appeals.map(&:claimants).flatten,
       Task => tasks,
       TaskTimer => TaskTimer.where(task_id: tasks.map(&:id)),
       User => tasks.map(&:assigned_by).compact +
         tasks.assigned_to_user.map(&:assigned_to) +
-        cavc_remands.map { |cavc_remand| [cavc_remand.created_by, cavc_remand.updated_by] }.flatten.uniq,
+        cavc_remands.map { |cavc_remand| [cavc_remand.created_by, cavc_remand.updated_by] }.flatten.uniq +
+        appeals.map(&:intake).compact.map(&:user).uniq,
       Organization => tasks.assigned_to_org.map(&:assigned_to),
 
       CavcRemand => cavc_remands
@@ -85,7 +87,7 @@ class SanitizedJsonExporter
     return obj_hash unless @sanitize
 
     case record
-    when Appeal
+    when Appeal, AppealIntake
       find_or_create_mapped_value_for(obj_hash, "veteran_file_number")
     when Veteran
       VETERAN_PII_FIELDS.each do |field|
