@@ -52,37 +52,36 @@ class SanitizedJsonImporter
 
   # fields expected to be different
   MAPPED_FIELDS = {
-    Appeal.table_name => %w[id veteran_file_number],
-    Task.table_name => %w[id appeal_id parent_id assigned_by_id assigned_to_id],
-    Veteran.table_name => %w[id file_number first_name middle_name last_name ssn],
-    Claimant.table_name => %w[id decision_review_id],
-    User.table_name => %w[id file_number first_name middle_name last_name ssn css_id email full_name] + [:display_name]
+    Appeal => %w[id veteran_file_number],
+    Veteran => %w[id file_number first_name middle_name last_name ssn],
+    Claimant => %w[id decision_review_id],
+    User => %w[id file_number first_name middle_name last_name ssn css_id email full_name] + [:display_name],
+    Task => %w[id appeal_id parent_id assigned_by_id assigned_to_id],
+    TaskTimer => %w[id task_id],
   }.freeze
 
   # :reek:BooleanParameter
   def differences(orig_appeals, orig_users, ignore_expected_diffs: true)
     mapped_fields = ignore_expected_diffs ? MAPPED_FIELDS : {}
     orig_appeals = orig_appeals.uniq.sort_by(&:id)
+    orig_tasks = orig_appeals.map(&:tasks).flatten.sort_by(&:id)
 
-    diffs = {
-      Appeal.table_name => orig_appeals,
-      Veteran.table_name => orig_appeals.map(&:veteran).uniq.sort_by(&:id),
-      Claimant.table_name => orig_appeals.map(&:claimants).flatten.uniq.sort_by(&:id),
-      User.table_name => orig_users
-    }.each_with_object({}) do |(key, orig_records), result|
-      result[key] = diff_record_lists(key, orig_records, mapped_fields[key])
+    {
+      Appeal => orig_appeals,
+      Veteran => orig_appeals.map(&:veteran).uniq.sort_by(&:id),
+      Claimant => orig_appeals.map(&:claimants).flatten.uniq.sort_by(&:id),
+      User => orig_users,
+      Task => orig_appeals.map(&:tasks).flatten.sort_by(&:id),
+      TaskTimer => TaskTimer.where(task_id: orig_tasks.map(&:id)).sort_by(&:id)
+    }.each_with_object({}) do |(clazz, orig_records), result|
+      key = clazz.table_name
+      result[key] = diff_record_lists(orig_records, imported_records[key], mapped_fields[clazz])
     end
-    diffs[Task.table_name] = orig_appeals.zip(imported_records[Appeal.table_name]).map do |orig_appeal, imported_appeal|
-      orig_appeal.tasks.order(:id).zip(imported_appeal.tasks.order(:id)).map do |task, imported_task|
-        self.class.diff_records(task, imported_task, ignored_keys: mapped_fields[Task.table_name])
-      end
-    end
-    diffs
   end
 
-  def diff_record_lists(key, orig_records, ignored_keys)
-    orig_records.zip(imported_records[key]).map do |original, imported|
-      self.class.diff_records(original, imported, ignored_keys: ignored_keys)
+  def diff_record_lists(orig_records, imported_records, ignored_fields)
+    orig_records.zip(imported_records).map do |original, imported|
+      self.class.diff_records(original, imported, ignored_fields: ignored_fields)
     end
   end
 
@@ -92,9 +91,9 @@ class SanitizedJsonImporter
   def self.diff_records(record_a, record_b,
                         ignore_id_offset: false,
                         convert_timestamps: true,
-                        ignored_keys: nil)
-    hash_a = SanitizedJsonExporter.record_to_hash(record_a).except(*ignored_keys)
-    hash_b = SanitizedJsonExporter.record_to_hash(record_b).except(*ignored_keys)
+                        ignored_fields: nil)
+    hash_a = SanitizedJsonExporter.record_to_hash(record_a).except(*ignored_fields)
+    hash_b = SanitizedJsonExporter.record_to_hash(record_b).except(*ignored_fields)
     # https://stackoverflow.com/questions/4928789/how-do-i-compare-two-hashes
     array_diff = (hash_b.to_a - hash_a.to_a) + (hash_a.to_a - hash_b.to_a)
 
