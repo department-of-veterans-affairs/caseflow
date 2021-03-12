@@ -66,7 +66,7 @@ describe "SanitizedJsonExporter/Importer" do
   end
 
   describe ".obfuscate_sentence" do
-    subject { SanitizedJsonExporter.obfuscate_sentence(nil, sentence) }
+    subject { SanitizedJsonExporter.obfuscate_sentence("instructions", sentence) }
     context "given CSS_ID" do
       let(:sentence) { "No PII, just potentially sensitive!" }
       it "returns sentence without any of the original longer words" do
@@ -198,7 +198,7 @@ describe "SanitizedJsonExporter/Importer" do
       end
     end
 
-    SjImporter = SanitizedJsonImporter
+    SjDifference = SanitizedJsonDifference
 
     before do
       sje # causes relevant appeals to be created
@@ -218,7 +218,8 @@ describe "SanitizedJsonExporter/Importer" do
         "users" => 0,
         "organizations" => 2, # only the first org will be created; the second one already exists
         "tasks" => 5,
-        "task_timers" => 1
+        "task_timers" => 1,
+        "cavc_remands" => 0
       }
       expect(sji.imported_records.transform_values(&:count)).to eq record_counts
 
@@ -232,24 +233,24 @@ describe "SanitizedJsonExporter/Importer" do
       # Compare differences between original records and imported records
       imported_appeal = sji.imported_records["appeals"].first
       appeal_mapped_fields = %w[id veteran_file_number]
-      expect(SjImporter.diff_records(appeal, imported_appeal).map(&:first)).to match_array appeal_mapped_fields
+      expect(SjDifference.diff_records(appeal, imported_appeal).map(&:first)).to match_array appeal_mapped_fields
 
       imported_veteran = sji.imported_records["veterans"].first
       veteran_mapped_fields = %w[id file_number first_name middle_name last_name ssn]
-      expect(SjImporter.diff_records(veteran, imported_veteran).map(&:first)).to match_array veteran_mapped_fields
+      expect(SjDifference.diff_records(veteran, imported_veteran).map(&:first)).to match_array veteran_mapped_fields
 
       claimant = appeal.claimant
       imported_claimant = sji.imported_records["claimants"].last
       claimant_mapped_fields = %w[id decision_review_id]
-      expect(SjImporter.diff_records(claimant, imported_claimant).map(&:first)).to match_array claimant_mapped_fields
+      expect(SjDifference.diff_records(claimant, imported_claimant).map(&:first)).to match_array claimant_mapped_fields
 
       task_mapped_fields = %w[id appeal_id]
       child_task_mapped_fields = task_mapped_fields + %w[parent_id]
       appeal.tasks.order(:id).zip(imported_appeal.tasks.order(:id)).each do |task, imported_task|
         if task.parent
-          expect(SjImporter.diff_records(task, imported_task).map(&:first)).to match_array child_task_mapped_fields
+          expect(SjDifference.diff_records(task, imported_task).map(&:first)).to match_array child_task_mapped_fields
         else
-          expect(SjImporter.diff_records(task, imported_task).map(&:first)).to match_array task_mapped_fields
+          expect(SjDifference.diff_records(task, imported_task).map(&:first)).to match_array task_mapped_fields
         end
       end
 
@@ -294,7 +295,8 @@ describe "SanitizedJsonExporter/Importer" do
           "users" => 5,
           "organizations" => 4,
           "tasks" => 16,
-          "task_timers" => 2
+          "task_timers" => 2,
+          "cavc_remands" => 1
         }
         expect(sji.imported_records.transform_values(&:count)).to eq record_counts
 

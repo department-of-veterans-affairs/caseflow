@@ -11,6 +11,7 @@ class SanitizedJsonExporter
     @records_hash = { "metadata" => { "exported_at": Time.zone.now } }
 
     records_to_export(initial_appeals).each do |clazz, records|
+      # puts "Exporting #{clazz.table_name}"
       @records_hash[clazz.table_name] = sanitize_records(records)
     end
   end
@@ -29,7 +30,7 @@ class SanitizedJsonExporter
       User => tasks.map(&:assigned_by).compact + tasks.assigned_to_user.map(&:assigned_to),
       Organization => tasks.assigned_to_org.map(&:assigned_to),
 
-      CavcRemand => appeals.map(&:cavc_remand),
+      CavcRemand => appeals.map(&:cavc_remand)
     }
   end
 
@@ -71,7 +72,7 @@ class SanitizedJsonExporter
 
   def sanitize_records(records)
     # keep records in order so that comparisons can be done after import
-    records.uniq.sort_by(&:id).map { |veteran| sanitize(veteran) }
+    records.uniq.compact.sort_by(&:id).map { |veteran| sanitize(veteran) }
   end
 
   VETERAN_PII_FIELDS = %w[first_name last_name middle_name file_number ssn].freeze
@@ -120,6 +121,7 @@ class SanitizedJsonExporter
       break if @value_mapping.values.uniq.size == @value_mapping.size
 
       puts "Value '#{obj_hash[field_name]}' for field #{field_name} is already used; trying again"
+      binding.pry
     end
   end
 
