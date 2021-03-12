@@ -11,10 +11,12 @@ class SanitizedJsonExporter
     @records_hash = { "metadata" => { "exported_at": Time.zone.now } }
 
     other_appeals = appeals.map { |appeal| associated_appeals(appeal) }.flatten.uniq.compact
-    @records_hash["appeals"] = (appeals + other_appeals).uniq.sort_by(&:id).map { |appeal| sanitize(appeal) }
-
     relevant_appeals = appeals + other_appeals
-    export_claimants(relevant_appeals)
+
+    @records_hash["appeals"] = sanitize_records(relevant_appeals)
+    @records_hash["veterans"] = sanitize_records(relevant_appeals.map(&:veteran))
+    @records_hash["claimants"] = sanitize_records(relevant_appeals.map(&:claimants).flatten)
+
     export_tasks(relevant_appeals)
   end
 
@@ -44,23 +46,29 @@ class SanitizedJsonExporter
 
   private
 
-  def export_claimants(appeals)
-    @records_hash["veterans"] = appeals.map(&:veteran).uniq.sort_by(&:id).map { |veteran| sanitize(veteran) }
-    @records_hash["claimants"] = appeals.map(&:claimants).flatten.uniq.sort_by(&:id).map do |claimant|
-      sanitize(claimant)
+  module TaskAssignment
+    def assigned_to_user
+      select { |task| task.assigned_to_type == "User" }
+    end
+
+    def assigned_to_org
+      select { |task| task.assigned_to_type == "Organization" }
     end
   end
 
+  def sanitize_records(records)
+    # keep records in order so that comparisons can be done after import
+    records.uniq.sort_by(&:id).map { |veteran| sanitize(veteran) }
+  end
+
   def export_tasks(appeals)
-    tasks = appeals.map(&:tasks).flatten.sort_by(&:id)
-    @records_hash["tasks"] = tasks.map { |task| sanitize(task) }
+    tasks = appeals.map(&:tasks).flatten.sort_by(&:id).extend(TaskAssignment)
+    @records_hash["tasks"] = sanitize_records(tasks)
 
-    users = tasks.sort_by(&:id).map(&:assigned_by).compact +
-            tasks.select { |task| task.assigned_to_type == "User" }.sort_by(&:id).map(&:assigned_to)
-    @records_hash["users"] = users.uniq.map { |user| sanitize(user) }
+    users = tasks.map(&:assigned_by).compact + tasks.assigned_to_user.map(&:assigned_to)
+    @records_hash["users"] = sanitize_records(users)
 
-    @records_hash["organizations"] = tasks.select { |task| task.assigned_to_type == "Organization" }.sort_by(&:id)
-      .map(&:assigned_to).uniq.map { |org| sanitize(org) }
+    @records_hash["organizations"] = sanitize_records(tasks.assigned_to_org.map(&:assigned_to))
   end
 
   VETERAN_PII_FIELDS = %w[first_name last_name middle_name file_number ssn].freeze

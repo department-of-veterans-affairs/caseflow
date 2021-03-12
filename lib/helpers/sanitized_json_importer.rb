@@ -49,31 +49,63 @@ class SanitizedJsonImporter
     imported_records
   end
 
-  # TODO: These 3 diff_* methods will be refactored later
-  # Compare tasks
-  def self.diff_task_hashes(appeal, imported_appeal, **kwargs)
-    # appeal_tasks = JSON.parse(appeal.tasks.order(:id).to_json(methods: :type))
-    # appeal_tasks_by_id = appeal_tasks.sor_by { |task| task["id"] }
+  APPEAL_MAPPED_FIELDS = %w[id veteran_file_number].freeze
+  TASK_MAPPED_FIELDS = %w[id appeal_id parent_id assigned_by_id assigned_to_id].freeze
+  VETERAN_MAPPED_FIELDS = %w[id file_number first_name middle_name last_name ssn].freeze
+  CLAIMANT_MAPPED_FIELDS = %w[id decision_review_id].freeze
+  USER_MAPPED_FIELDS = %w[id file_number first_name middle_name last_name ssn css_id email full_name] + [:display_name]
 
-    # task_list.map do |task|
-    #   diff_hashes(task.to_h, appeal_tasks_by_id[task_hash["id"]])
-    # end
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  def differences(orig_appeals, orig_users)
+    diffs = {}
+    orig_appeals = orig_appeals.uniq.sort_by(&:id)
+    zipped_appeals = orig_appeals.zip(imported_records["appeals"])
 
-    appeal.tasks.order(:id).zip(imported_appeal.tasks.order(:id)).map do |task, imported_task|
-      diff_records(task, imported_task, **kwargs)
+    # Appeals
+    diffs["appeals"] = zipped_appeals.map do |orig_appeal, imported_appeal|
+      self.class.diff_records(orig_appeal, imported_appeal, ignored_keys: APPEAL_MAPPED_FIELDS)
     end
-  end
 
-  def self.diff_records(record_a, record_b, **kwargs)
-    hash_a = SanitizedJsonExporter.record_to_hash(record_a)
-    hash_b = SanitizedJsonExporter.record_to_hash(record_b)
-    diff_hashes(hash_a, hash_b, { ignore_id_offset: false }.merge(kwargs))
+    # Tasks
+    diffs["tasks"] = zipped_appeals.map do |orig_appeal, imported_appeal|
+      orig_appeal.tasks.order(:id).zip(imported_appeal.tasks.order(:id)).map do |task, imported_task|
+        self.class.diff_records(task, imported_task, ignored_keys: TASK_MAPPED_FIELDS)
+      end
+    end
+
+    # Veterans
+    orig_veterans = orig_appeals.map(&:veteran).uniq.sort_by(&:id)
+    imported_veterans = imported_records["veterans"]
+    diffs["veterans"] = orig_veterans.zip(imported_veterans).map do |original, imported|
+      self.class.diff_records(original, imported, ignored_keys: VETERAN_MAPPED_FIELDS)
+    end
+
+    # Claimants
+    orig_claimants = orig_appeals.map(&:claimants).flatten.uniq.sort_by(&:id)
+    imported_claimants = imported_records["claimants"]
+    diffs["claimants"] = orig_claimants.zip(imported_claimants).map do |original, imported|
+      self.class.diff_records(original, imported, ignored_keys: CLAIMANT_MAPPED_FIELDS)
+    end
+
+    # Users
+    imported_users = imported_records["users"]
+    diffs["users"] = orig_users.zip(imported_users).map do |original, imported|
+      self.class.diff_records(original, imported, ignored_keys: USER_MAPPED_FIELDS)
+    end
+
+    diffs
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
   # :reek:BooleanParameter
   # :reek:LongParameterList
-  def self.diff_hashes(hash_a, hash_b, ignore_id_offset: true, convert_timestamps: true)
+  def self.diff_records(record_a, record_b,
+                        ignore_id_offset: false,
+                        convert_timestamps: true,
+                        ignored_keys: nil)
+    hash_a = SanitizedJsonExporter.record_to_hash(record_a).except(*ignored_keys)
+    hash_b = SanitizedJsonExporter.record_to_hash(record_b).except(*ignored_keys)
     # https://stackoverflow.com/questions/4928789/how-do-i-compare-two-hashes
     array_diff = (hash_b.to_a - hash_a.to_a) + (hash_a.to_a - hash_b.to_a)
 
@@ -83,6 +115,7 @@ class SanitizedJsonImporter
         next diffs if (hash_b[key].to_i - hash_a[key].to_i).abs == ID_OFFSET
       end
 
+      # Handle comparing a timestamp with the string equivalent recognized by JSON.parse
       if convert_timestamps && (hash_a[key].try(:to_time) || hash_b[key].try(:to_time))
         time_a = hash_a[key].try(:to_time)&.to_s || hash_a[key]
         time_b = hash_b[key].try(:to_time)&.to_s || hash_b[key]
@@ -104,23 +137,6 @@ class SanitizedJsonImporter
       import_record(clazz, obj_hash: obj_hash)
     end
     imported_records[key] = new_records
-  end
-
-  # Using this approach: https://mattpruitt.com/articles/skip-callbacks/
-  # Other resources:
-  # * https://api.rubyonrails.org/classes/ActiveSupport/Callbacks.html
-  # * https://www.allerin.com/blog/save-an-object-skipping-callbacks-in-rails-3-application
-  # * http://ashleyangell.com/2019/06/skipping-an-activerecord-callback-programatically/
-  module SkipCallbacks
-    def run_callbacks(kind, *args, &block)
-      if [:save, :create].include?(kind)
-        # puts "(Skipping callbacks for #{kind}: #{args})"
-        nil
-      else
-        super
-      end
-      yield(*args) if block_given?
-    end
   end
 
   # Classes that shouldn't be imported if a record with the same unique attributes already exists
@@ -180,6 +196,23 @@ class SanitizedJsonImporter
 
     if clazz <= Task
       obj_hash["parent_id"] += @id_offset if obj_hash["parent_id"]
+    end
+  end
+
+  # Using this approach: https://mattpruitt.com/articles/skip-callbacks/
+  # Other resources:
+  # * https://api.rubyonrails.org/classes/ActiveSupport/Callbacks.html
+  # * https://www.allerin.com/blog/save-an-object-skipping-callbacks-in-rails-3-application
+  # * http://ashleyangell.com/2019/06/skipping-an-activerecord-callback-programatically/
+  module SkipCallbacks
+    def run_callbacks(kind, *args, &block)
+      if [:save, :create].include?(kind)
+        # puts "(Skipping callbacks for #{kind}: #{args})"
+        nil
+      else
+        super
+      end
+      yield(*args) if block_given?
     end
   end
 

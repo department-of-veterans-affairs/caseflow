@@ -100,18 +100,6 @@ describe "SanitizedJsonExporter/Importer" do
     cavc_appeal.cavc_remand.source_appeal
   end
 
-  # temporary method for debugging
-  def print_things
-    pp appeal
-    appeal.treee
-    pp appeal.veteran
-    pp appeal.claimants
-    pp appeal.issues
-
-    pp sje.value_mapping
-    pp sje.records_hash
-  end
-
   context "Exporter" do
     shared_examples "exports appeals" do
       let(:relevant_appeals) { (appeals + [cavc_source_appeal]).uniq }
@@ -269,40 +257,6 @@ describe "SanitizedJsonExporter/Importer" do
       expect(sji.imported_records["tasks"].map(&:appeal).uniq).to eq [imported_appeal]
     end
 
-    # for debugging
-    def show_diffs(appeal, record_hash, imported_appeal)
-      orig_appeal_hash = SanitizedJsonExporter.record_to_hash(appeal)
-      imported_appeal_hash = SanitizedJsonExporter.record_to_hash(imported_appeal)
-
-      pp "======== show_diffs: orig_appeal_hash, imported_appeal_hash,   ignore_id_offset: false"
-      pp SanitizedJsonImporter.diff_hashes(orig_appeal_hash, imported_appeal_hash, ignore_id_offset: false)
-      pp "-------- show_diffs: orig_appeal_hash, imported_appeal_hash"
-      pp SanitizedJsonImporter.diff_hashes(orig_appeal_hash, imported_appeal_hash)
-
-      pp "-------- show_diffs: record_hash, imported_appeal_hash,   convert_timestamps: false"
-      pp SanitizedJsonImporter.diff_hashes(record_hash, imported_appeal_hash, convert_timestamps: false)
-      pp "-------- show_diffs: record_hash, imported_appeal_hash"
-      pp SanitizedJsonImporter.diff_hashes(record_hash, imported_appeal_hash)
-      # binding.pry
-    end
-
-    # temporary method for debugging
-    def print_imported_things
-      imp_appeal = sji.imported_records["appeals"].first
-      imp_veteran = sji.imported_records["veterans"].first
-      imp_claimant = sji.imported_records["claimants"].first
-
-      pp imp_appeal
-      imp_appeal.treee
-      pp imp_veteran
-      pp imp_claimant
-
-      show_diffs(appeal, sji.records_hash["appeals"].first, imp_appeal)
-    end
-
-    # SendCRPLetterTask = SendCavcRemandProcessedLetterTask
-    # CRPLRWindowTask = CavcRemandProcessedLetterResponseWindowTask
-
     context "when exporting CAVC remand appeal" do
       let!(:org_admin) { create(:user) { |u| OrganizationsUser.make_user_admin(u, CavcLitigationSupport.singleton) } }
       let(:org_nonadmin) { create(:user) { |u| CavcLitigationSupport.singleton.add_user(u) } }
@@ -348,47 +302,17 @@ describe "SanitizedJsonExporter/Importer" do
         expect(User.count).to eq 12
         expect(Task.count).to eq 32
 
-        # Compare differences between original records and imported records
-        orig_appeals = [cavc_appeal, cavc_source_appeal].uniq.sort_by(&:id)
+        # Check users and orgs associated with tasks exists
         imported_appeals = sji.imported_records["appeals"]
-        appeal_mapped_fields = %w[id veteran_file_number]
-        task_mapped_fields = %w[id appeal_id parent_id assigned_by_id assigned_to_id]
-        orig_appeals.zip(imported_appeals).each do |orig_appeal, imported_appeal|
-          expect(SjImporter.diff_records(orig_appeal, imported_appeal).map(&:first)).to match_array appeal_mapped_fields
-
-          # Check tasks
-          task_diffs = SjImporter.diff_task_hashes(orig_appeal, imported_appeal)
-          expect(task_diffs.flatten(1).map(&:first).flatten.uniq).to match_array task_mapped_fields
+        imported_appeals.map(&:tasks).flatten.each do |task|
+          expect(task.assigned_by).not_to be_nil if task.assigned_by_id
+          expect(task.assigned_to).not_to be_nil if task.assigned_to_id
         end
 
-        orig_veterans = [cavc_appeal.veteran, cavc_source_appeal.veteran].uniq.sort_by(&:id)
-        imported_veterans = sji.imported_records["veterans"]
-        veteran_mapped_fields = %w[id file_number first_name middle_name last_name ssn]
-        orig_veterans.zip(imported_veterans).each do |orig_veteran, imported_veteran|
-          expect(SjImporter.diff_records(orig_veteran, imported_veteran).map(&:first)).to match_array veteran_mapped_fields
-        end
-
-        orig_claimants = [cavc_appeal.claimants, cavc_source_appeal.claimants].flatten.uniq.sort_by(&:id)
-        imported_claimants = sji.imported_records["claimants"]
-        claimant_mapped_fields = %w[id decision_review_id]
-        orig_claimants.zip(imported_claimants).each do |orig_claimant, imported_claimant|
-          expect(SjImporter.diff_records(orig_claimant, imported_claimant).map(&:first)).to match_array claimant_mapped_fields
-        end
-
-        # print_things
-        cavc_appeal.treee
-        sji.imported_records["appeals"].first.treee
-        # binding.pry
-
-        # imported_user = sji.imported_records["users"].first
-        # user_mapped_fields = ["id", "file_number", "first_name", "middle_name", "last_name", "ssn"]
-        # expect(SjImporter.diff_records(user, imported_user).map(&:first)).to match_array user_mapped_fields
-
-        # TODO: test with TimedHoldTask
-
-        # binding.pry
-        # sji.import
-        # print_imported_things
+        orig_appeals = [cavc_appeal, cavc_source_appeal]
+        orig_users = User.where(id: sje.records_hash["users"].pluck("id")).order(:id)
+        diffs = sji.differences(orig_appeals, orig_users)
+        expect(diffs.values.flatten).to be_empty
       end
     end
   end
