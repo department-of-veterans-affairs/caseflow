@@ -103,7 +103,8 @@ class SanitizedJsonExporter
       # nothing to sanitize
       obj_hash
     when CavcRemand
-      find_or_create_mapped_value_for(obj_hash, "cavc_judge_full_name")
+      # cavc_judge_full_name is selected from Constants::CAVC_JUDGE_FULL_NAMES; no need to sanitize
+      # find_or_create_mapped_value_for(obj_hash, "cavc_judge_full_name")
       find_or_create_mapped_value_for(obj_hash, "instructions")
     else
       fail "Unsupported object type: #{record.class.name}"
@@ -116,22 +117,48 @@ class SanitizedJsonExporter
     return unless obj_hash[field_name]
 
     # Loop to ensure hash @value_mapping has a different value for each distinct key
-    loop do
+    10.times do
       obj_hash[field_name] = find_or_create_mapped_value(obj_hash[field_name], field_name)
       break if @value_mapping.values.uniq.size == @value_mapping.size
 
       puts "Value '#{obj_hash[field_name]}' for field #{field_name} is already used; trying again"
     end
+    obj_hash[field_name]
+  end
+
+  # fields whose mapped value should not be saved to the @value_mapping hash,
+  # e.g., due to distinct orig_values mapping to the same new_value
+  MAPPED_VALUES_IGNORED_FIELDS = %w[instructions descriptions].freeze
+
+  def find_or_create_mapped_value(orig_value, field_name = nil)
+    mapped_value = @value_mapping.fetch(orig_value) do
+      new_value, transform = transform_value(orig_value, field_name)
+      if transform != :obfuscate_sentence && !MAPPED_VALUES_IGNORED_FIELDS.include?(field_name)
+        @value_mapping[orig_value] = new_value
+      end
+      new_value
+    end
+    mapped_value || fail("Don't know how to map value '#{orig_value}' for field '#{field_name}'")
   end
 
   TRANSFORM_METHODS = [:mixup_css_id, :random_person_name, :invalid_ssn, :random_email, :obfuscate_sentence].freeze
 
-  def find_or_create_mapped_value(orig_value, field_name = nil)
-    @value_mapping.fetch(orig_value) do
-      # returns the value of the first of TRANSFORM_METHODS that returns a non-nil value
-      TRANSFORM_METHODS.find { |method| @value_mapping[orig_value] = self.class.send(method, field_name, orig_value) }
+  def transform_value(orig_value, field_name)
+    if orig_value.is_a?(Array)
+      new_array_value = []
+      transforms = orig_value.map do |value|
+        TRANSFORM_METHODS.find do |method|
+          a_value = self.class.send(method, field_name, value)
+          new_array_value << a_value if a_value
+        end
+      end
+      [new_array_value, transforms]
+    else
+      new_value = nil
+      # find the value of the first of TRANSFORM_METHODS that returns a non-nil value
+      transform = TRANSFORM_METHODS.find { |method| new_value = self.class.send(method, field_name, orig_value) }
+      [new_value, transform]
     end
-    @value_mapping[orig_value] || fail("Don't know how to map value '#{orig_value}' for field '#{field_name}'")
   end
 
   class << self
@@ -174,7 +201,6 @@ class SanitizedJsonExporter
       when "first_name"
         Faker::Name.first_name
       when /_name$/
-        # puts "NAME_REGEX for #{field_name}"
         Faker::Name.first_name
       end
     end
@@ -189,7 +215,7 @@ class SanitizedJsonExporter
 
     def obfuscate_sentence(field_name, field_value)
       case field_name
-      when "instructions"
+      when "instructions", "description", /_text$/
         field_value.split.map { |word| word[0..1] }.join(" ")
       end
     end

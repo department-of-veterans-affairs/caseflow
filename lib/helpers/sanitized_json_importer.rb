@@ -112,7 +112,7 @@ class SanitizedJsonImporter
               obj_hash["css_id"] += "_imported" if User.find_by_css_id(obj_hash["css_id"])
             elsif clazz <= CavcRemand
               # Avoid "Validation failed: Cavc judge full name is not included in the list"
-              obj_hash["cavc_judge_full_name"] = Constants::CAVC_JUDGE_FULL_NAMES.sample
+              # obj_hash["cavc_judge_full_name"] = Constants::CAVC_JUDGE_FULL_NAMES.sample
             end
     if label
       puts "  * Will import duplicate #{clazz} '#{label}' with different unique attributes " \
