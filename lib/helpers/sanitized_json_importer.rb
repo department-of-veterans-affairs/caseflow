@@ -7,6 +7,7 @@ class SanitizedJsonImporter
 
   # input
   attr_accessor :records_hash
+  attr_accessor :metadata
 
   # output
   attr_accessor :imported_records
@@ -20,6 +21,7 @@ class SanitizedJsonImporter
   def initialize(file_contents, id_offset: ID_OFFSET)
     @id_offset = id_offset
     @records_hash = JSON.parse(file_contents)
+    @metadata = @records_hash.except!["metadata"]
     @imported_records = {}
 
     # Keep track of id mappings for these record types to reassociate to newly imported records
@@ -30,10 +32,6 @@ class SanitizedJsonImporter
     }
   end
 
-  def metadata
-    @records_hash["metadata"]
-  end
-
   def import
     ActiveRecord::Base.transaction do
       import_array_of(Appeal).tap do |appeals|
@@ -42,16 +40,13 @@ class SanitizedJsonImporter
           return nil
         end
 
-        import_array_of(AppealIntake)
-        import_array_of(Veteran)
-        import_array_of(Claimant)
-
+        # Start with important types that other records will reassociate with
         import_array_of(User)
         import_array_of(Organization)
-        import_array_of(Task)
-        import_array_of(TaskTimer)
 
-        import_array_of(CavcRemand)
+        @records_hash.except("metadata").each do |key, obj_hash_array|
+          import_array_of(key.classify.constantize, key, obj_hash_array)
+        end
       end
     end
     imported_records
@@ -59,12 +54,12 @@ class SanitizedJsonImporter
 
   private
 
-  def import_array_of(clazz, key = clazz.table_name)
-    obj_hash_array = @records_hash.fetch(key, [])
+  def import_array_of(clazz, key = clazz.table_name, obj_hash_array = @records_hash.fetch(key, []))
     new_records = obj_hash_array.map do |obj_hash|
       import_record(clazz, obj_hash: obj_hash)
     end
     imported_records[key] = new_records
+    @records_hash.except!(key)
   end
 
   # Classes that shouldn't be imported if a record with the same unique attributes already exists
@@ -134,7 +129,6 @@ class SanitizedJsonImporter
       obj_hash["task_id"] += @id_offset
     elsif clazz <= AppealIntake
       obj_hash["detail_id"] += @id_offset
-
     elsif clazz <= CavcRemand
       obj_hash["source_appeal_id"] += @id_offset
       obj_hash["remand_appeal_id"] += @id_offset

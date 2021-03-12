@@ -57,12 +57,16 @@ module SanitizedJsonDifference
       end
 
       # Handle comparing a timestamp with the string equivalent recognized by JSON.parse
-      if convert_timestamps && (hash_a[key].try(:to_time) || hash_b[key].try(:to_time))
-        time_a = hash_a[key].try(:to_time)&.to_s || hash_a[key]
-        time_b = hash_b[key].try(:to_time)&.to_s || hash_b[key]
-        next diffs if time_a == time_b
+      begin
+        if convert_timestamps && (hash_a[key].try(:to_time) || hash_b[key].try(:to_time))
+          time_a = hash_a[key].try(:to_time)&.to_s || hash_a[key]
+          time_b = hash_b[key].try(:to_time)&.to_s || hash_b[key]
+          next diffs if time_a == time_b
 
-        next diffs << [key, time_a, time_b]
+          next diffs << [key, time_a, time_b]
+        end
+      rescue ArgumentError
+        # occurs when `to_time` is called on a string that is a UUID 
       end
 
       next diffs << [key, hash_a[key], hash_b[key]]
