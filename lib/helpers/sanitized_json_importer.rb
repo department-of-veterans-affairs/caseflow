@@ -221,7 +221,6 @@ class SanitizedJsonImporter
   def reassociate_type_table_fields
     @reassociate_type_table_fields ||= @configuration.reassociate_fields[:type].transform_keys(&:table_name).freeze
   end
-  # rubocop:enable Metrics/PerceivedComplexity
 
   def reassociate(obj_hash, id_field, record_id_mapping)
     obj_hash[id_field] = record_id_mapping[obj_hash[id_field]] if record_id_mapping[obj_hash[id_field]]
