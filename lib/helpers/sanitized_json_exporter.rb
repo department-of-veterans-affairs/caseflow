@@ -20,6 +20,7 @@ class SanitizedJsonExporter
     associated_appeals = initial_appeals.map { |appeal| appeals_associated_with(appeal) }.flatten.uniq.compact
     appeals = (initial_appeals + associated_appeals).uniq
     tasks = appeals.map(&:tasks).flatten.sort_by(&:id).extend(TaskAssignment)
+    cavc_remands = appeals.map(&:cavc_remand).compact
 
     {
       Appeal => appeals,
@@ -27,10 +28,12 @@ class SanitizedJsonExporter
       Claimant => appeals.map(&:claimants).flatten,
       Task => tasks,
       TaskTimer => TaskTimer.where(task_id: tasks.map(&:id)),
-      User => tasks.map(&:assigned_by).compact + tasks.assigned_to_user.map(&:assigned_to),
+      User => tasks.map(&:assigned_by).compact +
+        tasks.assigned_to_user.map(&:assigned_to) +
+        cavc_remands.map { |cavc_remand| [cavc_remand.created_by, cavc_remand.updated_by] }.flatten.uniq,
       Organization => tasks.assigned_to_org.map(&:assigned_to),
 
-      CavcRemand => appeals.map(&:cavc_remand)
+      CavcRemand => cavc_remands
     }
   end
 

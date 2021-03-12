@@ -125,10 +125,16 @@ class SanitizedJsonImporter
     obj_hash["id"] += @id_offset
 
     if clazz <= Task
+      obj_hash["appeal_id"] += @id_offset
       obj_hash["parent_id"] += @id_offset if obj_hash["parent_id"]
+    elsif clazz <= Claimant
+      obj_hash["decision_review_id"] += @id_offset
     elsif clazz <= TaskTimer
       obj_hash["task_id"] += @id_offset
     elsif clazz <= CavcRemand
+      obj_hash["source_appeal_id"] += @id_offset
+      obj_hash["remand_appeal_id"] += @id_offset
+      # TODO: import decision_issues due to validation: decision_issue_ids_match_appeal_decision_issues
       obj_hash["decision_issue_ids"] = obj_hash["decision_issue_ids"].map { |id| id + @id_offset }
     end
   end
@@ -184,14 +190,7 @@ class SanitizedJsonImporter
   # :reek:FeatureEnvy
   def reassociate_with_imported_records(clazz, obj_hash)
     # pp "Reassociate #{clazz}"
-    if clazz <= Claimant
-      if obj_hash["decision_review_type"] == "Appeal"
-        reassociate(obj_hash, "decision_review_id", appeal_id_mapping)
-      else
-        puts "To-do: HLR, SC, LegacyAppeal"
-      end
-    elsif clazz <= Task
-      reassociate(obj_hash, "appeal_id", appeal_id_mapping)
+    if clazz <= Task
       reassociate(obj_hash, "assigned_by_id", user_id_mapping)
 
       if obj_hash["assigned_to_type"] == "User"
@@ -199,6 +198,9 @@ class SanitizedJsonImporter
       elsif obj_hash["assigned_to_type"] == "Organization"
         reassociate(obj_hash, "assigned_to_id", org_id_mapping)
       end
+    elsif clazz <= CavcRemand
+      reassociate(obj_hash, "created_by_id", user_id_mapping)
+      reassociate(obj_hash, "updated_by_id", user_id_mapping)
     end
   end
   # rubocop:enable Metrics/PerceivedComplexity

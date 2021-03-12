@@ -145,6 +145,10 @@ describe "SanitizedJsonExporter/Importer" do
       let(:assigned_to_users) { tasks.select { |task| task.assigned_to_type == "User" }.map(&:assigned_to).uniq }
       let(:assigned_to_orgs) { tasks.select { |task| task.assigned_to_type == "Organization" }.map(&:assigned_to).uniq }
       let(:task_users) { (assigned_by_users + assigned_to_users).uniq }
+      let(:cavc_remand_users) do
+        cavc_remands = relevant_appeals.map(&:cavc_remand).compact
+        cavc_remands.map { |cavc_remand| [cavc_remand.created_by, cavc_remand.updated_by] }.flatten.uniq.compact
+      end
 
       it "includes all associated records" do
         expect(sje.records_hash["appeals"].size).to eq relevant_appeals.size
@@ -152,7 +156,7 @@ describe "SanitizedJsonExporter/Importer" do
         expect(sje.records_hash["claimants"].size).to eq claimants.size
 
         expect(sje.records_hash["tasks"].size).to eq tasks.size
-        expect(sje.records_hash["users"].size).to eq task_users.size
+        expect(sje.records_hash["users"].size).to eq (task_users + cavc_remand_users).uniq.size
         expect(sje.records_hash["organizations"].size).to eq assigned_to_orgs.size
 
         # Check associations
@@ -327,7 +331,7 @@ describe "SanitizedJsonExporter/Importer" do
           "appeals" => 2,
           "veterans" => 1,
           "claimants" => 2,
-          "users" => 5,
+          "users" => 6,
           "organizations" => 4,
           "tasks" => 16,
           "task_timers" => 2,
@@ -339,7 +343,7 @@ describe "SanitizedJsonExporter/Importer" do
         expect(Veteran.count).to eq 2
         expect(Claimant.count).to eq 4
         expect(Organization.count).to eq 8 # existing orgs are reused
-        expect(User.count).to eq 12
+        expect(User.count).to eq 13
         expect(Task.count).to eq 32
         expect(TaskTimer.count).to eq 4
 
