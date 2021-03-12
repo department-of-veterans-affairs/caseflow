@@ -31,6 +31,7 @@ class SanitizedJsonImporter
   # Hash parsed from JSON input, whose id fields are modified during importing
   # key = ActiveRecord class's table_name; value = array of JSON of ActiveRecords
   attr_accessor :records_hash
+  attr_accessor :metadata
 
   # Hash of records imported into the database
   # key = ActiveRecord class's table_name; value = ActiveRecords in the database
