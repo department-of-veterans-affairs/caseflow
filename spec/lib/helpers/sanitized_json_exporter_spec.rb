@@ -283,6 +283,7 @@ describe "SanitizedJsonExporter/Importer" do
         expect(Organization.count).to eq 8
         expect(User.count).to eq 7
         expect(Task.count).to eq 16
+        expect(TaskTimer.count).to eq 2
 
         subject
         record_counts = {
@@ -291,7 +292,8 @@ describe "SanitizedJsonExporter/Importer" do
           "claimants" => 2,
           "users" => 5,
           "organizations" => 4,
-          "tasks" => 16
+          "tasks" => 16,
+          "task_timers" => 2
         }
         expect(sji.imported_records.transform_values(&:count)).to eq record_counts
 
@@ -301,6 +303,7 @@ describe "SanitizedJsonExporter/Importer" do
         expect(Organization.count).to eq 8 # existing orgs are reused
         expect(User.count).to eq 12
         expect(Task.count).to eq 32
+        expect(TaskTimer.count).to eq 4
 
         # Check users and orgs associated with tasks exists
         imported_appeals = sji.imported_records["appeals"]
@@ -311,7 +314,15 @@ describe "SanitizedJsonExporter/Importer" do
 
         orig_appeals = [cavc_appeal, cavc_source_appeal]
         orig_users = User.where(id: sje.records_hash["users"].pluck("id")).order(:id)
-        pp sji.differences(orig_appeals, orig_users, ignore_expected_diffs: false)
+
+        # pp sji.differences(orig_appeals, orig_users, ignore_expected_diffs: false)
+        pp sje.records_hash.transform_values(&:count)
+        pp sji.differences(orig_appeals, orig_users, ignore_expected_diffs: false).transform_values(&:count)
+        binding.pry
+
+        not_imported_counts = sje.records_hash.transform_values(&:count).to_a - sji.imported_records.transform_values(&:count).to_a
+        expect(not_imported_counts).to eq [["metadata", 1]]
+
         diffs = sji.differences(orig_appeals, orig_users)
         expect(diffs.values.flatten).to be_empty
       end

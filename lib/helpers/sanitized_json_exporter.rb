@@ -5,22 +5,29 @@ class SanitizedJsonExporter
   attr_accessor :records_hash
 
   # :reek:BooleanParameter
-  def initialize(*appeals, sanitize: true)
+  def initialize(*initial_appeals, sanitize: true)
     @sanitize = sanitize
     @value_mapping = {}
     @records_hash = { "metadata" => { "exported_at": Time.zone.now } }
 
-    other_appeals = appeals.map { |appeal| associated_appeals(appeal) }.flatten.uniq.compact
-    relevant_appeals = appeals + other_appeals
+    associated_appeals = initial_appeals.map { |appeal| appeals_associated_with(appeal) }.flatten.uniq.compact
+    appeals = initial_appeals + associated_appeals
+    tasks = appeals.map(&:tasks).flatten.sort_by(&:id).extend(TaskAssignment)
 
-    @records_hash["appeals"] = sanitize_records(relevant_appeals)
-    @records_hash["veterans"] = sanitize_records(relevant_appeals.map(&:veteran))
-    @records_hash["claimants"] = sanitize_records(relevant_appeals.map(&:claimants).flatten)
-
-    export_tasks(relevant_appeals)
+    {
+      Appeal => appeals,
+      Veteran => appeals.map(&:veteran),
+      Claimant => appeals.map(&:claimants).flatten,
+      Task => tasks,
+      TaskTimer => TaskTimer.where(task_id: tasks.map(&:id)),
+      User => tasks.map(&:assigned_by).compact + tasks.assigned_to_user.map(&:assigned_to),
+      Organization => tasks.assigned_to_org.map(&:assigned_to)
+    }.each do |clazz, records|
+      @records_hash[clazz.table_name] = sanitize_records(records)
+    end
   end
 
-  def associated_appeals(appeal)
+  def appeals_associated_with(appeal)
     appeal.cavc_remand&.source_appeal
     # To-do: include other source appeals, e.g., those with the same docket number
   end
@@ -61,16 +68,6 @@ class SanitizedJsonExporter
     records.uniq.sort_by(&:id).map { |veteran| sanitize(veteran) }
   end
 
-  def export_tasks(appeals)
-    tasks = appeals.map(&:tasks).flatten.sort_by(&:id).extend(TaskAssignment)
-    @records_hash["tasks"] = sanitize_records(tasks)
-
-    users = tasks.map(&:assigned_by).compact + tasks.assigned_to_user.map(&:assigned_to)
-    @records_hash["users"] = sanitize_records(users)
-
-    @records_hash["organizations"] = sanitize_records(tasks.assigned_to_org.map(&:assigned_to))
-  end
-
   VETERAN_PII_FIELDS = %w[first_name last_name middle_name file_number ssn].freeze
 
   def sanitize(record)
@@ -93,7 +90,7 @@ class SanitizedJsonExporter
 
       # obj_hash["my_name"]="AAA BBB"
       # find_or_create_mapped_value_for(obj_hash, "my_name")
-    when Organization, Claimant, Task
+    when Organization, Claimant, Task, TaskTimer
       # nothing to sanitize
       obj_hash
     else

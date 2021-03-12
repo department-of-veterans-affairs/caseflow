@@ -32,18 +32,19 @@ class SanitizedJsonImporter
 
   def import
     ActiveRecord::Base.transaction do
-      import_array(Appeal, "appeals").tap do |appeals|
+      import_array_of(Appeal).tap do |appeals|
         if appeals.blank?
           puts "Warning: No appeal imported, aborting import of remaining records"
           return nil
         end
 
-        import_array(Veteran, "veterans")
-        import_array(Claimant, "claimants")
+        import_array_of(Veteran)
+        import_array_of(Claimant)
 
-        import_array(User, "users")
-        import_array(Organization, "organizations")
-        import_array(Task, "tasks")
+        import_array_of(User)
+        import_array_of(Organization)
+        import_array_of(Task)
+        import_array_of(TaskTimer)
       end
     end
     imported_records
@@ -51,36 +52,33 @@ class SanitizedJsonImporter
 
   # fields expected to be different
   MAPPED_FIELDS = {
-    "appeals" => %w[id veteran_file_number],
-    "tasks" => %w[id appeal_id parent_id assigned_by_id assigned_to_id],
-    "veterans" => %w[id file_number first_name middle_name last_name ssn],
-    "claimants" => %w[id decision_review_id],
-    "users" => %w[id file_number first_name middle_name last_name ssn css_id email full_name] + [:display_name]
+    Appeal.table_name => %w[id veteran_file_number],
+    Task.table_name => %w[id appeal_id parent_id assigned_by_id assigned_to_id],
+    Veteran.table_name => %w[id file_number first_name middle_name last_name ssn],
+    Claimant.table_name => %w[id decision_review_id],
+    User.table_name => %w[id file_number first_name middle_name last_name ssn css_id email full_name] + [:display_name]
   }.freeze
 
   # :reek:BooleanParameter
   def differences(orig_appeals, orig_users, ignore_expected_diffs: true)
     mapped_fields = ignore_expected_diffs ? MAPPED_FIELDS : {}
-
     orig_appeals = orig_appeals.uniq.sort_by(&:id)
-    orig_records_hash = {
-      "appeals" => orig_appeals,
-      "veterans" => orig_appeals.map(&:veteran).uniq.sort_by(&:id),
-      "claimants" => orig_appeals.map(&:claimants).flatten.uniq.sort_by(&:id),
-      "users" => orig_users
-    }
-    
-    diffs = orig_records_hash.each_with_object({}) do |(key, orig_records), result|
+
+    diffs = {
+      Appeal.table_name => orig_appeals,
+      Veteran.table_name => orig_appeals.map(&:veteran).uniq.sort_by(&:id),
+      Claimant.table_name => orig_appeals.map(&:claimants).flatten.uniq.sort_by(&:id),
+      User.table_name => orig_users
+    }.each_with_object({}) do |(key, orig_records), result|
       result[key] = diff_record_lists(key, orig_records, mapped_fields[key])
     end
-    diffs["tasks"] = orig_appeals.zip(imported_records["appeals"]).map do |orig_appeal, imported_appeal|
+    diffs[Task.table_name] = orig_appeals.zip(imported_records[Appeal.table_name]).map do |orig_appeal, imported_appeal|
       orig_appeal.tasks.order(:id).zip(imported_appeal.tasks.order(:id)).map do |task, imported_task|
-        self.class.diff_records(task, imported_task, ignored_keys: mapped_fields["tasks"])
+        self.class.diff_records(task, imported_task, ignored_keys: mapped_fields[Task.table_name])
       end
     end
     diffs
   end
-  # rubocop:enable
 
   def diff_record_lists(key, orig_records, ignored_keys)
     orig_records.zip(imported_records[key]).map do |original, imported|
@@ -122,7 +120,7 @@ class SanitizedJsonImporter
 
   private
 
-  def import_array(clazz, key)
+  def import_array_of(clazz, key = clazz.table_name)
     obj_hash_array = @records_hash.fetch(key, [])
     new_records = obj_hash_array.map do |obj_hash|
       import_record(clazz, obj_hash: obj_hash)
@@ -187,6 +185,8 @@ class SanitizedJsonImporter
 
     if clazz <= Task
       obj_hash["parent_id"] += @id_offset if obj_hash["parent_id"]
+    elsif clazz <= TaskTimer
+      obj_hash["task_id"] += @id_offset
     end
   end
 
