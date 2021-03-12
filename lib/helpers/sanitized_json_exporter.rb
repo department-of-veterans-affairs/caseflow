@@ -10,6 +10,12 @@ class SanitizedJsonExporter
     @value_mapping = {}
     @records_hash = { "metadata" => { "exported_at": Time.zone.now } }
 
+    records_to_export(initial_appeals).each do |clazz, records|
+      @records_hash[clazz.table_name] = sanitize_records(records)
+    end
+  end
+
+  def records_to_export(initial_appeals)
     associated_appeals = initial_appeals.map { |appeal| appeals_associated_with(appeal) }.flatten.uniq.compact
     appeals = initial_appeals + associated_appeals
     tasks = appeals.map(&:tasks).flatten.sort_by(&:id).extend(TaskAssignment)
@@ -22,9 +28,7 @@ class SanitizedJsonExporter
       TaskTimer => TaskTimer.where(task_id: tasks.map(&:id)),
       User => tasks.map(&:assigned_by).compact + tasks.assigned_to_user.map(&:assigned_to),
       Organization => tasks.assigned_to_org.map(&:assigned_to)
-    }.each do |clazz, records|
-      @records_hash[clazz.table_name] = sanitize_records(records)
-    end
+    }
   end
 
   def appeals_associated_with(appeal)
@@ -103,10 +107,10 @@ class SanitizedJsonExporter
   def find_or_create_mapped_value_for(obj_hash, field_name)
     return unless obj_hash[field_name]
 
-    # Loop to ensure value_mapping has different values for different keys
+    # Loop to ensure hash @value_mapping has a different value for each distinct key
     loop do
       obj_hash[field_name] = find_or_create_mapped_value(obj_hash[field_name], field_name)
-      break if value_mapping.values.uniq.size == value_mapping.size
+      break if @value_mapping.values.uniq.size == @value_mapping.size
 
       puts "Value '#{obj_hash[field_name]}' for field #{field_name} is already used; trying again"
     end
@@ -115,11 +119,11 @@ class SanitizedJsonExporter
   TRANSFORM_METHODS = [:mixup_css_id, :random_person_name, :invalid_ssn, :random_email].freeze
 
   def find_or_create_mapped_value(orig_value, field_name = nil)
-    mapped_value = value_mapping.fetch(orig_value) do
-      TRANSFORM_METHODS.find { |method| value_mapping[orig_value] = self.class.send(method, field_name, orig_value) }
-      value_mapping[orig_value]
+    @value_mapping.fetch(orig_value) do
+      # returns the value of the first of TRANSFORM_METHODS that returns a non-nil value
+      TRANSFORM_METHODS.find { |method| @value_mapping[orig_value] = self.class.send(method, field_name, orig_value) }
     end
-    mapped_value || fail("Don't know how to map value '#{orig_value}' for field '#{field_name}'")
+    @value_mapping[orig_value] || fail("Don't know how to map value '#{orig_value}' for field '#{field_name}'")
   end
 
   class << self
@@ -136,17 +140,17 @@ class SanitizedJsonExporter
       end
     end
 
-    def invalid_ssn(field_name, field_value)
-      # instead of using Faker::IDNumber.invalid, make the SSN obviously fake by starting with '000'
+    def invalid_ssn(field_name, field_value, fake_ssn_prefix: "000")
+      # Instead of using Faker::IDNumber.invalid, make the SSN obviously fake by starting with fake_ssn_prefix
       case field_name
       when "ssn", "file_number", "veteran_file_number"
-        "000#{Faker::Number.number(digits: 6)}"
+        fake_ssn_prefix + Faker::Number.number(digits: 6).to_s
       else
         case field_value
         when /^\d{9}$/
-          "000#{Faker::Number.number(digits: 6)}"
+          fake_ssn_prefix + Faker::Number.number(digits: 6).to_s
         when /^\d{3}-\d{2}-\d{4}$/
-          ["000", Faker::Number.number(digits: 2), Faker::Number.number(digits: 4)].join("-")
+          [fake_ssn_prefix, Faker::Number.number(digits: 2), Faker::Number.number(digits: 4)].join("-")
         end
       end
     end

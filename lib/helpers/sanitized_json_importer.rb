@@ -73,7 +73,7 @@ class SanitizedJsonImporter
       User => orig_users,
       Task => orig_appeals.map(&:tasks).flatten.sort_by(&:id),
       TaskTimer => TaskTimer.where(task_id: orig_tasks.map(&:id)).sort_by(&:id)
-    }.each_with_object({}) do |(clazz, orig_records), result|
+    }.each_with_object({}) do |(clazz, orig_records), result| # https://blog.arkency.com/inject-vs-each-with-object/
       key = clazz.table_name
       result[key] = diff_record_lists(orig_records, imported_records[key], mapped_fields[clazz])
     end
