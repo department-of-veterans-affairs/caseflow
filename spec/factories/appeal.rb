@@ -92,6 +92,7 @@ FactoryBot.define do
 
     transient do
       number_of_claimants { nil }
+      issue_count { nil }
     end
 
     transient do
@@ -386,6 +387,22 @@ FactoryBot.define do
         }
         PostDecisionMotionUpdater.new(addr_task, params).process
         mail_task.completed!
+      end
+    end
+
+    trait :with_request_issues do
+      description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
+      notes = "Pain disorder with 100\% evaluation per examination"
+
+      after(:create) do |appeal, evaluator|
+        FactoryBot.create_list(
+          :request_issue,
+          evaluator.issue_count || Random.rand(1..10),
+          :rating,
+          decision_review: appeal,
+          contested_issue_description: description,
+          notes: notes
+        )
       end
     end
   end
