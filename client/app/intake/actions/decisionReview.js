@@ -94,7 +94,7 @@ data.unlisted_claimant = {
     country: claimant.country,
     phone_number: claimant.phoneNumber,
     email_address: claimant.email,
-    poa_form: true
+    poa_form: claimant.vaForm
   }
 
 data.unlisted_poa = { 

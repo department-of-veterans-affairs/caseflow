@@ -290,8 +290,8 @@ class AddIssuesPage extends React.Component {
 
     const unlistedClaimantDisplayText = () => {
       const relationship = intakeData.claimantRelationship;
-      const otherClaimant = [intakeData.claimantName, relationship].filter(Boolean).join(', ');
-      const displayText = relationship === 'Other' ? otherClaimant : intakeData.claimantName;
+      const displayText = [intakeData.claimantName, relationship].filter(Boolean).join(', ');
+      // const displayText = relationship === 'Other' ? otherClaimant : intakeData.claimantName;
 
       if (relationship !== 'Veteran') {
         return displayText;
@@ -305,12 +305,11 @@ class AddIssuesPage extends React.Component {
       content: claimantDisplayText || unlistedClaimantDisplayText()
     });
 
-    if (intakeData.claimantRelationship === 'Other') {
+    
       fieldsForFormType = fieldsForFormType.concat({
         field: 'Claimant\'s POA',
         content: intakeData.powerOfAttorneyName || COPY.ADD_CLAIMANT_CONFIRM_MODAL_NO_POA
       });
-    }
 
     let issueChangeClassname = () => {
       // no-op unless the issue banner needs to be displayed

@@ -82,7 +82,7 @@ export const AddClaimantForm = ({
 
   useEffect(() => {
     if (['spouse', 'child'].includes(watchRelationship)) {
-      setValue('partyType', 'Individual');
+      setValue('partyType', 'individual');
     }
   }, [watchRelationship]);
 

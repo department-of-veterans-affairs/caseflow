@@ -98,7 +98,9 @@ export const AddPoaPage = () => {
 
   const onSubmit = (formData) => {
     // Add to Redux store
+    console.log("data", formData);
     dispatch(editPoaInformation({ formData }));
+
 
     toggleConfirm();
   };

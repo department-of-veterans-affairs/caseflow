@@ -55,6 +55,11 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
 
   const onSubmit = (formData) => {
     // Add stuff to redux store
+    console.log("data", formData);
+    if (formData.firstName) {
+        formData.partyType = 'individual'
+    }
+
     dispatch(editClaimantInformation({ formData }));
 
     if (formData.vaForm === 'true') {
