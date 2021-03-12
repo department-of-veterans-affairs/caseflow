@@ -156,6 +156,7 @@ class SanitizedJsonImporter
     @mapped_ids[Organization.name.underscore]
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   # :reek:FeatureEnvy
   def adjust_ids_by_offset(klass, obj_hash)
     obj_hash["id"] += @id_offset
@@ -171,6 +172,7 @@ class SanitizedJsonImporter
       end
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def offset_id_table_fields
     @offset_id_table_fields ||= @configuration.offset_id_fields.transform_keys(&:table_name).freeze
@@ -234,6 +236,7 @@ class SanitizedJsonImporter
       .freeze
   end
 
+  # rubocop:disable Metrics/PerceivedComplexity
   # :reek:FeatureEnvy
   def reassociate_with_imported_records(klass, obj_hash)
     # Handle polymorphic associations (where the association class is stored in the *'_type' field)
@@ -256,6 +259,7 @@ class SanitizedJsonImporter
       end
     end
   end
+  # rubocop:enable Metrics/PerceivedComplexity
 
   # :reek:FeatureEnvy
   # :reek:LongParameterList

@@ -61,6 +61,7 @@ class SanitizedJsonExporter
     @sanitize_table_fields ||= @configuration.sanitize_fields_hash.transform_keys(&:table_name).freeze
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
   def sanitize(record)
     puts " * Starting export of #{record.class.name} #{record.id}" if @verbosity > 2
     obj_hash = self.class.record_to_hash(record)
@@ -95,6 +96,7 @@ class SanitizedJsonExporter
     end
     obj_hash[field_name]
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
 
   # :reek:FeatureEnvy
   def find_or_create_mapped_value_for(obj_hash, field_name, **kwargs)
