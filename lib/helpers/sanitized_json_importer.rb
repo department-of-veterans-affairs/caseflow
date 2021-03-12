@@ -49,53 +49,44 @@ class SanitizedJsonImporter
     imported_records
   end
 
-  APPEAL_MAPPED_FIELDS = %w[id veteran_file_number].freeze
-  TASK_MAPPED_FIELDS = %w[id appeal_id parent_id assigned_by_id assigned_to_id].freeze
-  VETERAN_MAPPED_FIELDS = %w[id file_number first_name middle_name last_name ssn].freeze
-  CLAIMANT_MAPPED_FIELDS = %w[id decision_review_id].freeze
-  USER_MAPPED_FIELDS = %w[id file_number first_name middle_name last_name ssn css_id email full_name] + [:display_name]
+  # fields expected to be different
+  MAPPED_FIELDS = {
+    "appeals" => %w[id veteran_file_number],
+    "tasks" => %w[id appeal_id parent_id assigned_by_id assigned_to_id],
+    "veterans" => %w[id file_number first_name middle_name last_name ssn],
+    "claimants" => %w[id decision_review_id],
+    "users" => %w[id file_number first_name middle_name last_name ssn css_id email full_name] + [:display_name]
+  }.freeze
 
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-  def differences(orig_appeals, orig_users)
-    diffs = {}
+  # :reek:BooleanParameter
+  def differences(orig_appeals, orig_users, ignore_expected_diffs: true)
+    mapped_fields = ignore_expected_diffs ? MAPPED_FIELDS : {}
+
     orig_appeals = orig_appeals.uniq.sort_by(&:id)
-    zipped_appeals = orig_appeals.zip(imported_records["appeals"])
-
-    # Appeals
-    diffs["appeals"] = zipped_appeals.map do |orig_appeal, imported_appeal|
-      self.class.diff_records(orig_appeal, imported_appeal, ignored_keys: APPEAL_MAPPED_FIELDS)
+    orig_records_hash = {
+      "appeals" => orig_appeals,
+      "veterans" => orig_appeals.map(&:veteran).uniq.sort_by(&:id),
+      "claimants" => orig_appeals.map(&:claimants).flatten.uniq.sort_by(&:id),
+      "users" => orig_users
+    }
+    
+    diffs = orig_records_hash.each_with_object({}) do |(key, orig_records), result|
+      result[key] = diff_record_lists(key, orig_records, mapped_fields[key])
     end
-
-    # Tasks
-    diffs["tasks"] = zipped_appeals.map do |orig_appeal, imported_appeal|
+    diffs["tasks"] = orig_appeals.zip(imported_records["appeals"]).map do |orig_appeal, imported_appeal|
       orig_appeal.tasks.order(:id).zip(imported_appeal.tasks.order(:id)).map do |task, imported_task|
-        self.class.diff_records(task, imported_task, ignored_keys: TASK_MAPPED_FIELDS)
+        self.class.diff_records(task, imported_task, ignored_keys: mapped_fields["tasks"])
       end
     end
-
-    # Veterans
-    orig_veterans = orig_appeals.map(&:veteran).uniq.sort_by(&:id)
-    imported_veterans = imported_records["veterans"]
-    diffs["veterans"] = orig_veterans.zip(imported_veterans).map do |original, imported|
-      self.class.diff_records(original, imported, ignored_keys: VETERAN_MAPPED_FIELDS)
-    end
-
-    # Claimants
-    orig_claimants = orig_appeals.map(&:claimants).flatten.uniq.sort_by(&:id)
-    imported_claimants = imported_records["claimants"]
-    diffs["claimants"] = orig_claimants.zip(imported_claimants).map do |original, imported|
-      self.class.diff_records(original, imported, ignored_keys: CLAIMANT_MAPPED_FIELDS)
-    end
-
-    # Users
-    imported_users = imported_records["users"]
-    diffs["users"] = orig_users.zip(imported_users).map do |original, imported|
-      self.class.diff_records(original, imported, ignored_keys: USER_MAPPED_FIELDS)
-    end
-
     diffs
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:enable
+
+  def diff_record_lists(key, orig_records, ignored_keys)
+    orig_records.zip(imported_records[key]).map do |original, imported|
+      self.class.diff_records(original, imported, ignored_keys: ignored_keys)
+    end
+  end
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
   # :reek:BooleanParameter

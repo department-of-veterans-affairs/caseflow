@@ -311,6 +311,7 @@ describe "SanitizedJsonExporter/Importer" do
 
         orig_appeals = [cavc_appeal, cavc_source_appeal]
         orig_users = User.where(id: sje.records_hash["users"].pluck("id")).order(:id)
+        pp sji.differences(orig_appeals, orig_users, ignore_expected_diffs: false)
         diffs = sji.differences(orig_appeals, orig_users)
         expect(diffs.values.flatten).to be_empty
       end
