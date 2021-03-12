@@ -1,6 +1,6 @@
 import React from 'react';
 
-import PaginationButton from './PaginationButton';
+import PaginationButton from './Pagination/PaginationButton';
 
 export default {
   title: 'Commons/Components/PaginationButton',
