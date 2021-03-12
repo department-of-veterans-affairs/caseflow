@@ -29,6 +29,16 @@ RSpec.feature "Docket Switch", :all_dbs do
     end
   end
 
+  let!(:docket_switch_ruling_task) do
+    create(
+      :docket_switch_ruling_task,
+      appeal: appeal,
+      parent: root_task,
+      assigned_to: judge,
+      assigned_by: cotb_attorney
+    )
+  end
+
   let(:root_task) { create(:root_task, :completed, appeal: appeal) }
   let(:cotb_attorney) { create(:user, :with_vacols_attorney_record, full_name: "Clark Bard") }
   let!(:cotb_non_attorney) { create(:user, full_name: "Aang Bender") }
@@ -109,15 +119,6 @@ RSpec.feature "Docket Switch", :all_dbs do
   end
 
   describe "judge completes docket switch ruling" do
-    let!(:docket_switch_ruling_task) do
-      create(
-        :docket_switch_ruling_task,
-        appeal: appeal,
-        parent: root_task,
-        assigned_to: judge,
-        assigned_by: cotb_attorney
-      )
-    end
     let(:context) { "Lorem ipsum dolor sit amet, consectetur adipiscing elit" }
     let(:hyperlink) { "https://example.com/file.txt" }
 
@@ -206,6 +207,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       # Verify correct success alert
       expect(page).to have_content(format(COPY::DOCKET_SWITCH_DENIAL_SUCCESS_TITLE, appeal.claimant.name))
       # Verify that denial completed correctly
+      expect(docket_switch_ruling_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
       expect(docket_switch_denied_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
       expect(docket_switch_denied_task.reload.instructions).to include(context)
       docket_switch = DocketSwitch.find_by(old_docket_stream_id: appeal.id)
@@ -362,6 +364,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(docket_switch.new_docket_stream.docket_type).to eq(docket_switch.docket_type)
       expect(page).to have_current_path("/queue/appeals/#{docket_switch.new_docket_stream.uuid}")
 
+      expect(docket_switch_ruling_task.reload.status).to eq Constants.TASK_STATUSES.completed
       expect(docket_switch_granted_task.reload.status).to eq Constants.TASK_STATUSES.completed
       expect(existing_admin_action1.reload.status).to eq Constants.TASK_STATUSES.cancelled
 

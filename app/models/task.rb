@@ -637,7 +637,7 @@ class Task < CaseflowRecord
   end
 
   def timeline_title
-    "#{type.titleize} completed"
+    "#{type} completed"
   end
 
   def serializer_class
