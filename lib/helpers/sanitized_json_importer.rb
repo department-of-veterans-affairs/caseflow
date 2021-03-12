@@ -96,7 +96,6 @@ class SanitizedJsonImporter
     @unique_indices_per_class.fetch(klass) do
       @unique_indices_per_class[klass] = ActiveRecord::Base.connection.indexes(klass.table_name).select(&:unique)
     end
-  end
 
   def import_array_of(klass, key = klass.table_name, obj_hash_array = @records_hash.fetch(key, []))
     puts "Importing #{obj_hash_array.count} #{klass} records" if @verbosity > 1
@@ -107,6 +106,7 @@ class SanitizedJsonImporter
     end.compact
     @records_hash.delete(key)
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def import_record(key, klass, obj_hash)
     # Record original id in case it changes in the following lines
