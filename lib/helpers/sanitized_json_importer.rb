@@ -57,7 +57,7 @@ class SanitizedJsonImporter
     Claimant => %w[id decision_review_id],
     User => %w[id file_number first_name middle_name last_name ssn css_id email full_name] + [:display_name],
     Task => %w[id appeal_id parent_id assigned_by_id assigned_to_id],
-    TaskTimer => %w[id task_id],
+    TaskTimer => %w[id task_id]
   }.freeze
 
   # :reek:BooleanParameter
