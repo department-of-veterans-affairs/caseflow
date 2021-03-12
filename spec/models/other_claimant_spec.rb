@@ -93,5 +93,19 @@ describe OtherClaimant, :postgres do
         expect(subject.unrecognized_power_of_attorney).to be_nil
       end
     end
+
+    context "when CorpDB Attorney Power of Attorney is given" do
+      let(:poa_participant_id) { "6000044" }
+      let(:name) { "Generic Attorney, Esq." }
+      let!(:bgs_attorney) do
+        BgsAttorney.create!(participant_id: poa_participant_id, name: name, record_type: "POA State Organization")
+      end
+
+      it "saves the CorpDB APOA" do
+        expect(subject.power_of_attorney.name).to eq(name)
+        expect(subject.power_of_attorney.bgs_attorney).to_not be_nil
+        expect(subject.power_of_attorney.address).to_not be_nil
+      end
+    end
   end
 end

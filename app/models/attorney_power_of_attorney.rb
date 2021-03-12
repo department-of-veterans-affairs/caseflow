@@ -1,18 +1,15 @@
 # frozen_string_literal: true
 
-# This is an ephemeral class representing the unrecognized POA of an unrecognized appellant. The
-# UnrecognizedAppellant's unrecognized_power_of_attorney_id column links it directly to the
-# UnrecognizedPartyDetail record.
+# This is an ephemeral class representing the unrecognized attorney power of attorney of an unrecognized appellant.
 
 class AttorneyPowerOfAttorney
   include ActiveModel::Model
 
   delegate :name, :address, to: :bgs_attorney
-  attr_accessor :name, :address, :participant_id
+  attr_accessor :participant_id
 
   alias representative_name name
   alias representative_address address
-
 
   def initialize(participant_id)
     @participant_id = participant_id

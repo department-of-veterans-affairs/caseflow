@@ -10,7 +10,7 @@ class UnrecognizedAppellant < CaseflowRecord
   def power_of_attorney
     @power_of_attorney ||= begin
       if poa_participant_id
-      AttorneyPowerOfAttorney.new("56154689")
+        AttorneyPowerOfAttorney.new(poa_participant_id)
       elsif unrecognized_power_of_attorney_id
         UnrecognizedPowerOfAttorney.new(unrecognized_power_of_attorney)
       end

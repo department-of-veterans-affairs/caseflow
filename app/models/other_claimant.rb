@@ -57,10 +57,7 @@ class OtherClaimant < Claimant
 
   def create_party_detail!(params)
     first_name = params.delete(:first_name)
-    if first_name
-     params[:name] = first_name 
-     params[:party_type] = "individual"
-    end
+    params[:name] = first_name if params[:party_type] == "individual"
     UnrecognizedPartyDetail.create!(params)
   end
 end

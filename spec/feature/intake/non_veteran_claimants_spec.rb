@@ -207,6 +207,71 @@ feature "Non-veteran claimants", :postgres do
       expect(page).to have_content(new_individual_claimant[:first_name])
       expect(claimant.relationship).to eq("Other")
     end
+
+    it "allows selecting claimant not listed and validates spouse is saved on review page" do
+      start_appeal(veteran)
+      visit "/intake"
+
+      expect(page).to have_current_path("/intake/review_request")
+
+      within_fieldset("Is the claimant someone other than the Veteran?") do
+        find("label", text: "Yes", match: :prefer_exact).click
+      end
+
+      expect(page).to have_selector("label[for=claimant-options_claimant_not_listed]")
+
+      within_fieldset(COPY::SELECT_CLAIMANT_LABEL) do
+        find("label", text: "Claimant not listed", match: :prefer_exact).click
+      end
+
+      click_intake_continue
+
+      expect(page).to have_current_path("/intake/add_claimant")
+      expect(page).to have_content("Add Claimant")
+
+      fill_in("Relationship to the Veteran", with: "Spouse").send_keys :enter
+
+      # fill in form information
+      fill_in "First name", with: "Darlyn"
+      fill_in "Last name", with: "Duck"
+      fill_in "Street address 1", with: "1234 Justice St."
+      fill_in "City", with: "Anytown"
+      fill_in("State", with: "California").send_keys :enter
+      fill_in("Zip", with: "12345").send_keys :enter
+      fill_in("Country", with: "United States").send_keys :enter
+      within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
+        find("label", text: "No", match: :prefer_exact).click
+      end
+
+      expect(page).to have_button("Continue to next step", disabled: false)
+
+      click_button "Continue to next step"
+
+      expect(page).to have_content("Darlyn Duck")
+
+      submit_confirmation_modal
+
+      claimant = Claimant.find_by(type: "OtherClaimant")
+
+      expect(claimant.name).to eq("Darlyn Duck")
+      expect(claimant.relationship).to eq("Spouse")
+
+      expect(page).to have_content(COPY::ADD_CLAIMANT_CONFIRM_MODAL_NO_POA)
+
+      # Add request issues
+      click_intake_add_issue
+      add_intake_nonrating_issue(date: decision_date)
+      expect(page).to have_content("Active Duty Adjustments")
+      click_intake_finish
+      expect(page).to have_current_path("/intake/completed")
+
+      appeal = Appeal.find_by(docket_type: "evidence_submission")
+      # Case details page
+      visit "queue/appeals/#{appeal.uuid}"
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+      expect(claimant.name).to eq("Darlyn Duck")
+      expect(claimant.relationship).to eq("Spouse")
+    end
   end
 
   def add_existing_attorney(attorney)

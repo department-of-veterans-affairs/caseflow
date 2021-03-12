@@ -81,6 +81,7 @@ const data = prepareReviewData(intakeData, intakeType);
 data.unlisted_claimant = {
     relationship: claimant.relationship,
     party_type: claimant.partyType,
+    name: claimant.organization,
     first_name: claimant.firstName,
     middle_name: claimant.middleName,
     last_name: claimant.lastName,
