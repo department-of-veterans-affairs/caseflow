@@ -93,6 +93,7 @@ class SanitizedJsonExporter
     else
       fail "Expecting string or regex for the #{record.class}'s field name: #{fieldname_expression}"
     end
+    obj_hash[field_name]
   end
 
   # :reek:FeatureEnvy

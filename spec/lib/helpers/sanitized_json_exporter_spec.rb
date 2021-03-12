@@ -329,7 +329,7 @@ describe "SanitizedJsonExporter/Importer" do
 
   describe ".obfuscate_sentence" do
     subject { SanitizedJsonExporter.obfuscate_sentence("instructions", sentence) }
-    context "given CSS_ID" do
+    context "given sentence" do
       let(:sentence) { "No PII, just potentially sensitive!" }
       it "returns sentence without any of the original longer words" do
         obf_words = subject.split
@@ -337,6 +337,41 @@ describe "SanitizedJsonExporter/Importer" do
           expect(subject).not_to include word
           obf_words.each { |obf_word| expect(obf_word.chars).not_to match_array word.chars }
         end
+      end
+    end
+    context "given empty sentence" do
+      let(:sentence) { "" }
+      it "returns empty string" do
+        expect(subject).to eq ""
+      end
+    end
+  end
+
+  describe "#find_or_create_mapped_value_for" do
+    let(:sje) { SanitizedJsonExporter.new(create(:appeal)) }
+    subject { sje.send(:find_or_create_mapped_value_for, obj_hash, field_name) }
+    context "given input that will cause a loop" do
+      let(:field_name) { "my_text" }
+      let(:obj_hash) { { field_name => " " } }
+      before do
+        # Cause a loop to occur by adding an existing value_mapping entry with value ""
+        # Both "" and " " (in obj_hash) should both map to "" due to `obfuscate_sentence`
+        sje.value_mapping[""] = ""
+      end
+      it "does not loop indefinitely" do
+        expect(SanitizedJsonExporter).to receive(:obfuscate_sentence).and_call_original
+        subject
+        expect(obj_hash[field_name]).to eq ""
+      end
+    end
+
+    context "given array as a field value" do
+      let(:field_name) { "instructions" }
+      let(:obj_hash) { { field_name => ["instruct me", "me too"] } }
+      it "sets a new array with new values" do
+        expect(SanitizedJsonExporter).to receive(:obfuscate_sentence).and_call_original.exactly(2).times
+        subject
+        expect(obj_hash[field_name]).to eq ["in me", "me to"]
       end
     end
   end
