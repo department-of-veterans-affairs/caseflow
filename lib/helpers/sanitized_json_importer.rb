@@ -255,6 +255,8 @@ class SanitizedJsonImporter
       elsif obj_hash["assigned_to_type"] == "Organization"
         reassociate(obj_hash, "assigned_to_id", org_id_mapping)
       end
+    elsif clazz <= CavcRemand
+      # TODO: reassociate_array(obj_hash, "decision_issue_ids", appeal_id_mapping)
     end
   end
   # rubocop:enable Metrics/PerceivedComplexity

@@ -17,7 +17,7 @@ class SanitizedJsonExporter
 
   def records_to_export(initial_appeals)
     associated_appeals = initial_appeals.map { |appeal| appeals_associated_with(appeal) }.flatten.uniq.compact
-    appeals = initial_appeals + associated_appeals
+    appeals = (initial_appeals + associated_appeals).uniq
     tasks = appeals.map(&:tasks).flatten.sort_by(&:id).extend(TaskAssignment)
 
     {
@@ -27,7 +27,9 @@ class SanitizedJsonExporter
       Task => tasks,
       TaskTimer => TaskTimer.where(task_id: tasks.map(&:id)),
       User => tasks.map(&:assigned_by).compact + tasks.assigned_to_user.map(&:assigned_to),
-      Organization => tasks.assigned_to_org.map(&:assigned_to)
+      Organization => tasks.assigned_to_org.map(&:assigned_to),
+
+      CavcRemand => appeals.map(&:cavc_remand),
     }
   end
 
@@ -97,6 +99,11 @@ class SanitizedJsonExporter
     when Organization, Claimant, Task, TaskTimer
       # nothing to sanitize
       obj_hash
+    when Task
+      find_or_create_mapped_value_for(obj_hash, "instructions")
+    when CavcRemand
+      find_or_create_mapped_value_for(obj_hash, "cavc_judge_full_name")
+      find_or_create_mapped_value_for(obj_hash, "instructions")
     else
       fail "Unsupported object type: #{record.class.name}"
     end
@@ -116,7 +123,7 @@ class SanitizedJsonExporter
     end
   end
 
-  TRANSFORM_METHODS = [:mixup_css_id, :random_person_name, :invalid_ssn, :random_email].freeze
+  TRANSFORM_METHODS = [:mixup_css_id, :random_person_name, :invalid_ssn, :random_email, :obfuscate_sentence].freeze
 
   def find_or_create_mapped_value(orig_value, field_name = nil)
     @value_mapping.fetch(orig_value) do
@@ -179,8 +186,11 @@ class SanitizedJsonExporter
       end
     end
 
-    def obfuscate_sentence(_field_name, field_value)
-      field_value.split.map { |word| word[0..1] }.join(" ")
+    def obfuscate_sentence(field_name, field_value)
+      case field_name
+      when "instructions"
+        field_value.split.map { |word| word[0..1] }.join(" ")
+      end
     end
   end
 end
