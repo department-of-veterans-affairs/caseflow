@@ -134,7 +134,7 @@ class SanitizedJsonImporter
     elsif clazz <= CavcRemand
       obj_hash["source_appeal_id"] += @id_offset
       obj_hash["remand_appeal_id"] += @id_offset
-      # TODO: import decision_issues due to validation: decision_issue_ids_match_appeal_decision_issues
+      # TODO: import referenced decision_issues and request_issues
       obj_hash["decision_issue_ids"] = obj_hash["decision_issue_ids"].map { |id| id + @id_offset }
     end
   end
@@ -186,7 +186,6 @@ class SanitizedJsonImporter
     @id_mapping[Organization.name.underscore]
   end
 
-  # rubocop:disable Metrics/PerceivedComplexity
   # :reek:FeatureEnvy
   def reassociate_with_imported_records(clazz, obj_hash)
     # pp "Reassociate #{clazz}"
@@ -203,7 +202,6 @@ class SanitizedJsonImporter
       reassociate(obj_hash, "updated_by_id", user_id_mapping)
     end
   end
-  # rubocop:enable Metrics/PerceivedComplexity
 
   def reassociate(obj_hash, id_field, record_id_mapping)
     obj_hash[id_field] = record_id_mapping[obj_hash[id_field]] if record_id_mapping[obj_hash[id_field]]

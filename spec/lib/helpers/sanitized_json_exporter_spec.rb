@@ -156,7 +156,7 @@ describe "SanitizedJsonExporter/Importer" do
         expect(sje.records_hash["claimants"].size).to eq claimants.size
 
         expect(sje.records_hash["tasks"].size).to eq tasks.size
-        expect(sje.records_hash["users"].size).to eq (task_users + cavc_remand_users).uniq.size
+        expect(sje.records_hash["users"].size).to eq((task_users + cavc_remand_users).uniq.size)
         expect(sje.records_hash["organizations"].size).to eq assigned_to_orgs.size
 
         # Check associations
