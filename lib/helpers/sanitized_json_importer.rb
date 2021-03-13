@@ -147,7 +147,7 @@ class SanitizedJsonImporter
   def mapped_appeal_ids
     @mapped_ids[Appeal.name.underscore]
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity
 
   def mapped_user_ids
     @mapped_ids[User.name.underscore]
@@ -157,7 +157,7 @@ class SanitizedJsonImporter
     @mapped_ids[Organization.name.underscore]
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
   # :reek:FeatureEnvy
   def adjust_ids_by_offset(klass, obj_hash)
     obj_hash["id"] += @id_offset
@@ -173,7 +173,7 @@ class SanitizedJsonImporter
       end
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
 
   def offset_id_table_fields
     @offset_id_table_fields ||= @configuration.offset_id_fields.transform_keys(&:table_name).freeze
