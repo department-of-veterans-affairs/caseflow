@@ -147,6 +147,7 @@ class SanitizedJsonImporter
   def mapped_appeal_ids
     @mapped_ids[Appeal.name.underscore]
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
 
   def mapped_user_ids
     @mapped_ids[User.name.underscore]
