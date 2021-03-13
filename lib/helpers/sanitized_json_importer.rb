@@ -101,9 +101,9 @@ class SanitizedJsonImporter
     reassociate_with_imported_records(clazz, obj_hash)
 
     puts "  + Creating #{clazz} #{obj_hash['id']} #{obj_description}"
-    remaining_id_fields = obj_hash.select do |k, v|
-      k.ends_with?("_id") && v.is_a?(Integer) && (v < @id_offset) &&
-        !(clazz <= Task && obj_hash["assigned_to_type"] == "Organization" && k == "assigned_to_id")
+    remaining_id_fields = obj_hash.select do |field_name, field_value|
+      field_name.ends_with?("_id") && field_value.is_a?(Integer) && (field_value < @id_offset) &&
+        !(clazz <= Task && obj_hash["assigned_to_type"] == "Organization" && field_name == "assigned_to_id")
     end
     puts "!! Need offset?: #{remaining_id_fields}" unless remaining_id_fields.blank?
     create_new_record(orig_id, clazz, obj_hash)
