@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module SanitizedJsonDifference
-  # fields expected to be different
+  # fields expected to be different; corresponds with fields in SanitizedJsonExporter#sanitize and SanitizedJsonImporter
   MAPPED_FIELDS = {
     Appeal => %w[id veteran_file_number],
     Veteran => %w[id file_number first_name middle_name last_name ssn],
@@ -9,12 +9,28 @@ module SanitizedJsonDifference
     User => %w[id file_number first_name middle_name last_name ssn css_id email full_name] + [:display_name],
     Task => %w[id appeal_id parent_id assigned_by_id assigned_to_id instructions],
     TaskTimer => %w[id task_id],
-    CavcRemand => %w[instructions]
+    CavcRemand => %w[id created_by_id decision_issue_ids remand_appeal_id source_appeal_id instructions],
+    HearingDay => %w[id],
+    Hearing => %w[id appeal_id created_by_id updated_by_id hearing_day_id],
+    VirtualHearing => %w[id appeal_id alias guest_pin host_pin guest_pin_long host_pin_long representative_email
+                         judge_email
+                         alias_with_host
+                         appellant_email
+                         host_hearing_link
+                         guest_hearing_link
+                         created_by_id updated_by_id hearing_id],
+    HearingTaskAssociation => %w[id created_by_id updated_by_id hearing_id hearing_task_id]
   }.freeze
+
+  def differences(sje, **kwargs)
+    orig_appeals = Appeal.where(id: sje.records_hash[Appeal.table_name].pluck("id")).order(:id)
+    orig_users = User.where(id: sje.records_hash[User.table_name].pluck("id")).order(:id)
+    compare_with(sje, orig_appeals, orig_users, **kwargs)
+  end
 
   # :reek:BooleanParameter
   # :reek:FeatureEnvy
-  def differences(orig_appeals, orig_users, ignore_expected_diffs: true)
+  def compare_with(sje, orig_appeals, orig_users, ignore_expected_diffs: true)
     mapped_fields = ignore_expected_diffs ? MAPPED_FIELDS : {}
     orig_appeals = orig_appeals.uniq.sort_by(&:id)
     orig_tasks = orig_appeals.map(&:tasks).flatten.sort_by(&:id)
@@ -25,11 +41,17 @@ module SanitizedJsonDifference
       Claimant => orig_appeals.map(&:claimants).flatten.uniq.sort_by(&:id),
       User => orig_users,
       Task => orig_appeals.map(&:tasks).flatten.sort_by(&:id),
-      TaskTimer => TaskTimer.where(task_id: orig_tasks.map(&:id)).sort_by(&:id)
-      # TODO: add cavc_r, ri, di, rdi, Hearing, HearingDay, VirtualHearing, HearingTaskAssociation
+      TaskTimer => TaskTimer.where(task_id: orig_tasks.map(&:id)).sort_by(&:id),
+      CavcRemand => CavcRemand.where(id: sje.records_hash[CavcRemand.table_name].pluck("id")).order(:id),
+      Hearing => nil,
+      HearingDay => nil,
+      VirtualHearing => nil,
+      HearingTaskAssociation => nil
+      # TODO: add cavc_r, ri, di, rdi
       # TODO: print warning about missing by using JSON hashes
     }.each_with_object({}) do |(clazz, orig_records), result| # https://blog.arkency.com/inject-vs-each-with-object/
       key = clazz.table_name
+      orig_records ||= clazz.where(id: sje.records_hash[clazz.table_name].pluck("id")).order(:id)
       result[key] = SanitizedJsonDifference.diff_record_lists(orig_records, imported_records[key], mapped_fields[clazz])
     end
   end

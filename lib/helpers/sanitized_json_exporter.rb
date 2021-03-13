@@ -144,17 +144,14 @@ class SanitizedJsonExporter
       find_or_create_mapped_value_for(obj_hash, "representative_name")
       find_or_create_mapped_value_for(obj_hash, "witness")
     when VirtualHearing
-      find_or_create_mapped_value_for(obj_hash, "alias")
-      find_or_create_mapped_value_for(obj_hash, "guest_pin")
-      find_or_create_mapped_value_for(obj_hash, "host_pin")
-      find_or_create_mapped_value_for(obj_hash, "guest_pin_long")
-      find_or_create_mapped_value_for(obj_hash, "host_pin_long")
-      find_or_create_mapped_value_for(obj_hash, "representative_email")
-      find_or_create_mapped_value_for(obj_hash, "judge_email")
-      find_or_create_mapped_value_for(obj_hash, "alias_with_host")
-      find_or_create_mapped_value_for(obj_hash, "appellant_email")
-      find_or_create_mapped_value_for(obj_hash, "host_hearing_link")
-      find_or_create_mapped_value_for(obj_hash, "guest_hearing_link")
+      %w[alias guest_pin host_pin guest_pin_long host_pin_long representative_email
+         judge_email
+         alias_with_host
+         appellant_email
+         host_hearing_link
+         guest_hearing_link].each do |field_name|
+        find_or_create_mapped_value_for(obj_hash, field_name)
+      end
     when HearingDay
       find_or_create_mapped_value_for(obj_hash, "bva_poc")
       find_or_create_mapped_value_for(obj_hash, "notes")

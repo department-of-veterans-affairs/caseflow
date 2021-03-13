@@ -406,16 +406,17 @@ describe "SanitizedJsonExporter/Importer" do
       end
     end
 
-    def check_all_differences(sje, sji, *orig_appeals)
+    def check_all_differences(sje, sji, *_orig_appeals)
       pp sje.records_hash.transform_values(&:count)
       not_imported_counts = sje.records_hash.transform_values(&:count).to_a -
                             sji.imported_records.transform_values(&:count).to_a
       expect(not_imported_counts).to eq [["metadata", 1]]
 
       orig_users = User.where(id: sje.records_hash["users"].pluck("id")).order(:id)
-      pp sji.differences(orig_appeals, orig_users, ignore_expected_diffs: false).transform_values(&:count)
-      # pp sji.differences(orig_appeals, orig_users, ignore_expected_diffs: false)
-      diffs = sji.differences(orig_appeals, orig_users)
+      pp sji.differences(sje, ignore_expected_diffs: false).transform_values(&:count)
+      # pp sji.differences(sje, ignore_expected_diffs: false)
+      diffs = sji.differences(sje)
+      pp diffs
       expect(diffs.values.flatten).to be_empty
     end
   end
