@@ -730,7 +730,7 @@ describe "SanitizedJsonExporter/Importer" do
         expect(Veteran.count).to eq 2
         expect(Claimant.count).to eq 4
         expect(Organization.count).to eq 8 # existing orgs are reused
-        expect(User.count).to eq 13
+        expect(User.count).to eq 12
         expect(Task.count).to eq 32
         expect(TaskTimer.count).to eq 4
 
