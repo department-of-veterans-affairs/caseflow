@@ -328,7 +328,8 @@ describe "SanitizedJsonExporter/Importer" do
   end
 
   describe ".obfuscate_sentence" do
-    subject { SanitizedJsonExporter.obfuscate_sentence("instructions", sentence) }
+    let(:field_name) { "instructions" }
+    subject { SanitizedJsonExporter.obfuscate_sentence(field_name, sentence) }
     context "given sentence" do
       let(:sentence) { "No PII, just potentially sensitive!" }
       it "returns sentence without any of the original longer words" do
@@ -343,6 +344,22 @@ describe "SanitizedJsonExporter/Importer" do
       let(:sentence) { "" }
       it "returns empty string" do
         expect(subject).to eq ""
+      end
+    end
+    context "given military_service field" do
+      let(:field_name) { "military_service" }
+      let(:sentence) { "ARMY 09/09/1993 - 06/12/1996, Honorable" }
+      it "returns fake military_service" do
+        expect(subject).not_to eq sentence
+        expect(subject).to match /.* - .*,/
+      end
+    end
+    context "given summary field" do
+      let(:field_name) { "summary" }
+      let(:sentence) { "<p><strong>Contentions</strong>&nbsp;</p> blah <p><strong>Evidence</strong>&nbsp;</p> ..." }
+      it "returns fake summary" do
+        expect(subject).not_to eq sentence
+        expect(subject).to match /.*Contentions.*/
       end
     end
   end
