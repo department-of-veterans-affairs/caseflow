@@ -111,7 +111,7 @@ class SanitizedJsonExporter
       find_or_create_mapped_value_for(obj_hash, "css_id")
     when Task
       find_or_create_mapped_value_for(obj_hash, "instructions")
-    when Organization, Claimant, TaskTimer, OrganizationsUser
+    when Organization, Claimant, TaskTimer, OrganizationsUser, RequestDecisionIssue
       # nothing to sanitize
       obj_hash
     when CavcRemand

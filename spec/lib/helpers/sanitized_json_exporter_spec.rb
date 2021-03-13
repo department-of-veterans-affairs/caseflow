@@ -345,7 +345,7 @@ describe "SanitizedJsonExporter/Importer" do
           "intakes" => 0,
           "decision_issues" => 2,
           "request_issues" => 4,
-          "request_decision_issues" => 0
+          "request_decision_issues" => 2
         }
         expect(sji.imported_records.transform_values(&:count)).to eq record_counts
 

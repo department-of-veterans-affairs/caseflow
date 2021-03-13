@@ -141,7 +141,6 @@ class SanitizedJsonImporter
     elsif clazz <= CavcRemand
       obj_hash["source_appeal_id"] += @id_offset
       obj_hash["remand_appeal_id"] += @id_offset
-      # TODO: import referenced decision_issues and request_issues
       obj_hash["decision_issue_ids"] = obj_hash["decision_issue_ids"].map { |id| id + @id_offset }
     elsif clazz <= OrganizationsUser
       obj_hash["user_id"] += @id_offset
@@ -151,6 +150,9 @@ class SanitizedJsonImporter
     elsif clazz <= RequestIssue
       obj_hash["decision_review_id"] += @id_offset
       obj_hash["contested_decision_issue_id"] += @id_offset
+    elsif clazz <= RequestDecisionIssue
+      obj_hash["request_issue_id"] += @id_offset
+      obj_hash["decision_issue_id"] += @id_offset
     end
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
