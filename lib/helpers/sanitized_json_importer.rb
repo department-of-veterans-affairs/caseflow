@@ -65,6 +65,7 @@ class SanitizedJsonImporter
   # Classes that shouldn't be imported if a record with the same unique attributes already exists
   NONDUPLICATE_TYPES = [Organization, User, Veteran].freeze
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
   def import_record(clazz, key: clazz.name, obj_hash: @records_hash[key])
     fail "No JSON data for key '#{key}'.  Keys: #{@records_hash.keys}" unless obj_hash
 
@@ -80,8 +81,10 @@ class SanitizedJsonImporter
     orig_id = obj_hash["id"]
 
     adjust_unique_identifiers(clazz, obj_hash).tap do |label|
-      puts "  * Will import duplicate #{clazz} '#{label}' with different unique attributes " \
-           "because existing record's id is different: \n\t#{obj_hash}" if label
+      if label
+        puts "  * Will import duplicate #{clazz} '#{label}' with different unique attributes " \
+             "because existing record's id is different: \n\t#{obj_hash}"
+      end
     end
 
     # Handle Organization type specially because each organization has a `singleton`
@@ -97,6 +100,7 @@ class SanitizedJsonImporter
     puts "  + Creating #{clazz} #{obj_hash['id']} #{obj_description}"
     create_new_record(orig_id, clazz, obj_hash)
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
 
   def org_already_exists?(obj_hash)
     Organization.find_by(url: obj_hash["url"]) || Organization.find_by(id: obj_hash["id"])

@@ -188,6 +188,7 @@ detectors:
       - Address
       - ExternalApi::PexipService
       - InvalidAssigneeStatusOnTaskCreate
+      - SanitizedJsonImporter
       - Api::V3::DecisionReviews::ContestableIssueFinder
       - Api::V3::DecisionReviews::ContestableIssueParams
       - Api::V3::DecisionReviews::IntakeError
