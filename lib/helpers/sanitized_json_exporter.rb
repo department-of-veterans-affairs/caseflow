@@ -271,10 +271,10 @@ class SanitizedJsonExporter
     def random_pin(field_name, field_value)
       case field_name
       when /_pin$/, /_pin_/
-        if field_value is_a? String
+        if field_value.is_a?(String)
           Faker::Number.number(digits: field_value.length).to_s
         else
-          Faker::Number.number(digits: field_value.length)
+          Faker::Number.number(digits: field_value.to_s.length)
         end
       end
     end

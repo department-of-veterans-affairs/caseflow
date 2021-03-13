@@ -22,6 +22,28 @@ describe "SanitizedJsonExporter/Importer" do
     end
   end
 
+  describe ".random_pin" do
+    subject { SanitizedJsonExporter.random_pin(field_name, orig_value) }
+    let(:field_name) { "guest_pin" }
+    context "given fieldname ending with 'pin' and string value" do
+      let(:orig_value) { "1234567" }
+      it "returns fake PIN string" do
+        expect(subject).not_to eq orig_value
+        expect(subject.is_a?(String)).to be true
+        expect(subject).to match(/^\d*$/)
+        expect(subject.to_s.length).to eq orig_value.to_s.length
+      end
+    end
+    context "given fieldname ending with 'pin' and number value" do
+      let(:orig_value) { 1234567 }
+      it "returns fake PIN integer" do
+        expect(subject).not_to eq orig_value
+        expect(subject.is_a?(Integer)).to be true
+        expect(subject.to_s.length).to eq orig_value.to_s.length
+      end
+    end
+  end
+
   describe ".random_email" do
     let(:orig_value) { "yoom@caseflow.va.gov" }
     let(:field_prefix) { ["", ("a".."z").to_a.sample(rand(9)).join].sample }
@@ -45,11 +67,20 @@ describe "SanitizedJsonExporter/Importer" do
   describe ".random_person_name" do
     let(:orig_value) { "Yoom" }
     let(:field_prefix) { ["full", "first", "last", "middle", ("a".."z").to_a.sample(rand(9)).join].sample }
-    subject { SanitizedJsonExporter.random_person_name("#{field_prefix}_name", orig_value) }
+    let(:field_name) { "#{field_prefix}_name" }
+    subject { SanitizedJsonExporter.random_person_name(field_name, orig_value) }
     context "given fieldname ending with _name" do
       it "returns fake name" do
         expect(subject).not_to eq orig_value
         expect(subject.length).to be > 0
+      end
+    end
+    context "given witness" do
+      let(:orig_value) { "Elena Smith (daughter)" }
+      let(:field_name) { "witness" }
+      it "returns witness list as a string" do
+        expect(subject).not_to eq orig_value
+        expect(subject).to match /^.* \(.*\)$/
       end
     end
   end
@@ -66,7 +97,8 @@ describe "SanitizedJsonExporter/Importer" do
   end
 
   describe ".obfuscate_sentence" do
-    subject { SanitizedJsonExporter.obfuscate_sentence("instructions", sentence) }
+    let(:field_name) { "instructions" }
+    subject { SanitizedJsonExporter.obfuscate_sentence(field_name, sentence) }
     context "given sentence" do
       let(:sentence) { "No PII, just potentially sensitive!" }
       it "returns sentence without any of the original longer words" do
@@ -81,6 +113,22 @@ describe "SanitizedJsonExporter/Importer" do
       let(:sentence) { "" }
       it "returns empty string" do
         expect(subject).to eq ""
+      end
+    end
+    context "given military_service field" do
+      let(:field_name) { "military_service" }
+      let(:sentence) { "ARMY 09/09/1993 - 06/12/1996, Honorable" }
+      it "returns fake military_service" do
+        expect(subject).not_to eq sentence
+        expect(subject).to match /.* - .*,/
+      end
+    end
+    context "given summary field" do
+      let(:field_name) { "summary" }
+      let(:sentence) { "<p><strong>Contentions</strong>&nbsp;</p> blah <p><strong>Evidence</strong>&nbsp;</p> ..." }
+      it "returns fake summary" do
+        expect(subject).not_to eq sentence
+        expect(subject).to match /.*Contentions.*/
       end
     end
   end
