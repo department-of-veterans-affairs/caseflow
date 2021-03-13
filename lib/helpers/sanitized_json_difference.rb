@@ -26,7 +26,7 @@ module SanitizedJsonDifference
       User => orig_users,
       Task => orig_appeals.map(&:tasks).flatten.sort_by(&:id),
       TaskTimer => TaskTimer.where(task_id: orig_tasks.map(&:id)).sort_by(&:id)
-      # TODO: add cavc_r, ri, di, rdi
+      # TODO: add cavc_r, ri, di, rdi, Hearing, HearingDay, VirtualHearing, HearingTaskAssociation
       # TODO: print warning about missing by using JSON hashes
     }.each_with_object({}) do |(clazz, orig_records), result| # https://blog.arkency.com/inject-vs-each-with-object/
       key = clazz.table_name

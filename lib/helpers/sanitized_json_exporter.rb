@@ -22,14 +22,16 @@ class SanitizedJsonExporter
     appeals = (initial_appeals + associated_appeals).uniq
     tasks = appeals.map(&:tasks).flatten.sort_by(&:id).extend(TaskAssignment)
     cavc_remands = appeals.map(&:cavc_remand).compact
+    hearings = tasks.with_type("HearingTask").map(&:hearing).uniq.compact
 
     users = tasks.map(&:assigned_by).compact +
             tasks.assigned_to_user.map(&:assigned_to) +
             cavc_remands.map { |cavc_remand| [cavc_remand.created_by, cavc_remand.updated_by] }.flatten.uniq.compact +
-            appeals.map(&:intake).compact.map(&:user).uniq.compact
+            appeals.map(&:intake).compact.map(&:user).uniq.compact +
+            hearings.map { |h| [h.created_by, h.updated_by, h.judge] }.flatten.uniq.compact +
+            hearings.map(&:virtual_hearing).uniq.compact.map { |vh| [vh.created_by, vh.updated_by] }.flatten.uniq.compact
 
     request_issues = appeals.map(&:request_issues).flatten
-
     {
       Appeal => appeals,
       AppealIntake => appeals.map(&:intake),
@@ -43,7 +45,11 @@ class SanitizedJsonExporter
       CavcRemand => cavc_remands,
       DecisionIssue => appeals.map(&:decision_issues).flatten,
       RequestIssue => request_issues,
-      RequestDecisionIssue => RequestDecisionIssue.where(request_issue: request_issues)
+      RequestDecisionIssue => RequestDecisionIssue.where(request_issue: request_issues),
+      Hearing => hearings,
+      HearingTaskAssociation => HearingTaskAssociation.where(hearing: hearings),
+      HearingDay => hearings.map(&:hearing_day).uniq.compact,
+      VirtualHearing => hearings.map(&:virtual_hearing).uniq.compact
     }
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
@@ -82,6 +88,10 @@ class SanitizedJsonExporter
     def assigned_to_org
       select { |task| task.assigned_to_type == "Organization" }
     end
+
+    def with_type(task_type)
+      select { |task| task.type == task_type }
+    end
   end
 
   def sanitize_records(records)
@@ -111,7 +121,7 @@ class SanitizedJsonExporter
       find_or_create_mapped_value_for(obj_hash, "css_id")
     when Task
       find_or_create_mapped_value_for(obj_hash, "instructions")
-    when Organization, Claimant, TaskTimer, OrganizationsUser, RequestDecisionIssue
+    when Organization, Claimant, TaskTimer, OrganizationsUser, RequestDecisionIssue, HearingTaskAssociation
       # nothing to sanitize
       obj_hash
     when CavcRemand
@@ -126,6 +136,28 @@ class SanitizedJsonExporter
       obj_hash.keys.select { |k| k.match?(/_(notes|text|description)/) }.each do |key|
         find_or_create_mapped_value_for(obj_hash, key)
       end
+    when Hearing
+      find_or_create_mapped_value_for(obj_hash, "notes")
+      find_or_create_mapped_value_for(obj_hash, "military_service")
+      find_or_create_mapped_value_for(obj_hash, "summary")
+      find_or_create_mapped_value_for(obj_hash, "bva_poc")
+      find_or_create_mapped_value_for(obj_hash, "representative_name")
+      find_or_create_mapped_value_for(obj_hash, "witness")
+    when VirtualHearing
+      find_or_create_mapped_value_for(obj_hash, "alias")
+      find_or_create_mapped_value_for(obj_hash, "guest_pin")
+      find_or_create_mapped_value_for(obj_hash, "host_pin")
+      find_or_create_mapped_value_for(obj_hash, "guest_pin_long")
+      find_or_create_mapped_value_for(obj_hash, "host_pin_long")
+      find_or_create_mapped_value_for(obj_hash, "representative_email")
+      find_or_create_mapped_value_for(obj_hash, "judge_email")
+      find_or_create_mapped_value_for(obj_hash, "alias_with_host")
+      find_or_create_mapped_value_for(obj_hash, "appellant_email")
+      find_or_create_mapped_value_for(obj_hash, "host_hearing_link")
+      find_or_create_mapped_value_for(obj_hash, "guest_hearing_link")
+    when HearingDay
+      find_or_create_mapped_value_for(obj_hash, "bva_poc")
+      find_or_create_mapped_value_for(obj_hash, "notes")
     else
       fail "Unsupported object type: #{record.class.name}"
     end
@@ -213,16 +245,40 @@ class SanitizedJsonExporter
 
     def random_person_name(field_name, _field_value)
       case field_name
-      when "full_name"
-        "#{Faker::Name.first_name} #{Faker::Name.last_name}"
+      when "full_name", "representative_name"
+        Faker::Name.name
+      when "bva_poc"
+        Faker::Name.name.upcase
       when "last_name"
         Faker::Name.last_name
       when "middle_name"
         Faker::Name.initials(number: 1)
       when "first_name"
         Faker::Name.first_name
+      when "witness"
+        witnesses = []
+        rand(1..2).times do
+          relationship = ["spouse", "daughter", "son", "wife", "husband",
+                          "observer", "friend", "girlfriend", "brother-in-law",
+                          "witness", "cousin", "stepson", "bva attorney",
+                          "conservator", "daughter-in-law", "rep", "father",
+                          "bva counsel"].sample
+          witnesses << "#{Faker::Name.name} (#{relationship})"
+        end
+        witnesses.join(", ")
       when /_name$/
         Faker::Name.first_name
+      end
+    end
+
+    def random_pin(field_name, field_value)
+      case field_name
+      when /_pin$/, /_pin_/
+        if field_value is_a? String
+          Faker::Number.number(digits: field_value.length).to_s
+        else
+          Faker::Number.number(digits: field_value.length)
+        end
       end
     end
 
@@ -239,6 +295,22 @@ class SanitizedJsonExporter
       when "instructions", "description", "decision_text", "notes", /_text$/, /_notes$/, /_description$/
         # puts "obfuscate_sentence: #{field_name} = #{field_value}"
         field_value.split.map { |word| word[0..1] }.join(" ")
+      when "military_service"
+        branch = %w[ARMY AF NAVY M CG].sample
+        discharge = ["Honorable", "Under Honorable Conditions"].sample
+        start_date = Faker::Date.between(from: "1965-01-01", to: 10.years.ago)
+        end_date = start_date + rand(1..10).years + rand(6).months + rand(15).days
+        date_format = "%m/%d/%Y"
+        "#{branch} #{start_date.strftime(date_format)} - #{end_date.strftime(date_format)}, #{discharge}"
+      when "summary"
+        <<~HTML
+          <p><strong>Contentions</strong>&nbsp;</p>
+          <p><span style=\"color: rgb(0,0,255);\">#{Faker::Lorem.sentence(random_words_to_add: 5)}</span></p>
+          <p><strong>Evidence</strong>&nbsp;</p>
+          <p><span style=\"color: rgb(0,0,255);\">#{Faker::Lorem.sentence(random_words_to_add: 5)}</span></p>
+          <p><strong>Comments and special instructions to attorneys</strong>&nbsp;</p>
+          <p><span style=\"color: rgb(0,0,255);\">#{Faker::Lorem.sentence(random_words_to_add: 5)}</span></p>
+        HTML
       end
     end
   end

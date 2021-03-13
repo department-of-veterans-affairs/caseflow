@@ -230,6 +230,7 @@ describe "SanitizedJsonExporter/Importer" do
 
     context "when given empty JSON to import" do
       let(:sji) { SanitizedJsonImporter.new("{}") }
+      before { sje } # causes relevant appeals to be created
       it "returns nil" do
         expect_initial_state
         expect(subject).to be_nil
@@ -239,11 +240,8 @@ describe "SanitizedJsonExporter/Importer" do
 
     SjDifference = SanitizedJsonDifference
 
-    before do
-      sje # causes relevant appeals to be created
-    end
-
     it "creates 1 appeal with associated records" do
+      sje # causes relevant appeals to be created
       expect_initial_state
 
       # Cause a new organization to be created instead of using existing same-named org
@@ -265,7 +263,7 @@ describe "SanitizedJsonExporter/Importer" do
         "request_issues" => 0,
         "request_decision_issues" => 0
       }
-      expect(sji.imported_records.transform_values(&:count)).to eq record_counts
+      expect(sji.imported_records.transform_values(&:count)).to include record_counts
 
       expect(Appeal.count).to eq 2
       expect(Veteran.count).to eq 2
@@ -303,7 +301,48 @@ describe "SanitizedJsonExporter/Importer" do
       expect(sji.imported_records["tasks"].map(&:appeal).uniq).to eq [imported_appeal]
     end
 
-    context "when exporting CAVC remand appeal" do
+    context "when importing appeal with virtual hearing" do
+      let!(:hearing_day) { create(:hearing_day) }
+      let!(:hearing) do
+        create(:hearing, appeal: appeal, hearing_day: hearing_day).tap do |hearing|
+          create(:hearing_task_association,
+                 hearing: hearing,
+                 hearing_task: appeal.tasks.where(type: :HearingTask).last)
+          create(:assign_hearing_disposition_task,
+                 parent: hearing.hearing_task_association.hearing_task,
+                 appeal: hearing.appeal)
+        end
+      end
+      let!(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
+      before { sje } # causes relevant appeals to be created
+
+      it "creates hearing appeal with associated records" do
+        pp sje.records_hash.transform_values(&:count)
+        subject
+        record_counts = { "appeals" => 1,
+                          "users" => 4,
+                          "organizations" => 2,
+                          "intakes" => 0,
+                          "veterans" => 1,
+                          "claimants" => 2,
+                          "tasks" => 6,
+                          "task_timers" => 1,
+                          "organizations_users" => 0,
+                          "cavc_remands" => 0,
+                          "decision_issues" => 0,
+                          "request_issues" => 0,
+                          "request_decision_issues" => 0,
+                          "hearings" => 1,
+                          "hearing_task_associations" => 1,
+                          "hearing_days" => 1,
+                          "virtual_hearings" => 1 }
+        expect(sji.imported_records.transform_values(&:count)).to eq record_counts
+
+        check_all_differences(sje, sji, appeal)
+      end
+    end
+
+    context "when importing CAVC remand appeal" do
       let!(:org_admin) { create(:user) { |u| OrganizationsUser.make_user_admin(u, CavcLitigationSupport.singleton) } }
       let(:org_nonadmin) { create(:user) { |u| CavcLitigationSupport.singleton.add_user(u) } }
       let(:window_task) do
@@ -314,7 +353,7 @@ describe "SanitizedJsonExporter/Importer" do
         cavc_appeal.tasks.where(type: CavcRemandProcessedLetterResponseWindowTask.name).first
       end
 
-      let(:sje) do
+      let!(:sje) do
         # simulates "Assign to person", which creates child task
         CavcRemandProcessedLetterResponseWindowTask.create!(parent: window_task,
                                                             appeal: window_task.appeal,
@@ -327,7 +366,7 @@ describe "SanitizedJsonExporter/Importer" do
         expect(Veteran.count).to eq 1
         expect(Claimant.count).to eq 2
         expect(Organization.count).to eq 8
-        expect(User.count).to eq 7
+        expect(User.count).to eq 6
         expect(Task.count).to eq 16
         expect(TaskTimer.count).to eq 2
 
@@ -338,22 +377,21 @@ describe "SanitizedJsonExporter/Importer" do
           "claimants" => 2,
           "users" => 6,
           "organizations" => 4,
-          "organizations_users" => 2,
+          "organizations_users" => 3,
           "tasks" => 16,
           "task_timers" => 2,
           "cavc_remands" => 1,
-          "intakes" => 0,
           "decision_issues" => 2,
           "request_issues" => 4,
           "request_decision_issues" => 2
         }
-        expect(sji.imported_records.transform_values(&:count)).to eq record_counts
+        expect(sji.imported_records.transform_values(&:count)).to include record_counts
 
         expect(Appeal.count).to eq 4
         expect(Veteran.count).to eq 2
         expect(Claimant.count).to eq 4
         expect(Organization.count).to eq 8 # existing orgs are reused
-        expect(User.count).to eq 13
+        expect(User.count).to eq 12
         expect(Task.count).to eq 32
         expect(TaskTimer.count).to eq 4
 
@@ -364,21 +402,21 @@ describe "SanitizedJsonExporter/Importer" do
           expect(task.assigned_to).not_to be_nil if task.assigned_to_id
         end
 
-        orig_appeals = [cavc_appeal, cavc_source_appeal]
-        orig_users = User.where(id: sje.records_hash["users"].pluck("id")).order(:id)
-
-        # pp sji.differences(orig_appeals, orig_users, ignore_expected_diffs: false)
-        pp sje.records_hash.transform_values(&:count)
-        pp sji.differences(orig_appeals, orig_users, ignore_expected_diffs: false).transform_values(&:count)
-        # binding.pry
-
-        not_imported_counts = sje.records_hash.transform_values(&:count).to_a -
-                              sji.imported_records.transform_values(&:count).to_a
-        expect(not_imported_counts).to eq [["metadata", 1]]
-
-        diffs = sji.differences(orig_appeals, orig_users)
-        expect(diffs.values.flatten).to be_empty
+        check_all_differences(sje, sji, cavc_appeal, cavc_source_appeal)
       end
+    end
+
+    def check_all_differences(sje, sji, *orig_appeals)
+      pp sje.records_hash.transform_values(&:count)
+      not_imported_counts = sje.records_hash.transform_values(&:count).to_a -
+                            sji.imported_records.transform_values(&:count).to_a
+      expect(not_imported_counts).to eq [["metadata", 1]]
+
+      orig_users = User.where(id: sje.records_hash["users"].pluck("id")).order(:id)
+      pp sji.differences(orig_appeals, orig_users, ignore_expected_diffs: false).transform_values(&:count)
+      # pp sji.differences(orig_appeals, orig_users, ignore_expected_diffs: false)
+      diffs = sji.differences(orig_appeals, orig_users)
+      expect(diffs.values.flatten).to be_empty
     end
   end
 end

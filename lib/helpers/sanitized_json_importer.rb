@@ -44,6 +44,9 @@ class SanitizedJsonImporter
         import_array_of(User)
         import_array_of(Organization)
 
+        # needed for Hearing to be created
+        import_array_of(HearingDay)
+
         @records_hash.except("metadata").each do |key, obj_hash_array|
           import_array_of(key.classify.constantize, key, obj_hash_array)
         end
@@ -153,6 +156,14 @@ class SanitizedJsonImporter
     elsif clazz <= RequestDecisionIssue
       obj_hash["request_issue_id"] += @id_offset
       obj_hash["decision_issue_id"] += @id_offset
+    elsif clazz <= Hearing
+      obj_hash["appeal_id"] += @id_offset
+      obj_hash["hearing_day_id"] += @id_offset
+    elsif clazz <= HearingTaskAssociation
+      obj_hash["hearing_id"] += @id_offset
+      obj_hash["hearing_task_id"] += @id_offset
+    elsif clazz <= VirtualHearing
+      obj_hash["hearing_id"] += @id_offset
     end
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
@@ -218,7 +229,7 @@ class SanitizedJsonImporter
       end
     elsif clazz <= AppealIntake
       reassociate(obj_hash, "user_id", user_id_mapping)
-    elsif clazz <= CavcRemand
+    elsif clazz <= CavcRemand || clazz <= HearingDay || clazz <= Hearing || clazz <= VirtualHearing
       reassociate(obj_hash, "created_by_id", user_id_mapping)
       reassociate(obj_hash, "updated_by_id", user_id_mapping)
     end
