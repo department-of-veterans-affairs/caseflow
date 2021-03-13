@@ -256,10 +256,14 @@ describe "SanitizedJsonExporter/Importer" do
         "claimants" => 2,
         "users" => 0,
         "organizations" => 2, # only the first org will be created; the second one already exists
+        "organizations_users" => 0,
         "tasks" => 5,
         "task_timers" => 1,
         "cavc_remands" => 0,
-        "intakes" => 0
+        "intakes" => 0,
+        "decision_issues" => 0,
+        "request_issues" => 0,
+        "request_decision_issues" => 0
       }
       expect(sji.imported_records.transform_values(&:count)).to eq record_counts
 
@@ -334,10 +338,14 @@ describe "SanitizedJsonExporter/Importer" do
           "claimants" => 2,
           "users" => 6,
           "organizations" => 4,
+          "organizations_users" => 2,
           "tasks" => 16,
           "task_timers" => 2,
           "cavc_remands" => 1,
-          "intakes" => 0
+          "intakes" => 0,
+          "decision_issues" => 2,
+          "request_issues" => 4,
+          "request_decision_issues" => 0
         }
         expect(sji.imported_records.transform_values(&:count)).to eq record_counts
 

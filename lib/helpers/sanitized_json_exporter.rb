@@ -16,12 +16,19 @@ class SanitizedJsonExporter
     end
   end
 
-  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def records_to_export(initial_appeals)
     associated_appeals = initial_appeals.map { |appeal| appeals_associated_with(appeal) }.flatten.uniq.compact
     appeals = (initial_appeals + associated_appeals).uniq
     tasks = appeals.map(&:tasks).flatten.sort_by(&:id).extend(TaskAssignment)
     cavc_remands = appeals.map(&:cavc_remand).compact
+
+    users = tasks.map(&:assigned_by).compact +
+            tasks.assigned_to_user.map(&:assigned_to) +
+            cavc_remands.map { |cavc_remand| [cavc_remand.created_by, cavc_remand.updated_by] }.flatten.uniq.compact +
+            appeals.map(&:intake).compact.map(&:user).uniq.compact
+
+    request_issues = appeals.map(&:request_issues).flatten
 
     {
       Appeal => appeals,
@@ -30,15 +37,16 @@ class SanitizedJsonExporter
       Claimant => appeals.map(&:claimants).flatten,
       Task => tasks,
       TaskTimer => TaskTimer.where(task_id: tasks.map(&:id)),
-      User => tasks.map(&:assigned_by).compact +
-        tasks.assigned_to_user.map(&:assigned_to) +
-        cavc_remands.map { |cavc_remand| [cavc_remand.created_by, cavc_remand.updated_by] }.flatten.uniq +
-        appeals.map(&:intake).compact.map(&:user).uniq,
-      Organization => tasks.assigned_to_org.map(&:assigned_to),
-      CavcRemand => cavc_remands
+      User => users,
+      Organization => tasks.assigned_to_org.map(&:assigned_to) + users.map(&:organizations).flatten.uniq,
+      OrganizationsUser => OrganizationsUser.where(user: users),
+      CavcRemand => cavc_remands,
+      DecisionIssue => appeals.map(&:decision_issues).flatten,
+      RequestIssue => request_issues,
+      RequestDecisionIssue => RequestDecisionIssue.where(request_issue: request_issues)
     }
   end
-  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def appeals_associated_with(appeal)
     appeal.cavc_remand&.source_appeal
@@ -78,7 +86,7 @@ class SanitizedJsonExporter
 
   def sanitize_records(records)
     # keep records in order so that comparisons can be done after import
-    records.uniq.compact.sort_by(&:id).map { |veteran| sanitize(veteran) }
+    records.uniq.compact.sort_by(&:id).map { |record| sanitize(record) }
   end
 
   VETERAN_PII_FIELDS = %w[first_name last_name middle_name file_number ssn].freeze
@@ -103,13 +111,21 @@ class SanitizedJsonExporter
       find_or_create_mapped_value_for(obj_hash, "css_id")
     when Task
       find_or_create_mapped_value_for(obj_hash, "instructions")
-    when Organization, Claimant, TaskTimer
+    when Organization, Claimant, TaskTimer, OrganizationsUser
       # nothing to sanitize
       obj_hash
     when CavcRemand
       # cavc_judge_full_name is selected from Constants::CAVC_JUDGE_FULL_NAMES; no need to sanitize
       # find_or_create_mapped_value_for(obj_hash, "cavc_judge_full_name")
       find_or_create_mapped_value_for(obj_hash, "instructions")
+    when DecisionIssue
+      find_or_create_mapped_value_for(obj_hash, "description")
+      find_or_create_mapped_value_for(obj_hash, "decision_text")
+    when RequestIssue
+      find_or_create_mapped_value_for(obj_hash, "notes")
+      obj_hash.keys.select { |k| k.match?(/_(notes|text|description)/) }.each do |key|
+        find_or_create_mapped_value_for(obj_hash, key)
+      end
     else
       fail "Unsupported object type: #{record.class.name}"
     end
@@ -220,7 +236,8 @@ class SanitizedJsonExporter
 
     def obfuscate_sentence(field_name, field_value)
       case field_name
-      when "instructions", "description", /_text$/
+      when "instructions", "description", "decision_text", "notes", /_text$/, /_notes$/, /_description$/
+        # puts "obfuscate_sentence: #{field_name} = #{field_value}"
         field_value.split.map { |word| word[0..1] }.join(" ")
       end
     end

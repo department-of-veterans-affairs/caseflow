@@ -26,6 +26,8 @@ module SanitizedJsonDifference
       User => orig_users,
       Task => orig_appeals.map(&:tasks).flatten.sort_by(&:id),
       TaskTimer => TaskTimer.where(task_id: orig_tasks.map(&:id)).sort_by(&:id)
+      # TODO: add cavc_r, ri, di, rdi
+      # TODO: print warning about missing by using JSON hashes
     }.each_with_object({}) do |(clazz, orig_records), result| # https://blog.arkency.com/inject-vs-each-with-object/
       key = clazz.table_name
       result[key] = SanitizedJsonDifference.diff_record_lists(orig_records, imported_records[key], mapped_fields[clazz])
@@ -52,15 +54,17 @@ module SanitizedJsonDifference
 
     # Ignore some differences if they are expected or equivalent
     array_diff.map(&:first).uniq.inject([]) do |diffs, key|
-      if ignore_id_offset && integer?(hash_b[key])
-        next diffs if (hash_b[key].to_i - hash_a[key].to_i).abs == ID_OFFSET
+      value_a = hash_a[key]
+      value_b = hash_b[key]
+      if ignore_id_offset && (value_b.is_a?(Integer) || integer?(value_b))
+        next diffs if (value_b.to_i - value_a.to_i).abs == ID_OFFSET
       end
 
       # Handle comparing a timestamp with the string equivalent recognized by JSON.parse
       begin
-        if convert_timestamps && (hash_a[key].try(:to_time) || hash_b[key].try(:to_time))
-          time_a = hash_a[key].try(:to_time)&.to_s || hash_a[key]
-          time_b = hash_b[key].try(:to_time)&.to_s || hash_b[key]
+        if convert_timestamps && (value_a.try(:to_time) || value_b.try(:to_time))
+          time_a = value_a.try(:to_time)&.to_s || value_a
+          time_b = value_b.try(:to_time)&.to_s || value_b
           next diffs if time_a == time_b
 
           next diffs << [key, time_a, time_b]
@@ -69,7 +73,7 @@ module SanitizedJsonDifference
         # occurs when `to_time` is called on a string that is a UUID
       end
 
-      next diffs << [key, hash_a[key], hash_b[key]]
+      next diffs << [key, value_a, value_b]
     end
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity

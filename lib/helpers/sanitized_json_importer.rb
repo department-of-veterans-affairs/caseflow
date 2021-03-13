@@ -56,7 +56,9 @@ class SanitizedJsonImporter
 
   def import_array_of(clazz, key = clazz.table_name, obj_hash_array = @records_hash.fetch(key, []))
     new_records = obj_hash_array.map do |obj_hash|
-      import_record(clazz, obj_hash: obj_hash)
+      fail "No JSON data for records_hash key: #{key}" unless obj_hash
+
+      import_record(clazz, obj_hash)
     end
     imported_records[key] = new_records
     @records_hash.delete(key)
@@ -65,11 +67,9 @@ class SanitizedJsonImporter
   # Classes that shouldn't be imported if a record with the same unique attributes already exists
   NONDUPLICATE_TYPES = [Organization, User, Veteran].freeze
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
-  def import_record(clazz, key: clazz.name, obj_hash: @records_hash[key])
-    fail "No JSON data for key '#{key}'.  Keys: #{@records_hash.keys}" unless obj_hash
-
-    obj_description = "\n\t#{obj_hash['type']} " \
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity
+  def import_record(clazz, obj_hash)
+    obj_description = "\n\tfrom original#{obj_hash['type']} " \
                       "#{obj_hash.select { |obj_key, _v| obj_key.include?('_id') }}"
     # Don't import if certain types of records already exists
     if NONDUPLICATE_TYPES.include?(clazz) && existing_record(clazz, obj_hash)
@@ -98,9 +98,14 @@ class SanitizedJsonImporter
     reassociate_with_imported_records(clazz, obj_hash)
 
     puts "  + Creating #{clazz} #{obj_hash['id']} #{obj_description}"
+    remaining_id_fields = obj_hash.select do |k, v|
+      k.ends_with?("_id") && v.is_a?(Integer) && (v < @id_offset) &&
+        !(clazz <= Task && obj_hash["assigned_to_type"] == "Organization" && k == "assigned_to_id")
+    end
+    puts "!! Need offset?: #{remaining_id_fields}" unless remaining_id_fields.blank?
     create_new_record(orig_id, clazz, obj_hash)
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity
 
   def org_already_exists?(obj_hash)
     Organization.find_by(url: obj_hash["url"]) || Organization.find_by(id: obj_hash["id"])
@@ -119,7 +124,7 @@ class SanitizedJsonImporter
     end
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
   # :reek:FeatureEnvy
   def adjust_ids_by_offset(clazz, obj_hash)
     obj_hash["id"] += @id_offset
@@ -138,9 +143,17 @@ class SanitizedJsonImporter
       obj_hash["remand_appeal_id"] += @id_offset
       # TODO: import referenced decision_issues and request_issues
       obj_hash["decision_issue_ids"] = obj_hash["decision_issue_ids"].map { |id| id + @id_offset }
+    elsif clazz <= OrganizationsUser
+      obj_hash["user_id"] += @id_offset
+      obj_hash["organization_id"] += @id_offset
+    elsif clazz <= DecisionIssue
+      obj_hash["decision_review_id"] += @id_offset
+    elsif clazz <= RequestIssue
+      obj_hash["decision_review_id"] += @id_offset
+      obj_hash["contested_decision_issue_id"] += @id_offset
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
 
   # Using this approach: https://mattpruitt.com/articles/skip-callbacks/
   # Other resources:
