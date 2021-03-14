@@ -2,25 +2,24 @@
 
 module SanitizedJsonDifference
   # fields expected to be different; corresponds with fields in SanitizedJsonExporter#sanitize and SanitizedJsonImporter
-  MAPPED_FIELDS = {
-    Appeal => %w[id veteran_file_number],
-    Veteran => %w[id file_number first_name middle_name last_name ssn],
-    Claimant => %w[id decision_review_id],
-    User => %w[id file_number first_name middle_name last_name ssn css_id email full_name] + [:display_name],
-    Task => %w[id appeal_id parent_id assigned_by_id assigned_to_id instructions],
-    TaskTimer => %w[id task_id],
-    CavcRemand => %w[id created_by_id decision_issue_ids remand_appeal_id source_appeal_id instructions],
-    HearingDay => %w[id],
-    Hearing => %w[id appeal_id created_by_id updated_by_id hearing_day_id],
-    VirtualHearing => %w[id appeal_id alias guest_pin host_pin guest_pin_long host_pin_long representative_email
-                         judge_email
-                         alias_with_host
-                         appellant_email
-                         host_hearing_link
-                         guest_hearing_link
-                         created_by_id updated_by_id hearing_id],
-    HearingTaskAssociation => %w[id created_by_id updated_by_id hearing_id hearing_task_id]
+  ADDITIONAL_MAPPED_FIELDS = {
+    Claimant => %w[decision_review_id],
+    User => [:display_name],
+    Task => %w[appeal_id parent_id assigned_by_id assigned_to_id],
+    TaskTimer => %w[task_id],
+    CavcRemand => %w[created_by_id],
+    Hearing => %w[appeal_id created_by_id updated_by_id hearing_day_id],
+    HearingTaskAssociation => %w[created_by_id updated_by_id hearing_id hearing_task_id]
   }.freeze
+  MAPPED_FIELDS = [
+    SanitizedJsonExporter::SANITIZE_FIELDS,
+    SanitizedJsonExporter::OFFSET_ID_FIELDS,
+    *SanitizedJsonExporter::REASSOCIATE_FIELDS.values,
+    ADDITIONAL_MAPPED_FIELDS
+  ].map(&:to_a).sum.group_by(&:first).transform_values do |value|
+    field_name_arrays = value.map(&:second) + ["id"]
+    field_name_arrays.flatten.uniq
+  end.freeze
 
   def differences(sje, **kwargs)
     orig_appeals = Appeal.where(id: sje.records_hash[Appeal.table_name].pluck("id")).order(:id)

@@ -22,13 +22,16 @@ class SanitizedJsonExporter
     tasks = appeals.map(&:tasks).flatten.sort_by(&:id).extend(TaskAssignment)
     cavc_remands = appeals.map(&:cavc_remand).compact
     hearings = tasks.with_type("HearingTask").map(&:hearing).uniq.compact
+    hearing_days = hearings.map(&:hearing_day).uniq.compact
 
     users = tasks.map(&:assigned_by).compact +
             tasks.assigned_to_user.map(&:assigned_to) +
             cavc_remands.map { |cavc_remand| [cavc_remand.created_by, cavc_remand.updated_by] }.flatten.uniq.compact +
             appeals.map(&:intake).compact.map(&:user).uniq.compact +
+            hearing_days.map { |hd| [hd.created_by, hd.updated_by, hd.judge] }.flatten.uniq.compact +
             hearings.map { |h| [h.created_by, h.updated_by, h.judge] }.flatten.uniq.compact +
-            hearings.map(&:virtual_hearing).uniq.compact.map { |vh| [vh.created_by, vh.updated_by] }.flatten.uniq.compact
+            hearings.map(&:virtual_hearing).uniq.compact
+              .map { |vh| [vh.created_by, vh.updated_by] }.flatten.uniq.compact
 
     request_issues = appeals.map(&:request_issues).flatten
     {
@@ -47,7 +50,7 @@ class SanitizedJsonExporter
       RequestDecisionIssue => RequestDecisionIssue.where(request_issue: request_issues),
       Hearing => hearings,
       HearingTaskAssociation => HearingTaskAssociation.where(hearing: hearings),
-      HearingDay => hearings.map(&:hearing_day).uniq.compact,
+      HearingDay => hearing_days,
       VirtualHearing => hearings.map(&:virtual_hearing).uniq.compact
     }
   end
@@ -74,6 +77,37 @@ class SanitizedJsonExporter
     HearingDay => %w[bva_poc notes],
     VirtualHearing => %w[alias guest_pin host_pin guest_pin_long host_pin_long representative_email
                          judge_email alias_with_host appellant_email host_hearing_link guest_hearing_link]
+  }.freeze
+
+  # To-do: load this from a file or automatically determine fields to sanitize
+  # https://stackoverflow.com/questions/13355549/rails-activerecord-detect-if-a-column-is-an-association-or-not
+  OFFSET_ID_FIELDS = {
+    Task => %w[appeal_id parent_id],
+    Claimant => %w[decision_review_id],
+    TaskTimer => %w[task_id],
+    AppealIntake => %w[detail_id],
+    CavcRemand => %w[source_appeal_id remand_appeal_id decision_issue_ids],
+    OrganizationsUser => %w[user_id organization_id],
+    DecisionIssue => %w[decision_review_id],
+    RequestIssue => %w[decision_review_id contested_decision_issue_id],
+    RequestDecisionIssue => %w[request_issue_id decision_issue_id],
+    Hearing => %w[appeal_id hearing_day_id],
+    HearingTaskAssociation => %w[hearing_id hearing_task_id],
+    VirtualHearing => %w[hearing_id]
+  }.freeze
+
+  REASSOCIATE_FIELDS = {
+    "User" => {
+      Task => %w[assigned_by_id],
+      AppealIntake => %w[user_id],
+      CavcRemand => %w[created_by_id updated_by_id],
+      Hearing => %w[created_by_id updated_by_id],
+      HearingDay => %w[created_by_id updated_by_id judge_id],
+      VirtualHearing => %w[created_by_id updated_by_id]
+    },
+    :type => {
+      Task => %w[assigned_to_id]
+    }
   }.freeze
 
   def appeals_associated_with(appeal)
