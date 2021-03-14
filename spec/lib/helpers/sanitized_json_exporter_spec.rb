@@ -351,7 +351,7 @@ describe "SanitizedJsonExporter/Importer" do
       let(:sentence) { "ARMY 09/09/1993 - 06/12/1996, Honorable" }
       it "returns fake military_service" do
         expect(subject).not_to eq sentence
-        expect(subject).to match /.* - .*,/
+        expect(subject).to match(/.* - .*,/)
       end
     end
     context "given summary field" do
@@ -359,7 +359,7 @@ describe "SanitizedJsonExporter/Importer" do
       let(:sentence) { "<p><strong>Contentions</strong>&nbsp;</p> blah <p><strong>Evidence</strong>&nbsp;</p> ..." }
       it "returns fake summary" do
         expect(subject).not_to eq sentence
-        expect(subject).to match /.*Contentions.*/
+        expect(subject).to match(/.*Contentions.*/)
       end
     end
   end
@@ -376,7 +376,7 @@ describe "SanitizedJsonExporter/Importer" do
         sje.value_mapping[""] = ""
       end
       it "does not loop indefinitely" do
-        expect(SanitizedJsonExporter).to receive(:obfuscate_sentence).and_call_original
+        expect(SanitizedJsonExporter).to receive(:obfuscate_sentence).and_call_original.at_least(:once)
         subject
         expect(obj_hash[field_name]).to eq ""
       end
@@ -386,7 +386,7 @@ describe "SanitizedJsonExporter/Importer" do
       let(:field_name) { "instructions" }
       let(:obj_hash) { { field_name => ["instruct me", "me too"] } }
       it "sets a new array with new values" do
-        expect(SanitizedJsonExporter).to receive(:obfuscate_sentence).and_call_original.exactly(2).times
+        expect(SanitizedJsonExporter).to receive(:obfuscate_sentence).and_call_original.at_least(:once)
         subject
         expect(obj_hash[field_name]).to eq ["in me", "me to"]
       end
@@ -521,6 +521,7 @@ describe "SanitizedJsonExporter/Importer" do
         # Check PII values are not in file_contents
         expect(sje.file_contents).not_to include(*pii_values)
         # Check file_contents uses fake values instead of PII values
+        expect(sje.value_mapping.size).to eq 16
         expect(sje.file_contents).to include(*sje.value_mapping.values)
       end
     end
