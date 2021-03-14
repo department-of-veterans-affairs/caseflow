@@ -24,26 +24,14 @@ class SanitizedJsonExporter
     hearings = tasks.with_type("HearingTask").map(&:hearing).uniq.compact
     hearing_days = hearings.map(&:hearing_day).uniq.compact
 
-    users = tasks.map(&:assigned_by).compact +
-            tasks.assigned_to_user.map(&:assigned_to) +
-            cavc_remands.map { |cavc_remand| [cavc_remand.created_by, cavc_remand.updated_by] }.flatten.uniq.compact +
-            appeals.map(&:intake).compact.map(&:user).uniq.compact +
-            hearing_days.map { |hd| [hd.created_by, hd.updated_by, hd.judge] }.flatten.uniq.compact +
-            hearings.map { |h| [h.created_by, h.updated_by, h.judge] }.flatten.uniq.compact +
-            hearings.map(&:virtual_hearing).uniq.compact
-              .map { |vh| [vh.created_by, vh.updated_by] }.flatten.uniq.compact
-
     request_issues = appeals.map(&:request_issues).flatten
-    {
+    export_records = {
       Appeal => appeals,
       AppealIntake => appeals.map(&:intake),
       Veteran => appeals.map(&:veteran),
       Claimant => appeals.map(&:claimants).flatten,
       Task => tasks,
       TaskTimer => TaskTimer.where(task_id: tasks.map(&:id)),
-      User => users,
-      Organization => tasks.assigned_to_org.map(&:assigned_to) + users.map(&:organizations).flatten.uniq,
-      OrganizationsUser => OrganizationsUser.where(user: users),
       CavcRemand => cavc_remands,
       DecisionIssue => appeals.map(&:decision_issues).flatten,
       RequestIssue => request_issues,
@@ -53,20 +41,36 @@ class SanitizedJsonExporter
       HearingDay => hearing_days,
       VirtualHearing => hearings.map(&:virtual_hearing).uniq.compact
     }
+
+    users = tasks.map(&:assigned_by).compact + tasks.map(&:cancelled_by).compact +
+            tasks.assigned_to_user.map(&:assigned_to) +
+            cavc_remands.map { |cavc_remand| [cavc_remand.created_by, cavc_remand.updated_by] }.flatten.uniq.compact +
+            appeals.map(&:intake).compact.map(&:user).uniq.compact +
+            hearing_days.map { |hd| [hd.created_by, hd.updated_by, hd.judge] }.flatten.uniq.compact +
+            hearings.map { |h| [h.created_by, h.updated_by, h.judge] }.flatten.uniq.compact +
+            hearings.map(&:virtual_hearing).uniq.compact
+              .map { |vh| [vh.created_by, vh.updated_by] }.flatten.uniq.compact
+    export_records.merge!(
+      User => users,
+      Organization => tasks.assigned_to_org.map(&:assigned_to) + users.map(&:organizations).flatten.uniq,
+      OrganizationsUser => OrganizationsUser.where(user: users),
+      Person => (export_records[Veteran] + export_records[Claimant]).map(&:person).uniq.compact
+    )
   end
   # rubocop:enable
 
   # To-do: load this from a file or automatically determine fields to sanitize
-  SANITIZE_FIELDS = {
+  SANITIZE_FIELDS ||= {
     Appeal => %w[veteran_file_number],
     AppealIntake => %w[veteran_file_number],
     Veteran => %w[first_name last_name middle_name file_number ssn],
+    Claimant => %w[],
     User => %w[full_name email css_id],
+    Person => %w[date_of_birth email_address first_name last_name middle_name ssn],
     Task => %w[instructions],
     # cavc_judge_full_name is selected from Constants::CAVC_JUDGE_FULL_NAMES; no need to sanitize
     CavcRemand => %w[instructions],
     Organization => %w[],
-    Claimant => %w[],
     TaskTimer => %w[],
     OrganizationsUser => %w[],
     RequestDecisionIssue => %w[],
@@ -79,9 +83,17 @@ class SanitizedJsonExporter
                          judge_email alias_with_host appellant_email host_hearing_link guest_hearing_link]
   }.freeze
 
+  def self.typed_field_names_associated_with(clazz, ignore_fieldnames = OFFSET_ID_FIELDS[clazz])
+    belongs_to_associations = clazz.reflect_on_all_associations.select { |a| a.macro == :belongs_to }
+    fieldnames = belongs_to_associations.select { |assoc| assoc.foreign_type }
+      .reject { |assoc| ignore_fieldnames.include?(assoc.foreign_key) }
+      .map { |assoc| assoc.foreign_key }
+      .compact.sort
+    fieldnames unless fieldnames.blank?
+  end
+  
   # To-do: load this from a file or automatically determine fields to sanitize
-  # https://stackoverflow.com/questions/13355549/rails-activerecord-detect-if-a-column-is-an-association-or-not
-  OFFSET_ID_FIELDS = {
+  OFFSET_ID_FIELDS ||= {
     Task => %w[appeal_id parent_id],
     Claimant => %w[decision_review_id],
     TaskTimer => %w[task_id],
@@ -92,22 +104,37 @@ class SanitizedJsonExporter
     RequestIssue => %w[decision_review_id contested_decision_issue_id],
     RequestDecisionIssue => %w[request_issue_id decision_issue_id],
     Hearing => %w[appeal_id hearing_day_id],
+    HearingDay => %w[],
     HearingTaskAssociation => %w[hearing_id hearing_task_id],
     VirtualHearing => %w[hearing_id]
   }.freeze
 
-  REASSOCIATE_FIELDS = {
-    "User" => {
-      Task => %w[assigned_by_id],
-      AppealIntake => %w[user_id],
-      CavcRemand => %w[created_by_id updated_by_id],
-      Hearing => %w[created_by_id updated_by_id],
-      HearingDay => %w[created_by_id updated_by_id judge_id],
-      VirtualHearing => %w[created_by_id updated_by_id]
-    },
-    :type => {
-      Task => %w[assigned_to_id]
-    }
+  # https://stackoverflow.com/questions/13355549/rails-activerecord-detect-if-a-column-is-an-association-or-not
+  def self.fieldnames_of_untyped_associations_with(assoc_class, clazz)
+    # TODO: handle assoc.foreign_key.is_a?(Symbol)
+    fieldnames = clazz.reflect_on_all_associations.select { |assoc| assoc.macro == :belongs_to && assoc.foreign_type.nil? && assoc.foreign_key.is_a?(String)}
+      .map { |assoc| assoc.foreign_key if assoc.class_name == assoc_class.name }
+      .compact
+    fieldnames unless fieldnames.blank?
+  end
+
+  def self.fieldnames_of_typed_associations_for(clazz, ignore_fieldnames = OFFSET_ID_FIELDS[clazz])
+    fieldnames = clazz.reflect_on_all_associations.select { |assoc| assoc.macro == :belongs_to && assoc.foreign_type }
+      .reject { |assoc| ignore_fieldnames.include?(assoc.foreign_key) }
+      .map { |assoc| assoc.foreign_key }
+      .compact
+    fieldnames unless fieldnames.blank?
+  end
+
+  REASSOCIATE_FIELDS ||= {
+    # These untyped association fields will associate to the User ActiveRecord
+    "User" => OFFSET_ID_FIELDS.keys.map { |clazz| [clazz, fieldnames_of_untyped_associations_with(User, clazz)] }.to_h.compact,
+    # These typed association fields will associate to the their corresponding ActiveRecord
+    :type => OFFSET_ID_FIELDS.keys.map { |clazz| [clazz, fieldnames_of_typed_associations_for(clazz)] }.to_h.compact,
+  }.freeze
+
+  IGNORED_ID_FIELDS ||= {
+    RequestIssue => %w[end_product_establishment_id corrected_by_request_issue_id ineligible_due_to_id]
   }.freeze
 
   def appeals_associated_with(appeal)

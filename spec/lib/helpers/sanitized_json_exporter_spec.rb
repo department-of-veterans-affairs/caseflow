@@ -153,6 +153,29 @@ describe "SanitizedJsonExporter/Importer" do
     end
   end
 
+  describe ".fieldnames_of_untyped_associations_with User records" do
+    subject { SanitizedJsonExporter.fieldnames_of_untyped_associations_with(User, target_class) }
+    context "for Task class" do
+      let(:target_class) { Task }
+      it "returns fieldname associated with User records" do
+        expect(subject).to match_array %w[assigned_by_id cancelled_by_id]
+      end
+    end
+    context "for Hearing class" do
+      let(:target_class) { Hearing }
+      it "returns fieldname associated with User records" do
+        expect(subject).to match_array %w[created_by_id judge_id updated_by_id]
+      end
+    end
+    context "for AppealIntake class" do
+      let(:target_class) { AppealIntake }
+      it "returns fieldname associated with User records" do
+        expect(subject).to match_array %w[user_id]
+        pp SanitizedJsonExporter::REASSOCIATE_FIELDS[:type].transform_keys(&:name)
+      end
+    end
+  end
+
   describe "#find_or_create_mapped_value_for" do
     let(:sje) { SanitizedJsonExporter.new(create(:appeal)) }
     subject { sje.send(:find_or_create_mapped_value_for, obj_hash, field_name) }
@@ -244,8 +267,6 @@ describe "SanitizedJsonExporter/Importer" do
         [
           appeal.veteran_file_number,
           appeal.veteran.file_number,
-          appeal.veteran.first_name,
-          appeal.veteran.last_name,
           appeal.veteran.ssn
         ]).uniq
     end
@@ -278,7 +299,6 @@ describe "SanitizedJsonExporter/Importer" do
         # Check PII values are in file_contents
         expect(sje.file_contents).not_to include(*pii_values)
         # Check file_contents uses fake values instead of PII values
-        expect(sje.value_mapping.size).to be_within(1).of(16)
         expect(sje.file_contents).to include(*sje.value_mapping.values)
       end
     end
@@ -394,6 +414,7 @@ describe "SanitizedJsonExporter/Importer" do
                           "intakes" => 0,
                           "veterans" => 1,
                           "claimants" => 2,
+                          "people" => 3,
                           "tasks" => 6,
                           "task_timers" => 1,
                           "organizations_users" => 0,
@@ -484,7 +505,7 @@ describe "SanitizedJsonExporter/Importer" do
       pp sji.differences(sje, ignore_expected_diffs: false).transform_values(&:count)
       # pp sji.differences(sje, ignore_expected_diffs: false)
       diffs = sji.differences(sje)
-      pp diffs
+      # pp diffs
       expect(diffs.values.flatten).to be_empty
     end
   end
