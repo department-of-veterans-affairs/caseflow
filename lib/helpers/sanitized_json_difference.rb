@@ -1,16 +1,13 @@
 # frozen_string_literal: true
 
+require "helpers/sanitized_json_exporter.rb"
+
 module SanitizedJsonDifference
-  # fields expected to be different; corresponds with fields in SanitizedJsonExporter#sanitize and SanitizedJsonImporter
   ADDITIONAL_MAPPED_FIELDS = {
-    Claimant => %w[decision_review_id],
-    User => [:display_name],
-    Task => %w[appeal_id parent_id assigned_by_id assigned_to_id],
-    TaskTimer => %w[task_id],
-    CavcRemand => %w[created_by_id],
-    Hearing => %w[appeal_id created_by_id updated_by_id hearing_day_id],
-    HearingTaskAssociation => %w[created_by_id updated_by_id hearing_id hearing_task_id]
+    User => [:display_name]
   }.freeze
+
+  # fields expected to be different; corresponds with fields in SanitizedJsonExporter#sanitize and SanitizedJsonImporter
   MAPPED_FIELDS = [
     SanitizedJsonExporter::SANITIZE_FIELDS,
     SanitizedJsonExporter::OFFSET_ID_FIELDS,
@@ -98,4 +95,12 @@ module SanitizedJsonDifference
     end
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
+
+  def self.integer?(thing)
+    begin
+      Integer(thing)
+    rescue StandardError
+      false
+    end
+  end
 end

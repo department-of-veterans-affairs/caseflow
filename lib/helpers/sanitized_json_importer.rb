@@ -34,7 +34,7 @@ class SanitizedJsonImporter
         import_array_of(User)
         import_array_of(Organization)
 
-        # needed for Hearing to be created
+        # HearingDay is needed for Hearing records to be created
         import_array_of(HearingDay)
 
         @records_hash.except("metadata").each do |key, obj_hash_array|
@@ -58,7 +58,7 @@ class SanitizedJsonImporter
   end
 
   # Classes that shouldn't be imported if a record with the same unique attributes already exists
-  NONDUPLICATE_TYPES = [Organization, User, Veteran].freeze
+  NONDUPLICATE_TYPES = [Organization, User, Veteran, Person].freeze
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity
   def import_record(clazz, obj_hash)
@@ -95,7 +95,8 @@ class SanitizedJsonImporter
       field_name.ends_with?("_id") && field_value.is_a?(Integer) && (field_value < @id_offset) &&
         !(clazz <= Task && obj_hash["assigned_to_type"] == "Organization" && field_name == "assigned_to_id")
     end
-    puts "!! Need offset?: #{remaining_id_fields}" unless remaining_id_fields.blank?
+    fail "!! For #{clazz}, expecting these *'_id' fields be adjusted: #{remaining_id_fields}\n\tobj_hash: #{obj_hash}" unless remaining_id_fields.blank?
+
     create_new_record(orig_id, clazz, obj_hash)
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity
@@ -111,13 +112,11 @@ class SanitizedJsonImporter
     elsif clazz <= User
       # Change CSS_ID if it already exists for a user with different user.id
       obj_hash["css_id"] += "_imported" if User.find_by_css_id(obj_hash["css_id"])
-    elsif clazz <= CavcRemand
-      # Avoid "Validation failed: Cavc judge full name is not included in the list"
-      # obj_hash["cavc_judge_full_name"] = Constants::CAVC_JUDGE_FULL_NAMES.sample
     end
   end
 
   OFFSET_ID_TABLE_FIELDS = SanitizedJsonExporter::OFFSET_ID_FIELDS.transform_keys(&:table_name).freeze
+
   # :reek:FeatureEnvy
   def adjust_ids_by_offset(clazz, obj_hash)
     obj_hash["id"] += @id_offset
@@ -157,37 +156,39 @@ class SanitizedJsonImporter
     @id_mapping ||= ID_MAPPING_TYPES.map { |clazz| [clazz.name, {}] }.to_h
   end
 
+  SKIP_VALIDATION_AND_CALLBACKS_TYPES = [Task].map(&:table_name).freeze
+
   # :reek:FeatureEnvy
   def create_new_record(orig_id, clazz, obj_hash)
     # Record new id for certain record types
     id_mapping[clazz.name][orig_id] = obj_hash["id"] if ID_MAPPING_TYPES.include?(clazz)
 
-    if clazz <= Task
+    if SKIP_VALIDATION_AND_CALLBACKS_TYPES.include?(clazz.table_name)
       # Create the task without validation or callbacks
-      new_task = Task.new(obj_hash)
+      new_task = clazz.new(obj_hash)
       new_task.extend(SkipCallbacks) # monkeypatch only this in-memory instance of the task
       new_task.save(validate: false)
-      return new_task
+      new_task
+    else
+      clazz.create!(obj_hash)
     end
-
-    clazz.create!(obj_hash)
   end
 
   REASSOCIATE_TYPE_TABLE_FIELDS = SanitizedJsonExporter::REASSOCIATE_FIELDS[:type].transform_keys(&:table_name).freeze
   REASSOCIATE_TABLE_FIELDS_HASH = SanitizedJsonExporter::REASSOCIATE_FIELDS
-    .select { |type_string, _class_to_fieldnames_hash| type_string.is_a?(String) }
+    .select { |type_string, _| type_string.is_a?(String) }
     .transform_values { |class_to_fieldnames_hash| class_to_fieldnames_hash.transform_keys(&:table_name) }.freeze
 
   # :reek:FeatureEnvy
   def reassociate_with_imported_records(clazz, obj_hash)
     REASSOCIATE_TYPE_TABLE_FIELDS[clazz.table_name]&.each do |field_name|
-      next puts "!!! Expecting field_name to end with '_id' but got: #{field_name}" unless field_name.ends_with?("_id")
+      fail "!!! Expecting field_name to end with '_id' but got: #{field_name}" unless field_name.ends_with?("_id")
 
       assigned_to_type = obj_hash[field_name.sub(/_id$/, "_type")]
       reassociate(obj_hash, field_name, assigned_to_type)
     end
 
-    # For each type in ID_MAPPING_TYPES, iterate through each field_name in reassociate_table_fields
+    # For each type in REASSOCIATE_TABLE_FIELDS_HASH, iterate through each field_name in reassociate_table_fields
     # and reassociate the field to the imported record
     REASSOCIATE_TABLE_FIELDS_HASH.each do |association_type, reassociate_table_fields|
       reassociate_table_fields[clazz.table_name]&.each do |field_name|
@@ -201,7 +202,7 @@ class SanitizedJsonImporter
     return unless orig_record_id
 
     obj_hash[id_field] = record_id_mapping[orig_record_id] if record_id_mapping[orig_record_id]
-    puts "reassociated #{id_field}: #{association_type} #{orig_record_id}->#{obj_hash[id_field]}"
+    # puts "reassociated #{id_field}: #{association_type} #{orig_record_id}->#{obj_hash[id_field]}"
   end
 
   def existing_record(clazz, obj_hash)
@@ -218,16 +219,12 @@ class SanitizedJsonImporter
       existing_record.css_id == obj_hash["css_id"]
     when Claimant
       # check if claimant is associated with appeal we just imported
-      new_appeal_id = id_mapping[Appeal.name][obj_hash["decision_review_id"]]
-      existing_record.decision_review_id == new_appeal_id
-    end
-  end
-
-  private_class_method def self.integer?(thing)
-    begin
-      Integer(thing)
-    rescue StandardError
-      false
+      imported_appeal_id = id_mapping[Appeal.name][obj_hash["decision_review_id"]]
+      existing_record.decision_review_id == imported_appeal_id
+    when Person
+      # To-do: Person.connection.index_exists? :people, :participant_id
+      # To-do: ActiveRecord::Base.connection.indexes(Person.table_name).select{|idx| idx.unique}
+      existing_record.participant_id == obj_hash["participant_id"]
     end
   end
 end

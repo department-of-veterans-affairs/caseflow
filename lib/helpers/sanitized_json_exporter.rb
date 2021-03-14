@@ -173,10 +173,10 @@ class SanitizedJsonExporter
       SANITIZE_TABLE_FIELDS[record.class.table_name].each do |field_name|
         if field_name.is_a?(Regexp)
           obj_hash.keys.select { |k| k.match?(field_name) }.each do |key|
-            find_or_create_mapped_value_for(obj_hash, key)
+            find_or_create_mapped_value_for(obj_hash, key, obj_class: record.class)
           end
         elsif field_name.is_a?(String)
-          find_or_create_mapped_value_for(obj_hash, field_name)
+          find_or_create_mapped_value_for(obj_hash, field_name, obj_class: record.class)
         elsif obj_hash.key?(field_name)
           fail "#{record.class} record doesn't have field_name '#{field_name}': #{obj_hash}"
         else
@@ -190,12 +190,12 @@ class SanitizedJsonExporter
   end
   # rubocop:enable
 
-  def find_or_create_mapped_value_for(obj_hash, field_name)
+  def find_or_create_mapped_value_for(obj_hash, field_name, **kwargs)
     return unless obj_hash[field_name]
 
     # Loop to ensure hash @value_mapping has a different value for each distinct key
     10.times do
-      obj_hash[field_name] = find_or_create_mapped_value(obj_hash[field_name], field_name)
+      obj_hash[field_name] = find_or_create_mapped_value(obj_hash[field_name], field_name, **kwargs)
       break if @value_mapping.values.uniq.size == @value_mapping.size
 
       puts "Value '#{obj_hash[field_name]}' for field #{field_name} is already used; trying again"
@@ -203,41 +203,45 @@ class SanitizedJsonExporter
     obj_hash[field_name]
   end
 
-  def find_or_create_mapped_value(orig_value, field_name = nil, transform_method = nil)
+  def find_or_create_mapped_value(orig_value, field_name = nil, **kwargs)
     mapped_value = @value_mapping.fetch(orig_value) do
       if orig_value.is_a?(Array)
-        value_and_transforms = orig_value.map { |val| map_value(val, field_name, transform_method: transform_method) }
+        value_and_transforms = orig_value.map { |val| map_value(val, field_name, **kwargs) }
         value_and_transforms.map(&:first)
       else
-        map_value(orig_value, field_name, transform_method: transform_method).first
+        map_value(orig_value, field_name, **kwargs).first
       end
     end
     mapped_value || fail("Don't know how to map value '#{orig_value}' for field '#{field_name}'")
   end
 
-  TRANSFORM_METHODS = [:mixup_css_id, :random_person_name, :invalid_ssn, :random_email, :obfuscate_sentence].freeze
-
   # fields whose mapped value should not be saved to the @value_mapping hash,
   # e.g., due to distinct orig_values mapping to the same new_value
-  MAPPED_VALUES_IGNORED_FIELDS = %w[].freeze
+  MAPPED_VALUES_IGNORED_FIELDS = %w[first_name middle_name last_name].freeze
+  MAPPED_VALUES_IGNORED_TRANSFORMS = [:obfuscate_sentence, :similar_date].freeze
 
-  def map_value(orig_value, field_name, transform_method: nil)
+  def map_value(orig_value, field_name, obj_class: nil, transform_method: nil)
     # find the first of TRANSFORM_METHODS that returns a non-nil value
     transform_method ||= TRANSFORM_METHODS.find { |method| self.class.send(method, field_name, orig_value) }
+    fail "For #{obj_class.name} field '#{field_name}' with value '#{orig_value}' of class #{orig_value.class}, could not find a transform_method" unless transform_method
+
     new_value = self.class.send(transform_method, field_name, orig_value)
 
     # Don't save the value_mapping for certain transforms
-    if transform_method != :obfuscate_sentence && !MAPPED_VALUES_IGNORED_FIELDS.include?(field_name)
+    if !(MAPPED_VALUES_IGNORED_TRANSFORMS.include?(transform_method) || MAPPED_VALUES_IGNORED_FIELDS.include?(field_name))
       @value_mapping[orig_value] = new_value
     end
     [new_value, transform_method]
   end
 
+  # To-do: generate the automatically
+  TRANSFORM_METHODS = [:mixup_css_id, :random_person_name, :invalid_ssn, :random_email, :obfuscate_sentence, :similar_date, :random_pin].freeze
+
   class << self
     # :reek:RepeatedConditionals
     def random_email(field_name, field_value)
       case field_name
-      when /email$/
+      when "email_address", /email$/
         Faker::Internet.email
       else
         case field_value
@@ -287,6 +291,18 @@ class SanitizedJsonExporter
         witnesses.join(", ")
       when /_name$/
         Faker::Name.first_name
+      end
+    end
+
+    def similar_date(field_name, field_value)
+      case field_name
+      when "date_of_birth"
+        case field_value
+        when Date
+          Faker::Date.between_except(from: field_value - 1.year, to: field_value, excepted: field_value)
+        when /^\d{4}-\d{2}-\d{2}$/
+          Faker::Date.between_except(from: Date.parse(field_value) - 1.year, to: field_value, excepted: field_value).to_json
+        end
       end
     end
 

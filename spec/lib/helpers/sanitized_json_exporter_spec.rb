@@ -85,6 +85,26 @@ describe "SanitizedJsonExporter/Importer" do
     end
   end
 
+  describe ".similar_date" do
+    subject { SanitizedJsonExporter.similar_date("date_of_birth", orig_value) }
+    context "given date_of_birth as Date" do
+      let(:orig_value) { Date.parse("1938-09-05") }
+      it "returns random Date in the last year prior to orig_value" do
+        expect(subject).not_to eq orig_value
+        expect(subject.is_a?(Date)).to be true
+        expect(subject).to be_within(1.year).of(orig_value)
+      end
+    end
+    context "given date_of_birth as string" do
+      let(:orig_value) { "1938-09-05" }
+      it "returns random date string in the last year prior to orig_value" do
+        expect(subject).not_to eq orig_value
+        expect(subject.is_a?(String)).to be true
+        expect(Date.parse(subject)).to be_within(1.year).of(Date.parse(orig_value))
+      end
+    end
+  end
+
   describe ".mixup_css_id" do
     subject { SanitizedJsonExporter.mixup_css_id("css_id", css_id) }
     context "given CSS_ID" do
