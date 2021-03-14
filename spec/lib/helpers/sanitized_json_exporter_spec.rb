@@ -26,7 +26,7 @@ describe "SanitizedJsonExporter/Importer" do
     subject { SanitizedJsonExporter.random_pin(field_name, orig_value) }
     let(:field_name) { "guest_pin" }
     context "given fieldname ending with 'pin' and string value" do
-      let(:orig_value) { "1234567" }
+      let(:orig_value) { "12345" }
       it "returns fake PIN string" do
         expect(subject).not_to eq orig_value
         expect(subject.is_a?(String)).to be true
@@ -35,7 +35,7 @@ describe "SanitizedJsonExporter/Importer" do
       end
     end
     context "given fieldname ending with 'pin' and number value" do
-      let(:orig_value) { 1234567 }
+      let(:orig_value) { 1234 }
       it "returns fake PIN integer" do
         expect(subject).not_to eq orig_value
         expect(subject.is_a?(Integer)).to be true
@@ -80,7 +80,7 @@ describe "SanitizedJsonExporter/Importer" do
       let(:field_name) { "witness" }
       it "returns witness list as a string" do
         expect(subject).not_to eq orig_value
-        expect(subject).to match /^.* \(.*\)$/
+        expect(subject).to match(/^.* \(.*\)$/)
       end
     end
   end
@@ -120,7 +120,7 @@ describe "SanitizedJsonExporter/Importer" do
       let(:sentence) { "ARMY 09/09/1993 - 06/12/1996, Honorable" }
       it "returns fake military_service" do
         expect(subject).not_to eq sentence
-        expect(subject).to match /.* - .*,/
+        expect(subject).to match(/.* - .*,/)
       end
     end
     context "given summary field" do
@@ -128,7 +128,7 @@ describe "SanitizedJsonExporter/Importer" do
       let(:sentence) { "<p><strong>Contentions</strong>&nbsp;</p> blah <p><strong>Evidence</strong>&nbsp;</p> ..." }
       it "returns fake summary" do
         expect(subject).not_to eq sentence
-        expect(subject).to match /.*Contentions.*/
+        expect(subject).to match(/.*Contentions.*/)
       end
     end
   end
@@ -145,7 +145,7 @@ describe "SanitizedJsonExporter/Importer" do
         sje.value_mapping[""] = ""
       end
       it "does not loop indefinitely" do
-        expect(SanitizedJsonExporter).to receive(:obfuscate_sentence).and_call_original
+        expect(SanitizedJsonExporter).to receive(:obfuscate_sentence).and_call_original.at_least(:once)
         subject
         expect(obj_hash[field_name]).to eq ""
       end
@@ -155,7 +155,7 @@ describe "SanitizedJsonExporter/Importer" do
       let(:field_name) { "instructions" }
       let(:obj_hash) { { field_name => ["instruct me", "me too"] } }
       it "sets a new array with new values" do
-        expect(SanitizedJsonExporter).to receive(:obfuscate_sentence).and_call_original.exactly(2).times
+        expect(SanitizedJsonExporter).to receive(:obfuscate_sentence).and_call_original.at_least(:once)
         subject
         expect(obj_hash[field_name]).to eq ["in me", "me to"]
       end
@@ -258,6 +258,7 @@ describe "SanitizedJsonExporter/Importer" do
         # Check PII values are in file_contents
         expect(sje.file_contents).not_to include(*pii_values)
         # Check file_contents uses fake values instead of PII values
+        expect(sje.value_mapping.size).to eq 16
         expect(sje.file_contents).to include(*sje.value_mapping.values)
       end
     end
@@ -460,7 +461,6 @@ describe "SanitizedJsonExporter/Importer" do
                             sji.imported_records.transform_values(&:count).to_a
       expect(not_imported_counts).to eq [["metadata", 1]]
 
-      orig_users = User.where(id: sje.records_hash["users"].pluck("id")).order(:id)
       pp sji.differences(sje, ignore_expected_diffs: false).transform_values(&:count)
       # pp sji.differences(sje, ignore_expected_diffs: false)
       diffs = sji.differences(sje)

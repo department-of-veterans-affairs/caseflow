@@ -16,7 +16,6 @@ class SanitizedJsonExporter
     end
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def records_to_export(initial_appeals)
     associated_appeals = initial_appeals.map { |appeal| appeals_associated_with(appeal) }.flatten.uniq.compact
     appeals = (initial_appeals + associated_appeals).uniq
@@ -52,7 +51,30 @@ class SanitizedJsonExporter
       VirtualHearing => hearings.map(&:virtual_hearing).uniq.compact
     }
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:enable
+
+  # To-do: load this from a file or automatically determine fields to sanitize
+  SANITIZE_FIELDS = {
+    Appeal => %w[veteran_file_number],
+    AppealIntake => %w[veteran_file_number],
+    Veteran => %w[first_name last_name middle_name file_number ssn],
+    User => %w[full_name email css_id],
+    Task => %w[instructions],
+    # cavc_judge_full_name is selected from Constants::CAVC_JUDGE_FULL_NAMES; no need to sanitize
+    CavcRemand => %w[instructions],
+    Organization => %w[],
+    Claimant => %w[],
+    TaskTimer => %w[],
+    OrganizationsUser => %w[],
+    RequestDecisionIssue => %w[],
+    RequestIssue => ["notes", /_(notes|text|description)/],
+    DecisionIssue => %w[description decision_text],
+    HearingTaskAssociation => %w[],
+    Hearing => %w[notes military_service summary bva_poc representative_name witness],
+    HearingDay => %w[bva_poc notes],
+    VirtualHearing => %w[alias guest_pin host_pin guest_pin_long host_pin_long representative_email
+                         judge_email alias_with_host appellant_email host_hearing_link guest_hearing_link]
+  }.freeze
 
   def appeals_associated_with(appeal)
     appeal.cavc_remand&.source_appeal
@@ -99,69 +121,40 @@ class SanitizedJsonExporter
     records.uniq.compact.sort_by(&:id).map { |record| sanitize(record) }
   end
 
-  VETERAN_PII_FIELDS = %w[first_name last_name middle_name file_number ssn].freeze
+  KNOWN_CLASSES = SANITIZE_FIELDS.keys.freeze
+  SANITIZE_TABLE_FIELDS = SANITIZE_FIELDS.transform_keys(&:table_name).freeze
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
   def sanitize(record)
     obj_hash = self.class.record_to_hash(record)
     return obj_hash unless @sanitize
 
     case record
-    when Appeal, AppealIntake
-      find_or_create_mapped_value_for(obj_hash, "veteran_file_number")
-    when Veteran
-      VETERAN_PII_FIELDS.each do |field|
-        find_or_create_mapped_value_for(obj_hash, field)
-      end
     when User
       # User#attributes includes `display_name`; don't need it when importing so leave it out
       obj_hash.delete(:display_name)
-      find_or_create_mapped_value_for(obj_hash, "full_name")
-      find_or_create_mapped_value_for(obj_hash, "email")
-      find_or_create_mapped_value_for(obj_hash, "css_id")
-    when Task
-      find_or_create_mapped_value_for(obj_hash, "instructions")
-    when Organization, Claimant, TaskTimer, OrganizationsUser, RequestDecisionIssue, HearingTaskAssociation
-      # nothing to sanitize
-      obj_hash
-    when CavcRemand
-      # cavc_judge_full_name is selected from Constants::CAVC_JUDGE_FULL_NAMES; no need to sanitize
-      # find_or_create_mapped_value_for(obj_hash, "cavc_judge_full_name")
-      find_or_create_mapped_value_for(obj_hash, "instructions")
-    when DecisionIssue
-      find_or_create_mapped_value_for(obj_hash, "description")
-      find_or_create_mapped_value_for(obj_hash, "decision_text")
-    when RequestIssue
-      find_or_create_mapped_value_for(obj_hash, "notes")
-      obj_hash.keys.select { |k| k.match?(/_(notes|text|description)/) }.each do |key|
-        find_or_create_mapped_value_for(obj_hash, key)
-      end
-    when Hearing
-      find_or_create_mapped_value_for(obj_hash, "notes")
-      find_or_create_mapped_value_for(obj_hash, "military_service")
-      find_or_create_mapped_value_for(obj_hash, "summary")
-      find_or_create_mapped_value_for(obj_hash, "bva_poc")
-      find_or_create_mapped_value_for(obj_hash, "representative_name")
-      find_or_create_mapped_value_for(obj_hash, "witness")
-    when VirtualHearing
-      %w[alias guest_pin host_pin guest_pin_long host_pin_long representative_email
-         judge_email
-         alias_with_host
-         appellant_email
-         host_hearing_link
-         guest_hearing_link].each do |field_name|
-        find_or_create_mapped_value_for(obj_hash, field_name)
-      end
-    when HearingDay
-      find_or_create_mapped_value_for(obj_hash, "bva_poc")
-      find_or_create_mapped_value_for(obj_hash, "notes")
-    else
-      fail "Unsupported object type: #{record.class.name}"
     end
 
-    obj_hash
+    if KNOWN_CLASSES.any? { |klass| record.is_a?(klass) }
+      # Use table_name to handle subclasses/STI: e.g., a HearingTask record maps to table "tasks"
+      SANITIZE_TABLE_FIELDS[record.class.table_name].each do |field_name|
+        if field_name.is_a?(Regexp)
+          obj_hash.keys.select { |k| k.match?(field_name) }.each do |key|
+            find_or_create_mapped_value_for(obj_hash, key)
+          end
+        elsif field_name.is_a?(String)
+          find_or_create_mapped_value_for(obj_hash, field_name)
+        elsif obj_hash.key?(field_name)
+          fail "#{record.class} record doesn't have field_name '#{field_name}': #{obj_hash}"
+        else
+          fail "Expecting string or regex for the #{record.class}'s field name: #{field_name}"
+        end
+      end
+      return obj_hash
+    end
+
+    fail "Unsupported object type: #{record.class.name}"
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
+  # rubocop:enable
 
   def find_or_create_mapped_value_for(obj_hash, field_name)
     return unless obj_hash[field_name]
@@ -176,39 +169,34 @@ class SanitizedJsonExporter
     obj_hash[field_name]
   end
 
-  # fields whose mapped value should not be saved to the @value_mapping hash,
-  # e.g., due to distinct orig_values mapping to the same new_value
-  MAPPED_VALUES_IGNORED_FIELDS = %w[instructions descriptions].freeze
-
-  def find_or_create_mapped_value(orig_value, field_name = nil)
+  def find_or_create_mapped_value(orig_value, field_name = nil, transform_method = nil)
     mapped_value = @value_mapping.fetch(orig_value) do
-      new_value, transform = transform_value(orig_value, field_name)
-      if transform != :obfuscate_sentence && !MAPPED_VALUES_IGNORED_FIELDS.include?(field_name)
-        @value_mapping[orig_value] = new_value
+      if orig_value.is_a?(Array)
+        value_and_transforms = orig_value.map { |val| map_value(val, field_name, transform_method: transform_method) }
+        value_and_transforms.map(&:first)
+      else
+        map_value(orig_value, field_name, transform_method: transform_method).first
       end
-      new_value
     end
     mapped_value || fail("Don't know how to map value '#{orig_value}' for field '#{field_name}'")
   end
 
   TRANSFORM_METHODS = [:mixup_css_id, :random_person_name, :invalid_ssn, :random_email, :obfuscate_sentence].freeze
 
-  def transform_value(orig_value, field_name)
-    if orig_value.is_a?(Array)
-      new_array_value = []
-      transforms = orig_value.map do |value|
-        TRANSFORM_METHODS.find do |method|
-          a_value = self.class.send(method, field_name, value)
-          new_array_value << a_value if a_value
-        end
-      end
-      [new_array_value, transforms]
-    else
-      new_value = nil
-      # find the value of the first of TRANSFORM_METHODS that returns a non-nil value
-      transform = TRANSFORM_METHODS.find { |method| new_value = self.class.send(method, field_name, orig_value) }
-      [new_value, transform]
+  # fields whose mapped value should not be saved to the @value_mapping hash,
+  # e.g., due to distinct orig_values mapping to the same new_value
+  MAPPED_VALUES_IGNORED_FIELDS = %w[].freeze
+
+  def map_value(orig_value, field_name, transform_method: nil)
+    # find the first of TRANSFORM_METHODS that returns a non-nil value
+    transform_method ||= TRANSFORM_METHODS.find { |method| self.class.send(method, field_name, orig_value) }
+    new_value = self.class.send(transform_method, field_name, orig_value)
+
+    # Don't save the value_mapping for certain transforms
+    if transform_method != :obfuscate_sentence && !MAPPED_VALUES_IGNORED_FIELDS.include?(field_name)
+      @value_mapping[orig_value] = new_value
     end
+    [new_value, transform_method]
   end
 
   class << self

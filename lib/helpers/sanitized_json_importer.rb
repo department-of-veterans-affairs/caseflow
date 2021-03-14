@@ -35,10 +35,7 @@ class SanitizedJsonImporter
   def import
     ActiveRecord::Base.transaction do
       import_array_of(Appeal).tap do |appeals|
-        if appeals.blank?
-          puts "Warning: No appeal imported, aborting import of remaining records"
-          return nil
-        end
+        return puts "Warning: No appeal imported, aborting import of remaining records" if appeals.blank?
 
         # Start with important types that other records will reassociate with
         import_array_of(User)
