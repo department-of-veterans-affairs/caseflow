@@ -100,7 +100,18 @@ class SanitizedJsonConfiguration
   }
 
   IMPORTER_CONFIG = {
-
+    User => {
+      use_existing_records: true,
+    },
+    Organization => {
+      use_existing_records: true,
+    },
+    Veteran => {
+      use_existing_records: true,
+    },
+    Person => {
+      use_existing_records: true,
+    },
   }
 
   DIFFERENCE_CONFIG = {
@@ -208,13 +219,11 @@ class SanitizedJsonConfiguration
       end
     end
 
-    # To-do: generate the automatically
-    TRANSFORM_METHODS = [:mixup_css_id,
-                         :random_person_name, :invalid_ssn, :random_email,
-                         :obfuscate_sentence, :similar_date, :random_pin].freeze
-
     def transform_methods
-      TRANSFORM_METHODS
+      # To-do: generate this list automatically
+      @transform_methods ||= [:mixup_css_id,
+        :random_person_name, :invalid_ssn, :random_email,
+        :obfuscate_sentence, :similar_date, :random_pin]
     end
 
     # :reek:RepeatedConditionals
@@ -336,7 +345,7 @@ class SanitizedJsonConfiguration
   # ==========  Importer Configuration ==============
 
   # Classes that shouldn't be imported if a record with the same unique attributes already exists
-  NONDUPLICATE_TYPES = [Organization, User, Veteran, Person].freeze
+  NONDUPLICATE_TYPES = extract_classes_with_true(:use_existing_records, IMPORTER_CONFIG).freeze
 
   # During record creation, types where validation and callbacks should be avoided
   TYPES_THAT_SKIP_VALIDATION_AND_CALLBACKS = [Task, *Task.descendants].freeze
