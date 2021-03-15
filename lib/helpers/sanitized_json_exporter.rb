@@ -83,59 +83,105 @@ class SanitizedJsonExporter
                          judge_email alias_with_host appellant_email host_hearing_link guest_hearing_link]
   }.freeze
 
-  def self.typed_field_names_associated_with(clazz, ignore_fieldnames = OFFSET_ID_FIELDS[clazz])
-    belongs_to_associations = clazz.reflect_on_all_associations.select { |a| a.macro == :belongs_to }
-    fieldnames = belongs_to_associations.select { |assoc| assoc.foreign_type }
-      .reject { |assoc| ignore_fieldnames.include?(assoc.foreign_key) }
-      .map { |assoc| assoc.foreign_key }
-      .compact.sort
-    fieldnames unless fieldnames.blank?
-  end
-  
-  # To-do: load this from a file or automatically determine fields to sanitize
-  OFFSET_ID_FIELDS ||= {
-    Task => %w[appeal_id parent_id],
-    Claimant => %w[decision_review_id],
-    TaskTimer => %w[task_id],
-    AppealIntake => %w[detail_id],
-    CavcRemand => %w[source_appeal_id remand_appeal_id decision_issue_ids],
-    OrganizationsUser => %w[user_id organization_id],
-    DecisionIssue => %w[decision_review_id],
-    RequestIssue => %w[decision_review_id contested_decision_issue_id],
-    RequestDecisionIssue => %w[request_issue_id decision_issue_id],
-    Hearing => %w[appeal_id hearing_day_id],
-    HearingDay => %w[],
-    HearingTaskAssociation => %w[hearing_id hearing_task_id],
-    VirtualHearing => %w[hearing_id]
-  }.freeze
-
   # https://stackoverflow.com/questions/13355549/rails-activerecord-detect-if-a-column-is-an-association-or-not
+  class AssocationWrapper
+    attr_reader :associations
+
+    def initialize(clazz)
+      @associations = clazz.reflect_on_all_associations
+    end
+
+    def belongs_to
+      @associations = @associations.select { |assoc| assoc.macro == :belongs_to }
+      self
+    end
+
+    def without_type_field
+      # TODO: handle assoc.foreign_key.is_a?(Symbol)
+      @associations = @associations.select { |assoc| assoc.foreign_type.nil? && assoc.foreign_key.is_a?(String) }
+      self
+    end
+
+    def has_type_field
+      @associations = @associations.select(&:foreign_type)
+      self
+    end
+
+    def associated_with_type(assoc_class)
+      @associations = @associations.select { |assoc| assoc.class_name == assoc_class.name }
+      self
+    end
+
+    def ignore_fieldnames(ignore_fieldnames)
+      @associations = @associations.reject { |assoc| ignore_fieldnames&.include?(assoc.foreign_key) } if ignore_fieldnames.any?
+      self
+    end
+
+    def fieldnames
+      @associations.map(&:foreign_key)
+    end
+  end
+
+  def self.fieldnames_of_typed_associations_with(assoc_class, clazz)
+    AssocationWrapper.new(clazz).belongs_to.associated_with_type(assoc_class).fieldnames.presence
+  end
+
   def self.fieldnames_of_untyped_associations_with(assoc_class, clazz)
-    # TODO: handle assoc.foreign_key.is_a?(Symbol)
-    fieldnames = clazz.reflect_on_all_associations.select { |assoc| assoc.macro == :belongs_to && assoc.foreign_type.nil? && assoc.foreign_key.is_a?(String)}
-      .map { |assoc| assoc.foreign_key if assoc.class_name == assoc_class.name }
-      .compact
-    fieldnames unless fieldnames.blank?
+    AssocationWrapper.new(clazz).belongs_to.without_type_field.associated_with_type(assoc_class).fieldnames.presence
   end
 
-  def self.fieldnames_of_typed_associations_for(clazz, ignore_fieldnames = OFFSET_ID_FIELDS[clazz])
-    fieldnames = clazz.reflect_on_all_associations.select { |assoc| assoc.macro == :belongs_to && assoc.foreign_type }
-      .reject { |assoc| ignore_fieldnames.include?(assoc.foreign_key) }
-      .map { |assoc| assoc.foreign_key }
-      .compact
-    fieldnames unless fieldnames.blank?
+  def self.fieldnames_of_typed_associations_for(clazz, ignore_fieldnames)
+    AssocationWrapper.new(clazz).belongs_to.has_type_field.ignore_fieldnames(ignore_fieldnames).fieldnames.presence
   end
 
+  def self.grouped_fieldnames_of_typed_associations_with(clazz, known_classes)
+    AssocationWrapper.new(clazz).belongs_to.associations
+      .group_by(&:class_name)
+      .slice(*known_classes)
+      .transform_values { |assocs| assocs.map(&:foreign_key) }
+      .compact
+  end
+
+  # Special types that can be have `same_unique_attributes?`
+  # or where we want to look up its id, e.g. Appeal for Claimant used in `same_unique_attributes?`
+  ID_MAPPING_TYPES = [Appeal, User, Person, Organization].freeze
+
+  # types that we need to examine for associations and update them
+  REASSOCIATE_TYPES = [DecisionReview, AppealIntake, Veteran, Claimant, Task, TaskTimer, CavcRemand,
+                       DecisionIssue, RequestIssue, RequestDecisionIssue,
+                       Hearing, HearingTaskAssociation, HearingDay, VirtualHearing,
+                       OrganizationsUser].freeze
+
+  # in case a Class is associated with a specific decendant of one of the REASSOCIATE_TYPES
+  REASSOCIATE_TYPES_DESCENDANTS = REASSOCIATE_TYPES.map(&:descendants).flatten
+  KNOWN_TYPES = (REASSOCIATE_TYPES + REASSOCIATE_TYPES_DESCENDANTS).uniq # - (ID_MAPPING_TYPES - [Appeal])
+  KNOWN_TYPE_NAMES = KNOWN_TYPES.map(&:name)
+
+  # To-do: load this from a file or automatically determine fields to sanitize
+  # modelClass => fieldnames_array
+  OFFSET_ID_FIELDS ||= REASSOCIATE_TYPES.map do |clazz|
+    [clazz, SanitizedJsonExporter.grouped_fieldnames_of_typed_associations_with(clazz, KNOWN_TYPE_NAMES).values.flatten]
+  end.to_h.tap do |class_to_fieldnames_hash|
+    # array of decision_issue_ids; not declared as an association in Rails, so add it manually
+    class_to_fieldnames_hash[CavcRemand] << "decision_issue_ids"  
+
+    # TODO: Why is :participant_id listed as a association? Why is it a symbol whereas others are strings?
+    class_to_fieldnames_hash[Claimant].delete(:participant_id) 
+  end.compact.freeze
+
+  # For all the REASSOCIATE_TYPES, identify there associations so the '_id' fields can be updated based on imported records
+  # TODO: consider using KNOWN_TYPES instead of REASSOCIATE_TYPES, or consolidating e.g. TranscriptionTask => ["assigned_to_id", "appeal_id"] with that of Task
   REASSOCIATE_FIELDS ||= {
     # These untyped association fields will associate to the User ActiveRecord
-    "User" => OFFSET_ID_FIELDS.keys.map { |clazz| [clazz, fieldnames_of_untyped_associations_with(User, clazz)] }.to_h.compact,
-    # These typed association fields will associate to the their corresponding ActiveRecord
-    :type => OFFSET_ID_FIELDS.keys.map { |clazz| [clazz, fieldnames_of_typed_associations_for(clazz)] }.to_h.compact,
+    "User" => REASSOCIATE_TYPES.map { |clazz| [clazz, fieldnames_of_untyped_associations_with(User, clazz)] }.to_h.compact,
+
+    # These typed polymorphic association fields will associate to the their corresponding ActiveRecord
+    :type => REASSOCIATE_TYPES.map { |clazz| [clazz, fieldnames_of_typed_associations_for(clazz, OFFSET_ID_FIELDS[clazz])] }.to_h.compact
   }.freeze
 
-  IGNORED_ID_FIELDS ||= {
-    RequestIssue => %w[end_product_establishment_id corrected_by_request_issue_id ineligible_due_to_id]
-  }.freeze
+  # IGNORED_ID_FIELDS ||= {
+  #   RequestIssue => %w[end_product_establishment_id corrected_by_request_issue_id ineligible_due_to_id]
+  # }.freeze
 
   def appeals_associated_with(appeal)
     appeal.cavc_remand&.source_appeal

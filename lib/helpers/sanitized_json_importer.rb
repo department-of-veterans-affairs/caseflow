@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "helpers/sanitized_json_difference.rb"
+# require "helpers/sanitized_json_exporter.rb"
 
 class SanitizedJsonImporter
   prepend SanitizedJsonDifference
@@ -93,7 +94,11 @@ class SanitizedJsonImporter
     puts "  + Creating #{clazz} #{obj_hash['id']} #{obj_description}"
     remaining_id_fields = obj_hash.select do |field_name, field_value|
       field_name.ends_with?("_id") && field_value.is_a?(Integer) && (field_value < @id_offset) &&
-        !(clazz <= Task && obj_hash["assigned_to_type"] == "Organization" && field_name == "assigned_to_id")
+        (
+          !(clazz <= Task && field_name == "assigned_to_id" && obj_hash["assigned_to_type"] == "Organization") &&
+          !(clazz <= OrganizationsUser && field_name == "organization_id")
+          # !(clazz <= OrganizationsUser && field_name == "user_id")
+        )
     end
     fail "!! For #{clazz}, expecting these *'_id' fields be adjusted: #{remaining_id_fields}\n\tobj_hash: #{obj_hash}" unless remaining_id_fields.blank?
 
@@ -149,11 +154,9 @@ class SanitizedJsonImporter
     end
   end
 
-  ID_MAPPING_TYPES = [Appeal, User, Organization].freeze
-
   def id_mapping
     # Keep track of id mappings for these record types to reassociate to newly imported records
-    @id_mapping ||= ID_MAPPING_TYPES.map { |clazz| [clazz.name, {}] }.to_h
+    @id_mapping ||= SanitizedJsonExporter::ID_MAPPING_TYPES.map { |clazz| [clazz.name, {}] }.to_h
   end
 
   SKIP_VALIDATION_AND_CALLBACKS_TYPES = [Task].map(&:table_name).freeze
@@ -161,7 +164,7 @@ class SanitizedJsonImporter
   # :reek:FeatureEnvy
   def create_new_record(orig_id, clazz, obj_hash)
     # Record new id for certain record types
-    id_mapping[clazz.name][orig_id] = obj_hash["id"] if ID_MAPPING_TYPES.include?(clazz)
+    id_mapping[clazz.name][orig_id] = obj_hash["id"] if id_mapping[clazz.name]
 
     if SKIP_VALIDATION_AND_CALLBACKS_TYPES.include?(clazz.table_name)
       # Create the task without validation or callbacks
@@ -181,28 +184,35 @@ class SanitizedJsonImporter
 
   # :reek:FeatureEnvy
   def reassociate_with_imported_records(clazz, obj_hash)
+    # Handle polymorphic associations (where the association class is stored in the *'_type' field)
+    puts "--- Reassociate polymorphic associations for #{clazz.name}"
     REASSOCIATE_TYPE_TABLE_FIELDS[clazz.table_name]&.each do |field_name|
       fail "!!! Expecting field_name to end with '_id' but got: #{field_name}" unless field_name.ends_with?("_id")
 
-      assigned_to_type = obj_hash[field_name.sub(/_id$/, "_type")]
-      reassociate(obj_hash, field_name, assigned_to_type)
+      association_type = obj_hash[field_name.sub(/_id$/, "_type")]
+      record_id_mapping = id_mapping[association_type]
+      reassociate(obj_hash, field_name, record_id_mapping, association_type: association_type)
     end
 
+    # Handle associations where the association class is not stored (it is implied)
     # For each type in REASSOCIATE_TABLE_FIELDS_HASH, iterate through each field_name in reassociate_table_fields
     # and reassociate the field to the imported record
     REASSOCIATE_TABLE_FIELDS_HASH.each do |association_type, reassociate_table_fields|
+      puts "--- Reassociate #{clazz.name} fields for #{association_type} associations"
+      # record_id_mapping is a hash with key ... TODO
+      record_id_mapping = id_mapping[association_type]
       reassociate_table_fields[clazz.table_name]&.each do |field_name|
-        reassociate(obj_hash, field_name, association_type)
+        reassociate(obj_hash, field_name, record_id_mapping, association_type: association_type)
       end
     end
   end
 
-  def reassociate(obj_hash, id_field, association_type, record_id_mapping = id_mapping[association_type])
+  def reassociate(obj_hash, id_field, record_id_mapping, association_type: nil)
     orig_record_id = obj_hash[id_field]
     return unless orig_record_id
 
     obj_hash[id_field] = record_id_mapping[orig_record_id] if record_id_mapping[orig_record_id]
-    # puts "reassociated #{id_field}: #{association_type} #{orig_record_id}->#{obj_hash[id_field]}"
+    puts "reassociated #{id_field}: #{association_type} #{orig_record_id}->#{obj_hash[id_field]}"
   end
 
   def existing_record(clazz, obj_hash)
