@@ -88,8 +88,8 @@ class SanitizedJsonConfiguration
       retrieval: ->(records) { records[Hearing].map(&:hearing_day).uniq.compact }
     },
     VirtualHearing => {
-      sanitize_fields: %w[alias guest_pin host_pin guest_pin_long host_pin_long representative_email
-                          judge_email alias_with_host appellant_email host_hearing_link guest_hearing_link],
+      sanitize_fields: %w[alias guest_pin host_pin guest_pin_long host_pin_long representative_email judge_email
+                          alias_with_host appellant_email conference_id host_hearing_link guest_hearing_link],
       retrieval: ->(records) { records[Hearing].map(&:virtual_hearing).uniq.compact }
     },
     HearingTaskAssociation => {
