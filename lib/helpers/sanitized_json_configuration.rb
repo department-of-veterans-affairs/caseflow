@@ -5,42 +5,42 @@ require "helpers/association_wrapper.rb"
 # Configuration for exporting/importing data from/to Caseflow.
 
 class SanitizedJsonConfiguration
-
   # The :retrieval lambda is run according to the ordering in this hash.
   EXPORTER_CONFIG = {
     Appeal => {
       track_imported_ids: true,
-      sanitize_fields: %w[veteran_file_number],
+      sanitize_fields: %w[veteran_file_number]
     },
     User => {
       track_imported_ids: true,
       sanitize_fields: %w[full_name email css_id],
-      retrieval: ->(records) { 
+      retrieval: lambda do |records|
         tasks = records[Task]
         cavc_remands = records[CavcRemand]
         hearings = records[Hearing]
 
         tasks.map(&:assigned_by).compact + tasks.map(&:cancelled_by).compact +
-        tasks.assigned_to_user.map(&:assigned_to) +
-        cavc_remands.map { |cavc_remand| [cavc_remand.created_by, cavc_remand.updated_by] }.flatten.uniq.compact +
-        records[Appeal].map(&:intake).compact.map(&:user).uniq.compact +
-        records[AppealIntake].map { |intake| intake&.user }.uniq.compact +
-        records[HearingDay].map { |hd| [hd.created_by, hd.updated_by, hd.judge] }.flatten.uniq.compact +
-        hearings.map { |h| [h.created_by, h.updated_by, h.judge] }.flatten.uniq.compact +
-        hearings.map(&:virtual_hearing).uniq.compact.map { |vh| [vh.created_by, vh.updated_by] }.flatten.uniq.compact 
-      }
+          tasks.assigned_to_user.map(&:assigned_to) +
+          cavc_remands.map { |cavc_remand| [cavc_remand.created_by, cavc_remand.updated_by] }.flatten.uniq.compact +
+          records[Appeal].map(&:intake).compact.map(&:user).uniq.compact +
+          records[AppealIntake].map { |intake| intake&.user }.uniq.compact +
+          records[HearingDay].map { |hd| [hd.created_by, hd.updated_by, hd.judge] }.flatten.uniq.compact +
+          hearings.map { |h| [h.created_by, h.updated_by, h.judge] }.flatten.uniq.compact +
+          hearings.map(&:virtual_hearing).uniq.compact.map { |vh| [vh.created_by, vh.updated_by] }.flatten.uniq.compact
+      end
     },
     Organization => {
       track_imported_ids: true,
       sanitize_fields: %w[],
-      retrieval: ->(records) { records[Task].assigned_to_org.map(&:assigned_to) + records[User].map(&:organizations).flatten.uniq }
+      retrieval: lambda do |records|
+        records[Task].assigned_to_org.map(&:assigned_to) + records[User].map(&:organizations).flatten.uniq
+      end
     },
     Person => {
       track_imported_ids: true,
       sanitize_fields: %w[date_of_birth email_address first_name last_name middle_name ssn],
       retrieval: ->(records) { (records[Veteran] + records[Claimant]).map(&:person).uniq.compact }
     },
-
     OrganizationsUser => {
       # TODO: Investigate why enabling this breaks things: track_imported_ids: true,
       retrieval: ->(records) { OrganizationsUser.where(user: records[User]) }
@@ -68,7 +68,6 @@ class SanitizedJsonConfiguration
       sanitize_fields: %w[instructions],
       retrieval: ->(records) { records[Appeal].map(&:cavc_remand).compact }
     },
-
     RequestIssue => {
       sanitize_fields: ["notes", /_(notes|text|description)/],
       retrieval: ->(records) { records[Appeal].map(&:request_issues).flatten }
@@ -80,7 +79,6 @@ class SanitizedJsonConfiguration
     RequestDecisionIssue => {
       retrieval: ->(records) { RequestDecisionIssue.where(request_issue: records[RequestIssue]) }
     },
-
     Hearing => {
       sanitize_fields: %w[notes military_service summary bva_poc representative_name witness],
       retrieval: ->(records) { records[Task].with_type("HearingTask").map(&:hearing).uniq.compact }
@@ -91,39 +89,39 @@ class SanitizedJsonConfiguration
     },
     VirtualHearing => {
       sanitize_fields: %w[alias guest_pin host_pin guest_pin_long host_pin_long representative_email
-                         judge_email alias_with_host appellant_email host_hearing_link guest_hearing_link],
+                          judge_email alias_with_host appellant_email host_hearing_link guest_hearing_link],
       retrieval: ->(records) { records[Hearing].map(&:virtual_hearing).uniq.compact }
     },
     HearingTaskAssociation => {
       retrieval: ->(records) { HearingTaskAssociation.where(hearing: records[Hearing]) }
-    },
-  }
+    }
+  }.freeze
 
   IMPORTER_CONFIG = {
     User => {
-      use_existing_records: true,
+      use_existing_records: true
     },
     Organization => {
-      use_existing_records: true,
+      use_existing_records: true
     },
     Veteran => {
-      use_existing_records: true,
+      use_existing_records: true
     },
     Person => {
-      use_existing_records: true,
-    },
-  }
+      use_existing_records: true
+    }
+  }.freeze
 
   DIFFERENCE_CONFIG = {
 
-  }
+  }.freeze
 
   def self.extract_configuration(config_field, configuration, default_value = nil)
-    configuration.map {|clazz, class_config| [clazz, class_config[config_field] || default_value.clone]}.to_h.compact
+    configuration.map { |clazz, class_config| [clazz, class_config[config_field] || default_value.clone] }.to_h.compact
   end
 
   def self.extract_classes_with_true(config_field, configuration)
-    configuration.select {|_, config| config[config_field] == true }.keys.compact
+    configuration.select { |_, config| config[config_field] == true }.keys.compact
   end
 
   SANITIZE_FIELDS = extract_configuration(:sanitize_fields, EXPORTER_CONFIG, []).freeze
@@ -145,7 +143,10 @@ class SanitizedJsonConfiguration
   # modelClass => fieldnames_array
   # rubocop:disable Style/MultilineBlockChain
   OFFSET_ID_FIELDS ||= REASSOCIATE_TYPES.map do |clazz|
-    [clazz, AssocationWrapper.grouped_fieldnames_of_typed_associations_with(clazz, KNOWN_TYPE_NAMES).values.flatten.sort]
+    [
+      clazz,
+      AssocationWrapper.grouped_fieldnames_of_typed_associations_with(clazz, KNOWN_TYPE_NAMES).values.flatten.sort
+    ]
   end.to_h.tap do |class_to_fieldnames_hash|
     # array of decision_issue_ids; not declared as an association in Rails, so add it manually
     class_to_fieldnames_hash[CavcRemand].push("decision_issue_ids").sort!
@@ -191,10 +192,10 @@ class SanitizedJsonConfiguration
       appeals = (initial_appeals + associated_appeals).uniq
 
       export_records = {
-        Appeal => appeals,
+        Appeal => appeals
       }
       # incrementally update export_records as subsequent calls may rely on prior updates to export_records
-      retrieval_lambdas = extract_configuration(:retrieval, EXPORTER_CONFIG, ->(records) { [] })
+      retrieval_lambdas = extract_configuration(:retrieval, EXPORTER_CONFIG, ->(_records) { [] })
 
       retrieval_lambdas.reject { |clazz, _| ID_MAPPING_TYPES.include?(clazz) }
         .map { |clazz, retrieval_lambda| export_records[clazz] ||= retrieval_lambda.call(export_records) }
@@ -222,8 +223,8 @@ class SanitizedJsonConfiguration
     def transform_methods
       # To-do: generate this list automatically
       @transform_methods ||= [:mixup_css_id,
-        :random_person_name, :invalid_ssn, :random_email,
-        :obfuscate_sentence, :similar_date, :random_pin]
+                              :random_person_name, :invalid_ssn, :random_email,
+                              :obfuscate_sentence, :similar_date, :random_pin]
     end
 
     # :reek:RepeatedConditionals
