@@ -382,8 +382,52 @@ describe "SanitizedJsonExporter/Importer" do
       let(:target_class) { AppealIntake }
       it "returns fieldname associated with User records" do
         expect(subject).to match_array %w[user_id]
-        pp SanitizedJsonExporter::REASSOCIATE_FIELDS[:type].transform_keys(&:name)
       end
+    end
+
+    it "temporary" do
+      # pp SanitizedJsonExporter::OFFSET_ID_FIELDS.transform_keys(&:name)
+      offset_id_fields = {
+        DecisionReview => [],
+        AppealIntake => [],
+        Veteran => [],
+        Claimant => ["decision_review_id"],
+        Task => %w[parent_id appeal_id],
+        TaskTimer => ["task_id"],
+        CavcRemand => %w[source_appeal_id remand_appeal_id decision_issue_ids],
+        DecisionIssue => ["decision_review_id"],
+        RequestIssue => %w[decision_review_id contested_decision_issue_id corrected_by_request_issue_id ineligible_due_to_id],
+        RequestDecisionIssue => %w[decision_issue_id request_issue_id],
+        Hearing => %w[hearing_day_id appeal_id],
+        HearingTaskAssociation => %w[hearing_id hearing_task_id],
+        HearingDay => [],
+        VirtualHearing => ["hearing_id"],
+        OrganizationsUser => []
+      }
+      expect(SanitizedJsonExporter::OFFSET_ID_FIELDS).to eq offset_id_fields
+
+      expect(SanitizedJsonExporter::REASSOCIATE_FIELDS.keys).to match_array ["User", :type]
+      expect(SanitizedJsonExporter::REASSOCIATE_FIELDS[:type]).to eq(Task => ["assigned_to_id"], AppealIntake => ["detail_id"])
+      pp SanitizedJsonExporter::REASSOCIATE_FIELDS["User"].transform_keys(&:name)
+      reassociate_fields_for_user = {
+        AppealIntake => ["user_id"],
+        Task => %w[assigned_by_id cancelled_by_id],
+        CavcRemand => %w[updated_by_id created_by_id],
+        Hearing => %w[updated_by_id judge_id created_by_id],
+        HearingDay => %w[updated_by_id judge_id created_by_id],
+        VirtualHearing => %w[updated_by_id created_by_id],
+        OrganizationsUser => ["user_id"]
+      }
+      expect(SanitizedJsonExporter::REASSOCIATE_FIELDS["User"]).to eq(reassociate_fields_for_user)
+
+      # binding.pry
+      expect(SanitizedJsonExporter.fieldnames_of_typed_associations_with(Appeal, Task)).to eq ["appeal_id"]
+      # known_classes = sje.records_hash.keys.map{|k| k.classify.constantize.name rescue nil }.compact - %w[User Organization]
+      known_classes = (SanitizedJsonExporter::REASSOCIATE_TYPES + SanitizedJsonExporter::REASSOCIATE_TYPES_DESCENDANTS).map(&:name)
+      # known_classes_descendants =  SanitizedJsonExporter::REASSOCIATE_TYPES.map{|clazz| [clazz.name, clazz.descendants.map(&:name)] if clazz.descendants.any?}.compact.to_h
+      pp SanitizedJsonExporter::REASSOCIATE_TYPES.map { |clazz|
+        [clazz.name, SanitizedJsonExporter.grouped_fieldnames_of_typed_associations_with(clazz, known_classes)]
+      }.to_h.compact
     end
   end
 
