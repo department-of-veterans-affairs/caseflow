@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 
+require "helpers/sanitized_json_configuration.rb"
 require "helpers/sanitized_json_exporter.rb"
 require "helpers/sanitized_json_importer.rb"
 
 describe "SanitizedJsonExporter/Importer" do
+  SjConfiguration = SanitizedJsonConfiguration
+
   describe ".invalid_ssn" do
-    subject { SanitizedJsonExporter.invalid_ssn(nil, ssn) }
+    subject { SjConfiguration.invalid_ssn(nil, ssn) }
     context "given 9-digit number" do
       let(:ssn) { "123456789" }
       it "returns fake SSN" do
@@ -23,7 +26,7 @@ describe "SanitizedJsonExporter/Importer" do
   end
 
   describe ".random_pin" do
-    subject { SanitizedJsonExporter.random_pin(field_name, orig_value) }
+    subject { SjConfiguration.random_pin(field_name, orig_value) }
     let(:field_name) { "guest_pin" }
     context "given fieldname ending with 'pin' and string value" do
       let(:orig_value) { "12345" }
@@ -47,7 +50,7 @@ describe "SanitizedJsonExporter/Importer" do
   describe ".random_email" do
     let(:orig_value) { "yoom@caseflow.va.gov" }
     let(:field_prefix) { ["", ("a".."z").to_a.sample(rand(9)).join].sample }
-    subject { SanitizedJsonExporter.random_email(field_name, orig_value) }
+    subject { SjConfiguration.random_email(field_name, orig_value) }
     context "given fieldname ending with 'email'" do
       let(:field_name) { "#{field_prefix}email" }
       it "returns fake email" do
@@ -68,7 +71,7 @@ describe "SanitizedJsonExporter/Importer" do
     let(:orig_value) { "Yoom" }
     let(:field_prefix) { ["full", "first", "last", "middle", ("a".."z").to_a.sample(rand(9)).join].sample }
     let(:field_name) { "#{field_prefix}_name" }
-    subject { SanitizedJsonExporter.random_person_name(field_name, orig_value) }
+    subject { SjConfiguration.random_person_name(field_name, orig_value) }
     context "given fieldname ending with _name" do
       it "returns fake name" do
         expect(subject).not_to eq orig_value
@@ -86,7 +89,7 @@ describe "SanitizedJsonExporter/Importer" do
   end
 
   describe ".similar_date" do
-    subject { SanitizedJsonExporter.similar_date("date_of_birth", orig_value) }
+    subject { SjConfiguration.similar_date("date_of_birth", orig_value) }
     context "given date_of_birth as Date" do
       let(:orig_value) { Date.parse("1938-09-05") }
       it "returns random Date in the last year prior to orig_value" do
@@ -106,7 +109,7 @@ describe "SanitizedJsonExporter/Importer" do
   end
 
   describe ".mixup_css_id" do
-    subject { SanitizedJsonExporter.mixup_css_id("css_id", css_id) }
+    subject { SjConfiguration.mixup_css_id("css_id", css_id) }
     context "given CSS_ID" do
       let(:css_id) { create(:intake_user).css_id }
       it "returns mixed-up CSS_ID" do
@@ -118,7 +121,7 @@ describe "SanitizedJsonExporter/Importer" do
 
   describe ".obfuscate_sentence" do
     let(:field_name) { "instructions" }
-    subject { SanitizedJsonExporter.obfuscate_sentence(field_name, sentence) }
+    subject { SjConfiguration.obfuscate_sentence(field_name, sentence) }
     context "given sentence" do
       let(:sentence) { "No PII, just potentially sensitive!" }
       it "returns sentence without any of the original longer words" do
@@ -154,7 +157,7 @@ describe "SanitizedJsonExporter/Importer" do
   end
 
   describe ".fieldnames_of_untyped_associations_with User records" do
-    subject { SanitizedJsonExporter.fieldnames_of_untyped_associations_with(User, target_class) }
+    subject { SjConfiguration.fieldnames_of_untyped_associations_with(User, target_class) }
     context "for Task class" do
       let(:target_class) { Task }
       it "returns fieldname associated with User records" do
@@ -175,7 +178,7 @@ describe "SanitizedJsonExporter/Importer" do
     end
 
     it "temporary" do
-      # pp SanitizedJsonExporter::OFFSET_ID_FIELDS.transform_keys(&:name)
+      # pp SjConfiguration::OFFSET_ID_FIELDS.transform_keys(&:name)
       offset_id_fields = {
         DecisionReview => [],
         AppealIntake => [],
@@ -185,7 +188,10 @@ describe "SanitizedJsonExporter/Importer" do
         TaskTimer => ["task_id"],
         CavcRemand => %w[source_appeal_id remand_appeal_id decision_issue_ids],
         DecisionIssue => ["decision_review_id"],
-        RequestIssue => %w[decision_review_id contested_decision_issue_id corrected_by_request_issue_id ineligible_due_to_id],
+        RequestIssue => %w[decision_review_id
+                           contested_decision_issue_id
+                           corrected_by_request_issue_id
+                           ineligible_due_to_id],
         RequestDecisionIssue => %w[decision_issue_id request_issue_id],
         Hearing => %w[hearing_day_id appeal_id],
         HearingTaskAssociation => %w[hearing_id hearing_task_id],
@@ -193,11 +199,16 @@ describe "SanitizedJsonExporter/Importer" do
         VirtualHearing => ["hearing_id"],
         OrganizationsUser => []
       }
-      expect(SanitizedJsonExporter::OFFSET_ID_FIELDS).to eq offset_id_fields
+      expect(SjConfiguration::OFFSET_ID_FIELDS).to eq offset_id_fields
 
-      expect(SanitizedJsonExporter::REASSOCIATE_FIELDS.keys).to match_array ["User", :type]
-      expect(SanitizedJsonExporter::REASSOCIATE_FIELDS[:type]).to eq(Task => ["assigned_to_id"], AppealIntake => ["detail_id"])
-      pp SanitizedJsonExporter::REASSOCIATE_FIELDS["User"].transform_keys(&:name)
+      expect(SjConfiguration::REASSOCIATE_FIELDS.keys).to match_array ["User", :type]
+
+      reassociate_fields_for_polymorphics = {
+        Task => ["assigned_to_id"],
+        AppealIntake => ["detail_id"]
+      }
+      expect(SjConfiguration::REASSOCIATE_FIELDS[:type]).to eq(reassociate_fields_for_polymorphics)
+
       reassociate_fields_for_user = {
         AppealIntake => ["user_id"],
         Task => %w[assigned_by_id cancelled_by_id],
@@ -207,15 +218,13 @@ describe "SanitizedJsonExporter/Importer" do
         VirtualHearing => %w[updated_by_id created_by_id],
         OrganizationsUser => ["user_id"]
       }
-      expect(SanitizedJsonExporter::REASSOCIATE_FIELDS["User"]).to eq(reassociate_fields_for_user)
+      expect(SjConfiguration::REASSOCIATE_FIELDS["User"]).to eq(reassociate_fields_for_user)
 
       # binding.pry
-      expect(SanitizedJsonExporter.fieldnames_of_typed_associations_with(Appeal, Task)).to eq ["appeal_id"]
-      # known_classes = sje.records_hash.keys.map{|k| k.classify.constantize.name rescue nil }.compact - %w[User Organization]
-      known_classes = (SanitizedJsonExporter::REASSOCIATE_TYPES + SanitizedJsonExporter::REASSOCIATE_TYPES_DESCENDANTS).map(&:name)
-      # known_classes_descendants =  SanitizedJsonExporter::REASSOCIATE_TYPES.map{|clazz| [clazz.name, clazz.descendants.map(&:name)] if clazz.descendants.any?}.compact.to_h
-      pp SanitizedJsonExporter::REASSOCIATE_TYPES.map { |clazz|
-        [clazz.name, SanitizedJsonExporter.grouped_fieldnames_of_typed_associations_with(clazz, known_classes)]
+      expect(SjConfiguration.fieldnames_of_typed_associations_with(Appeal, Task)).to eq ["appeal_id"]
+      known_classes = (SjConfiguration::REASSOCIATE_TYPES + SjConfiguration::REASSOCIATE_TYPES_DESCENDANTS).map(&:name)
+      pp SjConfiguration::REASSOCIATE_TYPES.map { |clazz|
+        [clazz.name, SjConfiguration.grouped_fieldnames_of_typed_associations_with(clazz, known_classes)]
       }.to_h.compact
     end
   end
@@ -232,7 +241,7 @@ describe "SanitizedJsonExporter/Importer" do
         sje.value_mapping[""] = ""
       end
       it "does not loop indefinitely" do
-        expect(SanitizedJsonExporter).to receive(:obfuscate_sentence).and_call_original.at_least(:once)
+        expect(SjConfiguration).to receive(:obfuscate_sentence).and_call_original.at_least(:once)
         subject
         expect(obj_hash[field_name]).to eq ""
       end
@@ -242,7 +251,7 @@ describe "SanitizedJsonExporter/Importer" do
       let(:field_name) { "instructions" }
       let(:obj_hash) { { field_name => ["instruct me", "me too"] } }
       it "sets a new array with new values" do
-        expect(SanitizedJsonExporter).to receive(:obfuscate_sentence).and_call_original.at_least(:once)
+        expect(SjConfiguration).to receive(:obfuscate_sentence).and_call_original.at_least(:once)
         subject
         expect(obj_hash[field_name]).to eq ["in me", "me to"]
       end
@@ -366,7 +375,7 @@ describe "SanitizedJsonExporter/Importer" do
       before { sje } # causes relevant appeals to be created
       it "returns nil" do
         expect_initial_state
-        expect(subject).to be_nil
+        expect { subject }.to raise_error(RuntimeError)
         expect_initial_state
       end
     end

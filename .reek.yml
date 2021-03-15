@@ -23,9 +23,6 @@ detectors:
       - Hearings::GeomatchAndCacheAppealJob#perform
       - HearingRepository#slot_new_hearing
       - LegacyDocket#distribute_appeals
-      - SanitizedJsonExporter
-      - SanitizedJsonImporter
-      - SanitizedJsonDifference
       - Seeds::Tasks#create_legacy_case_with_open_schedule_hearing_task
       - SlackService#pick_color
       - Task#actions_allowable?
@@ -53,7 +50,6 @@ detectors:
     exclude:
       - HearingSerializerBase
       - LegacyDocket
-      - SanitizedJsonImporter
       - Seeds::Tasks
       - TaskTreeRenderModule
   DuplicateMethodCall:
@@ -172,7 +168,6 @@ detectors:
       - QueueConfig
       - RequestIssue
       - BulkTaskReassignment
-      - SanitizedJsonImporter
       - Seeds::Hearings
       - Task
       - UpdateCachedAppealsAttributesJob
@@ -188,7 +183,6 @@ detectors:
       - Address
       - ExternalApi::PexipService
       - InvalidAssigneeStatusOnTaskCreate
-      - SanitizedJsonImporter
       - Api::V3::DecisionReviews::ContestableIssueFinder
       - Api::V3::DecisionReviews::ContestableIssueParams
       - Api::V3::DecisionReviews::IntakeError

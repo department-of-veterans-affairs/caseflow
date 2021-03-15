@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "helpers/sanitized_json_exporter.rb"
+require "helpers/sanitized_json_configuration.rb"
 
 module SanitizedJsonDifference
   ADDITIONAL_MAPPED_FIELDS = {
@@ -9,9 +9,9 @@ module SanitizedJsonDifference
 
   # fields expected to be different; corresponds with fields in SanitizedJsonExporter#sanitize and SanitizedJsonImporter
   MAPPED_FIELDS = [
-    SanitizedJsonExporter::SANITIZE_FIELDS,
-    SanitizedJsonExporter::OFFSET_ID_FIELDS,
-    *SanitizedJsonExporter::REASSOCIATE_FIELDS.values,
+    SanitizedJsonConfiguration::SANITIZE_FIELDS,
+    SanitizedJsonConfiguration::OFFSET_ID_FIELDS,
+    *SanitizedJsonConfiguration::REASSOCIATE_FIELDS.values,
     ADDITIONAL_MAPPED_FIELDS
   ].map(&:to_a).sum.group_by(&:first).transform_values do |value|
     field_name_arrays = value.map(&:second) + ["id"]
