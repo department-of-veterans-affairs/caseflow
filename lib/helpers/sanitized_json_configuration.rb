@@ -13,7 +13,7 @@ class SanitizedJsonConfiguration
     },
     User => {
       track_imported_ids: true,
-      sanitize_fields: %w[full_name email css_id],
+      sanitize_fields: %w[css_id email full_name],
       retrieval: lambda do |records|
         tasks = records[Task]
         cavc_remands = records[CavcRemand]
@@ -46,7 +46,7 @@ class SanitizedJsonConfiguration
       retrieval: ->(records) { OrganizationsUser.where(user: records[User]) }
     },
     Veteran => {
-      sanitize_fields: %w[first_name last_name middle_name file_number ssn],
+      sanitize_fields: %w[file_number first_name last_name middle_name ssn],
       retrieval: ->(records) { records[Appeal].map(&:veteran) }
     },
     AppealIntake => {
@@ -73,14 +73,14 @@ class SanitizedJsonConfiguration
       retrieval: ->(records) { records[Appeal].map(&:request_issues).flatten }
     },
     DecisionIssue => {
-      sanitize_fields: %w[description decision_text],
+      sanitize_fields: %w[decision_text description],
       retrieval: ->(records) { records[Appeal].map(&:decision_issues).flatten }
     },
     RequestDecisionIssue => {
       retrieval: ->(records) { RequestDecisionIssue.where(request_issue: records[RequestIssue]) }
     },
     Hearing => {
-      sanitize_fields: %w[notes military_service summary bva_poc representative_name witness],
+      sanitize_fields: %w[bva_poc military_service notes representative_name summary witness],
       retrieval: ->(records) { records[Task].with_type("HearingTask").map(&:hearing).uniq.compact }
     },
     HearingDay => {
@@ -88,8 +88,8 @@ class SanitizedJsonConfiguration
       retrieval: ->(records) { records[Hearing].map(&:hearing_day).uniq.compact }
     },
     VirtualHearing => {
-      sanitize_fields: %w[alias guest_pin host_pin guest_pin_long host_pin_long representative_email judge_email
-                          alias_with_host appellant_email conference_id host_hearing_link guest_hearing_link],
+      sanitize_fields: %w[alias alias_with_host appellant_email conference_id guest_hearing_link guest_pin
+                          guest_pin_long host_hearing_link host_pin host_pin_long judge_email representative_email],
       retrieval: ->(records) { records[Hearing].map(&:virtual_hearing).uniq.compact }
     },
     HearingTaskAssociation => {
