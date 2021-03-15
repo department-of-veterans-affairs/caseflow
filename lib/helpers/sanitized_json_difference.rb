@@ -18,14 +18,17 @@ module SanitizedJsonDifference
     field_name_arrays.flatten.uniq
   end.freeze
 
+  # :reek:FeatureEnvy
   def differences(sje, **kwargs)
     orig_appeals = Appeal.where(id: sje.records_hash[Appeal.table_name].pluck("id")).order(:id)
     orig_users = User.where(id: sje.records_hash[User.table_name].pluck("id")).order(:id)
     compare_with(sje, orig_appeals, orig_users, **kwargs)
   end
 
+  # :reek:LongParameterList
   # :reek:BooleanParameter
   # :reek:FeatureEnvy
+  # rubocop:disable Metrics/AbcSize
   def compare_with(sje, orig_appeals, orig_users, ignore_expected_diffs: true)
     mapped_fields = ignore_expected_diffs ? MAPPED_FIELDS : {}
     orig_appeals = orig_appeals.uniq.sort_by(&:id)
@@ -38,7 +41,7 @@ module SanitizedJsonDifference
       User => orig_users,
       Task => orig_appeals.map(&:tasks).flatten.sort_by(&:id),
       TaskTimer => TaskTimer.where(task_id: orig_tasks.map(&:id)).sort_by(&:id),
-      CavcRemand => CavcRemand.where(id: sje.records_hash[CavcRemand.table_name].pluck("id")).order(:id),
+      CavcRemand => nil,
       Hearing => nil,
       HearingDay => nil,
       VirtualHearing => nil,
@@ -57,6 +60,7 @@ module SanitizedJsonDifference
       SanitizedJsonDifference.diff_records(original, imported, ignored_fields: ignored_fields)
     end
   end
+  # rubocop:enable Metrics/AbcSize
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
   # :reek:BooleanParameter

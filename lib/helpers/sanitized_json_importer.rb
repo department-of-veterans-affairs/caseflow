@@ -144,7 +144,7 @@ class SanitizedJsonImporter
   # :reek:FeatureEnvy
   def reassociate_with_imported_records(clazz, obj_hash)
     # Handle polymorphic associations (where the association class is stored in the *'_type' field)
-    puts "--- Reassociate polymorphic associations for #{clazz.name}"
+    puts "  | Reassociate polymorphic associations for #{clazz.name}"
     REASSOCIATE_TYPE_TABLE_FIELDS[clazz.table_name]&.each do |field_name|
       fail "!!! Expecting field_name to end with '_id' but got: #{field_name}" unless field_name.ends_with?("_id")
 
@@ -157,8 +157,7 @@ class SanitizedJsonImporter
     # For each type in REASSOCIATE_TABLE_FIELDS_HASH, iterate through each field_name in reassociate_table_fields
     # and reassociate the field to the imported record
     REASSOCIATE_TABLE_FIELDS_HASH.each do |association_type, reassociate_table_fields|
-      puts "--- Reassociate #{clazz.name} fields for #{association_type} associations"
-      # record_id_mapping is a hash with key ... TODO
+      puts "  | Reassociate #{clazz.name} fields for #{association_type} associations"
       record_id_mapping = id_mapping[association_type]
       reassociate_table_fields[clazz.table_name]&.each do |field_name|
         reassociate(obj_hash, field_name, record_id_mapping, association_type: association_type)
@@ -166,12 +165,15 @@ class SanitizedJsonImporter
     end
   end
 
+  # :reek:FeatureEnvy
+  # :reek:LongParameterList
   def reassociate(obj_hash, id_field, record_id_mapping, association_type: nil)
     orig_record_id = obj_hash[id_field]
     return unless orig_record_id
 
     obj_hash[id_field] = record_id_mapping[orig_record_id] if record_id_mapping[orig_record_id]
-    puts "reassociated #{id_field}: #{association_type} #{orig_record_id}->#{obj_hash[id_field]}"
+    puts "    > reassociated #{id_field}: #{association_type} #{orig_record_id}->#{obj_hash[id_field]}"
+    [orig_record_id, obj_hash[id_field]]
   end
 
   def existing_record(clazz, obj_hash)

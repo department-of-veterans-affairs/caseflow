@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class SanitizedJsonConfiguration
-
   # To-do: load this from a file or automatically determine fields to sanitize
   SANITIZE_FIELDS ||= {
     Appeal => %w[veteran_file_number],
@@ -45,7 +44,7 @@ class SanitizedJsonConfiguration
       self
     end
 
-    def has_type_field
+    def having_type_field
       @associations = @associations.select(&:foreign_type)
       self
     end
@@ -56,7 +55,9 @@ class SanitizedJsonConfiguration
     end
 
     def ignore_fieldnames(ignore_fieldnames)
-      @associations = @associations.reject { |assoc| ignore_fieldnames&.include?(assoc.foreign_key) } if ignore_fieldnames.any?
+      if ignore_fieldnames.any?
+        @associations = @associations.reject { |assoc| ignore_fieldnames&.include?(assoc.foreign_key) }
+      end
       self
     end
 
@@ -74,7 +75,7 @@ class SanitizedJsonConfiguration
   end
 
   def self.fieldnames_of_typed_associations_for(clazz, ignore_fieldnames)
-    AssocationWrapper.new(clazz).belongs_to.has_type_field.ignore_fieldnames(ignore_fieldnames).fieldnames.presence
+    AssocationWrapper.new(clazz).belongs_to.having_type_field.ignore_fieldnames(ignore_fieldnames).fieldnames.presence
   end
 
   def self.grouped_fieldnames_of_typed_associations_with(clazz, known_classes)
@@ -102,24 +103,31 @@ class SanitizedJsonConfiguration
 
   # To-do: load this from a file or automatically determine fields to sanitize
   # modelClass => fieldnames_array
+  # rubocop:disable Style/MultilineBlockChain
   OFFSET_ID_FIELDS ||= REASSOCIATE_TYPES.map do |clazz|
     [clazz, grouped_fieldnames_of_typed_associations_with(clazz, KNOWN_TYPE_NAMES).values.flatten]
   end.to_h.tap do |class_to_fieldnames_hash|
     # array of decision_issue_ids; not declared as an association in Rails, so add it manually
-    class_to_fieldnames_hash[CavcRemand] << "decision_issue_ids"  
+    class_to_fieldnames_hash[CavcRemand] << "decision_issue_ids"
 
     # TODO: Why is :participant_id listed as a association? Why is it a symbol whereas others are strings?
-    class_to_fieldnames_hash[Claimant].delete(:participant_id) 
+    class_to_fieldnames_hash[Claimant].delete(:participant_id)
   end.compact.freeze
+  # rubocop:enable Style/MultilineBlockChain
 
-  # For all the REASSOCIATE_TYPES, identify there associations so the '_id' fields can be updated based on imported records
-  # TODO: consider using KNOWN_TYPES instead of REASSOCIATE_TYPES, or consolidating e.g. TranscriptionTask => ["assigned_to_id", "appeal_id"] with that of Task
+  # For each REASSOCIATE_TYPES, identify their associations so the '_id' fields can be updated based on imported records
+  # TODO: consider using KNOWN_TYPES instead of REASSOCIATE_TYPES,
+  # or consolidating e.g. TranscriptionTask => ["assigned_to_id", "appeal_id"] with that of Task
   REASSOCIATE_FIELDS ||= {
     # These untyped association fields will associate to the User ActiveRecord
-    "User" => REASSOCIATE_TYPES.map { |clazz| [clazz, fieldnames_of_untyped_associations_with(User, clazz)] }.to_h.compact,
+    "User" => REASSOCIATE_TYPES.map do |clazz|
+      [clazz, fieldnames_of_untyped_associations_with(User, clazz)]
+    end.to_h.compact,
 
     # These typed polymorphic association fields will associate to the their corresponding ActiveRecord
-    :type => REASSOCIATE_TYPES.map { |clazz| [clazz, fieldnames_of_typed_associations_for(clazz, OFFSET_ID_FIELDS[clazz])] }.to_h.compact
+    :type => REASSOCIATE_TYPES.map do |clazz|
+      [clazz, fieldnames_of_typed_associations_for(clazz, OFFSET_ID_FIELDS[clazz])]
+    end.to_h.compact
   }.freeze
 
   # ==========  Exporter Configuration ==============
@@ -138,7 +146,6 @@ class SanitizedJsonConfiguration
     end
   end
   class << self
-
     def records_to_export(initial_appeals)
       associated_appeals = initial_appeals.map { |appeal| appeals_associated_with(appeal) }.flatten.uniq.compact
       appeals = (initial_appeals + associated_appeals).uniq
@@ -191,11 +198,13 @@ class SanitizedJsonConfiguration
       when User
         # User#attributes includes `display_name`; don't need it when importing so leave it out
         obj_hash.delete(:display_name)
-      end  
+      end
     end
 
     # To-do: generate the automatically
-    TRANSFORM_METHODS = [:mixup_css_id, :random_person_name, :invalid_ssn, :random_email, :obfuscate_sentence, :similar_date, :random_pin].freeze
+    TRANSFORM_METHODS = [:mixup_css_id,
+                         :random_person_name, :invalid_ssn, :random_email,
+                         :obfuscate_sentence, :similar_date, :random_pin].freeze
 
     def transform_methods
       TRANSFORM_METHODS
@@ -262,9 +271,11 @@ class SanitizedJsonConfiguration
       when "date_of_birth"
         case field_value
         when Date
-          Faker::Date.between_except(from: field_value - 1.year, to: field_value, excepted: field_value)
+          Faker::Date.between_except(from: field_value - 1.year,
+                                     to: field_value, excepted: field_value)
         when /^\d{4}-\d{2}-\d{2}$/
-          Faker::Date.between_except(from: Date.parse(field_value) - 1.year, to: field_value, excepted: field_value).to_json
+          Faker::Date.between_except(from: Date.parse(field_value) - 1.year,
+                                     to: field_value, excepted: field_value).to_json
         end
       end
     end
@@ -322,11 +333,13 @@ class SanitizedJsonConfiguration
   TYPES_THAT_SKIP_VALIDATION_AND_CALLBACKS = [Task, *Task.descendants].freeze
 
   # Start with important types that other records will reassociate with
-  FIRST_TYPES_TO_IMPORT = [Appeal, User, Organization, HearingDay]
+  FIRST_TYPES_TO_IMPORT = [Appeal, User, Organization, HearingDay].freeze
 
   class << self
     def check_first_imports(imported_records)
-      fail "Warning: No appeal imported, aborting import of remaining records" if imported_records[Appeal.table_name].blank?
+      if imported_records[Appeal.table_name].blank?
+        fail "Warning: No appeal imported, aborting import of remaining records"
+      end
     end
 
     # :reek:FeatureEnvy
@@ -352,10 +365,10 @@ class SanitizedJsonConfiguration
       # To-do: update dev's seed data to match prod's Organization#singleton record ids
       if clazz == Organization && !org_already_exists?(obj_hash)
         puts "  + Creating #{clazz} '#{obj_hash['name']}' with its original id #{obj_hash['id']} \n\t#{obj_description}"
-        return clazz.create!(obj_hash)
+        clazz.create!(obj_hash)
       end
     end
-    
+
     def org_already_exists?(obj_hash)
       Organization.find_by(url: obj_hash["url"]) || Organization.find_by(id: obj_hash["id"])
     end
@@ -380,7 +393,9 @@ class SanitizedJsonConfiguration
             # !(clazz <= OrganizationsUser && field_name == "user_id")
           )
       end
-      fail "!! For #{clazz}, expecting these *'_id' fields be adjusted: #{remaining_id_fields}\n\tobj_hash: #{obj_hash}" unless remaining_id_fields.blank?
+      unless remaining_id_fields.blank?
+        fail "!! For #{clazz}, expecting these *'_id' fields be adjusted: #{remaining_id_fields}\n\tobj_hash: #{obj_hash}"
+      end
     end
   end
 end

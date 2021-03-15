@@ -25,14 +25,8 @@ class SanitizedJsonExporter
     JSON.pretty_generate(@records_hash)
   end
 
-  # temporary method; delete for final PR
-  # :reek:BooleanParameter
-  def self.record_to_hash(record, call_attributes: true)
-    return record.attributes if call_attributes
-
-    # Alternative implementation
-    json_string = record.to_json(methods: :type)
-    JSON.parse(json_string)
+  def self.record_to_hash(record)
+    record.attributes
   end
 
   def sanitize_records(records)
@@ -53,7 +47,7 @@ class SanitizedJsonExporter
       # Use table_name to handle subclasses/STI: e.g., a HearingTask record maps to table "tasks"
       SANITIZE_TABLE_FIELDS[record.class.table_name].each do |field_name|
         if field_name.is_a?(Regexp)
-          obj_hash.keys.select { |k| k.match?(field_name) }.each do |key|
+          obj_hash.keys.select { |key| key.match?(field_name) }.each do |key|
             find_or_create_mapped_value_for(obj_hash, key, obj_class: record.class)
           end
         elsif field_name.is_a?(String)
@@ -70,6 +64,7 @@ class SanitizedJsonExporter
     fail "Unsupported object type: #{record.class.name}"
   end
 
+  # :reek:FeatureEnvy
   def find_or_create_mapped_value_for(obj_hash, field_name, **kwargs)
     return unless obj_hash[field_name]
 
@@ -100,6 +95,7 @@ class SanitizedJsonExporter
   MAPPED_VALUES_IGNORED_FIELDS = %w[first_name middle_name last_name].freeze
   MAPPED_VALUES_IGNORED_TRANSFORMS = [:obfuscate_sentence, :similar_date].freeze
 
+  # :reek:LongParameterList
   def map_value(orig_value, field_name, obj_class: nil, transform_method: nil)
     # find the first of the transform_methods that returns a non-nil value
     transform_method ||= SanitizedJsonConfiguration.transform_methods.find do |method|
