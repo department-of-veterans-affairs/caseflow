@@ -95,7 +95,6 @@ class SanitizedJsonExporter
     end
     obj_hash[field_name]
   end
-  # rubocop:enable
 
   # :reek:FeatureEnvy
   def find_or_create_mapped_value_for(obj_hash, field_name, **kwargs)

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "helpers/sanitized_json_difference.rb"
-# require "helpers/sanitized_json_exporter.rb"
 
 # Given JSON, this class parses it as records and creates those records in the database.
 #
@@ -33,6 +32,7 @@ class SanitizedJsonImporter
   # key = ActiveRecord class's table_name; value = array of JSON of ActiveRecords
   attr_accessor :records_hash
   attr_accessor :metadata
+  attr_accessor :id_offset
 
   # Hash of records imported into the database
   # key = ActiveRecord class's table_name; value = ActiveRecords in the database
@@ -62,6 +62,8 @@ class SanitizedJsonImporter
 
     @verbosity = verbosity # higher is more verbose
   end
+
+  SjConfiguration = SanitizedJsonConfiguration
 
   def import
     ActiveRecord::Base.transaction do
@@ -148,7 +150,6 @@ class SanitizedJsonImporter
   def mapped_appeal_ids
     @mapped_ids[Appeal.name.underscore]
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity
 
   def mapped_user_ids
     @mapped_ids[User.name.underscore]
@@ -175,7 +176,6 @@ class SanitizedJsonImporter
       end
     end
   end
-  # rubocop:enable
 
   def offset_id_table_fields
     @offset_id_table_fields ||= @configuration.offset_id_fields.transform_keys(&:table_name).freeze
@@ -214,8 +214,8 @@ class SanitizedJsonImporter
     end
   end
 
-  REASSOCIATE_TYPE_TABLE_FIELDS = SanitizedJsonExporter::REASSOCIATE_FIELDS[:type].transform_keys(&:table_name).freeze
-  REASSOCIATE_TABLE_FIELDS_HASH = SanitizedJsonExporter::REASSOCIATE_FIELDS
+  REASSOCIATE_TYPE_TABLE_FIELDS = SjConfiguration::REASSOCIATE_FIELDS[:type].transform_keys(&:table_name).freeze
+  REASSOCIATE_TABLE_FIELDS_HASH = SjConfiguration::REASSOCIATE_FIELDS
     .select { |type_string, _| type_string.is_a?(String) }
     .transform_values { |class_to_fieldnames_hash| class_to_fieldnames_hash.transform_keys(&:table_name) }.freeze
 
