@@ -1,100 +1,129 @@
 # frozen_string_literal: true
 
+require "helpers/association_wrapper.rb"
+
+# Configuration for exporting/importing data from/to Caseflow.
+
 class SanitizedJsonConfiguration
-  # To-do: load this from a file or automatically determine fields to sanitize
-  SANITIZE_FIELDS ||= {
-    Appeal => %w[veteran_file_number],
-    AppealIntake => %w[veteran_file_number],
-    Veteran => %w[first_name last_name middle_name file_number ssn],
-    Claimant => %w[],
-    User => %w[full_name email css_id],
-    Person => %w[date_of_birth email_address first_name last_name middle_name ssn],
-    Task => %w[instructions],
-    # cavc_judge_full_name is selected from Constants::CAVC_JUDGE_FULL_NAMES; no need to sanitize
-    CavcRemand => %w[instructions],
-    Organization => %w[],
-    TaskTimer => %w[],
-    OrganizationsUser => %w[],
-    RequestDecisionIssue => %w[],
-    RequestIssue => ["notes", /_(notes|text|description)/],
-    DecisionIssue => %w[description decision_text],
-    HearingTaskAssociation => %w[],
-    Hearing => %w[notes military_service summary bva_poc representative_name witness],
-    HearingDay => %w[bva_poc notes],
-    VirtualHearing => %w[alias guest_pin host_pin guest_pin_long host_pin_long representative_email
-                         judge_email alias_with_host appellant_email host_hearing_link guest_hearing_link]
-  }.freeze
 
-  # https://stackoverflow.com/questions/13355549/rails-activerecord-detect-if-a-column-is-an-association-or-not
-  class AssocationWrapper
-    attr_reader :associations
+  # The :retrieval lambda is run according to the ordering in this hash.
+  EXPORTER_CONFIG = {
+    Appeal => {
+      track_imported_ids: true,
+      sanitize_fields: %w[veteran_file_number],
+    },
+    User => {
+      track_imported_ids: true,
+      sanitize_fields: %w[full_name email css_id],
+      retrieval: ->(records) { 
+        tasks = records[Task]
+        cavc_remands = records[CavcRemand]
+        hearings = records[Hearing]
 
-    def initialize(clazz)
-      @associations = clazz.reflect_on_all_associations
-    end
+        tasks.map(&:assigned_by).compact + tasks.map(&:cancelled_by).compact +
+        tasks.assigned_to_user.map(&:assigned_to) +
+        cavc_remands.map { |cavc_remand| [cavc_remand.created_by, cavc_remand.updated_by] }.flatten.uniq.compact +
+        records[Appeal].map(&:intake).compact.map(&:user).uniq.compact +
+        records[AppealIntake].map { |intake| intake&.user }.uniq.compact +
+        records[HearingDay].map { |hd| [hd.created_by, hd.updated_by, hd.judge] }.flatten.uniq.compact +
+        hearings.map { |h| [h.created_by, h.updated_by, h.judge] }.flatten.uniq.compact +
+        hearings.map(&:virtual_hearing).uniq.compact.map { |vh| [vh.created_by, vh.updated_by] }.flatten.uniq.compact 
+      }
+    },
+    Organization => {
+      track_imported_ids: true,
+      sanitize_fields: %w[],
+      retrieval: ->(records) { records[Task].assigned_to_org.map(&:assigned_to) + records[User].map(&:organizations).flatten.uniq }
+    },
+    Person => {
+      track_imported_ids: true,
+      sanitize_fields: %w[date_of_birth email_address first_name last_name middle_name ssn],
+      retrieval: ->(records) { (records[Veteran] + records[Claimant]).map(&:person).uniq.compact }
+    },
 
-    def belongs_to
-      @associations = @associations.select { |assoc| assoc.macro == :belongs_to }
-      self
-    end
+    OrganizationsUser => {
+      # TODO: Investigate why enabling this breaks things: track_imported_ids: true,
+      retrieval: ->(records) { OrganizationsUser.where(user: records[User]) }
+    },
+    Veteran => {
+      sanitize_fields: %w[first_name last_name middle_name file_number ssn],
+      retrieval: ->(records) { records[Appeal].map(&:veteran) }
+    },
+    AppealIntake => {
+      sanitize_fields: %w[veteran_file_number],
+      retrieval: ->(records) { records[Appeal].map(&:intake) }
+    },
+    Claimant => {
+      retrieval: ->(records) { records[Appeal].map(&:claimants).flatten }
+    },
+    Task => {
+      sanitize_fields: %w[instructions],
+      retrieval: ->(records) { records[Appeal].map(&:tasks).flatten.sort_by(&:id).extend(TaskAssignment) }
+    },
+    TaskTimer => {
+      retrieval: ->(records) { TaskTimer.where(task_id: records[Task].map(&:id)) }
+    },
+    CavcRemand => {
+      # cavc_judge_full_name is selected from Constants::CAVC_JUDGE_FULL_NAMES; no need to sanitize
+      sanitize_fields: %w[instructions],
+      retrieval: ->(records) { records[Appeal].map(&:cavc_remand).compact }
+    },
 
-    def without_type_field
-      # TODO: handle assoc.foreign_key.is_a?(Symbol)
-      @associations = @associations.select { |assoc| assoc.foreign_type.nil? && assoc.foreign_key.is_a?(String) }
-      self
-    end
+    RequestIssue => {
+      sanitize_fields: ["notes", /_(notes|text|description)/],
+      retrieval: ->(records) { records[Appeal].map(&:request_issues).flatten }
+    },
+    DecisionIssue => {
+      sanitize_fields: %w[description decision_text],
+      retrieval: ->(records) { records[Appeal].map(&:decision_issues).flatten }
+    },
+    RequestDecisionIssue => {
+      retrieval: ->(records) { RequestDecisionIssue.where(request_issue: records[RequestIssue]) }
+    },
 
-    def having_type_field
-      @associations = @associations.select(&:foreign_type)
-      self
-    end
+    Hearing => {
+      sanitize_fields: %w[notes military_service summary bva_poc representative_name witness],
+      retrieval: ->(records) { records[Task].with_type("HearingTask").map(&:hearing).uniq.compact }
+    },
+    HearingDay => {
+      sanitize_fields: %w[bva_poc notes],
+      retrieval: ->(records) { records[Hearing].map(&:hearing_day).uniq.compact }
+    },
+    VirtualHearing => {
+      sanitize_fields: %w[alias guest_pin host_pin guest_pin_long host_pin_long representative_email
+                         judge_email alias_with_host appellant_email host_hearing_link guest_hearing_link],
+      retrieval: ->(records) { records[Hearing].map(&:virtual_hearing).uniq.compact }
+    },
+    HearingTaskAssociation => {
+      retrieval: ->(records) { HearingTaskAssociation.where(hearing: records[Hearing]) }
+    },
+  }
 
-    def associated_with_type(assoc_class)
-      @associations = @associations.select { |assoc| assoc.class_name == assoc_class.name }
-      self
-    end
+  IMPORTER_CONFIG = {
 
-    def ignore_fieldnames(ignore_fieldnames)
-      if ignore_fieldnames.any?
-        @associations = @associations.reject { |assoc| ignore_fieldnames&.include?(assoc.foreign_key) }
-      end
-      self
-    end
+  }
 
-    def fieldnames
-      @associations.map(&:foreign_key)
-    end
+  DIFFERENCE_CONFIG = {
+
+  }
+
+  def self.extract_configuration(config_field, configuration, default_value = nil)
+    configuration.map {|clazz, class_config| [clazz, class_config[config_field] || default_value.clone]}.to_h.compact
   end
 
-  def self.fieldnames_of_typed_associations_with(assoc_class, clazz)
-    AssocationWrapper.new(clazz).belongs_to.associated_with_type(assoc_class).fieldnames.presence
+  def self.extract_classes_with_true(config_field, configuration)
+    configuration.select {|_, config| config[config_field] == true }.keys.compact
   end
 
-  def self.fieldnames_of_untyped_associations_with(assoc_class, clazz)
-    AssocationWrapper.new(clazz).belongs_to.without_type_field.associated_with_type(assoc_class).fieldnames.presence
-  end
+  SANITIZE_FIELDS = extract_configuration(:sanitize_fields, EXPORTER_CONFIG, []).freeze
 
-  def self.fieldnames_of_typed_associations_for(clazz, ignore_fieldnames)
-    AssocationWrapper.new(clazz).belongs_to.having_type_field.ignore_fieldnames(ignore_fieldnames).fieldnames.presence
-  end
-
-  def self.grouped_fieldnames_of_typed_associations_with(clazz, known_classes)
-    AssocationWrapper.new(clazz).belongs_to.associations
-      .group_by(&:class_name)
-      .slice(*known_classes)
-      .transform_values { |assocs| assocs.map(&:foreign_key) }
-      .compact
-  end
-
-  # Special types that can be have `same_unique_attributes?`
+  # Special types that can have `same_unique_attributes?`
   # or where we want to look up its id, e.g. Appeal for Claimant used in `same_unique_attributes?`
-  ID_MAPPING_TYPES = [Appeal, User, Person, Organization].freeze
+  # The id are tracked in `importer.id_mapping`.
+  ID_MAPPING_TYPES = extract_classes_with_true(:track_imported_ids, EXPORTER_CONFIG).freeze
 
-  # types that we need to examine for associations and update them
-  REASSOCIATE_TYPES = [DecisionReview, AppealIntake, Veteran, Claimant, Task, TaskTimer, CavcRemand,
-                       DecisionIssue, RequestIssue, RequestDecisionIssue,
-                       Hearing, HearingTaskAssociation, HearingDay, VirtualHearing,
-                       OrganizationsUser].freeze
+  # Types that need to be examine for associations so that '_id' fields can be updated
+  REASSOCIATE_TYPES = (EXPORTER_CONFIG.keys - ID_MAPPING_TYPES + [DecisionReview]).uniq
 
   # in case a Class is associated with a specific decendant of one of the REASSOCIATE_TYPES
   REASSOCIATE_TYPES_DESCENDANTS = REASSOCIATE_TYPES.map(&:descendants).flatten
@@ -105,10 +134,10 @@ class SanitizedJsonConfiguration
   # modelClass => fieldnames_array
   # rubocop:disable Style/MultilineBlockChain
   OFFSET_ID_FIELDS ||= REASSOCIATE_TYPES.map do |clazz|
-    [clazz, grouped_fieldnames_of_typed_associations_with(clazz, KNOWN_TYPE_NAMES).values.flatten]
+    [clazz, AssocationWrapper.grouped_fieldnames_of_typed_associations_with(clazz, KNOWN_TYPE_NAMES).values.flatten.sort]
   end.to_h.tap do |class_to_fieldnames_hash|
     # array of decision_issue_ids; not declared as an association in Rails, so add it manually
-    class_to_fieldnames_hash[CavcRemand] << "decision_issue_ids"
+    class_to_fieldnames_hash[CavcRemand].push("decision_issue_ids").sort!
 
     # TODO: Why is :participant_id listed as a association? Why is it a symbol whereas others are strings?
     class_to_fieldnames_hash[Claimant].delete(:participant_id)
@@ -121,12 +150,12 @@ class SanitizedJsonConfiguration
   REASSOCIATE_FIELDS ||= {
     # These untyped association fields will associate to the User ActiveRecord
     "User" => REASSOCIATE_TYPES.map do |clazz|
-      [clazz, fieldnames_of_untyped_associations_with(User, clazz)]
+      [clazz, AssocationWrapper.fieldnames_of_untyped_associations_with(User, clazz)]
     end.to_h.compact,
 
     # These typed polymorphic association fields will associate to the their corresponding ActiveRecord
     :type => REASSOCIATE_TYPES.map do |clazz|
-      [clazz, fieldnames_of_typed_associations_for(clazz, OFFSET_ID_FIELDS[clazz])]
+      [clazz, AssocationWrapper.fieldnames_of_typed_associations_for(clazz, OFFSET_ID_FIELDS[clazz])]
     end.to_h.compact
   }.freeze
 
@@ -149,43 +178,21 @@ class SanitizedJsonConfiguration
     def records_to_export(initial_appeals)
       associated_appeals = initial_appeals.map { |appeal| appeals_associated_with(appeal) }.flatten.uniq.compact
       appeals = (initial_appeals + associated_appeals).uniq
-      tasks = appeals.map(&:tasks).flatten.sort_by(&:id).extend(TaskAssignment)
-      cavc_remands = appeals.map(&:cavc_remand).compact
-      hearings = tasks.with_type("HearingTask").map(&:hearing).uniq.compact
-      hearing_days = hearings.map(&:hearing_day).uniq.compact
 
-      request_issues = appeals.map(&:request_issues).flatten
       export_records = {
         Appeal => appeals,
-        AppealIntake => appeals.map(&:intake),
-        Veteran => appeals.map(&:veteran),
-        Claimant => appeals.map(&:claimants).flatten,
-        Task => tasks,
-        TaskTimer => TaskTimer.where(task_id: tasks.map(&:id)),
-        CavcRemand => cavc_remands,
-        DecisionIssue => appeals.map(&:decision_issues).flatten,
-        RequestIssue => request_issues,
-        RequestDecisionIssue => RequestDecisionIssue.where(request_issue: request_issues),
-        Hearing => hearings,
-        HearingTaskAssociation => HearingTaskAssociation.where(hearing: hearings),
-        HearingDay => hearing_days,
-        VirtualHearing => hearings.map(&:virtual_hearing).uniq.compact
       }
+      # incrementally update export_records as subsequent calls may rely on prior updates to export_records
+      retrieval_lambdas = extract_configuration(:retrieval, EXPORTER_CONFIG, ->(records) { [] })
 
-      users = tasks.map(&:assigned_by).compact + tasks.map(&:cancelled_by).compact +
-              tasks.assigned_to_user.map(&:assigned_to) +
-              cavc_remands.map { |cavc_remand| [cavc_remand.created_by, cavc_remand.updated_by] }.flatten.uniq.compact +
-              appeals.map(&:intake).compact.map(&:user).uniq.compact +
-              hearing_days.map { |hd| [hd.created_by, hd.updated_by, hd.judge] }.flatten.uniq.compact +
-              hearings.map { |h| [h.created_by, h.updated_by, h.judge] }.flatten.uniq.compact +
-              hearings.map(&:virtual_hearing).uniq.compact
-                .map { |vh| [vh.created_by, vh.updated_by] }.flatten.uniq.compact
-      export_records.merge!(
-        User => users,
-        Organization => tasks.assigned_to_org.map(&:assigned_to) + users.map(&:organizations).flatten.uniq,
-        OrganizationsUser => OrganizationsUser.where(user: users),
-        Person => (export_records[Veteran] + export_records[Claimant]).map(&:person).uniq.compact
-      )
+      retrieval_lambdas.reject { |clazz, _| ID_MAPPING_TYPES.include?(clazz) }
+        .map { |clazz, retrieval_lambda| export_records[clazz] ||= retrieval_lambda.call(export_records) }
+
+      retrieval_lambdas.select { |clazz, _| ID_MAPPING_TYPES.include?(clazz) }
+        .map { |clazz, retrieval_lambda| export_records[clazz] ||= retrieval_lambda.call(export_records) }
+
+      export_records[OrganizationsUser] = retrieval_lambdas[OrganizationsUser].call(export_records)
+      export_records
     end
 
     def appeals_associated_with(appeal)
