@@ -365,7 +365,7 @@ describe "SanitizedJsonExporter/Importer" do
   end
 
   describe ".fieldnames_of_untyped_associations_with User records" do
-    subject { SjConfiguration.fieldnames_of_untyped_associations_with(User, target_class) }
+    subject { AssocationWrapper.fieldnames_of_untyped_associations_with(User, target_class) }
     context "for Task class" do
       let(:target_class) { Task }
       it "returns fieldname associated with User records" do
@@ -392,16 +392,16 @@ describe "SanitizedJsonExporter/Importer" do
         AppealIntake => [],
         Veteran => [],
         Claimant => ["decision_review_id"],
-        Task => %w[parent_id appeal_id],
+        Task => %w[appeal_id parent_id],
         TaskTimer => ["task_id"],
-        CavcRemand => %w[source_appeal_id remand_appeal_id decision_issue_ids],
+        CavcRemand => %w[decision_issue_ids remand_appeal_id source_appeal_id],
         DecisionIssue => ["decision_review_id"],
-        RequestIssue => %w[decision_review_id
-                           contested_decision_issue_id
+        RequestIssue => %w[contested_decision_issue_id
                            corrected_by_request_issue_id
+                           decision_review_id
                            ineligible_due_to_id],
         RequestDecisionIssue => %w[decision_issue_id request_issue_id],
-        Hearing => %w[hearing_day_id appeal_id],
+        Hearing => %w[appeal_id hearing_day_id],
         HearingTaskAssociation => %w[hearing_id hearing_task_id],
         HearingDay => [],
         VirtualHearing => ["hearing_id"],
@@ -429,10 +429,10 @@ describe "SanitizedJsonExporter/Importer" do
       expect(SjConfiguration::REASSOCIATE_FIELDS["User"]).to eq(reassociate_fields_for_user)
 
       # binding.pry
-      expect(SjConfiguration.fieldnames_of_typed_associations_with(Appeal, Task)).to eq ["appeal_id"]
+      expect(AssocationWrapper.fieldnames_of_typed_associations_with(Appeal, Task)).to eq ["appeal_id"]
       known_classes = (SjConfiguration::REASSOCIATE_TYPES + SjConfiguration::REASSOCIATE_TYPES_DESCENDANTS).map(&:name)
       pp SjConfiguration::REASSOCIATE_TYPES.map { |clazz|
-        [clazz.name, SjConfiguration.grouped_fieldnames_of_typed_associations_with(clazz, known_classes)]
+        [clazz.name, AssocationWrapper.grouped_fieldnames_of_typed_associations_with(clazz, known_classes)]
       }.to_h.compact
     end
   end
