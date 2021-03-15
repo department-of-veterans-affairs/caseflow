@@ -69,7 +69,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
   let!(:hearing) { create(:hearing, :with_tasks, regional_office: "RO13") }
   let!(:central_hearing) { create(:hearing, :with_tasks) }
   let!(:expected_alert) do
-    COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
+    COPY::VIRTUAL_HEARING_SUCCESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
   end
 
   let(:pre_loaded_veteran_email) { hearing.appeal.veteran.email_address }
@@ -245,7 +245,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
     end
 
     let!(:expected_alert) do
-      COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_FROM_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
+      COPY::VIRTUAL_HEARING_SUCCESS_ALERTS["CHANGED_FROM_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
     end
 
     scenario "email notification history displays email addresses for previously sent emails" do
@@ -274,7 +274,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       )
     end
     let!(:expected_alert) do
-      COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_FROM_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
+      COPY::VIRTUAL_HEARING_SUCCESS_ALERTS["CHANGED_FROM_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
     end
 
     scenario "user switches hearing type back to original request type" do
