@@ -81,7 +81,9 @@ class SanitizedJsonConfiguration
     },
     Hearing => {
       sanitize_fields: %w[bva_poc military_service notes representative_name summary witness],
-      retrieval: ->(records) { records[Task].with_type("HearingTask").map(&:hearing).uniq.compact }
+      retrieval: lambda do |records|
+        (records[Appeal].map(&:hearings) + records[Task].with_type("HearingTask").map(&:hearing)).flatten.uniq.compact
+      end
     },
     HearingDay => {
       sanitize_fields: %w[bva_poc notes],
