@@ -238,6 +238,7 @@ class SanitizedJsonConfiguration
       end
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
     def random_person_name(field_name, _field_value)
       case field_name
       when "full_name", "representative_name"
@@ -265,6 +266,7 @@ class SanitizedJsonConfiguration
         Faker::Name.first_name
       end
     end
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
 
     def similar_date(field_name, field_value)
       case field_name
@@ -394,7 +396,8 @@ class SanitizedJsonConfiguration
           )
       end
       unless remaining_id_fields.blank?
-        fail "!! For #{clazz}, expecting these *'_id' fields be adjusted: #{remaining_id_fields}\n\tobj_hash: #{obj_hash}"
+        fail "!! For #{clazz}, expecting these *'_id' fields be adjusted: " \
+             "#{remaining_id_fields}\n\tobj_hash: #{obj_hash}"
       end
     end
   end
