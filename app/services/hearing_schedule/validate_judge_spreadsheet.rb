@@ -52,12 +52,10 @@ class HearingSchedule::ValidateJudgeSpreadsheet
 
   # This method smells of :reek:UtilityFunction
   def judge_name_matches(row, vacols_judges)
-    row_vlj_id = row[:vlj_id]
-    row_last, row_first = row[:name].split(", ").map { |name_part| name_part.strip.downcase }
+    last_name, first_name = row[:name].split(", ").map(&:strip)
 
-    vacols_judges[row_vlj_id] &&
-      vacols_judges[row_vlj_id][:first_name].casecmp(row_first).zero? &&
-      vacols_judges[row_vlj_id][:last_name].casecmp(row_last).zero?
+    vacols_judges[row[:vlj_id]][:first_name].casecmp(first_name).zero? &&
+      vacols_judges[row[:vlj_id]][:last_name].casecmp(last_name).zero?
   end
 
   def filter_rows_by_error
@@ -65,7 +63,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
 
     # get rows with and without matching ids
     rows_with_judge_id_match, rows_without_judge_id_match = @spreadsheet_data.partition do |row|
-      vacols_judges[row[:vlj_id]]
+      vacols_judges[row[:vlj_id]].present?
     end
 
     # check rows with matching ids for wrong names
