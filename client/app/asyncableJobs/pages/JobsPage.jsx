@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 
 import Table from '../../components/Table';
-import EasyPagination from '../../components/EasyPagination';
+import EasyPagination from '../../components/Pagination/EasyPagination';
 
 import AsyncModelNav from '../components/AsyncModelNav';
 import JobRestartButton from '../components/JobRestartButton';

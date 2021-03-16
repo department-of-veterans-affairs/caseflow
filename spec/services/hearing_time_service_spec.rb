@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe HearingTimeService, :all_dbs do
+  before do
+    Timecop.freeze(Time.utc(2020, 1, 1, 0, 0, 0))
+  end
+
   shared_context "legacy_hearing" do
     let!(:legacy_hearing) do
       # vacols requires us to pass a time set in ET even though it reflects local time
