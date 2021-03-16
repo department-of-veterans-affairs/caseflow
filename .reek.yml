@@ -185,6 +185,7 @@ detectors:
       - DuplicateUserTask
       - LegacyAppealDispatch
       - Address
+      - SanitizedJsonImporter
       - ExternalApi::PexipService
       - InvalidAssigneeStatusOnTaskCreate
       - Api::V3::DecisionReviews::ContestableIssueFinder

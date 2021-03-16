@@ -14,7 +14,7 @@ class AssocationWrapper
   end
 
   def without_type_field
-    # TODO: handle assoc.foreign_key.is_a?(Symbol)
+    # Not sure how to handle case where assoc.foreign_key.is_a?(Symbol)
     @associations = @associations.select { |assoc| assoc.foreign_type.nil? && assoc.foreign_key.is_a?(String) }
     self
   end

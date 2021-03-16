@@ -118,11 +118,10 @@ class SanitizedJsonConfiguration
     end
   end
 
-  # private_class_method def self.extract_configuration(config_field, configuration, default_value = nil,
-  #                                                     ordering_field: nil, default_ordering_value: nil)
-  #   configuration.select { |clazz, _| clazz < ActiveRecord::Base }
-  #     .map { |clazz, class_config| [clazz, class_config[config_field] || default_value.clone] }.to_h.compact
-  # end
+  private_class_method def self.extract_configuration(config_field, configuration, default_value = nil)
+    configuration.select { |clazz, _| clazz < ActiveRecord::Base }
+      .map { |clazz, class_config| [clazz, class_config[config_field] || default_value.clone] }.to_h.compact
+  end
 
   private_class_method def self.extract_classes_with_true(config_field, configuration)
     configuration.select { |_, config| config[config_field] == true }.keys.compact
@@ -400,11 +399,7 @@ class SanitizedJsonConfiguration
     end
 
     def reassociate_fields
-      # For each reassociate_types, identify their associations so the '_id' fields can be updated
-      # based on imported records
-      # TODO: consider using KNOWN_TYPES instead of reassociate_types,
-      #   KNOWN_TYPES = (reassociate_types + reassociate_types.map(&:descendants).flatten).uniq
-      # or consolidating e.g. TranscriptionTask => ["assigned_to_id", "appeal_id"] with that of Task
+      # For each reassociate_types, identify their associations so '_id' fields can be updated to imported records
       @reassociate_fields ||= {
         # These untyped association fields will associate to the User ActiveRecord
         "User" => reassociate_types.map do |clazz|
