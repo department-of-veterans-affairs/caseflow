@@ -386,7 +386,7 @@ describe "SanitizedJsonExporter/Importer" do
     end
 
     it "temporary" do
-      # pp SjConfiguration::OFFSET_ID_FIELDS.transform_keys(&:name)
+      # pp SjConfiguration.offset_id_fields.transform_keys(&:name)
       offset_id_fields = {
         DecisionReview => [],
         AppealIntake => [],
@@ -407,15 +407,15 @@ describe "SanitizedJsonExporter/Importer" do
         VirtualHearing => ["hearing_id"],
         OrganizationsUser => []
       }
-      expect(SjConfiguration::OFFSET_ID_FIELDS).to eq offset_id_fields
+      expect(SjConfiguration.offset_id_fields).to eq offset_id_fields
 
-      expect(SjConfiguration::REASSOCIATE_FIELDS.keys).to match_array ["User", :type]
+      expect(SjConfiguration.reassociate_fields.keys).to match_array ["User", :type]
 
       reassociate_fields_for_polymorphics = {
         Task => ["assigned_to_id"],
         AppealIntake => ["detail_id"]
       }
-      expect(SjConfiguration::REASSOCIATE_FIELDS[:type]).to eq(reassociate_fields_for_polymorphics)
+      expect(SjConfiguration.reassociate_fields[:type]).to eq(reassociate_fields_for_polymorphics)
 
       reassociate_fields_for_user = {
         AppealIntake => ["user_id"],
@@ -426,14 +426,15 @@ describe "SanitizedJsonExporter/Importer" do
         VirtualHearing => %w[updated_by_id created_by_id],
         OrganizationsUser => ["user_id"]
       }
-      expect(SjConfiguration::REASSOCIATE_FIELDS["User"]).to eq(reassociate_fields_for_user)
+      expect(SjConfiguration.reassociate_fields["User"]).to eq(reassociate_fields_for_user)
 
       # binding.pry
-      expect(AssocationWrapper.fieldnames_of_typed_associations_with(Appeal, Task)).to eq ["appeal_id"]
-      known_classes = (SjConfiguration::REASSOCIATE_TYPES + SjConfiguration::REASSOCIATE_TYPES_DESCENDANTS).map(&:name)
-      pp SjConfiguration::REASSOCIATE_TYPES.map { |clazz|
-        [clazz.name, AssocationWrapper.grouped_fieldnames_of_typed_associations_with(clazz, known_classes)]
-      }.to_h.compact
+      # expect(AssocationWrapper.fieldnames_of_typed_associations_with(Appeal, Task)).to eq ["appeal_id"]
+      # known_classes = (SjConfiguration.reassociate_fields +
+      #                  SjConfiguration::REASSOCIATE_TYPES_DESCENDANTS).map(&:name)
+      # pp SjConfiguration.reassociate_fields.map { |clazz|
+      #   [clazz.name, AssocationWrapper.grouped_fieldnames_of_typed_associations_with(clazz, known_classes)]
+      # }.to_h.compact
     end
   end
 

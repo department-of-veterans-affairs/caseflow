@@ -63,8 +63,6 @@ class SanitizedJsonImporter
     @verbosity = verbosity # higher is more verbose
   end
 
-  SjConfiguration = SanitizedJsonConfiguration
-
   def import
     ActiveRecord::Base.transaction do
       @configuration.first_types_to_import.each do |klass|
@@ -214,10 +212,15 @@ class SanitizedJsonImporter
     end
   end
 
-  REASSOCIATE_TYPE_TABLE_FIELDS = SjConfiguration::REASSOCIATE_FIELDS[:type].transform_keys(&:table_name).freeze
-  REASSOCIATE_TABLE_FIELDS_HASH = SjConfiguration::REASSOCIATE_FIELDS
-    .select { |type_string, _| type_string.is_a?(String) }
-    .transform_values { |class_to_fieldnames_hash| class_to_fieldnames_hash.transform_keys(&:table_name) }.freeze
+  def reassociate_type_table_fields
+    @reassociate_type_table_fields ||= @configuration.reassociate_fields[:type].transform_keys(&:table_name).freeze
+  end
+
+  def reassociate_table_fields_hash
+    @reassociate_table_fields_hash ||= @configuration.reassociate_fields
+      .select { |type_string, _| type_string.is_a?(String) }
+      .transform_values { |class_to_fieldnames_hash| class_to_fieldnames_hash.transform_keys(&:table_name) }.freeze
+  end
 
   def user_id_mapping
     @id_mapping[User.name.underscore]

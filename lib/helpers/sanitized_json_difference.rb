@@ -60,7 +60,7 @@ module SanitizedJsonDifference
       SanitizedJsonDifference.diff_records(original, imported, ignored_fields: ignored_fields)
     end.compact
   end
-  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   # rubocop:disable Metrics/CyclomaticComplexity
   # :reek:BooleanParameter
