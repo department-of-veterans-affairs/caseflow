@@ -210,7 +210,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     # Method to choose either the hearing time slot buttons or hearing time radio buttons
     def select_hearing_time(time)
       if FeatureToggle.enabled?(:enable_hearing_time_slots)
-        find(".time-slot-button", text: "#{time} AM EST").click
+        find(".time-slot-button", text: /#{time} AM E(S|D)T/).click
       else
         find(".cf-form-radio-option", text: time).click
       end
