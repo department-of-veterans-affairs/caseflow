@@ -8,9 +8,9 @@ describe Reporter do
   end
 
   describe "#average" do
-    let(:thing) { TestReporter.new }
+    let(:reporter) { TestReporter.new }
 
-    subject { thing.average(items) }
+    subject { reporter.average(items) }
 
     context "when there are no items" do
       let(:items) { [] }
@@ -35,8 +35,8 @@ describe Reporter do
   end
 
   describe "#median" do
-    let(:thing) { TestReporter.new }
-    subject { thing.median(items) }
+    let(:reporter) { TestReporter.new }
+    subject { reporter.median(items) }
 
     describe "when called with an empty array" do
       let(:items) { [] }
