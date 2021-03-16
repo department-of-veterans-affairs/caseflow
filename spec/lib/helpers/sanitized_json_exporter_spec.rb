@@ -385,56 +385,50 @@ describe "SanitizedJsonExporter/Importer" do
       end
     end
 
-    it "temporary" do
-      # pp SjConfiguration.offset_id_fields.transform_keys(&:name)
-      offset_id_fields = {
-        DecisionReview => [],
-        AppealIntake => [],
-        Veteran => [],
-        Claimant => ["decision_review_id"],
-        Task => %w[appeal_id parent_id],
-        TaskTimer => ["task_id"],
-        CavcRemand => %w[decision_issue_ids remand_appeal_id source_appeal_id],
-        DecisionIssue => ["decision_review_id"],
-        RequestIssue => %w[contested_decision_issue_id
-                           corrected_by_request_issue_id
-                           decision_review_id
-                           ineligible_due_to_id],
-        RequestDecisionIssue => %w[decision_issue_id request_issue_id],
-        Hearing => %w[appeal_id hearing_day_id],
-        HearingTaskAssociation => %w[hearing_id hearing_task_id],
-        HearingDay => [],
-        VirtualHearing => ["hearing_id"],
-        OrganizationsUser => []
-      }
-      expect(SjConfiguration.offset_id_fields).to eq offset_id_fields
+    context "SjConfiguration uses of AssocationWrapper" do
+      it "populates SjConfiguration constants correctly" do
+        offset_id_fields = {
+          DecisionReview => [],
+          AppealIntake => [],
+          Veteran => [],
+          Claimant => ["decision_review_id"],
+          Task => %w[appeal_id parent_id],
+          TaskTimer => ["task_id"],
+          CavcRemand => %w[decision_issue_ids remand_appeal_id source_appeal_id],
+          DecisionIssue => ["decision_review_id"],
+          RequestIssue => %w[contested_decision_issue_id
+                            corrected_by_request_issue_id
+                            decision_review_id
+                            ineligible_due_to_id],
+          RequestDecisionIssue => %w[decision_issue_id request_issue_id],
+          Hearing => %w[appeal_id hearing_day_id],
+          HearingTaskAssociation => %w[hearing_id hearing_task_id],
+          HearingDay => [],
+          VirtualHearing => ["hearing_id"],
+          OrganizationsUser => []
+        }
+        # pp SjConfiguration.offset_id_fields.transform_keys(&:name)
+        expect(SjConfiguration.offset_id_fields).to eq offset_id_fields
 
-      expect(SjConfiguration.reassociate_fields.keys).to match_array ["User", :type]
+        expect(SjConfiguration.reassociate_fields.keys).to match_array ["User", :type]
 
-      reassociate_fields_for_polymorphics = {
-        Task => ["assigned_to_id"],
-        AppealIntake => ["detail_id"]
-      }
-      expect(SjConfiguration.reassociate_fields[:type]).to eq(reassociate_fields_for_polymorphics)
+        reassociate_fields_for_polymorphics = {
+          Task => ["assigned_to_id"],
+          AppealIntake => ["detail_id"]
+        }
+        expect(SjConfiguration.reassociate_fields[:type]).to eq(reassociate_fields_for_polymorphics)
 
-      reassociate_fields_for_user = {
-        AppealIntake => ["user_id"],
-        Task => %w[assigned_by_id cancelled_by_id],
-        CavcRemand => %w[updated_by_id created_by_id],
-        Hearing => %w[updated_by_id judge_id created_by_id],
-        HearingDay => %w[updated_by_id judge_id created_by_id],
-        VirtualHearing => %w[updated_by_id created_by_id],
-        OrganizationsUser => ["user_id"]
-      }
-      expect(SjConfiguration.reassociate_fields["User"]).to eq(reassociate_fields_for_user)
-
-      # binding.pry
-      # expect(AssocationWrapper.fieldnames_of_typed_associations_with(Appeal, Task)).to eq ["appeal_id"]
-      # known_classes = (SjConfiguration.reassociate_fields +
-      #                  SjConfiguration::REASSOCIATE_TYPES_DESCENDANTS).map(&:name)
-      # pp SjConfiguration.reassociate_fields.map { |clazz|
-      #   [clazz.name, AssocationWrapper.grouped_fieldnames_of_typed_associations_with(clazz, known_classes)]
-      # }.to_h.compact
+        reassociate_fields_for_user = {
+          AppealIntake => ["user_id"],
+          Task => %w[assigned_by_id cancelled_by_id],
+          CavcRemand => %w[updated_by_id created_by_id],
+          Hearing => %w[updated_by_id judge_id created_by_id],
+          HearingDay => %w[updated_by_id judge_id created_by_id],
+          VirtualHearing => %w[updated_by_id created_by_id],
+          OrganizationsUser => ["user_id"]
+        }
+        expect(SjConfiguration.reassociate_fields["User"]).to eq(reassociate_fields_for_user)
+      end
     end
   end
 
