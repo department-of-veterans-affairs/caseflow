@@ -387,6 +387,9 @@ describe "SanitizedJsonExporter/Importer" do
 
     context "SjConfiguration uses of AssocationWrapper" do
       it "populates SjConfiguration constants correctly" do
+        expect(SjConfiguration.transform_methods).to include(:random_pin, :obfuscate_sentence, :similar_date)
+        expect(SjConfiguration.transform_methods).not_to include(:to_s, :to_i, :instance_methods)
+
         offset_id_fields = {
           DecisionReview => [],
           AppealIntake => [],
