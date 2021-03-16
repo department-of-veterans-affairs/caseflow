@@ -95,13 +95,13 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     rows_without_judge_id_match, rows_without_judge_name_match = filter_rows_by_error
     if rows_without_judge_id_match.count > 0
       @errors << JudgeIdNotInDatabase.new(
-        "These judges ids are not in the database: " + rows_without_judge_id_match.pluck(:vlj_id).to_s
+        "These judges ids are not in the database: " + rows_without_judge_id_match.pluck(:vlj_id).join(", ")
       )
     end
     if rows_without_judge_name_match.count > 0
       @errors << JudgeNameDoesNotMatchIdInDatabase.new(
         "These judges names do not match the database: " +
-          rows_without_judge_name_match.map { |row| "id: #{row[:vlj_id]}, name: #{row[:name]}" }.to_s
+          rows_without_judge_name_match.map { |judge| "#{judge['name']} (id: #{judge['vlj_id']})" }.join(", ")
       )
     end
   end
