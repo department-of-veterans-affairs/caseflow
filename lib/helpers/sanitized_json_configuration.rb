@@ -185,8 +185,9 @@ class SanitizedJsonConfiguration
     }
 
     # incrementally update export_records as subsequent calls may rely on prior updates to export_records
-    extract_configuration(:retrieval, configuration, ->(_records) { [] })
-      .map { |clazz, retrieval_lambda| export_records[clazz] = retrieval_lambda.call(export_records) }
+    extract_configuration(:retrieval, configuration).map do |clazz, retrieval_lambda|
+      export_records[clazz] = retrieval_lambda.call(export_records)
+    end
 
     export_records
   end
@@ -234,14 +235,14 @@ class SanitizedJsonConfiguration
     @first_types_to_import ||= [Appeal, User, Organization, HearingDay].freeze
   end
 
-  # Classes that shouldn't be imported if a record with the same unique attributes already exists
-  def nonduplicate_types
-    @nonduplicate_types ||= [User, Organization, Veteran, Person].freeze
-  end
-
   # During record creation, types where validation and callbacks should be avoided
   def types_that_skip_validation_and_callbacks
     @types_that_skip_validation_and_callbacks ||= [Task, *Task.descendants].freeze
+  end
+
+  # Classes that shouldn't be imported if a record with the same unique attributes already exists
+  def nonduplicate_types
+    @nonduplicate_types ||= [User, Organization, Veteran, Person].freeze
   end
 
   # For records where we want to reuse the existing record
@@ -261,13 +262,13 @@ class SanitizedJsonConfiguration
   def create_singleton(clazz, obj_hash, obj_description)
     # Handle Organization type specially because each organization has a `singleton`
     # To-do: update dev's seed data to match prod's Organization#singleton record ids
-    if clazz == Organization && !org_already_exists?(obj_hash)
+    if clazz == Organization && !self.class.org_already_exists?(obj_hash)
       puts "  + Creating #{clazz} '#{obj_hash['name']}' with its original id #{obj_hash['id']} \n\t#{obj_description}"
       clazz.create!(obj_hash)
     end
   end
 
-  def org_already_exists?(obj_hash)
+  def self.org_already_exists?(obj_hash)
     Organization.find_by(url: obj_hash["url"]) || Organization.find_by(id: obj_hash["id"])
   end
 
