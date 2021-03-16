@@ -60,15 +60,6 @@ class HearingSchedule::ValidateJudgeSpreadsheet
       vacols_judges[row_vlj_id][:last_name].casecmp(row_last).zero?
   end
 
-  # This method smells of :reek:UtilityFunction
-  def format_judge_names(judges_name_not_in_db)
-    judges_name_not_in_db.map do |judge|
-      "id: #{judge['vlj_id']}, name: #{judge['name']}"
-    end
-
-    judges_name_not_in_db.to_s
-  end
-
   def filter_judges
     vacols_judges = User.css_ids_by_vlj_ids(@spreadsheet_data.pluck("vlj_id").uniq)
 
@@ -107,7 +98,8 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     end
     if judges_name_not_in_db.count > 0
       @errors << JudgeNameDoesNotMatchIdInDatabase.new(
-        "These judges names do not match the database: " + format_judge_names(judges_name_not_in_db)
+        "These judges names do not match the database: " +
+          judges_name_not_in_db.map { |judge| "id: #{judge['vlj_id']}, name: #{judge['name']}" }.to_s
       )
     end
   end
