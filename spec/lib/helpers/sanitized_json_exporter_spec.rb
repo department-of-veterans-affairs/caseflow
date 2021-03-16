@@ -397,9 +397,9 @@ describe "SanitizedJsonExporter/Importer" do
           CavcRemand => %w[decision_issue_ids remand_appeal_id source_appeal_id],
           DecisionIssue => ["decision_review_id"],
           RequestIssue => %w[contested_decision_issue_id
-                            corrected_by_request_issue_id
-                            decision_review_id
-                            ineligible_due_to_id],
+                             corrected_by_request_issue_id
+                             decision_review_id
+                             ineligible_due_to_id],
           RequestDecisionIssue => %w[decision_issue_id request_issue_id],
           Hearing => %w[appeal_id hearing_day_id],
           HearingTaskAssociation => %w[hearing_id hearing_task_id],
