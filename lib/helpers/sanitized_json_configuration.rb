@@ -16,7 +16,7 @@ class SanitizedJsonConfiguration
         retrieval: lambda do |records|
           initial_appeals = records[Appeal]
           (initial_appeals +
-          initial_appeals.map { |appeal| appeals_associated_with(appeal) }.flatten.uniq.compact
+          initial_appeals.map { |appeal| self.class.appeals_associated_with(appeal) }.flatten.uniq.compact
           ).uniq
         end
       },
@@ -191,7 +191,7 @@ class SanitizedJsonConfiguration
     export_records
   end
 
-  def appeals_associated_with(appeal)
+  def self.appeals_associated_with(appeal)
     appeal.cavc_remand&.source_appeal
     # To-do: include other source appeals, e.g., those with the same docket number
   end
@@ -246,23 +246,14 @@ class SanitizedJsonConfiguration
 
   # For records where we want to reuse the existing record
   # :reek:FeatureEnvy
+  # :reek:UnusedParameters
   # rubocop:disable Lint/UnusedMethodArgument
   def same_unique_attributes?(existing_record, obj_hash, importer: nil)
     case existing_record
-    when Organization
-      existing_record.url == obj_hash["url"]
     when User
+      # SanitizedJsonImporter.attributes_with_unique_index(User) returns ["upper((css_id)::text)"]
+      # so fix it by manually checking here:
       existing_record.css_id == obj_hash["css_id"]
-      # when Claimant
-      # check if claimant is associated with appeal we just imported
-      # imported_appeal_id = importer.id_mapping[Appeal.name][obj_hash["decision_review_id"]]
-      # existing_record.decision_review_id == imported_appeal_id
-    when Veteran
-      existing_record.file_number == obj_hash["file_number"]
-    when Person
-      # To-do: Person.connection.index_exists? :people, :participant_id
-      # To-do: ActiveRecord::Base.connection.indexes(Person.table_name).select{|idx| idx.unique}
-      existing_record.participant_id == obj_hash["participant_id"]
     end
   end
   # rubocop:enable Lint/UnusedMethodArgument
@@ -293,18 +284,20 @@ class SanitizedJsonConfiguration
   def reassociate_fields
     # For each reassociate_types, identify their associations so '_id' fields can be updated to imported records
     @reassociate_fields ||= {
-      # These untyped association fields will associate to the User ActiveRecord
-      "User" => reassociate_types.map do |clazz|
-        [clazz, AssocationWrapper.fieldnames_of_untyped_associations_with(User, clazz)]
-      end.to_h.compact,
-
-      # These typed polymorphic association fields will associate to the their corresponding ActiveRecord
+      # Typed polymorphic association fields will associate to the their corresponding ActiveRecord
       :type => reassociate_types.map do |clazz|
         [clazz, AssocationWrapper.fieldnames_of_typed_associations_for(clazz, offset_id_fields[clazz])]
+      end.to_h.compact,
+
+      # Untyped association fields (those without the matching '_type' field) will associate to User records
+      "User" => reassociate_types.map do |clazz|
+        [clazz, AssocationWrapper.fieldnames_of_untyped_associations_with(User, clazz)]
       end.to_h.compact
     }.freeze
   end
 
+  # :reek:LongParameterList
+  # :reek:UnusedParameters
   # rubocop:disable Lint/UnusedMethodArgument, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def before_creation_hook(clazz, obj_hash, _obj_description, importer: nil)
     remaining_id_fields = obj_hash.select do |field_name, field_value|

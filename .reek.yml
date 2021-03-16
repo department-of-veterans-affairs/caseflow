@@ -25,6 +25,7 @@ detectors:
       - HearingRepository#slot_new_hearing
       - LegacyDocket#distribute_appeals
       - SanitizedJsonDifference
+      - SanitizedJsonConfiguration
       - Seeds::Tasks#create_legacy_case_with_open_schedule_hearing_task
       - SlackService#pick_color
       - Task#actions_allowable?
@@ -104,6 +105,7 @@ detectors:
       - RequestIssue#special_issues
       - RequestIssueReporter#as_csv
       - RunAsyncable#perform_later_or_now
+      - SanitizedJsonConfiguration
       - ScheduleHearingTask#create_hearing
       - Seeds::Hearings
       - Seeds::Tasks#create_colocated_legacy_tasks
@@ -225,6 +227,7 @@ detectors:
       - Reporter#median
       - Reporter#seconds_to_hms
       - Reporter#percent
+      - SanitizedJsonConfiguration
       - ScheduleHearingTaskPager#sorted_tasks
       - VBMSCaseflowLogger#log
 

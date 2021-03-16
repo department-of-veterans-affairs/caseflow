@@ -16,6 +16,11 @@ class SanitizedJsonImporter
     new(File.read(filename))
   end
 
+  def self.attributes_with_unique_index(clazz)
+    unique_indices = ActiveRecord::Base.connection.indexes(clazz.table_name).select(&:unique)
+    unique_indices.map(&:columns).flatten.uniq
+  end
+
   def initialize(file_contents, configuration: SanitizedJsonConfiguration.new)
     @configuration = configuration
     @id_offset = configuration.id_offset
@@ -189,7 +194,23 @@ class SanitizedJsonImporter
 
   def find_existing_record(clazz, obj_hash)
     existing_record = clazz.find_by_id(obj_hash["id"])
-    same_unique_attributes = @configuration.same_unique_attributes?(existing_record, obj_hash, importer: self)
-    existing_record if existing_record && same_unique_attributes
+    existing_record if existing_record && same_unique_attributes?(existing_record, obj_hash)
+  end
+
+  # For records where we want to reuse the existing record
+  # :reek:FeatureEnvy
+  def same_unique_attributes?(existing_record, obj_hash)
+    is_same = @configuration.same_unique_attributes?(existing_record, obj_hash, importer: self)
+    return is_same unless is_same.nil?
+
+    unique_attributes_per_tablename[existing_record.class.table_name]&.all? do |fieldname|
+      existing_record.send(fieldname) == obj_hash[fieldname]
+    end
+  end
+
+  def unique_attributes_per_tablename
+    @unique_attributes_per_tablename ||= @configuration.id_mapping_types.map do |clazz|
+      [clazz.table_name, self.class.attributes_with_unique_index(clazz)]
+    end.to_h.freeze
   end
 end
