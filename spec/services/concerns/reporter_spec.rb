@@ -1,4 +1,4 @@
-require 'rspec'
+require "rspec"
 
 # frozen_string_literal: true
 
@@ -32,7 +32,6 @@ describe Reporter do
         expect(subject).to eq 25
       end
     end
-
   end
 
   describe "#median" do
@@ -72,18 +71,17 @@ describe Reporter do
     end
 
     describe "when called with four erratically spaced items" do
-      let(:items) { [-10, 1, 5, 30000]}
+      let(:items) { [-10, 1, 5, 30_000] }
       it "returns the average of the middle two" do
         expect(subject).to eq 3
       end
     end
 
     describe "when called with an out-of-order set" do
-      let(:items) { [2, -7, 1]}
+      let(:items) { [2, -7, 1] }
       it "sorts the list and returns the true median" do
         expect(subject).to eq 1
       end
     end
-
   end
 end
