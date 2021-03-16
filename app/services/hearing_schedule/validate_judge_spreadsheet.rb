@@ -34,26 +34,26 @@ class HearingSchedule::ValidateJudgeSpreadsheet
 
   def filter_incorrectly_formatted_dates
     @spreadsheet_data.reject do |row|
-      HearingSchedule::DateValidators.new(row["date"]).date_correctly_formatted?
-    end.pluck("date")
+      HearingSchedule::DateValidators.new(row[:date]).date_correctly_formatted?
+    end.pluck(:date)
   end
 
   def filter_nonunique_judges
-    HearingSchedule::UniquenessValidators.new(@spreadsheet_data).duplicate_rows.pluck("vlj_id").uniq
+    HearingSchedule::UniquenessValidators.new(@spreadsheet_data).duplicate_rows.pluck(:vlj_id).uniq
   end
 
   def filter_out_of_range_dates
     out_of_range_dates = @spreadsheet_data.reject do |row|
-      HearingSchedule::DateValidators.new(row["date"], @start_date, @end_date).date_in_range?
-    end.pluck("date")
+      HearingSchedule::DateValidators.new(row[:date], @start_date, @end_date).date_in_range?
+    end.pluck(:date)
 
     out_of_range_dates.map { |date| date.strftime("%m/%d/%Y") }
   end
 
   # This method smells of :reek:UtilityFunction
   def judge_name_matches(row, vacols_judges)
-    row_vlj_id = row["vlj_id"]
-    row_last, row_first = row["name"].split(", ").map { |name_part| name_part.strip.downcase }
+    row_vlj_id = row[:vlj_id]
+    row_last, row_first = row[:name].split(", ").map { |name_part| name_part.strip.downcase }
 
     vacols_judges[row_vlj_id] &&
       vacols_judges[row_vlj_id][:first_name].casecmp(row_first).zero? &&
@@ -61,11 +61,11 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   end
 
   def filter_rows_by_error
-    vacols_judges = User.css_ids_by_vlj_ids(@spreadsheet_data.pluck("vlj_id").uniq)
+    vacols_judges = User.css_ids_by_vlj_ids(@spreadsheet_data.pluck(:vlj_id).uniq)
 
     # get rows with and without matching ids
     rows_with_judge_id_match, rows_without_judge_id_match = @spreadsheet_data.partition do |row|
-      vacols_judges[row["vlj_id"]]
+      vacols_judges[row[:vlj_id]]
     end
 
     # check rows with matching ids for wrong names
@@ -95,13 +95,13 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     rows_without_judge_id_match, rows_without_judge_name_match = filter_rows_by_error
     if rows_without_judge_id_match.count > 0
       @errors << JudgeIdNotInDatabase.new(
-        "These judges ids are not in the database: " + rows_without_judge_id_match.pluck("vlj_id").to_s
+        "These judges ids are not in the database: " + rows_without_judge_id_match.pluck(:vlj_id).to_s
       )
     end
     if rows_without_judge_name_match.count > 0
       @errors << JudgeNameDoesNotMatchIdInDatabase.new(
         "These judges names do not match the database: " +
-          rows_without_judge_name_match.map { |judge| "id: #{judge['vlj_id']}, name: #{judge['name']}" }.to_s
+          rows_without_judge_name_match.map { |row| "id: #{row[:vlj_id]}, name: #{row[:name]}" }.to_s
       )
     end
   end
