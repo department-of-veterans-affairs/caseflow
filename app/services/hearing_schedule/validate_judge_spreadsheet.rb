@@ -60,20 +60,20 @@ class HearingSchedule::ValidateJudgeSpreadsheet
       vacols_judges[row_vlj_id][:last_name].casecmp(row_last).zero?
   end
 
-  def filter_judges
+  def filter_rows_by_error
     vacols_judges = User.css_ids_by_vlj_ids(@spreadsheet_data.pluck("vlj_id").uniq)
 
     # get rows with and without matching ids
-    judges_id_in_db, judges_id_not_in_db = @spreadsheet_data.partition do |row|
+    rows_with_judge_id_match, rows_without_judge_id_match = @spreadsheet_data.partition do |row|
       vacols_judges[row["vlj_id"]]
     end
 
     # check rows with matching ids for wrong names
-    judges_name_not_in_db = judges_id_in_db.reject do |row|
+    rows_without_judge_name_match = rows_with_judge_id_match.reject do |row|
       judge_name_matches(row, vacols_judges)
     end
 
-    [judges_id_not_in_db, judges_name_not_in_db]
+    [rows_without_judge_id_match, rows_without_judge_name_match]
   end
 
   def validate_judge_non_availability_dates
@@ -92,16 +92,16 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   end
 
   def validate_judge_ids_and_names
-    judges_id_not_in_db, judges_name_not_in_db = filter_judges
-    if judges_id_not_in_db.count > 0
+    rows_without_judge_id_match, rows_without_judge_name_match = filter_rows_by_error
+    if rows_without_judge_id_match.count > 0
       @errors << JudgeIdNotInDatabase.new(
-        "These judges ids are not in the database: " + judges_id_not_in_db.pluck("vlj_id").to_s
+        "These judges ids are not in the database: " + rows_without_judge_id_match.pluck("vlj_id").to_s
       )
     end
-    if judges_name_not_in_db.count > 0
+    if rows_without_judge_name_match.count > 0
       @errors << JudgeNameDoesNotMatchIdInDatabase.new(
         "These judges names do not match the database: " +
-          judges_name_not_in_db.map { |judge| "id: #{judge['vlj_id']}, name: #{judge['name']}" }.to_s
+          rows_without_judge_name_match.map { |judge| "id: #{judge['vlj_id']}, name: #{judge['name']}" }.to_s
       )
     end
   end
