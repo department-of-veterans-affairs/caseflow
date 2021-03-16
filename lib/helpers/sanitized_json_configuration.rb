@@ -352,4 +352,5 @@ class SanitizedJsonConfiguration
       User => [:display_name]
     }
   end
+  # rubocop:enable Lint/UnusedMethodArgument, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 end

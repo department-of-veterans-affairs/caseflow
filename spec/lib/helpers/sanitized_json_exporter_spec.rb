@@ -82,7 +82,7 @@ describe "SanitizedJsonExporter/Importer" do
   describe ".random_email" do
     let(:orig_value) { "yoom@caseflow.va.gov" }
     let(:field_prefix) { ["", ("a".."z").to_a.sample(rand(9)).join].sample }
-    subject { SjConfiguration.random_email(field_name, orig_value) }
+    subject { SjConfiguration.new.random_email(field_name, orig_value) }
     context "given fieldname ending with 'email'" do
       let(:field_name) { "#{field_prefix}email" }
       it "returns fake email" do
@@ -329,7 +329,7 @@ describe "SanitizedJsonExporter/Importer" do
 
   describe ".obfuscate_sentence" do
     let(:field_name) { "instructions" }
-    subject { SjConfiguration.obfuscate_sentence(field_name, sentence) }
+    subject { SjConfiguration.new.obfuscate_sentence(field_name, sentence) }
     context "given sentence" do
       let(:sentence) { "No PII, just potentially sensitive!" }
       it "returns sentence without any of the original longer words" do
@@ -386,9 +386,10 @@ describe "SanitizedJsonExporter/Importer" do
     end
 
     context "SjConfiguration uses of AssocationWrapper" do
-      it "populates SjConfiguration constants correctly" do
-        expect(SjConfiguration.transform_methods).to include(:random_pin, :obfuscate_sentence, :similar_date)
-        expect(SjConfiguration.transform_methods).not_to include(:to_s, :to_i, :instance_methods)
+      let(:configuration) { SjConfiguration.new }
+      it "causes SjConfiguration instances to return correct results" do
+        expect(configuration.transform_methods).to include(:random_pin, :obfuscate_sentence, :similar_date)
+        expect(configuration.transform_methods).not_to include(:to_s, :to_i, :instance_methods)
 
         offset_id_fields = {
           DecisionReview => [],
@@ -410,16 +411,16 @@ describe "SanitizedJsonExporter/Importer" do
           VirtualHearing => ["hearing_id"],
           OrganizationsUser => []
         }
-        # pp SjConfiguration.offset_id_fields.transform_keys(&:name)
-        expect(SjConfiguration.offset_id_fields).to eq offset_id_fields
+        # pp configuration.offset_id_fields.transform_keys(&:name)
+        expect(configuration.offset_id_fields).to eq offset_id_fields
 
-        expect(SjConfiguration.reassociate_fields.keys).to match_array ["User", :type]
+        expect(configuration.reassociate_fields.keys).to match_array ["User", :type]
 
         reassociate_fields_for_polymorphics = {
           Task => ["assigned_to_id"],
           AppealIntake => ["detail_id"]
         }
-        expect(SjConfiguration.reassociate_fields[:type]).to eq(reassociate_fields_for_polymorphics)
+        expect(configuration.reassociate_fields[:type]).to eq(reassociate_fields_for_polymorphics)
 
         reassociate_fields_for_user = {
           AppealIntake => ["user_id"],
@@ -430,7 +431,7 @@ describe "SanitizedJsonExporter/Importer" do
           VirtualHearing => %w[updated_by_id created_by_id],
           OrganizationsUser => ["user_id"]
         }
-        expect(SjConfiguration.reassociate_fields["User"]).to eq(reassociate_fields_for_user)
+        expect(configuration.reassociate_fields["User"]).to eq(reassociate_fields_for_user)
       end
     end
   end
@@ -443,7 +444,8 @@ describe "SanitizedJsonExporter/Importer" do
       let(:field_name) { "instructions" }
       let(:obj_hash) { { field_name => ["instruct me", "me too"] } }
       it "sets a new array with new values" do
-        expect(SjConfiguration).to receive(:obfuscate_sentence).and_call_original.at_least(:once)
+        expect(sje.instance_variable_get("@configuration")).to receive(:obfuscate_sentence)
+          .and_call_original.at_least(:once)
         subject
         expect(obj_hash[field_name]).to eq ["in me", "me to"]
       end
