@@ -101,7 +101,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     if rows_without_judge_name_match.count > 0
       @errors << JudgeNameDoesNotMatchIdInDatabase.new(
         "These judges names do not match the database: " +
-          rows_without_judge_name_match.map { |judge| "#{judge['name']} (id: #{judge['vlj_id']})" }.join(", ")
+          rows_without_judge_name_match.map { |row| "#{row[:name]} (id: #{row[:vlj_id]})" }.join(", ")
       )
     end
   end
