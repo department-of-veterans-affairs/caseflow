@@ -42,51 +42,51 @@ module SanitizedJsonDifference
       SanitizedJsonDifference.diff_records(original, imported, ignored_fields: ignored_fields)
     end.compact
   end
-  # rubocop:enable
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity
   # :reek:BooleanParameter
   # :reek:LongParameterList
-  def self.diff_records(record_a, record_b,
-                        ignore_id_offset: false,
-                        convert_timestamps: true,
-                        ignored_fields: nil)
+  def self.diff_records(record_a, record_b, ignored_fields: nil,
+                        ignore_id_offset: false, convert_timestamps: true)
     hash_a = SanitizedJsonExporter.record_to_hash(record_a).except(*ignored_fields)
     hash_b = SanitizedJsonExporter.record_to_hash(record_b).except(*ignored_fields)
     # https://stackoverflow.com/questions/4928789/how-do-i-compare-two-hashes
     array_diff = (hash_b.to_a - hash_a.to_a) + (hash_a.to_a - hash_b.to_a)
 
     # Ignore some differences if they are expected or equivalent
-    array_diff.map(&:first).uniq.inject([]) do |diffs, key|
-      value_a = hash_a[key]
-      value_b = hash_b[key]
-      if ignore_id_offset && (value_b.is_a?(Integer) || integer?(value_b))
-        next diffs if (value_b.to_i - value_a.to_i).abs == ID_OFFSET
-      end
-
-      # Handle comparing a timestamp with the string equivalent recognized by JSON.parse
-      begin
-        if convert_timestamps && (value_a.try(:to_time) || value_b.try(:to_time))
-          time_a = value_a.try(:to_time)&.to_s || value_a
-          time_b = value_b.try(:to_time)&.to_s || value_b
-          next diffs if time_a == time_b
-
-          next diffs << [key, time_a, time_b]
-        end
-      rescue ArgumentError
-        # occurs when `to_time` is called on a string that is a UUID
-      end
-
-      next diffs << [key, value_a, value_b]
-    end
+    fieldnames_of_differences = array_diff.map(&:first).uniq
+    fieldnames_of_differences.map do |fieldname|
+      compare_values(fieldname, hash_a[fieldname], hash_b[fieldname],
+                     ignore_id_offset: ignore_id_offset,
+                     convert_timestamps: convert_timestamps)
+    end.compact
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
 
-  def self.integer?(thing)
-    begin
-      Integer(thing)
-    rescue StandardError
-      false
+  def self.compare_values(key, value_a, value_b, ignore_id_offset: false, convert_timestamps: true)
+    return nil if value_a == value_b
+
+    if ignore_id_offset && (value_a.is_a?(Integer) || value_b.is_a?(Integer))
+      return nil if (value_b.to_i - value_a.to_i).abs == ID_OFFSET
     end
+
+    if convert_timestamps
+      return try_to_compare_timestamps(key, value_a, value_b)
+    end
+
+    [key, value_a, value_b]
   end
+
+  # Compare a timestamp with the string equivalent recognized by JSON.parse
+  def self.try_to_compare_timestamps(key, value_a, value_b)
+    if value_a.try(:to_time) || value_b.try(:to_time)
+      time_a = value_a.try(:to_time)&.to_s || value_a
+      time_b = value_b.try(:to_time)&.to_s || value_b
+      return nil if time_a == time_b
+    end
+    [key, time_a, time_b]
+  rescue ArgumentError
+    # occurs when `to_time` is called on a string that is a UUID
+    ["#{key} (ArgumentError)", value_a, value_b]
+  end
+  # rubocop:enable Metrics/CyclomaticComplexity
 end

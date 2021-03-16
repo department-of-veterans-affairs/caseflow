@@ -561,7 +561,7 @@ describe "SanitizedJsonExporter/Importer" do
     end
 
     def check_all_differences(sje, sji, *orig_appeals)
-      pp sje.records_hash.transform_values(&:count)
+      # pp sje.records_hash.transform_values(&:count)
       not_imported_counts = sje.records_hash.transform_values(&:count).to_a -
                             sji.imported_records.transform_values(&:count).to_a
       expect(not_imported_counts).to eq [["metadata", 1]]

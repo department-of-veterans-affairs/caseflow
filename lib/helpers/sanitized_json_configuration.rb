@@ -104,9 +104,19 @@ class SanitizedJsonConfiguration
     }    
   }.freeze
 
-  DIFFERENCE_CONFIG = {
+  module TaskAssignment
+    def assigned_to_user
+      select { |task| task.assigned_to_type == "User" }
+    end
 
-  }.freeze
+    def assigned_to_org
+      select { |task| task.assigned_to_type == "Organization" }
+    end
+
+    def with_type(task_type)
+      select { |task| task.type == task_type }
+    end
+  end
 
   private_class_method def self.extract_configuration(config_field, configuration, default_value = nil, 
     ordering_field: nil, default_ordering_value: nil)
@@ -130,8 +140,7 @@ class SanitizedJsonConfiguration
     @reassociate_types ||= (EXPORTER_CONFIG.keys - id_mapping_types + [DecisionReview]).uniq
   end
 
-  # To-do: load this from a file or automatically determine fields to sanitize
-  # modelClass => fieldnames_array
+  # Fields that will be offset by the id_offset when imported
   # rubocop:disable Style/MultilineBlockChain
   def self.offset_id_fields
     @offset_id_fields ||= begin
@@ -148,30 +157,14 @@ class SanitizedJsonConfiguration
         # array of decision_issue_ids; not declared as an association in Rails, so add it manually
         class_to_fieldnames_hash[CavcRemand].push("decision_issue_ids").sort!
 
-        # TODO: Why is :participant_id listed as a association? Why is it a symbol whereas others are strings?
+        # Why is :participant_id listed as a association? Why is it a symbol whereas others are strings?
         class_to_fieldnames_hash[Claimant].delete(:participant_id)
       end.compact.freeze
     end
   end
   # rubocop:enable Style/MultilineBlockChain
 
-  # ==========  Exporter Configuration ==============
-
-  module TaskAssignment
-    def assigned_to_user
-      select { |task| task.assigned_to_type == "User" }
-    end
-
-    def assigned_to_org
-      select { |task| task.assigned_to_type == "Organization" }
-    end
-
-    def with_type(task_type)
-      select { |task| task.type == task_type }
-    end
-  end
-
-  class << self
+  class << self  # ==========  Exporter Configuration ==============
     def sanitize_fields_hash 
       @sanitize_fields ||= extract_configuration(:sanitize_fields, EXPORTER_CONFIG, []).freeze
     end
@@ -335,9 +328,7 @@ class SanitizedJsonConfiguration
     end
   end
 
-  # ==========  Importer Configuration ==============
-
-  class << self
+  class << self  # ==========  Importer Configuration ==============
     attr_accessor :id_offset
     
     def id_offset
@@ -360,6 +351,7 @@ class SanitizedJsonConfiguration
       @types_that_skip_validation_and_callbacks ||= [Task, *Task.descendants].freeze
     end
 
+    # For records where we want to reuse the existing record
     # :reek:FeatureEnvy
     def same_unique_attributes?(existing_record, obj_hash, importer: nil)
       case existing_record
@@ -367,10 +359,12 @@ class SanitizedJsonConfiguration
         existing_record.url == obj_hash["url"]
       when User
         existing_record.css_id == obj_hash["css_id"]
-      when Claimant
+      # when Claimant
         # check if claimant is associated with appeal we just imported
-        imported_appeal_id = importer.id_mapping[Appeal.name][obj_hash["decision_review_id"]]
-        existing_record.decision_review_id == imported_appeal_id
+        # imported_appeal_id = importer.id_mapping[Appeal.name][obj_hash["decision_review_id"]]
+        # existing_record.decision_review_id == imported_appeal_id
+      when Veteran
+        existing_record.file_number == obj_hash["file_number"]
       when Person
         # To-do: Person.connection.index_exists? :people, :participant_id
         # To-do: ActiveRecord::Base.connection.indexes(Person.table_name).select{|idx| idx.unique}
