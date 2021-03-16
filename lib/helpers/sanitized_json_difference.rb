@@ -3,20 +3,21 @@
 require "helpers/sanitized_json_configuration.rb"
 
 module SanitizedJsonDifference
-  ADDITIONAL_MAPPED_FIELDS = {
-    User => [:display_name]
-  }.freeze
+  ADDITIONAL_MAPPED_FIELDS = { User => [:display_name] }.freeze
 
-  # fields expected to be different; corresponds with fields in SanitizedJsonExporter#sanitize and SanitizedJsonImporter
-  MAPPED_FIELDS = [
-    SanitizedJsonConfiguration::SANITIZE_FIELDS,
-    SanitizedJsonConfiguration::OFFSET_ID_FIELDS,
-    *SanitizedJsonConfiguration::REASSOCIATE_FIELDS.values,
-    ADDITIONAL_MAPPED_FIELDS
-  ].map(&:to_a).sum.group_by(&:first).transform_values do |value|
-    field_name_arrays = value.map(&:second) + ["id"]
-    field_name_arrays.flatten.uniq
-  end.freeze
+  def mapped_fields1
+    # fields expected to be different;
+    # corresponds with fields in SanitizedJsonExporter#sanitize and SanitizedJsonImporter
+    @mapped_fields1 ||= [
+      @configuration.sanitize_fields_hash,
+      @configuration.offset_id_fields,
+      *@configuration.reassociate_fields.values,
+      ADDITIONAL_MAPPED_FIELDS
+    ].map(&:to_a).sum.group_by(&:first).transform_values do |value|
+      field_name_arrays = value.map(&:second) + ["id"]
+      field_name_arrays.flatten.uniq
+    end.freeze
+  end
 
   # :reek:FeatureEnvy
   def differences(sje, **kwargs)
@@ -28,9 +29,9 @@ module SanitizedJsonDifference
   # :reek:LongParameterList
   # :reek:BooleanParameter
   # :reek:FeatureEnvy
-  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def compare_with(sje, orig_appeals, orig_users, ignore_expected_diffs: true)
-    mapped_fields = ignore_expected_diffs ? MAPPED_FIELDS : {}
+    mapped_fields = ignore_expected_diffs ? mapped_fields1 : {}
     orig_appeals = orig_appeals.uniq.sort_by(&:id)
     orig_tasks = orig_appeals.map(&:tasks).flatten.sort_by(&:id)
 
@@ -51,7 +52,9 @@ module SanitizedJsonDifference
     }.each_with_object({}) do |(clazz, orig_records), result| # https://blog.arkency.com/inject-vs-each-with-object/
       key = clazz.table_name
       orig_records ||= clazz.where(id: sje.records_hash[clazz.table_name].pluck("id")).order(:id)
-      result[key] = SanitizedJsonDifference.diff_record_lists(orig_records, imported_records[key], mapped_fields[clazz])
+      result[key] = SanitizedJsonDifference.diff_record_lists(orig_records,
+                                                              imported_records[key],
+                                                              mapped_fields[clazz])
     end
   end
 
@@ -60,7 +63,7 @@ module SanitizedJsonDifference
       SanitizedJsonDifference.diff_records(original, imported, ignored_fields: ignored_fields)
     end
   end
-  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
   # :reek:BooleanParameter
