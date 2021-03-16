@@ -8,7 +8,7 @@ describe "SanitizedJsonExporter/Importer" do
   SjConfiguration = SanitizedJsonConfiguration
 
   describe ".invalid_ssn" do
-    subject { SjConfiguration.invalid_ssn(nil, ssn) }
+    subject { SjConfiguration.new.invalid_ssn(nil, ssn) }
     context "given 9-digit number" do
       let(:ssn) { "123456789" }
       it "returns fake SSN" do
@@ -26,7 +26,7 @@ describe "SanitizedJsonExporter/Importer" do
   end
 
   describe ".random_pin" do
-    subject { SjConfiguration.random_pin(field_name, orig_value) }
+    subject { SjConfiguration.new.random_pin(field_name, orig_value) }
     let(:field_name) { "guest_pin" }
     context "given fieldname ending with 'pin' and string value" do
       let(:orig_value) { "12345" }
@@ -50,7 +50,7 @@ describe "SanitizedJsonExporter/Importer" do
   describe ".random_email" do
     let(:orig_value) { "yoom@caseflow.va.gov" }
     let(:field_prefix) { ["", ("a".."z").to_a.sample(rand(9)).join].sample }
-    subject { SjConfiguration.random_email(field_name, orig_value) }
+    subject { SjConfiguration.new.random_email(field_name, orig_value) }
     context "given fieldname ending with 'email'" do
       let(:field_name) { "#{field_prefix}email" }
       it "returns fake email" do
@@ -71,7 +71,7 @@ describe "SanitizedJsonExporter/Importer" do
     let(:orig_value) { "Yoom" }
     let(:field_prefix) { ["full", "first", "last", "middle", ("a".."z").to_a.sample(rand(9)).join].sample }
     let(:field_name) { "#{field_prefix}_name" }
-    subject { SjConfiguration.random_person_name(field_name, orig_value) }
+    subject { SjConfiguration.new.random_person_name(field_name, orig_value) }
     context "given fieldname ending with _name" do
       it "returns fake name" do
         expect(subject).not_to eq orig_value
@@ -89,7 +89,7 @@ describe "SanitizedJsonExporter/Importer" do
   end
 
   describe ".similar_date" do
-    subject { SjConfiguration.similar_date("date_of_birth", orig_value) }
+    subject { SjConfiguration.new.similar_date("date_of_birth", orig_value) }
     context "given date_of_birth as Date" do
       let(:orig_value) { Date.parse("1938-09-05") }
       it "returns random Date in the last year prior to orig_value" do
@@ -109,7 +109,7 @@ describe "SanitizedJsonExporter/Importer" do
   end
 
   describe ".mixup_css_id" do
-    subject { SjConfiguration.mixup_css_id("css_id", css_id) }
+    subject { SjConfiguration.new.mixup_css_id("css_id", css_id) }
     context "given CSS_ID" do
       let(:css_id) { create(:intake_user).css_id }
       it "returns mixed-up CSS_ID" do
@@ -121,7 +121,7 @@ describe "SanitizedJsonExporter/Importer" do
 
   describe ".obfuscate_sentence" do
     let(:field_name) { "instructions" }
-    subject { SjConfiguration.obfuscate_sentence(field_name, sentence) }
+    subject { SjConfiguration.new.obfuscate_sentence(field_name, sentence) }
     context "given sentence" do
       let(:sentence) { "No PII, just potentially sensitive!" }
       it "returns sentence without any of the original longer words" do
@@ -178,9 +178,10 @@ describe "SanitizedJsonExporter/Importer" do
     end
 
     context "SjConfiguration uses of AssocationWrapper" do
-      it "populates SjConfiguration constants correctly" do
-        expect(SjConfiguration.transform_methods).to include(:random_pin, :obfuscate_sentence, :similar_date)
-        expect(SjConfiguration.transform_methods).not_to include(:to_s, :to_i, :instance_methods)
+      let(:configuration) { SjConfiguration.new }
+      it "causes SjConfiguration instances to return correct results" do
+        expect(configuration.transform_methods).to include(:random_pin, :obfuscate_sentence, :similar_date)
+        expect(configuration.transform_methods).not_to include(:to_s, :to_i, :instance_methods)
 
         offset_id_fields = {
           DecisionReview => [],
@@ -202,16 +203,16 @@ describe "SanitizedJsonExporter/Importer" do
           VirtualHearing => ["hearing_id"],
           OrganizationsUser => []
         }
-        # pp SjConfiguration.offset_id_fields.transform_keys(&:name)
-        expect(SjConfiguration.offset_id_fields).to eq offset_id_fields
+        # pp configuration.offset_id_fields.transform_keys(&:name)
+        expect(configuration.offset_id_fields).to eq offset_id_fields
 
-        expect(SjConfiguration.reassociate_fields.keys).to match_array ["User", :type]
+        expect(configuration.reassociate_fields.keys).to match_array ["User", :type]
 
         reassociate_fields_for_polymorphics = {
           Task => ["assigned_to_id"],
           AppealIntake => ["detail_id"]
         }
-        expect(SjConfiguration.reassociate_fields[:type]).to eq(reassociate_fields_for_polymorphics)
+        expect(configuration.reassociate_fields[:type]).to eq(reassociate_fields_for_polymorphics)
 
         reassociate_fields_for_user = {
           AppealIntake => ["user_id"],
@@ -222,7 +223,7 @@ describe "SanitizedJsonExporter/Importer" do
           VirtualHearing => %w[updated_by_id created_by_id],
           OrganizationsUser => ["user_id"]
         }
-        expect(SjConfiguration.reassociate_fields["User"]).to eq(reassociate_fields_for_user)
+        expect(configuration.reassociate_fields["User"]).to eq(reassociate_fields_for_user)
       end
     end
   end
@@ -235,7 +236,8 @@ describe "SanitizedJsonExporter/Importer" do
       let(:field_name) { "instructions" }
       let(:obj_hash) { { field_name => ["instruct me", "me too"] } }
       it "sets a new array with new values" do
-        expect(SjConfiguration).to receive(:obfuscate_sentence).and_call_original.at_least(:once)
+        expect(sje.instance_variable_get("@configuration")).to receive(:obfuscate_sentence)
+          .and_call_original.at_least(:once)
         subject
         expect(obj_hash[field_name]).to eq ["in me", "me to"]
       end
@@ -394,7 +396,7 @@ describe "SanitizedJsonExporter/Importer" do
     end
 
     context "when configuration provided with id_offset" do
-      let(:configuration) { SanitizedJsonConfiguration }
+      let(:configuration) { SanitizedJsonConfiguration.new }
       let(:sji) { SanitizedJsonImporter.new(sje.file_contents, configuration: configuration) }
       it "uses id_offset when importing records" do
         configuration.id_offset = 10_000

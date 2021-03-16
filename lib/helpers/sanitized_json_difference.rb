@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "helpers/sanitized_json_configuration.rb"
+# require "helpers/sanitized_json_configuration.rb"
 
 module SanitizedJsonDifference
   ADDITIONAL_MAPPED_FIELDS = { User => [:display_name] }.freeze

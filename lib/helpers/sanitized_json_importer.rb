@@ -16,7 +16,7 @@ class SanitizedJsonImporter
     new(File.read(filename))
   end
 
-  def initialize(file_contents, configuration: SanitizedJsonConfiguration)
+  def initialize(file_contents, configuration: SanitizedJsonConfiguration.new)
     @configuration = configuration
     @id_offset = configuration.id_offset
     @records_hash = JSON.parse(file_contents)

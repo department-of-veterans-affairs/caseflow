@@ -6,7 +6,7 @@ class SanitizedJsonExporter
 
   # :reek:BooleanParameter
   def initialize(*initial_records,
-                 configuration: SanitizedJsonConfiguration,
+                 configuration: SanitizedJsonConfiguration.new,
                  sanitize: true)
     @configuration = configuration
     @sanitize = sanitize
