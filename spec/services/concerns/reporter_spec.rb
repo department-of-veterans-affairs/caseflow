@@ -57,7 +57,7 @@ describe Reporter do
     describe "when called with two items" do
       let(:items) { [50, 52] }
 
-      it "returns the average?" do
+      it "returns the average" do
         expect(subject).to eq 51
       end
     end
