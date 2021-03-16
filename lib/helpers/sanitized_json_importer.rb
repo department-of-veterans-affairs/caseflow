@@ -32,11 +32,11 @@ class SanitizedJsonImporter
   # key = ActiveRecord class's table_name; value = array of JSON of ActiveRecords
   attr_accessor :records_hash
   attr_accessor :metadata
-  attr_accessor :id_offset
 
   # Hash of records imported into the database
   # key = ActiveRecord class's table_name; value = ActiveRecords in the database
   attr_accessor :imported_records
+  attr_accessor :reused_records
 
   # Existing ActiveRecords that are not imported because they already exist in the database
   attr_accessor :reused_records
