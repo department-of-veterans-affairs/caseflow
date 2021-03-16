@@ -16,6 +16,7 @@ detectors:
       - LegacyDocket#distribute_appeals
       - Veteran
       - ControllerSchema#respond_to_missing?
+      - SanitizedJsonDifference
   ControlParameter:
     exclude:
       - ExternalApi::VBMSService#self.send_and_log_request
@@ -138,6 +139,7 @@ detectors:
       - LegacyDocket#new_distributed_case
       - Api::V3::DecisionReviews::ContestableIssueFinder#initialize
       - QueueRepository#assign_case_to_attorney!
+      - SanitizedJsonDifference
       - Seeds::MTV#judge_addresses_mtv
       - Seeds::MTV#send_mtv_to_judge
       - Seeds::Tasks#create_task_at_colocated

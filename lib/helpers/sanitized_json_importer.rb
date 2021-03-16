@@ -86,6 +86,7 @@ class SanitizedJsonImporter
     reassociate_with_imported_records(clazz, obj_hash)
 
     @configuration.before_creation_hook(clazz, obj_hash, obj_description, importer: self)
+    puts "  + Creating #{clazz} #{obj_hash['id']} \n\t#{obj_description}"
     create_new_record(orig_id, clazz, obj_hash)
   end
   # rubocop:enable Metrics/MethodLength

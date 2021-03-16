@@ -12,8 +12,8 @@ class SanitizedJsonConfiguration
       sanitize_fields: %w[veteran_file_number],
       retrieval: lambda do |records|
         initial_appeals = records[Appeal]
-        ( initial_appeals +
-          initial_appeals.map { |appeal| appeals_associated_with(appeal) }.flatten.uniq.compact
+        (initial_appeals +
+         initial_appeals.map { |appeal| appeals_associated_with(appeal) }.flatten.uniq.compact
         ).uniq
       end
     },
@@ -101,7 +101,7 @@ class SanitizedJsonConfiguration
       track_imported_ids: true,
       sanitize_fields: %w[date_of_birth email_address first_name last_name middle_name ssn],
       retrieval: ->(records) { (records[Veteran] + records[Claimant]).map(&:person).uniq.compact }
-    }    
+    }
   }.freeze
 
   module TaskAssignment
@@ -118,11 +118,11 @@ class SanitizedJsonConfiguration
     end
   end
 
-  private_class_method def self.extract_configuration(config_field, configuration, default_value = nil, 
-    ordering_field: nil, default_ordering_value: nil)
-    configuration.select { |clazz, _| clazz < ActiveRecord::Base }
-      .map { |clazz, class_config| [clazz, class_config[config_field] || default_value.clone] }.to_h.compact
-  end
+  # private_class_method def self.extract_configuration(config_field, configuration, default_value = nil,
+  #                                                     ordering_field: nil, default_ordering_value: nil)
+  #   configuration.select { |clazz, _| clazz < ActiveRecord::Base }
+  #     .map { |clazz, class_config| [clazz, class_config[config_field] || default_value.clone] }.to_h.compact
+  # end
 
   private_class_method def self.extract_classes_with_true(config_field, configuration)
     configuration.select { |_, config| config[config_field] == true }.keys.compact
@@ -164,9 +164,10 @@ class SanitizedJsonConfiguration
   end
   # rubocop:enable Style/MultilineBlockChain
 
-  class << self  # ==========  Exporter Configuration ==============
-    def sanitize_fields_hash 
-      @sanitize_fields ||= extract_configuration(:sanitize_fields, EXPORTER_CONFIG, []).freeze
+  # ==========  Exporter Configuration ==============
+  class << self
+    def sanitize_fields_hash
+      @sanitize_fields_hash ||= extract_configuration(:sanitize_fields, EXPORTER_CONFIG, []).freeze
     end
 
     def records_to_export(initial_appeals)
@@ -200,7 +201,7 @@ class SanitizedJsonConfiguration
     MAPPED_VALUES_IGNORED_TRANSFORMS = [:random_pin, :obfuscate_sentence, :similar_date].freeze
 
     # :reek:LongParameterList
-    def save_mapped_value?(transform_method, field_name, orig_value, new_value)
+    def save_mapped_value?(transform_method, field_name, _orig_value, _new_value)
       !(MAPPED_VALUES_IGNORED_TRANSFORMS.include?(transform_method) ||
         MAPPED_VALUES_IGNORED_FIELDS.include?(field_name))
     end
@@ -328,9 +329,10 @@ class SanitizedJsonConfiguration
     end
   end
 
-  class << self  # ==========  Importer Configuration ==============
-    attr_accessor :id_offset
-    
+  # ==========  Importer Configuration ==============
+  class << self
+    attr_writer :id_offset
+
     def id_offset
       @id_offset ||= 2_000_000_000
     end
@@ -353,13 +355,14 @@ class SanitizedJsonConfiguration
 
     # For records where we want to reuse the existing record
     # :reek:FeatureEnvy
+    # rubocop:disable Lint/UnusedMethodArgument
     def same_unique_attributes?(existing_record, obj_hash, importer: nil)
       case existing_record
       when Organization
         existing_record.url == obj_hash["url"]
       when User
         existing_record.css_id == obj_hash["css_id"]
-      # when Claimant
+        # when Claimant
         # check if claimant is associated with appeal we just imported
         # imported_appeal_id = importer.id_mapping[Appeal.name][obj_hash["decision_review_id"]]
         # existing_record.decision_review_id == imported_appeal_id
@@ -371,6 +374,7 @@ class SanitizedJsonConfiguration
         existing_record.participant_id == obj_hash["participant_id"]
       end
     end
+    # rubocop:enable Lint/UnusedMethodArgument
 
     def create_singleton(clazz, obj_hash, obj_description)
       # Handle Organization type specially because each organization has a `singleton`
@@ -396,7 +400,8 @@ class SanitizedJsonConfiguration
     end
 
     def reassociate_fields
-      # For each reassociate_types, identify their associations so the '_id' fields can be updated based on imported records
+      # For each reassociate_types, identify their associations so the '_id' fields can be updated
+      # based on imported records
       # TODO: consider using KNOWN_TYPES instead of reassociate_types,
       #   KNOWN_TYPES = (reassociate_types + reassociate_types.map(&:descendants).flatten).uniq
       # or consolidating e.g. TranscriptionTask => ["assigned_to_id", "appeal_id"] with that of Task
@@ -413,8 +418,8 @@ class SanitizedJsonConfiguration
       }.freeze
     end
 
-    def before_creation_hook(clazz, obj_hash, obj_description, importer: nil)
-      puts "  + Creating #{clazz} #{obj_hash['id']} \n\t#{obj_description}"
+    # rubocop:disable Lint/UnusedMethodArgument, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    def before_creation_hook(clazz, obj_hash, _obj_description, importer: nil)
       remaining_id_fields = obj_hash.select do |field_name, field_value|
         field_name.ends_with?("_id") && field_value.is_a?(Integer) && (field_value < id_offset) &&
           (
@@ -428,5 +433,6 @@ class SanitizedJsonConfiguration
              "#{remaining_id_fields}\n\tobj_hash: #{obj_hash}"
       end
     end
+    # rubocop:enable Lint/UnusedMethodArgument, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   end
 end

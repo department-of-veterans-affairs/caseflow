@@ -5,10 +5,10 @@ require "helpers/sanitized_json_configuration.rb"
 module SanitizedJsonDifference
   ADDITIONAL_MAPPED_FIELDS = { User => [:display_name] }.freeze
 
-  def mapped_fields1
+  def configuration_mapped_fields
     # fields expected to be different;
     # corresponds with fields in SanitizedJsonExporter#sanitize and SanitizedJsonImporter
-    @mapped_fields1 ||= [
+    @configuration_mapped_fields ||= [
       @configuration.sanitize_fields_hash,
       @configuration.offset_id_fields,
       *@configuration.reassociate_fields.values,
@@ -21,7 +21,7 @@ module SanitizedJsonDifference
 
   # :reek:FeatureEnvy
   def differences(orig_initial_records, ignore_expected_diffs: true, ignore_reused_records: true)
-    mapped_fields = ignore_expected_diffs ? mapped_fields1 : {}
+    mapped_fields = ignore_expected_diffs ? configuration_mapped_fields : {}
     # https://blog.arkency.com/inject-vs-each-with-object/
     @configuration.records_to_export(orig_initial_records).each_with_object({}) do |(clazz, orig_records), result|
       key = clazz.table_name
@@ -45,7 +45,6 @@ module SanitizedJsonDifference
 
   # rubocop:disable Metrics/CyclomaticComplexity
   # :reek:BooleanParameter
-  # :reek:LongParameterList
   def self.diff_records(record_a, record_b, ignored_fields: nil,
                         ignore_id_offset: false, convert_timestamps: true)
     hash_a = SanitizedJsonExporter.record_to_hash(record_a).except(*ignored_fields)
