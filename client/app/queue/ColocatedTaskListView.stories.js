@@ -28,12 +28,7 @@ export default {
   title: 'Queue/Components/ColocatedTaskListView',
   component: ColocatedTaskListView,
   decorators: [RouterDecorator, ReduxDecorator],
-  args: {
-    sucess: {
-      title: 'Great Success!',
-      detail: 'Lorem ipsum dolor sit amet, consectetur',
-    },
-  },
+  args: {},
   argTypes: {
     clearCaseSelectSearch: { action: 'clearCaseSelectSearch' },
     hideSuccessMessage: { action: 'hideSuccessMessage' },
@@ -43,3 +38,11 @@ export default {
 const Template = (args) => <ColocatedTaskListView {...args} />;
 
 export const Default = Template.bind({});
+
+export const SuccessAlert = Template.bind({});
+SuccessAlert.args = {
+  success: {
+    title: 'Great Success!',
+    detail: 'Lorem ipsum dolor sit amet, consectetur',
+  },
+};
