@@ -233,20 +233,6 @@ describe "SanitizedJsonExporter/Importer" do
   describe "#find_or_create_mapped_value_for" do
     let(:sje) { SanitizedJsonExporter.new(create(:appeal)) }
     subject { sje.send(:find_or_create_mapped_value_for, obj_hash, field_name) }
-    context "given input that will cause a loop" do
-      let(:field_name) { "my_text" }
-      let(:obj_hash) { { field_name => " " } }
-      before do
-        # Cause a loop to occur by adding an existing value_mapping entry with value ""
-        # Both "" and " " (in obj_hash) should both map to "" due to `obfuscate_sentence`
-        sje.value_mapping[""] = ""
-      end
-      it "does not loop indefinitely" do
-        expect(SjConfiguration).to receive(:obfuscate_sentence).and_call_original.at_least(:once)
-        subject
-        expect(obj_hash[field_name]).to eq ""
-      end
-    end
 
     context "given array as a field value" do
       let(:field_name) { "instructions" }
@@ -281,6 +267,35 @@ describe "SanitizedJsonExporter/Importer" do
   end
 
   context "Exporter" do
+    context "failure conditions" do
+      describe ".sanitize" do
+        it "fails for unsupported record types" do
+          expect { sje.sanitize(PaperTrail::Version.last) }.to raise_error RuntimeError
+        end
+      end
+      describe ".sanitize_object_hash" do
+        subject { sje.sanitize_object_hash(obj_hash, fieldname_expression, appeal) }
+        let(:obj_hash) { appeal.attributes }
+        context "when non-existent object attribute is specified" do
+          let(:fieldname_expression) { "non_existent_field" }
+          it "fails" do
+            expect { subject }.to raise_error RuntimeError
+          end
+        end
+        context "when fieldname_expression is an unsupported type" do
+          let(:fieldname_expression) { 1 }
+          it "fails" do
+            expect { subject }.to raise_error RuntimeError
+          end
+        end
+      end
+      describe ".map_value" do
+        it "fails when transform method cannot be found for sanitization" do
+          expect { sje.map_value(1234, "field_without_sanitizing_transform") }.to raise_error RuntimeError
+        end
+      end
+    end
+
     shared_examples "exports appeals" do
       let(:relevant_appeals) { (appeals + [cavc_source_appeal]).uniq }
       let(:claimants) { relevant_appeals.map(&:claimants).flatten.uniq }

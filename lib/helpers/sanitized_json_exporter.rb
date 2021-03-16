@@ -59,7 +59,7 @@ class SanitizedJsonExporter
       return obj_hash
     end
 
-    fail "Unsupported object type: #{record.class.name}"
+    fail "Unsupported record type: #{record.class.name}"
   end
 
   def sanitize_object_hash(obj_hash, fieldname_expression, record)
@@ -68,9 +68,11 @@ class SanitizedJsonExporter
         find_or_create_mapped_value_for(obj_hash, key, obj_class: record.class)
       end
     elsif fieldname_expression.is_a?(String)
+      unless obj_hash.key?(fieldname_expression)
+        fail "#{record.class} record doesn't have attribute '#{fieldname_expression}': #{obj_hash}"
+      end
+
       find_or_create_mapped_value_for(obj_hash, fieldname_expression, obj_class: record.class)
-    elsif obj_hash.key?(fieldname_expression)
-      fail "#{record.class} record doesn't have attribute '#{fieldname_expression}': #{obj_hash}"
     else
       fail "Expecting string or regex for the #{record.class}'s field name: #{fieldname_expression}"
     end
@@ -110,8 +112,8 @@ class SanitizedJsonExporter
     end
 
     unless transform_method
-      fail "For #{obj_class.name} field '#{field_name}' with value '#{orig_value}' of class #{orig_value.class}, " \
-           "could not find a transform_method"
+      fail "Could not find a transform_method for #{obj_class&.name} field '#{field_name}'"\
+           " with value '#{orig_value}' of class #{orig_value.class}."
     end
 
     new_value = @configuration.send(transform_method, field_name, orig_value)

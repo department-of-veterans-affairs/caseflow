@@ -197,7 +197,7 @@ class SanitizedJsonConfiguration
     # Fields whose mapped value should not be saved to the @value_mapping hash,
     # e.g., due to distinct orig_values mapping to the same new_value
     MAPPED_VALUES_IGNORED_FIELDS = %w[first_name middle_name last_name].freeze
-    MAPPED_VALUES_IGNORED_TRANSFORMS = [:obfuscate_sentence, :similar_date].freeze
+    MAPPED_VALUES_IGNORED_TRANSFORMS = [:random_pin, :obfuscate_sentence, :similar_date].freeze
 
     # :reek:LongParameterList
     def save_mapped_value?(transform_method, field_name, orig_value, new_value)
