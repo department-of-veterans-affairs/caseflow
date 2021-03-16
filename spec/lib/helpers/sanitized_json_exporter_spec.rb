@@ -376,7 +376,7 @@ describe "SanitizedJsonExporter/Importer" do
       before { sje } # causes relevant appeals to be created
       it "returns nil" do
         expect_initial_state
-        expect { subject }.to raise_error(RuntimeError)
+        subject
         expect_initial_state
       end
     end
@@ -560,16 +560,16 @@ describe "SanitizedJsonExporter/Importer" do
       end
     end
 
-    def check_all_differences(sje, sji, *_orig_appeals)
+    def check_all_differences(sje, sji, *orig_appeals)
       pp sje.records_hash.transform_values(&:count)
       not_imported_counts = sje.records_hash.transform_values(&:count).to_a -
                             sji.imported_records.transform_values(&:count).to_a
       expect(not_imported_counts).to eq [["metadata", 1]]
 
-      pp sji.differences(sje, ignore_expected_diffs: false).transform_values(&:count)
-      # pp sji.differences(sje, ignore_expected_diffs: false)
-      diffs = sji.differences(sje)
-      # pp diffs
+      pp "DIFFERENCES counts", sji.differences(orig_appeals, ignore_expected_diffs: false).transform_values(&:count)
+      # pp sji.differences(orig_appeals, ignore_expected_diffs: false)
+      diffs = sji.differences(orig_appeals)
+      pp "DIFFERENCES minus expected diffs", diffs
       expect(diffs.values.flatten).to be_empty
     end
   end

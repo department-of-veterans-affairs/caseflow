@@ -5,13 +5,12 @@ require "helpers/sanitized_json_difference.rb"
 class SanitizedJsonImporter
   prepend SanitizedJsonDifference
 
-  # input
-  attr_accessor :records_hash
+  attr_accessor :records_hash # this is modified during importing
   attr_accessor :metadata
-  attr_accessor :id_offset
 
   # output
   attr_accessor :imported_records
+  attr_accessor :reused_records
 
   def self.from_file(filename)
     new(File.read(filename))
@@ -23,6 +22,7 @@ class SanitizedJsonImporter
     @records_hash = JSON.parse(file_contents)
     @metadata = @records_hash.delete("metadata")
     @imported_records = {}
+    @reused_records = {}
   end
 
   def import
@@ -30,8 +30,6 @@ class SanitizedJsonImporter
       @configuration.first_types_to_import.each do |clazz|
         import_array_of(clazz)
       end
-
-      @configuration.check_first_imports(imported_records)
 
       @records_hash.each do |key, obj_hash_array|
         import_array_of(key.classify.constantize, key, obj_hash_array)
@@ -51,33 +49,38 @@ class SanitizedJsonImporter
     new_records = obj_hash_array.map do |obj_hash|
       fail "No JSON data for records_hash key: #{key}" unless obj_hash
 
-      import_record(clazz, obj_hash)
+      import_record(key, clazz, obj_hash)
     end
     imported_records[key] = new_records
     @records_hash.delete(key)
   end
 
-  def import_record(clazz, obj_hash)
-    obj_description = "original: #{obj_hash['type']} " \
-                      "#{obj_hash.select { |obj_key, _v| obj_key.include?('_id') }}"
+  # rubocop:disable Metrics/MethodLength
+  def import_record(key, clazz, obj_hash)
     # Don't import if certain types of records already exists
-    if @configuration.nonduplicate_types.include?(clazz) && existing_record(clazz, obj_hash)
-      puts "  = Using existing #{clazz} instead of importing: #{obj_hash['id']} \n\t#{obj_description}"
+    if @configuration.nonduplicate_types.include?(clazz) && (existing_record = find_existing_record(clazz, obj_hash))
+      puts "  = Using existing #{clazz} instead of importing #{obj_hash['type']} #{obj_hash['id']}"
+      reused_records[key] ||= []
+      reused_records[key] << existing_record
       return
     end
 
     # Record original id in case it changes in the following lines
     orig_id = obj_hash["id"]
 
-    @configuration.adjust_unique_identifiers(clazz, obj_hash).tap do |label|
-      if label
-        puts "  * Will import duplicate #{clazz} '#{label}' with different unique attributes " \
+    @configuration.adjust_identifiers_for_unique_records(clazz, obj_hash).tap do |new_label|
+      if new_label
+        puts "  * Will import duplicate #{clazz} '#{new_label}' with different unique attributes " \
              "because existing record's id is different: \n\t#{obj_hash}"
       end
     end
 
-    singleton = @configuration.create_singleton(clazz, obj_hash, obj_description)
-    return singleton if singleton
+    obj_description = "original: #{obj_hash['type']} " \
+                      "#{obj_hash.select { |obj_key, _v| obj_key.include?('_id') }}"
+
+    @configuration.create_singleton(clazz, obj_hash, obj_description).tap do |singleton|
+      return singleton if singleton
+    end
 
     adjust_ids_by_offset(clazz, obj_hash)
     reassociate_with_imported_records(clazz, obj_hash)
@@ -85,10 +88,7 @@ class SanitizedJsonImporter
     @configuration.before_creation_hook(clazz, obj_hash, obj_description, importer: self)
     create_new_record(orig_id, clazz, obj_hash)
   end
-
-  def offset_id_table_fields
-    @offset_id_table_fields ||= @configuration.offset_id_fields.transform_keys(&:table_name).freeze
-  end
+  # rubocop:enable Metrics/MethodLength
 
   # :reek:FeatureEnvy
   def adjust_ids_by_offset(clazz, obj_hash)
@@ -102,6 +102,10 @@ class SanitizedJsonImporter
         obj_hash[field_name] += @id_offset
       end
     end
+  end
+
+  def offset_id_table_fields
+    @offset_id_table_fields ||= @configuration.offset_id_fields.transform_keys(&:table_name).freeze
   end
 
   # Using this approach: https://mattpruitt.com/articles/skip-callbacks/
@@ -182,7 +186,7 @@ class SanitizedJsonImporter
     [orig_record_id, obj_hash[id_field]]
   end
 
-  def existing_record(clazz, obj_hash)
+  def find_existing_record(clazz, obj_hash)
     existing_record = clazz.find_by_id(obj_hash["id"])
     same_unique_attributes = @configuration.same_unique_attributes?(existing_record, obj_hash, importer: self)
     existing_record if existing_record && same_unique_attributes

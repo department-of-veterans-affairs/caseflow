@@ -20,50 +20,29 @@ module SanitizedJsonDifference
   end
 
   # :reek:FeatureEnvy
-  def differences(sje, **kwargs)
-    orig_appeals = Appeal.where(id: sje.records_hash[Appeal.table_name].pluck("id")).order(:id)
-    orig_users = User.where(id: sje.records_hash[User.table_name].pluck("id")).order(:id)
-    compare_with(sje, orig_appeals, orig_users, **kwargs)
-  end
-
-  # :reek:LongParameterList
-  # :reek:BooleanParameter
-  # :reek:FeatureEnvy
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-  def compare_with(sje, orig_appeals, orig_users, ignore_expected_diffs: true)
+  def differences(orig_initial_records, ignore_expected_diffs: true, ignore_reused_records: true)
     mapped_fields = ignore_expected_diffs ? mapped_fields1 : {}
-    orig_appeals = orig_appeals.uniq.sort_by(&:id)
-    orig_tasks = orig_appeals.map(&:tasks).flatten.sort_by(&:id)
-
-    {
-      Appeal => orig_appeals,
-      Veteran => orig_appeals.map(&:veteran).uniq.sort_by(&:id),
-      Claimant => orig_appeals.map(&:claimants).flatten.uniq.sort_by(&:id),
-      User => orig_users,
-      Task => orig_appeals.map(&:tasks).flatten.sort_by(&:id),
-      TaskTimer => TaskTimer.where(task_id: orig_tasks.map(&:id)).sort_by(&:id),
-      CavcRemand => nil,
-      Hearing => nil,
-      HearingDay => nil,
-      VirtualHearing => nil,
-      HearingTaskAssociation => nil
-      # TODO: add cavc_r, ri, di, rdi
-      # TODO: print warning about missing by using JSON hashes
-    }.each_with_object({}) do |(clazz, orig_records), result| # https://blog.arkency.com/inject-vs-each-with-object/
+    # https://blog.arkency.com/inject-vs-each-with-object/
+    @configuration.records_to_export(orig_initial_records).each_with_object({}) do |(clazz, orig_records), result|
       key = clazz.table_name
-      orig_records ||= clazz.where(id: sje.records_hash[clazz.table_name].pluck("id")).order(:id)
-      result[key] = SanitizedJsonDifference.diff_record_lists(orig_records,
+      reused_records_list = ignore_reused_records ? reused_records[key] : []
+      result[key] = SanitizedJsonDifference.diff_record_lists(orig_records.compact.uniq.sort_by(&:id),
                                                               imported_records[key],
+                                                              reused_records_list,
                                                               mapped_fields[clazz])
     end
   end
 
-  def self.diff_record_lists(orig_records, imported_records, ignored_fields)
-    orig_records.zip(imported_records).map do |original, imported|
+  def self.diff_record_lists(orig_records_list, imported_records_list, reused_records_list, ignored_fields)
+    orig_records_list.zip(imported_records_list).map do |original, imported|
+      next if imported.nil? && reused_records_list.include?(original)
+
+      next ["record missing", original, imported] if original.nil? || imported.nil?
+
       SanitizedJsonDifference.diff_records(original, imported, ignored_fields: ignored_fields)
-    end
+    end.compact
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:enable
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
   # :reek:BooleanParameter

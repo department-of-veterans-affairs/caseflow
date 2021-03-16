@@ -41,7 +41,7 @@ class SanitizedJsonConfiguration
       retrieval: ->(records) { records[Appeal].map(&:cavc_remand).compact }
     },
     RequestIssue => {
-      sanitize_fields: ["notes", /_(notes|text|description)/],
+      sanitize_fields: ["notes", "contested_issue_description", /_(notes|text|description)/],
       retrieval: ->(records) { records[Appeal].map(&:request_issues).flatten }
     },
     DecisionIssue => {
@@ -102,21 +102,6 @@ class SanitizedJsonConfiguration
       sanitize_fields: %w[date_of_birth email_address first_name last_name middle_name ssn],
       retrieval: ->(records) { (records[Veteran] + records[Claimant]).map(&:person).uniq.compact }
     }    
-  }.freeze
-
-  IMPORTER_CONFIG = {
-    User => {
-      use_existing_records: true
-    },
-    Organization => {
-      use_existing_records: true
-    },
-    Veteran => {
-      use_existing_records: true
-    },
-    Person => {
-      use_existing_records: true
-    }
   }.freeze
 
   DIFFERENCE_CONFIG = {
@@ -187,14 +172,8 @@ class SanitizedJsonConfiguration
   end
 
   class << self
-    attr_accessor :id_offset
-    
-    def id_offset
-      @id_offset ||= 2_000_000_000
-    end
-
     def sanitize_fields_hash 
-      @sanitize_fields = extract_configuration(:sanitize_fields, EXPORTER_CONFIG, []).freeze
+      @sanitize_fields ||= extract_configuration(:sanitize_fields, EXPORTER_CONFIG, []).freeze
     end
 
     def records_to_export(initial_appeals)
@@ -359,25 +338,26 @@ class SanitizedJsonConfiguration
   # ==========  Importer Configuration ==============
 
   class << self
+    attr_accessor :id_offset
+    
+    def id_offset
+      @id_offset ||= 2_000_000_000
+    end
+
+    # Start with important types that other records will reassociate with
     def first_types_to_import
-      # Start with important types that other records will reassociate with
-      @first_types_to_import = [Appeal, User, Organization, HearingDay].freeze
+      # HearingDay is needed by Hearing
+      @first_types_to_import ||= [Appeal, User, Organization, HearingDay].freeze
     end
 
+    # Classes that shouldn't be imported if a record with the same unique attributes already exists
     def nonduplicate_types
-      # Classes that shouldn't be imported if a record with the same unique attributes already exists
-      @nonduplicate_types = extract_classes_with_true(:use_existing_records, IMPORTER_CONFIG).freeze
+      @nonduplicate_types ||= [User, Organization, Veteran, Person].freeze
     end
 
-    def check_first_imports(imported_records)
-      if imported_records[Appeal.table_name].blank?
-        fail "Warning: No appeal imported, aborting import of remaining records"
-      end
-    end
-
+    # During record creation, types where validation and callbacks should be avoided
     def types_that_skip_validation_and_callbacks
-      # During record creation, types where validation and callbacks should be avoided
-      @types_that_skip_validation_and_callbacks = [Task, *Task.descendants].freeze
+      @types_that_skip_validation_and_callbacks ||= [Task, *Task.descendants].freeze
     end
 
     # :reek:FeatureEnvy
@@ -412,7 +392,7 @@ class SanitizedJsonConfiguration
     end
 
     # :reek:FeatureEnvy
-    def adjust_unique_identifiers(clazz, obj_hash)
+    def adjust_identifiers_for_unique_records(clazz, obj_hash)
       if clazz <= Organization
         obj_hash["url"] += "_imported" if Organization.find_by(url: obj_hash["url"])
       elsif clazz <= User
@@ -442,7 +422,7 @@ class SanitizedJsonConfiguration
     def before_creation_hook(clazz, obj_hash, obj_description, importer: nil)
       puts "  + Creating #{clazz} #{obj_hash['id']} \n\t#{obj_description}"
       remaining_id_fields = obj_hash.select do |field_name, field_value|
-        field_name.ends_with?("_id") && field_value.is_a?(Integer) && (field_value < importer.id_offset) &&
+        field_name.ends_with?("_id") && field_value.is_a?(Integer) && (field_value < id_offset) &&
           (
             !(clazz <= Task && field_name == "assigned_to_id" && obj_hash["assigned_to_type"] == "Organization") &&
             !(clazz <= OrganizationsUser && field_name == "organization_id")
