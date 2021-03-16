@@ -102,9 +102,11 @@ class SanitizedJsonExporter
         find_or_create_mapped_value_for(obj_hash, key, obj_class: record.class)
       end
     elsif fieldname_expression.is_a?(String)
+      unless obj_hash.key?(fieldname_expression)
+        fail "#{record.class} record doesn't have attribute '#{fieldname_expression}': #{obj_hash}"
+      end
+
       find_or_create_mapped_value_for(obj_hash, fieldname_expression, obj_class: record.class)
-    elsif obj_hash.key?(fieldname_expression)
-      fail "#{record.class} record doesn't have attribute '#{fieldname_expression}': #{obj_hash}"
     else
       fail "Expecting string or regex for the #{record.class}'s field name: #{fieldname_expression}"
     end
