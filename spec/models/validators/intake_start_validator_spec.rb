@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe IntakeStartValidator, :postgres do
-  let(:user) { create(:user, station_id: "283") }
+  let!(:user) { create(:user, station_id: "283") }
   let(:veteran) { create(:veteran) }
   # IntakeStartValidator expects an uncommitted intake (hence new)
   let(:intake) { HigherLevelReviewIntake.new(veteran_file_number: veteran.file_number, user: user) }
@@ -21,8 +21,16 @@ describe IntakeStartValidator, :postgres do
     context "when BGS shows a station conflict" do
       let(:station_conflict) { true }
 
-      it "sets error_code \"veteran_not_modifiable\" when BGS shows a station conflict" do
+      it "sets error_code \"veteran_not_modifiable\" when BGS shows a station conflict", :aggregate_failures do
         subject
+
+        # Github Issue:
+        # This test has been flaky and multiple folks have tried to address.
+        # These expects are designed to give more info if this test continues
+        # to flake.
+        expect(intake.user).not_to eq(User.api_user)
+        expect(intake.is_a?(AppealIntake)).to be_falsey
+        expect(validator.send(:user_bypasses_same_station_check?)).to be_falsey
 
         expect(intake.error_code).to eq "veteran_not_modifiable"
       end
