@@ -316,22 +316,4 @@ class SanitizedJsonImporter
       existing_record
     end
   end
-
-  # For records where we want to reuse the existing record
-  # :reek:FeatureEnvy
-  # def same_unique_attributes?(existing_record, obj_hash)
-  #   is_same = @configuration.same_unique_attributes?(existing_record, obj_hash, importer: self)
-  #   return is_same unless is_same.nil?
-
-  #   # binding.pry if OrganizationsUser == existing_record.class
-  #   unique_attributes_per_tablename[existing_record.class.table_name]&.all? do |fieldname|
-  #     existing_record.send(fieldname) == obj_hash[fieldname]
-  #   end
-  # end
-
-  # def unique_attributes_per_tablename
-  #   @unique_attributes_per_tablename ||= @configuration.id_mapping_types.map do |clazz|
-  #     [clazz.table_name, self.class.attributes_with_unique_index(clazz)]
-  #   end.to_h.freeze
-  # end
 end
