@@ -135,7 +135,7 @@ export class CaseTitleDetails extends React.PureComponent {
       (appeal?.docketName === 'legacy' && appeal?.readableHearingRequestType);
 
     return (
-      <TitleDetailsSubheader>
+      <TitleDetailsSubheader id="caseTitleDetailsSubheader">
         <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}>
           <span {...docketBadgeContainerStyle}>
             <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />

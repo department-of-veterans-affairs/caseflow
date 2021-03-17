@@ -14,8 +14,8 @@ const updateFromServerIntake = (state, serverIntake) => {
     asyncJobUrl: {
       $set: serverIntake.async_job_url
     },
-    detailEditUrl: {
-      $set: serverIntake.detailEditUrl
+    editIssuesUrl: {
+      $set: serverIntake.editIssuesUrl
     },
     unreadMessages: {
       $set: serverIntake.unread_messages
@@ -41,7 +41,7 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
   updateFromServerIntake({
     id: null,
     asyncJobUrl: null,
-    detailEditUrl: null,
+    editIssuesUrl: null,
     formType: null,
     fileNumberSearch: '',
     searchErrorCode: null,

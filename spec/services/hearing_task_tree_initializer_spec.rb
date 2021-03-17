@@ -35,19 +35,6 @@ describe HearingTaskTreeInitializer do
       end
     end
 
-    context "an open hearing task already exists" do
-      let(:root_task) { create(:root_task, appeal: appeal) }
-      let(:hearing_task) { create(:hearing_task, appeal: appeal, parent: root_task) }
-      let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal, parent: hearing_task) }
-
-      it "does not create a duplicate task tree" do
-        subject
-        expect(ChangeHearingRequestTypeTask.count).to eq(0)
-        expect(ScheduleHearingTask.count).to eq(1)
-        expect(HearingTask.count).to eq(1)
-      end
-    end
-
     context "there's a closed hearing task on the appeal" do
       let(:root_task) { create(:root_task, appeal: appeal) }
       let!(:hearing_task) do
