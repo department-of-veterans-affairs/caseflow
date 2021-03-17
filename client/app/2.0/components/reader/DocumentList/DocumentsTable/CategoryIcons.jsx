@@ -10,7 +10,7 @@ import { sortCategories } from 'utils/reader';
  */
 export const CategoryIcons = ({ searchCategoryHighlights, doc }) => {
   // Sort the Categories by the document and apply a filter
-  const categories = sortCategories(true, doc);
+  const categories = sortCategories(doc);
 
   return categories.length && (
     <ul className="cf-document-category-icons" aria-label="document categories">

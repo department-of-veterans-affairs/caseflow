@@ -6,7 +6,6 @@ import ApiUtil from 'app/util/ApiUtil';
 import { documentCategories, ENDPOINT_NAMES } from 'store/constants/reader';
 import { doDatesMatch } from 'app/util/DateUtil';
 import { formatCategoryName } from 'utils/reader/format';
-import { annotationStateByDocId } from 'store/reader/selectors';
 
 /**
  * Helper Method to record the search value for analytics purposes. Don't worry if it fails
@@ -39,10 +38,11 @@ export const typeContainsString = (searchQuery, doc) => (doc.type.toLowerCase().
  * @param {Object} doc -- Contains the ID of the document to check comments
  * @returns {boolean} -- Returns whether the comment contains the search string
  */
-export const commentContainsString = (searchQuery, state, doc) => annotationStateByDocId(state)(doc.id).
-  reduce((acc, annotation) =>
-    acc || annotation.comment.toLowerCase().includes(searchQuery),
-  false);
+export const commentContainsString = (searchQuery, payload, doc) =>
+  payload.comments.filter((note) => note.document_id === doc.id).
+    reduce((acc, annotation) =>
+      acc || annotation.comment.toLowerCase().includes(searchQuery),
+    false);
 
 /**
  * Helper Method that checks if a comment contains the given search word
@@ -51,8 +51,8 @@ export const commentContainsString = (searchQuery, state, doc) => annotationStat
  * @param {Object} doc -- The document to check comments
  * @returns {boolean} -- Returns whether the comment contains the search word
  */
-export const commentContainsWords = (searchQuery, state, doc) =>
-  compact(searchQuery.split(' ')).some((word) => commentContainsString(word, state, doc));
+export const commentContainsWords = (searchQuery, payload, doc) =>
+  compact(searchQuery.split(' ')).some((word) => commentContainsString(word, payload, doc));
 
 /**
  * Helper Method that checks if a category contains the given search string

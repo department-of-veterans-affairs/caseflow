@@ -1,18 +1,18 @@
 // External Dependencies
 import React from 'react';
 import PropTypes from 'prop-types';
-import { sortBy as sort } from 'lodash';
+import { sortBy as sort, isEmpty } from 'lodash';
 
 // Local Dependencies
 import { formatDateStr } from 'app/util/DateUtil';
 import Button from 'app/components/Button';
 import DropdownFilter from 'app/components/DropdownFilter';
 import ViewableItemLink from 'app/components/ViewableItemLink';
-import Highlight from 'app/components/Highlight';
+import { Highlight } from 'components/reader/DocumentList/Highlight';
 import FilterIcon from 'app/components/FilterIcon';
 import { DoubleArrow } from 'app/components/RenderFunctions';
 
-import Comment from 'app/reader/Comment';
+import { Comment } from 'components/reader/DocumentViewer/Sidebar/Comment';
 import { CommentIndicator } from 'components/reader/DocumentList/DocumentsTable/CommentIndicator';
 import { CategoryPicker } from 'components/reader/DocumentList/DocumentsTable/CategoryPicker';
 import { CategoryIcons } from 'components/reader/DocumentList/DocumentsTable/CategoryIcons';
@@ -24,21 +24,22 @@ import { TagPicker } from 'components/reader/DocumentList/DocumentsTable/TagPick
  * @param {Object} annotations -- Object containing all annotations per document
  * @param {Function} jumpToComment -- Function to jump to the clicked comment
  */
-export const commentValue = (annotations, jumpToComment) => (doc) => (
+export const commentValue = ({ comments, documentPathBase, showPdf, ...props }) => (doc) => (
   <ul className="cf-no-styling-list" aria-label="Document comments">
-    {sort(annotations[doc.id], ['page', 'y']).map((comment, index) => (
+    {sort(comments.filter((comment) => comment.document_id === doc.id), ['page', 'y']).map((comment, index) => (
       <Comment
-        key={comment.uuid}
+        {...props}
+        showPdf={showPdf}
+        documentPathBase={documentPathBase}
+        currentDocument={doc}
+        comment={comment}
+        key={comment.id}
         id={`comment${doc.id}-${index}`}
         selected={false}
         page={comment.page}
-        onJumpToComment={jumpToComment(comment)}
-        uuid={comment.uuid}
         date={comment.relevant_date}
         horizontalLayout
-      >
-        {comment.comment}
-      </Comment>
+      />
     ))}
   </ul>
 );
@@ -48,8 +49,8 @@ export const commentValue = (annotations, jumpToComment) => (doc) => (
  * @param {Object} props -- Contains the category filters and functions to apply/remove them
  */
 export const CategoryHeader = ({
-  pdfList,
-  docFilterCriteria,
+  documentList,
+  filterCriteria,
   catFilterRef,
   toggleFilter,
   clearCategoryFilters,
@@ -62,20 +63,20 @@ export const CategoryHeader = ({
       label="Filter by category"
       idPrefix="category"
       getRef={catFilterRef}
-      selected={pdfList?.dropdowns?.category || docFilterCriteria?.category}
-      handleActivate={toggleFilter}
+      selected={documentList.pdfList?.dropdown?.category || filterCriteria?.category}
+      handleActivate={() => toggleFilter('category')}
     />
-    {pdfList?.dropdowns?.category && (
+    {documentList.pdfList?.dropdown?.category && (
       <DropdownFilter
         clearFilters={clearCategoryFilters}
         name="category"
-        isClearEnabled={docFilterCriteria?.category}
-        handleClose={toggleFilter}
+        isClearEnabled={!isEmpty(filterCriteria?.category)}
+        handleClose={() => toggleFilter('category')}
         addClearFiltersRow
       >
         <CategoryPicker
           {...props}
-          categoryToggleStates={docFilterCriteria?.category}
+          categoryToggleStates={filterCriteria?.category}
           handleCategoryToggle={setCategoryFilter}
         />
       </DropdownFilter>
@@ -84,8 +85,8 @@ export const CategoryHeader = ({
 );
 
 CategoryHeader.propTypes = {
-  pdfList: PropTypes.object,
-  docFilterCriteria: PropTypes.object,
+  documentList: PropTypes.object,
+  filterCriteria: PropTypes.object,
   catFilterRef: PropTypes.element,
   toggleFilter: PropTypes.func,
   clearCategoryFilters: PropTypes.func,
@@ -124,13 +125,18 @@ ReceiptDateHeader.propTypes = {
  * Receipt Date Value for Receipt Date Column in Documents table
  * @param {Object} doc -- The document for which to display the receipt date
  */
-export const receiptDateValue = (doc) => (
+export const ReceiptDateCell = ({ doc, filterCriteria }) => (
   <span className="document-list-receipt-date">
-    <Highlight>
+    <Highlight searchQuery={filterCriteria.searchQuery}>
       {formatDateStr(doc.receivedAt)}
     </Highlight>
   </span>
 );
+
+ReceiptDateCell.propTypes = {
+  filterCriteria: PropTypes.object,
+  doc: PropTypes.object,
+};
 
 /**
  * Document Type Header Component
@@ -164,32 +170,33 @@ TypeHeader.propTypes = {
  * Document Type Column component
  * @param {Object} props -- Contains the document and functions to navigate
  */
-export const typeValue = ({ doc, setPdf, documentPathBase }) => (
+export const TypeCell = ({ doc, showPdf, documentPathBase, filterCriteria }) => (
   <div>
     <ViewableItemLink
       boldCondition={!doc.opened_by_current_user}
-      onOpen={(id) => setPdf(id)}
+      onOpen={() => showPdf(doc.id)}
       linkProps={{
         to: `${documentPathBase}/${doc.id}`,
         'aria-label': doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')
       }}
     >
-      <Highlight>
+      <Highlight searchQuery={filterCriteria.searchQuery}>
         {doc.type}
       </Highlight>
     </ViewableItemLink>
     {doc.description && (
       <p className="document-list-doc-description">
-        <Highlight>{doc.description}</Highlight>
+        <Highlight searchQuery={filterCriteria.searchQuery}>{doc.description}</Highlight>
       </p>
     )}
   </div>
 );
 
-typeValue.propTypes = {
+TypeCell.propTypes = {
+  filterCriteria: PropTypes.object,
   doc: PropTypes.object,
   documentPathBase: PropTypes.string,
-  setPdf: PropTypes.func
+  showPdf: PropTypes.func
 };
 
 /**
@@ -197,13 +204,12 @@ typeValue.propTypes = {
  * @param {Object} props -- Contains the tag filters and functions to apply/remove them
  */
 export const TagHeader = ({
-  pdfList,
-  docFilterCriteria,
+  documentList,
+  filterCriteria,
   tagFilterRef,
   toggleFilter,
   clearTagFilters,
   setTagFilter,
-  pdfViewer,
   ...props
 }) => (
   <div id="tags-header" className="document-list-header-issue-tags">
@@ -212,21 +218,20 @@ export const TagHeader = ({
       label="Filter by tag"
       idPrefix="tag"
       getRef={tagFilterRef}
-      selected={pdfList?.dropdowns?.tag || docFilterCriteria?.tag}
-      handleActivate={toggleFilter}
+      selected={documentList.pdfList?.dropdown?.tag || filterCriteria?.tag}
+      handleActivate={() => toggleFilter('tag')}
     />
-    {pdfList?.dropdowns?.tag && (
+    {documentList.pdfList?.dropdown?.tag && (
       <DropdownFilter
         clearFilters={clearTagFilters}
         name="tag"
-        isClearEnabled={docFilterCriteria?.tag}
-        handleClose={toggleFilter}
+        isClearEnabled={!isEmpty(filterCriteria?.tag)}
+        handleClose={() => toggleFilter('tag')}
         addClearFiltersRow
       >
         <TagPicker
           {...props}
-          tags={pdfViewer.tagOptions}
-          tagToggleStates={docFilterCriteria?.tag}
+          tagToggleStates={filterCriteria?.tag}
           handleTagToggle={setTagFilter}
         />
       </DropdownFilter>
@@ -235,9 +240,9 @@ export const TagHeader = ({
 );
 
 TagHeader.propTypes = {
-  pdfList: PropTypes.object,
-  docFilterCriteria: PropTypes.object,
-  pdfViewer: PropTypes.object,
+  documentList: PropTypes.object,
+  filterCriteria: PropTypes.object,
+  tagOptions: PropTypes.object,
   tagFilterRef: PropTypes.element,
   toggleFilter: PropTypes.func,
   clearTagFilters: PropTypes.func,
@@ -248,12 +253,12 @@ TagHeader.propTypes = {
  * Document Tag Column component
  * @param {Object} props -- Contains the document tags
  */
-export const tagValue = ({ tags }) => (
+export const TagCell = ({ tags, filterCriteria }) => (
   <div className="document-list-issue-tags">
     {tags && tags.map((tag) =>
       <div className="document-list-issue-tag"
         key={tag.id}>
-        <Highlight>
+        <Highlight searchQuery={filterCriteria.searchQuery}>
           {tag.text}
         </Highlight>
       </div>
@@ -261,7 +266,8 @@ export const tagValue = ({ tags }) => (
   </div>
 );
 
-tagValue.propTypes = {
+TagCell.propTypes = {
+  filterCriteria: PropTypes.object,
   tags: PropTypes.arrayOf(PropTypes.object)
 };
 
@@ -279,7 +285,7 @@ export const CommentHeader = () => (
 export const documentHeaders = ({ lastReadIndicatorRef, ...props }) => [
   {
     cellClass: 'last-read-column',
-    valueFunction: (doc) => <LastReadIndicator docId={doc.id} getRef={lastReadIndicatorRef} />
+    valueFunction: (doc) => <LastReadIndicator docId={doc.id} getRef={lastReadIndicatorRef} {...props} />
   },
   {
     cellClass: 'categories-column',
@@ -289,22 +295,22 @@ export const documentHeaders = ({ lastReadIndicatorRef, ...props }) => [
   {
     cellClass: 'receipt-date-column',
     header: <ReceiptDateHeader {...props} />,
-    valueFunction: receiptDateValue
+    valueFunction: (doc) => <ReceiptDateCell doc={doc} {...props} />
   },
   {
     cellClass: 'doc-type-column',
     header: <TypeHeader {...props} />,
-    valueFunction: typeValue
+    valueFunction: (doc) => <TypeCell doc={doc} {...props} />
   },
   {
     cellClass: 'tags-column',
     header: <TagHeader {...props} />,
-    valueFunction: tagValue
+    valueFunction: (doc) => <TagCell doc={doc} tags={doc.tags} {...props} />
   },
   {
     cellClass: 'comments-column',
     header: <CommentHeader {...props} />,
-    valueFunction: (doc) => <CommentIndicator docId={doc.id} {...props} />
+    valueFunction: (doc) => <CommentIndicator doc={doc} {...props} />
   }
 ];
 
@@ -314,7 +320,7 @@ export const documentHeaders = ({ lastReadIndicatorRef, ...props }) => [
  */
 export const commentHeaders = (props) => [
   {
-    valueFunction: commentValue(props.annotationsPerDocument, props.jumpToComment),
-    span: documentHeaders(props).length
+    valueFunction: commentValue(props),
+    span: () => documentHeaders(props).length
   }
 ];
