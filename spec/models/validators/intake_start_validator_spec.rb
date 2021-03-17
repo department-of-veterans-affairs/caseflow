@@ -24,7 +24,7 @@ describe IntakeStartValidator, :postgres do
       it "sets error_code \"veteran_not_modifiable\" when BGS shows a station conflict", :aggregate_failures do
         subject
 
-        # Github Issue:
+        # Github issue #15865, PR #16007
         # This test has been flaky and multiple folks have tried to address.
         # These expects are designed to give more info if this test continues
         # to flake.
