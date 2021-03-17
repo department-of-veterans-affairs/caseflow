@@ -11,10 +11,11 @@ import SaveableTextArea from 'app/components/SaveableTextArea';
  * @param {Object} props -- Contains details about the comment and functions to modify
  */
 export const EditComment = ({
+  savingComment,
   disableOnEmpty,
   comment,
   saveComment,
-  cancelCommentEdit,
+  resetEdit,
   changeDate,
   onChange,
   keyListener,
@@ -24,20 +25,27 @@ export const EditComment = ({
     <DateSelector
       name="Relevant Date"
       onChange={changeDate}
-      value={comment.relevant_date}
+      value={comment.pendingDate || comment.relevant_date}
       type="date"
       strongLabel
     />
     <SaveableTextArea
+      inputProps={{
+        autoFocus: true,
+        onFocus: (event) => {
+          // Reset the value to focus the cursor at the end
+          event.target.selectionStart = event.target.value.length;
+        }
+      }}
       name="Edit comment"
       hideLabel
       onKeyDown={keyListener}
       id={nodeId}
       onChange={onChange}
-      value={comment.comment}
-      onCancelClick={cancelCommentEdit}
+      value={comment.pendingComment === null ? comment.comment : comment.pendingComment}
+      onCancelClick={resetEdit}
       onSaveClick={saveComment}
-      disabled={disableOnEmpty && !comment.comment.trim()}
+      disabled={savingComment || (disableOnEmpty && !comment.pendingComment.trim())}
     />
   </div>
 );
@@ -47,11 +55,12 @@ EditComment.defaultProps = {
 };
 
 EditComment.propTypes = {
+  savingComment: PropTypes.bool,
   comment: PropTypes.object.isRequired,
   disableOnEmpty: PropTypes.bool,
   nodeId: PropTypes.string,
   saveComment: PropTypes.func,
-  cancelCommentEdit: PropTypes.func,
+  resetEdit: PropTypes.func,
   changeDate: PropTypes.func,
   onChange: PropTypes.func,
   keyListener: PropTypes.func,

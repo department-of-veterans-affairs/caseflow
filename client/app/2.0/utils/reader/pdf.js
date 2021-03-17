@@ -4,8 +4,6 @@ import { memoize } from 'lodash';
 // Local Dependencies
 import { getQueryParams } from 'app/util/QueryParamsUtil';
 import { CATEGORIES } from 'store/constants/reader';
-import { stopPlacingAnnotation } from 'store/reader/annotationLayer';
-import { onScrollToComment } from 'store/reader/pdf';
 import { setCategoryFilter } from 'store/reader/documentList';
 
 /**
@@ -21,40 +19,6 @@ export const singleDocumentMode = memoize(() =>
  */
 export const showPdf = (history, vacolsId) => (documents, docId) =>
   documents[docId] && history.push(`/${vacolsId}/documents/${docId}`);
-
-/**
- * Helper Method to remove the placing annotation state from the redux store
- * @param {boolean} isPlacing -- Whether there is an annotation being placed
- * @param {function} dispatch -- The store dispatcher to update the annotation layer state
- */
-export const clearPlacingAnnotation = (isPlacing, dispatch) =>
-  isPlacing && dispatch(stopPlacingAnnotation('from-click-outside-doc'));
-
-/**
- * Helper Method to Add the Click event listener to the window
- */
-export const setAnnotationEvent = () => window.addEventListener('click', clearPlacingAnnotation);
-
-/**
- * Helper Method to Clear the Click event listener to the window
- */
-export const clearAnnotationEvent = () => window.removeEventListener('click', clearPlacingAnnotation);
-
-/**
- * Method to set the Comment and Scroll position of the PDF
- * @param {Object} history -- The Browser Router History Object
- * @param {number} vacolsId -- The ID of the Appeal in VACOLS
- */
-export const jumpToComment = (history, vacolsId) => (comment, dispatch) => {
-  // Create the closure from show PDF to load the correct comment
-  const loadPdf = showPdf(history, vacolsId);
-
-  // Load the PDF
-  loadPdf(comment.documentId);
-
-  // Update the scroll position in the store
-  dispatch(onScrollToComment(comment));
-};
 
 /**
  * Method to initialize the category Filters

@@ -1,5 +1,5 @@
 // External Dependencies
-import { current } from '@reduxjs/toolkit';
+import querystring from 'querystring';
 import moment from 'moment';
 import { sortBy, compact } from 'lodash';
 
@@ -23,7 +23,7 @@ export const formatFilterCriteria = (filterCriteria) => {
   const filters = {
     category: Object.keys(filterCriteria.category).filter((cat) => filterCriteria.category[cat] === true).
       map((key) => formatCategoryName(key)),
-    tag: Object.keys(filterCriteria.tag),
+    tag: Object.keys(filterCriteria.tag).filter((tag) => filterCriteria.tag[tag] === true),
     searchQuery: filterCriteria.searchQuery.toLowerCase()
   };
 
@@ -191,3 +191,57 @@ export const addMetaLabel = (action, payload, label = '', meta = true) => ({
     }
   }
 });
+
+/**
+ * Helper Method to Parse the Queue Redirect URL from the window
+ * @returns {string|null} -- The Parsed Queue Redirect URL
+ */
+export const getQueueRedirectUrl = () => {
+  // Parse the Redirect URL string from the URL bar
+  const query = querystring.parse(window.location.search.slice(1));
+
+  // Return either the parsed URL or null
+  return query.queue_redirect_url ? decodeURIComponent(query.queue_redirect_url) : null;
+};
+
+/**
+ * Helper Method to Parse the Task Type from the window
+ * @returns {string|null} -- The Parsed Queue Task Type
+ */
+export const getQueueTaskType = () => {
+  // Parse the Task Type string from the URL bar
+  const query = querystring.parse(window.location.search.slice(1));
+
+  // Return either the parsed Task Type or null
+  return query.queue_task_type ? decodeURIComponent(query.queue_task_type) : null;
+};
+
+/**
+ * Helper Method to Parse the Task Type from the window
+ * @returns {string|null} -- The Parsed Queue Task Type
+ */
+export const formatCommentQuery = () => {
+  // Parse the Task Type string from the URL bar
+  const query = querystring.parse(window.location.search.slice(0))['?annotation'];
+
+  // Convert to Int or null and return
+  return query ? parseInt(query, 10) : null;
+};
+
+/**
+ * Helper Method to map tags to appropriate options in the SearchableDropdown
+ * @param {Array} tags -- List of tags to be formatted
+ */
+export const formatTagValue = (tags) => tags.map((tag) => ({
+  value: tag.text,
+  label: tag.text,
+  tagId: tag.id
+}));
+
+/**
+ * Helper Method to map tags to appropriate options in the SearchableDropdown
+ * @param {Array} tags -- List of tags to be formatted
+ */
+export const formatTagOptions = (documents) => Object.values(documents).
+  reduce((list, doc) => [...list, ...doc.tags], []).
+  filter((tag, index, list) => list.findIndex((item) => item.text === tag.text) === index);

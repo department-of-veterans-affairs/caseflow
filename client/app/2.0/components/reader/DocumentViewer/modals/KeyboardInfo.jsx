@@ -3,10 +3,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // Internal Dependencies
-import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Keyboard } from 'app/components/RenderFunctions';
+import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'app/components/RenderFunctions';
 import Modal from 'app/components/Modal';
 import Table from 'app/components/Table';
-import Button from 'app/components/Button';
 
 /**
  * Scroll Keyboard Shortcuts Columns
@@ -106,7 +105,7 @@ export const searchInstructions = () => {
 /**
  * Document Keyboard Shortcut Instructions
  */
-export const documentsInstructions = [
+export const docInstructions = [
   {
     documentsInstruction: 'Scroll page up',
     shortcut: <span><code>shift</code> + <code>space</code></span>
@@ -151,49 +150,37 @@ export const documentsColumns = [{
  * Keyboard Info Component
  * @param {Object} props -- Contains functions for toggling the keyboard info
  */
-export const KeyboardInfo = ({ openKeyboard, closeKeyboard, handleClose, show, tableProps }) => (
-  <div className="cf-keyboard-shortcuts">
-    <Button
-      id="cf-open-keyboard-modal"
-      name={<span><Keyboard />&nbsp; View keyboard shortcuts</span>}
-      onClick={openKeyboard}
-      classNames={['cf-btn-link']}
-    />
-    {show && (
-      <div className="cf-modal-scroll">
-        <Modal
-          id="cf-keyboard-modal"
-          title="Keyboard shortcuts"
-          buttons={[{
-            classNames: ['usa-button', 'usa-button-secondary'],
-            name: 'Thanks, got it!',
-            onClick: closeKeyboard
-          }]}
-          closeHandler={handleClose}
-          noDivider
-        >
-          <div className="cf-keyboard-modal-scroll">
-            <Table columns={documentsColumns} rowObjects={documentsInstructions} {...tableProps} />
-            <Table columns={searchColumns} rowObjects={searchInstructions()} {...tableProps} />
-            <Table columns={commentColumns} rowObjects={commentInstructions} {...tableProps} />
-          </div>
-        </Modal>
+export const KeyboardInfo = ({ toggleKeyboardInfo, show, ...props }) => show && (
+  <div className="cf-modal-scroll">
+    <Modal
+      id="cf-keyboard-modal"
+      title="Keyboard shortcuts"
+      buttons={[{
+        classNames: ['usa-button', 'usa-button-secondary'],
+        name: 'Thanks, got it!',
+        onClick: () => toggleKeyboardInfo(false)
+      }]}
+      closeHandler={() => toggleKeyboardInfo(false)}
+      noDivider
+    >
+      <div className="cf-keyboard-modal-scroll">
+        <Table columns={documentsColumns} rowObjects={docInstructions} getKeyForRow={(index) => index} {...props} />
+        <Table columns={searchColumns} rowObjects={searchInstructions()} getKeyForRow={(index) => index} {...props} />
+        <Table columns={commentColumns} rowObjects={commentInstructions} getKeyForRow={(index) => index} {...props} />
       </div>
-    )}
+    </Modal>
   </div>
 );
 
 KeyboardInfo.defaultProps = {
-  tableProps: {
+  props: {
     slowReRendersAreOk: true,
     className: 'cf-keyboard-modal-table'
   }
 };
 
 KeyboardInfo.propTypes = {
-  tableProps: PropTypes.object,
-  openKeyboard: PropTypes.func,
-  closeKeyboard: PropTypes.func,
-  handleClose: PropTypes.func,
+  props: PropTypes.object,
+  toggleKeyboardInfo: PropTypes.func,
   show: PropTypes.bool,
 };

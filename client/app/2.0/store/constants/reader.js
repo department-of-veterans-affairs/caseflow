@@ -37,18 +37,18 @@ export const ANNOTATION_ICON_SIDE_LENGTH = 40;
 
 // Arrange the directions such that each direction + 1 modulo 4 rotates clockwise.
 export const MOVE_ANNOTATION_ICON_DIRECTIONS = {
-  UP: 0,
-  RIGHT: 1,
-  DOWN: 2,
-  LEFT: 3
+  ArrowUp: 0,
+  ArrowRight: 1,
+  ArrowDown: 2,
+  ArrowLeft: 3
 };
 
 // An array with the directions oriented in a clockwise rotation.
 export const MOVE_ANNOTATION_ICON_DIRECTION_ARRAY = [
-  MOVE_ANNOTATION_ICON_DIRECTIONS.UP,
-  MOVE_ANNOTATION_ICON_DIRECTIONS.RIGHT,
-  MOVE_ANNOTATION_ICON_DIRECTIONS.DOWN,
-  MOVE_ANNOTATION_ICON_DIRECTIONS.LEFT
+  MOVE_ANNOTATION_ICON_DIRECTIONS.ArrowUp,
+  MOVE_ANNOTATION_ICON_DIRECTIONS.ArrowRight,
+  MOVE_ANNOTATION_ICON_DIRECTIONS.ArrowDown,
+  MOVE_ANNOTATION_ICON_DIRECTIONS.ArrowLeft
 ];
 
 export const documentCategories = {
@@ -119,3 +119,5 @@ export const LOADING_DATA_MESSAGE = 'Loading claims folder in Reader...';
 
 // Set the cache timeout
 export const CACHE_TIMEOUT_HOURS = 3;
+
+export const COMMENT_SCROLL_FROM_THE_TOP = 50;

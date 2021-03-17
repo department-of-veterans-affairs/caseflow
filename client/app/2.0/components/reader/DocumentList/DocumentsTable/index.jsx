@@ -11,7 +11,7 @@ import {
 import { SortArrowUp, SortArrowDown } from 'app/components/RenderFunctions';
 import { commentHeaders, documentHeaders } from 'components/reader/DocumentList/DocumentsTable/Columns';
 import { documentRows, focusElement } from 'utils/reader';
-import { selectCurrentPdfLocally, handleToggleCommentOpened } from 'app/reader/Documents/DocumentsActions';
+import { selectCurrentPdfLocally } from 'app/reader/Documents/DocumentsActions';
 
 /**
  * Documents Table Component
@@ -29,14 +29,13 @@ export const DocumentsTable = ({ show, ...props }) => {
 
   // Check the scroll position on mount
   useEffect(() => {
-    // Only scroll if the scroll is set
-    if (props.documentList.pdfList.scrollTop) {
-      // Update the table body scroll position to the Last Read Row
-      tbodyRef.scrollTop = focusElement(lastReadRef, tbodyRef);
-    }
+    // Get the last Read Indicator
+    const lastRead = document.getElementById('read-indicator');
 
-    // Reset the scroll position on Un-mount
-    return () => dispatch(setDocListScrollPosition(tbodyRef?.scrollTop));
+    // Focus the last read if present
+    if (lastRead) {
+      lastRead.scrollIntoView();
+    }
   }, []);
 
   // Create the Table Props to pass to the columns
@@ -52,15 +51,15 @@ export const DocumentsTable = ({ show, ...props }) => {
     sortIcon: props.filterCriteria.sort.sortAscending ? <SortArrowUp /> : <SortArrowDown />,
     // Filter Functions
     setPdf: (doc) => dispatch(selectCurrentPdfLocally(doc.id)),
-    toggleComment: (docId, expanded) => dispatch(handleToggleCommentOpened(docId, expanded))
   };
 
   // Render The Table component
   return show && (
     <div>
       <Table
+        {...tableProps}
         columns={(row) => row?.isComment ? commentHeaders(tableProps) : documentHeaders(tableProps)}
-        rowObjects={documentRows(props.filteredDocIds, props.documents, props.annotations)}
+        rowObjects={documentRows(props.filteredDocIds, props.documents, props.comments)}
         summary="Document list"
         className="documents-table"
         headerClassName="cf-document-list-header-row"
@@ -78,7 +77,7 @@ DocumentsTable.propTypes = {
   filteredDocIds: PropTypes.array,
   show: PropTypes.bool,
   documents: PropTypes.object,
-  annotations: PropTypes.array,
+  comments: PropTypes.array,
   onJumpToComment: PropTypes.func,
   sortBy: PropTypes.string,
   documentList: PropTypes.shape({

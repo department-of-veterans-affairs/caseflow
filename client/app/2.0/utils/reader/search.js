@@ -39,7 +39,7 @@ export const typeContainsString = (searchQuery, doc) => (doc.type.toLowerCase().
  * @returns {boolean} -- Returns whether the comment contains the search string
  */
 export const commentContainsString = (searchQuery, payload, doc) =>
-  payload.annotations.filter((note) => note.documentId === doc.id).
+  payload.comments.filter((note) => note.document_id === doc.id).
     reduce((acc, annotation) =>
       acc || annotation.comment.toLowerCase().includes(searchQuery),
     false);

@@ -17,35 +17,38 @@ import { LOGO_COLORS } from 'app/constants/AppConstants';
 export const DocumentSearch = ({
   hidden,
   searchBarRef,
-  onChange,
+  searchText,
   onKeyPress,
-  searchIsLoading,
-  prevMatch,
-  nextMatch,
   searchTerm,
   totalMatchesInFile,
-  currentMatchIndex
-}) => (
+  matchIndex
+}) => !hidden && (
   <div className={classNames('cf-search-bar', { hidden })}>
     <SearchBar
+      inputProps={{ autoFocus: true }}
       ref={searchBarRef}
       isSearchAhead
       size="small"
       id="search-ahead"
       placeholder="Type to search..."
-      onChange={onChange}
+      onChange={(term) => searchText(term, matchIndex)}
       onKeyPress={onKeyPress}
-      internalText={formatSearchText(searchTerm, totalMatchesInFile, currentMatchIndex)}
-      loading={searchIsLoading}
+      internalText={formatSearchText(searchTerm, totalMatchesInFile, matchIndex)}
       spinnerColor={LOGO_COLORS.READER.ACCENT}
     />
-    <Button classNames={['cf-increment-search-match', 'cf-prev-match']} onClick={prevMatch} >
+    <Button
+      classNames={['cf-increment-search-match', 'cf-prev-match']}
+      onClick={() => searchText(searchTerm, matchIndex - 1)}
+    >
       <div style={{ transform: 'translateY(5px) translateX(-0.5rem)' }}>
         <LeftChevron />
         <span className="usa-sr-only">Previous Match</span>
       </div>
     </Button>
-    <Button classNames={['cf-increment-search-match', 'cf-next-match']} onClick={nextMatch} >
+    <Button
+      classNames={['cf-increment-search-match', 'cf-next-match']}
+      onClick={() => searchText(searchTerm, matchIndex + 1)}
+    >
       <div style={{ transform: 'translateY(5px) translateX(-0.5rem)' }}>
         <RightChevron />
         <span className="usa-sr-only">Next Match</span>
@@ -57,12 +60,12 @@ export const DocumentSearch = ({
 DocumentSearch.propTypes = {
   hidden: PropTypes.bool,
   searchBarRef: PropTypes.element,
-  onChange: PropTypes.func,
+  searchText: PropTypes.func,
   onKeyPress: PropTypes.func,
   searchIsLoading: PropTypes.bool,
   prevMatch: PropTypes.func,
   nextMatch: PropTypes.func,
   searchTerm: PropTypes.string,
   totalMatchesInFile: PropTypes.number,
-  currentMatchIndex: PropTypes.number,
+  matchIndex: PropTypes.number,
 };

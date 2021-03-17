@@ -5,12 +5,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 // Local Dependencies
-import { fetchDocuments } from 'utils/reader/documents';
+import { recordSearch, fetchDocuments, focusComment } from 'utils/reader';
 import { documentListScreen } from 'store/reader/selectors';
 import {
   setSearch,
   clearSearch as clear,
-  setViewingDocumentsOrComments,
+  changeView,
   changeSortState,
   setCategoryFilter,
   toggleDropdownFilterVisibility,
@@ -18,8 +18,8 @@ import {
   clearAllFilters,
   clearTagFilters,
   setTagFilter,
+  toggleComment,
 } from 'store/reader/documentList';
-import { recordSearch } from 'utils/reader';
 
 import {
   QueueLink,
@@ -29,8 +29,9 @@ import {
   LastRetrievalInfo,
   NoSearchResults,
   DocumentsTable,
-  CommentsTable
+  CommentsTable,
 } from 'components/reader/DocumentList';
+import { selectComment } from 'store/reader/annotationLayer';
 
 const DocumentList = (props) => {
   // Get the Document List state
@@ -40,21 +41,29 @@ const DocumentList = (props) => {
   const dispatch = useDispatch();
 
   // Load the Documents
-  useEffect(fetchDocuments({ ...state, vacolsId: props.match.params.vacolsId }, dispatch), []);
+  useEffect(fetchDocuments({ ...state, params: props.match.params }, dispatch), []);
 
   // Create the dispatchers
   const actions = {
+    toggleComment: (docId, expanded) => dispatch(toggleComment({ docId, expanded })),
     clearTagFilters: () => dispatch(clearTagFilters(state)),
-    setTagFilter: (text, checked, tagId) => dispatch(setTagFilter(text, checked, tagId, state)),
+    setTagFilter: (text, checked) => dispatch(setTagFilter(text, checked, state)),
     clearAllFilters: () => dispatch(clearAllFilters(state)),
     clearCategoryFilters: () => dispatch(clearCategoryFilters(state)),
     toggleFilter: (val) => dispatch(toggleDropdownFilterVisibility(val)),
     setCategoryFilter: (categoryName, checked) => dispatch(setCategoryFilter(categoryName, checked, state)),
-    changeView: (val) => dispatch(setViewingDocumentsOrComments(val)),
-    search: (val) => dispatch(setSearch(val, state.annotations, state.storeDocuments)),
-    clearSearch: () => dispatch(clear(state.filterCriteria, state.annotations, state.storeDocuments)),
+    changeView: (val) => dispatch(changeView(val)),
+    search: (val) => dispatch(setSearch(val, state.comments, state.storeDocuments)),
+    clearSearch: () => dispatch(clear(state.filterCriteria, state.comments, state.storeDocuments)),
     recordSearch: (query) => recordSearch(props.match.params.vacolsId, query),
     changeSort: (val) => dispatch(changeSortState(val, state)),
+    selectComment: (comment) => {
+      // Scroll to the comment location
+      // focusComment(comment);
+
+      // Update the store with the selected component
+      dispatch(selectComment(comment));
+    }
   };
 
   return (
@@ -68,8 +77,18 @@ const DocumentList = (props) => {
           <LastRetrievalAlert {...state.documentList} appeal={state.appeal} />
           <DocumentListHeader {...state} {...actions} />
           <NoSearchResults {...state} {...actions} show={state.documentsView === 'none'} />
-          <DocumentsTable {...state} {...actions} show={state.documentsView === 'documents'} />
-          <CommentsTable {...state} {...actions} show={state.documentsView === 'comments'} />
+          <DocumentsTable
+            {...state}
+            {...actions}
+            documentPathBase={`/reader/appeal/${ state.appeal.id }/documents`}
+            show={state.documentsView === 'documents'}
+          />
+          <CommentsTable
+            {...state}
+            {...actions}
+            documentPathBase={`/reader/appeal/${ state.appeal.id }/documents`}
+            show={state.documentsView === 'comments'}
+          />
         </div>
       </AppSegment>
       <LastRetrievalInfo {...state.documentList} />
@@ -84,13 +103,10 @@ DocumentList.propTypes = {
   dropdownUrls: PropTypes.array,
   singleDocumentMode: PropTypes.bool,
   match: PropTypes.object,
-  loadedAppealId: PropTypes.string,
   annotations: PropTypes.array,
 
   // Required actions
-  onScrollToComment: PropTypes.func,
-  stopPlacingAnnotation: PropTypes.func,
-  setCategoryFilter: PropTypes.func
+  setCategoryFilter: PropTypes.func,
 };
 
 export default DocumentList;

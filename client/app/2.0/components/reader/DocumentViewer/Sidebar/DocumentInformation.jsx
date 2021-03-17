@@ -16,33 +16,33 @@ import { getClaimTypeDetailInfo } from 'app/reader/utils';
  */
 export const DocumentInformation = ({
   appeal,
-  doc,
-  saveDocDescription,
-  changePendingDescription,
-  resetPendingDescription,
+  currentDocument,
+  saveDescription,
+  changeDescription,
+  resetDescription,
   error,
 }) => (
   <div className="cf-sidebar-document-information">
     <p className="cf-pdf-meta-title cf-pdf-cutoff">
       <strong>Document Type: </strong>
-      <span title={doc.type} className="cf-document-type">
-        {doc.type}
+      <span title={currentDocument.type} className="cf-document-type">
+        {currentDocument.type}
       </span>
     </p>
     <EditableField
       className="cf-pdf-meta-title"
-      value={doc.pendingDescription || doc.description || ''}
-      onSave={saveDocDescription}
-      onChange={changePendingDescription}
-      onCancel={resetPendingDescription}
+      value={currentDocument.pendingDescription || currentDocument.description || ''}
+      onSave={saveDescription}
+      onChange={changeDescription}
+      onCancel={resetDescription}
       maxLength={50}
       label="Document Description"
       strongLabel
       name="document_description"
-      errorMessage={error.visible ? error.message : null}
+      errorMessage={error?.visible ? error.message : null}
     />
     <p className="cf-pdf-meta-title">
-      <strong>Receipt Date:</strong> {formatDateStr(doc.receivedAt)}
+      <strong>Receipt Date:</strong> {formatDateStr(currentDocument.receivedAt)}
     </p>
     <hr />
     {isEmpty(appeal) ? <LoadingMessage message="Loading details..." /> : (
@@ -75,10 +75,10 @@ export const DocumentInformation = ({
 );
 
 DocumentInformation.propTypes = {
-  saveDocDescription: PropTypes.func,
-  changePendingDescription: PropTypes.func,
-  resetPendingDescription: PropTypes.func,
+  saveDescription: PropTypes.func,
+  changeDescription: PropTypes.func,
+  resetDescription: PropTypes.func,
   error: PropTypes.object,
   appeal: PropTypes.object,
-  doc: PropTypes.object,
+  currentDocument: PropTypes.object,
 };

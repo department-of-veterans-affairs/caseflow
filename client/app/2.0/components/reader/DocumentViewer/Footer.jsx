@@ -21,14 +21,13 @@ export const DocumentFooter = ({
   filteredDocIds,
   nextDoc,
   prevDoc,
-  numPages,
+  doc,
   setPageNumber,
   handleKeyPress,
-  pageNumber,
 }) => (
   <div className="cf-pdf-footer cf-pdf-toolbar" {...toolbarStyles.footer}>
     <div className="cf-pdf-footer-buttons-left">
-      {prevDocId && (
+      {prevDocId !== 0 && (
         <Button name="previous" classNames={['cf-pdf-button']} onClick={prevDoc} ariaLabel="previous PDF">
           <PageArrowLeft />
           <span className="left-button-label">Previous</span>
@@ -39,21 +38,21 @@ export const DocumentFooter = ({
       {!loadError && (
         <span>
           <span className="page-progress-indicator">
-            {numPages ? (
+            {doc.numPages ? (
               <span>
                 <div style={{ display: 'inline-block' }}>
                   <TextField
-                    maxLength="4"
+                    maxLength={4}
                     name="page-progress-indicator-input"
                     label="Page"
                     onChange={setPageNumber}
                     onKeyPress={handleKeyPress}
-                    value={pageNumber}
+                    value={doc.currentPage}
                     required={false}
                     className={['page-progress-indicator-input']}
                   />
                 </div>
-                of {numPages}
+                of {doc.numPages}
               </span>
             ) : (
               <em>Loading document...</em>
@@ -68,7 +67,7 @@ export const DocumentFooter = ({
       </span>
     </div>
     <div className="cf-pdf-footer-buttons-right">
-      {nextDocId && (
+      {nextDocId !== 0 && (
         <Button name="next" classNames={['cf-pdf-button cf-right-side']} onClick={nextDoc} ariaLabel="next PDF">
           <span className="right-button-label">Next</span>
           <PageArrowRight />
@@ -91,4 +90,5 @@ DocumentFooter.propTypes = {
   setPageNumber: PropTypes.func,
   handleKeyPress: PropTypes.func,
   pageNumber: PropTypes.number,
+  doc: PropTypes.object,
 };

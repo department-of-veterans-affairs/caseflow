@@ -37,7 +37,6 @@ export const DocumentListHeader = ({ filterCriteria, docsCount, search, clearSea
 );
 
 DocumentListHeader.propTypes = {
-  loadedAppealId: PropTypes.string,
   filterCriteria: PropTypes.object,
   documents: PropTypes.object,
   docsCount: PropTypes.number,

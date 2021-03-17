@@ -1,10 +1,8 @@
 // External Dependencies
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
 
 // Local Dependencies
-import { clearAllFilters } from 'app/reader/DocumentList/DocumentListActions';
 import { filterMessageClass } from 'styles/reader/DocumentList/Header';
 import { formatFilters } from 'utils/reader';
 import Button from 'app/components/Button';

@@ -20,6 +20,6 @@ export const WindowSlider = ({ setOverscanValue, windowingOverscan }) => (
 );
 
 WindowSlider.propTypes = {
-  windowingOverscan: PropTypes.number,
+  windowingOverscan: PropTypes.string,
   setOverscanValue: PropTypes.func,
 };

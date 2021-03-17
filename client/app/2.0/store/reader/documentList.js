@@ -1,58 +1,32 @@
 // External Dependencies
-import querystring from 'querystring';
-import { createSlice, createAction } from '@reduxjs/toolkit';
-import { pickBy } from 'lodash';
+import { createSlice, createAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { isNil, pickBy } from 'lodash';
 
 // Local Dependencies
-import { DOCUMENTS_OR_COMMENTS_ENUM } from 'store/constants/reader';
-import { categoryContainsWords } from 'utils/reader';
-import { loadDocuments, selectCurrentPdfLocally } from 'store/reader/documents';
-import { onReceiveAnnotations } from 'store/reader/annotationLayer';
-import { addMetaLabel } from 'utils/reader/format';
-import { filterDocuments } from 'utils/reader/documents';
-
-/**
- * Helper Method to change the Last Read Document
- * @param {Object} state -- The current Redux Store State
- * @param {string} docId -- The ID of the Document to set as the last Read
- */
-export const updateLastReadDoc = (state, docId) => {
-  state.pdfList.lastReadDocId = docId;
-};
-
-/**
- * Helper Method to Parse the Queue Redirect URL from the window
- * @returns {string|null} -- The Parsed Queue Redirect URL
- */
-export const getQueueRedirectUrl = () => {
-  // Parse the Redirect URL string from the URL bar
-  const query = querystring.parse(window.location.search.slice(1));
-
-  // Return either the parsed URL or null
-  return query.queue_redirect_url ? decodeURIComponent(query.queue_redirect_url) : null;
-};
-
-/**
- * Helper Method to Parse the Task Type from the window
- * @returns {string|null} -- The Parsed Queue Task Type
- */
-export const getQueueTaskType = () => {
-  // Parse the Task Type string from the URL bar
-  const query = querystring.parse(window.location.search.slice(1));
-
-  // Return either the parsed Task Type or null
-  return query.queue_task_type ? decodeURIComponent(query.queue_task_type) : null;
-};
+import ApiUtil from 'app/util/ApiUtil';
+import { ENDPOINT_NAMES, DOCUMENTS_OR_COMMENTS_ENUM } from 'store/constants/reader';
+import {
+  filterDocuments,
+  addMetaLabel,
+  commentContainsWords,
+  categoryContainsWords,
+  getQueueRedirectUrl,
+  getQueueTaskType
+} from 'utils/reader';
+import { showPdf, handleCategoryToggle, addTag, removeTag } from 'store/reader/documentViewer';
 
 /**
  * PDF Initial State
  */
 export const initialState = {
+  loading: false,
+  documents: {},
   queueRedirectUrl: getQueueRedirectUrl(),
   queueTaskType: getQueueTaskType(),
-  viewingDocumentsOrComments: DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
+  view: DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
   searchCategoryHighlights: {},
   filteredDocIds: [],
+  tagOptions: [],
   filterCriteria: {
     sort: {
       sortBy: 'receivedAt',
@@ -75,6 +49,45 @@ export const initialState = {
 };
 
 /**
+ * Helper Method to change the Last Read Document
+ * @param {Object} state -- The current Redux Store State
+ * @param {string} docId -- The ID of the Document to set as the last Read
+ */
+export const updateLastReadDoc = (state, docId) => {
+  state.pdfList.lastReadDocId = docId;
+};
+
+/**
+ * Dispatcher to Load Appeal Documents
+ */
+export const loadDocuments = createAsyncThunk('documentList/load', async (params, { getState }) => {
+  // Get the current state
+  const state = getState();
+
+  // Request the Documents for the Appeal
+  const { body } = await ApiUtil.get(`/reader/appeal/${params.vacolsId}/documents?json`, {}, ENDPOINT_NAMES.DOCUMENTS);
+
+  // Return the response and attach the Filter Criteria
+  return {
+    ...body,
+    ...params,
+    documents: body.appealDocuments,
+    filterCriteria: state.reader.documentList.filterCriteria
+  };
+});
+
+/**
+ * Dispatcher to Remove Tags from a Document
+ */
+export const markDocAsRead = createAsyncThunk('documentList/markRead', async({ docId }) => {
+  // Request the addition of the selected tags
+  await ApiUtil.patch(`/document/${docId}/mark-as-read`, {}, ENDPOINT_NAMES.MARK_DOC_AS_READ);
+
+  // Return the selected document and tag to the next Dispatcher
+  return { docId };
+});
+
+/**
  * Dispatcher to Set the Last Read Document
  */
 export const handleSetLastRead = createAction('documentList/handleSetLastRead');
@@ -86,6 +99,9 @@ const documentListSlice = createSlice({
   name: 'documentList',
   initialState,
   reducers: {
+    toggleComment: (state, action) => {
+      state.documents[action.payload.docId].listComments = !action.payload.expanded;
+    },
     changeSortState: {
       reducer: (state, action) => {
         state.filterCriteria.sort.sortBy = action.payload.sortBy;
@@ -119,8 +135,8 @@ const documentListSlice = createSlice({
       reducer: (state, action) => {
         state.filterCriteria.tag[action.payload.text] = action.payload.checked;
       },
-      prepare: (text, checked, tagId, props) =>
-        addMetaLabel(`${checked ? 'select' : 'unselect'}-category-filter`, { ...props, text, checked }, tagId)
+      prepare: (text, checked, props) =>
+        addMetaLabel(`${checked ? 'select' : 'unselect'}-category-filter`, { ...props, text, checked })
     },
     clearTagFilters: {
       reducer: (state) => {
@@ -138,8 +154,8 @@ const documentListSlice = createSlice({
       reducer: (state, action) => {
         state.filterCriteria.searchQuery = action.payload.filterCriteria.searchQuery;
       },
-      prepare: (searchQuery, annotations, documents) =>
-        addMetaLabel('clear-tag-filters', { filterCriteria: { searchQuery }, annotations, documents })
+      prepare: (searchQuery, comments, documents) =>
+        addMetaLabel('clear-tag-filters', { filterCriteria: { searchQuery }, comments, documents })
     },
     clearSearch: {
       reducer: (state) => {
@@ -154,9 +170,9 @@ const documentListSlice = createSlice({
       },
       prepare: (props) => addMetaLabel('clear-all-filters', { ...props })
     },
-    setViewingDocumentsOrComments: {
+    changeView: {
       reducer: (state, action) => {
-        state.viewingDocumentsOrComments = action.payload.documentsView;
+        state.view = action.payload.documentsView;
       },
       prepare: (documentsView) =>
         addMetaLabel('set-viewing-documents-or-comments', { documentsView }, documentsView)
@@ -172,12 +188,74 @@ const documentListSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.
+      addCase(loadDocuments.pending, (state) => {
+        state.loading = true;
+      }).
+      addCase(handleCategoryToggle.fulfilled, (state, action) => {
+        state.documents[action.payload.docId][action.payload.category] = action.payload.toggleState;
+      }).
+      addCase(loadDocuments.fulfilled, (state, action) => {
+        // Apply the documents to the store
+        state.documents = action.payload.documents.reduce((list, doc) => ({
+          ...list,
+          [doc.id]: {
+            ...doc,
+            receivedAt: doc.received_at,
+            listComments: false,
+            wasUpdated: !isNil(doc.previous_document_version_id) && !doc.opened_by_current_user
+          }
+        }), {});
+
+        // Map the unique document tags to an array of tag options
+        state.tagOptions = action.payload.documents.
+          map((doc) => doc.tags).
+          reduce((list, item) => list.includes(item) ? list : [...list, ...item], []);
+      }).
+      /* eslint-disable */
+      addCase(markDocAsRead.rejected, (state, action) => {
+        console.log('Error marking as read', action.payload.docId, action.payload.errorMessage);
+      }).
+      /* eslint-enable */
       addMatcher(
         (action) => [
-          selectCurrentPdfLocally.toString()
+          markDocAsRead.fulfilled.toString(),
         ].includes(action.type),
         (state, action) => {
-          updateLastReadDoc(state, action.payload.docId);
+          state.documents[action.payload.docId].opened_by_current_user = true;
+        }
+      ).
+      addMatcher(
+        (action) => [
+          loadDocuments.fulfilled.toString(),
+          loadDocuments.rejected.toString()
+        ].includes(action.type),
+        (state) => {
+          // Reset the Loading State
+          state.loading = false;
+        }).
+      addMatcher(
+        (action) => [
+          showPdf.fulfilled.toString()
+        ].includes(action.type),
+        (state, action) => {
+          updateLastReadDoc(state, action.payload.currentDocument.id);
+        }
+      ).
+      addMatcher(
+        (action) => [
+          removeTag.fulfilled.toString()
+        ].includes(action.type),
+        (state, action) => {
+          state.documents[action.payload.doc.id].tags =
+            action.payload.doc.tags.filter((tag) => tag.text !== action.payload.tag.text);
+        }
+      ).
+      addMatcher(
+        (action) => [
+          addTag.fulfilled.toString()
+        ].includes(action.type),
+        (state, action) => {
+          state.documents[action.payload.doc.id].tags = action.payload.tags;
         }
       ).
       addMatcher(
@@ -190,7 +268,6 @@ const documentListSlice = createSlice({
           'documentList/clearAllFilters',
           'documentList/setTagFilter',
           'documentList/clearTagFilters',
-          onReceiveAnnotations.toString(),
           loadDocuments.fulfilled.toString(),
         ].includes(action.type),
         (state, action) => {
@@ -226,6 +303,12 @@ const documentListSlice = createSlice({
               if (matchesCategories !== state.searchCategoryHighlights[doc.id]) {
                 state.searchCategoryHighlights[doc.id] = matchesCategories;
               }
+
+              // Determine whether the comment contains the search query
+              const containsWords = commentContainsWords(searchQuery, action.payload, doc);
+
+              // Updating the state of all annotations for expanded comments
+              state.documents[doc.id].listComments = Boolean(containsWords);
             });
           }
         });
@@ -236,7 +319,7 @@ const documentListSlice = createSlice({
 export const {
   toggleDropdownFilterVisibility,
   setDocListScrollPosition,
-  setViewingDocumentsOrComments,
+  changeView,
   onReceiveManifests,
   setSearch,
   clearSearch,
@@ -245,7 +328,8 @@ export const {
   clearCategoryFilters,
   clearAllFilters,
   setTagFilter,
-  clearTagFilters
+  clearTagFilters,
+  toggleComment
 } = documentListSlice.actions;
 
 // Default export the reducer
