@@ -1,15 +1,14 @@
 // External Dependencies
 import React from 'react';
-import { Switch } from 'react-router-dom';
 
 // Lazy Load Routes
-const ReaderRoutes = React.lazy(() => import('app/2.0/routes/Reader'));
+const ReaderRoutes = React.lazy(() => import('routes/Reader'));
 
 const Router = (props) => {
   return (
-    <Switch>
+    <React.Fragment>
       <ReaderRoutes {...props} />
-    </Switch>
+    </React.Fragment>
   );
 };
 

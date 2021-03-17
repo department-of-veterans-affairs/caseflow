@@ -1,14 +1,14 @@
 // External Dependencies
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 
 // Local dependencies
 import NavigationBar from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/NavigationBar';
 import CaseSearchLink from 'app/components/CaseSearchLink';
 import { LOGO_COLORS } from 'app/constants/AppConstants';
-import Loadable from 'app/2.0/components/shared/Loadable';
+import Loadable from 'components/shared/Loadable';
 
 const BaseLayout = ({
   children,
@@ -19,8 +19,10 @@ const BaseLayout = ({
   buildDate,
   appName,
   defaultUrl,
-  crumbs
 }) => {
+  // Get the Breadcrumbs from the store
+  const { crumbs } = useSelector((state) => ({ crumbs: state.routes.crumbs }));
+
   return (
     <React.Fragment>
       <NavigationBar
@@ -42,12 +44,7 @@ const BaseLayout = ({
           {children}
         </Loadable>
       </NavigationBar>
-      <Footer
-        wideApp
-        appName={appName}
-        feedbackUrl={feedbackUrl}
-        buildDate={buildDate}
-      />
+      <Footer wideApp appName={appName} feedbackUrl={feedbackUrl} buildDate={buildDate} />
     </React.Fragment>
   );
 };
@@ -64,17 +61,4 @@ BaseLayout.propTypes = {
   crumbs: PropTypes.array,
 };
 
-const mapStateToProps = () => ({
-  // NOTE: This will be loaded from redux in a later PR in this stack
-  crumbs: [
-    {
-      breadcrumb: 'Reader',
-      path: '/:vacolsId/documents'
-    }
-  ]
-});
-
-export default connect(
-  mapStateToProps,
-  null
-)(BaseLayout);
+export default BaseLayout;
