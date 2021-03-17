@@ -15,6 +15,8 @@ class DocketSwitchMailTask < MailTask
     actions
   end
 
+  # title
+
   class << self
     def label
       COPY::DOCKET_SWITCH_MAIL_TASK_LABEL
