@@ -696,6 +696,7 @@
   "CONTROLLED_CORRESPONDENCE_MAIL_TASK_LABEL": "Controlled correspondence",
   "DEATH_CERTIFICATE_MAIL_TASK_LABEL": "Death certificate",
   "DOCKET_SWITCH_MAIL_TASK_LABEL": "Docket Switch",
+  "DOCKET_SWITCH_MAIL_TASK_TITLE": "Docket Switch Mail Task",
   "DOCKET_SWITCH_DENIED_TASK_LABEL": "Denied Docket Switch",
   "DOCKET_SWITCH_DENIED_TASK_TITLE": "Docket Switch Denied",
   "DOCKET_SWITCH_GRANTED_TASK_LABEL": "Granted Docket Switch",
