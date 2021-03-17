@@ -84,10 +84,6 @@ export const toolbarStyles = {
   })
 };
 
-<<<<<<< HEAD
-export const pdfButtonStyle = ['cf-pdf-button cf-pdf-spaced-buttons']
-;
-=======
 export const pdfButtonStyle = ['cf-pdf-button cf-pdf-spaced-buttons'];
 
 export const pdfWrapper = css({
@@ -99,4 +95,3 @@ export const pdfWrapper = css({
     width: 'unset',
     right: '380px' }
 });
->>>>>>> 8bb11063bb4c24e0fddfb35573c1228fddd2bab4
