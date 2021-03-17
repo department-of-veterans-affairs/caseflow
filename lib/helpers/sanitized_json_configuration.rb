@@ -259,34 +259,16 @@ class SanitizedJsonConfiguration
     elsif clazz == OrganizationsUser
       user_id = importer.id_mapping[User.name][obj_hash["user_id"]]
       organization_id = importer.id_mapping[Organization.name][obj_hash["organization_id"]]
-      # user_id = User.find_by_css_id(obj_hash["css_id"])&.id
-      # Organization.find_by(url: obj_hash["url"])
-      # pp "find_existing_record OrganizationsUser #{user_id} #{organization_id}"
-      # binding.pry if user_id.nil? || organization_id.nil?
       OrganizationsUser.find_by(user_id: user_id, organization_id: organization_id)
     elsif clazz == Appeal
       Appeal.find_by(uuid: obj_hash["uuid"]) # cannot; TODO: allow class to provide find_by_uniq_field
     elsif [Organization, Veteran, Person].include?(clazz)
-      # let importer find it using the fallback: clazz.find_by(unique_field: obj_hash[unique_field])
+      # Let importer find it using the fallback: clazz.find_by(unique_field: obj_hash[unique_field])
       nil
     end
   end
 
-  # For records where we want to reuse the existing record
-  # :reek:FeatureEnvy
-  # :reek:UnusedParameters
-  # rubocop:disable Lint/UnusedMethodArgument
-  # def same_unique_attributes?(existing_record, obj_hash, importer: nil)
-  #   case existing_record
-  #   when User
-  #     # SanitizedJsonImporter.attributes_with_unique_index(User) returns ["upper((css_id)::text)"]
-  #     # so fix it by manually checking here:
-  #     existing_record.css_id == obj_hash["css_id"]
-  #   when OrganizationsUser
-  #     existing_record.user_id == obj_hash["user_id"] && existing_record.organization_id == obj_hash["organization_id"]
-  #   end
-  # end
-  # rubocop:enable Lint/UnusedMethodArgument
+  USE_PROD_ORGANIZATION_IDS = false
 
   def create_singleton(clazz, obj_hash, obj_description: obj_description)
     new_label = adjust_identifiers_for_unique_records(clazz, obj_hash)
@@ -299,10 +281,10 @@ class SanitizedJsonConfiguration
     # Only needed if we want Organizations to have same record id's as in prod.
     # Handle Organization type specially because each organization has a `singleton`
     # To-do: update dev's seed data to match prod's Organization#singleton record ids
-    # if clazz == Organization && !self.class.org_already_exists?(obj_hash)
-    #   puts "  + Creating #{clazz} '#{obj_hash['name']}' with its original id #{obj_hash['id']} \n\t#{obj_description}"
-    #   clazz.create!(obj_hash)
-    # end
+    if USE_PROD_ORGANIZATION_IDS && clazz == Organization && !self.class.org_already_exists?(obj_hash)
+      puts "  + Creating #{clazz} '#{obj_hash['name']}' with its original id #{obj_hash['id']} \n\t#{obj_description}"
+      clazz.create!(obj_hash)
+    end
   end
 
   def self.org_already_exists?(obj_hash)

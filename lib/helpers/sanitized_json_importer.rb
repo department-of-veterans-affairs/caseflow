@@ -221,28 +221,6 @@ class SanitizedJsonImporter
     return existing_record if existing_record
 
     find_record_by_unique_index(clazz, obj_hash)
-
-    # binding.pry if OrganizationsUser == clazz
-
-    # existing_record = clazz.find_by_id(obj_hash["id"])
-    # unless existing_record
-    #   # Try searching for previously imported record
-    #   # TODO: generalize; see org_already_exists
-    #   # TODO: for association records like OrganizationsUser, need to check with user/organization_id fields updated
-    #   existing_record = clazz.find_by_id(obj_hash["id"] + @id_offset)
-    #   obj_hash["id"] += @id_offset if existing_record
-    # end
-
-    # return existing_record if existing_record && same_unique_attributes?(existing_record, obj_hash)
-
-    # if existing_record
-    #   obj_hash_clone = obj_hash
-    #   # adjust_ids_by_offset(clazz, obj_hash_clone)
-    #   reassociate_with_imported_records(clazz, obj_hash_clone)
-    #   # existing_record ||= clazz.find_by_id(obj_hash_clone["id"] + @id_offset)
-    #   # binding.pry if OrganizationsUser == clazz
-    #   existing_record if existing_record && same_unique_attributes?(existing_record, obj_hash_clone)
-    # end
   end
 
   # Try to find record using unique indices on the corresponding table
@@ -263,22 +241,4 @@ class SanitizedJsonImporter
 
     fail "Found multiple records for #{clazz.name}: #{found_records}"
   end
-
-  # For records where we want to reuse the existing record
-  # :reek:FeatureEnvy
-  # def same_unique_attributes?(existing_record, obj_hash)
-  #   is_same = @configuration.same_unique_attributes?(existing_record, obj_hash, importer: self)
-  #   return is_same unless is_same.nil?
-
-  #   # binding.pry if OrganizationsUser == existing_record.class
-  #   unique_attributes_per_tablename[existing_record.class.table_name]&.all? do |fieldname|
-  #     existing_record.send(fieldname) == obj_hash[fieldname]
-  #   end
-  # end
-
-  # def unique_attributes_per_tablename
-  #   @unique_attributes_per_tablename ||= @configuration.id_mapping_types.map do |clazz|
-  #     [clazz.table_name, self.class.attributes_with_unique_index(clazz)]
-  #   end.to_h.freeze
-  # end
 end
