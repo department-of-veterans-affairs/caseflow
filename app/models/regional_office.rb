@@ -11,6 +11,7 @@ class RegionalOffice
   DOUBLE_ROOM_ROS = %w[RO18 RO19 RO20 RO22 RO25 RO49].freeze
   DEFAULT_RO_ROOM_COUNT = 1
   DOUBLE_RO_ROOM_COUNT = 2
+  TRIPLE_RO_ROOM_COUNT = 3
 
   # Maps CSS Station # to RO id
   STATIONS = convert_top_level_key_to_string(Constants.REGIONAL_OFFICE_FOR_CSS_STATION.to_h).freeze
