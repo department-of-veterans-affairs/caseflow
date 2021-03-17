@@ -12,7 +12,7 @@ class CavcTask < Task
   before_validation :set_assignee
 
   def self.label
-    "All CAVC-related tasks"
+    COPY::CAVC_TASK_LABEL
   end
 
   def available_actions(_user)

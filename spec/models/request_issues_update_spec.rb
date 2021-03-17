@@ -685,6 +685,29 @@ describe RequestIssuesUpdate, :all_dbs do
         end
       end
 
+      context "if remaining issues after update are ineligible" do
+        let!(:in_progress_task) { create(:higher_level_review_task, :in_progress, appeal: review) }
+        let!(:after_issue) do
+          create(:request_issue,
+                 :ineligible,
+                 decision_review: review,
+                 contention_reference_id: "2")
+        end
+        let!(:request_issues_update) do
+          create(:request_issues_update,
+                 :requires_processing,
+                 review: review,
+                 withdrawn_request_issue_ids: nil,
+                 before_request_issue_ids: review.request_issues.map(&:id),
+                 after_request_issue_ids: [after_issue.id])
+        end
+
+        it "should cancel tasks" do
+          subject
+          expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        end
+      end
+
       def capture_raven_log
         allow(Raven).to receive(:capture_exception) { @raven_called = true }
       end

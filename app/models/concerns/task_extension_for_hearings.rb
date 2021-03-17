@@ -74,4 +74,18 @@ module TaskExtensionForHearings
     assigned_to.is_a?(User) &&
       assigned_to.organizations.any? { |org| hearings_orgs.include?(org) && org.admins.include?(user) }
   end
+
+  # used by ScheduleHearingTask and AssignHearingDispositionTask to for withdrawal of scheduled and unscheduled hearings
+  def withdraw_hearing(parent)
+    if appeal.is_a?(LegacyAppeal)
+      AppealRepository.withdraw_hearing!(appeal)
+      nil
+    elsif appeal.is_a?(Appeal)
+      EvidenceSubmissionWindowTask.find_or_create_by!(
+        appeal: appeal,
+        parent: parent,
+        assigned_to: MailTeam.singleton
+      )
+    end
+  end
 end
