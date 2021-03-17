@@ -41,10 +41,8 @@ class DocketSwitch::TaskHandler
   private
 
   def complete_docket_switch_tasks
-    decision_task = DocketSwitchAbstractAttorneyTask.where(appeal: old_docket_stream)
-    decision_task.update(status: Constants.TASK_STATUSES.completed)
-      # if switch is granted or denied, then ruling task should also be completed
-    DocketSwitchRulingTask.find_by(appeal: old_docket_stream).update(status: Constants.TASK_STATUSES.completed)
+    DocketSwitchAbstractAttorneyTask.where(appeal: old_docket_stream).update(status: Constants.TASK_STATUSES.completed)
+    DocketSwitchRulingTask.where(appeal: old_docket_stream).update(status: Constants.TASK_STATUSES.completed)
   end
 
   # For full grants, cancel all tasks on the original stream
