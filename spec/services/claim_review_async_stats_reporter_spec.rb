@@ -93,7 +93,7 @@ describe ClaimReviewAsyncStatsReporter, :postgres do
           processed: 4,
           established_within_seven_days: 3,
           established_within_seven_days_percent: 50.0,
-          median: 50_400.0,
+          median: 86_400.0,
           avg: 481_500.0,
           max: 1_738_800.0,
           min: 14_400.0
@@ -106,7 +106,7 @@ describe ClaimReviewAsyncStatsReporter, :postgres do
           processed: 4,
           established_within_seven_days: 3,
           established_within_seven_days_percent: 50.0,
-          median: 9_000.0,
+          median: 50_400.0,
           avg: 457_200.0,
           max: 1_724_400.0,
           min: 3_600.0
@@ -133,7 +133,7 @@ describe ClaimReviewAsyncStatsReporter, :postgres do
 
     it "returns CSV" do
       csv = subject
-      expect(csv).to match(/supplemental_claims,6,1,1,4,3,50.0,14:00:00,133:45:00,483:00:00,04:00:00/)
+      expect(csv).to match(/supplemental_claims,6,1,1,4,3,50.0,24:00:00,133:45:00,483:00:00,04:00:00/)
     end
   end
 end
