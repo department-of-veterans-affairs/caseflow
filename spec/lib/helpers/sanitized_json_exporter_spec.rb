@@ -396,16 +396,16 @@ describe "SanitizedJsonExporter/Importer" do
           AppealIntake => [],
           # Veteran => [],
           Claimant => ["decision_review_id"],
-          Task => %w[appeal_id parent_id],
+          Task => %w[parent_id],
           TaskTimer => ["task_id"],
-          CavcRemand => %w[decision_issue_ids remand_appeal_id source_appeal_id],
+          CavcRemand => %w[decision_issue_ids],
           DecisionIssue => ["decision_review_id"],
           RequestIssue => %w[contested_decision_issue_id
                              corrected_by_request_issue_id
                              decision_review_id
                              ineligible_due_to_id],
           RequestDecisionIssue => %w[decision_issue_id request_issue_id],
-          Hearing => %w[appeal_id hearing_day_id],
+          Hearing => %w[hearing_day_id],
           HearingTaskAssociation => %w[hearing_id hearing_task_id],
           HearingDay => [],
           VirtualHearing => ["hearing_id"],
@@ -414,13 +414,20 @@ describe "SanitizedJsonExporter/Importer" do
         # pp configuration.offset_id_fields.transform_keys(&:name)
         expect(configuration.offset_id_fields).to eq offset_id_fields
 
-        expect(configuration.reassociate_fields.keys).to match_array [:type, "User", "Organization"]
+        reassociate_fields_keys = [:type, "Appeal", "Veteran", "Person", "User", "Organization"]
+        expect(configuration.reassociate_fields.keys).to match_array reassociate_fields_keys
 
         reassociate_fields_for_polymorphics = {
-          Task => ["assigned_to_id"],
+          Task => ["assigned_to_id", "appeal_id"],
           AppealIntake => ["detail_id"]
         }
         expect(configuration.reassociate_fields[:type]).to eq(reassociate_fields_for_polymorphics)
+
+        reassociate_fields_for_appeal = {
+          CavcRemand => ["source_appeal_id", "remand_appeal_id"], 
+          Hearing => ["appeal_id"]
+        }
+        expect(configuration.reassociate_fields["Appeal"]).to eq(reassociate_fields_for_appeal)
 
         reassociate_fields_for_user = {
           AppealIntake => ["user_id"],
