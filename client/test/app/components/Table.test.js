@@ -85,11 +85,11 @@ describe('Table', () => {
       for (let rowObject of defaultProps.rowObjects) {
         const userFirstName = rowObject.user.userFirstName.split('')[0];
         const userLastName = rowObject.user.userLastName;
-        const row = within(screen.getByText(rowObject.task).closest('tr'));
+        const rowUtil = within(screen.getByText(rowObject.task).closest('tr'));
 
-        expect(row.getByText(rowObject.task)).toBeInTheDocument();
-        expect(row.getByText(rowObject.submitted)).toBeInTheDocument();
-        expect(row.getByText(`${userFirstName}. ${userLastName}`)).toBeInTheDocument();
+        expect(rowUtil.getByText(rowObject.task)).toBeInTheDocument();
+        expect(rowUtil.getByText(rowObject.submitted)).toBeInTheDocument();
+        expect(rowUtil.getByText(`${userFirstName}. ${userLastName}`)).toBeInTheDocument();
       }
     });
 
