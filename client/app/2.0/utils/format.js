@@ -9,6 +9,25 @@ import { documentCategories } from 'app/reader/constants';
 export const CACHE_TIMEOUT_HOURS = 3;
 
 /**
+ * Helper Method to format the Appeal type based on claim info
+ * @param {Object} claim -- The claim to determine the appeal info
+ * @returns {string} -- The formatted appeal type
+ */
+export const formatAppealType = (claim) => {
+  // Handle the Claim Type
+  if (claim.cavc && claim.aod) {
+    return 'AOD, CAVC';
+  } else if (claim.cavc) {
+    return 'CAVC';
+  } else if (claim.aod) {
+    return 'AOD';
+  }
+
+  // Default to return nothing
+  return '';
+};
+
+/**
  * Helper Method to format the times for the Last Retrieval Alert
  * @param {string} manifestVbmsFetchedAt -- The last time the VBMS Manifest was fetched
  * @param {string} manifestVvaFetchedAt -- The last time the VVA Manifest was fetched
