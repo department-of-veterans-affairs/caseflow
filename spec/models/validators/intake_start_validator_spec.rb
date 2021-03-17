@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe IntakeStartValidator, :postgres do
+describe IntakeStartValidator, :all_dbs do
   let!(:user) { create(:user, station_id: "283") }
   let(:veteran) { create(:veteran) }
   # IntakeStartValidator expects an uncommitted intake (hence new)
