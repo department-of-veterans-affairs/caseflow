@@ -6,7 +6,7 @@ require "helpers/sanitation_transforms.rb"
 # Configuration for exporting/importing data from/to Caseflow.
 
 class SanitizedJsonConfiguration
-  # The :retrieval lambda is run according to the ordering in this hash.
+  # For exporting, the :retrieval lambda is run according to the ordering in this hash.
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def configuration
     @configuration ||= {
@@ -21,6 +21,7 @@ class SanitizedJsonConfiguration
         end
       },
       Veteran => {
+        track_imported_ids: true,
         sanitize_fields: %w[file_number first_name last_name middle_name ssn],
         retrieval: ->(records) { records[Appeal].map(&:veteran) }
       },
@@ -38,11 +39,6 @@ class SanitizedJsonConfiguration
       TaskTimer => {
         retrieval: ->(records) { TaskTimer.where(task_id: records[Task].map(&:id)) }
       },
-      CavcRemand => {
-        # cavc_judge_full_name is selected from Constants::CAVC_JUDGE_FULL_NAMES; no need to sanitize
-        sanitize_fields: %w[instructions],
-        retrieval: ->(records) { records[Appeal].map(&:cavc_remand).compact }
-      },
       RequestIssue => {
         sanitize_fields: ["notes", "contested_issue_description", /_(notes|text|description)/],
         retrieval: ->(records) { records[Appeal].map(&:request_issues).flatten }
@@ -53,6 +49,11 @@ class SanitizedJsonConfiguration
       },
       RequestDecisionIssue => {
         retrieval: ->(records) { RequestDecisionIssue.where(request_issue: records[RequestIssue]) }
+      },
+      CavcRemand => { # dependent on DecisionIssue records
+        # cavc_judge_full_name is selected from Constants::CAVC_JUDGE_FULL_NAMES; no need to sanitize
+        sanitize_fields: %w[instructions],
+        retrieval: ->(records) { records[Appeal].map(&:cavc_remand).compact }
       },
       Hearing => {
         sanitize_fields: %w[bva_poc military_service notes representative_name summary witness],
@@ -136,8 +137,10 @@ class SanitizedJsonConfiguration
     configuration.select { |_, config| config[config_field] == true }.keys.compact
   end
 
-  # Types that need to be examine for associations so that '_id' fields can be updated
+  # Types that need to be examine for associations so that '_id' fields can be updated by id_offset
+  # exclude id_mapping_types because we are reassociating those ourselves (don't try to id_offset them)
   def reassociate_types
+    # DecisionReview is parent class of Appeal, HLR, SC. We want associations of Appeal to be reassociated.
     @reassociate_types ||= (configuration.keys - id_mapping_types + [DecisionReview]).uniq
   end
 
@@ -145,7 +148,7 @@ class SanitizedJsonConfiguration
 
   # Special types that can have `same_unique_attributes?`
   # or where we want to look up its id, e.g. Appeal for Claimant used in `same_unique_attributes?`
-  # The id are tracked in `importer.id_mapping`.
+  # The id are tracked in `importer.id_mapping` and are used by reassociate_with_imported_records
   def id_mapping_types
     @id_mapping_types = extract_classes_with_true(:track_imported_ids, configuration).freeze
   end
@@ -232,7 +235,7 @@ class SanitizedJsonConfiguration
   # Start with important types that other records will reassociate with
   def first_types_to_import
     # HearingDay is needed by Hearing
-    @first_types_to_import ||= [Appeal, User, Organization, HearingDay].freeze
+    @first_types_to_import ||= [Appeal, Organization, User, HearingDay].freeze
   end
 
   # During record creation, types where validation and callbacks should be avoided
@@ -241,31 +244,65 @@ class SanitizedJsonConfiguration
   end
 
   # Classes that shouldn't be imported if a record with the same unique attributes already exists
+  # These types should be handled in `find_existing_record`.
   def nonduplicate_types
-    @nonduplicate_types ||= [User, Organization, Veteran, Person].freeze
+    # Adding OrganizationsUser because we don't want to create duplicate OrganizationsUser records
+    @nonduplicate_types ||= id_mapping_types + [OrganizationsUser].freeze
+    # binding.pry if id_mapping_types != @nonduplicate_types
+    @nonduplicate_types
+  end
+
+  # For each class in nonduplicate_types, provide a way to find the existing record
+  def find_existing_record(clazz, obj_hash, importer: nil)
+    if clazz == User
+      User.find_by_css_id(obj_hash["css_id"]) # cannot
+    elsif clazz == OrganizationsUser
+      user_id = importer.id_mapping[User.name][obj_hash["user_id"]]
+      organization_id = importer.id_mapping[Organization.name][obj_hash["organization_id"]]
+      # user_id = User.find_by_css_id(obj_hash["css_id"])&.id
+      # Organization.find_by(url: obj_hash["url"])
+      # pp "find_existing_record OrganizationsUser #{user_id} #{organization_id}"
+      # binding.pry if user_id.nil? || organization_id.nil?
+      OrganizationsUser.find_by(user_id: user_id, organization_id: organization_id)
+    elsif clazz == Appeal
+      Appeal.find_by(uuid: obj_hash["uuid"]) # cannot; TODO: allow class to provide find_by_uniq_field
+    elsif [Organization, Veteran, Person].include?(clazz)
+      # let importer find it using the fallback: clazz.find_by(unique_field: obj_hash[unique_field])
+      nil
+    end
   end
 
   # For records where we want to reuse the existing record
   # :reek:FeatureEnvy
   # :reek:UnusedParameters
   # rubocop:disable Lint/UnusedMethodArgument
-  def same_unique_attributes?(existing_record, obj_hash, importer: nil)
-    case existing_record
-    when User
-      # SanitizedJsonImporter.attributes_with_unique_index(User) returns ["upper((css_id)::text)"]
-      # so fix it by manually checking here:
-      existing_record.css_id == obj_hash["css_id"]
-    end
-  end
+  # def same_unique_attributes?(existing_record, obj_hash, importer: nil)
+  #   case existing_record
+  #   when User
+  #     # SanitizedJsonImporter.attributes_with_unique_index(User) returns ["upper((css_id)::text)"]
+  #     # so fix it by manually checking here:
+  #     existing_record.css_id == obj_hash["css_id"]
+  #   when OrganizationsUser
+  #     existing_record.user_id == obj_hash["user_id"] && existing_record.organization_id == obj_hash["organization_id"]
+  #   end
+  # end
   # rubocop:enable Lint/UnusedMethodArgument
 
-  def create_singleton(clazz, obj_hash, obj_description)
+  def create_singleton(clazz, obj_hash, obj_description: obj_description)
+    new_label = adjust_identifiers_for_unique_records(clazz, obj_hash)
+    if new_label
+      puts "  * Will import duplicate #{clazz} '#{new_label}' with different unique attributes " \
+            "because existing record's id is different: \n\t#{obj_hash}"
+      # binding.pry
+    end
+
+    # Only needed if we want Organizations to have same record id's as in prod.
     # Handle Organization type specially because each organization has a `singleton`
     # To-do: update dev's seed data to match prod's Organization#singleton record ids
-    if clazz == Organization && !self.class.org_already_exists?(obj_hash)
-      puts "  + Creating #{clazz} '#{obj_hash['name']}' with its original id #{obj_hash['id']} \n\t#{obj_description}"
-      clazz.create!(obj_hash)
-    end
+    # if clazz == Organization && !self.class.org_already_exists?(obj_hash)
+    #   puts "  + Creating #{clazz} '#{obj_hash['name']}' with its original id #{obj_hash['id']} \n\t#{obj_description}"
+    #   clazz.create!(obj_hash)
+    # end
   end
 
   def self.org_already_exists?(obj_hash)
@@ -284,6 +321,7 @@ class SanitizedJsonConfiguration
 
   def reassociate_fields
     # For each reassociate_types, identify their associations so '_id' fields can be updated to imported records
+    # TODO: shouldn't all id_mapping_types be a key in this hash?
     @reassociate_fields ||= {
       # Typed polymorphic association fields will associate to the their corresponding ActiveRecord
       :type => reassociate_types.map do |clazz|
@@ -293,6 +331,10 @@ class SanitizedJsonConfiguration
       # Untyped association fields (those without the matching '_type' field) will associate to User records
       "User" => reassociate_types.map do |clazz|
         [clazz, AssocationWrapper.fieldnames_of_untyped_associations_with(User, clazz)]
+      end.to_h.compact,
+
+      "Organization" => reassociate_types.map do |clazz|
+        [clazz, AssocationWrapper.fieldnames_of_untyped_associations_with(Organization, clazz)]
       end.to_h.compact
     }.freeze
   end
@@ -300,19 +342,29 @@ class SanitizedJsonConfiguration
   # :reek:LongParameterList
   # :reek:UnusedParameters
   # rubocop:disable Lint/UnusedMethodArgument, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-  def before_creation_hook(clazz, obj_hash, _obj_description, importer: nil)
+  def before_creation_hook(clazz, obj_hash, obj_description: nil, importer: nil)
     remaining_id_fields = obj_hash.select do |field_name, field_value|
       field_name.ends_with?("_id") && field_value.is_a?(Integer) && (field_value < id_offset) &&
         (
           !(clazz <= Task && field_name == "assigned_to_id" && obj_hash["assigned_to_type"] == "Organization") &&
-          !(clazz <= OrganizationsUser && field_name == "organization_id")
-          # !(clazz <= OrganizationsUser && field_name == "user_id")
+          !(clazz <= OrganizationsUser && (field_name == "organization_id" || field_name == "user_id")) &&
+          # !(clazz <= HearingDay && field_name == "judge_id") &&
+          !(clazz <= VirtualHearing && field_name == "conference_id") &&
+          true
         )
     end
     unless remaining_id_fields.blank?
+      binding.pry
       fail "!! For #{clazz}, expecting these *'_id' fields be adjusted: " \
            "#{remaining_id_fields}\n\tobj_hash: #{obj_hash}"
     end
   end
   # rubocop:enable Lint/UnusedMethodArgument, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+  # ==========  Difference Configuration ==============
+  def expected_differences
+    @expected_differences ||= {
+      User => [:display_name],
+    }.freeze
+  end
 end

@@ -54,6 +54,7 @@ detectors:
       - HearingSerializerBase
       - LegacyDocket
       - SanitizedJsonImporter
+      - SanitizedJsonExporter
       - Seeds::Tasks
       - TaskTreeRenderModule
   DuplicateMethodCall:

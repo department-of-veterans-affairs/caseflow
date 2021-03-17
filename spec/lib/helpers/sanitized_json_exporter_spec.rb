@@ -198,7 +198,7 @@ describe "SanitizedJsonExporter/Importer" do
         offset_id_fields = {
           DecisionReview => [],
           AppealIntake => [],
-          Veteran => [],
+          # Veteran => [],
           Claimant => ["decision_review_id"],
           Task => %w[appeal_id parent_id],
           TaskTimer => ["task_id"],
@@ -218,7 +218,7 @@ describe "SanitizedJsonExporter/Importer" do
         # pp configuration.offset_id_fields.transform_keys(&:name)
         expect(configuration.offset_id_fields).to eq offset_id_fields
 
-        expect(configuration.reassociate_fields.keys).to match_array ["User", :type]
+        expect(configuration.reassociate_fields.keys).to match_array [:type, "User", "Organization"]
 
         reassociate_fields_for_polymorphics = {
           Task => ["assigned_to_id"],
@@ -301,8 +301,8 @@ describe "SanitizedJsonExporter/Importer" do
         end
       end
       describe ".map_value" do
-        it "fails when transform method cannot be found for sanitization" do
-          expect { sje.map_value(1234, "field_without_sanitizing_transform") }.to raise_error RuntimeError
+        it "shows warning when transform method cannot be found for sanitization" do
+          expect { sje.map_value(1234, "field_without_sanitizing_transform") }.not_to raise_error RuntimeError
         end
       end
     end
@@ -385,7 +385,11 @@ describe "SanitizedJsonExporter/Importer" do
   end
 
   context "Importer" do
-    let(:sji) { SanitizedJsonImporter.new(sje.file_contents) }
+    let(:sji) { SanitizedJsonImporter.new(sje.file_contents).tap do |sji|
+        # Causes new appeals to be created (to avoid conflict within existing appeals)
+        sji.records_hash["appeals"].each {|appeal| appeal["uuid"] = SecureRandom.uuid }
+      end 
+    }
     subject { sji.import }
 
     def expect_initial_state
@@ -409,7 +413,11 @@ describe "SanitizedJsonExporter/Importer" do
 
     context "when configuration provided with id_offset" do
       let(:configuration) { SanitizedJsonConfiguration.new }
-      let(:sji) { SanitizedJsonImporter.new(sje.file_contents, configuration: configuration) }
+      let(:sji) {  SanitizedJsonImporter.new(sje.file_contents, configuration: configuration).tap do |sji|
+        # Cause a new appeal to be created (to avoid conflict within existing appeal)
+        sji.records_hash["appeals"].each {|appeal| appeal["uuid"] = SecureRandom.uuid }
+      end
+      }
       it "uses id_offset when importing records" do
         configuration.id_offset = 10_000
         subject
@@ -422,9 +430,6 @@ describe "SanitizedJsonExporter/Importer" do
     it "creates 1 appeal with associated records" do
       sje # causes relevant appeals to be created
       expect_initial_state
-
-      # Cause a new organization to be created instead of using existing same-named org
-      sji.records_hash["organizations"].first["id"] = 100
 
       subject
       record_counts = {
@@ -447,13 +452,13 @@ describe "SanitizedJsonExporter/Importer" do
       expect(Appeal.count).to eq 2
       expect(Veteran.count).to eq 2
       expect(Claimant.count).to eq 4
-      expect(Organization.count).to eq 3
+      expect(Organization.count).to eq 2
       expect(User.count).to eq 0
       expect(Task.count).to eq 10
 
       # Compare differences between original records and imported records
       imported_appeal = sji.imported_records["appeals"].first
-      appeal_mapped_fields = %w[id veteran_file_number]
+      appeal_mapped_fields = %w[id uuid veteran_file_number]
       expect(SjDifference.diff_records(appeal, imported_appeal).map(&:first)).to match_array appeal_mapped_fields
 
       imported_veteran = sji.imported_records["veterans"].first
@@ -597,7 +602,7 @@ describe "SanitizedJsonExporter/Importer" do
 
       pp "DIFFERENCES counts", sji.differences(orig_appeals, ignore_expected_diffs: false).transform_values(&:count)
       # pp sji.differences(orig_appeals, ignore_expected_diffs: false)
-      diffs = sji.differences(orig_appeals)
+      diffs = sji.differences(orig_appeals, additional_expected_diffs_fields: { Appeal => ["uuid"] })
       pp "DIFFERENCES minus expected diffs", diffs
       expect(diffs.values.flatten).to be_empty
     end

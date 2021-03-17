@@ -3,8 +3,6 @@
 # require "helpers/sanitized_json_configuration.rb"
 
 module SanitizedJsonDifference
-  ADDITIONAL_MAPPED_FIELDS = { User => [:display_name] }.freeze
-
   def configuration_mapped_fields
     # fields expected to be different;
     # corresponds with fields in SanitizedJsonExporter#sanitize and SanitizedJsonImporter
@@ -12,7 +10,7 @@ module SanitizedJsonDifference
       @configuration.sanitize_fields_hash,
       @configuration.offset_id_fields,
       *@configuration.reassociate_fields.values,
-      ADDITIONAL_MAPPED_FIELDS
+      @configuration.expected_differences
     ].map(&:to_a).sum.group_by(&:first).transform_values do |value|
       field_name_arrays = value.map(&:second) + ["id"]
       field_name_arrays.flatten.uniq
@@ -20,8 +18,15 @@ module SanitizedJsonDifference
   end
 
   # :reek:FeatureEnvy
-  def differences(orig_initial_records, ignore_expected_diffs: true, ignore_reused_records: true)
+  def differences(orig_initial_records, ignore_expected_diffs: true, ignore_reused_records: true, additional_expected_diffs_fields: nil)
     mapped_fields = ignore_expected_diffs ? configuration_mapped_fields : {}
+
+    mapped_fields = Marshal.load(Marshal.dump(mapped_fields)) if additional_expected_diffs_fields
+    # binding.pry
+    additional_expected_diffs_fields&.each {|clazz, fieldnames|
+      mapped_fields[clazz] += additional_expected_diffs_fields[clazz]
+    }
+
     # https://blog.arkency.com/inject-vs-each-with-object/
     @configuration.records_to_export(orig_initial_records).each_with_object({}) do |(clazz, orig_records), result|
       key = clazz.table_name
@@ -85,7 +90,7 @@ module SanitizedJsonDifference
     [key, time_a, time_b]
   rescue ArgumentError
     # occurs when `to_time` is called on a string that is a UUID
-    ["#{key} (ArgumentError)", value_a, value_b]
+    [key, value_a, value_b]
   end
   # rubocop:enable Metrics/CyclomaticComplexity
 end

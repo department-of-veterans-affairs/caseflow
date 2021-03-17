@@ -2,6 +2,23 @@
 
 require "helpers/sanitized_json_difference.rb"
 
+# Given JSON, this class parses it as records and creates those records in the database.
+# 
+# Approach:
+# - Import records using an id_offset (which is added to the value of all the *_id fields)
+#   - to avoid conflict with existing records
+#   - to easily identify imported records
+#   - See `adjust_ids_by_offset` and `offset_id_table_fields`.
+# - For certain record types (e.g., Organization, User, Person, Veteran), reuse them if the
+#   record already exists. See `nonduplicate_types`.
+#   - This means when an existing record is found, it is used instead of the id_offset,
+#     which means the importer needs to track the `id_mapping` from original id (in the JSON)
+#     to the id of the existing record so that association records like OrganizationsUser
+#     (which only refer to `user_id` and `organization_id`) can be mapped properly.
+#
+# The major logic is in `import_record`.
+##
+
 class SanitizedJsonImporter
   prepend SanitizedJsonDifference
 
@@ -16,10 +33,10 @@ class SanitizedJsonImporter
     new(File.read(filename), **kwargs)
   end
 
-  def self.attributes_with_unique_index(clazz)
-    unique_indices = ActiveRecord::Base.connection.indexes(clazz.table_name).select(&:unique)
-    unique_indices.map(&:columns).flatten.uniq
-  end
+  # def self.attributes_with_unique_index(clazz)
+  #   unique_indices = ActiveRecord::Base.connection.indexes(clazz.table_name).select(&:unique)
+  #   unique_indices.map(&:columns).flatten.uniq
+  # end
 
   def initialize(file_contents, configuration: SanitizedJsonConfiguration.new, verbosity: 8)
     @configuration = configuration
@@ -62,41 +79,45 @@ class SanitizedJsonImporter
     @records_hash.delete(key)
   end
 
-  # rubocop:disable Metrics/MethodLength
   def import_record(key, clazz, obj_hash)
+    # Record original id in case it changes in the following lines
+    orig_id = obj_hash["id"]
+
     # Don't import if certain types of records already exists
     if @configuration.nonduplicate_types.include?(clazz) && (existing_record = find_existing_record(clazz, obj_hash))
       puts "  = Using existing #{clazz} instead of importing #{obj_hash['type']} #{obj_hash['id']}"
       reused_records[key] ||= []
       reused_records[key] << existing_record
-      return
-    end
-
-    # Record original id in case it changes in the following lines
-    orig_id = obj_hash["id"]
-
-    @configuration.adjust_identifiers_for_unique_records(clazz, obj_hash).tap do |new_label|
-      if new_label
-        puts "  * Will import duplicate #{clazz} '#{new_label}' with different unique attributes " \
-             "because existing record's id is different: \n\t#{obj_hash}"
+      id_mapping_key = clazz.table_name.classify
+      unless id_mapping[id_mapping_key]
+        puts "ERROR: add #{id_mapping_key} to @configuration.id_mapping_types"
+        id_mapping[id_mapping_key] = {}
       end
+      # Track it for use by association records like OrganizationsUser in @configuration.find_existing_record
+      id_mapping[id_mapping_key][orig_id] = existing_record.id
+      return
     end
 
     obj_description = "original: #{obj_hash['type']} " \
                       "#{obj_hash.select { |obj_key, _v| obj_key.include?('_id') }}"
 
-    @configuration.create_singleton(clazz, obj_hash, obj_description).tap do |singleton|
-      return singleton if singleton
+    if @configuration.nonduplicate_types.include?(clazz)
+      singleton = @configuration.create_singleton(clazz, obj_hash, obj_description: obj_description)
+      if singleton
+        fail "Consider: Nonduplicate_type #{clazz.name} should be an entry in @configuration.id_mapping_types" unless id_mapping[clazz.table_name.classify]
+        id_mapping[clazz.table_name.classify] ||= {}
+        id_mapping[clazz.table_name.classify][orig_id] = obj_hash["id"]
+        return singleton
+      end
     end
 
     adjust_ids_by_offset(clazz, obj_hash)
     reassociate_with_imported_records(clazz, obj_hash)
 
-    @configuration.before_creation_hook(clazz, obj_hash, obj_description, importer: self)
+    @configuration.before_creation_hook(clazz, obj_hash, obj_description: obj_description, importer: self)
     puts "  + Creating #{clazz} #{obj_hash['id']} \n\t#{obj_description}"
     create_new_record(orig_id, clazz, obj_hash)
   end
-  # rubocop:enable Metrics/MethodLength
 
   # :reek:FeatureEnvy
   def adjust_ids_by_offset(clazz, obj_hash)
@@ -136,7 +157,7 @@ class SanitizedJsonImporter
   # :reek:FeatureEnvy
   def create_new_record(orig_id, clazz, obj_hash)
     # Record new id for certain record types
-    id_mapping[clazz.name][orig_id] = obj_hash["id"] if id_mapping[clazz.name]
+    id_mapping[clazz.table_name.classify][orig_id] = obj_hash["id"] if id_mapping[clazz.table_name.classify]
 
     if @configuration.types_that_skip_validation_and_callbacks.include?(clazz)
       # Create the record without validation or callbacks
@@ -177,6 +198,7 @@ class SanitizedJsonImporter
     reassociate_table_fields_hash.each do |association_type, reassociate_table_fields|
       puts "  | Reassociate #{clazz.name} fields for #{association_type} associations" if @verbosity > 5
       record_id_mapping = id_mapping[association_type]
+      # binding.pry if clazz = OrganizationsUser
       reassociate_table_fields[clazz.table_name]&.each do |field_name|
         reassociate(obj_hash, field_name, record_id_mapping, association_type: association_type)
       end
@@ -195,24 +217,68 @@ class SanitizedJsonImporter
   end
 
   def find_existing_record(clazz, obj_hash)
-    existing_record = clazz.find_by_id(obj_hash["id"])
-    existing_record if existing_record && same_unique_attributes?(existing_record, obj_hash)
+    existing_record = @configuration.find_existing_record(clazz, obj_hash, importer: self)
+    return existing_record if existing_record
+
+    find_record_by_unique_index(clazz, obj_hash)
+
+    # binding.pry if OrganizationsUser == clazz
+
+    # existing_record = clazz.find_by_id(obj_hash["id"])
+    # unless existing_record
+    #   # Try searching for previously imported record
+    #   # TODO: generalize; see org_already_exists
+    #   # TODO: for association records like OrganizationsUser, need to check with user/organization_id fields updated
+    #   existing_record = clazz.find_by_id(obj_hash["id"] + @id_offset)
+    #   obj_hash["id"] += @id_offset if existing_record
+    # end
+
+    # return existing_record if existing_record && same_unique_attributes?(existing_record, obj_hash)
+
+    # if existing_record
+    #   obj_hash_clone = obj_hash
+    #   # adjust_ids_by_offset(clazz, obj_hash_clone)
+    #   reassociate_with_imported_records(clazz, obj_hash_clone)
+    #   # existing_record ||= clazz.find_by_id(obj_hash_clone["id"] + @id_offset)
+    #   # binding.pry if OrganizationsUser == clazz
+    #   existing_record if existing_record && same_unique_attributes?(existing_record, obj_hash_clone)
+    # end
+  end
+
+  # Try to find record using unique indices on the corresponding table
+  def find_record_by_unique_index(clazz, obj_hash)
+    unique_indices = ActiveRecord::Base.connection.indexes(clazz.table_name).select(&:unique)
+    found_records = unique_indices.map(&:columns).map { |fieldnames|
+      next nil if fieldnames.is_a?(String) # occurs for custom indices like for User
+      next nil unless (fieldnames - clazz.column_names).blank?
+
+      uniq_attributes = fieldnames.map { |fieldname| [fieldname, obj_hash[fieldname]]}.to_h
+      clazz.find_by(uniq_attributes)
+    }.compact
+
+    return nil if found_records.blank?
+
+    # puts "Found #{clazz.name}: #{found_records}"
+    return found_records.first if found_records.size == 1
+
+    fail "Found multiple records for #{clazz.name}: #{found_records}"
   end
 
   # For records where we want to reuse the existing record
   # :reek:FeatureEnvy
-  def same_unique_attributes?(existing_record, obj_hash)
-    is_same = @configuration.same_unique_attributes?(existing_record, obj_hash, importer: self)
-    return is_same unless is_same.nil?
+  # def same_unique_attributes?(existing_record, obj_hash)
+  #   is_same = @configuration.same_unique_attributes?(existing_record, obj_hash, importer: self)
+  #   return is_same unless is_same.nil?
 
-    unique_attributes_per_tablename[existing_record.class.table_name]&.all? do |fieldname|
-      existing_record.send(fieldname) == obj_hash[fieldname]
-    end
-  end
+  #   # binding.pry if OrganizationsUser == existing_record.class
+  #   unique_attributes_per_tablename[existing_record.class.table_name]&.all? do |fieldname|
+  #     existing_record.send(fieldname) == obj_hash[fieldname]
+  #   end
+  # end
 
-  def unique_attributes_per_tablename
-    @unique_attributes_per_tablename ||= @configuration.id_mapping_types.map do |clazz|
-      [clazz.table_name, self.class.attributes_with_unique_index(clazz)]
-    end.to_h.freeze
-  end
+  # def unique_attributes_per_tablename
+  #   @unique_attributes_per_tablename ||= @configuration.id_mapping_types.map do |clazz|
+  #     [clazz.table_name, self.class.attributes_with_unique_index(clazz)]
+  #   end.to_h.freeze
+  # end
 end
