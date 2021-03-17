@@ -3,7 +3,6 @@ import { createStore, applyMiddleware } from 'redux';
 import rootReducer from '../../../app/queue/reducers';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
-
 import OvertimeBadge from './OvertimeBadge';
 import { setCanViewOvertimeStatus } from 'app/queue/uiReducer/uiActions';
 
@@ -15,13 +14,12 @@ export default {
   },
   args: {
     appeal: {
-      overtime: true,
-      canViewOvertimeStatus: true,
+      overtime: true
     },
+    canViewOvertimeStatus: true,
     featureToggles: {
       overtime_revamp: true
-    },
-    canViewOvertimeStatus: true, 
+    }, 
   }
 };
 
