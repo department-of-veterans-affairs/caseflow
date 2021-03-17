@@ -717,6 +717,7 @@
   "DOCKET_SWITCH_RECOMMENDATION_TITLE": "Switch Docket: Send %s's Request to a Judge",
   "DOCKET_SWITCH_RECOMMENDATION_INSTRUCTIONS": "Add and send your recommendation for this docket switch request to a Veteran's Law Judge.",
   "DOCKET_SWITCH_RULING_TASK_LABEL": "Rule on Docket Switch",
+  "DOCKET_SWITCH_RULING_TASK_TITLE": "Docket Switch Ruling Task",
   "DOCKET_SWITCH_RECOMMENDATION_SUCCESS_TITLE": "%s's docket switch request has been sent to %s",
   "DOCKET_SWITCH_RECOMMENDATION_SUCCESS_MESSAGE": "This task will appear in the “Completed” tab in your Queue.",
   "DOCKET_SWITCH_RULING_TITLE": "Switch Docket: Rule on %s's Request",
