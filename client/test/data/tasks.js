@@ -127,5 +127,18 @@ export const changeHearingRequestTypeTask = {
   docketName: 'hearing',
   externalHearingId: '93897397'
 }
+
+export const changeHearingRequestTypeTaskCancelAction = {
+  label: 'Cancel convert hearing to virtual',
+  func: 'cancel_convert_hearing_request_type_data',
+  value: 'modal/cancel_task',
+  data: {
+    redirect_after: '/queue/appeals/1986897',
+    modal_title: 'Cancel convert hearing to virtual task',
+    message_title: 'Task for Merlin V Langworth\'s case has been cancelled',
+    message_detail: 'You have successfully cancelled the convert hearing to virtual task',
+    show_instructions: false
+  }
+};
 /* eslint-enable camelcase */
 

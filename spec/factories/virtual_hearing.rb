@@ -18,8 +18,10 @@ FactoryBot.define do
     representative_tz { nil }
     association :created_by, factory: :user
     association :updated_by, factory: :user
-    establishment { nil }
+    establishment { build(:virtual_hearing_establishment) }
     guest_pin_long { nil }
+    created_at { Time.zone.now }
+    updated_at { Time.zone.now }
 
     transient do
       status { nil }
@@ -28,7 +30,7 @@ FactoryBot.define do
     trait :initialized do
       alias_name { rand(1..9).to_s[0..6] }
       conference_id { rand(1..9) }
-      before(:create, &:generate_conference_pins)
+      after(:build, &:generate_conference_pins)
     end
 
     trait :previously_central do
@@ -42,11 +44,14 @@ FactoryBot.define do
       judge_email_sent { true }
     end
 
+    after(:create) do |virtual_hearing, _evaluator|
+      # Calling reload after create fixes a problem where calling `virtual_hearing.hearing.virtual_hearing`
+      # would return `nil`.
+      virtual_hearing.reload
+    end
+
     after(:create) do |virtual_hearing, evaluator|
-      virtual_hearing.establishment = create(
-        :virtual_hearing_establishment,
-        virtual_hearing: virtual_hearing
-      )
+      virtual_hearing.establishment.save!
 
       if evaluator.status == :cancelled
         virtual_hearing.cancel!
