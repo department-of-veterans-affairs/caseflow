@@ -3,7 +3,7 @@
 exports[`Table renders correctly 1`] = `
 <div>
   <table
-    class="usa-table-borderless undefined"
+    class="usa-table-borderless "
     summary="Test minimal table"
   >
     <thead

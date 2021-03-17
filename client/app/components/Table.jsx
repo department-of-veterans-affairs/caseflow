@@ -252,7 +252,7 @@ export default class Table extends React.PureComponent {
 
     return <table
       id={id}
-      className={`usa-table-borderless ${this.props.className}`}
+      className={`usa-table-borderless ${this.props.className ?? ''}`}
       summary={summary}
       {...styling} >
 
