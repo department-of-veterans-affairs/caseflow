@@ -6,11 +6,17 @@ import ReactOnRails from 'react-on-rails';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import _ from 'lodash';
+
+// Local Dependencies
 import './styles/app.scss';
 import '../node_modules/pdfjs-dist/web/pdf_viewer.css';
+import { BrowserRouter, Switch } from 'react-router-dom';
+import BaseLayout from 'layouts/BaseLayout';
+import ReduxBase from 'app/components/ReduxBase';
+import rootReducer from 'store/root';
 
 // List of container components we render directly in  Rails .erb files
-const Root = React.lazy(() => import('app/2.0/root'));
+const Router = React.lazy(() => import('app/2.0/router'));
 const BaseContainer = React.lazy(() => import('app/containers/BaseContainer'));
 const Certification = React.lazy(() => import('app/certification/Certification'));
 
@@ -41,7 +47,7 @@ const Inbox = React.lazy(() => import('app/inbox'));
 
 const COMPONENTS = {
   // New Version 2.0 Root Component
-  Root,
+  Router,
   BaseContainer,
   Certification,
   // New SPA wrapper for multiple admin pages
@@ -72,14 +78,27 @@ const COMPONENTS = {
 };
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
-  const renderApp = (Component) => {
-    const element = (
-      <AppContainer>
-        <Suspense fallback={<div />}>
-          <Component {...props} />
-        </Suspense>
-      </AppContainer>
+  /* eslint-disable */
+  const wrapComponent = (Component) =>
+    props.featureToggles?.interfaceVersion2 ? (
+      <ReduxBase reducer={rootReducer}>
+        <BrowserRouter>
+          <Switch>
+            <BaseLayout appName={props.appName} {...props}>
+              <Component {...props} />
+            </BaseLayout>
+          </Switch>
+        </BrowserRouter>
+      </ReduxBase>
+    ) : (
+      <Suspense fallback={<div />}>
+        <Component {...props} />
+      </Suspense>
     );
+  /* eslint-enable */
+
+  const renderApp = (Component) => {
+    const element = <AppContainer>{wrapComponent(Component)}</AppContainer>;
 
     render(element, document.getElementById(domNodeId));
   };
