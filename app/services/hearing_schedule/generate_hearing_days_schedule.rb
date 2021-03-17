@@ -249,7 +249,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
       available_days = @ros[ro_key][:allocated_dates][month]
 
       # Skip if there are no requested days or available days
-      next if available_days&.count == 0 || allocated_days == 0
+      next if available_days.nil? || available_days&.count == 0 || allocated_days == 0
 
       # Determine the difference between the requested and available to use as an offset when requested is greater
       remaining = allocated_days % available_days.count
