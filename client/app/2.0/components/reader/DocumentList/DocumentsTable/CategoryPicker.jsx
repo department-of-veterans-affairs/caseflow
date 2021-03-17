@@ -9,7 +9,7 @@ import {
   categoryNameStyles,
   docCategoryPickerStyles
 } from 'styles/reader/DocumentList/DocumentsTable';
-import { sortCategories } from 'app/2.0/utils/format';
+import { documentCategories } from 'store/constants/reader';
 
 /**
  * Category Picker Component
@@ -23,22 +23,22 @@ export const CategoryPicker = ({
   dropdownFilterViewListItemStyle,
 }) => (
   <ul {...docCategoryPickerStyles} {...dropdownFilterViewListStyle}>
-    {sortCategories(false).map(([categoryName, category]) =>
+    {Object.keys(documentCategories).map((categoryName) => (
       <li key={categoryName} {...dropdownFilterViewListItemStyle}>
         <Checkbox
           name={categoryName}
           onChange={(checked) => handleCategoryToggle(categoryName, checked)}
           label={(
             <div {...categoryLabelStyles}>
-              {category.svg}
-              <span {...categoryNameStyles}>{category.humanName}</span>
+              {documentCategories[categoryName].svg}
+              <span {...categoryNameStyles}>{documentCategories[categoryName].humanName}</span>
             </div>
           )}
           value={categoryToggleStates[categoryName] || false}
-          disabled={category.readOnly && allowReadOnly}
+          disabled={documentCategories[categoryName].readOnly && allowReadOnly}
         />
       </li>
-    )}
+    ))}
   </ul>
 );
 
@@ -48,6 +48,7 @@ CategoryPicker.defaultProps = {
 };
 
 CategoryPicker.propTypes = {
+  categories: PropTypes.object,
   handleCategoryToggle: PropTypes.func.isRequired,
   categoryToggleStates: PropTypes.object,
   allowReadOnly: PropTypes.bool,

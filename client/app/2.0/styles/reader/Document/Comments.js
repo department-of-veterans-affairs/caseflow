@@ -24,5 +24,5 @@ export const textLayerStyles = (dimensions, scale) => ({
   height: `${dimensions.height}px`,
   transform: `scale(${scale})`,
   transformOrigin: 'left top',
-  opacity: 1
+  opacity: 1,
 });

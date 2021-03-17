@@ -3,8 +3,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // Local Dependencies
-import { HearingWorksheetLink } from 'components/reader/DocumentList/ClaimsFolderDetails/ClaimTypeDetail';
-import { formatAppealType } from 'utils/format';
+import { HearingWorksheetLink } from 'components/reader/DocumentList/ClaimsFolderDetails/HearingWorksheetLink';
+import { formatAppealType } from 'utils/reader';
 
 /**
  * Hearing Worksheet Link React Component

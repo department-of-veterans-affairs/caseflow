@@ -1,24 +1,19 @@
 // External Dependencies
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
 
 // Local Dependencies
-import { clearAllFilters } from 'app/reader/DocumentList/DocumentListActions';
 import { filterMessageClass } from 'styles/reader/DocumentList/Header';
-import { formatFilters } from 'utils/format';
+import { formatFilters } from 'utils/reader';
 import Button from 'app/components/Button';
 
 /**
  * Filter Message Component
  * @param {Object} props -- Props include filter criteria
  */
-export const FilterMessage = ({ docFilterCriteria }) => {
-  // Create the Dispatcher
-  const dispatch = useDispatch();
-
+export const FilterMessage = ({ filterCriteria, clearAllFilters }) => {
   // Get the filtered categories
-  const filteredCategories = formatFilters(docFilterCriteria.tag, docFilterCriteria.category);
+  const filteredCategories = formatFilters(filterCriteria.tag, filterCriteria.category);
 
   return (
     <p className={filterMessageClass(filteredCategories)}>
@@ -27,7 +22,7 @@ export const FilterMessage = ({ docFilterCriteria }) => {
         id="clear-filters"
         name="clear-filters"
         classNames={['cf-btn-link']}
-        onClick={() => dispatch(clearAllFilters())}
+        onClick={clearAllFilters}
       >
         Clear all filters.
       </Button>
@@ -36,5 +31,6 @@ export const FilterMessage = ({ docFilterCriteria }) => {
 };
 
 FilterMessage.propTypes = {
-  docFilterCriteria: PropTypes.object,
+  filterCriteria: PropTypes.object,
+  clearAllFilters: PropTypes.func,
 };

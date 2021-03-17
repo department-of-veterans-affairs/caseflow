@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // Local Dependencies
-import { sortCategories } from 'app/2.0/utils/format';
+import { sortCategories } from 'utils/reader';
 
 /**
  * Category Icons Component
@@ -10,7 +10,7 @@ import { sortCategories } from 'app/2.0/utils/format';
  */
 export const CategoryIcons = ({ searchCategoryHighlights, doc }) => {
   // Sort the Categories by the document and apply a filter
-  const categories = sortCategories(true, doc);
+  const categories = sortCategories(doc);
 
   return categories.length && (
     <ul className="cf-document-category-icons" aria-label="document categories">

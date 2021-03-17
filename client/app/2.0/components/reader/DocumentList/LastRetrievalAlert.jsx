@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 // Local Dependencies
 import Alert from 'app/components/Alert';
 import { alertStyles } from 'styles/reader/DocumentList/LastRetrievalAlert';
-import { formatAlertTime } from 'app/2.0/utils/format';
+import { formatAlertTime } from 'utils/reader';
 
 /**
  * Last Retrieval Alert Component
