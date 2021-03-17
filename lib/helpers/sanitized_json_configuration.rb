@@ -237,7 +237,7 @@ class SanitizedJsonConfiguration
 
   # During record creation, types where validation and callbacks should be avoided
   def types_that_skip_validation_and_callbacks
-    @types_that_skip_validation_and_callbacks ||= [Task, *Task.descendants].freeze
+    @types_that_skip_validation_and_callbacks ||= [Task, *Task.descendants, Hearing].freeze
   end
 
   # Classes that shouldn't be imported if a record with the same unique attributes already exists

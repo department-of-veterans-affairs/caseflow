@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/ModuleLength
+# rubocop:disable Metrics/ModuleLength, Lint/UnusedMethodArgument
 module SanitizationTransforms
   # :reek:RepeatedConditionals
-  def random_email(field_name, field_value)
+  def random_email(field_name, field_value, obj_class: nil)
     case field_name
     when "email_address", /email$/
       Faker::Internet.email
@@ -15,7 +15,7 @@ module SanitizationTransforms
     end
   end
 
-  def invalid_ssn(field_name, field_value, fake_ssn_prefix: "000")
+  def invalid_ssn(field_name, field_value, obj_class: nil, fake_ssn_prefix: "000")
     # Instead of using Faker::IDNumber.invalid, make the SSN obviously fake by starting with fake_ssn_prefix
     case field_name
     when "ssn", "file_number", "veteran_file_number"
@@ -31,7 +31,7 @@ module SanitizationTransforms
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
-  def random_person_name(field_name, _field_value)
+  def random_person_name(field_name, _field_value, obj_class: nil)
     case field_name
     when "full_name", "representative_name"
       Faker::Name.name
@@ -60,7 +60,7 @@ module SanitizationTransforms
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
 
-  def similar_date(field_name, field_value)
+  def similar_date(field_name, field_value, obj_class: nil)
     case field_name
     when "date_of_birth"
       case field_value
@@ -74,8 +74,16 @@ module SanitizationTransforms
     end
   end
 
-  def random_pin(field_name, field_value)
+  def random_pin(field_name, field_value, obj_class: nil)
     case field_name
+    when "alias"
+      if obj_class == VirtualHearing
+        Faker::Number.number(digits: field_value.length).to_s
+      end
+    when "conference_id"
+      if obj_class == VirtualHearing
+        Faker::Number.number(digits: field_value.to_s.length)
+      end
     when /_pin$/, /_pin_/
       if field_value.is_a?(String)
         Faker::Number.number(digits: field_value.length).to_s
@@ -86,14 +94,14 @@ module SanitizationTransforms
   end
 
   # Keep field value recognizable but different to reduce risk of exploitation (e.g., username scraping)
-  def mixup_css_id(field_name, field_value)
+  def mixup_css_id(field_name, field_value, obj_class: nil)
     case field_name
     when "css_id"
       field_value[4..-1] + field_value[0..3]
     end
   end
 
-  def obfuscate_sentence(field_name, field_value)
+  def obfuscate_sentence(field_name, field_value, obj_class: nil)
     case field_name
     when "instructions", "description", "decision_text", "notes", /_text$/, /_notes$/, /_description$/
       # puts "obfuscate_sentence: #{field_name} = #{field_value}"
@@ -117,4 +125,4 @@ module SanitizationTransforms
     end
   end
 end
-# rubocop:enable Metrics/ModuleLength
+# rubocop:enable Metrics/ModuleLength, Lint/UnusedMethodArgument

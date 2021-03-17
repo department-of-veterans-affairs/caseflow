@@ -26,7 +26,8 @@ describe "SanitizedJsonExporter/Importer" do
   end
 
   describe ".random_pin" do
-    subject { SjConfiguration.new.random_pin(field_name, orig_value) }
+    let(:obj_class) { nil }
+    subject { SjConfiguration.new.random_pin(field_name, orig_value, obj_class: obj_class) }
     let(:field_name) { "guest_pin" }
     context "given fieldname ending with 'pin' and string value" do
       let(:orig_value) { "12345" }
@@ -42,6 +43,17 @@ describe "SanitizedJsonExporter/Importer" do
       it "returns fake PIN integer" do
         expect(subject).not_to eq orig_value
         expect(subject.is_a?(Integer)).to be true
+        expect(subject.to_s.length).to eq orig_value.to_s.length
+      end
+    end
+    context "given VirtualHearing's fieldname 'alias' and String value" do
+      let(:obj_class) { VirtualHearing }
+      let(:field_name) { "alias" }
+      let(:orig_value) { "0007483" }
+      it "returns fake alias string" do
+        expect(subject).not_to eq orig_value
+        expect(subject.is_a?(String)).to be true
+        expect(subject).to match(/^\d*$/)
         expect(subject.to_s.length).to eq orig_value.to_s.length
       end
     end
@@ -480,7 +492,10 @@ describe "SanitizedJsonExporter/Importer" do
                  appeal: hearing.appeal)
         end
       end
-      let!(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
+      let!(:virtual_hearing) do
+        create(:virtual_hearing, hearing: hearing,
+                                 alias: "0123456", conference_id: 7_654_321)
+      end
       before { sje } # causes relevant appeals to be created
 
       it "creates hearing appeal with associated records" do

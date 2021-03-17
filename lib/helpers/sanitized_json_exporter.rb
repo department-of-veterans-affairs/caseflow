@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "helpers/sanitized_json_configuration.rb"
+
 class SanitizedJsonExporter
   attr_accessor :value_mapping
   attr_accessor :records_hash
@@ -101,22 +103,39 @@ class SanitizedJsonExporter
         map_value(orig_value, field_name, **kwargs).first
       end
     end
-    mapped_value || fail("Don't know how to map value '#{orig_value}' for field '#{field_name}'")
+
+    return mapped_value if mapped_value
+
+    default_mapped_value(orig_value, field_name, **kwargs)
+  end
+
+  def default_mapped_value(orig_value, field_name, **kwargs)
+    puts("WARNING: Don't know how to map value '#{orig_value}' #{orig_value.class.name} "\
+      "for field '#{field_name}'; #{kwargs}")
+    case orig_value
+    when Integer
+      0
+    when String
+      ""
+    when Array
+      []
+    end
   end
 
   # :reek:LongParameterList
   def map_value(orig_value, field_name, obj_class: nil, transform_method: nil)
     # find the first of the transform_methods that returns a non-nil value
     transform_method ||= @configuration.transform_methods.find do |method|
-      @configuration.send(method, field_name, orig_value)
+      @configuration.send(method, field_name, orig_value, obj_class: obj_class)
     end
 
     unless transform_method
-      fail "Could not find a transform_method for #{obj_class&.name} field '#{field_name}'"\
+      puts "WARNING: Could not find a transform_method for #{obj_class&.name} field '#{field_name}'"\
            " with value '#{orig_value}' of class #{orig_value.class}."
+      return [nil, nil]
     end
 
-    new_value = @configuration.send(transform_method, field_name, orig_value)
+    new_value = @configuration.send(transform_method, field_name, orig_value, obj_class: obj_class)
 
     # Don't save the value_mapping for certain transforms
     if @configuration.save_mapped_value?(transform_method, field_name, orig_value, new_value)

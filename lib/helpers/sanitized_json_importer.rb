@@ -12,8 +12,8 @@ class SanitizedJsonImporter
   attr_accessor :imported_records
   attr_accessor :reused_records
 
-  def self.from_file(filename)
-    new(File.read(filename))
+  def self.from_file(filename, **kwargs)
+    new(File.read(filename), **kwargs)
   end
 
   def self.attributes_with_unique_index(clazz)
@@ -21,13 +21,15 @@ class SanitizedJsonImporter
     unique_indices.map(&:columns).flatten.uniq
   end
 
-  def initialize(file_contents, configuration: SanitizedJsonConfiguration.new)
+  def initialize(file_contents, configuration: SanitizedJsonConfiguration.new, verbosity: 8)
     @configuration = configuration
     @id_offset = configuration.id_offset
     @records_hash = JSON.parse(file_contents)
     @metadata = @records_hash.delete("metadata")
     @imported_records = {}
     @reused_records = {}
+
+    @verbosity = verbosity # for debugging; higher is more verbose
   end
 
   def import
@@ -160,7 +162,7 @@ class SanitizedJsonImporter
   # :reek:FeatureEnvy
   def reassociate_with_imported_records(clazz, obj_hash)
     # Handle polymorphic associations (where the association class is stored in the *'_type' field)
-    puts "  | Reassociate polymorphic associations for #{clazz.name}"
+    puts "  | Reassociate polymorphic associations for #{clazz.name}" if @verbosity > 5
     reassociate_type_table_fields[clazz.table_name]&.each do |field_name|
       fail "!!! Expecting field_name to end with '_id' but got: #{field_name}" unless field_name.ends_with?("_id")
 
@@ -173,7 +175,7 @@ class SanitizedJsonImporter
     # For each type in reassociate_table_fields_hash, iterate through each field_name in reassociate_table_fields
     # and reassociate the field to the imported record
     reassociate_table_fields_hash.each do |association_type, reassociate_table_fields|
-      puts "  | Reassociate #{clazz.name} fields for #{association_type} associations"
+      puts "  | Reassociate #{clazz.name} fields for #{association_type} associations" if @verbosity > 5
       record_id_mapping = id_mapping[association_type]
       reassociate_table_fields[clazz.table_name]&.each do |field_name|
         reassociate(obj_hash, field_name, record_id_mapping, association_type: association_type)
