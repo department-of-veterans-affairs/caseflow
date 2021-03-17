@@ -418,13 +418,13 @@ describe "SanitizedJsonExporter/Importer" do
         expect(configuration.reassociate_fields.keys).to match_array reassociate_fields_keys
 
         reassociate_fields_for_polymorphics = {
-          Task => ["assigned_to_id", "appeal_id"],
+          Task => %w[assigned_to_id appeal_id],
           AppealIntake => ["detail_id"]
         }
         expect(configuration.reassociate_fields[:type]).to eq(reassociate_fields_for_polymorphics)
 
         reassociate_fields_for_appeal = {
-          CavcRemand => ["source_appeal_id", "remand_appeal_id"], 
+          CavcRemand => %w[source_appeal_id remand_appeal_id],
           Hearing => ["appeal_id"]
         }
         expect(configuration.reassociate_fields["Appeal"]).to eq(reassociate_fields_for_appeal)

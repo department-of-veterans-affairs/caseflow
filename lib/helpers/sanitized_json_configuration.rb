@@ -362,7 +362,7 @@ class SanitizedJsonConfiguration
   # ==========  Difference Configuration ==============
   def expected_differences
     @expected_differences ||= {
-      User => [:display_name],
+      User => [:display_name]
     }.freeze
   end
 end
