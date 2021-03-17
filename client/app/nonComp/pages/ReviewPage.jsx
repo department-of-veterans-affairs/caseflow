@@ -23,17 +23,16 @@ const linkButtonStyling = css({
   }
 });
 
-const linkStyling = css({ float: 'left',
-  paddingBottom: '7px',
-  paddingTop: '7px' });
+const compReviewButtonStyling = css({
+  whiteSpace: 'nowrap',
+  margin: '12px'
+});
+
+const secondaryButtonClassNames = ['usa-button-secondary'];
 
 class NonCompReviewsPage extends React.PureComponent {
-  businessLineReport = () => {
-    if (this.props.businessLine) {
-      return <span><a href={`/decision_reviews/${this.props.businessLineUrl}.csv`}
-        className="cf-link-btn" {...linkStyling}>Download completed tasks</a>
-      </span>;
-    }
+  downloadCsv = () => {
+    location.href = `/decision_reviews/${this.props.businessLineUrl}.csv`;
   }
 
   render = () => {
@@ -49,19 +48,26 @@ class NonCompReviewsPage extends React.PureComponent {
       { successAlert }
       <h1>{this.props.businessLine}</h1>
       <div className="usa-grid-full" {...pageStyling} >
-        <div className="usa-width-two-thirds" {...linkButtonStyling}>
+        <div className="usa-width-one-half" {...linkButtonStyling}>
           <h2>Reviews needing action</h2>
           <div>Review each issue and select a disposition</div>
         </div>
-        <div className="usa-width-one-thirds cf-txt-r">
-          {this.businessLineReport()}
+        <div className="usa-width-one-half cf-txt-r">
           <Button onClick={() => {
             window.location.href = '/intake';
           }}
-          classNames={['usa-button']}
+          classNames={compReviewButtonStyling}
           >
             + Intake new form
           </Button>
+          {this.props.businessLine &&
+          <Button
+            classNames={secondaryButtonClassNames}
+            onClick={this.downloadCsv}
+            styling={compReviewButtonStyling}>
+            Download completed tasks
+          </Button>
+          }
         </div>
       </div>
       <NonCompTabs />

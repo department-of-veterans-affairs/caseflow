@@ -56,7 +56,7 @@ describe Api::V3::DecisionReviews::HigherLevelReviewsController, :all_dbs, type:
   end
 
   let(:receipt_date) { Time.zone.today - 5.days }
-  let(:informal_conference) { true }
+  let(:informal_conference) { false }
   let(:same_office) { false }
   let(:legacy_opt_in_approved) { true }
   let(:benefit_type) { "compensation" }
@@ -66,9 +66,9 @@ describe Api::V3::DecisionReviews::HigherLevelReviewsController, :all_dbs, type:
       {
         type: "ContestableIssue",
         attributes: {
-          ratingIssueId: contestable_issues.first.rating_issue_reference_id,
-          decisionIssueId: contestable_issues.first.decision_issue&.id,
-          ratingDecisionIssueId: contestable_issues.first.rating_decision_reference_id
+          issue: "Left Knee",
+          decisionDate: "2020-04-01",
+          ratingIssueReferenceId: contestable_issues.first.rating_issue_reference_id
         }
       }
     ]
