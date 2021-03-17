@@ -78,14 +78,17 @@ describe DocketSwitch::TaskHandler, :all_dbs do
     context "When the disposition is granted" do
       let(:disposition) { "granted" }
 
-      it "Completes ruling tasks" do
-        ruling_task = old_docket_stream.reload.tasks.find { |task| task.type == "DocketSwitchRulingTask" }
+      it "Completes granted and ruling tasks" do
+        ruling_task = old_docket_stream.tasks.find_by(type: "DocketSwitchRulingTask")
+        granted_task = old_docket_stream.tasks.find_by(type: "DocketSwitchGrantedTask")
 
         expect(ruling_task).to be_open
+        expect(granted_task).to be_open
 
         subject
 
         expect(ruling_task.reload).to be_completed
+        expect(granted_task.reload).to be_completed
       end
 
       it "Cancels the original appeal stream and creates selected and docket-related tasks on new stream" do
@@ -149,14 +152,17 @@ describe DocketSwitch::TaskHandler, :all_dbs do
       let(:disposition) { "denied" }
       let(:granted_request_issue_ids) { nil }
 
-      it "Completes ruling tasks" do
+      it "Completes denied and ruling tasks" do
         ruling_task = old_docket_stream.reload.tasks.find { |task| task.type == "DocketSwitchRulingTask" }
+        denied_task = old_docket_stream.tasks.find_by(type: "DocketSwitchDeniedTask")
 
         expect(ruling_task).to be_open
+        expect(denied_task).to be_open
 
         subject
 
         expect(ruling_task.reload).to be_completed
+        expect(denied_task.reload).to be_completed
       end
     end
   end
