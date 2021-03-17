@@ -133,11 +133,11 @@ class DocketCoordinator
     @pacesetting_direct_review_proportion = receipts_per_year.to_f / nonpriority_decisions_per_year
   end
 
-  private
-
   def total_batch_size
-    DecisionDraftingAttorney.users.size * Distribution::CASES_PER_ATTORNEY
+    JudgeTeam.includes(:non_admin_users).flat_map(&:non_admin_users).size * Distribution::CASES_PER_ATTORNEY
   end
+
+  private
 
   def docket_margin_net_of_priority
     [total_batch_size - priority_count, 0].max
