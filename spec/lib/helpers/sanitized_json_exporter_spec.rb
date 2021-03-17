@@ -394,7 +394,7 @@ describe "SanitizedJsonExporter/Importer" do
         offset_id_fields = {
           DecisionReview => [],
           AppealIntake => [],
-          Veteran => [],
+          # Veteran => [],
           Claimant => ["decision_review_id"],
           Task => %w[appeal_id parent_id],
           TaskTimer => ["task_id"],
@@ -414,7 +414,7 @@ describe "SanitizedJsonExporter/Importer" do
         # pp configuration.offset_id_fields.transform_keys(&:name)
         expect(configuration.offset_id_fields).to eq offset_id_fields
 
-        expect(configuration.reassociate_fields.keys).to match_array ["User", :type]
+        expect(configuration.reassociate_fields.keys).to match_array [:type, "User", "Organization"]
 
         reassociate_fields_for_polymorphics = {
           Task => ["assigned_to_id"],
