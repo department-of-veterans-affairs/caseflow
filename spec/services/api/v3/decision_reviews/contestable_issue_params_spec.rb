@@ -36,9 +36,9 @@ context Api::V3::DecisionReviews::ContestableIssueParams, :all_dbs do
 
   let(:attributes) do
     {
-      ratingIssueId: contestable_issues.first.rating_issue_reference_id,
+      ratingIssueReferenceId: contestable_issues.first.rating_issue_reference_id,
       decisionIssueId: contestable_issues.first.decision_issue&.id,
-      ratingDecisionIssueId: contestable_issues.first.rating_decision_reference_id
+      ratingDecisionReferenceId: contestable_issues.first.rating_decision_reference_id
     }
   end
 
@@ -89,7 +89,7 @@ context Api::V3::DecisionReviews::ContestableIssueParams, :all_dbs do
       it { is_expected.to be true }
     end
     context do
-      let(:attributes) { { ratingDecisionIssueId: 0 } }
+      let(:attributes) { { ratingDecisionReferenceId: 0 } }
       it { is_expected.to be false }
     end
   end
