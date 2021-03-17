@@ -157,8 +157,9 @@ class SanitizedJsonConfiguration
   # rubocop:disable Style/MultilineBlockChain
   def offset_id_fields
     @offset_id_fields ||= begin
-      # in case a Class is associated with a specific decendant of one of the reassociate_types
-      known_types = (reassociate_types + reassociate_types.map(&:descendants).flatten).uniq
+      # In case a Class is associated with a specific decendant of one of the reassociate_types, include descendants.
+      # Exclude id_mapping_types since they will be handled by reassociate_with_imported_records via reassociate_fields
+      known_types = (reassociate_types + reassociate_types.map(&:descendants).flatten - id_mapping_types).uniq
 
       reassociate_types.map do |clazz|
         [
@@ -308,17 +309,16 @@ class SanitizedJsonConfiguration
       # Typed polymorphic association fields will associate to the their corresponding ActiveRecord
       :type => reassociate_types.map do |clazz|
         [clazz, AssocationWrapper.fieldnames_of_typed_associations_for(clazz, offset_id_fields[clazz])]
-      end.to_h.compact,
-
-      # Untyped association fields (those without the matching '_type' field) will associate to User records
-      "User" => reassociate_types.map do |clazz|
-        [clazz, AssocationWrapper.fieldnames_of_untyped_associations_with(User, clazz)]
-      end.to_h.compact,
-
-      "Organization" => reassociate_types.map do |clazz|
-        [clazz, AssocationWrapper.fieldnames_of_untyped_associations_with(Organization, clazz)]
       end.to_h.compact
-    }.freeze
+    }.merge(
+      # Untyped association fields (those without the matching '_type' field) will associate to User records
+      id_mapping_types.map { |assoc_class| [
+        assoc_class.name,
+        reassociate_types.map do |clazz|
+          [clazz, AssocationWrapper.fieldnames_of_untyped_associations_with(assoc_class, clazz)]
+        end.to_h.compact
+      ]}.to_h
+    ).freeze
   end
 
   # :reek:LongParameterList
