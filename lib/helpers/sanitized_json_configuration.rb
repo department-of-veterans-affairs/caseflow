@@ -249,8 +249,6 @@ class SanitizedJsonConfiguration
   def nonduplicate_types
     # Adding OrganizationsUser because we don't want to create duplicate OrganizationsUser records
     @nonduplicate_types ||= id_mapping_types + [OrganizationsUser].freeze
-    # binding.pry if id_mapping_types != @nonduplicate_types
-    @nonduplicate_types
   end
 
   # For each class in nonduplicate_types, provide a way to find the existing record
@@ -271,7 +269,7 @@ class SanitizedJsonConfiguration
 
   USE_PROD_ORGANIZATION_IDS = false
 
-  def create_singleton(clazz, obj_hash, obj_description: obj_description)
+  def create_singleton(clazz, obj_hash, obj_description: nil)
     new_label = adjust_identifiers_for_unique_records(clazz, obj_hash)
     if new_label
       puts "  * Will import duplicate #{clazz} '#{new_label}' with different unique attributes " \
@@ -307,23 +305,25 @@ class SanitizedJsonConfiguration
     # TODO: shouldn't all id_mapping_types be a key in this hash?
     @reassociate_fields ||= {
       # Typed polymorphic association fields will associate to the their corresponding ActiveRecord
-      :type => reassociate_types.map do |clazz|
+      type: reassociate_types.map do |clazz|
         [clazz, AssocationWrapper.fieldnames_of_typed_associations_for(clazz, offset_id_fields[clazz])]
       end.to_h.compact
     }.merge(
       # Untyped association fields (those without the matching '_type' field) will associate to User records
-      id_mapping_types.map { |assoc_class| [
-        assoc_class.name,
-        reassociate_types.map do |clazz|
-          [clazz, AssocationWrapper.fieldnames_of_untyped_associations_with(assoc_class, clazz)]
-        end.to_h.compact
-      ]}.to_h
+      id_mapping_types.map do |assoc_class|
+        [
+          assoc_class.name,
+          reassociate_types.map do |clazz|
+            [clazz, AssocationWrapper.fieldnames_of_untyped_associations_with(assoc_class, clazz)]
+          end.to_h.compact
+        ]
+      end .to_h
     ).freeze
   end
 
   # :reek:LongParameterList
   # :reek:UnusedParameters
-  # rubocop:disable Lint/UnusedMethodArgument, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Lint/UnusedMethodArgument
   def before_creation_hook(clazz, obj_hash, obj_description: nil, importer: nil)
     remaining_id_fields = obj_hash.select do |field_name, field_value|
       field_name.ends_with?("_id") && field_value.is_a?(Integer) && (field_value < id_offset) &&
@@ -336,17 +336,16 @@ class SanitizedJsonConfiguration
         )
     end
     unless remaining_id_fields.blank?
-      binding.pry
       fail "!! For #{clazz}, expecting these *'_id' fields be adjusted: " \
            "#{remaining_id_fields}\n\tobj_hash: #{obj_hash}"
     end
   end
-  # rubocop:enable Lint/UnusedMethodArgument, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Lint/UnusedMethodArgument
 
   # ==========  Difference Configuration ==============
   def expected_differences
     @expected_differences ||= {
-      User => [:display_name],
+      User => [:display_name]
     }.freeze
   end
 end

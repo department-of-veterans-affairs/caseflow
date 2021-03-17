@@ -53,6 +53,7 @@ detectors:
     exclude:
       - HearingSerializerBase
       - LegacyDocket
+      - SanitizedJsonConfiguration
       - SanitizedJsonImporter
       - SanitizedJsonExporter
       - Seeds::Tasks

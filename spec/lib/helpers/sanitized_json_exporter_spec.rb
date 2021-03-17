@@ -222,13 +222,13 @@ describe "SanitizedJsonExporter/Importer" do
         expect(configuration.reassociate_fields.keys).to match_array reassociate_fields_keys
 
         reassociate_fields_for_polymorphics = {
-          Task => ["assigned_to_id", "appeal_id"],
+          Task => %w[assigned_to_id appeal_id],
           AppealIntake => ["detail_id"]
         }
         expect(configuration.reassociate_fields[:type]).to eq(reassociate_fields_for_polymorphics)
 
         reassociate_fields_for_appeal = {
-          CavcRemand => ["source_appeal_id", "remand_appeal_id"], 
+          CavcRemand => %w[source_appeal_id remand_appeal_id],
           Hearing => ["appeal_id"]
         }
         expect(configuration.reassociate_fields["Appeal"]).to eq(reassociate_fields_for_appeal)
@@ -392,11 +392,12 @@ describe "SanitizedJsonExporter/Importer" do
   end
 
   context "Importer" do
-    let(:sji) { SanitizedJsonImporter.new(sje.file_contents).tap do |sji|
+    let(:sji) do
+      SanitizedJsonImporter.new(sje.file_contents).tap do |sji|
         # Causes new appeals to be created (to avoid conflict within existing appeals)
-        sji.records_hash["appeals"].each {|appeal| appeal["uuid"] = SecureRandom.uuid }
-      end 
-    }
+        sji.records_hash["appeals"].each { |appeal| appeal["uuid"] = SecureRandom.uuid }
+      end
+    end
     subject { sji.import }
 
     def expect_initial_state
@@ -420,11 +421,12 @@ describe "SanitizedJsonExporter/Importer" do
 
     context "when configuration provided with id_offset" do
       let(:configuration) { SanitizedJsonConfiguration.new }
-      let(:sji) {  SanitizedJsonImporter.new(sje.file_contents, configuration: configuration).tap do |sji|
-        # Cause a new appeal to be created (to avoid conflict within existing appeal)
-        sji.records_hash["appeals"].each {|appeal| appeal["uuid"] = SecureRandom.uuid }
+      let(:sji) do
+        SanitizedJsonImporter.new(sje.file_contents, configuration: configuration).tap do |sji|
+          # Cause a new appeal to be created (to avoid conflict within existing appeal)
+          sji.records_hash["appeals"].each { |appeal| appeal["uuid"] = SecureRandom.uuid }
+        end
       end
-      }
       it "uses id_offset when importing records" do
         configuration.id_offset = 10_000
         subject

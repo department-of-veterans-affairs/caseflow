@@ -3,7 +3,7 @@
 require "helpers/sanitized_json_difference.rb"
 
 # Given JSON, this class parses it as records and creates those records in the database.
-# 
+#
 # Approach:
 # - Import records using an id_offset (which is added to the value of all the *_id fields)
 #   - to avoid conflict with existing records
@@ -79,6 +79,7 @@ class SanitizedJsonImporter
     @records_hash.delete(key)
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
   def import_record(key, clazz, obj_hash)
     # Record original id in case it changes in the following lines
     orig_id = obj_hash["id"]
@@ -104,7 +105,10 @@ class SanitizedJsonImporter
     if @configuration.nonduplicate_types.include?(clazz)
       singleton = @configuration.create_singleton(clazz, obj_hash, obj_description: obj_description)
       if singleton
-        fail "Consider: Nonduplicate_type #{clazz.name} should be an entry in @configuration.id_mapping_types" unless id_mapping[clazz.table_name.classify]
+        unless id_mapping[clazz.table_name.classify]
+          fail "Consider: Nonduplicate_type #{clazz.name} should be an entry in @configuration.id_mapping_types"
+        end
+
         id_mapping[clazz.table_name.classify] ||= {}
         id_mapping[clazz.table_name.classify][orig_id] = obj_hash["id"]
         return singleton
@@ -118,6 +122,7 @@ class SanitizedJsonImporter
     puts "  + Creating #{clazz} #{obj_hash['id']} \n\t#{obj_description}"
     create_new_record(orig_id, clazz, obj_hash)
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
 
   # :reek:FeatureEnvy
   def adjust_ids_by_offset(clazz, obj_hash)
@@ -226,13 +231,13 @@ class SanitizedJsonImporter
   # Try to find record using unique indices on the corresponding table
   def find_record_by_unique_index(clazz, obj_hash)
     unique_indices = ActiveRecord::Base.connection.indexes(clazz.table_name).select(&:unique)
-    found_records = unique_indices.map(&:columns).map { |fieldnames|
+    found_records = unique_indices.map(&:columns).map do |fieldnames|
       next nil if fieldnames.is_a?(String) # occurs for custom indices like for User
       next nil unless (fieldnames - clazz.column_names).blank?
 
-      uniq_attributes = fieldnames.map { |fieldname| [fieldname, obj_hash[fieldname]]}.to_h
+      uniq_attributes = fieldnames.map { |fieldname| [fieldname, obj_hash[fieldname]] }.to_h
       clazz.find_by(uniq_attributes)
-    }.compact
+    end.compact
 
     return nil if found_records.blank?
 

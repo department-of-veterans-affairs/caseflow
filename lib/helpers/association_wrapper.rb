@@ -54,12 +54,12 @@ class AssocationWrapper
     end
 
     def grouped_fieldnames_of_typed_associations_with(clazz, known_classes)
-      # foreign keys that are not strings (e.g., Claimant.participant_id) involves 
+      # foreign keys that are not strings (e.g., Claimant.participant_id) involves
       # more complex association that isn't currently handled (and may not need to be)
       AssocationWrapper.new(clazz).belongs_to.associations
         .group_by(&:class_name)
         .slice(*known_classes)
-        .transform_values { |assocs| assocs.map(&:foreign_key).select{|fk| fk.is_a?(String)} }
+        .transform_values { |assocs| assocs.map(&:foreign_key).select { |fk| fk.is_a?(String) } }
         .compact
     end
   end

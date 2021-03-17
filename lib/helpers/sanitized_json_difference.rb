@@ -18,14 +18,15 @@ module SanitizedJsonDifference
   end
 
   # :reek:FeatureEnvy
-  def differences(orig_initial_records, ignore_expected_diffs: true, ignore_reused_records: true, additional_expected_diffs_fields: nil)
+  def differences(orig_initial_records, ignore_expected_diffs: true,
+                  ignore_reused_records: true, additional_expected_diffs_fields: nil)
     mapped_fields = ignore_expected_diffs ? configuration_mapped_fields : {}
 
     mapped_fields = Marshal.load(Marshal.dump(mapped_fields)) if additional_expected_diffs_fields
     # binding.pry
-    additional_expected_diffs_fields&.each {|clazz, fieldnames|
+    additional_expected_diffs_fields&.each do |clazz, _fieldnames|
       mapped_fields[clazz] += additional_expected_diffs_fields[clazz]
-    }
+    end
 
     # https://blog.arkency.com/inject-vs-each-with-object/
     @configuration.records_to_export(orig_initial_records).each_with_object({}) do |(clazz, orig_records), result|

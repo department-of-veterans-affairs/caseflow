@@ -74,16 +74,13 @@ module SanitizationTransforms
     end
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def random_pin(field_name, field_value, obj_class: nil)
     case field_name
     when "alias"
-      if obj_class == VirtualHearing
-        Faker::Number.number(digits: field_value.length).to_s
-      end
+      Faker::Number.number(digits: field_value.length).to_s if obj_class == VirtualHearing
     when "conference_id"
-      if obj_class == VirtualHearing
-        Faker::Number.number(digits: field_value.to_s.length)
-      end
+      Faker::Number.number(digits: field_value.to_s.length) if obj_class == VirtualHearing
     when /_pin$/, /_pin_/
       if field_value.is_a?(String)
         Faker::Number.number(digits: field_value.length).to_s
@@ -92,6 +89,7 @@ module SanitizationTransforms
       end
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   # Keep field value recognizable but different to reduce risk of exploitation (e.g., username scraping)
   def mixup_css_id(field_name, field_value, obj_class: nil)
