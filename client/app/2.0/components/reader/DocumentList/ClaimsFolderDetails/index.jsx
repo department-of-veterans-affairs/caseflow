@@ -13,19 +13,19 @@ import { viewedParagraphStyles } from 'styles/reader/DocumentList/ClaimsFolderDe
  * Claims Folder Details Component
  * @param {Object} props -- React props containing the appeal and documents
  */
-export const ClaimsFolderDetails = ({ appeal, documents }) => {
+export const ClaimsFolderDetails = ({ appeal, documents, docsCount }) => {
   // Set whether the appeal exists
   const noAppeal = isEmpty(appeal);
 
   // Set the Count of documents viewed
-  const docsViewedCount = documents.filter((doc) => doc.opened_by_current_user).length;
+  const docsViewedCount = Object.keys(documents).filter((doc) => documents[doc].opened_by_current_user).length;
 
   return (
     <div>
       <div>
         {!noAppeal && <h1 className="cf-push-left">{appeal.veteran_full_name}'s Claims Folder</h1>}
         <p className="cf-push-right" {...viewedParagraphStyles}>
-          You've viewed {docsViewedCount} out of {documents.length} documents
+          You've viewed {docsViewedCount} out of {docsCount} documents
         </p>
       </div>
       <Accordion style="bordered" accordion={false} defaultActiveKey={['Claims Folder details']}>
@@ -44,5 +44,6 @@ export const ClaimsFolderDetails = ({ appeal, documents }) => {
 
 ClaimsFolderDetails.propTypes = {
   appeal: PropTypes.object,
-  documents: PropTypes.array
+  documents: PropTypes.object,
+  docsCount: PropTypes.number
 };

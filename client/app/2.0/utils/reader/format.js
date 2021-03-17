@@ -1,21 +1,48 @@
 // External Dependencies
+import querystring from 'querystring';
 import moment from 'moment';
 import { sortBy, compact } from 'lodash';
 
 // Local Dependencies
 import { formatNameShort } from 'app/util/FormatUtil';
 import { documentCategories, CACHE_TIMEOUT_HOURS, CATEGORIES } from 'store/constants/reader';
-import { categoryFieldNameOfCategoryName } from 'app/reader/utils';
+
+/**
+ * Helper Method to add `category_` to the name of the category
+ * @param {string} categoryName -- The name of the category to format
+ * @returns {string} -- The newly formatted category name
+ */
+export const formatCategoryName = (categoryName) => `category_${categoryName}`;
+
+/**
+ * Helper Method to format the Filter Criteria
+ * @param {Object} filterCriteria -- The object containing filter criteria
+ */
+export const formatFilterCriteria = (filterCriteria) => {
+  // Create the filter object
+  const filters = {
+    category: Object.keys(filterCriteria.category).filter((cat) => filterCriteria.category[cat] === true).
+      map((key) => formatCategoryName(key)),
+    tag: Object.keys(filterCriteria.tag).filter((tag) => filterCriteria.tag[tag] === true),
+    searchQuery: filterCriteria.searchQuery.toLowerCase()
+  };
+
+  // Map the active filters
+  const active = Object.keys(filters).filter((activeFilter) => filters[activeFilter].length).
+    map((activeFilter) => filters[activeFilter]);
+
+  // Return the filters and the active filters
+  return { filters, active };
+};
 
 /**
  * Helper Method to sort the Categories of a document
  * @param {Object} document -- Document object from the store
  */
-export const sortCategories = (filtered, document) => {
+export const sortCategories = (document) => {
   // Determine whether the categories should be filtered
-  const categories = filtered ?
-    documentCategories.filter((_, name) => document[categoryFieldNameOfCategoryName(name)]) :
-    documentCategories;
+  const categories = Object.keys(documentCategories).filter((name) => document[formatCategoryName(name)]).
+    map((cat) => documentCategories[cat]);
 
   // Return the sorted categories
   return sortBy(categories, 'renderOrder');
@@ -65,7 +92,7 @@ export const formatFilters = (tag, category) => {
  */
 export const formatRedirectText = ({ queueTaskType, veteranFullName, vbmsId }) => {
   // Set the Base text
-  const text = '&lt; Back to ';
+  const text = '< Back to ';
 
   // Set the text to your cases if there is no task type
   if (!queueTaskType) {
@@ -121,8 +148,8 @@ export const formatAlertTime = (manifestVbmsFetchedAt, manifestVvaFetchedAt) => 
   if (stale) {
     // Calculate the time
     formattedTimes.now = moment();
-    formattedTimes.vbmsDiff = formattedTimes.diff(formattedTimes.vbmsTimestamp, 'hours');
-    formattedTimes.vvaDiff = formattedTimes.diff(formattedTimes.vvaTimestamp, 'hours');
+    formattedTimes.vbmsDiff = formattedTimes.now.diff(formattedTimes.vbmsTimestamp, 'hours');
+    formattedTimes.vvaDiff = formattedTimes.now.diff(formattedTimes.vvaTimestamp, 'hours');
   }
 
   // Return all of the Formatted Times
@@ -137,13 +164,6 @@ export const formatAlertTime = (manifestVbmsFetchedAt, manifestVvaFetchedAt) => 
 export const claimsFolderPageTitle = (appeal) => appeal && appeal.veteran_first_name ?
   `${formatNameShort(appeal.veteran_first_name, appeal.veteran_last_name)}'s Claims Folder` :
   'Claims Folder | Caseflow Reader';
-
-/**
- * Helper Method to add `category_` to the name of the category
- * @param {string} categoryName -- The name of the category to format
- * @returns {string} -- The newly formatted category name
- */
-export const formatCategoryName = (categoryName) => `category_${categoryName}`;
 
 /**
  * Helper Method that character escapes certain characters for a RegExp
@@ -171,3 +191,57 @@ export const addMetaLabel = (action, payload, label = '', meta = true) => ({
     }
   }
 });
+
+/**
+ * Helper Method to Parse the Queue Redirect URL from the window
+ * @returns {string|null} -- The Parsed Queue Redirect URL
+ */
+export const getQueueRedirectUrl = () => {
+  // Parse the Redirect URL string from the URL bar
+  const query = querystring.parse(window.location.search.slice(1));
+
+  // Return either the parsed URL or null
+  return query.queue_redirect_url ? decodeURIComponent(query.queue_redirect_url) : null;
+};
+
+/**
+ * Helper Method to Parse the Task Type from the window
+ * @returns {string|null} -- The Parsed Queue Task Type
+ */
+export const getQueueTaskType = () => {
+  // Parse the Task Type string from the URL bar
+  const query = querystring.parse(window.location.search.slice(1));
+
+  // Return either the parsed Task Type or null
+  return query.queue_task_type ? decodeURIComponent(query.queue_task_type) : null;
+};
+
+/**
+ * Helper Method to Parse the Task Type from the window
+ * @returns {string|null} -- The Parsed Queue Task Type
+ */
+export const formatCommentQuery = () => {
+  // Parse the Task Type string from the URL bar
+  const query = querystring.parse(window.location.search.slice(0))['?annotation'];
+
+  // Convert to Int or null and return
+  return query ? parseInt(query, 10) : null;
+};
+
+/**
+ * Helper Method to map tags to appropriate options in the SearchableDropdown
+ * @param {Array} tags -- List of tags to be formatted
+ */
+export const formatTagValue = (tags) => tags.map((tag) => ({
+  value: tag.text,
+  label: tag.text,
+  tagId: tag.id
+}));
+
+/**
+ * Helper Method to map tags to appropriate options in the SearchableDropdown
+ * @param {Array} tags -- List of tags to be formatted
+ */
+export const formatTagOptions = (documents) => Object.values(documents).
+  reduce((list, doc) => [...list, ...doc.tags], []).
+  filter((tag, index, list) => list.findIndex((item) => item.text === tag.text) === index);

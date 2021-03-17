@@ -17,12 +17,11 @@ export const markStyles = css({
   }
 });
 
-export const pageStyles = ({ width, height, scale, visible }) => ({
+export const pageStyles = ({ width, height, scale }) => ({
   marginBottom: `${PAGE_MARGIN * scale}px`,
   width: `${width}px`,
   height: `${height}px`,
   verticalAlign: 'top',
-  display: visible ? '' : 'none'
 });
 
 export const pdfStyles = {
@@ -35,8 +34,8 @@ export const pdfStyles = {
 
 export const fileContainerStyles = { position: 'relative', width: '100%', height: '100%' };
 
-export const gridStyles = (isVisible) => ({
-  visibility: `${isVisible ? 'visible' : 'hidden'}`,
+export const gridStyles = () => ({
+  visibility: 'visible',
   margin: '0 auto',
   marginBottom: `-${PAGE_MARGIN}px`
 });
@@ -86,3 +85,13 @@ export const toolbarStyles = {
 };
 
 export const pdfButtonStyle = ['cf-pdf-button cf-pdf-spaced-buttons'];
+
+export const pdfWrapper = css({
+  width: '72%',
+  '@media(max-width: 920px)': {
+    width: 'unset',
+    right: '250px' },
+  '@media(min-width: 1240px )': {
+    width: 'unset',
+    right: '380px' }
+});
