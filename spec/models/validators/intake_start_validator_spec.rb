@@ -29,6 +29,8 @@ describe IntakeStartValidator, :postgres do
         # These expects are designed to give more info if this test continues
         # to flake.
         expect(intake.user).not_to eq(User.api_user)
+        # Likely overkill, see conversation in PR for the why this is worthwhile
+        expect(intake.user.id == User.api_user.id).to be_falsey
         expect(intake.is_a?(AppealIntake)).to be_falsey
         expect(validator.send(:user_bypasses_same_station_check?)).to be_falsey
 
