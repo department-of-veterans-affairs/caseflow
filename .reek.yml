@@ -20,6 +20,7 @@ detectors:
     exclude:
       - ExternalApi::VBMSService#self.send_and_log_request
       - Fakes::BGSService
+      - Hearings::GeomatchAndCacheAppealJob#perform
       - HearingRepository#slot_new_hearing
       - LegacyDocket#distribute_appeals
       - Seeds::Tasks#create_legacy_case_with_open_schedule_hearing_task
@@ -64,6 +65,11 @@ detectors:
       - AssignHearingDispositionTask#reschedule_or_schedule_later
       - AssignJudgeteamRoles#process
       - AsyncableJobsReporter
+      - CachedAppealService#cache_ama_appeals
+      - CachedAppealService#cache_legacy_appeal_postgres_data
+      - CachedAppealService#cache_legacy_appeal_vacols_data
+      - CachedAppealService#poa_representative_name_for
+      - CachedAppealService#case_fields_for_vacols_ids
       - ConvertToVirtualHearing#convert_hearing_to_virtual
       - ClaimReviewAsyncStatsReporter#as_csv
       - DataIntegrityChecksJob
@@ -83,6 +89,8 @@ detectors:
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - FetchHearingLocationsForVeteransJob#sleep_before_retry_on_limit_error
       - HearingSerializerBase
+      - HearingSchedule::GenerateHearingDaysSchedule#generate_co_hearing_days_schedule
+      - HearingSchedule::GenerateHearingDaysSchedule#get_fallback_date_for_co
       - LegacyDocket#count
       - RedistributedCase#legacy_appeal_relevant_tasks
       - LegacyAppeal#cancel_open_caseflow_tasks!
@@ -93,6 +101,7 @@ detectors:
       - RequestIssue#find_or_create_decision_issue_from_rating_issue
       - RequestIssue#special_issues
       - RequestIssueReporter#as_csv
+      - RunAsyncable#perform_later_or_now
       - ScheduleHearingTask#create_hearing
       - Seeds::Hearings
       - Seeds::Tasks#create_colocated_legacy_tasks
