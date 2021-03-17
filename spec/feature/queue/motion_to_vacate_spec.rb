@@ -579,7 +579,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
       PostDecisionMotionUpdater.new(judge_address_motion_to_vacate_task, post_decision_motion_params)
     end
     let!(:post_decision_motion) { post_decision_motion_updater.process }
-    let(:vacate_stream) { Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "vacate") }
+    let(:vacate_stream) do
+      Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: Constants.AMA_STREAM_TYPES.vacate)
+    end
     let(:attorney_task) { AttorneyTask.find_by(assigned_to: drafting_attorney) }
 
     let(:review_decisions_path) do
@@ -1094,7 +1096,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
   end
 
   def visit_vacate_stream
-    vacate_stream = Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "vacate")
+    vacate_stream = Appeal.find_by(
+      stream_docket_number: appeal.docket_number, stream_type: Constants.AMA_STREAM_TYPES.vacate
+    )
     visit "/queue/appeals/#{vacate_stream.uuid}"
     expect(page).to have_content("Vacate")
     find("span", text: "View all cases").click

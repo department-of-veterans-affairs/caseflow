@@ -336,7 +336,13 @@ module Seeds
     end
 
     def create_clerk_of_the_board_user
-      u = User.create!(station_id: 101, css_id: "CLERK_OF_THE_BOARD_USER", full_name: "Clark ClerkOfTheBoardUser Bard")
+      u = create(
+        :user,
+        :with_vacols_attorney_record,
+        station_id: 101,
+        css_id: "COB_USER",
+        full_name: "Clark ClerkOfTheBoardUser Bard"
+      )
       ClerkOfTheBoard.singleton.add_user(u)
     end
 
