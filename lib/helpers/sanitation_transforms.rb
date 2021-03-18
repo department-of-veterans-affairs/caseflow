@@ -1,5 +1,15 @@
 # frozen_string_literal: true
 
+# This class contains transform methods referenced by SanitizedJsonConfiguration
+# for use by SanitizedJsonExporter.
+# The methods are meant to sanitize the original sensitive values, including PII.
+#
+# SanitizedJsonExporter calls these methods with the following arguments:
+#   - field_name: the column name in a table representing an ActiveRecord
+#   - field_value: the original value associated with the field_name of the ActiveRecord object
+#   - obj_class: the class of the ActiveRecord object
+##
+
 # rubocop:disable Metrics/ModuleLength, Lint/UnusedMethodArgument
 module SanitizationTransforms
   # :reek:RepeatedConditionals

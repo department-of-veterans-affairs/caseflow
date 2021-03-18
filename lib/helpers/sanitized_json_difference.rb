@@ -2,6 +2,11 @@
 
 # require "helpers/sanitized_json_configuration.rb"
 
+# This module is used to compare records imported by SanitizedJsonImporter against
+# the original records (exported by SanitizedJsonExporter).
+# This module isolates differencing code from SanitizedJsonImporter.
+##
+
 module SanitizedJsonDifference
   def configuration_mapped_fields
     # fields expected to be different;
@@ -11,22 +16,19 @@ module SanitizedJsonDifference
       @configuration.offset_id_fields,
       *@configuration.reassociate_fields.values,
       @configuration.expected_differences
-    ].map(&:to_a).sum.group_by(&:first).transform_values do |value|
-      field_name_arrays = value.map(&:second) + ["id"]
+    ].map(&:to_a).sum.group_by(&:first).transform_values do |class_to_fieldnames_tuple|
+      field_name_arrays = class_to_fieldnames_tuple.map(&:second) + ["id"]
       field_name_arrays.flatten.uniq
     end.freeze
   end
 
   # :reek:FeatureEnvy
-  def differences(orig_initial_records, ignore_expected_diffs: true,
-                  ignore_reused_records: true, additional_expected_diffs_fields: nil)
+  def differences(orig_initial_records,
+                  ignore_expected_diffs: true,
+                  ignore_reused_records: true,
+                  additional_expected_diffs_fields: nil)
     mapped_fields = ignore_expected_diffs ? configuration_mapped_fields : {}
-
-    mapped_fields = Marshal.load(Marshal.dump(mapped_fields)) if additional_expected_diffs_fields
-    # binding.pry
-    additional_expected_diffs_fields&.each do |clazz, _fieldnames|
-      mapped_fields[clazz] += additional_expected_diffs_fields[clazz]
-    end
+    mapped_fields = SanitizedJsonDifference.hash_merge_array_values(mapped_fields, additional_expected_diffs_fields)
 
     # https://blog.arkency.com/inject-vs-each-with-object/
     @configuration.records_to_export(orig_initial_records).each_with_object({}) do |(clazz, orig_records), result|
@@ -37,6 +39,16 @@ module SanitizedJsonDifference
                                                               reused_records_list,
                                                               mapped_fields[clazz])
     end
+  end
+
+  def self.hash_merge_array_values(mapped_fields, additional_expected_diffs_fields)
+    return mapped_fields unless additional_expected_diffs_fields
+
+    mapped_fields.map do |clazz, fieldnames|
+      next [clazz, fieldnames] unless additional_expected_diffs_fields[clazz]
+
+      [clazz, fieldnames + additional_expected_diffs_fields[clazz]]
+    end.to_h
   end
 
   def self.diff_record_lists(orig_records_list, imported_records_list, reused_records_list, ignored_fields)
@@ -55,6 +67,7 @@ module SanitizedJsonDifference
                         ignore_id_offset: false, convert_timestamps: true)
     hash_a = SanitizedJsonExporter.record_to_hash(record_a).except(*ignored_fields)
     hash_b = SanitizedJsonExporter.record_to_hash(record_b).except(*ignored_fields)
+
     # https://stackoverflow.com/questions/4928789/how-do-i-compare-two-hashes
     array_diff = (hash_b.to_a - hash_a.to_a) + (hash_a.to_a - hash_b.to_a)
 

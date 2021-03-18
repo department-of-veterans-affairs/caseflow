@@ -3,7 +3,8 @@
 require "helpers/association_wrapper.rb"
 require "helpers/sanitation_transforms.rb"
 
-# Configuration for exporting/importing data from/to Caseflow.
+# Configuration for exporting/importing data from/to Caseflow's database.
+# Needed by SanitizedJsonExporter and SanitizedJsonImporter.
 
 class SanitizedJsonConfiguration
   # For exporting, the :retrieval lambda is run according to the ordering in this hash.

@@ -45,6 +45,7 @@ class SanitizedJsonImporter
     @metadata = @records_hash.delete("metadata")
     @imported_records = {}
     @reused_records = {}
+    @unique_indices = {}
 
     @verbosity = verbosity # for debugging; higher is more verbose
   end
@@ -125,7 +126,6 @@ class SanitizedJsonImporter
   private
 
   def unique_indices(clazz)
-    @unique_indices ||= {}
     @unique_indices.fetch(clazz) do
       @unique_indices[clazz] = ActiveRecord::Base.connection.indexes(clazz.table_name).select(&:unique)
     end
