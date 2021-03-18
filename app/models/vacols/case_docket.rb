@@ -108,16 +108,17 @@ class VACOLS::CaseDocket < VACOLS::Record
     select BFKEY, BFDLOOUT, VLJ
       from (
         select BFKEY, BFDLOOUT,
-          case when BFHINES is null or BFHINES <> 'GP' then nvl(VLJ_HEARINGS.VLJ, VLJ_PRIORDEC.VLJ) end VLJ
+          case when BFHINES is null or BFHINES <> 'GP' then nvl(VLJ_HEARINGS.VLJ, '') end VLJ
         from (
           #{SELECT_READY_APPEALS}
             and (BFAC = '7' or AOD = '1')
           order by BFDLOOUT
         ) BRIEFF
         #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
-        #{JOIN_ASSOCIATED_VLJS_BY_PRIOR_DECISIONS}
       )
   "
+#         #{JOIN_ASSOCIATED_VLJS_BY_PRIOR_DECISIONS}
+
 
   SELECT_NONPRIORITY_APPEALS = "
     select BFKEY, BFDLOOUT, VLJ, DOCKET_INDEX
