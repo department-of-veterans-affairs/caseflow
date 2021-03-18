@@ -4,6 +4,7 @@ import NumberField from './NumberField';
 
 const Template = () => {
   const [number, setNumber] = useState(5);
+  // Todo, add readonly story
 
   return <NumberField
     label="Enter the number of things"
