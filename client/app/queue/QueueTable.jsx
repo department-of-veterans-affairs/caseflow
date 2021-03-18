@@ -626,7 +626,7 @@ export default class QueueTable extends React.PureComponent {
         <HeaderRow
           columns={columns}
           rowObjects={rowObjects}
-          headerClassName={headerClassName ?? ''}
+          headerClassName={headerClassName}
           setSortOrder={this.setColumnSortOrder}
           updateFilteredByList={this.updateFilteredByList}
           filteredByList={this.state.filteredByList}
