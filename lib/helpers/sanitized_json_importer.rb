@@ -161,7 +161,7 @@ class SanitizedJsonImporter
     orig_id = obj_hash["id"]
     puts " * Starting import of #{clazz} #{obj_hash['type']} #{obj_hash['id']}" if @verbosity > 5
 
-    # Don't import if certain types of records already exists
+    # Step 1: Don't import if certain types of records already exists; register them for later use
     if @configuration.reuse_record_types.include?(clazz) && (existing_record = find_existing_record(clazz, obj_hash))
       puts "  = Using existing #{clazz} instead of importing #{obj_hash['type']} #{obj_hash['id']}" if @verbosity > 2
       reused_records[key] ||= []
@@ -171,9 +171,9 @@ class SanitizedJsonImporter
       return
     end
 
+    # Step 2: Create singleton records if appropriate
     obj_description = "original: #{obj_hash['type']} " \
                       "#{obj_hash.select { |obj_key, _v| obj_key.include?('_id') }}"
-    # Create singleton records if appropriate
     if @configuration.reuse_record_types.include?(clazz)
       singleton = @configuration.create_singleton(clazz, obj_hash, obj_description: obj_description)
       if singleton
@@ -182,11 +182,11 @@ class SanitizedJsonImporter
       end
     end
 
-    # Update *_id fields and associations
+    # Step 3: Update *_id fields and associations
     adjust_ids_by_offset(clazz, obj_hash)
     reassociate_with_imported_records(clazz, obj_hash)
 
-    # Create record in the database
+    # Step 4: Create record in the database
     @configuration.before_creation_hook(clazz, obj_hash, obj_description: obj_description, importer: self)
     puts "  + Creating #{clazz} #{obj_hash['id']} \n\t#{obj_description}" if @verbosity > 2
     create_new_record(orig_id, clazz, obj_hash)

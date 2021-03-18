@@ -65,7 +65,7 @@ class SanitizedJsonExporter
     obj_hash = self.class.record_to_hash(record)
     return obj_hash unless @sanitize
 
-    @configuration.before_sanitize_hook(record, obj_hash)
+    @configuration.before_sanitize(record, obj_hash)
 
     if supported_classes.any? { |klass| record.is_a?(klass) }
       # Use table_name to handle subclasses/STI: e.g., a HearingTask record maps to table "tasks"

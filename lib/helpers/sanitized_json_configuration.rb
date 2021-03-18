@@ -181,7 +181,7 @@ class SanitizedJsonConfiguration
   end
   # rubocop:enable Style/MultilineBlockChain
 
-  # ==========  Exporter Configuration ==============
+  # ==========  SanitizedJsonExporter-specific Configuration ==============
   def sanitize_fields_hash
     @sanitize_fields_hash ||= extract_configuration(:sanitize_fields, configuration, []).freeze
   end
@@ -204,7 +204,7 @@ class SanitizedJsonConfiguration
     # To-do: include other source appeals, e.g., those with the same docket number
   end
 
-  def before_sanitize_hook(record, obj_hash)
+  def before_sanitize(record, obj_hash)
     case record
     when User
       # User#attributes includes `display_name`; don't need it when importing so leave it out
@@ -229,7 +229,7 @@ class SanitizedJsonConfiguration
 
   include SanitizationTransforms
 
-  # ==========  Importer Configuration ==============
+  # ==========  SanitizedJsonImporter-specific Configuration ==============
   attr_writer :id_offset
 
   def id_offset
@@ -335,12 +335,12 @@ class SanitizedJsonConfiguration
   # :reek:UnusedParameters
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Lint/UnusedMethodArgument
   def before_creation_hook(clazz, obj_hash, obj_description: nil, importer: nil)
+    # Basic check to make sure *`_id` fields have been updated
     remaining_id_fields = obj_hash.select do |field_name, field_value|
       field_name.ends_with?("_id") && field_value.is_a?(Integer) && (field_value < id_offset) &&
         (
           !(clazz <= Task && field_name == "assigned_to_id" && obj_hash["assigned_to_type"] == "Organization") &&
           !(clazz <= OrganizationsUser && (field_name == "organization_id" || field_name == "user_id")) &&
-          # !(clazz <= HearingDay && field_name == "judge_id") &&
           !(clazz <= VirtualHearing && field_name == "conference_id") &&
           true
         )
@@ -352,7 +352,7 @@ class SanitizedJsonConfiguration
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Lint/UnusedMethodArgument
 
-  # ==========  Difference Configuration ==============
+  # ==========  SanitizedJsonDifference-specific Configuration ==============
   def expected_differences
     @expected_differences ||= {
       User => [:display_name]
