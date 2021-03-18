@@ -914,10 +914,10 @@ describe Veteran, :all_dbs do
   end
 
   describe "#date_of_death" do
-    context "when nil is cached and BGS returns a date of death" do
-      let(:date_of_death) { nil }
-      let(:new_date_of_death) { Date.new(2021, 3, 8) }
-      let(:bgs_date_of_death) { "03/08/2021" }
+    let(:date_of_death) { nil }
+    let(:new_date_of_death) { Date.new(2021, 3, 8) }
+    let(:bgs_date_of_death) { "03/08/2021" }
+    context "when nil is cached and BGS returns a date of death with no previous sync" do
       before do
         allow(veteran).to receive(:fetch_bgs_record).and_return(date_of_death: bgs_date_of_death)
       end
@@ -926,6 +926,33 @@ describe Veteran, :all_dbs do
       it "saves the non-nil value to Caseflow DB" do
         expect(subject).to eq(new_date_of_death)
         expect(veteran[:date_of_death]).to eq(new_date_of_death)
+      end
+    end
+
+    context "when nil is cached and BGS returns a date of death with a stale previous sync" do
+      before do
+        allow(veteran).to receive(:fetch_bgs_record).and_return(date_of_death: bgs_date_of_death)
+        veteran.bgs_last_synced_at = 13.hours.ago
+      end
+
+      subject { veteran.date_of_death }
+      it "saves a new date if there was a sync that was more than 12hr ago" do
+        expect(subject).to eq(new_date_of_death)
+        expect(veteran[:date_of_death]).to eq(new_date_of_death)
+      end
+    end
+
+    context "when nil is cached and BGS returns a date of death with a fresh previous sync" do
+      before do
+        allow(veteran).to receive(:fetch_bgs_record).and_return(date_of_death: bgs_date_of_death)
+        veteran.bgs_last_synced_at = 10.hours.ago
+      end
+
+      subject { veteran.date_of_death }
+      it "doesn't save a new date if there was a sync that was less than 12hr ago" do
+        expect(subject).to eq(nil)
+        expect(veteran[:date_of_death]).to eq(nil)
+        expect(veteran).not_to receive(:fetch_bgs_record)
       end
     end
   end
