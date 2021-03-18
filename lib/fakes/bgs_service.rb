@@ -300,7 +300,7 @@ class Fakes::BGSService
               else
                 {
                   legacy_poa_cd: "100",
-                  nm: "Attorney McAttorneyFace",
+                  nm: "Clarence Darrow",
                   org_type_nm: "POA Attorney",
                   ptcpnt_id: "1234567"
                 }

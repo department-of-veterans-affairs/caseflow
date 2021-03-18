@@ -1903,7 +1903,7 @@ describe LegacyAppeal, :all_dbs do
       end
 
       it "uses appellant to load BGS POA" do
-        expect(appeal.power_of_attorney.bgs_representative_name).to eq "Attorney McAttorneyFace"
+        expect(appeal.power_of_attorney.bgs_representative_name).to eq "Clarence Darrow"
         expect(appeal.power_of_attorney.bgs_participant_id).to eq poa_pid
       end
     end
