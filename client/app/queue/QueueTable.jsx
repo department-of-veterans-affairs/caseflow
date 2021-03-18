@@ -521,8 +521,8 @@ export default class QueueTable extends React.PureComponent {
     const {
       columns,
       summary,
-      headerClassName = '',
-      bodyClassName = '',
+      headerClassName,
+      bodyClassName,
       rowClassNames = this.defaultRowClassNames,
       getKeyForRow,
       slowReRendersAreOk,
@@ -626,7 +626,7 @@ export default class QueueTable extends React.PureComponent {
         <HeaderRow
           columns={columns}
           rowObjects={rowObjects}
-          headerClassName={headerClassName}
+          headerClassName={headerClassName ?? ''}
           setSortOrder={this.setColumnSortOrder}
           updateFilteredByList={this.updateFilteredByList}
           filteredByList={this.state.filteredByList}
@@ -639,7 +639,7 @@ export default class QueueTable extends React.PureComponent {
           columns={columns}
           getKeyForRow={keyGetter}
           rowObjects={rowObjects}
-          bodyClassName={bodyClassName}
+          bodyClassName={bodyClassName ?? ''}
           rowClassNames={rowClassNames}
           bodyStyling={bodyStyling}
           {...this.state}
