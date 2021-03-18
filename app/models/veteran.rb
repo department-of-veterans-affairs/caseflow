@@ -325,7 +325,9 @@ class Veteran < CaseflowRecord
 
   def update_cached_attributes!
     CACHED_BGS_ATTRIBUTES.each do |local_attr, bgs_attr|
-      local_attr == :date_of_death ? self[local_attr] = Date.strptime(bgs_record[bgs_attr], "%m/%d/%Y") : self[local_attr] = bgs_record[bgs_attr]
+      fetched_attr = bgs_record[bgs_attr]
+      formatted_attr = (local_attr == :date_of_death) ? Date.strptime(fetched_attr, "%m/%d/%Y") : fetched_attr
+      self[local_attr] = formatted_attr
     rescue ArgumentError
       nil
     end
