@@ -12,6 +12,9 @@ class SanitizedJsonConfiguration
   def configuration
     @configuration ||= {
       Appeal => {
+        # Need track_imported_ids=true because parent DecisionReview is abstract,
+        # i.e., DecisionReview has no table_name and hence cannot be used
+        # when reassociating using polymorphic associations.
         track_imported_ids: true,
         sanitize_fields: %w[veteran_file_number],
         retrieval: lambda do |records|
@@ -139,17 +142,16 @@ class SanitizedJsonConfiguration
   end
 
   # Types that need to be examine for associations so that '_id' fields can be updated by id_offset
-  # exclude id_mapping_types because we are reassociating those ourselves (don't try to id_offset them)
+  # exclude id_mapping_types because we are reassociating those using id_mapping (don't try to id_offset them)
   def reassociate_types
-    # DecisionReview is parent class of Appeal, HLR, SC. We want associations of Appeal to be reassociated.
+    # DecisionReview is parent class of Appeal, HLR, SC. We want associations to Appeals to be reassociated.
     @reassociate_types ||= (configuration.keys - id_mapping_types + [DecisionReview]).uniq
   end
 
   public
 
-  # Special types that can have `same_unique_attributes?`
-  # or where we want to look up its id, e.g. Appeal for Claimant used in `same_unique_attributes?`
-  # The id are tracked in `importer.id_mapping` and are used by reassociate_with_imported_records
+  # Types whose id's are tracked in `importer.id_mapping` and are used by `reassociate_with_imported_records`
+  # or where we want to look up its new id
   def id_mapping_types
     @id_mapping_types = extract_classes_with_true(:track_imported_ids, configuration).freeze
   end
@@ -247,12 +249,12 @@ class SanitizedJsonConfiguration
 
   # Classes that shouldn't be imported if a record with the same unique attributes already exists
   # These types should be handled in `find_existing_record`.
-  def nonduplicate_types
+  def reuse_record_types
     # Adding OrganizationsUser because we don't want to create duplicate OrganizationsUser records
-    @nonduplicate_types ||= id_mapping_types + [OrganizationsUser].freeze
+    @reuse_record_types ||= id_mapping_types + [OrganizationsUser].freeze
   end
 
-  # For each class in nonduplicate_types, provide a way to find the existing record
+  # For each class in reuse_record_types, provide a way to find the existing record
   def find_existing_record(clazz, obj_hash, importer: nil)
     if clazz == User
       # The index for css_id has an odd column name plus find_by_css_id is faster.
@@ -308,15 +310,15 @@ class SanitizedJsonConfiguration
   end
 
   def reassociate_fields
-    # For each reassociate_types, identify their associations so '_id' fields can be updated to imported records
+    # For each reassociate_types, identify their associations so '_id' fields can be reassociated with imported records
     @reassociate_fields ||= {
-      # Typed polymorphic association fields will associate to the their corresponding ActiveRecord
+      # Typed polymorphic association fields will be associated based on the '_type' field
       type: reassociate_types.map do |clazz|
         [clazz,
          AssocationWrapper.new(clazz).typed_associations(excluding: offset_id_fields[clazz]).fieldnames.presence]
       end.to_h.compact
     }.merge(
-      # Untyped association fields (those without the matching '_type' field) will associate to User records
+      # Untyped association fields (ie, without the matching '_type' field) will associate to their corresponding type
       id_mapping_types.map do |assoc_class|
         [
           assoc_class.name,

@@ -5,16 +5,19 @@ require "helpers/sanitized_json_difference.rb"
 # Given JSON, this class parses it as records and creates those records in the database.
 #
 # Approach:
-# - Import records using an id_offset (which is added to the value of all the *_id fields)
+# - Import records using an `id_offset` (which is added to the value of all the *_id fields)
 #   - to avoid conflict with existing records
 #   - to easily identify imported records
 #   - See `adjust_ids_by_offset` and `offset_id_table_fields`.
 # - For certain record types (e.g., Organization, User, Person, Veteran), reuse them if the
-#   record already exists. See `nonduplicate_types`.
-#   - This means when an existing record is found, it is used instead of the id_offset,
+#   record already exists in the database. See `reuse_record_types`.
+#   - This means when an existing record is found, it is used instead of the `id_offset`,
 #     which means the importer needs to track the `id_mapping` from original id (in the JSON)
 #     to the id of the existing record so that association records like OrganizationsUser
 #     (which only refer to `user_id` and `organization_id`) can be mapped properly.
+#
+# To summarize, fields that reference other records must be updated,
+# either by an `id_offset` or using the `id_mapping`.
 #
 # The major logic is in `import_record`.
 ##
@@ -22,32 +25,38 @@ require "helpers/sanitized_json_difference.rb"
 class SanitizedJsonImporter
   prepend SanitizedJsonDifference
 
-  attr_accessor :records_hash # this is modified during importing
+  # parsed from JSON input
   attr_accessor :metadata
 
-  # output
+  # Hash parsed from JSON input, whose id fields are modified during importing
+  # key = ActiveRecord class's table_name; value = array of JSON of ActiveRecords
+  attr_accessor :records_hash
+
+  # Hash of records imported into the database
+  # key = ActiveRecord class's table_name; value = ActiveRecords in the database
   attr_accessor :imported_records
+
+  # Existing ActiveRecords that are not imported because they already exist in the database
   attr_accessor :reused_records
 
   def self.from_file(filename, **kwargs)
     new(File.read(filename), **kwargs)
   end
 
-  # def self.attributes_with_unique_index(clazz)
-  #   unique_indices = ActiveRecord::Base.connection.indexes(clazz.table_name).select(&:unique)
-  #   unique_indices.map(&:columns).flatten.uniq
-  # end
-
-  def initialize(file_contents, configuration: SanitizedJsonConfiguration.new, verbosity: 8)
+  def initialize(file_contents,
+                 configuration: SanitizedJsonConfiguration.new,
+                 verbosity: ENV["SJ_VERBOSITY"] ? ENV["SJ_VERBOSITY"].to_i : 2)
     @configuration = configuration
     @id_offset = configuration.id_offset
     @records_hash = JSON.parse(file_contents)
     @metadata = @records_hash.delete("metadata")
     @imported_records = {}
     @reused_records = {}
-    @unique_indices = {}
 
-    @verbosity = verbosity # for debugging; higher is more verbose
+    # unique indices for the table associated with a class
+    @unique_indices_per_class = {}
+
+    @verbosity = verbosity # higher is more verbose
   end
 
   def import
@@ -56,9 +65,14 @@ class SanitizedJsonImporter
         import_array_of(clazz)
       end
 
+      # for the remaining classes from the JSON, import the records
       @records_hash.each do |key, obj_hash_array|
         import_array_of(key.classify.constantize, key, obj_hash_array)
       end
+    end
+    if @verbosity > 0
+      puts "Imported #{imported_records.values.map(&:count).sum} records; "\
+           "reused #{reused_records.values.map(&:count).sum} existing records"
     end
     imported_records
   end
@@ -71,22 +85,20 @@ class SanitizedJsonImporter
   # :reek:FeatureEnvy
   def reassociate_with_imported_records(clazz, obj_hash)
     # Handle polymorphic associations (where the association class is stored in the *'_type' field)
-    puts "  | Reassociate polymorphic associations for #{clazz.name}" if @verbosity > 5
+    puts "  | Reassociate polymorphic associations for #{clazz.name}" if @verbosity > 4
     reassociate_type_table_fields[clazz.table_name]&.each do |field_name|
       fail "!!! Expecting field_name to end with '_id' but got: #{field_name}" unless field_name.ends_with?("_id")
 
       association_type = obj_hash[field_name.sub(/_id$/, "_type")]
-      record_id_mapping = id_mapping[association_type]
-      reassociate(obj_hash, field_name, record_id_mapping, association_type: association_type)
+      reassociate(obj_hash, field_name, id_mapping[association_type], association_type: association_type)
     end
 
     # Handle associations where the association class is not stored (it is implied)
     # For each type in reassociate_table_fields_hash, iterate through each field_name in reassociate_table_fields
     # and reassociate the field to the imported record
     reassociate_table_fields_hash.each do |association_type, reassociate_table_fields|
-      puts "  | Reassociate #{clazz.name} fields for #{association_type} associations" if @verbosity > 5
+      puts "  | Reassociate #{clazz.name} fields for #{association_type} associations" if @verbosity > 4
       record_id_mapping = id_mapping[association_type]
-      # binding.pry if clazz = OrganizationsUser
       reassociate_table_fields[clazz.table_name]&.each do |field_name|
         reassociate(obj_hash, field_name, record_id_mapping, association_type: association_type)
       end
@@ -100,14 +112,16 @@ class SanitizedJsonImporter
     return unless orig_record_id
 
     obj_hash[id_field] = record_id_mapping[orig_record_id] if record_id_mapping[orig_record_id]
-    puts "    > reassociated #{id_field}: #{association_type} #{orig_record_id}->#{obj_hash[id_field]}"
+    if @verbosity > 3
+      puts "    > reassociated #{id_field}: #{association_type} #{orig_record_id}->#{obj_hash[id_field]}"
+    end
     [orig_record_id, obj_hash[id_field]]
   end
 
   # Try to find record using unique indices on the corresponding table
   # :reek:FeatureEnvy
   def find_record_by_unique_index(clazz, obj_hash)
-    found_records = unique_indices(clazz).map(&:columns).map do |fieldnames|
+    found_records = unique_indices_per_class(clazz).map(&:columns).map do |fieldnames|
       next nil if fieldnames.is_a?(String) # occurs for custom indices like for User
       next nil unless (fieldnames - clazz.column_names).blank? # in case a fieldname is not a column
 
@@ -117,7 +131,7 @@ class SanitizedJsonImporter
 
     return nil if found_records.blank?
 
-    # puts "Found #{clazz.name}: #{found_records}"
+    puts "Found #{clazz.name} record(s) by unique index: #{found_records}" if @verbosity > 5
     return found_records.first if found_records.size == 1
 
     fail "Found multiple records for #{clazz.name}: #{found_records}"
@@ -125,66 +139,68 @@ class SanitizedJsonImporter
 
   private
 
-  def unique_indices(clazz)
-    @unique_indices.fetch(clazz) do
-      @unique_indices[clazz] = ActiveRecord::Base.connection.indexes(clazz.table_name).select(&:unique)
+  def unique_indices_per_class(clazz)
+    @unique_indices_per_class.fetch(clazz) do
+      @unique_indices_per_class[clazz] = ActiveRecord::Base.connection.indexes(clazz.table_name).select(&:unique)
     end
   end
 
   def import_array_of(clazz, key = clazz.table_name, obj_hash_array = @records_hash.fetch(key, []))
-    new_records = obj_hash_array.map do |obj_hash|
-      fail "No JSON data for records_hash key: #{key}" unless obj_hash
+    puts "Importing #{obj_hash_array.count} #{clazz} records" if @verbosity > 1
+    imported_records[key] = obj_hash_array.map do |obj_hash|
+      next puts "WARNING: No JSON data for records_hash key: #{key}" unless obj_hash
 
       import_record(key, clazz, obj_hash)
     end
-    imported_records[key] = new_records
     @records_hash.delete(key)
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def import_record(key, clazz, obj_hash)
     # Record original id in case it changes in the following lines
     orig_id = obj_hash["id"]
+    puts " * Starting import of #{clazz} #{obj_hash['type']} #{obj_hash['id']}" if @verbosity > 5
 
     # Don't import if certain types of records already exists
-    if @configuration.nonduplicate_types.include?(clazz) && (existing_record = find_existing_record(clazz, obj_hash))
-      puts "  = Using existing #{clazz} instead of importing #{obj_hash['type']} #{obj_hash['id']}"
+    if @configuration.reuse_record_types.include?(clazz) && (existing_record = find_existing_record(clazz, obj_hash))
+      puts "  = Using existing #{clazz} instead of importing #{obj_hash['type']} #{obj_hash['id']}" if @verbosity > 2
       reused_records[key] ||= []
       reused_records[key] << existing_record
-      id_mapping_key = clazz.table_name.classify
-      unless id_mapping[id_mapping_key]
-        puts "ERROR: add #{id_mapping_key} to @configuration.id_mapping_types"
-        id_mapping[id_mapping_key] = {}
-      end
       # Track it for use by association records like OrganizationsUser in @configuration.find_existing_record
-      id_mapping[id_mapping_key][orig_id] = existing_record.id
+      add_to_id_mapping(clazz, orig_id, existing_record.id)
       return
     end
 
     obj_description = "original: #{obj_hash['type']} " \
                       "#{obj_hash.select { |obj_key, _v| obj_key.include?('_id') }}"
-
-    if @configuration.nonduplicate_types.include?(clazz)
+    # Create singleton records if appropriate
+    if @configuration.reuse_record_types.include?(clazz)
       singleton = @configuration.create_singleton(clazz, obj_hash, obj_description: obj_description)
       if singleton
-        unless id_mapping[clazz.table_name.classify]
-          fail "Consider: Nonduplicate_type #{clazz.name} should be an entry in @configuration.id_mapping_types"
-        end
-
-        id_mapping[clazz.table_name.classify] ||= {}
-        id_mapping[clazz.table_name.classify][orig_id] = obj_hash["id"]
+        add_to_id_mapping(clazz, orig_id, obj_hash["id"])
         return singleton
       end
     end
 
+    # Update *_id fields and associations
     adjust_ids_by_offset(clazz, obj_hash)
     reassociate_with_imported_records(clazz, obj_hash)
 
+    # Create record in the database
     @configuration.before_creation_hook(clazz, obj_hash, obj_description: obj_description, importer: self)
-    puts "  + Creating #{clazz} #{obj_hash['id']} \n\t#{obj_description}"
+    puts "  + Creating #{clazz} #{obj_hash['id']} \n\t#{obj_description}" if @verbosity > 2
     create_new_record(orig_id, clazz, obj_hash)
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+  def add_to_id_mapping(clazz, orig_id, new_id)
+    id_mapping_key = clazz.table_name.classify
+    unless id_mapping[id_mapping_key]
+      # puts "Consider: adding #{id_mapping_key} to @configuration.id_mapping_types"
+      id_mapping[id_mapping_key] = {}
+    end
+    id_mapping[id_mapping_key][orig_id] = new_id
+  end
 
   # :reek:FeatureEnvy
   def adjust_ids_by_offset(clazz, obj_hash)
@@ -244,7 +260,8 @@ class SanitizedJsonImporter
   def reassociate_table_fields_hash
     @reassociate_table_fields_hash ||= @configuration.reassociate_fields
       .select { |type_string, _| type_string.is_a?(String) }
-      .transform_values { |class_to_fieldnames_hash| class_to_fieldnames_hash.transform_keys(&:table_name) }.freeze
+      .transform_values { |class_to_fieldnames_hash| class_to_fieldnames_hash.transform_keys(&:table_name) }
+      .freeze
   end
 
   def find_existing_record(clazz, obj_hash)
