@@ -29,16 +29,6 @@ RSpec.feature "Docket Switch", :all_dbs do
     end
   end
 
-  let!(:docket_switch_ruling_task) do
-    create(
-      :docket_switch_ruling_task,
-      appeal: appeal,
-      parent: root_task,
-      assigned_to: judge,
-      assigned_by: cotb_attorney
-    )
-  end
-
   let(:root_task) { create(:root_task, :completed, appeal: appeal) }
   let(:cotb_attorney) { create(:user, :with_vacols_attorney_record, full_name: "Clark Bard") }
   let!(:cotb_non_attorney) { create(:user, full_name: "Aang Bender") }
@@ -119,6 +109,15 @@ RSpec.feature "Docket Switch", :all_dbs do
   end
 
   describe "judge completes docket switch ruling" do
+    let!(:docket_switch_ruling_task) do
+      create(
+        :docket_switch_ruling_task,
+        appeal: appeal,
+        parent: root_task,
+        assigned_to: judge,
+        assigned_by: cotb_attorney
+      )
+    end
     let(:context) { "Lorem ipsum dolor sit amet, consectetur adipiscing elit" }
     let(:hyperlink) { "https://example.com/file.txt" }
 

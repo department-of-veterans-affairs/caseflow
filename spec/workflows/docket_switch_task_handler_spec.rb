@@ -78,18 +78,7 @@ describe DocketSwitch::TaskHandler, :all_dbs do
     context "When the disposition is granted" do
       let(:disposition) { "granted" }
 
-      it "Completes ruling tasks" do
-        ruling_task = old_docket_stream.reload.tasks.find { |task| task.type == "DocketSwitchRulingTask" }
-
-        expect(ruling_task).to be_open
-
-        subject
-
-        expect(ruling_task.reload).to be_completed
-      end
-
       it "Cancels the original appeal stream and creates selected and docket-related tasks on new stream" do
-        # evidence to hearing docketswitch
         docket_task = old_docket_stream.reload.tasks.find { |task| task.type == "EvidenceSubmissionWindowTask" }
 
         expect(old_docket_stream).to be_active
@@ -149,15 +138,7 @@ describe DocketSwitch::TaskHandler, :all_dbs do
       let(:disposition) { "denied" }
       let(:granted_request_issue_ids) { nil }
 
-      it "Completes ruling tasks" do
-        ruling_task = old_docket_stream.reload.tasks.find { |task| task.type == "DocketSwitchRulingTask" }
-
-        expect(ruling_task).to be_open
-
-        subject
-
-        expect(ruling_task.reload).to be_completed
-      end
+      it { is_expected.to be_falsey }
     end
   end
 end

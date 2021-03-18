@@ -11,10 +11,6 @@ class DocketSwitchRulingTask < JudgeTask
     actions
   end
 
-  def timeline_title
-    COPY::DOCKET_SWITCH_RULING_TASK_TITLE
-  end
-
   class << self
     def label
       COPY::DOCKET_SWITCH_RULING_TASK_LABEL

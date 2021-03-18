@@ -15,10 +15,6 @@ class DocketSwitchMailTask < MailTask
     actions
   end
 
-  def timeline_title
-    COPY::DOCKET_SWITCH_MAIL_TASK_TITLE
-  end
-
   class << self
     def label
       COPY::DOCKET_SWITCH_MAIL_TASK_LABEL
