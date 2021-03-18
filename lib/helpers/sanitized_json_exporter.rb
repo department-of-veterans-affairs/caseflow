@@ -6,6 +6,8 @@
 # The resulting JSON can then imported by SanitizedJsonImporter.
 ##
 
+# :reek:RepeatedConditionals
+# :reek:TooManyInstanceVariables
 class SanitizedJsonExporter
   attr_accessor :value_mapping
   attr_accessor :records_hash
@@ -123,8 +125,10 @@ class SanitizedJsonExporter
   end
 
   def default_mapped_value(orig_value, field_name, **kwargs)
-    puts("WARNING: Don't know how to map value '#{orig_value}' #{orig_value.class.name} "\
-      "for field '#{field_name}'; #{kwargs}\n\t  Returning empty value.") if @verbosity > 0
+    if @verbosity > 0
+      puts("WARNING: Don't know how to map value '#{orig_value}' #{orig_value.class.name} "\
+        "for field '#{field_name}'; #{kwargs}\n\t  Returning empty value.")
+    end
     case orig_value
     when Integer
       0
