@@ -30,10 +30,13 @@ const WrapperComponent = ({ children }) => (
   </MemoryRouter>
 );
 
+// Date constructor uses zero-based offset for months — this is 2021-03-17
+const fakeDate = new Date(2021, 2, 17, 12);
+
 beforeAll(() => {
-  // Ensure consistent handling of dates
+  // Ensure consistent handling of dates across tests
   jest.useFakeTimers('modern');
-  jest.setSystemTime(new Date(2021, 2, 15, 12));
+  jest.setSystemTime(fakeDate);
 });
 
 afterAll(() => {
@@ -57,13 +60,24 @@ describe('ColocatedTaskListView', () => {
       expect(container).toMatchSnapshot();
     });
 
+    it('passes a11y', async () => {
+      // Fake timers causes timeouts for jest-axe
+      jest.useRealTimers();
+
+      const { container } = setup();
+
+      const results = await axe(container);
+
+      expect(results).toHaveNoViolations();
+
+      jest.useFakeTimers('modern');
+    });
+
     it('shows only new tasks and tasks with a completed hold', async () => {
       setup();
 
       const task1 = taskNewAssigned().attributes;
       const task2 = completedHoldTask().attributes;
-
-      screen.debug(screen.getAllByRole('row')[1]);
 
       await waitFor(() => {
         expect(
@@ -169,6 +183,19 @@ describe('ColocatedTaskListView', () => {
       });
 
       expect(container).toMatchSnapshot();
+    });
+
+    it('passes a11y', async () => {
+      // Fake timers causes timeouts for jest-axe
+      jest.useRealTimers();
+
+      const { container } = setup();
+
+      const results = await axe(container);
+
+      expect(results).toHaveNoViolations();
+
+      jest.useFakeTimers('modern');
     });
 
     it('shows only on-hold tasks', async () => {
