@@ -459,6 +459,30 @@ describe "SanitizedJsonExporter/Importer" do
     end
   end
 
+  describe "#default_mapped_value" do
+    let(:sje) { SanitizedJsonExporter.new(nil) }
+    subject { sje.send(:default_mapped_value, orig_value, "doesnt_matter") }
+
+    context "given an integer" do
+      let(:orig_value) { 12 }
+      it "returns 0" do
+        expect(subject).to eq 0
+      end
+    end
+    context "given a string" do
+      let(:orig_value) { "blah" }
+      it "returns empty string" do
+        expect(subject).to eq ""
+      end
+    end
+    context "given an array" do
+      let(:orig_value) { ["blah", 123] }
+      it "returns empty array" do
+        expect(subject).to eq []
+      end
+    end
+  end
+
   let(:veteran) { create(:veteran, file_number: "111447777", middle_name: "Middle") }
   let(:appeal) do
     create(:appeal,
