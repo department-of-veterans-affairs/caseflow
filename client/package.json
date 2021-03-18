@@ -144,7 +144,7 @@
     "@testing-library/jest-dom": "^5.11.3",
     "@testing-library/react": "^10.4.9",
     "@testing-library/react-hooks": "^3.4.1",
-    "@testing-library/user-event": "^12.1.1",
+    "@testing-library/user-event": "^12.8.3",
     "@types/jest": "^26.0.10",
     "babel-eslint": "^10.1.0",
     "chai": "^3.5.0",

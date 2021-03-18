@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_02_165940) do
+ActiveRecord::Schema.define(version: 2021_03_11_154002) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1507,6 +1507,7 @@ ActiveRecord::Schema.define(version: 2021_03_02_165940) do
   end
 
   create_table "veterans", force: :cascade do |t|
+    t.datetime "bgs_last_synced_at", comment: "The last time cached BGS attributes were synced"
     t.string "closest_regional_office"
     t.datetime "created_at"
     t.date "date_of_death", comment: "Date of Death reported by BGS, cached locally"
