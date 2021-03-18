@@ -60,7 +60,7 @@ RSpec.feature "Remove hearing scheduled in error" do
     let(:fill_in_veteran_email) { "vet@testingEmail.com" }
     let(:fill_in_representative_email) { "email@testingEmail.com" }
     let(:expected_alert) do
-      COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % appeal.veteran&.name
+      COPY::VIRTUAL_HEARING_SUCCESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % appeal.veteran&.name
     end
   end
 
