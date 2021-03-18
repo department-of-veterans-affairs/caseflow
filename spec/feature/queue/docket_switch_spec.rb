@@ -206,7 +206,6 @@ RSpec.feature "Docket Switch", :all_dbs do
       # Verify correct success alert
       expect(page).to have_content(format(COPY::DOCKET_SWITCH_DENIAL_SUCCESS_TITLE, appeal.claimant.name))
       # Verify that denial completed correctly
-      expect(docket_switch_ruling_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
       expect(docket_switch_denied_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
       expect(docket_switch_denied_task.reload.instructions).to include(context)
       docket_switch = DocketSwitch.find_by(old_docket_stream_id: appeal.id)
@@ -363,7 +362,6 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(docket_switch.new_docket_stream.docket_type).to eq(docket_switch.docket_type)
       expect(page).to have_current_path("/queue/appeals/#{docket_switch.new_docket_stream.uuid}")
 
-      expect(docket_switch_ruling_task.reload.status).to eq Constants.TASK_STATUSES.completed
       expect(docket_switch_granted_task.reload.status).to eq Constants.TASK_STATUSES.completed
       expect(existing_admin_action1.reload.status).to eq Constants.TASK_STATUSES.cancelled
 
