@@ -458,10 +458,13 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     context "tracking distributions over time" do
       let(:number_judges) { rand(5..10) }
       let(:priority_count) { rand(10..30) }
+      # Github Issue 15984, this stops this test from flaking, by making sure the
+      # expects below are achievable for all values rand() will produce.
+      let(:max_preexisting_cases) { (priority_count / (number_judges - 1)).floor }
 
       before do
         # Mock cases already distributed this month
-        @distribution_counts = to_judge_hash(Array.new(number_judges).map { rand(12) })
+        @distribution_counts = to_judge_hash(Array.new(number_judges).map { rand(max_preexisting_cases) })
         allow_any_instance_of(PushPriorityAppealsToJudgesJob)
           .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(@distribution_counts)
         allow_any_instance_of(PushPriorityAppealsToJudgesJob)
