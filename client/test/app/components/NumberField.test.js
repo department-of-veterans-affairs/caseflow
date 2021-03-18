@@ -65,15 +65,8 @@ describe('NumberField', () => {
     consoleErrorSpy.mockClear();
   });
 
+  // This functionality doesn't seem to be used, is likely deprecated
   describe('allows non-integer input when isInteger is false', () => {
-    it('accepts an integer', async () => {
-      const { input } = setup();
-
-      expect(input.value).toBe('');
-      await userEvent.type(input, '6');
-      expect(handleChange).toHaveBeenCalledWith(6);
-    });
-    // It can't support something like 0.45 weirdly
     it('accepts a decimal', async () => {
       const { input } = setup({ isInteger: false });
 
