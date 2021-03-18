@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
+# This is a helper class for SanitizedJsonConfiguration to automate identifying certain
+# fieldnames (a.k.a. foreign keys) that associate with other records.
 # https://stackoverflow.com/questions/13355549/rails-activerecord-detect-if-a-column-is-an-association-or-not
+##
+
 class AssocationWrapper
   attr_reader :associations
 
@@ -29,7 +33,7 @@ class AssocationWrapper
     self
   end
 
-  def ignore_fieldnames(ignore_fieldnames)
+  def except_fieldnames(ignore_fieldnames)
     if ignore_fieldnames.any?
       @associations = @associations.reject { |assoc| ignore_fieldnames&.include?(assoc.foreign_key) }
     end
@@ -40,27 +44,24 @@ class AssocationWrapper
     @associations.map(&:foreign_key)
   end
 
-  class << self
-    def fieldnames_of_typed_associations_with(assoc_class, clazz)
-      AssocationWrapper.new(clazz).belongs_to.associated_with_type(assoc_class).fieldnames.presence
-    end
+  def typed_associations(excluding: nil)
+    belongs_to.having_type_field.except_fieldnames(excluding)
+  end
 
-    def fieldnames_of_untyped_associations_with(assoc_class, clazz)
-      AssocationWrapper.new(clazz).belongs_to.without_type_field.associated_with_type(assoc_class).fieldnames.presence
-    end
+  def typed_associations_with(assoc_class)
+    belongs_to.having_type_field.associated_with_type(assoc_class)
+  end
 
-    def fieldnames_of_typed_associations_for(clazz, ignore_fieldnames)
-      AssocationWrapper.new(clazz).belongs_to.having_type_field.ignore_fieldnames(ignore_fieldnames).fieldnames.presence
-    end
+  def untyped_associations_with(assoc_class)
+    belongs_to.without_type_field.associated_with_type(assoc_class)
+  end
 
-    def grouped_fieldnames_of_typed_associations_with(clazz, known_classes)
-      # foreign keys that are not strings (e.g., Claimant.participant_id) involves
-      # more complex association that isn't currently handled (and may not need to be)
-      AssocationWrapper.new(clazz).belongs_to.associations
-        .group_by(&:class_name)
-        .slice(*known_classes)
-        .transform_values { |assocs| assocs.map(&:foreign_key).select { |fk| fk.is_a?(String) } }
-        .compact
-    end
+  def grouped_fieldnames_of_typed_associations_with(known_classes)
+    # Foreign keys that are not strings (e.g., Claimant.participant_id) involves
+    # more complex association that isn't currently handled (and may not need to be)
+    belongs_to.associations.group_by(&:class_name)
+      .slice(*known_classes)
+      .transform_values { |assocs| assocs.map(&:foreign_key).select { |fk| fk.is_a?(String) } }
+      .compact
   end
 end

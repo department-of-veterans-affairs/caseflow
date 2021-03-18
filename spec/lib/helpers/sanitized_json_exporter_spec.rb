@@ -168,8 +168,8 @@ describe "SanitizedJsonExporter/Importer" do
     end
   end
 
-  describe ".fieldnames_of_untyped_associations_with User records" do
-    subject { AssocationWrapper.fieldnames_of_untyped_associations_with(User, target_class) }
+  describe "AssocationWrapper#untyped_associations_with User records" do
+    subject { AssocationWrapper.new(target_class).untyped_associations_with(User).fieldnames }
     context "for Task class" do
       let(:target_class) { Task }
       it "returns fieldname associated with User records" do
@@ -265,7 +265,7 @@ describe "SanitizedJsonExporter/Importer" do
 
   describe "#default_mapped_value" do
     let(:sje) { SanitizedJsonExporter.new(nil) }
-    subject { sje.send(:default_mapped_value, orig_value, "doesnt_matter") }
+    subject { sje.send(:default_mapped_value, orig_value, "some_field") }
 
     context "given an integer" do
       let(:orig_value) { 12 }

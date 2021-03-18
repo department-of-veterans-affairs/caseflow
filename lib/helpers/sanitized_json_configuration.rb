@@ -164,7 +164,7 @@ class SanitizedJsonConfiguration
       reassociate_types.map do |clazz|
         [
           clazz,
-          AssocationWrapper.grouped_fieldnames_of_typed_associations_with(clazz, known_types.map(&:name))
+          AssocationWrapper.new(clazz).grouped_fieldnames_of_typed_associations_with(known_types.map(&:name))
             .values.flatten.sort
         ]
       end.to_h.tap do |class_to_fieldnames_hash|
@@ -254,13 +254,19 @@ class SanitizedJsonConfiguration
   # For each class in nonduplicate_types, provide a way to find the existing record
   def find_existing_record(clazz, obj_hash, importer: nil)
     if clazz == User
-      User.find_by_css_id(obj_hash["css_id"]) # cannot
+      # The index for css_id has an odd column name plus find_by_css_id is faster.
+      User.find_by_css_id(obj_hash["css_id"])
     elsif clazz == OrganizationsUser
-      user_id = importer.id_mapping[User.name][obj_hash["user_id"]]
-      organization_id = importer.id_mapping[Organization.name][obj_hash["organization_id"]]
-      OrganizationsUser.find_by(user_id: user_id, organization_id: organization_id)
+      # Since OrganizationsUser requires the (user_id,organization_id) combination to be unique,
+      # and User and Organization are mapped to possibly different id's, update the id's by
+      # reassociating with the imported records, then searching for an existing record.
+      obj_hash_clone = obj_hash.clone
+      importer.reassociate_with_imported_records(clazz, obj_hash_clone)
+      importer.find_record_by_unique_index(clazz, obj_hash_clone)
+      # OrganizationsUser.find_by(user_id: user_id2, organization_id: org_id2)
     elsif clazz == Appeal
-      Appeal.find_by(uuid: obj_hash["uuid"]) # cannot; TODO: allow class to provide find_by_uniq_field
+      # uuid is not a uniq index, so can't rely on importer to do it automatically
+      Appeal.find_by(uuid: obj_hash["uuid"])
     elsif [Organization, Veteran, Person].include?(clazz)
       # Let importer find it using the fallback: clazz.find_by(unique_field: obj_hash[unique_field])
       nil
@@ -302,11 +308,11 @@ class SanitizedJsonConfiguration
 
   def reassociate_fields
     # For each reassociate_types, identify their associations so '_id' fields can be updated to imported records
-    # TODO: shouldn't all id_mapping_types be a key in this hash?
     @reassociate_fields ||= {
       # Typed polymorphic association fields will associate to the their corresponding ActiveRecord
       type: reassociate_types.map do |clazz|
-        [clazz, AssocationWrapper.fieldnames_of_typed_associations_for(clazz, offset_id_fields[clazz])]
+        [clazz,
+         AssocationWrapper.new(clazz).typed_associations(excluding: offset_id_fields[clazz]).fieldnames.presence]
       end.to_h.compact
     }.merge(
       # Untyped association fields (those without the matching '_type' field) will associate to User records
@@ -314,7 +320,8 @@ class SanitizedJsonConfiguration
         [
           assoc_class.name,
           reassociate_types.map do |clazz|
-            [clazz, AssocationWrapper.fieldnames_of_untyped_associations_with(assoc_class, clazz)]
+            [clazz,
+             AssocationWrapper.new(clazz).untyped_associations_with(assoc_class).fieldnames.presence]
           end.to_h.compact
         ]
       end .to_h
