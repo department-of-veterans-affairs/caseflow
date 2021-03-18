@@ -229,6 +229,7 @@ class SanitizedJsonImporter
   end
 
   # Try to find record using unique indices on the corresponding table
+  # :reek:FeatureEnvy
   def find_record_by_unique_index(clazz, obj_hash)
     unique_indices = ActiveRecord::Base.connection.indexes(clazz.table_name).select(&:unique)
     found_records = unique_indices.map(&:columns).map do |fieldnames|

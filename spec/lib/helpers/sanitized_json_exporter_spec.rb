@@ -263,6 +263,30 @@ describe "SanitizedJsonExporter/Importer" do
     end
   end
 
+  describe "#default_mapped_value" do
+    let(:sje) { SanitizedJsonExporter.new(nil) }
+    subject { sje.send(:default_mapped_value, orig_value, "doesnt_matter") }
+
+    context "given an integer" do
+      let(:orig_value) { 12 }
+      it "returns 0" do
+        expect(subject).to eq 0
+      end
+    end
+    context "given a string" do
+      let(:orig_value) { "blah" }
+      it "returns empty string" do
+        expect(subject).to eq ""
+      end
+    end
+    context "given an array" do
+      let(:orig_value) { ["blah", 123] }
+      it "returns empty array" do
+        expect(subject).to eq []
+      end
+    end
+  end
+
   let(:veteran) { create(:veteran, file_number: "111447777", middle_name: "Middle") }
   let(:appeal) do
     create(:appeal,
@@ -288,11 +312,11 @@ describe "SanitizedJsonExporter/Importer" do
     context "failure conditions" do
       describe ".sanitize" do
         it "fails for unsupported record types" do
-          expect { sje.sanitize(PaperTrail::Version.last) }.to raise_error RuntimeError
+          expect { sje.send(:sanitize, PaperTrail::Version.last) }.to raise_error RuntimeError
         end
       end
       describe ".sanitize_object_hash" do
-        subject { sje.sanitize_object_hash(obj_hash, fieldname_expression, appeal) }
+        subject { sje.send(:sanitize_object_hash, obj_hash, fieldname_expression, appeal) }
         let(:obj_hash) { appeal.attributes }
         context "when non-existent object attribute is specified" do
           let(:fieldname_expression) { "non_existent_field" }
@@ -309,7 +333,7 @@ describe "SanitizedJsonExporter/Importer" do
       end
       describe ".map_value" do
         it "shows warning when transform method cannot be found for sanitization" do
-          expect { sje.map_value(1234, "field_without_sanitizing_transform") }.not_to raise_error RuntimeError
+          expect { sje.send(:map_value, 1234, "field_without_sanitizing_transform") }.not_to raise_error RuntimeError
         end
       end
     end

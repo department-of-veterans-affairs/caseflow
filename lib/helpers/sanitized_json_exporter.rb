@@ -2,6 +2,12 @@
 
 require "helpers/sanitized_json_configuration.rb"
 
+# Given a set of records, this class sanitizes specified fields and exports them as JSON.
+# The fields to be sanitized is specified by the SanitizedJsonConfiguration, which also provides
+# a list of methods (e.g., those in SanitizationTransforms) that will be applied to the original values.
+# The resulting JSON can then imported by SanitizedJsonImporter.
+##
+
 class SanitizedJsonExporter
   attr_accessor :value_mapping
   attr_accessor :records_hash
@@ -14,6 +20,8 @@ class SanitizedJsonExporter
     @sanitize = sanitize
     @value_mapping = {}
     @records_hash = { "metadata" => { "exported_at": Time.zone.now } }
+
+    return if initial_records.compact.blank?
 
     @configuration.records_to_export(initial_records).each do |clazz, records|
       # puts "Exporting #{clazz.table_name}"
@@ -33,6 +41,8 @@ class SanitizedJsonExporter
   def self.record_to_hash(record)
     record.attributes
   end
+
+  private
 
   def sanitize_records(records)
     # keep records in order so that comparisons can be done after import
