@@ -56,6 +56,7 @@ class SanitizedJsonImporter
     @metadata = @records_hash.delete("metadata")
     @imported_records = {}
     @reused_records = {}
+    @unique_indices = {}
 
     # unique indices for the table associated with a class
     @unique_indices_per_class = {}
