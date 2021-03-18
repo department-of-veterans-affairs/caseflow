@@ -8,6 +8,7 @@ const Template = () => {
   return <NumberField
     label="Enter the number of things"
     name="things"
+    useAriaLabel
     isInteger
     value={number}
     onChange={setNumber}
