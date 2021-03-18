@@ -461,7 +461,7 @@ describe "SanitizedJsonExporter/Importer" do
 
   describe "#default_mapped_value" do
     let(:sje) { SanitizedJsonExporter.new(nil) }
-    subject { sje.send(:default_mapped_value, orig_value, "doesnt_matter") }
+    subject { sje.send(:default_mapped_value, orig_value, "some_field") }
 
     context "given an integer" do
       let(:orig_value) { 12 }
