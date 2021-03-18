@@ -1145,7 +1145,7 @@ feature "Task queue", :all_dbs do
         click_on "Completed"
         click_on veteran_link_text
         expect(page).to have_content("Currently active tasks")
-        expect(page).to have_content("No active tasks")
+        expect(page).to have_content("There are currently no active tasks")
       end
 
       step "verify that the associated TimedHoldTask has been canceled" do

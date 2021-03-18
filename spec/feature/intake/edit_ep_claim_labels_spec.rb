@@ -88,6 +88,8 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
   end
 
   context "When editing a decision review with end products" do
+    let(:new_ep_code) { "030HLRR" }
+
     before do
       higher_level_review.create_issues!(
         [
@@ -136,7 +138,7 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
 
       nr_row.find("button", text: "Edit claim label").click
       safe_click ".cf-select"
-      fill_in "Select the correct EP claim label", with: "030HLRR"
+      fill_in "Select the correct EP claim label", with: new_ep_code
       find("#select-claim-label").send_keys :enter
       find("button", text: "Continue").click
 
@@ -145,6 +147,12 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
       expect(page).to have_content("New label: #{r_label}")
 
       find("button", text: "Confirm").click
+
+      expect(page).to_not have_content(COPY::EDIT_CLAIM_LABEL_MODAL_NOTE)
+      sleep 1 # when frontend displays result of XHR, write a capybara expect against that
+
+      expect(EndProductUpdate.find_by(original_decision_review: higher_level_review)).to_not be_nil
+      expect(higher_level_review.end_product_establishments.where(code: new_ep_code).count).to eq(2)
     end
   end
 end
