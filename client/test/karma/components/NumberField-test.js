@@ -47,7 +47,7 @@ describe('NumberField', () => {
     expect(state.value).to.be.eq('');
   });
 
-  it('allows non-integer input when isInteger is false', () => {
+  it('Depcrecated functionality: allows non-integer input when isInteger is false', () => {
     wrapper = mount(
       <NumberField
         name="foo"
