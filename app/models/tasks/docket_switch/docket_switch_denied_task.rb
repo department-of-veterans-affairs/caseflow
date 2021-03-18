@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class DocketSwitchDeniedTask < DocketSwitchAbstractAttorneyTask
-
   def timeline_title
     COPY::DOCKET_SWITCH_DENIED_TASK_TITLE
   end

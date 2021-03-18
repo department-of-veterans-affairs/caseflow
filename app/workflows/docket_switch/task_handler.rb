@@ -32,6 +32,7 @@ class DocketSwitch::TaskHandler
     complete_docket_switch_tasks
 
     return if disposition == "denied"
+
     create_new_tasks
     tasks_to_move = persistent_tasks.map { |task| task.copy_with_ancestors_to_stream(new_docket_stream) }
     cancel_old_tasks
