@@ -112,7 +112,7 @@ class SanitizedJsonConfiguration
         sanitize_fields: %w[date_of_birth email_address first_name last_name middle_name ssn],
         retrieval: ->(records) { (records[Veteran] + records[Claimant]).map(&:person).uniq.compact }
       }
-    }.freeze
+    }
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
@@ -153,7 +153,7 @@ class SanitizedJsonConfiguration
   # Types whose id's are tracked in `importer.id_mapping` and are used by `reassociate_with_imported_records`
   # or where we want to look up its new id
   def id_mapping_types
-    @id_mapping_types = extract_classes_with_true(:track_imported_ids, configuration).freeze
+    @id_mapping_types ||= extract_classes_with_true(:track_imported_ids, configuration)
   end
 
   # Fields that will be offset by the id_offset when imported
@@ -176,14 +176,14 @@ class SanitizedJsonConfiguration
 
         # Why is :participant_id listed as a association? Why is it a symbol whereas others are strings?
         class_to_fieldnames_hash[Claimant].delete(:participant_id)
-      end.compact.freeze
+      end.compact
     end
   end
   # rubocop:enable Style/MultilineBlockChain
 
   # ==========  SanitizedJsonExporter-specific Configuration ==============
   def sanitize_fields_hash
-    @sanitize_fields_hash ||= extract_configuration(:sanitize_fields, configuration, []).freeze
+    @sanitize_fields_hash ||= extract_configuration(:sanitize_fields, configuration, [])
   end
 
   def records_to_export(initial_appeals)
@@ -239,19 +239,19 @@ class SanitizedJsonConfiguration
   # Start with important types that other records will reassociate with
   def first_types_to_import
     # HearingDay is needed by Hearing
-    @first_types_to_import ||= [Appeal, Organization, User, HearingDay].freeze
+    @first_types_to_import ||= [Appeal, Organization, User, HearingDay]
   end
 
   # During record creation, types where validation and callbacks should be avoided
   def types_that_skip_validation_and_callbacks
-    @types_that_skip_validation_and_callbacks ||= [Task, *Task.descendants, Hearing].freeze
+    @types_that_skip_validation_and_callbacks ||= [Task, *Task.descendants, Hearing]
   end
 
   # Classes that shouldn't be imported if a record with the same unique attributes already exists
   # These types should be handled in `find_existing_record`.
   def reuse_record_types
     # Adding OrganizationsUser because we don't want to create duplicate OrganizationsUser records
-    @reuse_record_types ||= id_mapping_types + [OrganizationsUser].freeze
+    @reuse_record_types ||= id_mapping_types + [OrganizationsUser]
   end
 
   # For each class in reuse_record_types, provide a way to find the existing record
@@ -328,7 +328,7 @@ class SanitizedJsonConfiguration
           end.to_h.compact
         ]
       end .to_h
-    ).freeze
+    )
   end
 
   # :reek:LongParameterList
@@ -356,6 +356,6 @@ class SanitizedJsonConfiguration
   def expected_differences
     @expected_differences ||= {
       User => [:display_name]
-    }.freeze
+    }
   end
 end
