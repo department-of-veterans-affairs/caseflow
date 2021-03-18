@@ -537,7 +537,7 @@ describe "SanitizedJsonExporter/Importer" do
       before { sje } # causes relevant appeals to be created
 
       it "creates hearing appeal with associated records" do
-        pp sje.records_hash.transform_values(&:count)
+        # pp sje.records_hash.transform_values(&:count)
         subject
         record_counts = { "appeals" => 1,
                           "users" => 6,
@@ -633,10 +633,10 @@ describe "SanitizedJsonExporter/Importer" do
                             sji.imported_records.transform_values(&:count).to_a
       expect(not_imported_counts).to eq [["metadata", 1]]
 
-      pp "DIFFERENCES counts", sji.differences(orig_appeals, ignore_expected_diffs: false).transform_values(&:count)
+      # pp "DIFFERENCES counts", sji.differences(orig_appeals, ignore_expected_diffs: false).transform_values(&:count)
       # pp sji.differences(orig_appeals, ignore_expected_diffs: false)
       diffs = sji.differences(orig_appeals, additional_expected_diffs_fields: { Appeal => ["uuid"] })
-      pp "DIFFERENCES minus expected diffs", diffs
+      # pp "DIFFERENCES minus expected diffs", diffs
       expect(diffs.values.flatten).to be_empty
     end
   end

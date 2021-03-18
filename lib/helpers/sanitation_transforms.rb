@@ -15,7 +15,7 @@ module SanitizationTransforms
   # :reek:RepeatedConditionals
   def random_email(field_name, field_value, obj_class: nil)
     case field_name
-    when "email_address", /email$/
+    when "email_address", "alias_with_host", /email$/
       Faker::Internet.email
     else
       case field_value

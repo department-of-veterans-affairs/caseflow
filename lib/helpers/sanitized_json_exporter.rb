@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "helpers/sanitized_json_configuration.rb"
-
 # Given a set of records, this class sanitizes specified fields and exports them as JSON.
 # The fields to be sanitized is specified by the SanitizedJsonConfiguration, which also provides
 # a list of methods (e.g., those in SanitizationTransforms) that will be applied to the original values.
@@ -15,18 +13,21 @@ class SanitizedJsonExporter
   # :reek:BooleanParameter
   def initialize(*initial_records,
                  configuration: SanitizedJsonConfiguration.new,
-                 sanitize: true)
+                 sanitize: true,
+                 verbosity: ENV["SJ_VERBOSITY"] ? ENV["SJ_VERBOSITY"].to_i : 2)
     @configuration = configuration
     @sanitize = sanitize
     @value_mapping = {}
     @records_hash = { "metadata" => { "exported_at": Time.zone.now } }
+    @verbosity = verbosity # higher is more verbose
 
     return if initial_records.compact.blank?
 
     @configuration.records_to_export(initial_records).each do |clazz, records|
-      # puts "Exporting #{clazz.table_name}"
-      @records_hash[clazz.table_name] = sanitize_records(records)
+      puts "Exporting #{records.count} #{clazz} records" if @verbosity > 1
+      @records_hash[clazz.table_name] = sanitize_records(records.uniq.compact)
     end
+    puts "Processed #{@records_hash.values.map(&:count).sum} records" if @verbosity > 0
   end
 
   def save(filename, purpose: nil)
@@ -46,7 +47,7 @@ class SanitizedJsonExporter
 
   def sanitize_records(records)
     # keep records in order so that comparisons can be done after import
-    records.uniq.compact.sort_by(&:id).map { |record| sanitize(record) }
+    records.sort_by(&:id).map { |record| sanitize(record) }
   end
 
   def supported_classes
@@ -58,6 +59,7 @@ class SanitizedJsonExporter
   end
 
   def sanitize(record)
+    puts " * Starting export of #{record.class.name} #{record.id}" if @verbosity > 2
     obj_hash = self.class.record_to_hash(record)
     return obj_hash unless @sanitize
 
@@ -71,7 +73,7 @@ class SanitizedJsonExporter
       return obj_hash
     end
 
-    fail "Unsupported record type: #{record.class.name}"
+    fail "ERROR: Unsupported record type: #{record.class.name}"
   end
 
   def sanitize_object_hash(obj_hash, fieldname_expression, record)
@@ -97,9 +99,10 @@ class SanitizedJsonExporter
     # Loop to ensure hash @value_mapping has a different value for each distinct key
     10.times do
       obj_hash[field_name] = find_or_create_mapped_value(obj_hash[field_name], field_name, **kwargs)
+      puts "    > sanitizing #{field_name} to '#{obj_hash[field_name]}'" if @verbosity > 3
       break if @value_mapping.values.uniq.size == @value_mapping.size
 
-      puts "Value '#{obj_hash[field_name]}' for field #{field_name} is already used; trying again"
+      puts "   Value '#{obj_hash[field_name]}' for field #{field_name} is already used; trying again" if @verbosity > 1
     end
     obj_hash[field_name]
   end
@@ -121,7 +124,7 @@ class SanitizedJsonExporter
 
   def default_mapped_value(orig_value, field_name, **kwargs)
     puts("WARNING: Don't know how to map value '#{orig_value}' #{orig_value.class.name} "\
-      "for field '#{field_name}'; #{kwargs}")
+      "for field '#{field_name}'; #{kwargs}\n\t  Returning empty value.") if @verbosity > 0
     case orig_value
     when Integer
       0
@@ -140,8 +143,10 @@ class SanitizedJsonExporter
     end
 
     unless transform_method
-      puts "WARNING: Could not find a transform_method for #{obj_class&.name} field '#{field_name}'"\
-           " with value '#{orig_value}' of class #{orig_value.class}."
+      if @verbosity > 0
+        puts "WARNING: Could not find a transform_method for #{obj_class&.name} field '#{field_name}'"\
+            " with value '#{orig_value}' of class #{orig_value.class}."
+      end
       return [nil, nil]
     end
 
