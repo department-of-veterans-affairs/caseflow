@@ -43,6 +43,7 @@ NumberField.propTypes = {
     }
   },
   placeholder: PropTypes.string,
+  isInteger: PropTypes.bool,
   readOnly: PropTypes.bool,
   required: PropTypes.bool.isRequired,
   type: PropTypes.string,

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
 
@@ -15,8 +15,7 @@ describe('NumberField', () => {
     name: 'number-things',
     useAriaLabel: true,
     isInteger: true,
-    value: 4,
-    onChange: { handleChange }
+    onChange: handleChange
   };
 
   const setup = (props = {}) => {
@@ -66,17 +65,53 @@ describe('NumberField', () => {
     consoleErrorSpy.mockClear();
   });
 
-  /*
-  it('accepts typing in an integer', async () => {
-    const { input } = setup();
+  describe('allows non-integer input when isInteger is false', () => {
+    it('accepts an integer', async () => {
+      const { input } = setup();
 
-    expect(input.value).toBe('4');
-    await userEvent.type(input, '6');
-    expect(handleChange).toHaveBeenCalled();
-    expect(input.value).toBe('6');
+      expect(input.value).toBe('');
+      await userEvent.type(input, '6');
+      expect(handleChange).toHaveBeenCalledWith(6);
+    });
+    // It can't support something like 0.45 weirdly
+    it('accepts a decimal', async () => {
+      const { input } = setup({ isInteger: false });
+
+      expect(input.value).toBe('');
+      await userEvent.type(input, '2.4');
+      expect(handleChange).toHaveBeenCalledWith(2.4);
+    });
   });
-  */
-  it('rejects typing in a letter', () => {});
-  it('rejects typing in a symbol', () => {});
-  it('rejects typing in a decimal', () => {});
+  describe('only accepts integer values when isInteger is true', () => {
+    it('accepts an integer', async () => {
+      const { input } = setup();
+
+      expect(input.value).toBe('');
+      await userEvent.type(input, '6');
+      expect(handleChange).toHaveBeenCalledWith(6);
+    });
+
+    it('rejects a letter', async () => {
+      const { input } = setup();
+
+      expect(input.value).toBe('');
+      await userEvent.type(input, 'a');
+      expect(handleChange).toHaveBeenCalledWith('');
+    });
+
+    it('rejects a symbol', async () => {
+      const { input } = setup();
+
+      expect(input.value).toBe('');
+      await userEvent.type(input, '-');
+      expect(handleChange).toHaveBeenCalledWith('');
+    });
+    it('rejects a decimal', async() => {
+      const { input } = setup();
+
+      expect(input.value).toBe('');
+      await userEvent.type(input, '0.4');
+      expect(handleChange).toHaveBeenCalledWith('');
+    });
+  });
 });

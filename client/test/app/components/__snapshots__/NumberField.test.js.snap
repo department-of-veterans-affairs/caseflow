@@ -21,7 +21,7 @@ exports[`NumberField renders correctly 1`] = `
         id="number-things"
         name="number-things"
         type="text"
-        value="4"
+        value=""
       />
     </div>
   </div>
