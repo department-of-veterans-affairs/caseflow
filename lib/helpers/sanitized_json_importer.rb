@@ -36,6 +36,8 @@ class SanitizedJsonImporter
   # Hash of records imported into the database
   # key = ActiveRecord class's table_name; value = ActiveRecords in the database
   attr_accessor :imported_records
+
+  # Existing ActiveRecords that are not imported because they already exist in the database
   attr_accessor :reused_records
 
   # Existing ActiveRecords that are not imported because they already exist in the database
@@ -56,7 +58,6 @@ class SanitizedJsonImporter
     @metadata = @records_hash.delete("metadata")
     @imported_records = {}
     @reused_records = {}
-    @unique_indices = {}
 
     # unique indices for the table associated with a class
     @unique_indices_per_class = {}
@@ -153,7 +154,16 @@ class SanitizedJsonImporter
   def mapped_user_ids
     @mapped_ids[User.name.underscore]
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+  def add_to_id_mapping(clazz, orig_id, new_id)
+    id_mapping_key = clazz.table_name.classify
+    unless id_mapping[id_mapping_key]
+      # puts "Consider: adding #{id_mapping_key} to @configuration.id_mapping_types"
+      id_mapping[id_mapping_key] = {}
+    end
+    id_mapping[id_mapping_key][orig_id] = new_id
+  end
 
   def mapped_org_ids
     @mapped_ids[Organization.name.underscore]
@@ -221,7 +231,8 @@ class SanitizedJsonImporter
   def reassociate_table_fields_hash
     @reassociate_table_fields_hash ||= @configuration.reassociate_fields
       .select { |type_string, _| type_string.is_a?(String) }
-      .transform_values { |class_to_fieldnames_hash| class_to_fieldnames_hash.transform_keys(&:table_name) }.freeze
+      .transform_values { |class_to_fieldnames_hash| class_to_fieldnames_hash.transform_keys(&:table_name) }
+      .freeze
   end
 
   def user_id_mapping
