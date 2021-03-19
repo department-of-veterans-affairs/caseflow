@@ -90,7 +90,7 @@ export const completedHoldTask = () =>
   amaTaskWith({
     id: '2',
     attributes: {
-      assigned_at: formatISO(sub(new Date(), { days: daysOnHold, hours: 13 })),
+      assigned_at: formatISO(sub(new Date(), { days: daysOnHold + 1 })),
       placed_on_hold_at: formatISO(sub(new Date(), { days: daysOnHold })),
       on_hold_duration: daysOnHold - 1,
     },
@@ -110,7 +110,7 @@ export const noOnHoldDurationTask = () =>
   amaTaskWith({
     id: '4',
     attributes: {
-      assigned_at: formatISO(sub(new Date(), { days: daysOnHold, hours: 12 })),
+      assigned_at: formatISO(sub(new Date(), { days: daysOnHold + 1 })),
       placed_on_hold_at: formatISO(sub(new Date(), { days: daysOnHold })),
       status: 'on_hold',
     },
