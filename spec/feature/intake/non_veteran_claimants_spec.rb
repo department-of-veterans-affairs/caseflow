@@ -83,6 +83,7 @@ feature "Non-veteran claimants", :postgres do
 
       safe_click ".dropdown-listedAttorney"
       fill_in("listedAttorney", with: "Name not listed").send_keys :enter
+      find("div", class: "cf-select__menu", text: "Name not listed")
       select_claimant(0)
 
       expect(page).to have_content("Is the claimant an organization or individual?")
@@ -165,6 +166,7 @@ feature "Non-veteran claimants", :postgres do
       # Fill in Name not listed
       safe_click ".dropdown-listedAttorney"
       fill_in("listedAttorney", with: "Name not listed").send_keys :enter
+      find("div", class: "cf-select__menu", text: "Name not listed")
       select_claimant(0)
       expect(page).to have_content("Is the representative an organization or individual?")
 
