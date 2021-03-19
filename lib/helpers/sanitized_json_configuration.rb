@@ -8,6 +8,7 @@ require "helpers/sanitation_transforms.rb"
 
 class SanitizedJsonConfiguration
   # For exporting, the :retrieval lambda is run according to the ordering in this hash.
+  # Results of running each lambda are added to the `records` hash for use by later retrieval lambdas.
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def configuration
     @configuration ||= {
@@ -261,12 +262,12 @@ class SanitizedJsonConfiguration
       User.find_by_css_id(obj_hash["css_id"])
     elsif clazz == OrganizationsUser
       # Since OrganizationsUser requires the (user_id,organization_id) combination to be unique,
-      # and User and Organization are mapped to possibly different id's, update the id's by
-      # reassociating with the imported records, then searching for an existing record.
+      # and User and Organization are mapped to possibly different id's (not simply an id_offset), 
+      # update the id's by reassociating with the imported records, then search for an existing record.
       obj_hash_clone = obj_hash.clone
       importer.reassociate_with_imported_records(clazz, obj_hash_clone)
+      # The following is equiv to: OrganizationsUser.find_by(user_id: ..., organization_id: ...)
       importer.find_record_by_unique_index(clazz, obj_hash_clone)
-      # OrganizationsUser.find_by(user_id: user_id2, organization_id: org_id2)
     elsif clazz == Appeal
       # uuid is not a uniq index, so can't rely on importer to do it automatically
       Appeal.find_by(uuid: obj_hash["uuid"])
