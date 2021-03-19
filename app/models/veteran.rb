@@ -327,7 +327,7 @@ class Veteran < CaseflowRecord
     CACHED_BGS_ATTRIBUTES.each do |local_attr, bgs_attr|
       fetched_attr = bgs_record[bgs_attr]
       self[local_attr] = (local_attr == :date_of_death) ? Date.strptime(fetched_attr, "%m/%d/%Y") : fetched_attr
-    rescue ArgumentError
+    rescue StandardError
       nil
     end
     set_bgs_last_synced_at!
