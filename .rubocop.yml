@@ -159,6 +159,10 @@ Lint/SuppressedException:
   Enabled: true
   AllowComments: true
 
+Lint/UnusedMethodArgument:
+  Exclude:
+    - 'lib/fakes/*.rb'
+
 Layout/LineLength:
   Max: 120
 

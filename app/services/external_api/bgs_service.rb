@@ -58,6 +58,7 @@ class ExternalApi::BGSService
       end
   end
 
+  # rubocop:disable Metrics/ParameterLists
   def update_benefit_claim(veteran_file_number:, payee_code:, claim_date:, benefit_type_code:, modifier:, new_code:)
     DBService.release_db_connections
 
@@ -80,6 +81,7 @@ class ExternalApi::BGSService
       )
     end
   end
+  # rubocop:enable Metrics/ParameterLists
 
   def fetch_veteran_info(vbms_id)
     DBService.release_db_connections

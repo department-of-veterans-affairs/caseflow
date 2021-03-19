@@ -128,9 +128,9 @@ class Fakes::BGSService
   def select_end_products(file_number, code: nil, modifier: nil, payee_code: nil, claim_date: nil)
     get_end_products(file_number).select do |ep|
       (code.nil? || ep[:claim_type_code] == code) &&
-      (modifier.nil? || ep[:end_product_type_code] == modifier) &&
-      (payee_code.nil? || ep[:payee_code] == payee_code) &&
-      (claim_date.nil? || ep[:claim_receive_date] == claim_date.strftime("%m/%d/%Y"))
+        (modifier.nil? || ep[:end_product_type_code] == modifier) &&
+        (payee_code.nil? || ep[:payee_code] == payee_code) &&
+        (claim_date.nil? || ep[:claim_receive_date] == claim_date.strftime("%m/%d/%Y"))
     end
   end
 
@@ -184,20 +184,28 @@ class Fakes::BGSService
   # benefit_type_code is not available data on end product data we fetch from BGS,
   # and isn't part of the end product store in fakes
   def cancel_end_product(file_number, end_product_code, end_product_modifier, payee_code, _benefit_type)
-    matching_eps = select_end_products(file_number, code: end_product_code, modifier: end_product_modifier, payee_code: payee_code)
+    matching_eps = select_end_products(file_number,
+                                       code: end_product_code,
+                                       modifier: end_product_modifier,
+                                       payee_code: payee_code)
     matching_eps.each do |ep|
       ep[:status_type_code] = "CAN"
       self.class.store_end_product_record(file_number, ep)
     end
   end
 
+  # rubocop:disable Metrics/ParameterLists
   def update_benefit_claim(veteran_file_number:, payee_code:, claim_date:, benefit_type_code:, modifier:, new_code:)
-    matching_eps = select_end_products(file_number, modifier: modifier, payee_code: payee_code, claim_date: claim_date)
+    matching_eps = select_end_products(veteran_file_number,
+                                       modifier: modifier,
+                                       payee_code: payee_code,
+                                       claim_date: claim_date)
     matching_eps.each do |ep|
       ep[:claim_type_code] = new_code
       self.class.store_end_product_record(file_number, ep)
     end
   end
+  # rubocop:enable Metrics/ParameterLists
 
   def fetch_veteran_info(vbms_id)
     # BGS throws a ShareError if the veteran has too high sensitivity

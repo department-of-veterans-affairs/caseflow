@@ -9,7 +9,8 @@ class EndProductUpdate < CaseflowRecord
   belongs_to :original_decision_review, polymorphic: true, optional: false
   belongs_to :user, optional: false
 
-  delegate :request_issues, :claim_date, :benefit_type_code, :payee_code, :modifier, :veteran_file_number, to: :end_product_establishment
+  delegate :request_issues, :claim_date, :benefit_type_code, :payee_code, :modifier, :veteran_file_number,
+           to: :end_product_establishment
 
   enum status: { success: "success", error: "error" }
 
