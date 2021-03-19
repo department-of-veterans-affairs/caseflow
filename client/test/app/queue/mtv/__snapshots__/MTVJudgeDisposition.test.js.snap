@@ -1,0 +1,239 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MTVJudgeDisposition default view renders correctly 1`] = `
+<div>
+  <div
+    class="address-motion-to-vacate"
+  >
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <h1>
+        Address Abellona Valtas's Motion to Vacate
+      </h1>
+      <div
+        class="case-meta"
+      >
+        <span>
+          <strong>
+            Veteran ID:
+          </strong>
+           
+          123456789
+        </span>
+        <span
+          style="margin-left: 3rem;"
+        >
+          <strong>
+            Task:
+          </strong>
+           
+        </span>
+      </div>
+      <div
+        class="cf-help-divider"
+        style="margin: 15px 0px;"
+      />
+      <p>
+        Determine how you would like to address this motion to vacate.
+        <br />
+        
+        <br />
+        If you are granting all issues for vacatur or a partial vacatur for this motion, you will then assign this case to an attorney on your team.
+        <br />
+        
+        <br />
+        If you are choosing to deny or dismiss this motion, it will be automatically returned to the original Motions Attorney on the case.
+        <br />
+        
+        <br />
+        If they are no longer active, it will be placed in the Litigation Support team queue for reassignment.
+      </p>
+      <h3>
+        Motion Attorney's Notes
+      </h3>
+      <p
+        class="mtv-task-instructions"
+      >
+        Lorem ipsum dolor sit amet, consectetur adipiscing
+      </p>
+      <div
+        class="cf-help-divider"
+      />
+      <fieldset
+        class="mtv-disposition-selection cf-form-radio "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              How will you address this motion to vacate?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_granted"
+              name="disposition"
+              type="radio"
+              value="granted"
+            />
+            <label
+              class=""
+              for="disposition_granted"
+            >
+              Grant all issues for vacatur
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_partially_granted"
+              name="disposition"
+              type="radio"
+              value="partially_granted"
+            />
+            <label
+              class=""
+              for="disposition_partially_granted"
+            >
+              Grant partial vacatur
+            </label>
+            <div
+              class="cf-form-radio-help helpText"
+            >
+              e.g. if you do not want to vacate all the issues the veteran is requesting
+            </div>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_denied"
+              name="disposition"
+              type="radio"
+              value="denied"
+            />
+            <label
+              class=""
+              for="disposition_denied"
+            >
+              Deny all issues for vacatur
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_dismissed"
+              name="disposition"
+              type="radio"
+              value="dismissed"
+            />
+            <label
+              class=""
+              for="disposition_dismissed"
+            >
+              Dismiss
+            </label>
+            <div
+              class="cf-form-radio-help helpText"
+            >
+              e.g. if the veteran has passed away or has withdrawn their motion
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      <div
+        style="max-width: 46rem; margin-bottom: 1.5em;"
+      >
+        <div
+          class="usa-alert usa-alert-warning"
+          role="alert"
+        >
+          <div
+            class="usa-alert-body"
+          >
+            <h2
+              class="usa-alert-heading"
+            >
+              Please Note
+            </h2>
+            <div
+              class="usa-alert-text"
+            >
+              If you weren't provided the draft ruling letter, or would like to request that the motions attorney make changes, please 
+              <a
+                href="/modal/return_to_lit_support"
+              >
+                return to the motions attorney
+              </a>
+              .
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="cf-form-textarea"
+      >
+        <label
+          class="question-label"
+          for="instructions"
+        >
+          <strong>
+            <span>
+              Provide context and instructions on which issues should be granted
+              <span
+                class="cf-optional"
+              >
+                Optional
+              </span>
+            </span>
+          </strong>
+        </label>
+        <textarea
+          id="instructions"
+          name="instructions"
+        />
+      </div>
+    </section>
+    <div
+      class="controls cf-app-segment"
+    >
+      <span>
+        <button
+          class="cf-right-side usa-button-disabled usa-button"
+          data-css-wn5k45=""
+          disabled=""
+          id="button-submit"
+          type="button"
+        >
+          Submit
+        </button>
+      </span>
+      <a
+        href="/queue/appeals/23423534"
+      >
+        <span>
+          <button
+            class="cf-right-side usa-button-secondary usa-button"
+            id="button-Cancel"
+            type="button"
+          >
+            Cancel
+          </button>
+        </span>
+      </a>
+    </div>
+  </div>
+</div>
+`;
