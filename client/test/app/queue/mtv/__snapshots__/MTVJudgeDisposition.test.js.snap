@@ -50,9 +50,11 @@ exports[`MTVJudgeDisposition default view renders correctly 1`] = `
         <br />
         If they are no longer active, it will be placed in the Litigation Support team queue for reassignment.
       </p>
-      <h3>
+      <h2
+        class="css-mynltj"
+      >
         Motion Attorney's Notes
-      </h3>
+      </h2>
       <p
         class="mtv-task-instructions"
       >
