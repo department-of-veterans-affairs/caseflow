@@ -44,4 +44,6 @@ export const generateAttorneys = (number) => {
   for (let i = 1; i < number + 1; i++) {
     result.push(attyTemplate(i));
   }
+
+  return result;
 };
