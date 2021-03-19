@@ -521,8 +521,8 @@ export default class QueueTable extends React.PureComponent {
     const {
       columns,
       summary,
-      headerClassName = '',
-      bodyClassName = '',
+      headerClassName,
+      bodyClassName,
       rowClassNames = this.defaultRowClassNames,
       getKeyForRow,
       slowReRendersAreOk,
@@ -639,7 +639,7 @@ export default class QueueTable extends React.PureComponent {
           columns={columns}
           getKeyForRow={keyGetter}
           rowObjects={rowObjects}
-          bodyClassName={bodyClassName}
+          bodyClassName={bodyClassName ?? ''}
           rowClassNames={rowClassNames}
           bodyStyling={bodyStyling}
           {...this.state}
