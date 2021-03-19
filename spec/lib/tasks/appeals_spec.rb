@@ -59,7 +59,7 @@ describe "appeals" do
       context "appeals are passed that aren't in the expected location" do
         let(:loc1) { loc_transcription }
         let(:output_match) do
-          /vacols_id #{la1.id} is in location #{loc_transcription}, not #{loc_service_org}; skipping./
+          /vacols_id #{la1.vacols_id} is in location #{loc_transcription}, not #{loc_service_org}; skipping./
         end
         let(:args) { [loc_service_org, loc_case_storage, false, la1.vacols_id, la2.vacols_id] }
 
