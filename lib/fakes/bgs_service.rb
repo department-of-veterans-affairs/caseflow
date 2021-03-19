@@ -126,11 +126,14 @@ class Fakes::BGSService
   end
 
   def select_end_products(file_number, code: nil, modifier: nil, payee_code: nil, claim_date: nil)
+    requirements = {
+      claim_type_code: code,
+      end_product_type_code: modifier,
+      payee_code: payee_code,
+      claim_receive_date: claim_date&.strftime("%m/%d/%Y")
+    }.compact
     get_end_products(file_number).select do |ep|
-      (code.nil? || ep[:claim_type_code] == code) &&
-        (modifier.nil? || ep[:end_product_type_code] == modifier) &&
-        (payee_code.nil? || ep[:payee_code] == payee_code) &&
-        (claim_date.nil? || ep[:claim_receive_date] == claim_date.strftime("%m/%d/%Y"))
+      requirements.map { |key, value| ep[key] == value }.all?
     end
   end
 
