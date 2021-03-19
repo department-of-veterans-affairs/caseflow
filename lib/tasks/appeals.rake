@@ -14,7 +14,7 @@ namespace :appeals do
   task :change_vacols_location, [:from_location, :to_location, :dry_run] => :environment do |_, args|
     extras = args.extras
     dry_run = args.dry_run&.to_s&.strip&.upcase != "FALSE"
-    if dry_run && args.dry_run.to_i > 0
+    if dry_run && args.dry_run.present?
       extras.unshift(args.dry_run)
     end
 
