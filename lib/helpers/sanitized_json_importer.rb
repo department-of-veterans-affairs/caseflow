@@ -82,59 +82,10 @@ class SanitizedJsonImporter
     @id_mapping ||= @configuration.id_mapping_types.map { |clazz| [clazz.name, {}] }.to_h
   end
 
-  # :reek:FeatureEnvy
-  def reassociate_with_imported_records(clazz, obj_hash)
-    # Handle polymorphic associations (where the association class is stored in the *'_type' field)
-    puts "  | Reassociate polymorphic associations for #{clazz.name}" if @verbosity > 4
-    reassociate_type_table_fields[clazz.table_name]&.each do |field_name|
-      fail "!!! Expecting field_name to end with '_id' but got: #{field_name}" unless field_name.ends_with?("_id")
-
-      association_type = obj_hash[field_name.sub(/_id$/, "_type")]
-      reassociate(obj_hash, field_name, id_mapping[association_type], association_type: association_type)
-    end
-
-    # Handle associations where the association class is not stored (it is implied)
-    # For each type in reassociate_table_fields_hash, iterate through each field_name in reassociate_table_fields
-    # and reassociate the field to the imported record
-    reassociate_table_fields_hash.each do |association_type, reassociate_table_fields|
-      puts "  | Reassociate #{clazz.name} fields for #{association_type} associations" if @verbosity > 4
-      record_id_mapping = id_mapping[association_type]
-      reassociate_table_fields[clazz.table_name]&.each do |field_name|
-        reassociate(obj_hash, field_name, record_id_mapping, association_type: association_type)
-      end
-    end
-  end
-
-  # :reek:FeatureEnvy
-  # :reek:LongParameterList
-  def reassociate(obj_hash, id_field, record_id_mapping, association_type: nil)
-    orig_record_id = obj_hash[id_field]
-    return unless orig_record_id
-
-    obj_hash[id_field] = record_id_mapping[orig_record_id] if record_id_mapping[orig_record_id]
-    if @verbosity > 3
-      puts "    > reassociated #{id_field}: #{association_type} #{orig_record_id}->#{obj_hash[id_field]}"
-    end
-    [orig_record_id, obj_hash[id_field]]
-  end
-
-  # Try to find record using unique indices on the corresponding table
-  # :reek:FeatureEnvy
-  def find_record_by_unique_index(clazz, obj_hash)
-    found_records = unique_indices_per_class(clazz).map(&:columns).map do |fieldnames|
-      next nil if fieldnames.is_a?(String) # occurs for custom indices like for User
-      next nil unless (fieldnames - clazz.column_names).blank? # in case a fieldname is not a column
-
-      uniq_attributes = fieldnames.map { |fieldname| [fieldname, obj_hash[fieldname]] }.to_h
-      clazz.find_by(uniq_attributes)
-    end.compact
-
-    return nil if found_records.blank?
-
-    puts "Found #{clazz.name} record(s) by unique index: #{found_records}" if @verbosity > 5
-    return found_records.first if found_records.size == 1
-
-    fail "Found multiple records for #{clazz.name}: #{found_records}"
+  def update_association_fields(clazz, obj_hash)
+    adjust_ids_by_offset(clazz, obj_hash)
+    reassociate_with_imported_records(clazz, obj_hash)
+    obj_hash
   end
 
   private
@@ -183,8 +134,7 @@ class SanitizedJsonImporter
     end
 
     # Step 3: Update *_id fields and associations
-    adjust_ids_by_offset(clazz, obj_hash)
-    reassociate_with_imported_records(clazz, obj_hash)
+    update_association_fields(clazz, obj_hash)
 
     # Step 4: Create record in the database
     @configuration.before_creation_hook(clazz, obj_hash, obj_description: obj_description, importer: self)
@@ -264,10 +214,78 @@ class SanitizedJsonImporter
       .freeze
   end
 
+  # :reek:FeatureEnvy
+  def reassociate_with_imported_records(clazz, obj_hash)
+    # Handle polymorphic associations (where the association class is stored in the *'_type' field)
+    puts "  | Reassociate polymorphic associations for #{clazz.name}" if @verbosity > 4
+    reassociate_type_table_fields[clazz.table_name]&.each do |field_name|
+      fail "!!! Expecting field_name to end with '_id' but got: #{field_name}" unless field_name.ends_with?("_id")
+
+      association_type = obj_hash[field_name.sub(/_id$/, "_type")]
+      reassociate(obj_hash, field_name, id_mapping[association_type], association_type: association_type)
+    end
+
+    # Handle associations where the association class is not stored (it is implied)
+    # For each type in reassociate_table_fields_hash, iterate through each field_name in reassociate_table_fields
+    # and reassociate the field to the imported record
+    reassociate_table_fields_hash.each do |association_type, reassociate_table_fields|
+      puts "  | Reassociate #{clazz.name} fields for #{association_type} associations" if @verbosity > 4
+      record_id_mapping = id_mapping[association_type]
+      reassociate_table_fields[clazz.table_name]&.each do |field_name|
+        reassociate(obj_hash, field_name, record_id_mapping, association_type: association_type)
+      end
+    end
+  end
+
+  # :reek:FeatureEnvy
+  # :reek:LongParameterList
+  def reassociate(obj_hash, id_field, record_id_mapping, association_type: nil)
+    orig_record_id = obj_hash[id_field]
+    return unless orig_record_id
+
+    obj_hash[id_field] = record_id_mapping[orig_record_id] if record_id_mapping[orig_record_id]
+    if @verbosity > 3
+      puts "    > reassociated #{id_field}: #{association_type} #{orig_record_id}->#{obj_hash[id_field]}"
+    end
+    [orig_record_id, obj_hash[id_field]]
+  end
+
+  # Try to find record using unique indices on the corresponding table
+  # :reek:FeatureEnvy
+  def find_record_by_unique_index(clazz, obj_hash)
+    found_records = unique_indices_per_class(clazz).map(&:columns).map do |fieldnames|
+      next nil if fieldnames.is_a?(String) # occurs for custom indices like for User
+      next nil unless (fieldnames - clazz.column_names).blank? # in case a fieldname is not a column
+
+      uniq_attributes = fieldnames.map { |fieldname| [fieldname, obj_hash[fieldname]] }.to_h
+      clazz.find_by(uniq_attributes)
+    end.compact
+
+    return nil if found_records.blank?
+
+    puts "Found #{clazz.name} record(s) by unique index: #{found_records}" if @verbosity > 5
+    return found_records.first if found_records.size == 1
+
+    fail "Found multiple records for #{clazz.name}: #{found_records}"
+  end
+
   def find_existing_record(clazz, obj_hash)
     existing_record = @configuration.find_existing_record(clazz, obj_hash, importer: self)
     return existing_record if existing_record
 
-    find_record_by_unique_index(clazz, obj_hash)
+    existing_record = find_record_by_unique_index(clazz, obj_hash)
+    return existing_record if existing_record
+
+    # Try updating the *_id fields in a clone of obj_hash by reassociating with the imported records,
+    # then search for an existing record.
+    # Example: OrganizationsUser requires the (user_id,organization_id) combination to be unique,
+    # and User and Organization are mapped to possibly different id's (not simply an id_offset)
+    obj_hash_clone = update_association_fields(clazz, obj_hash.clone)
+    existing_record = find_record_by_unique_index(clazz, obj_hash_clone)
+    if existing_record
+      # Since existing_record was found, update obj_hash
+      update_association_fields(clazz, obj_hash)
+      existing_record
+    end
   end
 end

@@ -256,18 +256,11 @@ class SanitizedJsonConfiguration
   end
 
   # For each class in reuse_record_types, provide a way to find the existing record
+  # rubocop:disable Lint/UnusedMethodArgument
   def find_existing_record(clazz, obj_hash, importer: nil)
     if clazz == User
       # The index for css_id has an odd column name plus find_by_css_id is faster.
       User.find_by_css_id(obj_hash["css_id"])
-    elsif clazz == OrganizationsUser
-      # Since OrganizationsUser requires the (user_id,organization_id) combination to be unique,
-      # and User and Organization are mapped to possibly different id's (not simply an id_offset),
-      # update the id's by reassociating with the imported records, then search for an existing record.
-      obj_hash_clone = obj_hash.clone
-      importer.reassociate_with_imported_records(clazz, obj_hash_clone)
-      # The following is equiv to: OrganizationsUser.find_by(user_id: ..., organization_id: ...)
-      importer.find_record_by_unique_index(clazz, obj_hash_clone)
     elsif clazz == Appeal
       # uuid is not a uniq index, so can't rely on importer to do it automatically
       Appeal.find_by(uuid: obj_hash["uuid"])
@@ -276,6 +269,7 @@ class SanitizedJsonConfiguration
       nil
     end
   end
+  # rubocop:enable Lint/UnusedMethodArgument
 
   USE_PROD_ORGANIZATION_IDS ||= false
 
