@@ -6,18 +6,18 @@ import { axe } from 'jest-axe';
 import Modal from 'app/components/Modal';
 import Button from 'app/components/Button';
 
-describe('Modal', () => {
+describe.only('Modal', () => {
   const title = 'Test Modal Title';
   const modalBodyContent = 'This is text content';
-  let cancel, closeHandler, goBack;
-
-  closeHandler = cancel = goBack = jest.fn();
+  const closeHandler = jest.fn();
+  const cancelMock = jest.fn();
+  const confirmMock = jest.fn();
 
   const defaultProps = {
     title,
     closeHandler,
-    cancelButton: <Button onClick={cancel}> Cancel </Button>,
-    confirmButton: <Button onClick={goBack}> Confirm </Button>,
+    cancelButton: <Button onClick={cancelMock}> Cancel </Button>,
+    confirmButton: <Button onClick={confirmMock}> Confirm </Button>,
   };
 
   const setupComponent = (props) => {
@@ -56,14 +56,14 @@ describe('Modal', () => {
     const { container } = setupComponent();
 
     // Not recommended way of testing but element does not have text, role, or id
-    expect(container.querySelector('.cf-modal-divider')).toBe(true);
+    expect(container.querySelector('.cf-modal-divider')).toBeTruthy();
   });
 
   it('does not render divider if noDivider set to true', () => {
     const { container } = setupComponent({ noDivider: true });
 
     // Not recommended way of testing but element does not have text, role, or id
-    expect(container.querySelector('.cf-modal-divider')).toBe(true);
+    expect(container.querySelector('.cf-modal-divider')).toBeFalsy();
   });
 
   describe('buttons', () => {
@@ -85,11 +85,12 @@ describe('Modal', () => {
       expect(cancelButton).toBeInTheDocument();
       expect(confirmButton).toBeInTheDocument();
 
+      confirmMock.mockClear();
       await userEvent.click(cancelButton);
-      expect(defaultProps.buttons[0].onClick).toHaveBeenCalledTimes(1);
+      expect(cancelMock).toHaveBeenCalledTimes(1);
 
       await userEvent.click(confirmButton);
-      expect(defaultProps.buttons[1].onClick).toHaveBeenCalledTimes(1);
+      expect(confirmMock).toHaveBeenCalledTimes(1);
     });
 
     it('renders array of buttons', async() => {

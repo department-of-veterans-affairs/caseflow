@@ -52,7 +52,11 @@ exports[`Modal renders correctly 1`] = `
           </h1>
           <div
             data-css-o98ubo=""
-          />
+          >
+            <p>
+              This is text content
+            </p>
+          </div>
         </div>
       </div>
       <div
@@ -61,24 +65,32 @@ exports[`Modal renders correctly 1`] = `
       <div
         class="cf-modal-controls"
       >
-        <span>
-          <button
-            class="cf-modal-link cf-btn-link cf-push-left usa-button"
-            id="Test-Modal-Title-button-id-0"
-            type="button"
+        <div>
+          <span
+            class="cf-push-right"
           >
-            Cancel
-          </button>
-        </span>
-        <span>
-          <button
-            class="usa-button usa-button-secondary cf-push-right usa-button"
-            id="Test-Modal-Title-button-id-1"
-            type="button"
+            <span>
+              <button
+                class="cf-submit usa-button"
+                type="button"
+              >
+                 Confirm 
+              </button>
+            </span>
+          </span>
+          <span
+            class="cf-push-left"
           >
-            Confirm
-          </button>
-        </span>
+            <span>
+              <button
+                class="cf-submit usa-button"
+                type="button"
+              >
+                 Cancel 
+              </button>
+            </span>
+          </span>
+        </div>
       </div>
     </div>
   </section>
