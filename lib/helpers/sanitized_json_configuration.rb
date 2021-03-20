@@ -256,6 +256,7 @@ class SanitizedJsonConfiguration
   end
 
   # For each class in reuse_record_types, provide a way to find the existing record
+  # :reek:UnusedParameters
   # rubocop:disable Lint/UnusedMethodArgument
   def find_existing_record(clazz, obj_hash, importer: nil)
     if clazz == User

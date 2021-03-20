@@ -156,7 +156,7 @@ class SanitizedJsonExporter
 
     new_value = @configuration.send(transform_method, field_name, orig_value, obj_class: obj_class)
 
-    # Don't save the value_mapping for certain transforms
+    # Save the value_mapping for certain transforms
     if @configuration.save_mapped_value?(transform_method, field_name, orig_value, new_value)
       @value_mapping[orig_value] = new_value
     end

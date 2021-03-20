@@ -270,20 +270,20 @@ class SanitizedJsonImporter
   end
 
   def find_existing_record(clazz, obj_hash)
-    existing_record = @configuration.find_existing_record(clazz, obj_hash, importer: self)
-    return existing_record if existing_record
+    @configuration.find_existing_record(clazz, obj_hash, importer: self) ||
+      find_record_by_unique_index(clazz, obj_hash) ||
+      find_existing_record_after_reassociating(clazz, obj_hash)
+  end
 
-    existing_record = find_record_by_unique_index(clazz, obj_hash)
-    return existing_record if existing_record
-
-    # Try updating the *_id fields in a clone of obj_hash by reassociating with the imported records,
-    # then search for an existing record.
-    # Example: OrganizationsUser requires the (user_id,organization_id) combination to be unique,
-    # and User and Organization are mapped to possibly different id's (not simply an id_offset)
+  # Try updating the *_id fields in a clone of obj_hash by reassociating with the imported records,
+  # then search for an existing record.
+  # Example: OrganizationsUser requires the (user_id,organization_id) combination to be unique,
+  # and User and Organization are mapped to possibly different id's (not simply an id_offset)
+  def find_existing_record_after_reassociating(clazz, obj_hash)
     obj_hash_clone = update_association_fields(clazz, obj_hash.clone)
     existing_record = find_record_by_unique_index(clazz, obj_hash_clone)
     if existing_record
-      # Since existing_record was found, update obj_hash
+      # Since existing_record was found, update original obj_hash
       update_association_fields(clazz, obj_hash)
       existing_record
     end
