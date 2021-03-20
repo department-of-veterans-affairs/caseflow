@@ -262,7 +262,7 @@ class SanitizedJsonConfiguration
       User.find_by_css_id(obj_hash["css_id"])
     elsif clazz == OrganizationsUser
       # Since OrganizationsUser requires the (user_id,organization_id) combination to be unique,
-      # and User and Organization are mapped to possibly different id's (not simply an id_offset), 
+      # and User and Organization are mapped to possibly different id's (not simply an id_offset),
       # update the id's by reassociating with the imported records, then search for an existing record.
       obj_hash_clone = obj_hash.clone
       importer.reassociate_with_imported_records(clazz, obj_hash_clone)
