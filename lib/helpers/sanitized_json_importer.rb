@@ -154,7 +154,6 @@ class SanitizedJsonImporter
   def mapped_user_ids
     @mapped_ids[User.name.underscore]
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def add_to_id_mapping(clazz, orig_id, new_id)
     id_mapping_key = clazz.table_name.classify
