@@ -64,4 +64,22 @@ class AssocationWrapper
       .transform_values { |assocs| assocs.map(&:foreign_key).select { |fk| fk.is_a?(String) } }
       .compact
   end
+
+  # https://thoughtbot.com/blog/referential-integrity-with-foreign-keys
+  # $ be rails generate immigration AddForeignKeys
+  # WARNING: Skipping claimants.participant_id: it has multiple associations referencing different keys/tables.
+  # WARNING: Skipping sent_hearing_email_events.hearing_id: it has multiple associations referencing different keys/tables.
+  # WARNING: Skipping worksheet_issues.appeal_id: it has multiple associations referencing different keys/tables.
+  # WARNING: Skipping tasks.appeal_id: it has multiple associations referencing different keys/tables.
+  # WARNING: Skipping hearings.appeal_id: it has multiple associations referencing different keys/tables.
+  # TODO: Add `be rake immigrant:check_keys` to Makefile and PR template
+  # Add to wiki page: https://github.com/department-of-veterans-affairs/caseflow/pull/15383#issuecomment-705173743
+
+  # clazz=VACOLS::Case
+  # ag=AssocationWrapper.new(clazz).belongs_to.associations.group_by(&:class_name);
+  # ag.transform_values { |assocs| assocs.map{|assoc| [assoc.foreign_key, assoc.foreign_type] } }
+  def to_jailer_association_csv
+    assocs = belongs_to.associations.transform_values { |assocs| assocs.map{|assoc| [assoc.foreign_key, assoc.foreign_type] } }
+    
+  end
 end
