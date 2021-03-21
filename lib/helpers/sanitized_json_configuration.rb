@@ -275,13 +275,6 @@ class SanitizedJsonConfiguration
   USE_PROD_ORGANIZATION_IDS ||= false
 
   def create_singleton(clazz, obj_hash, obj_description: nil)
-    new_label = adjust_identifiers_for_unique_records(clazz, obj_hash)
-    if new_label
-      puts "  * Will import duplicate #{clazz} '#{new_label}' with different unique attributes " \
-            "because existing record's id is different: \n\t#{obj_hash}"
-      # binding.pry
-    end
-
     # Only needed if we want Organizations to have same record id's as in prod.
     # Handle Organization type specially because each organization has a `singleton`
     # To-do: update dev's seed data to match prod's Organization#singleton record ids
@@ -293,16 +286,6 @@ class SanitizedJsonConfiguration
 
   def self.org_already_exists?(obj_hash)
     Organization.find_by(url: obj_hash["url"]) || Organization.find_by(id: obj_hash["id"])
-  end
-
-  # :reek:FeatureEnvy
-  def adjust_identifiers_for_unique_records(clazz, obj_hash)
-    if clazz <= Organization
-      obj_hash["url"] += "_imported" if Organization.find_by(url: obj_hash["url"])
-    elsif clazz <= User
-      # Change CSS_ID if it already exists for a user with different user.id
-      obj_hash["css_id"] += "_imported" if User.find_by_css_id(obj_hash["css_id"])
-    end
   end
 
   def reassociate_fields
