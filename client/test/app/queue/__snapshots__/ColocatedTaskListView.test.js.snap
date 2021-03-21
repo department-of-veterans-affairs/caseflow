@@ -113,9 +113,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
               class="usa-table-borderless undefined"
               role="table"
             >
-              <thead
-                class=""
-              >
+              <thead>
                 <tr
                   role="row"
                 >
@@ -1027,9 +1025,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
               class="usa-table-borderless undefined"
               role="table"
             >
-              <thead
-                class=""
-              >
+              <thead>
                 <tr
                   role="row"
                 >
