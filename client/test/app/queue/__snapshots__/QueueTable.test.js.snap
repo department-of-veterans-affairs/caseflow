@@ -850,7 +850,6 @@ exports[`QueueTable render() Can filter rows 1`] = `
         }
         currentPage={0}
         filteredByList={Object {}}
-        headerClassName=""
         needsTaskRequest={true}
         rowObjects={
           Array [
@@ -877,9 +876,7 @@ exports[`QueueTable render() Can filter rows 1`] = `
         tasksFromApi={null}
         updateFilteredByList={[Function]}
       >
-        <thead
-          className=""
-        >
+        <thead>
           <tr
             role="row"
           >
@@ -1496,7 +1493,6 @@ exports[`QueueTable render() Can sort rows 1`] = `
         }
         currentPage={0}
         filteredByList={Object {}}
-        headerClassName=""
         needsTaskRequest={true}
         rowObjects={
           Array [
@@ -1523,9 +1519,7 @@ exports[`QueueTable render() Can sort rows 1`] = `
         tasksFromApi={null}
         updateFilteredByList={[Function]}
       >
-        <thead
-          className=""
-        >
+        <thead>
           <tr
             role="row"
           >
@@ -2043,7 +2037,6 @@ exports[`QueueTable render() Matches snapshot with default props 1`] = `
       }
       currentPage={0}
       filteredByList={Object {}}
-      headerClassName=""
       needsTaskRequest={true}
       rowObjects={
         Array [
@@ -8481,7 +8474,6 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
         }
         currentPage={0}
         filteredByList={Object {}}
-        headerClassName=""
         needsTaskRequest={true}
         rowObjects={
           Array [
@@ -8688,9 +8680,7 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
         tasksFromApi={null}
         updateFilteredByList={[Function]}
       >
-        <thead
-          className=""
-        >
+        <thead>
           <tr
             role="row"
           >
