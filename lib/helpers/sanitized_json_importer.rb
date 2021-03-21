@@ -106,7 +106,6 @@ class SanitizedJsonImporter
     @records_hash.delete(key)
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def import_record(key, clazz, obj_hash)
     # Record original id in case it changes in the following lines
     orig_id = obj_hash["id"]
@@ -122,26 +121,16 @@ class SanitizedJsonImporter
       return
     end
 
-    # Step 2: Create singleton records if appropriate
-    obj_description = "original: #{obj_hash['type']} " \
-                      "#{obj_hash.select { |obj_key, _v| obj_key.include?('_id') }}"
-    if @configuration.reuse_record_types.include?(clazz)
-      singleton = @configuration.create_singleton(clazz, obj_hash, obj_description: obj_description)
-      if singleton
-        add_to_id_mapping(clazz, orig_id, obj_hash["id"])
-        return singleton
-      end
-    end
-
-    # Step 3: Update *_id fields and associations
+    # Step 2: Update *_id fields and associations
     update_association_fields(clazz, obj_hash)
 
-    # Step 4: Create record in the database
+    # Step 3: Create record in the database
+    obj_description = "original: #{obj_hash['type']} " \
+                      "#{obj_hash.select { |obj_key, _v| obj_key.include?('_id') }}"
     @configuration.before_creation_hook(clazz, obj_hash, obj_description: obj_description, importer: self)
     puts "  + Creating #{clazz} #{obj_hash['id']} \n\t#{obj_description}" if @verbosity > 2
     create_new_record(orig_id, clazz, obj_hash)
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def add_to_id_mapping(clazz, orig_id, new_id)
     id_mapping_key = clazz.table_name.classify

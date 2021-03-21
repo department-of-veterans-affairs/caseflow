@@ -274,20 +274,6 @@ class SanitizedJsonConfiguration
 
   USE_PROD_ORGANIZATION_IDS ||= false
 
-  def create_singleton(clazz, obj_hash, obj_description: nil)
-    # Only needed if we want Organizations to have same record id's as in prod.
-    # Handle Organization type specially because each organization has a `singleton`
-    # To-do: update dev's seed data to match prod's Organization#singleton record ids
-    if USE_PROD_ORGANIZATION_IDS && clazz == Organization && !self.class.org_already_exists?(obj_hash)
-      puts "  + Creating #{clazz} '#{obj_hash['name']}' with its original id #{obj_hash['id']} \n\t#{obj_description}"
-      clazz.create!(obj_hash)
-    end
-  end
-
-  def self.org_already_exists?(obj_hash)
-    Organization.find_by(url: obj_hash["url"]) || Organization.find_by(id: obj_hash["id"])
-  end
-
   def reassociate_fields
     # For each reassociate_types, identify their associations so '_id' fields can be reassociated with imported records
     @reassociate_fields ||= {
