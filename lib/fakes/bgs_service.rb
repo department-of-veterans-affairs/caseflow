@@ -129,7 +129,7 @@ class Fakes::BGSService
     requirements = {
       claim_type_code: code,
       end_product_type_code: modifier,
-      payee_code: payee_code,
+      payee_type_code: payee_code,
       claim_receive_date: claim_date&.strftime("%m/%d/%Y")
     }.compact
     get_end_products(file_number).select do |ep|
@@ -205,7 +205,7 @@ class Fakes::BGSService
                                        claim_date: claim_date)
     matching_eps.each do |ep|
       ep[:claim_type_code] = new_code
-      self.class.store_end_product_record(file_number, ep)
+      self.class.store_end_product_record(veteran_file_number, ep)
     end
   end
   # rubocop:enable Metrics/ParameterLists
