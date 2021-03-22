@@ -36,17 +36,12 @@ class ContestableIssueGenerator
 
   attr_reader :review
 
-  def associated_rating_issues
-    contestable_rating_issues.map(&:rating_issue_reference_id).compact
-  end
-
   def contestable_rating_decisions
     return [] unless review.can_contest_rating_issues?
     return from_rating_decisions if FeatureToggle.enabled?(:disability_issue_test, user: RequestStore[:current_user])
     return [] unless FeatureToggle.enabled?(:contestable_rating_decisions, user: RequestStore[:current_user])
 
-    from_rating_decisions
-      .reject { |contestable_issue| associated_rating_issues.include?(contestable_issue.rating_issue_reference_id) }
+    from_rating_decisions.reject { |contestable_issue| decision_issue_duplicate_exists?(contestable_issue) }
   end
 
   def from_ratings
@@ -71,7 +66,7 @@ class ContestableIssueGenerator
     # rating decisions are a superset of every disability ever recorded for a veteran,
     # so filter out any that are duplicates of a rating issue or that are not related to their parent rating.
     rating_decisions
-      .select { |rating_decision| rating_decision.profile_date && rating_decision.profile_date.to_date <= receipt_date }
+      .select(&:contestable?)
       .map { |rating_decision| ContestableIssue.from_rating_decision(rating_decision, review) }
   end
 
