@@ -45,7 +45,8 @@ class ContestableIssueGenerator
     return from_rating_decisions if FeatureToggle.enabled?(:disability_issue_test, user: RequestStore[:current_user])
     return [] unless FeatureToggle.enabled?(:contestable_rating_decisions, user: RequestStore[:current_user])
 
-    from_rating_decisions.reject { |contestable_issue| associated_rating_issues.include?(contestable_issue.rating_issue_reference_id)}
+    from_rating_decisions
+      .reject { |contestable_issue| associated_rating_issues.include?(contestable_issue.rating_issue_reference_id) }
   end
 
   def from_ratings
