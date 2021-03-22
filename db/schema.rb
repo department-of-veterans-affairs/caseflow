@@ -1642,6 +1642,8 @@ ActiveRecord::Schema.define(version: 2021_03_22_174325) do
   add_foreign_key "end_product_establishments", "users"
   add_foreign_key "end_product_updates", "end_product_establishments"
   add_foreign_key "end_product_updates", "users"
+  add_foreign_key "granted_substitutions", "appeals", column: "source_appeal_id"
+  add_foreign_key "granted_substitutions", "appeals", column: "target_appeal_id"
   add_foreign_key "granted_substitutions", "claimants", column: "substitute_id"
   add_foreign_key "granted_substitutions", "users", column: "created_by_id"
   add_foreign_key "hearing_days", "users", column: "created_by_id"
