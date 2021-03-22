@@ -25,6 +25,7 @@ gem "fuzzy_match"
 gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
 gem "icalendar"
+gem "jemalloc"
 gem "kaminari"
 gem "moment_timezone-rails"
 # Rails 6 has native support for multiple dbs, so prefer that over multiverse after upgrade.
