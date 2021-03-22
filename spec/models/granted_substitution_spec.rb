@@ -8,7 +8,7 @@ describe GrantedSubstitution do
     let(:source_appeal) { create(:appeal) }
     let(:substitution_date) { 5.days.ago.to_date }
     let(:substitute) { create(:claimant) }
-    let(:poa_participant_id) { "100" }
+    let(:poa_participant_id) { "13579" }
 
     let(:params) do
       {
@@ -23,6 +23,8 @@ describe GrantedSubstitution do
     it "creates the record" do
       expect { subject }.not_to raise_error
       params.each_key { |key| expect(subject.send(key)).to eq params[key] }
+
+      expect(subject.target_appeal.docket_number).to eq subject.source_appeal.docket_number
     end
 
     context "when source appeal is AOD" do
