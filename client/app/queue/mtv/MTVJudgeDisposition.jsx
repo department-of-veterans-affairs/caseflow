@@ -54,6 +54,13 @@ const formatInstructions = ({ disposition, vacateType, hyperlink, instructions }
   return parts.join('\n');
 };
 
+const styles = {
+  h3: css({
+    fontSize: '19px',
+    marginBottom: '16px',
+  })
+};
+
 export const MTVJudgeDisposition = ({
   attorneys,
   selectedAttorney,
@@ -123,7 +130,7 @@ export const MTVJudgeDisposition = ({
 
         <p>{StringUtil.nl2br(JUDGE_ADDRESS_MTV_DESCRIPTION)}</p>
 
-        <h3>Motion Attorney's Notes</h3>
+        <h2 className={styles.h3}>Motion Attorney's Notes</h2>
         <p className="mtv-task-instructions" dangerouslySetInnerHTML={{ __html: parsedInstructions }} />
 
         <div className="cf-help-divider" />
