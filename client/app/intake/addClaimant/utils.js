@@ -36,16 +36,16 @@ export const schema = yup.object().shape({
   middleName: yup.string(),
   lastName: yup.string(),
   suffix: yup.string(),
-  organization: yup.string().when('partyType', {
+  name: yup.string().when('partyType', {
     is: 'organization',
     then: yup.string().required(),
   }),
-  address1: yup.string().when('partyType', {
+  addressLine1: yup.string().when('partyType', {
     is: (value) => ['individual', 'organization'].includes(value),
     then: yup.string().required(),
   }),
-  address2: yup.string(),
-  address3: yup.string(),
+  addressLine2: yup.string(),
+  addressLine3: yup.string(),
   city: yup.string().when('partyType', {
     is: (value) => ['individual', 'organization'].includes(value),
     then: yup.string().required(),
@@ -65,28 +65,29 @@ export const schema = yup.object().shape({
     is: (value) => ['individual', 'organization'].includes(value),
     then: yup.string().required(),
   }),
-  email: yup.string().email(),
+  emailAddress: yup.string().emailAddress(),
   phoneNumber: yup.string(),
-  vaForm: yup.string().required(),
+  poaForm: yup.string().required(),
 });
 
 export const defaultFormValues = {
   relationship: null,
   partyType: null,
+  name: '',
   firstName: '',
   middleName: '',
   lastName: '',
   suffix: '',
-  address1: '',
-  address2: '',
-  address3: '',
+  addressLine1: '',
+  addressLine2: '',
+  addressLine3: '',
   city: '',
   state: null,
   zip: '',
   country: '',
-  email: '',
+  emailAddress: '',
   phoneNumber: '',
-  vaForm: null,
+  poaForm: null,
 };
 
 export const useAddClaimantForm = ({ defaultValues = defaultFormValues } = {}) => {
@@ -126,34 +127,34 @@ export const fetchAttorneys = async (search = '') => {
 
 export const claimantPropTypes = {
   partyType: PropTypes.oneOf(['individual', 'organization']),
-  organization: PropTypes.string,
+  name: PropTypes.string,
   firstName: PropTypes.string,
   middleName: PropTypes.string,
   lastName: PropTypes.string,
-  address1: PropTypes.string,
-  address2: PropTypes.string,
-  address3: PropTypes.string,
+  addressLine1: PropTypes.string,
+  addressLine2: PropTypes.string,
+  addressLine3: PropTypes.string,
   city: PropTypes.string,
   state: PropTypes.string,
   zip: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   country: PropTypes.string,
-  email: PropTypes.string,
+  emailAddress: PropTypes.string,
   phoneNumber: PropTypes.string,
 };
 
 export const poaPropTypes = {
   partyType: PropTypes.oneOf(['individual', 'organization']),
-  organization: PropTypes.string,
+  name: PropTypes.string,
   firstName: PropTypes.string,
   middleName: PropTypes.string,
   lastName: PropTypes.string,
-  address1: PropTypes.string,
-  address2: PropTypes.string,
-  address3: PropTypes.string,
+  addressLine1: PropTypes.string,
+  addressLine2: PropTypes.string,
+  addressLine3: PropTypes.string,
   city: PropTypes.string,
   state: PropTypes.string,
   zip: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   country: PropTypes.string,
-  email: PropTypes.string,
+  emailAddress: PropTypes.string,
   phoneNumber: PropTypes.string,
 };

@@ -19,7 +19,7 @@ import { AddClaimantConfirmationModal } from '../addClaimant/AddClaimantConfirma
 import { formatAddress } from '../addClaimant/utils';
 import { FORM_TYPES } from '../constants';
 // eslint-disable-next-line no-unused-vars
-import { submitReviewUnlistedClaimant } from '../actions/decisionReview';
+import { submitReview } from '../actions/decisionReview';
 
 const partyTypeOpts = [
   { displayText: 'Organization', value: 'organization' },
@@ -92,7 +92,10 @@ export const AddPoaPage = () => {
 
   const toggleConfirm = () => setConfirmModal((val) => !val);
   const handleConfirm = () => {
-    dispatch(submitReviewUnlistedClaimant(intakeId, intakeData, selectedForm.formName, claimant, poa));
+    intakeData.claimant = claimant;
+    intakeData.poa = poa;
+
+    dispatch(submitReview(intakeId, intakeData, selectedForm.formName));
     push('/add_issues');
   };
 
@@ -219,7 +222,7 @@ export const AddPoaPage = () => {
 
           {watchPartyType === 'organization' && (
             <TextField
-              name="organization"
+              name="name"
               label="Organization name"
               inputRef={register}
               strongLabel
@@ -230,7 +233,7 @@ export const AddPoaPage = () => {
               <AddressForm {...methods} />
               <FieldDiv>
                 <TextField
-                  name="email"
+                  name="emailAddress"
                   label="Representative email"
                   inputRef={register}
                   optional

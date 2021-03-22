@@ -80,6 +80,18 @@ const StringUtil = {
     return sentence[0].toUpperCase() + sentence.substring(1);
   },
 
+  // Converts all keys of an object from camel case to snake case, recursively
+  camelCaseToSnakeCaseObjectKeys(object) {
+    const camelCaseObj = {};
+    for (const key of Object.keys(obj)){
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+       camelCaseObj[_.snakeCase(key)] = obj[key];
+     };
+   };
+
+    return camelCaseObj;
+  },
+
   html5CompliantId(str) {
     return str.replace(/[^A-Za-z0-9-]/g, '-').replace(/-+/g, '-');
   },

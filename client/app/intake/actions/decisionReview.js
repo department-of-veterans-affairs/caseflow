@@ -6,7 +6,7 @@ import { formatIssues } from '../util/issues';
 
 const analytics = true;
 
-export const submitReview = (intakeId, intakeData, intakeType) => (dispatch) => {
+export const submitReview = (intakeId, intakeData, intakeType, claimant, poa) => (dispatch) => {
   dispatch({
     type: ACTIONS.SUBMIT_REVIEW_START,
     meta: { analytics }
@@ -57,100 +57,6 @@ export const submitReview = (intakeId, intakeData, intakeType) => (dispatch) => 
     }
   );
 };
-
-export const submitReviewUnlistedClaimant = (intakeId, intakeData, intakeType, claimant, poa) => (dispatch) => {
-   dispatch({
-    type: ACTIONS.SUBMIT_REVIEW_START,
-    meta: { analytics }
-  });
-
-  const validationErrors = validateReviewData(intakeData, intakeType);
-
-  if (validationErrors) {
-    dispatch({
-      type: ACTIONS.SUBMIT_REVIEW_FAIL,
-      payload: { responseErrorCodes: validationErrors },
-      meta: { analytics }
-    });
-
-    return Promise.reject();
-  }
-
-const data = prepareReviewData(intakeData, intakeType);
-
-data.unlisted_claimant = {
-    relationship: claimant.relationship,
-    party_type: claimant.partyType,
-    name: claimant.organization,
-    first_name: claimant.firstName,
-    middle_name: claimant.middleName,
-    last_name: claimant.lastName,
-    suffix: claimant.suffix,
-    address_line_1: claimant.address1,
-    address_line_2: claimant.address2,
-    address_line_3: claimant.address3,
-    city: claimant.city,
-    state: claimant.state,
-    zip: claimant.zip,
-    country: claimant.country,
-    phone_number: claimant.phoneNumber,
-    email_address: claimant.email,
-    poa_form: claimant.vaForm
-  }
-
-data.unlisted_poa = { 
-    party_type: poa.partyType,
-    name: poa.organization,
-    first_name: poa.firstName,
-    middle_name: poa.middleName,
-    last_name: poa.lastName,
-    address_line_1: poa.address1,
-    address_line_2: poa.address2,
-    address_line_3: poa.address3,
-    city: poa.city,
-    state: poa.state,
-    zip: poa.zip,
-    country: poa.country,
-    phone_number: poa.phoneNumber,
-    email_address: poa.email
-  }
-
-  data.poa_participant_id = poa.listedAttorney?.value
-  
-
-  return ApiUtil.patch(`/intake/${intakeId}/review`, { data }, ENDPOINT_NAMES.REVIEW_INTAKE).then(
-    (response) => {
-      dispatch({
-        type: ACTIONS.SUBMIT_REVIEW_SUCCEED,
-        payload: {
-          intake: response.body
-        },
-        meta: { analytics }
-      });
-
-      return true;
-    },
-    (error) => {
-      const responseObject = error.response.body;
-      const responseErrorCodes = responseObject.error_codes;
-
-      dispatch({
-        type: ACTIONS.SUBMIT_REVIEW_FAIL,
-        payload: {
-          errorUUID: responseObject.error_uuid,
-          responseErrorCodes
-        },
-        meta: {
-          analytics: analyticsCallback
-        }
-      });
-
-      throw error;
-    }
-  );
-
-}
-
 
 export const completeIntake = (intakeId, intakeData) => (dispatch) => {
   dispatch({

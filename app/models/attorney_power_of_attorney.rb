@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-# This is an ephemeral class representing the unrecognized attorney power of attorney of an unrecognized appellant.
+# This is an ephemeral class representing an unrecognized appellant's power of attorney when it is a listed
+# attorney returned from the Corporate DB.
 
 class AttorneyPowerOfAttorney
   include ActiveModel::Model

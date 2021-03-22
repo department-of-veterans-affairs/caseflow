@@ -29,18 +29,22 @@ class OtherClaimant < Claimant
     unrecognized_appellant&.relationship&.titleize || "Other"
   end
 
-  def save_unrecognized_details!(params, poa_params, poa_participant_id)
+  def save_unrecognized_details!(params, poa_params)
     params.permit!
-    poa_form = params.delete(:poa_form)
     appellant = create_appellant!(params)
+
+    poa_form = params.dig(:poa_form)
+    poa_participant_id = poa_params.dig(:listed_attorney)
+
     if poa_form
-      if poa_params.present?
+      if poa_participant_id
+        appellant.update!(poa_participant_id: poa_participant_id)
+      else
         poa_params.permit!
         appellant.update!(unrecognized_power_of_attorney: create_party_detail!(poa_params))
-      elsif poa_participant_id.present?
-        appellant.update!(poa_participant_id: poa_participant_id)
       end
     end
+
     appellant
   end
 

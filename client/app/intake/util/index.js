@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { REVIEW_OPTIONS, REVIEW_DATA_FIELDS, CLAIMANT_ERRORS } from '../constants';
 import DATES from '../../../constants/DATES';
 import { formatDateStr } from '../../util/DateUtil';
+import { camelCaseToSnakeCaseObjectKeys } from '../../util/StringUtil';
 
 export const getBlankOptionError = (responseErrorCodes, field) => (
   _.get(responseErrorCodes[field], 0) === 'blank' ? 'Please select an option.' : null
@@ -118,5 +119,5 @@ export const prepareReviewData = (intakeData, intakeType) => {
   for (let fieldName in fields) {
     result[fieldName] = intakeData[fields[fieldName].key];
   }
-  return result;
+  return camelCaseToSnakeCaseObjectKeys(result);
 };

@@ -80,12 +80,6 @@ export const AddClaimantForm = ({
     }
   }, [watchRelationship]);
 
-  useEffect(() => {
-    if (['spouse', 'child'].includes(watchRelationship)) {
-      setValue('partyType', 'individual');
-    }
-  }, [watchRelationship]);
-
   return (
     <>
       <h1>Add Claimant</h1>
@@ -193,7 +187,7 @@ export const AddClaimantForm = ({
         )}
         {watchPartyType === 'organization' && (
           <TextField
-            name="organization"
+            name="name"
             label="Organization name"
             inputRef={register}
             strongLabel
@@ -204,7 +198,7 @@ export const AddClaimantForm = ({
             <AddressForm {...methods} />
             <FieldDiv>
               <TextField
-                name="email"
+                name="emailAddress"
                 label="Claimant email"
                 inputRef={register}
                 optional
@@ -228,7 +222,7 @@ export const AddClaimantForm = ({
             vertical
             inputRef={register}
             label="Do you have a VA Form 21-22 for this claimant?"
-            name="vaForm"
+            name="poaForm"
             strongLabel
           />
         )}

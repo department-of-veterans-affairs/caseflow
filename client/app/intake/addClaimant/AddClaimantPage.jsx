@@ -16,7 +16,7 @@ import { IntakeLayout } from '../components/IntakeLayout';
 import { AddClaimantButtons } from './AddClaimantButtons';
 import { useAddClaimantForm, fetchAttorneys } from './utils';
 // eslint-disable-next-line no-unused-vars
-import { submitReviewUnlistedClaimant } from '../actions/decisionReview';
+import { submitReview } from '../actions/decisionReview';
 import { FORM_TYPES } from '../constants';
 
 export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
@@ -48,8 +48,9 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
 
   const toggleConfirm = () => setConfirmModal((val) => !val);
   const handleConfirm = () => {
+    intakeData.claimant = claimant;
 
-    dispatch(submitReviewUnlistedClaimant(intakeId, intakeData, selectedForm.formName, claimant, poa));
+    dispatch(submitReview(intakeId, intakeData, selectedForm.formName));
     push('/add_issues');
   };
 
@@ -60,10 +61,10 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
 
     dispatch(editClaimantInformation({ formData }));
 
-    if (formData.vaForm === 'true') {
+    if (formData.poaForm === 'true') {
       push('/add_power_of_attorney');
     } else {
-      // In case user has come back to this page and changed value on vaForm
+      // In case user has come back to this page and changed value on poaForm
       dispatch(clearPoa());
 
       // Regardless, show confirmation modal
