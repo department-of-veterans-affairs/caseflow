@@ -6,7 +6,7 @@ import { axe } from 'jest-axe';
 import Modal from 'app/components/Modal';
 import Button from 'app/components/Button';
 
-describe.only('Modal', () => {
+describe('Modal', () => {
   const title = 'Test Modal Title';
   const modalBodyContent = 'This is text content';
   const closeHandler = jest.fn();
