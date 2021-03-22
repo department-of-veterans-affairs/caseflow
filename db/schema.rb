@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_11_154002) do
+ActiveRecord::Schema.define(version: 2021_03_22_174325) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -689,6 +689,19 @@ ActiveRecord::Schema.define(version: 2021_03_11_154002) do
     t.string "target_station_id"
     t.datetime "updated_at"
     t.index ["updated_at"], name: "index_global_admin_logins_on_updated_at"
+  end
+
+  create_table "granted_substitutions", comment: "Store Granted Substitution form data", force: :cascade do |t|
+    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.bigint "created_by_id", null: false, comment: "User that created this record"
+    t.string "poa_participant_id", null: false, comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id"
+    t.bigint "source_appeal_id", null: false, comment: "The relevant source appeal for this substitution"
+    t.bigint "substitute_id", null: false, comment: "References claimants table"
+    t.date "substitution_date", null: false, comment: "Date of granted substitution"
+    t.bigint "target_appeal_id", null: false, comment: "The new appeal resulting from this granted substitution"
+    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.index ["source_appeal_id"], name: "index_granted_substitutions_on_source_appeal_id"
+    t.index ["target_appeal_id"], name: "index_granted_substitutions_on_target_appeal_id"
   end
 
   create_table "hearing_appeal_stream_snapshots", id: false, force: :cascade do |t|
@@ -1628,6 +1641,8 @@ ActiveRecord::Schema.define(version: 2021_03_11_154002) do
   add_foreign_key "end_product_establishments", "users"
   add_foreign_key "end_product_updates", "end_product_establishments"
   add_foreign_key "end_product_updates", "users"
+  add_foreign_key "granted_substitutions", "claimants", column: "substitute_id"
+  add_foreign_key "granted_substitutions", "users", column: "created_by_id"
   add_foreign_key "hearing_days", "users", column: "created_by_id"
   add_foreign_key "hearing_days", "users", column: "updated_by_id"
   add_foreign_key "hearing_views", "users"
