@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_11_154002) do
+ActiveRecord::Schema.define(version: 2021_03_22_135622) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1230,6 +1230,7 @@ ActiveRecord::Schema.define(version: 2021_03_11_154002) do
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
     t.index ["ineligible_reason"], name: "index_request_issues_on_ineligible_reason"
     t.index ["updated_at"], name: "index_request_issues_on_updated_at"
+    t.index ["veteran_participant_id"], name: "index_veteran_participant_id"
   end
 
   create_table "request_issues_updates", comment: "Keeps track of edits to request issues on a decision review that happen after the initial intake, such as removing and adding issues.  When the decision review is processed in VBMS, this also tracks whether adding or removing contentions in VBMS for the update has succeeded.", force: :cascade do |t|
