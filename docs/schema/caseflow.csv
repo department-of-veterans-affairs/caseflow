@@ -920,7 +920,7 @@ request_issues,id,integer (8) PK,x,x,,,,
 request_issues,ineligible_due_to_id,integer (8) FK,,,x,,x,"If a request issue is ineligible due to another request issue, for example that issue is already being actively reviewed, then the ID of the other request issue is stored here."
 request_issues,ineligible_reason,string,,,,,x,"The reason for a Request Issue being ineligible. If a Request Issue has an ineligible_reason, it is still captured, but it will not get a contention in VBMS or a decision."
 request_issues,is_unidentified,boolean,,,,,,"Indicates whether a Request Issue is unidentified, meaning it wasn't found in the list of contestable issues, and is not a new nonrating issue. Contentions for unidentified issues are created on a rating End Product if processed in VBMS but without the issue description, and someone is required to edit it in Caseflow before proceeding with the decision."
-request_issues,nonrating_issue_category,string,,,,,x,The category selected for nonrating request issues. These vary by business line.
+request_issues,nonrating_issue_category,string,,,,,,The category selected for nonrating request issues. These vary by business line.
 request_issues,nonrating_issue_description,string,,,,,,The user entered description if the issue is a nonrating issue
 request_issues,notes,text,,,,,,"Notes added by the Claims Assistant when adding request issues. This may be used to capture handwritten notes on the form, or other comments the CA wants to capture."
 request_issues,ramp_claim_id,string,,,,,,"If a rating issue was created as a result of an issue intaken for a RAMP Review, it will be connected to the former RAMP issue by its End Product's claim ID."
