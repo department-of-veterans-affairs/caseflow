@@ -9,7 +9,7 @@ import Tooltip from '../components/Tooltip';
 import { DoubleArrow } from '../components/RenderFunctions';
 import TableFilter from '../components/TableFilter';
 import FilterSummary from '../components/FilterSummary';
-import Pagination from '../components/Pagination';
+import Pagination from '../components/Pagination/Pagination';
 import { COLORS, LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import LoadingScreen from '../components/LoadingScreen';
@@ -521,8 +521,8 @@ export default class QueueTable extends React.PureComponent {
     const {
       columns,
       summary,
-      headerClassName = '',
-      bodyClassName = '',
+      headerClassName,
+      bodyClassName,
       rowClassNames = this.defaultRowClassNames,
       getKeyForRow,
       slowReRendersAreOk,
@@ -639,7 +639,7 @@ export default class QueueTable extends React.PureComponent {
           columns={columns}
           getKeyForRow={keyGetter}
           rowObjects={rowObjects}
-          bodyClassName={bodyClassName}
+          bodyClassName={bodyClassName ?? ''}
           rowClassNames={rowClassNames}
           bodyStyling={bodyStyling}
           {...this.state}
