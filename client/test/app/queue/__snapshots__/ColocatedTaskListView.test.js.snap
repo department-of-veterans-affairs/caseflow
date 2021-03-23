@@ -302,7 +302,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     </span>
                   </th>
                   <th
-                    aria-labelledby="header-appeal.caseType"
+                    aria-labelledby="header-appealCaseType"
                     class=""
                     role="columnheader"
                     scope="col"
@@ -312,7 +312,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       data-css-9shxm7=""
                     >
                       <span
-                        id="header-appeal.caseType"
+                        id="header-appealCaseType"
                       >
                         Types
                       </span>
@@ -409,7 +409,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     </span>
                   </th>
                   <th
-                    aria-labelledby="header-appeal.docketName"
+                    aria-labelledby="header-appealDocketName"
                     class=""
                     role="columnheader"
                     scope="col"
@@ -419,7 +419,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       data-css-9shxm7=""
                     >
                       <span
-                        id="header-appeal.docketName"
+                        id="header-appealDocketName"
                       >
                         Docket
                       </span>
@@ -1223,7 +1223,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     </span>
                   </th>
                   <th
-                    aria-labelledby="header-appeal.caseType"
+                    aria-labelledby="header-appealCaseType"
                     class=""
                     role="columnheader"
                     scope="col"
@@ -1233,7 +1233,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       data-css-9shxm7=""
                     >
                       <span
-                        id="header-appeal.caseType"
+                        id="header-appealCaseType"
                       >
                         Types
                       </span>
@@ -1330,7 +1330,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     </span>
                   </th>
                   <th
-                    aria-labelledby="header-appeal.docketName"
+                    aria-labelledby="header-appealDocketName"
                     class=""
                     role="columnheader"
                     scope="col"
@@ -1340,7 +1340,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       data-css-9shxm7=""
                     >
                       <span
-                        id="header-appeal.docketName"
+                        id="header-appealDocketName"
                       >
                         Docket
                       </span>

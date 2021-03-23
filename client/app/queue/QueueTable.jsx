@@ -114,7 +114,7 @@ export const HeaderRow = (props) => {
           let filterIcon;
 
           // Determine whether to apply an ID to the column title
-          const titleId = column?.columnName ? `header-${column.columnName}` : '';
+          const titleId = column?.columnName ? `header-${_.camelCase(column.columnName)}` : '';
 
           // Define the aria label to exclude the filter/sort
           const ariaLabel = column?.ariaLabel ? column?.ariaLabel : titleId;
