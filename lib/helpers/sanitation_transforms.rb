@@ -27,15 +27,15 @@ module SanitizationTransforms
 
   def invalid_ssn(field_name, field_value, obj_class: nil, fake_ssn_prefix: "000")
     # Instead of using Faker::IDNumber.invalid, make the SSN obviously fake by starting with fake_ssn_prefix
-    invalid_ssn = (fake_ssn_prefix + Faker::Number.number(digits: 9 - fake_ssn_prefix.length).to_s)[0..8]
     case field_name
     when "ssn", "file_number", "veteran_file_number"
-      invalid_ssn
+      gen_invalid_ssn(fake_ssn_prefix)
     else
       case field_value
       when /^\d{9}$/
-        invalid_ssn
+        gen_invalid_ssn(fake_ssn_prefix)
       when /^\d{3}-\d{2}-\d{4}$/
+        invalid_ssn = gen_invalid_ssn(fake_ssn_prefix)
         "#{invalid_ssn[0..2]}-#{invalid_ssn[3..4]}-#{invalid_ssn[5..8]}"
       end
     end
@@ -132,6 +132,12 @@ module SanitizationTransforms
         <p><span style=\"color: rgb(0,0,255);\">#{Faker::Lorem.sentence(random_words_to_add: 5)}</span></p>
       HTML
     end
+  end
+
+  private
+
+  def gen_invalid_ssn(fake_ssn_prefix)
+    fake_ssn_prefix + Faker::Number.number(digits: 9 - fake_ssn_prefix.length).to_s
   end
 end
 # rubocop:enable Metrics/ModuleLength, Lint/UnusedMethodArgument

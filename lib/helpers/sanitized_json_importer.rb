@@ -102,7 +102,7 @@ class SanitizedJsonImporter
       next puts "WARNING: No JSON data for records_hash key: #{key}" unless obj_hash
 
       import_record(key, klass, obj_hash)
-    end
+    end.compact
     @records_hash.delete(key)
   end
 
@@ -113,7 +113,7 @@ class SanitizedJsonImporter
 
     # Step 1: Don't import if certain types of records already exists; register them for later use
     if @configuration.reuse_record_types.include?(klass) && (existing_record = find_existing_record(klass, obj_hash))
-      puts "  = Using existing #{klass} instead of importing #{obj_hash['type']} #{obj_hash['id']}" if @verbosity > 2
+      puts "  = Using existing #{klass} instead of importing #{obj_hash['type']} #{obj_hash['id']}" if @verbosity > 1
       reused_records[key] ||= []
       reused_records[key] << existing_record
       # Track it for use by association records like OrganizationsUser in @configuration.find_existing_record
