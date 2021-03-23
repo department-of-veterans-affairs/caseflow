@@ -113,8 +113,11 @@ export const HeaderRow = (props) => {
           let sortIcon;
           let filterIcon;
 
+          // Determine whether to apply an ID to the column title
+          const titleId = column?.columnName ? `header-${column.columnName}` : '';
+
           // Define the aria label to exclude the filter/sort
-          const ariaLabel = column?.ariaLabel ? column?.ariaLabel : `header-${column.columnName}`;
+          const ariaLabel = column?.ariaLabel ? column?.ariaLabel : titleId;
 
           // Set the Sort name for the column if sorting by this column
           const sorting = props.sortColName === column.name;
@@ -163,9 +166,9 @@ export const HeaderRow = (props) => {
               />
             );
           }
-          const columnTitleContent = <span id={`header-${column.columnName}`}>{column.header || ''}</span>;
+          const columnTitleContent = <span {...(titleId ? { id: titleId } : {})}>{column.header || ''}</span>;
           const columnContent = (
-            <span {...iconHeaderStyle}>
+            <span {...iconHeaderStyle} aria-label="">
               {columnTitleContent}
               {sortIcon}
               {filterIcon}
@@ -176,11 +179,11 @@ export const HeaderRow = (props) => {
             <th
               {...sortProps}
               {...(column?.sortProps || {})}
+              {...(ariaLabel ? { 'aria-labelledby': ariaLabel } : {})}
               role="columnheader"
               scope="col"
               key={columnNumber}
               className={cellClasses(column)}
-              aria-labelledby={ariaLabel}
             >
               {column.tooltip ? (
                 <Tooltip id={`tooltip-${columnNumber}`} text={column.tooltip}>

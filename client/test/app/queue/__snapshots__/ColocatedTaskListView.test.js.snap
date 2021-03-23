@@ -195,6 +195,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     </span>
                   </th>
                   <th
+                    aria-labelledby="header-label"
                     class=""
                     role="columnheader"
                     scope="col"
@@ -203,7 +204,9 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       aria-label=""
                       data-css-9shxm7=""
                     >
-                      <span>
+                      <span
+                        id="header-label"
+                      >
                         Tasks
                       </span>
                       <span
@@ -299,6 +302,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     </span>
                   </th>
                   <th
+                    aria-labelledby="header-appeal.caseType"
                     class=""
                     role="columnheader"
                     scope="col"
@@ -307,7 +311,9 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       aria-label=""
                       data-css-9shxm7=""
                     >
-                      <span>
+                      <span
+                        id="header-appeal.caseType"
+                      >
                         Types
                       </span>
                       <span
@@ -403,6 +409,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     </span>
                   </th>
                   <th
+                    aria-labelledby="header-appeal.docketName"
                     class=""
                     role="columnheader"
                     scope="col"
@@ -411,7 +418,9 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       aria-label=""
                       data-css-9shxm7=""
                     >
-                      <span>
+                      <span
+                        id="header-appeal.docketName"
+                      >
                         Docket
                       </span>
                       <span
@@ -1107,6 +1116,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     </span>
                   </th>
                   <th
+                    aria-labelledby="header-label"
                     class=""
                     role="columnheader"
                     scope="col"
@@ -1115,7 +1125,9 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       aria-label=""
                       data-css-9shxm7=""
                     >
-                      <span>
+                      <span
+                        id="header-label"
+                      >
                         Tasks
                       </span>
                       <span
@@ -1211,6 +1223,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     </span>
                   </th>
                   <th
+                    aria-labelledby="header-appeal.caseType"
                     class=""
                     role="columnheader"
                     scope="col"
@@ -1219,7 +1232,9 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       aria-label=""
                       data-css-9shxm7=""
                     >
-                      <span>
+                      <span
+                        id="header-appeal.caseType"
+                      >
                         Types
                       </span>
                       <span
@@ -1315,6 +1330,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     </span>
                   </th>
                   <th
+                    aria-labelledby="header-appeal.docketName"
                     class=""
                     role="columnheader"
                     scope="col"
@@ -1323,7 +1339,9 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       aria-label=""
                       data-css-9shxm7=""
                     >
-                      <span>
+                      <span
+                        id="header-appeal.docketName"
+                      >
                         Docket
                       </span>
                       <span
