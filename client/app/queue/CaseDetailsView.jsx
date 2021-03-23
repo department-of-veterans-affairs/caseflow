@@ -158,7 +158,7 @@ export const CaseDetailsView = (props) => {
             additionalHeaderContent={
               canEditCavcRemands && (
                 <span className="cf-push-right" {...anchorEditLinkStyling}>
-                  <Link href={`/appeals/${appealId}/edit`}>{COPY.CORRECT_CAVC_REMAND_LINK}</Link>
+                  <Link href={`/queue/appeals/${appealId}/add_cavc_remand`}>{COPY.CORRECT_CAVC_REMAND_LINK}</Link>
                 </span>
               )
             }
