@@ -46,14 +46,15 @@ class HearingDayRange
     end
   end
 
-  def upcoming_days_for_vso_user(user)
+  # Using limit here produces undesirable behavior, remaining_days_limit is only used to test this
+  def upcoming_days_for_vso_user(user, remaining_days_limit = 1000)
     days_in_range = hearing_days_in_range
 
     ama_days = days_in_range.select do |hearing_day|
       self.class.ama_hearing_day_for_vso_user?(hearing_day, user)
     end
 
-    remaining_days = days_in_range.where.not(id: ama_days.pluck(:id)).order(:scheduled_for).limit(1000)
+    remaining_days = days_in_range.where.not(id: ama_days.pluck(:id)).order(:scheduled_for).limit(remaining_days_limit)
 
     vacols_hearings_for_remaining_days = HearingRepository.fetch_hearings_for_parents(remaining_days.map(&:id))
 
