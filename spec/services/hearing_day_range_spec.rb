@@ -293,7 +293,8 @@ describe HearingDayRange, :all_dbs do
     end
   end
 
-  describe ".range_includes_all_days_for_user" do
+  describe ".range_has_a_limit_bug" do
+    # This should be part of the factory, but doing that is nontrivial
     def create_legacy_day(vso, date)
       hearing_day = create(:hearing_day, scheduled_for: date, judge: create(:user, full_name: Faker::Name.name))
       case_hearing = create(:case_hearing, vdkey: hearing_day.id)
@@ -303,11 +304,10 @@ describe HearingDayRange, :all_dbs do
       hearing_day
     end
 
+    # User related set up
     let!(:vso_participant_id) { Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_PARTICIPANT_ID }
     let!(:vso) { create(:vso, participant_id: vso_participant_id) }
     let!(:current_user) { User.authenticate!(css_id: "VSO_USER", roles: ["VSO"]) }
-    let(:start_date) { Time.zone.now + 1.day - 1.month }
-    let(:end_date) { Time.zone.now - 1.day + 1.year }
     let!(:vso_participant_ids) { Fakes::BGSServicePOA.default_vsos_poas }
     # Create the hearing_days, only legacy days will appear in subject (due to 'limit' buggy behaviour)
     let!(:legacy_day_one)   { create_legacy_day(vso, Time.zone.today + 1) }
@@ -316,11 +316,18 @@ describe HearingDayRange, :all_dbs do
     let!(:ama_hearing)      { create(:hearing, :with_tasks, hearing_day: ama_day_one) }
     let!(:legacy_day_three) { create_legacy_day(vso, Time.zone.today + 4) }
     let!(:legacy_day_four)  { create_legacy_day(vso, Time.zone.today + 5) }
-    # Will get cut off even despite being in the time range
+    # Will not appear in the resultant days despite being in the time range
     let!(:legacy_day_five)  { create_legacy_day(vso, Time.zone.today + 6) }
     let!(:legacy_day_six)   { create_legacy_day(vso, Time.zone.today + 7) }
 
-    subject { HearingDayRange.new(start_date, end_date).upcoming_days_for_vso_user(current_user, 5) }
+    # Set up the range for the HearingDayRange
+    let(:start_date) { Time.zone.now + 1.day - 1.month }
+    let(:end_date)   { Time.zone.now - 1.day + 1.year }
+    # This is set to 1000 in production, so this bug isn't often seen
+    # to reproduce it easily in this test we need to set this lower than
+    # the number of HearingDays we create
+    let(:remaining_days_limit) { 5 }
+    subject { HearingDayRange.new(start_date, end_date).upcoming_days_for_vso_user(current_user, remaining_days_limit) }
 
     before do
       stub_const("BGSService", ExternalApi::BGSService)
@@ -332,10 +339,18 @@ describe HearingDayRange, :all_dbs do
         .with(vso_participant_id).and_return(vso_participant_ids)
     end
 
-    it "only returns hearing days with VSO assigned hearings" do
+    it "returns a set of hearing days that might not be what you'd expect" do
+      # Once this is fixed we expect to see:
+      # subject.count == HearingDay.count == 7 (six legacy, one ama)
+      # subject.pluck(:id) == ids of all seven days in order
       expect(subject.count).to eq 4
       expect(HearingDay.count).to eq 7
-      expect(subject.pluck(:id)).to match_array [legacy_day_one.id, legacy_day_two.id, legacy_day_three.id, legacy_day_four.id]
+      expect(subject.pluck(:id)).to match_array [
+        legacy_day_one.id,
+        legacy_day_two.id,
+        legacy_day_three.id,
+        legacy_day_four.id
+      ]
     end
   end
 end
