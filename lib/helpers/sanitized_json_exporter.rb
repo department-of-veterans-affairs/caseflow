@@ -25,9 +25,9 @@ class SanitizedJsonExporter
 
     return if initial_records.compact.blank?
 
-    @configuration.records_to_export(initial_records).each do |clazz, records|
-      puts "Exporting #{records.count} #{clazz.name} records" if @verbosity > 1
-      @records_hash[clazz.table_name] = sanitize_records(records.uniq.compact)
+    @configuration.records_to_export(initial_records).each do |klass, records|
+      puts "Exporting #{records.count} #{klass.name} records" if @verbosity > 1
+      @records_hash[klass.table_name] = sanitize_records(records.uniq.compact)
     end
     puts "Processed #{@records_hash.values.map(&:count).sum} records" if @verbosity > 0
   end

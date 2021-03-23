@@ -134,8 +134,8 @@ class SanitizedJsonConfiguration
   private
 
   def extract_configuration(config_field, configuration, default_value = nil)
-    configuration.select { |clazz, _| clazz < ActiveRecord::Base }
-      .map { |clazz, class_config| [clazz, class_config[config_field] || default_value.clone] }.to_h.compact
+    configuration.select { |klass, _| klass < ActiveRecord::Base }
+      .map { |klass, class_config| [klass, class_config[config_field] || default_value.clone] }.to_h.compact
   end
 
   def extract_classes_with_true(config_field, configuration)
@@ -165,10 +165,10 @@ class SanitizedJsonConfiguration
       # Exclude id_mapping_types since they will be handled by reassociate_with_imported_records via reassociate_fields
       known_types = (reassociate_types + reassociate_types.map(&:descendants).flatten - id_mapping_types).uniq
 
-      reassociate_types.map do |clazz|
+      reassociate_types.map do |klass|
         [
-          clazz,
-          AssocationWrapper.new(clazz).grouped_fieldnames_of_typed_associations_with(known_types.map(&:name))
+          klass,
+          AssocationWrapper.new(klass).grouped_fieldnames_of_typed_associations_with(known_types.map(&:name))
             .values.flatten.sort
         ]
       end.to_h.tap do |class_to_fieldnames_hash|
@@ -193,8 +193,8 @@ class SanitizedJsonConfiguration
     }
 
     # incrementally update export_records as subsequent calls may rely on prior updates to export_records
-    extract_configuration(:retrieval, configuration).map do |clazz, retrieval_lambda|
-      export_records[clazz] = retrieval_lambda.call(export_records)
+    extract_configuration(:retrieval, configuration).map do |klass, retrieval_lambda|
+      export_records[klass] = retrieval_lambda.call(export_records)
     end
 
     export_records
@@ -258,15 +258,15 @@ class SanitizedJsonConfiguration
   # For each class in reuse_record_types, provide a way to find the existing record
   # :reek:UnusedParameters
   # rubocop:disable Lint/UnusedMethodArgument
-  def find_existing_record(clazz, obj_hash, importer: nil)
-    if clazz == User
+  def find_existing_record(klass, obj_hash, importer: nil)
+    if klass == User
       # The index for css_id has an odd column name plus find_by_css_id is faster.
       User.find_by_css_id(obj_hash["css_id"])
-    elsif clazz == Appeal
+    elsif klass == Appeal
       # uuid is not a uniq index, so can't rely on importer to do it automatically
       Appeal.find_by(uuid: obj_hash["uuid"])
-    elsif [Organization, Veteran, Person].include?(clazz)
-      # Let importer find it using the fallback: clazz.find_by(unique_field: obj_hash[unique_field])
+    elsif [Organization, Veteran, Person].include?(klass)
+      # Let importer find it using the fallback: klass.find_by(unique_field: obj_hash[unique_field])
       nil
     end
   end
@@ -278,18 +278,18 @@ class SanitizedJsonConfiguration
     # For each reassociate_types, identify their associations so '_id' fields can be reassociated with imported records
     @reassociate_fields ||= {
       # Typed polymorphic association fields will be associated based on the '_type' field
-      type: reassociate_types.map do |clazz|
-        [clazz,
-         AssocationWrapper.new(clazz).typed_associations(excluding: offset_id_fields[clazz]).fieldnames.presence]
+      type: reassociate_types.map do |klass|
+        [klass,
+         AssocationWrapper.new(klass).typed_associations(excluding: offset_id_fields[klass]).fieldnames.presence]
       end.to_h.compact
     }.merge(
       # Untyped association fields (ie, without the matching '_type' field) will associate to their corresponding type
       id_mapping_types.map do |assoc_class|
         [
           assoc_class.name,
-          reassociate_types.map do |clazz|
-            [clazz,
-             AssocationWrapper.new(clazz).untyped_associations_with(assoc_class).fieldnames.presence]
+          reassociate_types.map do |klass|
+            [klass,
+             AssocationWrapper.new(klass).untyped_associations_with(assoc_class).fieldnames.presence]
           end.to_h.compact
         ]
       end .to_h
@@ -299,19 +299,19 @@ class SanitizedJsonConfiguration
   # :reek:LongParameterList
   # :reek:UnusedParameters
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Lint/UnusedMethodArgument
-  def before_creation_hook(clazz, obj_hash, obj_description: nil, importer: nil)
+  def before_creation_hook(klass, obj_hash, obj_description: nil, importer: nil)
     # Basic check to make sure *`_id` fields have been updated
     remaining_id_fields = obj_hash.select do |field_name, field_value|
       field_name.ends_with?("_id") && field_value.is_a?(Integer) && (field_value < id_offset) &&
         (
-          !(clazz <= Task && field_name == "assigned_to_id" && obj_hash["assigned_to_type"] == "Organization") &&
-          !(clazz <= OrganizationsUser && (field_name == "organization_id" || field_name == "user_id")) &&
-          !(clazz <= VirtualHearing && field_name == "conference_id") &&
+          !(klass <= Task && field_name == "assigned_to_id" && obj_hash["assigned_to_type"] == "Organization") &&
+          !(klass <= OrganizationsUser && (field_name == "organization_id" || field_name == "user_id")) &&
+          !(klass <= VirtualHearing && field_name == "conference_id") &&
           true
         )
     end
     unless remaining_id_fields.blank?
-      fail "!! For #{clazz}, expecting these *'_id' fields be adjusted: " \
+      fail "!! For #{klass}, expecting these *'_id' fields be adjusted: " \
            "#{remaining_id_fields}\n\tobj_hash: #{obj_hash}"
     end
   end

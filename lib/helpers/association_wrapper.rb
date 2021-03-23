@@ -8,8 +8,8 @@
 class AssocationWrapper
   attr_reader :associations
 
-  def initialize(clazz)
-    @associations = clazz.reflect_on_all_associations
+  def initialize(klass)
+    @associations = klass.reflect_on_all_associations
   end
 
   def belongs_to
@@ -18,7 +18,7 @@ class AssocationWrapper
   end
 
   def without_type_field
-    # Not sure how to handle case where assoc.foreign_key.is_a?(Symbol)
+    # Ignoring case where assoc.foreign_key.is_a?(Symbol)
     @associations = @associations.select { |assoc| assoc.foreign_type.nil? && assoc.foreign_key.is_a?(String) }
     self
   end

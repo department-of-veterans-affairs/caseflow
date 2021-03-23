@@ -31,23 +31,23 @@ module SanitizedJsonDifference
     mapped_fields = SanitizedJsonDifference.hash_merge_array_values(mapped_fields, additional_expected_diffs_fields)
 
     # https://blog.arkency.com/inject-vs-each-with-object/
-    @configuration.records_to_export(orig_initial_records).each_with_object({}) do |(clazz, orig_records), result|
-      key = clazz.table_name
+    @configuration.records_to_export(orig_initial_records).each_with_object({}) do |(klass, orig_records), result|
+      key = klass.table_name
       reused_records_list = ignore_reused_records ? reused_records[key] : []
       result[key] = SanitizedJsonDifference.diff_record_lists(orig_records.compact.uniq.sort_by(&:id),
                                                               imported_records[key],
                                                               reused_records_list,
-                                                              mapped_fields[clazz])
+                                                              mapped_fields[klass])
     end
   end
 
   def self.hash_merge_array_values(mapped_fields, additional_expected_diffs_fields)
     return mapped_fields unless additional_expected_diffs_fields
 
-    mapped_fields.map do |clazz, fieldnames|
-      next [clazz, fieldnames] unless additional_expected_diffs_fields[clazz]
+    mapped_fields.map do |klass, fieldnames|
+      next [klass, fieldnames] unless additional_expected_diffs_fields[klass]
 
-      [clazz, fieldnames + additional_expected_diffs_fields[clazz]]
+      [klass, fieldnames + additional_expected_diffs_fields[klass]]
     end.to_h
   end
 
