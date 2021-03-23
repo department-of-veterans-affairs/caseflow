@@ -13,6 +13,28 @@ export const getDependentClaimant = (intakeData) => {
   return `${relation.displayText} (payee code ${intakeData.payeeCode})`;
 };
 
+const getClaimantField = (veteran, intakeData) => {
+  const {
+    claimantName,
+    relationship,
+    claimantType
+  } = intakeData;
+
+  const claimantMap = {
+    veteran: () => veteran.name,
+    dependent: () => getDependentClaimant(intakeData),
+    attorney: () => `${claimantName}, Attorney`,
+    other: () => [claimantName, relationship].filter(Boolean).join(', ')
+  };
+
+  const claimantDisplayText = claimantMap[claimantType ?? 'veteran']?.();
+
+  return [{
+    field: 'Claimant',
+    content: claimantDisplayText
+  }];
+};
+
 export const isTimely = (formType, decisionDateStr, receiptDateStr) => {
   if (formType === 'supplemental_claim') {
     return true;
@@ -308,7 +330,9 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
     fields = [];
   }
 
-  return fields
+  let claimantField = getClaimantField(veteran, intakeData);
+
+  return fields.concat(claimantField);
 };
 
 export const formatIssuesBySection = (issues, editClaimLabelFeatureToggle) => {

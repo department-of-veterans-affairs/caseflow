@@ -19,7 +19,7 @@ import DateSelector from '../../components/DateSelector';
 import ErrorAlert from '../components/ErrorAlert';
 import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES, FORM_TYPES } from '../constants';
 import EP_CLAIM_TYPES from '../../../constants/EP_CLAIM_TYPES';
-import { formatAddedIssues, getAddIssuesFields, formatIssuesBySection, getDependentClaimant } from '../util/issues';
+import { formatAddedIssues, getAddIssuesFields, formatIssuesBySection } from '../util/issues';
 import Table from '../../components/Table';
 import IssueList from '../components/IssueList';
 
@@ -277,24 +277,6 @@ class AddIssuesPage extends React.Component {
     const columns = [{ valueName: 'field' }, { valueName: 'content' }];
 
     let fieldsForFormType = getAddIssuesFields(formType, veteran, intakeData);
-
-    const claimantType = intakeData.claimantType;
-
-    const claimantDisplayText = () => {
-      const relationship = intakeData.claimantRelationship;
-      const displayText = [intakeData.claimantName, relationship].filter(Boolean).join(', ');
-
-      if (relationship !== 'Veteran') {
-        return displayText;
-      }
-
-      return relationship;
-    };
-
-    fieldsForFormType = fieldsForFormType.concat({
-      field: 'Claimant',
-      content: claimantDisplayText()
-    });
 
     if (formType === 'appeal' && nonVeteranClaimants) {
       fieldsForFormType = fieldsForFormType.concat({
