@@ -19,7 +19,7 @@ const containerStyles = css({
   position: 'relative'
 });
 
-class ColocatedTaskListView extends React.PureComponent {
+export class ColocatedTaskListView extends React.PureComponent {
   componentDidMount = () => {
     this.props.clearCaseSelectSearch();
   };
@@ -54,5 +54,8 @@ export default (connect(mapStateToProps, mapDispatchToProps)(ColocatedTaskListVi
 ColocatedTaskListView.propTypes = {
   clearCaseSelectSearch: PropTypes.func,
   hideSuccessMessage: PropTypes.func,
-  success: PropTypes.object
+  success: PropTypes.shape({
+    title: PropTypes.string,
+    detail: PropTypes.string
+  })
 };

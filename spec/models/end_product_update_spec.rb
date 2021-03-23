@@ -3,7 +3,10 @@
 describe EndProductUpdate do
   describe "#perform!" do
     let(:original_decision_review) { create(:higher_level_review, :processed, same_office: false) }
-    let!(:epe) { create(:end_product_establishment, code: old_code, source: original_decision_review) }
+    let(:claim_date) { Time.zone.yesterday }
+    let!(:epe) do
+      create(:end_product_establishment, code: old_code, source: original_decision_review, claim_date: claim_date)
+    end
     let(:epu) do
       create(:end_product_update,
              original_decision_review: original_decision_review,
@@ -106,6 +109,18 @@ describe EndProductUpdate do
             expect(epu.request_issues).to all have_attributes(benefit_type: new_benefit_type)
           end
         end
+      end
+    end
+
+    context "when there is a matching EP in BGS" do
+      let(:old_code) { "030HLRR" }
+      let(:new_code) { "030HLRNR" }
+      let(:claim_date) { 10.days.ago }
+
+      it "updates the EP in BGS to have the new claim label" do
+        subject
+        ep = BGSService.new.get_end_products(epu.veteran_file_number).first
+        expect(ep).to include(claim_type_code: new_code)
       end
     end
   end
