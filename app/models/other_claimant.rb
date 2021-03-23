@@ -34,10 +34,10 @@ class OtherClaimant < Claimant
     appellant = create_appellant!(params)
 
     poa_form = params.dig(:poa_form)
-    poa_participant_id = poa_params.dig(:listed_attorney)
+    poa_participant_id = poa_params.dig(:listed_attorney).dig(:value)
 
     if poa_form
-      if poa_participant_id
+      if poa_participant_id != "not_listed"
         appellant.update!(poa_participant_id: poa_participant_id)
       else
         poa_params.permit!

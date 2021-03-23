@@ -65,7 +65,7 @@ export const schema = yup.object().shape({
     is: (value) => ['individual', 'organization'].includes(value),
     then: yup.string().required(),
   }),
-  emailAddress: yup.string().emailAddress(),
+  emailAddress: yup.string().email(),
   phoneNumber: yup.string(),
   poaForm: yup.string().required(),
 });

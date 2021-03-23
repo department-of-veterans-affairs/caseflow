@@ -155,8 +155,8 @@ export const SelectClaimant = (props) => {
       });
     } else {
       setClaimant({ claimant: value,
-        claimantType: claimantType });
-    }
+        claimantType });
+    };
   };
   const handleAddClaimant = ({
     name,

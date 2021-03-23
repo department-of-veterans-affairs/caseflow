@@ -92,7 +92,7 @@ export const AddPoaPage = () => {
 
   const toggleConfirm = () => setConfirmModal((val) => !val);
   const handleConfirm = () => {
-    intakeData.claimant = claimant;
+    intakeData.unlistedClaimant = claimant;
     intakeData.poa = poa;
 
     dispatch(submitReview(intakeId, intakeData, selectedForm.formName));
@@ -144,17 +144,19 @@ export const AddPoaPage = () => {
             name="listedAttorney"
             defaultValue={null}
             render={({ ...rest }) => (
-              <SearchableDropdown
-                {...rest}
-                label="Representative's name"
-                filterOption={filterOption}
-                async={asyncFn}
-                defaultOptions
-                debounce={250}
-                strongLabel
-                isClearable
-                placeholder="Type to search..."
-              />
+              <FieldDiv>
+                <SearchableDropdown
+                  {...rest}
+                  label="Representative's name"
+                  filterOption={filterOption}
+                  async={asyncFn}
+                  defaultOptions
+                  debounce={250}
+                  strongLabel
+                  isClearable
+                  placeholder="Type to search..."
+                />
+              </FieldDiv>
             )}
           />
 

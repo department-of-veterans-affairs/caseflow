@@ -177,6 +177,7 @@ export const REVIEW_DATA_FIELDS = {
     docket_type: { key: 'docketType', required: true },
     receipt_date: { key: 'receiptDate', required: true },
     claimant: { key: 'claimant' },
+    unlisted_claimant: { key: 'unlistedClaimant' },
     poa: { key: 'poa' },
     claimant_notes: { key: 'claimantNotes' },
     claimant_type: { key: 'claimantType', required: true },

@@ -65,8 +65,7 @@ export const AddClaimantConfirmationModal = ({
 
   const missingLastName = useMemo(
     () =>
-      (['child', 'spouse'].includes(claimantEntity?.relationship) ||
-        claimantEntity?.partyType === 'individual') &&
+      (claimantEntity?.partyType === 'individual') &&
       !claimantEntity?.lastName,
     [claimantEntity]
   );

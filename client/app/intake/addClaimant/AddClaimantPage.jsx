@@ -48,7 +48,7 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
 
   const toggleConfirm = () => setConfirmModal((val) => !val);
   const handleConfirm = () => {
-    intakeData.claimant = claimant;
+    intakeData.unlisted_claimant = claimant;
 
     dispatch(submitReview(intakeId, intakeData, selectedForm.formName));
     push('/add_issues');

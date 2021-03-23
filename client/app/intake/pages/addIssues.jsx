@@ -278,17 +278,9 @@ class AddIssuesPage extends React.Component {
 
     let fieldsForFormType = getAddIssuesFields(formType, veteran, intakeData);
 
-    const claimantMap = {
-      veteran: () => veteran.name,
-      dependent: () => getDependentClaimant(intakeData),
-      attorney: () => `${intakeData.claimantName}, Attorney`,
-      other: () => intakeData.claimantNotes
-    };
-
     const claimantType = intakeData.claimantType;
-    const claimantDisplayText = claimantMap[claimantType ?? 'veteran']?.();
 
-    const unlistedClaimantDisplayText = () => {
+    const claimantDisplayText = () => {
       const relationship = intakeData.claimantRelationship;
       const displayText = [intakeData.claimantName, relationship].filter(Boolean).join(', ');
 
@@ -301,7 +293,7 @@ class AddIssuesPage extends React.Component {
 
     fieldsForFormType = fieldsForFormType.concat({
       field: 'Claimant',
-      content: claimantDisplayText || unlistedClaimantDisplayText()
+      content: claimantDisplayText()
     });
 
     if (formType === 'appeal' && nonVeteranClaimants) {

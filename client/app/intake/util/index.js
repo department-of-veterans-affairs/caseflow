@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { REVIEW_OPTIONS, REVIEW_DATA_FIELDS, CLAIMANT_ERRORS } from '../constants';
 import DATES from '../../../constants/DATES';
 import { formatDateStr } from '../../util/DateUtil';
-import { camelCaseToSnakeCaseObjectKeys } from '../../util/StringUtil';
+import StringUtil from '../../util/StringUtil';
 
 export const getBlankOptionError = (responseErrorCodes, field) => (
   _.get(responseErrorCodes[field], 0) === 'blank' ? 'Please select an option.' : null
@@ -113,11 +113,36 @@ export const validateReviewData = (intakeData, intakeType) => {
   return (Object.keys(errorCodes).length ? errorCodes : null);
 };
 
+
+  // Converts all object and nested keys to snake case
+const keysToSnakeCase = (object) => {
+  let snakeCaseObject = _.cloneDeep(object);
+
+  // Convert keys to snake case
+  snakeCaseObject = _.mapKeys(snakeCaseObject, (value, key) => {
+    return _.snakeCase(key);
+  });
+
+  // Recursively apply throughout object
+  return _.mapValues(
+    snakeCaseObject,
+    value => {
+      if (_.isPlainObject(value)) {
+        return keysToSnakeCase(value);
+      } else if (_.isArray(value)) {
+        return _.map(value, keysToSnakeCase);
+      } else {
+        return value;
+      }
+    }
+  );
+};
+
 export const prepareReviewData = (intakeData, intakeType) => {
   const fields = REVIEW_DATA_FIELDS[intakeType];
   const result = {};
   for (let fieldName in fields) {
     result[fieldName] = intakeData[fields[fieldName].key];
   }
-  return camelCaseToSnakeCaseObjectKeys(result);
+  return keysToSnakeCase(result);
 };

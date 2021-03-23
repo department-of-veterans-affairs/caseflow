@@ -1,12 +1,12 @@
 import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { analyticsCallback, submitIntakeCompleteRequest } from './intake';
-import { validateReviewData, prepareReviewData, formatUnlistedClaimant } from '../util';
+import { validateReviewData, prepareReviewData } from '../util';
 import { formatIssues } from '../util/issues';
 
 const analytics = true;
 
-export const submitReview = (intakeId, intakeData, intakeType, claimant, poa) => (dispatch) => {
+export const submitReview = (intakeId, intakeData, intakeType) => (dispatch) => {
   dispatch({
     type: ACTIONS.SUBMIT_REVIEW_START,
     meta: { analytics }
