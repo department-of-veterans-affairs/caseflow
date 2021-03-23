@@ -14,7 +14,7 @@ describe VACOLS::Staff, :all_dbs do
     end
     context "when given invalid/unknown CSS_ID" do
       let(:search_css_id) { "INVALID_CSS_ID" }
-      it "returns empty list" do
+      it "returns nil" do
         expect(subject).to be_nil
       end
     end
