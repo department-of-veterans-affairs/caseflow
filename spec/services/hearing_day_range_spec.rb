@@ -324,8 +324,8 @@ describe HearingDayRange, :all_dbs do
     let(:start_date) { Time.zone.now + 1.day - 1.month }
     let(:end_date)   { Time.zone.now - 1.day + 1.year }
     # This is set to 1000 in production, so this bug isn't often seen
-    # to reproduce it easily in this test we need to set this lower than
-    # the number of HearingDays we create
+    # to reproduce it easily in this test it's easiest to set this lower
+    # than the number of HearingDays we create
     let(:remaining_days_limit) { 5 }
     subject { HearingDayRange.new(start_date, end_date).upcoming_days_for_vso_user(current_user, remaining_days_limit) }
 
@@ -339,10 +339,9 @@ describe HearingDayRange, :all_dbs do
         .with(vso_participant_id).and_return(vso_participant_ids)
     end
 
+    # This succeeds when we have the undesired behavior, it will fail when
+    # there's a fix
     it "returns a set of hearing days that might not be what you'd expect" do
-      # Once this is fixed we expect to see:
-      # subject.count == HearingDay.count == 7 (six legacy, one ama)
-      # subject.pluck(:id) == ids of all seven days in order
       expect(subject.count).to eq 4
       expect(HearingDay.count).to eq 7
       expect(subject.pluck(:id)).to match_array [
@@ -350,6 +349,24 @@ describe HearingDayRange, :all_dbs do
         legacy_day_two.id,
         legacy_day_three.id,
         legacy_day_four.id
+      ]
+    end
+
+    # This test will succeed when the behavior has been adjusted
+    it "returns the correct set of all hearing days" do
+      # Once this is fixed we expect to see:
+      # subject.count == HearingDay.count == 7 (six legacy, one ama)
+      # subject.pluck(:id) == ids of all seven days in order
+      expect(subject.count).to eq 7
+      expect(HearingDay.count).to eq 7
+      expect(subject.pluck(:id)).to match_array [
+        legacy_day_one.id,
+        legacy_day_two.id,
+        ama_day_one.id,
+        legacy_day_three.id,
+        legacy_day_four.id,
+        legacy_day_five.id,
+        legacy_day_six.id
       ]
     end
   end
