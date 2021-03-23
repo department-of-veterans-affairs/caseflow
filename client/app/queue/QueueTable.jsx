@@ -113,11 +113,19 @@ export const HeaderRow = (props) => {
           let sortIcon;
           let filterIcon;
 
+          // Define the aria label to exclude the filter/sort
+          const ariaLabel = column?.ariaLabel ? column?.ariaLabel : `header-${column.columnName}`;
+
+          // Set the Sort name for the column if sorting by this column
+          const sorting = props.sortColName === column.name;
+          const sortLabel = sorting && props.sortAscending ? 'ascending' : 'descending';
+
+          // Set the aria props for this column header
+          const sortProps = sorting ? { 'aria-sort': sortLabel } : {};
+
           if ((!props.useTaskPagesApi || column.backendCanSort) && column.getSortValue) {
-            const topColor =
-              props.sortColName === column.name && !props.sortAscending ? COLORS.PRIMARY : COLORS.GREY_LIGHT;
-            const botColor =
-              props.sortColName === column.name && props.sortAscending ? COLORS.PRIMARY : COLORS.GREY_LIGHT;
+            const topColor = sorting && !props.sortAscending ? COLORS.PRIMARY : COLORS.GREY_LIGHT;
+            const botColor = sorting && props.sortAscending ? COLORS.PRIMARY : COLORS.GREY_LIGHT;
 
             sortIcon = (
               <span
@@ -155,9 +163,9 @@ export const HeaderRow = (props) => {
               />
             );
           }
-          const columnTitleContent = <span>{column.header || ''}</span>;
+          const columnTitleContent = <span id={`header-${column.columnName}`}>{column.header || ''}</span>;
           const columnContent = (
-            <span {...iconHeaderStyle} aria-label="">
+            <span {...iconHeaderStyle}>
               {columnTitleContent}
               {sortIcon}
               {filterIcon}
@@ -165,7 +173,15 @@ export const HeaderRow = (props) => {
           );
 
           return (
-            <th role="columnheader" scope="col" key={columnNumber} className={cellClasses(column)}>
+            <th
+              {...sortProps}
+              {...(column?.sortProps || {})}
+              role="columnheader"
+              scope="col"
+              key={columnNumber}
+              className={cellClasses(column)}
+              aria-labelledby={ariaLabel}
+            >
               {column.tooltip ? (
                 <Tooltip id={`tooltip-${columnNumber}`} text={column.tooltip}>
                   {columnContent}
