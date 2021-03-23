@@ -27,15 +27,16 @@ module SanitizationTransforms
 
   def invalid_ssn(field_name, field_value, obj_class: nil, fake_ssn_prefix: "000")
     # Instead of using Faker::IDNumber.invalid, make the SSN obviously fake by starting with fake_ssn_prefix
+    invalid_ssn = (fake_ssn_prefix + Faker::Number.number(digits: 9 - fake_ssn_prefix.length).to_s)[0..8]
     case field_name
     when "ssn", "file_number", "veteran_file_number"
-      fake_ssn_prefix + Faker::Number.number(digits: 6).to_s
+      invalid_ssn
     else
       case field_value
       when /^\d{9}$/
-        fake_ssn_prefix + Faker::Number.number(digits: 6).to_s
+        invalid_ssn
       when /^\d{3}-\d{2}-\d{4}$/
-        [fake_ssn_prefix, Faker::Number.number(digits: 2), Faker::Number.number(digits: 4)].join("-")
+        "#{invalid_ssn[0..2]}-#{invalid_ssn[3..4]}-#{invalid_ssn[5..8]}"
       end
     end
   end

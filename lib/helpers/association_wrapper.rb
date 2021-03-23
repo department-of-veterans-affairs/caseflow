@@ -44,7 +44,7 @@ class AssocationWrapper
     @associations.map(&:foreign_key)
   end
 
-  def typed_associations(excluding: nil)
+  def typed_associations(excluding: [])
     belongs_to.having_type_field.except_fieldnames(excluding)
   end
 

@@ -407,7 +407,7 @@ describe "SanitizedJsonExporter/Importer" do
         expect(sje.value_mapping.keys).to include(*pii_values)
         expect(sje.value_mapping.values).not_to include(*pii_values)
 
-        # Check PII values are in file_contents
+        # Check PII values are not in file_contents
         expect(sje.file_contents).not_to include(*pii_values)
         # Check file_contents uses fake values instead of PII values
         expect(sje.file_contents).to include(*sje.value_mapping.values)
