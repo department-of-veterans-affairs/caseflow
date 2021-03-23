@@ -532,6 +532,16 @@ global_admin_logins,id,integer PK,x,x,,,,
 global_admin_logins,target_css_id,string,,,,,,
 global_admin_logins,target_station_id,string,,,,,,
 global_admin_logins,updated_at,datetime,,,,,x,
+granted_substitutions,,,,,,,,Store Granted Substitution form data
+granted_substitutions,created_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
+granted_substitutions,created_by_id,integer (8) ∗ FK,x,,x,,,User that created this record
+granted_substitutions,id,integer (8) PK,x,x,,,,
+granted_substitutions,poa_participant_id,string ∗,x,,,,,"Identifier of the appellant's POA, if they have a CorpDB participant_id"
+granted_substitutions,source_appeal_id,integer (8) ∗ FK,x,,x,,x,The relevant source appeal for this substitution
+granted_substitutions,substitute_id,integer (8) ∗ FK,x,,x,,,References claimants table
+granted_substitutions,substitution_date,date ∗,x,,,,,Date of granted substitution
+granted_substitutions,target_appeal_id,integer (8) ∗ FK,x,,x,,x,The new appeal resulting from this granted substitution
+granted_substitutions,updated_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
 hearings,,,,,,,,
 hearings,appeal_id,integer ∗ FK,x,,x,,,Appeal ID; use as FK to appeals
 hearings,bva_poc,string,,,,,,Hearing coordinator full name
@@ -933,7 +943,7 @@ request_issues,updated_at,datetime,,,,,x,Automatic timestamp whenever the record
 request_issues,vacols_id,string,,,,,,The vacols_id of the legacy appeal that had an issue found to match the request issue.
 request_issues,vacols_sequence_id,integer,,,,,,"The vacols_sequence_id, for the specific issue on the legacy appeal which the Claims Assistant determined to match the request issue on the Decision Review. A combination of the vacols_id (for the legacy appeal), and vacols_sequence_id (for which issue on the legacy appeal), is required to identify the issue being opted-in."
 request_issues,verified_unidentified_issue,boolean,,,,,,"A verified unidentified issue allows an issue whose rating data is missing to be intaken as a regular rating issue. In order to be marked as verified, a VSR needs to confirm that they were able to find the record of the decision for the issue."
-request_issues,veteran_participant_id,string,,,,,,The veteran participant ID. This should be unique in upstream systems and used in the future to reconcile duplicates.
+request_issues,veteran_participant_id,string,,,,,x,The veteran participant ID. This should be unique in upstream systems and used in the future to reconcile duplicates.
 request_issues_updates,,,,,,,,"Keeps track of edits to request issues on a decision review that happen after the initial intake, such as removing and adding issues.  When the decision review is processed in VBMS, this also tracks whether adding or removing contentions in VBMS for the update has succeeded."
 request_issues_updates,after_request_issue_ids,integer ∗,x,,,,,An array of the active request issue IDs after a user has finished editing a decision review. Used with before_request_issue_ids to determine appropriate actions (such as which contentions need to be added).
 request_issues_updates,attempted_at,datetime,,,,,,Timestamp for when the request issue update processing was last attempted.
