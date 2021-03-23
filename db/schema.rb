@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_11_154002) do
+ActiveRecord::Schema.define(version: 2021_03_22_174325) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -691,6 +691,19 @@ ActiveRecord::Schema.define(version: 2021_03_11_154002) do
     t.index ["updated_at"], name: "index_global_admin_logins_on_updated_at"
   end
 
+  create_table "granted_substitutions", comment: "Store Granted Substitution form data", force: :cascade do |t|
+    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.bigint "created_by_id", null: false, comment: "User that created this record"
+    t.string "poa_participant_id", null: false, comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id"
+    t.bigint "source_appeal_id", null: false, comment: "The relevant source appeal for this substitution"
+    t.bigint "substitute_id", null: false, comment: "References claimants table"
+    t.date "substitution_date", null: false, comment: "Date of granted substitution"
+    t.bigint "target_appeal_id", null: false, comment: "The new appeal resulting from this granted substitution"
+    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.index ["source_appeal_id"], name: "index_granted_substitutions_on_source_appeal_id"
+    t.index ["target_appeal_id"], name: "index_granted_substitutions_on_target_appeal_id"
+  end
+
   create_table "hearing_appeal_stream_snapshots", id: false, force: :cascade do |t|
     t.integer "appeal_id", comment: "LegacyAppeal ID; use as FK to legacy_appeals"
     t.datetime "created_at", null: false, comment: "Automatic timestamp of when snapshot was created"
@@ -1230,6 +1243,7 @@ ActiveRecord::Schema.define(version: 2021_03_11_154002) do
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
     t.index ["ineligible_reason"], name: "index_request_issues_on_ineligible_reason"
     t.index ["updated_at"], name: "index_request_issues_on_updated_at"
+    t.index ["veteran_participant_id"], name: "index_veteran_participant_id"
   end
 
   create_table "request_issues_updates", comment: "Keeps track of edits to request issues on a decision review that happen after the initial intake, such as removing and adding issues.  When the decision review is processed in VBMS, this also tracks whether adding or removing contentions in VBMS for the update has succeeded.", force: :cascade do |t|
@@ -1628,6 +1642,10 @@ ActiveRecord::Schema.define(version: 2021_03_11_154002) do
   add_foreign_key "end_product_establishments", "users"
   add_foreign_key "end_product_updates", "end_product_establishments"
   add_foreign_key "end_product_updates", "users"
+  add_foreign_key "granted_substitutions", "appeals", column: "source_appeal_id"
+  add_foreign_key "granted_substitutions", "appeals", column: "target_appeal_id"
+  add_foreign_key "granted_substitutions", "claimants", column: "substitute_id"
+  add_foreign_key "granted_substitutions", "users", column: "created_by_id"
   add_foreign_key "hearing_days", "users", column: "created_by_id"
   add_foreign_key "hearing_days", "users", column: "updated_by_id"
   add_foreign_key "hearing_views", "users"

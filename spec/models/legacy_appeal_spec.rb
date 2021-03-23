@@ -2934,4 +2934,18 @@ describe LegacyAppeal, :all_dbs do
       end
     end
   end
+
+  describe "#completed_hearing_on_previous_appeal?" do
+    context "when there are no hearings" do
+      let(:vacols_case) { create(:case, bfcorlid: "12345") }
+      subject { appeal.completed_hearing_on_previous_appeal? }
+
+      it "returns false" do
+        vacols_ids = VACOLS::Case.where(bfcorlid: appeal.vbms_id).pluck(:bfkey)
+        hearings = HearingRepository.hearings_for_appeals(vacols_ids)
+        expect(hearings).to eq({})
+        expect(subject).to eq false
+      end
+    end
+  end
 end
