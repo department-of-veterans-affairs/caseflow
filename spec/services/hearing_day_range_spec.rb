@@ -310,9 +310,18 @@ describe HearingDayRange, :all_dbs do
   #  end
   #end
   describe ".range_includes_all_days_for_user" do
+    def create_legacy_day(vso, date)
+      hearing_day = create(:hearing_day, scheduled_for: date, judge: create(:user, full_name: Faker::Name.name))
+      case_hearing = create(:case_hearing, vdkey: hearing_day.id)
+      hearing = create(:legacy_hearing, hearing_day: hearing_day, case_hearing: case_hearing)
+      track_veteran_task = create(:track_veteran_task, appeal: hearing.appeal, assigned_to: vso)
+
+      hearing_day
+    end
+
     # Create two 'legacy' hearing_days with all the required parts
-    let!(:visible_hearing_day_one) { create(:hearing_day, judge: create(:user, full_name: "Leocadia Jarecki")) }
-    let!(:visible_hearing_day_two) { create(:hearing_day, judge: create(:user, full_name: "Ayame Jouda")) }
+    let!(:visible_hearing_day_one) { create(:hearing_day, scheduled_for: Time.zone.today - 1, judge: create(:user, full_name: "Leocadia Jarecki")) }
+    let!(:visible_hearing_day_two) { create(:hearing_day, scheduled_for: Time.zone.today + 6, judge: create(:user, full_name: "Ayame Jouda")) }
     # Create one hearing_day that should not be visible to this user at all
     let!(:hearing_day_three) { create(:hearing_day, judge: create(:user, full_name: "Clovis Jolla")) }
     let!(:case_hearing_one) { create(:case_hearing, vdkey: visible_hearing_day_one.id) }
@@ -328,6 +337,13 @@ describe HearingDayRange, :all_dbs do
     let(:start_date) { Time.zone.now + 1.day - 1.month }
     let(:end_date) { Time.zone.now - 1.day + 1.year }
     let!(:vso_participant_ids) { Fakes::BGSServicePOA.default_vsos_poas }
+    # I'd really like to get this into a 10.times do {} block
+    let!(:legacy_day_one) { create_legacy_day(vso, Time.zone.today + 1) }
+    let!(:legacy_day_two) { create_legacy_day(vso, Time.zone.today + 2) }
+    let!(:legacy_day_three) { create_legacy_day(vso, Time.zone.today + 3) }
+    # These two get cut off
+    let!(:legacy_day_four) { create_legacy_day(vso, Time.zone.today + 4) }
+    let!(:legacy_day_five) { create_legacy_day(vso, Time.zone.today + 5) }
 
     subject { HearingDayRange.new(start_date, end_date).upcoming_days_for_vso_user(current_user) }
 
@@ -342,9 +358,11 @@ describe HearingDayRange, :all_dbs do
     end
 
     it "only returns hearing days with VSO assigned hearings" do
-      expect(subject.count).to eq 2
-      expect(HearingDay.count).to eq 3
-      expect(subject.pluck(:id)).to match_array [visible_hearing_day_one.id, visible_hearing_day_two.id]
+      expect(subject.count).to eq 4
+      expect(HearingDay.count).to eq 8
+      #expect(subject).to eq(false)
+      #expect(HearingDay.all).to eq(false)
+      expect(subject.pluck(:id)).to match_array [visible_hearing_day_one.id, legacy_day_one.id, legacy_day_two.id, legacy_day_three.id]
     end
   end
 end
