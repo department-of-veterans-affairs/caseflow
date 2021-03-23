@@ -307,11 +307,11 @@ class SanitizedJsonConfiguration
           !(klass <= Task && field_name == "assigned_to_id" && obj_hash["assigned_to_type"] == "Organization") &&
           !(klass <= OrganizationsUser && (field_name == "organization_id" || field_name == "user_id")) &&
           !(klass <= VirtualHearing && field_name == "conference_id") &&
-          true
+          !(klass <= RequestIssue && field_name == "vacols_sequence_id") # Handle this when we can export VACOLS data
         )
     end
     unless remaining_id_fields.blank?
-      fail "!! For #{klass}, expecting these *'_id' fields be adjusted: " \
+      puts "!! For #{klass}, expecting these *'_id' fields be adjusted: " \
            "#{remaining_id_fields}\n\tobj_hash: #{obj_hash}"
     end
   end
