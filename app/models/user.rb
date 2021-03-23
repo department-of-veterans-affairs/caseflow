@@ -118,6 +118,11 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     CaseReview.singleton.users.include?(self) || can_intake_appeals?
   end
 
+  def can_edit_cavc_remands?
+    CavcLitigationSupport.singleton.admins.include?(self)
+    # need to update to only allow cavc lit support admins
+  end
+
   def can_intake_appeals?
     BvaIntake.singleton.users.include?(self)
   end

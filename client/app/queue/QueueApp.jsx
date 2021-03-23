@@ -12,6 +12,7 @@ import {
   setCanEditAod,
   setCanEditNodDate,
   setCanViewOvertimeStatus,
+  setCanEditCavcRemands,
   setFeatureToggles,
   setUserRole,
   setUserCssId,
@@ -97,6 +98,7 @@ class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setCanEditAod(this.props.canEditAod);
     this.props.setCanEditNodDate(this.props.userCanViewEditNodDate);
+    this.props.setCanEditCavcRemands(this.props.canEditCavcRemands);
     this.props.setCanViewOvertimeStatus(this.props.userCanViewOvertimeStatus);
     this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserRole(this.props.userRole);
@@ -1035,6 +1037,7 @@ QueueApp.propTypes = {
   setCanEditAod: PropTypes.func,
   setCanViewOvertimeStatus: PropTypes.func,
   setCanEditNodDate: PropTypes.func,
+  setCanEditCavcRemands: PropTypes.func,
   canEditAod: PropTypes.bool,
   setFeatureToggles: PropTypes.func,
   featureToggles: PropTypes.object,
@@ -1054,6 +1057,7 @@ QueueApp.propTypes = {
   userCanViewOvertimeStatus: PropTypes.bool,
   userCanViewEditNodDate: PropTypes.bool,
   userCanAssignHearingSchedule: PropTypes.bool,
+  canEditCavcRemands: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({
@@ -1065,6 +1069,7 @@ const mapDispatchToProps = (dispatch) =>
     {
       setCanEditAod,
       setCanEditNodDate,
+      setCanEditCavcRemands,
       setCanViewOvertimeStatus,
       setFeatureToggles,
       setUserRole,

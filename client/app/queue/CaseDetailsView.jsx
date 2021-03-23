@@ -55,7 +55,7 @@ export const CaseDetailsView = (props) => {
   const { appealId } = props;
   const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
   const tasks = useSelector((state) => getAllTasksForAppeal(state, { appealId }));
-
+  const canEditCavcRemands = useSelector((state) => state.ui.canEditCavcRemands);
   const success = useSelector((state) => state.ui.messages.success);
   const error = useSelector((state) => state.ui.messages.error);
   const veteranCaseListIsVisible = useSelector((state) => state.ui.veteranCaseListIsVisible);
@@ -151,8 +151,20 @@ export const CaseDetailsView = (props) => {
           {!_.isNull(appeal.appellantFullName) && appeal.appellantIsNotVeteran && (
             <AppellantDetail title="About the Appellant" appeal={appeal} />
           )}
+
           {!_.isNull(appeal.cavcRemand) && appeal.cavcRemand &&
-          (<CavcDetail title="CAVC Remand" {...appeal.cavcRemand} />)}
+          (<CavcDetail 
+            title="CAVC Remand"
+            additionalHeaderContent={
+              canEditCavcRemands && (
+                <span className="cf-push-right" {...anchorEditLinkStyling}>
+                  <Link href={`/appeals/${appealId}/edit`}>{COPY.CORRECT_CAVC_REMAND_LINK}</Link>
+                </span>
+              )
+            }
+            {...appeal.cavcRemand} 
+          />)}
+
           <CaseTimeline title="Case Timeline" appeal={appeal} />
         </StickyNavContentArea>
         {props.pollHearing && pollHearing()}
