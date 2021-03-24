@@ -8,9 +8,12 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   HEARING_BACKLOG_LIMIT = 30
 
+  # https://github.com/department-of-veterans-affairs/caseflow/issues/11713#issuecomment-522678137
+  LOCATION_IS_CASE_STORAGE = "BRIEFF.BFCURLOC in ('81', '83')"
+
   LOCK_READY_APPEALS = "
     select BFCURLOC from BRIEFF
-    where BRIEFF.BFMPRO = 'ACT' and BRIEFF.BFCURLOC in ('81', '83')
+    where BRIEFF.BFMPRO = 'ACT' and #{LOCATION_IS_CASE_STORAGE}
     for update
   "
 
@@ -69,7 +72,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     #{JOIN_DIARY_BLOCKS_DISTRIBUTION}
     inner join FOLDER on FOLDER.TICKNUM = BRIEFF.BFKEY
     where BRIEFF.BFMPRO = 'ACT'
-      and BRIEFF.BFCURLOC in ('81', '83')
+      and #{LOCATION_IS_CASE_STORAGE}
       and BRIEFF.BFBOX is null
       and MAIL_BLOCKS_DISTRIBUTION = 0
       and DIARY_BLOCKS_DISTRIBUTION = 0
@@ -124,7 +127,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       select count(*) N, PRIORITY, READY
       from (
         select case when BFAC = '7' or nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0) > 0 then 1 else 0 end as PRIORITY,
-          case when BFCURLOC in ('81', '83') and MAIL_BLOCKS_DISTRIBUTION = 0 and DIARY_BLOCKS_DISTRIBUTION = 0
+          case when #{LOCATION_IS_CASE_STORAGE} and MAIL_BLOCKS_DISTRIBUTION = 0 and DIARY_BLOCKS_DISTRIBUTION = 0
             then 1 else 0 end as READY
         from BRIEFF
         #{JOIN_MAIL_BLOCKS_DISTRIBUTION}
@@ -176,10 +179,10 @@ class VACOLS::CaseDocket < VACOLS::Record
         select row_number() over (order by BFD19 asc) as ROWNUMBER,
           BFD19
         from BRIEFF
-        where BFCURLOC in ('81', '83')
+        where #{LOCATION_IS_CASE_STORAGE}
           and BFAC <> '9'
       )
-      cross join (select count(*) as MAX_ROWNUMBER from BRIEFF where BFCURLOC in ('81', '83') and BFAC <> '9')
+      cross join (select count(*) as MAX_ROWNUMBER from BRIEFF where #{LOCATION_IS_CASE_STORAGE} and BFAC <> '9')
       where ROWNUMBER = least(?, MAX_ROWNUMBER)
     SQL
 
@@ -200,7 +203,7 @@ class VACOLS::CaseDocket < VACOLS::Record
         ) CUMSUM_READY_N
       from (
         select extract(year from BFD19) YEAR, extract(month from BFD19) MONTH, count(*) N,
-          count(case when BFMPRO = 'ACT' and (BFCURLOC  in ('81', '83') or SATTYID is not null) then 1 end) READY_N
+          count(case when BFMPRO = 'ACT' and (#{LOCATION_IS_CASE_STORAGE} or SATTYID is not null) then 1 end) READY_N
         from BRIEFF
         inner join STAFF on BFCURLOC = STAFKEY
         left join (
