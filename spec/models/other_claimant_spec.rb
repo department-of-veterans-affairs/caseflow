@@ -26,7 +26,7 @@ describe OtherClaimant, :postgres do
     let(:poa_params) { nil }
     let(:poa_participant_id) { nil }
 
-    subject { claimant.save_unrecognized_details!(params, poa_params, poa_participant_id) }
+    subject { claimant.save_unrecognized_details!(params, poa_params) }
 
     context "when appellant is an unlisted individual" do
       let(:relationship) { "child" }
@@ -63,7 +63,8 @@ describe OtherClaimant, :postgres do
       end
     end
 
-    context "when unlisted POA is given" do
+    context "when an unrecognized appellant has a power of attorney added" do
+      let(:poa_participant_id) { nil }
       let(:poa_params) do
         ActionController::Parameters.new(
           party_type: "organization",
@@ -72,39 +73,44 @@ describe OtherClaimant, :postgres do
           city: "Springfield",
           state: "AL",
           zip: "54321",
-          country: "USA"
+          country: "USA",
+          listed_attorney: { value: poa_participant_id }
         )
       end
 
-      it "saves the unlisted POA" do
-        expect(subject.unrecognized_power_of_attorney).to have_attributes(
-          party_type: "organization",
-          name: "POA Name"
-        )
-        expect(subject.poa_participant_id).to be_nil
-      end
-    end
+      context "when unlisted POA is given" do
+        let(:poa_participant_id) { "not_listed" }
 
-    context "when CorpDB POA is given" do
-      let(:poa_participant_id) { "13579" }
-
-      it "saves the CorpDB POA" do
-        expect(subject.poa_participant_id).to eq(poa_participant_id)
-        expect(subject.unrecognized_power_of_attorney).to be_nil
-      end
-    end
-
-    context "when CorpDB Attorney Power of Attorney is given" do
-      let(:poa_participant_id) { "6000044" }
-      let(:name) { "Generic Attorney, Esq." }
-      let!(:bgs_attorney) do
-        BgsAttorney.create!(participant_id: poa_participant_id, name: name, record_type: "POA State Organization")
+        it "saves the unlisted POA" do
+          expect(subject.unrecognized_power_of_attorney).to have_attributes(
+            party_type: "organization",
+            name: "POA Name"
+          )
+          expect(subject.poa_participant_id).to be_nil
+        end
       end
 
-      it "saves the CorpDB APOA" do
-        expect(subject.power_of_attorney.name).to eq(name)
-        expect(subject.power_of_attorney.bgs_attorney).to_not be_nil
-        expect(subject.power_of_attorney.address).to_not be_nil
+      context "when CorpDB POA is given" do
+        let(:poa_participant_id) { "13579" }
+
+        it "saves the CorpDB POA" do
+          expect(subject.poa_participant_id).to eq(poa_participant_id)
+          expect(subject.unrecognized_power_of_attorney).to be_nil
+        end
+      end
+
+      context "when CorpDB Attorney Power of Attorney is given" do
+        let(:poa_participant_id) { "6000044" }
+        let(:name) { "Generic Attorney, Esq." }
+        let!(:bgs_attorney) do
+          BgsAttorney.create!(participant_id: poa_participant_id, name: name, record_type: "POA State Organization")
+        end
+
+        it "saves the CorpDB APOA" do
+          expect(subject.power_of_attorney.name).to eq(name)
+          expect(subject.power_of_attorney.bgs_attorney).to_not be_nil
+          expect(subject.power_of_attorney.address).to_not be_nil
+        end
       end
     end
   end

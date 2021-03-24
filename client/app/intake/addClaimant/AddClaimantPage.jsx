@@ -24,7 +24,7 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
   const { goBack, push } = useHistory();
 
   const [confirmModal, setConfirmModal] = useState(false);
-  const { claimant, poa } = useSelector((state) => state.addClaimant);
+  const { claimant } = useSelector((state) => state.addClaimant);
 
   /* eslint-disable no-unused-vars */
   // This code will likely be needed in submission (see handleConfirm)
@@ -48,7 +48,7 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
 
   const toggleConfirm = () => setConfirmModal((val) => !val);
   const handleConfirm = () => {
-    intakeData.unlisted_claimant = claimant;
+    intakeData.unlistedClaimant = claimant;
 
     dispatch(submitReview(intakeId, intakeData, selectedForm.formName));
     push('/add_issues');
@@ -115,7 +115,6 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
             onCancel={toggleConfirm}
             onConfirm={handleConfirm}
             claimant={claimant}
-            poa={poa}
           />
         )}
       </IntakeLayout>
