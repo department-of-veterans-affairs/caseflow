@@ -11,6 +11,29 @@ describe JudgeTask, :all_dbs do
     create(:staff, :attorney_role, sdomainid: attorney.css_id)
   end
 
+  describe "only_one_judge_assign_task" do
+    let(:user) { judge }
+    let(:stream_type) { Constants.AMA_STREAM_TYPES.original}
+    let(:appeal) { create(:appeal, stream_type: stream_type) }
+    let!(:assign_task) do
+      build(:ama_judge_assign_task, assigned_to: judge, appeal: appeal)
+    end
+    let(:second_assign_task) do
+      create(:ama_judge_assign_task, assigned_to: judge, appeal: appeal)
+    end
+
+    subject { second_assign_task.save! }
+
+    context "only one judge assign task can be created for an appeal" do
+      it "throws an error when a second task is created" do
+        expect{ subject }.to raise_error do |error|
+          expect(error).to be_a(ActiveRecord::RecordInvalid)
+        end 
+      end
+    end
+
+  end
+
   describe ".available_actions" do
     let(:user) { judge }
     let(:appeal) { create(:appeal, stream_type: stream_type) }

@@ -14,6 +14,9 @@
 # Historically, it can have AttorneyTask children, but AttorneyTasks should now be under JudgeDecisionReviewTasks.
 
 class JudgeAssignTask < JudgeTask
+  
+  validate :only_one_judge_assign_task
+
   def additional_available_actions(_user)
     [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]
   end
@@ -33,5 +36,13 @@ class JudgeAssignTask < JudgeTask
 
   def hide_from_case_timeline
     true
+  end
+
+  def only_one_judge_assign_task
+    siblings = self.appeal.reload.tasks
+    judge_assign_siblings = siblings.select{ |task| task.type == "JudgeAssignTask" }
+    if judge_assign_siblings.length >= 1
+      errors.add(:type, "there should be no more than one judge assign task")
+    end
   end
 end
