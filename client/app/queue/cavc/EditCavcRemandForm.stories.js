@@ -1,4 +1,5 @@
 import React from 'react';
+import { format, sub } from 'date-fns';
 
 import { EditCavcRemandForm } from './EditCavcRemandForm';
 
@@ -30,6 +31,13 @@ export const Default = Template.bind({});
 export const Editing = Template.bind({});
 Editing.args = {
   existingValues: {
-    docketNumber: '20200301-123',
+    docketNumber: '12-3456',
+    attorney: 'no',
+    judge: 'Panel',
+    decisionType: 'remand',
+    remandType: 'mdr',
+    decisionDate: format(sub(new Date(), { days: 7 }), 'yyyy-MM-dd'),
+    issueIds: [2, 3],
+    instructions: 'Lorem ipsum dolor sit amet'
   },
 };

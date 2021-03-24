@@ -65,9 +65,9 @@ export const EditCavcRemandForm = ({
       docketNumber: existingValues.docketNumber ?? '',
       decisionType: existingValues.decisionType ?? null,
       remandType: existingValues.remandType ?? null,
-      issueIds:
-        existingValues.issueIds ?? decisionIssues.map((issue) => issue.id),
-      mandateSame: existingValues.mandateSame ?? true,
+      issueIds: decisionIssues.map((issue) => issue.id),
+      mandateSame: true,
+      ...existingValues,
     },
   });
 
@@ -145,14 +145,14 @@ export const EditCavcRemandForm = ({
   const watchMandateSame = watch('mandateSame');
   const watchIssueIds = watch('issueIds');
 
+  console.log('watch', watch());
+
   const isRemandType = (type) =>
     watchDecisionType?.includes('remand') && watchRemandType?.includes(type);
   const allIssuesSelected = useMemo(
     () => watchIssueIds?.length === decisionIssues?.length,
     [watchIssueIds, decisionIssues]
   );
-
-  console.log('watch', watch());
 
   const mandateAvailable = useMemo(
     () =>
@@ -375,6 +375,21 @@ EditCavcRemandForm.propTypes = {
   ),
   existingValues: PropTypes.shape({
     docketNumber: PropTypes.string,
+    attorney: PropTypes.string,
+    judge: PropTypes.string,
+    decisionType: PropTypes.string,
+    remandType: PropTypes.string,
+    remandDatesProvided: PropTypes.oneOf(['yes', 'no']),
+    decisionDate: PropTypes.string,
+    mandateSame: PropTypes.oneOf(['yes', 'no']),
+    judgementDate: PropTypes.string,
+    mandateDate: PropTypes.string,
+    issueIds: PropTypes.arrayOf(PropTypes.string),
+    federalCircuit: PropTypes.bool,
+    instructions: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.arrayOf(PropTypes.string),
+    ]),
   }),
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
