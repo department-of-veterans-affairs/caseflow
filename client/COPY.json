@@ -132,6 +132,7 @@
   "POST_DISPATCH_TITLE": "Post-dispatch actions",
   "ADD_CAVC_BUTTON": "+ Add CAVC Remand",
   "ADD_CAVC_PAGE_TITLE": "Add a Court remand",
+  "EDIT_CAVC_PAGE_TITLE": "Edit a Court remand",
   "ADD_CAVC_DESCRIPTION": "Complete the details below to intake this Court remand for further processing",
   "CAVC_DOCKET_NUMBER_LABEL": "What is the court docket number?",
   "CAVC_DOCKET_NUMBER_ERROR": "Please enter a valid docket number provided by CAVC (12-3456).",
