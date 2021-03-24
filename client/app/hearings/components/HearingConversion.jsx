@@ -36,12 +36,12 @@ export const HearingConversion = ({
     hearing,
     virtualHearing,
     virtual,
-    video,
     type,
     errors,
     update,
     appellantTitle,
-    readOnly: !virtual
+    readOnly: !virtual,
+    showTimezoneField: virtual && !video
   };
 
   const prefillFields = () => {

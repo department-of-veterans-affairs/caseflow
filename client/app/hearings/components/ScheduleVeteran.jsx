@@ -53,7 +53,7 @@ export const ScheduleVeteran = ({
   const [errors, setErrors] = useState({});
 
   // Get the appellant title ('Veteran' or 'Appellant')
-  const appellantTitle = getAppellantTitle(appeal?.apppellantIsNotVeteran);
+  const appellantTitle = getAppellantTitle(appeal?.appellantIsNotVeteran);
 
   // Get the selected hearing day
   const selectedHearingDay = assignHearingForm?.hearingDay || hearingDay;
@@ -100,6 +100,8 @@ export const ScheduleVeteran = ({
     appellantCity: appeal?.appellantAddress?.city,
     appellantState: appeal?.appellantAddress?.state,
     appellantZip: appeal?.appellantAddress?.zip,
+    appellantRelationship: appeal?.appellantRelationship,
+    appellantIsNotVeteran: appeal?.appellantIsNotVeteran,
     veteranFullName: appeal?.veteranFullName,
   };
 
@@ -115,7 +117,16 @@ export const ScheduleVeteran = ({
   // Reset the state on unmount
   useEffect(() => {
     if (appeal?.readableHearingRequestType === VIRTUAL_HEARING_LABEL) {
-      props.onChangeFormData('assignHearing', { virtualHearing: { status: 'pending' } });
+      props.onChangeFormData(
+        'assignHearing',
+        {
+          virtualHearing: {
+            status: 'pending',
+            appellantTz: appeal?.appellantTz,
+            representativeTz: appeal?.powerOfAttorney?.representative_tz
+          }
+        }
+      );
     }
 
     if (props.params?.action && props.params?.disposition) {
@@ -316,13 +327,19 @@ export const ScheduleVeteran = ({
     }
 
     return props.onChangeFormData('assignHearing', {
-      virtualHearing: { status: 'pending' }
+      virtualHearing: {
+        status: 'pending',
+        appellantTz: appeal.appellantTz,
+        representativeTz: appeal?.powerOfAttorney?.representative_tz
+      }
     });
   };
 
   // Create the header styling based on video/virtual type
   const headerStyle = virtual ? setMargin('0 0 0.75rem 0') : setMargin(0);
   const helperTextStyle = virtual ? setMargin('0 0 2rem 0') : setMargin(0);
+  const recipients = hearing?.representative ? `${appellantTitle}, power of attorney,` : `${appellantTitle}`;
+  const helperLabel = sprintf(COPY.SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL, recipients);
 
   // This protects against users navigating directly to this page without the correct data in the store
   return scheduledHearing?.taskId && !scheduledHearing?.action ? (
@@ -333,7 +350,7 @@ export const ScheduleVeteran = ({
         <h1 {...headerStyle}>{header}</h1>
         {error && <Alert title={error.title} type="error">{error.detail}</Alert>}
         {virtual ?
-          <div {...helperTextStyle}>{COPY.SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL}</div> :
+          <div {...helperTextStyle}>{helperLabel}</div> :
           !fullHearingDay && <div {...marginTop(45)} />}
 
         {fullHearingDay && (
@@ -408,6 +425,7 @@ ScheduleVeteran.propTypes = {
     regionalOffice: PropTypes.object,
     powerOfAttorney: PropTypes.object,
     appellantFullName: PropTypes.string,
+    appellantTz: PropTypes.string
   }),
   assignHearingForm: PropTypes.shape({
     apiFormattedValues: PropTypes.object,

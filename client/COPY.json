@@ -915,7 +915,7 @@
 
   "SCHEDULE_VETERAN_FULL_HEARING_DAY_TITLE": "This hearing day is full",
   "SCHEDULE_VETERAN_FULL_HEARING_DAY_MESSAGE_DETAIL": "You are about to schedule this Veteran on a full docket. Please verify before scheduling.",
-  "SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL": "Email notifications will be sent to the Veteran and POA/Representative.",
+  "SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL": "When you schedule the hearing, the %s and Judge will receive an email with connection information for the virtual hearing.",
 
   "REMOVE_HEARING_DAY_MESSAGE_TITLE": "Remove Hearing Day",
   "REMOVE_HEARING_DAY_MESSAGE_DETAIL": "Once the hearing day is removed, users will no longer be able to schedule Veterans for this %s hearing day on %s.",
