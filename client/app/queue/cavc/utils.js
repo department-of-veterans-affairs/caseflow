@@ -3,6 +3,7 @@ import StringUtil from 'app/util/StringUtil';
 
 import COPY from 'app/../COPY';
 import CAVC_JUDGE_FULL_NAMES from 'constants/CAVC_JUDGE_FULL_NAMES';
+import CAVC_REMAND_SUBTYPES from 'constants/CAVC_REMAND_SUBTYPES';
 import CAVC_REMAND_SUBTYPE_NAMES from 'constants/CAVC_REMAND_SUBTYPE_NAMES';
 import CAVC_DECISION_TYPES from 'constants/CAVC_DECISION_TYPES';
 
@@ -79,8 +80,33 @@ export const generateSchema = ({ maxIssues }) =>
       when('remandType', {
         is: 'jmr',
         then: yup.array().length(maxIssues, COPY.CAVC_ALL_ISSUES_ERROR),
-        otherwise: yup.array().min(1, COPY.CAVC_NO_ISSUES_ERROR)
+        otherwise: yup.array().min(1, COPY.CAVC_NO_ISSUES_ERROR),
       }),
     federalCircuit: yup.boolean(),
     instructions: yup.string().required(),
   });
+
+export const getSupportedDecisionTypes = (featureToggles) => {
+  const toggledDecisionTypes = {
+    [CAVC_DECISION_TYPES.remand]: featureToggles.cavc_remand,
+    [CAVC_DECISION_TYPES.straight_reversal]:
+      featureToggles.reversal_cavc_remand,
+    [CAVC_DECISION_TYPES.death_dismissal]: featureToggles.dismissal_cavc_remand,
+  };
+
+  return Object.keys(toggledDecisionTypes).filter(
+    (key) => toggledDecisionTypes[key] === true
+  );
+};
+
+export const getSupportedRemandTypes = (featureToggles) => {
+  const toggledRemandTypes = {
+    [CAVC_REMAND_SUBTYPES.jmr]: featureToggles.cavc_remand,
+    [CAVC_REMAND_SUBTYPES.jmpr]: featureToggles.cavc_remand,
+    [CAVC_REMAND_SUBTYPES.mdr]: featureToggles.mdr_cavc_remand,
+  };
+
+  return Object.keys(toggledRemandTypes).filter(
+    (key) => toggledRemandTypes[key] === true
+  );
+};
