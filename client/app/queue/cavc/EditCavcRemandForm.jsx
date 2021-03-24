@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { isEmpty } from 'lodash';
 
 import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
@@ -71,9 +72,9 @@ export const EditCavcRemandForm = ({
     resolver: yupResolver(schema),
     reValidateMode: 'onChange',
     defaultValues: {
-      docketNumber: existingValues.docketNumber ?? '',
-      decisionType: existingValues.decisionType ?? null,
-      remandType: existingValues.remandType ?? null,
+      //   docketNumber: existingValues?.docketNumber ?? '',
+      //   decisionType: existingValues?.decisionType ?? null,
+      //   remandType: existingValues?.remandType ?? null,
       issueIds: decisionIssues.map((issue) => issue.id),
       mandateSame: true,
       ...existingValues,
@@ -154,8 +155,6 @@ export const EditCavcRemandForm = ({
   const watchMandateSame = watch('mandateSame');
   const watchIssueIds = watch('issueIds');
 
-  console.log('watch', watch());
-
   const isRemandType = (type) =>
     watchDecisionType?.includes('remand') && watchRemandType?.includes(type);
   const allIssuesSelected = useMemo(
@@ -173,9 +172,9 @@ export const EditCavcRemandForm = ({
     <form onSubmit={handleSubmit(onSubmit)}>
       <AppSegment filledBackground>
         <h1>
-          {existingValues ?
-            COPY.EDIT_CAVC_PAGE_TITLE :
-            COPY.ADD_CAVC_PAGE_TITLE}
+          {isEmpty(existingValues) ?
+            COPY.ADD_CAVC_PAGE_TITLE :
+            COPY.EDIT_CAVC_PAGE_TITLE}
         </h1>
         <TextField
           inputRef={register}
@@ -393,7 +392,9 @@ EditCavcRemandForm.propTypes = {
     mandateSame: PropTypes.oneOf(['yes', 'no']),
     judgementDate: PropTypes.string,
     mandateDate: PropTypes.string,
-    issueIds: PropTypes.arrayOf(PropTypes.string),
+    issueIds: PropTypes.arrayOf(
+      PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    ),
     federalCircuit: PropTypes.bool,
     instructions: PropTypes.oneOfType([
       PropTypes.string,
