@@ -45,6 +45,15 @@ const radioLabelStyling = css({ marginTop: '2.5rem' });
 const issueListStyling = css({ marginTop: '0rem' });
 const buttonStyling = css({ paddingLeft: '0' });
 
+/**
+ * @param {Object} props
+ *  - @param {Object[]} decisionIssues   Issues pulled from state to allow the user to select which are being remanded
+ *  - @param {Object}   existingValues   Values to pre-populate the form (used when editing)
+ *  - @param {string[]} supportedDecisionTypes Which decision types are allowed (usually due to feature toggles)
+ *  - @param {string[]} supportedRemandTypes Which remand types are allowed (usually due to feature toggles)
+ *  - @param {function} onCancel         Function called when "cancel" button is clicked
+ *  - @param {function} onSubmit         Function called when form is submitted and data is validated
+ */
 export const EditCavcRemandForm = ({
   decisionIssues,
   existingValues = {},
