@@ -1,5 +1,7 @@
 import * as yup from 'yup';
 import StringUtil from 'app/util/StringUtil';
+
+import COPY from 'app/../COPY';
 import CAVC_JUDGE_FULL_NAMES from 'constants/CAVC_JUDGE_FULL_NAMES';
 import CAVC_REMAND_SUBTYPE_NAMES from 'constants/CAVC_REMAND_SUBTYPE_NAMES';
 import CAVC_DECISION_TYPES from 'constants/CAVC_DECISION_TYPES';
@@ -76,7 +78,9 @@ export const generateSchema = ({ maxIssues }) =>
       of(yup.string()).
       when('remandType', {
         is: 'jmr',
-        then: yup.array()
-        // .length(maxIssues),
+        then: yup.array().length(maxIssues, COPY.CAVC_ALL_ISSUES_ERROR),
+        otherwise: yup.array().min(1, COPY.CAVC_NO_ISSUES_ERROR)
       }),
+    federalCircuit: yup.boolean(),
+    instructions: yup.string().required(),
   });

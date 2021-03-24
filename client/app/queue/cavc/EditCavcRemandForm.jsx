@@ -315,7 +315,7 @@ export const EditCavcRemandForm = ({
                     }
                     styling={issueListStyling}
                     values={issueVals}
-                    //   errorMessage={errors?.issueIds && issueSelectionError}
+                    errorMessage={errors?.issueIds?.message}
                   />
                 );
               }}
