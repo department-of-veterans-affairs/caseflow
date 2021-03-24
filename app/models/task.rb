@@ -803,6 +803,14 @@ class Task < CaseflowRecord
     true
   end
 
+  def only_one_of_task
+    siblings = self.appeal.reload.tasks
+    type_siblings = siblings.select{ |task| task.type == self.type }
+    if type_siblings.length >= 1
+      errors.add(:type, "there should be no more than one task of this type")
+    end
+  end
+
   def parent_can_have_children
     if parent&.class&.cannot_have_children
       fail Caseflow::Error::InvalidParentTask, message: "Child tasks cannot be created for #{parent.type}s"
