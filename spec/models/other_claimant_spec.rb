@@ -64,7 +64,6 @@ describe OtherClaimant, :postgres do
     end
 
     context "when an unrecognized appellant has a power of attorney added" do
-      let(:poa_participant_id) { nil }
       let(:poa_params) do
         ActionController::Parameters.new(
           party_type: "organization",

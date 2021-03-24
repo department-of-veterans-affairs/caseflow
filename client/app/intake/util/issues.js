@@ -3,7 +3,7 @@ import { formatDateStr } from '../../util/DateUtil';
 import DATES from '../../../constants/DATES';
 import { FORM_TYPES } from '../constants';
 
-export const getDependentClaimant = (intakeData) => {
+const getDependentClaimant = (intakeData) => {
   const relation = intakeData.relationships.find(({ value }) => value === intakeData.claimant);
 
   if (!intakeData.payeeCode) {
