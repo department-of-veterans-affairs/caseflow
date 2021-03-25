@@ -485,7 +485,7 @@ export const dispositionLabel = (disposition) => HEARING_DISPOSITION_TYPE_TO_LAB
  * Method to set the available time slots based on the hearings scheduled
  * @param {array} hearings -- List of hearings scheduled for a specific date
  */
-export const setTimeSlots = (hearings, hearingType) => {
+export const setTimeSlots = (hearings, hearingType, roTimezone = 'America/New_York') => {
   // Default to using EST for all times before conversion
   moment.tz.setDefault('America/New_York');
 
@@ -494,7 +494,7 @@ export const setTimeSlots = (hearings, hearingType) => {
 
   // Store a list of the scheduled times
   const scheduledHearingTimes = scheduledHearings.map((hearing) =>
-    moment(hearing.hearingTime, 'HH:mm')
+    moment.tz(hearing.hearingTime, 'HH:mm', roTimezone)
   );
 
   // This works because:
