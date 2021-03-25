@@ -46,6 +46,8 @@ class SanitizedJsonImporter
   def initialize(file_contents,
                  configuration: SanitizedJsonConfiguration.new,
                  verbosity: ENV["SJ_VERBOSITY"] ? ENV["SJ_VERBOSITY"].to_i : 2)
+    fail "Importing is not allowed in production!" if Rails.env.production?
+
     @configuration = configuration
     @id_offset = configuration.id_offset
     @records_hash = JSON.parse(file_contents)

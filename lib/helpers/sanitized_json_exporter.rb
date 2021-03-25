@@ -33,6 +33,8 @@ class SanitizedJsonExporter
   end
 
   def save(filename, purpose: nil)
+    fail "File already exists!" if File.exist?(filename)
+
     @records_hash["metadata"]["purpose"] = purpose if purpose
     File.open(filename.to_s, "w") { |file| file.puts file_contents }
   end
