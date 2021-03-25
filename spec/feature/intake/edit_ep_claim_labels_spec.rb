@@ -102,6 +102,24 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
       higher_level_review.establish!
     end
 
+    fit "shows each established end product label" do
+      visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+
+      nr_label = Constants::EP_CLAIM_TYPES[nonrating_request_issue.end_product_establishment.code]["official_label"]
+      nr_row = page.find("tr", text: nr_label, match: :prefer_exact)
+
+      # affirm that save button is disabled
+      expect(page).to have_button("Save", disabled: true)
+      # affirm that 'Edit claim label' button(s) are enabled
+      expect(nr_row).to have_button("Edit claim label", disabled: false)
+
+      # make change - either withdraw/remove issue or edit description
+      binding.pry
+
+      # affirm that save button is enabled 
+      # affirm that 'Edit claim label' button(s) are disabled
+    end
+
     it "shows each established end product label" do
       visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
 
@@ -109,6 +127,7 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
       # Note for these, there's a row for the EP label, and a subsequent row for the issues
       nr_label = Constants::EP_CLAIM_TYPES[nonrating_request_issue.end_product_establishment.code]["official_label"]
       nr_row = page.find("tr", text: nr_label, match: :prefer_exact)
+
       expect(nr_row).to have_button("Edit claim label")
       nr_next_row = nr_row.first(:xpath, "./following-sibling::tr")
       expect(nr_next_row).to have_content(/Requested issues\n1. #{nonrating_request_issue.description}/i)
