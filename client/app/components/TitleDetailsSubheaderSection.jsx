@@ -15,13 +15,13 @@ const listItemStyling = css({
       paddingRight: '1.5rem'
     }
   },
-  '& > h4': { textTransform: 'uppercase' },
+  '& > p': { textTransform: 'uppercase', fontWeight: 'bold' },
   '& > div': { minHeight: '22px' }
 });
 
 export const TitleDetailsSubheaderSection = ({ title, children }) => (
   <div {...listItemStyling}>
-    <h4>{title}</h4>
+    <p>{title}</p>
     <div>
       {children}
     </div>
