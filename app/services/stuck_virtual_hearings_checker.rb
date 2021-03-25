@@ -3,6 +3,9 @@
 # Data integrity checker for notifying when a virtual hearing is 'stuck'
 # i.e the pexip conference creation is pending and/or all emails haven't successfuly sent
 class StuckVirtualHearingsChecker < DataIntegrityChecker
+  # For time_ago_in_words() and distance_of_time_in_words()
+  include ActionView::Helpers::DateHelper
+
   def call
     build_report(stuck_virtual_hearings)
   end
@@ -14,7 +17,7 @@ class StuckVirtualHearingsChecker < DataIntegrityChecker
 
   private
 
-  TRACKING_DOCUMENT = "https://hackmd.io/DKPyLFB7QHuw6JuuTfc_8A"
+  TRACKING_DOCUMENT_LINK = "https://hackmd.io/DKPyLFB7QHuw6JuuTfc_8A"
 
   def stuck_virtual_hearings
     @stuck_virtual_hearings ||= begin
@@ -38,16 +41,33 @@ class StuckVirtualHearingsChecker < DataIntegrityChecker
 
     add_to_report "Found #{stuck_count} stuck #{'virtual hearing'.pluralize(stuck_count)}: "
     stuck_virtual_hearings.each do |stuck_vh|
+      last_attempted = if stuck_vh.establishment.attempted_at.present?
+                         "#{time_ago_in_words(stuck_vh.establishment.attempted_at)} ago"
+                       else
+                         "never"
+                       end
+
       add_to_report "`VirtualHearing.find(#{stuck_vh.id})` " \
-        "last attempted at: #{stuck_vh.establishment.attempted_at}, " \
-        "scheduled for: #{stuck_vh.hearing.scheduled_for}, updated by: #{stuck_vh.updated_by.css_id}, " \
+        "last attempted: #{last_attempted}, " \
+        "#{scheduled_for_report(stuck_vh)}, " \
+        "updated by: #{stuck_vh.updated_by.css_id}, " \
         "#{uuid_or_vacols_id_of_hearing(stuck_vh)}"
     end
 
     add_to_report "If a virtual hearing is in this state, Caseflow may not be displaying the information that " \
       "users need to prepare for the hearing, and notification emails may not have been sent."
-    add_to_report "Stuck virtual hearings are tracked in this document: " \
-      "#{TRACKING_DOCUMENT}"
+    add_to_report "Stuck virtual hearings are tracked in *<#{TRACKING_DOCUMENT_LINK}|this document>*."
+  end
+
+  def scheduled_for_report(virtual_hearing)
+    scheduled_for = virtual_hearing.hearing.scheduled_for
+    in_words = distance_of_time_in_words(Time.zone.now, scheduled_for)
+    display_in_words = if Time.zone.now < scheduled_for
+                         "(in #{in_words})"
+                       else
+                         "(#{in_words} ago)"
+                       end
+    "scheduled for: #{scheduled_for.strftime('%a %m/%d')} #{display_in_words}"
   end
 
   def uuid_or_vacols_id_of_hearing(virtual_hearing)
