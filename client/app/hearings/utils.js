@@ -547,7 +547,7 @@ export const formatTimeSlotLabel = (time, zone) => {
     return coTime;
   }
 
-  return `${coTime} (${roTime})`;
+  return `${roTime} (${coTime})`;
 };
 
 /* eslint-enable camelcase */
