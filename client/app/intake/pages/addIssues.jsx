@@ -57,7 +57,7 @@ class AddIssuesPage extends React.Component {
       originalIssueLength,
       issueRemoveIndex: 0,
       issueIndex: 0,
-      addingIssue: false,
+      addingIssue: false
     };
   }
 
