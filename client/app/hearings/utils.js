@@ -348,13 +348,14 @@ export const timezones = (time) => {
       commonsCount += 1;
     }
 
+    //ensure that before the user selects a time it won't display 'Invalid Date' next to zone
+    const zoneLabel = dateTime.isValid() ? `${zone} (${moment(dateTime, 'HH:mm').tz(TIMEZONES[zone]).format('h:mm A')})` : `${zone}`
+
     // Return the formatted options
     return {
       index,
       value: TIMEZONES[zone],
-      label: `${zone} (${moment(dateTime, 'HH:mm').
-        tz(TIMEZONES[zone]).
-        format('h:mm A')})`
+      label: zoneLabel
     };
   });
 
