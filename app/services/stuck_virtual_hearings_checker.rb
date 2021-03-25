@@ -3,7 +3,7 @@
 # Data integrity checker for notifying when a virtual hearing is 'stuck'
 # i.e the pexip conference creation is pending and/or all emails haven't successfuly sent
 class StuckVirtualHearingsChecker < DataIntegrityChecker
-  # For time_ago_in_words() and distance_of_time_in_words()
+  # For time_ago_in_words()
   include ActionView::Helpers::DateHelper
 
   def call
@@ -61,7 +61,7 @@ class StuckVirtualHearingsChecker < DataIntegrityChecker
 
   def scheduled_for_report(virtual_hearing)
     scheduled_for = virtual_hearing.hearing.scheduled_for
-    in_words = distance_of_time_in_words(Time.zone.now, scheduled_for)
+    in_words = time_ago_in_words(scheduled_for)
     display_in_words = if Time.zone.now < scheduled_for
                          "(in #{in_words})"
                        else
