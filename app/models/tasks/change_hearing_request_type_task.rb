@@ -5,7 +5,7 @@
 # Travel Board hearing request. Gives the user the option to convert that request to a video
 # or virtual hearing request so it can be scheduled in Caseflow.
 #
-# When task is completed, i.e the field `changed_request_type` is passed as payload, the location
+# When task is completed, i.e the field `changed_hearing_request_type` is passed as payload, the location
 # of LegacyAppeal is moved `CASEFLOW` and the parent `ScheduleHearingTask` is set to be `assigned`
 class ChangeHearingRequestTypeTask < Task
   include RunAsyncable
@@ -61,7 +61,7 @@ class ChangeHearingRequestTypeTask < Task
   def update_from_params(params, user)
     payload_values = params.delete(:business_payloads)&.dig(:values)
 
-    if payload_values&.[](:changed_request_type).present?
+    if payload_values&.[](:changed_hearing_request_type).present?
       update_appeal_and_self(payload_values, params)
 
       [self]
@@ -88,14 +88,14 @@ class ChangeHearingRequestTypeTask < Task
       # save the original request type if needed
       appeal.remember_original_hearing_request_type
       appeal.update!(
-        changed_request_type: payload_values[:changed_request_type],
+        changed_hearing_request_type: payload_values[:changed_hearing_request_type],
         closest_regional_office: payload_values[:closest_regional_office]
       )
 
       # in VACOLS, update location to `CASEFLOW` and save the new hearing request type
       if appeal.is_a?(LegacyAppeal)
         AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
-        AppealRepository.update_vacols_hearing_request_type!(appeal, payload_values[:changed_request_type])
+        AppealRepository.update_vacols_hearing_request_type!(appeal, payload_values[:changed_hearing_request_type])
       end
 
       update!(params)

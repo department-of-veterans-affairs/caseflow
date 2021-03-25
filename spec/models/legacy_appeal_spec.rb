@@ -12,7 +12,7 @@ describe LegacyAppeal, :all_dbs do
   let(:last_year) { 365.days.ago.to_formatted_s(:short_date) }
   let(:veteran_address) { nil }
   let(:appellant_address) { nil }
-  let(:changed_request_type) { nil }
+  let(:changed_hearing_request_type) { nil }
 
   let(:appeal) do
     create(
@@ -20,7 +20,7 @@ describe LegacyAppeal, :all_dbs do
       vacols_case: vacols_case,
       veteran_address: veteran_address,
       appellant_address: appellant_address,
-      changed_request_type: changed_request_type
+      changed_hearing_request_type: changed_hearing_request_type
     )
   end
 
@@ -2043,22 +2043,22 @@ describe LegacyAppeal, :all_dbs do
         end
       end
 
-      context "updating changed_request_type to valid value" do
-        let(:appeals_hash) { { changed_request_type: "V" } }
-        let(:updated_appeals_hash) { { changed_request_type: HearingDay::REQUEST_TYPES[:virtual] } }
+      context "updating changed_hearing_request_type to valid value" do
+        let(:appeals_hash) { { changed_hearing_request_type: "V" } }
+        let(:updated_appeals_hash) { { changed_hearing_request_type: HearingDay::REQUEST_TYPES[:virtual] } }
 
         it "successfully updates" do
           subject
-          expect(appeal.reload.changed_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
+          expect(appeal.reload.changed_hearing_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
         end
 
         it "creates a new version in paper trail" do
           subject
 
           # Check for the first round fo updates
-          expect(appeal.reload.changed_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
+          expect(appeal.reload.changed_hearing_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
           expect(appeal.reload.versions.length).to eq(1)
-          expect(appeal.reload.paper_trail.previous_version.changed_request_type).to eq(nil)
+          expect(appeal.reload.paper_trail.previous_version.changed_hearing_request_type).to eq(nil)
 
           # Check that changing the hearing request type creates a new paper trail record
           appeal.update(updated_appeals_hash)
@@ -2066,15 +2066,15 @@ describe LegacyAppeal, :all_dbs do
           expect(new_appeal.versions.length).to eq(2)
 
           # Ensure the correct details are stored in paper trail
-          expect(new_appeal.paper_trail.previous_version.changed_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
+          expect(new_appeal.paper_trail.previous_version.changed_hearing_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
 
           # Ensure the previous version is set to the original appeal
           expect(new_appeal.paper_trail.previous_version).to eq(appeal)
         end
       end
 
-      context "updating changed_request_type to invalid value" do
-        let(:appeals_hash) { { changed_request_type: "INVALID" } }
+      context "updating changed_hearing_request_type to invalid value" do
+        let(:appeals_hash) { { changed_hearing_request_type: "INVALID" } }
 
         it "throws an exception" do
           expect { subject }.to raise_error(ActiveRecord::RecordInvalid)

@@ -16,7 +16,7 @@ class LegacyHearingUpdateForm < BaseHearingUpdateForm
     if virtual_hearing_created?
       hearing.update_request_type_in_vacols(VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:virtual])
     elsif virtual_hearing_cancelled?
-      hearing.update_request_type_in_vacols(hearing.original_request_type)
+      hearing.update_request_type_in_vacols(hearing.original_hearing_request_type)
     end
   end
 

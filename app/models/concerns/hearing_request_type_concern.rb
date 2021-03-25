@@ -5,9 +5,9 @@ module HearingRequestTypeConcern
 
   included do
     # Add Paper Trail configuration
-    has_paper_trail only: [:changed_request_type], on: [:update]
+    has_paper_trail only: [:changed_hearing_request_type], on: [:update]
 
-    validates :changed_request_type,
+    validates :changed_hearing_request_type,
               inclusion: {
                 in: [
                   HearingDay::REQUEST_TYPES[:central],
@@ -18,7 +18,7 @@ module HearingRequestTypeConcern
               },
               allow_nil: true
 
-    validates :original_request_type,
+    validates :original_hearing_request_type,
               inclusion: {
                 in: %w[central central_office travel_board video virtual],
                 message: "original request type (%<value>s) is invalid"
@@ -31,8 +31,8 @@ module HearingRequestTypeConcern
     TaskEvent.new(version: versions.last) if versions.any?
   end
 
-  def original_hearing_request_type
-    return original_request_type.to_sym if original_request_type.present?
+  def formatted_original_hearing_request_type
+    return original_hearing_request_type.to_sym if original_hearing_request_type.present?
 
     # Use the VACOLS value for LegacyAppeals, otherwise use the closest regional office
     original = is_a?(LegacyAppeal) ? hearing_request_type : closest_regional_office
@@ -41,15 +41,15 @@ module HearingRequestTypeConcern
   end
 
   def readable_original_hearing_request_type
-    LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[original_hearing_request_type]
+    LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[formatted_original_hearing_request_type]
   end
 
   def remember_original_hearing_request_type
-    update!(original_request_type: original_hearing_request_type&.to_s) if original_request_type.blank?
+    update!(original_hearing_request_type: formatted_original_hearing_request_type&.to_s) if original_hearing_request_type.blank?
   end
 
   def current_hearing_request_type
-    format_or_formatted_original_request_type(changed_request_type)
+    format_or_formatted_request_type(changed_hearing_request_type)
   end
 
   def readable_current_hearing_request_type
@@ -84,14 +84,14 @@ module HearingRequestTypeConcern
     request_type_index = tasks.where(type: "ChangeHearingRequestTypeTask").order(:id).map(&:id).index(task_id)
     return nil if request_type_index.blank?
 
-    versions[request_type_index].changeset["changed_request_type"]
+    versions[request_type_index].changeset["changed_hearing_request_type"]
   end
 
   def format_or_formatted_original_request_type(request_type)
     if request_type.present?
       format_hearing_request_type(request_type)
     else
-      original_hearing_request_type
+      formatted_original_hearing_request_type
     end
   end
 

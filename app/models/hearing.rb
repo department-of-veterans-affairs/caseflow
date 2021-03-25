@@ -112,7 +112,7 @@ class Hearing < CaseflowRecord
     HEARING_TYPES[request_type.to_sym]
   end
 
-  alias original_request_type request_type
+  alias original_hearing_request_type request_type
 
   def assigned_to_vso?(user)
     appeal.tasks.any? do |task|
