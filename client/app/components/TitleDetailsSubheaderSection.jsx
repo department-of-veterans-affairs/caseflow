@@ -15,7 +15,15 @@ const listItemStyling = css({
       paddingRight: '1.5rem'
     }
   },
-  '& > p': { textTransform: 'uppercase', fontWeight: 'bold' },
+  '& > p': {
+    textTransform: 'uppercase',
+    fontWeight: 'bold',
+    fontSize: '15px',
+    marginBottom: '12px',
+    marginTop: '0',
+    color: '#323a45',
+    lineHeight: '1.3'
+  },
   '& > div': { minHeight: '22px' }
 });
 
