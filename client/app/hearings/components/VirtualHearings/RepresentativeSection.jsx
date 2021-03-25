@@ -16,7 +16,6 @@ export const RepresentativeSection = ({
   virtualHearing,
   errors,
   type,
-  virtual,
   readOnly,
   update,
   appellantTitle,
@@ -61,7 +60,7 @@ export const RepresentativeSection = ({
           readOnly={readOnly}
           emailType="representativeEmail"
           label="POA/Representative Email"
-          email={virtual ? virtualHearing?.representativeEmail : virtualHearing?.representativeEmail}
+          email={virtualHearing?.representativeEmail}
           error={errors?.representativeEmail}
           type={type}
           update={update}
@@ -77,7 +76,6 @@ RepresentativeSection.propTypes = {
   errors: PropTypes.object,
   type: PropTypes.string,
   update: PropTypes.func,
-  virtual: PropTypes.bool,
   readOnly: PropTypes.bool,
   appellantTitle: PropTypes.string,
   showTimezoneField: PropTypes.bool

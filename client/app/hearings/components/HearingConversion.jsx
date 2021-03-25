@@ -35,7 +35,6 @@ export const HearingConversion = ({
   const sectionProps = {
     hearing,
     virtualHearing,
-    virtual,
     type,
     errors,
     update,

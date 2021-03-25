@@ -52,11 +52,11 @@ describe('Appellant', () => {
     expect(appellantSection).toMatchSnapshot();
   });
 
-  test('Displays timezone when virtual', () => {
+  test('Displays timezone when showTimezoneField is passed as prop', () => {
     // Run the test
     const appellantSection = mount(
       <AppellantSection
-        virtual
+        showTimezoneField
         appellantTitle="Veteran"
         virtualHearing={virtualHearing.virtualHearing}
         hearing={defaultHearing}
@@ -74,7 +74,6 @@ describe('Appellant', () => {
     // Run the test
     const appellantSection = mount(
       <AppellantSection
-        virtual
         appellantTitle="Veteran"
         virtualHearing={{ appellantEmail: null }}
         hearing={defaultHearing}
@@ -94,7 +93,6 @@ describe('Appellant', () => {
     // Run the test
     const appellantSection = mount(
       <AppellantSection
-        virtual
         appellantTitle="Veteran"
         virtualHearing={{}}
         hearing={defaultHearing}

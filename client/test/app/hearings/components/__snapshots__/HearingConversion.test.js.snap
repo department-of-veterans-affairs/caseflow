@@ -4187,6 +4187,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
           }
         }
         readOnly={true}
+        showTimezoneField={false}
         type="change_from_virtual"
         update={
           [MockFunction] {
@@ -4208,8 +4209,6 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
             ],
           }
         }
-        video={false}
-        virtual={false}
         virtualHearing={
           Object {
             "aliasWithHost": "BVA0000009@care.evn.va.gov",
@@ -4239,14 +4238,31 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
           <h2>
             Veteran
           </h2>
+          <ReadOnly
+            label="Veteran Name"
+            text="Bob Smith"
+          >
+            <div
+              data-css-1a5irm0=""
+            >
+              <strong>
+                Veteran Name
+              </strong>
+              <pre>
+                Bob Smith
+              </pre>
+            </div>
+          </ReadOnly>
           <AddressLine
             addressCity="SAN FRANCISCO"
             addressLine1="9999 MISSION ST"
             addressState="CA"
             addressZip="94103"
+            label="Veteran Mailing Address"
             name="Bob Smith"
           >
             <ReadOnly
+              label="Veteran Mailing Address"
               text="Bob Smith
 9999 MISSION ST
 SAN FRANCISCO, CA 94103"
@@ -4254,6 +4270,9 @@ SAN FRANCISCO, CA 94103"
               <div
                 data-css-1a5irm0=""
               >
+                <strong>
+                  Veteran Mailing Address
+                </strong>
                 <pre>
                   Bob Smith
 9999 MISSION ST
@@ -4401,6 +4420,7 @@ SAN FRANCISCO, CA 94103
           }
         }
         readOnly={true}
+        showTimezoneField={false}
         type="change_from_virtual"
         update={
           [MockFunction] {
@@ -4422,8 +4442,6 @@ SAN FRANCISCO, CA 94103
             ],
           }
         }
-        video={false}
-        virtual={false}
         virtualHearing={
           Object {
             "aliasWithHost": "BVA0000009@care.evn.va.gov",
@@ -8603,6 +8621,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
           }
         }
         readOnly={false}
+        showTimezoneField={true}
         type="change_to_virtual"
         update={
           [MockFunction] {
@@ -8624,8 +8643,6 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
             ],
           }
         }
-        video={false}
-        virtual={true}
         virtualHearing={
           Object {
             "aliasWithHost": "BVA0000009@care.evn.va.gov",
@@ -8655,14 +8672,31 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
           <h2>
             Veteran
           </h2>
+          <ReadOnly
+            label="Veteran Name"
+            text="Bob Smith"
+          >
+            <div
+              data-css-1a5irm0=""
+            >
+              <strong>
+                Veteran Name
+              </strong>
+              <pre>
+                Bob Smith
+              </pre>
+            </div>
+          </ReadOnly>
           <AddressLine
             addressCity="SAN FRANCISCO"
             addressLine1="9999 MISSION ST"
             addressState="CA"
             addressZip="94103"
+            label="Veteran Mailing Address"
             name="Bob Smith"
           >
             <ReadOnly
+              label="Veteran Mailing Address"
               text="Bob Smith
 9999 MISSION ST
 SAN FRANCISCO, CA 94103"
@@ -8670,6 +8704,9 @@ SAN FRANCISCO, CA 94103"
               <div
                 data-css-1a5irm0=""
               >
+                <strong>
+                  Veteran Mailing Address
+                </strong>
                 <pre>
                   Bob Smith
 9999 MISSION ST
@@ -23956,6 +23993,7 @@ SAN FRANCISCO, CA 94103
           }
         }
         readOnly={false}
+        showTimezoneField={true}
         type="change_to_virtual"
         update={
           [MockFunction] {
@@ -23977,8 +24015,6 @@ SAN FRANCISCO, CA 94103
             ],
           }
         }
-        video={false}
-        virtual={true}
         virtualHearing={
           Object {
             "aliasWithHost": "BVA0000009@care.evn.va.gov",

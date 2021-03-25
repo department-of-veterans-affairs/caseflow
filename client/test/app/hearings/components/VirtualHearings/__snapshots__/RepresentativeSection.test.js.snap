@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`RepresentativeSection Displays timezone when virtual 1`] = `
+exports[`RepresentativeSection Displays timezone when showTimezoneField is passed as prop 1`] = `
 <RepresentativeSection
   appellantTitle="Veteran"
   hearing={
@@ -90,9 +90,9 @@ exports[`RepresentativeSection Displays timezone when virtual 1`] = `
       "worksheetIssues": Object {},
     }
   }
+  showTimezoneField={true}
   type="change_to_virtual"
   update={[MockFunction]}
-  virtual={true}
   virtualHearing={
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",

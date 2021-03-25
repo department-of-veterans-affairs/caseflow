@@ -65,7 +65,6 @@ export const ScheduleVeteranForm = ({
   const sectionProps = {
     errors,
     hearing,
-    virtual,
     appellantTitle,
     virtualHearing: hearing?.virtualHearing,
     type: HEARING_CONVERSION_TYPES[0],
