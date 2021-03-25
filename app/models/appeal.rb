@@ -28,6 +28,8 @@ class Appeal < DecisionReview
 
   has_one :special_issue_list
   has_one :post_decision_motion
+
+  # The has_one here provides the docket_switch object to the newly created appeal upon completion of the docket switch
   has_one :docket_switch, class_name: "DocketSwitch", foreign_key: :new_docket_stream_id
 
   has_many :record_synced_by_job, as: :record
@@ -42,7 +44,8 @@ class Appeal < DecisionReview
     Constants.AMA_STREAM_TYPES.original.to_sym => Constants.AMA_STREAM_TYPES.original,
     Constants.AMA_STREAM_TYPES.vacate.to_sym => Constants.AMA_STREAM_TYPES.vacate,
     Constants.AMA_STREAM_TYPES.de_novo.to_sym => Constants.AMA_STREAM_TYPES.de_novo,
-    Constants.AMA_STREAM_TYPES.court_remand.to_sym => Constants.AMA_STREAM_TYPES.court_remand
+    Constants.AMA_STREAM_TYPES.court_remand.to_sym => Constants.AMA_STREAM_TYPES.court_remand,
+    Constants.AMA_STREAM_TYPES.granted_substitution.to_sym => Constants.AMA_STREAM_TYPES.granted_substitution
   }
 
   after_create :conditionally_set_aod_based_on_age
@@ -529,6 +532,12 @@ class Appeal < DecisionReview
     return true if JudgeDecisionReviewTask.completed.find_by(appeal: self)
 
     false
+  end
+
+  # This method allows the old appeal stream to access the docket_switch objects
+  # rubocop:disable all
+  def switched_dockets
+    DocketSwitch.where(old_docket_stream_id: self.id)
   end
 
   private
