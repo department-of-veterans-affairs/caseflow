@@ -57,7 +57,11 @@ class StuckVirtualHearingsChecker < DataIntegrityChecker
       .where(conference_id: nil)
       .pluck(:hearing_id, :hearing_type)
       .each do |hearing_id, hearing_type|
-        VirtualHearings::CreateConferenceJob.perform_now(hearing_id: hearing_id, hearing_type: hearing_type)
+        begin
+          VirtualHearings::CreateConferenceJob.perform_now(hearing_id: hearing_id, hearing_type: hearing_type)
+        rescue VirtualHearings::SendEmail::RecipientIsDeceasedVeteran
+          next
+        end
       end
   end
 end
