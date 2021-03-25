@@ -49,7 +49,7 @@ module HearingRequestTypeConcern
   end
 
   def current_hearing_request_type
-    format_or_formatted_request_type(changed_hearing_request_type)
+    format_or_formatted_original_request_type(changed_hearing_request_type)
   end
 
   def readable_current_hearing_request_type
