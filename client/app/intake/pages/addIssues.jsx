@@ -57,7 +57,7 @@ class AddIssuesPage extends React.Component {
       originalIssueLength,
       issueRemoveIndex: 0,
       issueIndex: 0,
-      addingIssue: false
+      addingIssue: false,
     };
   }
 
@@ -232,6 +232,10 @@ class AddIssuesPage extends React.Component {
       return false;
     };
 
+    const editDisabled = !_.isEqual(
+      intakeData.addedIssues, intakeData.originalIssues
+    );
+
     const addIssueButton = () => {
       return (
         <div className="cf-actions">
@@ -319,6 +323,7 @@ class AddIssuesPage extends React.Component {
             <div className="edit-claim-label">
               <Button
                 classNames={['usa-button-secondary']}
+                disabled={editDisabled}
                 onClick={() => this.openEditClaimLabelModal(endProductCode)}
               >
               Edit claim label
