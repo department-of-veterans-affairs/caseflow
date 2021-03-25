@@ -17,10 +17,17 @@ class StuckVirtualHearingsChecker < DataIntegrityChecker
   TRACKING_DOCUMENT = "https://hackmd.io/DKPyLFB7QHuw6JuuTfc_8A"
 
   def stuck_virtual_hearings
-    rerun_jobs
+    @stuck_virtual_hearings ||= begin
+      rerun_jobs
 
-    VirtualHearingRepository.with_pending_conference_or_emails.select do |virtual_hearing|
-      virtual_hearing.updated_at < Time.zone.now - 2.hours
+      # select hearings with pending conference/emails updated earlier than 2 hours ago, scheduled today or later
+      virtual_hearings = VirtualHearingRepository.with_pending_conference_or_emails.select do |virtual_hearing|
+        virtual_hearing.updated_at < Time.zone.now - 2.hours &&
+          virtual_hearing.hearing.scheduled_for > Time.zone.now - 1.day
+      end
+
+      # sort hearings that are happening sooner to the top
+      virtual_hearings.sort_by { |virtual_hearing| virtual_hearing.hearing.scheduled_for }
     end
   end
 
