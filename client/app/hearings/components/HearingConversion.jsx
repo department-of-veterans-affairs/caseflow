@@ -40,7 +40,7 @@ export const HearingConversion = ({
     update,
     appellantTitle,
     readOnly: !virtual,
-    showTimezoneField: virtual && !video
+    showTimezoneField: true
   };
 
   const prefillFields = () => {

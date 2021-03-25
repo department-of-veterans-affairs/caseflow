@@ -11,16 +11,13 @@ import COPY from '../../../../COPY';
 export const VirtualHearingFields = ({
   errors,
   appellantTitle,
-  requestType,
   initialRepresentativeTz,
   virtualHearing,
   readOnly,
   update,
   time
 }) => {
-  const central = requestType !== 'Video';
-
-  return central ? (
+  return (
     <React.Fragment>
       <h3>{appellantTitle}</h3>
       <div id="email-section" className="usa-grid">
@@ -87,30 +84,6 @@ export const VirtualHearingFields = ({
         </div>
       </div>
     </React.Fragment>
-  ) : (
-    <div id="email-section" className="usa-grid">
-      <div className="usa-width-one-third">
-        <VirtualHearingEmail
-          required
-          disabled={readOnly}
-          label={`${appellantTitle} Email`}
-          emailType="appellantEmail"
-          email={virtualHearing?.appellantEmail}
-          error={errors?.appellantEmail}
-          update={update}
-        />
-      </div>
-      <div className="usa-width-one-third">
-        <VirtualHearingEmail
-          disabled={readOnly}
-          label="POA/Representative Email"
-          emailType="representativeEmail"
-          email={virtualHearing?.representativeEmail}
-          error={errors?.representativeEmail}
-          update={update}
-        />
-      </div>
-    </div>
   );
 };
 

@@ -83,8 +83,8 @@ describe('HearingConversion', () => {
     ).toEqual(true);
     expect(conversion.find(JudgeDropdown)).toHaveLength(0);
 
-    // Ensure the timezones are not displayed
-    expect(conversion.find(Timezone)).toHaveLength(0);
+    // Ensure the timezones are displayed
+    expect(conversion.find(Timezone)).toHaveLength(2);
 
     // Ensure the emails are read-only
     conversion.find(VirtualHearingEmail).map((node) => expect(node.prop('readOnly')).toEqual(true));
