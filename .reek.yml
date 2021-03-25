@@ -16,6 +16,7 @@ detectors:
       - LegacyDocket#distribute_appeals
       - Veteran
       - ControllerSchema#respond_to_missing?
+      - SanitizedJsonDifference
   ControlParameter:
     exclude:
       - ExternalApi::VBMSService#self.send_and_log_request
@@ -23,6 +24,8 @@ detectors:
       - Hearings::GeomatchAndCacheAppealJob#perform
       - HearingRepository#slot_new_hearing
       - LegacyDocket#distribute_appeals
+      - SanitizedJsonDifference
+      - SanitizedJsonConfiguration
       - Seeds::Tasks#create_legacy_case_with_open_schedule_hearing_task
       - SlackService#pick_color
       - Task#actions_allowable?
@@ -50,6 +53,9 @@ detectors:
     exclude:
       - HearingSerializerBase
       - LegacyDocket
+      - SanitizedJsonConfiguration
+      - SanitizedJsonImporter
+      - SanitizedJsonExporter
       - Seeds::Tasks
       - TaskTreeRenderModule
   DuplicateMethodCall:
@@ -101,6 +107,7 @@ detectors:
       - RequestIssue#special_issues
       - RequestIssueReporter#as_csv
       - RunAsyncable#perform_later_or_now
+      - SanitizedJsonConfiguration
       - ScheduleHearingTask#create_hearing
       - Seeds::Hearings
       - Seeds::Tasks#create_colocated_legacy_tasks
@@ -136,6 +143,7 @@ detectors:
       - LegacyDocket#new_distributed_case
       - Api::V3::DecisionReviews::ContestableIssueFinder#initialize
       - QueueRepository#assign_case_to_attorney!
+      - SanitizedJsonDifference
       - Seeds::MTV#judge_addresses_mtv
       - Seeds::MTV#send_mtv_to_judge
       - Seeds::Tasks#create_task_at_colocated
@@ -181,6 +189,7 @@ detectors:
       - DuplicateUserTask
       - LegacyAppealDispatch
       - Address
+      - SanitizedJsonImporter
       - ExternalApi::PexipService
       - InvalidAssigneeStatusOnTaskCreate
       - Api::V3::DecisionReviews::ContestableIssueFinder
@@ -220,6 +229,7 @@ detectors:
       - Reporter#median
       - Reporter#seconds_to_hms
       - Reporter#percent
+      - SanitizedJsonConfiguration
       - ScheduleHearingTaskPager#sorted_tasks
       - VBMSCaseflowLogger#log
 
