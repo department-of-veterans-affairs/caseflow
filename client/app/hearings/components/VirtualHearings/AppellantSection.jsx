@@ -24,7 +24,8 @@ export const AppellantSection = ({
   appellantTitle,
   showOnlyAppellantName,
   showMissingEmailAlert,
-  showTimezoneField
+  showTimezoneField,
+  schedulingToVirtual
 }) => {
   // Depending on where this component is used, the *FullName fields will be available.
   // If they aren't, the *FirstName/*LastName fields should be available.
@@ -71,7 +72,7 @@ export const AppellantSection = ({
       {/*
         * Timezone fields
         */}
-      {showTimezoneField && (
+      {showTimezoneField && schedulingToVirtual && (
         <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
           <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
             <Timezone
@@ -117,6 +118,10 @@ export const AppellantSection = ({
   );
 };
 
+AppellantSection.defaultProps = {
+  schedulingToVirtual: true
+};
+
 AppellantSection.propTypes = {
   hearing: PropTypes.object,
   virtualHearing: PropTypes.object,
@@ -128,5 +133,6 @@ AppellantSection.propTypes = {
   showOnlyAppellantName: PropTypes.bool,
   showDivider: PropTypes.bool,
   showMissingEmailAlert: PropTypes.bool,
-  showTimezoneField: PropTypes.bool
+  showTimezoneField: PropTypes.bool,
+  schedulingToVirtual: PropTypes.bool
 };

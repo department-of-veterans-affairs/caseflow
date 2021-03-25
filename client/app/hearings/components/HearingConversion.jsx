@@ -40,7 +40,8 @@ export const HearingConversion = ({
     update,
     appellantTitle,
     readOnly: !virtual,
-    showTimezoneField: true
+    showTimezoneField: true,
+    schedulingToVirtual: virtual
   };
 
   const prefillFields = () => {

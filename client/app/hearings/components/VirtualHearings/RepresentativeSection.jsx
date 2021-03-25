@@ -19,7 +19,8 @@ export const RepresentativeSection = ({
   readOnly,
   update,
   appellantTitle,
-  showTimezoneField
+  showTimezoneField,
+  schedulingToVirtual
 }) => (
   <VirtualHearingSection label="Power of Attorney">
     {hearing?.representative ? (
@@ -36,7 +37,7 @@ export const RepresentativeSection = ({
     ) : (
       <ReadOnly text={`The ${appellantTitle} does not have a representative recorded in VBMS`} />
     )}
-    {showTimezoneField && (
+    {showTimezoneField && schedulingToVirtual && (
       <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
         <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })}>
           <Timezone
@@ -70,6 +71,10 @@ export const RepresentativeSection = ({
   </VirtualHearingSection>
 );
 
+RepresentativeSection.defaultProps = {
+  schedulingToVirtual: true
+};
+
 RepresentativeSection.propTypes = {
   hearing: PropTypes.object,
   virtualHearing: PropTypes.object,
@@ -78,5 +83,6 @@ RepresentativeSection.propTypes = {
   update: PropTypes.func,
   readOnly: PropTypes.bool,
   appellantTitle: PropTypes.string,
-  showTimezoneField: PropTypes.bool
+  showTimezoneField: PropTypes.bool,
+  schedulingToVirtual: PropTypes.bool
 };
