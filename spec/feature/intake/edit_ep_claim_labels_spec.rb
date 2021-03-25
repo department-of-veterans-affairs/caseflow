@@ -102,22 +102,22 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
       higher_level_review.establish!
     end
 
-    fit "shows each established end product label" do
+    it "Issue update disables Edit claim label btn and enables save btn" do
       visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
 
       nr_label = Constants::EP_CLAIM_TYPES[nonrating_request_issue.end_product_establishment.code]["official_label"]
       nr_row = page.find("tr", text: nr_label, match: :prefer_exact)
 
-      # affirm that save button is disabled
       expect(page).to have_button("Save", disabled: true)
-      # affirm that 'Edit claim label' button(s) are enabled
       expect(nr_row).to have_button("Edit claim label", disabled: false)
 
-      # make change - either withdraw/remove issue or edit description
-      binding.pry
+      # make issue update - remove issue or edit description
+      find("#issue-action-0").click
+      find("#issue-action-0_remove").click
+      find("#Remove-issue-button-id-1").click
 
-      # affirm that save button is enabled 
-      # affirm that 'Edit claim label' button(s) are disabled
+      expect(page).to have_button("Save", disabled: false)
+      expect(page).to have_button("Edit claim label", disabled: true)
     end
 
     it "shows each established end product label" do
