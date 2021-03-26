@@ -28,7 +28,7 @@ export const DocketSwitchReviewConfirmContainer = () => {
   const { appealId, taskId } = useParams();
   const { goBack, push } = useHistory();
   const dispatch = useDispatch();
-  const [disabled, setDisabled] = useState(false)
+  const [disabled, setDisabled] = useState(false);
 
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
@@ -87,8 +87,8 @@ export const DocketSwitchReviewConfirmContainer = () => {
     try {
       const resultAction = await dispatch(completeDocketSwitchGranted(docketSwitch));
       const { newAppealId } = unwrapResult(resultAction);
-      setDisabled(true)
-
+      
+      setDisabled(true);
       dispatch(showSuccessMessage(successMessage));
       dispatch(stepForward());
       push(`/queue/appeals/${newAppealId}`);
