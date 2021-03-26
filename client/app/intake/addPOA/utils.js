@@ -5,7 +5,7 @@ import * as yup from 'yup';
 export const schema = yup.object().shape({
   partyType: yup.string().when('listedAttorney', {
     is: (value) =>
-      value?.value === 'not_listed' || value?.value === value.address,
+      value?.value === 'not_listed',
     then: yup.string().required(),
   }),
   firstName: yup.string().when('partyType', {

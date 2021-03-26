@@ -53,17 +53,15 @@ export const AddClaimantForm = ({
   const methods = useFormContext();
   const { control, register, watch, handleSubmit, setValue } = methods;
 
-  const watchPartyType = watch('partyType');
   const watchRelationship = watch('relationship');
-
-  const showIndividualNameFields =
-    watchPartyType === 'individual' ||
-    ['spouse', 'child'].includes(watchRelationship);
-  const listedAttorney = watch('listedAttorney');
-  const attorneyNotListed = listedAttorney?.value === 'not_listed';
+  const dependentRelationship = ['spouse', 'child'].includes(watchRelationship);
+  const watchPartyType = watch('partyType');
+  const watchListedAttorney = watch('listedAttorney');
+  const attorneyRelationship = watchRelationship === 'attorney';
+  const attorneyNotListed = watchListedAttorney?.value === 'not_listed';
+  const listedAttorney = attorneyRelationship && watchListedAttorney?.value && !attorneyNotListed;
   const showPartyType = watchRelationship === 'other' || attorneyNotListed;
-  const showAdditionalFields =
-    watchPartyType || ['spouse', 'child'].includes(watchRelationship);
+  const partyType = (showPartyType && watchPartyType) || (dependentRelationship && 'individual');
 
   const asyncFn = useCallback(
     debounce((search, callback) => {
@@ -88,6 +86,7 @@ export const AddClaimantForm = ({
         <Controller
           control={control}
           name="relationship"
+          defaultValue={null}
           render={({ onChange, ...rest }) => (
             <SearchableDropdown
               {...rest}
@@ -108,30 +107,36 @@ export const AddClaimantForm = ({
               control={control}
               name="listedAttorney"
               defaultValue={null}
-              render={({ ...rest }) => (
-                <SearchableDropdown
-                  {...rest}
-                  label="Claimant's name"
-                  filterOption={filterOption}
-                  async={asyncFn}
-                  defaultOptions
-                  debounce={250}
-                  strongLabel
-                  isClearable
-                  placeholder="Type to search..."
-                />
+              render={({ onChange, ...rest }) => (
+                <FieldDiv>
+                  <SearchableDropdown
+                    {...rest}
+                    label="Claimant's name"
+                    filterOption={filterOption}
+                    async={asyncFn}
+                    defaultOptions
+                    debounce={250}
+                    strongLabel
+                    isClearable
+                    onChange={(valObj) => {
+                      onChange(valObj);
+                      setValue('listedAttorney', valObj);
+                    }}
+                    placeholder="Type to search..."
+                  />
+                </FieldDiv>
               )}
             />
           </>
         )}
 
-        {listedAttorney?.address && (
+        {listedAttorney && watchListedAttorney?.address && (
           <div>
             <ClaimantAddress>
               <strong>Claimant's address</strong>
             </ClaimantAddress>
             <br />
-            <Address address={listedAttorney?.address} />
+            <Address address={watchListedAttorney?.address} />
           </div>
         )}
 
@@ -146,7 +151,7 @@ export const AddClaimantForm = ({
           />
         )}
         <br />
-        {showIndividualNameFields && (
+        {partyType === 'individual' && (
           <>
             <FieldDiv>
               <TextField
@@ -185,7 +190,7 @@ export const AddClaimantForm = ({
             </Suffix>
           </>
         )}
-        {watchPartyType === 'organization' && (
+        {partyType === 'organization' && (
           <TextField
             name="name"
             label="Organization name"
@@ -193,7 +198,7 @@ export const AddClaimantForm = ({
             strongLabel
           />
         )}
-        {showAdditionalFields && (
+        {partyType && (
           <>
             <AddressForm {...methods} />
             <FieldDiv>
@@ -216,7 +221,7 @@ export const AddClaimantForm = ({
             </PhoneNumber>
           </>
         )}
-        {(showAdditionalFields || listedAttorney) && (
+        {(partyType && !attorneyRelationship) && (
           <RadioField
             options={Constants.BOOLEAN_RADIO_OPTIONS}
             vertical

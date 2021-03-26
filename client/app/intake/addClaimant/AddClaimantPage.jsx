@@ -44,13 +44,27 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
   const intakeData = useMemo(() => {
     return selectedForm ? intakeForms[camelCase(formType)] : null;
   }, [intakeForms, formType, selectedForm]);
-  /* eslint-enable no-unused-vars */
 
+  const methods = useAddClaimantForm({ defaultValues: claimant });
+  const {
+    formState: { isValid },
+    handleSubmit,
+    watch
+  } = methods;
+
+  const relationship = watch('relationship');
   const toggleConfirm = () => setConfirmModal((val) => !val);
   const handleConfirm = () => {
-    intakeData.unlistedClaimant = claimant;
+    const listedAttorney = claimant?.listedAttorney?.value;
 
+    if (relationship === 'attorney' && listedAttorney !== 'not_listed') {
+      intakeData.claimantType = 'attorney';
+      intakeData.claimant = listedAttorney;
+    } else {
+      intakeData.unlistedClaimant = claimant;
+    }
     dispatch(submitReview(intakeId, intakeData, selectedForm.formName));
+    dispatch(clearClaimant());
     push('/add_issues');
   };
 
@@ -74,15 +88,6 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
 
   const handleBack = () => goBack();
 
-  const methods = useAddClaimantForm({ defaultValues: claimant });
-  const {
-    formState: { isValid },
-    handleSubmit,
-    watch,
-  } = methods;
-
-  const relationship = watch('relationship');
-
   useEffect(() => {
     if (
       relationship &&
@@ -90,7 +95,6 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
       claimant?.relationship !== relationship
     ) {
       dispatch(clearClaimant());
-      // reset();
     }
   }, [relationship, claimant]);
 

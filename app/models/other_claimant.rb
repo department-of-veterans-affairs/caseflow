@@ -31,6 +31,7 @@ class OtherClaimant < Claimant
 
   def save_unrecognized_details!(params, poa_params)
     poa_form = params.delete(:poa_form)
+    listed_attorney = params.delete(:listed_attorney)
     params.permit!
     appellant = create_appellant!(params)
 

@@ -14,7 +14,7 @@ import Address from 'app/queue/components/Address';
 import AddressForm from 'app/components/AddressForm';
 import TextField from 'app/components/TextField';
 import { useDispatch, useSelector } from 'react-redux';
-import { editPoaInformation } from 'app/intake/reducers/addClaimantSlice';
+import { editPoaInformation, clearPoa } from 'app/intake/reducers/addClaimantSlice';
 import { AddClaimantConfirmationModal } from '../addClaimant/AddClaimantConfirmationModal';
 import { formatAddress } from '../addClaimant/utils';
 import { FORM_TYPES } from '../constants';
@@ -67,7 +67,7 @@ export const AddPoaPage = () => {
     register,
     watch,
     formState: { isValid },
-    handleSubmit,
+    handleSubmit
   } = methods;
 
   /* eslint-disable no-unused-vars */
@@ -96,6 +96,7 @@ export const AddPoaPage = () => {
     intakeData.poa = poa;
 
     dispatch(submitReview(intakeId, intakeData, selectedForm.formName));
+    dispatch(clearPoa());
     push('/add_issues');
   };
 
@@ -108,12 +109,13 @@ export const AddPoaPage = () => {
   const handleBack = () => goBack();
 
   const watchPartyType = watch('partyType');
-  const showAdditionalFields = watchPartyType;
   const showIndividualNameFields = watchPartyType === 'individual';
 
-  const listedAttorney = watch('listedAttorney');
-  const attorneyNotListed = listedAttorney?.value === 'not_listed';
+  const watchListedAttorney = watch('listedAttorney');
+  const attorneyNotListed = watchListedAttorney?.value === 'not_listed';
   const showPartyType = attorneyNotListed;
+  const showAdditionalFields = watchPartyType && showPartyType;
+
   const asyncFn = useCallback(
     debounce((search, callback) => {
       getAttorneyClaimantOpts(search, fetchAttorneys).then((res) =>
@@ -160,13 +162,13 @@ export const AddPoaPage = () => {
             )}
           />
 
-          {listedAttorney?.address && (
+          {watchListedAttorney?.address && (
             <div>
               <ClaimantAddress>
                 <strong>Representative's address</strong>
               </ClaimantAddress>
               <br />
-              <Address address={listedAttorney?.address} />
+              <Address address={watchListedAttorney?.address} />
             </div>
           )}
 
@@ -222,7 +224,7 @@ export const AddPoaPage = () => {
             </>
           )}
 
-          {watchPartyType === 'organization' && (
+          {showPartyType && watchPartyType === 'organization' && (
             <TextField
               name="name"
               label="Organization name"

@@ -171,8 +171,6 @@ class AddIssuesPage extends React.Component {
   }
 
   submitClaimLabelEdit = () => {
-    // eslint-disable-next-line no-console
-    console.log(`Submitting request to switch from ${this.state.previousEpCode} to ${this.state.selectedEpCode}...`);
     this.props.editEpClaimLabel(
       this.props.intakeForms[this.props.formType].claimId,
       this.props.formType,

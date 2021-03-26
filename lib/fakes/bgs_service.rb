@@ -414,8 +414,21 @@ class Fakes::BGSService
     get_address_from_bgs_address(address)
   end
 
-  def fetch_claimant_info_by_participant_id(_participant_id)
-    default_claimant_info
+  def fetch_claimant_info_by_participant_id(participant_id)
+    veteran = Veteran.find_by(participant_id: participant_id)
+    if veteran.present?
+      {
+        relationship: "Veteran",
+        payee_code: "00"
+      }
+    else
+      relationship = find_all_relationships(participant_id).find{ |r| r[:ptcpnt_id] == participant_id }
+
+      {
+        relationship: relationship&.dig(:relationship_type) || "Spouse",
+        payee_code: relationship&.dig(:default_payee_code) || "10"
+      }
+    end
   end
 
   def fetch_person_by_ssn(ssn)
@@ -622,13 +635,6 @@ class Fakes::BGSService
 
   def current_user
     RequestStore[:current_user]
-  end
-
-  def default_claimant_info
-    {
-      relationship: "Spouse",
-      payee_code: "10"
-    }
   end
 
   def default_power_of_attorney_record
