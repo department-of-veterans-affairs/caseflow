@@ -21,12 +21,12 @@ class MdrTask < Task
 
   before_validation :set_assignee
 
-  def self.create_with_hold(parent_task)
+  def self.create_with_hold(parent_task, decision_date)
     multi_transaction do
       create!(parent: parent_task, appeal: parent_task.appeal).tap do |window_task|
         TimedHoldTask.create_from_parent(
           window_task,
-          days_on_hold: 90,
+          days_on_hold: decision_date_plus_90_days(decision_date),
           instructions: [COPY::MDR_WINDOW_TASK_DEFAULT_INSTRUCTIONS]
         )
       end
@@ -57,5 +57,12 @@ class MdrTask < Task
 
   def set_assignee
     self.assigned_to = CavcLitigationSupport.singleton if assigned_to.nil?
+  end
+
+  def self.decision_date_plus_90_days(decision_date)
+    end_date = decision_date + 90.days
+    # What's expected is the _number_ of days to wait:
+    # TODO: This could go negative. Should we cap it?
+    (end_date - Date.today).to_i
   end
 end

@@ -69,7 +69,7 @@ class InitialTasksFactory
     cavc_task = CavcTask.create!(appeal: @appeal, parent: distribution_task)
     case @cavc_remand.remand_subtype
     when Constants.CAVC_REMAND_SUBTYPES.mdr
-      MdrTask.create_with_hold(cavc_task)
+      MdrTask.create_with_hold(cavc_task, @cavc_remand.decision_date)
     when Constants.CAVC_REMAND_SUBTYPES.jmr, Constants.CAVC_REMAND_SUBTYPES.jmpr
       SendCavcRemandProcessedLetterTask.create!(appeal: @appeal, parent: cavc_task)
     else
