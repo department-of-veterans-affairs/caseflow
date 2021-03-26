@@ -13,8 +13,9 @@ exports[`RepresentativeSection Displays timezone when showTimezoneField is passe
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -90,6 +91,7 @@ exports[`RepresentativeSection Displays timezone when showTimezoneField is passe
       "worksheetIssues": Object {},
     }
   }
+  schedulingToVirtual={true}
   showTimezoneField={true}
   type="change_to_virtual"
   update={[MockFunction]}
@@ -15327,8 +15329,9 @@ exports[`RepresentativeSection Does not allow editing emails when read-only 1`] 
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -15405,6 +15408,7 @@ exports[`RepresentativeSection Does not allow editing emails when read-only 1`] 
     }
   }
   readOnly={true}
+  schedulingToVirtual={true}
   type="change_to_virtual"
   update={[MockFunction]}
   virtualHearing={
@@ -15508,8 +15512,9 @@ exports[`RepresentativeSection Matches snapshot with default props 1`] = `
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -15585,6 +15590,7 @@ exports[`RepresentativeSection Matches snapshot with default props 1`] = `
       "worksheetIssues": Object {},
     }
   }
+  schedulingToVirtual={true}
   type="change_to_virtual"
   update={[MockFunction]}
   virtualHearing={
@@ -15821,6 +15827,7 @@ exports[`RepresentativeSection Shows Representative name when representative add
       "worksheetIssues": Object {},
     }
   }
+  schedulingToVirtual={true}
   type="change_to_virtual"
   update={[MockFunction]}
   virtualHearing={
@@ -16050,6 +16057,7 @@ exports[`RepresentativeSection Shows Representative not present message when no 
       "worksheetIssues": Object {},
     }
   }
+  schedulingToVirtual={true}
   type="change_to_virtual"
   update={[MockFunction]}
   virtualHearing={

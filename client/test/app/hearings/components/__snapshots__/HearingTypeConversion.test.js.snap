@@ -377,6 +377,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                 }
               }
               readOnly={true}
+              schedulingToVirtual={true}
               showDivider={false}
               showMissingEmailAlert={true}
               showOnlyAppellantName={true}
@@ -483,6 +484,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                 }
               }
               readOnly={true}
+              schedulingToVirtual={true}
               showDivider={false}
               showMissingEmailAlert={true}
               showOnlyAppellantName={true}

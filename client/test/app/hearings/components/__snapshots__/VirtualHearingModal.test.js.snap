@@ -12,8 +12,9 @@ exports[`VirtualHearingModal ChangeEmailOrTimezone sub-component Displays ReadOn
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -166,8 +167,9 @@ exports[`VirtualHearingModal ChangeEmailOrTimezone sub-component Displays ReadOn
         "appellantCity": "SAN FRANCISCO",
         "appellantEmailAddress": "tom.brady@caseflow.gov",
         "appellantFirstName": "Tom",
-        "appellantIsNotVeteran": true,
+        "appellantIsNotVeteran": false,
         "appellantLastName": "Brady",
+        "appellantRelationship": "Spouse",
         "appellantState": "CA",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
@@ -324,8 +326,9 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -480,8 +483,9 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
         "appellantCity": "SAN FRANCISCO",
         "appellantEmailAddress": "tom.brady@caseflow.gov",
         "appellantFirstName": "Tom",
-        "appellantIsNotVeteran": true,
+        "appellantIsNotVeteran": false,
         "appellantLastName": "Brady",
+        "appellantRelationship": "Spouse",
         "appellantState": "CA",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
@@ -654,8 +658,9 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
         "appellantCity": "SAN FRANCISCO",
         "appellantEmailAddress": "tom.brady@caseflow.gov",
         "appellantFirstName": "Tom",
-        "appellantIsNotVeteran": true,
+        "appellantIsNotVeteran": false,
         "appellantLastName": "Brady",
+        "appellantRelationship": "Spouse",
         "appellantState": "CA",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
@@ -802,7 +807,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
   >
     <p>
       <strong>
-        Appellant
+        Veteran
          Email
       </strong>
       <br />
@@ -831,8 +836,9 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -985,8 +991,9 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
         "appellantCity": "SAN FRANCISCO",
         "appellantEmailAddress": "tom.brady@caseflow.gov",
         "appellantFirstName": "Tom",
-        "appellantIsNotVeteran": true,
+        "appellantIsNotVeteran": false,
         "appellantLastName": "Brady",
+        "appellantRelationship": "Spouse",
         "appellantState": "CA",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
@@ -1151,8 +1158,9 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
         "appellantCity": "SAN FRANCISCO",
         "appellantEmailAddress": "tom.brady@caseflow.gov",
         "appellantFirstName": "Tom",
-        "appellantIsNotVeteran": true,
+        "appellantIsNotVeteran": false,
         "appellantLastName": "Brady",
+        "appellantRelationship": "Spouse",
         "appellantState": "CA",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
@@ -1297,7 +1305,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
   >
     <p>
       <strong>
-        Appellant
+        Veteran
          Email
       </strong>
       <br />
@@ -1326,8 +1334,9 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -1480,8 +1489,9 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
         "appellantCity": "SAN FRANCISCO",
         "appellantEmailAddress": "tom.brady@caseflow.gov",
         "appellantFirstName": "Tom",
-        "appellantIsNotVeteran": true,
+        "appellantIsNotVeteran": false,
         "appellantLastName": "Brady",
+        "appellantRelationship": "Spouse",
         "appellantState": "CA",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
@@ -1646,8 +1656,9 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
         "appellantCity": "SAN FRANCISCO",
         "appellantEmailAddress": "tom.brady@caseflow.gov",
         "appellantFirstName": "Tom",
-        "appellantIsNotVeteran": true,
+        "appellantIsNotVeteran": false,
         "appellantLastName": "Brady",
+        "appellantRelationship": "Spouse",
         "appellantState": "CA",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
@@ -1792,7 +1803,7 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
   >
     <p>
       <strong>
-        Appellant
+        Veteran
          Email
       </strong>
       <br />
@@ -1822,8 +1833,9 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -1967,8 +1979,9 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
         "appellantCity": "SAN FRANCISCO",
         "appellantEmailAddress": "tom.brady@caseflow.gov",
         "appellantFirstName": "Tom",
-        "appellantIsNotVeteran": true,
+        "appellantIsNotVeteran": false,
         "appellantLastName": "Brady",
+        "appellantRelationship": "Spouse",
         "appellantState": "CA",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
@@ -2119,7 +2132,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
       ]
     }
     errorMessage="Something went wrong..."
-    label="Appellant Email"
+    label="Veteran Email"
     name="appellant-email"
     onChange={[Function]}
     optional={false}
@@ -2137,13 +2150,13 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
       >
         <strong>
           <FormLabel
-            label="Appellant Email"
+            label="Veteran Email"
             name="appellant-email"
             optional={false}
             required={false}
           >
             <span>
-              Appellant Email
+              Veteran Email
             </span>
           </FormLabel>
         </strong>
@@ -2219,7 +2232,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
   <p
     dangerouslySetInnerHTML={
       Object {
-        "__html": "Changes to the Appellant and POA / Representative emails will be used to send notifications <strong>for this hearing only</strong>.",
+        "__html": "Changes to the Veteran and POA / Representative emails will be used to send notifications <strong>for this hearing only</strong>.",
       }
     }
   />
@@ -2238,8 +2251,9 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -2372,8 +2386,9 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
         "appellantCity": "SAN FRANCISCO",
         "appellantEmailAddress": "tom.brady@caseflow.gov",
         "appellantFirstName": "Tom",
-        "appellantIsNotVeteran": true,
+        "appellantIsNotVeteran": false,
         "appellantLastName": "Brady",
+        "appellantRelationship": "Spouse",
         "appellantState": "CA",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
@@ -2513,7 +2528,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
         "cf-form-textinput",
       ]
     }
-    label="Appellant Email"
+    label="Veteran Email"
     name="appellant-email"
     onChange={[Function]}
     optional={false}
@@ -2531,13 +2546,13 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
       >
         <strong>
           <FormLabel
-            label="Appellant Email"
+            label="Veteran Email"
             name="appellant-email"
             optional={false}
             required={false}
           >
             <span>
-              Appellant Email
+              Veteran Email
             </span>
           </FormLabel>
         </strong>
@@ -2608,7 +2623,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
   <p
     dangerouslySetInnerHTML={
       Object {
-        "__html": "Changes to the Appellant and POA / Representative emails will be used to send notifications <strong>for this hearing only</strong>.",
+        "__html": "Changes to the Veteran and POA / Representative emails will be used to send notifications <strong>for this hearing only</strong>.",
       }
     }
   />
@@ -2627,8 +2642,9 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -2782,8 +2798,9 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
         "appellantCity": "SAN FRANCISCO",
         "appellantEmailAddress": "tom.brady@caseflow.gov",
         "appellantFirstName": "Tom",
-        "appellantIsNotVeteran": true,
+        "appellantIsNotVeteran": false,
         "appellantLastName": "Brady",
+        "appellantRelationship": "Spouse",
         "appellantState": "CA",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
@@ -2944,7 +2961,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
         "cf-form-textinput",
       ]
     }
-    label="Appellant Email"
+    label="Veteran Email"
     name="appellant-email"
     onChange={[Function]}
     optional={false}
@@ -2962,13 +2979,13 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
       >
         <strong>
           <FormLabel
-            label="Appellant Email"
+            label="Veteran Email"
             name="appellant-email"
             optional={false}
             required={false}
           >
             <span>
-              Appellant Email
+              Veteran Email
             </span>
           </FormLabel>
         </strong>
@@ -3045,7 +3062,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
   <p
     dangerouslySetInnerHTML={
       Object {
-        "__html": "Changes to the Appellant and POA / Representative emails will be used to send notifications <strong>for this hearing only</strong>.",
+        "__html": "Changes to the Veteran and POA / Representative emails will be used to send notifications <strong>for this hearing only</strong>.",
       }
     }
   />
@@ -3229,8 +3246,9 @@ exports[`VirtualHearingModal DateTime sub-component Displays formatted hearing d
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -3398,8 +3416,9 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -3646,8 +3665,9 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
                       "appellantCity": "SAN FRANCISCO",
                       "appellantEmailAddress": "tom.brady@caseflow.gov",
                       "appellantFirstName": "Tom",
-                      "appellantIsNotVeteran": true,
+                      "appellantIsNotVeteran": false,
                       "appellantLastName": "Brady",
+                      "appellantRelationship": "Spouse",
                       "appellantState": "CA",
                       "appellantZip": "94103",
                       "availableHearingLocations": Object {},
@@ -3774,8 +3794,9 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
                         "appellantCity": "SAN FRANCISCO",
                         "appellantEmailAddress": "tom.brady@caseflow.gov",
                         "appellantFirstName": "Tom",
-                        "appellantIsNotVeteran": true,
+                        "appellantIsNotVeteran": false,
                         "appellantLastName": "Brady",
+                        "appellantRelationship": "Spouse",
                         "appellantState": "CA",
                         "appellantZip": "94103",
                         "availableHearingLocations": Object {},
@@ -3982,8 +4003,9 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -4214,7 +4236,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                 <p
                   dangerouslySetInnerHTML={
                     Object {
-                      "__html": "Emails will be sent to the Appellant and POA/Representative to notify them that:<ul><li>The hearing format has been changed to Video, and their Virtual hearing URL is no longer valid</li><li>They must appear in-person at their designated Regional Office or alternate hearing location</li></ul>",
+                      "__html": "Emails will be sent to the Veteran and POA/Representative to notify them that:<ul><li>The hearing format has been changed to Video, and their Virtual hearing URL is no longer valid</li><li>They must appear in-person at their designated Regional Office or alternate hearing location</li></ul>",
                     }
                   }
                 />
@@ -4230,8 +4252,9 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                       "appellantCity": "SAN FRANCISCO",
                       "appellantEmailAddress": "tom.brady@caseflow.gov",
                       "appellantFirstName": "Tom",
-                      "appellantIsNotVeteran": true,
+                      "appellantIsNotVeteran": false,
                       "appellantLastName": "Brady",
+                      "appellantRelationship": "Spouse",
                       "appellantState": "CA",
                       "appellantZip": "94103",
                       "availableHearingLocations": Object {},
@@ -4358,8 +4381,9 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                         "appellantCity": "SAN FRANCISCO",
                         "appellantEmailAddress": "tom.brady@caseflow.gov",
                         "appellantFirstName": "Tom",
-                        "appellantIsNotVeteran": true,
+                        "appellantIsNotVeteran": false,
                         "appellantLastName": "Brady",
+                        "appellantRelationship": "Spouse",
                         "appellantState": "CA",
                         "appellantZip": "94103",
                         "availableHearingLocations": Object {},
@@ -4498,8 +4522,9 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                         "appellantCity": "SAN FRANCISCO",
                         "appellantEmailAddress": "tom.brady@caseflow.gov",
                         "appellantFirstName": "Tom",
-                        "appellantIsNotVeteran": true,
+                        "appellantIsNotVeteran": false,
                         "appellantLastName": "Brady",
+                        "appellantRelationship": "Spouse",
                         "appellantState": "CA",
                         "appellantZip": "94103",
                         "availableHearingLocations": Object {},
@@ -4617,7 +4642,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                   >
                     <p>
                       <strong>
-                        Appellant
+                        Veteran
                          Email
                       </strong>
                       <br />
@@ -4723,8 +4748,9 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -4955,7 +4981,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                 <p
                   dangerouslySetInnerHTML={
                     Object {
-                      "__html": "Email notifications will be sent to the Appellant, POA / Representative, and VLJ.",
+                      "__html": "Email notifications will be sent to the Veteran, POA / Representative, and VLJ.",
                     }
                   }
                 />
@@ -4971,8 +4997,9 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                       "appellantCity": "SAN FRANCISCO",
                       "appellantEmailAddress": "tom.brady@caseflow.gov",
                       "appellantFirstName": "Tom",
-                      "appellantIsNotVeteran": true,
+                      "appellantIsNotVeteran": false,
                       "appellantLastName": "Brady",
+                      "appellantRelationship": "Spouse",
                       "appellantState": "CA",
                       "appellantZip": "94103",
                       "availableHearingLocations": Object {},
@@ -5099,8 +5126,9 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                         "appellantCity": "SAN FRANCISCO",
                         "appellantEmailAddress": "tom.brady@caseflow.gov",
                         "appellantFirstName": "Tom",
-                        "appellantIsNotVeteran": true,
+                        "appellantIsNotVeteran": false,
                         "appellantLastName": "Brady",
+                        "appellantRelationship": "Spouse",
                         "appellantState": "CA",
                         "appellantZip": "94103",
                         "availableHearingLocations": Object {},
@@ -5239,8 +5267,9 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                         "appellantCity": "SAN FRANCISCO",
                         "appellantEmailAddress": "tom.brady@caseflow.gov",
                         "appellantFirstName": "Tom",
-                        "appellantIsNotVeteran": true,
+                        "appellantIsNotVeteran": false,
                         "appellantLastName": "Brady",
+                        "appellantRelationship": "Spouse",
                         "appellantState": "CA",
                         "appellantZip": "94103",
                         "availableHearingLocations": Object {},
@@ -5358,7 +5387,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                   >
                     <p>
                       <strong>
-                        Appellant
+                        Veteran
                          Email
                       </strong>
                       <br />
@@ -5464,8 +5493,9 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -5696,7 +5726,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                 <p
                   dangerouslySetInnerHTML={
                     Object {
-                      "__html": "Email notifications will be sent to the Appellant, POA / Representative, and VLJ.",
+                      "__html": "Email notifications will be sent to the Veteran, POA / Representative, and VLJ.",
                     }
                   }
                 />
@@ -5712,8 +5742,9 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                       "appellantCity": "SAN FRANCISCO",
                       "appellantEmailAddress": "tom.brady@caseflow.gov",
                       "appellantFirstName": "Tom",
-                      "appellantIsNotVeteran": true,
+                      "appellantIsNotVeteran": false,
                       "appellantLastName": "Brady",
+                      "appellantRelationship": "Spouse",
                       "appellantState": "CA",
                       "appellantZip": "94103",
                       "availableHearingLocations": Object {},
@@ -5840,8 +5871,9 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                         "appellantCity": "SAN FRANCISCO",
                         "appellantEmailAddress": "tom.brady@caseflow.gov",
                         "appellantFirstName": "Tom",
-                        "appellantIsNotVeteran": true,
+                        "appellantIsNotVeteran": false,
                         "appellantLastName": "Brady",
+                        "appellantRelationship": "Spouse",
                         "appellantState": "CA",
                         "appellantZip": "94103",
                         "availableHearingLocations": Object {},
@@ -5975,7 +6007,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                       ]
                     }
                     errorMessage={null}
-                    label="Appellant Email"
+                    label="Veteran Email"
                     name="appellant-email"
                     onChange={[Function]}
                     optional={false}
@@ -5994,13 +6026,13 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                       >
                         <strong>
                           <FormLabel
-                            label="Appellant Email"
+                            label="Veteran Email"
                             name="appellant-email"
                             optional={false}
                             required={false}
                           >
                             <span>
-                              Appellant Email
+                              Veteran Email
                             </span>
                           </FormLabel>
                         </strong>
@@ -6075,7 +6107,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                   <p
                     dangerouslySetInnerHTML={
                       Object {
-                        "__html": "Changes to the Appellant and POA / Representative emails will be used to send notifications <strong>for this hearing only</strong>.",
+                        "__html": "Changes to the Veteran and POA / Representative emails will be used to send notifications <strong>for this hearing only</strong>.",
                       }
                     }
                   />
@@ -7819,8 +7851,9 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -7965,7 +7998,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
 >
   <p>
     <strong>
-      Appellant
+      Veteran
        Email
     </strong>
     <br />
@@ -7993,8 +8026,9 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -8139,7 +8173,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
 >
   <p>
     <strong>
-      Appellant
+      Veteran
        Email
     </strong>
     <br />
@@ -8168,8 +8202,9 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -8313,7 +8348,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
 >
   <p>
     <strong>
-      Appellant
+      Veteran
        Email
     </strong>
     <br />
@@ -8334,8 +8369,9 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
