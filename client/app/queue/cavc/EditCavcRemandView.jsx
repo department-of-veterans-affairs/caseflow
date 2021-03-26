@@ -1,14 +1,19 @@
 import React, { useMemo } from 'react';
 
-import { useParams } from 'react-router';
-import { useSelector } from 'react-redux';
+import { useHistory, useParams } from 'react-router';
+import { useDispatch, useSelector } from 'react-redux';
 
+import COPY from 'app/../COPY';
 import { appealWithDetailSelector } from 'app/queue/selectors';
 import { getSupportedDecisionTypes, getSupportedRemandTypes } from './utils';
 import { EditCavcRemandForm } from './EditCavcRemandForm';
+import { requestPatch, showErrorMessage } from 'app/queue/uiReducer/uiActions';
+import { editAppeal } from '../QueueActions';
 
 export const EditCavcRemandView = () => {
   const { appealId } = useParams();
+  const dispatch = useDispatch();
+  const history = useHistory();
   const cavcAppeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
@@ -31,12 +36,56 @@ export const EditCavcRemandView = () => {
       judgementDate: cavcRemand.judgement_date,
       mandateDate: cavcRemand.mandate_date,
       remandType: cavcRemand.remand_subtype,
-      attorney: cavcRemand.represented_by_attorney,
+      attorney: cavcRemand.represented_by_attorney ? 'yes' : 'no',
+      remand_appeal_id: cavcRemand.remand_appeal_uuid,
     };
   }, [cavcRemand]);
 
-  const handleCancel = () => {};
-  const handleSubmit = () => {};
+  const handleCancel = () => history.push(`/queue/appeals/${appealId}`);
+
+  const handleSubmit = async (formData) => {
+    const payload = {
+      data: {
+        judgement_date: formData.judgementDate,
+        mandate_date: formData.mandateDate,
+        source_appeal_id: appealId,
+        cavc_docket_number: formData.docketNumber,
+        cavc_judge_full_name: formData.judge,
+        cavc_decision_type: formData.decisionType,
+        decision_date: formData.decisionDate,
+        remand_subtype: formData.remandType,
+        represented_by_attorney: formData.attorney === 'yes',
+        decision_issue_ids: formData.issueIds,
+        federal_circuit: formData.federalCircuit,
+        instructions: formData.instructions,
+      },
+    };
+
+    const successMsg = {
+      title: COPY.CAVC_REMAND_EDIT_SUCCESS_TITLE,
+      detail: COPY.CAVC_REMAND_EDIT_SUCCESS_DETAIL,
+    };
+
+    try {
+      const res = await dispatch(
+        requestPatch(`/appeals/${appealId}/cavc_remand`, payload, successMsg)
+      );
+      const updatedCavcRemand = res.body.cavc_remand;
+
+      // Update Redux
+      dispatch(editAppeal(appealId, { cavcRemand: updatedCavcRemand }));
+
+      // Redirect back to case details for remand appeal
+      history.push(`/queue/appeals/${appealId}`);
+    } catch (error) {
+      dispatch(
+        showErrorMessage({
+          title: 'Error',
+          detail: JSON.parse(error.message).errors[0].detail,
+        })
+      );
+    }
+  };
 
   return (
     <EditCavcRemandForm

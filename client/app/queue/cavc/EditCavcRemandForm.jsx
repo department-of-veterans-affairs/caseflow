@@ -72,11 +72,8 @@ export const EditCavcRemandForm = ({
     resolver: yupResolver(schema),
     reValidateMode: 'onChange',
     defaultValues: {
-      //   docketNumber: existingValues?.docketNumber ?? '',
-      //   decisionType: existingValues?.decisionType ?? null,
-      //   remandType: existingValues?.remandType ?? null,
       issueIds: decisionIssues.map((issue) => issue.id),
-      mandateSame: true,
+      mandateSame: !existingValues.judgementDate,
       ...existingValues,
     },
   });
@@ -164,7 +161,8 @@ export const EditCavcRemandForm = ({
 
   const mandateAvailable = useMemo(
     () =>
-      !watchRemandType?.includes('mdr') && watchRemandDatesProvided === 'yes',
+      (watchRemandType && !watchRemandType?.includes('mdr')) ||
+      watchRemandDatesProvided === 'yes',
     [watchRemandType, watchRemandDatesProvided]
   );
 
@@ -240,6 +238,7 @@ export const EditCavcRemandForm = ({
             name="remandDatesProvided"
             options={YesNoOpts}
             strongLabel
+            errorMessage={errors?.remandDatesProvided?.message}
           />
         )}
 
