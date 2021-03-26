@@ -1,0 +1,35 @@
+<div style="font-size:0.875em; padding:10px">
+  <details>
+    <summary style="color: blue">Help</summary>
+    URL query parameter options:
+    <ul>
+      <li><code><%= link_to('show_pii', {action: 'show', show_pii: ""}) %></code>: shows PII in the Intake section</li>
+      <li><code><%= link_to('fields=id,status,updated_at', {action: 'show', fields: "id,status,updated_at"}) %></code>: custom fields to show in the Task tree section</li>
+    </ul>
+    <%= treee_help_text %>
+    <p/>Other formats:
+    <%= link_to('text', {action: 'show', format: "text"}) %>, 
+    <%= link_to('json', {action: 'show', format: "json"}) %>
+    <hr/>
+  </details>
+
+  <h3>Task tree</h3>
+  <code style="color: green">
+    Appeal.find(<%= appeal.id %>).treee
+      (<%= treee_fields.map{|f| f.to_s.prepend(":")}.join(", ") %>)
+    <% if appeal.is_a?(LegacyAppeal) %>
+      <br/>la = LegacyWorkQueue.tasks_by_appeal_id(<%= appeal.vacols_id %>)
+      <br/>la.location_history.map(&:summary)
+    <% end %>
+  </code>
+  <pre><code><%= task_tree_as_text %></code></pre>
+  <hr/>
+
+  <h3>Intake</h3>
+  <code style="color: green">
+    puts IntakeRenderer.render(Appeal.find(<%= appeal.id %>), 
+      show_pii: <%= show_pii_query_param ? "true" : "false" %>)
+  </code>
+  <pre><code><%= intake_as_text %></code></pre>
+  <hr/>
+</div>

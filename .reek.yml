@@ -170,12 +170,13 @@ detectors:
   RepeatedConditional:
     exclude:
       - BgsPowerOfAttorney
+      - BulkTaskReassignment
+      - ExportController
       - HearingLocation
       - LegacyAppeal
       - Person
       - QueueConfig
       - RequestIssue
-      - BulkTaskReassignment
       - Seeds::Hearings
       - Task
       - UpdateCachedAppealsAttributesJob

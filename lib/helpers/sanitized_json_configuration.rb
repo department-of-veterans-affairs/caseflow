@@ -192,8 +192,9 @@ class SanitizedJsonConfiguration
       Appeal => initial_appeals
     }
 
+    retrieval_key = initial_appeals.first.is_a?(LegacyAppeal) ? :legacy_retrieval : :retrieval
     # incrementally update export_records as subsequent calls may rely on prior updates to export_records
-    extract_configuration(:retrieval, configuration).map do |klass, retrieval_lambda|
+    extract_configuration(retrieval_key, configuration).map do |klass, retrieval_lambda|
       export_records[klass] = retrieval_lambda.call(export_records)
     end
 

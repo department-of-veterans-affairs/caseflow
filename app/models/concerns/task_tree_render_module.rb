@@ -5,28 +5,30 @@ require "console_tree_renderer"
 # Usage instructions at https://github.com/department-of-veterans-affairs/caseflow/wiki/Task-Tree-Render
 # :nocov:
 module TaskTreeRenderModule
-  def self.new_renderer # rubocop:disable all
+  PRESET_VALUE_FUNCS = {
+    CRE_DATE: ->(task) { task.created_at&.strftime("%Y-%m-%d") },
+    CRE_TIME: ->(task) { task.created_at&.strftime("%H-%M-%S") },
+    UPD_DATE: ->(task) { task.updated_at&.strftime("%Y-%m-%d") },
+    UPD_TIME: ->(task) { task.updated_at&.strftime("%H-%M-%S") },
+    CLO_DATE: ->(task) { task.updated_at&.strftime("%Y-%m-%d") },
+    CLO_TIME: ->(task) { task.updated_at&.strftime("%H-%M-%S") },
+    ASGN_DATE: ->(task) { task.created_at&.strftime("%Y-%m-%d") },
+    ASGN_TIME: ->(task) { task.created_at&.strftime("%H-%M-%S") },
+    ASGN_BY: lambda { |task|
+      ConsoleTreeRenderer.send_chain(task, [:assigned_by, :type])&.to_s ||
+        ConsoleTreeRenderer.send_chain(task, [:assigned_by, :name])&.to_s ||
+        ConsoleTreeRenderer.send_chain(task, [:assigned_by, :css_id])&.to_s
+    },
+    ASGN_TO: lambda { |task|
+      ConsoleTreeRenderer.send_chain(task, [:assigned_to, :type])&.to_s ||
+        ConsoleTreeRenderer.send_chain(task, [:assigned_to, :name])&.to_s ||
+        ConsoleTreeRenderer.send_chain(task, [:assigned_to, :css_id])&.to_s
+    }
+  }.freeze
+
+  def self.new_renderer
     ConsoleTreeRenderer::ConsoleRenderer.new.tap do |ttr|
-      ttr.config.value_funcs_hash.merge!(
-        CRE_DATE: ->(task) { task.created_at&.strftime("%Y-%m-%d") },
-        CRE_TIME: ->(task) { task.created_at&.strftime("%H-%M-%S") },
-        UPD_DATE: ->(task) { task.updated_at&.strftime("%Y-%m-%d") },
-        UPD_TIME: ->(task) { task.updated_at&.strftime("%H-%M-%S") },
-        CLO_DATE: ->(task) { task.updated_at&.strftime("%Y-%m-%d") },
-        CLO_TIME: ->(task) { task.updated_at&.strftime("%H-%M-%S") },
-        ASGN_DATE: ->(task) { task.created_at&.strftime("%Y-%m-%d") },
-        ASGN_TIME: ->(task) { task.created_at&.strftime("%H-%M-%S") },
-        ASGN_BY: lambda { |task|
-          ConsoleTreeRenderer.send_chain(task, [:assigned_by, :type])&.to_s ||
-            ConsoleTreeRenderer.send_chain(task, [:assigned_by, :name])&.to_s ||
-            ConsoleTreeRenderer.send_chain(task, [:assigned_by, :css_id])&.to_s
-        },
-        ASGN_TO: lambda { |task|
-          ConsoleTreeRenderer.send_chain(task, [:assigned_to, :type])&.to_s ||
-            ConsoleTreeRenderer.send_chain(task, [:assigned_to, :name])&.to_s ||
-            ConsoleTreeRenderer.send_chain(task, [:assigned_to, :css_id])&.to_s
-        }
-      )
+      ttr.config.value_funcs_hash.merge!(PRESET_VALUE_FUNCS)
       ttr.config.default_atts = [:id, :status, :ASGN_BY, :ASGN_TO, :updated_at]
       ttr.config.heading_label_template = lambda { |appeal|
         docket = appeal.docket_name.first.titleize
