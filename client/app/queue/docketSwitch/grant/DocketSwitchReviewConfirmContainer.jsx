@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router';
@@ -28,6 +28,7 @@ export const DocketSwitchReviewConfirmContainer = () => {
   const { appealId, taskId } = useParams();
   const { goBack, push } = useHistory();
   const dispatch = useDispatch();
+  const [disabled, setDisabled] = useState(false)
 
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
@@ -46,6 +47,8 @@ export const DocketSwitchReviewConfirmContainer = () => {
   const dispositionType = useSelector(
     (state) => state.docketSwitch.formData.disposition
   );
+
+  console.log(disabled)
 
   const handleCancel = () => {
     // Clear Redux store
@@ -86,7 +89,8 @@ export const DocketSwitchReviewConfirmContainer = () => {
     try {
       const resultAction = await dispatch(completeDocketSwitchGranted(docketSwitch));
       const { newAppealId } = unwrapResult(resultAction);
-
+      setDisabled(true)
+      debugger
       dispatch(showSuccessMessage(successMessage));
       dispatch(stepForward());
       push(`/queue/appeals/${newAppealId}`);
@@ -132,6 +136,7 @@ export const DocketSwitchReviewConfirmContainer = () => {
       onBack={goBack}
       onCancel={handleCancel}
       onSubmit={handleSubmit}
+      disabled={disabled}
       originalReceiptDate={receiptDate}
       tasksAdded={tasksAdded}
       tasksKept={tasksSwitched}
