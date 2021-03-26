@@ -18,7 +18,7 @@ class ExportController < ApplicationController
 
   helper_method :appeal,
                 :show_pii_query_param, :treee_fields,
-                :treee_help_text,
+                :available_fields,
                 :task_tree_as_text, :intake_as_text
 
   def export_as_text
@@ -28,9 +28,8 @@ class ExportController < ApplicationController
     ].join("\n\n")
   end
 
-  def treee_help_text
-    @treee_help_text ||= "Common fields for task tree: \n" +
-                         (Task.column_names + TaskTreeRenderModule::PRESET_VALUE_FUNCS.keys).map(&:to_s).join(", ")
+  def available_fields
+    (Task.column_names + TaskTreeRenderModule::PRESET_VALUE_FUNCS.keys).map(&:to_s)
   end
 
   def task_tree_as_text
