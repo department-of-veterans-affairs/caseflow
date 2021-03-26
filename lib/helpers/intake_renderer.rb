@@ -253,3 +253,4 @@ class IntakeRenderer
     (text.size > size) ? text[0, size - 1] + "…" : text
   end
 end
+# :nocov:
