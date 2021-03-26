@@ -189,7 +189,7 @@ class IntakeRenderer
       child = "ineligible (#{ri.ineligible_reason})"
       if ri.ineligible_due_to_id.present?
         child = {
-          child.to_s => ["due to #{label(ri.ineligible_due_to)}"]
+          child => ["due to #{label(ri.ineligible_due_to)}"]
         }
       end
       children << child
