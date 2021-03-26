@@ -28,10 +28,10 @@ class WorkQueue::CavcRemandSerializer
   end
 
   attribute :created_by do |object|
-    object.created_by.full_name
+    object.created_by&.full_name
   end
 
   attribute :updated_by do |object|
-    object.updated_by.full_name
+    object.updated_by&.full_name
   end
 end
