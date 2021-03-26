@@ -2066,7 +2066,8 @@ describe LegacyAppeal, :all_dbs do
           expect(new_appeal.versions.length).to eq(2)
 
           # Ensure the correct details are stored in paper trail
-          expect(new_appeal.paper_trail.previous_version.changed_hearing_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
+          changed_hearing_request_type = new_appeal.paper_trail.previous_version.changed_hearing_request_type
+          expect(changed_hearing_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
 
           # Ensure the previous version is set to the original appeal
           expect(new_appeal.paper_trail.previous_version).to eq(appeal)

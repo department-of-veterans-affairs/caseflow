@@ -45,7 +45,9 @@ module HearingRequestTypeConcern
   end
 
   def remember_original_hearing_request_type
-    update!(original_hearing_request_type: formatted_original_hearing_request_type&.to_s) if original_hearing_request_type.blank?
+    if original_hearing_request_type.blank?
+      update!(original_hearing_request_type: formatted_original_hearing_request_type&.to_s)
+    end
   end
 
   def current_hearing_request_type
