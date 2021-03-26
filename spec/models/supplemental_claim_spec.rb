@@ -51,9 +51,8 @@ describe SupplementalClaim, :postgres do
         context "invalid Veteran" do
           context "processed in VBMS" do
             let(:benefit_type) { "compensation" }
-
             it "adds an error" do
-              veteran.update(first_name: nil)
+              Fakes::BGSService.edit_veteran_record(veteran.file_number, :first_name, nil)
               expect(subject).to eq false
               expect(supplemental_claim.errors[:veteran]).to include("veteran_not_valid")
             end
