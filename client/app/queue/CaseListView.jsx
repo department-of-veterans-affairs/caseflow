@@ -29,8 +29,8 @@ import {
   appealsByCaseflowVeteranId,
   claimReviewsByCaseflowVeteranId
 } from './selectors';
-
 import COPY from '../../COPY';
+import Alert from '../components/Alert';
 
 const horizontalRuleStyling = css({
   border: 0,
@@ -87,17 +87,24 @@ class CaseListView extends React.PureComponent {
       heading = `No cases found for “${firstClaimReview.veteranFullName} (${firstClaimReview.veteranFileNumber})”`;
     }
 
-    return <div>
-      {this.searchPageHeading()}
-      <br /><br />
-      <h2 className="cf-push-left" {...fullWidth}>{heading}</h2>
+    return <React.Fragment>
+      {this.props.successAlert && (
+        <Alert type="success" title={this.props.successAlert.title} scrollOnAlert={false}>
+          {this.props.successAlert.detail}
+        </Alert>
+      )}
+      <div>
+        {this.searchPageHeading()}
+        <br /><br />
+        <h2 className="cf-push-left" {...fullWidth}>{heading}</h2>
 
-      <h3 className="cf-push-left" {...fullWidth}>{COPY.CASE_LIST_TABLE_TITLE}</h3>
-      <CaseListTable appeals={this.props.appeals} />
+        <h3 className="cf-push-left" {...fullWidth}>{COPY.CASE_LIST_TABLE_TITLE}</h3>
+        <CaseListTable appeals={this.props.appeals} />
 
-      <h3 className="cf-push-left" {...fullWidth}>{COPY.OTHER_REVIEWS_TABLE_TITLE}</h3>
-      <OtherReviewsTable reviews={this.props.claimReviews} />
-    </div>;
+        <h3 className="cf-push-left" {...fullWidth}>{COPY.OTHER_REVIEWS_TABLE_TITLE}</h3>
+        <OtherReviewsTable reviews={this.props.claimReviews} />
+      </div>
+    </React.Fragment>;
   }
 
   render() {
@@ -126,7 +133,11 @@ CaseListView.propTypes = {
   caseflowVeteranIds: PropTypes.arrayOf(PropTypes.string),
   claimReviews: PropTypes.arrayOf(PropTypes.object),
   onReceiveAppeals: PropTypes.func,
-  onReceiveClaimReviews: PropTypes.func
+  onReceiveClaimReviews: PropTypes.func,
+  successAlert: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    detail: PropTypes.string
+  })
 };
 
 CaseListView.defaultProps = {
@@ -142,8 +153,13 @@ const mapStateToProps = (state, ownProps) => {
     (id) => claimReviewsByCaseflowVeteranId(state, { caseflowVeteranId: id })
   );
 
-  return { appeals,
-    claimReviews };
+  const successAlert = state.ui.messages.success;
+
+  return {
+    appeals,
+    claimReviews,
+    successAlert,
+  };
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

@@ -1,6 +1,9 @@
 import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { formatIssues } from '../../intake/util/issues';
+import { showSuccessMessage } from '../../queue/uiReducer/uiActions';
+import COPY from '../../../COPY';
+import { PAGE_PATHS } from '../../intake/constants';
 
 const analytics = true;
 
@@ -60,6 +63,18 @@ export const editEpClaimLabel = (claimId, formType, previousCode, selectedCode) 
     previous_code: previousCode,
     selected_code: selectedCode,
   };
-  return ApiUtil.post(`/${pathMap[formType]}/${claimId}/edit_ep`, { data }, ENDPOINT_NAMES.EDIT_EP_CLAIM_LABEL);
-  // await the result and dispatch success/failure actions accordingly
+
+  return ApiUtil.post(`/${pathMap[formType]}/${claimId}/edit_ep`, { data }, ENDPOINT_NAMES.EDIT_EP_CLAIM_LABEL).then(
+    (response) => {
+      const successMessage = {
+        title: COPY.EDIT_EP_CLAIM_LABEL_SUCCESS_ALERT_TITLE,
+        detail: COPY.EDIT_EP_CLAIM_LABEL_SUCCESS_ALERT_MESSAGE,
+      };
+
+      if (response.statusCode === 200) {
+        dispatch(showSuccessMessage(successMessage));
+        window.location.replace(PAGE_PATHS.SEARCH);
+      }
+    }
+  );
 };
