@@ -65,11 +65,6 @@ class CaseListView extends React.PureComponent {
   };
 
   searchPageHeading = () => <React.Fragment>
-    {!_.isEmpty(this.state.alert) && (
-      <Alert type={this.state.alert.type} title={this.state.alert.title} scrollOnAlert={false}>
-        {this.state.alert.detail}
-      </Alert>
-    )}
     <h1 className="cf-push-left" {...fullWidth}>{COPY.CASE_SEARCH_HOME_PAGE_HEADING}</h1>
     <p>{COPY.CASE_SEARCH_INPUT_INSTRUCTION}</p>
     <CaseListSearch elementId="searchBarEmptyList" />
@@ -132,6 +127,11 @@ class CaseListView extends React.PureComponent {
         }}
         failStatusMessageProps={{ title: COPY.CASE_SEARCH_DATA_LOAD_FAILED_MESSAGE }}
         failStatusMessageChildren={failStatusMessageChildren}>
+        {!_.isEmpty(this.state.alert) && (
+          <Alert type={this.state.alert.type} title={this.state.alert.title} scrollOnAlert={false}>
+            {this.state.alert.detail}
+          </Alert>
+        )}
         {this.caseListTable()}
       </LoadingDataDisplay>
     </AppSegment>;
