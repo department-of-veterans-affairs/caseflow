@@ -68,7 +68,7 @@ export const ScheduleVeteran = ({
    `This appeal has an open hearing on ${formatDateStr(openHearing?.date)}. You cannot schedule another hearing.`;
 
   // Set the header for the page
-  const header = `Schedule ${appellantTitle} for a Hearing`;
+  const header = `Schedule ${appellantTitle}`;
 
   // Determine the Request Type for the hearing
   const virtual = assignHearingForm?.virtualHearing;
@@ -329,8 +329,8 @@ export const ScheduleVeteran = ({
     <Redirect to={`/queue/appeals/${props.appealId}`} />
   ) : (
     <div {...regionalOfficeSection}>
-      <AppSegment filledBackground >
-        <h1 {...headerStyle}>{header}</h1>
+      <AppSegment filledBackground>
+        <h1 {...headerStyle} >{header}</h1>
         {error && <Alert title={error.title} type="error">{error.detail}</Alert>}
         {virtual ?
           <div {...helperTextStyle}>{COPY.SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL}</div> :
