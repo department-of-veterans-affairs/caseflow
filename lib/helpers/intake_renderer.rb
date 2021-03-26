@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# :nocov:
 class IntakeRenderer
   RENDERABLE_CLASSNAMES = %w[
     Veteran
@@ -74,6 +73,7 @@ class IntakeRenderer
     details
   end
 
+  # :nocov:
   def veteran_children(vet)
     reviews = [Appeal, HigherLevelReview, SupplementalClaim].map do |klass|
       klass.where(veteran_file_number: vet.file_number)
@@ -81,6 +81,7 @@ class IntakeRenderer
     reviews.sort_by! { |dr| dr.receipt_date || Time.zone.today }
     reviews.map { |dr| structure(dr) }
   end
+  # :nocov:
 
   def decision_review_details(dr)
     ["rcvd #{dr.receipt_date}", dr.uuid]
@@ -139,6 +140,7 @@ class IntakeRenderer
     [epe.code, "mod: #{epe.modifier || 'nil'}", epe.synced_status]
   end
 
+  # :nocov:
   def end_product_establishment_children(epe)
     children = []
     children << "Claim #{epe.reference_id}" if epe.reference_id.present?
@@ -252,5 +254,5 @@ class IntakeRenderer
   def truncate(text, size)
     (text.size > size) ? text[0, size - 1] + "…" : text
   end
+  # :nocov:
 end
-# :nocov:
