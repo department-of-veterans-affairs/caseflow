@@ -465,6 +465,49 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
     end
   end
 
+  describe "when editing a cavc remand" do
+    let(:remand_appeal) { create(:appeal, :type_cavc_remand) }
+    let(:source_appeal) { remand_appeal.cavc_remand.source_appeal }
+
+    context "with feature toggles enabled" do
+      before do
+        FeatureToggle.enable!(:cavc_remand)
+        FeatureToggle.enable!(:mdr_cavc_remand)
+        FeatureToggle.enable!(:reversal_cavc_remand)
+        FeatureToggle.enable!(:dismissal_cavc_remand)
+        FeatureToggle.enable!(:can_edit_cavc_remands)
+      end
+      after do
+        FeatureToggle.disable!(:cavc_remand)
+        FeatureToggle.disable!(:mdr_cavc_remand)
+        FeatureToggle.disable!(:reversal_cavc_remand)
+        FeatureToggle.disable!(:dismissal_cavc_remand)
+        FeatureToggle.disable!(:can_edit_cavc_remands)
+      end
+
+      it "allows editing of an existing remand" do
+        step "check 'Correct remand' link does not appear for users not in the CAVC Team" do
+          User.authenticate!(user: other_user)
+          visit "queue/appeals/#{remand_appeal.external_id}"
+          expect(page).to_not have_content "Correct remand"
+        end
+  
+        step "check 'Correct remand' link appears" do
+          User.authenticate!(user: org_admin)
+          visit "queue/appeals/#{remand_appeal.external_id}"
+          expect(page).to have_content "Correct Remand"
+        end
+  
+        step "verify that existing values are present" do
+          click_on "Correct Remand"
+          binding.pry
+          expect(page).to have_content "#{COPY::EDIT_CAVC_PAGE_TITLE}"
+          
+        end
+      end
+    end
+  end
+
   before { Colocated.singleton.add_user(create(:user)) }
 
   describe "when CAVC Lit Support has a CAVC Remand case" do
