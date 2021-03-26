@@ -93,6 +93,7 @@ import HearingTypeConversion from '../hearings/components/HearingTypeConversion'
 import HearingTypeConversionModal from '../hearings/components/HearingTypeConversionModal';
 import CavcReviewExtensionRequestModal from './components/CavcReviewExtensionRequestModal';
 import { PrivateRoute } from '../components/PrivateRoute';
+import { EditCavcRemandView } from './cavc/EditCavcRemandView';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -251,6 +252,10 @@ class QueueApp extends React.PureComponent {
 
   routedAddCavcRemand = (props) => (
     <AddCavcRemandView {...props.match.params} />
+  );
+
+  routedEditCavcRemand = (props) => (
+    <EditCavcRemandView />
   );
 
   routedAdvancedOnDocketMotion = (props) => (
@@ -654,6 +659,12 @@ class QueueApp extends React.PureComponent {
                 path="/queue/appeals/:appealId/add_cavc_remand"
                 title="Add Cavc Remand | Caseflow"
                 render={this.routedAddCavcRemand}
+              />
+              <PageRoute
+                exact
+                path="/queue/appeals/:appealId/edit_cavc_remand"
+                title="Edit Cavc Remand | Caseflow"
+                render={this.routedEditCavcRemand}
               />
               <PageRoute
                 exact

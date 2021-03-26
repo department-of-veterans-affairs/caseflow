@@ -153,16 +153,16 @@ export const CaseDetailsView = (props) => {
           )}
 
           {!_.isNull(appeal.cavcRemand) && appeal.cavcRemand &&
-          (<CavcDetail 
+          (<CavcDetail
             title="CAVC Remand"
             additionalHeaderContent={
               canEditCavcRemands && (
                 <span className="cf-push-right" {...anchorEditLinkStyling}>
-                  <Link href={`/queue/appeals/${appealId}/add_cavc_remand`}>{COPY.CORRECT_CAVC_REMAND_LINK}</Link>
+                  <Link to={`/queue/appeals/${appealId}/edit_cavc_remand`}>{COPY.CORRECT_CAVC_REMAND_LINK}</Link>
                 </span>
               )
             }
-            {...appeal.cavcRemand} 
+            {...appeal.cavcRemand}
           />)}
 
           <CaseTimeline title="Case Timeline" appeal={appeal} />
