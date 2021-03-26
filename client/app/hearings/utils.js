@@ -510,13 +510,13 @@ export const setTimeSlots = (hearings, hearingType) => {
     // Add the index to the start time so we assign 1 value per hour
     const slotTime = moment(startTime, 'HH:mm').add(index, 'hours');
 
-    // This slot is not available (full) if there's a scheduled hearing less than an hour before it.
+    // This slot is not available (full) if there's a scheduled hearing less than an hour before
+    // or after the slot.
     // A 10:45 appointment will:
+    // - Hide a 10:30 slot (it's full, so we return null)
     // - Hide a 11:30 slot (it's full, so we return null)
-    // - Show a 10:30 slot (return the timeslot)
     const slotFull = scheduledHearingTimes.some((scheduledHearingTime) =>
-      slotTime.isSameOrAfter(scheduledHearingTime) &&
-        slotTime.diff(scheduledHearingTime, 'minutes') < 60
+      Math.abs(slotTime.diff(scheduledHearingTime, 'minutes')) < 60
     );
 
     // Return null if there is a filled time slot, otherwise return the hearingTime
