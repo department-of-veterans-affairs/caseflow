@@ -43,7 +43,7 @@ export const RepresentativeSection = ({
           <Timezone
             errorMessage={errors?.representativeTz}
             required={Boolean(virtualHearing?.representativeEmail)}
-            value={virtualHearing?.representativeTz}
+            value={virtualHearing?.representativeTz || virtualHearing?.appellantTz}
             onChange={(representativeTz) =>
               update('virtualHearing', { representativeTz })
             }
