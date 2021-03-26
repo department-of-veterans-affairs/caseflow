@@ -48,8 +48,6 @@ export const DocketSwitchReviewConfirmContainer = () => {
     (state) => state.docketSwitch.formData.disposition
   );
 
-  console.log(disabled)
-
   const handleCancel = () => {
     // Clear Redux store
     dispatch(cancel());
@@ -90,7 +88,7 @@ export const DocketSwitchReviewConfirmContainer = () => {
       const resultAction = await dispatch(completeDocketSwitchGranted(docketSwitch));
       const { newAppealId } = unwrapResult(resultAction);
       setDisabled(true)
-      debugger
+
       dispatch(showSuccessMessage(successMessage));
       dispatch(stepForward());
       push(`/queue/appeals/${newAppealId}`);
