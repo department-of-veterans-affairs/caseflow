@@ -51,7 +51,7 @@ describe HigherLevelReview, :postgres do
         let(:benefit_type) { "compensation" }
 
         it "adds an error" do
-          veteran.update(first_name: nil)
+          Fakes::BGSService.edit_veteran_record(veteran.file_number, :first_name, nil)
           expect(subject).to eq false
           expect(higher_level_review.errors[:veteran]).to include("veteran_not_valid")
         end
