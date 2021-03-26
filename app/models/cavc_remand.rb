@@ -38,12 +38,15 @@ class CavcRemand < CaseflowRecord
   }
 
   def update(params)
-    if already_has_mandate?
-      fail Caseflow::Error::CannotUpdateMandatedRemands
-    end
+    # TODO - Add logic based on param to run this for the existing modal updates of MDR thingers
+    # if already_has_mandate?
+    #   fail Caseflow::Error::CannotUpdateMandatedRemands
+    # end
 
-    update_with_instructions(params)
-    end_mandate_hold
+    # update_with_instructions(params)
+    # end_mandate_hold
+    
+    update!(params)
   end
 
   private
