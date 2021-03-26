@@ -40,6 +40,16 @@ const horizontalRuleStyling = css({
 });
 
 class CaseListView extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    const alert = sessionStorage.getItem('veteranSearchPageAlert');
+
+    if (alert) {
+      sessionStorage.removeItem('veteranSearchPageAlert');
+    }
+    this.state = { alert: JSON.parse(alert) };
+  }
+
   createLoadPromise = () => {
     const { appeals, claimReviews, caseflowVeteranIds } = this.props;
 
@@ -55,6 +65,11 @@ class CaseListView extends React.PureComponent {
   };
 
   searchPageHeading = () => <React.Fragment>
+    {!_.isEmpty(this.state.alert) && (
+      <Alert type={this.state.alert.type} title={this.state.alert.title} scrollOnAlert={false}>
+        {this.state.alert.detail}
+      </Alert>
+    )}
     <h1 className="cf-push-left" {...fullWidth}>{COPY.CASE_SEARCH_HOME_PAGE_HEADING}</h1>
     <p>{COPY.CASE_SEARCH_INPUT_INSTRUCTION}</p>
     <CaseListSearch elementId="searchBarEmptyList" />
@@ -88,11 +103,6 @@ class CaseListView extends React.PureComponent {
     }
 
     return <React.Fragment>
-      {this.props.successAlert && (
-        <Alert type="success" title={this.props.successAlert.title} scrollOnAlert={false}>
-          {this.props.successAlert.detail}
-        </Alert>
-      )}
       <div>
         {this.searchPageHeading()}
         <br /><br />
@@ -134,10 +144,6 @@ CaseListView.propTypes = {
   claimReviews: PropTypes.arrayOf(PropTypes.object),
   onReceiveAppeals: PropTypes.func,
   onReceiveClaimReviews: PropTypes.func,
-  successAlert: PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    detail: PropTypes.string
-  })
 };
 
 CaseListView.defaultProps = {
@@ -153,12 +159,9 @@ const mapStateToProps = (state, ownProps) => {
     (id) => claimReviewsByCaseflowVeteranId(state, { caseflowVeteranId: id })
   );
 
-  const successAlert = state.ui.messages.success;
-
   return {
     appeals,
     claimReviews,
-    successAlert,
   };
 };
 

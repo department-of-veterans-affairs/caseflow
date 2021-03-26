@@ -149,7 +149,7 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
       find("button", text: "Confirm").click
 
       expect(page).to_not have_content(COPY::EDIT_CLAIM_LABEL_MODAL_NOTE)
-      sleep 1 # when frontend displays result of XHR, write a capybara expect against that
+      sleep 1
       expect(page).to have_content COPY::EDIT_EP_CLAIM_LABEL_SUCCESS_ALERT_TITLE
       expect(page).to have_content COPY::EDIT_EP_CLAIM_LABEL_SUCCESS_ALERT_MESSAGE
 
