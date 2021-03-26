@@ -3,11 +3,14 @@
 # This is for updating the claim label for end products established from Caseflow
 
 class EndProductUpdate < CaseflowRecord
+  include BgsService
+
   belongs_to :end_product_establishment, optional: false
   belongs_to :original_decision_review, polymorphic: true, optional: false
   belongs_to :user, optional: false
 
-  delegate :request_issues, to: :end_product_establishment
+  delegate :request_issues, :claim_date, :benefit_type_code, :payee_code, :modifier, :veteran_file_number,
+           to: :end_product_establishment
 
   enum status: { success: "success", error: "error" }
 
@@ -17,10 +20,22 @@ class EndProductUpdate < CaseflowRecord
       update_correction_type
       update_issue_type
       update_benefit_type
+      update_bgs_claim
     end
   end
 
   private
+
+  def update_bgs_claim
+    bgs.update_benefit_claim(
+      veteran_file_number: veteran_file_number,
+      payee_code: payee_code,
+      claim_date: claim_date,
+      benefit_type_code: benefit_type_code,
+      modifier: modifier,
+      new_code: new_code
+    )
+  end
 
   def update_correction_type
     correction_type = new_code_hash[:correction_type]
