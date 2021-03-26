@@ -15,7 +15,7 @@
 
 class JudgeAssignTask < JudgeTask
   
-  validate :only_one_of_task
+  validate :no_multiples_of_noncancelled_task, :on => :create
 
   def additional_available_actions(_user)
     [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]

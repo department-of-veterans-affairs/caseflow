@@ -546,23 +546,27 @@ class Task < CaseflowRecord
   end
 
   def reassign(reassign_params, current_user)
-    sibling = dup.tap do |task|
+    previous_status = self.status
+    
+    replacement = dup.tap do |task|
       task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
       task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
       task.instructions = flattened_instructions(reassign_params)
       task.status = Constants.TASK_STATUSES.assigned
+      
+      self.status = Constants.TASK_STATUSES.cancelled
+
       task.save!
     end
 
     # Preserve the open children and status of the old task
-    children.select(&:stays_with_reassigned_parent?).each { |child| child.update!(parent_id: sibling.id) }
-    sibling.update!(status: status)
+    children.select(&:stays_with_reassigned_parent?).each { |child| child.update!(parent_id: replacement.id) }
+    replacement.update!(status: previous_status)
 
-    update_with_instructions(status: Constants.TASK_STATUSES.cancelled, instructions: reassign_params[:instructions])
 
     appeal.overtime = false if appeal.overtime? && reassign_clears_overtime?
 
-    [sibling, self, sibling.children].flatten
+    [replacement, self, replacement.children].flatten
   end
 
   def can_move_on_docket_switch?
@@ -803,11 +807,11 @@ class Task < CaseflowRecord
     true
   end
 
-  def only_one_of_task
-    siblings = self.appeal.reload.tasks
-    type_siblings = siblings.select{ |task| task.type == self.type }
-    if type_siblings.length >= 1
-      errors.add(:type, "there should be no more than one task of this type")
+  def no_multiples_of_noncancelled_task
+    tasks = self.appeal.reload.tasks
+    target_tasks = tasks.select{ |task| task.type == self.type && task.status != Constants.TASK_STATUSES.cancelled }
+    if target_tasks.length >= 1
+      errors.add(:type, "there should not be multiple tasks of this type")
     end
   end
 

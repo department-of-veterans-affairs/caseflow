@@ -15,17 +15,20 @@ describe JudgeTask, :all_dbs do
     let(:user) { judge }
     let(:stream_type) { Constants.AMA_STREAM_TYPES.original}
     let(:appeal) { create(:appeal, stream_type: stream_type) }
-    let!(:assign_task) do
-      build(:ama_judge_assign_task, assigned_to: judge, appeal: appeal)
+    let!(:first_assign_task) do
+      create(:ama_judge_assign_task, assigned_to: judge, appeal: appeal)
     end
-    let(:second_assign_task) do
+    let!(:second_assign_task) do
+      create(:ama_judge_assign_task, assigned_to: judge, appeal: appeal)
+    end
+    let(:third_assign_task) do
       create(:ama_judge_assign_task, assigned_to: judge, appeal: appeal)
     end
 
-    subject { second_assign_task.save! }
+    subject { third_assign_task }
 
-    context "only one judge assign task can be created for an appeal" do
-      it "throws an error when a second task is created" do
+    context "only two judge assign tasks can be created for an appeal" do
+      it "throws an error when a third task is created" do
         expect{ subject }.to raise_error do |error|
           expect(error).to be_a(ActiveRecord::RecordInvalid)
         end 
