@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# :nocov:
 class IntakeRenderer
   RENDERABLE_CLASSNAMES = %w[
     Veteran
@@ -82,7 +83,7 @@ class IntakeRenderer
   end
 
   def decision_review_details(dr)
-    ["rcvd #{dr.receipt_date.to_s}", dr.uuid]
+    ["rcvd #{dr.receipt_date}", dr.uuid]
   end
 
   def decision_review_children(dr)
@@ -153,7 +154,7 @@ class IntakeRenderer
       [epe.established_at, "established"],
       [epe.last_synced_at, "last synced: #{epe.synced_status || 'nil'}"]
     ]
-    history.select { |hi| hi[0].present? }.map { |hi| "#{hi[0].to_s}: #{hi[1]}" }.sort
+    history.select { |hi| hi[0].present? }.map { |hi| "#{hi[0]}: #{hi[1]}" }.sort
   end
 
   def end_product_establishment_context(epe)
@@ -188,7 +189,7 @@ class IntakeRenderer
       child = "ineligible (#{ri.ineligible_reason})"
       if ri.ineligible_due_to_id.present?
         child = {
-          "#{child}" => ["due to #{label(ri.ineligible_due_to)}"]
+          child.to_s => ["due to #{label(ri.ineligible_due_to)}"]
         }
       end
       children << child
@@ -209,7 +210,7 @@ class IntakeRenderer
       [ri.decision_sync_attempted_at, "decision sync attempted"],
       [ri.decision_sync_canceled_at, "decision sync canceled"]
     ]
-    history.select { |hi| hi[0].present? }.map { |hi| "#{hi[0].to_s}: #{hi[1]}" }.sort
+    history.select { |hi| hi[0].present? }.map { |hi| "#{hi[0]}: #{hi[1]}" }.sort
   end
 
   def request_issue_context(ri)
