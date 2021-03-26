@@ -64,9 +64,7 @@ export const AddClaimantConfirmationModal = ({
   const poaEntity = useMemo(() => shapeAddressBlock(poa), [poa]);
 
   const missingLastName = useMemo(
-    () =>
-      (claimantEntity?.partyType === 'individual') &&
-      !claimantEntity?.lastName,
+    () => claimantEntity?.firstName && !claimantEntity?.lastName,
     [claimantEntity]
   );
 

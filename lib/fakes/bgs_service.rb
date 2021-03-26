@@ -422,7 +422,7 @@ class Fakes::BGSService
         payee_code: "00"
       }
     else
-      relationship = find_all_relationships(participant_id).find{ |r| r[:ptcpnt_id] == participant_id }
+      relationship = Array.wrap(find_all_relationships(participant_id)).find{ |r| r.dig(:ptcpnt_id) == participant_id }
 
       {
         relationship: relationship&.dig(:relationship_type) || "Spouse",

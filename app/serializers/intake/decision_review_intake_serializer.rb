@@ -64,6 +64,6 @@ class Intake::DecisionReviewIntakeSerializer < Intake::IntakeSerializer
   end
 
   attribute :power_of_attorney_name do |object|
-    object.detail&.claimant&.power_of_attorney&.representative_name
+    object.detail&.claimant&.power_of_attorney&.representative_name&.titleize
   end
 end

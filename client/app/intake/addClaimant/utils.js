@@ -61,10 +61,10 @@ export const schema = yup.object().shape({
     is: (relationship) => relationship !== 'attorney',
     then: yup.string().required(),
   }),
-  // listedAttorney: yup.object().when('relationship', {
-  //   is: 'attorney',
-  //   then: yup.object().required(),
-  // }),
+  listedAttorney: yup.object().when('relationship', {
+    is: 'attorney',
+    then: yup.object().required(),
+  }),
 });
 
 export const defaultFormValues = {
