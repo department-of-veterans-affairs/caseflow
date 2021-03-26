@@ -124,6 +124,7 @@ class IntakeRenderer
     details
   end
 
+  # :nocov:
   def claimant_context(claimant)
     claimant.decision_review
   end
@@ -140,7 +141,6 @@ class IntakeRenderer
     [epe.code, "mod: #{epe.modifier || 'nil'}", epe.synced_status]
   end
 
-  # :nocov:
   def end_product_establishment_children(epe)
     children = []
     children << "Claim #{epe.reference_id}" if epe.reference_id.present?
