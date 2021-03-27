@@ -435,8 +435,8 @@ class Fakes::BGSService
       claimant = Array.wrap(find_all_relationships(participant_id)).find { |rel| rel.dig(:ptcpnt_id) == participant_id }
 
       {
-        relationship: relationship&.dig(:relationship_type) || "Spouse",
-        payee_code: relationship&.dig(:default_payee_code) || "10"
+        relationship: claimant&.dig(:relationship_type) || "Spouse",
+        payee_code: claimant&.dig(:default_payee_code) || "10"
       }
     end
   end
