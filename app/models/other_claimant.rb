@@ -31,7 +31,7 @@ class OtherClaimant < Claimant
 
   def save_unrecognized_details!(params, poa_params)
     poa_form = params.delete(:poa_form)
-    params.reject { |param| param.to_sym == :listed_attorney }.permit!
+    params.delete(:listed_attorney)
     appellant = create_appellant!(params)
 
     if poa_form
@@ -55,7 +55,7 @@ class OtherClaimant < Claimant
     UnrecognizedAppellant.create!(
       relationship: relationship,
       claimant_id: id,
-      unrecognized_party_detail: create_party_detail!(params)
+      unrecognized_party_detail: create_party_detail!(params.permit!)
     )
   end
 
