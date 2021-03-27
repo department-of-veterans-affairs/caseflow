@@ -78,7 +78,8 @@ feature "Non-veteran claimants", :postgres do
       expect(page).to have_content("Type to search...")
 
       safe_click ".dropdown-listedAttorney"
-      fill_in("listedAttorney", with: "Name not listed").send_keys :enter
+      fill_in("Claimant's name", with: "Name not lis")
+      expect(page).to have_content("Name not listed")
       find("div", class: "cf-select__menu", text: "Name not listed")
       select_claimant(0)
 
@@ -98,7 +99,6 @@ feature "Non-veteran claimants", :postgres do
       expect(page).to have_button("Continue to next step", disabled: false)
 
       click_button "Continue to next step"
-
       submit_confirmation_modal
 
       # Submission currently out of scope; consider stub as next path might be conditional
@@ -137,6 +137,7 @@ feature "Non-veteran claimants", :postgres do
 
       # fill in form information
       add_new_claimant
+
       within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
         find("label", text: "Yes", match: :prefer_exact).click
       end
@@ -157,9 +158,11 @@ feature "Non-veteran claimants", :postgres do
 
       # Fill in Name not listed
       safe_click ".dropdown-listedAttorney"
-      fill_in("listedAttorney", with: "Name not listed").send_keys :enter
+      fill_in("Representative's name", with: "Name not lis")
+      expect(page).to have_content("Name not listed")
       find("div", class: "cf-select__menu", text: "Name not listed")
       select_claimant(0)
+
       expect(page).to have_content("Is the representative an organization or individual?")
 
       # Check validation for unlisted attorney

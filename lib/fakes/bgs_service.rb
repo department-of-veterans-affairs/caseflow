@@ -221,6 +221,7 @@ class Fakes::BGSService
 
   # rubocop:disable Metrics/MethodLength
   def fetch_person_info(participant_id)
+    veteran = Veteran.find_by(participant_id: participant_id)
     # This is a limited set of test data, more fields are available.
     if participant_id == "5382910292"
       # This claimant is over 75 years old so they get automatic AOD
@@ -261,6 +262,15 @@ class Fakes::BGSService
         last_name: last_name,
         ssn_nbr: "666005555",
         email_address: "#{first_name}.#{last_name}@email.com"
+      }
+    elsif veteran.present?
+      {
+        birth_date: veteran.date_of_birth,
+        first_name: veteran.first_name,
+        middle_name: veteran.middle_name,
+        last_name: veteran.last_name,
+        ssn_nbr: veteran.ssn,
+        email_address: veteran.email_address
       }
     else
       {
@@ -422,7 +432,7 @@ class Fakes::BGSService
         payee_code: "00"
       }
     else
-      relationship = Array.wrap(find_all_relationships(participant_id)).find{ |r| r.dig(:ptcpnt_id) == participant_id }
+      claimant = Array.wrap(find_all_relationships(participant_id)).find { |rel| rel.dig(:ptcpnt_id) == participant_id }
 
       {
         relationship: relationship&.dig(:relationship_type) || "Spouse",

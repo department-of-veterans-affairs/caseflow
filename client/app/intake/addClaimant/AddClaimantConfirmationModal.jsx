@@ -59,7 +59,6 @@ export const AddClaimantConfirmationModal = ({
   ];
 
   const showPoa = poa && !isEmpty(poa);
-
   const claimantEntity = useMemo(() => shapeAddressBlock(claimant), [claimant]);
   const poaEntity = useMemo(() => shapeAddressBlock(poa), [poa]);
 
