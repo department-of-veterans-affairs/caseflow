@@ -19,7 +19,8 @@ class ExportController < ApplicationController
   helper_method :appeal,
                 :show_pii_query_param, :treee_fields,
                 :available_fields,
-                :task_tree_as_text, :intake_as_text
+                :task_tree_as_text, :intake_as_text,
+                :network_graph_data
 
   def export_as_text
     [
@@ -79,6 +80,93 @@ class ExportController < ApplicationController
 
     sje = SanitizedJsonExporter.new(appeal, sanitize: !show_pii_query_param, verbosity: 0)
     sje.file_contents
+  end
+
+  def network_graph_data
+    return "(LegacyAppeals are not yet supported)".to_json if legacy_appeal?
+
+    sje = SanitizedJsonExporter.new(appeal, sanitize: !show_pii_query_param, verbosity: 0)
+    nodes = []
+    edges = []
+
+    prep_nodes(sje, Veteran, nodes,
+               icon: "\uf29a",
+               id_for: ->(klass, record) { "#{klass.name}#{record['file_number']}" })
+    sje.records_hash[Veteran.table_name].each do |veteran|
+      edges << { from: veteran["id"], to: "#{Person.name}#{veteran['participant_id']}" }
+    end
+
+    prep_nodes(sje, Person, nodes,
+               icon: "\uf2bb", color: "gray",
+               id_for: ->(klass, record) { "#{klass.name}#{record['participant_id']}" },
+               label_for: ->(klass, record) { "#{klass.name}_#{record['participant_id']}" })
+
+    prep_nodes(sje, User, nodes,
+               icon: "\uf007",
+               label_for: ->(klass, record) { "#{klass.name}_#{record['css_id']}" })
+
+    prep_nodes(sje, Organization, nodes,
+               icon: "\uf0e8", color: "gray",
+               label_for: ->(_klass, record) { "#{record['type']}_#{record['name']}" })
+    sje.records_hash[OrganizationsUser.table_name].each do |ou|
+      edges << { from: "#{Organization.name}#{ou['organization_id']}", to: "#{User.name}#{ou['user_id']}",
+                 label: ou["admin"] ? "admin" : nil }
+    end
+
+    prep_nodes(sje, Claimant, nodes,
+               label_for: ->(_klass, record) { "#{record['type']}_#{record['participant_id']}" })
+    sje.records_hash[Claimant.table_name].each do |claimant|
+      edges << { to: claimant["id"], from: "#{claimant['decision_review_type']}#{claimant['decision_review_id']}" }
+      edges << { from: claimant["id"], to: "#{Person.name}#{claimant['participant_id']}" }
+    end
+
+    prep_nodes(sje, Appeal, nodes, shape: "star", color: "#ff8888")
+    sje.records_hash[Appeal.table_name].each do |appeal|
+      edges << { from: appeal["id"], to: "#{Veteran.name}#{appeal['veteran_file_number']}" }
+    end
+
+    prep_nodes(sje, Task, nodes,
+               shape: "box", color: "#00ff00",
+               label_for: ->(_klass, record) { "#{record['type']}_#{record['id']}" })
+
+    klass = Task
+    sje.records_hash[klass.table_name].each do |task|
+      if task["parent_id"]
+        edges << { from: "#{klass.name}#{task['parent_id']}", to: task["id"] }
+      elsif task["appeal_id"]
+        edges << { from: "#{task['appeal_type']}#{task['appeal_id']}", to: task["id"] }
+      end
+      edges << { to: "#{task['assigned_to_type']}#{task['assigned_to_id']}", from: task["id"] } if task["assigned_to_id"]
+      edges << { from: "#{User.name}#{task['assigned_by_id']}", to: task["id"] } if task["assigned_by_id"]
+    end
+
+    prep_nodes(sje, RequestIssue, nodes,
+               label_for: ->(_klass, record) { "#{record['type']}_#{record['id']}" })
+    sje.records_hash[RequestIssue.table_name].each do |ri|
+      edges << { to: ri["id"], from: "#{ri['decision_review_type']}#{ri['decision_review_id']}" }
+    end
+
+    { nodes: nodes, edges: edges }
+  end
+
+  def prep_node(sje, klass, nodes,
+                label_for: ->(clazz, record) { "#{clazz.name}_#{record['id']}" },
+                id_for: ->(clazz, record) { "#{clazz.name}#{record['id']}" },
+                shape: nil, icon: nil, color: nil)
+    sje.records_hash[klass.table_name].each do |record|
+      record["label"] = label_for.call(klass, record)
+      record["id"] = id_for.call(klass, record)
+      if icon
+        record["icon"] = {
+          code: icon,
+          color: color.presence
+        }
+        record["shape"] = "icon"
+      end
+      record["shape"] = shape if shape
+      record["color"] = color if color
+      nodes << record
+    end
   end
 
   def legacy_appeal?

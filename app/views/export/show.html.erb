@@ -44,7 +44,12 @@
   <pre><code><%= intake_as_text %></code></pre>
   <hr/>
 
-  <%= javascript_include_tag 'task-tree' %>
+  <h3>Network graph</h3>
+  <div id="mynetwork"></div>
+  <pre><code><%= JSON.pretty_generate(network_graph_data) %></code></pre>
+  TODO: https://visjs.github.io/vis-network/examples/network/data/dynamicFiltering.html
+
+  <%= javascript_include_tag 'export-appeal' %>
   <script type="text/javascript">
     $('#treeefields input').change(function(){
       var selected = [];
@@ -53,5 +58,23 @@
       });
       $('#task_tree_link').attr("href", window.location.href.split('?')[0]+"?fields="+selected.join(','));
     });
+
+    var network_graph_data = <%= network_graph_data.to_json.html_safe %>;
+    var nodes = new vis.DataSet(network_graph_data["nodes"]);
+    var edges = new vis.DataSet(network_graph_data["edges"]);
+
+    var container = document.getElementById("mynetwork");
+    var data = {
+      nodes: nodes,
+      edges: edges,
+    };
+    var options = {
+      height: '500px',
+      clickToUse: true,
+      edges: {
+        arrows: 'to'
+      }
+    };
+    var network = new vis.Network(container, data, options);
   </script>
 </div>
