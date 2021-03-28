@@ -25,6 +25,7 @@ Rails.application.config.assets.precompile += %w( 0.webpack-bundle.js )
 Rails.application.config.assets.precompile += %w( print/hearings_worksheet.css )
 Rails.application.config.assets.precompile += %w( print/hearings_worksheet_overrides.css )
 Rails.application.config.assets.precompile += %w( print/hearings_schedule.css )
+Rails.application.config.assets.precompile += %w( export_appeal.css )
 
 Rails.application.config.assets.precompile += %w( favicon.ico )
 Rails.application.config.assets.precompile << %w( *.woff *.woff2 *.eot *.ttf )

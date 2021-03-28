@@ -20,7 +20,7 @@ class ExportController < ApplicationController
                 :show_pii_query_param, :treee_fields,
                 :available_fields,
                 :task_tree_as_text, :intake_as_text,
-                :network_graph_data
+                :timeline_data, :network_graph_data
 
   def export_as_text
     [
@@ -78,93 +78,115 @@ class ExportController < ApplicationController
   def sanitized_json
     return "(LegacyAppeals are not yet supported)".to_json if legacy_appeal?
 
-    sje = SanitizedJsonExporter.new(appeal, sanitize: !show_pii_query_param, verbosity: 0)
     sje.file_contents
+  end
+
+  def sje
+    @sje ||= SanitizedJsonExporter.new(appeal, sanitize: !show_pii_query_param, verbosity: 0)
+  end
+
+  def timeline_data
+    data = sje.records_hash[Task.table_name].map do |record|
+      record = record.clone
+      end_time = (record['closed_at']-record['assigned_at'] > 120) ? record['closed_at'] : nil if record['closed_at']
+      {id: "#{Task.name}#{record['id']}", 
+       content: "#{record['type']}_#{record['id']}", 
+       start: record['assigned_at'],
+       end: end_time
+      }
+    end
+    data += sje.records_hash[Intake.table_name].map do |record|
+      record = record.clone
+      end_time = (record['completed_at']-record['created_at'] > 120) ? record['completed_at'] : nil if record['completed_at']
+      {id: "#{record['type']}#{record['id']}", 
+       content: "#{record['type']}_#{record['id']}", 
+       start: record['created_at'],
+       end: end_time
+      }
+    end
   end
 
   def network_graph_data
     return "(LegacyAppeals are not yet supported)".to_json if legacy_appeal?
 
-    sje = SanitizedJsonExporter.new(appeal, sanitize: !show_pii_query_param, verbosity: 0)
+    @network_graph_data ||= create_network_graph_data
+  end
+
+  def create_network_graph_data
     nodes = []
     edges = []
 
-    prep_nodes(sje, Veteran, nodes,
-               icon: "\uf29a",
+    prep_nodes(Veteran, nodes,
                id_for: ->(klass, record) { "#{klass.name}#{record['file_number']}" })
     sje.records_hash[Veteran.table_name].each do |veteran|
-      edges << { from: veteran["id"], to: "#{Person.name}#{veteran['participant_id']}" }
+      edges << { from: "#{Veteran.name}#{veteran['file_number']}", to: "#{Person.name}#{veteran['participant_id']}" }
     end
 
-    prep_nodes(sje, Person, nodes,
-               icon: "\uf2bb", color: "gray",
+    prep_nodes(Person, nodes,
                id_for: ->(klass, record) { "#{klass.name}#{record['participant_id']}" },
                label_for: ->(klass, record) { "#{klass.name}_#{record['participant_id']}" })
 
-    prep_nodes(sje, User, nodes,
-               icon: "\uf007",
+    prep_nodes(User, nodes,
                label_for: ->(klass, record) { "#{klass.name}_#{record['css_id']}" })
 
-    prep_nodes(sje, Organization, nodes,
-               icon: "\uf0e8", color: "gray",
+    prep_nodes(Organization, nodes,
                label_for: ->(_klass, record) { "#{record['type']}_#{record['name']}" })
     sje.records_hash[OrganizationsUser.table_name].each do |ou|
       edges << { from: "#{Organization.name}#{ou['organization_id']}", to: "#{User.name}#{ou['user_id']}",
                  label: ou["admin"] ? "admin" : nil }
     end
 
-    prep_nodes(sje, Claimant, nodes,
+    prep_nodes(Claimant, nodes,
                label_for: ->(_klass, record) { "#{record['type']}_#{record['participant_id']}" })
     sje.records_hash[Claimant.table_name].each do |claimant|
-      edges << { to: claimant["id"], from: "#{claimant['decision_review_type']}#{claimant['decision_review_id']}" }
-      edges << { from: claimant["id"], to: "#{Person.name}#{claimant['participant_id']}" }
+      edges << { to: "#{Claimant.name}#{claimant['id']}", from: "#{claimant['decision_review_type']}#{claimant['decision_review_id']}" }
+      edges << { from: "#{Claimant.name}#{claimant['id']}", to: "#{Person.name}#{claimant['participant_id']}" }
     end
 
-    prep_nodes(sje, Appeal, nodes, shape: "star", color: "#ff8888")
+    prep_nodes(Appeal, nodes)
     sje.records_hash[Appeal.table_name].each do |appeal|
-      edges << { from: appeal["id"], to: "#{Veteran.name}#{appeal['veteran_file_number']}" }
+      edges << { from: "#{Appeal.name}#{appeal['id']}", to: "#{Veteran.name}#{appeal['veteran_file_number']}" }
     end
 
-    prep_nodes(sje, Task, nodes,
-               shape: "box", color: "#00ff00",
+    prep_nodes(AppealIntake, nodes)
+    sje.records_hash[AppealIntake.table_name].each do |intake|
+      edges << { from: "#{User.name}#{intake['user_id']}", to: "#{AppealIntake.name}#{intake['id']}" } if intake["user_id"]
+      edges << { from: "#{AppealIntake.name}#{intake['id']}", to: "#{intake['detail_type']}#{intake['detail_id']}" }
+    end
+
+    prep_nodes(Task, nodes,
                label_for: ->(_klass, record) { "#{record['type']}_#{record['id']}" })
 
     klass = Task
     sje.records_hash[klass.table_name].each do |task|
+      task_id = "#{Task.name}#{task['id']}"
       if task["parent_id"]
-        edges << { from: "#{klass.name}#{task['parent_id']}", to: task["id"] }
+        edges << { from: "#{klass.name}#{task['parent_id']}", to: task_id }
       elsif task["appeal_id"]
-        edges << { from: "#{task['appeal_type']}#{task['appeal_id']}", to: task["id"] }
+        edges << { from: "#{task['appeal_type']}#{task['appeal_id']}", to: task_id }
       end
-      edges << { to: "#{task['assigned_to_type']}#{task['assigned_to_id']}", from: task["id"] } if task["assigned_to_id"]
-      edges << { from: "#{User.name}#{task['assigned_by_id']}", to: task["id"] } if task["assigned_by_id"]
+      edges << { to: "#{task['assigned_to_type']}#{task['assigned_to_id']}", from: task_id } if task["assigned_to_id"]
+      edges << { from: "#{User.name}#{task['assigned_by_id']}", to: task_id } if task["assigned_by_id"]
+      edges << { from: "#{User.name}#{task['cancelled_by_id']}", to: task_id } if task["cancelled_by_id"]
     end
 
-    prep_nodes(sje, RequestIssue, nodes,
+    prep_nodes(RequestIssue, nodes,
                label_for: ->(_klass, record) { "#{record['type']}_#{record['id']}" })
     sje.records_hash[RequestIssue.table_name].each do |ri|
-      edges << { to: ri["id"], from: "#{ri['decision_review_type']}#{ri['decision_review_id']}" }
+      edges << { to: "#{RequestIssue.name}#{ri['id']}", from: "#{ri['decision_review_type']}#{ri['decision_review_id']}" }
     end
 
     { nodes: nodes, edges: edges }
   end
 
-  def prep_node(sje, klass, nodes,
+  def prep_nodes(klass, nodes,
                 label_for: ->(clazz, record) { "#{clazz.name}_#{record['id']}" },
-                id_for: ->(clazz, record) { "#{clazz.name}#{record['id']}" },
-                shape: nil, icon: nil, color: nil)
+                id_for: ->(clazz, record) { "#{clazz.name}#{record['id']}" })
     sje.records_hash[klass.table_name].each do |record|
+      record = record.clone
       record["label"] = label_for.call(klass, record)
       record["id"] = id_for.call(klass, record)
-      if icon
-        record["icon"] = {
-          code: icon,
-          color: color.presence
-        }
-        record["shape"] = "icon"
-      end
-      record["shape"] = shape if shape
-      record["color"] = color if color
+      record["tableName"] = klass.table_name
       nodes << record
     end
   end

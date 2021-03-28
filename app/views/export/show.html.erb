@@ -1,3 +1,7 @@
+<% content_for :head do %>
+<%= stylesheet_link_tag 'export_appeal' %>
+<% end %>
+
 <div style="font-size:0.875em; padding:10px">
   <details>
     <summary style="color: blue">Help</summary>
@@ -24,16 +28,20 @@
     <hr/>
   </details>
 
+  <h3>Appeal</h3>
+  <p>
+  AOD: <%= appeal.aod? %>, CAVC: <%= appeal.cavc? %>
+  </p>
+
   <h3>Task tree</h3>
   <code style="color: green">
-    Appeal.find(<%= appeal.id %>).treee
-      (<%= treee_fields.map{|f| f.to_s.prepend(":")}.join(", ") %>)
+    Appeal.find(<%= appeal.id %>).treee(<%= treee_fields.map{|f| f.to_s.prepend(":")}.join(", ") %>)
     <% if appeal.is_a?(LegacyAppeal) %>
       <br/>la = LegacyWorkQueue.tasks_by_appeal_id(<%= appeal.vacols_id %>)
       <br/>la.location_history.map(&:summary)
     <% end %>
   </code>
-  <pre><code><%= task_tree_as_text %></code></pre>
+  <pre style="font-size:0.84em; padding:10px"><code><%= task_tree_as_text %></code></pre>
   <hr/>
 
   <h3>Intake</h3>
@@ -41,40 +49,47 @@
     puts IntakeRenderer.render(Appeal.find(<%= appeal.id %>), 
       show_pii: <%= show_pii_query_param ? "true" : "false" %>)
   </code>
-  <pre><code><%= intake_as_text %></code></pre>
+  <pre style="font-size:0.84em; padding:10px"><code><%= intake_as_text %></code></pre>
+  <hr/>
+
+  <h3>Timeline</h3>
+  <div id="timeline"></div>
   <hr/>
 
   <h3>Network graph</h3>
-  <div id="mynetwork"></div>
-  <pre><code><%= JSON.pretty_generate(network_graph_data) %></code></pre>
-  TODO: https://visjs.github.io/vis-network/examples/network/data/dynamicFiltering.html
+  <details>
+    <summary style="color: blue">Filter nodes</summary>
+    <div id="nodeFilters" style="width: 200px; height: 300px; overflow-y: scroll; padding:10px">
+      <% ["tasks", "users", "organizations"].each do |tableName| %>
+        <input type="checkbox" name="<%=tableName%>" id="<%=tableName%>" value="<%=tableName%>" checked />
+        <label for="<%=tableName%>"><%=tableName%></label>
+      <% end %>
+    </div>
+  </details>
+  <div id="netgraph"></div>
+  <details>
+    <summary style="color: blue">Network graph data</summary>
+    <pre style="font-size:0.75em; padding:10px"><code><%= JSON.pretty_generate(network_graph_data) %></code></pre>
+  </details>
+  <hr/>
 
+  <!-- JavaScript -->
   <%= javascript_include_tag 'export-appeal' %>
   <script type="text/javascript">
-    $('#treeefields input').change(function(){
-      var selected = [];
-      $('#treeefields input:checked').each(function() {
-          selected.push($(this).attr('name'));
-      });
+    // Handle Task Tree field checkboxes
+    function updateTaskTreeLink(){
+      var selected = $('#treeefields input:checked').map( (idx, elem) => elem.name ).get();
       $('#task_tree_link').attr("href", window.location.href.split('?')[0]+"?fields="+selected.join(','));
-    });
-
+    }
+    updateTaskTreeLink();
+    $('#treeefields input').change( () => updateTaskTreeLink() );
+    
+    // Network graph
     var network_graph_data = <%= network_graph_data.to_json.html_safe %>;
-    var nodes = new vis.DataSet(network_graph_data["nodes"]);
-    var edges = new vis.DataSet(network_graph_data["edges"]);
+    addNetworkGraph("netgraph", network_graph_data);
 
-    var container = document.getElementById("mynetwork");
-    var data = {
-      nodes: nodes,
-      edges: edges,
-    };
-    var options = {
-      height: '500px',
-      clickToUse: true,
-      edges: {
-        arrows: 'to'
-      }
-    };
-    var network = new vis.Network(container, data, options);
+    // Timeline
+    var timeline_data = <%= timeline_data.to_json.html_safe %>;
+    addTimeline('timeline', timeline_data);
   </script>
 </div>
