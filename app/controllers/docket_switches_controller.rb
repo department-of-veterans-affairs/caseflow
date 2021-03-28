@@ -23,16 +23,16 @@ class DocketSwitchesController < ApplicationController
       selected_task_ids: params[:selected_task_ids],
       new_admin_actions: params[:new_admin_actions]
     )
-    duplicate_docket_switch = DocketSwitch.find_by(task_id: docket_switch_params.task_id)
+    # duplicate_docket_switch = DocketSwitch.find_by(task_id: docket_switch_params.task_id)
     # :nocov:
     if docket_switch.errors.present?
       render json: { errors: [detail: docket_switch.errors.full_messages.join(", ")] }, status: :bad_request
       return
     end
     # :nocov:
-    if duplicate_docket_switch
-      fail Caseflow::Error::DuplicateDocketSwitchError
-    end
+    # if duplicate_docket_switch
+    #   fail Caseflow::Error::DuplicateDocketSwitchError
+    # end
 
     docket_switch.process!
 
