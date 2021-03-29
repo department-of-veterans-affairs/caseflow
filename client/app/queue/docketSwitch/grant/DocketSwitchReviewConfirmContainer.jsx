@@ -16,6 +16,7 @@ import {
   DOCKET_SWITCH_FULL_GRANTED_SUCCESS_TITLE,
   DOCKET_SWITCH_GRANTED_SUCCESS_MESSAGE
 } from 'app/../COPY';
+import { formatDateStr } from '../../../util/DateUtil';
 
 export const reformatTaskType = (type) => {
   const truncated = type.replace('ColocatedTask', '');
@@ -126,7 +127,7 @@ export const DocketSwitchReviewConfirmContainer = () => {
       claimantName={appeal.claimantName}
       docketFrom={StringUtil.snakeCaseToCapitalized(appeal.docketName)}
       docketTo={StringUtil.snakeCaseToCapitalized(formData.docketType)}
-      docketSwitchReceiptDate={new Date(formData.receiptDate)}
+      docketSwitchReceiptDate={formatDateStr(formData.receiptDate)}
       issuesSwitched={issuesSwitched}
       issuesRemaining={issuesRemaining}
       onBack={goBack}

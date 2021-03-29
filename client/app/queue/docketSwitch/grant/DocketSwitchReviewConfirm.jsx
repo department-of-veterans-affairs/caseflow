@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
 import { format } from 'date-fns';
 import { css } from 'glamor';
+import { formatDateStr } from '../../../util/DateUtil';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -94,7 +95,7 @@ export const DocketSwitchReviewConfirm = ({
             </tr>
             <tr>
               <td>Docket Switch Receipt Date</td>
-              <td>{format(docketSwitchReceiptDate, 'M/d/y')}</td>
+              <td>{formatDateStr(docketSwitchReceiptDate)}</td>
             </tr>
             <tr>
               <td>New Review option</td>
