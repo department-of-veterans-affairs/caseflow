@@ -25,8 +25,8 @@ class StuckVirtualHearingsChecker < DataIntegrityChecker
 
       # select hearings with pending conference/emails updated earlier than 2 hours ago, scheduled today or later
       virtual_hearings = VirtualHearingRepository.with_pending_conference_or_emails.select do |virtual_hearing|
-        virtual_hearing.updated_at < Time.zone.now - 2.hours &&
-          virtual_hearing.hearing.scheduled_for > Time.zone.now - 1.day
+        virtual_hearing.updated_at < 2.hours.ago &&
+          virtual_hearing.hearing.scheduled_for > 1.day.ago
       end
 
       # sort hearings that are happening sooner to the top
