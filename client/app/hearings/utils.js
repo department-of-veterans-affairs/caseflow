@@ -518,7 +518,6 @@ const calculateAvailableTimeslots = ({ slotCount, startTime, roTimezone, hearing
     return slotFull ? null : {
       slotId: index,
       time: slotTime,
-      full: false
     };
   });
 
