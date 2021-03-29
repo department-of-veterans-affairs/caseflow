@@ -515,7 +515,12 @@ const calculateAvailableTimeslots = ({ slotCount, startTime, roTimezone, hearing
     );
 
     // Return null if there is a filled time slot, otherwise return the hearingTime
-    return slotFull ? null : {
+    if (slotFull) {
+      return null;
+    }
+
+    // If the slot is not full, return the slot
+    return {
       slotId: index,
       time: slotTime,
     };
@@ -550,6 +555,7 @@ const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings
       tz('America/New_York').
       format('HH:mm')
   }));
+
   const slotsAndHearings = slots.concat(formattedHearings);
 
   return _.sortBy(slotsAndHearings, 'hearingTime');
