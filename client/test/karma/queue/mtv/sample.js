@@ -320,7 +320,7 @@ export const appeals = [
     certificationDate: null,
     powerOfAttorney: {
       representative_type: 'Attorney',
-      representative_name: 'Attorney McAttorneyFace',
+      representative_name: 'Clarence Darrow',
       representative_address: {
         address_line_1: '9999 MISSION ST',
         address_line_2: 'UBER',
