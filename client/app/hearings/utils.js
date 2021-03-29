@@ -535,7 +535,7 @@ const calculateAvailableTimeslots = ({ slotCount, startTime, roTimezone, hearing
 const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings }) => {
   const slots = availableSlots.map((slot) => ({
     ...slot,
-    key: `slot?.slotId}-${slot?.time_string}`,
+    key: `${slot?.slotId}-${slot?.time_string}`,
     full: false,
     // This is a moment object, always in "America/New_York" as returned by calculateAvailableTimeslots
     hearingTime: slot.time.format('HH:mm')
