@@ -498,10 +498,8 @@ const calculateAvailableTimeslots = ({ slotCount, startTime, roTimezone, hearing
   // - There is one possible slot per hour: 8:30, 9:30, 10:30, ...
   // - We want 8 hours of slots: 8 = 15:30 - 08:30 + 1
   const availableSlots = _.times(slotCount).map((index) => {
-    // Add the index to the start time so we assign 1 value per hour, clone() is required
-    // otherwise moment will mutate the object.
-    const slotTime = moment.tz(startTime, 'HH:mm', 'America/New_York').clone().
-      add(index, 'hours');
+    // Add the index to the start time so we assign 1 value per hour
+    const slotTime = moment.tz(startTime, 'HH:mm', 'America/New_York').add(index, 'hours');
 
     // This slot is not available (full) if there's a scheduled hearing less than an hour before
     // or after the slot.
