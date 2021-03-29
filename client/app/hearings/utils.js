@@ -595,8 +595,8 @@ export const setTimeSlots = (hearings, hearingType, roTimezone = 'America/New_Yo
 };
 
 export const formatTimeSlotLabel = (time, zone) => {
-  const coTime = zoneName(time, zone, 'z');
-  const roTime = zoneName(time, COMMON_TIMEZONES[3], 'z');
+  const roTime = zoneName(time, zone, 'z');
+  const coTime = zoneName(time, COMMON_TIMEZONES[3], 'z');
 
   if (roTime === coTime) {
     return coTime;
