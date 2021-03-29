@@ -51,7 +51,7 @@ class StuckVirtualHearingsChecker < DataIntegrityChecker
         "last attempted: #{last_attempted}, " \
         "#{scheduled_for_report(stuck_vh)}, " \
         "updated by: #{stuck_vh.updated_by.css_id}, " \
-        "#{uuid_or_vacols_id_of_hearing(stuck_vh)}"
+        "#{external_id_report(stuck_vh)}"
     end
 
     add_to_report "If a virtual hearing is in this state, Caseflow may not be displaying the information that " \
@@ -70,7 +70,7 @@ class StuckVirtualHearingsChecker < DataIntegrityChecker
     "scheduled for: #{scheduled_for.strftime('%a %m/%d')} #{display_in_words}"
   end
 
-  def uuid_or_vacols_id_of_hearing(virtual_hearing)
+  def external_id_report(virtual_hearing)
     if virtual_hearing.hearing.is_a? Hearing
       "UUID: #{virtual_hearing.hearing.uuid}"
     elsif virtual_hearing.hearing.is_a? LegacyHearing
