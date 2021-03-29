@@ -376,10 +376,4 @@ module Caseflow::Error
       @message = args[:message]
     end
   end
-
-  class DuplicateDocketSwitchError < StandardError
-    def initialize
-      @message = "Docket Switch Already Submitted"
-    end
-  end
 end
