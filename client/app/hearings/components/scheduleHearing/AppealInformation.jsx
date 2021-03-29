@@ -16,6 +16,7 @@ export const AppealInformation = ({ appeal }) => {
       />
       <ReadOnly spacing={15} label="Issues" text={appeal?.issueCount} />
       <ReadOnly
+        className="schedule-veteran-appeals-info-stream"
         spacing={15}
         label="Appeal Stream"
         text={renderAppealType({
