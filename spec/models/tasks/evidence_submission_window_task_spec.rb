@@ -56,6 +56,29 @@ describe EvidenceSubmissionWindowTask, :postgres do
       expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
     end
 
+    context "appeal with no vso and hearing disposition is no_show" do
+      let(:docket_type) { Constants.AMA_DOCKETS.hearing }
+      let(:hearing) { create(:hearing, :no_show, :with_completed_tasks, appeal: appeal_no_vso) }
+
+      let!(:task) do
+        EvidenceSubmissionWindowTask.create!(
+          appeal: appeal,
+          assigned_to: MailTeam.singleton,
+          parent: HearingTaskAssociation.find_by(hearing_id: hearing.id).hearing_task
+        )
+      end
+
+      subject { task.when_timer_ends }
+
+      it "reopens task" do
+        subject
+        task.reload
+
+        expect(task.status).to eq(Constants.TASK_STATUSES.assigned)
+        expect(task.closed_at).to eq(nil)
+      end
+    end
+
     include_examples "works for all remand subtypes"
   end
 

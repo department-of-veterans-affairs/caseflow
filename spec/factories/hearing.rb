@@ -48,5 +48,21 @@ FactoryBot.define do
                appeal: hearing.appeal)
       end
     end
+
+    trait :with_completed_tasks do
+      after(:create) do |hearing, _evaluator|
+        create(:hearing_task_association,
+               hearing: hearing,
+               hearing_task: create(:hearing_task, appeal: hearing.appeal))
+        create(:schedule_hearing_task,
+               :completed,
+               parent: hearing.hearing_task_association.hearing_task,
+               appeal: hearing.appeal)
+        create(:assign_hearing_disposition_task,
+               :completed,
+               parent: hearing.hearing_task_association.hearing_task,
+               appeal: hearing.appeal)
+      end
+    end
   end
 end
