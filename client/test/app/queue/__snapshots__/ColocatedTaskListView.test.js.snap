@@ -1,0 +1,1825 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
+<div>
+  <section
+    class="cf-app-segment cf-app-segment--alt"
+    data-css-13azwyo=""
+    role="main"
+  >
+    <div
+      class="css-1fk0u9n"
+    >
+      <h1
+        data-css-w0yocm=""
+      >
+        Your cases
+      </h1>
+      <div
+        class="cf-tab-navigation"
+        role="tablist"
+      >
+        <button
+          aria-controls="tasks-tabwindow-tabpanel-0"
+          aria-selected="true"
+          class="cf-tab tab cf-active"
+          data-value="0"
+          id="tasks-tabwindow-tab-0"
+          role="tab"
+          tabindex="0"
+        >
+          <div>
+            <span>
+              
+              <span>
+                Assigned (2)
+              </span>
+              
+            </span>
+          </div>
+        </button>
+        <button
+          aria-controls="tasks-tabwindow-tabpanel-1"
+          aria-selected="false"
+          class="cf-tab tab"
+          data-value="1"
+          id="tasks-tabwindow-tab-1"
+          role="tab"
+          tabindex="-1"
+        >
+          <div>
+            <span>
+              
+              <span>
+                On hold (2)
+              </span>
+              
+            </span>
+          </div>
+        </button>
+        <button
+          aria-controls="tasks-tabwindow-tabpanel-2"
+          aria-selected="false"
+          class="cf-tab tab"
+          data-value="2"
+          id="tasks-tabwindow-tab-2"
+          role="tab"
+          tabindex="-1"
+        >
+          <div>
+            <span>
+              
+              <span>
+                Completed
+              </span>
+              
+            </span>
+          </div>
+        </button>
+      </div>
+      <div
+        class="cf-tab-window-body-full-screen tabContent"
+      >
+        <div
+          aria-hidden="false"
+          class="tabPanel active"
+          id="tasks-tabwindow-tabpanel-0"
+          role="tabpanel"
+          tabindex="0"
+        >
+          <p
+            class="cf-margin-top-0"
+          >
+            Cases assigned to you:
+          </p>
+          <div
+            class="cf-table-wrapper"
+          >
+            <div
+              class="cf-pagination"
+            >
+              <div
+                class="cf-pagination-summary"
+              >
+                Viewing 1-2 of 2 total
+              </div>
+              <div
+                class="cf-pagination-pages"
+              />
+            </div>
+            <table
+              aria-describedby="case-table-description"
+              aria-label="Appeals"
+              class="usa-table-borderless undefined"
+              role="table"
+            >
+              <thead>
+                <tr
+                  role="row"
+                >
+                  <th
+                    class=""
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <span
+                      aria-label=""
+                      data-css-9shxm7=""
+                    >
+                      <span />
+                    </span>
+                  </th>
+                  <th
+                    class=""
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <span
+                      aria-label=""
+                      data-css-9shxm7=""
+                    >
+                      <span>
+                        Case Details
+                      </span>
+                      <span
+                        aria-label="Sort by Case Details"
+                        data-css-ilmt4b=""
+                        role="button"
+                        tabindex="0"
+                      >
+                        <svg
+                          class="table-icon"
+                          height="16px"
+                          version="1.1"
+                          viewBox="0 0 13 16"
+                          width="13px"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <g
+                            fill="none"
+                            fill-rule="evenodd"
+                            stroke="none"
+                            stroke-width="1"
+                          >
+                            <g
+                              fill-rule="nonzero"
+                            >
+                              <g
+                                fill="#d6d7d9"
+                                transform="translate(2.000000, 1.000000)"
+                              >
+                                <g
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                >
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
+                                </g>
+                              </g>
+                              <g
+                                fill="#d6d7d9"
+                                transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                              >
+                                <g
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                >
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
+                                </g>
+                              </g>
+                            </g>
+                          </g>
+                        </svg>
+                      </span>
+                    </span>
+                  </th>
+                  <th
+                    aria-labelledby="header-label"
+                    class=""
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <span
+                      aria-label=""
+                      data-css-9shxm7=""
+                    >
+                      <span
+                        id="header-label"
+                      >
+                        Tasks
+                      </span>
+                      <span
+                        aria-label="Sort by Tasks"
+                        data-css-ilmt4b=""
+                        role="button"
+                        tabindex="0"
+                      >
+                        <svg
+                          class="table-icon"
+                          height="16px"
+                          version="1.1"
+                          viewBox="0 0 13 16"
+                          width="13px"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <g
+                            fill="none"
+                            fill-rule="evenodd"
+                            stroke="none"
+                            stroke-width="1"
+                          >
+                            <g
+                              fill-rule="nonzero"
+                            >
+                              <g
+                                fill="#d6d7d9"
+                                transform="translate(2.000000, 1.000000)"
+                              >
+                                <g
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                >
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
+                                </g>
+                              </g>
+                              <g
+                                fill="#d6d7d9"
+                                transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                              >
+                                <g
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                >
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
+                                </g>
+                              </g>
+                            </g>
+                          </g>
+                        </svg>
+                      </span>
+                      <span
+                        data-css-ilmt4b=""
+                      >
+                        <svg
+                          aria-label="Filter by task"
+                          class="table-icon unselected-filter-icon"
+                          height="21px"
+                          role="button"
+                          tabindex="0"
+                          viewBox="0 0 21 21"
+                          width="21px"
+                        >
+                          <g
+                            fill="none"
+                            fill-rule="evenodd"
+                            stroke="none"
+                            stroke-width="1"
+                          >
+                            <g>
+                              <rect
+                                class="unselected-filter-icon-border"
+                                fill="#FFFFFF"
+                                fill-rule="nonzero"
+                                height="20"
+                                rx="2"
+                                stroke="#5B616B"
+                                width="20"
+                                x="0.5"
+                                y="0.5"
+                              />
+                              <path
+                                class="unselected-filter-icon-inner"
+                                d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
+                                fill="#1A1A1A"
+                              />
+                            </g>
+                          </g>
+                        </svg>
+                      </span>
+                    </span>
+                  </th>
+                  <th
+                    aria-labelledby="header-appealCaseType"
+                    class=""
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <span
+                      aria-label=""
+                      data-css-9shxm7=""
+                    >
+                      <span
+                        id="header-appealCaseType"
+                      >
+                        Types
+                      </span>
+                      <span
+                        aria-label="Sort by Types"
+                        data-css-ilmt4b=""
+                        role="button"
+                        tabindex="0"
+                      >
+                        <svg
+                          class="table-icon"
+                          height="16px"
+                          version="1.1"
+                          viewBox="0 0 13 16"
+                          width="13px"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <g
+                            fill="none"
+                            fill-rule="evenodd"
+                            stroke="none"
+                            stroke-width="1"
+                          >
+                            <g
+                              fill-rule="nonzero"
+                            >
+                              <g
+                                fill="#d6d7d9"
+                                transform="translate(2.000000, 1.000000)"
+                              >
+                                <g
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                >
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
+                                </g>
+                              </g>
+                              <g
+                                fill="#d6d7d9"
+                                transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                              >
+                                <g
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                >
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
+                                </g>
+                              </g>
+                            </g>
+                          </g>
+                        </svg>
+                      </span>
+                      <span
+                        data-css-ilmt4b=""
+                      >
+                        <svg
+                          aria-label="Filter by type"
+                          class="table-icon unselected-filter-icon"
+                          height="21px"
+                          role="button"
+                          tabindex="0"
+                          viewBox="0 0 21 21"
+                          width="21px"
+                        >
+                          <g
+                            fill="none"
+                            fill-rule="evenodd"
+                            stroke="none"
+                            stroke-width="1"
+                          >
+                            <g>
+                              <rect
+                                class="unselected-filter-icon-border"
+                                fill="#FFFFFF"
+                                fill-rule="nonzero"
+                                height="20"
+                                rx="2"
+                                stroke="#5B616B"
+                                width="20"
+                                x="0.5"
+                                y="0.5"
+                              />
+                              <path
+                                class="unselected-filter-icon-inner"
+                                d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
+                                fill="#1A1A1A"
+                              />
+                            </g>
+                          </g>
+                        </svg>
+                      </span>
+                    </span>
+                  </th>
+                  <th
+                    aria-labelledby="header-appealDocketName"
+                    class=""
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <span
+                      aria-label=""
+                      data-css-9shxm7=""
+                    >
+                      <span
+                        id="header-appealDocketName"
+                      >
+                        Docket
+                      </span>
+                      <span
+                        aria-label="Sort by Docket"
+                        data-css-ilmt4b=""
+                        role="button"
+                        tabindex="0"
+                      >
+                        <svg
+                          class="table-icon"
+                          height="16px"
+                          version="1.1"
+                          viewBox="0 0 13 16"
+                          width="13px"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <g
+                            fill="none"
+                            fill-rule="evenodd"
+                            stroke="none"
+                            stroke-width="1"
+                          >
+                            <g
+                              fill-rule="nonzero"
+                            >
+                              <g
+                                fill="#d6d7d9"
+                                transform="translate(2.000000, 1.000000)"
+                              >
+                                <g
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                >
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
+                                </g>
+                              </g>
+                              <g
+                                fill="#d6d7d9"
+                                transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                              >
+                                <g
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                >
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
+                                </g>
+                              </g>
+                            </g>
+                          </g>
+                        </svg>
+                      </span>
+                      <span
+                        data-css-ilmt4b=""
+                      >
+                        <svg
+                          aria-label="Filter by docket name"
+                          class="table-icon unselected-filter-icon"
+                          height="21px"
+                          role="button"
+                          tabindex="0"
+                          viewBox="0 0 21 21"
+                          width="21px"
+                        >
+                          <g
+                            fill="none"
+                            fill-rule="evenodd"
+                            stroke="none"
+                            stroke-width="1"
+                          >
+                            <g>
+                              <rect
+                                class="unselected-filter-icon-border"
+                                fill="#FFFFFF"
+                                fill-rule="nonzero"
+                                height="20"
+                                rx="2"
+                                stroke="#5B616B"
+                                width="20"
+                                x="0.5"
+                                y="0.5"
+                              />
+                              <path
+                                class="unselected-filter-icon-inner"
+                                d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
+                                fill="#1A1A1A"
+                              />
+                            </g>
+                          </g>
+                        </svg>
+                      </span>
+                    </span>
+                  </th>
+                  <th
+                    class="cf-txt-c"
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <span
+                      aria-describedby="tooltip-5"
+                      currentitem="false"
+                      data-event="focus mouseenter"
+                      data-event-off="keydown mouseleave"
+                      data-for="tooltip-5"
+                      data-tip="true"
+                      role="tooltip"
+                      tabindex="0"
+                    >
+                      <span
+                        aria-label=""
+                        data-css-9shxm7=""
+                      >
+                        <span>
+                          Days Waiting
+                        </span>
+                        <span
+                          aria-label="Sort by Days Waiting"
+                          data-css-ilmt4b=""
+                          role="button"
+                          tabindex="0"
+                        >
+                          <svg
+                            class="table-icon"
+                            height="16px"
+                            version="1.1"
+                            viewBox="0 0 13 16"
+                            width="13px"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <g
+                              fill="none"
+                              fill-rule="evenodd"
+                              stroke="none"
+                              stroke-width="1"
+                            >
+                              <g
+                                fill-rule="nonzero"
+                              >
+                                <g
+                                  fill="#d6d7d9"
+                                  transform="translate(2.000000, 1.000000)"
+                                >
+                                  <g
+                                    transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                  >
+                                    <path
+                                      d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                    />
+                                  </g>
+                                </g>
+                                <g
+                                  fill="#d6d7d9"
+                                  transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                                >
+                                  <g
+                                    transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                  >
+                                    <path
+                                      d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                    />
+                                  </g>
+                                </g>
+                              </g>
+                            </g>
+                          </svg>
+                        </span>
+                      </span>
+                    </span>
+                    <span
+                      data-css-fs14qy=""
+                    >
+                      <div
+                        class="__react_component_tooltip place-top type-dark "
+                        data-id="tooltip"
+                        id="tooltip-5"
+                      >
+                        Calendar days since 
+                        <br />
+                         this case was assigned
+                      </div>
+                    </span>
+                  </th>
+                  <th
+                    class=""
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <span
+                      aria-label=""
+                      data-css-9shxm7=""
+                    >
+                      <span>
+                        Veteran Documents
+                      </span>
+                    </span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                class=""
+              >
+                <tr
+                  class=""
+                  id="table-row-1"
+                  role="row"
+                >
+                  <td
+                    class=""
+                    colspan="1"
+                    role="cell"
+                  >
+                    <div
+                      data-css-w0yocm=""
+                    >
+                      <div />
+                    </div>
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="cell"
+                  >
+                    <a
+                      href="/queue/appeals/fe583ee4-6f58-41a6-b8c5-09bfdc987c75"
+                    >
+                      <span
+                        data-css-l6c9n4=""
+                        id="veteran-name-for-task-1"
+                      >
+                        John Doe 1
+                         (
+                        500000001
+                        )
+                      </span>
+                    </a>
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="cell"
+                  >
+                    Stayed appeal
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="cell"
+                  >
+                    <span>
+                      Original
+                    </span>
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="cell"
+                  >
+                    <span
+                      aria-describedby="badge-200603-71"
+                      currentitem="false"
+                      data-event="focus mouseenter"
+                      data-event-off="keydown mouseleave"
+                      data-for="badge-200603-71"
+                      data-tip="true"
+                      role="tooltip"
+                      tabindex="0"
+                    >
+                      <span
+                        aria-label="Direct Review"
+                        data-css-2moai0=""
+                      >
+                        D
+                      </span>
+                    </span>
+                    <span
+                      data-css-19if8q3=""
+                    >
+                      <div
+                        class="__react_component_tooltip place-bottom type-dark "
+                        data-id="tooltip"
+                        id="badge-200603-71"
+                      >
+                        Direct Review
+                      </div>
+                    </span>
+                    <span>
+                      200603-71
+                    </span>
+                  </td>
+                  <td
+                    class="cf-txt-c"
+                    colspan="1"
+                    role="cell"
+                  >
+                    <span
+                      class=""
+                    >
+                      1
+                       
+                      day
+                    </span>
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="cell"
+                  >
+                    <a
+                      href="/reader/appeal/fe583ee4-6f58-41a6-b8c5-09bfdc987c75/documents?queue_redirect_url=%2F"
+                    >
+                      View 
+                       docs
+                    </a>
+                    <div
+                      data-css-11y190r=""
+                    >
+                      <span
+                        data-css-1umacli=""
+                      >
+                        Loading number of docs...
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+                <tr
+                  class=""
+                  id="table-row-2"
+                  role="row"
+                >
+                  <td
+                    class=""
+                    colspan="1"
+                    role="cell"
+                  >
+                    <div
+                      data-css-w0yocm=""
+                    >
+                      <div />
+                    </div>
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="cell"
+                  >
+                    <a
+                      href="/queue/appeals/fe583ee4-6f58-41a6-b8c5-09bfdc987c75"
+                    >
+                      <span
+                        data-css-l6c9n4=""
+                        id="veteran-name-for-task-2"
+                      >
+                        John Doe 2
+                         (
+                        500000002
+                        )
+                      </span>
+                    </a>
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="cell"
+                  >
+                    Stayed appeal
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="cell"
+                  >
+                    <span>
+                      Original
+                    </span>
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="cell"
+                  >
+                    <span
+                      aria-describedby="badge-200603-72"
+                      currentitem="false"
+                      data-event="focus mouseenter"
+                      data-event-off="keydown mouseleave"
+                      data-for="badge-200603-72"
+                      data-tip="true"
+                      role="tooltip"
+                      tabindex="0"
+                    >
+                      <span
+                        aria-label="Direct Review"
+                        data-css-2moai0=""
+                      >
+                        D
+                      </span>
+                    </span>
+                    <span
+                      data-css-hd31kg=""
+                    >
+                      <div
+                        class="__react_component_tooltip place-bottom type-dark "
+                        data-id="tooltip"
+                        id="badge-200603-72"
+                      >
+                        Direct Review
+                      </div>
+                    </span>
+                    <span>
+                      200603-72
+                    </span>
+                  </td>
+                  <td
+                    class="cf-txt-c"
+                    colspan="1"
+                    role="cell"
+                  >
+                    <span
+                      class="cf-red-text"
+                    >
+                      31
+                       
+                      days
+                    </span>
+                    <div
+                      class="cf-continuous-progress-bar"
+                    >
+                      <div
+                        class="cf-continuous-progress-bar-warning"
+                        style="width: 100%;"
+                      />
+                    </div>
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="cell"
+                  >
+                    <a
+                      href="/reader/appeal/fe583ee4-6f58-41a6-b8c5-09bfdc987c75/documents?queue_redirect_url=%2F"
+                    >
+                      View 
+                       docs
+                    </a>
+                    <div
+                      data-css-11y190r=""
+                    >
+                      <span
+                        data-css-1umacli=""
+                      >
+                        Loading number of docs...
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot />
+            </table>
+            <div
+              class="cf-pagination"
+            >
+              <div
+                class="cf-pagination-summary"
+              >
+                Viewing 1-2 of 2 total
+              </div>
+              <div
+                class="cf-pagination-pages"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          aria-hidden="true"
+          class="tabPanel"
+          id="tasks-tabwindow-tabpanel-1"
+          role="tabpanel"
+          tabindex="-1"
+        />
+        <div
+          aria-hidden="true"
+          class="tabPanel"
+          id="tasks-tabwindow-tabpanel-2"
+          role="tabpanel"
+          tabindex="-1"
+        />
+      </div>
+    </div>
+  </section>
+</div>
+`;
+
+exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
+<div>
+  <section
+    class="cf-app-segment cf-app-segment--alt"
+    data-css-13azwyo=""
+    role="main"
+  >
+    <div
+      class="css-1fk0u9n"
+    >
+      <h1
+        data-css-w0yocm=""
+      >
+        Your cases
+      </h1>
+      <div
+        class="cf-tab-navigation"
+        role="tablist"
+      >
+        <button
+          aria-controls="tasks-tabwindow-tabpanel-0"
+          aria-selected="false"
+          class="cf-tab tab"
+          data-value="0"
+          id="tasks-tabwindow-tab-0"
+          role="tab"
+          tabindex="-1"
+        >
+          <div>
+            <span>
+              
+              <span>
+                Assigned (2)
+              </span>
+              
+            </span>
+          </div>
+        </button>
+        <button
+          aria-controls="tasks-tabwindow-tabpanel-1"
+          aria-selected="true"
+          class="cf-tab tab cf-active"
+          data-value="1"
+          id="tasks-tabwindow-tab-1"
+          role="tab"
+          tabindex="0"
+        >
+          <div>
+            <span>
+              
+              <span>
+                On hold (2)
+              </span>
+              
+            </span>
+          </div>
+        </button>
+        <button
+          aria-controls="tasks-tabwindow-tabpanel-2"
+          aria-selected="false"
+          class="cf-tab tab"
+          data-value="2"
+          id="tasks-tabwindow-tab-2"
+          role="tab"
+          tabindex="-1"
+        >
+          <div>
+            <span>
+              
+              <span>
+                Completed
+              </span>
+              
+            </span>
+          </div>
+        </button>
+      </div>
+      <div
+        class="cf-tab-window-body-full-screen tabContent"
+      >
+        <div
+          aria-hidden="true"
+          class="tabPanel"
+          id="tasks-tabwindow-tabpanel-0"
+          role="tabpanel"
+          tabindex="-1"
+        />
+        <div
+          aria-hidden="false"
+          class="tabPanel active"
+          id="tasks-tabwindow-tabpanel-1"
+          role="tabpanel"
+          tabindex="0"
+        >
+          <p
+            class="cf-margin-top-0"
+          >
+            Cases on hold (will return to "Assigned" tab when hold is completed):
+          </p>
+          <div
+            class="cf-table-wrapper"
+          >
+            <div
+              class="cf-pagination"
+            >
+              <div
+                class="cf-pagination-summary"
+              >
+                Viewing 1-2 of 2 total
+              </div>
+              <div
+                class="cf-pagination-pages"
+              />
+            </div>
+            <table
+              aria-describedby="case-table-description"
+              aria-label="Appeals"
+              class="usa-table-borderless undefined"
+              role="table"
+            >
+              <thead>
+                <tr
+                  role="row"
+                >
+                  <th
+                    class=""
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <span
+                      aria-label=""
+                      data-css-9shxm7=""
+                    >
+                      <span />
+                    </span>
+                  </th>
+                  <th
+                    class=""
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <span
+                      aria-label=""
+                      data-css-9shxm7=""
+                    >
+                      <span>
+                        Case Details
+                      </span>
+                      <span
+                        aria-label="Sort by Case Details"
+                        data-css-ilmt4b=""
+                        role="button"
+                        tabindex="0"
+                      >
+                        <svg
+                          class="table-icon"
+                          height="16px"
+                          version="1.1"
+                          viewBox="0 0 13 16"
+                          width="13px"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <g
+                            fill="none"
+                            fill-rule="evenodd"
+                            stroke="none"
+                            stroke-width="1"
+                          >
+                            <g
+                              fill-rule="nonzero"
+                            >
+                              <g
+                                fill="#d6d7d9"
+                                transform="translate(2.000000, 1.000000)"
+                              >
+                                <g
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                >
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
+                                </g>
+                              </g>
+                              <g
+                                fill="#d6d7d9"
+                                transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                              >
+                                <g
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                >
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
+                                </g>
+                              </g>
+                            </g>
+                          </g>
+                        </svg>
+                      </span>
+                    </span>
+                  </th>
+                  <th
+                    aria-labelledby="header-label"
+                    class=""
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <span
+                      aria-label=""
+                      data-css-9shxm7=""
+                    >
+                      <span
+                        id="header-label"
+                      >
+                        Tasks
+                      </span>
+                      <span
+                        aria-label="Sort by Tasks"
+                        data-css-ilmt4b=""
+                        role="button"
+                        tabindex="0"
+                      >
+                        <svg
+                          class="table-icon"
+                          height="16px"
+                          version="1.1"
+                          viewBox="0 0 13 16"
+                          width="13px"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <g
+                            fill="none"
+                            fill-rule="evenodd"
+                            stroke="none"
+                            stroke-width="1"
+                          >
+                            <g
+                              fill-rule="nonzero"
+                            >
+                              <g
+                                fill="#d6d7d9"
+                                transform="translate(2.000000, 1.000000)"
+                              >
+                                <g
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                >
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
+                                </g>
+                              </g>
+                              <g
+                                fill="#d6d7d9"
+                                transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                              >
+                                <g
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                >
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
+                                </g>
+                              </g>
+                            </g>
+                          </g>
+                        </svg>
+                      </span>
+                      <span
+                        data-css-ilmt4b=""
+                      >
+                        <svg
+                          aria-label="Filter by task"
+                          class="table-icon unselected-filter-icon"
+                          height="21px"
+                          role="button"
+                          tabindex="0"
+                          viewBox="0 0 21 21"
+                          width="21px"
+                        >
+                          <g
+                            fill="none"
+                            fill-rule="evenodd"
+                            stroke="none"
+                            stroke-width="1"
+                          >
+                            <g>
+                              <rect
+                                class="unselected-filter-icon-border"
+                                fill="#FFFFFF"
+                                fill-rule="nonzero"
+                                height="20"
+                                rx="2"
+                                stroke="#5B616B"
+                                width="20"
+                                x="0.5"
+                                y="0.5"
+                              />
+                              <path
+                                class="unselected-filter-icon-inner"
+                                d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
+                                fill="#1A1A1A"
+                              />
+                            </g>
+                          </g>
+                        </svg>
+                      </span>
+                    </span>
+                  </th>
+                  <th
+                    aria-labelledby="header-appealCaseType"
+                    class=""
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <span
+                      aria-label=""
+                      data-css-9shxm7=""
+                    >
+                      <span
+                        id="header-appealCaseType"
+                      >
+                        Types
+                      </span>
+                      <span
+                        aria-label="Sort by Types"
+                        data-css-ilmt4b=""
+                        role="button"
+                        tabindex="0"
+                      >
+                        <svg
+                          class="table-icon"
+                          height="16px"
+                          version="1.1"
+                          viewBox="0 0 13 16"
+                          width="13px"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <g
+                            fill="none"
+                            fill-rule="evenodd"
+                            stroke="none"
+                            stroke-width="1"
+                          >
+                            <g
+                              fill-rule="nonzero"
+                            >
+                              <g
+                                fill="#d6d7d9"
+                                transform="translate(2.000000, 1.000000)"
+                              >
+                                <g
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                >
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
+                                </g>
+                              </g>
+                              <g
+                                fill="#d6d7d9"
+                                transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                              >
+                                <g
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                >
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
+                                </g>
+                              </g>
+                            </g>
+                          </g>
+                        </svg>
+                      </span>
+                      <span
+                        data-css-ilmt4b=""
+                      >
+                        <svg
+                          aria-label="Filter by type"
+                          class="table-icon unselected-filter-icon"
+                          height="21px"
+                          role="button"
+                          tabindex="0"
+                          viewBox="0 0 21 21"
+                          width="21px"
+                        >
+                          <g
+                            fill="none"
+                            fill-rule="evenodd"
+                            stroke="none"
+                            stroke-width="1"
+                          >
+                            <g>
+                              <rect
+                                class="unselected-filter-icon-border"
+                                fill="#FFFFFF"
+                                fill-rule="nonzero"
+                                height="20"
+                                rx="2"
+                                stroke="#5B616B"
+                                width="20"
+                                x="0.5"
+                                y="0.5"
+                              />
+                              <path
+                                class="unselected-filter-icon-inner"
+                                d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
+                                fill="#1A1A1A"
+                              />
+                            </g>
+                          </g>
+                        </svg>
+                      </span>
+                    </span>
+                  </th>
+                  <th
+                    aria-labelledby="header-appealDocketName"
+                    class=""
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <span
+                      aria-label=""
+                      data-css-9shxm7=""
+                    >
+                      <span
+                        id="header-appealDocketName"
+                      >
+                        Docket
+                      </span>
+                      <span
+                        aria-label="Sort by Docket"
+                        data-css-ilmt4b=""
+                        role="button"
+                        tabindex="0"
+                      >
+                        <svg
+                          class="table-icon"
+                          height="16px"
+                          version="1.1"
+                          viewBox="0 0 13 16"
+                          width="13px"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <g
+                            fill="none"
+                            fill-rule="evenodd"
+                            stroke="none"
+                            stroke-width="1"
+                          >
+                            <g
+                              fill-rule="nonzero"
+                            >
+                              <g
+                                fill="#d6d7d9"
+                                transform="translate(2.000000, 1.000000)"
+                              >
+                                <g
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                >
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
+                                </g>
+                              </g>
+                              <g
+                                fill="#d6d7d9"
+                                transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                              >
+                                <g
+                                  transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                >
+                                  <path
+                                    d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                  />
+                                </g>
+                              </g>
+                            </g>
+                          </g>
+                        </svg>
+                      </span>
+                      <span
+                        data-css-ilmt4b=""
+                      >
+                        <svg
+                          aria-label="Filter by docket name"
+                          class="table-icon unselected-filter-icon"
+                          height="21px"
+                          role="button"
+                          tabindex="0"
+                          viewBox="0 0 21 21"
+                          width="21px"
+                        >
+                          <g
+                            fill="none"
+                            fill-rule="evenodd"
+                            stroke="none"
+                            stroke-width="1"
+                          >
+                            <g>
+                              <rect
+                                class="unselected-filter-icon-border"
+                                fill="#FFFFFF"
+                                fill-rule="nonzero"
+                                height="20"
+                                rx="2"
+                                stroke="#5B616B"
+                                width="20"
+                                x="0.5"
+                                y="0.5"
+                              />
+                              <path
+                                class="unselected-filter-icon-inner"
+                                d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
+                                fill="#1A1A1A"
+                              />
+                            </g>
+                          </g>
+                        </svg>
+                      </span>
+                    </span>
+                  </th>
+                  <th
+                    class="cf-txt-c"
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <span
+                      aria-describedby="tooltip-5"
+                      currentitem="false"
+                      data-event="focus mouseenter"
+                      data-event-off="keydown mouseleave"
+                      data-for="tooltip-5"
+                      data-tip="true"
+                      role="tooltip"
+                      tabindex="0"
+                    >
+                      <span
+                        aria-label=""
+                        data-css-9shxm7=""
+                      >
+                        <span>
+                          Days on Hold
+                        </span>
+                        <span
+                          aria-label="Sort by Days on Hold"
+                          data-css-ilmt4b=""
+                          role="button"
+                          tabindex="0"
+                        >
+                          <svg
+                            class="table-icon"
+                            height="16px"
+                            version="1.1"
+                            viewBox="0 0 13 16"
+                            width="13px"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <g
+                              fill="none"
+                              fill-rule="evenodd"
+                              stroke="none"
+                              stroke-width="1"
+                            >
+                              <g
+                                fill-rule="nonzero"
+                              >
+                                <g
+                                  fill="#d6d7d9"
+                                  transform="translate(2.000000, 1.000000)"
+                                >
+                                  <g
+                                    transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                  >
+                                    <path
+                                      d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                    />
+                                  </g>
+                                </g>
+                                <g
+                                  fill="#d6d7d9"
+                                  transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                                >
+                                  <g
+                                    transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                                  >
+                                    <path
+                                      d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                    />
+                                  </g>
+                                </g>
+                              </g>
+                            </g>
+                          </svg>
+                        </span>
+                      </span>
+                    </span>
+                    <span
+                      data-css-fs14qy=""
+                    >
+                      <div
+                        class="__react_component_tooltip place-top type-dark "
+                        data-id="tooltip"
+                        id="tooltip-5"
+                      >
+                        Calendar days since 
+                        <br />
+                         this case was placed on hold
+                      </div>
+                    </span>
+                  </th>
+                  <th
+                    class=""
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <span
+                      aria-label=""
+                      data-css-9shxm7=""
+                    >
+                      <span>
+                        Veteran Documents
+                      </span>
+                    </span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                class=""
+              >
+                <tr
+                  class=""
+                  id="table-row-3"
+                  role="row"
+                >
+                  <td
+                    class=""
+                    colspan="1"
+                    role="cell"
+                  >
+                    <div
+                      data-css-w0yocm=""
+                    >
+                      <div />
+                    </div>
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="cell"
+                  >
+                    <a
+                      href="/queue/appeals/fe583ee4-6f58-41a6-b8c5-09bfdc987c75"
+                    >
+                      <span
+                        data-css-l6c9n4=""
+                        id="veteran-name-for-task-3"
+                      >
+                        John Doe 3
+                         (
+                        500000003
+                        )
+                      </span>
+                    </a>
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="cell"
+                  >
+                    Stayed appeal
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="cell"
+                  >
+                    <span>
+                      Original
+                    </span>
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="cell"
+                  >
+                    <span
+                      aria-describedby="badge-200603-73"
+                      currentitem="false"
+                      data-event="focus mouseenter"
+                      data-event-off="keydown mouseleave"
+                      data-for="badge-200603-73"
+                      data-tip="true"
+                      role="tooltip"
+                      tabindex="0"
+                    >
+                      <span
+                        aria-label="Direct Review"
+                        data-css-2moai0=""
+                      >
+                        D
+                      </span>
+                    </span>
+                    <span
+                      data-css-t9ad6e=""
+                    >
+                      <div
+                        class="__react_component_tooltip place-bottom type-dark "
+                        data-id="tooltip"
+                        id="badge-200603-73"
+                      >
+                        Direct Review
+                      </div>
+                    </span>
+                    <span>
+                      200603-73
+                    </span>
+                  </td>
+                  <td
+                    class="cf-txt-c"
+                    colspan="1"
+                    role="cell"
+                  >
+                    1 of 31
+                    <div
+                      class="cf-continuous-progress-bar"
+                    >
+                      <div
+                        class=""
+                        style="width: 3.225806451612903%;"
+                      />
+                    </div>
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="cell"
+                  >
+                    <a
+                      href="/reader/appeal/fe583ee4-6f58-41a6-b8c5-09bfdc987c75/documents?queue_redirect_url=%2F"
+                    >
+                      View 
+                       docs
+                    </a>
+                    <div
+                      data-css-11y190r=""
+                    >
+                      <span
+                        data-css-1umacli=""
+                      >
+                        Loading number of docs...
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+                <tr
+                  class=""
+                  id="table-row-4"
+                  role="row"
+                >
+                  <td
+                    class=""
+                    colspan="1"
+                    role="cell"
+                  >
+                    <div
+                      data-css-w0yocm=""
+                    >
+                      <div />
+                    </div>
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="cell"
+                  >
+                    <a
+                      href="/queue/appeals/fe583ee4-6f58-41a6-b8c5-09bfdc987c75"
+                    >
+                      <span
+                        data-css-l6c9n4=""
+                        id="veteran-name-for-task-4"
+                      >
+                        John Doe 4
+                         (
+                        500000004
+                        )
+                      </span>
+                    </a>
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="cell"
+                  >
+                    Stayed appeal
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="cell"
+                  >
+                    <span>
+                      Original
+                    </span>
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="cell"
+                  >
+                    <span
+                      aria-describedby="badge-200603-74"
+                      currentitem="false"
+                      data-event="focus mouseenter"
+                      data-event-off="keydown mouseleave"
+                      data-for="badge-200603-74"
+                      data-tip="true"
+                      role="tooltip"
+                      tabindex="0"
+                    >
+                      <span
+                        aria-label="Direct Review"
+                        data-css-2moai0=""
+                      >
+                        D
+                      </span>
+                    </span>
+                    <span
+                      data-css-ns953s=""
+                    >
+                      <div
+                        class="__react_component_tooltip place-bottom type-dark "
+                        data-id="tooltip"
+                        id="badge-200603-74"
+                      >
+                        Direct Review
+                      </div>
+                    </span>
+                    <span>
+                      200603-74
+                    </span>
+                  </td>
+                  <td
+                    class="cf-txt-c"
+                    colspan="1"
+                    role="cell"
+                  >
+                    30
+                    <div
+                      class="cf-continuous-progress-bar"
+                    >
+                      <div
+                        class=""
+                        style="width: 100%;"
+                      />
+                    </div>
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="cell"
+                  >
+                    <a
+                      href="/reader/appeal/fe583ee4-6f58-41a6-b8c5-09bfdc987c75/documents?queue_redirect_url=%2F"
+                    >
+                      View 
+                       docs
+                    </a>
+                    <div
+                      data-css-11y190r=""
+                    >
+                      <span
+                        data-css-1umacli=""
+                      >
+                        Loading number of docs...
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot />
+            </table>
+            <div
+              class="cf-pagination"
+            >
+              <div
+                class="cf-pagination-summary"
+              >
+                Viewing 1-2 of 2 total
+              </div>
+              <div
+                class="cf-pagination-pages"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          aria-hidden="true"
+          class="tabPanel"
+          id="tasks-tabwindow-tabpanel-2"
+          role="tabpanel"
+          tabindex="-1"
+        />
+      </div>
+    </div>
+  </section>
+</div>
+`;

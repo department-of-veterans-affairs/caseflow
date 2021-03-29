@@ -5,7 +5,6 @@
 # CAVC Remands Overview: https://github.com/department-of-veterans-affairs/caseflow/wiki/CAVC-Remands
 
 class CavcRemand < CaseflowRecord
-  self.ignored_columns = ["appeal_id"]
   include UpdatedByUserConcern
 
   belongs_to :created_by, class_name: "User"
