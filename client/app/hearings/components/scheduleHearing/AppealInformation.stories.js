@@ -9,9 +9,7 @@ export default {
   title: 'Hearings/Components/Schedule Hearing/AppealInformation',
   component: AppealInformation,
   argTypes: {
-    scheduledHearingsList: { table: { disable: true } },
-    update: { table: { disable: true } },
-    fetchScheduledHearings: { table: { disable: true } },
+    appeal: { table: { disable: true } },
   }
 };
 
