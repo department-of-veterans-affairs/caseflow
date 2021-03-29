@@ -62,7 +62,6 @@ class MdrTask < Task
   def self.decision_date_plus_90_days(decision_date)
     end_date = decision_date + 90.days
     # What's expected is the _number_ of days to wait:
-    # TODO: This could go negative. Should we cap it?
     (end_date - Date.today).to_i
   end
 end

@@ -22,7 +22,8 @@ describe MdrTask, :postgres do
     end
 
     describe ".create_with_hold" do
-      subject { described_class.create_with_hold(parent_task) }
+      let(:decision_date) { Date.today - 1.week }
+      subject { described_class.create_with_hold(parent_task, decision_date) }
 
       it "creates task with child TimedHoldTask" do
         new_task = subject
@@ -36,7 +37,7 @@ describe MdrTask, :postgres do
         expect(child_timed_hold_tasks.count).to eq 1
         expect(child_timed_hold_tasks.first.assigned_to).to eq CavcLitigationSupport.singleton
         expect(child_timed_hold_tasks.first.status).to eq Constants.TASK_STATUSES.assigned
-        expect(child_timed_hold_tasks.first.timer_end_time.to_date).to eq(Time.zone.now.to_date + 90.days)
+        expect(child_timed_hold_tasks.first.timer_end_time.to_date).to eq(decision_date + 90.days)
 
         expect(new_task.label).to eq COPY::MDR_TASK_LABEL
         expect(new_task.default_instructions).to eq [COPY::MDR_WINDOW_TASK_DEFAULT_INSTRUCTIONS]
@@ -45,7 +46,8 @@ describe MdrTask, :postgres do
   end
 
   describe "#available_actions" do
-    let!(:mdr_task) { MdrTask.create_with_hold(create(:cavc_task)) }
+    let(:decision_date) { Date.today - 1.week }
+    let!(:mdr_task) { MdrTask.create_with_hold(create(:cavc_task), decision_date) }
 
     context "immediately after MdrTask is created" do
       it "returns available actions when MdrTask is on hold" do
@@ -53,15 +55,16 @@ describe MdrTask, :postgres do
         child_timed_hold_tasks = mdr_task.children.where(type: :TimedHoldTask)
         expect(child_timed_hold_tasks.first.status).to eq Constants.TASK_STATUSES.assigned
 
-        expect(mdr_task.available_actions(org_admin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
-        expect(mdr_task.available_actions(org_nonadmin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
+        timed_hold = Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
+        expect(mdr_task.available_actions(org_admin)).to include timed_hold
+        expect(mdr_task.available_actions(org_nonadmin)).to include timed_hold
         expect(mdr_task.available_actions(other_user)).to be_empty
       end
     end
 
-    context "after 90 days have passed" do
+    context "after more than 90 days have passed" do
       before do
-        Timecop.travel(Time.zone.now + 90.days + 1.hour)
+        Timecop.travel(decision_date + 91.days)
         TaskTimerJob.perform_now
       end
       it "marks MdrTask as assigned" do
