@@ -419,6 +419,13 @@
   padding: 25px 20px;
   max-width: 300px;
   position: fixed;
+
+  pre {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 200px;
+  }
 }
 
 .usa-width-one-fourth.schedule-veteran-appeal-info-container {
