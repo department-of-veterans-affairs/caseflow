@@ -485,11 +485,83 @@ export const formatChangeRequestType = (type) => {
 export const dispositionLabel = (disposition) => HEARING_DISPOSITION_TYPE_TO_LABEL_MAP[disposition] ?? 'None';
 
 /**
+ * Method to calculate an array of available time slots, no filled timeslots or hearings are included
+ * @param {string} slotCount  -- Max number of slots to generate
+ * @param {string} startTime  -- Time of first possible slot in "America/New_York" timezone
+ * @param {string} roTimezone -- Timezone like 'America/Los_Angeles' of the ro
+ * @param {array} hearings    -- List of hearings scheduled for a specific date
+ **/
+const calculateAvailableTimeslots = ({ slotCount, startTime, roTimezone, hearings }) => {
+  // Extract the hearing time, interpret it as in the roTimezone
+  const hearingTimes = hearings.map((hearing) =>
+    moment.tz(hearing.hearingTime, 'HH:mm', roTimezone)
+  );
+
+  // This works because:
+  // - There is one possible slot per hour: 8:30, 9:30, 10:30, ...
+  // - We want 8 hours of slots: 8 = 15:30 - 08:30 + 1
+  const availableSlots = _.times(slotCount).map((index) => {
+    // Add the index to the start time so we assign 1 value per hour
+    const slotTime = moment.tz(startTime, 'HH:mm', 'America/New_York').clone().
+      add(index, 'hours');
+
+    // This slot is not available (full) if there's a scheduled hearing less than an hour before
+    // or after the slot.
+    // A 10:45 appointment will:
+    // - Hide a 10:30 slot (it's full, so we return null)
+    // - Hide a 11:30 slot (it's full, so we return null)
+    const slotFull = hearingTimes.some((scheduledHearingTime) =>
+      Math.abs(slotTime.diff(scheduledHearingTime, 'minutes')) < 60
+    );
+
+    // Return null if there is a filled time slot, otherwise return the hearingTime
+    return slotFull ? null : {
+      slotId: index,
+      time: slotTime,
+      full: false
+    };
+  });
+
+  return _.compact(availableSlots);
+};
+
+/**
+ * Method to calculate an array of available time slots, no filled timeslots or hearings are included
+ * Method to convert all timezones to 'America/New_York, add an id for React, and
+ * combine the available slots and hearings
+ * @param {string} slotCount  -- Max number of slots to generate
+ * @param {string} startTime  -- Time of first possible slot in "America/New_York" timezon
+ **/
+const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings }) => {
+  const slots = availableSlots.map((slot) => ({
+    ...slot,
+    key: `slot?.slotId}-${slot?.time_string}`,
+    full: false,
+    // This is a moment object, always in "America/New_York" as returned by calculateAvailableTimeslots
+    hearingTime: slot.time.format('HH:mm')
+  }));
+
+  const formattedHearings = scheduledHearings.map((hearing) => ({
+    ...hearing,
+    key: hearing?.externalId,
+    full: true,
+    // The hearingTime is in roTimezone, but it looks like "09:30", this takes that "09:30"
+    // in roTimezone, and converts it to Eastern zone because slots are always in eastern.
+    hearingTime: moment.tz(hearing?.hearingTime, 'HH:mm', roTimezone).clone().
+      tz('America/New_York').
+      format('HH:mm')
+  }));
+  const slotsAndHearings = slots.concat(formattedHearings);
+
+  return _.sortBy(slotsAndHearings, 'hearingTime');
+
+};
+
+/**
  * Method to set the available time slots based on the hearings scheduled
  * @param {array} hearings -- List of hearings scheduled for a specific date
  *
- * The 'hearingTime' (really slotTime) in the returned array is always in
- * the  roTimezone.
+ * The 'hearingTime' in the returned array is always in 'America/New_York' timezone.
  *
  * Each hearing passed in has a hearingTime property:
  * - This time is in the timezone of the ro that this individual hearing has in the db.
@@ -500,56 +572,21 @@ export const setTimeSlots = (hearings, hearingType, roTimezone = 'America/New_Yo
   // Safe assign the hearings array in case there are no scheduled hearings
   const scheduledHearings = hearings || [];
 
-  // Store a list of the scheduled times
-  const scheduledHearingTimes = scheduledHearings.map((hearing) =>
-    moment.tz(hearing.hearingTime, 'HH:mm', 'America/New_York')
-  );
-
-  // This works because:
-  // - There is one possible slot per hour: 8:30, 9:30, 10:30, ...
-  // - We want 8 hours of slots: 8 = 15:30 - 08:30 + 1
   const slotCount = 8;
-  // Don't convert startTime to moment here, moment mutates when you 'add'
   const startTime = hearingType === 'C' ? '09:00' : '08:30';
+  const availableSlots = calculateAvailableTimeslots({
+    slotCount,
+    startTime,
+    roTimezone,
+    hearings: scheduledHearings
+  });
 
-  // For each possible slot, return it only if it's available. Availability is
-  // determined by comparing to the scheduledHearingTimes.
-  const availableSlots = _.compact(_.times(slotCount).map((index) => {
-    // Add the index to the start time so we assign 1 value per hour
-    const slotTime = moment.tz(startTime, 'HH:mm', 'America/New_York').add(index, 'hours');
+  return combineSlotsAndHearings({
+    roTimezone,
+    availableSlots,
+    scheduledHearings
+  });
 
-    // This slot is not available (full) if there's a scheduled hearing less than an hour before
-    // or after the slot.
-    // A 10:45 appointment will:
-    // - Hide a 10:30 slot (it's full, so we return null)
-    // - Hide a 11:30 slot (it's full, so we return null)
-    const slotFull = scheduledHearingTimes.some((scheduledHearingTime) =>
-      Math.abs(slotTime.diff(scheduledHearingTime, 'minutes')) < 60
-    );
-
-    // Return null if there is a filled time slot, otherwise return the hearingTime
-    return slotFull ? null : {
-      slotId: index,
-      hearingTime: slotTime.format('HH:mm', 'America/New_York'),
-      full: false
-    };
-  }));
-
-  console.log('slots: ', availableSlots);
-  console.log('sched: ', scheduledHearings);
-
-  // Transform the values into the available slots
-  const slots = [...availableSlots, ...scheduledHearings].map((slot) => ({
-    ...slot,
-    key: `${slot?.externalId || slot?.slotId}-${slot?.hearingTime}`,
-    full: slot?.full !== false,
-    // hearingTime: slot?.hearingTime
-    hearingTime: moment.tz(slot?.hearingTime, 'HH:mm', roTimezone).format('HH:mm')
-  }));
-
-  console.log(_.sortBy(slots, 'hearingTime'));
-  // Return the time slots sorted by time
-  return _.sortBy(slots, 'hearingTime');
 };
 
 export const formatTimeSlotLabel = (time, zone) => {
