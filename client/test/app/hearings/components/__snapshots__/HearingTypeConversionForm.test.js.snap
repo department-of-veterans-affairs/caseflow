@@ -68,7 +68,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
           "zip": "94103",
         },
         "representative_email_address": "tom.brady@caseflow.gov",
-        "representative_name": "Attorney McAttorneyFace",
+        "representative_name": "Clarence Darrow",
         "representative_type": "Attorney",
       },
       "readableHearingRequestType": "Travel",
@@ -139,7 +139,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
           Object {
             "appellantFullName": "Abellona Valtas",
             "appellantIsNotVeteran": false,
-            "representative": "Attorney McAttorneyFace",
+            "representative": "Clarence Darrow",
             "representativeType": "Attorney",
             "veteranFullName": "Abellona Valtas",
           }
@@ -245,7 +245,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
           Object {
             "appellantFullName": "Abellona Valtas",
             "appellantIsNotVeteran": false,
-            "representative": "Attorney McAttorneyFace",
+            "representative": "Clarence Darrow",
             "representativeType": "Attorney",
             "veteranFullName": "Abellona Valtas",
           }
@@ -275,11 +275,11 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
           </h2>
           <AddressLine
             label="Attorney"
-            name="Attorney McAttorneyFace"
+            name="Clarence Darrow"
           >
             <ReadOnly
               label="Attorney"
-              text="Attorney McAttorneyFace
+              text="Clarence Darrow
 "
             >
               <div
@@ -289,7 +289,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
                   Attorney
                 </strong>
                 <pre>
-                  Attorney McAttorneyFace
+                  Clarence Darrow
 
                 </pre>
               </div>
@@ -460,7 +460,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
           "zip": "94103",
         },
         "representative_email_address": "tom.brady@caseflow.gov",
-        "representative_name": "Attorney McAttorneyFace",
+        "representative_name": "Clarence Darrow",
         "representative_type": "Attorney",
       },
       "readableHearingRequestType": "Travel",
@@ -529,7 +529,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
           Object {
             "appellantFullName": "Abellona Valtas",
             "appellantIsNotVeteran": false,
-            "representative": "Attorney McAttorneyFace",
+            "representative": "Clarence Darrow",
             "representativeType": "Attorney",
             "veteranFullName": "Abellona Valtas",
           }
@@ -613,7 +613,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
           Object {
             "appellantFullName": "Abellona Valtas",
             "appellantIsNotVeteran": false,
-            "representative": "Attorney McAttorneyFace",
+            "representative": "Clarence Darrow",
             "representativeType": "Attorney",
             "veteranFullName": "Abellona Valtas",
           }
@@ -643,11 +643,11 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
           </h2>
           <AddressLine
             label="Attorney"
-            name="Attorney McAttorneyFace"
+            name="Clarence Darrow"
           >
             <ReadOnly
               label="Attorney"
-              text="Attorney McAttorneyFace
+              text="Clarence Darrow
 "
             >
               <div
@@ -657,7 +657,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
                   Attorney
                 </strong>
                 <pre>
-                  Attorney McAttorneyFace
+                  Clarence Darrow
 
                 </pre>
               </div>
@@ -828,7 +828,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
           "zip": "94103",
         },
         "representative_email_address": "tom.brady@caseflow.gov",
-        "representative_name": "Attorney McAttorneyFace",
+        "representative_name": "Clarence Darrow",
         "representative_type": "Attorney",
       },
       "readableHearingRequestType": "Travel",
@@ -897,7 +897,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
           Object {
             "appellantFullName": "Abellona Valtas",
             "appellantIsNotVeteran": false,
-            "representative": "Attorney McAttorneyFace",
+            "representative": "Clarence Darrow",
             "representativeType": "Attorney",
             "veteranFullName": "Abellona Valtas",
           }
@@ -981,7 +981,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
           Object {
             "appellantFullName": "Abellona Valtas",
             "appellantIsNotVeteran": false,
-            "representative": "Attorney McAttorneyFace",
+            "representative": "Clarence Darrow",
             "representativeType": "Attorney",
             "veteranFullName": "Abellona Valtas",
           }
@@ -1011,11 +1011,11 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
           </h2>
           <AddressLine
             label="Attorney"
-            name="Attorney McAttorneyFace"
+            name="Clarence Darrow"
           >
             <ReadOnly
               label="Attorney"
-              text="Attorney McAttorneyFace
+              text="Clarence Darrow
 "
             >
               <div
@@ -1025,7 +1025,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
                   Attorney
                 </strong>
                 <pre>
-                  Attorney McAttorneyFace
+                  Clarence Darrow
 
                 </pre>
               </div>
@@ -1196,7 +1196,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
           "zip": "94103",
         },
         "representative_email_address": "tom.brady@caseflow.gov",
-        "representative_name": "Attorney McAttorneyFace",
+        "representative_name": "Clarence Darrow",
         "representative_type": "Attorney",
       },
       "readableHearingRequestType": "Travel",
@@ -1265,7 +1265,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
           Object {
             "appellantFullName": "Abellona Valtas",
             "appellantIsNotVeteran": false,
-            "representative": "Attorney McAttorneyFace",
+            "representative": "Clarence Darrow",
             "representativeType": "Attorney",
             "veteranFullName": "Abellona Valtas",
           }
@@ -1349,7 +1349,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
           Object {
             "appellantFullName": "Abellona Valtas",
             "appellantIsNotVeteran": false,
-            "representative": "Attorney McAttorneyFace",
+            "representative": "Clarence Darrow",
             "representativeType": "Attorney",
             "veteranFullName": "Abellona Valtas",
           }
@@ -1379,11 +1379,11 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
           </h2>
           <AddressLine
             label="Attorney"
-            name="Attorney McAttorneyFace"
+            name="Clarence Darrow"
           >
             <ReadOnly
               label="Attorney"
-              text="Attorney McAttorneyFace
+              text="Clarence Darrow
 "
             >
               <div
@@ -1393,7 +1393,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
                   Attorney
                 </strong>
                 <pre>
-                  Attorney McAttorneyFace
+                  Clarence Darrow
 
                 </pre>
               </div>
