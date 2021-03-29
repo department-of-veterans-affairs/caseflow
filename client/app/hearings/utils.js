@@ -264,9 +264,6 @@ export const zoneName = (time, name, format) => {
   // Set the label
   const label = format ? '' : zone;
 
-  // console.log('moment: ', moment(time, 'h:mm A').tz(timezone).
-  //  format('h:mm A'));
-
   // Return the value if it is not a valid time
   return moment(time, 'h:mm A').isValid() ? `${moment(time, 'h:mm a').tz(timezone).
     format(`h:mm A ${format || ''}`)}${label}` : time;
