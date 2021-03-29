@@ -68,7 +68,7 @@ export const ScheduleVeteran = ({
    `This appeal has an open hearing on ${formatDateStr(openHearing?.date)}. You cannot schedule another hearing.`;
 
   // Set the header for the page
-  const header = `Schedule ${appellantTitle}`;
+  const header = `Schedule ${appellantTitle} for a Hearing`;
 
   // Determine the Request Type for the hearing
   const virtual = assignHearingForm?.virtualHearing;
