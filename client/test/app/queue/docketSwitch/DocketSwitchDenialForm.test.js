@@ -26,8 +26,12 @@ describe('DocketSwitchDenialForm', () => {
 
     expect(container).toMatchSnapshot();
 
-    expect(screen.getByText(sprintf(DOCKET_SWITCH_DENIAL_TITLE, appellantName))).toBeInTheDocument();
-    expect(screen.getByText(DOCKET_SWITCH_DENIAL_INSTRUCTIONS)).toBeInTheDocument();
+    expect(
+      screen.getByText(sprintf(DOCKET_SWITCH_DENIAL_TITLE, appellantName))
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(DOCKET_SWITCH_DENIAL_INSTRUCTIONS)
+    ).toBeInTheDocument();
   });
 
   it('fires onCancel', async () => {
@@ -42,10 +46,15 @@ describe('DocketSwitchDenialForm', () => {
     const receiptDate = '2020-10-01';
     const fillForm = async () => {
       //   Set receipt date
-      await fireEvent.change(screen.getByLabelText(/receipt date/i), { target: { value: receiptDate } });
+      await fireEvent.change(screen.getByLabelText(/receipt date/i), {
+        target: { value: receiptDate },
+      });
 
       //   Enter context/instructions
-      await userEvent.type(screen.getByRole('textbox', { name: /context/i }), instructions);
+      await userEvent.type(
+        screen.getByRole('textbox', { name: /context/i }),
+        instructions
+      );
     };
 
     it('disables submit until all fields valid', async () => {
@@ -55,15 +64,14 @@ describe('DocketSwitchDenialForm', () => {
 
       expect(onSubmit).not.toHaveBeenCalled();
 
-      await fillForm();
+      await waitFor(() => {
+        expect(submit).toBeDisabled();
+      });
 
       await userEvent.click(submit);
       expect(onSubmit).not.toHaveBeenCalled();
 
-      // We need to wrap this in waitFor due to async nature of form validation
-      await waitFor(() => {
-        expect(submit).toBeDisabled();
-      });
+      await fillForm();
 
       await waitFor(() => {
         expect(submit).toBeEnabled();
@@ -76,7 +84,6 @@ describe('DocketSwitchDenialForm', () => {
     });
 
     it('fires onSubmit with correct values', async () => {
-
       render(<DocketSwitchDenialForm {...defaults} />);
 
       const submit = screen.getByRole('button', { name: /confirm/i });
@@ -89,7 +96,6 @@ describe('DocketSwitchDenialForm', () => {
         expect(onSubmit).toHaveBeenCalledWith({
           receiptDate,
           context,
-
         });
       });
     });

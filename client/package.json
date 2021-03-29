@@ -136,7 +136,7 @@
     "uuid": "^3.0.1",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11",
-    "yup": "^0.29.3"
+    "yup": "^0.32.9"
   },
   "devDependencies": {
     "@department-of-veterans-affairs/eslint-config-appeals": "https://github.com/department-of-veterans-affairs/eslint-config-appeals#1e2a2db",
