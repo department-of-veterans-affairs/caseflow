@@ -63,13 +63,16 @@ class StuckVirtualHearingsChecker < DataIntegrityChecker
 
   def scheduled_for_report(virtual_hearing)
     scheduled_for = virtual_hearing.hearing.scheduled_for
+    "scheduled for: #{scheduled_for.strftime('%a %m/%d')} #{display_in_words(scheduled_for)}"
+  end
+
+  def display_in_words(scheduled_for)
     in_words = time_ago_in_words(scheduled_for)
-    display_in_words = if Time.zone.now < scheduled_for
-                         "(in #{in_words})"
-                       else
-                         "(#{in_words} ago)"
-                       end
-    "scheduled for: #{scheduled_for.strftime('%a %m/%d')} #{display_in_words}"
+    if Time.zone.now < scheduled_for
+      "(in #{in_words})"
+    else
+      "(#{in_words} ago)"
+    end
   end
 
   def external_id_report(virtual_hearing)
