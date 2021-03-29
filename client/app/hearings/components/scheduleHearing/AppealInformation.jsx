@@ -39,6 +39,7 @@ export const AppealInformation = ({ appeal }) => {
       <ReadOnly
         spacing={15}
         label="Power of Attorney"
+        // eslint-disable-next-line camelcase
         text={appeal?.powerOfAttorney?.representative_name}
       />
       {appeal?.veteranDateOfDeath && (
