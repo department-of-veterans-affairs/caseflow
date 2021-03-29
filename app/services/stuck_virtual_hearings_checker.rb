@@ -41,14 +41,8 @@ class StuckVirtualHearingsChecker < DataIntegrityChecker
 
     add_to_report "Found #{stuck_count} stuck #{'virtual hearing'.pluralize(stuck_count)}: "
     stuck_virtual_hearings.each do |stuck_vh|
-      last_attempted = if stuck_vh.establishment.attempted_at.present?
-                         "#{time_ago_in_words(stuck_vh.establishment.attempted_at)} ago"
-                       else
-                         "never"
-                       end
-
       add_to_report "`VirtualHearing.find(#{stuck_vh.id})` " \
-        "last attempted: #{last_attempted}, " \
+        "last attempted: #{last_attempted_report(stuck_vh)}, " \
         "#{scheduled_for_report(stuck_vh)}, " \
         "updated by: #{stuck_vh.updated_by.css_id}, " \
         "#{external_id_report(stuck_vh)}"
@@ -57,6 +51,14 @@ class StuckVirtualHearingsChecker < DataIntegrityChecker
     add_to_report "If a virtual hearing is in this state, Caseflow may not be displaying the information that " \
       "users need to prepare for the hearing, and notification emails may not have been sent."
     add_to_report "Stuck virtual hearings are tracked in *<#{TRACKING_DOCUMENT_LINK}|this document>*."
+  end
+
+  def last_attempted_report(virtual_hearing)
+    if virtual_hearing.establishment.attempted_at.present?
+      "#{time_ago_in_words(virtual_hearing.establishment.attempted_at)} ago"
+    else
+      "never"
+    end
   end
 
   def scheduled_for_report(virtual_hearing)
