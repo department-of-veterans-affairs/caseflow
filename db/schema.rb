@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_22_174325) do
+ActiveRecord::Schema.define(version: 2021_03_22_220713) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1632,9 +1632,12 @@ ActiveRecord::Schema.define(version: 2021_03_22_174325) do
   add_foreign_key "annotations", "users"
   add_foreign_key "api_views", "api_keys"
   add_foreign_key "appeal_views", "users"
+  add_foreign_key "cavc_remands", "users", column: "created_by_id"
+  add_foreign_key "cavc_remands", "users", column: "updated_by_id"
   add_foreign_key "certifications", "users"
   add_foreign_key "claims_folder_searches", "users"
   add_foreign_key "dispatch_tasks", "users"
+  add_foreign_key "distributions", "users", column: "judge_id"
   add_foreign_key "docket_switches", "appeals", column: "new_docket_stream_id"
   add_foreign_key "docket_switches", "appeals", column: "old_docket_stream_id"
   add_foreign_key "docket_switches", "tasks"
@@ -1647,11 +1650,15 @@ ActiveRecord::Schema.define(version: 2021_03_22_174325) do
   add_foreign_key "granted_substitutions", "claimants", column: "substitute_id"
   add_foreign_key "granted_substitutions", "users", column: "created_by_id"
   add_foreign_key "hearing_days", "users", column: "created_by_id"
+  add_foreign_key "hearing_days", "users", column: "judge_id"
   add_foreign_key "hearing_days", "users", column: "updated_by_id"
   add_foreign_key "hearing_views", "users"
   add_foreign_key "hearings", "users", column: "created_by_id"
+  add_foreign_key "hearings", "users", column: "judge_id"
   add_foreign_key "hearings", "users", column: "updated_by_id"
   add_foreign_key "intakes", "users"
+  add_foreign_key "judge_case_reviews", "users", column: "attorney_id"
+  add_foreign_key "judge_case_reviews", "users", column: "judge_id"
   add_foreign_key "legacy_appeals", "appeal_series"
   add_foreign_key "legacy_hearings", "hearing_days"
   add_foreign_key "legacy_hearings", "users"
@@ -1667,9 +1674,13 @@ ActiveRecord::Schema.define(version: 2021_03_22_174325) do
   add_foreign_key "ramp_election_rollbacks", "users"
   add_foreign_key "request_issues_updates", "users"
   add_foreign_key "schedule_periods", "users"
+  add_foreign_key "sent_hearing_email_events", "users", column: "sent_by_id"
+  add_foreign_key "tasks", "users", column: "assigned_by_id"
+  add_foreign_key "tasks", "users", column: "cancelled_by_id"
   add_foreign_key "unrecognized_appellants", "claimants"
   add_foreign_key "unrecognized_appellants", "unrecognized_party_details"
   add_foreign_key "unrecognized_appellants", "unrecognized_party_details", column: "unrecognized_power_of_attorney_id"
   add_foreign_key "user_quotas", "users"
+  add_foreign_key "virtual_hearings", "users", column: "created_by_id"
   add_foreign_key "virtual_hearings", "users", column: "updated_by_id"
 end
