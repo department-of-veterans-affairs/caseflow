@@ -85,10 +85,10 @@ export const DocketSwitchReviewConfirmContainer = () => {
     };
 
     try {
+      setDisabled(true);
       const resultAction = await dispatch(completeDocketSwitchGranted(docketSwitch));
       const { newAppealId } = unwrapResult(resultAction);
 
-      setDisabled(true);
       dispatch(showSuccessMessage(successMessage));
       dispatch(stepForward());
       push(`/queue/appeals/${newAppealId}`);
