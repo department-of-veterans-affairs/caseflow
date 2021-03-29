@@ -233,11 +233,19 @@ export const ScheduleVeteran = ({
         regionalOffice: hearing.regionalOffice || hearing.virtualHearing ? null : 'Please select a Regional Office '
       };
 
-      // Prevent submitting the form with a null appellant email
-      if (hearing.virtualHearing && !hearing.virtualHearing.appellantEmail) {
+      const noAppellantEmail = !hearing.virtualHearing?.appellantEmail;
+      const noAppellantTimezone = !hearing.virtualHearing?.appellantTz;
+      const noRepTimezone = !hearing.virtualHearing?.representativeTz && hearing.virtualHearing?.representativeEmail;
+      const emailOrTzErrors = hearing?.virtualHearing && (noAppellantEmail || noAppellantTimezone || noRepTimezone);
+
+      if (emailOrTzErrors) {
         document.getElementById('email-section').scrollIntoView();
 
-        return setErrors({ appellantEmail: 'Appellant email is required' });
+        return setErrors({
+          [noAppellantEmail && 'appellantEmail']: `${appellantTitle} email is required`,
+          [noAppellantTimezone && 'appellantTz']: COPY.VIRTUAL_HEARING_TIMEZONE_REQUIRED,
+          [noRepTimezone && 'representativeTz']: COPY.VIRTUAL_HEARING_TIMEZONE_REQUIRED
+        });
       }
 
       // First validate the form
