@@ -85,9 +85,9 @@ class HearingTask < Task
     if hearing&.no_show?
       # if there was already a completed ESWT, reopen it
       # More info in slack: https://dsva.slack.com/archives/C3EAF3Q15/p1617048776125000
-      if self.children.closed.where(type: EvidenceSubmissionWindowTask.name).present?
+      if children.closed.where(type: EvidenceSubmissionWindowTask.name).present?
         # the appeal may already have many ESWT so pick the last completed one
-        eswt =  self.children.closed.where(type: EvidenceSubmissionWindowTask.name).order(:closed_at).last
+        eswt = children.closed.where(type: EvidenceSubmissionWindowTask.name).order(:closed_at).last
         eswt.update!(status: :assigned)
       else
         EvidenceSubmissionWindowTask.create!(
