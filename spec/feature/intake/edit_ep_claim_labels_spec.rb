@@ -102,22 +102,45 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
       higher_level_review.establish!
     end
 
-    it "Issue update disables Edit claim label btn and enables save btn" do
-      visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+    context "When an update is made to an issue" do
+      it "enables the Save btn and disables the Edit claim label btn, when you remove an issue" do
+        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
 
-      nr_label = Constants::EP_CLAIM_TYPES[nonrating_request_issue.end_product_establishment.code]["official_label"]
-      nr_row = page.find("tr", text: nr_label, match: :prefer_exact)
+        nr_label = Constants::EP_CLAIM_TYPES[nonrating_request_issue.end_product_establishment.code]["official_label"]
+        nr_row = page.find("tr", text: nr_label, match: :prefer_exact)
 
-      expect(page).to have_button("Save", disabled: true)
-      expect(nr_row).to have_button("Edit claim label", disabled: false)
+        expect(page).to have_button("Save", disabled: true)
+        expect(nr_row).to have_button("Edit claim label", disabled: false)
 
-      # make issue update - remove issue or edit description
-      find("#issue-action-0").click
-      find("#issue-action-0_remove").click
-      find("#Remove-issue-button-id-1").click
+        # make issue update - remove issue
+        find("#issue-action-0").click
+        find("#issue-action-0_remove").click
+        find("#Remove-issue-button-id-1").click
 
-      expect(page).to have_button("Save", disabled: false)
-      expect(page).to have_button("Edit claim label", disabled: true)
+        expect(page).to have_button("Save", disabled: false)
+        expect(page).to have_button("Edit claim label", disabled: true)
+      end
+
+      it "enables the Save btn and disables the Edit claim label btn, when you edit issue description" do
+        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+        nr_label = Constants::EP_CLAIM_TYPES[nonrating_request_issue.end_product_establishment.code]["official_label"]
+        nr_row = page.find("tr", text: nr_label, match: :prefer_exact)
+
+        expect(page).to have_button("Save", disabled: true)
+        expect(nr_row).to have_button("Edit claim label", disabled: false)
+
+        # make issue update - add issue
+        find("#button-add-issue").click
+        find(".cf-select").click
+        find("#react-select-2-option-1").click
+        fill_in "decision-date", with: "08192020"
+        fill_in "Issue description", with: "this is a description"
+
+        find("#Add-issue-5-button-id-1").click
+
+        expect(page).to have_button("Save", disabled: false)
+        expect(page).to have_button("Edit claim label", disabled: true)
+      end
     end
 
     it "shows each established end product label" do
