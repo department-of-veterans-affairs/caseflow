@@ -29,6 +29,7 @@ export const CheckoutButtons = ({
     classNames: ['cf-right-side', 'cf-prev-step', 'usa-button-secondary'],
     callback: onBack,
     name: 'back-button',
+    disabled,
     displayText: 'Back',
     willNeverBeLoading: true,
   };
