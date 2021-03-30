@@ -175,7 +175,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
       "virtualHearing": Object {
         "aliasWithHost": "BVA0000009@care.evn.va.gov",
         "appellantEmail": "Bob.Smith@test.com",
-        "appellantTz": null,
+        "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
@@ -183,7 +183,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
         "hostPin": "8600030#",
         "jobCompleted": true,
         "representativeEmail": "tom.brady@caseflow.gov",
-        "representativeTz": null,
+        "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
         "status": "active",
       },
@@ -205,8 +205,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
         Array [
           "virtualHearing",
           Object {
-            "appellantTz": null,
-            "representativeTz": null,
+            "false": "America/Denver",
           },
         ],
       ],
@@ -226,7 +225,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -234,7 +233,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
@@ -334,7 +333,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
               "virtualHearing": Object {
                 "aliasWithHost": "BVA0000009@care.evn.va.gov",
                 "appellantEmail": "Bob.Smith@test.com",
-                "appellantTz": null,
+                "appellantTz": "America/Denver",
                 "clientHost": "care.evn.va.gov",
                 "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                 "guestPin": "2684353125#",
@@ -342,7 +341,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                 "hostPin": "8600030#",
                 "jobCompleted": true,
                 "representativeEmail": "tom.brady@caseflow.gov",
-                "representativeTz": null,
+                "representativeTz": "America/Los_Angeles",
                 "requestCancelled": false,
                 "status": "active",
               },
@@ -366,7 +365,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
             Object {
               "aliasWithHost": "BVA0000009@care.evn.va.gov",
               "appellantEmail": "Bob.Smith@test.com",
-              "appellantTz": null,
+              "appellantTz": "America/Denver",
               "clientHost": "care.evn.va.gov",
               "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
               "guestPin": "2684353125#",
@@ -374,7 +373,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
               "hostPin": "8600030#",
               "jobCompleted": true,
               "representativeEmail": "tom.brady@caseflow.gov",
-              "representativeTz": null,
+              "representativeTz": "America/Los_Angeles",
               "requestCancelled": false,
               "status": "active",
             }
@@ -465,7 +464,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                   "virtualHearing": Object {
                     "aliasWithHost": "BVA0000009@care.evn.va.gov",
                     "appellantEmail": "Bob.Smith@test.com",
-                    "appellantTz": null,
+                    "appellantTz": "America/Denver",
                     "clientHost": "care.evn.va.gov",
                     "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                     "guestPin": "2684353125#",
@@ -473,7 +472,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                     "hostPin": "8600030#",
                     "jobCompleted": true,
                     "representativeEmail": "tom.brady@caseflow.gov",
-                    "representativeTz": null,
+                    "representativeTz": "America/Los_Angeles",
                     "requestCancelled": false,
                     "status": "active",
                   },
@@ -501,7 +500,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                 Object {
                   "aliasWithHost": "BVA0000009@care.evn.va.gov",
                   "appellantEmail": "Bob.Smith@test.com",
-                  "appellantTz": null,
+                  "appellantTz": "America/Denver",
                   "clientHost": "care.evn.va.gov",
                   "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                   "guestPin": "2684353125#",
@@ -509,7 +508,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                   "hostPin": "8600030#",
                   "jobCompleted": true,
                   "representativeEmail": "tom.brady@caseflow.gov",
-                  "representativeTz": null,
+                  "representativeTz": "America/Los_Angeles",
                   "requestCancelled": false,
                   "status": "active",
                 }
@@ -605,7 +604,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                       "virtualHearing": Object {
                         "aliasWithHost": "BVA0000009@care.evn.va.gov",
                         "appellantEmail": "Bob.Smith@test.com",
-                        "appellantTz": null,
+                        "appellantTz": "America/Denver",
                         "clientHost": "care.evn.va.gov",
                         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                         "guestPin": "2684353125#",
@@ -613,7 +612,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                         "hostPin": "8600030#",
                         "jobCompleted": true,
                         "representativeEmail": "tom.brady@caseflow.gov",
-                        "representativeTz": null,
+                        "representativeTz": "America/Los_Angeles",
                         "requestCancelled": false,
                         "status": "active",
                       },
@@ -641,7 +640,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                     Object {
                       "aliasWithHost": "BVA0000009@care.evn.va.gov",
                       "appellantEmail": "Bob.Smith@test.com",
-                      "appellantTz": null,
+                      "appellantTz": "America/Denver",
                       "clientHost": "care.evn.va.gov",
                       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                       "guestPin": "2684353125#",
@@ -649,7 +648,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                       "hostPin": "8600030#",
                       "jobCompleted": true,
                       "representativeEmail": "tom.brady@caseflow.gov",
-                      "representativeTz": null,
+                      "representativeTz": "America/Los_Angeles",
                       "requestCancelled": false,
                       "status": "active",
                     }
@@ -736,7 +735,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                         "virtualHearing": Object {
                           "aliasWithHost": "BVA0000009@care.evn.va.gov",
                           "appellantEmail": "Bob.Smith@test.com",
-                          "appellantTz": null,
+                          "appellantTz": "America/Denver",
                           "clientHost": "care.evn.va.gov",
                           "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                           "guestPin": "2684353125#",
@@ -744,7 +743,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                           "hostPin": "8600030#",
                           "jobCompleted": true,
                           "representativeEmail": "tom.brady@caseflow.gov",
-                          "representativeTz": null,
+                          "representativeTz": "America/Los_Angeles",
                           "requestCancelled": false,
                           "status": "active",
                         },
@@ -772,7 +771,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                       Object {
                         "aliasWithHost": "BVA0000009@care.evn.va.gov",
                         "appellantEmail": "Bob.Smith@test.com",
-                        "appellantTz": null,
+                        "appellantTz": "America/Denver",
                         "clientHost": "care.evn.va.gov",
                         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                         "guestPin": "2684353125#",
@@ -780,7 +779,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                         "hostPin": "8600030#",
                         "jobCompleted": true,
                         "representativeEmail": "tom.brady@caseflow.gov",
-                        "representativeTz": null,
+                        "representativeTz": "America/Los_Angeles",
                         "requestCancelled": false,
                         "status": "active",
                       }
@@ -1016,7 +1015,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                   "virtualHearing": Object {
                     "aliasWithHost": "BVA0000009@care.evn.va.gov",
                     "appellantEmail": "Bob.Smith@test.com",
-                    "appellantTz": null,
+                    "appellantTz": "America/Denver",
                     "clientHost": "care.evn.va.gov",
                     "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                     "guestPin": "2684353125#",
@@ -1024,7 +1023,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                     "hostPin": "8600030#",
                     "jobCompleted": true,
                     "representativeEmail": "tom.brady@caseflow.gov",
-                    "representativeTz": null,
+                    "representativeTz": "America/Los_Angeles",
                     "requestCancelled": false,
                     "status": "active",
                   },
@@ -1052,7 +1051,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                 Object {
                   "aliasWithHost": "BVA0000009@care.evn.va.gov",
                   "appellantEmail": "Bob.Smith@test.com",
-                  "appellantTz": null,
+                  "appellantTz": "America/Denver",
                   "clientHost": "care.evn.va.gov",
                   "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                   "guestPin": "2684353125#",
@@ -1060,7 +1059,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                   "hostPin": "8600030#",
                   "jobCompleted": true,
                   "representativeEmail": "tom.brady@caseflow.gov",
-                  "representativeTz": null,
+                  "representativeTz": "America/Los_Angeles",
                   "requestCancelled": false,
                   "status": "active",
                 }
@@ -1156,7 +1155,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                       "virtualHearing": Object {
                         "aliasWithHost": "BVA0000009@care.evn.va.gov",
                         "appellantEmail": "Bob.Smith@test.com",
-                        "appellantTz": null,
+                        "appellantTz": "America/Denver",
                         "clientHost": "care.evn.va.gov",
                         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                         "guestPin": "2684353125#",
@@ -1164,7 +1163,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                         "hostPin": "8600030#",
                         "jobCompleted": true,
                         "representativeEmail": "tom.brady@caseflow.gov",
-                        "representativeTz": null,
+                        "representativeTz": "America/Los_Angeles",
                         "requestCancelled": false,
                         "status": "active",
                       },
@@ -1192,7 +1191,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                     Object {
                       "aliasWithHost": "BVA0000009@care.evn.va.gov",
                       "appellantEmail": "Bob.Smith@test.com",
-                      "appellantTz": null,
+                      "appellantTz": "America/Denver",
                       "clientHost": "care.evn.va.gov",
                       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                       "guestPin": "2684353125#",
@@ -1200,7 +1199,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                       "hostPin": "8600030#",
                       "jobCompleted": true,
                       "representativeEmail": "tom.brady@caseflow.gov",
-                      "representativeTz": null,
+                      "representativeTz": "America/Los_Angeles",
                       "requestCancelled": false,
                       "status": "active",
                     }
@@ -1287,7 +1286,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                         "virtualHearing": Object {
                           "aliasWithHost": "BVA0000009@care.evn.va.gov",
                           "appellantEmail": "Bob.Smith@test.com",
-                          "appellantTz": null,
+                          "appellantTz": "America/Denver",
                           "clientHost": "care.evn.va.gov",
                           "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                           "guestPin": "2684353125#",
@@ -1295,7 +1294,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                           "hostPin": "8600030#",
                           "jobCompleted": true,
                           "representativeEmail": "tom.brady@caseflow.gov",
-                          "representativeTz": null,
+                          "representativeTz": "America/Los_Angeles",
                           "requestCancelled": false,
                           "status": "active",
                         },
@@ -1323,7 +1322,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                       Object {
                         "aliasWithHost": "BVA0000009@care.evn.va.gov",
                         "appellantEmail": "Bob.Smith@test.com",
-                        "appellantTz": null,
+                        "appellantTz": "America/Denver",
                         "clientHost": "care.evn.va.gov",
                         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                         "guestPin": "2684353125#",
@@ -1331,7 +1330,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                         "hostPin": "8600030#",
                         "jobCompleted": true,
                         "representativeEmail": "tom.brady@caseflow.gov",
-                        "representativeTz": null,
+                        "representativeTz": "America/Los_Angeles",
                         "requestCancelled": false,
                         "status": "active",
                       }
@@ -1511,8 +1510,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                 Array [
                   "virtualHearing",
                   Object {
-                    "appellantTz": null,
-                    "representativeTz": null,
+                    "false": "America/Denver",
                   },
                 ],
               ],
@@ -1532,7 +1530,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
             Object {
               "aliasWithHost": "BVA0000009@care.evn.va.gov",
               "appellantEmail": "Bob.Smith@test.com",
-              "appellantTz": null,
+              "appellantTz": "America/Denver",
               "clientHost": "care.evn.va.gov",
               "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
               "guestPin": "2684353125#",
@@ -1540,7 +1538,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
               "hostPin": "8600030#",
               "jobCompleted": true,
               "representativeEmail": "tom.brady@caseflow.gov",
-              "representativeTz": null,
+              "representativeTz": "America/Los_Angeles",
               "requestCancelled": false,
               "status": "active",
             }
@@ -1563,7 +1561,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                 readOnly={false}
                 required={true}
                 time="03:30"
-                value={null}
+                value="America/Denver"
               >
                 <SearchableDropdown
                   clearOnSelect={false}
@@ -2355,7 +2353,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                       },
                     }
                   }
-                  value={null}
+                  value="America/Denver"
                 >
                   <div
                     className=""
@@ -3170,7 +3168,13 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                               "input": [Function],
                             }
                           }
-                          value={null}
+                          value={
+                            Object {
+                              "index": -1,
+                              "label": "Mountain Time (US & Canada) (1:30 AM)",
+                              "value": "America/Denver",
+                            }
+                          }
                         >
                           <Select
                             backspaceRemovesValue={true}
@@ -3990,14 +3994,20 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                             }
                             tabIndex="0"
                             tabSelectsValue={true}
-                            value={null}
+                            value={
+                              Object {
+                                "index": -1,
+                                "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                "value": "America/Denver",
+                              }
+                            }
                           >
                             <SelectContainer
                               clearValue={[Function]}
                               cx={[Function]}
                               getStyles={[Function]}
                               getValue={[Function]}
-                              hasValue={false}
+                              hasValue={true}
                               innerProps={
                                 Object {
                                   "id": undefined,
@@ -5596,7 +5606,11 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                   },
                                   "tabIndex": "0",
                                   "tabSelectsValue": true,
-                                  "value": null,
+                                  "value": Object {
+                                    "index": -1,
+                                    "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                    "value": "America/Denver",
+                                  },
                                 }
                               }
                               setValue={[Function]}
@@ -5654,7 +5668,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                     cx={[Function]}
                                     getStyles={[Function]}
                                     getValue={[Function]}
-                                    hasValue={false}
+                                    hasValue={true}
                                     innerProps={
                                       Object {
                                         "onMouseDown": [Function],
@@ -7255,7 +7269,11 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                         },
                                         "tabIndex": "0",
                                         "tabSelectsValue": true,
-                                        "value": null,
+                                        "value": Object {
+                                          "index": -1,
+                                          "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                          "value": "America/Denver",
+                                        },
                                       }
                                     }
                                     setValue={[Function]}
@@ -7330,7 +7348,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                           cx={[Function]}
                                           getStyles={[Function]}
                                           getValue={[Function]}
-                                          hasValue={false}
+                                          hasValue={true}
                                           isDisabled={false}
                                           isMulti={false}
                                           isRtl={false}
@@ -8922,7 +8940,11 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                               },
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
-                                              "value": null,
+                                              "value": Object {
+                                                "index": -1,
+                                                "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                "value": "America/Denver",
+                                              },
                                             }
                                           }
                                           setValue={[Function]}
@@ -8959,7 +8981,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                           <EmotionCssPropInternal
                                             __EMOTION_LABEL_PLEASE_DO_NOT_USE__="ValueContainer"
                                             __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                            className="cf-select__value-container"
+                                            className="cf-select__value-container cf-select__value-container--has-value"
                                             css={
                                               Object {
                                                 "WebkitOverflowScrolling": "touch",
@@ -8975,19 +8997,24 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                             }
                                           >
                                             <div
-                                              className="cf-select__value-container css-g1d714-ValueContainer"
+                                              className="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
                                             >
-                                              <Placeholder
+                                              <SingleValue
                                                 clearValue={[Function]}
                                                 cx={[Function]}
+                                                data={
+                                                  Object {
+                                                    "index": -1,
+                                                    "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                    "value": "America/Denver",
+                                                  }
+                                                }
                                                 getStyles={[Function]}
                                                 getValue={[Function]}
-                                                hasValue={false}
+                                                hasValue={true}
                                                 isDisabled={false}
-                                                isFocused={false}
                                                 isMulti={false}
                                                 isRtl={false}
-                                                key="placeholder"
                                                 options={
                                                   Array [
                                                     Object {
@@ -10576,7 +10603,11 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": null,
+                                                    "value": Object {
+                                                      "index": -1,
+                                                      "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                      "value": "America/Denver",
+                                                    },
                                                   }
                                                 }
                                                 setValue={[Function]}
@@ -10611,29 +10642,33 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                 }
                                               >
                                                 <EmotionCssPropInternal
-                                                  __EMOTION_LABEL_PLEASE_DO_NOT_USE__="Placeholder"
+                                                  __EMOTION_LABEL_PLEASE_DO_NOT_USE__="SingleValue"
                                                   __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                                  className="cf-select__placeholder"
+                                                  className="cf-select__single-value"
                                                   css={
                                                     Object {
                                                       "boxSizing": "border-box",
-                                                      "color": "hsl(0, 0%, 50%)",
-                                                      "label": "placeholder",
+                                                      "color": "hsl(0, 0%, 20%)",
+                                                      "label": "singleValue",
                                                       "marginLeft": 2,
                                                       "marginRight": 2,
+                                                      "maxWidth": "calc(100% - 8px)",
+                                                      "overflow": "hidden",
                                                       "position": "absolute",
+                                                      "textOverflow": "ellipsis",
                                                       "top": "50%",
                                                       "transform": "translateY(-50%)",
+                                                      "whiteSpace": "nowrap",
                                                     }
                                                   }
                                                 >
                                                   <div
-                                                    className="cf-select__placeholder css-1wa3eu0-placeholder"
+                                                    className="cf-select__single-value css-1uccc91-singleValue"
                                                   >
-                                                    Select a timezone
+                                                    Mountain Time (US & Canada) (1:30 AM)
                                                   </div>
                                                 </EmotionCssPropInternal>
-                                              </Placeholder>
+                                              </SingleValue>
                                               <Input
                                                 aria-autocomplete="list"
                                                 autoCapitalize="none"
@@ -11467,7 +11502,11 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": null,
+                                                    "value": Object {
+                                                      "index": -1,
+                                                      "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                      "value": "America/Denver",
+                                                    },
                                                   }
                                                 }
                                                 spellCheck="false"
@@ -11610,7 +11649,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                           cx={[Function]}
                                           getStyles={[Function]}
                                           getValue={[Function]}
-                                          hasValue={false}
+                                          hasValue={true}
                                           isDisabled={false}
                                           isMulti={false}
                                           isRtl={false}
@@ -13202,7 +13241,11 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                               },
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
-                                              "value": null,
+                                              "value": Object {
+                                                "index": -1,
+                                                "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                "value": "America/Denver",
+                                              },
                                             }
                                           }
                                           setValue={[Function]}
@@ -13258,7 +13301,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                 cx={[Function]}
                                                 getStyles={[Function]}
                                                 getValue={[Function]}
-                                                hasValue={false}
+                                                hasValue={true}
                                                 isDisabled={false}
                                                 isFocused={false}
                                                 isMulti={false}
@@ -14851,7 +14894,11 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": null,
+                                                    "value": Object {
+                                                      "index": -1,
+                                                      "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                      "value": "America/Denver",
+                                                    },
                                                   }
                                                 }
                                                 setValue={[Function]}
@@ -14911,7 +14958,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                 cx={[Function]}
                                                 getStyles={[Function]}
                                                 getValue={[Function]}
-                                                hasValue={false}
+                                                hasValue={true}
                                                 innerProps={
                                                   Object {
                                                     "aria-hidden": "true",
@@ -16511,7 +16558,11 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": null,
+                                                    "value": Object {
+                                                      "index": -1,
+                                                      "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                      "value": "America/Denver",
+                                                    },
                                                   }
                                                 }
                                                 setValue={[Function]}
@@ -16658,8 +16709,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                       Array [
                         "virtualHearing",
                         Object {
-                          "appellantTz": null,
-                          "representativeTz": null,
+                          "false": "America/Denver",
                         },
                       ],
                     ],
@@ -16767,7 +16817,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                 readOnly={false}
                 required={true}
                 time="03:30"
-                value={null}
+                value="America/Los_Angeles"
               >
                 <SearchableDropdown
                   clearOnSelect={false}
@@ -17559,7 +17609,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                       },
                     }
                   }
-                  value={null}
+                  value="America/Los_Angeles"
                 >
                   <div
                     className=""
@@ -18374,7 +18424,13 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                               "input": [Function],
                             }
                           }
-                          value={null}
+                          value={
+                            Object {
+                              "index": -0,
+                              "label": "Pacific Time (US & Canada) (12:30 AM)",
+                              "value": "America/Los_Angeles",
+                            }
+                          }
                         >
                           <Select
                             backspaceRemovesValue={true}
@@ -19194,14 +19250,20 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                             }
                             tabIndex="0"
                             tabSelectsValue={true}
-                            value={null}
+                            value={
+                              Object {
+                                "index": -0,
+                                "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                "value": "America/Los_Angeles",
+                              }
+                            }
                           >
                             <SelectContainer
                               clearValue={[Function]}
                               cx={[Function]}
                               getStyles={[Function]}
                               getValue={[Function]}
-                              hasValue={false}
+                              hasValue={true}
                               innerProps={
                                 Object {
                                   "id": undefined,
@@ -20800,7 +20862,11 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                   },
                                   "tabIndex": "0",
                                   "tabSelectsValue": true,
-                                  "value": null,
+                                  "value": Object {
+                                    "index": -0,
+                                    "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                    "value": "America/Los_Angeles",
+                                  },
                                 }
                               }
                               setValue={[Function]}
@@ -20858,7 +20924,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                     cx={[Function]}
                                     getStyles={[Function]}
                                     getValue={[Function]}
-                                    hasValue={false}
+                                    hasValue={true}
                                     innerProps={
                                       Object {
                                         "onMouseDown": [Function],
@@ -22459,7 +22525,11 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                         },
                                         "tabIndex": "0",
                                         "tabSelectsValue": true,
-                                        "value": null,
+                                        "value": Object {
+                                          "index": -0,
+                                          "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                          "value": "America/Los_Angeles",
+                                        },
                                       }
                                     }
                                     setValue={[Function]}
@@ -22534,7 +22604,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                           cx={[Function]}
                                           getStyles={[Function]}
                                           getValue={[Function]}
-                                          hasValue={false}
+                                          hasValue={true}
                                           isDisabled={false}
                                           isMulti={false}
                                           isRtl={false}
@@ -24126,7 +24196,11 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                               },
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
-                                              "value": null,
+                                              "value": Object {
+                                                "index": -0,
+                                                "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                "value": "America/Los_Angeles",
+                                              },
                                             }
                                           }
                                           setValue={[Function]}
@@ -24163,7 +24237,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                           <EmotionCssPropInternal
                                             __EMOTION_LABEL_PLEASE_DO_NOT_USE__="ValueContainer"
                                             __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                            className="cf-select__value-container"
+                                            className="cf-select__value-container cf-select__value-container--has-value"
                                             css={
                                               Object {
                                                 "WebkitOverflowScrolling": "touch",
@@ -24179,19 +24253,24 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                             }
                                           >
                                             <div
-                                              className="cf-select__value-container css-g1d714-ValueContainer"
+                                              className="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
                                             >
-                                              <Placeholder
+                                              <SingleValue
                                                 clearValue={[Function]}
                                                 cx={[Function]}
+                                                data={
+                                                  Object {
+                                                    "index": -0,
+                                                    "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                    "value": "America/Los_Angeles",
+                                                  }
+                                                }
                                                 getStyles={[Function]}
                                                 getValue={[Function]}
-                                                hasValue={false}
+                                                hasValue={true}
                                                 isDisabled={false}
-                                                isFocused={false}
                                                 isMulti={false}
                                                 isRtl={false}
-                                                key="placeholder"
                                                 options={
                                                   Array [
                                                     Object {
@@ -25780,7 +25859,11 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": null,
+                                                    "value": Object {
+                                                      "index": -0,
+                                                      "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                      "value": "America/Los_Angeles",
+                                                    },
                                                   }
                                                 }
                                                 setValue={[Function]}
@@ -25815,29 +25898,33 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                 }
                                               >
                                                 <EmotionCssPropInternal
-                                                  __EMOTION_LABEL_PLEASE_DO_NOT_USE__="Placeholder"
+                                                  __EMOTION_LABEL_PLEASE_DO_NOT_USE__="SingleValue"
                                                   __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                                  className="cf-select__placeholder"
+                                                  className="cf-select__single-value"
                                                   css={
                                                     Object {
                                                       "boxSizing": "border-box",
-                                                      "color": "hsl(0, 0%, 50%)",
-                                                      "label": "placeholder",
+                                                      "color": "hsl(0, 0%, 20%)",
+                                                      "label": "singleValue",
                                                       "marginLeft": 2,
                                                       "marginRight": 2,
+                                                      "maxWidth": "calc(100% - 8px)",
+                                                      "overflow": "hidden",
                                                       "position": "absolute",
+                                                      "textOverflow": "ellipsis",
                                                       "top": "50%",
                                                       "transform": "translateY(-50%)",
+                                                      "whiteSpace": "nowrap",
                                                     }
                                                   }
                                                 >
                                                   <div
-                                                    className="cf-select__placeholder css-1wa3eu0-placeholder"
+                                                    className="cf-select__single-value css-1uccc91-singleValue"
                                                   >
-                                                    Select a timezone
+                                                    Pacific Time (US & Canada) (12:30 AM)
                                                   </div>
                                                 </EmotionCssPropInternal>
-                                              </Placeholder>
+                                              </SingleValue>
                                               <Input
                                                 aria-autocomplete="list"
                                                 autoCapitalize="none"
@@ -26671,7 +26758,11 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": null,
+                                                    "value": Object {
+                                                      "index": -0,
+                                                      "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                      "value": "America/Los_Angeles",
+                                                    },
                                                   }
                                                 }
                                                 spellCheck="false"
@@ -26814,7 +26905,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                           cx={[Function]}
                                           getStyles={[Function]}
                                           getValue={[Function]}
-                                          hasValue={false}
+                                          hasValue={true}
                                           isDisabled={false}
                                           isMulti={false}
                                           isRtl={false}
@@ -28406,7 +28497,11 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                               },
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
-                                              "value": null,
+                                              "value": Object {
+                                                "index": -0,
+                                                "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                "value": "America/Los_Angeles",
+                                              },
                                             }
                                           }
                                           setValue={[Function]}
@@ -28462,7 +28557,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                 cx={[Function]}
                                                 getStyles={[Function]}
                                                 getValue={[Function]}
-                                                hasValue={false}
+                                                hasValue={true}
                                                 isDisabled={false}
                                                 isFocused={false}
                                                 isMulti={false}
@@ -30055,7 +30150,11 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": null,
+                                                    "value": Object {
+                                                      "index": -0,
+                                                      "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                      "value": "America/Los_Angeles",
+                                                    },
                                                   }
                                                 }
                                                 setValue={[Function]}
@@ -30115,7 +30214,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                 cx={[Function]}
                                                 getStyles={[Function]}
                                                 getValue={[Function]}
-                                                hasValue={false}
+                                                hasValue={true}
                                                 innerProps={
                                                   Object {
                                                     "aria-hidden": "true",
@@ -31715,7 +31814,11 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": null,
+                                                    "value": Object {
+                                                      "index": -0,
+                                                      "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                      "value": "America/Los_Angeles",
+                                                    },
                                                   }
                                                 }
                                                 setValue={[Function]}
@@ -32005,7 +32108,7 @@ exports[`VirtualHearingForm Shows only hearing links with no virtualHearing 1`] 
       "virtualHearing": Object {
         "aliasWithHost": "BVA0000009@care.evn.va.gov",
         "appellantEmail": "Bob.Smith@test.com",
-        "appellantTz": null,
+        "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
@@ -32013,7 +32116,7 @@ exports[`VirtualHearingForm Shows only hearing links with no virtualHearing 1`] 
         "hostPin": "8600030#",
         "jobCompleted": true,
         "representativeEmail": "tom.brady@caseflow.gov",
-        "representativeTz": null,
+        "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
         "status": "active",
       },
@@ -32136,7 +32239,7 @@ exports[`VirtualHearingForm Shows only hearing links with no virtualHearing 1`] 
               "virtualHearing": Object {
                 "aliasWithHost": "BVA0000009@care.evn.va.gov",
                 "appellantEmail": "Bob.Smith@test.com",
-                "appellantTz": null,
+                "appellantTz": "America/Denver",
                 "clientHost": "care.evn.va.gov",
                 "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                 "guestPin": "2684353125#",
@@ -32144,7 +32247,7 @@ exports[`VirtualHearingForm Shows only hearing links with no virtualHearing 1`] 
                 "hostPin": "8600030#",
                 "jobCompleted": true,
                 "representativeEmail": "tom.brady@caseflow.gov",
-                "representativeTz": null,
+                "representativeTz": "America/Los_Angeles",
                 "requestCancelled": false,
                 "status": "active",
               },
@@ -32250,7 +32353,7 @@ exports[`VirtualHearingForm Shows only hearing links with no virtualHearing 1`] 
                   "virtualHearing": Object {
                     "aliasWithHost": "BVA0000009@care.evn.va.gov",
                     "appellantEmail": "Bob.Smith@test.com",
-                    "appellantTz": null,
+                    "appellantTz": "America/Denver",
                     "clientHost": "care.evn.va.gov",
                     "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                     "guestPin": "2684353125#",
@@ -32258,7 +32361,7 @@ exports[`VirtualHearingForm Shows only hearing links with no virtualHearing 1`] 
                     "hostPin": "8600030#",
                     "jobCompleted": true,
                     "representativeEmail": "tom.brady@caseflow.gov",
-                    "representativeTz": null,
+                    "representativeTz": "America/Los_Angeles",
                     "requestCancelled": false,
                     "status": "active",
                   },
@@ -32378,7 +32481,7 @@ exports[`VirtualHearingForm Shows only hearing links with no virtualHearing 1`] 
                   "virtualHearing": Object {
                     "aliasWithHost": "BVA0000009@care.evn.va.gov",
                     "appellantEmail": "Bob.Smith@test.com",
-                    "appellantTz": null,
+                    "appellantTz": "America/Denver",
                     "clientHost": "care.evn.va.gov",
                     "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                     "guestPin": "2684353125#",
@@ -32386,7 +32489,7 @@ exports[`VirtualHearingForm Shows only hearing links with no virtualHearing 1`] 
                     "hostPin": "8600030#",
                     "jobCompleted": true,
                     "representativeEmail": "tom.brady@caseflow.gov",
-                    "representativeTz": null,
+                    "representativeTz": "America/Los_Angeles",
                     "requestCancelled": false,
                     "status": "active",
                   },

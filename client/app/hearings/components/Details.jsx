@@ -5,6 +5,7 @@ import { isUndefined, get } from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import React, { useState, useContext, useEffect } from 'react';
+import { sprintf } from 'sprintf-js';
 
 import { DetailsHeader } from './details/DetailsHeader';
 import { HearingConversion } from './HearingConversion';
@@ -215,7 +216,7 @@ const HearingDetails = (props) => {
 
   const editedEmails = getEditedEmails();
   const convertLabel = converting === 'change_to_virtual' ?
-    'Convert to Virtual Hearing' : `Convert to ${hearing.readableRequestType} Hearing`;
+    sprintf(COPY.CONVERT_HEARING_TITLE, 'Virtual') : sprintf(COPY.CONVERT_HEARING_TITLE, hearing.readableRequestType);
 
   return (
     <React.Fragment>

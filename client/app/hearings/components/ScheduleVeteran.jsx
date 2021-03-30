@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 /* eslint-disable camelcase */
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
@@ -509,3 +510,4 @@ export default withRouter(
 );
 
 /* eslint-enable camelcase */
+/* eslint-enable max-lines */
