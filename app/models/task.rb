@@ -546,22 +546,34 @@ class Task < CaseflowRecord
   end
 
   def reassign(reassign_params, current_user)
-    previous_status = self.status
-    
     replacement = dup.tap do |task|
-      task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
-      task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
-      task.instructions = flattened_instructions(reassign_params)
-      task.status = Constants.TASK_STATUSES.assigned
-      
-      self.status = Constants.TASK_STATUSES.cancelled
-
-      task.save!
+      ActiveRecord::Base.transaction do  
+        task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
+        task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
+        task.instructions = flattened_instructions(reassign_params)
+        task.status = Constants.TASK_STATUSES.assigned
+        
+        begin
+          task.save!
+          # We ignore the no_multiples_of_noncancelled_task validation during the reassign flow
+        rescue ActiveRecord::RecordInvalid => e
+          if e.message != "Validation failed: Type there should not be multiple tasks of this type"
+            raise
+          end
+        end
+      end
     end
 
     # Preserve the open children and status of the old task
     children.select(&:stays_with_reassigned_parent?).each { |child| child.update!(parent_id: replacement.id) }
-    replacement.update!(status: previous_status)
+    # note: below may conflict with requirement for new judge assign tasks to be created with status of assigned
+    
+    if replacement.type != "JudgeAssignTask"
+      replacement.update!(status: status)
+    end
+    self.status = Constants.TASK_STATUSES.cancelled
+    self.save!
+    update_with_instructions(status: Constants.TASK_STATUSES.cancelled, instructions: reassign_params[:instructions])
 
 
     appeal.overtime = false if appeal.overtime? && reassign_clears_overtime?

@@ -11,21 +11,18 @@ describe JudgeTask, :all_dbs do
     create(:staff, :attorney_role, sdomainid: attorney.css_id)
   end
 
-  describe "only_one_judge_assign_task" do
+  describe "no_multiples_of_noncancelled_task" do
     let(:user) { judge }
     let(:stream_type) { Constants.AMA_STREAM_TYPES.original}
     let(:appeal) { create(:appeal, stream_type: stream_type) }
     let!(:first_assign_task) do
       create(:ama_judge_assign_task, assigned_to: judge, appeal: appeal)
     end
-    let!(:second_assign_task) do
-      create(:ama_judge_assign_task, assigned_to: judge, appeal: appeal)
-    end
-    let(:third_assign_task) do
+    let(:second_assign_task) do
       create(:ama_judge_assign_task, assigned_to: judge, appeal: appeal)
     end
 
-    subject { third_assign_task }
+    subject { second_assign_task }
 
     context "only two judge assign tasks can be created for an appeal" do
       it "throws an error when a third task is created" do
@@ -35,6 +32,27 @@ describe JudgeTask, :all_dbs do
       end
     end
 
+  end
+
+  describe "reassign" do 
+    let(:root_task) { RootTask.find(create(:root_task).id) }
+    let(:task) {create(:ama_judge_assign_task, parent: root_task)}
+    let(:old_assignee) { task.assigned_to }
+    let(:new_assignee) { create(:user) }
+    let(:params) do
+      {
+        assigned_to_id: new_assignee.id,
+        assigned_to_type: new_assignee.class.name,
+        instructions: "instructions"
+      }
+    end
+    subject { task.reassign(params, old_assignee) }
+
+    context "when a judge task is reassigned" do
+      it "should not violate the no_multiples_of_noncancelled_task validation" do
+        expect { subject }.to_not raise_error
+      end
+    end
   end
 
   describe ".available_actions" do
