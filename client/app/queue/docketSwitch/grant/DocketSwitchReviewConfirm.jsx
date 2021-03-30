@@ -41,7 +41,7 @@ export const DocketSwitchReviewConfirm = ({
   onCancel,
   onBack,
   onSubmit,
-  disabled = false,
+  loading = false,
   originalReceiptDate,
   docketSwitchReceiptDate,
   issuesSwitched,
@@ -177,7 +177,7 @@ export const DocketSwitchReviewConfirm = ({
           onCancel={onCancel}
           onBack={onBack}
           onSubmit={onSubmit}
-          disabled={disabled}
+          loading={loading}
           submitText="Confirm docket switch"
         />
       </div>
@@ -192,7 +192,7 @@ DocketSwitchReviewConfirm.propTypes = {
   onBack: PropTypes.func,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
-  disabled: PropTypes.bool,
+  loading: PropTypes.bool,
   originalReceiptDate: PropTypes.instanceOf(Date),
   docketSwitchReceiptDate: PropTypes.instanceOf(Date),
   issuesSwitched: PropTypes.arrayOf(
