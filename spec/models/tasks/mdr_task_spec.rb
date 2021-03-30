@@ -22,7 +22,7 @@ describe MdrTask, :postgres do
     end
 
     describe ".create_with_hold" do
-      let(:decision_date) { Date.today - 1.week }
+      let(:decision_date) { Time.zone.today - 1.week }
       subject { described_class.create_with_hold(parent_task, decision_date) }
 
       it "creates task with child TimedHoldTask" do
@@ -46,7 +46,7 @@ describe MdrTask, :postgres do
   end
 
   describe "#available_actions" do
-    let(:decision_date) { Date.today - 1.week }
+    let(:decision_date) { Time.zone.today - 1.week }
     let!(:mdr_task) { MdrTask.create_with_hold(create(:cavc_task), decision_date) }
 
     context "immediately after MdrTask is created" do

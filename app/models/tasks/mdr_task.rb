@@ -53,15 +53,15 @@ class MdrTask < Task
     TASK_ACTIONS
   end
 
+  def self.decision_date_plus_90_days(decision_date)
+    end_date = decision_date + 90.days
+    # What's expected is the _number_ of days to wait:
+    (end_date - Time.zone.today).to_i
+  end
+
   private
 
   def set_assignee
     self.assigned_to = CavcLitigationSupport.singleton if assigned_to.nil?
-  end
-
-  def self.decision_date_plus_90_days(decision_date)
-    end_date = decision_date + 90.days
-    # What's expected is the _number_ of days to wait:
-    (end_date - Date.today).to_i
   end
 end
