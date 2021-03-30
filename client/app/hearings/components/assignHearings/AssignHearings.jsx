@@ -9,6 +9,8 @@ import { NoUpcomingHearingDayMessage } from './Messages';
 import AssignHearingsTabs from './AssignHearingsTabs';
 import Button from '../../../components/Button';
 
+import { VIDEO_HEARING_LABEL } from '../../constants';
+
 const horizontalRuleStyling = css({
   border: 0,
   width: '90%',
@@ -62,6 +64,31 @@ const UpcomingHearingDaysNav = ({
     (hearingDay) => hearingDay.scheduledFor, 'asc'
   );
 
+  // This came out of ListSchedule, should be refactored into common import
+  const formatHearingType = (hearingType) => {
+    if (hearingType.toLowerCase().startsWith('video')) {
+      return VIDEO_HEARING_LABEL;
+    }
+
+    return hearingType;
+  };
+  // This is necessecary otherwise 'null' is displayed when there's no room or judge
+  const formatHearingRoom = (hearingDay) => hearingDay.room ? hearingDay.room : '';
+  // Check if there's a judge assigned
+  const hearingDayHasJudge = (hearingDay) => hearingDay.judgeFirstName && hearingDay.judgeLastName;
+  // This came out of ListSchedule, should be refactored into common import
+  // I modified it though, will need to make that change in ListSchedule
+  const formatVljName = (hearingDay) => {
+    const first = hearingDay?.judgeFirstName;
+    const last = hearingDay?.judgeLastName;
+
+    if (last && first) {
+      return `${last}, ${first}`;
+    }
+
+    return '';
+  };
+
   return (
     <div className="usa-width-one-fourth" {...roSelectionStyling}>
       <h3>Hearings to Schedule</h3>
@@ -71,6 +98,15 @@ const UpcomingHearingDaysNav = ({
           orderedHearingDays.map(
             (hearingDay) => {
               const dateSelected = selectedHearingDay?.id === hearingDay?.id;
+              const formattedHearingType = formatHearingType(hearingDay.readableRequestType);
+              const judgeOrRoom = hearingDayHasJudge(hearingDay) ? formatVljName(hearingDay) : formatHearingRoom(hearingDay);
+
+              // This came from AssignHearingTabs, modified
+              const scheduledHearings = _.get(hearingDay, 'hearings', {});
+              const scheduledHearingCount = Object.keys(scheduledHearings).length;
+              const availableSlotCount = _.get(selectedHearingDay, 'totalSlots', 0) - scheduledHearingCount;
+
+              const formattedSlotRatio = `${scheduledHearingCount} of ${availableSlotCount}`;
 
               return (
                 <li key={hearingDay.id} >
@@ -81,15 +117,15 @@ const UpcomingHearingDaysNav = ({
                     <div>
                       <div {...leftColumnStyle} >
                         <div>
-                        Thu Apr 1
+                          {moment(hearingDay.scheduledFor).format('ddd MMM Do')}
                         </div>
                         <div {...typeAndJudgeStyle}>
-                          Virtual * VLJVigsittaboorn
+                          {`${formattedHearingType} - ${judgeOrRoom}`}
                         </div>
                       </div>
                       <div {...rightColumnStyle} >
                         <div>
-                        2 of 4
+                          {formattedSlotRatio}
                         </div>
                         <div>
                         scheduled
