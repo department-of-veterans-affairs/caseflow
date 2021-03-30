@@ -13,6 +13,7 @@ const buttonCommonStyle = {
   width: '90%',
   paddingTop: '1.5rem',
   paddingBottom: '1.5rem',
+  outline: 'none'
 };
 
 const buttonUnselectedStyle = css(
