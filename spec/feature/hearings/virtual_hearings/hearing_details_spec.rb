@@ -577,7 +577,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       end
     end
 
-    context "Updating both Appellant and POA/Representative timezone", focus: true do
+    context "Updating both Appellant and POA/Representative timezone" do
       let!(:virtual_hearing) do
         create(:virtual_hearing,
                :all_emails_sent,
