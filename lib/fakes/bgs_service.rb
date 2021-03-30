@@ -265,7 +265,7 @@ class Fakes::BGSService
       }
     elsif veteran.present?
       {
-        birth_date: Date.strptime(veteran.date_of_birth, "%m/%d/%Y"),
+        birth_date: veteran&.date_of_birth && Date.strptime(veteran&.date_of_birth, "%m/%d/%Y"),
         first_name: veteran.first_name,
         middle_name: veteran.middle_name,
         last_name: veteran.last_name,
