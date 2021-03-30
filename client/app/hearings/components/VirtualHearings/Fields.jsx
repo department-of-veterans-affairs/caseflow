@@ -53,7 +53,7 @@ export const VirtualHearingFields = ({
           <Timezone
             errorMessage={errors?.representativeTz}
             required={Boolean(virtualHearing?.representativeEmail)}
-            value={virtualHearing?.representativeTz || virtualHearing?.appellantTz}
+            value={virtualHearing?.representativeTz}
             onChange={(representativeTz) => update('virtualHearing', { representativeTz })}
             readOnly={readOnly || !virtualHearing?.representativeEmail}
             time={time}

@@ -124,7 +124,7 @@ export const ScheduleVeteran = ({
           virtualHearing: {
             status: 'pending',
             appellantTz: appeal?.appellantTz,
-            representativeTz: appeal?.powerOfAttorney?.representative_tz
+            representativeTz: appeal?.powerOfAttorney?.representative_tz || appeal?.appellantTz
           }
         }
       );
@@ -339,7 +339,7 @@ export const ScheduleVeteran = ({
       virtualHearing: {
         status: 'pending',
         appellantTz: appeal.appellantTz,
-        representativeTz: appeal?.powerOfAttorney?.representative_tz
+        representativeTz: appeal?.powerOfAttorney?.representative_tz || appeal.appellantTz
       }
     });
   };
