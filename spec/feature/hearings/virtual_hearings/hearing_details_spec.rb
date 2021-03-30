@@ -199,6 +199,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       let!(:virtual_hearing) do
         create(
           :virtual_hearing,
+          :initialized,
           :all_emails_sent,
           :timezones_initialized,
           status: :active,
@@ -251,7 +252,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
         check_email_event_table(hearing, 4)
 
         # Check that links were generated correctly
-        check_virtual_hearings_links(virtual_hearing)
+        check_virtual_hearings_links_expired(virtual_hearing)
       end
     end
 
