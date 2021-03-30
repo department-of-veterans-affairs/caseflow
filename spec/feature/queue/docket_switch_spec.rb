@@ -589,8 +589,8 @@ RSpec.feature "Docket Switch", :all_dbs do
       docket_switch = DocketSwitch.find_by(old_docket_stream_id: appeal.id)
       expect(docket_switch).to_not be_nil
       expect(docket_switch.new_docket_stream.docket_type).to eq(docket_switch.docket_type)
-      aod_motion_mail_task = new_docket_stream.reload.tasks.find { |task| task.type == "AodMotionMailTask" }
-      foia_task = new_docket_stream.reload.tasks.find { |task| task.type == "AodMotionMailTask" }
+      aod_motion_mail_task = docket_switch.new_docket_stream.reload.tasks.find { |task| task.type == "AodMotionMailTask" }
+      foia_task = docket_switch.new_docket_stream.reload.tasks.find { |task| task.type == "FoiaTask" }
       expect(aod_motion_mail_task && foia_task).to be_active
       expect(page).to have_current_path("/queue/appeals/#{docket_switch.new_docket_stream.uuid}")
 
