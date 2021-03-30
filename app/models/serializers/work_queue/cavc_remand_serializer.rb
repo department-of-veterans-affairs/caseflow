@@ -15,7 +15,7 @@ class WorkQueue::CavcRemandSerializer
   attribute :remand_appeal_id
   attribute :remand_subtype
   attribute :represented_by_attorney
-  
+
   attribute :source_appeal_uuid do |object|
     object.source_appeal&.uuid
   end
