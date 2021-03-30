@@ -308,9 +308,11 @@ RSpec.feature "Docket Switch", :all_dbs do
 
       expect(page).to have_content(format(COPY::DOCKET_SWITCH_GRANTED_REQUEST_LABEL, appeal.claimant.name))
       expect(page).to have_content(COPY::DOCKET_SWITCH_GRANTED_REQUEST_INSTRUCTIONS)
-
       fill_in "What is the Receipt Date of the docket switch request?", with: receipt_date
 
+      expect(find_field(
+        "What is the Receipt Date of the docket switch request?"
+      ).value).to have_content(receipt_date.to_s)
       # select full grants
       within_fieldset("How are you proceeding with this request to switch dockets?") do
         find("label", text: "Grant all issues").click
@@ -345,6 +347,7 @@ RSpec.feature "Docket Switch", :all_dbs do
         "/queue/appeals/#{appeal.uuid}/tasks/#{docket_switch_granted_task.id}/docket_switch/checkout/grant/confirm"
       )
       expect(page).to have_content appeal.veteran_full_name
+      expect(page).to have_content(receipt_date.strftime("%-m/%-d/%Y"))
 
       click_button(text: "Confirm docket switch")
 
