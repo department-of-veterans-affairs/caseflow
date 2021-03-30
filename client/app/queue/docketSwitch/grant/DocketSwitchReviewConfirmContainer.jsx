@@ -128,7 +128,7 @@ export const DocketSwitchReviewConfirmContainer = () => {
       claimantName={appeal.claimantName}
       docketFrom={StringUtil.snakeCaseToCapitalized(appeal.docketName)}
       docketTo={StringUtil.snakeCaseToCapitalized(formData.docketType)}
-      docketSwitchReceiptDate={new Date(formData.receiptDate)}
+      docketSwitchReceiptDate={parseISO(formData.receiptDate)}
       issuesSwitched={issuesSwitched}
       issuesRemaining={issuesRemaining}
       onBack={goBack}
