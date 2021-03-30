@@ -34,9 +34,12 @@ RSpec.feature "Docket Switch", :all_dbs do
   let!(:cotb_non_attorney) { create(:user, full_name: "Aang Bender") }
   let(:judge) { create(:user, :with_vacols_judge_record, full_name: "Judge the First", css_id: "JUDGE_1") }
   let!(:other_organization) { Organization.create!(name: "Other organization", url: "other") }
-  let!(:aod_motion_mail_task, appeal: appeal, parent: root_task),
-  let!(:foia_task, appeal: appeal, parent: create(
-    :translation_task, parent: appeal.root_task, assigned_to: other_organization))
+  let!(:aod_motion_mail_task) create(:aod_motion_mail_task, appeal: appeal, parent: root_task)
+  let!(:foia_task) do
+    create(:foia_task, 
+      appeal: appeal, 
+      parent: create(:translation_task, parent: appeal.root_task, assigned_to: other_organization)
+    )
   end
 
   describe "create DocketSwitchMailTask" do
