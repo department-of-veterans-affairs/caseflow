@@ -72,10 +72,16 @@ const UpcomingHearingDaysNav = ({
 
     return hearingType;
   };
-  // This is necessecary otherwise 'null' is displayed when there's no room or judge
-  const formatHearingRoom = (hearingDay) => hearingDay.room ? hearingDay.room : '';
   // Check if there's a judge assigned
   const hearingDayHasJudge = (hearingDay) => hearingDay.judgeFirstName && hearingDay.judgeLastName;
+  // Check if there's a room assigned (there never is for virtual)
+  const hearingDayHasRoom = (hearingDay) => Boolean(hearingDay.room);
+  // Check if there's a judge or room assigned
+  const hearingDayHasJudgeOrRoom = (hearingDay) => hearingDayHasJudge(hearingDay) || hearingDayHasRoom(hearingDay);
+
+  const separatorIfJudgeOrRoomPresent = (hearingDay) => hearingDayHasJudgeOrRoom(hearingDay) ? '-' : '';
+  // This is necessecary otherwise 'null' is displayed when there's no room or judge
+  const formatHearingRoom = (hearingDay) => hearingDay.room ? hearingDay.room : '';
   // This came out of ListSchedule, should be refactored into common import
   // I modified it though, will need to make that change in ListSchedule
   const formatVljName = (hearingDay) => {
@@ -100,12 +106,12 @@ const UpcomingHearingDaysNav = ({
               const dateSelected = selectedHearingDay?.id === hearingDay?.id;
               const formattedHearingType = formatHearingType(hearingDay.readableRequestType);
               const judgeOrRoom = hearingDayHasJudge(hearingDay) ? formatVljName(hearingDay) : formatHearingRoom(hearingDay);
+              const separator = separatorIfJudgeOrRoomPresent(hearingDay);
 
               // This came from AssignHearingTabs, modified
               const scheduledHearings = _.get(hearingDay, 'hearings', {});
               const scheduledHearingCount = Object.keys(scheduledHearings).length;
               const availableSlotCount = _.get(selectedHearingDay, 'totalSlots', 0) - scheduledHearingCount;
-
               const formattedSlotRatio = `${scheduledHearingCount} of ${availableSlotCount}`;
 
               return (
@@ -120,7 +126,7 @@ const UpcomingHearingDaysNav = ({
                           {moment(hearingDay.scheduledFor).format('ddd MMM Do')}
                         </div>
                         <div {...typeAndJudgeStyle}>
-                          {`${formattedHearingType} - ${judgeOrRoom}`}
+                          {`${formattedHearingType} ${separator} ${judgeOrRoom}`}
                         </div>
                       </div>
                       <div {...rightColumnStyle} >
