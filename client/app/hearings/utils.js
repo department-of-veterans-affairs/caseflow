@@ -511,12 +511,12 @@ const calculateAvailableTimeslots = ({ slotCount, startTime, roTimezone, hearing
     // so if there's a slot for 8:30am eastern (5:30am Pacific), don't show that
     // if we have an roTimezone of 'America/Los_Angeles' (or other west coast)
     const slotFull = hearingTimes.some((scheduledHearingTime) =>
-      (Math.abs(slotTime.diff(scheduledHearingTime, 'minutes')) < 60) ||
-      (slotTime.isBefore(moment.tz(startTime, 'HH:mm', roTimezone)))
+      (Math.abs(slotTime.diff(scheduledHearingTime, 'minutes')) < 60)
     );
+    const slotOutsideTimeRange = slotTime.isBefore(moment.tz(startTime, 'HH:mm', roTimezone));
 
     // Return null if there is a filled time slot, otherwise return the hearingTime
-    if (slotFull) {
+    if (slotFull || slotOutsideTimeRange) {
       return null;
     }
 
