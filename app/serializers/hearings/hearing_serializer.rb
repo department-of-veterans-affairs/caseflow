@@ -90,4 +90,6 @@ class HearingSerializer
   attribute :was_virtual, &:was_virtual?
   attribute :witness
   attribute :worksheet_issues
+  attribute :veteran_date_of_death_info, &:rescue_and_check_toggle_veteran_date_of_death_info
+  attribute :hearing_disposition_task_id, &:open_hearing_disposition_task_id
 end

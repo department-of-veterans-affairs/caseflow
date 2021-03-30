@@ -435,6 +435,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   options={
                     Array [
                       Object {
+                        "label": "Clerk",
+                        "value": "Clerk",
+                      },
+                      Object {
+                        "label": "Panel",
+                        "value": "Panel",
+                      },
+                      Object {
+                        "label": "Per curiam",
+                        "value": "Per curiam",
+                      },
+                      Object {
                         "label": "Alan G. Lance, Sr.",
                         "value": "Alan G. Lance, Sr.",
                       },
@@ -517,21 +529,21 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   value={null}
                 >
                   <div
-                    className="cf-form-dropdown dropdown-judge-dropdown"
+                    className=""
                   >
-                    <label
-                      className="question-label"
-                      htmlFor="judge-dropdown"
-                    >
-                      <strong>
-                        <span>
-                          What is the CAVC judge's name?
-                        </span>
-                      </strong>
-                    </label>
                     <div
-                      className=""
+                      className="cf-form-dropdown dropdown-judge-dropdown"
                     >
+                      <label
+                        className="question-label"
+                        htmlFor="judge-dropdown"
+                      >
+                        <strong>
+                          <span>
+                            What is the CAVC judge's name?
+                          </span>
+                        </strong>
+                      </label>
                       <div
                         className="cf-select"
                       >
@@ -549,6 +561,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                           onChange={[Function]}
                           options={
                             Array [
+                              Object {
+                                "label": "Clerk",
+                                "value": "Clerk",
+                              },
+                              Object {
+                                "label": "Panel",
+                                "value": "Panel",
+                              },
+                              Object {
+                                "label": "Per curiam",
+                                "value": "Per curiam",
+                              },
                               Object {
                                 "label": "Alan G. Lance, Sr.",
                                 "value": "Alan G. Lance, Sr.",
@@ -678,6 +702,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                             options={
                               Array [
                                 Object {
+                                  "label": "Clerk",
+                                  "value": "Clerk",
+                                },
+                                Object {
+                                  "label": "Panel",
+                                  "value": "Panel",
+                                },
+                                Object {
+                                  "label": "Per curiam",
+                                  "value": "Per curiam",
+                                },
+                                Object {
                                   "label": "Alan G. Lance, Sr.",
                                   "value": "Alan G. Lance, Sr.",
                                 },
@@ -787,6 +823,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                               isRtl={false}
                               options={
                                 Array [
+                                  Object {
+                                    "label": "Clerk",
+                                    "value": "Clerk",
+                                  },
+                                  Object {
+                                    "label": "Panel",
+                                    "value": "Panel",
+                                  },
+                                  Object {
+                                    "label": "Per curiam",
+                                    "value": "Per curiam",
+                                  },
                                   Object {
                                     "label": "Alan G. Lance, Sr.",
                                     "value": "Alan G. Lance, Sr.",
@@ -910,6 +958,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                   "openMenuOnClick": true,
                                   "openMenuOnFocus": false,
                                   "options": Array [
+                                    Object {
+                                      "label": "Clerk",
+                                      "value": "Clerk",
+                                    },
+                                    Object {
+                                      "label": "Panel",
+                                      "value": "Panel",
+                                    },
+                                    Object {
+                                      "label": "Per curiam",
+                                      "value": "Per curiam",
+                                    },
                                     Object {
                                       "label": "Alan G. Lance, Sr.",
                                       "value": "Alan G. Lance, Sr.",
@@ -1071,6 +1131,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                     options={
                                       Array [
                                         Object {
+                                          "label": "Clerk",
+                                          "value": "Clerk",
+                                        },
+                                        Object {
+                                          "label": "Panel",
+                                          "value": "Panel",
+                                        },
+                                        Object {
+                                          "label": "Per curiam",
+                                          "value": "Per curiam",
+                                        },
+                                        Object {
                                           "label": "Alan G. Lance, Sr.",
                                           "value": "Alan G. Lance, Sr.",
                                         },
@@ -1193,6 +1265,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                         "openMenuOnClick": true,
                                         "openMenuOnFocus": false,
                                         "options": Array [
+                                          Object {
+                                            "label": "Clerk",
+                                            "value": "Clerk",
+                                          },
+                                          Object {
+                                            "label": "Panel",
+                                            "value": "Panel",
+                                          },
+                                          Object {
+                                            "label": "Per curiam",
+                                            "value": "Per curiam",
+                                          },
                                           Object {
                                             "label": "Alan G. Lance, Sr.",
                                             "value": "Alan G. Lance, Sr.",
@@ -1362,6 +1446,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                           options={
                                             Array [
                                               Object {
+                                                "label": "Clerk",
+                                                "value": "Clerk",
+                                              },
+                                              Object {
+                                                "label": "Panel",
+                                                "value": "Panel",
+                                              },
+                                              Object {
+                                                "label": "Per curiam",
+                                                "value": "Per curiam",
+                                              },
+                                              Object {
                                                 "label": "Alan G. Lance, Sr.",
                                                 "value": "Alan G. Lance, Sr.",
                                               },
@@ -1484,6 +1580,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                               "openMenuOnClick": true,
                                               "openMenuOnFocus": false,
                                               "options": Array [
+                                                Object {
+                                                  "label": "Clerk",
+                                                  "value": "Clerk",
+                                                },
+                                                Object {
+                                                  "label": "Panel",
+                                                  "value": "Panel",
+                                                },
+                                                Object {
+                                                  "label": "Per curiam",
+                                                  "value": "Per curiam",
+                                                },
                                                 Object {
                                                   "label": "Alan G. Lance, Sr.",
                                                   "value": "Alan G. Lance, Sr.",
@@ -1640,6 +1748,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                 options={
                                                   Array [
                                                     Object {
+                                                      "label": "Clerk",
+                                                      "value": "Clerk",
+                                                    },
+                                                    Object {
+                                                      "label": "Panel",
+                                                      "value": "Panel",
+                                                    },
+                                                    Object {
+                                                      "label": "Per curiam",
+                                                      "value": "Per curiam",
+                                                    },
+                                                    Object {
                                                       "label": "Alan G. Lance, Sr.",
                                                       "value": "Alan G. Lance, Sr.",
                                                     },
@@ -1762,6 +1882,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                     "openMenuOnClick": true,
                                                     "openMenuOnFocus": false,
                                                     "options": Array [
+                                                      Object {
+                                                        "label": "Clerk",
+                                                        "value": "Clerk",
+                                                      },
+                                                      Object {
+                                                        "label": "Panel",
+                                                        "value": "Panel",
+                                                      },
+                                                      Object {
+                                                        "label": "Per curiam",
+                                                        "value": "Per curiam",
+                                                      },
                                                       Object {
                                                         "label": "Alan G. Lance, Sr.",
                                                         "value": "Alan G. Lance, Sr.",
@@ -1965,6 +2097,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                     "openMenuOnClick": true,
                                                     "openMenuOnFocus": false,
                                                     "options": Array [
+                                                      Object {
+                                                        "label": "Clerk",
+                                                        "value": "Clerk",
+                                                      },
+                                                      Object {
+                                                        "label": "Panel",
+                                                        "value": "Panel",
+                                                      },
+                                                      Object {
+                                                        "label": "Per curiam",
+                                                        "value": "Per curiam",
+                                                      },
                                                       Object {
                                                         "label": "Alan G. Lance, Sr.",
                                                         "value": "Alan G. Lance, Sr.",
@@ -2202,6 +2346,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                           options={
                                             Array [
                                               Object {
+                                                "label": "Clerk",
+                                                "value": "Clerk",
+                                              },
+                                              Object {
+                                                "label": "Panel",
+                                                "value": "Panel",
+                                              },
+                                              Object {
+                                                "label": "Per curiam",
+                                                "value": "Per curiam",
+                                              },
+                                              Object {
                                                 "label": "Alan G. Lance, Sr.",
                                                 "value": "Alan G. Lance, Sr.",
                                               },
@@ -2324,6 +2480,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                               "openMenuOnClick": true,
                                               "openMenuOnFocus": false,
                                               "options": Array [
+                                                Object {
+                                                  "label": "Clerk",
+                                                  "value": "Clerk",
+                                                },
+                                                Object {
+                                                  "label": "Panel",
+                                                  "value": "Panel",
+                                                },
+                                                Object {
+                                                  "label": "Per curiam",
+                                                  "value": "Per curiam",
+                                                },
                                                 Object {
                                                   "label": "Alan G. Lance, Sr.",
                                                   "value": "Alan G. Lance, Sr.",
@@ -2475,6 +2643,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                 options={
                                                   Array [
                                                     Object {
+                                                      "label": "Clerk",
+                                                      "value": "Clerk",
+                                                    },
+                                                    Object {
+                                                      "label": "Panel",
+                                                      "value": "Panel",
+                                                    },
+                                                    Object {
+                                                      "label": "Per curiam",
+                                                      "value": "Per curiam",
+                                                    },
+                                                    Object {
                                                       "label": "Alan G. Lance, Sr.",
                                                       "value": "Alan G. Lance, Sr.",
                                                     },
@@ -2597,6 +2777,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                     "openMenuOnClick": true,
                                                     "openMenuOnFocus": false,
                                                     "options": Array [
+                                                      Object {
+                                                        "label": "Clerk",
+                                                        "value": "Clerk",
+                                                      },
+                                                      Object {
+                                                        "label": "Panel",
+                                                        "value": "Panel",
+                                                      },
+                                                      Object {
+                                                        "label": "Per curiam",
+                                                        "value": "Per curiam",
+                                                      },
                                                       Object {
                                                         "label": "Alan G. Lance, Sr.",
                                                         "value": "Alan G. Lance, Sr.",
@@ -2759,6 +2951,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                 options={
                                                   Array [
                                                     Object {
+                                                      "label": "Clerk",
+                                                      "value": "Clerk",
+                                                    },
+                                                    Object {
+                                                      "label": "Panel",
+                                                      "value": "Panel",
+                                                    },
+                                                    Object {
+                                                      "label": "Per curiam",
+                                                      "value": "Per curiam",
+                                                    },
+                                                    Object {
                                                       "label": "Alan G. Lance, Sr.",
                                                       "value": "Alan G. Lance, Sr.",
                                                     },
@@ -2881,6 +3085,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                     "openMenuOnClick": true,
                                                     "openMenuOnFocus": false,
                                                     "options": Array [
+                                                      Object {
+                                                        "label": "Clerk",
+                                                        "value": "Clerk",
+                                                      },
+                                                      Object {
+                                                        "label": "Panel",
+                                                        "value": "Panel",
+                                                      },
+                                                      Object {
+                                                        "label": "Per curiam",
+                                                        "value": "Per curiam",
+                                                      },
                                                       Object {
                                                         "label": "Alan G. Lance, Sr.",
                                                         "value": "Alan G. Lance, Sr.",
@@ -3304,134 +3520,45 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                     </div>
                   </TextField>
                 </DateSelector>
-                <DateSelector
-                  errorMessage={null}
-                  label="What is the Court's judgement date?"
-                  name="judgement-date"
+                <legend>
+                  <strong>
+                    Judgement and mandate date
+                  </strong>
+                </legend>
+                <Checkbox
+                  label="Same as Court's decision date"
+                  name="mandate-dates-same-toggle"
                   onChange={[Function]}
-                  strongLabel={true}
-                  type="date"
-                  value={null}
+                  required={false}
+                  value={true}
                 >
-                  <TextField
-                    className={
-                      Array [
-                        "cf-form-textinput",
-                      ]
-                    }
-                    errorMessage={null}
-                    label="What is the Court's judgement date?"
-                    max="9999-12-31"
-                    name="judgement-date"
-                    onChange={[Function]}
-                    optional={false}
-                    placeholder="mm/dd/yyyy"
-                    required={false}
-                    strongLabel={true}
-                    type="date"
-                    useAriaLabel={false}
-                    value={null}
+                  <div
+                    className="checkbox-wrapper-mandate-dates-same-toggle cf-form-checkboxes"
                   >
                     <div
-                      className="cf-form-textinput   "
+                      className="cf-form-checkbox"
                     >
-                      <label
-                        htmlFor="judgement-date"
-                      >
-                        <strong>
-                          <FormLabel
-                            label="What is the Court's judgement date?"
-                            name="judgement-date"
-                            optional={false}
-                            required={false}
-                          >
-                            <span>
-                              What is the Court's judgement date?
-                            </span>
-                          </FormLabel>
-                        </strong>
-                      </label>
                       <input
-                        className={
-                          Array [
-                            "cf-form-textinput",
-                          ]
-                        }
-                        id="judgement-date"
-                        max="9999-12-31"
-                        name="judgement-date"
+                        aria-label="mandate-dates-same-toggle"
+                        checked={true}
+                        id="mandate-dates-same-toggle"
+                        name="mandate-dates-same-toggle"
                         onChange={[Function]}
-                        placeholder="mm/dd/yyyy"
-                        type="date"
-                        value=""
+                        type="checkbox"
                       />
-                    </div>
-                  </TextField>
-                </DateSelector>
-                <DateSelector
-                  errorMessage={null}
-                  label="What is the Court's mandate date?"
-                  name="mandate-date"
-                  onChange={[Function]}
-                  strongLabel={true}
-                  type="date"
-                  value={null}
-                >
-                  <TextField
-                    className={
-                      Array [
-                        "cf-form-textinput",
-                      ]
-                    }
-                    errorMessage={null}
-                    label="What is the Court's mandate date?"
-                    max="9999-12-31"
-                    name="mandate-date"
-                    onChange={[Function]}
-                    optional={false}
-                    placeholder="mm/dd/yyyy"
-                    required={false}
-                    strongLabel={true}
-                    type="date"
-                    useAriaLabel={false}
-                    value={null}
-                  >
-                    <div
-                      className="cf-form-textinput   "
-                    >
                       <label
-                        htmlFor="mandate-date"
+                        htmlFor="mandate-dates-same-toggle"
                       >
-                        <strong>
-                          <FormLabel
-                            label="What is the Court's mandate date?"
-                            name="mandate-date"
-                            optional={false}
-                            required={false}
-                          >
-                            <span>
-                              What is the Court's mandate date?
-                            </span>
-                          </FormLabel>
-                        </strong>
+                        <span
+                          className=""
+                        >
+                          Same as Court's decision date
+                        </span>
+                         
                       </label>
-                      <input
-                        className={
-                          Array [
-                            "cf-form-textinput",
-                          ]
-                        }
-                        id="mandate-date"
-                        max="9999-12-31"
-                        name="mandate-date"
-                        onChange={[Function]}
-                        placeholder="mm/dd/yyyy"
-                        type="date"
-                        value=""
-                      />
                     </div>
-                  </TextField>
-                </DateSelector>
+                  </div>
+                </Checkbox>
                 <legend>
                   <strong>
                     Which issues are being addressed by the court?
@@ -3468,22 +3595,30 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   </span>
                 </Button>
                 <CheckboxGroup
+                  errorMessage={null}
                   getCheckbox={[Function]}
                   hideErrorMessage={false}
+                  hideLabel={true}
+                  name="issuesList"
                   onChange={[Function]}
                   options={
                     Array [
                       Object {
-                        "id": 1,
+                        "id": "1",
                         "label": "This is a description of the decision",
                       },
                       Object {
-                        "id": 2,
+                        "id": "2",
                         "label": "This is a description of another decision",
                       },
                     ]
                   }
                   required={false}
+                  styling={
+                    Object {
+                      "data-css-13g2xn1": "",
+                    }
+                  }
                   values={
                     Object {
                       "1": true,
@@ -3492,12 +3627,15 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   }
                 >
                   <fieldset
-                    className="checkbox-wrapper-undefined cf-form-checkboxes cf-checkbox-group-inline"
+                    className="checkbox-wrapper-issuesList cf-form-checkboxes cf-checkbox-group-inline"
+                    data-css-13g2xn1=""
                   >
                     <legend
-                      className=""
+                      className="hidden-field"
                     >
-                      <span />
+                      <span>
+                        issuesList
+                      </span>
                     </legend>
                     <div
                       className="checkbox"
@@ -3506,13 +3644,13 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                       <input
                         checked={true}
                         disabled=""
-                        id={1}
-                        name={1}
+                        id="1"
+                        name="1"
                         onChange={[Function]}
                         type="checkbox"
                       />
                       <label
-                        htmlFor={1}
+                        htmlFor="1"
                       >
                         This is a description of the decision
                       </label>
@@ -3524,13 +3662,13 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                       <input
                         checked={true}
                         disabled=""
-                        id={2}
-                        name={2}
+                        id="2"
+                        name="2"
                         onChange={[Function]}
                         type="checkbox"
                       />
                       <label
-                        htmlFor={2}
+                        htmlFor="2"
                       >
                         This is a description of another decision
                       </label>
@@ -3546,7 +3684,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   optional={false}
                   required={false}
                   strongLabel={true}
-                  value={null}
+                  value=""
                 >
                   <div
                     className="cf-form-textarea"
@@ -3573,7 +3711,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                       id="context-and-instructions-textBox"
                       name="context-and-instructions-textBox"
                       onChange={[Function]}
-                      value={null}
+                      value=""
                     />
                   </div>
                 </TextareaField>

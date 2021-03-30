@@ -206,11 +206,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           create(:ama_task, assigned_to: user, appeal: legacy_appeal)
         end
 
-        it "does not make a BGS call" do
-          BGSService.instance_methods(false).each do |method_name|
-            expect_any_instance_of(BGSService).not_to receive(method_name)
-          end
-
+        it "returns tasks" do
           get :index, params: { user_id: user.id, role: "unknown" }
           expect(response).to be_successful
 

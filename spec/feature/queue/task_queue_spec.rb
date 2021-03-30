@@ -773,7 +773,7 @@ feature "Task queue", :all_dbs do
             text: Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label
           ).click
           find("button", text: "Send case").click
-          expect(page).to have_content("Bob Smith's case has been sent to the Confirm schedule hearing team")
+          expect(page).to have_content(/Bob Smith.*'s case has been sent to the Confirm schedule hearing team/)
           expect(appeal.tasks.pluck(:type)).to include(
             ScheduleHearingTask.name, HearingTask.name, DistributionTask.name
           )
@@ -1049,7 +1049,7 @@ feature "Task queue", :all_dbs do
         click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: COPY::CANCEL_TASK_MODAL_TITLE)
         fill_in "taskInstructions", with: "Cancelling task"
         click_button("Submit")
-        expect(page).to have_content(format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name))
+        expect(page).to have_content(format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name))
         expect(page.current_path).to eq("/queue")
         expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
       end
@@ -1145,7 +1145,7 @@ feature "Task queue", :all_dbs do
         click_on "Completed"
         click_on veteran_link_text
         expect(page).to have_content("Currently active tasks")
-        expect(page).to have_content("No active tasks")
+        expect(page).to have_content("There are currently no active tasks")
       end
 
       step "verify that the associated TimedHoldTask has been canceled" do

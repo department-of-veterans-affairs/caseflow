@@ -7,6 +7,7 @@ export const CheckoutButtons = ({
   onCancel,
   onBack,
   onSubmit,
+  submitText,
   disabled = false,
 }) => {
   const cancelBtn = {
@@ -21,13 +22,14 @@ export const CheckoutButtons = ({
     callback: onSubmit,
     name: 'next-button',
     disabled,
-    displayText: 'Continue',
+    displayText: submitText ?? 'Continue',
     styling: css({ marginLeft: '1rem' }),
   };
   const backBtn = {
     classNames: ['cf-right-side', 'cf-prev-step', 'usa-button-secondary'],
     callback: onBack,
     name: 'back-button',
+    disabled,
     displayText: 'Back',
     willNeverBeLoading: true,
   };
@@ -46,5 +48,6 @@ CheckoutButtons.propTypes = {
   onBack: PropTypes.func,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
+  submitText: PropTypes.string,
 };
 export default CheckoutButtons;

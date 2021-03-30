@@ -14,16 +14,16 @@ describe CavcCorrespondenceMailTask do
   after { FeatureToggle.disable!(:cavc_remand) }
 
   describe ".available_actions" do
-    let(:appeal) { create(:appeal, :type_cavc_remand, :with_post_intake_tasks) }
+    let(:appeal) { create(:appeal, :type_cavc_remand) }
     let(:mail_task) do
       described_class.create_from_params({ appeal: appeal, parent_id: appeal.root_task.id }, mail_user)
     end
 
+    # organization-level-tasks
     let(:mail_task_actions) do
       [
         Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
         Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
-        Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
         Constants.TASK_ACTIONS.CANCEL_TASK.to_h
       ]
     end
@@ -67,14 +67,15 @@ describe CavcCorrespondenceMailTask do
         end
 
         context "who is a team member" do
-          let(:expected_actions) { [] }
+          let(:expected_actions) { mail_task_actions }
 
-          it "has no actions" do
+          it "has actions" do
             subject
           end
         end
       end
     end
+
     context "when assigned to a User" do
       let(:mail_user_task) do
         described_class.create_from_params({ appeal: appeal,
@@ -123,12 +124,12 @@ describe CavcCorrespondenceMailTask do
           end
 
           context "and is not assigned the task" do
-            let(:expected_actions) { [] }
+            let(:expected_actions) { mail_task_user_actions }
             let(:user) { create(:user) }
 
             before { CavcLitigationSupport.singleton.add_user(user) }
 
-            it "has no actions" do
+            it "has actions" do
               subject
             end
           end
@@ -153,11 +154,11 @@ describe CavcCorrespondenceMailTask do
     end
 
     context "on a CAVC Appeal Stream" do
-      let(:appeal) { create(:appeal, :type_cavc_remand, :with_post_intake_tasks) }
+      let(:appeal) { create(:appeal, :type_cavc_remand) }
+      let(:root_task) { appeal.root_task }
 
       context "without a CAVC task" do
-        let(:appeal) { create(:appeal, :type_cavc_remand) }
-        let(:root_task) { RootTask.create!(appeal: appeal) }
+        before { CavcTask.find_by(appeal: appeal).destroy }
 
         it "fails to create the task" do
           expect { subject }.to raise_error(Caseflow::Error::ActionForbiddenError)
@@ -165,8 +166,6 @@ describe CavcCorrespondenceMailTask do
       end
 
       context "after the CAVC Lit Support work is complete" do
-        let(:root_task) { appeal.root_task }
-
         before { CavcTask.find_by(appeal: appeal).completed! }
 
         it "fails to create the task" do
@@ -175,8 +174,6 @@ describe CavcCorrespondenceMailTask do
       end
 
       context "while still with CAVC Lit Support" do
-        let(:root_task) { appeal.root_task }
-
         it "creates an org task each for Mail team and CAVC Lit Support" do
           expect(CavcCorrespondenceMailTask.all.size).to eq(0)
           subject

@@ -82,7 +82,7 @@ module Seeds
       create_judge_teams
       create_dvc_teams
       create_hearings_user
-      create_edit_hearings_user
+      create_build_and_edit_hearings_user
       create_non_admin_hearing_coordinator_user
     end
 
@@ -200,7 +200,7 @@ module Seeds
       HearingAdmin.singleton.add_user(hearings_member)
     end
 
-    def create_edit_hearings_user
+    def create_build_and_edit_hearings_user
       hearings_user = User.create(
         css_id: "BVASYELLOW",
         station_id: 101,
@@ -208,6 +208,7 @@ module Seeds
         roles: ["Edit HearSched", "Build HearSched"]
       )
       HearingsManagement.singleton.add_user(hearings_user)
+      HearingAdmin.singleton.add_user(hearings_user)
     end
 
     def create_non_admin_hearing_coordinator_user
@@ -312,17 +313,28 @@ module Seeds
     end
 
     def create_cavc_lit_support_user
-      users = [User.create!(station_id: 101,
-                            css_id: "CAVC_LIT_SUPPORT_ADMIN",
-                            full_name: "Diego CAVCLitigationSupportUser Christiansen"),
-               User.create!(station_id: 101,
-                            css_id: "CAVC_LIT_SUPPORT_USER1",
-                            full_name: "Regina CAVCLitigationSupportUser Lebsack"),
-               User.create!(station_id: 101,
-                            css_id: "CAVC_LIT_SUPPORT_USER2",
-                            full_name: "Tonita CAVCLitigationSupportUser Kuhn ")]
+      users_info = [
+        { css_id: "CAVC_LIT_SUPPORT_ADMIN", full_name: "Diego CAVCLitSupportAdmin Christiansen" },
+        { css_id: "CAVC_LIT_SUPPORT_ADMIN2", full_name: "Mattie CAVCLitSupportAdmin Jackson" },
+        { css_id: "CAVC_LIT_SUPPORT_USER1", full_name: "Regina CAVCLitSupportUser Lebsack" },
+        { css_id: "CAVC_LIT_SUPPORT_USER2", full_name: "Tonita CAVCLitSupportUser Kuhn" },
+        { css_id: "CAVC_LIT_SUPPORT_USER3", full_name: "Anna CAVCLitSupportUser Cooper" },
+        { css_id: "CAVC_LIT_SUPPORT_USER4", full_name: "Ramona CAVCLitSupportUser Stanley" },
+        { css_id: "CAVC_LIT_SUPPORT_USER5", full_name: "Drew CAVCLitSupportUser Payne" },
+        { css_id: "CAVC_LIT_SUPPORT_USER6", full_name: "Clyde CAVCLitSupportUser Lee" },
+        { css_id: "CAVC_LIT_SUPPORT_USER7", full_name: "Priscilla CAVCLitSupportUser Cortez" },
+        { css_id: "CAVC_LIT_SUPPORT_USER8", full_name: "Irvin CAVCLitSupportUser King" }
+      ]
+
+      users = users_info.map do |user_info|
+        User.create!(station_id: 101,
+                     css_id: user_info[:css_id],
+                     full_name: user_info[:full_name])
+      end
+
       users.each { |u| CavcLitigationSupport.singleton.add_user(u) }
       OrganizationsUser.make_user_admin(users.first, CavcLitigationSupport.singleton)
+      OrganizationsUser.make_user_admin(users.second, CavcLitigationSupport.singleton)
     end
 
     def create_pulac_cerullo_user

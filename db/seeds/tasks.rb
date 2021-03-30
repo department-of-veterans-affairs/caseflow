@@ -145,7 +145,6 @@ module Seeds
       create_ama_tasks
       create_board_grant_tasks
       create_veteran_record_request_tasks
-      create_cavc_appeals
     end
 
     def create_ama_distribution_tasks
@@ -389,6 +388,7 @@ module Seeds
         30.times do
           appeal = create(
             :appeal,
+            :with_request_issues,
             :hearing_docket,
             claimants: [
               create(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO_#{rand(10**10)}")
@@ -722,10 +722,6 @@ module Seeds
           :request_issue, 2, :rating, contested_issue_description: description, notes: notes
         )
       )
-    end
-
-    def create_cavc_appeals
-      9.times { create(:cavc_remand) }
     end
 
     # these really belong in Seeds::Intake but we put them here for now because they rely on Seeds::Facols

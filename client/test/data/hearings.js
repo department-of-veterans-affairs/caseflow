@@ -81,7 +81,7 @@ export const amaHearing = {
   regionalOfficeKey: 'C',
   regionalOfficeName: 'Central',
   regionalOfficeTimezone: 'America/New_York',
-  representative: 'Attorney McAttorneyFace',
+  representative: 'Clarence Darrow',
   representativeName: 'PARALYZED VETERANS OF AMERICA, INC.',
   representativeEmailAddress: 'tom.brady@caseflow.gov',
   representativeTz: 'America/Denver',
@@ -456,6 +456,7 @@ export const scheduledHearing = {
   disposition: null,
   externalId: '3afefa82-5736-47c8-a977-0b4b8586f73e',
   polling: false,
+  action: 'schedule'
 };
 
 export const scheduleVeteranResponse = {

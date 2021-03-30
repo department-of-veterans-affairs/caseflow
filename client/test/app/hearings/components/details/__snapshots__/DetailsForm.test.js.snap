@@ -129,21 +129,21 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                 }
               >
                 <div
-                  className="cf-form-dropdown dropdown-judgeDropdown"
+                  className=""
                 >
-                  <label
-                    className="question-label"
-                    htmlFor="judgeDropdown"
-                  >
-                    <strong>
-                      <span>
-                        VLJ
-                      </span>
-                    </strong>
-                  </label>
                   <div
-                    className=""
+                    className="cf-form-dropdown dropdown-judgeDropdown"
                   >
+                    <label
+                      className="question-label"
+                      htmlFor="judgeDropdown"
+                    >
+                      <strong>
+                        <span>
+                          VLJ
+                        </span>
+                      </strong>
+                    </label>
                     <div
                       className="cf-select"
                     >
@@ -1441,21 +1441,21 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                 }
               >
                 <div
-                  className="cf-form-dropdown dropdown-hearingCoordinatorDropdown"
+                  className=""
                 >
-                  <label
-                    className="question-label"
-                    htmlFor="hearingCoordinatorDropdown"
-                  >
-                    <strong>
-                      <span>
-                        Hearing Coordinator
-                      </span>
-                    </strong>
-                  </label>
                   <div
-                    className=""
+                    className="cf-form-dropdown dropdown-hearingCoordinatorDropdown"
                   >
+                    <label
+                      className="question-label"
+                      htmlFor="hearingCoordinatorDropdown"
+                    >
+                      <strong>
+                        <span>
+                          Hearing Coordinator
+                        </span>
+                      </strong>
+                    </label>
                     <div
                       className="cf-select"
                     >
@@ -2849,30 +2849,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                     "label": "Mogadishu",
                     "value": "28",
                   },
-                  Object {
-                    "label": "Chosin",
-                    "value": "29",
-                  },
-                  Object {
-                    "label": "Gettysburg",
-                    "value": "30",
-                  },
-                  Object {
-                    "label": "Leyte Gulf",
-                    "value": "31",
-                  },
-                  Object {
-                    "label": "Iwo Jima",
-                    "value": "32",
-                  },
-                  Object {
-                    "label": "Inchon",
-                    "value": "33",
-                  },
-                  Object {
-                    "label": "Fallujah",
-                    "value": "34",
-                  },
                 ]
               }
               strongLabel={true}
@@ -2884,21 +2860,21 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
               }
             >
               <div
-                className="cf-form-dropdown dropdown-hearingRoomDropdown"
+                className=""
               >
-                <label
-                  className="question-label"
-                  htmlFor="hearingRoomDropdown"
-                >
-                  <strong>
-                    <span>
-                      Hearing Room
-                    </span>
-                  </strong>
-                </label>
                 <div
-                  className=""
+                  className="cf-form-dropdown dropdown-hearingRoomDropdown"
                 >
+                  <label
+                    className="question-label"
+                    htmlFor="hearingRoomDropdown"
+                  >
+                    <strong>
+                      <span>
+                        Hearing Room
+                      </span>
+                    </strong>
+                  </label>
                   <div
                     className="cf-select"
                   >
@@ -3031,30 +3007,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                           Object {
                             "label": "Mogadishu",
                             "value": "28",
-                          },
-                          Object {
-                            "label": "Chosin",
-                            "value": "29",
-                          },
-                          Object {
-                            "label": "Gettysburg",
-                            "value": "30",
-                          },
-                          Object {
-                            "label": "Leyte Gulf",
-                            "value": "31",
-                          },
-                          Object {
-                            "label": "Iwo Jima",
-                            "value": "32",
-                          },
-                          Object {
-                            "label": "Inchon",
-                            "value": "33",
-                          },
-                          Object {
-                            "label": "Fallujah",
-                            "value": "34",
                           },
                         ]
                       }
@@ -3228,30 +3180,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                               "label": "Mogadishu",
                               "value": "28",
                             },
-                            Object {
-                              "label": "Chosin",
-                              "value": "29",
-                            },
-                            Object {
-                              "label": "Gettysburg",
-                              "value": "30",
-                            },
-                            Object {
-                              "label": "Leyte Gulf",
-                              "value": "31",
-                            },
-                            Object {
-                              "label": "Iwo Jima",
-                              "value": "32",
-                            },
-                            Object {
-                              "label": "Inchon",
-                              "value": "33",
-                            },
-                            Object {
-                              "label": "Fallujah",
-                              "value": "34",
-                            },
                           ]
                         }
                         pageSize={5}
@@ -3405,30 +3333,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                               Object {
                                 "label": "Mogadishu",
                                 "value": "28",
-                              },
-                              Object {
-                                "label": "Chosin",
-                                "value": "29",
-                              },
-                              Object {
-                                "label": "Gettysburg",
-                                "value": "30",
-                              },
-                              Object {
-                                "label": "Leyte Gulf",
-                                "value": "31",
-                              },
-                              Object {
-                                "label": "Iwo Jima",
-                                "value": "32",
-                              },
-                              Object {
-                                "label": "Inchon",
-                                "value": "33",
-                              },
-                              Object {
-                                "label": "Fallujah",
-                                "value": "34",
                               },
                             ]
                           }
@@ -3592,30 +3496,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                 Object {
                                   "label": "Mogadishu",
                                   "value": "28",
-                                },
-                                Object {
-                                  "label": "Chosin",
-                                  "value": "29",
-                                },
-                                Object {
-                                  "label": "Gettysburg",
-                                  "value": "30",
-                                },
-                                Object {
-                                  "label": "Leyte Gulf",
-                                  "value": "31",
-                                },
-                                Object {
-                                  "label": "Iwo Jima",
-                                  "value": "32",
-                                },
-                                Object {
-                                  "label": "Inchon",
-                                  "value": "33",
-                                },
-                                Object {
-                                  "label": "Fallujah",
-                                  "value": "34",
                                 },
                               ],
                               "pageSize": 5,
@@ -3820,30 +3700,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                       "label": "Mogadishu",
                                       "value": "28",
                                     },
-                                    Object {
-                                      "label": "Chosin",
-                                      "value": "29",
-                                    },
-                                    Object {
-                                      "label": "Gettysburg",
-                                      "value": "30",
-                                    },
-                                    Object {
-                                      "label": "Leyte Gulf",
-                                      "value": "31",
-                                    },
-                                    Object {
-                                      "label": "Iwo Jima",
-                                      "value": "32",
-                                    },
-                                    Object {
-                                      "label": "Inchon",
-                                      "value": "33",
-                                    },
-                                    Object {
-                                      "label": "Fallujah",
-                                      "value": "34",
-                                    },
                                   ]
                                 }
                                 selectOption={[Function]}
@@ -4006,30 +3862,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                       Object {
                                         "label": "Mogadishu",
                                         "value": "28",
-                                      },
-                                      Object {
-                                        "label": "Chosin",
-                                        "value": "29",
-                                      },
-                                      Object {
-                                        "label": "Gettysburg",
-                                        "value": "30",
-                                      },
-                                      Object {
-                                        "label": "Leyte Gulf",
-                                        "value": "31",
-                                      },
-                                      Object {
-                                        "label": "Iwo Jima",
-                                        "value": "32",
-                                      },
-                                      Object {
-                                        "label": "Inchon",
-                                        "value": "33",
-                                      },
-                                      Object {
-                                        "label": "Fallujah",
-                                        "value": "34",
                                       },
                                     ],
                                     "pageSize": 5,
@@ -4242,30 +4074,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                             "label": "Mogadishu",
                                             "value": "28",
                                           },
-                                          Object {
-                                            "label": "Chosin",
-                                            "value": "29",
-                                          },
-                                          Object {
-                                            "label": "Gettysburg",
-                                            "value": "30",
-                                          },
-                                          Object {
-                                            "label": "Leyte Gulf",
-                                            "value": "31",
-                                          },
-                                          Object {
-                                            "label": "Iwo Jima",
-                                            "value": "32",
-                                          },
-                                          Object {
-                                            "label": "Inchon",
-                                            "value": "33",
-                                          },
-                                          Object {
-                                            "label": "Fallujah",
-                                            "value": "34",
-                                          },
                                         ]
                                       }
                                       selectOption={[Function]}
@@ -4428,30 +4236,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                             Object {
                                               "label": "Mogadishu",
                                               "value": "28",
-                                            },
-                                            Object {
-                                              "label": "Chosin",
-                                              "value": "29",
-                                            },
-                                            Object {
-                                              "label": "Gettysburg",
-                                              "value": "30",
-                                            },
-                                            Object {
-                                              "label": "Leyte Gulf",
-                                              "value": "31",
-                                            },
-                                            Object {
-                                              "label": "Iwo Jima",
-                                              "value": "32",
-                                            },
-                                            Object {
-                                              "label": "Inchon",
-                                              "value": "33",
-                                            },
-                                            Object {
-                                              "label": "Fallujah",
-                                              "value": "34",
                                             },
                                           ],
                                           "pageSize": 5,
@@ -4655,30 +4439,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                   "label": "Mogadishu",
                                                   "value": "28",
                                                 },
-                                                Object {
-                                                  "label": "Chosin",
-                                                  "value": "29",
-                                                },
-                                                Object {
-                                                  "label": "Gettysburg",
-                                                  "value": "30",
-                                                },
-                                                Object {
-                                                  "label": "Leyte Gulf",
-                                                  "value": "31",
-                                                },
-                                                Object {
-                                                  "label": "Iwo Jima",
-                                                  "value": "32",
-                                                },
-                                                Object {
-                                                  "label": "Inchon",
-                                                  "value": "33",
-                                                },
-                                                Object {
-                                                  "label": "Fallujah",
-                                                  "value": "34",
-                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -4841,30 +4601,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                   Object {
                                                     "label": "Mogadishu",
                                                     "value": "28",
-                                                  },
-                                                  Object {
-                                                    "label": "Chosin",
-                                                    "value": "29",
-                                                  },
-                                                  Object {
-                                                    "label": "Gettysburg",
-                                                    "value": "30",
-                                                  },
-                                                  Object {
-                                                    "label": "Leyte Gulf",
-                                                    "value": "31",
-                                                  },
-                                                  Object {
-                                                    "label": "Iwo Jima",
-                                                    "value": "32",
-                                                  },
-                                                  Object {
-                                                    "label": "Inchon",
-                                                    "value": "33",
-                                                  },
-                                                  Object {
-                                                    "label": "Fallujah",
-                                                    "value": "34",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -5115,30 +4851,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                   Object {
                                                     "label": "Mogadishu",
                                                     "value": "28",
-                                                  },
-                                                  Object {
-                                                    "label": "Chosin",
-                                                    "value": "29",
-                                                  },
-                                                  Object {
-                                                    "label": "Gettysburg",
-                                                    "value": "30",
-                                                  },
-                                                  Object {
-                                                    "label": "Leyte Gulf",
-                                                    "value": "31",
-                                                  },
-                                                  Object {
-                                                    "label": "Iwo Jima",
-                                                    "value": "32",
-                                                  },
-                                                  Object {
-                                                    "label": "Inchon",
-                                                    "value": "33",
-                                                  },
-                                                  Object {
-                                                    "label": "Fallujah",
-                                                    "value": "34",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -5419,30 +5131,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                             "label": "Mogadishu",
                                             "value": "28",
                                           },
-                                          Object {
-                                            "label": "Chosin",
-                                            "value": "29",
-                                          },
-                                          Object {
-                                            "label": "Gettysburg",
-                                            "value": "30",
-                                          },
-                                          Object {
-                                            "label": "Leyte Gulf",
-                                            "value": "31",
-                                          },
-                                          Object {
-                                            "label": "Iwo Jima",
-                                            "value": "32",
-                                          },
-                                          Object {
-                                            "label": "Inchon",
-                                            "value": "33",
-                                          },
-                                          Object {
-                                            "label": "Fallujah",
-                                            "value": "34",
-                                          },
                                         ]
                                       }
                                       selectOption={[Function]}
@@ -5605,30 +5293,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                             Object {
                                               "label": "Mogadishu",
                                               "value": "28",
-                                            },
-                                            Object {
-                                              "label": "Chosin",
-                                              "value": "29",
-                                            },
-                                            Object {
-                                              "label": "Gettysburg",
-                                              "value": "30",
-                                            },
-                                            Object {
-                                              "label": "Leyte Gulf",
-                                              "value": "31",
-                                            },
-                                            Object {
-                                              "label": "Iwo Jima",
-                                              "value": "32",
-                                            },
-                                            Object {
-                                              "label": "Inchon",
-                                              "value": "33",
-                                            },
-                                            Object {
-                                              "label": "Fallujah",
-                                              "value": "34",
                                             },
                                           ],
                                           "pageSize": 5,
@@ -5823,30 +5487,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                   "label": "Mogadishu",
                                                   "value": "28",
                                                 },
-                                                Object {
-                                                  "label": "Chosin",
-                                                  "value": "29",
-                                                },
-                                                Object {
-                                                  "label": "Gettysburg",
-                                                  "value": "30",
-                                                },
-                                                Object {
-                                                  "label": "Leyte Gulf",
-                                                  "value": "31",
-                                                },
-                                                Object {
-                                                  "label": "Iwo Jima",
-                                                  "value": "32",
-                                                },
-                                                Object {
-                                                  "label": "Inchon",
-                                                  "value": "33",
-                                                },
-                                                Object {
-                                                  "label": "Fallujah",
-                                                  "value": "34",
-                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -6009,30 +5649,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                   Object {
                                                     "label": "Mogadishu",
                                                     "value": "28",
-                                                  },
-                                                  Object {
-                                                    "label": "Chosin",
-                                                    "value": "29",
-                                                  },
-                                                  Object {
-                                                    "label": "Gettysburg",
-                                                    "value": "30",
-                                                  },
-                                                  Object {
-                                                    "label": "Leyte Gulf",
-                                                    "value": "31",
-                                                  },
-                                                  Object {
-                                                    "label": "Iwo Jima",
-                                                    "value": "32",
-                                                  },
-                                                  Object {
-                                                    "label": "Inchon",
-                                                    "value": "33",
-                                                  },
-                                                  Object {
-                                                    "label": "Fallujah",
-                                                    "value": "34",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -6238,30 +5854,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                   "label": "Mogadishu",
                                                   "value": "28",
                                                 },
-                                                Object {
-                                                  "label": "Chosin",
-                                                  "value": "29",
-                                                },
-                                                Object {
-                                                  "label": "Gettysburg",
-                                                  "value": "30",
-                                                },
-                                                Object {
-                                                  "label": "Leyte Gulf",
-                                                  "value": "31",
-                                                },
-                                                Object {
-                                                  "label": "Iwo Jima",
-                                                  "value": "32",
-                                                },
-                                                Object {
-                                                  "label": "Inchon",
-                                                  "value": "33",
-                                                },
-                                                Object {
-                                                  "label": "Fallujah",
-                                                  "value": "34",
-                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -6424,30 +6016,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                   Object {
                                                     "label": "Mogadishu",
                                                     "value": "28",
-                                                  },
-                                                  Object {
-                                                    "label": "Chosin",
-                                                    "value": "29",
-                                                  },
-                                                  Object {
-                                                    "label": "Gettysburg",
-                                                    "value": "30",
-                                                  },
-                                                  Object {
-                                                    "label": "Leyte Gulf",
-                                                    "value": "31",
-                                                  },
-                                                  Object {
-                                                    "label": "Iwo Jima",
-                                                    "value": "32",
-                                                  },
-                                                  Object {
-                                                    "label": "Inchon",
-                                                    "value": "33",
-                                                  },
-                                                  Object {
-                                                    "label": "Fallujah",
-                                                    "value": "34",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -6936,21 +6504,21 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                 strongLabel={true}
               >
                 <div
-                  className="cf-form-dropdown dropdown-transcriber"
+                  className=""
                 >
-                  <label
-                    className="question-label"
-                    htmlFor="transcriber"
-                  >
-                    <strong>
-                      <span>
-                        Transcriber
-                      </span>
-                    </strong>
-                  </label>
                   <div
-                    className=""
+                    className="cf-form-dropdown dropdown-transcriber"
                   >
+                    <label
+                      className="question-label"
+                      htmlFor="transcriber"
+                    >
+                      <strong>
+                        <span>
+                          Transcriber
+                        </span>
+                      </strong>
+                    </label>
                     <div
                       className="cf-select"
                     >
@@ -8708,21 +8276,21 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                 strongLabel={true}
               >
                 <div
-                  className="cf-form-dropdown dropdown-problemType"
+                  className=""
                 >
-                  <label
-                    className="question-label"
-                    htmlFor="problemType"
-                  >
-                    <strong>
-                      <span>
-                        Transcription Problem Type
-                      </span>
-                    </strong>
-                  </label>
                   <div
-                    className=""
+                    className="cf-form-dropdown dropdown-problemType"
                   >
+                    <label
+                      className="question-label"
+                      htmlFor="problemType"
+                    >
+                      <strong>
+                        <span>
+                          Transcription Problem Type
+                        </span>
+                      </strong>
+                    </label>
                     <div
                       className="cf-select"
                     >
@@ -10854,21 +10422,21 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                 }
               >
                 <div
-                  className="cf-form-dropdown dropdown-judgeDropdown"
+                  className=""
                 >
-                  <label
-                    className="question-label"
-                    htmlFor="judgeDropdown"
-                  >
-                    <strong>
-                      <span>
-                        VLJ
-                      </span>
-                    </strong>
-                  </label>
                   <div
-                    className=""
+                    className="cf-form-dropdown dropdown-judgeDropdown"
                   >
+                    <label
+                      className="question-label"
+                      htmlFor="judgeDropdown"
+                    >
+                      <strong>
+                        <span>
+                          VLJ
+                        </span>
+                      </strong>
+                    </label>
                     <div
                       className="cf-select"
                     >
@@ -12166,21 +11734,21 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                 }
               >
                 <div
-                  className="cf-form-dropdown dropdown-hearingCoordinatorDropdown"
+                  className=""
                 >
-                  <label
-                    className="question-label"
-                    htmlFor="hearingCoordinatorDropdown"
-                  >
-                    <strong>
-                      <span>
-                        Hearing Coordinator
-                      </span>
-                    </strong>
-                  </label>
                   <div
-                    className=""
+                    className="cf-form-dropdown dropdown-hearingCoordinatorDropdown"
                   >
+                    <label
+                      className="question-label"
+                      htmlFor="hearingCoordinatorDropdown"
+                    >
+                      <strong>
+                        <span>
+                          Hearing Coordinator
+                        </span>
+                      </strong>
+                    </label>
                     <div
                       className="cf-select"
                     >
@@ -13574,30 +13142,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                     "label": "Mogadishu",
                     "value": "28",
                   },
-                  Object {
-                    "label": "Chosin",
-                    "value": "29",
-                  },
-                  Object {
-                    "label": "Gettysburg",
-                    "value": "30",
-                  },
-                  Object {
-                    "label": "Leyte Gulf",
-                    "value": "31",
-                  },
-                  Object {
-                    "label": "Iwo Jima",
-                    "value": "32",
-                  },
-                  Object {
-                    "label": "Inchon",
-                    "value": "33",
-                  },
-                  Object {
-                    "label": "Fallujah",
-                    "value": "34",
-                  },
                 ]
               }
               strongLabel={true}
@@ -13609,21 +13153,21 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
               }
             >
               <div
-                className="cf-form-dropdown dropdown-hearingRoomDropdown"
+                className=""
               >
-                <label
-                  className="question-label"
-                  htmlFor="hearingRoomDropdown"
-                >
-                  <strong>
-                    <span>
-                      Hearing Room
-                    </span>
-                  </strong>
-                </label>
                 <div
-                  className=""
+                  className="cf-form-dropdown dropdown-hearingRoomDropdown"
                 >
+                  <label
+                    className="question-label"
+                    htmlFor="hearingRoomDropdown"
+                  >
+                    <strong>
+                      <span>
+                        Hearing Room
+                      </span>
+                    </strong>
+                  </label>
                   <div
                     className="cf-select"
                   >
@@ -13756,30 +13300,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                           Object {
                             "label": "Mogadishu",
                             "value": "28",
-                          },
-                          Object {
-                            "label": "Chosin",
-                            "value": "29",
-                          },
-                          Object {
-                            "label": "Gettysburg",
-                            "value": "30",
-                          },
-                          Object {
-                            "label": "Leyte Gulf",
-                            "value": "31",
-                          },
-                          Object {
-                            "label": "Iwo Jima",
-                            "value": "32",
-                          },
-                          Object {
-                            "label": "Inchon",
-                            "value": "33",
-                          },
-                          Object {
-                            "label": "Fallujah",
-                            "value": "34",
                           },
                         ]
                       }
@@ -13953,30 +13473,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                               "label": "Mogadishu",
                               "value": "28",
                             },
-                            Object {
-                              "label": "Chosin",
-                              "value": "29",
-                            },
-                            Object {
-                              "label": "Gettysburg",
-                              "value": "30",
-                            },
-                            Object {
-                              "label": "Leyte Gulf",
-                              "value": "31",
-                            },
-                            Object {
-                              "label": "Iwo Jima",
-                              "value": "32",
-                            },
-                            Object {
-                              "label": "Inchon",
-                              "value": "33",
-                            },
-                            Object {
-                              "label": "Fallujah",
-                              "value": "34",
-                            },
                           ]
                         }
                         pageSize={5}
@@ -14130,30 +13626,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                               Object {
                                 "label": "Mogadishu",
                                 "value": "28",
-                              },
-                              Object {
-                                "label": "Chosin",
-                                "value": "29",
-                              },
-                              Object {
-                                "label": "Gettysburg",
-                                "value": "30",
-                              },
-                              Object {
-                                "label": "Leyte Gulf",
-                                "value": "31",
-                              },
-                              Object {
-                                "label": "Iwo Jima",
-                                "value": "32",
-                              },
-                              Object {
-                                "label": "Inchon",
-                                "value": "33",
-                              },
-                              Object {
-                                "label": "Fallujah",
-                                "value": "34",
                               },
                             ]
                           }
@@ -14317,30 +13789,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                 Object {
                                   "label": "Mogadishu",
                                   "value": "28",
-                                },
-                                Object {
-                                  "label": "Chosin",
-                                  "value": "29",
-                                },
-                                Object {
-                                  "label": "Gettysburg",
-                                  "value": "30",
-                                },
-                                Object {
-                                  "label": "Leyte Gulf",
-                                  "value": "31",
-                                },
-                                Object {
-                                  "label": "Iwo Jima",
-                                  "value": "32",
-                                },
-                                Object {
-                                  "label": "Inchon",
-                                  "value": "33",
-                                },
-                                Object {
-                                  "label": "Fallujah",
-                                  "value": "34",
                                 },
                               ],
                               "pageSize": 5,
@@ -14545,30 +13993,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                       "label": "Mogadishu",
                                       "value": "28",
                                     },
-                                    Object {
-                                      "label": "Chosin",
-                                      "value": "29",
-                                    },
-                                    Object {
-                                      "label": "Gettysburg",
-                                      "value": "30",
-                                    },
-                                    Object {
-                                      "label": "Leyte Gulf",
-                                      "value": "31",
-                                    },
-                                    Object {
-                                      "label": "Iwo Jima",
-                                      "value": "32",
-                                    },
-                                    Object {
-                                      "label": "Inchon",
-                                      "value": "33",
-                                    },
-                                    Object {
-                                      "label": "Fallujah",
-                                      "value": "34",
-                                    },
                                   ]
                                 }
                                 selectOption={[Function]}
@@ -14731,30 +14155,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                       Object {
                                         "label": "Mogadishu",
                                         "value": "28",
-                                      },
-                                      Object {
-                                        "label": "Chosin",
-                                        "value": "29",
-                                      },
-                                      Object {
-                                        "label": "Gettysburg",
-                                        "value": "30",
-                                      },
-                                      Object {
-                                        "label": "Leyte Gulf",
-                                        "value": "31",
-                                      },
-                                      Object {
-                                        "label": "Iwo Jima",
-                                        "value": "32",
-                                      },
-                                      Object {
-                                        "label": "Inchon",
-                                        "value": "33",
-                                      },
-                                      Object {
-                                        "label": "Fallujah",
-                                        "value": "34",
                                       },
                                     ],
                                     "pageSize": 5,
@@ -14967,30 +14367,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                             "label": "Mogadishu",
                                             "value": "28",
                                           },
-                                          Object {
-                                            "label": "Chosin",
-                                            "value": "29",
-                                          },
-                                          Object {
-                                            "label": "Gettysburg",
-                                            "value": "30",
-                                          },
-                                          Object {
-                                            "label": "Leyte Gulf",
-                                            "value": "31",
-                                          },
-                                          Object {
-                                            "label": "Iwo Jima",
-                                            "value": "32",
-                                          },
-                                          Object {
-                                            "label": "Inchon",
-                                            "value": "33",
-                                          },
-                                          Object {
-                                            "label": "Fallujah",
-                                            "value": "34",
-                                          },
                                         ]
                                       }
                                       selectOption={[Function]}
@@ -15153,30 +14529,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                             Object {
                                               "label": "Mogadishu",
                                               "value": "28",
-                                            },
-                                            Object {
-                                              "label": "Chosin",
-                                              "value": "29",
-                                            },
-                                            Object {
-                                              "label": "Gettysburg",
-                                              "value": "30",
-                                            },
-                                            Object {
-                                              "label": "Leyte Gulf",
-                                              "value": "31",
-                                            },
-                                            Object {
-                                              "label": "Iwo Jima",
-                                              "value": "32",
-                                            },
-                                            Object {
-                                              "label": "Inchon",
-                                              "value": "33",
-                                            },
-                                            Object {
-                                              "label": "Fallujah",
-                                              "value": "34",
                                             },
                                           ],
                                           "pageSize": 5,
@@ -15380,30 +14732,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "label": "Mogadishu",
                                                   "value": "28",
                                                 },
-                                                Object {
-                                                  "label": "Chosin",
-                                                  "value": "29",
-                                                },
-                                                Object {
-                                                  "label": "Gettysburg",
-                                                  "value": "30",
-                                                },
-                                                Object {
-                                                  "label": "Leyte Gulf",
-                                                  "value": "31",
-                                                },
-                                                Object {
-                                                  "label": "Iwo Jima",
-                                                  "value": "32",
-                                                },
-                                                Object {
-                                                  "label": "Inchon",
-                                                  "value": "33",
-                                                },
-                                                Object {
-                                                  "label": "Fallujah",
-                                                  "value": "34",
-                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -15566,30 +14894,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   Object {
                                                     "label": "Mogadishu",
                                                     "value": "28",
-                                                  },
-                                                  Object {
-                                                    "label": "Chosin",
-                                                    "value": "29",
-                                                  },
-                                                  Object {
-                                                    "label": "Gettysburg",
-                                                    "value": "30",
-                                                  },
-                                                  Object {
-                                                    "label": "Leyte Gulf",
-                                                    "value": "31",
-                                                  },
-                                                  Object {
-                                                    "label": "Iwo Jima",
-                                                    "value": "32",
-                                                  },
-                                                  Object {
-                                                    "label": "Inchon",
-                                                    "value": "33",
-                                                  },
-                                                  Object {
-                                                    "label": "Fallujah",
-                                                    "value": "34",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -15840,30 +15144,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   Object {
                                                     "label": "Mogadishu",
                                                     "value": "28",
-                                                  },
-                                                  Object {
-                                                    "label": "Chosin",
-                                                    "value": "29",
-                                                  },
-                                                  Object {
-                                                    "label": "Gettysburg",
-                                                    "value": "30",
-                                                  },
-                                                  Object {
-                                                    "label": "Leyte Gulf",
-                                                    "value": "31",
-                                                  },
-                                                  Object {
-                                                    "label": "Iwo Jima",
-                                                    "value": "32",
-                                                  },
-                                                  Object {
-                                                    "label": "Inchon",
-                                                    "value": "33",
-                                                  },
-                                                  Object {
-                                                    "label": "Fallujah",
-                                                    "value": "34",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -16144,30 +15424,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                             "label": "Mogadishu",
                                             "value": "28",
                                           },
-                                          Object {
-                                            "label": "Chosin",
-                                            "value": "29",
-                                          },
-                                          Object {
-                                            "label": "Gettysburg",
-                                            "value": "30",
-                                          },
-                                          Object {
-                                            "label": "Leyte Gulf",
-                                            "value": "31",
-                                          },
-                                          Object {
-                                            "label": "Iwo Jima",
-                                            "value": "32",
-                                          },
-                                          Object {
-                                            "label": "Inchon",
-                                            "value": "33",
-                                          },
-                                          Object {
-                                            "label": "Fallujah",
-                                            "value": "34",
-                                          },
                                         ]
                                       }
                                       selectOption={[Function]}
@@ -16330,30 +15586,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                             Object {
                                               "label": "Mogadishu",
                                               "value": "28",
-                                            },
-                                            Object {
-                                              "label": "Chosin",
-                                              "value": "29",
-                                            },
-                                            Object {
-                                              "label": "Gettysburg",
-                                              "value": "30",
-                                            },
-                                            Object {
-                                              "label": "Leyte Gulf",
-                                              "value": "31",
-                                            },
-                                            Object {
-                                              "label": "Iwo Jima",
-                                              "value": "32",
-                                            },
-                                            Object {
-                                              "label": "Inchon",
-                                              "value": "33",
-                                            },
-                                            Object {
-                                              "label": "Fallujah",
-                                              "value": "34",
                                             },
                                           ],
                                           "pageSize": 5,
@@ -16548,30 +15780,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "label": "Mogadishu",
                                                   "value": "28",
                                                 },
-                                                Object {
-                                                  "label": "Chosin",
-                                                  "value": "29",
-                                                },
-                                                Object {
-                                                  "label": "Gettysburg",
-                                                  "value": "30",
-                                                },
-                                                Object {
-                                                  "label": "Leyte Gulf",
-                                                  "value": "31",
-                                                },
-                                                Object {
-                                                  "label": "Iwo Jima",
-                                                  "value": "32",
-                                                },
-                                                Object {
-                                                  "label": "Inchon",
-                                                  "value": "33",
-                                                },
-                                                Object {
-                                                  "label": "Fallujah",
-                                                  "value": "34",
-                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -16734,30 +15942,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   Object {
                                                     "label": "Mogadishu",
                                                     "value": "28",
-                                                  },
-                                                  Object {
-                                                    "label": "Chosin",
-                                                    "value": "29",
-                                                  },
-                                                  Object {
-                                                    "label": "Gettysburg",
-                                                    "value": "30",
-                                                  },
-                                                  Object {
-                                                    "label": "Leyte Gulf",
-                                                    "value": "31",
-                                                  },
-                                                  Object {
-                                                    "label": "Iwo Jima",
-                                                    "value": "32",
-                                                  },
-                                                  Object {
-                                                    "label": "Inchon",
-                                                    "value": "33",
-                                                  },
-                                                  Object {
-                                                    "label": "Fallujah",
-                                                    "value": "34",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -16963,30 +16147,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "label": "Mogadishu",
                                                   "value": "28",
                                                 },
-                                                Object {
-                                                  "label": "Chosin",
-                                                  "value": "29",
-                                                },
-                                                Object {
-                                                  "label": "Gettysburg",
-                                                  "value": "30",
-                                                },
-                                                Object {
-                                                  "label": "Leyte Gulf",
-                                                  "value": "31",
-                                                },
-                                                Object {
-                                                  "label": "Iwo Jima",
-                                                  "value": "32",
-                                                },
-                                                Object {
-                                                  "label": "Inchon",
-                                                  "value": "33",
-                                                },
-                                                Object {
-                                                  "label": "Fallujah",
-                                                  "value": "34",
-                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -17149,30 +16309,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   Object {
                                                     "label": "Mogadishu",
                                                     "value": "28",
-                                                  },
-                                                  Object {
-                                                    "label": "Chosin",
-                                                    "value": "29",
-                                                  },
-                                                  Object {
-                                                    "label": "Gettysburg",
-                                                    "value": "30",
-                                                  },
-                                                  Object {
-                                                    "label": "Leyte Gulf",
-                                                    "value": "31",
-                                                  },
-                                                  Object {
-                                                    "label": "Iwo Jima",
-                                                    "value": "32",
-                                                  },
-                                                  Object {
-                                                    "label": "Inchon",
-                                                    "value": "33",
-                                                  },
-                                                  Object {
-                                                    "label": "Fallujah",
-                                                    "value": "34",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -17676,21 +16812,21 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                 strongLabel={true}
               >
                 <div
-                  className="cf-form-dropdown dropdown-transcriber"
+                  className=""
                 >
-                  <label
-                    className="question-label"
-                    htmlFor="transcriber"
-                  >
-                    <strong>
-                      <span>
-                        Transcriber
-                      </span>
-                    </strong>
-                  </label>
                   <div
-                    className=""
+                    className="cf-form-dropdown dropdown-transcriber"
                   >
+                    <label
+                      className="question-label"
+                      htmlFor="transcriber"
+                    >
+                      <strong>
+                        <span>
+                          Transcriber
+                        </span>
+                      </strong>
+                    </label>
                     <div
                       className="cf-select"
                     >
@@ -19448,21 +18584,21 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                 strongLabel={true}
               >
                 <div
-                  className="cf-form-dropdown dropdown-problemType"
+                  className=""
                 >
-                  <label
-                    className="question-label"
-                    htmlFor="problemType"
-                  >
-                    <strong>
-                      <span>
-                        Transcription Problem Type
-                      </span>
-                    </strong>
-                  </label>
                   <div
-                    className=""
+                    className="cf-form-dropdown dropdown-problemType"
                   >
+                    <label
+                      className="question-label"
+                      htmlFor="problemType"
+                    >
+                      <strong>
+                        <span>
+                          Transcription Problem Type
+                        </span>
+                      </strong>
+                    </label>
                     <div
                       className="cf-select"
                     >
@@ -21601,21 +20737,21 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                 }
               >
                 <div
-                  className="cf-form-dropdown dropdown-judgeDropdown"
+                  className=""
                 >
-                  <label
-                    className="question-label"
-                    htmlFor="judgeDropdown"
-                  >
-                    <strong>
-                      <span>
-                        VLJ
-                      </span>
-                    </strong>
-                  </label>
                   <div
-                    className=""
+                    className="cf-form-dropdown dropdown-judgeDropdown"
                   >
+                    <label
+                      className="question-label"
+                      htmlFor="judgeDropdown"
+                    >
+                      <strong>
+                        <span>
+                          VLJ
+                        </span>
+                      </strong>
+                    </label>
                     <div
                       className="cf-select"
                     >
@@ -22913,21 +22049,21 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                 }
               >
                 <div
-                  className="cf-form-dropdown dropdown-hearingCoordinatorDropdown"
+                  className=""
                 >
-                  <label
-                    className="question-label"
-                    htmlFor="hearingCoordinatorDropdown"
-                  >
-                    <strong>
-                      <span>
-                        Hearing Coordinator
-                      </span>
-                    </strong>
-                  </label>
                   <div
-                    className=""
+                    className="cf-form-dropdown dropdown-hearingCoordinatorDropdown"
                   >
+                    <label
+                      className="question-label"
+                      htmlFor="hearingCoordinatorDropdown"
+                    >
+                      <strong>
+                        <span>
+                          Hearing Coordinator
+                        </span>
+                      </strong>
+                    </label>
                     <div
                       className="cf-select"
                     >
@@ -24321,30 +23457,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                     "label": "Mogadishu",
                     "value": "28",
                   },
-                  Object {
-                    "label": "Chosin",
-                    "value": "29",
-                  },
-                  Object {
-                    "label": "Gettysburg",
-                    "value": "30",
-                  },
-                  Object {
-                    "label": "Leyte Gulf",
-                    "value": "31",
-                  },
-                  Object {
-                    "label": "Iwo Jima",
-                    "value": "32",
-                  },
-                  Object {
-                    "label": "Inchon",
-                    "value": "33",
-                  },
-                  Object {
-                    "label": "Fallujah",
-                    "value": "34",
-                  },
                 ]
               }
               strongLabel={true}
@@ -24356,21 +23468,21 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
               }
             >
               <div
-                className="cf-form-dropdown dropdown-hearingRoomDropdown"
+                className=""
               >
-                <label
-                  className="question-label"
-                  htmlFor="hearingRoomDropdown"
-                >
-                  <strong>
-                    <span>
-                      Hearing Room
-                    </span>
-                  </strong>
-                </label>
                 <div
-                  className=""
+                  className="cf-form-dropdown dropdown-hearingRoomDropdown"
                 >
+                  <label
+                    className="question-label"
+                    htmlFor="hearingRoomDropdown"
+                  >
+                    <strong>
+                      <span>
+                        Hearing Room
+                      </span>
+                    </strong>
+                  </label>
                   <div
                     className="cf-select"
                   >
@@ -24503,30 +23615,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                           Object {
                             "label": "Mogadishu",
                             "value": "28",
-                          },
-                          Object {
-                            "label": "Chosin",
-                            "value": "29",
-                          },
-                          Object {
-                            "label": "Gettysburg",
-                            "value": "30",
-                          },
-                          Object {
-                            "label": "Leyte Gulf",
-                            "value": "31",
-                          },
-                          Object {
-                            "label": "Iwo Jima",
-                            "value": "32",
-                          },
-                          Object {
-                            "label": "Inchon",
-                            "value": "33",
-                          },
-                          Object {
-                            "label": "Fallujah",
-                            "value": "34",
                           },
                         ]
                       }
@@ -24700,30 +23788,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                               "label": "Mogadishu",
                               "value": "28",
                             },
-                            Object {
-                              "label": "Chosin",
-                              "value": "29",
-                            },
-                            Object {
-                              "label": "Gettysburg",
-                              "value": "30",
-                            },
-                            Object {
-                              "label": "Leyte Gulf",
-                              "value": "31",
-                            },
-                            Object {
-                              "label": "Iwo Jima",
-                              "value": "32",
-                            },
-                            Object {
-                              "label": "Inchon",
-                              "value": "33",
-                            },
-                            Object {
-                              "label": "Fallujah",
-                              "value": "34",
-                            },
                           ]
                         }
                         pageSize={5}
@@ -24877,30 +23941,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                               Object {
                                 "label": "Mogadishu",
                                 "value": "28",
-                              },
-                              Object {
-                                "label": "Chosin",
-                                "value": "29",
-                              },
-                              Object {
-                                "label": "Gettysburg",
-                                "value": "30",
-                              },
-                              Object {
-                                "label": "Leyte Gulf",
-                                "value": "31",
-                              },
-                              Object {
-                                "label": "Iwo Jima",
-                                "value": "32",
-                              },
-                              Object {
-                                "label": "Inchon",
-                                "value": "33",
-                              },
-                              Object {
-                                "label": "Fallujah",
-                                "value": "34",
                               },
                             ]
                           }
@@ -25064,30 +24104,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                 Object {
                                   "label": "Mogadishu",
                                   "value": "28",
-                                },
-                                Object {
-                                  "label": "Chosin",
-                                  "value": "29",
-                                },
-                                Object {
-                                  "label": "Gettysburg",
-                                  "value": "30",
-                                },
-                                Object {
-                                  "label": "Leyte Gulf",
-                                  "value": "31",
-                                },
-                                Object {
-                                  "label": "Iwo Jima",
-                                  "value": "32",
-                                },
-                                Object {
-                                  "label": "Inchon",
-                                  "value": "33",
-                                },
-                                Object {
-                                  "label": "Fallujah",
-                                  "value": "34",
                                 },
                               ],
                               "pageSize": 5,
@@ -25292,30 +24308,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                       "label": "Mogadishu",
                                       "value": "28",
                                     },
-                                    Object {
-                                      "label": "Chosin",
-                                      "value": "29",
-                                    },
-                                    Object {
-                                      "label": "Gettysburg",
-                                      "value": "30",
-                                    },
-                                    Object {
-                                      "label": "Leyte Gulf",
-                                      "value": "31",
-                                    },
-                                    Object {
-                                      "label": "Iwo Jima",
-                                      "value": "32",
-                                    },
-                                    Object {
-                                      "label": "Inchon",
-                                      "value": "33",
-                                    },
-                                    Object {
-                                      "label": "Fallujah",
-                                      "value": "34",
-                                    },
                                   ]
                                 }
                                 selectOption={[Function]}
@@ -25478,30 +24470,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                       Object {
                                         "label": "Mogadishu",
                                         "value": "28",
-                                      },
-                                      Object {
-                                        "label": "Chosin",
-                                        "value": "29",
-                                      },
-                                      Object {
-                                        "label": "Gettysburg",
-                                        "value": "30",
-                                      },
-                                      Object {
-                                        "label": "Leyte Gulf",
-                                        "value": "31",
-                                      },
-                                      Object {
-                                        "label": "Iwo Jima",
-                                        "value": "32",
-                                      },
-                                      Object {
-                                        "label": "Inchon",
-                                        "value": "33",
-                                      },
-                                      Object {
-                                        "label": "Fallujah",
-                                        "value": "34",
                                       },
                                     ],
                                     "pageSize": 5,
@@ -25714,30 +24682,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             "label": "Mogadishu",
                                             "value": "28",
                                           },
-                                          Object {
-                                            "label": "Chosin",
-                                            "value": "29",
-                                          },
-                                          Object {
-                                            "label": "Gettysburg",
-                                            "value": "30",
-                                          },
-                                          Object {
-                                            "label": "Leyte Gulf",
-                                            "value": "31",
-                                          },
-                                          Object {
-                                            "label": "Iwo Jima",
-                                            "value": "32",
-                                          },
-                                          Object {
-                                            "label": "Inchon",
-                                            "value": "33",
-                                          },
-                                          Object {
-                                            "label": "Fallujah",
-                                            "value": "34",
-                                          },
                                         ]
                                       }
                                       selectOption={[Function]}
@@ -25900,30 +24844,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             Object {
                                               "label": "Mogadishu",
                                               "value": "28",
-                                            },
-                                            Object {
-                                              "label": "Chosin",
-                                              "value": "29",
-                                            },
-                                            Object {
-                                              "label": "Gettysburg",
-                                              "value": "30",
-                                            },
-                                            Object {
-                                              "label": "Leyte Gulf",
-                                              "value": "31",
-                                            },
-                                            Object {
-                                              "label": "Iwo Jima",
-                                              "value": "32",
-                                            },
-                                            Object {
-                                              "label": "Inchon",
-                                              "value": "33",
-                                            },
-                                            Object {
-                                              "label": "Fallujah",
-                                              "value": "34",
                                             },
                                           ],
                                           "pageSize": 5,
@@ -26127,30 +25047,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "label": "Mogadishu",
                                                   "value": "28",
                                                 },
-                                                Object {
-                                                  "label": "Chosin",
-                                                  "value": "29",
-                                                },
-                                                Object {
-                                                  "label": "Gettysburg",
-                                                  "value": "30",
-                                                },
-                                                Object {
-                                                  "label": "Leyte Gulf",
-                                                  "value": "31",
-                                                },
-                                                Object {
-                                                  "label": "Iwo Jima",
-                                                  "value": "32",
-                                                },
-                                                Object {
-                                                  "label": "Inchon",
-                                                  "value": "33",
-                                                },
-                                                Object {
-                                                  "label": "Fallujah",
-                                                  "value": "34",
-                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -26313,30 +25209,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   Object {
                                                     "label": "Mogadishu",
                                                     "value": "28",
-                                                  },
-                                                  Object {
-                                                    "label": "Chosin",
-                                                    "value": "29",
-                                                  },
-                                                  Object {
-                                                    "label": "Gettysburg",
-                                                    "value": "30",
-                                                  },
-                                                  Object {
-                                                    "label": "Leyte Gulf",
-                                                    "value": "31",
-                                                  },
-                                                  Object {
-                                                    "label": "Iwo Jima",
-                                                    "value": "32",
-                                                  },
-                                                  Object {
-                                                    "label": "Inchon",
-                                                    "value": "33",
-                                                  },
-                                                  Object {
-                                                    "label": "Fallujah",
-                                                    "value": "34",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -26587,30 +25459,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   Object {
                                                     "label": "Mogadishu",
                                                     "value": "28",
-                                                  },
-                                                  Object {
-                                                    "label": "Chosin",
-                                                    "value": "29",
-                                                  },
-                                                  Object {
-                                                    "label": "Gettysburg",
-                                                    "value": "30",
-                                                  },
-                                                  Object {
-                                                    "label": "Leyte Gulf",
-                                                    "value": "31",
-                                                  },
-                                                  Object {
-                                                    "label": "Iwo Jima",
-                                                    "value": "32",
-                                                  },
-                                                  Object {
-                                                    "label": "Inchon",
-                                                    "value": "33",
-                                                  },
-                                                  Object {
-                                                    "label": "Fallujah",
-                                                    "value": "34",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -26891,30 +25739,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             "label": "Mogadishu",
                                             "value": "28",
                                           },
-                                          Object {
-                                            "label": "Chosin",
-                                            "value": "29",
-                                          },
-                                          Object {
-                                            "label": "Gettysburg",
-                                            "value": "30",
-                                          },
-                                          Object {
-                                            "label": "Leyte Gulf",
-                                            "value": "31",
-                                          },
-                                          Object {
-                                            "label": "Iwo Jima",
-                                            "value": "32",
-                                          },
-                                          Object {
-                                            "label": "Inchon",
-                                            "value": "33",
-                                          },
-                                          Object {
-                                            "label": "Fallujah",
-                                            "value": "34",
-                                          },
                                         ]
                                       }
                                       selectOption={[Function]}
@@ -27077,30 +25901,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             Object {
                                               "label": "Mogadishu",
                                               "value": "28",
-                                            },
-                                            Object {
-                                              "label": "Chosin",
-                                              "value": "29",
-                                            },
-                                            Object {
-                                              "label": "Gettysburg",
-                                              "value": "30",
-                                            },
-                                            Object {
-                                              "label": "Leyte Gulf",
-                                              "value": "31",
-                                            },
-                                            Object {
-                                              "label": "Iwo Jima",
-                                              "value": "32",
-                                            },
-                                            Object {
-                                              "label": "Inchon",
-                                              "value": "33",
-                                            },
-                                            Object {
-                                              "label": "Fallujah",
-                                              "value": "34",
                                             },
                                           ],
                                           "pageSize": 5,
@@ -27295,30 +26095,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "label": "Mogadishu",
                                                   "value": "28",
                                                 },
-                                                Object {
-                                                  "label": "Chosin",
-                                                  "value": "29",
-                                                },
-                                                Object {
-                                                  "label": "Gettysburg",
-                                                  "value": "30",
-                                                },
-                                                Object {
-                                                  "label": "Leyte Gulf",
-                                                  "value": "31",
-                                                },
-                                                Object {
-                                                  "label": "Iwo Jima",
-                                                  "value": "32",
-                                                },
-                                                Object {
-                                                  "label": "Inchon",
-                                                  "value": "33",
-                                                },
-                                                Object {
-                                                  "label": "Fallujah",
-                                                  "value": "34",
-                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -27481,30 +26257,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   Object {
                                                     "label": "Mogadishu",
                                                     "value": "28",
-                                                  },
-                                                  Object {
-                                                    "label": "Chosin",
-                                                    "value": "29",
-                                                  },
-                                                  Object {
-                                                    "label": "Gettysburg",
-                                                    "value": "30",
-                                                  },
-                                                  Object {
-                                                    "label": "Leyte Gulf",
-                                                    "value": "31",
-                                                  },
-                                                  Object {
-                                                    "label": "Iwo Jima",
-                                                    "value": "32",
-                                                  },
-                                                  Object {
-                                                    "label": "Inchon",
-                                                    "value": "33",
-                                                  },
-                                                  Object {
-                                                    "label": "Fallujah",
-                                                    "value": "34",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -27710,30 +26462,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "label": "Mogadishu",
                                                   "value": "28",
                                                 },
-                                                Object {
-                                                  "label": "Chosin",
-                                                  "value": "29",
-                                                },
-                                                Object {
-                                                  "label": "Gettysburg",
-                                                  "value": "30",
-                                                },
-                                                Object {
-                                                  "label": "Leyte Gulf",
-                                                  "value": "31",
-                                                },
-                                                Object {
-                                                  "label": "Iwo Jima",
-                                                  "value": "32",
-                                                },
-                                                Object {
-                                                  "label": "Inchon",
-                                                  "value": "33",
-                                                },
-                                                Object {
-                                                  "label": "Fallujah",
-                                                  "value": "34",
-                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -27896,30 +26624,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   Object {
                                                     "label": "Mogadishu",
                                                     "value": "28",
-                                                  },
-                                                  Object {
-                                                    "label": "Chosin",
-                                                    "value": "29",
-                                                  },
-                                                  Object {
-                                                    "label": "Gettysburg",
-                                                    "value": "30",
-                                                  },
-                                                  Object {
-                                                    "label": "Leyte Gulf",
-                                                    "value": "31",
-                                                  },
-                                                  Object {
-                                                    "label": "Iwo Jima",
-                                                    "value": "32",
-                                                  },
-                                                  Object {
-                                                    "label": "Inchon",
-                                                    "value": "33",
-                                                  },
-                                                  Object {
-                                                    "label": "Fallujah",
-                                                    "value": "34",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -28092,22 +26796,22 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
               }
             >
               <div
-                className="cf-form-dropdown dropdown-hearingType"
-                data-css-vzv9iy=""
+                className=""
               >
-                <label
-                  className="question-label"
-                  htmlFor="hearingType"
-                >
-                  <strong>
-                    <span>
-                      Hearing Type
-                    </span>
-                  </strong>
-                </label>
                 <div
-                  className=""
+                  className="cf-form-dropdown dropdown-hearingType"
+                  data-css-vzv9iy=""
                 >
+                  <label
+                    className="question-label"
+                    htmlFor="hearingType"
+                  >
+                    <strong>
+                      <span>
+                        Hearing Type
+                      </span>
+                    </strong>
+                  </label>
                   <div
                     className="cf-select"
                   >
@@ -29843,21 +28547,21 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                 strongLabel={true}
               >
                 <div
-                  className="cf-form-dropdown dropdown-transcriber"
+                  className=""
                 >
-                  <label
-                    className="question-label"
-                    htmlFor="transcriber"
-                  >
-                    <strong>
-                      <span>
-                        Transcriber
-                      </span>
-                    </strong>
-                  </label>
                   <div
-                    className=""
+                    className="cf-form-dropdown dropdown-transcriber"
                   >
+                    <label
+                      className="question-label"
+                      htmlFor="transcriber"
+                    >
+                      <strong>
+                        <span>
+                          Transcriber
+                        </span>
+                      </strong>
+                    </label>
                     <div
                       className="cf-select"
                     >
@@ -31615,21 +30319,21 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                 strongLabel={true}
               >
                 <div
-                  className="cf-form-dropdown dropdown-problemType"
+                  className=""
                 >
-                  <label
-                    className="question-label"
-                    htmlFor="problemType"
-                  >
-                    <strong>
-                      <span>
-                        Transcription Problem Type
-                      </span>
-                    </strong>
-                  </label>
                   <div
-                    className=""
+                    className="cf-form-dropdown dropdown-problemType"
                   >
+                    <label
+                      className="question-label"
+                      htmlFor="problemType"
+                    >
+                      <strong>
+                        <span>
+                          Transcription Problem Type
+                        </span>
+                      </strong>
+                    </label>
                     <div
                       className="cf-select"
                     >
@@ -33769,21 +32473,21 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                 }
               >
                 <div
-                  className="cf-form-dropdown dropdown-judgeDropdown"
+                  className=""
                 >
-                  <label
-                    className="question-label"
-                    htmlFor="judgeDropdown"
-                  >
-                    <strong>
-                      <span>
-                        VLJ
-                      </span>
-                    </strong>
-                  </label>
                   <div
-                    className=""
+                    className="cf-form-dropdown dropdown-judgeDropdown"
                   >
+                    <label
+                      className="question-label"
+                      htmlFor="judgeDropdown"
+                    >
+                      <strong>
+                        <span>
+                          VLJ
+                        </span>
+                      </strong>
+                    </label>
                     <div
                       className="cf-select"
                     >
@@ -35081,21 +33785,21 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                 }
               >
                 <div
-                  className="cf-form-dropdown dropdown-hearingCoordinatorDropdown"
+                  className=""
                 >
-                  <label
-                    className="question-label"
-                    htmlFor="hearingCoordinatorDropdown"
-                  >
-                    <strong>
-                      <span>
-                        Hearing Coordinator
-                      </span>
-                    </strong>
-                  </label>
                   <div
-                    className=""
+                    className="cf-form-dropdown dropdown-hearingCoordinatorDropdown"
                   >
+                    <label
+                      className="question-label"
+                      htmlFor="hearingCoordinatorDropdown"
+                    >
+                      <strong>
+                        <span>
+                          Hearing Coordinator
+                        </span>
+                      </strong>
+                    </label>
                     <div
                       className="cf-select"
                     >
@@ -36489,30 +35193,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                     "label": "Mogadishu",
                     "value": "28",
                   },
-                  Object {
-                    "label": "Chosin",
-                    "value": "29",
-                  },
-                  Object {
-                    "label": "Gettysburg",
-                    "value": "30",
-                  },
-                  Object {
-                    "label": "Leyte Gulf",
-                    "value": "31",
-                  },
-                  Object {
-                    "label": "Iwo Jima",
-                    "value": "32",
-                  },
-                  Object {
-                    "label": "Inchon",
-                    "value": "33",
-                  },
-                  Object {
-                    "label": "Fallujah",
-                    "value": "34",
-                  },
                 ]
               }
               strongLabel={true}
@@ -36524,21 +35204,21 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
               }
             >
               <div
-                className="cf-form-dropdown dropdown-hearingRoomDropdown"
+                className=""
               >
-                <label
-                  className="question-label"
-                  htmlFor="hearingRoomDropdown"
-                >
-                  <strong>
-                    <span>
-                      Hearing Room
-                    </span>
-                  </strong>
-                </label>
                 <div
-                  className=""
+                  className="cf-form-dropdown dropdown-hearingRoomDropdown"
                 >
+                  <label
+                    className="question-label"
+                    htmlFor="hearingRoomDropdown"
+                  >
+                    <strong>
+                      <span>
+                        Hearing Room
+                      </span>
+                    </strong>
+                  </label>
                   <div
                     className="cf-select"
                   >
@@ -36671,30 +35351,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                           Object {
                             "label": "Mogadishu",
                             "value": "28",
-                          },
-                          Object {
-                            "label": "Chosin",
-                            "value": "29",
-                          },
-                          Object {
-                            "label": "Gettysburg",
-                            "value": "30",
-                          },
-                          Object {
-                            "label": "Leyte Gulf",
-                            "value": "31",
-                          },
-                          Object {
-                            "label": "Iwo Jima",
-                            "value": "32",
-                          },
-                          Object {
-                            "label": "Inchon",
-                            "value": "33",
-                          },
-                          Object {
-                            "label": "Fallujah",
-                            "value": "34",
                           },
                         ]
                       }
@@ -36868,30 +35524,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                               "label": "Mogadishu",
                               "value": "28",
                             },
-                            Object {
-                              "label": "Chosin",
-                              "value": "29",
-                            },
-                            Object {
-                              "label": "Gettysburg",
-                              "value": "30",
-                            },
-                            Object {
-                              "label": "Leyte Gulf",
-                              "value": "31",
-                            },
-                            Object {
-                              "label": "Iwo Jima",
-                              "value": "32",
-                            },
-                            Object {
-                              "label": "Inchon",
-                              "value": "33",
-                            },
-                            Object {
-                              "label": "Fallujah",
-                              "value": "34",
-                            },
                           ]
                         }
                         pageSize={5}
@@ -37045,30 +35677,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                               Object {
                                 "label": "Mogadishu",
                                 "value": "28",
-                              },
-                              Object {
-                                "label": "Chosin",
-                                "value": "29",
-                              },
-                              Object {
-                                "label": "Gettysburg",
-                                "value": "30",
-                              },
-                              Object {
-                                "label": "Leyte Gulf",
-                                "value": "31",
-                              },
-                              Object {
-                                "label": "Iwo Jima",
-                                "value": "32",
-                              },
-                              Object {
-                                "label": "Inchon",
-                                "value": "33",
-                              },
-                              Object {
-                                "label": "Fallujah",
-                                "value": "34",
                               },
                             ]
                           }
@@ -37232,30 +35840,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                 Object {
                                   "label": "Mogadishu",
                                   "value": "28",
-                                },
-                                Object {
-                                  "label": "Chosin",
-                                  "value": "29",
-                                },
-                                Object {
-                                  "label": "Gettysburg",
-                                  "value": "30",
-                                },
-                                Object {
-                                  "label": "Leyte Gulf",
-                                  "value": "31",
-                                },
-                                Object {
-                                  "label": "Iwo Jima",
-                                  "value": "32",
-                                },
-                                Object {
-                                  "label": "Inchon",
-                                  "value": "33",
-                                },
-                                Object {
-                                  "label": "Fallujah",
-                                  "value": "34",
                                 },
                               ],
                               "pageSize": 5,
@@ -37460,30 +36044,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                       "label": "Mogadishu",
                                       "value": "28",
                                     },
-                                    Object {
-                                      "label": "Chosin",
-                                      "value": "29",
-                                    },
-                                    Object {
-                                      "label": "Gettysburg",
-                                      "value": "30",
-                                    },
-                                    Object {
-                                      "label": "Leyte Gulf",
-                                      "value": "31",
-                                    },
-                                    Object {
-                                      "label": "Iwo Jima",
-                                      "value": "32",
-                                    },
-                                    Object {
-                                      "label": "Inchon",
-                                      "value": "33",
-                                    },
-                                    Object {
-                                      "label": "Fallujah",
-                                      "value": "34",
-                                    },
                                   ]
                                 }
                                 selectOption={[Function]}
@@ -37646,30 +36206,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                       Object {
                                         "label": "Mogadishu",
                                         "value": "28",
-                                      },
-                                      Object {
-                                        "label": "Chosin",
-                                        "value": "29",
-                                      },
-                                      Object {
-                                        "label": "Gettysburg",
-                                        "value": "30",
-                                      },
-                                      Object {
-                                        "label": "Leyte Gulf",
-                                        "value": "31",
-                                      },
-                                      Object {
-                                        "label": "Iwo Jima",
-                                        "value": "32",
-                                      },
-                                      Object {
-                                        "label": "Inchon",
-                                        "value": "33",
-                                      },
-                                      Object {
-                                        "label": "Fallujah",
-                                        "value": "34",
                                       },
                                     ],
                                     "pageSize": 5,
@@ -37882,30 +36418,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             "label": "Mogadishu",
                                             "value": "28",
                                           },
-                                          Object {
-                                            "label": "Chosin",
-                                            "value": "29",
-                                          },
-                                          Object {
-                                            "label": "Gettysburg",
-                                            "value": "30",
-                                          },
-                                          Object {
-                                            "label": "Leyte Gulf",
-                                            "value": "31",
-                                          },
-                                          Object {
-                                            "label": "Iwo Jima",
-                                            "value": "32",
-                                          },
-                                          Object {
-                                            "label": "Inchon",
-                                            "value": "33",
-                                          },
-                                          Object {
-                                            "label": "Fallujah",
-                                            "value": "34",
-                                          },
                                         ]
                                       }
                                       selectOption={[Function]}
@@ -38068,30 +36580,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             Object {
                                               "label": "Mogadishu",
                                               "value": "28",
-                                            },
-                                            Object {
-                                              "label": "Chosin",
-                                              "value": "29",
-                                            },
-                                            Object {
-                                              "label": "Gettysburg",
-                                              "value": "30",
-                                            },
-                                            Object {
-                                              "label": "Leyte Gulf",
-                                              "value": "31",
-                                            },
-                                            Object {
-                                              "label": "Iwo Jima",
-                                              "value": "32",
-                                            },
-                                            Object {
-                                              "label": "Inchon",
-                                              "value": "33",
-                                            },
-                                            Object {
-                                              "label": "Fallujah",
-                                              "value": "34",
                                             },
                                           ],
                                           "pageSize": 5,
@@ -38295,30 +36783,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "label": "Mogadishu",
                                                   "value": "28",
                                                 },
-                                                Object {
-                                                  "label": "Chosin",
-                                                  "value": "29",
-                                                },
-                                                Object {
-                                                  "label": "Gettysburg",
-                                                  "value": "30",
-                                                },
-                                                Object {
-                                                  "label": "Leyte Gulf",
-                                                  "value": "31",
-                                                },
-                                                Object {
-                                                  "label": "Iwo Jima",
-                                                  "value": "32",
-                                                },
-                                                Object {
-                                                  "label": "Inchon",
-                                                  "value": "33",
-                                                },
-                                                Object {
-                                                  "label": "Fallujah",
-                                                  "value": "34",
-                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -38481,30 +36945,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   Object {
                                                     "label": "Mogadishu",
                                                     "value": "28",
-                                                  },
-                                                  Object {
-                                                    "label": "Chosin",
-                                                    "value": "29",
-                                                  },
-                                                  Object {
-                                                    "label": "Gettysburg",
-                                                    "value": "30",
-                                                  },
-                                                  Object {
-                                                    "label": "Leyte Gulf",
-                                                    "value": "31",
-                                                  },
-                                                  Object {
-                                                    "label": "Iwo Jima",
-                                                    "value": "32",
-                                                  },
-                                                  Object {
-                                                    "label": "Inchon",
-                                                    "value": "33",
-                                                  },
-                                                  Object {
-                                                    "label": "Fallujah",
-                                                    "value": "34",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -38755,30 +37195,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   Object {
                                                     "label": "Mogadishu",
                                                     "value": "28",
-                                                  },
-                                                  Object {
-                                                    "label": "Chosin",
-                                                    "value": "29",
-                                                  },
-                                                  Object {
-                                                    "label": "Gettysburg",
-                                                    "value": "30",
-                                                  },
-                                                  Object {
-                                                    "label": "Leyte Gulf",
-                                                    "value": "31",
-                                                  },
-                                                  Object {
-                                                    "label": "Iwo Jima",
-                                                    "value": "32",
-                                                  },
-                                                  Object {
-                                                    "label": "Inchon",
-                                                    "value": "33",
-                                                  },
-                                                  Object {
-                                                    "label": "Fallujah",
-                                                    "value": "34",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -39059,30 +37475,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             "label": "Mogadishu",
                                             "value": "28",
                                           },
-                                          Object {
-                                            "label": "Chosin",
-                                            "value": "29",
-                                          },
-                                          Object {
-                                            "label": "Gettysburg",
-                                            "value": "30",
-                                          },
-                                          Object {
-                                            "label": "Leyte Gulf",
-                                            "value": "31",
-                                          },
-                                          Object {
-                                            "label": "Iwo Jima",
-                                            "value": "32",
-                                          },
-                                          Object {
-                                            "label": "Inchon",
-                                            "value": "33",
-                                          },
-                                          Object {
-                                            "label": "Fallujah",
-                                            "value": "34",
-                                          },
                                         ]
                                       }
                                       selectOption={[Function]}
@@ -39245,30 +37637,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             Object {
                                               "label": "Mogadishu",
                                               "value": "28",
-                                            },
-                                            Object {
-                                              "label": "Chosin",
-                                              "value": "29",
-                                            },
-                                            Object {
-                                              "label": "Gettysburg",
-                                              "value": "30",
-                                            },
-                                            Object {
-                                              "label": "Leyte Gulf",
-                                              "value": "31",
-                                            },
-                                            Object {
-                                              "label": "Iwo Jima",
-                                              "value": "32",
-                                            },
-                                            Object {
-                                              "label": "Inchon",
-                                              "value": "33",
-                                            },
-                                            Object {
-                                              "label": "Fallujah",
-                                              "value": "34",
                                             },
                                           ],
                                           "pageSize": 5,
@@ -39463,30 +37831,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "label": "Mogadishu",
                                                   "value": "28",
                                                 },
-                                                Object {
-                                                  "label": "Chosin",
-                                                  "value": "29",
-                                                },
-                                                Object {
-                                                  "label": "Gettysburg",
-                                                  "value": "30",
-                                                },
-                                                Object {
-                                                  "label": "Leyte Gulf",
-                                                  "value": "31",
-                                                },
-                                                Object {
-                                                  "label": "Iwo Jima",
-                                                  "value": "32",
-                                                },
-                                                Object {
-                                                  "label": "Inchon",
-                                                  "value": "33",
-                                                },
-                                                Object {
-                                                  "label": "Fallujah",
-                                                  "value": "34",
-                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -39649,30 +37993,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   Object {
                                                     "label": "Mogadishu",
                                                     "value": "28",
-                                                  },
-                                                  Object {
-                                                    "label": "Chosin",
-                                                    "value": "29",
-                                                  },
-                                                  Object {
-                                                    "label": "Gettysburg",
-                                                    "value": "30",
-                                                  },
-                                                  Object {
-                                                    "label": "Leyte Gulf",
-                                                    "value": "31",
-                                                  },
-                                                  Object {
-                                                    "label": "Iwo Jima",
-                                                    "value": "32",
-                                                  },
-                                                  Object {
-                                                    "label": "Inchon",
-                                                    "value": "33",
-                                                  },
-                                                  Object {
-                                                    "label": "Fallujah",
-                                                    "value": "34",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -39878,30 +38198,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "label": "Mogadishu",
                                                   "value": "28",
                                                 },
-                                                Object {
-                                                  "label": "Chosin",
-                                                  "value": "29",
-                                                },
-                                                Object {
-                                                  "label": "Gettysburg",
-                                                  "value": "30",
-                                                },
-                                                Object {
-                                                  "label": "Leyte Gulf",
-                                                  "value": "31",
-                                                },
-                                                Object {
-                                                  "label": "Iwo Jima",
-                                                  "value": "32",
-                                                },
-                                                Object {
-                                                  "label": "Inchon",
-                                                  "value": "33",
-                                                },
-                                                Object {
-                                                  "label": "Fallujah",
-                                                  "value": "34",
-                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -40064,30 +38360,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   Object {
                                                     "label": "Mogadishu",
                                                     "value": "28",
-                                                  },
-                                                  Object {
-                                                    "label": "Chosin",
-                                                    "value": "29",
-                                                  },
-                                                  Object {
-                                                    "label": "Gettysburg",
-                                                    "value": "30",
-                                                  },
-                                                  Object {
-                                                    "label": "Leyte Gulf",
-                                                    "value": "31",
-                                                  },
-                                                  Object {
-                                                    "label": "Iwo Jima",
-                                                    "value": "32",
-                                                  },
-                                                  Object {
-                                                    "label": "Inchon",
-                                                    "value": "33",
-                                                  },
-                                                  Object {
-                                                    "label": "Fallujah",
-                                                    "value": "34",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -40260,22 +38532,22 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
               }
             >
               <div
-                className="cf-form-dropdown dropdown-hearingType"
-                data-css-vzv9iy=""
+                className=""
               >
-                <label
-                  className="question-label"
-                  htmlFor="hearingType"
-                >
-                  <strong>
-                    <span>
-                      Hearing Type
-                    </span>
-                  </strong>
-                </label>
                 <div
-                  className=""
+                  className="cf-form-dropdown dropdown-hearingType"
+                  data-css-vzv9iy=""
                 >
+                  <label
+                    className="question-label"
+                    htmlFor="hearingType"
+                  >
+                    <strong>
+                      <span>
+                        Hearing Type
+                      </span>
+                    </strong>
+                  </label>
                   <div
                     className="cf-select"
                   >
@@ -42011,21 +40283,21 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                 strongLabel={true}
               >
                 <div
-                  className="cf-form-dropdown dropdown-transcriber"
+                  className=""
                 >
-                  <label
-                    className="question-label"
-                    htmlFor="transcriber"
-                  >
-                    <strong>
-                      <span>
-                        Transcriber
-                      </span>
-                    </strong>
-                  </label>
                   <div
-                    className=""
+                    className="cf-form-dropdown dropdown-transcriber"
                   >
+                    <label
+                      className="question-label"
+                      htmlFor="transcriber"
+                    >
+                      <strong>
+                        <span>
+                          Transcriber
+                        </span>
+                      </strong>
+                    </label>
                     <div
                       className="cf-select"
                     >
@@ -43783,21 +42055,21 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                 strongLabel={true}
               >
                 <div
-                  className="cf-form-dropdown dropdown-problemType"
+                  className=""
                 >
-                  <label
-                    className="question-label"
-                    htmlFor="problemType"
-                  >
-                    <strong>
-                      <span>
-                        Transcription Problem Type
-                      </span>
-                    </strong>
-                  </label>
                   <div
-                    className=""
+                    className="cf-form-dropdown dropdown-problemType"
                   >
+                    <label
+                      className="question-label"
+                      htmlFor="problemType"
+                    >
+                      <strong>
+                        <span>
+                          Transcription Problem Type
+                        </span>
+                      </strong>
+                    </label>
                     <div
                       className="cf-select"
                     >
@@ -45937,21 +44209,21 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                 }
               >
                 <div
-                  className="cf-form-dropdown dropdown-judgeDropdown"
+                  className=""
                 >
-                  <label
-                    className="question-label"
-                    htmlFor="judgeDropdown"
-                  >
-                    <strong>
-                      <span>
-                        VLJ
-                      </span>
-                    </strong>
-                  </label>
                   <div
-                    className=""
+                    className="cf-form-dropdown dropdown-judgeDropdown"
                   >
+                    <label
+                      className="question-label"
+                      htmlFor="judgeDropdown"
+                    >
+                      <strong>
+                        <span>
+                          VLJ
+                        </span>
+                      </strong>
+                    </label>
                     <div
                       className="cf-select"
                     >
@@ -47249,21 +45521,21 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                 }
               >
                 <div
-                  className="cf-form-dropdown dropdown-hearingCoordinatorDropdown"
+                  className=""
                 >
-                  <label
-                    className="question-label"
-                    htmlFor="hearingCoordinatorDropdown"
-                  >
-                    <strong>
-                      <span>
-                        Hearing Coordinator
-                      </span>
-                    </strong>
-                  </label>
                   <div
-                    className=""
+                    className="cf-form-dropdown dropdown-hearingCoordinatorDropdown"
                   >
+                    <label
+                      className="question-label"
+                      htmlFor="hearingCoordinatorDropdown"
+                    >
+                      <strong>
+                        <span>
+                          Hearing Coordinator
+                        </span>
+                      </strong>
+                    </label>
                     <div
                       className="cf-select"
                     >
@@ -48657,30 +46929,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                     "label": "Mogadishu",
                     "value": "28",
                   },
-                  Object {
-                    "label": "Chosin",
-                    "value": "29",
-                  },
-                  Object {
-                    "label": "Gettysburg",
-                    "value": "30",
-                  },
-                  Object {
-                    "label": "Leyte Gulf",
-                    "value": "31",
-                  },
-                  Object {
-                    "label": "Iwo Jima",
-                    "value": "32",
-                  },
-                  Object {
-                    "label": "Inchon",
-                    "value": "33",
-                  },
-                  Object {
-                    "label": "Fallujah",
-                    "value": "34",
-                  },
                 ]
               }
               strongLabel={true}
@@ -48692,21 +46940,21 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
               }
             >
               <div
-                className="cf-form-dropdown dropdown-hearingRoomDropdown"
+                className=""
               >
-                <label
-                  className="question-label"
-                  htmlFor="hearingRoomDropdown"
-                >
-                  <strong>
-                    <span>
-                      Hearing Room
-                    </span>
-                  </strong>
-                </label>
                 <div
-                  className=""
+                  className="cf-form-dropdown dropdown-hearingRoomDropdown"
                 >
+                  <label
+                    className="question-label"
+                    htmlFor="hearingRoomDropdown"
+                  >
+                    <strong>
+                      <span>
+                        Hearing Room
+                      </span>
+                    </strong>
+                  </label>
                   <div
                     className="cf-select"
                   >
@@ -48839,30 +47087,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                           Object {
                             "label": "Mogadishu",
                             "value": "28",
-                          },
-                          Object {
-                            "label": "Chosin",
-                            "value": "29",
-                          },
-                          Object {
-                            "label": "Gettysburg",
-                            "value": "30",
-                          },
-                          Object {
-                            "label": "Leyte Gulf",
-                            "value": "31",
-                          },
-                          Object {
-                            "label": "Iwo Jima",
-                            "value": "32",
-                          },
-                          Object {
-                            "label": "Inchon",
-                            "value": "33",
-                          },
-                          Object {
-                            "label": "Fallujah",
-                            "value": "34",
                           },
                         ]
                       }
@@ -49036,30 +47260,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                               "label": "Mogadishu",
                               "value": "28",
                             },
-                            Object {
-                              "label": "Chosin",
-                              "value": "29",
-                            },
-                            Object {
-                              "label": "Gettysburg",
-                              "value": "30",
-                            },
-                            Object {
-                              "label": "Leyte Gulf",
-                              "value": "31",
-                            },
-                            Object {
-                              "label": "Iwo Jima",
-                              "value": "32",
-                            },
-                            Object {
-                              "label": "Inchon",
-                              "value": "33",
-                            },
-                            Object {
-                              "label": "Fallujah",
-                              "value": "34",
-                            },
                           ]
                         }
                         pageSize={5}
@@ -49213,30 +47413,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                               Object {
                                 "label": "Mogadishu",
                                 "value": "28",
-                              },
-                              Object {
-                                "label": "Chosin",
-                                "value": "29",
-                              },
-                              Object {
-                                "label": "Gettysburg",
-                                "value": "30",
-                              },
-                              Object {
-                                "label": "Leyte Gulf",
-                                "value": "31",
-                              },
-                              Object {
-                                "label": "Iwo Jima",
-                                "value": "32",
-                              },
-                              Object {
-                                "label": "Inchon",
-                                "value": "33",
-                              },
-                              Object {
-                                "label": "Fallujah",
-                                "value": "34",
                               },
                             ]
                           }
@@ -49400,30 +47576,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                 Object {
                                   "label": "Mogadishu",
                                   "value": "28",
-                                },
-                                Object {
-                                  "label": "Chosin",
-                                  "value": "29",
-                                },
-                                Object {
-                                  "label": "Gettysburg",
-                                  "value": "30",
-                                },
-                                Object {
-                                  "label": "Leyte Gulf",
-                                  "value": "31",
-                                },
-                                Object {
-                                  "label": "Iwo Jima",
-                                  "value": "32",
-                                },
-                                Object {
-                                  "label": "Inchon",
-                                  "value": "33",
-                                },
-                                Object {
-                                  "label": "Fallujah",
-                                  "value": "34",
                                 },
                               ],
                               "pageSize": 5,
@@ -49628,30 +47780,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                       "label": "Mogadishu",
                                       "value": "28",
                                     },
-                                    Object {
-                                      "label": "Chosin",
-                                      "value": "29",
-                                    },
-                                    Object {
-                                      "label": "Gettysburg",
-                                      "value": "30",
-                                    },
-                                    Object {
-                                      "label": "Leyte Gulf",
-                                      "value": "31",
-                                    },
-                                    Object {
-                                      "label": "Iwo Jima",
-                                      "value": "32",
-                                    },
-                                    Object {
-                                      "label": "Inchon",
-                                      "value": "33",
-                                    },
-                                    Object {
-                                      "label": "Fallujah",
-                                      "value": "34",
-                                    },
                                   ]
                                 }
                                 selectOption={[Function]}
@@ -49814,30 +47942,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                       Object {
                                         "label": "Mogadishu",
                                         "value": "28",
-                                      },
-                                      Object {
-                                        "label": "Chosin",
-                                        "value": "29",
-                                      },
-                                      Object {
-                                        "label": "Gettysburg",
-                                        "value": "30",
-                                      },
-                                      Object {
-                                        "label": "Leyte Gulf",
-                                        "value": "31",
-                                      },
-                                      Object {
-                                        "label": "Iwo Jima",
-                                        "value": "32",
-                                      },
-                                      Object {
-                                        "label": "Inchon",
-                                        "value": "33",
-                                      },
-                                      Object {
-                                        "label": "Fallujah",
-                                        "value": "34",
                                       },
                                     ],
                                     "pageSize": 5,
@@ -50050,30 +48154,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                             "label": "Mogadishu",
                                             "value": "28",
                                           },
-                                          Object {
-                                            "label": "Chosin",
-                                            "value": "29",
-                                          },
-                                          Object {
-                                            "label": "Gettysburg",
-                                            "value": "30",
-                                          },
-                                          Object {
-                                            "label": "Leyte Gulf",
-                                            "value": "31",
-                                          },
-                                          Object {
-                                            "label": "Iwo Jima",
-                                            "value": "32",
-                                          },
-                                          Object {
-                                            "label": "Inchon",
-                                            "value": "33",
-                                          },
-                                          Object {
-                                            "label": "Fallujah",
-                                            "value": "34",
-                                          },
                                         ]
                                       }
                                       selectOption={[Function]}
@@ -50236,30 +48316,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                             Object {
                                               "label": "Mogadishu",
                                               "value": "28",
-                                            },
-                                            Object {
-                                              "label": "Chosin",
-                                              "value": "29",
-                                            },
-                                            Object {
-                                              "label": "Gettysburg",
-                                              "value": "30",
-                                            },
-                                            Object {
-                                              "label": "Leyte Gulf",
-                                              "value": "31",
-                                            },
-                                            Object {
-                                              "label": "Iwo Jima",
-                                              "value": "32",
-                                            },
-                                            Object {
-                                              "label": "Inchon",
-                                              "value": "33",
-                                            },
-                                            Object {
-                                              "label": "Fallujah",
-                                              "value": "34",
                                             },
                                           ],
                                           "pageSize": 5,
@@ -50463,30 +48519,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   "label": "Mogadishu",
                                                   "value": "28",
                                                 },
-                                                Object {
-                                                  "label": "Chosin",
-                                                  "value": "29",
-                                                },
-                                                Object {
-                                                  "label": "Gettysburg",
-                                                  "value": "30",
-                                                },
-                                                Object {
-                                                  "label": "Leyte Gulf",
-                                                  "value": "31",
-                                                },
-                                                Object {
-                                                  "label": "Iwo Jima",
-                                                  "value": "32",
-                                                },
-                                                Object {
-                                                  "label": "Inchon",
-                                                  "value": "33",
-                                                },
-                                                Object {
-                                                  "label": "Fallujah",
-                                                  "value": "34",
-                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -50649,30 +48681,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   Object {
                                                     "label": "Mogadishu",
                                                     "value": "28",
-                                                  },
-                                                  Object {
-                                                    "label": "Chosin",
-                                                    "value": "29",
-                                                  },
-                                                  Object {
-                                                    "label": "Gettysburg",
-                                                    "value": "30",
-                                                  },
-                                                  Object {
-                                                    "label": "Leyte Gulf",
-                                                    "value": "31",
-                                                  },
-                                                  Object {
-                                                    "label": "Iwo Jima",
-                                                    "value": "32",
-                                                  },
-                                                  Object {
-                                                    "label": "Inchon",
-                                                    "value": "33",
-                                                  },
-                                                  Object {
-                                                    "label": "Fallujah",
-                                                    "value": "34",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -50923,30 +48931,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   Object {
                                                     "label": "Mogadishu",
                                                     "value": "28",
-                                                  },
-                                                  Object {
-                                                    "label": "Chosin",
-                                                    "value": "29",
-                                                  },
-                                                  Object {
-                                                    "label": "Gettysburg",
-                                                    "value": "30",
-                                                  },
-                                                  Object {
-                                                    "label": "Leyte Gulf",
-                                                    "value": "31",
-                                                  },
-                                                  Object {
-                                                    "label": "Iwo Jima",
-                                                    "value": "32",
-                                                  },
-                                                  Object {
-                                                    "label": "Inchon",
-                                                    "value": "33",
-                                                  },
-                                                  Object {
-                                                    "label": "Fallujah",
-                                                    "value": "34",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -51227,30 +49211,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                             "label": "Mogadishu",
                                             "value": "28",
                                           },
-                                          Object {
-                                            "label": "Chosin",
-                                            "value": "29",
-                                          },
-                                          Object {
-                                            "label": "Gettysburg",
-                                            "value": "30",
-                                          },
-                                          Object {
-                                            "label": "Leyte Gulf",
-                                            "value": "31",
-                                          },
-                                          Object {
-                                            "label": "Iwo Jima",
-                                            "value": "32",
-                                          },
-                                          Object {
-                                            "label": "Inchon",
-                                            "value": "33",
-                                          },
-                                          Object {
-                                            "label": "Fallujah",
-                                            "value": "34",
-                                          },
                                         ]
                                       }
                                       selectOption={[Function]}
@@ -51413,30 +49373,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                             Object {
                                               "label": "Mogadishu",
                                               "value": "28",
-                                            },
-                                            Object {
-                                              "label": "Chosin",
-                                              "value": "29",
-                                            },
-                                            Object {
-                                              "label": "Gettysburg",
-                                              "value": "30",
-                                            },
-                                            Object {
-                                              "label": "Leyte Gulf",
-                                              "value": "31",
-                                            },
-                                            Object {
-                                              "label": "Iwo Jima",
-                                              "value": "32",
-                                            },
-                                            Object {
-                                              "label": "Inchon",
-                                              "value": "33",
-                                            },
-                                            Object {
-                                              "label": "Fallujah",
-                                              "value": "34",
                                             },
                                           ],
                                           "pageSize": 5,
@@ -51631,30 +49567,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   "label": "Mogadishu",
                                                   "value": "28",
                                                 },
-                                                Object {
-                                                  "label": "Chosin",
-                                                  "value": "29",
-                                                },
-                                                Object {
-                                                  "label": "Gettysburg",
-                                                  "value": "30",
-                                                },
-                                                Object {
-                                                  "label": "Leyte Gulf",
-                                                  "value": "31",
-                                                },
-                                                Object {
-                                                  "label": "Iwo Jima",
-                                                  "value": "32",
-                                                },
-                                                Object {
-                                                  "label": "Inchon",
-                                                  "value": "33",
-                                                },
-                                                Object {
-                                                  "label": "Fallujah",
-                                                  "value": "34",
-                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -51817,30 +49729,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   Object {
                                                     "label": "Mogadishu",
                                                     "value": "28",
-                                                  },
-                                                  Object {
-                                                    "label": "Chosin",
-                                                    "value": "29",
-                                                  },
-                                                  Object {
-                                                    "label": "Gettysburg",
-                                                    "value": "30",
-                                                  },
-                                                  Object {
-                                                    "label": "Leyte Gulf",
-                                                    "value": "31",
-                                                  },
-                                                  Object {
-                                                    "label": "Iwo Jima",
-                                                    "value": "32",
-                                                  },
-                                                  Object {
-                                                    "label": "Inchon",
-                                                    "value": "33",
-                                                  },
-                                                  Object {
-                                                    "label": "Fallujah",
-                                                    "value": "34",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -52046,30 +49934,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   "label": "Mogadishu",
                                                   "value": "28",
                                                 },
-                                                Object {
-                                                  "label": "Chosin",
-                                                  "value": "29",
-                                                },
-                                                Object {
-                                                  "label": "Gettysburg",
-                                                  "value": "30",
-                                                },
-                                                Object {
-                                                  "label": "Leyte Gulf",
-                                                  "value": "31",
-                                                },
-                                                Object {
-                                                  "label": "Iwo Jima",
-                                                  "value": "32",
-                                                },
-                                                Object {
-                                                  "label": "Inchon",
-                                                  "value": "33",
-                                                },
-                                                Object {
-                                                  "label": "Fallujah",
-                                                  "value": "34",
-                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -52232,30 +50096,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   Object {
                                                     "label": "Mogadishu",
                                                     "value": "28",
-                                                  },
-                                                  Object {
-                                                    "label": "Chosin",
-                                                    "value": "29",
-                                                  },
-                                                  Object {
-                                                    "label": "Gettysburg",
-                                                    "value": "30",
-                                                  },
-                                                  Object {
-                                                    "label": "Leyte Gulf",
-                                                    "value": "31",
-                                                  },
-                                                  Object {
-                                                    "label": "Iwo Jima",
-                                                    "value": "32",
-                                                  },
-                                                  Object {
-                                                    "label": "Inchon",
-                                                    "value": "33",
-                                                  },
-                                                  Object {
-                                                    "label": "Fallujah",
-                                                    "value": "34",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -52428,22 +50268,22 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
               }
             >
               <div
-                className="cf-form-dropdown dropdown-hearingType"
-                data-css-vzv9iy=""
+                className=""
               >
-                <label
-                  className="question-label"
-                  htmlFor="hearingType"
-                >
-                  <strong>
-                    <span>
-                      Hearing Type
-                    </span>
-                  </strong>
-                </label>
                 <div
-                  className=""
+                  className="cf-form-dropdown dropdown-hearingType"
+                  data-css-vzv9iy=""
                 >
+                  <label
+                    className="question-label"
+                    htmlFor="hearingType"
+                  >
+                    <strong>
+                      <span>
+                        Hearing Type
+                      </span>
+                    </strong>
+                  </label>
                   <div
                     className="cf-select"
                   >

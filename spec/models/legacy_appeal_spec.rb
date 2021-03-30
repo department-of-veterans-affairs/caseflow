@@ -1903,7 +1903,7 @@ describe LegacyAppeal, :all_dbs do
       end
 
       it "uses appellant to load BGS POA" do
-        expect(appeal.power_of_attorney.bgs_representative_name).to eq "Attorney McAttorneyFace"
+        expect(appeal.power_of_attorney.bgs_representative_name).to eq "Clarence Darrow"
         expect(appeal.power_of_attorney.bgs_participant_id).to eq poa_pid
       end
     end
@@ -2080,124 +2080,6 @@ describe LegacyAppeal, :all_dbs do
           expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
         end
       end
-    end
-  end
-
-  context "#current_hearing_request_type" do
-    subject { appeal.current_hearing_request_type }
-
-    context "when central_office" do
-      let(:vacols_case) { create(:case, :video_hearing_requested, :central_office_hearing) }
-      it { is_expected.to eq(:central_office) }
-    end
-
-    context "when travel_board" do
-      let(:vacols_case) { create(:case, :video_hearing_requested, :travel_board_hearing) }
-
-      context "when video_hearing_requested" do
-        it { is_expected.to eq(:video) }
-      end
-
-      context "when video_hearing_requested is false" do
-        let(:vacols_case) { create(:case, :travel_board_hearing) }
-        it { is_expected.to eq(:travel_board) }
-      end
-
-      context "when request type overriden in Caseflow to video" do
-        let(:changed_request_type) { HearingDay::REQUEST_TYPES[:video] }
-        let(:vacols_case) { create(:case, :travel_board_hearing) }
-
-        it { is_expected.to eq(:video) }
-      end
-
-      context "when request type overriden in Caseflow to virtual" do
-        let(:changed_request_type) { HearingDay::REQUEST_TYPES[:virtual] }
-        let(:vacols_case) { create(:case, :travel_board_hearing) }
-
-        it { is_expected.to eq(:virtual) }
-      end
-    end
-
-    context "when unsupported type" do
-      let(:vacols_case) { create(:case, bfhr: "9") }
-      it { is_expected.to be_nil }
-    end
-  end
-
-  context "#original_hearing_request_type" do
-    subject { appeal.original_hearing_request_type }
-
-    context "when central_office" do
-      let(:vacols_case) { create(:case, :video_hearing_requested, :central_office_hearing) }
-      it { is_expected.to eq(:central_office) }
-    end
-
-    context "when travel_board" do
-      let(:vacols_case) { create(:case, :video_hearing_requested, :travel_board_hearing) }
-
-      context "when video_hearing_requested" do
-        it { is_expected.to eq(:video) }
-      end
-
-      context "when video_hearing_requested is false" do
-        let(:vacols_case) { create(:case, :travel_board_hearing) }
-        it { is_expected.to eq(:travel_board) }
-      end
-
-      context "when request type overriden in Caseflow to video" do
-        let(:changed_request_type) { HearingDay::REQUEST_TYPES[:video] }
-        let(:vacols_case) { create(:case, :travel_board_hearing) }
-
-        it { is_expected.to eq(:travel_board) }
-      end
-
-      context "when request type overriden in Caseflow to virtual" do
-        let(:changed_request_type) { HearingDay::REQUEST_TYPES[:virtual] }
-        let(:vacols_case) { create(:case, :travel_board_hearing) }
-
-        it { is_expected.to eq(:travel_board) }
-      end
-    end
-
-    context "when unsupported type" do
-      let(:vacols_case) { create(:case, bfhr: "9") }
-      it { is_expected.to be_nil }
-    end
-  end
-
-  context "#previous_hearing_request_type" do
-    subject { appeal.reload.previous_hearing_request_type }
-
-    context "when there's one paper trail event" do
-      let(:vacols_case) { create(:case, :travel_board_hearing) }
-
-      before do
-        # this will create the event
-        appeal.update!(changed_request_type: HearingDay::REQUEST_TYPES[:virtual])
-      end
-
-      it { is_expected.to eq(:travel_board) }
-    end
-
-    context "when there are two paper trail events" do
-      let(:changed_request_type1) { HearingDay::REQUEST_TYPES[:virtual] }
-      let(:changed_request_type2) { HearingDay::REQUEST_TYPES[:video] }
-      let(:vacols_case) { create(:case, :travel_board_hearing) }
-
-      before do
-        # this will create the first event
-        appeal.update!(changed_request_type: changed_request_type1)
-        # this will create the second event
-        appeal.reload.update!(changed_request_type: changed_request_type2)
-      end
-
-      it { is_expected.to eq(:virtual) }
-    end
-
-    context "when paper trail event is nil" do
-      let(:vacols_case) { create(:case, :video_hearing_requested, :central_office_hearing) }
-
-      it { is_expected.to eq(:central_office) }
     end
   end
 
@@ -3049,6 +2931,20 @@ describe LegacyAppeal, :all_dbs do
         end
 
         it_behaves_like "assumes user is the decision signer"
+      end
+    end
+  end
+
+  describe "#completed_hearing_on_previous_appeal?" do
+    context "when there are no hearings" do
+      let(:vacols_case) { create(:case, bfcorlid: "12345") }
+      subject { appeal.completed_hearing_on_previous_appeal? }
+
+      it "returns false" do
+        vacols_ids = VACOLS::Case.where(bfcorlid: appeal.vbms_id).pluck(:bfkey)
+        hearings = HearingRepository.hearings_for_appeals(vacols_ids)
+        expect(hearings).to eq({})
+        expect(subject).to eq false
       end
     end
   end

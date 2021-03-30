@@ -16,7 +16,8 @@ class WorkQueue::AppealSerializer
         notes: issue.notes,
         diagnostic_code: issue.contested_rating_issue_diagnostic_code,
         remand_reasons: issue.remand_reasons,
-        closed_status: issue.closed_status
+        closed_status: issue.closed_status,
+        decision_date: issue.decision_date
       }
     end
   end
@@ -34,6 +35,12 @@ class WorkQueue::AppealSerializer
         diagnostic_code: issue.diagnostic_code,
         request_issue_ids: issue.request_decision_issues.pluck(:request_issue_id)
       }
+    end
+  end
+
+  attribute :nod_date_updates do |object|
+    object.nod_date_updates.map do |nod_date_update|
+      WorkQueue::NodDateUpdateSerializer.new(nod_date_update).serializable_hash[:data][:attributes]
     end
   end
 
@@ -72,6 +79,8 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :cavc_remand
+
+  attribute :veteran_death_date
 
   attribute :veteran_file_number
 
@@ -142,10 +151,19 @@ class WorkQueue::AppealSerializer
     ).editable?
   end
 
-  attribute :readable_hearing_request_type do |object|
-    object.current_hearing_request_type(readable: true)
+  attribute :readable_hearing_request_type, &:readable_current_hearing_request_type
+
+  attribute :readable_original_hearing_request_type, &:readable_original_hearing_request_type
+
+  attribute :docket_switch do |object|
+    if object.docket_switch
+      WorkQueue::DocketSwitchSerializer.new(object.docket_switch).serializable_hash[:data][:attributes]
+    end
   end
-  attribute :readable_original_hearing_request_type do |object|
-    object.original_hearing_request_type(readable: true)
+
+  attribute :switched_dockets do |object|
+    object.switched_dockets.map do |docket_switch|
+      WorkQueue::DocketSwitchSerializer.new(docket_switch).serializable_hash[:data][:attributes]
+    end
   end
 end

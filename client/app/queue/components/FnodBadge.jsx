@@ -10,19 +10,19 @@ import Badge from './Badge';
  */
 
 const FnodBadge = (props) => {
-  const { appeal } = props;
+  const { veteranAppellantDeceased, uniqueId, tooltipText } = props;
 
-  if (!appeal.veteran_appellant_deceased) {
+  if (!veteranAppellantDeceased) {
     return null;
   }
 
-  const tooltipText = 'Date of Death Reported';
-
-  return <Badge name="fnod" displayName="FNOD" color={COLORS.RED} tooltipText={tooltipText} id={`fnod-${appeal.id}`} />;
+  return <Badge name="fnod" displayName="FNOD" color={COLORS.RED} tooltipText={tooltipText} id={`fnod-${uniqueId}`} />;
 };
 
 FnodBadge.propTypes = {
-  appeal: PropTypes.object
+  veteranAppellantDeceased: PropTypes.bool,
+  uniqueId: PropTypes.string,
+  tooltipText: PropTypes.string
 };
 
 export default FnodBadge;

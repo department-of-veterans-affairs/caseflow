@@ -1,7 +1,4 @@
 /* eslint-disable react/prop-types */
-
-import { hot } from 'react-hot-loader/root';
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -23,6 +20,8 @@ import { PAGE_PATHS } from './constants';
 import { toggleCancelModal, submitCancel } from './actions/intake';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { IntakeLayout } from './components/IntakeLayout';
+import { AddClaimantPage } from './addClaimant/AddClaimantPage';
+import { AddPoaPage } from './addPOA/AddPoaPage';
 
 export const IntakeFrame = (props) => {
   const history = useHistory();
@@ -99,6 +98,22 @@ export const IntakeFrame = (props) => {
 
           <PageRoute
             exact
+            path={PAGE_PATHS.ADD_CLAIMANT}
+            title="Add Claimant | Caseflow Intake"
+          >
+            <AddClaimantPage />
+          </PageRoute>
+
+          <PageRoute
+            exact
+            path={PAGE_PATHS.ADD_POWER_OF_ATTORNEY}
+            title="Add Power of Attorney | Caseflow Intake"
+          >
+            <AddPoaPage />
+          </PageRoute>
+
+          <PageRoute
+            exact
             path={PAGE_PATHS.ADD_ISSUES}
             title="Add / Remove Issues | Caseflow Intake"
           >
@@ -137,22 +152,20 @@ export const IntakeFrame = (props) => {
   );
 };
 
-export default hot(
-  connect(
-    ({ intake }) => ({
-      intakeId: intake.id,
-      unreadMessages: intake.unreadMessages,
-      veteran: intake.veteran,
-      cancelModalVisible: intake.cancelModalVisible,
-      cancelIntakeRequestStatus: intake.requestStatus.cancel,
-    }),
-    (dispatch) =>
-      bindActionCreators(
-        {
-          toggleCancelModal,
-          submitCancel,
-        },
-        dispatch
-      )
-  )(IntakeFrame)
-);
+export default connect(
+  ({ intake }) => ({
+    intakeId: intake.id,
+    unreadMessages: intake.unreadMessages,
+    veteran: intake.veteran,
+    cancelModalVisible: intake.cancelModalVisible,
+    cancelIntakeRequestStatus: intake.requestStatus.cancel,
+  }),
+  (dispatch) =>
+    bindActionCreators(
+      {
+        toggleCancelModal,
+        submitCancel,
+      },
+      dispatch
+    )
+)(IntakeFrame);

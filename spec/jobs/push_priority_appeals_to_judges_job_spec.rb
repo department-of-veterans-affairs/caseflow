@@ -203,7 +203,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       (1..5).map do |i|
         appeal = create(:appeal,
                         :type_cavc_remand,
-                        :ready_for_distribution,
+                        :cavc_ready_for_distribution,
                         docket_type: Constants.AMA_DOCKETS.evidence_submission)
         appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.month.ago)
         appeal
@@ -221,10 +221,10 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
     end
 
-    let(:priority_count) { Appeal.count + VACOLS::Case.count }
+    let(:priority_count) { Appeal.count { |a| a.aod? || a.cavc? } + VACOLS::Case.count }
     let(:priority_target) { (priority_count + judge_distributions_this_month.sum) / judges.count }
 
-    it "should distibute ready priortiy appeals to the judges" do
+    it "should distribute ready priority appeals to the judges" do
       expect(subject.count).to eq judges.count
 
       # Ensure we distributed all available ready cases from any docket that are not tied to a judge
@@ -458,10 +458,13 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     context "tracking distributions over time" do
       let(:number_judges) { rand(5..10) }
       let(:priority_count) { rand(10..30) }
+      # Github Issue 15984, this stops this test from flaking, by making sure the
+      # expects below are achievable for all values rand() will produce.
+      let(:max_preexisting_cases) { (priority_count / (number_judges - 1)).floor }
 
       before do
         # Mock cases already distributed this month
-        @distribution_counts = to_judge_hash(Array.new(number_judges).map { rand(12) })
+        @distribution_counts = to_judge_hash(Array.new(number_judges).map { rand(max_preexisting_cases) })
         allow_any_instance_of(PushPriorityAppealsToJudgesJob)
           .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(@distribution_counts)
         allow_any_instance_of(PushPriorityAppealsToJudgesJob)

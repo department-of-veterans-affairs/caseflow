@@ -16,7 +16,7 @@ class CachedAppealService
           issue_count: request_issues_to_cache[appeal.id] || 0,
           docket_type: appeal.docket_type,
           docket_number: appeal.docket_number,
-          hearing_request_type: appeal.current_hearing_request_type(readable: true),
+          hearing_request_type: appeal.readable_current_hearing_request_type,
           is_aod: appeal_aod_status.include?(appeal.id),
           suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location,
           veteran_name: veteran_names_to_cache[appeal.veteran_file_number]
@@ -179,8 +179,8 @@ class CachedAppealService
     # }
     VACOLS::Case.where(bfkey: vacols_ids).map do |vacols_case|
       original_request = original_hearing_request_type_for_vacols_case(vacols_case)
-      changed_request = changed_hearing_request_type_for_all_vacols_ids[vacols_case.bfkey]
-      # Replicates LegacyAppeal#current_hearing_request_type
+      changed_request = hearing_request_types_for_all_vacols_ids[vacols_case.bfkey]&.[](:changed)
+      # Replicates HearingRequestTypeConcern#current_hearing_request_type
       current_request = HearingDay::REQUEST_TYPES.key(changed_request)&.to_sym || original_request
 
       [
@@ -209,22 +209,26 @@ class CachedAppealService
   end
 
   # Gets the symbolic representation of the original type of hearing requested for a vacols case record
-  # Replicates logic in LegacyAppeal#original_hearing_request_type
   def original_hearing_request_type_for_vacols_case(vacols_case)
+    # return the value saved in caseflow's database if it exists
+    request_type = hearing_request_types_for_all_vacols_ids[vacols_case.bfkey]&.[](:original)
+    return request_type.to_sym if request_type.present?
+
+    # get the value from cached VACOLS data
+    # redundant with logic in HearingRequestTypeConcern and AppealRepository
     request_type = VACOLS::Case::HEARING_REQUEST_TYPES[vacols_case.bfhr]
 
     (request_type == :travel_board && vacols_case.bfdocind == "V") ? :video : request_type
   end
 
   # Maps vacols ids to their leagcy appeal's changed hearing request type
-  def changed_hearing_request_type_for_all_vacols_ids
-    @changed_hearing_request_type_for_all_vacols_ids ||= begin
-                                                           LegacyAppeal
-                                                             .where
-                                                             .not(changed_request_type: nil)
-                                                             .pluck(:vacols_id, :changed_request_type)
-                                                             .to_h
-                                                         end
+  def hearing_request_types_for_all_vacols_ids
+    @hearing_request_types_for_all_vacols_ids ||= LegacyAppeal
+      .where
+      .not(changed_request_type: nil)
+      .pluck(:vacols_id, :changed_request_type, :original_request_type)
+      .map { |group| [group[0], { changed: group[1], original: group[2] }] }
+      .to_h
   end
 
   def issues_counts_for_vacols_folders(vacols_ids)

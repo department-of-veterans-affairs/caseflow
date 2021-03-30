@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class AppealsController < ApplicationController
-  include ValidationConcern
-
   before_action :react_routed
   before_action :set_application, only: [:document_count, :power_of_attorney]
   # Only whitelist endpoints VSOs should have access to.
@@ -136,13 +134,6 @@ class AppealsController < ApplicationController
       }
     else
       render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
-    end
-  end
-
-  validates :update_nod_date, using: AppealsSchemas.update_nod_date
-  def update_nod_date
-    if params[:receipt_date]
-      appeal.update_receipt_date!(receipt_date: params[:receipt_date])
     end
   end
 

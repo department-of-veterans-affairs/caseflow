@@ -117,8 +117,7 @@ RSpec.feature "Case details", :all_dbs do
         hearing = appeal.hearings.first
         expect(page).to have_content("Type: #{hearing.readable_request_type}")
 
-        expect(page).to have_content("Disposition: Cancelled")
-
+        expect(page).to have_content("Disposition: #{Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.cancelled}")
         expect(page).to have_content("Date: ")
         expect(page).to have_content("Judge: ")
       end
@@ -816,6 +815,43 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
 
+  describe "Appeal has requested to switch dockets" do
+    let!(:full_grant_docket_switch) { create(:docket_switch) }
+    let!(:partial_grant_docket_switch) { create(:docket_switch, :partially_granted) }
+    let!(:denied_docket_switch) { create(:docket_switch, :denied) }
+    context "appeal has received full grant docket switch" do
+      it "should display alert banner on old appeal stream page" do
+        visit "/queue/appeals/#{full_grant_docket_switch.old_docket_stream.uuid}"
+        expect(page).to have_content COPY::DOCKET_SWITCH_FULL_GRANTED_TITLE
+        click_link "switched appeal stream."
+        expect(page).to have_current_path("/queue/appeals/#{full_grant_docket_switch.new_docket_stream.uuid}")
+      end
+    end
+
+    context "appeal has received partial grant docket switch" do
+      it "should display alert banner on old appeal stream page" do
+        visit "/queue/appeals/#{partial_grant_docket_switch.old_docket_stream.uuid}"
+        expect(page).to have_content COPY::DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_OLD_DOCKET
+        click_link "switched appeal stream."
+        expect(page).to have_current_path("/queue/appeals/#{partial_grant_docket_switch.new_docket_stream.uuid}")
+      end
+
+      it "should display alert banner on new appeal stream page" do
+        visit "/queue/appeals/#{partial_grant_docket_switch.new_docket_stream.uuid}"
+        expect(page).to have_content COPY::DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_NEW_DOCKET
+        click_link "other appeal stream."
+        expect(page).to have_current_path("/queue/appeals/#{partial_grant_docket_switch.old_docket_stream.uuid}")
+      end
+    end
+
+    context "appeal has been denied request to switch dockets" do
+      it "should not display alert banner" do
+        visit "/queue/appeals/#{denied_docket_switch.old_docket_stream.uuid}"
+        expect(page).to_not have_content COPY::DOCKET_SWITCH_FULL_GRANTED_TITLE
+      end
+    end
+  end
+
   describe "Marking organization task complete" do
     context "when there is no assigner" do
       let(:qr) { QualityReview.singleton }
@@ -893,7 +929,8 @@ RSpec.feature "Case details", :all_dbs do
 
     describe "CaseTimeline shows judge & attorney tasks" do
       let!(:user) { create(:user) }
-      let!(:appeal) { create(:appeal) }
+      let!(:nod_date_update) { create(:nod_date_update) }
+      let!(:appeal) { create(:appeal, nod_date_updates: [nod_date_update]) }
       let!(:appeal2) { create(:appeal) }
       let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
       let!(:assign_task) { create(:ama_judge_assign_task, assigned_to: user, parent: root_task) }
@@ -908,13 +945,17 @@ RSpec.feature "Case details", :all_dbs do
       let!(:attorney_task2) { create(:ama_attorney_task, parent: root_task, assigned_to: user) }
 
       before do
+        FeatureToggle.enable!(:view_nod_date_updates)
         # The status attribute needs to be set here due to update_parent_status hook in the task model
         # the updated_at attribute needs to be set here due to the set_timestamps hook in the task model
         assign_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-01-01")
         attorney_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-02-01")
         attorney_task2.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-03-01")
         judge_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: Time.zone.now)
+        nod_date_update.update!(updated_at: "2019-01-05")
       end
+
+      after { FeatureToggle.disable!(:view_nod_date_updates) }
 
       it "should display judge & attorney tasks, but not judge assign tasks" do
         visit "/queue/appeals/#{appeal.uuid}"
@@ -922,15 +963,17 @@ RSpec.feature "Case details", :all_dbs do
         expect(page.find_all("dl", text: COPY::CASE_TIMELINE_JUDGE_TASK).length).to eq 1
       end
 
-      it "should sort tasks properly" do
+      it "should sort tasks and nod date updates properly" do
         visit "/queue/appeals/#{appeal.uuid}"
         case_timeline_rows = page.find_all("table#case-timeline-table tbody tr")
         first_row_with_date = case_timeline_rows[1]
         second_row_with_date = case_timeline_rows[2]
         third_row_with_date = case_timeline_rows[3]
+        fourth_row_with_date = case_timeline_rows[4]
         expect(first_row_with_date).to have_content("01/01/2020")
         expect(second_row_with_date).to have_content("03/01/2019")
         expect(third_row_with_date).to have_content("02/01/2019")
+        expect(fourth_row_with_date).to have_content("01/05/2019")
       end
 
       it "should NOT display judge & attorney tasks" do
@@ -1232,6 +1275,32 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
 
+    context "when a NOD exists and the case is a legacy case, do not display Edit NOD Date link" do
+      before { FeatureToggle.enable!(:edit_nod_date) }
+      after { FeatureToggle.disable!(:edit_nod_date) }
+
+      let(:judge_user) { create(:user, css_id: "BVAAABSHIRE", station_id: "101") }
+      let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+      let!(:vacols_case) do
+        create(
+          :case,
+          bfdnod: 2.days.ago,
+          bfd19: 1.day.ago
+        )
+      end
+
+      before do
+        User.authenticate!(user: judge_user)
+      end
+
+      it "displays case timeline and does not display Edit NOD Date link for legacy cases" do
+        visit "/queue/appeals/#{appeal.external_id}"
+        expect(appeal.nod_date).to_not be_nil
+        expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
+        expect(page).to_not have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
+      end
+    end
+
     context "when a NOD exists and user can edit NOD date display Edit NOD Date link" do
       before { FeatureToggle.enable!(:edit_nod_date) }
       after { FeatureToggle.disable!(:edit_nod_date) }
@@ -1266,6 +1335,25 @@ RSpec.feature "Case details", :all_dbs do
           expect(appeal.nod_date).to_not be_nil
           expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
           expect(page).to have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
+        end
+
+        it "creates an Edit NOD Date entry and a success alert displays after a successful change" do
+          visit("/queue/appeals/#{appeal.uuid}")
+
+          find("button", text: COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY).click
+          fill_in COPY::EDIT_NOD_DATE_LABEL, with: Time.zone.today.mdY
+
+          expect(page).to have_content("Reason for edit")
+          find(".cf-form-dropdown", text: "Reason for edit").click
+          find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
+          safe_click "#Edit-NOD-Date-button-id-1"
+
+          expect(page).to have_content(
+            format(COPY::EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE.tr("(", "{").gsub(")s", "}"),
+                   appellantName: appeal.claimant.name,
+                   nodDateStr: appeal.receipt_date.mdY,
+                   receiptDateStr: Time.zone.today.mdY)
+          )
         end
       end
 
@@ -1317,6 +1405,87 @@ RSpec.feature "Case details", :all_dbs do
           expect(page).to have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
         end
       end
+
+      context "when the user clicks on the edit nod button" do
+        let(:judge_user) { create(:user, css_id: "BVAOSHOWALT", station_id: "101") }
+
+        before do
+          User.authenticate!(user: judge_user)
+        end
+
+        let(:veteran_full_name) { veteran.first_name + veteran.last_name }
+        let(:nod_date) { "11/11/2020" }
+        let(:later_nod_date) { Time.zone.now.next_year(2).mdY }
+        let(:before_earliest_date) { "12/31/2017" }
+        before { FeatureToggle.enable!(:edit_nod_date) }
+        after { FeatureToggle.disable!(:edit_nod_date) }
+
+        it "user enters an NOD Date after original NOD Date" do
+          visit "queue/appeals/#{appeal.uuid}"
+          page.find("button", text: "Edit NOD Date").click
+          fill_in "nodDate", with: nod_date
+          find(".cf-form-dropdown", text: "Reason for edit").click
+          find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
+          expect(page).to have_content COPY::EDIT_NOD_DATE_WARNING_ALERT_MESSAGE
+        end
+
+        it "user enters a future NOD Date" do
+          visit "queue/appeals/#{appeal.uuid}"
+          page.find("button", text: "Edit NOD Date").click
+          fill_in "nodDate", with: later_nod_date
+          find(".cf-form-dropdown", text: "Reason for edit").click
+          find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
+          expect(page).to have_content COPY::EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE
+          click_on "Submit"
+          expect(page).to_not have_content COPY::EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE
+        end
+
+        it "user enters an NOD Date before 01/01/2018" do
+          visit "queue/appeals/#{appeal.uuid}"
+          page.find("button", text: "Edit NOD Date").click
+          fill_in "nodDate", with: before_earliest_date
+          find(".cf-form-dropdown", text: "Reason for edit").click
+          find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
+          expect(page).to have_content COPY::EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE
+          click_on "Submit"
+          expect(page).to_not have_content COPY::EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE
+        end
+
+        it "user enters a reason with invalid Date" do
+          visit "queue/appeals/#{appeal.uuid}"
+          page.find("button", text: "Edit NOD Date").click
+          fill_in "nodDate", with: nod_date
+          find(:css, "input[id$='nodDate']").click.send_keys(:delete)
+          find(".cf-form-dropdown", text: "Reason for edit").click
+          find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
+          expect(page).to have_content "Invalid date."
+          click_on "Submit"
+          expect(page).to_not have_content COPY::EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE
+        end
+
+        it "user enters a valid NOD Date and reason" do
+          visit "queue/appeals/#{appeal.uuid}"
+          page.find("button", text: "Edit NOD Date").click
+          fill_in "nodDate", with: nod_date
+          find(".cf-form-dropdown", text: "Reason for edit").click
+          find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
+          click_on "Submit"
+          expect(page).to have_content(format(COPY::EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE
+                                              .tr("(", "{").gsub(")s", "}"),
+                                              appellantName: "Bobby Winters",
+                                              nodDateStr: "01/03/2019",
+                                              receiptDateStr: nod_date))
+        end
+
+        it "user enters a valid NOD Date but no reason" do
+          visit "queue/appeals/#{appeal.uuid}"
+          page.find("button", text: "Edit NOD Date").click
+          fill_in "nodDate", with: nod_date
+          click_on "Submit"
+          expect(page).to have_content "Required."
+          expect(page).to_not have_content COPY::EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE
+        end
+      end
     end
 
     context "when a NOD exists and user cannot edit NOD date do not display Edit NOD Date link" do
@@ -1352,6 +1521,73 @@ RSpec.feature "Case details", :all_dbs do
         expect(appeal.nod_date).to_not be_nil
         expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
         expect(page).to_not have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
+      end
+    end
+
+    context "when a NOD exists and user can edit NOD date but triggers timeliness issues with NOD date update" do
+      let(:veteran) do
+        create(:veteran,
+               first_name: "Bobby",
+               last_name: "Winters",
+               file_number: "55555456")
+      end
+      let(:untimely_request_issue) { create(:request_issue, :nonrating, id: 1, decision_date: 381.days.ago) }
+      let(:untimely_request_issue_with_exemption) do
+        create(:request_issue, :nonrating, id: 2, decision_date: 2.years.ago, untimely_exemption: true)
+      end
+      let(:request_issues) { [untimely_request_issue, untimely_request_issue_with_exemption] }
+
+      let!(:appeal) do
+        create(:appeal,
+               :with_post_intake_tasks,
+               veteran_file_number: veteran.file_number,
+               docket_type: Constants.AMA_DOCKETS.direct_review,
+               receipt_date: 10.months.ago.to_date.mdY,
+               request_issues: request_issues)
+      end
+      subject { appeal.validate_all_issues_timely!(receipt_date) }
+      let(:judge_user) { create(:user, css_id: "BVAAABSHIRE", station_id: "101") }
+
+      before do
+        FeatureToggle.enable!(:edit_nod_date)
+        BvaDispatch.singleton.add_user(judge_user)
+        User.authenticate!(user: judge_user)
+      end
+
+      after { FeatureToggle.disable!(:edit_nod_date) }
+
+      it "displays timeliness issues list if new NOD date causes timely issue to be untimely" do
+        visit("/queue/appeals/#{appeal.uuid}")
+
+        expect(appeal.nod_date).to_not be_nil
+        expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
+        expect(page).to have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
+
+        find("button", text: COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY).click
+        fill_in COPY::EDIT_NOD_DATE_LABEL, with: Time.zone.today.mdY
+
+        expect(page).to have_content("Reason for edit")
+        find(".cf-form-dropdown", text: "Reason for edit").click
+        find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
+        safe_click "#Edit-NOD-Date-button-id-1"
+
+        expect(page).to have_content(COPY::EDIT_NOD_DATE_TIMELINESS_ERROR_MESSAGE)
+
+        affected_issues_list = page.find_all(".cf-modal-body ul.cf-error li")
+        unaffected_issues_list = page.find_all(".cf-modal-body ul:not(.cf-error) li")
+
+        issue_one = untimely_request_issue
+        issue_two = untimely_request_issue_with_exemption
+
+        issue_one_desc = "#{issue_one.nonrating_issue_category} - #{issue_one.nonrating_issue_description}"
+        issue_two_desc = "#{issue_two.nonrating_issue_category} - #{issue_two.nonrating_issue_description}"
+
+        expect(affected_issues_list[0]).to have_content(
+          "#{issue_one_desc}\n(Decision Date: #{issue_one.decision_date.to_date.mdY})"
+        )
+        expect(unaffected_issues_list[0]).to have_content(
+          "#{issue_two_desc}\n(Decision Date: #{issue_two.decision_date.to_date.mdY})"
+        )
       end
     end
   end
@@ -1513,7 +1749,7 @@ RSpec.feature "Case details", :all_dbs do
         visit("/queue/appeals/#{id}")
 
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ABOUT_BOX_HEARING_REQUEST_TYPE_LABEL.upcase)
-        expect(page).to have_content(appeal.current_hearing_request_type(readable: true))
+        expect(page).to have_content(appeal.readable_current_hearing_request_type)
       end
     end
 

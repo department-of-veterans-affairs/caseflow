@@ -586,30 +586,6 @@ feature "Intake Review Page", :postgres do
             expect(page).to_not have_selector("label[for=claimant-options_claimant_not_listed]")
           end
         end
-
-        context "with non_veteran_claimants feature toggle" do
-          before { FeatureToggle.enable!(:non_veteran_claimants) }
-          after { FeatureToggle.disable!(:non_veteran_claimants) }
-
-          it "allows selecting claimant not listed" do
-            start_appeal(veteran, claim_participant_id: claim_participant_id)
-
-            visit "/intake"
-
-            expect(page).to have_current_path("/intake/review_request")
-
-            within_fieldset("Is the claimant someone other than the Veteran?") do
-              find("label", text: "Yes", match: :prefer_exact).click
-            end
-
-            expect(page).to have_selector("label[for=claimant-options_claimant_not_listed]")
-            within_fieldset(COPY::SELECT_CLAIMANT_LABEL) do
-              find("label", text: "Claimant not listed", match: :prefer_exact).click
-            end
-
-            # Add remaining steps of Add Claimant flow
-          end
-        end
       end
     end
   end

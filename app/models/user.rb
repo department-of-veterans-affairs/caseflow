@@ -16,6 +16,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   has_one :vacols_user, class_name: "CachedUser", foreign_key: :sdomainid, primary_key: :css_id
 
   BOARD_STATION_ID = "101"
+  LAST_LOGIN_PRECISION = 5.minutes
 
   # Ephemeral values obtained from CSS on auth. Stored in user's session
   attr_writer :regional_office
@@ -60,6 +61,12 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def attorney_in_vacols?
     vacols_roles.include?("attorney")
+  end
+
+  # Using "pure_judge" terminology from VACOLS::Staff
+  # This implementation relies on UserRepository#roles_based_on_staff_fields return values
+  def pure_judge_in_vacols?
+    vacols_roles.first == "judge"
   end
 
   def judge_in_vacols?
@@ -124,8 +131,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_change_hearing_request_type?
-    (can?("Build HearSched") || can?("Edit HearSched")) &&
-      FeatureToggle.enabled?(:convert_travel_board_to_video_or_virtual, user: self)
+    can?("Build HearSched") || can?("Edit HearSched")
   end
 
   def vacols_uniq_id
@@ -433,17 +439,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     @user_info ||= self.class.user_repository.user_info_from_vacols(css_id)
   end
 
-  def get_appeal_stream_hearings(appeal_streams)
-    appeal_streams.reduce({}) do |acc, (appeal_id, appeals)|
-      acc[appeal_id] = appeal_hearings(appeals.map(&:id))
-      acc
-    end
-  end
-
-  def appeal_hearings(appeal_ids)
-    LegacyHearing.where(appeal_id: appeal_ids)
-  end
-
   class << self
     attr_writer :authentication_service
     delegate :authenticate_vacols, to: :authentication_service
@@ -493,7 +488,9 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
       attrs = attrs_from_session(session, user_session)
 
       user ||= create!(attrs.merge(css_id: css_id.upcase))
-      user.update!(attrs.merge(last_login_at: Time.zone.now))
+      now = Time.zone.now
+      attrs[:last_login_at] = now if !user.last_login_at || now - user.last_login_at > LAST_LOGIN_PRECISION
+      user.update!(attrs)
       user_session["pg_user_id"] = user.id
       user
     end

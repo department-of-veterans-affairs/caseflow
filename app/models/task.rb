@@ -511,6 +511,10 @@ class Task < CaseflowRecord
   def when_child_task_created(child_task)
     cancel_timed_hold unless child_task.is_a?(TimedHoldTask)
 
+    put_on_hold_due_to_new_child_task
+  end
+
+  def put_on_hold_due_to_new_child_task
     if !on_hold?
       Raven.capture_message("Closed task #{id} re-opened because child task created") if !open?
       update!(status: :on_hold)
@@ -559,6 +563,39 @@ class Task < CaseflowRecord
     appeal.overtime = false if appeal.overtime? && reassign_clears_overtime?
 
     [sibling, self, sibling.children].flatten
+  end
+
+  def can_move_on_docket_switch?
+    return false unless open_with_no_children?
+    return false if type.include?("DocketSwitch")
+    return false if %w[RootTask DistributionTask HearingTask EvidenceSubmissionWindowTask].include?(type)
+    return false if ancestor_task_of_type(HearingTask).present?
+    return false if ancestor_task_of_type(EvidenceSubmissionWindowTask).present?
+
+    true
+  end
+
+  # This method is for copying a task and its ancestors to a new appeal stream
+  def copy_with_ancestors_to_stream(new_appeal_stream)
+    return unless parent
+
+    new_task_attributes = attributes.reject { |attr| %w[id created_at updated_at appeal_id parent_id].include?(attr) }
+    new_task_attributes["appeal_id"] = new_appeal_stream.id
+
+    # This method recurses until the parent is nil or a task of its type is already present on the new stream
+    existing_new_parent = new_appeal_stream.tasks.find { |task| task.type == parent.type }
+    new_parent = existing_new_parent || parent.copy_with_ancestors_to_stream(new_appeal_stream)
+
+    # Do not copy orphaned branches
+    return unless new_parent
+
+    new_task_attributes["parent_id"] = new_parent.id
+
+    # Skip validation since these are not new tasks (and don't need to have a status of assigned, for example)
+    new_stream_task = self.class.new(new_task_attributes)
+    new_stream_task.save(validate: false)
+
+    new_stream_task
   end
 
   def root_task(task_id = nil)

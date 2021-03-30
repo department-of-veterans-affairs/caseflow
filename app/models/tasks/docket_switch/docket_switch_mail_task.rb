@@ -15,6 +15,10 @@ class DocketSwitchMailTask < MailTask
     actions
   end
 
+  def timeline_title
+    COPY::DOCKET_SWITCH_MAIL_TASK_TITLE
+  end
+
   class << self
     def label
       COPY::DOCKET_SWITCH_MAIL_TASK_LABEL
@@ -45,8 +49,8 @@ class DocketSwitchMailTask < MailTask
       end
     end
 
-    def allow_creation?(user)
-      ClerkOfTheBoard.singleton.user_has_access?(user)
+    def allow_creation?(user:, appeal:)
+      ClerkOfTheBoard.singleton.user_has_access?(user) && !appeal.outcoded?
     end
 
     # This differs from the default behavior of `MailTask`

@@ -86,7 +86,7 @@
   .transcriptRequested {
     display: inline-block;
     text-align: left;
-    padding: .4em;
+    padding: 0.4em;
     width: 100%;
 
     .cf-form-checkboxes {
@@ -100,7 +100,7 @@
   margin-bottom: 15px;
 
   [type="text"] {
-    margin: .3em 0 0;
+    margin: 0.3em 0 0;
   }
 
   .cf-form-textarea {
@@ -153,7 +153,7 @@
 
   label {
     font-size: 1.05em;
-    padding-bottom: .3em;
+    padding-bottom: 0.3em;
   }
 
   h4 {
@@ -170,23 +170,21 @@
   }
 
   .cf-modal {
-
     h2 {
       border-bottom: none;
       font-size: 1.5em;
     }
-
   }
 
   .cf-hearings-worksheet-data-cell {
     display: inline-block;
     width: 20%;
     vertical-align: top;
-    padding-left: .2em;
+    padding-left: 0.2em;
   }
 
   .cf-appeal-stream-label {
-    margin-top: .5em;
+    margin-top: 0.5em;
     margin-bottom: 0;
   }
 
@@ -198,13 +196,13 @@
 
   h2 {
     border-bottom: 1px solid $color-gray-lighter;
-    margin-bottom: .5em;
+    margin-bottom: 0.5em;
   }
 }
 
 .cf-hearings-worksheet-issues {
   white-space: pre-line;
-  margin: .5em 0 1.5em;
+  margin: 0.5em 0 1.5em;
 
   tr:last-child {
     .cf-form-textarea {
@@ -222,9 +220,9 @@
   }
 
   .cf-txt-l {
-    padding-left: .4em;
+    padding-left: 0.4em;
 
-    [id=trash-can] {
+    [id="trash-can"] {
       margin-top: 20px;
     }
   }
@@ -239,7 +237,7 @@
 
   td {
     vertical-align: top;
-    padding: .5em;
+    padding: 0.5em;
 
     &:nth-of-type(1) {
       width: 5%;
@@ -273,7 +271,7 @@
       display: inline-block;
       box-sizing: border-box;
       margin: 0;
-      padding: .3em 0;
+      padding: 0.3em 0;
 
       &:nth-of-type(1),
       &:nth-of-type(4) {
@@ -340,4 +338,73 @@
     font-size: 11px;
     margin-top: 0;
   }
+}
+
+.time-slot-label {
+  font-weight: bold;
+}
+
+.time-slot-button {
+  height: 75px;
+  width: 350px;
+  text-align: left;
+  padding-left: 25px;
+
+  > div:first-child {
+    display: flex;
+    height: 100%;
+    align-items: center;
+  }
+}
+
+.time-slot-button-selected.usa-button {
+  background-color: $color-primary-darker;
+  color: $color-white;
+
+  &:hover {
+    color: $color-white;
+  }
+}
+
+.time-slot-button-full.usa-button {
+  background-color: $caseflow-background;
+  border: 2px solid $color-gray-lighter;
+  color: $color-gray;
+  font-weight: 600;
+}
+
+.time-slot-arrow {
+  font-size: x-large;
+}
+
+.time-slot-details {
+  font-weight: 400;
+  font-size: medium;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 295px;
+  margin-top: 5px;
+}
+
+.time-slot-button-container {
+  display: flex;
+  width: 800px;
+}
+
+.time-slot-container {
+  flex: 0;
+  max-width: 46rem;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  line-height: normal;
+
+  > span {
+    margin: 5px;
+  }
+}
+
+.time-slot-button-toggle.usa-button {
+  padding-left: 0;
 }

@@ -34,6 +34,7 @@ export class SearchableDropdown extends React.Component {
   onChange = (value) => {
     let newValue = value;
     let deletedValue = null;
+    let { clearOnSelect, multi, onChange, selfManageValueState } = this.props;
 
     /*
      * this is a temp fix for react-select value backspace
@@ -42,15 +43,15 @@ export class SearchableDropdown extends React.Component {
      * using the backspace.
      * https://github.com/JedWatson/react-select/pull/773
      */
-    if (!this.props.multi && Array.isArray(value) && value.length <= 0) {
+    if (!multi && Array.isArray(value) && value.length <= 0) {
       newValue = null;
-    } else if (this.props.multi && value === null) {
+    } else if (multi && value === null) {
       // Fix for https://github.com/JedWatson/react-select/issues/3632
       newValue = [];
     }
     // don't set value in state if creatable is true
-    if (!this.props.selfManageValueState) {
-      this.setState({ value: this.props.clearOnSelect ? null : newValue });
+    if (!selfManageValueState) {
+      this.setState({ value: clearOnSelect ? null : newValue });
     }
 
     if (
@@ -62,8 +63,8 @@ export class SearchableDropdown extends React.Component {
     ) {
       deletedValue = _.differenceWith(this.state.value, newValue, _.isEqual);
     }
-    if (this.props.onChange) {
-      this.props.onChange(newValue, deletedValue);
+    if (onChange) {
+      onChange(newValue, deletedValue);
     }
   };
 
@@ -94,8 +95,10 @@ export class SearchableDropdown extends React.Component {
       async,
       options,
       defaultOptions,
+      defaultValue,
       filterOption,
       isClearable,
+      inputRef,
       loading,
       placeholder,
       errorMessage,
@@ -167,11 +170,11 @@ export class SearchableDropdown extends React.Component {
     );
 
     return (
-      <div className={dropdownClasses} {...dropdownStyling}>
-        <label className={labelClasses} htmlFor={name}>
-          {strongLabel ? <strong>{labelContents}</strong> : labelContents}
-        </label>
-        <div className={errorMessage ? 'usa-input-error' : ''}>
+      <div className={errorMessage ? 'usa-input-error' : ''}>
+        <div className={dropdownClasses} {...dropdownStyling}>
+          <label className={labelClasses} htmlFor={name}>
+            {strongLabel ? <strong>{labelContents}</strong> : labelContents}
+          </label>
           {errorMessage && (
             <span className="usa-input-error-message">{errorMessage}</span>
           )}
@@ -181,6 +184,7 @@ export class SearchableDropdown extends React.Component {
               inputId={name}
               options={options}
               defaultOptions={defaultOptions}
+              defaultValue={defaultValue}
               filterOption={filterOption}
               loadOptions={async}
               isLoading={loading}
@@ -197,6 +201,7 @@ export class SearchableDropdown extends React.Component {
               isSearchable={!readOnly}
               cache={false}
               onBlurResetsInput={false}
+              ref={inputRef}
               shouldKeyDownEventCreateNewOption={
                 this.shouldKeyDownEventCreateNewOption
               }
@@ -234,9 +239,23 @@ SearchableDropdown.propTypes = {
     formatCreateLabel: PropTypes.func,
   }),
   defaultOptions: PropTypes.oneOfType([SelectOpts, PropTypes.bool]),
+  defaultValue: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.arrayOf(PropTypes.object),
+  ]),
   dropdownStyling: PropTypes.object,
   errorMessage: PropTypes.string,
   filterOption: PropTypes.func,
+
+  /**
+   * Pass a ref to the underlying React Select element
+   */
+  inputRef: PropTypes.oneOfType([
+    // Either a function
+    PropTypes.func,
+    // Or the instance of a DOM native element (see the note about SSR)
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+  ]),
   label: PropTypes.string,
   strongLabel: PropTypes.bool,
   hideLabel: PropTypes.bool,
@@ -245,8 +264,8 @@ SearchableDropdown.propTypes = {
   name: PropTypes.string.isRequired,
 
   /**
- * react-select will by default set noResultsText to say "No options" unless the prop is explicitly defined
- */
+   * react-select will by default set noResultsText to say "No options" unless the prop is explicitly defined
+   */
   noResultsText: PropTypes.string,
   onChange: PropTypes.func,
   options: SelectOpts,

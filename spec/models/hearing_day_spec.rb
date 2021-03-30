@@ -307,7 +307,11 @@ describe HearingDay, :all_dbs do
       before do
         5.times do
           create(:hearing, hearing_day: hearing_day, disposition: "postponed")
-          create(:case_hearing, vdkey: hearing_day.id, hearing_disp: "C")
+          create(
+            :case_hearing,
+            vdkey: hearing_day.id,
+            hearing_disp: VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:cancelled]
+          )
         end
       end
 
@@ -344,7 +348,7 @@ describe HearingDay, :all_dbs do
       subject { HearingDayRange.new(schedule_period.start_date, schedule_period.end_date).load_days }
 
       it do
-        expect(subject.size).to eql(365)
+        expect(subject.size).to eql(970)
       end
     end
   end
