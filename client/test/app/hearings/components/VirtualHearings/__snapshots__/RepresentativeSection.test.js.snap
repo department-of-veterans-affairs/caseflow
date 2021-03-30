@@ -15787,7 +15787,7 @@ exports[`RepresentativeSection Shows Representative name when representative add
       "regionalOfficeKey": "C",
       "regionalOfficeName": "Central",
       "regionalOfficeTimezone": "America/New_York",
-      "representative": "Attorney McAttorneyFace",
+      "representative": "Clarence Darrow",
       "representativeAddress": null,
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
