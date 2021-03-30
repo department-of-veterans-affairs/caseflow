@@ -192,35 +192,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
       "worksheetIssues": Object {},
     }
   }
-  update={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          "virtualHearing",
-          Object {
-            "appellantTz": undefined,
-            "representativeTz": undefined,
-          },
-        ],
-        Array [
-          "virtualHearing",
-          Object {
-            "false": "America/Denver",
-          },
-        ],
-      ],
-      "results": Array [
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-      ],
-    }
-  }
+  update={[MockFunction]}
   virtualHearing={
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
@@ -1497,35 +1469,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
           readOnly={false}
           requestType="Central"
           time="03:30"
-          update={
-            [MockFunction] {
-              "calls": Array [
-                Array [
-                  "virtualHearing",
-                  Object {
-                    "appellantTz": undefined,
-                    "representativeTz": undefined,
-                  },
-                ],
-                Array [
-                  "virtualHearing",
-                  Object {
-                    "false": "America/Denver",
-                  },
-                ],
-              ],
-              "results": Array [
-                Object {
-                  "type": "return",
-                  "value": undefined,
-                },
-                Object {
-                  "type": "return",
-                  "value": undefined,
-                },
-              ],
-            }
-          }
+          update={[MockFunction]}
           virtualHearing={
             Object {
               "aliasWithHost": "BVA0000009@care.evn.va.gov",
@@ -16696,35 +16640,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                 emailType="appellantEmail"
                 label="Veteran Email"
                 required={true}
-                update={
-                  [MockFunction] {
-                    "calls": Array [
-                      Array [
-                        "virtualHearing",
-                        Object {
-                          "appellantTz": undefined,
-                          "representativeTz": undefined,
-                        },
-                      ],
-                      Array [
-                        "virtualHearing",
-                        Object {
-                          "false": "America/Denver",
-                        },
-                      ],
-                    ],
-                    "results": Array [
-                      Object {
-                        "type": "return",
-                        "value": undefined,
-                      },
-                      Object {
-                        "type": "return",
-                        "value": undefined,
-                      },
-                    ],
-                  }
-                }
+                update={[MockFunction]}
               >
                 <TextField
                   className={
@@ -32125,25 +32041,7 @@ exports[`VirtualHearingForm Shows only hearing links with no virtualHearing 1`] 
       "worksheetIssues": Object {},
     }
   }
-  update={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          "virtualHearing",
-          Object {
-            "appellantTz": undefined,
-            "representativeTz": undefined,
-          },
-        ],
-      ],
-      "results": Array [
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
-      ],
-    }
-  }
+  update={[MockFunction]}
 >
   <ContentSection
     header="Virtual Hearing Details"

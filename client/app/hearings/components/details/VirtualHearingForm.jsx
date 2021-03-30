@@ -20,17 +20,6 @@ export const VirtualHearingForm = (
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const user = useContext(HearingsUserContext);
 
-  useEffect(() => {
-    // Try to use the existing timezones if present
-    const { appellantTz, representativeTz } = (virtualHearing || {});
-
-    // Set the  timezone if not already set
-    update('virtualHearing', {
-      [!representativeTz && 'representativeTz']: representativeTz,
-      [!appellantTz && 'appellantTz']: appellantTz,
-    });
-  }, []);
-
   return (
     <ContentSection
       header={`${hearing?.wasVirtual ? 'Previous ' : ''}Virtual Hearing Details`}
