@@ -57,15 +57,7 @@ const typeAndJudgeStyle = css({ textOverflow: 'ellipsis', overflowX: 'hidden', o
 
 const roSelectionStyling = css({ marginTop: '10px', textAlign: 'center' });
 
-const UpcomingHearingDaysNav = ({
-  upcomingHearingDays, selectedHearingDay,
-  onSelectedHearingDayChange
-}) => {
-  const orderedHearingDays = _.orderBy(
-    Object.values(upcomingHearingDays),
-    (hearingDay) => hearingDay.scheduledFor, 'asc'
-  );
-
+const HearingDayInfoButton = ({ hearingDay, selected, onSelectedHearingDayChange }) => {
   // This came out of ListSchedule, should be refactored into common import
   const formatHearingType = (hearingType) => {
     if (hearingType.toLowerCase().startsWith('video')) {
@@ -74,7 +66,7 @@ const UpcomingHearingDaysNav = ({
 
     return hearingType;
   };
-  // Check if there's a judge assigned
+    // Check if there's a judge assigned
   const hearingDayHasJudge = (hearingDay) => hearingDay.judgeFirstName && hearingDay.judgeLastName;
   // Check if there's a room assigned (there never is for virtual)
   const hearingDayHasRoom = (hearingDay) => Boolean(hearingDay.room);
@@ -96,6 +88,50 @@ const UpcomingHearingDaysNav = ({
 
     return '';
   };
+  const formattedHearingType = formatHearingType(hearingDay.readableRequestType);
+  const judgeOrRoom = hearingDayHasJudge(hearingDay) ? formatVljName(hearingDay) : formatHearingRoom(hearingDay);
+  const separator = separatorIfJudgeOrRoomPresent(hearingDay);
+
+  // This came from AssignHearingTabs, modified, the slots dont match new work
+  const scheduledHearings = _.get(hearingDay, 'hearings', {});
+  const scheduledHearingCount = Object.keys(scheduledHearings).length;
+  const availableSlotCount = _.get(hearingDay, 'totalSlots', 0) - scheduledHearingCount;
+  const formattedSlotRatio = `${scheduledHearingCount} of ${availableSlotCount}`;
+
+  return (
+    <Button
+      styling={selected ? buttonSelectedStyle : buttonUnselectedStyle}
+      onClick={() => onSelectedHearingDayChange(hearingDay)}
+      linkStyling>
+      <div {...fontSizeStyle}>
+        <div {...leftColumnStyle} >
+          <div {...dateStyle}>
+            {moment(hearingDay.scheduledFor).format('ddd MMM Do')}
+          </div>
+          <div {...typeAndJudgeStyle}>
+            {`${formattedHearingType} ${separator} ${judgeOrRoom}`}
+          </div>
+        </div>
+        <div {...rightColumnStyle} >
+          <div>
+            {formattedSlotRatio}
+          </div>
+          <div>
+                        scheduled
+          </div>
+        </div>
+      </div>
+    </Button>
+  );
+};
+const UpcomingHearingDaysNav = ({
+  upcomingHearingDays, selectedHearingDay,
+  onSelectedHearingDayChange
+}) => {
+  const orderedHearingDays = _.orderBy(
+    Object.values(upcomingHearingDays),
+    (hearingDay) => hearingDay.scheduledFor, 'asc'
+  );
 
   return (
     <div className="usa-width-one-fourth" {...roSelectionStyling}>
@@ -105,42 +141,15 @@ const UpcomingHearingDaysNav = ({
         {
           orderedHearingDays.map(
             (hearingDay) => {
-              const dateSelected = selectedHearingDay?.id === hearingDay?.id;
-              const formattedHearingType = formatHearingType(hearingDay.readableRequestType);
-              const judgeOrRoom = hearingDayHasJudge(hearingDay) ? formatVljName(hearingDay) : formatHearingRoom(hearingDay);
-              const separator = separatorIfJudgeOrRoomPresent(hearingDay);
-
-              // This came from AssignHearingTabs, modified, the slots dont match new work
-              const scheduledHearings = _.get(hearingDay, 'hearings', {});
-              const scheduledHearingCount = Object.keys(scheduledHearings).length;
-              const availableSlotCount = _.get(selectedHearingDay, 'totalSlots', 0) - scheduledHearingCount;
-              const formattedSlotRatio = `${scheduledHearingCount} of ${availableSlotCount}`;
+              const selected = selectedHearingDay?.id === hearingDay?.id;
 
               return (
                 <li key={hearingDay.id} >
-                  <Button
-                    styling={dateSelected ? buttonSelectedStyle : buttonUnselectedStyle}
-                    onClick={() => onSelectedHearingDayChange(hearingDay)}
-                    linkStyling>
-                    <div {...fontSizeStyle}>
-                      <div {...leftColumnStyle} >
-                        <div {...dateStyle}>
-                          {moment(hearingDay.scheduledFor).format('ddd MMM Do')}
-                        </div>
-                        <div {...typeAndJudgeStyle}>
-                          {`${formattedHearingType} ${separator} ${judgeOrRoom}`}
-                        </div>
-                      </div>
-                      <div {...rightColumnStyle} >
-                        <div>
-                          {formattedSlotRatio}
-                        </div>
-                        <div>
-                        scheduled
-                        </div>
-                      </div>
-                    </div>
-                  </Button>
+                  <HearingDayInfoButton
+                    selected={selected}
+                    hearingDay={hearingDay}
+                    onSelectedHearingDayChange={onSelectedHearingDayChange}
+                  />
                   <hr {...horizontalRuleStyling} />
                 </li>
               );
