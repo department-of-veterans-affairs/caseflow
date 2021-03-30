@@ -24,7 +24,11 @@ const headerContainerStyling = css({
 });
 
 const headerStyling = css({
-  paddingLeft: 0
+  paddingLeft: 0,
+  fontFamily: 'Source Sans Pro',
+  fontWeight: 700,
+  fontSize: '34px',
+  lineHeight: '1.3em/44px'
 });
 
 export const DetailsHeader = (
@@ -90,9 +94,9 @@ export const DetailsHeader = (
   return (
     <React.Fragment>
       <div {...headerContainerStyling}>
-        <h1 className="cf-margin-bottom-0" {...headerStyling}>
+        <p className="cf-margin-bottom-0" {...headerStyling}>
           {`${veteranFirstName} ${veteranLastName}'s Hearing Details`}
-        </h1>
+        </p>
         <div>
           Veteran ID: <CopyTextButton text={veteranFileNumber} label="Veteran ID" />
         </div>
