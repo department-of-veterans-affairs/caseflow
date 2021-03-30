@@ -23,18 +23,33 @@ const sectionNavigationListStyling = css({
   }
 });
 
-const buttonColorSelected = css({
+const buttonCommonStyle = {
   width: '90%',
   paddingTop: '1em',
   paddingBottom: '1em',
-  backgroundColor: COLORS.GREY_DARK,
-  color: COLORS.WHITE,
-  borderRadius: '0.1rem 0.1rem 0 0',
-  '&:hover': {
-    backgroundColor: COLORS.GREY_DARK,
-    color: COLORS.WHITE
-  }
-});
+};
+
+const buttonUnselectedStyle = css(
+  buttonCommonStyle
+);
+
+const buttonSelectedStyle = css(
+  {
+    ...buttonCommonStyle,
+    ...{
+      backgroundColor: COLORS.GREY_DARK,
+      color: COLORS.WHITE,
+      borderRadius: '0.1rem 0.1rem 0 0',
+      '&:hover': {
+        backgroundColor: COLORS.GREY_DARK,
+        color: COLORS.WHITE
+      }
+    }
+  });
+
+const leftColumnStyle = css({ width: '67%', display: 'inline-block', textAlign: 'left' });
+const rightColumnStyle = css({ width: '33%', display: 'inline-block', textAlign: 'right', overflowX: 'hidden', overflowY: 'hidden' });
+const typeAndJudgeStyle = css({ textOverflow: 'ellipsis', overflowX: 'hidden', overflowY: 'hidden', whiteSpace: 'nowrap' });
 
 const roSelectionStyling = css({ marginTop: '10px', textAlign: 'center' });
 
@@ -46,11 +61,6 @@ const UpcomingHearingDaysNav = ({
     Object.values(upcomingHearingDays),
     (hearingDay) => hearingDay.scheduledFor, 'asc'
   );
-
-  /*
-                      {`${moment(hearingDay.scheduledFor).format('ddd M/DD/YYYY')}
-                      ${hearingDay.room ?? ''}`
-  */
 
   return (
     <div className="usa-width-one-fourth" {...roSelectionStyling}>
@@ -65,19 +75,19 @@ const UpcomingHearingDaysNav = ({
               return (
                 <li key={hearingDay.id} >
                   <Button
-                    styling={dateSelected ? buttonColorSelected : css({ width: '90%', paddingTop: '1em', paddingBottom: '1em' })}
+                    styling={dateSelected ? buttonSelectedStyle : buttonUnselectedStyle}
                     onClick={() => onSelectedHearingDayChange(hearingDay)}
                     linkStyling>
                     <div>
-                      <div {...css({ width: '67%', display: 'inline-block', textAlign: 'left' })} >
+                      <div {...leftColumnStyle} >
                         <div>
                         Thu Apr 1
                         </div>
-                        <div {...css({ textOverflow: 'ellipsis', overflowX: 'hidden', overflowY: 'hidden', whiteSpace: 'nowrap' })}>
+                        <div {...typeAndJudgeStyle}>
                           Virtual * VLJVigsittaboorn
                         </div>
                       </div>
-                      <div {...css({ width: '33%', display: 'inline-block', textAlign: 'right', overflowX: 'hidden', overflowY: 'hidden' })} >
+                      <div {...rightColumnStyle} >
                         <div>
                         2 of 4
                         </div>
