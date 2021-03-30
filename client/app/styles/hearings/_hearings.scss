@@ -418,7 +418,6 @@
   border-radius: 2%;
   padding: 25px 20px;
   max-width: 300px;
-  position: fixed;
 
   pre {
     white-space: nowrap;
@@ -428,18 +427,13 @@
   }
 }
 
-.schedule-veteran-appeals-info-stream {
-
-  pre {
-    color: $color-blue;
-  }
-}
-
 .usa-width-one-fourth.schedule-veteran-appeal-info-container {
   margin-right: 30px;
   position: relative;
   width: 300px;
   height: 400px;
+  position: sticky;
+  top: 15px;
 
   h2 {
     margin-bottom: 10px;
