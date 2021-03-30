@@ -56,15 +56,7 @@ const typeAndJudgeStyle = css({
   whiteSpace: 'nowrap'
 });
 
-// This came out of ListSchedule, should be refactored into common import
-const formatHearingType = (hearingType) => {
-  if (hearingType.toLowerCase().startsWith('video')) {
-    return VIDEO_HEARING_LABEL;
-  }
-
-  return hearingType;
-};
-  // Check if there's a judge assigned
+// Check if there's a judge assigned
 const hearingDayHasJudge = (hearingDay) => hearingDay.judgeFirstName && hearingDay.judgeLastName;
 // Check if there's a room assigned (there never is for virtual)
 const hearingDayHasRoom = (hearingDay) => Boolean(hearingDay.room);
@@ -74,6 +66,14 @@ const hearingDayHasJudgeOrRoom = (hearingDay) => hearingDayHasJudge(hearingDay) 
 const separatorIfJudgeOrRoomPresent = (hearingDay) => hearingDayHasJudgeOrRoom(hearingDay) ? '·' : '';
 // This is necessecary otherwise 'null' is displayed when there's no room or judge
 const formatHearingRoom = (hearingDay) => hearingDay.room ? hearingDay.room : '';
+// This came out of ListSchedule, should be refactored into common import
+const formatHearingType = (hearingType) => {
+  if (hearingType.toLowerCase().startsWith('video')) {
+    return VIDEO_HEARING_LABEL;
+  }
+
+  return hearingType;
+};
 // This came out of ListSchedule, should be refactored into common import
 // I modified it though, will need to make that change in ListSchedule
 const formatVljName = (hearingDay) => {
@@ -86,17 +86,21 @@ const formatVljName = (hearingDay) => {
 
   return '';
 };
+const formatSlotRatio = (hearingDay) => {
+// This came from AssignHearingTabs, modified, the slots dont match new work
+  const scheduledHearings = _.get(hearingDay, 'hearings', {});
+  const scheduledHearingCount = Object.keys(scheduledHearings).length;
+  const availableSlotCount = _.get(hearingDay, 'totalSlots', 0) - scheduledHearingCount;
+  const formattedSlotRatio = `${scheduledHearingCount} of ${availableSlotCount}`;
+
+  return formattedSlotRatio;
+};
 
 export const HearingDayInfoButton = ({ hearingDay, selected, onSelectedHearingDayChange }) => {
   const formattedHearingType = formatHearingType(hearingDay.readableRequestType);
   const judgeOrRoom = hearingDayHasJudge(hearingDay) ? formatVljName(hearingDay) : formatHearingRoom(hearingDay);
   const separator = separatorIfJudgeOrRoomPresent(hearingDay);
-
-  // This came from AssignHearingTabs, modified, the slots dont match new work
-  const scheduledHearings = _.get(hearingDay, 'hearings', {});
-  const scheduledHearingCount = Object.keys(scheduledHearings).length;
-  const availableSlotCount = _.get(hearingDay, 'totalSlots', 0) - scheduledHearingCount;
-  const formattedSlotRatio = `${scheduledHearingCount} of ${availableSlotCount}`;
+  const formattedSlotRatio = formatSlotRatio(hearingDay);
 
   return (
     <Button
@@ -116,9 +120,7 @@ export const HearingDayInfoButton = ({ hearingDay, selected, onSelectedHearingDa
           <div>
             {formattedSlotRatio}
           </div>
-          <div>
-                          scheduled
-          </div>
+          <div>scheduled</div>
         </div>
       </div>
     </Button>
