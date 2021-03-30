@@ -44,7 +44,6 @@ describe('AddClaimantPage', () => {
 
     const results = await axe(container);
 
-    screen.debug();
     expect(results).toHaveNoViolations();
   });
 
