@@ -37,7 +37,9 @@ RSpec.feature "Docket Switch", :all_dbs do
   let!(:old_docket_stream_tasks) do
     [
       create(:aod_motion_mail_task, appeal: appeal, parent: root_task),
-      create(:foia_task, appeal: appeal, parent: create(:translation_task, parent: appeal.root_task, assigned_to: other_organization))
+      create(:foia_task, appeal: appeal, parent: create(
+        :translation_task, parent: appeal.root_task, assigned_to: other_organization)
+      )
     ]
   end
 
