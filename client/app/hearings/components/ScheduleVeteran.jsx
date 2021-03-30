@@ -329,7 +329,7 @@ export const ScheduleVeteran = ({
     <Redirect to={`/queue/appeals/${props.appealId}`} />
   ) : (
     <div {...regionalOfficeSection}>
-      <AppSegment filledBackground>
+      <AppSegment filledBackground extraClassNames="schedule-veteran-page">
         <h1 {...headerStyle} >{header}</h1>
         {error && <Alert title={error.title} type="error">{error.detail}</Alert>}
         {virtual ?
