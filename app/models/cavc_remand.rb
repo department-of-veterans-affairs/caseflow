@@ -39,7 +39,7 @@ class CavcRemand < CaseflowRecord
 
   def update(params)
     sourced_from = params[:source]
-    if sourced_from == MODAL_SOURCE
+    if sourced_from == "add_cavc_dates_modal"
       # sourced_from Add Cavc Date Modal submission
       if already_has_mandate?
         fail Caseflow::Error::CannotUpdateMandatedRemands

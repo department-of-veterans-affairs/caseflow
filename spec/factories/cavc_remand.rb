@@ -83,15 +83,13 @@ FactoryBot.define do
     def self.create_issues_for(appeal)
       description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
       notes = "Pain disorder with 100\% evaluation per examination"
-      issues_mapping = FactoryBot.create_list(
-        :request_issue, 
-        3,
-        :rating,
-        :with_rating_decision_issue,
-        decision_review: appeal,
-        veteran_participant_id: appeal.veteran.participant_id,
-        contested_issue_description: description,
-        notes: notes).zip(appeal.decision_issues)
+      issues_mapping = FactoryBot.create_list(:request_issue, 3,
+                                              :rating,
+                                              :with_rating_decision_issue,
+                                              decision_review: appeal,
+                                              veteran_participant_id: appeal.veteran.participant_id,
+                                              contested_issue_description: description,
+                                              notes: notes).zip(appeal.decision_issues)
       issues_mapping.each { |req_issue, dec_issue| req_issue.decision_issues << dec_issue }
     end
   end

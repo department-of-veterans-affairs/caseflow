@@ -217,7 +217,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         end
       end
 
-      it "allows the user to intake a MDR cavc remand" do
+      fit "allows the user to intake a MDR cavc remand" do
         step "cavc user inputs cavc data" do
           visit "queue/appeals/#{appeal.external_id}"
           page.find("button", text: "+ Add CAVC Remand").click
@@ -249,8 +249,8 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           find("label", text: "Yes, this case has been appealed to the Federal Circuit").click
           page.find("button", text: "Submit").click
 
-          expect(page).to have_content COPY::CAVC_REMAND_CREATED_TITLE
-          expect(page).to have_content COPY::CAVC_REMAND_MDR_CREATED_DETAIL
+          expect(page).to have_content(COPY::CAVC_REMAND_CREATED_TITLE)
+          expect(page).to have_content(COPY::CAVC_REMAND_MDR_CREATED_DETAIL)
         end
 
         step "cavc user confirms data on case details page" do
@@ -501,7 +501,6 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         step "verify that existing values are present" do
           click_on "Edit Remand"
           expect(page).to have_content COPY::EDIT_CAVC_PAGE_TITLE.to_s
-          # expect(page).to have_content "#{COPY::EDIT_CAVC_PAGE_TITLE}"
         end
       end
     end

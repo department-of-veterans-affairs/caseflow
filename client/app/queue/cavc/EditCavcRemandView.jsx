@@ -11,6 +11,7 @@ import { requestPatch, showErrorMessage } from 'app/queue/uiReducer/uiActions';
 import { editAppeal } from '../QueueActions';
 
 export const EditCavcRemandView = () => {
+  /* eslint-disable camelcase */
   const { appealId } = useParams();
   const dispatch = useDispatch();
   const history = useHistory();
