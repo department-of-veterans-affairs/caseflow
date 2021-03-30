@@ -27,8 +27,8 @@ const sectionNavigationListStyling = css({
 
 const buttonCommonStyle = {
   width: '90%',
-  paddingTop: '1em',
-  paddingBottom: '1em',
+  paddingTop: '1.5rem',
+  paddingBottom: '1.5rem',
 };
 
 const buttonUnselectedStyle = css(
@@ -49,6 +49,8 @@ const buttonSelectedStyle = css(
     }
   });
 
+const fontSizeStyle = css({ fontSize: '1.5rem' });
+const dateStyle = css({ fontWeight: 'bold' });
 const leftColumnStyle = css({ width: '60%', display: 'inline-block', textAlign: 'left' });
 const rightColumnStyle = css({ width: '40%', display: 'inline-block', textAlign: 'right', overflowX: 'hidden', overflowY: 'hidden' });
 const typeAndJudgeStyle = css({ textOverflow: 'ellipsis', overflowX: 'hidden', overflowY: 'hidden', whiteSpace: 'nowrap' });
@@ -79,7 +81,7 @@ const UpcomingHearingDaysNav = ({
   // Check if there's a judge or room assigned
   const hearingDayHasJudgeOrRoom = (hearingDay) => hearingDayHasJudge(hearingDay) || hearingDayHasRoom(hearingDay);
 
-  const separatorIfJudgeOrRoomPresent = (hearingDay) => hearingDayHasJudgeOrRoom(hearingDay) ? '-' : '';
+  const separatorIfJudgeOrRoomPresent = (hearingDay) => hearingDayHasJudgeOrRoom(hearingDay) ? '·' : '';
   // This is necessecary otherwise 'null' is displayed when there's no room or judge
   const formatHearingRoom = (hearingDay) => hearingDay.room ? hearingDay.room : '';
   // This came out of ListSchedule, should be refactored into common import
@@ -108,7 +110,7 @@ const UpcomingHearingDaysNav = ({
               const judgeOrRoom = hearingDayHasJudge(hearingDay) ? formatVljName(hearingDay) : formatHearingRoom(hearingDay);
               const separator = separatorIfJudgeOrRoomPresent(hearingDay);
 
-              // This came from AssignHearingTabs, modified
+              // This came from AssignHearingTabs, modified, the slots dont match new work
               const scheduledHearings = _.get(hearingDay, 'hearings', {});
               const scheduledHearingCount = Object.keys(scheduledHearings).length;
               const availableSlotCount = _.get(selectedHearingDay, 'totalSlots', 0) - scheduledHearingCount;
@@ -120,9 +122,9 @@ const UpcomingHearingDaysNav = ({
                     styling={dateSelected ? buttonSelectedStyle : buttonUnselectedStyle}
                     onClick={() => onSelectedHearingDayChange(hearingDay)}
                     linkStyling>
-                    <div>
+                    <div {...fontSizeStyle}>
                       <div {...leftColumnStyle} >
-                        <div>
+                        <div {...dateStyle}>
                           {moment(hearingDay.scheduledFor).format('ddd MMM Do')}
                         </div>
                         <div {...typeAndJudgeStyle}>
