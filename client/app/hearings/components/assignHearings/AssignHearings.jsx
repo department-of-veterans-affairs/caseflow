@@ -49,8 +49,8 @@ const buttonSelectedStyle = css(
     }
   });
 
-const leftColumnStyle = css({ width: '67%', display: 'inline-block', textAlign: 'left' });
-const rightColumnStyle = css({ width: '33%', display: 'inline-block', textAlign: 'right', overflowX: 'hidden', overflowY: 'hidden' });
+const leftColumnStyle = css({ width: '60%', display: 'inline-block', textAlign: 'left' });
+const rightColumnStyle = css({ width: '40%', display: 'inline-block', textAlign: 'right', overflowX: 'hidden', overflowY: 'hidden' });
 const typeAndJudgeStyle = css({ textOverflow: 'ellipsis', overflowX: 'hidden', overflowY: 'hidden', whiteSpace: 'nowrap' });
 
 const roSelectionStyling = css({ marginTop: '10px', textAlign: 'center' });
