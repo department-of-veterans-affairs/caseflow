@@ -49,11 +49,18 @@ FactoryBot.define do
       end
     end
 
+    # A better representation of a hearing subtree:
+    # RootTask, on_hold
+    #   DistributionTask, on_hold
+    #     HearingTask, assigned
+    #       ScheduleHearingTask, completed
+    #       AssignHeringDispositionTask, completed
     trait :with_completed_tasks do
       after(:create) do |hearing, _evaluator|
+        dist_task = DistributionTask.create!(appeal: hearing.appeal, parent: hearing.appeal.root_task)
         create(:hearing_task_association,
                hearing: hearing,
-               hearing_task: create(:hearing_task, appeal: hearing.appeal))
+               hearing_task: create(:hearing_task, appeal: hearing.appeal, parent: dist_task))
         create(:schedule_hearing_task,
                :completed,
                parent: hearing.hearing_task_association.hearing_task,

@@ -62,7 +62,7 @@ describe EvidenceSubmissionWindowTask, :postgres do
 
       let!(:task) do
         EvidenceSubmissionWindowTask.create!(
-          appeal: appeal,
+          appeal: appeal_no_vso,
           assigned_to: MailTeam.singleton,
           parent: HearingTaskAssociation.find_by(hearing_id: hearing.id).hearing_task
         )
@@ -70,12 +70,12 @@ describe EvidenceSubmissionWindowTask, :postgres do
 
       subject { task.when_timer_ends }
 
-      it "reopens task" do
+      it "closes parent HearingTask and assigns grandparent DistributionTask" do
         subject
         task.reload
 
-        expect(task.status).to eq(Constants.TASK_STATUSES.assigned)
-        expect(task.closed_at).to eq(nil)
+        expect(task.parent.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(task.parent.parent.status).to eq(Constants.TASK_STATUSES.assigned)
       end
     end
 
