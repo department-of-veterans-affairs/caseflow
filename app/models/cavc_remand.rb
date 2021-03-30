@@ -38,15 +38,19 @@ class CavcRemand < CaseflowRecord
   }
 
   def update(params)
-    # TODO - Add logic based on param to run this for the existing modal updates of MDR thingers
-    # if already_has_mandate?
-    #   fail Caseflow::Error::CannotUpdateMandatedRemands
-    # end
+    sourced_from = params[:source]
+    if sourced_from == MODAL_SOURCE
+      # sourced_from Add Cavc Date Modal submission
+      if already_has_mandate?
+        fail Caseflow::Error::CannotUpdateMandatedRemands
+      end
 
-    # update_with_instructions(params)
-    # end_mandate_hold
-    
-    update!(params)
+      update_with_instructions(params)
+      end_mandate_hold
+    else
+      # sourced_from Edit Remand link
+      update!(params)
+    end
   end
 
   private
@@ -104,5 +108,9 @@ class CavcRemand < CaseflowRecord
 
   def cavc_task
     CavcTask.open.find_by(appeal_id: remand_appeal_id)
+  end
+
+  def modal_source
+    "add_cavc_date_modal"
   end
 end

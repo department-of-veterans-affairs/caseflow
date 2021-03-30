@@ -486,23 +486,22 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
       end
 
       it "allows editing of an existing remand" do
-        step "check 'Correct remand' link does not appear for users not in the CAVC Team" do
+        step "check 'Edit remand' link does not appear for users not in the CAVC Team" do
           User.authenticate!(user: other_user)
           visit "queue/appeals/#{remand_appeal.external_id}"
-          expect(page).to_not have_content "Correct remand"
+          expect(page).to_not have_content "Edit remand"
         end
-  
-        step "check 'Correct remand' link appears" do
+
+        step "check 'Edit remand' link appears" do
           User.authenticate!(user: org_admin)
           visit "queue/appeals/#{remand_appeal.external_id}"
-          expect(page).to have_content "Correct Remand"
+          expect(page).to have_content "Edit Remand"
         end
-  
+
         step "verify that existing values are present" do
-          click_on "Correct Remand"
-          binding.pry
-          expect(page).to have_content "#{COPY::EDIT_CAVC_PAGE_TITLE}"
-          
+          click_on "Edit Remand"
+          expect(page).to have_content COPY::EDIT_CAVC_PAGE_TITLE.to_s
+          # expect(page).to have_content "#{COPY::EDIT_CAVC_PAGE_TITLE}"
         end
       end
     end

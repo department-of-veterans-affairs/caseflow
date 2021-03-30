@@ -38,7 +38,8 @@ class CavcRemandsController < ApplicationController
     REMAND_REQUIRED_PARAMS,
     JMR_REQUIRED_PARAMS,
     MDR_REQUIRED_PARAMS,
-    :remand_subtype
+    :remand_subtype,
+    :source
   ].flatten.freeze
 
   def create
@@ -49,9 +50,9 @@ class CavcRemandsController < ApplicationController
 
   def update
     cavc_remand.update(update_params)
-    render json: { 
-      cavc_remand: WorkQueue::CavcRemandSerializer.new(cavc_remand).serializable_hash[:data][:attributes], 
-      cavc_appeal: cavc_remand.remand_appeal 
+    render json: {
+      cavc_remand: WorkQueue::CavcRemandSerializer.new(cavc_remand).serializable_hash[:data][:attributes],
+      cavc_appeal: cavc_remand.remand_appeal
     }, status: :ok
   end
 
@@ -73,14 +74,13 @@ class CavcRemandsController < ApplicationController
   end
 
   def update_params
-    # For non-MDR (existing modal functionality), you can essentially use same as create_params
-    params.merge!(created_by_id: current_user.id, updated_by_id: current_user.id, source_appeal_id: source_appeal.id)
-    params.require(required_params_by_decisiontype_and_subtype)
-    params.permit(PERMITTED_PARAMS).merge(params.permit(decision_issue_ids: []))
-
-    # TODO - Add a conditional based on a param sent by the existing modal update for MDR (see https://github.com/department-of-veterans-affairs/caseflow/pull/15860)
-    # params.require(UPDATE_PARAMS)
-    # params.permit(PERMITTED_PARAMS).reject { |param| param == "remand_appeal_id" }
+    case params["source"]
+    when "add_cavc_dates_modal"
+      params.require(UPDATE_PARAMS)
+      params.permit(PERMITTED_PARAMS).except("remand_appeal_id", "source")
+    else
+      create_params
+    end
   end
 
   def create_params
