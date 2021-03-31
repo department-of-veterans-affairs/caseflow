@@ -56,7 +56,7 @@ class MdrTask < Task
   def self.decision_date_plus_90_days(appeal)
     decision_date = appeal.cavc_remand.decision_date
     end_date = decision_date + 90.days
-    # What's expected is the _number_ of days to wait:
+    # convert to the number of days from today
     (end_date - Time.zone.today).to_i
   end
 
