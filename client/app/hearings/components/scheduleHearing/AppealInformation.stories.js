@@ -14,6 +14,8 @@ export default {
 };
 
 const Template = (args) => {
+  const veteranDateOfDeath = args.veteranDateOfDeath && new Date(args.veteranDateOfDeath);
+
   return (
     <AppealInformation
       {...args}
@@ -29,7 +31,7 @@ const Template = (args) => {
           ...amaAppeal.powerOfAttorney,
           representative_name: args.representative_name,
         },
-        veteranDateOfDeath: args.veteranDateOfDeath,
+        veteranDateOfDeath
       }}
     />
   );
@@ -38,7 +40,7 @@ const Template = (args) => {
 export const Basic = Template.bind({});
 Basic.args = {
   appellantIsNotVeteran: amaAppeal.appellantIsNotVeteran,
-  issueCount: amaAppeal.issueCount,
+  issueCount: 1,
   caseType: amaAppeal.caseType,
   isAdvancedOnDocket: amaAppeal.isAdvancedOnDocket,
   docketName: amaAppeal.docketName,

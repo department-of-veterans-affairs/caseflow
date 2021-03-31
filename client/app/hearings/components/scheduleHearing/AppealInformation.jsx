@@ -5,6 +5,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
 import { ReadOnly } from '../details/ReadOnly';
 import { renderAppealType } from '../../../queue/utils';
+import { formatDateStr } from '../../../util/DateUtil';
 
 export const AppealStreamDetails = ({
   remandSourceAppealId,
@@ -45,6 +46,12 @@ AppealStreamDetails.propTypes = {
 };
 
 export const AppealInformation = ({ appeal }) => {
+  /* eslint-disable camelcase */
+  const poaLabel = appeal?.powerOfAttorney?.representative_name ?
+    appeal?.powerOfAttorney?.representative_name :
+    'No representative';
+  /* eslint-enable camelcase */
+
   return (
     <div className="schedule-veteran-appeals-info">
       <h2>Appeal Information</h2>
@@ -76,14 +83,13 @@ export const AppealInformation = ({ appeal }) => {
       <ReadOnly
         spacing={15}
         label="Power of Attorney"
-        // eslint-disable-next-line camelcase
-        text={appeal?.powerOfAttorney?.representative_name}
+        text={poaLabel}
       />
       {appeal?.veteranDateOfDeath && (
         <ReadOnly
           spacing={15}
           label="Date of Death"
-          text={appeal?.veteranDateOfDeath}
+          text={formatDateStr(appeal.veteranDateOfDeath)}
         />
       )}
     </div>
