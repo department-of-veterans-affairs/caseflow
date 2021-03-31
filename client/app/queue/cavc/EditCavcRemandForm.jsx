@@ -18,6 +18,7 @@ import Checkbox from 'app/components/Checkbox';
 import CheckboxGroup from 'app/components/CheckboxGroup';
 
 import CAVC_JUDGE_FULL_NAMES from 'constants/CAVC_JUDGE_FULL_NAMES';
+import CAVC_REMAND_SUBTYPE_NAMES from 'constants/CAVC_REMAND_SUBTYPE_NAMES';
 
 import {
   JmprIssuesBanner,
@@ -42,6 +43,11 @@ const judgeOptions = CAVC_JUDGE_FULL_NAMES.map((value) => ({
   value,
 }));
 
+const remandSubtype = _.map(_.keys(CAVC_REMAND_SUBTYPE_NAMES), (key) => ({
+  displayText: CAVC_REMAND_SUBTYPE_NAMES[key],
+  value: key
+}));
+
 const radioLabelStyling = css({ marginTop: '2.5rem' });
 const issueListStyling = css({ marginTop: '0rem' });
 const buttonStyling = css({ paddingLeft: '0' });
@@ -58,8 +64,6 @@ const buttonStyling = css({ paddingLeft: '0' });
 export const EditCavcRemandForm = ({
   decisionIssues,
   existingValues = {},
-  supportedDecisionTypes = [],
-  supportedRemandTypes = [],
   onCancel,
   onSubmit,
 }) => {
@@ -73,26 +77,9 @@ export const EditCavcRemandForm = ({
     reValidateMode: 'onChange',
     defaultValues: {
       issueIds: decisionIssues.map((issue) => issue.id),
-      mandateSame: !existingValues.judgementDate,
       ...existingValues,
     },
   });
-
-  const filteredDecisionTypes = useMemo(
-    () =>
-      allDecisionTypeOpts.filter((item) =>
-        supportedDecisionTypes.includes(item.value)
-      ),
-    [supportedDecisionTypes]
-  );
-
-  const filteredRemandTypes = useMemo(
-    () =>
-      allRemandTypeOpts.filter((item) =>
-        supportedRemandTypes.includes(item.value)
-      ),
-    [supportedRemandTypes]
-  );
 
   const issueOptions = useMemo(
     () =>
@@ -149,7 +136,6 @@ export const EditCavcRemandForm = ({
   const watchDecisionType = watch('decisionType');
   const watchRemandType = watch('remandType');
   const watchRemandDatesProvided = watch('remandDatesProvided');
-  const watchMandateSame = watch('mandateSame');
   const watchIssueIds = watch('issueIds');
 
   const isRemandType = (type) =>
@@ -202,32 +188,28 @@ export const EditCavcRemandForm = ({
               onChange={(valObj) => onChange(valObj?.value)}
               errorMessage={errors.judge && COPY.CAVC_JUDGE_ERROR}
               searchable
+              strongLabel
             />
           )}
         />
-
-        <RadioField
-          errorMessage={errors?.decisionType?.message}
+        <br />
+        <TextField
           inputRef={register}
-          styling={radioLabelStyling}
           label={COPY.CAVC_TYPE_LABEL}
           name="decisionType"
-          options={filteredDecisionTypes}
+          readOnly="{readOnly}"
           strongLabel
-          vertical
         />
 
         {watchDecisionType?.includes('remand') && (
-          <RadioField
+          <TextField
             inputRef={register}
-            errorMessage={errors?.remandType?.message}
-            styling={radioLabelStyling}
             label={COPY.CAVC_SUB_TYPE_LABEL}
             name="remandType"
-            options={filteredRemandTypes}
+            readOnly="{readOnly}"
             strongLabel
-            vertical
-          />
+            //value={remandSubtype}
+          />         
         )}
 
         {watchDecisionType && !watchDecisionType.includes('remand') && (
@@ -254,19 +236,6 @@ export const EditCavcRemandForm = ({
         {isRemandType('mdr') && <MdrBanner />}
 
         {mandateAvailable && (
-          <>
-            <legend>
-              <strong>{COPY.CAVC_REMAND_MANDATE_DATES_LABEL}</strong>
-            </legend>
-            <Checkbox
-              inputRef={register}
-              label={COPY.CAVC_REMAND_MANDATE_DATES_SAME_DESCRIPTION}
-              name="mandateSame"
-            />
-          </>
-        )}
-
-        {mandateAvailable && !watchMandateSame && (
           <>
             <DateSelector
               inputRef={register}
@@ -388,7 +357,6 @@ EditCavcRemandForm.propTypes = {
     remandType: PropTypes.string,
     remandDatesProvided: PropTypes.oneOf(['yes', 'no']),
     decisionDate: PropTypes.string,
-    mandateSame: PropTypes.oneOf(['yes', 'no']),
     judgementDate: PropTypes.string,
     mandateDate: PropTypes.string,
     issueIds: PropTypes.arrayOf(
@@ -404,4 +372,5 @@ EditCavcRemandForm.propTypes = {
   onSubmit: PropTypes.func,
   supportedDecisionTypes: PropTypes.arrayOf(PropTypes.string),
   supportedRemandTypes: PropTypes.arrayOf(PropTypes.string),
+  readOnly: PropTypes.bool
 };

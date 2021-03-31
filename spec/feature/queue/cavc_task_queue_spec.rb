@@ -217,7 +217,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         end
       end
 
-      fit "allows the user to intake a MDR cavc remand" do
+      it "allows the user to intake a MDR cavc remand" do
         step "cavc user inputs cavc data" do
           visit "queue/appeals/#{appeal.external_id}"
           page.find("button", text: "+ Add CAVC Remand").click
