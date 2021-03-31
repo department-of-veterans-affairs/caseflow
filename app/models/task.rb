@@ -545,35 +545,40 @@ class Task < CaseflowRecord
     end
   end
 
+  def update_status(replacement)
+    if replacement.type != "JudgeAssignTask"
+      replacement.update!(status: status)
+    end
+    save!(status: Constants.TASK_STATUSES.cancelled)
+  end
+
+  def handle_task_count_validation(task)
+    begin
+      task.save!
+      # We ignore the no_multiples_of_noncancelled_task validation during the reassign flow
+    rescue ActiveRecord::RecordInvalid => error
+      if error.message != "Validation failed: Type there should not be multiple tasks of this type"
+        raise
+      end
+    end
+  end
+
   def reassign(reassign_params, current_user)
     replacement = dup.tap do |task|
-      ActiveRecord::Base.transaction do  
+      ActiveRecord::Base.transaction do
         task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
         task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
         task.instructions = flattened_instructions(reassign_params)
         task.status = Constants.TASK_STATUSES.assigned
-        
-        begin
-          task.save!
-          # We ignore the no_multiples_of_noncancelled_task validation during the reassign flow
-        rescue ActiveRecord::RecordInvalid => e
-          if e.message != "Validation failed: Type there should not be multiple tasks of this type"
-            raise
-          end
-        end
+
+        handle_task_count_validation(task)
       end
     end
 
     # Preserve the open children and status of the old task
     children.select(&:stays_with_reassigned_parent?).each { |child| child.update!(parent_id: replacement.id) }
-    
-    if replacement.type != "JudgeAssignTask"
-      replacement.update!(status: status)
-    end
-    self.status = Constants.TASK_STATUSES.cancelled
-    self.save!
+    update_status(replacement)
     update_with_instructions(status: Constants.TASK_STATUSES.cancelled, instructions: reassign_params[:instructions])
-
 
     appeal.overtime = false if appeal.overtime? && reassign_clears_overtime?
 
@@ -819,8 +824,8 @@ class Task < CaseflowRecord
   end
 
   def no_multiples_of_noncancelled_task
-    tasks = self.appeal.reload.tasks
-    target_tasks = tasks.select{ |task| task.type == self.type && task.open? }
+    tasks = appeal.reload.tasks
+    target_tasks = tasks.select { |task| task.type == type && task.open? }
     if target_tasks.length >= 1
       errors.add(:type, "there should not be multiple tasks of this type")
     end
