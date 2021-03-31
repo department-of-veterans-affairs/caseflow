@@ -83,7 +83,7 @@ RSpec.shared_examples "Change hearing disposition" do
 
         step "visit and verify that the new hearing disposition is on the hearing details page" do
           visit "hearings/" + hearing.external_id.to_s + "/details"
-          disposition_div = find("h4", text: "DISPOSITION").first(:xpath, "ancestor::div")
+          disposition_div = find("p", text: "DISPOSITION").first(:xpath, "ancestor::div")
           expect(disposition_div).to have_css("div", text: Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.held)
         end
 
