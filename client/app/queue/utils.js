@@ -630,7 +630,7 @@ export const nullToFalse = (key, obj) => {
 };
 
 export const sortCaseTimelineEvents = (taskList, nodDateUpdates) => {
-  const timelineEvents = [...taskList, ...nodDateUpdates];
+  const timelineEvents = [...(taskList ?? []), ...(nodDateUpdates ?? [])];
 
   const sortedTimelineEvents = timelineEvents.sort((prev, next) => {
     return new Date(next.closedAt || next.createdAt || next.updatedAt).getTime() -
