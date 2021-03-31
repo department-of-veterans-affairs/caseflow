@@ -80,7 +80,7 @@ export const HearingTime = ({
             name={`hearingTime${componentIndex}`}
             label={label || 'Time'}
             strongLabel
-            options={enableZone ? hearingTimeOptsWithZone(timeOptions, localZone || enableZone) : timeOptions}
+            options={enableZone ? hearingTimeOptsWithZone(timeOptions, localZone || enableZone, true) : timeOptions}
             onChange={onRadioChange}
             value={isOther ? 'other' : value}
           />
@@ -95,7 +95,7 @@ export const HearingTime = ({
           placeholder="Select a time"
           options={
             enableZone ?
-              hearingTimeOptsWithZone(HEARING_TIME_OPTIONS, localZone || enableZone) :
+              hearingTimeOptsWithZone(HEARING_TIME_OPTIONS, localZone || enableZone, true) :
               HEARING_TIME_OPTIONS
           }
           value={value}

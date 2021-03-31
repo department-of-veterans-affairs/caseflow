@@ -271,27 +271,47 @@ export const zoneName = (time, name, format) => {
 
 /**
  * Method to add timezone to the label of the time
+ * @param {Array} options value is in localTime, label/displayText is in localTime zone
  * @returns {Array} -- List of hearing times with the zone appended to the label
  */
-export const hearingTimeOptsWithZone = (options, local) =>
-  options.map((item) => {
-    // Default to using EST for all times before conversion
-    moment.tz.setDefault(local ? local : 'America/New_York');
+export const hearingTimeOptsWithZone = (options, localTimezone, isRadioField) => {
+  return options.map((item) => {
 
-    // Check which label to use
+    // This only happens when RadioField uses this (isRadioField will be true)
+    if (item.value === 'other') {
+      return item;
+    }
+
+    // The time in item.value is always in localTimezone, convert to 'America/New_York'
+    const timeWithZone = isRadioField ?
+      moment.tz(item.value, 'HH:mm', 'America/New_York') :
+      moment.tz(item.value, 'HH:mm', localTimezone).tz('America/New_York');
+    // Get the moment time in "14:30" format
+    const newValue = timeWithZone.format('HH:mm');
+
+    // Get a string of the time in the eastern timezone
+    const easternTime = zoneName(newValue);
+    // Get a string of the time in the localTimezone
+    const localTime = zoneName(newValue, localTimezone);
+    // Check which label to use, RadioField uses 'displayText', SearchableDropdown uses 'label'
     const label = item.label ? 'label' : 'displayText';
 
-    // Set the time
-    const time = zoneName(item[label]);
-
-    // Set the time in the local timezone
-    const localTime = zoneName(item[label], local === true ? '' : local);
-
-    return {
-      ...item,
-      [label]: local && localTime !== time ? `${localTime} / ${time}` : time
+    // Create the item with new time zones and labels
+    const newItem = {
+      value: newValue,
+      [label]: localTimezone && localTime !== easternTime ? `${localTime} / ${easternTime}` : easternTime
     };
+
+    // Log statements
+    // console.log('old: ', item.value);
+    // console.log('new: ', newItem.value);
+    // console.log('localTime: ', localTime);
+    // console.log('easternTime: ', easternTime);
+    // console.log('localTimezone', localTimezone);
+
+    return newItem;
   });
+};
 
 /**
  * Method to normalize the Regional Office Timezone names

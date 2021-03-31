@@ -1,6 +1,7 @@
 // External Dependencies
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment-timezone';
 
 // Local Dependencies
 import { setTimeSlots } from '../../utils';
@@ -31,9 +32,13 @@ export const TimeSlot = ({
   const handleClick = (time) => {
     // Set the selected time slot
     setSelected(time);
+    const timeInRoTimezone = moment.tz(time, 'HH:mm', 'America/New_York').tz(roTimezone).
+      format('HH:mm');
 
+    // console.log('time in TimeSlot: ', moment.tz(time, 'HH:mm', 'America/New_York').tz(roTimezone).
+    // format('HH:mm'));
     // Use the onChange callback to set the hearing time
-    onChange('scheduledTimeString', time);
+    onChange('scheduledTimeString', timeInRoTimezone);
   };
 
   // Create a hearing Time ID to associate the label with the appropriate form element
