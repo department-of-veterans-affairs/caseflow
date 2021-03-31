@@ -16,6 +16,17 @@ export default {
 const Template = (args) => {
   const veteranDateOfDeath = args.veteranDateOfDeath && new Date(args.veteranDateOfDeath);
 
+  // Handle Remand Appeals
+  if (args.caseType === LEGACY_APPEAL_TYPES.CAVC_REMAND) {
+    amaAppeal.cavcRemand = { };
+    amaAppeal.remandSourceAppealId = '123';
+    amaAppeal.remandJudgeName = 'Judge Name';
+  } else {
+    amaAppeal.cavcRemand = null;
+    amaAppeal.remandSourceAppealId = null;
+    amaAppeal.remandJudgeName = null;
+  }
+
   return (
     <AppealInformation
       {...args}
