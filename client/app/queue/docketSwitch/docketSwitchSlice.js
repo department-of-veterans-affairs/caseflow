@@ -31,6 +31,7 @@ const docketSwitchSlice = createSlice({
       state.formData = {
         ...state.formData,
         ...updates,
+        newTasks: updates?.newTasks
       };
     },
   },
