@@ -289,6 +289,7 @@ class DailyDocketRow extends React.Component {
           {...inputProps}
           disableRadioOptions={hearing?.isVirtual}
           enableZone={hearing?.regionalOfficeTimezone || 'America/New_York'}
+          localZone={hearing?.regionalOfficeTimezone || 'America/New_York'}
           componentIndex={rowIndex}
           regionalOffice={regionalOffice}
           readOnly={
