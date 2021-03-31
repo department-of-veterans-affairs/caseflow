@@ -116,11 +116,13 @@ export const DocketSwitchReviewConfirmContainer = () => {
   }, [formData.taskIds, amaTasks]);
 
   const tasksAdded = useMemo(() => {
-    return formData.newTasks.map(({ type, instructions }) => {
-      const label = colocatedAdminActions[reformatTaskType(type)];
+    if (formData.newTasks) {
+      return formData.newTasks.map(({ type, instructions }) => {
+        const label = colocatedAdminActions[reformatTaskType(type)];
 
-      return { type, label, instructions };
-    });
+        return { type, label, instructions };
+      });
+    }
   }, [formData.newTasks, colocatedAdminActions]);
 
   return (
