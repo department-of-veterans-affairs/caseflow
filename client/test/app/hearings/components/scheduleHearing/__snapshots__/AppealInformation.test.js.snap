@@ -604,6 +604,9 @@ Object {
           <strong>
             Power of Attorney
           </strong>
+          <pre>
+            No representative
+          </pre>
         </div>
       </div>
     </div>
@@ -692,6 +695,9 @@ Object {
         <strong>
           Power of Attorney
         </strong>
+        <pre>
+          No representative
+        </pre>
       </div>
     </div>
   </div>,
