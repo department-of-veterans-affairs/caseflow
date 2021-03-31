@@ -29,10 +29,16 @@ RSpec.feature "Docket Switch", :all_dbs do
     end
   end
 
-  let(:root_task) { create(:root_task, :completed, appeal: appeal) }
+  let(:root_task) { create(:root_task, appeal: appeal) }
   let(:cotb_attorney) { create(:user, :with_vacols_attorney_record, full_name: "Clark Bard") }
   let!(:cotb_non_attorney) { create(:user, full_name: "Aang Bender") }
   let(:judge) { create(:user, :with_vacols_judge_record, full_name: "Judge the First", css_id: "JUDGE_1") }
+  let(:other_organization) { Organization.create!(name: "Other organization", url: "other") }
+  let!(:aod_motion_mail_task) { create(:aod_motion_mail_task, appeal: appeal, parent: root_task) }
+  let(:translation_task) do
+    create(:translation_task, appeal: appeal, parent: root_task, assigned_to: other_organization)
+  end
+  let!(:foia_task) { create(:foia_task, appeal: appeal, parent: translation_task) }
 
   describe "create DocketSwitchMailTask" do
     it "allows Clerk of the Board users to create DocketSwitchMailTask" do
@@ -584,6 +590,12 @@ RSpec.feature "Docket Switch", :all_dbs do
       docket_switch = DocketSwitch.find_by(old_docket_stream_id: appeal.id)
       expect(docket_switch).to_not be_nil
       expect(docket_switch.new_docket_stream.docket_type).to eq(docket_switch.docket_type)
+
+      new_tasks = docket_switch.new_docket_stream.reload.tasks
+      aod_motion_mail_task = new_tasks.find { |task| task.type == "AodMotionMailTask" }
+      foia_task = new_tasks.find { |task| task.type == "FoiaTask" }
+      expect(aod_motion_mail_task).to be_active
+      expect(foia_task).to be_active
       expect(page).to have_current_path("/queue/appeals/#{docket_switch.new_docket_stream.uuid}")
 
       new_completed_task = DocketSwitchGrantedTask.find_by(

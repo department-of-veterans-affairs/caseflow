@@ -70,7 +70,7 @@ class DocketSwitch::TaskHandler
   end
 
   def persistent_tasks
-    @persistent_tasks ||= docket_switchable_tasks.select { |task| selected_task_ids.include?(task.id) }
+    @persistent_tasks ||= docket_switchable_tasks.select { |task| selected_task_ids.include?(task.id.to_s) }
   end
 
   def attorney_user
