@@ -425,7 +425,8 @@
   max-width: 300px;
 
   pre {
-    white-space: wrap;
+    white-space: pre-wrap;
+    word-wrap: break-word;
     width: 200px;
   }
 }
