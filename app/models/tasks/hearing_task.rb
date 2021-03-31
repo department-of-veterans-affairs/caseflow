@@ -83,11 +83,17 @@ class HearingTask < Task
 
   def create_evidence_or_ihp_task
     if hearing&.no_show?
-      EvidenceSubmissionWindowTask.create!(
-        appeal: appeal,
-        parent: self,
-        assigned_to: MailTeam.singleton
-      )
+      # if there was already a completed ESWT, set the appeal ready for distribution
+      # More info in slack: https://dsva.slack.com/archives/C3EAF3Q15/p1617048776125000
+      if children.closed.where(type: EvidenceSubmissionWindowTask.name).present?
+        update!(status: Constants.TASK_STATUSES.completed)
+      else
+        EvidenceSubmissionWindowTask.create!(
+          appeal: appeal,
+          parent: self,
+          assigned_to: MailTeam.singleton
+        )
+      end
     else
       IhpTasksFactory.new(parent).create_ihp_tasks!
     end
