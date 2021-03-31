@@ -2,8 +2,6 @@ import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { formatIssues } from '../../intake/util/issues';
 import COPY from '../../../COPY';
-import { PAGE_PATHS } from '../../intake/constants';
-
 const analytics = true;
 
 const pathMap = {
@@ -73,7 +71,7 @@ export const editEpClaimLabel = (claimId, formType, previousCode, selectedCode) 
         };
 
         sessionStorage.setItem('veteranSearchPageAlert', JSON.stringify(alert));
-        window.location.replace(PAGE_PATHS.SEARCH);
+        history.back();
       }
     }
   ).

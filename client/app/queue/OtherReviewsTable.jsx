@@ -75,8 +75,7 @@ class OtherReviewsTable extends React.PureComponent {
         return <React.Fragment>
           <Link
             name="edit-issues"
-            href={review.editIssuesUrl}
-            target="_blank">
+            href={review.editIssuesUrl}>
             {_.startCase(review.reviewType)}
           </Link>
         </React.Fragment>;
