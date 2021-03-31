@@ -9,6 +9,7 @@ export const CheckoutButtons = ({
   onSubmit,
   submitText,
   disabled = false,
+  loading = false,
 }) => {
   const cancelBtn = {
     classNames: [cx('cf-btn-link', { 'cf-right-side': !onBack })],
@@ -23,13 +24,13 @@ export const CheckoutButtons = ({
     name: 'next-button',
     disabled,
     displayText: submitText ?? 'Continue',
+    loading,
     styling: css({ marginLeft: '1rem' }),
   };
   const backBtn = {
     classNames: ['cf-right-side', 'cf-prev-step', 'usa-button-secondary'],
     callback: onBack,
     name: 'back-button',
-    disabled,
     displayText: 'Back',
     willNeverBeLoading: true,
   };
@@ -38,13 +39,14 @@ export const CheckoutButtons = ({
     submitBtn,
     cancelBtn,
     // Only display "Back" button if applicable
-    ...(onBack ? [backBtn] : []),
+    ...(onBack && !loading ? [backBtn] : []),
   ]);
 
   return <DecisionViewFooter buttons={buttons} />;
 };
 CheckoutButtons.propTypes = {
   disabled: PropTypes.bool,
+  loading: PropTypes.bool,
   onBack: PropTypes.func,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,

@@ -28,7 +28,7 @@ export const DocketSwitchReviewConfirmContainer = () => {
   const { appealId, taskId } = useParams();
   const { goBack, push } = useHistory();
   const dispatch = useDispatch();
-  const [disabled, setDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
@@ -85,7 +85,7 @@ export const DocketSwitchReviewConfirmContainer = () => {
     };
 
     try {
-      setDisabled(true);
+      setLoading(true);
       const resultAction = await dispatch(completeDocketSwitchGranted(docketSwitch));
       const { newAppealId } = unwrapResult(resultAction);
 
@@ -128,13 +128,13 @@ export const DocketSwitchReviewConfirmContainer = () => {
       claimantName={appeal.claimantName}
       docketFrom={StringUtil.snakeCaseToCapitalized(appeal.docketName)}
       docketTo={StringUtil.snakeCaseToCapitalized(formData.docketType)}
-      docketSwitchReceiptDate={new Date(formData.receiptDate)}
+      docketSwitchReceiptDate={parseISO(formData.receiptDate)}
       issuesSwitched={issuesSwitched}
       issuesRemaining={issuesRemaining}
       onBack={goBack}
       onCancel={handleCancel}
       onSubmit={handleSubmit}
-      disabled={disabled}
+      loading={loading}
       originalReceiptDate={receiptDate}
       tasksAdded={tasksAdded}
       tasksKept={tasksSwitched}
