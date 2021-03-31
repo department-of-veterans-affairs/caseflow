@@ -30,10 +30,9 @@ class Dispatch::EstablishClaimsController < Dispatch::TasksController
   end
 
   def pdf
-    return redirect_to "/404" if task.appeal.decisions.blank?
-
-    decision_number = params[:decision_number].to_i
-    return redirect_to "/404" if decision_number >= task.appeal.decisions.size || decision_number < 0
+    return redirect_to "/404" if task.appeal.decisions.blank? ||
+                                 decision_number >= task.appeal.decisions.size ||
+                                 decision_number < 0
 
     decision = task.appeal.decisions[decision_number]
     send_file(decision.serve, type: "application/pdf", disposition: "inline")
@@ -179,6 +178,10 @@ class Dispatch::EstablishClaimsController < Dispatch::TasksController
 
   def cancel_feedback
     params.require(:feedback)
+  end
+
+  def decision_number
+    params[:decision_number].to_i
   end
 
   def total_cases_completed
