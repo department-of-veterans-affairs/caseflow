@@ -11,6 +11,7 @@ export const AppealStreamDetails = ({
   cavcRemand,
   caseType,
   isAdvancedOnDocket,
+  remandJudgeName
 }) => {
   const caseLabel = renderAppealType({
     caseType,
@@ -27,7 +28,7 @@ export const AppealStreamDetails = ({
           {caseType}
         </span>
         <div>
-          {cavcRemand.cavc_judge_full_name}
+          VLJ {remandJudgeName}
         </div>
       </Link>
     </React.Fragment>
@@ -39,12 +40,11 @@ AppealStreamDetails.propTypes = {
   cavcRemand: PropTypes.object,
   caseType: PropTypes.string,
   remandSourceAppealId: PropTypes.string,
+  remandJudgeName: PropTypes.string,
   isAdvancedOnDocket: PropTypes.bool,
 };
 
 export const AppealInformation = ({ appeal }) => {
-  console.log('APPEAL: ', appeal);
-
   return (
     <div className="schedule-veteran-appeals-info">
       <h2>Appeal Information</h2>

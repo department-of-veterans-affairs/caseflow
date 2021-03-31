@@ -387,7 +387,8 @@ export const prepareAppealForStore = (appeals) => {
       attorneyCaseRewriteDetails: appeal.attributes.attorney_case_rewrite_details,
       docketSwitch: appeal.attributes.docket_switch,
       switchedDockets: appeal.attributes.switched_dockets,
-      remandSourceAppealId: appeal.attributes.remand_source_appeal_id
+      remandSourceAppealId: appeal.attributes.remand_source_appeal_id,
+      remandJudgeName: appeal.attributes.remand_judge_name
     };
 
     return accumulator;

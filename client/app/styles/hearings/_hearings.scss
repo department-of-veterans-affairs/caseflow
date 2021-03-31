@@ -342,7 +342,7 @@
 
 // Schedule Veteran Styles
 .schedule-veteran-page {
-  min-height: 650px;
+  min-height: 680px;
 }
 
 // Time Slot Styles
@@ -425,6 +425,13 @@
   max-width: 300px;
 
   pre {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 200px;
+  }
+
+  a > div {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
