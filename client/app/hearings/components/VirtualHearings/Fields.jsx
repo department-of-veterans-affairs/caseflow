@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
-import { marginTop } from '../details/style';
+import { marginTop, input8px } from '../details/style';
 import { VirtualHearingEmail } from './Emails';
 import { Timezone } from './Timezone';
 import { HelperText } from './HelperText';
@@ -21,7 +21,7 @@ export const VirtualHearingFields = ({
     <React.Fragment>
       <h3>{appellantTitle}</h3>
       <div id="email-section" className="usa-grid">
-        <div className="usa-width-one-third">
+        <div className="usa-width-one-third" {...input8px}>
           <Timezone
             required
             errorMessage={errors?.appellantTz}
@@ -49,7 +49,7 @@ export const VirtualHearingFields = ({
       <div className="cf-help-divider" />
       <h3>Power of Attorney</h3>
       <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
-        <div className="usa-width-one-third">
+        <div className="usa-width-one-third" {...input8px}>
           <Timezone
             errorMessage={errors?.representativeTz}
             required={Boolean(virtualHearing?.representativeEmail)}

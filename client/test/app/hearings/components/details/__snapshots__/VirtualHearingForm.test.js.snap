@@ -1497,6 +1497,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
           >
             <div
               className="usa-width-one-third"
+              data-css-150oin1=""
             >
               <Timezone
                 label="Veteran Timezone"
@@ -16725,6 +16726,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
           >
             <div
               className="usa-width-one-third"
+              data-css-150oin1=""
             >
               <Timezone
                 label="POA/Representative Timezone"
