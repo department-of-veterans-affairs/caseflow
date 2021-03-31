@@ -566,7 +566,6 @@ class Task < CaseflowRecord
 
     # Preserve the open children and status of the old task
     children.select(&:stays_with_reassigned_parent?).each { |child| child.update!(parent_id: replacement.id) }
-    # note: below may conflict with requirement for new judge assign tasks to be created with status of assigned
     
     if replacement.type != "JudgeAssignTask"
       replacement.update!(status: status)
@@ -821,7 +820,7 @@ class Task < CaseflowRecord
 
   def no_multiples_of_noncancelled_task
     tasks = self.appeal.reload.tasks
-    target_tasks = tasks.select{ |task| task.type == self.type && task.status != Constants.TASK_STATUSES.cancelled }
+    target_tasks = tasks.select{ |task| task.type == self.type && task.open? }
     if target_tasks.length >= 1
       errors.add(:type, "there should not be multiple tasks of this type")
     end
