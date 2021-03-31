@@ -418,16 +418,14 @@
 // Appeal Information Styles
 .schedule-veteran-appeals-info {
   width: 100%;
-  background-color: $color-gray-lightest;
+  background-color: $caseflow-background;
   border: 2px solid $color-gray-lighter;
   border-radius: 2%;
   padding: 25px 20px;
   max-width: 300px;
 
   pre {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
+    white-space: wrap;
     width: 200px;
   }
 }
