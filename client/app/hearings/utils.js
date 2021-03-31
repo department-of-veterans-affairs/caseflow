@@ -298,6 +298,7 @@ export const hearingTimeOptsWithZone = (options, localTimezone, isRadioField) =>
 
     // Create the item with new time zones and labels
     const newItem = {
+      ...item,
       value: newValue,
       [label]: localTimezone && localTime !== easternTime ? `${localTime} / ${easternTime}` : easternTime
     };
