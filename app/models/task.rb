@@ -559,6 +559,8 @@ class Task < CaseflowRecord
     rescue ActiveRecord::RecordInvalid => error
       if error.message != "Validation failed: Type there should not be multiple tasks of this type"
         raise
+      else
+        task.save(validate: false)
       end
     end
   end
@@ -582,7 +584,8 @@ class Task < CaseflowRecord
 
     appeal.overtime = false if appeal.overtime? && reassign_clears_overtime?
 
-    [replacement, self, replacement.children].flatten
+    result = [replacement, self, replacement.children].flatten
+    result
   end
 
   def can_move_on_docket_switch?

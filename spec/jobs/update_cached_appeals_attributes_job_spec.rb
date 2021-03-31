@@ -19,7 +19,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
     before do
       open_appeals.each do |appeal|
         create_list(:bva_dispatch_task, 3, appeal: appeal)
-        create_list(:ama_judge_assign_task, 8, appeal: appeal)
+        create(:ama_judge_assign_task, appeal: appeal)
       end
     end
 
@@ -119,7 +119,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
     before do
       open_appeals.each do |appeal|
         create_list(:bva_dispatch_task, 3, appeal: appeal)
-        create_list(:ama_judge_assign_task, 8, appeal: appeal)
+        create(:ama_judge_assign_task, appeal: appeal)
       end
     end
 
