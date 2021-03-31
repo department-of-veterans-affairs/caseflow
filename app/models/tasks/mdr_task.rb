@@ -21,12 +21,12 @@ class MdrTask < Task
 
   before_validation :set_assignee
 
-  def self.create_with_hold(parent_task, decision_date)
+  def self.create_with_hold(parent_task)
     multi_transaction do
       create!(parent: parent_task, appeal: parent_task.appeal).tap do |window_task|
         TimedHoldTask.create_from_parent(
           window_task,
-          days_on_hold: decision_date_plus_90_days(decision_date),
+          days_on_hold: decision_date_plus_90_days(parent_task.appeal),
           instructions: [COPY::MDR_WINDOW_TASK_DEFAULT_INSTRUCTIONS]
         )
       end
@@ -53,7 +53,8 @@ class MdrTask < Task
     TASK_ACTIONS
   end
 
-  def self.decision_date_plus_90_days(decision_date)
+  def self.decision_date_plus_90_days(appeal)
+    decision_date = appeal.cavc_remand.decision_date
     end_date = decision_date + 90.days
     # What's expected is the _number_ of days to wait:
     (end_date - Time.zone.today).to_i
