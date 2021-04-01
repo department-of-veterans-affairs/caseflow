@@ -48,12 +48,22 @@ class CavcRemand < CaseflowRecord
       update_with_instructions(params)
       end_mandate_hold
     else
+      new_decision_date = (Date.parse(params[:decision_date]) - decision_date).to_i.abs > 0
       # sourced_from Edit Remand link
       update!(params)
+      update_timed_hold if new_decision_date
     end
   end
 
   private
+
+  def update_timed_hold
+    if mdr?
+      # Assume there is only 1 open MdrTask
+      mdr_task = remand_appeal.tasks.open.where(type: :MdrTask).last
+      mdr_task.update_timed_hold
+    end
+  end
 
   def update_with_instructions(params)
     params[:instructions] = flattened_instructions(params)
