@@ -207,12 +207,29 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       end
     end
 
+    # Method to convert time zones
+    def convert_local_time_to_eastern_timezone(time)
+      # Reach through hearing_day for the regional_office timezone
+      ro_timezone = if hearing_day.central_office?
+                      "America/New_York"
+                    else
+                      RegionalOffice.find!(hearing_day.regional_office).timezone
+                    end
+
+      # Get the timezone abbreviation like "EDT", "PDT", from the long timezone
+      ro_timezone_abbreviation = Time.zone.now.in_time_zone(ro_timezone).strftime("%Z")
+
+      # Parse the local time string, then produce a result in EDT like "11:30 EDT"
+      Time.zone.parse("#{time} #{ro_timezone_abbreviation}").strftime("%-I:%M %p %Z")
+    end
+
     # Method to choose either the hearing time slot buttons or hearing time radio buttons
     def select_hearing_time(time)
       if FeatureToggle.enabled?(:enable_hearing_time_slots)
-        find(".time-slot-button", text: /#{time} AM E(S|D)T/).click
+        eastern_time = convert_local_time_to_eastern_timezone(time)
+        find(".time-slot-button", text: eastern_time).click
       else
-        find(".cf-form-radio-option", text: time).click
+        first(".cf-form-radio-option", text: time).click
       end
     end
 
@@ -264,7 +281,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       scenario "Schedule Veteran for video" do
         cache_appeals
         navigate_to_schedule_veteran
-        select_hearing_time("8:30")
+        select_hearing_time("8:30 ")
         click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
         expect(page).not_to have_content("Could not find hearing locations for this veteran")
         expect(page).not_to have_content("There are no upcoming hearing dates for this regional office.")
