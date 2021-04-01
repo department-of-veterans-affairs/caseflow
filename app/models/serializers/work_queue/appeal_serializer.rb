@@ -74,9 +74,9 @@ class WorkQueue::AppealSerializer
     object.claimant&.address
   end
 
-  attribute :appellant_relationship do |object|
-    object.claimant&.relationship
-  end
+  attribute :appellant_tz, &:appellant_tz
+
+  attribute :appellant_relationship, &:appellant_relationship
 
   attribute :cavc_remand
 

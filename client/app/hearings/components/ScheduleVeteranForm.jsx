@@ -62,8 +62,21 @@ export const ScheduleVeteranForm = ({
     return appeal?.readableOriginalHearingRequestType ?? VIDEO_HEARING_LABEL;
   };
 
-  // Set the hearing request to Video unless the RO is Central
-  const video = ro !== 'C';
+  // Set the section props
+  const sectionProps = {
+    errors,
+    hearing,
+    appellantTitle,
+    schedulingToVirtual: virtual,
+    virtualHearing: hearing?.virtualHearing,
+    type: HEARING_CONVERSION_TYPES[0],
+    showTimezoneField: true,
+    update: (_, virtualHearing) =>
+      props.onChange('virtualHearing', {
+        ...hearing?.virtualHearing,
+        ...virtualHearing,
+      })
+  };
 
   return (
     <div className="usa-width-one-whole schedule-veteran-details">
@@ -71,7 +84,6 @@ export const ScheduleVeteranForm = ({
         <AppealInformation appeal={appeal} />
       </div>
       <div className="usa-width-one-half">
-
         <div className="usa-width-one-whole">
           <HearingTypeDropdown
             enableFullPageConversion
@@ -168,36 +180,8 @@ export const ScheduleVeteranForm = ({
         </div>
         {virtual && (
           <div className="usa-width-one-whole" {...marginTop(25)}>
-            <AppellantSection
-              virtual={virtual}
-              errors={errors}
-              video={video}
-              update={(_, virtualHearing) =>
-                props.onChange('virtualHearing', {
-                  ...hearing?.virtualHearing,
-                  ...virtualHearing,
-                })
-              }
-              appellantTitle={appellantTitle}
-              hearing={hearing}
-              virtualHearing={hearing?.virtualHearing}
-              type={HEARING_CONVERSION_TYPES[0]}
-            />
-            <RepresentativeSection
-              virtual={virtual}
-              errors={errors}
-              video={video}
-              update={(_, virtualHearing) =>
-                props.onChange('virtualHearing', {
-                  ...hearing?.virtualHearing,
-                  ...virtualHearing,
-                })
-              }
-              appellantTitle={appellantTitle}
-              hearing={hearing}
-              virtualHearing={hearing?.virtualHearing}
-              type={HEARING_CONVERSION_TYPES[0]}
-            />
+            <AppellantSection {...sectionProps} />
+            <RepresentativeSection {...sectionProps} />
           </div>
         )}
       </div>

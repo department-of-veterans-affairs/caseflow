@@ -12,8 +12,9 @@ exports[`VirtualHearingModal ChangeEmailOrTimezone sub-component Displays ReadOn
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -141,7 +142,7 @@ exports[`VirtualHearingModal ChangeEmailOrTimezone sub-component Displays ReadOn
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -149,7 +150,7 @@ exports[`VirtualHearingModal ChangeEmailOrTimezone sub-component Displays ReadOn
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
@@ -166,8 +167,9 @@ exports[`VirtualHearingModal ChangeEmailOrTimezone sub-component Displays ReadOn
         "appellantCity": "SAN FRANCISCO",
         "appellantEmailAddress": "tom.brady@caseflow.gov",
         "appellantFirstName": "Tom",
-        "appellantIsNotVeteran": true,
+        "appellantIsNotVeteran": false,
         "appellantLastName": "Brady",
+        "appellantRelationship": "Spouse",
         "appellantState": "CA",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
@@ -295,7 +297,7 @@ exports[`VirtualHearingModal ChangeEmailOrTimezone sub-component Displays ReadOn
       Object {
         "aliasWithHost": "BVA0000009@care.evn.va.gov",
         "appellantEmail": "Bob.Smith@test.com",
-        "appellantTz": null,
+        "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
@@ -303,12 +305,16 @@ exports[`VirtualHearingModal ChangeEmailOrTimezone sub-component Displays ReadOn
         "hostPin": "8600030#",
         "jobCompleted": true,
         "representativeEmail": "tom.brady@caseflow.gov",
-        "representativeTz": null,
+        "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
         "status": "active",
       }
     }
-  />
+  >
+    <div
+      data-css-18v9q72=""
+    />
+  </ReadOnlyEmails>
 </ChangeEmailOrTimezone>
 `;
 
@@ -324,8 +330,9 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -455,7 +462,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -463,7 +470,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
@@ -480,8 +487,9 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
         "appellantCity": "SAN FRANCISCO",
         "appellantEmailAddress": "tom.brady@caseflow.gov",
         "appellantFirstName": "Tom",
-        "appellantIsNotVeteran": true,
+        "appellantIsNotVeteran": false,
         "appellantLastName": "Brady",
+        "appellantRelationship": "Spouse",
         "appellantState": "CA",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
@@ -611,7 +619,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
       Object {
         "aliasWithHost": "BVA0000009@care.evn.va.gov",
         "appellantEmail": "Bob.Smith@test.com",
-        "appellantTz": null,
+        "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
@@ -619,7 +627,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
         "hostPin": "8600030#",
         "jobCompleted": true,
         "representativeEmail": "tom.brady@caseflow.gov",
-        "representativeTz": null,
+        "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
         "status": "active",
       }
@@ -654,8 +662,9 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
         "appellantCity": "SAN FRANCISCO",
         "appellantEmailAddress": "tom.brady@caseflow.gov",
         "appellantFirstName": "Tom",
-        "appellantIsNotVeteran": true,
+        "appellantIsNotVeteran": false,
         "appellantLastName": "Brady",
+        "appellantRelationship": "Spouse",
         "appellantState": "CA",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
@@ -786,7 +795,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
       Object {
         "aliasWithHost": "BVA0000009@care.evn.va.gov",
         "appellantEmail": "Bob.Smith@test.com",
-        "appellantTz": null,
+        "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
@@ -794,27 +803,83 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
         "hostPin": "8600030#",
         "jobCompleted": true,
         "representativeEmail": "tom.brady@caseflow.gov",
-        "representativeTz": null,
+        "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
         "status": "active",
       }
     }
   >
-    <p>
-      <strong>
-        Appellant
-         Email
-      </strong>
-      <br />
-      Bob.Smith@test.com
-    </p>
-    <p>
-      <strong>
-        POA/Representative Email
-      </strong>
-      <br />
-      tom.brady@caseflow.gov
-    </p>
+    <div
+      data-css-18v9q72=""
+    >
+      <ReadOnly
+        label="Veteran Hearing Time"
+        spacing={15}
+        text="4:00 AM Mountain Time (US & Canada)"
+      >
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            Veteran Hearing Time
+          </strong>
+          <pre>
+            4:00 AM Mountain Time (US & Canada)
+          </pre>
+        </div>
+      </ReadOnly>
+      <ReadOnly
+        label="Veteran Email"
+        spacing={15}
+        text="Bob.Smith@test.com"
+      >
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            Veteran Email
+          </strong>
+          <pre>
+            Bob.Smith@test.com
+          </pre>
+        </div>
+      </ReadOnly>
+      <div
+        className="cf-help-divider"
+      />
+      <ReadOnly
+        label="POA/Representative Hearing Time"
+        spacing={15}
+        text="3:00 AM Pacific Time (US & Canada)"
+      >
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            POA/Representative Hearing Time
+          </strong>
+          <pre>
+            3:00 AM Pacific Time (US & Canada)
+          </pre>
+        </div>
+      </ReadOnly>
+      <ReadOnly
+        label="POA/Representative Email"
+        spacing={15}
+        text="tom.brady@caseflow.gov"
+      >
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            POA/Representative Email
+          </strong>
+          <pre>
+            tom.brady@caseflow.gov
+          </pre>
+        </div>
+      </ReadOnly>
+    </div>
   </ReadOnlyEmails>
 </ChangeFromVirtual>
 `;
@@ -831,8 +896,9 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -960,7 +1026,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -968,7 +1034,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
@@ -985,8 +1051,9 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
         "appellantCity": "SAN FRANCISCO",
         "appellantEmailAddress": "tom.brady@caseflow.gov",
         "appellantFirstName": "Tom",
-        "appellantIsNotVeteran": true,
+        "appellantIsNotVeteran": false,
         "appellantLastName": "Brady",
+        "appellantRelationship": "Spouse",
         "appellantState": "CA",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
@@ -1114,7 +1181,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
       Object {
         "aliasWithHost": "BVA0000009@care.evn.va.gov",
         "appellantEmail": "Bob.Smith@test.com",
-        "appellantTz": null,
+        "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
@@ -1122,7 +1189,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
         "hostPin": "8600030#",
         "jobCompleted": true,
         "representativeEmail": "tom.brady@caseflow.gov",
-        "representativeTz": null,
+        "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
         "status": "active",
       }
@@ -1151,8 +1218,9 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
         "appellantCity": "SAN FRANCISCO",
         "appellantEmailAddress": "tom.brady@caseflow.gov",
         "appellantFirstName": "Tom",
-        "appellantIsNotVeteran": true,
+        "appellantIsNotVeteran": false,
         "appellantLastName": "Brady",
+        "appellantRelationship": "Spouse",
         "appellantState": "CA",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
@@ -1281,7 +1349,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
       Object {
         "aliasWithHost": "BVA0000009@care.evn.va.gov",
         "appellantEmail": "Bob.Smith@test.com",
-        "appellantTz": null,
+        "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
@@ -1289,27 +1357,83 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
         "hostPin": "8600030#",
         "jobCompleted": true,
         "representativeEmail": "tom.brady@caseflow.gov",
-        "representativeTz": null,
+        "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
         "status": "active",
       }
     }
   >
-    <p>
-      <strong>
-        Appellant
-         Email
-      </strong>
-      <br />
-      Bob.Smith@test.com
-    </p>
-    <p>
-      <strong>
-        POA/Representative Email
-      </strong>
-      <br />
-      tom.brady@caseflow.gov
-    </p>
+    <div
+      data-css-18v9q72=""
+    >
+      <ReadOnly
+        label="Veteran Hearing Time"
+        spacing={15}
+        text="4:00 AM Mountain Time (US & Canada)"
+      >
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            Veteran Hearing Time
+          </strong>
+          <pre>
+            4:00 AM Mountain Time (US & Canada)
+          </pre>
+        </div>
+      </ReadOnly>
+      <ReadOnly
+        label="Veteran Email"
+        spacing={15}
+        text="Bob.Smith@test.com"
+      >
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            Veteran Email
+          </strong>
+          <pre>
+            Bob.Smith@test.com
+          </pre>
+        </div>
+      </ReadOnly>
+      <div
+        className="cf-help-divider"
+      />
+      <ReadOnly
+        label="POA/Representative Hearing Time"
+        spacing={15}
+        text="3:00 AM Pacific Time (US & Canada)"
+      >
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            POA/Representative Hearing Time
+          </strong>
+          <pre>
+            3:00 AM Pacific Time (US & Canada)
+          </pre>
+        </div>
+      </ReadOnly>
+      <ReadOnly
+        label="POA/Representative Email"
+        spacing={15}
+        text="tom.brady@caseflow.gov"
+      >
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            POA/Representative Email
+          </strong>
+          <pre>
+            tom.brady@caseflow.gov
+          </pre>
+        </div>
+      </ReadOnly>
+    </div>
   </ReadOnlyEmails>
 </ChangeFromVirtual>
 `;
@@ -1326,8 +1450,9 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -1455,7 +1580,7 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -1463,7 +1588,7 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
@@ -1480,8 +1605,9 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
         "appellantCity": "SAN FRANCISCO",
         "appellantEmailAddress": "tom.brady@caseflow.gov",
         "appellantFirstName": "Tom",
-        "appellantIsNotVeteran": true,
+        "appellantIsNotVeteran": false,
         "appellantLastName": "Brady",
+        "appellantRelationship": "Spouse",
         "appellantState": "CA",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
@@ -1609,7 +1735,7 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
       Object {
         "aliasWithHost": "BVA0000009@care.evn.va.gov",
         "appellantEmail": "Bob.Smith@test.com",
-        "appellantTz": null,
+        "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
@@ -1617,7 +1743,7 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
         "hostPin": "8600030#",
         "jobCompleted": true,
         "representativeEmail": "tom.brady@caseflow.gov",
-        "representativeTz": null,
+        "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
         "status": "active",
       }
@@ -1646,8 +1772,9 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
         "appellantCity": "SAN FRANCISCO",
         "appellantEmailAddress": "tom.brady@caseflow.gov",
         "appellantFirstName": "Tom",
-        "appellantIsNotVeteran": true,
+        "appellantIsNotVeteran": false,
         "appellantLastName": "Brady",
+        "appellantRelationship": "Spouse",
         "appellantState": "CA",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
@@ -1776,7 +1903,7 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
       Object {
         "aliasWithHost": "BVA0000009@care.evn.va.gov",
         "appellantEmail": "Bob.Smith@test.com",
-        "appellantTz": null,
+        "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
@@ -1784,27 +1911,83 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
         "hostPin": "8600030#",
         "jobCompleted": true,
         "representativeEmail": "tom.brady@caseflow.gov",
-        "representativeTz": null,
+        "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
         "status": "active",
       }
     }
   >
-    <p>
-      <strong>
-        Appellant
-         Email
-      </strong>
-      <br />
-      Bob.Smith@test.com
-    </p>
-    <p>
-      <strong>
-        POA/Representative Email
-      </strong>
-      <br />
-      tom.brady@caseflow.gov
-    </p>
+    <div
+      data-css-18v9q72=""
+    >
+      <ReadOnly
+        label="Veteran Hearing Time"
+        spacing={15}
+        text="4:00 AM Mountain Time (US & Canada)"
+      >
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            Veteran Hearing Time
+          </strong>
+          <pre>
+            4:00 AM Mountain Time (US & Canada)
+          </pre>
+        </div>
+      </ReadOnly>
+      <ReadOnly
+        label="Veteran Email"
+        spacing={15}
+        text="Bob.Smith@test.com"
+      >
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            Veteran Email
+          </strong>
+          <pre>
+            Bob.Smith@test.com
+          </pre>
+        </div>
+      </ReadOnly>
+      <div
+        className="cf-help-divider"
+      />
+      <ReadOnly
+        label="POA/Representative Hearing Time"
+        spacing={15}
+        text="3:00 AM Pacific Time (US & Canada)"
+      >
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            POA/Representative Hearing Time
+          </strong>
+          <pre>
+            3:00 AM Pacific Time (US & Canada)
+          </pre>
+        </div>
+      </ReadOnly>
+      <ReadOnly
+        label="POA/Representative Email"
+        spacing={15}
+        text="tom.brady@caseflow.gov"
+      >
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            POA/Representative Email
+          </strong>
+          <pre>
+            tom.brady@caseflow.gov
+          </pre>
+        </div>
+      </ReadOnly>
+    </div>
   </ReadOnlyEmails>
 </ChangeHearingTime>
 `;
@@ -1822,8 +2005,9 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -1941,7 +2125,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -1949,7 +2133,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
@@ -1967,8 +2151,9 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
         "appellantCity": "SAN FRANCISCO",
         "appellantEmailAddress": "tom.brady@caseflow.gov",
         "appellantFirstName": "Tom",
-        "appellantIsNotVeteran": true,
+        "appellantIsNotVeteran": false,
         "appellantLastName": "Brady",
+        "appellantRelationship": "Spouse",
         "appellantState": "CA",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
@@ -2086,7 +2271,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
       Object {
         "aliasWithHost": "BVA0000009@care.evn.va.gov",
         "appellantEmail": "Bob.Smith@test.com",
-        "appellantTz": null,
+        "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
@@ -2094,7 +2279,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
         "hostPin": "8600030#",
         "jobCompleted": true,
         "representativeEmail": "tom.brady@caseflow.gov",
-        "representativeTz": null,
+        "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
         "status": "active",
       }
@@ -2119,7 +2304,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
       ]
     }
     errorMessage="Something went wrong..."
-    label="Appellant Email"
+    label="Veteran Email"
     name="appellant-email"
     onChange={[Function]}
     optional={false}
@@ -2137,13 +2322,13 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
       >
         <strong>
           <FormLabel
-            label="Appellant Email"
+            label="Veteran Email"
             name="appellant-email"
             optional={false}
             required={false}
           >
             <span>
-              Appellant Email
+              Veteran Email
             </span>
           </FormLabel>
         </strong>
@@ -2219,7 +2404,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
   <p
     dangerouslySetInnerHTML={
       Object {
-        "__html": "Changes to the Appellant and POA / Representative emails will be used to send notifications <strong>for this hearing only</strong>.",
+        "__html": "Changes to the Veteran and POA / Representative emails will be used to send notifications <strong>for this hearing only</strong>.",
       }
     }
   />
@@ -2238,8 +2423,9 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -2347,7 +2533,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -2355,7 +2541,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
@@ -2372,8 +2558,9 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
         "appellantCity": "SAN FRANCISCO",
         "appellantEmailAddress": "tom.brady@caseflow.gov",
         "appellantFirstName": "Tom",
-        "appellantIsNotVeteran": true,
+        "appellantIsNotVeteran": false,
         "appellantLastName": "Brady",
+        "appellantRelationship": "Spouse",
         "appellantState": "CA",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
@@ -2481,7 +2668,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
       Object {
         "aliasWithHost": "BVA0000009@care.evn.va.gov",
         "appellantEmail": "Bob.Smith@test.com",
-        "appellantTz": null,
+        "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
@@ -2489,7 +2676,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
         "hostPin": "8600030#",
         "jobCompleted": true,
         "representativeEmail": "tom.brady@caseflow.gov",
-        "representativeTz": null,
+        "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
         "status": "active",
       }
@@ -2513,7 +2700,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
         "cf-form-textinput",
       ]
     }
-    label="Appellant Email"
+    label="Veteran Email"
     name="appellant-email"
     onChange={[Function]}
     optional={false}
@@ -2531,13 +2718,13 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
       >
         <strong>
           <FormLabel
-            label="Appellant Email"
+            label="Veteran Email"
             name="appellant-email"
             optional={false}
             required={false}
           >
             <span>
-              Appellant Email
+              Veteran Email
             </span>
           </FormLabel>
         </strong>
@@ -2608,7 +2795,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
   <p
     dangerouslySetInnerHTML={
       Object {
-        "__html": "Changes to the Appellant and POA / Representative emails will be used to send notifications <strong>for this hearing only</strong>.",
+        "__html": "Changes to the Veteran and POA / Representative emails will be used to send notifications <strong>for this hearing only</strong>.",
       }
     }
   />
@@ -2627,8 +2814,9 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -2757,7 +2945,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -2765,7 +2953,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
@@ -2782,8 +2970,9 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
         "appellantCity": "SAN FRANCISCO",
         "appellantEmailAddress": "tom.brady@caseflow.gov",
         "appellantFirstName": "Tom",
-        "appellantIsNotVeteran": true,
+        "appellantIsNotVeteran": false,
         "appellantLastName": "Brady",
+        "appellantRelationship": "Spouse",
         "appellantState": "CA",
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
@@ -2912,7 +3101,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
       Object {
         "aliasWithHost": "BVA0000009@care.evn.va.gov",
         "appellantEmail": "Bob.Smith@test.com",
-        "appellantTz": null,
+        "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
@@ -2920,7 +3109,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
         "hostPin": "8600030#",
         "jobCompleted": true,
         "representativeEmail": "tom.brady@caseflow.gov",
-        "representativeTz": null,
+        "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
         "status": "active",
       }
@@ -2944,7 +3133,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
         "cf-form-textinput",
       ]
     }
-    label="Appellant Email"
+    label="Veteran Email"
     name="appellant-email"
     onChange={[Function]}
     optional={false}
@@ -2962,13 +3151,13 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
       >
         <strong>
           <FormLabel
-            label="Appellant Email"
+            label="Veteran Email"
             name="appellant-email"
             optional={false}
             required={false}
           >
             <span>
-              Appellant Email
+              Veteran Email
             </span>
           </FormLabel>
         </strong>
@@ -3045,7 +3234,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
   <p
     dangerouslySetInnerHTML={
       Object {
-        "__html": "Changes to the Appellant and POA / Representative emails will be used to send notifications <strong>for this hearing only</strong>.",
+        "__html": "Changes to the Veteran and POA / Representative emails will be used to send notifications <strong>for this hearing only</strong>.",
       }
     }
   />
@@ -3186,7 +3375,7 @@ exports[`VirtualHearingModal DateTime sub-component Displays divider for formerl
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -3194,7 +3383,7 @@ exports[`VirtualHearingModal DateTime sub-component Displays divider for formerl
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
@@ -3229,8 +3418,9 @@ exports[`VirtualHearingModal DateTime sub-component Displays formatted hearing d
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -3358,7 +3548,7 @@ exports[`VirtualHearingModal DateTime sub-component Displays formatted hearing d
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -3366,7 +3556,7 @@ exports[`VirtualHearingModal DateTime sub-component Displays formatted hearing d
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
@@ -3398,8 +3588,9 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -3498,7 +3689,7 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -3506,7 +3697,7 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
@@ -3646,8 +3837,9 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
                       "appellantCity": "SAN FRANCISCO",
                       "appellantEmailAddress": "tom.brady@caseflow.gov",
                       "appellantFirstName": "Tom",
-                      "appellantIsNotVeteran": true,
+                      "appellantIsNotVeteran": false,
                       "appellantLastName": "Brady",
+                      "appellantRelationship": "Spouse",
                       "appellantState": "CA",
                       "appellantZip": "94103",
                       "availableHearingLocations": Object {},
@@ -3748,7 +3940,7 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
                     Object {
                       "aliasWithHost": "BVA0000009@care.evn.va.gov",
                       "appellantEmail": "Bob.Smith@test.com",
-                      "appellantTz": null,
+                      "appellantTz": "America/Denver",
                       "clientHost": "care.evn.va.gov",
                       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                       "guestPin": "2684353125#",
@@ -3756,7 +3948,7 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
                       "hostPin": "8600030#",
                       "jobCompleted": true,
                       "representativeEmail": "tom.brady@caseflow.gov",
-                      "representativeTz": null,
+                      "representativeTz": "America/Los_Angeles",
                       "requestCancelled": false,
                       "status": "active",
                     }
@@ -3774,8 +3966,9 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
                         "appellantCity": "SAN FRANCISCO",
                         "appellantEmailAddress": "tom.brady@caseflow.gov",
                         "appellantFirstName": "Tom",
-                        "appellantIsNotVeteran": true,
+                        "appellantIsNotVeteran": false,
                         "appellantLastName": "Brady",
+                        "appellantRelationship": "Spouse",
                         "appellantState": "CA",
                         "appellantZip": "94103",
                         "availableHearingLocations": Object {},
@@ -3876,7 +4069,7 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
                       Object {
                         "aliasWithHost": "BVA0000009@care.evn.va.gov",
                         "appellantEmail": "Bob.Smith@test.com",
-                        "appellantTz": null,
+                        "appellantTz": "America/Denver",
                         "clientHost": "care.evn.va.gov",
                         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                         "guestPin": "2684353125#",
@@ -3884,12 +4077,16 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
                         "hostPin": "8600030#",
                         "jobCompleted": true,
                         "representativeEmail": "tom.brady@caseflow.gov",
-                        "representativeTz": null,
+                        "representativeTz": "America/Los_Angeles",
                         "requestCancelled": false,
                         "status": "active",
                       }
                     }
-                  />
+                  >
+                    <div
+                      data-css-18v9q72=""
+                    />
+                  </ReadOnlyEmails>
                 </ChangeEmailOrTimezone>
               </div>
             </div>
@@ -3982,8 +4179,9 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -4082,7 +4280,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -4090,7 +4288,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
@@ -4214,7 +4412,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                 <p
                   dangerouslySetInnerHTML={
                     Object {
-                      "__html": "Emails will be sent to the Appellant and POA/Representative to notify them that:<ul><li>The hearing format has been changed to Video, and their Virtual hearing URL is no longer valid</li><li>They must appear in-person at their designated Regional Office or alternate hearing location</li></ul>",
+                      "__html": "Emails will be sent to the Veteran and POA/Representative to notify them that:<ul><li>The hearing format has been changed to Video, and their Virtual hearing URL is no longer valid</li><li>They must appear in-person at their designated Regional Office or alternate hearing location</li></ul>",
                     }
                   }
                 />
@@ -4230,8 +4428,9 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                       "appellantCity": "SAN FRANCISCO",
                       "appellantEmailAddress": "tom.brady@caseflow.gov",
                       "appellantFirstName": "Tom",
-                      "appellantIsNotVeteran": true,
+                      "appellantIsNotVeteran": false,
                       "appellantLastName": "Brady",
+                      "appellantRelationship": "Spouse",
                       "appellantState": "CA",
                       "appellantZip": "94103",
                       "availableHearingLocations": Object {},
@@ -4332,7 +4531,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                     Object {
                       "aliasWithHost": "BVA0000009@care.evn.va.gov",
                       "appellantEmail": "Bob.Smith@test.com",
-                      "appellantTz": null,
+                      "appellantTz": "America/Denver",
                       "clientHost": "care.evn.va.gov",
                       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                       "guestPin": "2684353125#",
@@ -4340,7 +4539,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                       "hostPin": "8600030#",
                       "jobCompleted": true,
                       "representativeEmail": "tom.brady@caseflow.gov",
-                      "representativeTz": null,
+                      "representativeTz": "America/Los_Angeles",
                       "requestCancelled": false,
                       "status": "active",
                     }
@@ -4358,8 +4557,9 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                         "appellantCity": "SAN FRANCISCO",
                         "appellantEmailAddress": "tom.brady@caseflow.gov",
                         "appellantFirstName": "Tom",
-                        "appellantIsNotVeteran": true,
+                        "appellantIsNotVeteran": false,
                         "appellantLastName": "Brady",
+                        "appellantRelationship": "Spouse",
                         "appellantState": "CA",
                         "appellantZip": "94103",
                         "availableHearingLocations": Object {},
@@ -4460,7 +4660,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                       Object {
                         "aliasWithHost": "BVA0000009@care.evn.va.gov",
                         "appellantEmail": "Bob.Smith@test.com",
-                        "appellantTz": null,
+                        "appellantTz": "America/Denver",
                         "clientHost": "care.evn.va.gov",
                         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                         "guestPin": "2684353125#",
@@ -4468,7 +4668,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                         "hostPin": "8600030#",
                         "jobCompleted": true,
                         "representativeEmail": "tom.brady@caseflow.gov",
-                        "representativeTz": null,
+                        "representativeTz": "America/Los_Angeles",
                         "requestCancelled": false,
                         "status": "active",
                       }
@@ -4498,8 +4698,9 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                         "appellantCity": "SAN FRANCISCO",
                         "appellantEmailAddress": "tom.brady@caseflow.gov",
                         "appellantFirstName": "Tom",
-                        "appellantIsNotVeteran": true,
+                        "appellantIsNotVeteran": false,
                         "appellantLastName": "Brady",
+                        "appellantRelationship": "Spouse",
                         "appellantState": "CA",
                         "appellantZip": "94103",
                         "availableHearingLocations": Object {},
@@ -4601,7 +4802,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                       Object {
                         "aliasWithHost": "BVA0000009@care.evn.va.gov",
                         "appellantEmail": "Bob.Smith@test.com",
-                        "appellantTz": null,
+                        "appellantTz": "America/Denver",
                         "clientHost": "care.evn.va.gov",
                         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                         "guestPin": "2684353125#",
@@ -4609,27 +4810,83 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                         "hostPin": "8600030#",
                         "jobCompleted": true,
                         "representativeEmail": "tom.brady@caseflow.gov",
-                        "representativeTz": null,
+                        "representativeTz": "America/Los_Angeles",
                         "requestCancelled": false,
                         "status": "active",
                       }
                     }
                   >
-                    <p>
-                      <strong>
-                        Appellant
-                         Email
-                      </strong>
-                      <br />
-                      Bob.Smith@test.com
-                    </p>
-                    <p>
-                      <strong>
-                        POA/Representative Email
-                      </strong>
-                      <br />
-                      tom.brady@caseflow.gov
-                    </p>
+                    <div
+                      data-css-18v9q72=""
+                    >
+                      <ReadOnly
+                        label="Veteran Hearing Time"
+                        spacing={15}
+                        text="4:00 AM Mountain Time (US & Canada)"
+                      >
+                        <div
+                          data-css-acl5jg=""
+                        >
+                          <strong>
+                            Veteran Hearing Time
+                          </strong>
+                          <pre>
+                            4:00 AM Mountain Time (US & Canada)
+                          </pre>
+                        </div>
+                      </ReadOnly>
+                      <ReadOnly
+                        label="Veteran Email"
+                        spacing={15}
+                        text="Bob.Smith@test.com"
+                      >
+                        <div
+                          data-css-acl5jg=""
+                        >
+                          <strong>
+                            Veteran Email
+                          </strong>
+                          <pre>
+                            Bob.Smith@test.com
+                          </pre>
+                        </div>
+                      </ReadOnly>
+                      <div
+                        className="cf-help-divider"
+                      />
+                      <ReadOnly
+                        label="POA/Representative Hearing Time"
+                        spacing={15}
+                        text="3:00 AM Pacific Time (US & Canada)"
+                      >
+                        <div
+                          data-css-acl5jg=""
+                        >
+                          <strong>
+                            POA/Representative Hearing Time
+                          </strong>
+                          <pre>
+                            3:00 AM Pacific Time (US & Canada)
+                          </pre>
+                        </div>
+                      </ReadOnly>
+                      <ReadOnly
+                        label="POA/Representative Email"
+                        spacing={15}
+                        text="tom.brady@caseflow.gov"
+                      >
+                        <div
+                          data-css-acl5jg=""
+                        >
+                          <strong>
+                            POA/Representative Email
+                          </strong>
+                          <pre>
+                            tom.brady@caseflow.gov
+                          </pre>
+                        </div>
+                      </ReadOnly>
+                    </div>
                   </ReadOnlyEmails>
                 </ChangeFromVirtual>
               </div>
@@ -4723,8 +4980,9 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -4823,7 +5081,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -4831,7 +5089,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
@@ -4955,7 +5213,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                 <p
                   dangerouslySetInnerHTML={
                     Object {
-                      "__html": "Email notifications will be sent to the Appellant, POA / Representative, and VLJ.",
+                      "__html": "Email notifications will be sent to the Veteran, POA / Representative, and VLJ.",
                     }
                   }
                 />
@@ -4971,8 +5229,9 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                       "appellantCity": "SAN FRANCISCO",
                       "appellantEmailAddress": "tom.brady@caseflow.gov",
                       "appellantFirstName": "Tom",
-                      "appellantIsNotVeteran": true,
+                      "appellantIsNotVeteran": false,
                       "appellantLastName": "Brady",
+                      "appellantRelationship": "Spouse",
                       "appellantState": "CA",
                       "appellantZip": "94103",
                       "availableHearingLocations": Object {},
@@ -5073,7 +5332,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                     Object {
                       "aliasWithHost": "BVA0000009@care.evn.va.gov",
                       "appellantEmail": "Bob.Smith@test.com",
-                      "appellantTz": null,
+                      "appellantTz": "America/Denver",
                       "clientHost": "care.evn.va.gov",
                       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                       "guestPin": "2684353125#",
@@ -5081,7 +5340,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                       "hostPin": "8600030#",
                       "jobCompleted": true,
                       "representativeEmail": "tom.brady@caseflow.gov",
-                      "representativeTz": null,
+                      "representativeTz": "America/Los_Angeles",
                       "requestCancelled": false,
                       "status": "active",
                     }
@@ -5099,8 +5358,9 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                         "appellantCity": "SAN FRANCISCO",
                         "appellantEmailAddress": "tom.brady@caseflow.gov",
                         "appellantFirstName": "Tom",
-                        "appellantIsNotVeteran": true,
+                        "appellantIsNotVeteran": false,
                         "appellantLastName": "Brady",
+                        "appellantRelationship": "Spouse",
                         "appellantState": "CA",
                         "appellantZip": "94103",
                         "availableHearingLocations": Object {},
@@ -5201,7 +5461,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                       Object {
                         "aliasWithHost": "BVA0000009@care.evn.va.gov",
                         "appellantEmail": "Bob.Smith@test.com",
-                        "appellantTz": null,
+                        "appellantTz": "America/Denver",
                         "clientHost": "care.evn.va.gov",
                         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                         "guestPin": "2684353125#",
@@ -5209,7 +5469,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                         "hostPin": "8600030#",
                         "jobCompleted": true,
                         "representativeEmail": "tom.brady@caseflow.gov",
-                        "representativeTz": null,
+                        "representativeTz": "America/Los_Angeles",
                         "requestCancelled": false,
                         "status": "active",
                       }
@@ -5239,8 +5499,9 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                         "appellantCity": "SAN FRANCISCO",
                         "appellantEmailAddress": "tom.brady@caseflow.gov",
                         "appellantFirstName": "Tom",
-                        "appellantIsNotVeteran": true,
+                        "appellantIsNotVeteran": false,
                         "appellantLastName": "Brady",
+                        "appellantRelationship": "Spouse",
                         "appellantState": "CA",
                         "appellantZip": "94103",
                         "availableHearingLocations": Object {},
@@ -5342,7 +5603,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                       Object {
                         "aliasWithHost": "BVA0000009@care.evn.va.gov",
                         "appellantEmail": "Bob.Smith@test.com",
-                        "appellantTz": null,
+                        "appellantTz": "America/Denver",
                         "clientHost": "care.evn.va.gov",
                         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                         "guestPin": "2684353125#",
@@ -5350,27 +5611,83 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                         "hostPin": "8600030#",
                         "jobCompleted": true,
                         "representativeEmail": "tom.brady@caseflow.gov",
-                        "representativeTz": null,
+                        "representativeTz": "America/Los_Angeles",
                         "requestCancelled": false,
                         "status": "active",
                       }
                     }
                   >
-                    <p>
-                      <strong>
-                        Appellant
-                         Email
-                      </strong>
-                      <br />
-                      Bob.Smith@test.com
-                    </p>
-                    <p>
-                      <strong>
-                        POA/Representative Email
-                      </strong>
-                      <br />
-                      tom.brady@caseflow.gov
-                    </p>
+                    <div
+                      data-css-18v9q72=""
+                    >
+                      <ReadOnly
+                        label="Veteran Hearing Time"
+                        spacing={15}
+                        text="4:00 AM Mountain Time (US & Canada)"
+                      >
+                        <div
+                          data-css-acl5jg=""
+                        >
+                          <strong>
+                            Veteran Hearing Time
+                          </strong>
+                          <pre>
+                            4:00 AM Mountain Time (US & Canada)
+                          </pre>
+                        </div>
+                      </ReadOnly>
+                      <ReadOnly
+                        label="Veteran Email"
+                        spacing={15}
+                        text="Bob.Smith@test.com"
+                      >
+                        <div
+                          data-css-acl5jg=""
+                        >
+                          <strong>
+                            Veteran Email
+                          </strong>
+                          <pre>
+                            Bob.Smith@test.com
+                          </pre>
+                        </div>
+                      </ReadOnly>
+                      <div
+                        className="cf-help-divider"
+                      />
+                      <ReadOnly
+                        label="POA/Representative Hearing Time"
+                        spacing={15}
+                        text="3:00 AM Pacific Time (US & Canada)"
+                      >
+                        <div
+                          data-css-acl5jg=""
+                        >
+                          <strong>
+                            POA/Representative Hearing Time
+                          </strong>
+                          <pre>
+                            3:00 AM Pacific Time (US & Canada)
+                          </pre>
+                        </div>
+                      </ReadOnly>
+                      <ReadOnly
+                        label="POA/Representative Email"
+                        spacing={15}
+                        text="tom.brady@caseflow.gov"
+                      >
+                        <div
+                          data-css-acl5jg=""
+                        >
+                          <strong>
+                            POA/Representative Email
+                          </strong>
+                          <pre>
+                            tom.brady@caseflow.gov
+                          </pre>
+                        </div>
+                      </ReadOnly>
+                    </div>
                   </ReadOnlyEmails>
                 </ChangeHearingTime>
               </div>
@@ -5464,8 +5781,9 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -5564,7 +5882,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -5572,7 +5890,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
@@ -5696,7 +6014,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                 <p
                   dangerouslySetInnerHTML={
                     Object {
-                      "__html": "Email notifications will be sent to the Appellant, POA / Representative, and VLJ.",
+                      "__html": "Email notifications will be sent to the Veteran, POA / Representative, and VLJ.",
                     }
                   }
                 />
@@ -5712,8 +6030,9 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                       "appellantCity": "SAN FRANCISCO",
                       "appellantEmailAddress": "tom.brady@caseflow.gov",
                       "appellantFirstName": "Tom",
-                      "appellantIsNotVeteran": true,
+                      "appellantIsNotVeteran": false,
                       "appellantLastName": "Brady",
+                      "appellantRelationship": "Spouse",
                       "appellantState": "CA",
                       "appellantZip": "94103",
                       "availableHearingLocations": Object {},
@@ -5814,7 +6133,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                     Object {
                       "aliasWithHost": "BVA0000009@care.evn.va.gov",
                       "appellantEmail": "Bob.Smith@test.com",
-                      "appellantTz": null,
+                      "appellantTz": "America/Denver",
                       "clientHost": "care.evn.va.gov",
                       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                       "guestPin": "2684353125#",
@@ -5822,7 +6141,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                       "hostPin": "8600030#",
                       "jobCompleted": true,
                       "representativeEmail": "tom.brady@caseflow.gov",
-                      "representativeTz": null,
+                      "representativeTz": "America/Los_Angeles",
                       "requestCancelled": false,
                       "status": "active",
                     }
@@ -5840,8 +6159,9 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                         "appellantCity": "SAN FRANCISCO",
                         "appellantEmailAddress": "tom.brady@caseflow.gov",
                         "appellantFirstName": "Tom",
-                        "appellantIsNotVeteran": true,
+                        "appellantIsNotVeteran": false,
                         "appellantLastName": "Brady",
+                        "appellantRelationship": "Spouse",
                         "appellantState": "CA",
                         "appellantZip": "94103",
                         "availableHearingLocations": Object {},
@@ -5942,7 +6262,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                       Object {
                         "aliasWithHost": "BVA0000009@care.evn.va.gov",
                         "appellantEmail": "Bob.Smith@test.com",
-                        "appellantTz": null,
+                        "appellantTz": "America/Denver",
                         "clientHost": "care.evn.va.gov",
                         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                         "guestPin": "2684353125#",
@@ -5950,7 +6270,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                         "hostPin": "8600030#",
                         "jobCompleted": true,
                         "representativeEmail": "tom.brady@caseflow.gov",
-                        "representativeTz": null,
+                        "representativeTz": "America/Los_Angeles",
                         "requestCancelled": false,
                         "status": "active",
                       }
@@ -5975,7 +6295,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                       ]
                     }
                     errorMessage={null}
-                    label="Appellant Email"
+                    label="Veteran Email"
                     name="appellant-email"
                     onChange={[Function]}
                     optional={false}
@@ -5994,13 +6314,13 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                       >
                         <strong>
                           <FormLabel
-                            label="Appellant Email"
+                            label="Veteran Email"
                             name="appellant-email"
                             optional={false}
                             required={false}
                           >
                             <span>
-                              Appellant Email
+                              Veteran Email
                             </span>
                           </FormLabel>
                         </strong>
@@ -6075,7 +6395,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                   <p
                     dangerouslySetInnerHTML={
                       Object {
-                        "__html": "Changes to the Appellant and POA / Representative emails will be used to send notifications <strong>for this hearing only</strong>.",
+                        "__html": "Changes to the Veteran and POA / Representative emails will be used to send notifications <strong>for this hearing only</strong>.",
                       }
                     }
                   />
@@ -6295,7 +6615,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -6303,7 +6623,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
@@ -6315,7 +6635,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+      text="6:30 AM Mountain Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6324,7 +6644,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Hearing Time
         </strong>
         <pre>
-          8:30 AM Eastern Time (US & Canada)
+          6:30 AM Mountain Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -6350,7 +6670,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="POA/Representative Hearing Time"
       spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+      text="5:30 AM Pacific Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6359,7 +6679,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           POA/Representative Hearing Time
         </strong>
         <pre>
-          8:30 AM Eastern Time (US & Canada)
+          5:30 AM Pacific Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -6519,7 +6839,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -6527,7 +6847,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
@@ -6539,7 +6859,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+      text="6:30 AM Mountain Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6548,7 +6868,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Hearing Time
         </strong>
         <pre>
-          8:30 AM Eastern Time (US & Canada)
+          6:30 AM Mountain Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -6574,7 +6894,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="POA/Representative Hearing Time"
       spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+      text="5:30 AM Pacific Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6583,7 +6903,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           POA/Representative Hearing Time
         </strong>
         <pre>
-          8:30 AM Eastern Time (US & Canada)
+          5:30 AM Pacific Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -6743,7 +7063,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -6751,7 +7071,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
@@ -6763,7 +7083,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+      text="6:30 AM Mountain Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6772,7 +7092,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Hearing Time
         </strong>
         <pre>
-          8:30 AM Eastern Time (US & Canada)
+          6:30 AM Mountain Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -6798,7 +7118,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="POA/Representative Hearing Time"
       spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+      text="5:30 AM Pacific Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6807,7 +7127,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           POA/Representative Hearing Time
         </strong>
         <pre>
-          8:30 AM Eastern Time (US & Canada)
+          5:30 AM Pacific Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -6966,7 +7286,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -6974,7 +7294,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
@@ -6986,7 +7306,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+      text="6:30 AM Mountain Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6995,7 +7315,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Hearing Time
         </strong>
         <pre>
-          8:30 AM Eastern Time (US & Canada)
+          6:30 AM Mountain Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -7021,7 +7341,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="POA/Representative Hearing Time"
       spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+      text="5:30 AM Pacific Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -7030,7 +7350,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           POA/Representative Hearing Time
         </strong>
         <pre>
-          8:30 AM Eastern Time (US & Canada)
+          5:30 AM Pacific Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -7189,7 +7509,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -7197,7 +7517,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
@@ -7209,7 +7529,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+      text="6:30 AM Mountain Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -7218,7 +7538,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Hearing Time
         </strong>
         <pre>
-          8:30 AM Eastern Time (US & Canada)
+          6:30 AM Mountain Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -7377,7 +7697,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -7385,7 +7705,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
@@ -7397,7 +7717,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="POA/Representative Hearing Time"
       spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+      text="5:30 AM Pacific Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -7406,7 +7726,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           POA/Representative Hearing Time
         </strong>
         <pre>
-          8:30 AM Eastern Time (US & Canada)
+          5:30 AM Pacific Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -7565,7 +7885,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -7573,7 +7893,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
@@ -7585,7 +7905,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="POA/Representative Hearing Time"
       spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+      text="5:30 AM Pacific Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -7594,7 +7914,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           POA/Representative Hearing Time
         </strong>
         <pre>
-          8:30 AM Eastern Time (US & Canada)
+          5:30 AM Pacific Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -7753,7 +8073,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -7761,7 +8081,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
@@ -7773,7 +8093,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+      text="6:30 AM Mountain Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -7782,7 +8102,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Hearing Time
         </strong>
         <pre>
-          8:30 AM Eastern Time (US & Canada)
+          6:30 AM Mountain Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -7806,7 +8126,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
 </ReadOnlyEmails>
 `;
 
-exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays both representative email and appellant email when both are edited 1`] = `
+exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays Section divider when appellant email and POA/Representative timezone edited 1`] = `
 <ReadOnlyEmails
   appellantEmailEdited={true}
   hearing={
@@ -7819,8 +8139,241 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
+      "appellantState": "CA",
+      "appellantZip": "94103",
+      "availableHearingLocations": Object {},
+      "bvaPoc": null,
+      "centralOfficeTimeString": "04:00",
+      "claimantId": 604,
+      "closestRegionalOffice": null,
+      "currentIssueCount": 0,
+      "disposition": null,
+      "dispositionEditable": true,
+      "docketName": "hearing",
+      "docketNumber": "200624-614",
+      "emailEvents": Array [],
+      "evidenceWindowWaived": false,
+      "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+      "hearingDayId": 11,
+      "id": 10,
+      "isVirtual": false,
+      "judge": Object {
+        "createdAt": "2020-06-25T11:00:43.257-04:00",
+        "cssId": "BVAAABSHIRE",
+        "displayName": "BVAAABSHIRE (VACO)",
+        "efolderDocumentsFetchedAt": null,
+        "email": null,
+        "fullName": "Aaron Judge_HearingsAndCases Abshire",
+        "id": 3,
+        "lastLoginAt": null,
+        "roles": Object {},
+        "selectedRegionalOffice": null,
+        "stationId": "101",
+        "status": "active",
+        "statusUpdatedAt": null,
+        "updatedAt": "2020-06-25T11:00:43.257-04:00",
+      },
+      "judgeId": "3",
+      "location": null,
+      "militaryService": "",
+      "notes": null,
+      "paperCase": false,
+      "prepped": null,
+      "readableLocation": null,
+      "readableRequestType": "Video",
+      "regionalOfficeKey": "RO17",
+      "regionalOfficeName": "St. Petersburg regional office",
+      "regionalOfficeTimezone": "America/New_York",
+      "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
+      "representativeEmailAddress": "tom.brady@caseflow.gov",
+      "representativeName": null,
+      "room": "1",
+      "scheduledFor": "2020-07-06T06:00:00.000-04:00",
+      "scheduledForIsPast": false,
+      "scheduledTime": "2000-01-01T06:00:00.000-05:00",
+      "scheduledTimeString": "06:00",
+      "summary": null,
+      "transcriptRequested": null,
+      "transcription": Object {},
+      "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+      "veteranAge": 85,
+      "veteranEmailAddress": "John.Smith@test.com",
+      "veteranFileNumber": "100000005",
+      "veteranFirstName": "John",
+      "veteranGender": "M",
+      "veteranLastName": "Smith",
+      "virtualHearing": null,
+      "wasVirtual": false,
+      "witness": null,
+      "worksheetIssues": Object {},
+    }
+  }
+  representativeTzEdited={true}
+  update={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
+  virtualHearing={
+    Object {
+      "aliasWithHost": "BVA0000009@care.evn.va.gov",
+      "appellantEmail": "Bob.Smith@test.com",
+      "appellantTz": "America/Denver",
+      "clientHost": "care.evn.va.gov",
+      "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+      "guestPin": "2684353125#",
+      "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+      "hostPin": "8600030#",
+      "jobCompleted": true,
+      "representativeEmail": "tom.brady@caseflow.gov",
+      "representativeTz": "America/Los_Angeles",
+      "requestCancelled": false,
+      "status": "active",
+    }
+  }
+>
+  <div
+    data-css-18v9q72=""
+  >
+    <ReadOnly
+      label="Veteran Hearing Time"
+      spacing={15}
+      text="4:00 AM Mountain Time (US & Canada)"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          Veteran Hearing Time
+        </strong>
+        <pre>
+          4:00 AM Mountain Time (US & Canada)
+        </pre>
+      </div>
+    </ReadOnly>
+    <ReadOnly
+      label="Veteran Email"
+      spacing={15}
+      text="Bob.Smith@test.com"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          Veteran Email
+        </strong>
+        <pre>
+          Bob.Smith@test.com
+        </pre>
+      </div>
+    </ReadOnly>
+    <div
+      className="cf-help-divider"
+    />
+    <ReadOnly
+      label="POA/Representative Hearing Time"
+      spacing={15}
+      text="3:00 AM Pacific Time (US & Canada)"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          POA/Representative Hearing Time
+        </strong>
+        <pre>
+          3:00 AM Pacific Time (US & Canada)
+        </pre>
+      </div>
+    </ReadOnly>
+    <ReadOnly
+      label="POA/Representative Email"
+      spacing={15}
+      text="tom.brady@caseflow.gov"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          POA/Representative Email
+        </strong>
+        <pre>
+          tom.brady@caseflow.gov
+        </pre>
+      </div>
+    </ReadOnly>
+  </div>
+</ReadOnlyEmails>
+`;
+
+exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays Section divider when appellant timezone and POA/Representative email edited 1`] = `
+<ReadOnlyEmails
+  appellantTzEdited={true}
+  hearing={
+    Object {
+      "advanceOnDocketMotion": null,
+      "aod": false,
+      "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c4",
+      "appealId": 613,
+      "appellantAddressLine1": "9999 MISSION ST",
+      "appellantCity": "SAN FRANCISCO",
+      "appellantEmailAddress": "tom.brady@caseflow.gov",
+      "appellantFirstName": "Tom",
+      "appellantIsNotVeteran": false,
+      "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -7949,7 +8502,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -7957,31 +8510,319 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
   }
 >
-  <p>
-    <strong>
-      Appellant
-       Email
-    </strong>
-    <br />
-    Bob.Smith@test.com
-  </p>
-  <p>
-    <strong>
-      POA/Representative Email
-    </strong>
-    <br />
-    tom.brady@caseflow.gov
-  </p>
+  <div
+    data-css-18v9q72=""
+  >
+    <ReadOnly
+      label="Veteran Hearing Time"
+      spacing={15}
+      text="4:00 AM Mountain Time (US & Canada)"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          Veteran Hearing Time
+        </strong>
+        <pre>
+          4:00 AM Mountain Time (US & Canada)
+        </pre>
+      </div>
+    </ReadOnly>
+    <ReadOnly
+      label="Veteran Email"
+      spacing={15}
+      text="Bob.Smith@test.com"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          Veteran Email
+        </strong>
+        <pre>
+          Bob.Smith@test.com
+        </pre>
+      </div>
+    </ReadOnly>
+    <div
+      className="cf-help-divider"
+    />
+    <ReadOnly
+      label="POA/Representative Hearing Time"
+      spacing={15}
+      text="3:00 AM Pacific Time (US & Canada)"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          POA/Representative Hearing Time
+        </strong>
+        <pre>
+          3:00 AM Pacific Time (US & Canada)
+        </pre>
+      </div>
+    </ReadOnly>
+    <ReadOnly
+      label="POA/Representative Email"
+      spacing={15}
+      text="tom.brady@caseflow.gov"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          POA/Representative Email
+        </strong>
+        <pre>
+          tom.brady@caseflow.gov
+        </pre>
+      </div>
+    </ReadOnly>
+  </div>
 </ReadOnlyEmails>
 `;
 
-exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays both representative email and appellant email when showAllEmails is true 1`] = `
+exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays both representative email/time and appellant email/time when both timezones are edited 1`] = `
+<ReadOnlyEmails
+  appellantTzEdited={true}
+  hearing={
+    Object {
+      "advanceOnDocketMotion": null,
+      "aod": false,
+      "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c4",
+      "appealId": 613,
+      "appellantAddressLine1": "9999 MISSION ST",
+      "appellantCity": "SAN FRANCISCO",
+      "appellantEmailAddress": "tom.brady@caseflow.gov",
+      "appellantFirstName": "Tom",
+      "appellantIsNotVeteran": false,
+      "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
+      "appellantState": "CA",
+      "appellantZip": "94103",
+      "availableHearingLocations": Object {},
+      "bvaPoc": null,
+      "centralOfficeTimeString": "04:00",
+      "claimantId": 604,
+      "closestRegionalOffice": null,
+      "currentIssueCount": 0,
+      "disposition": null,
+      "dispositionEditable": true,
+      "docketName": "hearing",
+      "docketNumber": "200624-614",
+      "emailEvents": Array [],
+      "evidenceWindowWaived": false,
+      "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+      "hearingDayId": 11,
+      "id": 10,
+      "isVirtual": false,
+      "judge": Object {
+        "createdAt": "2020-06-25T11:00:43.257-04:00",
+        "cssId": "BVAAABSHIRE",
+        "displayName": "BVAAABSHIRE (VACO)",
+        "efolderDocumentsFetchedAt": null,
+        "email": null,
+        "fullName": "Aaron Judge_HearingsAndCases Abshire",
+        "id": 3,
+        "lastLoginAt": null,
+        "roles": Object {},
+        "selectedRegionalOffice": null,
+        "stationId": "101",
+        "status": "active",
+        "statusUpdatedAt": null,
+        "updatedAt": "2020-06-25T11:00:43.257-04:00",
+      },
+      "judgeId": "3",
+      "location": null,
+      "militaryService": "",
+      "notes": null,
+      "paperCase": false,
+      "prepped": null,
+      "readableLocation": null,
+      "readableRequestType": "Video",
+      "regionalOfficeKey": "RO17",
+      "regionalOfficeName": "St. Petersburg regional office",
+      "regionalOfficeTimezone": "America/New_York",
+      "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
+      "representativeEmailAddress": "tom.brady@caseflow.gov",
+      "representativeName": null,
+      "room": "1",
+      "scheduledFor": "2020-07-06T06:00:00.000-04:00",
+      "scheduledForIsPast": false,
+      "scheduledTime": "2000-01-01T06:00:00.000-05:00",
+      "scheduledTimeString": "06:00",
+      "summary": null,
+      "transcriptRequested": null,
+      "transcription": Object {},
+      "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+      "veteranAge": 85,
+      "veteranEmailAddress": "John.Smith@test.com",
+      "veteranFileNumber": "100000005",
+      "veteranFirstName": "John",
+      "veteranGender": "M",
+      "veteranLastName": "Smith",
+      "virtualHearing": null,
+      "wasVirtual": false,
+      "witness": null,
+      "worksheetIssues": Object {},
+    }
+  }
+  representativeTzEdited={true}
+  update={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
+  virtualHearing={
+    Object {
+      "aliasWithHost": "BVA0000009@care.evn.va.gov",
+      "appellantEmail": "Bob.Smith@test.com",
+      "appellantTz": "America/Denver",
+      "clientHost": "care.evn.va.gov",
+      "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+      "guestPin": "2684353125#",
+      "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+      "hostPin": "8600030#",
+      "jobCompleted": true,
+      "representativeEmail": "tom.brady@caseflow.gov",
+      "representativeTz": "America/Los_Angeles",
+      "requestCancelled": false,
+      "status": "active",
+    }
+  }
+>
+  <div
+    data-css-18v9q72=""
+  >
+    <ReadOnly
+      label="Veteran Hearing Time"
+      spacing={15}
+      text="4:00 AM Mountain Time (US & Canada)"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          Veteran Hearing Time
+        </strong>
+        <pre>
+          4:00 AM Mountain Time (US & Canada)
+        </pre>
+      </div>
+    </ReadOnly>
+    <ReadOnly
+      label="Veteran Email"
+      spacing={15}
+      text="Bob.Smith@test.com"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          Veteran Email
+        </strong>
+        <pre>
+          Bob.Smith@test.com
+        </pre>
+      </div>
+    </ReadOnly>
+    <div
+      className="cf-help-divider"
+    />
+    <ReadOnly
+      label="POA/Representative Hearing Time"
+      spacing={15}
+      text="3:00 AM Pacific Time (US & Canada)"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          POA/Representative Hearing Time
+        </strong>
+        <pre>
+          3:00 AM Pacific Time (US & Canada)
+        </pre>
+      </div>
+    </ReadOnly>
+    <ReadOnly
+      label="POA/Representative Email"
+      spacing={15}
+      text="tom.brady@caseflow.gov"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          POA/Representative Email
+        </strong>
+        <pre>
+          tom.brady@caseflow.gov
+        </pre>
+      </div>
+    </ReadOnly>
+  </div>
+</ReadOnlyEmails>
+`;
+
+exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Displays both representative email/time and appellant email/time when showAllEmails is true 1`] = `
 <ReadOnlyEmails
   hearing={
     Object {
@@ -7993,8 +8834,9 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -8123,7 +8965,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -8131,27 +8973,83 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
   }
 >
-  <p>
-    <strong>
-      Appellant
-       Email
-    </strong>
-    <br />
-    Bob.Smith@test.com
-  </p>
-  <p>
-    <strong>
-      POA/Representative Email
-    </strong>
-    <br />
-    tom.brady@caseflow.gov
-  </p>
+  <div
+    data-css-18v9q72=""
+  >
+    <ReadOnly
+      label="Veteran Hearing Time"
+      spacing={15}
+      text="4:00 AM Mountain Time (US & Canada)"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          Veteran Hearing Time
+        </strong>
+        <pre>
+          4:00 AM Mountain Time (US & Canada)
+        </pre>
+      </div>
+    </ReadOnly>
+    <ReadOnly
+      label="Veteran Email"
+      spacing={15}
+      text="Bob.Smith@test.com"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          Veteran Email
+        </strong>
+        <pre>
+          Bob.Smith@test.com
+        </pre>
+      </div>
+    </ReadOnly>
+    <div
+      className="cf-help-divider"
+    />
+    <ReadOnly
+      label="POA/Representative Hearing Time"
+      spacing={15}
+      text="3:00 AM Pacific Time (US & Canada)"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          POA/Representative Hearing Time
+        </strong>
+        <pre>
+          3:00 AM Pacific Time (US & Canada)
+        </pre>
+      </div>
+    </ReadOnly>
+    <ReadOnly
+      label="POA/Representative Email"
+      spacing={15}
+      text="tom.brady@caseflow.gov"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          POA/Representative Email
+        </strong>
+        <pre>
+          tom.brady@caseflow.gov
+        </pre>
+      </div>
+    </ReadOnly>
+  </div>
 </ReadOnlyEmails>
 `;
 
@@ -8168,8 +9066,9 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -8297,7 +9196,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -8305,20 +9204,48 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
   }
 >
-  <p>
-    <strong>
-      Appellant
-       Email
-    </strong>
-    <br />
-    Bob.Smith@test.com
-  </p>
+  <div
+    data-css-18v9q72=""
+  >
+    <ReadOnly
+      label="Veteran Hearing Time"
+      spacing={15}
+      text="4:00 AM Mountain Time (US & Canada)"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          Veteran Hearing Time
+        </strong>
+        <pre>
+          4:00 AM Mountain Time (US & Canada)
+        </pre>
+      </div>
+    </ReadOnly>
+    <ReadOnly
+      label="Veteran Email"
+      spacing={15}
+      text="Bob.Smith@test.com"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          Veteran Email
+        </strong>
+        <pre>
+          Bob.Smith@test.com
+        </pre>
+      </div>
+    </ReadOnly>
+  </div>
 </ReadOnlyEmails>
 `;
 
@@ -8334,8 +9261,9 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "appellantCity": "SAN FRANCISCO",
       "appellantEmailAddress": "tom.brady@caseflow.gov",
       "appellantFirstName": "Tom",
-      "appellantIsNotVeteran": true,
+      "appellantIsNotVeteran": false,
       "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
       "appellantState": "CA",
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
@@ -8464,7 +9392,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -8472,18 +9400,439 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
   }
 >
-  <p>
-    <strong>
-      POA/Representative Email
-    </strong>
-    <br />
-    tom.brady@caseflow.gov
-  </p>
+  <div
+    data-css-18v9q72=""
+  >
+    <ReadOnly
+      label="POA/Representative Hearing Time"
+      spacing={15}
+      text="3:00 AM Pacific Time (US & Canada)"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          POA/Representative Hearing Time
+        </strong>
+        <pre>
+          3:00 AM Pacific Time (US & Canada)
+        </pre>
+      </div>
+    </ReadOnly>
+    <ReadOnly
+      label="POA/Representative Email"
+      spacing={15}
+      text="tom.brady@caseflow.gov"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          POA/Representative Email
+        </strong>
+        <pre>
+          tom.brady@caseflow.gov
+        </pre>
+      </div>
+    </ReadOnly>
+  </div>
+</ReadOnlyEmails>
+`;
+
+exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Does not display Section divider when only POA/Representative timezone edited 1`] = `
+<ReadOnlyEmails
+  hearing={
+    Object {
+      "advanceOnDocketMotion": null,
+      "aod": false,
+      "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c4",
+      "appealId": 613,
+      "appellantAddressLine1": "9999 MISSION ST",
+      "appellantCity": "SAN FRANCISCO",
+      "appellantEmailAddress": "tom.brady@caseflow.gov",
+      "appellantFirstName": "Tom",
+      "appellantIsNotVeteran": false,
+      "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
+      "appellantState": "CA",
+      "appellantZip": "94103",
+      "availableHearingLocations": Object {},
+      "bvaPoc": null,
+      "centralOfficeTimeString": "04:00",
+      "claimantId": 604,
+      "closestRegionalOffice": null,
+      "currentIssueCount": 0,
+      "disposition": null,
+      "dispositionEditable": true,
+      "docketName": "hearing",
+      "docketNumber": "200624-614",
+      "emailEvents": Array [],
+      "evidenceWindowWaived": false,
+      "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+      "hearingDayId": 11,
+      "id": 10,
+      "isVirtual": false,
+      "judge": Object {
+        "createdAt": "2020-06-25T11:00:43.257-04:00",
+        "cssId": "BVAAABSHIRE",
+        "displayName": "BVAAABSHIRE (VACO)",
+        "efolderDocumentsFetchedAt": null,
+        "email": null,
+        "fullName": "Aaron Judge_HearingsAndCases Abshire",
+        "id": 3,
+        "lastLoginAt": null,
+        "roles": Object {},
+        "selectedRegionalOffice": null,
+        "stationId": "101",
+        "status": "active",
+        "statusUpdatedAt": null,
+        "updatedAt": "2020-06-25T11:00:43.257-04:00",
+      },
+      "judgeId": "3",
+      "location": null,
+      "militaryService": "",
+      "notes": null,
+      "paperCase": false,
+      "prepped": null,
+      "readableLocation": null,
+      "readableRequestType": "Video",
+      "regionalOfficeKey": "RO17",
+      "regionalOfficeName": "St. Petersburg regional office",
+      "regionalOfficeTimezone": "America/New_York",
+      "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
+      "representativeEmailAddress": "tom.brady@caseflow.gov",
+      "representativeName": null,
+      "room": "1",
+      "scheduledFor": "2020-07-06T06:00:00.000-04:00",
+      "scheduledForIsPast": false,
+      "scheduledTime": "2000-01-01T06:00:00.000-05:00",
+      "scheduledTimeString": "06:00",
+      "summary": null,
+      "transcriptRequested": null,
+      "transcription": Object {},
+      "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+      "veteranAge": 85,
+      "veteranEmailAddress": "John.Smith@test.com",
+      "veteranFileNumber": "100000005",
+      "veteranFirstName": "John",
+      "veteranGender": "M",
+      "veteranLastName": "Smith",
+      "virtualHearing": null,
+      "wasVirtual": false,
+      "witness": null,
+      "worksheetIssues": Object {},
+    }
+  }
+  representativeTzEdited={true}
+  update={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
+  virtualHearing={
+    Object {
+      "aliasWithHost": "BVA0000009@care.evn.va.gov",
+      "appellantEmail": "Bob.Smith@test.com",
+      "appellantTz": "America/Denver",
+      "clientHost": "care.evn.va.gov",
+      "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+      "guestPin": "2684353125#",
+      "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+      "hostPin": "8600030#",
+      "jobCompleted": true,
+      "representativeEmail": "tom.brady@caseflow.gov",
+      "representativeTz": "America/Los_Angeles",
+      "requestCancelled": false,
+      "status": "active",
+    }
+  }
+>
+  <div
+    data-css-18v9q72=""
+  >
+    <ReadOnly
+      label="POA/Representative Hearing Time"
+      spacing={15}
+      text="3:00 AM Pacific Time (US & Canada)"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          POA/Representative Hearing Time
+        </strong>
+        <pre>
+          3:00 AM Pacific Time (US & Canada)
+        </pre>
+      </div>
+    </ReadOnly>
+    <ReadOnly
+      label="POA/Representative Email"
+      spacing={15}
+      text="tom.brady@caseflow.gov"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          POA/Representative Email
+        </strong>
+        <pre>
+          tom.brady@caseflow.gov
+        </pre>
+      </div>
+    </ReadOnly>
+  </div>
+</ReadOnlyEmails>
+`;
+
+exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual Hearing Does not display Section divider when only appellant timezone edited 1`] = `
+<ReadOnlyEmails
+  appellantEmailEdited={true}
+  hearing={
+    Object {
+      "advanceOnDocketMotion": null,
+      "aod": false,
+      "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c4",
+      "appealId": 613,
+      "appellantAddressLine1": "9999 MISSION ST",
+      "appellantCity": "SAN FRANCISCO",
+      "appellantEmailAddress": "tom.brady@caseflow.gov",
+      "appellantFirstName": "Tom",
+      "appellantIsNotVeteran": false,
+      "appellantLastName": "Brady",
+      "appellantRelationship": "Spouse",
+      "appellantState": "CA",
+      "appellantZip": "94103",
+      "availableHearingLocations": Object {},
+      "bvaPoc": null,
+      "centralOfficeTimeString": "04:00",
+      "claimantId": 604,
+      "closestRegionalOffice": null,
+      "currentIssueCount": 0,
+      "disposition": null,
+      "dispositionEditable": true,
+      "docketName": "hearing",
+      "docketNumber": "200624-614",
+      "emailEvents": Array [],
+      "evidenceWindowWaived": false,
+      "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+      "hearingDayId": 11,
+      "id": 10,
+      "isVirtual": false,
+      "judge": Object {
+        "createdAt": "2020-06-25T11:00:43.257-04:00",
+        "cssId": "BVAAABSHIRE",
+        "displayName": "BVAAABSHIRE (VACO)",
+        "efolderDocumentsFetchedAt": null,
+        "email": null,
+        "fullName": "Aaron Judge_HearingsAndCases Abshire",
+        "id": 3,
+        "lastLoginAt": null,
+        "roles": Object {},
+        "selectedRegionalOffice": null,
+        "stationId": "101",
+        "status": "active",
+        "statusUpdatedAt": null,
+        "updatedAt": "2020-06-25T11:00:43.257-04:00",
+      },
+      "judgeId": "3",
+      "location": null,
+      "militaryService": "",
+      "notes": null,
+      "paperCase": false,
+      "prepped": null,
+      "readableLocation": null,
+      "readableRequestType": "Video",
+      "regionalOfficeKey": "RO17",
+      "regionalOfficeName": "St. Petersburg regional office",
+      "regionalOfficeTimezone": "America/New_York",
+      "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
+      "representativeEmailAddress": "tom.brady@caseflow.gov",
+      "representativeName": null,
+      "room": "1",
+      "scheduledFor": "2020-07-06T06:00:00.000-04:00",
+      "scheduledForIsPast": false,
+      "scheduledTime": "2000-01-01T06:00:00.000-05:00",
+      "scheduledTimeString": "06:00",
+      "summary": null,
+      "transcriptRequested": null,
+      "transcription": Object {},
+      "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+      "veteranAge": 85,
+      "veteranEmailAddress": "John.Smith@test.com",
+      "veteranFileNumber": "100000005",
+      "veteranFirstName": "John",
+      "veteranGender": "M",
+      "veteranLastName": "Smith",
+      "virtualHearing": null,
+      "wasVirtual": false,
+      "witness": null,
+      "worksheetIssues": Object {},
+    }
+  }
+  update={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
+  virtualHearing={
+    Object {
+      "aliasWithHost": "BVA0000009@care.evn.va.gov",
+      "appellantEmail": "Bob.Smith@test.com",
+      "appellantTz": "America/Denver",
+      "clientHost": "care.evn.va.gov",
+      "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+      "guestPin": "2684353125#",
+      "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+      "hostPin": "8600030#",
+      "jobCompleted": true,
+      "representativeEmail": "tom.brady@caseflow.gov",
+      "representativeTz": "America/Los_Angeles",
+      "requestCancelled": false,
+      "status": "active",
+    }
+  }
+>
+  <div
+    data-css-18v9q72=""
+  >
+    <ReadOnly
+      label="Veteran Hearing Time"
+      spacing={15}
+      text="4:00 AM Mountain Time (US & Canada)"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          Veteran Hearing Time
+        </strong>
+        <pre>
+          4:00 AM Mountain Time (US & Canada)
+        </pre>
+      </div>
+    </ReadOnly>
+    <ReadOnly
+      label="Veteran Email"
+      spacing={15}
+      text="Bob.Smith@test.com"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          Veteran Email
+        </strong>
+        <pre>
+          Bob.Smith@test.com
+        </pre>
+      </div>
+    </ReadOnly>
+  </div>
 </ReadOnlyEmails>
 `;

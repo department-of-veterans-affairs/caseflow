@@ -125,8 +125,8 @@ describe('ScheduleVeteranForm', () => {
     expect(scheduleVeteran.find(AppealHearingLocationsDropdown)).toHaveLength(0);
     expect(scheduleVeteran.find('[label="Hearing Location"]').text()).toEqual('Hearing LocationVirtual');
 
-    // Make sure there are no timezones for non-Central ROs
-    expect(scheduleVeteran.find(Timezone)).toHaveLength(0);
+    // Ensure Timezone fields display when scheduling virtual
+    expect(scheduleVeteran.find(Timezone)).toHaveLength(2);
 
     // Change the regional office to Central
     scheduleVeteran.setProps({

@@ -146,6 +146,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
           }
         }
         readOnly={true}
+        schedulingToVirtual={true}
         showDivider={false}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
@@ -252,6 +253,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
           }
         }
         readOnly={true}
+        schedulingToVirtual={true}
         showDivider={false}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
@@ -537,6 +539,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
           }
         }
         readOnly={true}
+        schedulingToVirtual={true}
         showDivider={false}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
@@ -621,6 +624,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
           }
         }
         readOnly={true}
+        schedulingToVirtual={true}
         showDivider={false}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
@@ -906,6 +910,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
           }
         }
         readOnly={true}
+        schedulingToVirtual={true}
         showDivider={false}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
@@ -990,6 +995,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
           }
         }
         readOnly={true}
+        schedulingToVirtual={true}
         showDivider={false}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
@@ -1275,6 +1281,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
           }
         }
         readOnly={true}
+        schedulingToVirtual={true}
         showDivider={false}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
@@ -1359,6 +1366,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
           }
         }
         readOnly={true}
+        schedulingToVirtual={true}
         showDivider={false}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
