@@ -5,7 +5,7 @@ import * as yup from 'yup';
 export const schema = yup.object().shape({
   partyType: yup.string().when('listedAttorney', {
     is: (value) =>
-      value?.value === 'not_listed' || value?.value === value.address,
+      value?.value === 'not_listed',
     then: yup.string().required(),
   }),
   firstName: yup.string().when('partyType', {
@@ -15,16 +15,16 @@ export const schema = yup.object().shape({
   middleName: yup.string(),
   lastName: yup.string(),
   suffix: yup.string(),
-  organization: yup.string().when('partyType', {
+  name: yup.string().when('partyType', {
     is: 'organization',
     then: yup.string().required(),
   }),
-  address1: yup.string().when('partyType', {
+  addressLine1: yup.string().when('partyType', {
     is: (value) => ['individual', 'organization'].includes(value),
     then: yup.string().required(),
   }),
-  address2: yup.string(),
-  address3: yup.string(),
+  addressLine2: yup.string(),
+  addressLine3: yup.string(),
   city: yup.string().when('partyType', {
     is: (value) => ['individual', 'organization'].includes(value),
     then: yup.string().required(),
@@ -44,7 +44,7 @@ export const schema = yup.object().shape({
     is: (value) => ['individual', 'organization'].includes(value),
     then: yup.string().required(),
   }),
-  email: yup.string().email(),
+  emailAddress: yup.string().email(),
   phoneNumber: yup.string(),
 });
 
