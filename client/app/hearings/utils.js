@@ -274,7 +274,10 @@ export const zoneName = (time, name, format) => {
  * @param {Array} options value is in localTime, label/displayText is in localTime zone
  * @returns {Array} -- List of hearing times with the zone appended to the label
  */
-export const hearingTimeOptsWithZone = (options, localTimezone, isRadioField) => {
+export const hearingTimeOptsWithZone = (options, local, isRadioField) => {
+  // Sometimes local is 'true' this means 'America/New_York'
+  const localTimezone = (local === true) ? 'America/New_York' : local;
+
   return options.map((item) => {
 
     // This only happens when RadioField uses this (isRadioField will be true)
