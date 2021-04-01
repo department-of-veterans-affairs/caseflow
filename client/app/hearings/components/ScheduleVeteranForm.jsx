@@ -149,6 +149,7 @@ export const ScheduleVeteranForm = ({
                     label="Hearing Time"
                     enableZone
                     localZone={hearing?.hearingDay?.timezone}
+                    timesInZone={hearing?.hearingDay?.timezone}
                     onChange={(scheduledTimeString) =>
                       props.onChange('scheduledTimeString', scheduledTimeString)
                     }

@@ -274,7 +274,7 @@ export const zoneName = (time, name, format) => {
  * @param {Array} options value is in localTime, label/displayText is in localTime zone
  * @returns {Array} -- List of hearing times with the zone appended to the label
  */
-export const hearingTimeOptsWithZone = (options, local, isRadioField) => {
+export const hearingTimeOptsWithZone = (options, local, timesInZone = 'America/New_York') => {
   // Sometimes local is 'true' this means 'America/New_York'
   const localTimezone = (local === true) ? 'America/New_York' : local;
 
@@ -285,10 +285,11 @@ export const hearingTimeOptsWithZone = (options, local, isRadioField) => {
       return item;
     }
 
-    // The time in item.value is always in localTimezone, convert to 'America/New_York'
-    const timeWithZone = isRadioField ?
-      moment.tz(item.value, 'HH:mm', 'America/New_York') :
-      moment.tz(item.value, 'HH:mm', localTimezone).tz('America/New_York');
+    // The time in item.value is
+    // - From ScheduleVeteranForm is in localTimezone,
+    // - From DailyDocketRow is in 'America/New_York'
+    const timeWithZone = moment.tz(item.value, 'HH:mm', timesInZone).tz('America/New_York');
+
     // Get the moment time in "14:30" format
     const newValue = timeWithZone.format('HH:mm');
 
