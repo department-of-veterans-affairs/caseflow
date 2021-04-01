@@ -43,11 +43,6 @@ const judgeOptions = CAVC_JUDGE_FULL_NAMES.map((value) => ({
   value,
 }));
 
-const remandSubtype = _.map(_.keys(CAVC_REMAND_SUBTYPE_NAMES), (key) => ({
-  displayText: CAVC_REMAND_SUBTYPE_NAMES[key],
-  value: key
-}));
-
 const radioLabelStyling = css({ marginTop: '2.5rem' });
 const issueListStyling = css({ marginTop: '0rem' });
 const buttonStyling = css({ paddingLeft: '0' });
@@ -64,6 +59,8 @@ const buttonStyling = css({ paddingLeft: '0' });
 export const EditCavcRemandForm = ({
   decisionIssues,
   existingValues = {},
+  supportedDecisionTypes = [],
+  supportedRemandTypes = [],
   onCancel,
   onSubmit,
 }) => {
@@ -77,9 +74,26 @@ export const EditCavcRemandForm = ({
     reValidateMode: 'onChange',
     defaultValues: {
       issueIds: decisionIssues.map((issue) => issue.id),
+      mandateSame: !existingValues.judgementDate,
       ...existingValues,
     },
   });
+
+  const filteredDecisionTypes = useMemo(
+    () =>
+      allDecisionTypeOpts.filter((item) =>
+        supportedDecisionTypes.includes(item.value)
+      ),
+    [supportedDecisionTypes]
+  );
+
+  const filteredRemandTypes = useMemo(
+    () =>
+      allRemandTypeOpts.filter((item) =>
+        supportedRemandTypes.includes(item.value)
+      ),
+    [supportedRemandTypes]
+  );
 
   const issueOptions = useMemo(
     () =>
@@ -197,7 +211,7 @@ export const EditCavcRemandForm = ({
           inputRef={register}
           label={COPY.CAVC_TYPE_LABEL}
           name="decisionType"
-          readOnly="{readOnly}"
+          readOnly={Boolean(register)}
           strongLabel
         />
 
@@ -206,10 +220,9 @@ export const EditCavcRemandForm = ({
             inputRef={register}
             label={COPY.CAVC_SUB_TYPE_LABEL}
             name="remandType"
-            readOnly="{readOnly}"
+            readOnly={Boolean(register)}
             strongLabel
-            //value={remandSubtype}
-          />         
+          />          
         )}
 
         {watchDecisionType && !watchDecisionType.includes('remand') && (
@@ -235,8 +248,8 @@ export const EditCavcRemandForm = ({
 
         {isRemandType('mdr') && <MdrBanner />}
 
-        {mandateAvailable && (
-          <>
+      {mandateAvailable && (
+        <>
             <DateSelector
               inputRef={register}
               label={COPY.CAVC_JUDGEMENT_DATE}
@@ -292,7 +305,7 @@ export const EditCavcRemandForm = ({
                     styling={issueListStyling}
                     values={issueVals}
                     errorMessage={errors?.issueIds?.message}
-                  />
+                  />                 
                 );
               }}
             />
