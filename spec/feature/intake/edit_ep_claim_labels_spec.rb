@@ -113,9 +113,10 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
         expect(nr_row).to have_button("Edit claim label", disabled: false)
 
         # make issue update - remove issue
-        find("#issue-action-0").click
-        find("#issue-action-0_remove").click
-        find("#Remove-issue-button-id-1").click
+        within "#issue-2" do
+          select('Remove issue', :from => 'issue-action-0')
+        end
+        click_on("Yes, remove issue")
 
         expect(page).to have_button("Save", disabled: false)
         expect(page).to have_button("Edit claim label", disabled: true)
@@ -130,13 +131,12 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
         expect(nr_row).to have_button("Edit claim label", disabled: false)
 
         # make issue update - add issue
-        find("#button-add-issue").click
-        find(".cf-select").click
-        find("#react-select-2-option-1").click
+        click_on("Add issue")
+        find(".cf-select", text: "Select or enter").click
+        find(".cf-select__option", text: "Unknown issue category").click
         fill_in "decision-date", with: "08192020"
         fill_in "Issue description", with: "this is a description"
-
-        find("#Add-issue-5-button-id-1").click
+        click_on("Add this issue")
 
         expect(page).to have_button("Save", disabled: false)
         expect(page).to have_button("Edit claim label", disabled: true)
