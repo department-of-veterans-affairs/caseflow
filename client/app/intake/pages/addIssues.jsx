@@ -194,12 +194,15 @@ class AddIssuesPage extends React.Component {
 
     if (this.willRedirect(intakeData, hasClearedEp)) {
       return this.redirect(intakeData, hasClearedEp);
-    }
 
-    const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
+    }
+    const requestStatus = intakeData.requestStatus
+    const requestState = requestStatus.completeIntake || requestStatus.requestIssuesUpdate || requestStatus.editClaimLabelUpdate;
+    const showEditEpError = intakeData.editEpUpdateError
+    
     const requestErrorCode =
       intakeData.requestStatus.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
-    const requestErrorUUID = intakeData.requestStatus.completeIntakeErrorUUID;
+    const requestErrorUUID = requestStatus.completeIntakeErrorUUID;
     const showInvalidVeteranError =
       !intakeData.veteranValid &&
       _.some(
@@ -416,6 +419,10 @@ class AddIssuesPage extends React.Component {
 
         {showInvalidVeteranError && (
           <ErrorAlert errorCode="veteran_not_valid" errorData={intakeData.veteranInvalidFields} />
+        )}
+
+        {editPage && showEditEpError && (
+          <ErrorAlert errorCode="unable_to_edit_ep" />
         )}
 
         {editPage && this.establishmentCredits()}

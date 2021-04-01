@@ -27,7 +27,8 @@ class EndProductUpdate < CaseflowRecord
   private
 
   def update_bgs_claim
-    bgs.update_benefit_claim(
+    binding.pry
+   response = bgs.update_benefit_claim(
       veteran_file_number: veteran_file_number,
       payee_code: payee_code,
       claim_date: claim_date,
@@ -35,6 +36,13 @@ class EndProductUpdate < CaseflowRecord
       modifier: modifier,
       new_code: new_code
     )
+    
+    if response[:return_message] != "A benefit claim has been changed"
+      fail Caseflow::Error::UpdateClaimFailedInVBMS, response[:return_message]
+    end
+
+    rescue BGS::ShareError, Caseflow::Error::UpdateClaimFailedInVBMS => error
+    update!(error: error, status: "error")
   end
 
   def update_correction_type

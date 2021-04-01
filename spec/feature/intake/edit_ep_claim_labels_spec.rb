@@ -158,4 +158,109 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
       expect(higher_level_review.end_product_establishments.where(code: new_ep_code).count).to eq(2)
     end
   end
+
+  context "show edit ep error message" do
+    let(:new_ep_code) { "030HLRR" }
+    let(:ep_code) { "030HLR" }
+   
+    let!(:end_product) do
+      Generators::EndProduct.build(
+        veteran_file_number: veteran.file_number,
+        bgs_attrs: {
+          benefit_claim_id: "",
+          claim_type_code: "",
+          end_product_type_code: "",
+          payee_type_code: "",
+          status_type_code: ""
+        }
+      )
+    end
+
+    let(:reference_id) { end_product.claim_id }
+    let(:synced_status) { "PEND" }
+
+    let(:end_product_establishment) do
+      create(:end_product_establishment,
+             source: higher_level_review,
+             synced_status: synced_status,
+             code: ep_code,
+             reference_id: reference_id)
+    end
+
+    let(:rating_request_issue) do
+    create(
+      :request_issue,
+      contested_rating_issue_reference_id: "def456",
+      contested_rating_issue_profile_date: rating.profile_date,
+      decision_review: higher_level_review,
+      benefit_type: benefit_type,
+      contested_issue_description: "PTSD denied",
+      end_product_establishment: end_product_establishment
+    )
+  end
+
+  let(:nonrating_request_issue) do
+    create(
+      :request_issue,
+      :nonrating,
+      decision_review: higher_level_review,
+      benefit_type: benefit_type,
+      contested_issue_description: "Apportionment",
+      end_product_establishment: end_product_establishment
+    )
+  end
+
+  before do
+      higher_level_review.create_issues!(
+        [
+          rating_request_issue,
+          nonrating_request_issue
+        ]
+      )
+      higher_level_review.establish!
+    end
+
+    fit "shows error message when claim is not correct" do
+
+      visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+
+      # First shows issues on end products, in ascending order by EP code (nonrating before rating)
+      # Note for these, there's a row for the EP label, and a subsequent row for the issues
+
+      nr_label = Constants::EP_CLAIM_TYPES[nonrating_request_issue.end_product_establishment.code]["official_label"]
+      nr_row = page.find("tr", text: nr_label, match: :prefer_exact)
+      expect(nr_row).to have_button("Edit claim label")
+      nr_next_row = nr_row.first(:xpath, "./following-sibling::tr")
+      expect(nr_next_row).to have_content(/Requested issues\n1. #{nonrating_request_issue.description}/i)
+
+      r_label = Constants::EP_CLAIM_TYPES[rating_request_issue.end_product_establishment.code]["official_label"]
+      r_row = page.find("tr", text: r_label, match: :prefer_exact)
+      expect(r_row).to have_button("Edit claim label")
+      r_next_row = r_row.first(:xpath, "./following-sibling::tr")
+      expect(r_next_row).to have_content(/Requested issues\n2. #{rating_request_issue.description}/i)
+
+
+      # Edit nonrating label to rating
+      nr_row.find("button", text: "Edit claim label").click
+      expect(page).to have_content(COPY::EDIT_CLAIM_LABEL_MODAL_NOTE)
+      click_on "Cancel"
+      expect(page).to_not have_content(COPY::EDIT_CLAIM_LABEL_MODAL_NOTE)
+
+      nr_row.find("button", text: "Edit claim label").click
+      safe_click ".cf-select"
+      fill_in "Select the correct EP claim label", with: new_ep_code
+      find("#select-claim-label").send_keys :enter
+      find("button", text: "Continue").click
+       
+       binding.pry
+      expect(page).to have_content(COPY::CONFIRM_CLAIM_LABEL_MODAL_TITLE)
+      find("button", text: "Confirm").click
+
+      expect(page).to_not have_content(COPY::EDIT_CLAIM_LABEL_MODAL_NOTE)
+      sleep 1 # when frontend displays result of XHR, write a capybara expect against that
+
+      expect(EndProductUpdate.find_by(original_decision_review: higher_level_review)).to_not be_nil
+      expect(higher_level_review.end_product_establishments.where(code: new_ep_code).count).to eq(2)
+    end
+  end
 end

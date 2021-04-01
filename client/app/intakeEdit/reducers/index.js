@@ -84,6 +84,10 @@ export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
       },
       requestIssuesUpdateErrorCode: { $set: action.payload.responseErrorCode }
     });
+  case ACTIONS.EDIT_EP_CLAIM_LABEL_FAILED:
+    return update(state, {
+      editEpUpdateError: { $set: true}
+    });
   default:
     return applyCommonReducers(state, action);
   }

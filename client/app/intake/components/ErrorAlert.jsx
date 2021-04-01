@@ -9,7 +9,8 @@ import { ERROR_ADDRESS_LINE_INVALID_CHARACTERS,
   ERROR_ADDRESS_TOO_LONG, INTAKE_VETERAN_DATE_OF_BIRTH_ERROR,
   INTAKE_VETERAN_NAME_SUFFIX_ERROR,
   ERROR_INVALID_ZIP_CODE,
-  INTAKE_VETERAN_PAY_GRADE_INVALID } from '../../../COPY';
+  INTAKE_VETERAN_PAY_GRADE_INVALID,
+  ERROR_UNABLE_TO_EDIT_EP } from '../../../COPY';
 import { css } from 'glamor';
 
 const missingFieldsMessage = (fields) => <p>
@@ -119,6 +120,9 @@ export default class ErrorAlert extends React.PureComponent {
       veteran_not_valid: {
         title: 'Check the Veteran\'s profile for invalid information',
         body: invalidVeteranInstructions(this.props.errorData)
+      },
+      unable_to_edit_ep:{
+        body: ERROR_UNABLE_TO_EDIT_EP
       }
     }[this.props.errorCode || 'default'];
 
