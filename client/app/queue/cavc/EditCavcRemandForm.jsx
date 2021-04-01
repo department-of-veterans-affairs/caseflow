@@ -16,6 +16,7 @@ import SearchableDropdown from 'app/components/SearchableDropdown';
 import DateSelector from 'app/components/DateSelector';
 import Checkbox from 'app/components/Checkbox';
 import CheckboxGroup from 'app/components/CheckboxGroup';
+import StringUtil from 'app/util/StringUtil';
 
 import CAVC_JUDGE_FULL_NAMES from 'constants/CAVC_JUDGE_FULL_NAMES';
 import CAVC_REMAND_SUBTYPE_NAMES from 'constants/CAVC_REMAND_SUBTYPE_NAMES';
@@ -46,6 +47,9 @@ const judgeOptions = CAVC_JUDGE_FULL_NAMES.map((value) => ({
 const radioLabelStyling = css({ marginTop: '2.5rem' });
 const issueListStyling = css({ marginTop: '0rem' });
 const buttonStyling = css({ paddingLeft: '0' });
+
+const capitalizeTextTransform = css({ textTransform: 'capitalize' });
+const uppercaseTextTransform = css({ textTransform: 'uppercase' });
 
 /**
  * @param {Object} props
@@ -213,6 +217,7 @@ export const EditCavcRemandForm = ({
           name="decisionType"
           readOnly={Boolean(register)}
           strongLabel
+          inputStyling={capitalizeTextTransform}
         />
 
         {watchDecisionType?.includes('remand') && (
@@ -222,7 +227,8 @@ export const EditCavcRemandForm = ({
             name="remandType"
             readOnly={Boolean(register)}
             strongLabel
-          />          
+            inputStyling={uppercaseTextTransform}
+          />
         )}
 
         {watchDecisionType && !watchDecisionType.includes('remand') && (
