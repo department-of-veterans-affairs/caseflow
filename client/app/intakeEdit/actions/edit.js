@@ -2,6 +2,7 @@ import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { formatIssues } from '../../intake/util/issues';
 import COPY from '../../../COPY';
+import { PAGE_PATHS } from '../../intake/constants';
 const analytics = true;
 
 const pathMap = {
@@ -70,8 +71,10 @@ export const editEpClaimLabel = (claimId, formType, previousCode, selectedCode) 
           detail: COPY.EDIT_EP_CLAIM_LABEL_SUCCESS_ALERT_MESSAGE
         };
 
+        const veteranId = response.body.veteran.id;
+
         sessionStorage.setItem('veteranSearchPageAlert', JSON.stringify(alert));
-        history.back();
+        window.location.replace(`${PAGE_PATHS.SEARCH}?veteran_ids=${veteranId}`);
       }
     }
   ).
