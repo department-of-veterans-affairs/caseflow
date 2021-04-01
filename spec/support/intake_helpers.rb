@@ -603,7 +603,7 @@ module IntakeHelpers
   # rubocop:enable Metrics/AbcSize
 
   def check_row(label, text)
-    row = find("tr", text: label)
+    row = find("tr", text: label, match: :prefer_exact)
     expect(row).to have_text(text)
   end
 
