@@ -129,9 +129,9 @@ class LegacyHearing < CaseflowRecord
   end
 
   def hearing_day_id_refers_to_vacols_row?
-    (original_hearing_request_type == HearingDay::REQUEST_TYPES[:central] &&
+    (original_request_type == HearingDay::REQUEST_TYPES[:central] &&
       scheduled_for.to_date < Date.new(2019, 1, 1)) ||
-      (original_hearing_request_type == HearingDay::REQUEST_TYPES[:video] &&
+      (original_request_type == HearingDay::REQUEST_TYPES[:video] &&
       scheduled_for.to_date < Date.new(2019, 4, 1))
   end
 
@@ -250,10 +250,10 @@ class LegacyHearing < CaseflowRecord
   end
 
   def readable_request_type
-    Hearing::HEARING_TYPES[original_hearing_request_type.to_sym]
+    Hearing::HEARING_TYPES[original_request_type.to_sym]
   end
 
-  def original_hearing_request_type
+  def original_request_type
     original_vacols_request_type.presence || request_type
   end
 
