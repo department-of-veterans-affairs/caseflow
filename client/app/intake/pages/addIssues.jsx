@@ -308,7 +308,7 @@ class AddIssuesPage extends React.Component {
       };
     };
 
-    const endProductLabelRow = (endProductCode) => {
+    const endProductLabelRow = (endProductCode, editDisabled) => {
       return {
         field: 'EP Claim Label',
         content: (
@@ -320,6 +320,7 @@ class AddIssuesPage extends React.Component {
               <Button
                 classNames={['usa-button-secondary']}
                 onClick={() => this.openEditClaimLabelModal(endProductCode)}
+                disabled={editDisabled}
               >
               Edit claim label
               </Button>
@@ -332,13 +333,14 @@ class AddIssuesPage extends React.Component {
     Object.keys(issuesBySection).sort().
       map((key) => {
         const sectionIssues = issuesBySection[key];
+        const endProductCleared = sectionIssues[0]?.endProductCleared;
 
         if (key === 'requestedIssues') {
           rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, 'Requested issues'));
         } else if (key === 'withdrawnIssues') {
           rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, 'Withdrawn issues'));
         } else {
-          rowObjects = rowObjects.concat(endProductLabelRow(key));
+          rowObjects = rowObjects.concat(endProductLabelRow(key, endProductCleared));
           rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, ' '));
         }
 
