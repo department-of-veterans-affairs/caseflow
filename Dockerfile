@@ -41,11 +41,12 @@ RUN apt -y update && \
     apt-get clean && apt-get autoclean && apt-get autoremove
 
 # install jemalloc
-apt-get install -y --no-install-recommends libjemalloc2 \
-rm -rf /var/lib/apt/lists/*
+apt-get install -y --no-install-recommends libjemalloc-dev
 
 # install datadog agent
 RUN DD_INSTALL_ONLY=true DD_AGENT_MAJOR_VERSION=7 DD_API_KEY=$(cat config/datadog.key) bash -c "$(curl -L https://raw.githubusercontent.com/DataDog/datadog-agent/master/cmd/agent/install_script.sh)"
+
+rm -rf /var/lib/apt/lists/*
 
 RUN bundle install && \
     cd client && \
