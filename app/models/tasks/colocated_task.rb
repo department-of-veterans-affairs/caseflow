@@ -74,7 +74,7 @@ class ColocatedTask < Task
       Colocated.singleton
     end
 
-    # Intentionally not including all descendants as we do not want to create any more of the old style
+    # Intentionally not including all descendant as we do not want to create any more of the old style
     # FoiaColocatedTasks, MissingHearingTranscriptsColocatedTasks, or TranslationColocatedTasks as their
     # PreRoutingColocatedTask versions exist only to allow tasks currently in that state in production to live
     # out their days with their old colocated task workflow
