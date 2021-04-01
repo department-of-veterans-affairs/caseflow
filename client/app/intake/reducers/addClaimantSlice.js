@@ -6,7 +6,7 @@ const initialState = {
 };
 
 const addClaimantSlice = createSlice({
-  name: 'editClaimant',
+  name: 'addClaimant',
   initialState,
   reducers: {
     cancel: () => ({ ...initialState }),
