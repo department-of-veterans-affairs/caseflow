@@ -734,7 +734,6 @@ feature "Higher-Level Review", :all_dbs do
         ptcpnt_id: "5382910292",
         relationship_type: "Spouse"
       )
-
       higher_level_review, = start_higher_level_review(veteran, claim_participant_id: "5382910292")
       visit "/intake/add_issues"
 
