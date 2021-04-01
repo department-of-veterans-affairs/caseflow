@@ -81,9 +81,7 @@ class WorkQueue::AppealSerializer
   attribute :cavc_remand
 
   attribute :remand_source_appeal_id do |appeal|
-    if appeal.cavc_remand.present?
-      Appeal.find(appeal.cavc_remand.source_appeal_id).uuid
-    end
+    appeal.cavc_remand&.source_appeal&.uuid
   end
 
   attribute :remand_judge_name do |appeal|
