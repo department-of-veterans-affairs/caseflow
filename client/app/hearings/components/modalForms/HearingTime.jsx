@@ -58,7 +58,9 @@ export const HearingTime = ({
   hideLabel,
 }) => {
   const timeOptions = getTimeOptions(regionalOffice, readOnly);
-  const radioOptions = enableZone ? hearingTimeOptsWithZone(timeOptions, localZone || enableZone, timesInZone) : timeOptions;
+  const radioOptions = enableZone ?
+    hearingTimeOptsWithZone(timeOptions, localZone || enableZone, timesInZone) :
+    timeOptions;
 
   const isOther = _.isUndefined(
     _.find(radioOptions, (opt) => opt.value === value)
