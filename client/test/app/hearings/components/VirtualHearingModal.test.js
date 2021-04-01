@@ -36,7 +36,7 @@ const showAllEmailsAssertion = (node, hearing) => {
   expect(node.find('.cf-help-divider')).toHaveLength(1);
 };
 
-const showSingleEmailAssertion = (node, hearing, email, tz,) => {
+const showSingleEmailAssertion = (node, hearing, email, tz) => {
   expect(node.find(ReadOnly)).toHaveLength(2);
   expect(node.find(ReadOnly).first().
     text()).toContain(zoneName(hearing.scheduledTimeString, tz));
@@ -447,15 +447,15 @@ describe('VirtualHearingModal', () => {
       );
       expect(readOnlyEmails).toMatchSnapshot();
     });
-  }
+  };
 
   describe('ReadOnlyEmails sub-component', () => {
     describe('Formerly Video Virtual Hearing', () => {
-      videoOrCentralExpectations(defaultHearing)
+      videoOrCentralExpectations(defaultHearing);
     });
 
     describe('Formerly Central Virtual Hearing', () => {
-      videoOrCentralExpectations(centralHearing)
+      videoOrCentralExpectations(centralHearing);
     });
   });
 });

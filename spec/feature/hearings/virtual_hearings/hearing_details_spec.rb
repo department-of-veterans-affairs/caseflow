@@ -120,7 +120,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
     expect(page).to have_selector(:css, "a[href='#{link}']") unless disable
   end
 
-  shared_context "shared behaviors" do
+  shared_examples "shared behaviors" do
     context "Before hearing type is converted" do
       scenario "email notification history is not displayed" do
         visit "hearings/" + hearing.external_id.to_s + "/details"
@@ -658,12 +658,12 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
   context "Initally a Video hearing" do
     let!(:hearing) { create(:hearing, :with_tasks, regional_office: "RO13") }
 
-    include_context "shared behaviors"
+    include_examples "shared behaviors"
   end
 
   context "Initally a Central hearing " do
     let!(:hearing) { create(:hearing, :with_tasks) }
 
-    include_context "shared behaviors"
+    include_examples "shared behaviors"
   end
 end
