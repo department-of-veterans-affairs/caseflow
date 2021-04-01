@@ -297,7 +297,7 @@ export const hearingTimeOptsWithZone = (options, local, timesInZone = 'America/N
     const easternTime = zoneName(newValue);
     // Get a string of the time in the localTimezone
     const localTime = zoneName(newValue, localTimezone);
-    // Check which label to use, RadioField uses 'displayText', SearchableDropdown uses 'label'
+    // Check which property is used as the label, RadioField uses 'displayText', SearchableDropdown uses 'label'
     const label = item.label ? 'label' : 'displayText';
 
     // Create the item with new time zones and labels
