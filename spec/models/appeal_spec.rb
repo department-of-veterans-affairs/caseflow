@@ -146,7 +146,7 @@ describe Appeal, :all_dbs do
       end
     end
 
-    fcontext "when there is an associated legacy issue" do
+    context "when there is an associated legacy issue" do
       let(:vacols_id) { legacy_appeal.vacols_id }
       let(:vacols_sequence_id) { legacy_appeal.issues.first.vacols_sequence_id }
 

@@ -26,7 +26,7 @@ RSpec.describe Idt::Api::V1::VeteransController, :all_dbs, type: :controller do
         {
           first_name: "Bob",
           last_name: "Smith",
-          date_of_birth: "03/30/1991",
+          date_of_birth: veteran.person&.date_of_birth&.mdY,
           date_of_death: nil,
           name_suffix: "II",
           ssn: "987654321",
