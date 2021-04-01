@@ -340,6 +340,12 @@
   }
 }
 
+// Schedule Veteran Styles
+.schedule-veteran-page {
+  min-height: 680px;
+}
+
+// Time Slot Styles
 .time-slot-label {
   font-weight: bold;
 }
@@ -407,4 +413,39 @@
 
 .time-slot-button-toggle.usa-button {
   padding-left: 0;
+}
+
+// Appeal Information Styles
+.schedule-veteran-appeals-info {
+  width: 100%;
+  background-color: $caseflow-background;
+  border: 2px solid $color-gray-lighter;
+  border-radius: 2%;
+  padding: 25px 20px;
+  max-width: 300px;
+
+  pre {
+    white-space: normal;
+    word-wrap: break-word;
+    width: 200px;
+  }
+
+  a > div {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 200px;
+  }
+}
+
+.usa-width-one-fourth.schedule-veteran-appeal-info-container {
+  margin-right: 30px;
+  width: 300px;
+  height: 400px;
+  position: sticky;
+  top: 15px;
+
+  h2 {
+    margin-bottom: 10px;
+  }
 }
