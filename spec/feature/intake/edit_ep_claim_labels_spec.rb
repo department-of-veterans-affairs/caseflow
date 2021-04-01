@@ -186,8 +186,6 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
             status_type_code: "CAN"
           }
         )
-
-        [rating_ep, nonrating_ep].each(&:sync!)
       end
 
       it "hides cancelled claims and disables edits on cleared claims" do
