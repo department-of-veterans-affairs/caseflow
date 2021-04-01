@@ -136,7 +136,7 @@ group :development do
 end
 
 group :test do
-  gem "knapsack_pro"
+  gem "knapsack_pro", "~> 2.11.0"
   # For retrying failed feature tests. Read more: https://github.com/NoRedInk/rspec-retry
   gem "rspec-retry"
   gem "webmock"
