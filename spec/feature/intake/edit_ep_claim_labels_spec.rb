@@ -193,7 +193,7 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
 
         # Cancelled EPs do not show on the UI
         nr_label = Constants::EP_CLAIM_TYPES[nonrating_request_issue.end_product_establishment.code]["official_label"]
-        expect(page).not_to have_content(nr_label)
+        expect(page.has_no_content?(nr_label)).to eq(true)
 
         # Edit button on Cleared claim is disabled
         # Note: Cleared EPs only appear when the end product correction feature toggle is enabled

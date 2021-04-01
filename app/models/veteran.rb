@@ -101,7 +101,7 @@ class Veteran < CaseflowRecord
   end
 
   def end_products
-    @end_products.presence || fetch_end_products
+    @end_products ||= fetch_end_products
   end
 
   def periods_of_service
