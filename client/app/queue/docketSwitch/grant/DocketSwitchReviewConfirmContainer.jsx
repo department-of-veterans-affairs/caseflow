@@ -28,7 +28,7 @@ export const DocketSwitchReviewConfirmContainer = () => {
   const { appealId, taskId } = useParams();
   const { goBack, push } = useHistory();
   const dispatch = useDispatch();
-  const [disabled, setDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
@@ -85,7 +85,7 @@ export const DocketSwitchReviewConfirmContainer = () => {
     };
 
     try {
-      setDisabled(true);
+      setLoading(true);
       const resultAction = await dispatch(completeDocketSwitchGranted(docketSwitch));
       const { newAppealId } = unwrapResult(resultAction);
 
@@ -116,11 +116,13 @@ export const DocketSwitchReviewConfirmContainer = () => {
   }, [formData.taskIds, amaTasks]);
 
   const tasksAdded = useMemo(() => {
-    return formData.newTasks.map(({ type, instructions }) => {
-      const label = colocatedAdminActions[reformatTaskType(type)];
+    if (formData.newTasks) {
+      return formData.newTasks.map(({ type, instructions }) => {
+        const label = colocatedAdminActions[reformatTaskType(type)];
 
-      return { type, label, instructions };
-    });
+        return { type, label, instructions };
+      });
+    }
   }, [formData.newTasks, colocatedAdminActions]);
 
   return (
@@ -134,7 +136,7 @@ export const DocketSwitchReviewConfirmContainer = () => {
       onBack={goBack}
       onCancel={handleCancel}
       onSubmit={handleSubmit}
-      disabled={disabled}
+      loading={loading}
       originalReceiptDate={receiptDate}
       tasksAdded={tasksAdded}
       tasksKept={tasksSwitched}
