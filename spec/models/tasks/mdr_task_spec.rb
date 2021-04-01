@@ -6,9 +6,55 @@ describe MdrTask, :postgres do
   let(:org_nonadmin) { create(:user) { |u| CavcLitigationSupport.singleton.add_user(u) } }
   let(:other_user) { create(:user) }
 
+  let(:created_by) { create(:user) }
+  let(:updated_by) { create(:user) }
+  let(:source_appeal) { create(:appeal) }
+  let(:cavc_docket_number) { "123-1234567" }
+  let(:represented_by_attorney) { true }
+  let(:cavc_judge_full_name) { Constants::CAVC_JUDGE_FULL_NAMES.first }
+  let(:cavc_decision_type) { Constants::CAVC_DECISION_TYPES.keys.first }
+  let(:remand_subtype) { Constants::CAVC_REMAND_SUBTYPES.keys.first }
+  let(:decision_date) { 5.days.ago.to_date }
+  let(:judgement_date) { 4.days.ago.to_date }
+  let(:mandate_date) { 3.days.ago.to_date }
+  let(:decision_issues) do
+    create_list(
+      :decision_issue,
+      3,
+      :rating,
+      decision_review: source_appeal,
+      disposition: "denied",
+      description: "Decision issue description",
+      decision_text: "decision issue"
+    )
+  end
+  let(:decision_issue_ids) { decision_issues.map(&:id) }
+  let(:federal_circuit) { nil }
+  let(:instructions) { "Instructions!" }
+
+  let(:params) do
+    {
+      created_by: created_by,
+      updated_by: updated_by,
+      source_appeal: source_appeal,
+      cavc_docket_number: cavc_docket_number,
+      represented_by_attorney: represented_by_attorney,
+      cavc_judge_full_name: cavc_judge_full_name,
+      cavc_decision_type: cavc_decision_type,
+      remand_subtype: remand_subtype,
+      decision_date: decision_date,
+      judgement_date: judgement_date,
+      mandate_date: mandate_date,
+      decision_issue_ids: decision_issue_ids,
+      federal_circuit: federal_circuit,
+      instructions: instructions
+    }
+  end
+  let(:cavc_remand) { CavcRemand.create!(params) }
+  let(:appeal) { cavc_remand.remand_appeal }
+
   describe ".create" do
     subject { described_class.create(parent: parent_task, appeal: appeal) }
-    let(:appeal) { create(:appeal) }
     let!(:parent_task) { create(:cavc_task, appeal: appeal) }
     let(:parent_task_class) { CavcTask }
 
@@ -22,7 +68,6 @@ describe MdrTask, :postgres do
     end
 
     describe ".create_with_hold" do
-      let(:decision_date) { Time.zone.today - 1.week }
       subject { described_class.create_with_hold(parent_task) }
 
       it "creates task with child TimedHoldTask" do
@@ -46,8 +91,8 @@ describe MdrTask, :postgres do
   end
 
   describe "#available_actions" do
-    let(:decision_date) { Time.zone.today - 1.week }
-    let!(:mdr_task) { MdrTask.create_with_hold(create(:cavc_task)) }
+    let(:cavc_task) { create(:cavc_task, appeal: appeal) }
+    let!(:mdr_task) { described_class.create_with_hold(cavc_task) }
 
     context "immediately after MdrTask is created" do
       it "returns available actions when MdrTask is on hold" do
