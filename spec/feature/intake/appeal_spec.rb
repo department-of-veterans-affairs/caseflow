@@ -336,7 +336,7 @@ feature "Appeal Intake", :all_dbs do
 
     expect(page).to have_content("Add / Remove Issues")
     check_row("Review option", "Evidence Submission")
-    check_row("Claimant", "Ed Merica")
+    check_row("Claimant", "Ed Merica, Veteran")
     check_row("SOC/SSOC Opt-in", "No")
 
     # clicking the add issues button should bring up the modal
