@@ -18,6 +18,7 @@ const textStyling = css({
   color: COLORS.PRIMARY,
   display: 'table-cell',
   fontSize: '1.7rem',
+  fontWeight: 900,
   lineHeight: '4em',
   marginBottom: 0
 });
@@ -25,7 +26,7 @@ const textStyling = css({
 const CaseSearchLink = (props) => <div {...containerStyling}>
   <Link href="/search" target={props.newWindow ? '_blank' : '_self'}>
     <span {...iconStyling}><MagnifyingGlass color={COLORS.PRIMARY} /></span>
-    <h3 {...textStyling}>Search cases</h3>
+    <p {...textStyling}>Search cases</p>
   </Link>
 </div>;
 
