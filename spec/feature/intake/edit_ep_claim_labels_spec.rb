@@ -114,7 +114,7 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
 
         # make issue update - remove issue
         within "#issue-2" do
-          select('Remove issue', :from => 'issue-action-0')
+          select("Remove issue", from: "issue-action-0")
         end
         click_on("Yes, remove issue")
 
