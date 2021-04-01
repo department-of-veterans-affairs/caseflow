@@ -1,10 +1,49 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
 import { ReadOnly } from '../details/ReadOnly';
 import { renderAppealType } from '../../../queue/utils';
 import { formatDateStr } from '../../../util/DateUtil';
+
+export const AppealStreamDetails = ({
+  remandSourceAppealId,
+  cavcRemand,
+  caseType,
+  isAdvancedOnDocket,
+  remandJudgeName
+}) => {
+  const caseLabel = renderAppealType({
+    caseType,
+    isAdvancedOnDocket,
+  });
+
+  return cavcRemand ? (
+    <React.Fragment>
+      <span>
+        {caseLabel},
+      </span>
+      <Link href={`/queue/appeals/${remandSourceAppealId}`} >
+        <span>
+          {caseType}
+        </span>
+        <div>
+          VLJ {remandJudgeName}
+        </div>
+      </Link>
+    </React.Fragment>
+  ) : caseLabel;
+
+};
+
+AppealStreamDetails.propTypes = {
+  cavcRemand: PropTypes.object,
+  caseType: PropTypes.string,
+  remandSourceAppealId: PropTypes.string,
+  remandJudgeName: PropTypes.string,
+  isAdvancedOnDocket: PropTypes.bool,
+};
 
 export const AppealInformation = ({ appeal }) => {
   /* eslint-disable camelcase */
@@ -26,10 +65,7 @@ export const AppealInformation = ({ appeal }) => {
         className="schedule-veteran-appeals-info-stream"
         spacing={15}
         label="Appeal Stream"
-        text={renderAppealType({
-          caseType: appeal?.caseType,
-          isAdvancedOnDocket: appeal?.isAdvancedOnDocket,
-        })}
+        text={<AppealStreamDetails {...appeal} />}
       />
       <ReadOnly
         spacing={15}
