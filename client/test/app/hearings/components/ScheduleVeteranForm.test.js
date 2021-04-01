@@ -13,6 +13,7 @@ import {
   RegionalOfficeDropdown,
   AppealHearingLocationsDropdown,
 } from 'app/components/DataDropdowns';
+import { AppealInformation } from 'app/hearings/components/scheduleHearing/AppealInformation';
 import { AddressLine } from 'app/hearings/components/details/Address';
 import { AppellantSection } from 'app/hearings/components/VirtualHearings/AppellantSection';
 import { RepresentativeSection } from 'app/hearings/components/VirtualHearings/RepresentativeSection';
@@ -41,7 +42,7 @@ describe('ScheduleVeteranForm', () => {
 
     // Assertions
     expect(
-      scheduleVeteran.find(ReadOnly).first().
+      scheduleVeteran.find(`[label="${amaAppeal?.appellantTitle} Address"]`).
         prop('text').props
     ).toMatchObject(
       {
@@ -53,6 +54,7 @@ describe('ScheduleVeteranForm', () => {
     );
     expect(scheduleVeteran.find(HearingTypeDropdown)).toHaveLength(1);
     expect(scheduleVeteran.find(RegionalOfficeDropdown)).toHaveLength(1);
+    expect(scheduleVeteran.find(AppealInformation)).toHaveLength(1);
     expect(scheduleVeteran).toMatchSnapshot();
   });
 
@@ -78,6 +80,7 @@ describe('ScheduleVeteranForm', () => {
     );
 
     // Assertions
+    expect(scheduleVeteran.find(AppealInformation)).toHaveLength(1);
     expect(scheduleVeteran.find(AppealHearingLocationsDropdown)).toHaveLength(1);
     expect(scheduleVeteran.find(HearingDateDropdown)).toHaveLength(1);
     expect(scheduleVeteran.find(AddressLine)).toHaveLength(1);
@@ -120,8 +123,7 @@ describe('ScheduleVeteranForm', () => {
 
     // Ensure Video-only fields are not displayed
     expect(scheduleVeteran.find(AppealHearingLocationsDropdown)).toHaveLength(0);
-    expect(scheduleVeteran.find(ReadOnly).first().
-      text()).toEqual('Hearing LocationVirtual');
+    expect(scheduleVeteran.find('[label="Hearing Location"]').text()).toEqual('Hearing LocationVirtual');
 
     // Ensure Timezone fields display when scheduling virtual
     expect(scheduleVeteran.find(Timezone)).toHaveLength(2);
@@ -138,6 +140,7 @@ describe('ScheduleVeteranForm', () => {
     // Make sure the timezones display after changing to Central
     expect(scheduleVeteran.find(Timezone)).toHaveLength(2);
 
+    expect(scheduleVeteran.find(AppealInformation)).toHaveLength(1);
     expect(scheduleVeteran).toMatchSnapshot();
   });
 
@@ -167,6 +170,7 @@ describe('ScheduleVeteranForm', () => {
     );
 
     // Assertions
+    expect(scheduleVeteran.find(AppealInformation)).toHaveLength(1);
     expect(scheduleVeteran.find(HearingDateDropdown).prop('errorMessage')).toEqual(error);
     expect(scheduleVeteran).toMatchSnapshot();
   });
@@ -195,6 +199,7 @@ describe('ScheduleVeteranForm', () => {
       }
     );
 
+    expect(scheduleVeteran.find(AppealInformation)).toHaveLength(1);
     expect(
       scheduleVeteran.
         find(HearingTypeDropdown).

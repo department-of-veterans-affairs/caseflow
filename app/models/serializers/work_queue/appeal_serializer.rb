@@ -80,6 +80,14 @@ class WorkQueue::AppealSerializer
 
   attribute :cavc_remand
 
+  attribute :remand_source_appeal_id do |appeal|
+    appeal.cavc_remand&.source_appeal&.uuid
+  end
+
+  attribute :remand_judge_name do |appeal|
+    appeal.cavc_remand&.source_appeal&.reviewing_judge_name
+  end
+
   attribute :veteran_death_date
 
   attribute :veteran_file_number
