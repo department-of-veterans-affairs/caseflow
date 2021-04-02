@@ -33,8 +33,7 @@ class MdrTask < Task
   # TODO: move this to a Concern that is used by MdrTask and MandateHoldTask
   def update_timed_hold
     ActiveRecord::Base.transaction do
-      last_timed_hold_task = children.open.where(type: :TimedHoldTask).last
-      last_timed_hold_task.cancelled! if last_timed_hold_task
+      children.open.where(type: :TimedHoldTask).last&.cancelled!
       create_timed_hold_task
     end
   end

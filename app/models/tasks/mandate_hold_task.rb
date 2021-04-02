@@ -32,8 +32,7 @@ class MandateHoldTask < Task
 
   def update_timed_hold
     ActiveRecord::Base.transaction do
-      last_timed_hold_task = children.open.where(type: :TimedHoldTask).last
-      last_timed_hold_task.cancelled! if last_timed_hold_task
+      children.open.where(type: :TimedHoldTask).last&.cancelled!
       create_timed_hold_task
     end
   end
@@ -63,7 +62,7 @@ class MandateHoldTask < Task
         instructions: [COPY::MANDATE_HOLD_TASK_DEFAULT_INSTRUCTIONS]
       )
     end
-  end  
+  end
 
   private
 

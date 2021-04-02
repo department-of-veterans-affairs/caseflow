@@ -31,11 +31,11 @@ export const Default = Template.bind({});
 export const Editing = Template.bind({});
 Editing.args = {
   existingValues: {
-    docketNumber: '12-3456',
-    attorney: 'no',
+    docketNumber: '12-3333',
+    attorney: 'yes',
     judge: 'Panel',
     decisionType: 'remand',
-    remandType: 'mdr',
+    remandType: 'jmr',
     decisionDate: format(sub(new Date(), { days: 7 }), 'yyyy-MM-dd'),
     issueIds: [2, 3],
     instructions: 'Lorem ipsum dolor sit amet'

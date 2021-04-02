@@ -18,7 +18,7 @@ import Checkbox from 'app/components/Checkbox';
 import CheckboxGroup from 'app/components/CheckboxGroup';
 
 import CAVC_JUDGE_FULL_NAMES from 'constants/CAVC_JUDGE_FULL_NAMES';
-import CAVC_REMAND_SUBTYPE_NAMES from 'constants/CAVC_REMAND_SUBTYPE_NAMES';
+// import CAVC_REMAND_SUBTYPE_NAMES from 'constants/CAVC_REMAND_SUBTYPE_NAMES';
 
 import {
   JmprIssuesBanner,
@@ -82,21 +82,21 @@ export const EditCavcRemandForm = ({
     },
   });
 
-  const filteredDecisionTypes = useMemo(
-    () =>
-      allDecisionTypeOpts.filter((item) =>
-        supportedDecisionTypes.includes(item.value)
-      ),
-    [supportedDecisionTypes]
-  );
+  // const filteredDecisionTypes = useMemo(
+  //   () =>
+  //     allDecisionTypeOpts.filter((item) =>
+  //       supportedDecisionTypes.includes(item.value)
+  //     ),
+  //   [supportedDecisionTypes]
+  // );
 
-  const filteredRemandTypes = useMemo(
-    () =>
-      allRemandTypeOpts.filter((item) =>
-        supportedRemandTypes.includes(item.value)
-      ),
-    [supportedRemandTypes]
-  );
+  // const filteredRemandTypes = useMemo(
+  //   () =>
+  //     allRemandTypeOpts.filter((item) =>
+  //       supportedRemandTypes.includes(item.value)
+  //     ),
+  //   [supportedRemandTypes]
+  // );
 
   const issueOptions = useMemo(
     () =>
@@ -253,8 +253,8 @@ export const EditCavcRemandForm = ({
 
         {isRemandType('mdr') && <MdrBanner />}
 
-      {mandateDatesAvailable && (
-        <div>
+        {mandateDatesAvailable && (
+          <div>
             <DateSelector
               inputRef={register}
               label={COPY.CAVC_JUDGEMENT_DATE}
@@ -312,7 +312,7 @@ export const EditCavcRemandForm = ({
                     values={issueVals}
                     disableAll={watchDecisionType?.includes('death_dismissal')}
                     errorMessage={errors?.issueIds?.message}
-                  />                 
+                  />
                 );
               }}
             />
