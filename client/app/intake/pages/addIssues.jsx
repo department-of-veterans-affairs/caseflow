@@ -290,11 +290,14 @@ class AddIssuesPage extends React.Component {
 
     let rowObjects = fieldsForFormType;
 
-    const issueSectionRow = (sectionIssues, fieldTitle) => {
+    const issueSectionRow = (sectionIssues, fieldTitle, endProductCode = null) => {
       return {
         field: fieldTitle,
         content: (
           <div>
+            {showEditEpError === endProductCode && endProductCode && (
+            <ErrorAlert errorCode="unable_to_edit_ep" />
+          )}
             { !fieldTitle.includes('issues') && <span><strong>Requested issues</strong></span> }
             <IssueList
               onClickIssueAction={this.onClickIssueAction}
@@ -335,9 +338,9 @@ class AddIssuesPage extends React.Component {
     Object.keys(issuesBySection).sort().
       map((key) => {
         const sectionIssues = issuesBySection[key];
-
+         console.log("key", key);
         if (key === 'requestedIssues') {
-          rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, 'Requested issues'));
+          rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, 'Requested issues', key));
         } else if (key === 'withdrawnIssues') {
           rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, 'Withdrawn issues'));
         } else {
@@ -419,10 +422,6 @@ class AddIssuesPage extends React.Component {
 
         {showInvalidVeteranError && (
           <ErrorAlert errorCode="veteran_not_valid" errorData={intakeData.veteranInvalidFields} />
-        )}
-
-        {editPage && showEditEpError && (
-          <ErrorAlert errorCode="unable_to_edit_ep" />
         )}
 
         {editPage && this.establishmentCredits()}

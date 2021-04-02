@@ -64,7 +64,6 @@ export const editEpClaimLabel = (claimId, formType, previousCode, selectedCode) 
 
   return ApiUtil.post(`/${pathMap[formType]}/${claimId}/edit_ep`, { data }, ENDPOINT_NAMES.EDIT_EP_CLAIM_LABEL).then(
     (response) => {
-       console.log("response", response);
        
       if (response.statusCode === 200) {
         const alert = {
@@ -79,14 +78,17 @@ export const editEpClaimLabel = (claimId, formType, previousCode, selectedCode) 
         window.location.replace(`${PAGE_PATHS.SEARCH}?veteran_ids=${veteranId}`);
       }
     }
-  ),
-    (error) => {
+  ).catch((error) => {
+      const responseObject = error.response.body || {};
+      const responseErrorCode = responseObject.error_code;
+       console.log('error', error);
         dispatch({
           type: ACTIONS.EDIT_EP_CLAIM_LABEL_FAILED,
           payload: {
-            
+           errorCode: responseErrorCode
           },
           meta: { analytics }
         });
       }
+    )
 };
