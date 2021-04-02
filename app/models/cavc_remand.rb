@@ -22,7 +22,7 @@ class CavcRemand < CaseflowRecord
 
   before_create :normalize_cavc_docket_number
   before_create :establish_appeal_stream, if: :cavc_remand_form_complete?
-  after_create :initilize_tasks
+  after_create :initialize_tasks
 
   enum cavc_decision_type: {
     Constants.CAVC_DECISION_TYPES.remand.to_sym => Constants.CAVC_DECISION_TYPES.remand,
@@ -104,7 +104,7 @@ class CavcRemand < CaseflowRecord
     end
   end
 
-  def initilize_tasks
+  def initialize_tasks
     InitialTasksFactory.new(remand_appeal).create_root_and_sub_tasks!
   end
 
