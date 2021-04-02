@@ -112,12 +112,10 @@ class CavcRemand < CaseflowRecord
   end
 
   def update_request_issues(cavc_appeal = remand_appeal, add: [], remove: [])
-    puts "add: #{add}    remove: #{remove}"
     DecisionIssue.find(add).map do |cavc_remanded_issue|
       cavc_remanded_issue.create_contesting_request_issue!(cavc_appeal)
     end
     DecisionIssue.find(remove).map do |cavc_remanded_issue|
-      puts "remove cavc_remanded_issue: #{cavc_remanded_issue}"
       req_issues = remand_appeal.request_issues.where(contested_decision_issue_id: cavc_remanded_issue.id)
       req_issues.delete_all
     end

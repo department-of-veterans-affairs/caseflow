@@ -49,7 +49,7 @@ class CavcRemandsController < ApplicationController
   end
 
   def update
-    if params["source_form"] == "add_cavc_dates_modal" # TODO: replace all occurrences with a constant
+    if params["source_form"] == "add_cavc_dates_modal" # EditCavcTodo: replace all occurrences with a constant
       cavc_remand.add_cavc_dates(add_cavc_dates_params.except(:source_form))
     else
       cavc_remand.update(creation_params.except(:source_form))

@@ -75,7 +75,7 @@ export const EditCavcRemandForm = ({
     reValidateMode: 'onChange',
     defaultValues: {
       issueIds: decisionIssues.map((issue) => issue.id),
-      // TODO: remove the following if not needed; see remandDatesProvided
+      // EditCavcTodo: remove the following if not needed; see remandDatesProvided
       mandateSame: !existingValues.judgementDate,
       ...existingValues,
     },
@@ -108,7 +108,7 @@ export const EditCavcRemandForm = ({
 
   // We have to do a bit of manual manipulation for issue IDs due to nature of CheckboxGroup
   const [issueVals, setIssueVals] = useState({});
-  const handleIssueChange = (evt) => {
+  const handleIssueSelectionChange = (evt) => {
     const newIssues = { ...issueVals, [evt.target.name]: evt.target.checked };
 
     setIssueVals(newIssues);
@@ -326,7 +326,7 @@ export const EditCavcRemandForm = ({
                     strongLabel
                     options={issueOptions}
                     onChange={(event) =>
-                      onCheckChange(handleIssueChange(event))
+                      onCheckChange(handleIssueSelectionChange(event))
                     }
                     styling={issueListStyling}
                     values={issueVals}

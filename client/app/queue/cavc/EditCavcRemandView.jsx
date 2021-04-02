@@ -79,9 +79,8 @@ export const EditCavcRemandView = () => {
       dispatch(editAppeal(appealId, { cavcRemand: updatedCavcRemand }));
 
       // Redirect back to case details for remand appeal
+      // EditCavcTodo: Force a refresh in case issue selection changed
       history.push(`/queue/appeals/${appealId}`);
-      // TODO: fix this hack: Force a refresh in case issue selection changed
-      // history.go();
     } catch (error) {
       dispatch(
         showErrorMessage({
