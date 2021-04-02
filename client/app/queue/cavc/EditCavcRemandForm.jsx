@@ -28,8 +28,8 @@ import {
   NoMandateBanner,
 } from './Alerts';
 import {
-  allDecisionTypeOpts,
-  allRemandTypeOpts,
+  // allDecisionTypeOpts,
+  // allRemandTypeOpts,
   generateSchema,
 } from './utils';
 
@@ -62,8 +62,8 @@ const uppercaseTextTransform = css({ textTransform: 'uppercase' });
 export const EditCavcRemandForm = ({
   decisionIssues,
   existingValues = {},
-  supportedDecisionTypes = [],
-  supportedRemandTypes = [],
+  // supportedDecisionTypes = [],
+  // supportedRemandTypes = [],
   onCancel,
   onSubmit,
 }) => {
