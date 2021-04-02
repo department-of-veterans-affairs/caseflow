@@ -64,7 +64,7 @@ export const editEpClaimLabel = (claimId, formType, previousCode, selectedCode) 
 
   return ApiUtil.post(`/${pathMap[formType]}/${claimId}/edit_ep`, { data }, ENDPOINT_NAMES.EDIT_EP_CLAIM_LABEL).then(
     (response) => {
-       
+
       if (response.statusCode === 200) {
         const alert = {
           type: 'success',

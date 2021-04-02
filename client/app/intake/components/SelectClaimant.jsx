@@ -144,6 +144,8 @@ export const SelectClaimant = (props) => {
     });
   };
   const handleSelectNonVeteran = (value) => {
+    const claimantType = value === 'claimant_not_listed' ? 'other' : 'dependent';
+
     if (newClaimant && value === newClaimant.value) {
       setClaimant({
         claimant: value || null,
@@ -152,7 +154,8 @@ export const SelectClaimant = (props) => {
         claimantType: newClaimant.claimantType,
       });
     } else {
-      setClaimant({ claimant: value, claimantType: 'dependent' });
+      setClaimant({ claimant: value,
+        claimantType });
     }
   };
   const handleAddClaimant = ({

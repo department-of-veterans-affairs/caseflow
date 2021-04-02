@@ -35,8 +35,7 @@ class IntakesSchemas
         # applicable when :claimant_type is "other"
         string :claimant_notes, optional: true, nullable: true, doc: "Appeals only"
         nested :unlisted_claimant, optional: true, nullable: true
-        nested :unlisted_poa, optional: true, nullable: true
-        string :poa_participant_id, optional: true, nullable: true
+        nested :poa, optional: true, nullable: true
       end
     end
     # rubocop:enable Metrics/MethodLength

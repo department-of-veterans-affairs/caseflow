@@ -35,13 +35,13 @@ export const HearingConversion = ({
   const sectionProps = {
     hearing,
     virtualHearing,
-    virtual,
-    video,
     type,
     errors,
     update,
     appellantTitle,
-    readOnly: !virtual
+    readOnly: !virtual,
+    showTimezoneField: true,
+    schedulingToVirtual: virtual
   };
 
   const prefillFields = () => {
@@ -53,7 +53,8 @@ export const HearingConversion = ({
 
     update(
       'virtualHearing', {
-        [!representativeTz && 'representativeTz']: representativeTz || hearing?.representativeTz,
+        [!representativeTz && 'representativeTz']:
+          representativeTz || hearing?.representativeTz || hearing?.appellantTz,
         [!appellantTz && 'appellantTz']: appellantTz || hearing?.appellantTz,
         [!virtualHearing?.appellantEmail && 'appellantEmail']: appellantEmail,
         [!virtualHearing?.representativeEmail && 'representativeEmail']: hearing.representativeEmailAddress,
