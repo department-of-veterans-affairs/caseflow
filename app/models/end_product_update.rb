@@ -15,6 +15,7 @@ class EndProductUpdate < CaseflowRecord
   enum status: { success: "success", error: "error" }
 
   def perform!
+    
     transaction do
       end_product_establishment.update(code: new_code)
       update_correction_type

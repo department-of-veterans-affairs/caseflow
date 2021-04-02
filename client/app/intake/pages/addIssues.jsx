@@ -204,7 +204,7 @@ class AddIssuesPage extends React.Component {
     const requestStatus = intakeData.requestStatus;
     const requestState =
       requestStatus.completeIntake || requestStatus.requestIssuesUpdate || requestStatus.editClaimLabelUpdate;
-    const showEditEpError = intakeData.editEpUpdateError;
+    const endProductWithError = intakeData.editEpUpdateError;
 
     const requestErrorCode =
       intakeData.requestStatus.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
@@ -313,7 +313,7 @@ class AddIssuesPage extends React.Component {
         field: fieldTitle,
         content: (
           <div>
-            {showEditEpError === endProductCode && (
+            {endProductWithError === endProductCode && (
               <ErrorAlert errorCode="unable_to_edit_ep" />
             )}
             { !fieldTitle.includes('issues') && <span><strong>Requested issues</strong></span> }
@@ -362,7 +362,7 @@ class AddIssuesPage extends React.Component {
         if (key === 'requestedIssues') {
           rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, 'Requested issues', key));
         } else if (key === 'withdrawnIssues') {
-          rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, 'Withdrawn issues', key));
+          rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, 'Withdrawn issues'));
         } else {
           rowObjects = rowObjects.concat(endProductLabelRow(key, endProductCleared || issuesChanged));
           rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, ' ', key));

@@ -4,8 +4,13 @@ describe EndProductUpdate do
   describe "#perform!" do
     let(:original_decision_review) { create(:higher_level_review, :processed, same_office: false) }
     let(:claim_date) { Time.zone.yesterday }
+    let!(:veteran) { create(:veteran) }
     let!(:epe) do
-      create(:end_product_establishment, code: old_code, source: original_decision_review, claim_date: claim_date)
+      create(:end_product_establishment,
+             code: old_code,
+             source: original_decision_review,
+             claim_date: claim_date,
+             veteran_file_number: veteran.file_number)
     end
     let(:epu) do
       create(:end_product_update,
