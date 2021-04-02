@@ -61,7 +61,7 @@ describe('AddCavcDatesModal', () => {
         mandate_date: mandateDate,
         remand_appeal_id: appealId,
         instructions,
-        source: 'add_cavc_dates_modal',
+        source_form: 'add_cavc_dates_modal',
       }
     }, {
       title: COPY.CAVC_REMAND_CREATED_TITLE,

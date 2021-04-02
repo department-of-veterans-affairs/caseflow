@@ -39,9 +39,10 @@ class CavcRemand < CaseflowRecord
   }
 
   def update(params)
-    sourced_from = params[:source]
-    if sourced_from == "add_cavc_dates_modal"
-      # sourced_from Add Cavc Date Modal submission
+    source_form = params[:source_form]
+    params.except!(:source_form)
+    if source_form == "add_cavc_dates_modal" # TODO: replace all occurrences with a constant
+      # called from Add Cavc Date Modal submission
       if already_has_mandate?
         fail Caseflow::Error::CannotUpdateMandatedRemands
       end
@@ -50,7 +51,7 @@ class CavcRemand < CaseflowRecord
       end_mandate_hold
     else
       new_decision_date = (Date.parse(params[:decision_date]) - decision_date).to_i.abs > 0
-      # sourced_from Edit Remand link
+      # called from Edit Remand link
       update!(params)
       update_timed_hold if new_decision_date
     end

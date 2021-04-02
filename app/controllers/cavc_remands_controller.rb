@@ -74,7 +74,7 @@ class CavcRemandsController < ApplicationController
   end
 
   def update_params
-    case params["source"]
+    case params["source_form"]
     when "add_cavc_dates_modal"
       params.require(UPDATE_PARAMS)
       params.permit(PERMITTED_PARAMS).except("remand_appeal_id", "source")
