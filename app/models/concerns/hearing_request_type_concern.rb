@@ -87,7 +87,9 @@ module HearingRequestTypeConcern
     request_type_index = tasks.where(type: "ChangeHearingRequestTypeTask").order(:id).map(&:id).index(task_id)
     return nil if request_type_index.blank?
 
-    versions[request_type_index].changeset["changed_hearing_request_type"]
+    # support versions that were recorded before the column name changed
+    versions[request_type_index].changeset["changed_hearing_request_type"] ||
+      versions[request_type_index].changeset["changed_request_type"]
   end
 
   def format_or_formatted_original_hearing_request_type(request_type)
