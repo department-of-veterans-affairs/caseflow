@@ -5,7 +5,7 @@ exports[`HearingDayInfoButton renders correctly 1`] = `
   <span>
     <button
       class="unselected-hearing-day-info-button cf-btn-link usa-button"
-      data-css-s0bvcw=""
+      data-css-klbfz3=""
       type="button"
     >
       <div>
@@ -13,9 +13,9 @@ exports[`HearingDayInfoButton renders correctly 1`] = `
           data-css-16v9b8i=""
         >
           <div
-            data-css-l6c9n4=""
+            data-css-1o3wy7o=""
           >
-            Mon Apr 12th
+            Mon Apr 12
           </div>
           <div
             data-css-134a1o=""
@@ -26,8 +26,10 @@ exports[`HearingDayInfoButton renders correctly 1`] = `
         <div
           data-css-1fnaqki=""
         >
-          <div>
-            2 of 6
+          <div
+            data-css-lrak98=""
+          >
+            2 of 8
           </div>
           <div>
             scheduled
