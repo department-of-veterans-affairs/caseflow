@@ -169,7 +169,7 @@ describe CavcRemand do
     end
   end
 
-  describe ".update! with source_form='add_cavc_dates_modal'" do
+  describe ".add_cavc_dates" do
     let(:remand_appeal_id) { cavc_remand.remand_appeal_id }
     let(:remand_appeal_uuid) { Appeal.find(cavc_remand.remand_appeal_id).uuid }
     let(:judgement_date) { 2.days.ago }
@@ -177,14 +177,13 @@ describe CavcRemand do
     let(:instructions) { "Do this!" }
     let(:params) do
       {
-        source_form: 'add_cavc_dates_modal',
         judgement_date: judgement_date,
         mandate_date: mandate_date,
         instructions: instructions
       }
     end
 
-    subject { cavc_remand.update(params) }
+    subject { cavc_remand.add_cavc_dates(params) }
 
     context "on a JMR appeal" do
       let(:cavc_remand) { create(:cavc_remand) }

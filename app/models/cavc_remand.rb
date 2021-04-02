@@ -38,23 +38,21 @@ class CavcRemand < CaseflowRecord
     Constants.CAVC_REMAND_SUBTYPES.mdr.to_sym => Constants.CAVC_REMAND_SUBTYPES.mdr
   }
 
-  def update(params)
-    source_form = params[:source_form]
-    params.except!(:source_form)
-    if source_form == "add_cavc_dates_modal" # TODO: replace all occurrences with a constant
-      # called from Add Cavc Date Modal submission
-      if already_has_mandate?
-        fail Caseflow::Error::CannotUpdateMandatedRemands
-      end
-
-      update_with_instructions(params)
-      end_mandate_hold
-    else
-      new_decision_date = (Date.parse(params[:decision_date]) - decision_date).to_i.abs > 0
-      # called from Edit Remand link
-      update!(params)
-      update_timed_hold if new_decision_date
+  # called from Add Cavc Date Modal submission
+  def add_cavc_dates(params)
+    if already_has_mandate?
+      fail Caseflow::Error::CannotUpdateMandatedRemands
     end
+
+    update_with_instructions(params)
+    end_mandate_hold
+  end
+
+  # called from Edit Remand link
+  def update(params)
+    new_decision_date = (Date.parse(params[:decision_date]) - decision_date).to_i.abs > 0
+    update!(params)
+    update_timed_hold if new_decision_date
   end
 
   private
