@@ -1,61 +1,19 @@
-import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 
-import { COLORS } from '../../../constants/AppConstants';
 import Button from '../../../components/Button';
+import {
+  buttonSelectedStyle,
+  buttonUnselectedStyle,
+  dateStyle,
+  leftColumnStyle,
+  rightColumnStyle,
+  typeAndJudgeStyle
+} from './styles';
 
 import { VIDEO_HEARING_LABEL } from '../../constants';
-
-const buttonCommonStyle = {
-  width: '90%',
-  paddingTop: '1.5rem',
-  paddingBottom: '1.5rem',
-  outline: 'none'
-};
-
-const buttonUnselectedStyle = css(
-  buttonCommonStyle
-);
-
-const buttonSelectedStyle = css(
-  {
-    ...buttonCommonStyle,
-    ...{
-      backgroundColor: COLORS.GREY_DARK,
-      color: COLORS.WHITE,
-      borderRadius: '0.1rem 0.1rem 0 0',
-      '&:hover': {
-        backgroundColor: COLORS.GREY_DARK,
-        color: COLORS.WHITE
-      }
-    }
-  });
-
-const fontSizeStyle = css({ fontSize: '1.5rem' });
-
-const dateStyle = css({ fontWeight: 'bold' });
-
-const leftColumnStyle = css({
-  width: '60%',
-  display: 'inline-block',
-  textAlign: 'left'
-});
-const rightColumnStyle = css({
-  width: '40%',
-  display: 'inline-block',
-  textAlign: 'right',
-  overflowX: 'hidden',
-  overflowY: 'hidden'
-});
-const typeAndJudgeStyle = css({
-  textOverflow: 'ellipsis',
-  overflowX: 'hidden',
-  overflowY: 'hidden',
-  whiteSpace: 'nowrap'
-});
 
 // Check if there's a judge assigned
 const hearingDayHasJudge = (hearingDay) => hearingDay.judgeFirstName && hearingDay.judgeLastName;
@@ -108,7 +66,7 @@ export const HearingDayInfoButton = ({ hearingDay, selected, onSelectedHearingDa
       styling={selected ? buttonSelectedStyle : buttonUnselectedStyle}
       onClick={() => onSelectedHearingDayChange(hearingDay)}
       linkStyling>
-      <div {...fontSizeStyle}>
+      <div >
         <div {...leftColumnStyle} >
           <div {...dateStyle}>
             {moment(hearingDay.scheduledFor).format('ddd MMM Do')}
