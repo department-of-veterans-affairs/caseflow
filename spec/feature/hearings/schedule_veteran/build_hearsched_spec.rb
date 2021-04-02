@@ -229,7 +229,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         eastern_time = convert_local_time_to_eastern_timezone(time)
         find(".time-slot-button", text: eastern_time).click
       else
-        first(".cf-form-radio-option", text: time).click
+        find(".cf-form-radio-option", text: time).click
       end
     end
 
