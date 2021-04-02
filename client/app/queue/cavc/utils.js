@@ -20,8 +20,13 @@ export const allRemandTypeOpts = Object.entries(CAVC_REMAND_SUBTYPE_NAMES).map(
   })
 );
 
-export const generateSchema = ({ maxIssues }) =>
-  yup.object().shape({
+export const generateSchema = ({ maxIssues }) => {
+  const requireDateBeforeToday = yup.
+    date().
+    max(new Date()).
+    required();
+
+  return yup.object().shape({
     docketNumber: yup.
       string().
       // We accept ‐ HYPHEN, - Hyphen-minus, − MINUS SIGN, – EN DASH, — EM DASH
@@ -62,15 +67,11 @@ export const generateSchema = ({ maxIssues }) =>
     mandateSame: yup.boolean(), // EditCavcTodo: remove if not needed; see remandDatesProvided
     judgementDate: yup.mixed().when('remandDatesProvided', {
       is: 'yes',
-      then: yup.
-        date().
-        max(new Date()).
-        required(),
+      then: requireDateBeforeToday,
     }),
     mandateDate: yup.mixed().when('remandDatesProvided', {
       is: 'yes',
-      then: yup.date().max(new Date()).
-        required(),
+      then: requireDateBeforeToday,
     }),
     issueIds: yup.
       array().
@@ -83,6 +84,7 @@ export const generateSchema = ({ maxIssues }) =>
     federalCircuit: yup.boolean(),
     instructions: yup.string().required(),
   });
+};
 
 export const getSupportedDecisionTypes = (featureToggles) => {
   const toggledDecisionTypes = {
