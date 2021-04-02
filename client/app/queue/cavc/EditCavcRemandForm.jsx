@@ -16,9 +16,10 @@ import SearchableDropdown from 'app/components/SearchableDropdown';
 import DateSelector from 'app/components/DateSelector';
 import Checkbox from 'app/components/Checkbox';
 import CheckboxGroup from 'app/components/CheckboxGroup';
+import StringUtil from 'app/util/StringUtil';
 
 import CAVC_JUDGE_FULL_NAMES from 'constants/CAVC_JUDGE_FULL_NAMES';
-// import CAVC_REMAND_SUBTYPE_NAMES from 'constants/CAVC_REMAND_SUBTYPE_NAMES';
+import CAVC_REMAND_SUBTYPE_NAMES from 'constants/CAVC_REMAND_SUBTYPE_NAMES';
 
 import {
   JmprIssuesBanner,
@@ -211,15 +212,33 @@ export const EditCavcRemandForm = ({
         />
         <br />
         <TextField
-          inputRef={register}
+          defaultValue={StringUtil.snakeCaseToCapitalized(watchDecisionType)}
           label={COPY.CAVC_TYPE_LABEL}
-          name="decisionType"
           readOnly={Boolean(register)}
           strongLabel
           inputStyling={capitalizeTextTransform}
         />
 
         {watchDecisionType?.includes('remand') && (
+          <TextField
+            defaultValue={CAVC_REMAND_SUBTYPE_NAMES[watchRemandType]}
+            value={CAVC_REMAND_SUBTYPE_NAMES[watchRemandType]}
+            label={COPY.CAVC_SUB_TYPE_LABEL}
+            readOnly={Boolean(register)}
+            strongLabel
+          />
+        )}
+
+        {/* Workaround: must have TextField that has a proper value and uses `register` to pass validation */}
+        <div style={{ display: 'none' }}>
+          <TextField
+            inputRef={register}
+            label={COPY.CAVC_TYPE_LABEL}
+            name="decisionType"
+            readOnly={Boolean(register)}
+            strongLabel
+            inputStyling={capitalizeTextTransform}
+          />
           <TextField
             inputRef={register}
             label={COPY.CAVC_SUB_TYPE_LABEL}
@@ -228,7 +247,7 @@ export const EditCavcRemandForm = ({
             strongLabel
             inputStyling={uppercaseTextTransform}
           />
-        )}
+        </div>
 
         {watchDecisionType && !watchDecisionType.includes('remand') && (
           <RadioField
