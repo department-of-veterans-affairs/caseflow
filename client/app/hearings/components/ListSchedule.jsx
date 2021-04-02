@@ -20,7 +20,7 @@ import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ListScheduleDateSearch from './ListScheduleDateSearch';
 import moment from 'moment';
 
-import { LIST_SCHEDULE_VIEWS, VIDEO_HEARING_LABEL } from '../constants';
+import { LIST_SCHEDULE_VIEWS } from '../constants';
 import DropdownButton from '../../components/DropdownButton';
 import WindowUtil from '../../util/WindowUtil';
 
