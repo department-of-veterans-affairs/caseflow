@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
 
@@ -12,6 +12,7 @@ describe('HearingDayInfoButton', () => {
   const props = {
     hearingDay:
       {
+        scheduledFor: '04/12/2021',
         judgeFirstName: 'Jonas',
         judgeLastName: 'Jerengal',
         room: '14',
@@ -40,54 +41,28 @@ describe('HearingDayInfoButton', () => {
     expect(results).toHaveNoViolations();
   });
 
-  /*
-  it('correctly sets checkbox status when all are unchecked', () => {
-    const uncheckedOptions = props.options.map((opt) => {
-      return { ...opt, checked: false };
-    });
-    const allFalseOptionsProps = { ...props, options: uncheckedOptions };
+  it('has correct class when selected', () => {
+    const selectedProps = { ...props, selected: true };
+    const utils = render(<HearingDayInfoButton {...selectedProps} />);
+    const button = utils.getByRole('button');
 
-    const component = render(<FilterOption {...allFalseOptionsProps} />);
-    const options = component.getAllByRole('checkbox');
-    const checked = options.filter((el) => el.checked);
-
-    expect(checked.length).toBe(0);
+    expect(button).toHaveClass('selected-hearing-day-info-button');
   });
 
-  it('correctly sets checkbox status when all are checked', () => {
-    const checkedOptions = props.options.map((opt) => {
-      return { ...opt, checked: true };
-    });
-    const allTrueOptionsProps = { ...props, options: checkedOptions };
+  it('has correct class when unselected', () => {
+    const selectedProps = { ...props, selected: false };
+    const utils = render(<HearingDayInfoButton {...selectedProps} />);
+    const button = utils.getByRole('button');
 
-    const component = render(<FilterOption {...allTrueOptionsProps} />);
-    const options = component.getAllByRole('checkbox');
-    const checked = options.filter((el) => el.checked);
-
-    expect(checked.length).toBe(options.length);
+    expect(button).toHaveClass('unselected-hearing-day-info-button');
   });
 
-  it('correctly calls setSelectedValue', async () => {
-    const component = render(<FilterOption {...props} />);
+  it('calls setSelected on click', async () => {
+    const utils = render(<HearingDayInfoButton {...props} />);
+    const button = utils.getByRole('button');
 
-    const options = component.getAllByRole('checkbox');
-    const opt = props.options[1];
-    const checkedBefore = options.filter((el) => el.checked);
-
-    expect(checkedBefore.length).toBe(1);
-
-    await userEvent.click(screen.getByLabelText(opt.displayText));
-
-    // Calls onChange handler
+    expect(setSelectedValue).toHaveBeenCalledTimes(0);
+    await userEvent.click(button);
     expect(setSelectedValue).toHaveBeenCalledTimes(1);
-
-    // While we aren't updating value, handleChange is still getting called
-    expect(setSelectedValue).toHaveBeenLastCalledWith(opt.value);
-
-    const checkedAfter = options.filter((el) => el.checked);
-
-    // Value should not have been updated, since we're not doing that
-    expect(checkedAfter.length).toBe(1);
   });
-  */
 });
