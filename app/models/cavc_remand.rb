@@ -21,7 +21,8 @@ class CavcRemand < CaseflowRecord
   validates :federal_circuit, inclusion: { in: [true, false] }, if: -> { remand? && mdr? }
 
   before_create :normalize_cavc_docket_number
-  before_save :establish_appeal_stream, if: :cavc_remand_form_complete?
+  before_create :establish_appeal_stream, if: :cavc_remand_form_complete?
+  after_create :initilize_tasks
 
   enum cavc_decision_type: {
     Constants.CAVC_DECISION_TYPES.remand.to_sym => Constants.CAVC_DECISION_TYPES.remand,
@@ -58,10 +59,12 @@ class CavcRemand < CaseflowRecord
   private
 
   def update_timed_hold
-    if mdr?
-      # Assume there is only 1 open MdrTask
-      mdr_task = remand_appeal.tasks.open.where(type: :MdrTask).last
-      mdr_task.update_timed_hold
+    if mandate_not_required?
+      parent_task_types = [:MdrTask, :MandateHoldTask]
+      # There should only be 1 open timed_hold_parent_task
+      remand_appeal.tasks.open.where(type: parent_task_types).each do |timed_hold_parent_task|
+        timed_hold_parent_task.update_timed_hold
+      end
     end
   end
 
@@ -98,8 +101,11 @@ class CavcRemand < CaseflowRecord
         cavc_remanded_issue.create_contesting_request_issue!(cavc_appeal)
       end
       AdvanceOnDocketMotion.copy_granted_motions_to_appeal(source_appeal, cavc_appeal)
-      InitialTasksFactory.new(cavc_appeal, self).create_root_and_sub_tasks!
     end
+  end
+
+  def initilize_tasks
+    InitialTasksFactory.new(remand_appeal).create_root_and_sub_tasks!
   end
 
   def end_mandate_hold

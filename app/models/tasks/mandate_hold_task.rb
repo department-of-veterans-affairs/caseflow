@@ -23,14 +23,17 @@ class MandateHoldTask < Task
   before_validation :set_assignee
 
   def self.create_with_hold(parent_task)
-    multi_transaction do
-      create!(parent: parent_task, appeal: parent_task.appeal).tap do |window_task|
-        TimedHoldTask.create_from_parent(
-          window_task,
-          days_on_hold: 90,
-          instructions: [COPY::MANDATE_HOLD_TASK_DEFAULT_INSTRUCTIONS]
-        )
-      end
+    ActiveRecord::Base.transaction do
+      mandate_hold_task = create!(parent: parent_task, appeal: parent_task.appeal)
+      mandate_hold_task.create_timed_hold_task
+    end
+  end
+
+  def update_timed_hold
+    ActiveRecord::Base.transaction do
+      last_timed_hold_task = children.open.where(type: :TimedHoldTask).last
+      last_timed_hold_task.cancelled! if last_timed_hold_task
+      create_timed_hold_task
     end
   end
 
@@ -50,9 +53,27 @@ class MandateHoldTask < Task
     TASK_ACTIONS
   end
 
+  def create_timed_hold_task
+    days_to_hold = decision_date_plus_90_days
+    if days_to_hold > 0
+      TimedHoldTask.create_from_parent(
+        self,
+        days_on_hold: days_to_hold,
+        instructions: [COPY::MANDATE_HOLD_TASK_DEFAULT_INSTRUCTIONS]
+      )
+    end
+  end  
+
   private
 
   def set_assignee
     self.assigned_to = CavcLitigationSupport.singleton if assigned_to.nil?
+  end
+
+  def decision_date_plus_90_days
+    decision_date = appeal.cavc_remand.decision_date
+    end_date = decision_date + 90.days
+    # convert to the number of days from today
+    (end_date - Time.zone.today).to_i
   end
 end

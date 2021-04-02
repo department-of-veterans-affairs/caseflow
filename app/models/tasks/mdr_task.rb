@@ -21,6 +21,7 @@ class MdrTask < Task
 
   before_validation :set_assignee
 
+  # TODO: move this to a Concern that is used by MdrTask and MandateHoldTask
   def self.create_with_hold(parent_task)
     ActiveRecord::Base.transaction do
       mdr_task = create!(parent: parent_task, appeal: parent_task.appeal)
@@ -28,9 +29,11 @@ class MdrTask < Task
     end
   end
 
+  # TODO: move this to a Concern that is used by MdrTask and MandateHoldTask
   def update_timed_hold
     ActiveRecord::Base.transaction do
-      children.open.where(type: :TimedHoldTask).last.cancelled!
+      last_timed_hold_task = children.open.where(type: :TimedHoldTask).last
+      last_timed_hold_task.cancelled! if last_timed_hold_task
       create_timed_hold_task
     end
   end
@@ -55,12 +58,7 @@ class MdrTask < Task
     TASK_ACTIONS
   end
 
-  private
-
-  def set_assignee
-    self.assigned_to = CavcLitigationSupport.singleton if assigned_to.nil?
-  end
-
+  # TODO: move this to a Concern that is used by MdrTask and MandateHoldTask
   def create_timed_hold_task
     days_to_hold = decision_date_plus_90_days
     if days_to_hold > 0
@@ -72,6 +70,13 @@ class MdrTask < Task
     end
   end
 
+  private
+
+  def set_assignee
+    self.assigned_to = CavcLitigationSupport.singleton if assigned_to.nil?
+  end
+
+  # TODO: move this to a Concern that is used by MdrTask and MandateHoldTask
   def decision_date_plus_90_days
     decision_date = appeal.cavc_remand.decision_date
     end_date = decision_date + 90.days

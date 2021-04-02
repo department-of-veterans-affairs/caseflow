@@ -16,7 +16,6 @@ import SearchableDropdown from 'app/components/SearchableDropdown';
 import DateSelector from 'app/components/DateSelector';
 import Checkbox from 'app/components/Checkbox';
 import CheckboxGroup from 'app/components/CheckboxGroup';
-import StringUtil from 'app/util/StringUtil';
 
 import CAVC_JUDGE_FULL_NAMES from 'constants/CAVC_JUDGE_FULL_NAMES';
 import CAVC_REMAND_SUBTYPE_NAMES from 'constants/CAVC_REMAND_SUBTYPE_NAMES';
@@ -255,7 +254,7 @@ export const EditCavcRemandForm = ({
         {isRemandType('mdr') && <MdrBanner />}
 
       {mandateAvailable && (
-        <>
+        <div>
             <DateSelector
               inputRef={register}
               label={COPY.CAVC_JUDGEMENT_DATE}
@@ -275,7 +274,7 @@ export const EditCavcRemandForm = ({
               errorMessage={errors?.mandateDate && COPY.CAVC_MANDATE_DATE_ERROR}
               strongLabel
             />
-          </>
+          </div>
         )}
 
         {!mandateAvailable && !watchDecisionType?.includes('remand') && (
