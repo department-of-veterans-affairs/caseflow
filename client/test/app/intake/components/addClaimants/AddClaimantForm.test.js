@@ -86,7 +86,7 @@ describe('AddClaimantForm', () => {
       partyType: 'individual',
       firstName: 'Jane',
       lastName: 'Doe',
-      address1: '123 Main St',
+      addressLine1: '123 Main St',
       city: 'San Francisco',
       state: 'CA',
       zip: '94123',

@@ -29,6 +29,7 @@ class HearingSerializer
   attribute :appellant_last_name
   attribute :appellant_state
   attribute :appellant_zip
+  attribute :appellant_relationship, if: for_full
   attribute :available_hearing_locations
   attribute :bva_poc
   attribute :central_office_time_string
