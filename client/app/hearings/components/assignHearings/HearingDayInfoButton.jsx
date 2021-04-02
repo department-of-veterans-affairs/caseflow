@@ -29,7 +29,7 @@ export const HearingDayInfoButton = ({ hearingDay, selected, onSelectedHearingDa
     hearingRoomOrEmptyString(hearingDay);
   const separator = separatorIfJudgeOrRoomPresent(hearingDay);
   const formattedSlotRatio = formatSlotRatio(hearingDay);
-  const formattedDate = moment(hearingDay.scheduledFor).format('ddd MMM Do');
+  const formattedDate = moment(hearingDay.scheduledFor).format('ddd MMM D');
 
   const classNames = selected ? ['selected-hearing-day-info-button'] : ['unselected-hearing-day-info-button'];
 
