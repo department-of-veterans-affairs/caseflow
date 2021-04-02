@@ -9,6 +9,7 @@ import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMA
 // To see how values were determined: https://github.com/department-of-veterans-affairs/caseflow/pull/14556#discussion_r447102582
 import TIMEZONES from '../../constants/TIMEZONES';
 import { COMMON_TIMEZONES, REGIONAL_OFFICE_ZONE_ALIASES } from '../constants/AppConstants';
+import { VIDEO_HEARING_LABEL } from './constants';
 import ApiUtil from '../util/ApiUtil';
 import { RESET_VIRTUAL_HEARING } from './contexts/HearingsFormContext';
 import HEARING_REQUEST_TYPES from '../../constants/HEARING_REQUEST_TYPES';
@@ -548,6 +549,34 @@ export const formatTimeSlotLabel = (time, zone) => {
   }
 
   return `${coTime} (${roTime})`;
+};
+
+export const formatHearingType = (hearingType) => {
+  if (hearingType.toLowerCase().startsWith('video')) {
+    return VIDEO_HEARING_LABEL;
+  }
+
+  return hearingType;
+};
+
+export const formatVljName = (hearingDay) => {
+  const first = hearingDay?.judgeFirstName;
+  const last = hearingDay?.judgeLastName;
+
+  if (last && first) {
+    return `${last}, ${first}`;
+  }
+
+  return '';
+};
+
+export const formatSlotRatio = (hearingDay) => {
+  const scheduledHearings = _.get(hearingDay, 'hearings', {});
+  const scheduledHearingCount = Object.keys(scheduledHearings).length;
+  const availableSlotCount = _.get(hearingDay, 'totalSlots', 0) - scheduledHearingCount;
+  const formattedSlotRatio = `${scheduledHearingCount} of ${availableSlotCount}`;
+
+  return formattedSlotRatio;
 };
 
 /* eslint-enable camelcase */

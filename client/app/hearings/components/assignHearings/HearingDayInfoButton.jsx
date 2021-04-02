@@ -13,7 +13,7 @@ import {
   typeAndJudgeStyle
 } from './styles';
 
-import { VIDEO_HEARING_LABEL } from '../../constants';
+import { formatHearingType, formatVljName, formatSlotRatio } from '../../utils';
 
 // Check if there's a judge assigned
 const hearingDayHasJudge = (hearingDay) => hearingDay.judgeFirstName && hearingDay.judgeLastName;
@@ -25,35 +25,6 @@ const hearingDayHasJudgeOrRoom = (hearingDay) => hearingDayHasJudge(hearingDay) 
 const separatorIfJudgeOrRoomPresent = (hearingDay) => hearingDayHasJudgeOrRoom(hearingDay) ? '·' : '';
 // This is necessecary otherwise 'null' is displayed when there's no room or judge
 const formatHearingRoom = (hearingDay) => hearingDay.room ? hearingDay.room : '';
-// This came out of ListSchedule, should be refactored into common import
-const formatHearingType = (hearingType) => {
-  if (hearingType.toLowerCase().startsWith('video')) {
-    return VIDEO_HEARING_LABEL;
-  }
-
-  return hearingType;
-};
-// This came out of ListSchedule, should be refactored into common import
-// I modified it though, will need to make that change in ListSchedule
-const formatVljName = (hearingDay) => {
-  const first = hearingDay?.judgeFirstName;
-  const last = hearingDay?.judgeLastName;
-
-  if (last && first) {
-    return `${last}, ${first}`;
-  }
-
-  return '';
-};
-const formatSlotRatio = (hearingDay) => {
-// This came from AssignHearingTabs, modified, the slots dont match new work
-  const scheduledHearings = _.get(hearingDay, 'hearings', {});
-  const scheduledHearingCount = Object.keys(scheduledHearings).length;
-  const availableSlotCount = _.get(hearingDay, 'totalSlots', 0) - scheduledHearingCount;
-  const formattedSlotRatio = `${scheduledHearingCount} of ${availableSlotCount}`;
-
-  return formattedSlotRatio;
-};
 
 export const HearingDayInfoButton = ({ hearingDay, selected, onSelectedHearingDayChange }) => {
   const formattedHearingType = formatHearingType(hearingDay.readableRequestType);
