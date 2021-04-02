@@ -69,9 +69,7 @@ export const generateSchema = ({ maxIssues }) =>
     }),
     mandateDate: yup.mixed().when('remandDatesProvided', {
       is: 'yes',
-      then: yup.
-        date().
-        max(new Date()).
+      then: yup.date().max(new Date()).
         required(),
     }),
     issueIds: yup.
