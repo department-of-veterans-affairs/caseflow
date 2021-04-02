@@ -353,8 +353,8 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
         expect(page).to_not have_content(COPY::EDIT_CLAIM_LABEL_MODAL_NOTE)
         expect(page).to have_content("We are unable to edit the claim label.")
         sleep 1 # when frontend displays result of XHR, write a capybara expect against that
-      
-        expect(EndProductUpdate.find_by(original_decision_review: higher_level_review)).to_not be_nil
+
+        expect(EndProductUpdate.find_by(error: "bgs error")).to_not be_nil
         expect(higher_level_review.end_product_establishments.where(code: new_ep_code).count).to eq(1)
       end
     end
