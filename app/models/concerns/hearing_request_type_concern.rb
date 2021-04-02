@@ -52,7 +52,7 @@ module HearingRequestTypeConcern
   end
 
   def current_hearing_request_type
-    format_or_formatted_original_request_type(changed_hearing_request_type)
+    format_or_formatted_original_hearing_request_type(changed_hearing_request_type)
   end
 
   def readable_current_hearing_request_type
@@ -76,11 +76,11 @@ module HearingRequestTypeConcern
   private
 
   def previous_hearing_request_type_for_task(task_id)
-    format_or_formatted_original_request_type(changeset_at_index_for_task(task_id)&.first)
+    format_or_formatted_original_hearing_request_type(changeset_at_index_for_task(task_id)&.first)
   end
 
   def current_hearing_request_type_for_task(task_id)
-    format_or_formatted_original_request_type(changeset_at_index_for_task(task_id)&.last)
+    format_or_formatted_original_hearing_request_type(changeset_at_index_for_task(task_id)&.last)
   end
 
   def changeset_at_index_for_task(task_id)
@@ -90,7 +90,7 @@ module HearingRequestTypeConcern
     versions[request_type_index].changeset["changed_hearing_request_type"]
   end
 
-  def format_or_formatted_original_request_type(request_type)
+  def format_or_formatted_original_hearing_request_type(request_type)
     if request_type.present?
       format_hearing_request_type(request_type)
     else
