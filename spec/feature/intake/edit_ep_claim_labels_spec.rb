@@ -192,7 +192,10 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
       find("button", text: "Confirm").click
 
       expect(page).to_not have_content(COPY::EDIT_CLAIM_LABEL_MODAL_NOTE)
-      sleep 1 # when frontend displays result of XHR, write a capybara expect against that
+
+      expect(page).to have_current_path("/search?veteran_ids=#{higher_level_review.veteran.id}")
+      expect(page).to have_content COPY::EDIT_EP_CLAIM_LABEL_SUCCESS_ALERT_TITLE
+      expect(page).to have_content COPY::EDIT_EP_CLAIM_LABEL_SUCCESS_ALERT_MESSAGE
 
       expect(EndProductUpdate.find_by(original_decision_review: higher_level_review)).to_not be_nil
       expect(higher_level_review.end_product_establishments.where(code: new_ep_code).count).to eq(2)
