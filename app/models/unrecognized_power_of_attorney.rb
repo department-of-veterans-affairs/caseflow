@@ -21,4 +21,8 @@ class UnrecognizedPowerOfAttorney
   def representative_type
     "Unrecognized representative"
   end
+
+  def participant_id
+    nil
+  end
 end

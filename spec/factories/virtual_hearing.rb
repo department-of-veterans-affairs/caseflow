@@ -35,7 +35,7 @@ FactoryBot.define do
       after(:build, &:generate_conference_pins)
     end
 
-    trait :previously_central do
+    trait :timezones_initialized do
       appellant_tz { "America/Denver" }
       representative_tz { "America/Los_Angeles" }
     end
