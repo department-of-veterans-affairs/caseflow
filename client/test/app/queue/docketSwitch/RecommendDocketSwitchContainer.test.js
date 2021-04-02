@@ -19,7 +19,7 @@ describe('formatDocketSwitchRecommendation', () => {
         hyperlink,
         disposition,
       });
-      screen.debug()
+
       expect(res).toMatch(
         new RegExp(`\\*\\*Summary:\\*\\* ${summary} {2}\\n {2}\\n`)
       );
@@ -29,65 +29,65 @@ describe('formatDocketSwitchRecommendation', () => {
       expect(res).toMatch(
         new RegExp('\\*\\*Recommendation:\\*\\* Grant all issues {2}\\n {2}\\n')
       );
-      expect(res).toMatch(new RegExp(`\\*\\*Draft letter:\\*\\* [View link](${hyperlink})`));
+      expect(res).toMatch(`**Draft letter:** [View link](${hyperlink})`);
       expect(res).toMatchSnapshot();
     });
   });
 
-  // describe('with partially_granted disposition', () => {
-  //   beforeAll(() => {
-  //     disposition = 'partially_granted';
-  //   });
+  describe('with partially_granted disposition', () => {
+    beforeAll(() => {
+      disposition = 'partially_granted';
+    });
 
-  //   it('properly formats', () => {
-  //     const res = formatDocketSwitchRecommendation({
-  //       summary,
-  //       timely,
-  //       hyperlink,
-  //       disposition,
-  //     });
+    it('properly formats', () => {
+      const res = formatDocketSwitchRecommendation({
+        summary,
+        timely,
+        hyperlink,
+        disposition,
+      });
 
-  //     expect(res).toMatch(
-  //       new RegExp(`\\*\\*Summary:\\*\\* ${summary} {2}\\n {2}\\n`)
-  //     );
-  //     expect(res).toMatch(
-  //       new RegExp('\\*\\*Is this a timely request:\\*\\* Yes {2}\\n {2}\\n')
-  //     );
-  //     expect(res).toMatch(
-  //       new RegExp(
-  //         '\\*\\*Recommendation:\\*\\* Grant a partial switch {2}\\n {2}\\n'
-  //       )
-  //     );
-  //     expect(res).toMatch(new RegExp(`\\*\\*Draft letter:\\*\\* [View link](${hyperlink})`));
-  //     expect(res).toMatchSnapshot();
-  //   });
-  // });
+      expect(res).toMatch(
+        new RegExp(`\\*\\*Summary:\\*\\* ${summary} {2}\\n {2}\\n`)
+      );
+      expect(res).toMatch(
+        new RegExp('\\*\\*Is this a timely request:\\*\\* Yes {2}\\n {2}\\n')
+      );
+      expect(res).toMatch(
+        new RegExp(
+          '\\*\\*Recommendation:\\*\\* Grant a partial switch {2}\\n {2}\\n'
+        )
+      );
+      expect(res).toMatch(`**Draft letter:** [View link](${hyperlink})`);
+      expect(res).toMatchSnapshot();
+    });
+  });
 
-  // describe('with denied disposition', () => {
-  //   beforeAll(() => {
-  //     disposition = 'denied';
-  //   });
+  describe('with denied disposition', () => {
+    beforeAll(() => {
+      disposition = 'denied';
+    });
 
-  //   it('properly formats', () => {
-  //     const res = formatDocketSwitchRecommendation({
-  //       summary,
-  //       timely,
-  //       hyperlink,
-  //       disposition,
-  //     });
+    it('properly formats', () => {
+      const res = formatDocketSwitchRecommendation({
+        summary,
+        timely,
+        hyperlink,
+        disposition,
+      });
 
-  //     expect(res).toMatch(
-  //       new RegExp(`\\*\\*Summary:\\*\\* ${summary} {2}\\n {2}\\n`)
-  //     );
-  //     expect(res).toMatch(
-  //       new RegExp('\\*\\*Is this a timely request:\\*\\* Yes {2}\\n {2}\\n')
-  //     );
-  //     expect(res).toMatch(
-  //       new RegExp('\\*\\*Recommendation:\\*\\* Deny all issues {2}\\n {2}\\n')
-  //     );
-  //     expect(res).toMatch(new RegExp(`\\*\\*Draft letter:\\*\\* [View link](${hyperlink})`));
-  //     expect(res).toMatchSnapshot();
-  //   });
-  // });
+      expect(res).toMatch(
+        new RegExp(`\\*\\*Summary:\\*\\* ${summary} {2}\\n {2}\\n`)
+      );
+      expect(res).toMatch(
+        new RegExp('\\*\\*Is this a timely request:\\*\\* Yes {2}\\n {2}\\n')
+      );
+      expect(res).toMatch(
+        new RegExp('\\*\\*Recommendation:\\*\\* Deny all issues {2}\\n {2}\\n')
+      );
+      expect(res).toMatch(`**Draft letter:** [View link](${hyperlink})`);
+      expect(res).toMatchSnapshot();
+    });
+  });
 });
 

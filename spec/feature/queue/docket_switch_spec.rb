@@ -110,7 +110,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(page).to have_content "Summary: #{summary}"
       expect(page).to have_content "Is this a timely request: #{timely.capitalize}"
       expect(page).to have_content "Recommendation: Grant all issues"
-      expect(page).to have_content "Draft letter: #{hyperlink}"
+      expect(page).to have_content "Draft letter: View link"
     end
   end
 
