@@ -38,7 +38,7 @@ class CavcRemand < CaseflowRecord
     Constants.CAVC_REMAND_SUBTYPES.mdr.to_sym => Constants.CAVC_REMAND_SUBTYPES.mdr
   }
 
-  # called from Add Cavc Date Modal submission
+  # called from the Add Cavc Date Modal
   def add_cavc_dates(params)
     if already_has_mandate?
       fail Caseflow::Error::CannotUpdateMandatedRemands
@@ -48,7 +48,7 @@ class CavcRemand < CaseflowRecord
     end_mandate_hold
   end
 
-  # called from Edit Remand link
+  # called from the Edit Remand Form
   def update(params)
     new_decision_date = (Date.parse(params[:decision_date]) - decision_date).to_i.abs > 0
     update!(params)
@@ -61,8 +61,7 @@ class CavcRemand < CaseflowRecord
     if mandate_not_required?
       parent_task_types = [:MdrTask, :MandateHoldTask]
       # There should only be 1 open timed_hold_parent_task
-      remand_appeal.tasks.open.where(type: parent_task_types).find_each do |timed_hold_parent_task|
-        timed_hold_parent_task.update_timed_hold
+      remand_appeal.tasks.open.where(type: parent_task_types).find_each(&:update_timed_hold)
       end
     end
   end
@@ -123,9 +122,5 @@ class CavcRemand < CaseflowRecord
 
   def cavc_task
     CavcTask.open.find_by(appeal_id: remand_appeal_id)
-  end
-
-  def modal_source
-    "add_cavc_date_modal"
   end
 end

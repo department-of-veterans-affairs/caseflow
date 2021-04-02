@@ -25,7 +25,7 @@ class MdrTask < Task
 
   def self.create_with_hold(parent_task)
     ActiveRecord::Base.transaction do
-      create!(parent: parent_task, appeal: parent_task.appeal).tap { |mdr_task| mdr_task.create_timed_hold_task }
+      create!(parent: parent_task, appeal: parent_task.appeal).tap(&:create_timed_hold_task)
     end
   end
 

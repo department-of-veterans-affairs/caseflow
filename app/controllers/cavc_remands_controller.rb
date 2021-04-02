@@ -39,7 +39,7 @@ class CavcRemandsController < ApplicationController
     JMR_REQUIRED_PARAMS,
     MDR_REQUIRED_PARAMS,
     :remand_subtype,
-    :source
+    :source_form
   ].flatten.freeze
 
   def create
