@@ -43,6 +43,7 @@ export default class CopyTextButton extends React.PureComponent {
             type="submit"
             className="cf-apppeal-id"
             aria-label={`Copy ${label} ${text}`}
+            role="button"
             {...clipboardButtonStyling(buttonStyles)}
           >
             {text}&nbsp;
