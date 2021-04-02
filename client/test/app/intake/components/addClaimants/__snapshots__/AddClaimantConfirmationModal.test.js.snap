@@ -67,12 +67,7 @@ exports[`AddClaimantConfirmationModal individual claimant missing last name show
               <div>
                 Jane McClaimant 
               </div>
-              <div>
-                123 Main St
-              </div>
-              <div>
-                Apt 1
-              </div>
+              <div />
               <div>
                 San Francisco, CA USA 94123
               </div>
@@ -203,15 +198,8 @@ exports[`AddClaimantConfirmationModal organization claimant renders correctly 1`
                   Claimant
                 </strong>
               </div>
-              <div>
-                Organization of Vet Helpers
-              </div>
-              <div>
-                123 Main St
-              </div>
-              <div>
-                Apt 1
-              </div>
+              <div />
+              <div />
               <div>
                 San Francisco, CA USA 94123
               </div>
@@ -331,12 +319,7 @@ exports[`AddClaimantConfirmationModal with POA renders correctly 1`] = `
               <div>
                 Jane McClaimant Doe
               </div>
-              <div>
-                123 Main St
-              </div>
-              <div>
-                Apt 1
-              </div>
+              <div />
               <div>
                 San Francisco, CA USA 94123
               </div>
@@ -355,12 +338,7 @@ exports[`AddClaimantConfirmationModal with POA renders correctly 1`] = `
               <div>
                 Paul Ern O'Attorney
               </div>
-              <div>
-                321 Main St
-              </div>
-              <div>
-                Suite 5
-              </div>
+              <div />
               <div>
                 Washington, DC USA 20001
               </div>
@@ -468,12 +446,7 @@ exports[`AddClaimantConfirmationModal without POA renders correctly 1`] = `
               <div>
                 Jane McClaimant Doe
               </div>
-              <div>
-                123 Main St
-              </div>
-              <div>
-                Apt 1
-              </div>
+              <div />
               <div>
                 San Francisco, CA USA 94123
               </div>
