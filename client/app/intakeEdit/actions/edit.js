@@ -81,9 +81,7 @@ export const editEpClaimLabel = (claimId, formType, previousCode, selectedCode) 
     (error) => {
       const responseObject = error.response.body || {};
       const responseErrorCode = responseObject.error_code;
-       console.log('error', responseObject);
-       console.log('response', responseErrorCode);
-
+      
         dispatch({
           type: ACTIONS.EDIT_EP_CLAIM_LABEL_FAILED,
           payload: {
