@@ -217,12 +217,15 @@ describe InitialTasksFactory, :postgres do
                cavc_decision_type: cavc_decision_type,
                remand_subtype: remand_subtype,
                judgement_date: judgement_date,
-               mandate_date: mandate_date)
+               mandate_date: mandate_date,
+               decision_date: decision_date
+              )
       end
 
       let(:cavc_decision_type) { Constants.CAVC_DECISION_TYPES.remand }
       let(:judgement_date) { 30.days.ago.to_date }
       let(:mandate_date) { 30.days.ago.to_date }
+      let(:decision_date) { 30.days.ago.to_date }
 
       before do
         expect_any_instance_of(InitialTasksFactory).to receive(:create_root_and_sub_tasks!).once.and_call_original
@@ -248,6 +251,10 @@ describe InitialTasksFactory, :postgres do
         include_examples "remand appeal blocking distribution", SendCavcRemandProcessedLetterTask, "assigned"
       end
 
+      # THIS is the test that fails. In decision_date_plus_90_days, appeal.cavc_remand is nil.
+      # I noticed that CavcRemand.count == 0 in a debugger; I'm wondering if this is inside a
+      # transaction or something weird? Maybe this will be evident to me in the morning. It's not
+      # an assertion failing; we're hitting an exception after create_remand_substack in this case.
       context "when CavcRemand subtype is MDR" do
         let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.mdr }
 
