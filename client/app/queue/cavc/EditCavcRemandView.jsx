@@ -48,8 +48,8 @@ export const EditCavcRemandView = () => {
   const handleSubmit = async (formData) => {
     const payload = {
       data: {
-        judgement_date: formData.judgementDate,
-        mandate_date: formData.mandateDate,
+        judgement_date: formData.judgementDate ? formData.judgementDate : '',
+        mandate_date: formData.mandateDate ? formData.mandateDate : '',
         source_appeal_id: cavcRemand.source_appeal_uuid,
         remand_appeal_id: appealId,
         cavc_docket_number: formData.docketNumber,

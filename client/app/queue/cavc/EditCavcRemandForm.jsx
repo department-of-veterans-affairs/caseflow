@@ -167,6 +167,13 @@ export const EditCavcRemandForm = ({
     [watchRemandType, watchRemandDatesProvided]
   );
 
+  useEffect(() => {
+    if (!mandateDatesAvailable) {
+      setValue('judgementDate', '');
+      setValue('mandateDate', '');
+    }
+  }, [watchRemandType, watchRemandDatesProvided]);
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <AppSegment filledBackground>
