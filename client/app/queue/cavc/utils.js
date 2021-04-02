@@ -59,7 +59,7 @@ export const generateSchema = ({ maxIssues }) =>
       date().
       max(new Date()).
       required(),
-    mandateSame: yup.boolean(),
+    mandateSame: yup.boolean(), // TODO: remove if not needed; see remandDatesProvided
     judgementDate: yup.mixed().when('remandDatesProvided', {
       is: 'yes',
       then: yup.
