@@ -26,9 +26,10 @@ module HearingRequestTypeConcern
               allow_nil: true
   end
 
-  # uses the paper_trail version on LegacyAppeal
-  def latest_appeal_event
-    TaskEvent.new(version: versions.last) if versions.any?
+  def last_converted_by
+    if versions.any?
+      versions.last.whodunnit.present? ? User.find(versions.last.whodunnit) : User.new
+    end
   end
 
   def formatted_original_hearing_request_type

@@ -38,9 +38,7 @@ class ChangeHearingRequestTypeTask < Task
   end
 
   def converted_by
-    if completed?
-      appeal.latest_appeal_event.who
-    end
+    appeal.last_converted_by if completed?
   end
 
   def default_instructions
