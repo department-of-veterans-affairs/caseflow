@@ -171,8 +171,6 @@ class AddIssuesPage extends React.Component {
   }
 
   submitClaimLabelEdit = () => {
-    // eslint-disable-next-line no-console
-    console.log(`Submitting request to switch from ${this.state.previousEpCode} to ${this.state.selectedEpCode}...`);
     this.props.editEpClaimLabel(
       this.props.intakeForms[this.props.formType].claimId,
       this.props.formType,
@@ -187,9 +185,16 @@ class AddIssuesPage extends React.Component {
   }
 
   render() {
-    const { intakeForms, formType, veteran, featureToggles, editPage, addingIssue, userCanWithdrawIssues } = this.props;
+    const { intakeForms,
+      formType,
+      veteran,
+      featureToggles,
+      editPage,
+      addingIssue,
+      userCanWithdrawIssues
+    } = this.props;
     const intakeData = intakeForms[formType];
-    const { useAmaActivationDate, editEpClaimLabels } = featureToggles;
+    const { useAmaActivationDate, editEpClaimLabels, nonVeteranClaimants } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
 
     if (this.willRedirect(intakeData, hasClearedEp)) {
@@ -232,6 +237,10 @@ class AddIssuesPage extends React.Component {
       return false;
     };
 
+    const editDisabled = !_.isEqual(
+      intakeData.addedIssues, intakeData.originalIssues
+    );
+
     const addIssueButton = () => {
       return (
         <div className="cf-actions">
@@ -270,6 +279,14 @@ class AddIssuesPage extends React.Component {
     const columns = [{ valueName: 'field' }, { valueName: 'content' }];
 
     let fieldsForFormType = getAddIssuesFields(formType, veteran, intakeData);
+
+    if (formType === 'appeal' && nonVeteranClaimants) {
+      fieldsForFormType = fieldsForFormType.concat({
+        field: 'Claimant\'s POA',
+        content: intakeData.powerOfAttorneyName || COPY.ADD_CLAIMANT_CONFIRM_MODAL_NO_POA
+      });
+    }
+
     let issueChangeClassname = () => {
       // no-op unless the issue banner needs to be displayed
     };
@@ -319,6 +336,7 @@ class AddIssuesPage extends React.Component {
             <div className="edit-claim-label">
               <Button
                 classNames={['usa-button-secondary']}
+                disabled={editDisabled}
                 onClick={() => this.openEditClaimLabelModal(endProductCode)}
               >
               Edit claim label

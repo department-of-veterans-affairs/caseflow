@@ -362,6 +362,7 @@ export const prepareAppealForStore = (appeals) => {
       appellantIsNotVeteran: appeal.attributes.appellant_is_not_veteran,
       appellantFullName: appeal.attributes.appellant_full_name,
       appellantAddress: appeal.attributes.appellant_address,
+      appellantTz: appeal.attributes.appellant_tz,
       appellantRelationship: appeal.attributes.appellant_relationship,
       assignedToLocation: appeal.attributes.assigned_to_location,
       veteranDateOfBirth: appeal.attributes.veteran_date_of_birth,
@@ -387,7 +388,9 @@ export const prepareAppealForStore = (appeals) => {
       canEditDocumentId: appeal.attributes.can_edit_document_id,
       attorneyCaseRewriteDetails: appeal.attributes.attorney_case_rewrite_details,
       docketSwitch: appeal.attributes.docket_switch,
-      switchedDockets: appeal.attributes.switched_dockets
+      switchedDockets: appeal.attributes.switched_dockets,
+      remandSourceAppealId: appeal.attributes.remand_source_appeal_id,
+      remandJudgeName: appeal.attributes.remand_judge_name
     };
 
     return accumulator;

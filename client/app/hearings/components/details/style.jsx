@@ -152,6 +152,12 @@ export const inputFix = css({
   },
 });
 
+export const input8px = css({
+  '& .question-label': {
+    marginBottom: '8px !important',
+  },
+});
+
 export const virtualHearingModalStyles = css({
   '& pre': {
     margin: '5px 0'
