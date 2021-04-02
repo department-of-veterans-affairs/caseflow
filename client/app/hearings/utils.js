@@ -307,13 +307,6 @@ export const hearingTimeOptsWithZone = (options, local, timesInZone = 'America/N
       [label]: localTimezone && localTime !== easternTime ? `${localTime} / ${easternTime}` : easternTime
     };
 
-    // Log statements
-    // console.log('old: ', item.value);
-    // console.log('new: ', newItem.value);
-    // console.log('localTime: ', localTime);
-    // console.log('easternTime: ', easternTime);
-    // console.log('localTimezone', localTimezone);
-
     return newItem;
   });
 };
