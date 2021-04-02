@@ -50,7 +50,8 @@ export const EditCavcRemandView = () => {
       data: {
         judgement_date: formData.judgementDate,
         mandate_date: formData.mandateDate,
-        source_appeal_id: appealId,
+        source_appeal_id: cavcRemand.source_appeal_uuid,
+        remand_appeal_id: appealId,
         cavc_docket_number: formData.docketNumber,
         cavc_judge_full_name: formData.judge,
         cavc_decision_type: formData.decisionType,

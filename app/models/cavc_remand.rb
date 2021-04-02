@@ -50,8 +50,20 @@ class CavcRemand < CaseflowRecord
 
   # called from the Edit Remand Form
   def update(params)
+    # Identify changes
+    decision_issue_ids_as_ints = params[:decision_issue_ids].map(&:to_i)
+    decision_issue_ids_add = decision_issue_ids_as_ints - decision_issue_ids
+    decision_issue_ids_remove = decision_issue_ids - decision_issue_ids_as_ints
     new_decision_date = (Date.parse(params[:decision_date]) - decision_date).to_i.abs > 0
+
+    # Update self
     update!(params)
+
+    # Apply changes to other records
+    if decision_issue_ids_add.any? || decision_issue_ids_remove.any?
+      update_request_issues(add: decision_issue_ids_add, remove: decision_issue_ids_remove)
+    end
+
     update_timed_hold if new_decision_date
   end
 
@@ -94,10 +106,20 @@ class CavcRemand < CaseflowRecord
 
   def establish_appeal_stream
     self.remand_appeal ||= source_appeal.create_stream(:court_remand).tap do |cavc_appeal|
-      DecisionIssue.find(decision_issue_ids).map do |cavc_remanded_issue|
-        cavc_remanded_issue.create_contesting_request_issue!(cavc_appeal)
-      end
+      update_request_issues(cavc_appeal, add: decision_issue_ids)
       AdvanceOnDocketMotion.copy_granted_motions_to_appeal(source_appeal, cavc_appeal)
+    end
+  end
+
+  def update_request_issues(cavc_appeal = remand_appeal, add: [], remove: [])
+    puts "add: #{add}    remove: #{remove}"
+    DecisionIssue.find(add).map do |cavc_remanded_issue|
+      cavc_remanded_issue.create_contesting_request_issue!(cavc_appeal)
+    end
+    DecisionIssue.find(remove).map do |cavc_remanded_issue|
+      puts "remove cavc_remanded_issue: #{cavc_remanded_issue}"
+      req_issues = remand_appeal.request_issues.where(contested_decision_issue_id: cavc_remanded_issue.id)
+      req_issues.delete_all
     end
   end
 
