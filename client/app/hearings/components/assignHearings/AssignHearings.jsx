@@ -1,27 +1,11 @@
-import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'lodash';
 
-import { COLORS } from '../../../constants/AppConstants';
 import { NoUpcomingHearingDayMessage } from './Messages';
 import AssignHearingsTabs from './AssignHearingsTabs';
 import HearingDayInfoButton from './HearingDayInfoButton';
-
-const horizontalRuleStyling = css({
-  border: 0,
-  width: '90%',
-  borderTop: `1px solid ${COLORS.GREY_LIGHT}`,
-  margin: 'auto',
-});
-
-const sectionNavigationListStyling = css({
-  '& > li': {
-    color: COLORS.PRIMARY,
-    borderWidth: 0
-  }
-});
-const roSelectionStyling = css({ marginTop: '10px', textAlign: 'center' });
+import { hearingDayListHorizontalRuleStyle, sectionNavigationListStyling, roSelectionStyling } from './styles';
 
 const UpcomingHearingDaysNav = ({
   upcomingHearingDays, selectedHearingDay,
@@ -49,7 +33,7 @@ const UpcomingHearingDaysNav = ({
                     hearingDay={hearingDay}
                     onSelectedHearingDayChange={onSelectedHearingDayChange}
                   />
-                  <hr {...horizontalRuleStyling} />
+                  <hr {...hearingDayListHorizontalRuleStyle} />
                 </li>
               );
             }

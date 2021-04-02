@@ -7,9 +7,28 @@ export const tableNumberStyling = css({
   }
 });
 
+// Used by AssignHearings, contains multiple HearingDayInfoButton(s)
+const hearingDayButtonWidth = '80%';
+
+export const hearingDayListHorizontalRuleStyle = css({
+  border: 0,
+  width: hearingDayButtonWidth,
+  borderTop: `1px solid ${COLORS.GREY_LIGHT}`,
+  margin: 'auto',
+});
+
+export const sectionNavigationListStyling = css({
+  '& > li': {
+    color: COLORS.PRIMARY,
+    borderWidth: 0
+  }
+});
+
+export const roSelectionStyling = css({ marginTop: '10px', textAlign: 'center' });
+
 // Used by HearingDayInfoButton
 const buttonCommonStyle = {
-  width: '90%',
+  width: hearingDayButtonWidth,
   paddingTop: '1.5rem',
   paddingBottom: '1.5rem',
   outline: 'none'
@@ -33,13 +52,23 @@ export const buttonSelectedStyle = css(
     }
   });
 
-export const dateStyle = css({ fontWeight: 'bold' });
+const bottomPadInsideColumn = { paddingBottom: '0.5rem' };
+
+export const slotDisplayStyle = css({
+  ...bottomPadInsideColumn,
+});
+
+export const dateStyle = css({
+  ...bottomPadInsideColumn,
+  ...{ fontWeight: 'bold' }
+});
 
 export const leftColumnStyle = css({
   width: '60%',
   display: 'inline-block',
   textAlign: 'left'
 });
+
 export const rightColumnStyle = css({
   width: '40%',
   display: 'inline-block',
@@ -47,6 +76,7 @@ export const rightColumnStyle = css({
   overflowX: 'hidden',
   overflowY: 'hidden'
 });
+
 export const typeAndJudgeStyle = css({
   textOverflow: 'ellipsis',
   overflowX: 'hidden',
