@@ -16,7 +16,7 @@ FactoryBot.define do
         {
           first_name: first_name,
           last_name: last_name,
-          date_of_birth: "01/10/1935",
+          date_of_birth: 30.years.ago.to_date.strftime("%m/%d/%Y"),
           date_of_death: date_of_death,
           name_suffix: name_suffix,
           sex: sex,
