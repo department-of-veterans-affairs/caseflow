@@ -62,7 +62,6 @@ class CavcRemand < CaseflowRecord
       parent_task_types = [:MdrTask, :MandateHoldTask]
       # There should only be 1 open timed_hold_parent_task
       remand_appeal.tasks.open.where(type: parent_task_types).find_each(&:update_timed_hold)
-      end
     end
   end
 
