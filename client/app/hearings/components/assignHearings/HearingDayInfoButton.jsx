@@ -21,7 +21,7 @@ const hearingDayHasJudge = (hearingDay) => hearingDay.judgeFirstName && hearingD
 const hearingDayHasRoom = (hearingDay) => Boolean(hearingDay.room);
 // Check if there's a judge or room assigned
 const hearingDayHasJudgeOrRoom = (hearingDay) => hearingDayHasJudge(hearingDay) || hearingDayHasRoom(hearingDay);
-
+// Make the '·' separator appear or disappear
 const separatorIfJudgeOrRoomPresent = (hearingDay) => hearingDayHasJudgeOrRoom(hearingDay) ? '·' : '';
 // This is necessecary otherwise 'null' is displayed when there's no room or judge
 const formatHearingRoom = (hearingDay) => hearingDay.room ? hearingDay.room : '';
@@ -31,16 +31,19 @@ export const HearingDayInfoButton = ({ hearingDay, selected, onSelectedHearingDa
   const judgeOrRoom = hearingDayHasJudge(hearingDay) ? formatVljName(hearingDay) : formatHearingRoom(hearingDay);
   const separator = separatorIfJudgeOrRoomPresent(hearingDay);
   const formattedSlotRatio = formatSlotRatio(hearingDay);
+  const formattedDate = moment(hearingDay.scheduledFor).format('ddd MMM Do');
+  const classNames = selected ? ['selected-hearing-day-info-button'] : ['unselected-hearing-day-info-button'];
 
   return (
     <Button
       styling={selected ? buttonSelectedStyle : buttonUnselectedStyle}
       onClick={() => onSelectedHearingDayChange(hearingDay)}
+      classNames={classNames}
       linkStyling>
       <div >
         <div {...leftColumnStyle} >
           <div {...dateStyle}>
-            {moment(hearingDay.scheduledFor).format('ddd MMM Do')}
+            {formattedDate}
           </div>
           <div {...typeAndJudgeStyle}>
             {`${formattedHearingType} ${separator} ${judgeOrRoom}`}
