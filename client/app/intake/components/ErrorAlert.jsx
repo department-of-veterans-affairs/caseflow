@@ -123,8 +123,8 @@ export default class ErrorAlert extends React.PureComponent {
       unable_to_edit_ep: {
         body: (
           <Fragment>
-           We are unable to edit the claim label. Please try again and if this error persists, <a
-              href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT ticket</a>
+           We are unable to edit the claim label. Please try again and if this error persists, submit a <a
+              href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT ticket</a>.
           </Fragment>
         )
       }
