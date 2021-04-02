@@ -628,14 +628,14 @@ export const vljFullnameOrEmptyString = (hearingDay) => {
   return '';
 };
 
-// Make a string like "2 of 8" given a hearing day:
+// Make a string like "2 of 12" given a hearing day:
 // - 2 is the number of hearings scheduled for that day
-// - 8 is the 'totalSlots' which comes from HearingDay and depends on ro
+// - 12 is the 'totalSlots' which comes from HearingDay and depends on ro
 export const formatSlotRatio = (hearingDay) => {
   const scheduledHearings = _.get(hearingDay, 'hearings', {});
   const scheduledHearingCount = Object.keys(scheduledHearings).length;
-  const availableSlotCount = _.get(hearingDay, 'totalSlots', 0) - scheduledHearingCount;
-  const formattedSlotRatio = `${scheduledHearingCount} of ${availableSlotCount}`;
+  const totalSlotCount = _.get(hearingDay, 'totalSlots', 0);
+  const formattedSlotRatio = `${scheduledHearingCount} of ${totalSlotCount}`;
 
   return formattedSlotRatio;
 };
