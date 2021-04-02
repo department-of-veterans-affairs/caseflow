@@ -75,7 +75,8 @@ export const EditCavcRemandForm = ({
     reValidateMode: 'onChange',
     defaultValues: {
       issueIds: decisionIssues.map((issue) => issue.id),
-      mandateSame: !existingValues.judgementDate,  // TODO: remove if not needed; see remandDatesProvided
+      // TODO: remove the following if not needed; see remandDatesProvided
+      mandateSame: !existingValues.judgementDate,
       ...existingValues,
     },
   });
@@ -314,7 +315,7 @@ export const EditCavcRemandForm = ({
                 </>
             }
 
-            <Controller 
+            <Controller
               name="issueIds"
               control={control}
               render={({ name, onChange: onCheckChange }) => {
