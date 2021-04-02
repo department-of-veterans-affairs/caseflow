@@ -23,11 +23,11 @@ export const buttonSelectedStyle = css(
   {
     ...buttonCommonStyle,
     ...{
-      backgroundColor: COLORS.GREY_DARK,
+      backgroundColor: COLORS.BLUE_DARKEST,
       color: COLORS.WHITE,
       borderRadius: '0.1rem 0.1rem 0 0',
       '&:hover': {
-        backgroundColor: COLORS.GREY_DARK,
+        backgroundColor: COLORS.BLUE_DARKEST,
         color: COLORS.WHITE
       }
     }
