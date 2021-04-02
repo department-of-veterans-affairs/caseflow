@@ -29,6 +29,8 @@ class WorkQueue::LegacyAppealSerializer
 
   attribute :appellant_address, &:appellant_address
 
+  attribute :appellant_tz, &:appellant_tz
+
   attribute :appellant_relationship
   attribute :assigned_to_location
   attribute :vbms_id, &:sanitized_vbms_id
@@ -65,9 +67,9 @@ class WorkQueue::LegacyAppealSerializer
 
   attribute :regional_office do |object|
     {
-      key: object.regional_office.key,
-      city: object.regional_office.city,
-      state: object.regional_office.state
+      key: object.regional_office&.key,
+      city: object.regional_office&.city,
+      state: object.regional_office&.state
     }
   end
 

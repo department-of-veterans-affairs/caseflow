@@ -171,8 +171,6 @@ class AddIssuesPage extends React.Component {
   }
 
   submitClaimLabelEdit = () => {
-    // eslint-disable-next-line no-console
-    console.log(`Submitting request to switch from ${this.state.previousEpCode} to ${this.state.selectedEpCode}...`);
     this.props.editEpClaimLabel(
       this.props.intakeForms[this.props.formType].claimId,
       this.props.formType,
@@ -187,9 +185,16 @@ class AddIssuesPage extends React.Component {
   }
 
   render() {
-    const { intakeForms, formType, veteran, featureToggles, editPage, addingIssue, userCanWithdrawIssues } = this.props;
+    const { intakeForms,
+      formType,
+      veteran,
+      featureToggles,
+      editPage,
+      addingIssue,
+      userCanWithdrawIssues
+    } = this.props;
     const intakeData = intakeForms[formType];
-    const { useAmaActivationDate, editEpClaimLabels } = featureToggles;
+    const { useAmaActivationDate, editEpClaimLabels, nonVeteranClaimants } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
 
     if (this.willRedirect(intakeData, hasClearedEp)) {
@@ -232,6 +237,10 @@ class AddIssuesPage extends React.Component {
       return false;
     };
 
+    const issuesChanged = !_.isEqual(
+      intakeData.addedIssues, intakeData.originalIssues
+    );
+
     const addIssueButton = () => {
       return (
         <div className="cf-actions">
@@ -270,6 +279,14 @@ class AddIssuesPage extends React.Component {
     const columns = [{ valueName: 'field' }, { valueName: 'content' }];
 
     let fieldsForFormType = getAddIssuesFields(formType, veteran, intakeData);
+
+    if (formType === 'appeal' && nonVeteranClaimants) {
+      fieldsForFormType = fieldsForFormType.concat({
+        field: 'Claimant\'s POA',
+        content: intakeData.powerOfAttorneyName || COPY.ADD_CLAIMANT_CONFIRM_MODAL_NO_POA
+      });
+    }
+
     let issueChangeClassname = () => {
       // no-op unless the issue banner needs to be displayed
     };
@@ -308,7 +325,7 @@ class AddIssuesPage extends React.Component {
       };
     };
 
-    const endProductLabelRow = (endProductCode) => {
+    const endProductLabelRow = (endProductCode, editDisabled) => {
       return {
         field: 'EP Claim Label',
         content: (
@@ -320,6 +337,7 @@ class AddIssuesPage extends React.Component {
               <Button
                 classNames={['usa-button-secondary']}
                 onClick={() => this.openEditClaimLabelModal(endProductCode)}
+                disabled={editDisabled}
               >
               Edit claim label
               </Button>
@@ -332,13 +350,14 @@ class AddIssuesPage extends React.Component {
     Object.keys(issuesBySection).sort().
       map((key) => {
         const sectionIssues = issuesBySection[key];
+        const endProductCleared = sectionIssues[0]?.endProductCleared;
 
         if (key === 'requestedIssues') {
           rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, 'Requested issues'));
         } else if (key === 'withdrawnIssues') {
           rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, 'Withdrawn issues'));
         } else {
-          rowObjects = rowObjects.concat(endProductLabelRow(key));
+          rowObjects = rowObjects.concat(endProductLabelRow(key, endProductCleared || issuesChanged));
           rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, ' '));
         }
 

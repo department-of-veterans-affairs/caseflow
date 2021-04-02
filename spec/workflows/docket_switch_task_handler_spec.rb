@@ -50,7 +50,7 @@ describe DocketSwitch::TaskHandler, :all_dbs do
   let!(:translation_organization) { Translation.singleton }
   let!(:other_organization) { Organization.create!(name: "Other organization", url: "other") }
 
-  let(:selected_task_ids) { [old_docket_stream_tasks.first.id] }
+  let(:selected_task_ids) { [old_docket_stream_tasks.first.id.to_s] }
 
   let(:new_admin_actions) do
     [
@@ -78,7 +78,21 @@ describe DocketSwitch::TaskHandler, :all_dbs do
     context "When the disposition is granted" do
       let(:disposition) { "granted" }
 
+      it "Completes granted and ruling tasks" do
+        ruling_task = old_docket_stream.tasks.find_by(type: "DocketSwitchRulingTask")
+        granted_task = old_docket_stream.tasks.find_by(type: "DocketSwitchGrantedTask")
+
+        expect(ruling_task).to be_open
+        expect(granted_task).to be_open
+
+        subject
+
+        expect(ruling_task.reload).to be_completed
+        expect(granted_task.reload).to be_completed
+      end
+
       it "Cancels the original appeal stream and creates selected and docket-related tasks on new stream" do
+        # evidence to hearing docketswitch
         docket_task = old_docket_stream.reload.tasks.find { |task| task.type == "EvidenceSubmissionWindowTask" }
 
         expect(old_docket_stream).to be_active
@@ -128,7 +142,7 @@ describe DocketSwitch::TaskHandler, :all_dbs do
 
         expect(new_docket_task).to be_active
         expect(persistent_task_copy).to be_active
-        removed_task = old_docket_stream_tasks.find { |task| !selected_task_ids.include?(task.id) }
+        removed_task = old_docket_stream_tasks.find { |task| !selected_task_ids.include?(task.id.to_s) }
         expect(new_docket_stream.tasks.find { |task| task.type == removed_task.type }).to be nil
         expect(new_admin_action).to be_active
       end
@@ -138,7 +152,18 @@ describe DocketSwitch::TaskHandler, :all_dbs do
       let(:disposition) { "denied" }
       let(:granted_request_issue_ids) { nil }
 
-      it { is_expected.to be_falsey }
+      it "Completes denied and ruling tasks" do
+        ruling_task = old_docket_stream.reload.tasks.find { |task| task.type == "DocketSwitchRulingTask" }
+        denied_task = old_docket_stream.tasks.find_by(type: "DocketSwitchDeniedTask")
+
+        expect(ruling_task).to be_open
+        expect(denied_task).to be_open
+
+        subject
+
+        expect(ruling_task.reload).to be_completed
+        expect(denied_task.reload).to be_completed
+      end
     end
   end
 end

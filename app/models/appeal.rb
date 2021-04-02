@@ -44,7 +44,8 @@ class Appeal < DecisionReview
     Constants.AMA_STREAM_TYPES.original.to_sym => Constants.AMA_STREAM_TYPES.original,
     Constants.AMA_STREAM_TYPES.vacate.to_sym => Constants.AMA_STREAM_TYPES.vacate,
     Constants.AMA_STREAM_TYPES.de_novo.to_sym => Constants.AMA_STREAM_TYPES.de_novo,
-    Constants.AMA_STREAM_TYPES.court_remand.to_sym => Constants.AMA_STREAM_TYPES.court_remand
+    Constants.AMA_STREAM_TYPES.court_remand.to_sym => Constants.AMA_STREAM_TYPES.court_remand,
+    Constants.AMA_STREAM_TYPES.granted_substitution.to_sym => Constants.AMA_STREAM_TYPES.granted_substitution
   }
 
   after_create :conditionally_set_aod_based_on_age
@@ -537,6 +538,10 @@ class Appeal < DecisionReview
   # rubocop:disable all
   def switched_dockets
     DocketSwitch.where(old_docket_stream_id: self.id)
+  end
+
+  def appellant_relationship
+    appellant&.relationship
   end
 
   private

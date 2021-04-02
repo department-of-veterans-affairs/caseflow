@@ -62,7 +62,8 @@ class AppealsController < ApplicationController
       representative_type: appeal.representative_type,
       representative_name: appeal.representative_name,
       representative_address: appeal.representative_address,
-      representative_email_address: appeal.representative_email_address
+      representative_email_address: appeal.representative_email_address,
+      representative_tz: appeal.representative_tz
     }
   end
 

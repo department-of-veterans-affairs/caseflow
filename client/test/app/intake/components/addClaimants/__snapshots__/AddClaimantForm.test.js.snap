@@ -266,7 +266,7 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
         class="cf-form-textinput   "
       >
         <label
-          for="address1"
+          for="addressLine1"
         >
           <strong>
             <span>
@@ -276,8 +276,8 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
         </label>
         <input
           class="cf-form-textinput"
-          id="address1"
-          name="address1"
+          id="addressLine1"
+          name="addressLine1"
           type="text"
           value=""
         />
@@ -290,7 +290,7 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
         class="cf-form-textinput   "
       >
         <label
-          for="address2"
+          for="addressLine2"
         >
           <strong>
             <span>
@@ -305,15 +305,15 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
         </label>
         <input
           class="cf-form-textinput"
-          id="address2"
-          name="address2"
+          id="addressLine2"
+          name="addressLine2"
           type="text"
           value=""
         />
       </div>
     </div>
     <div
-      class="sc-bdfBwQ hBgyjW"
+      class="sc-bdfBwQ JMref"
     >
       <div
         class="cf-form-textinput   "
@@ -474,7 +474,7 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
         class="cf-form-textinput   "
       >
         <label
-          for="email"
+          for="emailAddress"
         >
           <strong>
             <span>
@@ -489,8 +489,8 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
         </label>
         <input
           class="cf-form-textinput"
-          id="email"
-          name="email"
+          id="emailAddress"
+          name="emailAddress"
           type="text"
           value=""
         />
@@ -545,14 +545,14 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
           class="cf-form-radio-option"
         >
           <input
-            id="vaForm_false"
-            name="vaForm"
+            id="poaForm_false"
+            name="poaForm"
             type="radio"
             value="false"
           />
           <label
             class=""
-            for="vaForm_false"
+            for="poaForm_false"
           >
             No
           </label>
@@ -561,14 +561,14 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
           class="cf-form-radio-option"
         >
           <input
-            id="vaForm_true"
-            name="vaForm"
+            id="poaForm_true"
+            name="poaForm"
             type="radio"
             value="true"
           />
           <label
             class=""
-            for="vaForm_true"
+            for="poaForm_true"
           >
             Yes
           </label>

@@ -144,7 +144,7 @@ class DecisionReview < CaseflowRecord
   end
 
   def remove_claimants!
-    claimants.delete_all
+    claimants.each(&:destroy!)
   end
 
   # :reek:FeatureEnvy

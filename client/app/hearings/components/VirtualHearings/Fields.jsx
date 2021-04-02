@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
-import { marginTop } from '../details/style';
+import { marginTop, input8px } from '../details/style';
 import { VirtualHearingEmail } from './Emails';
 import { Timezone } from './Timezone';
 import { HelperText } from './HelperText';
@@ -11,20 +11,17 @@ import COPY from '../../../../COPY';
 export const VirtualHearingFields = ({
   errors,
   appellantTitle,
-  requestType,
   initialRepresentativeTz,
   virtualHearing,
   readOnly,
   update,
   time
 }) => {
-  const central = requestType !== 'Video';
-
-  return central ? (
+  return (
     <React.Fragment>
       <h3>{appellantTitle}</h3>
       <div id="email-section" className="usa-grid">
-        <div className="usa-width-one-third">
+        <div className="usa-width-one-third" {...input8px}>
           <Timezone
             required
             errorMessage={errors?.appellantTz}
@@ -52,7 +49,7 @@ export const VirtualHearingFields = ({
       <div className="cf-help-divider" />
       <h3>Power of Attorney</h3>
       <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
-        <div className="usa-width-one-third">
+        <div className="usa-width-one-third" {...input8px}>
           <Timezone
             errorMessage={errors?.representativeTz}
             required={Boolean(virtualHearing?.representativeEmail)}
@@ -87,30 +84,6 @@ export const VirtualHearingFields = ({
         </div>
       </div>
     </React.Fragment>
-  ) : (
-    <div id="email-section" className="usa-grid">
-      <div className="usa-width-one-third">
-        <VirtualHearingEmail
-          required
-          disabled={readOnly}
-          label={`${appellantTitle} Email`}
-          emailType="appellantEmail"
-          email={virtualHearing?.appellantEmail}
-          error={errors?.appellantEmail}
-          update={update}
-        />
-      </div>
-      <div className="usa-width-one-third">
-        <VirtualHearingEmail
-          disabled={readOnly}
-          label="POA/Representative Email"
-          emailType="representativeEmail"
-          email={virtualHearing?.representativeEmail}
-          error={errors?.representativeEmail}
-          update={update}
-        />
-      </div>
-    </div>
   );
 };
 
