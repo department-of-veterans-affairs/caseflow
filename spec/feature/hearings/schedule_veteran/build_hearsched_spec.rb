@@ -234,12 +234,19 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
 
     # Method to choose the custom hearing time dropdown
-    def select_custom_hearing_time(time)
-      if FeatureToggle.enabled?(:enable_hearing_time_slots)
+    def select_custom_hearing_time(time, append_eastern_if_slots_enabled = false)
+      slots_enabled = FeatureToggle.enabled?(:enable_hearing_time_slots)
+      if slots_enabled
         find(".time-slot-button-toggle", text: "Choose a custom time").click
       end
 
-      click_dropdown(text: time, name: "optionalHearingTime0")
+      time_string = if append_eastern_if_slots_enabled && slots_enabled
+                      "#{time} AM Eastern"
+                    else
+                      time
+                    end
+
+      click_dropdown(text: time_string, name: "optionalHearingTime0")
     end
 
     shared_examples "scheduling a central hearing" do
@@ -507,7 +514,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
             text: "Holdrege, NE (VHA) 0 miles away",
             name: "appealHearingLocation"
           )
-          select_custom_hearing_time("10:00")
+          select_custom_hearing_time("10:00", true)
           click_button("Schedule", exact: true)
 
           expect(page).to have_content(COPY::SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL)
@@ -533,7 +540,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
             text: "Holdrege, NE (VHA) 0 miles away",
             name: "appealHearingLocation"
           )
-          select_custom_hearing_time("10:00")
+          select_custom_hearing_time("10:00", true)
           click_button("Schedule", exact: true)
           click_on "Back to Schedule Veterans"
 
@@ -578,7 +585,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
             text: "Holdrege, NE (VHA) 0 miles away",
             name: "appealHearingLocation"
           )
-          select_custom_hearing_time("10:00")
+          select_custom_hearing_time("10:00", true)
           click_button("Schedule", exact: true)
 
           expect(page).to have_content(COPY::SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL)
