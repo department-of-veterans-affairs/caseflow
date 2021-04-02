@@ -86,25 +86,7 @@ export const ReadOnlyEmails = ({
   // Determine whether ti display a divider
   const showDivider = virtualHearing.representativeEmail && (repEdited || appellantEdited || showAllEmails);
 
-  return hearing.readableRequestType === 'Video' ? (
-    <React.Fragment>
-      {(appellantEmailEdited || showAllEmails) && (
-        <p>
-          <strong>{appellantTitle} Email</strong>
-          <br />
-          {virtualHearing.appellantEmail}
-        </p>
-      )}
-      {(virtualHearing.representativeEmail &&
-       (representativeEmailEdited || showAllEmails)) && (
-        <p>
-          <strong>POA/Representative Email</strong>
-          <br />
-          {virtualHearing.representativeEmail}
-        </p>
-      )}
-    </React.Fragment>
-  ) : (
+  return (
     <div {...virtualHearingModalStyles}>
       {(appellantTzEdited || appellantEmailEdited || showAllEmails) && (
         <React.Fragment>

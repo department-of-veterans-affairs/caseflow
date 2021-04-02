@@ -54,7 +54,7 @@ describe('HearingConversion', () => {
     expect(conversion).toMatchSnapshot();
   });
 
-  test('Displays read-only when type is virtual', () => {
+  test('Displays read-only when hearing type is switched from virtual', () => {
     const conversion = mount(
       <HearingConversion
         scheduledFor={amaHearing.scheduledFor.toString()}

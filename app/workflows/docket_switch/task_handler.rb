@@ -74,7 +74,7 @@ class DocketSwitch::TaskHandler
   end
 
   def attorney_user
-    granted_task = old_docket_stream.tasks.find { |task| task.is_a?(DocketSwitchGrantedTask) }
+    granted_task = old_docket_stream.tasks.find_by(type: "DocketSwitchGrantedTask", assigned_to_type: "User")
 
     granted_task&.assigned_to
   end
