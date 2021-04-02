@@ -201,10 +201,11 @@ class AddIssuesPage extends React.Component {
       return this.redirect(intakeData, hasClearedEp);
 
     }
-    const requestStatus = intakeData.requestStatus
-    const requestState = requestStatus.completeIntake || requestStatus.requestIssuesUpdate || requestStatus.editClaimLabelUpdate;
-    const showEditEpError = intakeData.editEpUpdateError
-    
+    const requestStatus = intakeData.requestStatus;
+    const requestState =
+      requestStatus.completeIntake || requestStatus.requestIssuesUpdate || requestStatus.editClaimLabelUpdate;
+    const showEditEpError = intakeData.editEpUpdateError;
+
     const requestErrorCode =
       intakeData.requestStatus.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
     const requestErrorUUID = requestStatus.completeIntakeErrorUUID;
@@ -313,8 +314,8 @@ class AddIssuesPage extends React.Component {
         content: (
           <div>
             {showEditEpError === endProductCode && (
-            <ErrorAlert errorCode="unable_to_edit_ep" />
-          )}
+              <ErrorAlert errorCode="unable_to_edit_ep" />
+            )}
             { !fieldTitle.includes('issues') && <span><strong>Requested issues</strong></span> }
             <IssueList
               onClickIssueAction={this.onClickIssueAction}
@@ -361,10 +362,10 @@ class AddIssuesPage extends React.Component {
         if (key === 'requestedIssues') {
           rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, 'Requested issues', key));
         } else if (key === 'withdrawnIssues') {
-          rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, 'Withdrawn issues'));
+          rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, 'Withdrawn issues', key));
         } else {
           rowObjects = rowObjects.concat(endProductLabelRow(key, endProductCleared || issuesChanged));
-          rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, ' '));
+          rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, ' ', key));
         }
 
         return rowObjects;

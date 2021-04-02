@@ -77,11 +77,13 @@ export const editEpClaimLabel = (claimId, formType, previousCode, selectedCode) 
         sessionStorage.setItem('veteranSearchPageAlert', JSON.stringify(alert));
         window.location.replace(`${PAGE_PATHS.SEARCH}?veteran_ids=${veteranId}`);
       }
-    }
-  ).catch((error) => {
+    }, 
+    (error) => {
       const responseObject = error.response.body || {};
       const responseErrorCode = responseObject.error_code;
-       console.log('error', error);
+       console.log('error', responseObject);
+       console.log('response', responseErrorCode);
+
         dispatch({
           type: ACTIONS.EDIT_EP_CLAIM_LABEL_FAILED,
           payload: {
@@ -90,5 +92,6 @@ export const editEpClaimLabel = (claimId, formType, previousCode, selectedCode) 
           meta: { analytics }
         });
       }
-    )
+
+    ).catch((error) => error);
 };
