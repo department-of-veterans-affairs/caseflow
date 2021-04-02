@@ -26,6 +26,7 @@ class MandateHoldTask < Task
     ActiveRecord::Base.transaction do
       mandate_hold_task = create!(parent: parent_task, appeal: parent_task.appeal)
       mandate_hold_task.create_timed_hold_task
+      mandate_hold_task
     end
   end
 

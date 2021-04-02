@@ -40,7 +40,7 @@ describe MandateHoldTask, :postgres do
         expect(child_timed_hold_tasks.count).to eq 1
         expect(child_timed_hold_tasks.first.assigned_to).to eq CavcLitigationSupport.singleton
         expect(child_timed_hold_tasks.first.status).to eq Constants.TASK_STATUSES.assigned
-        expect(child_timed_hold_tasks.first.timer_end_time.to_date).to eq(Time.zone.now.to_date + 90.days)
+        expect(child_timed_hold_tasks.first.timer_end_time.to_date).to eq(decision_date + 90.days)
 
         expect(new_task.label).to eq "Mandate Hold Task"
         expect(new_task.default_instructions).to eq [COPY::MANDATE_HOLD_TASK_DEFAULT_INSTRUCTIONS]
@@ -65,7 +65,7 @@ describe MandateHoldTask, :postgres do
 
     context "after more than 90 days have passed since decision_date" do
       before do
-        Timecop.travel(decision_date + 90.days + 1.hour)
+        Timecop.travel(decision_date + 91.days)
         TaskTimerJob.perform_now
       end
       it "marks MandateHoldTask as assigned" do
