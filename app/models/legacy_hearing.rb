@@ -80,6 +80,7 @@ class LegacyHearing < CaseflowRecord
            :closest_regional_office, :available_hearing_locations, :veteran_email_address,
            :appellant_address, :appellant_address_line_1, :appellant_address_line_2, :appellant_city,
            :appellant_country, :appellant_state, :appellant_zip, :appellant_email_address,
+           :appellant_relationship,
            to: :appeal,
            allow_nil: true
   delegate :external_id, to: :appeal, prefix: true

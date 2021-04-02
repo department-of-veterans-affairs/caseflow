@@ -60,6 +60,7 @@ exports[`HearingTypeConversion Displays convert to Central text when converting 
       "removed": false,
       "status": "not_distributed",
       "vacateType": null,
+      "veteranDateOfDeath": null,
       "veteranFileNumber": "123456789",
       "veteranFullName": "Abellona Valtas",
       "veteranInfo": Object {
@@ -144,6 +145,7 @@ exports[`HearingTypeConversion Displays convert to Central text when converting 
         "removed": false,
         "status": "not_distributed",
         "vacateType": null,
+        "veteranDateOfDeath": null,
         "veteranFileNumber": "123456789",
         "veteranFullName": "Abellona Valtas",
         "veteranInfo": Object {
@@ -524,6 +526,7 @@ exports[`HearingTypeConversion Displays convert to Video text when converting fr
       "removed": false,
       "status": "not_distributed",
       "vacateType": null,
+      "veteranDateOfDeath": null,
       "veteranFileNumber": "123456789",
       "veteranFullName": "Abellona Valtas",
       "veteranInfo": Object {
@@ -608,6 +611,7 @@ exports[`HearingTypeConversion Displays convert to Video text when converting fr
         "removed": false,
         "status": "not_distributed",
         "vacateType": null,
+        "veteranDateOfDeath": null,
         "veteranFileNumber": "123456789",
         "veteranFullName": "Abellona Valtas",
         "veteranInfo": Object {

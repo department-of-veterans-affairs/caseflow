@@ -453,7 +453,7 @@ feature "Supplemental Claim Intake", :all_dbs do
       expect(page).to have_content("Add / Remove Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
       check_row("Benefit type", "Compensation")
-      check_row("Claimant", "Ed Merica")
+      check_row("Claimant", "Ed Merica, Veteran")
       check_row("SOC/SSOC Opt-in", "No")
 
       # clicking the add issues button should bring up the modal

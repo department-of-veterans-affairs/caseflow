@@ -15,34 +15,6 @@ class Claimant < CaseflowRecord
             uniqueness: { scope: [:decision_review_id, :decision_review_type],
                           on: :create }
 
-  def self.create_without_intake!(participant_id:, payee_code:, type:)
-    create!(
-      participant_id: participant_id,
-      payee_code: payee_code,
-      type: type
-    )
-    Person.find_or_create_by_participant_id(participant_id)
-  end
-
-  def power_of_attorney
-    @power_of_attorney ||= find_power_of_attorney
-  end
-
-  delegate :representative_name,
-           :representative_type,
-           :representative_address,
-           :representative_email_address,
-           to: :power_of_attorney,
-           allow_nil: true
-
-  def representative_participant_id
-    power_of_attorney&.participant_id
-  end
-
-  def person
-    @person ||= Person.find_or_create_by_participant_id(participant_id)
-  end
-
   delegate :date_of_birth,
            :advanced_on_docket?,
            :advanced_on_docket_based_on_age?,
@@ -62,6 +34,33 @@ class Claimant < CaseflowRecord
            :state,
            :zip,
            to: :bgs_address_service
+  delegate :representative_name,
+           :representative_type,
+           :representative_address,
+           :representative_email_address,
+           to: :power_of_attorney,
+           allow_nil: true
+
+  def self.create_without_intake!(participant_id:, payee_code:, type:)
+    create!(
+      participant_id: participant_id,
+      payee_code: payee_code,
+      type: type
+    )
+    Person.find_or_create_by_participant_id(participant_id)
+  end
+
+  def power_of_attorney
+    @power_of_attorney ||= find_power_of_attorney
+  end
+
+  def representative_participant_id
+    power_of_attorney&.participant_id
+  end
+
+  def person
+    @person ||= Person.find_or_create_by_participant_id(participant_id)
+  end
 
   private
 

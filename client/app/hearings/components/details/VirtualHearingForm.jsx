@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 
 import { ContentSection } from '../../../components/ContentSection';
 import { HearingLinks } from './HearingLinks';
@@ -19,17 +19,6 @@ export const VirtualHearingForm = (
   const readOnlyEmails = readOnly || !virtualHearing?.jobCompleted || hearing?.wasVirtual || hearing.scheduledForIsPast;
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const user = useContext(HearingsUserContext);
-
-  useEffect(() => {
-    // Try to use the existing timezones if present
-    const { appellantTz, representativeTz } = (virtualHearing || {});
-
-    // Set the  timezone if not already set
-    update('virtualHearing', {
-      [!representativeTz && 'representativeTz']: representativeTz,
-      [!appellantTz && 'appellantTz']: appellantTz,
-    });
-  }, []);
 
   return (
     <ContentSection
