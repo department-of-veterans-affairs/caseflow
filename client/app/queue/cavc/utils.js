@@ -60,15 +60,15 @@ export const generateSchema = ({ maxIssues }) =>
       max(new Date()).
       required(),
     mandateSame: yup.boolean(),
-    judgementDate: yup.mixed().when('mandateSame', {
-      is: 'no',
+    judgementDate: yup.mixed().when('remandDatesProvided', {
+      is: 'yes',
       then: yup.
         date().
         max(new Date()).
         required(),
     }),
-    mandateDate: yup.mixed().when('mandateSame', {
-      is: 'no',
+    mandateDate: yup.mixed().when('remandDatesProvided', {
+      is: 'yes',
       then: yup.
         date().
         max(new Date()).
