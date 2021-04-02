@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams, useRouteMatch } from 'react-router';
-import { fetchJudges } from 'app/queue/QueueActions';
+// import { fetchJudges } from 'app/queue/QueueActions';
 import { appealWithDetailSelector, rootTasksForAppeal, taskById } from 'app/queue/selectors';
 import { taskActionData } from 'app/queue/utils';
 
@@ -116,7 +116,7 @@ export const RecommendDocketSwitchContainer = () => {
       onCancel={goBack}
       onSubmit={handleSubmit}
       judgeOptions={options}
-      defaultJudgeId={undefined}
+      defaultJudgeId={null}
       appellantName={appeal.appellantFullName}
     />
   );
