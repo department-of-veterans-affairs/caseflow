@@ -26,6 +26,7 @@ class MdrTask < Task
     ActiveRecord::Base.transaction do
       mdr_task = create!(parent: parent_task, appeal: parent_task.appeal)
       mdr_task.create_timed_hold_task
+      mdr_task
     end
   end
 
