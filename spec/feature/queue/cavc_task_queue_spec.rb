@@ -427,6 +427,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         end
       end
 
+      # add back in
       # it "allows the user to intake a death dismissal without a judgement and mandate date" do
       #   step "cavc user inputs cavc data" do
       #     visit "queue/appeals/#{appeal.external_id}"
