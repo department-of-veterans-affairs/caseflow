@@ -86,7 +86,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       fill_in("hyperlink", with: hyperlink)
 
       # Normally, we expect the previously assigned judge to be selected.
-      #expect(page).to have_content(judge_assign_task.assigned_to.display_name)
+      # expect(page).to have_content(judge_assign_task.assigned_to.display_name)
 
       # For now, there is no default as the previously assigned judge is likely not an OCB VLJ.
       find(".cf-select__control", text: "Select judge").click
