@@ -32,7 +32,7 @@ class ClaimReviewController < ApplicationController
     render json: { error_code: "EP not found" }, status: :not_found if epe.nil?
 
     perform_ep_update!(epe)
-    render json: {veteran: claim_review.veteran}
+    render json: { veteran: claim_review.veteran }
   end
 
   private
