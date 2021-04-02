@@ -613,14 +613,14 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       end
     end
 
-    shared_examples "scheduling a virtual hearing" do |fill_in_timezones, ro_key, time|
+    shared_examples "scheduling a virtual hearing" do |ro_key, time|
       scenario "can successfully schedule virtual hearing" do
         navigate_to_schedule_veteran
         expect(page).to have_content("Schedule Veteran for a Hearing")
         click_dropdown(name: "hearingType", text: "Virtual")
         click_dropdown(name: "hearingDate", index: 1)
 
-        expected_time_radio_text = if fill_in_timezones
+        expected_time_radio_text = if ro_key == "C"
                                      "#{time} AM Eastern Time (US & Canada)"
                                    else
                                      "#{time} AM Mountain Time (US & Canada) / 10:30 AM Eastern Time (US & Canada)"
@@ -628,11 +628,11 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         select_custom_hearing_time(expected_time_radio_text)
 
         # Fill in appellant details
-        click_dropdown(name: "appellantTz", index: 1) if fill_in_timezones
+        click_dropdown(name: "appellantTz", index: 1)
         fill_in "Veteran Email", with: fill_in_veteran_email
 
         # Fill in POA/Representative details
-        click_dropdown(name: "representativeTz", index: 1) if fill_in_timezones
+        click_dropdown(name: "representativeTz", index: 1)
         fill_in "POA/Representative Email", with: fill_in_representative_email
 
         click_button("Schedule")
@@ -666,7 +666,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
       before { cache_appeals }
 
-      it_behaves_like "scheduling a virtual hearing", true, "C", "9:00"
+      it_behaves_like "scheduling a virtual hearing", "C", "9:00"
     end
 
     shared_examples "change from Video hearing" do
@@ -674,7 +674,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
       before { cache_appeals }
 
-      it_behaves_like "scheduling a virtual hearing", false, "RO39", "8:30"
+      it_behaves_like "scheduling a virtual hearing", "RO39", "8:30"
     end
 
     shared_examples "withdraw a hearing" do

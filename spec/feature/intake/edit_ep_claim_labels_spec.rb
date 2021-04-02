@@ -103,6 +103,47 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
       higher_level_review.establish!
     end
 
+    context "When an update is made to an issue" do
+      it "enables the Save btn and disables the Edit claim label btn, when you remove an issue" do
+        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+
+        nr_label = Constants::EP_CLAIM_TYPES[nonrating_request_issue.end_product_establishment.code]["official_label"]
+        nr_row = page.find("tr", text: nr_label, match: :prefer_exact)
+
+        expect(page).to have_button("Save", disabled: true)
+        expect(nr_row).to have_button("Edit claim label", disabled: false)
+
+        # make issue update - remove issue
+        within "#issue-2" do
+          select("Remove issue", from: "issue-action-0")
+        end
+        click_on("Yes, remove issue")
+
+        expect(page).to have_button("Save", disabled: false)
+        expect(page).to have_button("Edit claim label", disabled: true)
+      end
+
+      it "enables the Save btn and disables the Edit claim label btn, when you edit issue description" do
+        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+        nr_label = Constants::EP_CLAIM_TYPES[nonrating_request_issue.end_product_establishment.code]["official_label"]
+        nr_row = page.find("tr", text: nr_label, match: :prefer_exact)
+
+        expect(page).to have_button("Save", disabled: true)
+        expect(nr_row).to have_button("Edit claim label", disabled: false)
+
+        # make issue update - add issue
+        click_on("Add issue")
+        find(".cf-select", text: "Select or enter").click
+        find(".cf-select__option", text: "Unknown issue category").click
+        fill_in "decision-date", with: "08192020"
+        fill_in "Issue description", with: "this is a description"
+        click_on("Add this issue")
+
+        expect(page).to have_button("Save", disabled: false)
+        expect(page).to have_button("Edit claim label", disabled: true)
+      end
+    end
+
     it "shows each established end product label" do
       visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
 
@@ -110,6 +151,7 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
       # Note for these, there's a row for the EP label, and a subsequent row for the issues
       nr_label = Constants::EP_CLAIM_TYPES[nonrating_request_issue.end_product_establishment.code]["official_label"]
       nr_row = page.find("tr", text: nr_label, match: :prefer_exact)
+
       expect(nr_row).to have_button("Edit claim label")
       nr_next_row = nr_row.first(:xpath, "./following-sibling::tr")
       expect(nr_next_row).to have_content(/Requested issues\n1. #{nonrating_request_issue.description}/i)

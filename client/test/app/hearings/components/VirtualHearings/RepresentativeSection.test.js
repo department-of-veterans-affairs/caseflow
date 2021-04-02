@@ -54,11 +54,11 @@ describe('RepresentativeSection', () => {
     expect(representativeSection).toMatchSnapshot();
   });
 
-  test('Displays timezone when virtual', () => {
+  test('Displays timezone when showTimezoneField is passed as prop', () => {
     // Run the test
     const representativeSection = mount(
       <RepresentativeSection
-        virtual
+        showTimezoneField
         appellantTitle="Veteran"
         virtualHearing={virtualHearing.virtualHearing}
         hearing={defaultHearing}
