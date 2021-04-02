@@ -48,7 +48,7 @@ class LegacyHearing < CaseflowRecord
   vacols_attr_accessor :scheduled_for
 
   # request_type is the current value of HEARSCHED.HEARING_TYPE in VACOLS, but one
-  # should use original_hearing_request_type to make sure we consistently get the value we
+  # should use original_request_type to make sure we consistently get the value we
   # expect, as we are now writing to this field in VACOLS when we convert a legacy
   # hearing to and from virtual.
   vacols_attr_accessor :request_type
@@ -158,7 +158,7 @@ class LegacyHearing < CaseflowRecord
   # There is a constraint within the `HearingRepository` context that means that calling
   # `LegacyHearing#regional_office_Key` triggers an unnecessary call to VACOLS.
   def regional_office_key
-    if original_hearing_request_type == HearingDay::REQUEST_TYPES[:travel] || hearing_day.nil?
+    if original_request_type == HearingDay::REQUEST_TYPES[:travel] || hearing_day.nil?
       return (venue_key || appeal&.regional_office_key)
     end
 
@@ -166,7 +166,7 @@ class LegacyHearing < CaseflowRecord
   end
 
   def request_type_location
-    if original_hearing_request_type == HearingDay::REQUEST_TYPES[:central]
+    if original_request_type == HearingDay::REQUEST_TYPES[:central]
       "Board of Veterans' Appeals in Washington, DC"
     elsif venue
       venue[:label]
@@ -242,7 +242,7 @@ class LegacyHearing < CaseflowRecord
   end
 
   def readable_location
-    if original_hearing_request_type == HearingDay::REQUEST_TYPES[:central]
+    if original_request_type == HearingDay::REQUEST_TYPES[:central]
       return "Washington, DC"
     end
 
