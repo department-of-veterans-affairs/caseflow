@@ -1,7 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams, useRouteMatch } from 'react-router';
-// import { fetchJudges } from 'app/queue/QueueActions';
 import { appealWithDetailSelector, rootTasksForAppeal, taskById } from 'app/queue/selectors';
 import { taskActionData } from 'app/queue/utils';
 
@@ -49,25 +48,6 @@ export const RecommendDocketSwitchContainer = () => {
   const match = useRouteMatch();
   const options = taskActionData({ task, match })?.options;
 
-  /* For now, we're only allowing OCB VLJs to be assigned. Instead of fetching all judges, we
-     use the task action repository.
-  const judges = useSelector((state) => state.queue.judges);
-  const judgeOptions = useMemo(
-    () =>
-      Object.values(judges).map(({ id: value, display_name: label }) => ({
-        label,
-        value,
-      })),
-    [judges]
-  );
-
-  // We want to default the judge selection to the VLJ currently assigned to the case, if exists
-  const defaultJudgeId = useMemo(() => {
-    // eslint-disable-next-line no-undefined
-    return appeal.assignedJudge?.id ?? undefined;
-  }, [judges, appeal]);
-  */
-
   // eslint-disable-next-line no-console
   const handleSubmit = async (formData) => {
 
@@ -102,14 +82,6 @@ export const RecommendDocketSwitchContainer = () => {
       console.error('Error saving task', error);
     }
   };
-
-  /* No need to make an extra XHR until we roll out to all judges.
-  useEffect(() => {
-    if (!judgeOptions.length) {
-      dispatch(fetchJudges());
-    }
-  });
-  */
 
   return (
     <RecommendDocketSwitchForm
