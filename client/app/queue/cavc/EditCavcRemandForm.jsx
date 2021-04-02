@@ -48,9 +48,6 @@ const radioLabelStyling = css({ marginTop: '2.5rem' });
 const issueListStyling = css({ marginTop: '0rem' });
 const buttonStyling = css({ paddingLeft: '0' });
 
-const capitalizeTextTransform = css({ textTransform: 'capitalize' });
-const uppercaseTextTransform = css({ textTransform: 'uppercase' });
-
 /**
  * @param {Object} props
  *  - @param {Object[]} decisionIssues   Issues pulled from state to allow the user to select which are being remanded
@@ -216,7 +213,6 @@ export const EditCavcRemandForm = ({
           label={COPY.CAVC_TYPE_LABEL}
           readOnly={Boolean(register)}
           strongLabel
-          inputStyling={capitalizeTextTransform}
         />
 
         {watchDecisionType?.includes('remand') && (
@@ -233,19 +229,11 @@ export const EditCavcRemandForm = ({
         <div style={{ display: 'none' }}>
           <TextField
             inputRef={register}
-            label={COPY.CAVC_TYPE_LABEL}
             name="decisionType"
-            readOnly={Boolean(register)}
-            strongLabel
-            inputStyling={capitalizeTextTransform}
           />
           <TextField
             inputRef={register}
-            label={COPY.CAVC_SUB_TYPE_LABEL}
             name="remandType"
-            readOnly={Boolean(register)}
-            strongLabel
-            inputStyling={uppercaseTextTransform}
           />
         </div>
 
