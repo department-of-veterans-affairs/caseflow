@@ -80,6 +80,8 @@ export const EditCavcRemandView = () => {
 
       // Redirect back to case details for remand appeal
       history.push(`/queue/appeals/${appealId}`);
+      // TODO: fix this hack: Force a refresh in case issue selection changed
+      // history.go();
     } catch (error) {
       dispatch(
         showErrorMessage({

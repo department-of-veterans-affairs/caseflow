@@ -298,18 +298,23 @@ export const EditCavcRemandForm = ({
         {/* If the following is hidden for death_dismissal, no issues are submitted. */}
         {(
           <React.Fragment>
-            <legend>
-              <strong>{COPY.CAVC_ISSUES_LABEL}</strong>
-            </legend>
-            <Button
-              name={watchIssueIds.length ? 'Unselect all' : 'Select all'}
-              styling={buttonStyling}
-              linkStyling
-              onClick={
-                watchIssueIds?.length ? unselectAllIssues : selectAllIssues
-              }
-            />
-            <Controller
+            { !watchDecisionType?.includes('death_dismissal') &&
+                <>
+                  <legend>
+                    <strong>{COPY.CAVC_ISSUES_LABEL}</strong>
+                  </legend>
+                  <Button
+                    name={watchIssueIds.length ? 'Unselect all' : 'Select all'}
+                    styling={buttonStyling}
+                    linkStyling
+                    onClick={
+                      watchIssueIds?.length ? unselectAllIssues : selectAllIssues
+                    }
+                  />
+                </>
+            }
+
+            <Controller 
               name="issueIds"
               control={control}
               render={({ name, onChange: onCheckChange }) => {
