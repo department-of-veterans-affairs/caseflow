@@ -162,7 +162,7 @@ export const EditCavcRemandForm = ({
     [watchIssueIds, decisionIssues]
   );
 
-  const mandateAvailable = useMemo(
+  const mandateDatesAvailable = useMemo(
     () =>
       (watchRemandType && !watchRemandType?.includes('mdr')) ||
       watchRemandDatesProvided === 'yes',
@@ -253,7 +253,7 @@ export const EditCavcRemandForm = ({
 
         {isRemandType('mdr') && <MdrBanner />}
 
-      {mandateAvailable && (
+      {mandateDatesAvailable && (
         <div>
             <DateSelector
               inputRef={register}
@@ -277,11 +277,12 @@ export const EditCavcRemandForm = ({
           </div>
         )}
 
-        {!mandateAvailable && !watchDecisionType?.includes('remand') && (
+        {!mandateDatesAvailable && !watchDecisionType?.includes('remand') && (
           <NoMandateBanner />
         )}
 
-        {watchDecisionType && !watchDecisionType?.includes('death_dismissal') && (
+        {/* If the following is hidden for death_dismissal, no issues are submitted. */}
+        {(
           <React.Fragment>
             <legend>
               <strong>{COPY.CAVC_ISSUES_LABEL}</strong>
@@ -309,6 +310,7 @@ export const EditCavcRemandForm = ({
                     }
                     styling={issueListStyling}
                     values={issueVals}
+                    disableAll={watchDecisionType?.includes('death_dismissal')}
                     errorMessage={errors?.issueIds?.message}
                   />                 
                 );
