@@ -12,25 +12,25 @@ import {
   typeAndJudgeStyle
 } from './styles';
 
-import { formatHearingType, formatVljName, formatSlotRatio } from '../../utils';
-
-// Check if there's a judge assigned
-const hearingDayHasJudge = (hearingDay) => hearingDay.judgeFirstName && hearingDay.judgeLastName;
-// Check if there's a room assigned (there never is for virtual)
-const hearingDayHasRoom = (hearingDay) => Boolean(hearingDay.room);
-// Check if there's a judge or room assigned
-const hearingDayHasJudgeOrRoom = (hearingDay) => hearingDayHasJudge(hearingDay) || hearingDayHasRoom(hearingDay);
-// Make the '·' separator appear or disappear
-const separatorIfJudgeOrRoomPresent = (hearingDay) => hearingDayHasJudgeOrRoom(hearingDay) ? '·' : '';
-// This is necessecary otherwise 'null' is displayed when there's no room or judge
-const formatHearingRoom = (hearingDay) => hearingDay.room ? hearingDay.room : '';
+import {
+  formatHearingType,
+  vljFullnameOrEmptyString,
+  formatSlotRatio,
+  hearingDayHasJudge,
+  separatorIfJudgeOrRoomPresent,
+  hearingRoomOrEmptyString
+} from '../../utils';
 
 export const HearingDayInfoButton = ({ hearingDay, selected, onSelectedHearingDayChange }) => {
+  // Format the pieces of information from hearingDay
   const formattedHearingType = formatHearingType(hearingDay.readableRequestType);
-  const judgeOrRoom = hearingDayHasJudge(hearingDay) ? formatVljName(hearingDay) : formatHearingRoom(hearingDay);
+  const judgeOrRoom = hearingDayHasJudge(hearingDay) ?
+    vljFullnameOrEmptyString(hearingDay) :
+    hearingRoomOrEmptyString(hearingDay);
   const separator = separatorIfJudgeOrRoomPresent(hearingDay);
   const formattedSlotRatio = formatSlotRatio(hearingDay);
   const formattedDate = moment(hearingDay.scheduledFor).format('ddd MMM Do');
+
   const classNames = selected ? ['selected-hearing-day-info-button'] : ['unselected-hearing-day-info-button'];
 
   return (

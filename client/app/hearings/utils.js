@@ -349,8 +349,9 @@ export const timezones = (time) => {
       commonsCount += 1;
     }
 
-    //ensure that before the user selects a time it won't display 'Invalid Date' next to zone
-    const zoneLabel = dateTime.isValid() ? `${zone} (${moment(dateTime, 'HH:mm').tz(TIMEZONES[zone]).format('h:mm A')})` : `${zone}`
+    // ensure that before the user selects a time it won't display 'Invalid Date' next to zone
+    const zoneLabel = dateTime.isValid() ? `${zone} (${moment(dateTime, 'HH:mm').tz(TIMEZONES[zone]).
+      format('h:mm A')})` : `${zone}`;
 
     // Return the formatted options
     return {
@@ -605,6 +606,8 @@ export const formatTimeSlotLabel = (time, zone) => {
   return `${roTime} (${coTime})`;
 };
 
+// Given the hearingType, if it starts with 'video' return Video or the
+// passed in hearintType
 export const formatHearingType = (hearingType) => {
   if (hearingType.toLowerCase().startsWith('video')) {
     return VIDEO_HEARING_LABEL;
@@ -613,7 +616,8 @@ export const formatHearingType = (hearingType) => {
   return hearingType;
 };
 
-export const formatVljName = (hearingDay) => {
+// Given a hearing day, return the judges last, first or ''
+export const vljFullnameOrEmptyString = (hearingDay) => {
   const first = hearingDay?.judgeFirstName;
   const last = hearingDay?.judgeLastName;
 
@@ -624,6 +628,9 @@ export const formatVljName = (hearingDay) => {
   return '';
 };
 
+// Make a string like "2 of 8" given a hearing day:
+// - 2 is the number of hearings scheduled for that day
+// - 8 is the 'totalSlots' which comes from HearingDay and depends on ro
 export const formatSlotRatio = (hearingDay) => {
   const scheduledHearings = _.get(hearingDay, 'hearings', {});
   const scheduledHearingCount = Object.keys(scheduledHearings).length;
@@ -632,5 +639,17 @@ export const formatSlotRatio = (hearingDay) => {
 
   return formattedSlotRatio;
 };
+
+// Check if there's a judge assigned
+export const hearingDayHasJudge = (hearingDay) => hearingDay.judgeFirstName && hearingDay.judgeLastName;
+// Check if there's a room assigned (there never is for virtual)
+const hearingDayHasRoom = (hearingDay) => Boolean(hearingDay.room);
+// Check if there's a judge or room assigned
+const hearingDayHasJudgeOrRoom = (hearingDay) => hearingDayHasJudge(hearingDay) || hearingDayHasRoom(hearingDay);
+
+// Make the '·' separator appear or disappear
+export const separatorIfJudgeOrRoomPresent = (hearingDay) => hearingDayHasJudgeOrRoom(hearingDay) ? '·' : '';
+// This is necessecary otherwise 'null' is displayed when there's no room or judge
+export const hearingRoomOrEmptyString = (hearingDay) => hearingDay.room ? hearingDay.room : '';
 
 /* eslint-enable camelcase */
