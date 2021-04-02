@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useParams } from 'react-router';
+import { useHistory, useParams, useRouteMatch } from 'react-router';
 import { fetchJudges } from 'app/queue/QueueActions';
+import { appealWithDetailSelector, rootTasksForAppeal, taskById } from 'app/queue/selectors';
+import { taskActionData } from 'app/queue/utils';
 
-import { appealWithDetailSelector, rootTasksForAppeal } from '../../selectors';
 import DISPOSITIONS from 'constants/DOCKET_SWITCH_DISPOSITIONS';
 
 import { RecommendDocketSwitchForm } from './RecommendDocketSwitchForm';
@@ -43,7 +44,13 @@ export const RecommendDocketSwitchContainer = () => {
 
   const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
   const rootTask = useSelector((state) => rootTasksForAppeal(state, { appealId }))[0];
+  const task = useSelector((state) => taskById(state, { taskId }));
 
+  const match = useRouteMatch();
+  const options = taskActionData({ task, match })?.options;
+
+  /* For now, we're only allowing OCB VLJs to be assigned. Instead of fetching all judges, we
+     use the task action repository.
   const judges = useSelector((state) => state.queue.judges);
   const judgeOptions = useMemo(
     () =>
@@ -59,6 +66,7 @@ export const RecommendDocketSwitchContainer = () => {
     // eslint-disable-next-line no-undefined
     return appeal.assignedJudge?.id ?? undefined;
   }, [judges, appeal]);
+  */
 
   // eslint-disable-next-line no-console
   const handleSubmit = async (formData) => {
@@ -95,18 +103,20 @@ export const RecommendDocketSwitchContainer = () => {
     }
   };
 
+  /* No need to make an extra XHR until we roll out to all judges.
   useEffect(() => {
     if (!judgeOptions.length) {
       dispatch(fetchJudges());
     }
   });
+  */
 
   return (
     <RecommendDocketSwitchForm
       onCancel={goBack}
       onSubmit={handleSubmit}
-      judgeOptions={judgeOptions}
-      defaultJudgeId={defaultJudgeId}
+      judgeOptions={options}
+      defaultJudgeId={undefined}
       appellantName={appeal.appellantFullName}
     />
   );
