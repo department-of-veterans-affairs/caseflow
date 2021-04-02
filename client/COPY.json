@@ -174,7 +174,7 @@
   "CAVC_REMAND_MANDATE_DATES_LABEL": "Judgement and mandate date",
   "CAVC_REMAND_MANDATE_DATES_SAME_DESCRIPTION": "Same as Court's decision date",
   "CAVC_REMAND_EDIT_SUCCESS_TITLE": "You have successfully edited this CAVC Remand",
-  "CAVC_REMAND_EDIT_SUCCESS_DETAIL": "(These changes are reflected in the CAVC Remand section.)",
+  "CAVC_REMAND_EDIT_SUCCESS_DETAIL": "These changes are reflected in the CAVC Remand section.",
 
   "CAVC_EXTENSION_REQUEST_TITLE": "Review extension request",
   "CAVC_EXTENSION_REQUEST_DECISION_LABEL": "How will you proceed?",
