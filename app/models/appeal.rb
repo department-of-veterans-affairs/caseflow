@@ -540,6 +540,10 @@ class Appeal < DecisionReview
     DocketSwitch.where(old_docket_stream_id: self.id)
   end
 
+  def appellant_relationship
+    appellant&.relationship
+  end
+
   private
 
   def business_lines_needing_assignment

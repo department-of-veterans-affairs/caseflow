@@ -111,7 +111,7 @@ describe('ScheduleVeteran', () => {
     expect(scheduleVeteran.find(AppSegment)).toHaveLength(1);
     expect(scheduleVeteran.find(ScheduleVeteranForm)).toHaveLength(1);
     expect(scheduleVeteran.find(AppSegment).text()).not.toContain(
-      COPY.SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL
+      'will receive an email with connection information for the virtual hearing.'
     );
     expect(scheduleVeteran).toMatchSnapshot();
   });
@@ -595,7 +595,7 @@ describe('ScheduleVeteran', () => {
     expect(scheduleVeteran.find(RepresentativeSection)).toHaveLength(1);
     expect(scheduleVeteran.find(AppellantSection)).toHaveLength(1);
     expect(scheduleVeteran.find(AppSegment).text()).toContain(
-      COPY.SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL
+      'will receive an email with connection information for the virtual hearing.'
     );
     expect(scheduleVeteran).toMatchSnapshot();
   });
