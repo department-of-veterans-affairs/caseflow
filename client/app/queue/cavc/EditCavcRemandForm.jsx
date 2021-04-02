@@ -20,6 +20,7 @@ import StringUtil from 'app/util/StringUtil';
 
 import CAVC_JUDGE_FULL_NAMES from 'constants/CAVC_JUDGE_FULL_NAMES';
 import CAVC_REMAND_SUBTYPE_NAMES from 'constants/CAVC_REMAND_SUBTYPE_NAMES';
+import CAVC_DECISION_TYPE_NAMES from 'constants/CAVC_DECISION_TYPE_NAMES';
 
 import {
   JmprIssuesBanner,
@@ -217,7 +218,8 @@ export const EditCavcRemandForm = ({
         />
         <br />
         <TextField
-          defaultValue={StringUtil.snakeCaseToCapitalized(watchDecisionType)}
+          defaultValue={CAVC_DECISION_TYPE_NAMES[watchDecisionType]}
+          value={CAVC_DECISION_TYPE_NAMES[watchDecisionType]}
           label={COPY.CAVC_TYPE_LABEL}
           readOnly={Boolean(register)}
           strongLabel
