@@ -17,9 +17,8 @@ class EndProductUpdate < CaseflowRecord
   class UpdateClaimFailedInVBMS < StandardError; end
 
   def perform!
-    update_bgs_claim
-
     transaction do
+      update_bgs_claim
       end_product_establishment.update(code: new_code)
       update_correction_type
       update_issue_type
