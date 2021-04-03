@@ -200,6 +200,7 @@ class Fakes::BGSService
   end
 
   # rubocop:disable Metrics/ParameterLists
+  # rubocop:disable Metrics/MethodLength
   def update_benefit_claim(veteran_file_number:, payee_code:, claim_date:, benefit_type_code:, modifier:, new_code:)
     matching_eps = select_end_products(veteran_file_number,
                                        modifier: modifier,
@@ -233,6 +234,7 @@ class Fakes::BGSService
       suspence_record: nil }
   end
   # rubocop:enable Metrics/ParameterLists
+  # rubocop:enable Metrics/MethodLength
 
   def fetch_veteran_info(vbms_id)
     # BGS throws a ShareError if the veteran has too high sensitivity

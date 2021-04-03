@@ -97,13 +97,6 @@ describe EndProductUpdate do
         context "when the other stream already exists" do
           before { original_decision_review.find_or_create_stream!(new_benefit_type) }
 
-          let!(:bgs) { BGSService.new }
-
-          before do
-            allow(BGSService).to receive(:new) { bgs }
-            allow(bgs).to receive(:update_benefit_claim).and_raise(BGS::ShareError, "bgs error")
-          end
-
           it "moves the EP and its issues to the existing stream" do
             allow(original_decision_review).to receive(:create_stream!).and_call_original
             existing_stream = HigherLevelReview.find_by(
