@@ -249,8 +249,8 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
     end
 
     context "show edit ep error message" do
-      let(:new_ep_code) { "030HLRR" }
-      let(:ep_code) { "030HLRNR" }
+      let(:new_ep_code) { "030HLRRPMC" }
+      let(:ep_code) { "030HLR" }
       let(:synced_status) { "PEND" }
       let(:payee_code) { "00" }
       let(:modifier) { "030" }
@@ -326,18 +326,6 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
         nr_next_row = nr_row.first(:xpath, "./following-sibling::tr")
         expect(nr_next_row).to have_content(/Requested issues\n1. #{nonrating_request_issue.description}/i)
 
-        r_label = Constants::EP_CLAIM_TYPES[rating_request_issue.end_product_establishment.code]["official_label"]
-        r_row = page.find("tr", text: r_label, match: :prefer_exact)
-        expect(r_row).to have_button("Edit claim label")
-        r_next_row = r_row.first(:xpath, "./following-sibling::tr")
-        expect(r_next_row).to have_content(/Requested issues\n2. #{rating_request_issue.description}/i)
-
-        # Edit nonrating label to rating
-        nr_row.find("button", text: "Edit claim label").click
-        expect(page).to have_content(COPY::EDIT_CLAIM_LABEL_MODAL_NOTE)
-        click_on "Cancel"
-        expect(page).to_not have_content(COPY::EDIT_CLAIM_LABEL_MODAL_NOTE)
-
         nr_row.find("button", text: "Edit claim label").click
         safe_click ".cf-select"
         fill_in "Select the correct EP claim label", with: new_ep_code
@@ -352,7 +340,7 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
         sleep 1 # when frontend displays result of XHR, write a capybara expect against that
 
         expect(EndProductUpdate.find_by(error: "bgs error")).to_not be_nil
-        # expect(higher_level_review.end_product_establishments.where(code: new_ep_code).count).to eq(1)
+        expect(higher_level_review.end_product_establishments.where(code: ep_code).count).to eq(1)
       end
     end
   end
