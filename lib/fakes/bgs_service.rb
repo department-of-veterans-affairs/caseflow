@@ -217,7 +217,8 @@ class Fakes::BGSService
                return_cod: "GUIE50004",
                return_message: "Benefit Claim not found on Corporate Database",
                suspence_record: nil }
-   end
+    end
+
     matching_eps.each do |ep|
       ep[:claim_type_code] = new_code
       self.class.store_end_product_record(veteran_file_number, ep)

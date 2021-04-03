@@ -14,16 +14,18 @@ class EndProductUpdate < CaseflowRecord
 
   enum status: { success: "success", error: "error" }
 
+  class UpdateClaimFailedInVBMS < StandardError; end
+
   def perform!
-    
+    update_bgs_claim
+
     transaction do
       end_product_establishment.update(code: new_code)
       update_correction_type
       update_issue_type
       update_benefit_type
-      update_bgs_claim
     end
-  rescue BGS::ShareError, Caseflow::Error::UpdateClaimFailedInVBMS => error
+  rescue StandardError => error
     update!(error: error, status: "error")
   end
 
@@ -40,7 +42,7 @@ class EndProductUpdate < CaseflowRecord
     )
 
     if response[:return_message] != "A benefit claim has been changed"
-      fail Caseflow::Error::UpdateClaimFailedInVBMS, response[:return_message]
+      fail UpdateClaimFailedInVBMS, response[:return_message]
     end
   end
 

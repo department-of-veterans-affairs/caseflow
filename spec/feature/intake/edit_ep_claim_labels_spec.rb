@@ -272,6 +272,7 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
 
       let(:end_product_establishment) do
         create(:end_product_establishment,
+               :active,
                source: higher_level_review,
                synced_status: synced_status,
                code: ep_code,
@@ -319,25 +320,8 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
 
       it "shows error message when claim is not correct" do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
-
         nr_label = Constants::EP_CLAIM_TYPES[nonrating_request_issue.end_product_establishment.code]["official_label"]
         nr_row = page.find("tr", text: nr_label, match: :prefer_exact)
-        expect(nr_row).to have_button("Edit claim label")
-        nr_next_row = nr_row.first(:xpath, "./following-sibling::tr")
-        expect(nr_next_row).to have_content(/Requested issues\n1. #{nonrating_request_issue.description}/i)
-
-        r_label = Constants::EP_CLAIM_TYPES[rating_request_issue.end_product_establishment.code]["official_label"]
-        r_row = page.find("tr", text: r_label, match: :prefer_exact)
-        expect(r_row).to have_button("Edit claim label")
-        r_next_row = r_row.first(:xpath, "./following-sibling::tr")
-        expect(r_next_row).to have_content(/Requested issues\n2. #{rating_request_issue.description}/i)
-
-        # Edit nonrating label to rating
-        nr_row.find("button", text: "Edit claim label").click
-        expect(page).to have_content(COPY::EDIT_CLAIM_LABEL_MODAL_NOTE)
-        click_on "Cancel"
-        expect(page).to_not have_content(COPY::EDIT_CLAIM_LABEL_MODAL_NOTE)
-
         nr_row.find("button", text: "Edit claim label").click
         safe_click ".cf-select"
         fill_in "Select the correct EP claim label", with: new_ep_code
@@ -345,14 +329,16 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
         find("button", text: "Continue").click
 
         expect(page).to have_content(COPY::CONFIRM_CLAIM_LABEL_MODAL_TITLE)
+
         find("button", text: "Confirm").click
 
         expect(page).to_not have_content(COPY::EDIT_CLAIM_LABEL_MODAL_NOTE)
         expect(page).to have_content("We are unable to edit the claim label.")
-        sleep 1 # when frontend displays result of XHR, write a capybara expect against that
 
-        expect(EndProductUpdate.find_by(error: "bgs error")).to_not be_nil
-        # expect(higher_level_review.end_product_establishments.where(code: new_ep_code).count).to eq(1)
+        epu = EndProductUpdate.find_by(error: "bgs error", status: "error")
+
+        expect(epu).to_not be_nil
+        expect(epu.end_product_establishment.reload.code).to eq(ep_code)
       end
     end
   end

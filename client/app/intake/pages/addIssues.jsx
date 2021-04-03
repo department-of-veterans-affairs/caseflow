@@ -308,7 +308,7 @@ class AddIssuesPage extends React.Component {
 
     let rowObjects = fieldsForFormType;
 
-    const issueSectionRow = (sectionIssues, fieldTitle, endProductCode = null) => {
+    const issueSectionRow = (sectionIssues, fieldTitle, endProductCode = "none") => {
       return {
         field: fieldTitle,
         content: (
