@@ -249,8 +249,8 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
     end
 
     context "show edit ep error message" do
-      let(:new_ep_code) { "030HLRR" }
-      let(:ep_code) { "030HLRNR" }
+      let(:new_ep_code) { "030HLRRPMC" }
+      let(:ep_code) { "030HLR" }
       let(:synced_status) { "PEND" }
       let(:payee_code) { "00" }
       let(:modifier) { "030" }
