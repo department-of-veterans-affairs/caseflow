@@ -297,8 +297,6 @@ module Caseflow::Error
   class MustImplementInSubclass < StandardError; end
   class AttributeNotLoaded < StandardError; end
 
-  class UpdateClaimFailedInVBMS < StandardError; end
-
   class EstablishClaimFailedInVBMS < StandardError
     attr_reader :error_code
 
