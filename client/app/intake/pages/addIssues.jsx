@@ -308,7 +308,7 @@ class AddIssuesPage extends React.Component {
 
     let rowObjects = fieldsForFormType;
 
-    const issueSectionRow = (sectionIssues, fieldTitle, endProductCode = "none") => {
+    const issueSectionRow = (sectionIssues, fieldTitle, endProductCode = 0) => {
       return {
         field: fieldTitle,
         content: (
@@ -360,7 +360,7 @@ class AddIssuesPage extends React.Component {
         const endProductCleared = sectionIssues[0]?.endProductCleared;
 
         if (key === 'requestedIssues') {
-          rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, 'Requested issues', key));
+          rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, 'Requested issues'));
         } else if (key === 'withdrawnIssues') {
           rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, 'Withdrawn issues'));
         } else {
