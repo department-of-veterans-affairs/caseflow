@@ -2,7 +2,7 @@
 
 describe EndProductUpdate do
   describe "#perform!" do
-    let(:original_decision_review) { create(:higher_level_review, :processed, same_office: false, veteran_file_number: veteran.file_number) }
+    let(:original_decision_review) { create(:higher_level_review, :processed, same_office: false) }
     let(:claim_date) { Time.zone.yesterday }
     let!(:veteran) { create(:veteran) }
     let!(:epe) do
