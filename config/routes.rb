@@ -132,6 +132,7 @@ Rails.application.routes.draw do
       post 'work_mode', to: "work_modes#create"
       patch 'cavc_remand', to: "cavc_remands#update"
       post 'cavc_remand', to: "cavc_remands#create"
+      post 'appellant_substitution', to: "appellant_substitutions#create"
       patch 'nod_date_update', to: "nod_date_updates#update"
     end
   end
