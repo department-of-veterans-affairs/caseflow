@@ -1368,8 +1368,8 @@ RSpec.feature "Case details", :all_dbs do
           visit("/queue/appeals/#{appeal.uuid}")
 
           expect(appeal.nod_date).to_not be_nil
-          expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
-          expect(page).to have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
+          expect(page).to_not have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
+          expect(page).to_not have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
         end
       end
 
@@ -1384,8 +1384,8 @@ RSpec.feature "Case details", :all_dbs do
           visit("/queue/appeals/#{appeal.uuid}")
 
           expect(appeal.nod_date).to_not be_nil
-          expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
-          expect(page).to have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
+          expect(page).to_not have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
+          expect(page).to_not have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
         end
       end
 
@@ -1401,16 +1401,17 @@ RSpec.feature "Case details", :all_dbs do
           visit("/queue/appeals/#{appeal.uuid}")
 
           expect(appeal.nod_date).to_not be_nil
-          expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
-          expect(page).to have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
+          expect(page).to_not have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
+          expect(page).to_not have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
         end
       end
 
       context "when the user clicks on the edit nod button" do
-        let(:judge_user) { create(:user, css_id: "BVAOSHOWALT", station_id: "101") }
+        let(:cob_user) { create(:user, css_id: "COB_USER", station_id: "101") }
 
         before do
-          User.authenticate!(user: judge_user)
+          ClerkOfTheBoard.singleton.add_user(cob_user)
+          User.authenticate!(user: cob_user)
         end
 
         let(:veteran_full_name) { veteran.first_name + veteran.last_name }
