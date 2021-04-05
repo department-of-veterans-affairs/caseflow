@@ -1,211 +1,210 @@
-import React from 'react';
-import {
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-  within,
-} from '@testing-library/react';
+// import React from 'react';
+// import {
+//   fireEvent,
+//   render,
+//   screen,
+//   waitFor,
+//   within,
+// } from '@testing-library/react';
 
-import userEvent from '@testing-library/user-event';
-import selectEvent from 'react-select-event';
-import { axe } from 'jest-axe';
+// import userEvent from '@testing-library/user-event';
+// import selectEvent from 'react-select-event';
+// import { axe } from 'jest-axe';
 
-import COPY from 'app/../COPY';
-import { EditCavcRemandForm } from 'app/queue/cavc/EditCavcRemandForm';
+// import COPY from 'app/../COPY';
+// import { EditCavcRemandForm } from 'app/queue/cavc/EditCavcRemandForm';
 
-import {
-  existingValues,
-  decisionIssues,
-  supportedDecisionTypes,
-  supportedRemandTypes,
-} from 'test/data/queue/cavc';
+// import {
+//   existingValues,
+//   decisionIssues,
+//   supportedDecisionTypes,
+//   supportedRemandTypes,
+// } from 'test/data/queue/cavc';
 
-const getDecisionGroup = () => {
-  return screen.getByRole('group', { name: /how are you proceeding/i });
-};
-const fillDocketNumber = async () => {
-  await userEvent.type(
-    screen.getByRole('textbox', { name: /court docket number/i }),
-    existingValues.docketNumber
-  );
-};
-const fillAttorney = async () => {
-  const radioGroup = screen.getByRole('group', {
-    name: /represented by an attorney/i,
-  });
+// const fillDecisionType = async() => {
+//   //return screen.getByRole('group', { name: /how are you proceeding/i });
+//   await userEvent.type(
+//     screen.getByText(/how are you proceeding\?/i),
+//     existingValues.decisionType
+//   );
+// };
 
-  await userEvent.click(
-    within(radioGroup).getByRole('radio', { name: /yes/i })
-  );
-};
-const fillJudge = async () => {
-  await selectEvent.select(screen.getByLabelText(/cavc judge's name/i), [
-    existingValues.judge,
-  ]);
-};
-const fillDecisionDate = async () => {
-  await fireEvent.change(screen.getByLabelText(/decision date/i), {
-    target: { value: existingValues.decisionDate },
-  });
-};
-const fillInstructions = async () => {
-  await userEvent.type(
-    screen.getByRole('textbox', { name: /instructions/i }),
-    existingValues.instructions
-  );
-};
-const fillStatic = async () => {
-  await fillDocketNumber();
-  await fillAttorney();
-  await fillJudge();
-  await fillDecisionDate();
-  await fillInstructions();
-};
+// const fillRemandType = async() => {
+//   screen.getByText(/what type of remand is this\?/i),
+//   existingValues.remandType
+// };
 
-describe('EditCavcRemandForm', () => {
-  const onCancel = jest.fn();
-  const onSubmit = jest.fn();
-  const defaults = {
-    decisionIssues,
-    supportedDecisionTypes,
-    supportedRemandTypes,
-    onCancel,
-    onSubmit,
-  };
+// const fillDocketNumber = async () => {
+//   await userEvent.type(
+//     screen.getByRole('textbox', { name: /court docket number/i }),
+//     existingValues.docketNumber
+//   );
+// };
+// const fillAttorney = async () => {
+//   const radioGroup = screen.getByRole('group', {
+//     name: /represented by an attorney/i,
+//   });
 
-  const setup = (props) =>
-    render(<EditCavcRemandForm {...defaults} {...props} />);
+//   await userEvent.click(
+//     within(radioGroup).getByRole('radio', { name: /yes/i })
+//   );
+// };
+// const fillJudge = async () => {
+//   await selectEvent.select(screen.getByLabelText(/cavc judge's name/i), [
+//     existingValues.judge,
+//   ]);
+// };
+// const fillDecisionDate = async () => {
+//   await fireEvent.change(screen.getByLabelText(/decision date/i), {
+//     target: { value: existingValues.decisionDate },
+//   });
+// };
+// const fillInstructions = async () => {
+//   await userEvent.type(
+//     screen.getByRole('textbox', { name: /instructions/i }),
+//     existingValues.instructions
+//   );
+// };
+// const fillStatic = async () => {
+//   await fillDocketNumber();
+//   await fillAttorney();
+//   await fillJudge();
+//   await fillDecisionDate();
+//   await fillInstructions();
+//   fillDecisionType();
+//   fillRemandType();
+// };
 
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
+// describe('EditCavcRemandForm', () => {
+//   const onCancel = jest.fn();
+//   const onSubmit = jest.fn();
+//   const defaults = {
+//     decisionIssues,
+//     supportedDecisionTypes,
+//     supportedRemandTypes,
+//     onCancel,
+//     onSubmit,
+//   };
 
-  describe('adding new', () => {
-    describe('all feature toggles enabled', () => {
-      it('renders correctly', () => {
-        const { container } = setup();
+//   const setup = (props) =>
+//     render(<EditCavcRemandForm {...defaults} {...props} />);
 
-        expect(container).toMatchSnapshot();
-        expect(screen.getByText(COPY.ADD_CAVC_PAGE_TITLE)).toBeInTheDocument();
-      });
+//   beforeEach(() => {
+//     jest.clearAllMocks();
+//   });
 
-      it('passes a11y testing', async () => {
-        const { container } = setup();
+//   describe('adding new', () => {
+//     describe('all feature toggles enabled', () => {
+//       it('renders correctly', () => {
+//         const { container } = setup();
 
-        const results = await axe(container);
+//         expect(container).toMatchSnapshot();
+//         expect(screen.getByText(COPY.ADD_CAVC_PAGE_TITLE)).toBeInTheDocument();
+//       });
 
-        expect(results).toHaveNoViolations();
-      });
-    });
+//       it('passes a11y testing', async () => {
+//         const { container } = setup();
 
-    it('fires onCancel', () => {
-      setup();
-      expect(onCancel).not.toHaveBeenCalled();
+//         const results = await axe(container);
 
-      userEvent.click(screen.getByRole('button', { name: /cancel/i }));
-      expect(onCancel).toHaveBeenCalled();
-    });
+//         expect(results).toHaveNoViolations();
+//       });
+//     });
 
-    describe('with Remand decision', () => {
-      it.each(['jmr', 'jmpr', 'mdr'])(
-        'renders correctly with %s remand type selected',
-        async (remandType) => {
-          const { container } = setup();
+//     it('fires onCancel', () => {
+//       setup();
+//       expect(onCancel).not.toHaveBeenCalled();
 
-          await fillStatic();
+//       userEvent.click(screen.getByRole('button', { name: /cancel/i }));
+//       expect(onCancel).toHaveBeenCalled();
+//     });
 
-          await userEvent.click(
-            within(getDecisionGroup()).getByRole('radio', { name: /remand/i })
-          );
+//     describe('with Remand decision', () => {
+//       it.each(['jmr', 'jmpr', 'mdr'])(
+//         'renders correctly with %s remand type selected',
+//         async (remandType) => {
+//           const { container } = setup();
 
-          await waitFor(() => {
-            expect(
-              screen.getByRole('group', {
-                name: /what type of remand is this/i,
-              })
-            ).toBeInTheDocument();
-          });
+//           await fillStatic();
 
-          await userEvent.click(
-            screen.getByRole('radio', { name: new RegExp(remandType, 'i') })
-          );
+//           const { decisionType } = 'Remand';
 
-          if (remandType === 'mdr') {
-            expect(
-              await screen.findByText(/choosing mdr will/i)
-            ).toBeInTheDocument();
-          }
+//           expect(await screen.findByText(/how are you proceeding\?/i)).toBeInTheDocument();
+//           expect(await screen.findByText(/what type of remand is this\?/i)).toBeInTheDocument();
 
-          expect(container).toMatchSnapshot();
-        }
-      );
-    });
+//           if (remandType === 'mdr') {
+//             expect(screen.findByText(/choosing mdr will/i)).toBeInTheDocument();
+//           }
 
-    describe('with Reversal decision', () => {
-      it.each(['yes', 'no'])(
-        'renders correctly when judgement/mandate dates provided set to %s',
-        async (remandDatesProvided) => {
-          const { container } = setup();
+//           expect(container).toMatchSnapshot();
+//         }
+//       );
+//     });
 
-          await fillStatic();
+//     describe('with Reversal decision', () => {
+//       it.each(['yes', 'no'])(
+//         'renders correctly when judgement/mandate dates provided set to %s',
+//         async (remandDatesProvided) => {
+//           const { container } = setup();
 
-          await userEvent.click(
-            within(getDecisionGroup()).getByRole('radio', { name: /reversal/i })
-          );
+//           await fillStatic();
 
-          const datesProvidedGroup = await screen.findByRole('group', {
-            name: /judgement and mandate dates provided/i,
-          });
+//           await userEvent.click(
+//             within(getDecisionGroup()).getByRole('radio', { name: /reversal/i })
+//           );
 
-          await userEvent.click(
-            within(datesProvidedGroup).getByRole('radio', {
-              name: new RegExp(remandDatesProvided, 'i'),
-            })
-          );
+//           const datesProvidedGroup = await screen.findByRole('group', {
+//             name: /judgement and mandate dates provided/i,
+//           });
 
-          if (remandDatesProvided === 'yes') {
-            expect(
-              await screen.findByText(/same as court's decision date/i)
-            ).toBeInTheDocument();
-          } else {
-            expect(
-              await screen.findByText(
-                /this task will be put on hold for 90 days/i
-              )
-            ).toBeInTheDocument();
-          }
+//           await userEvent.click(
+//             within(datesProvidedGroup).getByRole('radio', {
+//               name: new RegExp(remandDatesProvided, 'i'),
+//             })
+//           );
 
-          expect(container).toMatchSnapshot();
-        }
-      );
-    });
-  });
+//           if (remandDatesProvided === 'yes') {
+//             expect(
+//               await screen.findByText(/same as court's decision date/i)
+//             ).toBeInTheDocument();
+//           } else {
+//             expect(
+//               await screen.findByText(
+//                 /this task will be put on hold for 90 days/i
+//               )
+//             ).toBeInTheDocument();
+//           }
 
-  describe('editing existing', () => {
-    describe('all feature toggles enabled', () => {
-      it('renders correctly', () => {
-        const { container } = setup({ existingValues });
+//           expect(container).toMatchSnapshot();
+//         }
+//       );
+//     });
+//   });
 
-        expect(container).toMatchSnapshot();
-        expect(screen.getByText(COPY.EDIT_CAVC_PAGE_TITLE)).toBeInTheDocument();
-      });
+//   describe('editing existing', () => {
+//     describe('all feature toggles enabled', () => {
+//       it('renders correctly', () => {
+//         const { container } = setup({ existingValues });
 
-      it('passes a11y testing', async () => {
-        const { container } = setup({ existingValues });
+//         expect(container).toMatchSnapshot();
+//         expect(screen.getByText(COPY.EDIT_CAVC_PAGE_TITLE)).toBeInTheDocument();
+//       });
 
-        const results = await axe(container);
+//       it('passes a11y testing', async () => {
+//         const { container } = setup({ existingValues });
 
-        expect(results).toHaveNoViolations();
-      });
-    });
+//         const results = await axe(container);
 
-    it('fires onCancel', () => {
-      setup({ existingValues });
-      expect(onCancel).not.toHaveBeenCalled();
+//         expect(results).toHaveNoViolations();
+//       });
+//     });
 
-      userEvent.click(screen.getByRole('button', { name: /cancel/i }));
-      expect(onCancel).toHaveBeenCalled();
-    });
-  });
-});
+//     it('fires onCancel', () => {
+//       setup({ existingValues });
+//       expect(onCancel).not.toHaveBeenCalled();
+
+//       userEvent.click(screen.getByRole('button', { name: /cancel/i }));
+//       expect(onCancel).toHaveBeenCalled();
+//     });
+//   });
+// });

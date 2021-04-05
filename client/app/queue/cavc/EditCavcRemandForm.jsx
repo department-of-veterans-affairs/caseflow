@@ -221,6 +221,7 @@ export const EditCavcRemandForm = ({
           value={CAVC_DECISION_TYPE_NAMES[watchDecisionType]}
           label={COPY.CAVC_TYPE_LABEL}
           readOnly={Boolean(register)}
+          name="decisonType"
           strongLabel
         />
 
@@ -230,6 +231,7 @@ export const EditCavcRemandForm = ({
             value={CAVC_REMAND_SUBTYPE_NAMES[watchRemandType]}
             label={COPY.CAVC_SUB_TYPE_LABEL}
             readOnly={Boolean(register)}
+            name="remandType"
             strongLabel
           />
         )}
