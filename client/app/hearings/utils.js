@@ -604,12 +604,11 @@ export const setTimeSlots = (hearings, ro, roTimezone = 'America/New_York') => {
 };
 
 export const formatTimeSlotLabel = (time, zone) => {
-  const roTime = zoneName(time, zone, 'z');
-  const coTime = zoneName(time, COMMON_TIMEZONES[3], 'z');
+  const easternMoment = moment.tz(time, 'HH:mm', 'America/New_York');
+  const roMoment = easternMoment.clone().tz(zone);
 
-  if (roTime === coTime) {
-    return coTime;
-  }
+  const roTime = roMoment.format('h:mm A z');
+  const coTime = easternMoment.format('h:mm A z');
 
   return `${roTime} (${coTime})`;
 };
