@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_22_220713) do
+ActiveRecord::Schema.define(version: 2021_03_24_184415) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -94,7 +94,7 @@ ActiveRecord::Schema.define(version: 2021_03_22_220713) do
 
   create_table "appeals", comment: "Decision reviews intaken for AMA appeals to the board (also known as a notice of disagreement).", force: :cascade do |t|
     t.boolean "aod_based_on_age", comment: "If true, appeal is advance-on-docket due to claimant's age."
-    t.string "changed_request_type", comment: "The new hearing type preference for an appellant that needs a hearing scheduled"
+    t.string "changed_hearing_request_type", comment: "The new hearing type preference for an appellant that needs a hearing scheduled"
     t.string "closest_regional_office", comment: "The code for the regional office closest to the Veteran on the appeal."
     t.datetime "created_at"
     t.date "docket_range_date", comment: "Date that appeal was added to hearing docket range."
@@ -107,7 +107,7 @@ ActiveRecord::Schema.define(version: 2021_03_22_220713) do
     t.datetime "establishment_processed_at", comment: "Timestamp for when the establishment has succeeded in processing."
     t.datetime "establishment_submitted_at", comment: "Timestamp for when the the intake was submitted for asynchronous processing."
     t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review."
-    t.string "original_request_type", comment: "The hearing type preference for an appellant before any changes were made in Caseflow"
+    t.string "original_hearing_request_type", comment: "The hearing type preference for an appellant before any changes were made in Caseflow"
     t.string "poa_participant_id", comment: "Used to identify the power of attorney (POA) at the time the appeal was dispatched to BVA. Sometimes the POA changes in BGS after the fact, and BGS only returns the current representative."
     t.date "receipt_date", comment: "Receipt date of the appeal form. Used to determine which issues are within the timeliness window to be appealed. Only issues decided prior to the receipt date will show up as contestable issues."
     t.string "stream_docket_number", comment: "Multiple appeals with the same docket number indicate separate appeal streams, mimicking the structure of legacy appeals."
@@ -913,7 +913,7 @@ ActiveRecord::Schema.define(version: 2021_03_22_220713) do
 
   create_table "legacy_appeals", force: :cascade do |t|
     t.bigint "appeal_series_id"
-    t.string "changed_request_type", comment: "The new hearing type preference for an appellant that needs a hearing scheduled"
+    t.string "changed_hearing_request_type", comment: "The new hearing type preference for an appellant that needs a hearing scheduled"
     t.string "closest_regional_office"
     t.boolean "contaminated_water_at_camp_lejeune", default: false
     t.datetime "created_at"
@@ -932,7 +932,7 @@ ActiveRecord::Schema.define(version: 2021_03_22_220713) do
     t.boolean "mustard_gas", default: false
     t.boolean "national_cemetery_administration", default: false
     t.boolean "nonrating_issue", default: false
-    t.string "original_request_type", comment: "The hearing type preference for an appellant before any changes were made in Caseflow"
+    t.string "original_hearing_request_type", comment: "The hearing type preference for an appellant before any changes were made in Caseflow"
     t.boolean "pension_united_states", default: false
     t.boolean "private_attorney_or_agent", default: false
     t.boolean "radiation", default: false

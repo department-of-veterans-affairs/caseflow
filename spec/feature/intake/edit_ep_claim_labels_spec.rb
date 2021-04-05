@@ -247,5 +247,99 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
         expect(r_row).to have_button("Edit claim label", disabled: true)
       end
     end
+
+    context "show edit ep error message" do
+      let(:new_ep_code) { "030HLRRPMC" }
+      let(:ep_code) { "030HLRNR" }
+      let(:synced_status) { "PEND" }
+      let(:payee_code) { "00" }
+      let(:modifier) { "030" }
+
+      let!(:end_product) do
+        Generators::EndProduct.build(
+          veteran_file_number: veteran.file_number,
+          bgs_attrs: {
+            benefit_claim_id: "123456",
+            claim_type_code: ep_code,
+            end_product_type_code: modifier,
+            payee_type_code: payee_code,
+            status_type_code: synced_status
+          }
+        )
+      end
+
+      let(:reference_id) { end_product.claim_id }
+
+      let(:end_product_establishment) do
+        create(:end_product_establishment,
+               :active,
+               source: higher_level_review,
+               synced_status: synced_status,
+               code: ep_code,
+               reference_id: reference_id,
+               payee_code: payee_code,
+               modifier: modifier)
+      end
+
+      let(:rating_request_issue) do
+        create(
+          :request_issue,
+          contested_rating_issue_reference_id: "def456",
+          contested_rating_issue_profile_date: rating.profile_date,
+          decision_review: higher_level_review,
+          benefit_type: benefit_type,
+          contested_issue_description: "PTSD denied",
+          end_product_establishment: end_product_establishment
+        )
+      end
+
+      let(:nonrating_request_issue) do
+        create(
+          :request_issue,
+          :nonrating,
+          decision_review: higher_level_review,
+          benefit_type: benefit_type,
+          contested_issue_description: "Apportionment",
+          end_product_establishment: end_product_establishment
+        )
+      end
+
+      let!(:bgs) { BGSService.new }
+
+      before do
+        higher_level_review.create_issues!(
+          [
+            rating_request_issue,
+            nonrating_request_issue
+          ]
+        )
+        higher_level_review.establish!
+        allow(BGSService).to receive(:new) { bgs }
+        allow(bgs).to receive(:update_benefit_claim).and_raise(BGS::ShareError, "bgs error")
+      end
+
+      it "shows error message when claim is not correct" do
+        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+        nr_label = Constants::EP_CLAIM_TYPES[nonrating_request_issue.end_product_establishment.code]["official_label"]
+        nr_row = page.find("tr", text: nr_label, match: :prefer_exact)
+        nr_row.find("button", text: "Edit claim label").click
+        safe_click ".cf-select"
+        fill_in "Select the correct EP claim label", with: new_ep_code
+        find("#select-claim-label").send_keys :enter
+        find("button", text: "Continue").click
+
+        expect(page).to have_content(COPY::CONFIRM_CLAIM_LABEL_MODAL_TITLE)
+
+        find("button", text: "Confirm").click
+
+        expect(page).to_not have_content(COPY::EDIT_CLAIM_LABEL_MODAL_NOTE)
+        expect(page).to have_content("We were unable to edit the claim label.")
+
+        epu = EndProductUpdate.find_by(error: "bgs error", status: "error")
+
+        expect(epu).to_not be_nil
+        expect(epu.end_product_establishment.reload.code).to eq(ep_code)
+      end
+    end
   end
 end
