@@ -44,7 +44,7 @@ else
 fi
 
 echo "==> Installing the base dependencies"
-brew install rbenv nodenv yarn jq
+brew install rbenv nodenv yarn jq shared-mime-info
 brew tap ouchxp/nodenv
 brew install nodenv-nvmrc
 brew install postgres
