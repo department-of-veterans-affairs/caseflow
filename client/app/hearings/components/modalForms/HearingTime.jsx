@@ -59,7 +59,7 @@ export const HearingTime = ({
 }) => {
   const timeOptions = getTimeOptions(regionalOffice, readOnly);
   const radioOptions = enableZone ?
-    hearingTimeOptsWithZone(timeOptions, localZone || enableZone, timesInZone) :
+    hearingTimeOptsWithZone(timeOptions, localZone, timesInZone) :
     timeOptions;
 
   const isOther = _.isUndefined(
@@ -100,7 +100,7 @@ export const HearingTime = ({
           placeholder="Select a time"
           options={
             enableZone ?
-              hearingTimeOptsWithZone(HEARING_TIME_OPTIONS, localZone || enableZone, timesInZone) :
+              hearingTimeOptsWithZone(HEARING_TIME_OPTIONS, localZone, timesInZone) :
               HEARING_TIME_OPTIONS
           }
           value={value}
