@@ -4,7 +4,8 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
   include IntakeHelpers
 
   before do
-    setup_intake_flags
+    Timecop.freeze(Time.zone.today)
+    User.authenticate!(roles: ["Admin Intake"])
     FeatureToggle.enable!(:edit_ep_claim_labels)
   end
 
@@ -191,10 +192,60 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
       find("button", text: "Confirm").click
 
       expect(page).to_not have_content(COPY::EDIT_CLAIM_LABEL_MODAL_NOTE)
-      sleep 1 # when frontend displays result of XHR, write a capybara expect against that
+
+      expect(page).to have_current_path("/search?veteran_ids=#{higher_level_review.veteran.id}")
+      expect(page).to have_content COPY::EDIT_EP_CLAIM_LABEL_SUCCESS_ALERT_TITLE
+      expect(page).to have_content COPY::EDIT_EP_CLAIM_LABEL_SUCCESS_ALERT_MESSAGE
 
       expect(EndProductUpdate.find_by(original_decision_review: higher_level_review)).to_not be_nil
       expect(higher_level_review.end_product_establishments.where(code: new_ep_code).count).to eq(2)
+    end
+
+    context "when the end product correction feature toggle is enabled" do
+      before { FeatureToggle.enable!(:correct_claim_reviews) }
+      after { FeatureToggle.disable!(:correct_claim_reviews) }
+
+      before do
+        rating_ep = higher_level_review.end_product_establishments.find_by(code: "030HLRR")
+        nonrating_ep = higher_level_review.end_product_establishments.find_by(code: "030HLRNR")
+
+        # This creates EPs in the Fakes so that they are available for syncing
+        Generators::EndProduct.build(
+          veteran_file_number: rating_ep.veteran_file_number,
+          bgs_attrs: {
+            claim_type_code: rating_ep.code,
+            end_product_type_code: rating_ep.modifier,
+            benefit_claim_id: rating_ep.reference_id,
+            last_action_date: 5.days.ago.to_formatted_s(:short_date),
+            status_type_code: "CLR"
+          }
+        )
+
+        Generators::EndProduct.build(
+          veteran_file_number: nonrating_ep.veteran_file_number,
+          bgs_attrs: {
+            claim_type_code: nonrating_ep.code,
+            end_product_type_code: nonrating_ep.modifier,
+            benefit_claim_id: nonrating_ep.reference_id,
+            last_action_date: 5.days.ago.to_formatted_s(:short_date),
+            status_type_code: "CAN"
+          }
+        )
+      end
+
+      it "hides cancelled claims and disables edits on cleared claims" do
+        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+
+        # Cancelled EPs do not show on the UI
+        nr_label = Constants::EP_CLAIM_TYPES[nonrating_request_issue.end_product_establishment.code]["official_label"]
+        expect(page.has_no_content?(nr_label)).to eq(true)
+
+        # Edit button on Cleared claim is disabled
+        # Note: Cleared EPs only appear when the end product correction feature toggle is enabled
+        r_label = Constants::EP_CLAIM_TYPES[rating_request_issue.end_product_establishment.code]["official_label"]
+        r_row = page.find("tr", text: r_label, match: :prefer_exact)
+        expect(r_row).to have_button("Edit claim label", disabled: true)
+      end
     end
   end
 end
