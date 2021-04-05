@@ -348,8 +348,9 @@ export const timezones = (time) => {
       commonsCount += 1;
     }
 
-    //ensure that before the user selects a time it won't display 'Invalid Date' next to zone
-    const zoneLabel = dateTime.isValid() ? `${zone} (${moment(dateTime, 'HH:mm').tz(TIMEZONES[zone]).format('h:mm A')})` : `${zone}`
+    // ensure that before the user selects a time it won't display 'Invalid Date' next to zone
+    const zoneLabel = dateTime.isValid() ? `${zone} (${moment(dateTime, 'HH:mm').tz(TIMEZONES[zone]).
+      format('h:mm A')})` : `${zone}`;
 
     // Return the formatted options
     return {
@@ -575,6 +576,10 @@ const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings
 export const setTimeSlots = (hearings, ro, roTimezone = 'America/New_York') => {
   // Safe assign the hearings array in case there are no scheduled hearings
   const scheduledHearings = hearings || [];
+
+  // Set the moment default tz, if this isn't done there are timezone problems
+  // when switching between 'Custom time' and slot selection, see hearingTimeOptsWithZone
+  moment.tz.setDefault(roTimezone);
 
   const slotCount = 8;
   const startTime = ro === 'C' ? '09:00' : '08:30';
