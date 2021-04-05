@@ -487,10 +487,11 @@ export const dispositionLabel = (disposition) => HEARING_DISPOSITION_TYPE_TO_LAB
  * Method to calculate an array of available time slots, no filled timeslots or hearings are included
  * @param {string} slotCount  -- Max number of slots to generate
  * @param {string} startTime  -- Time of first possible slot in "America/New_York" timezone
+ * @param {string} endTime    -- Time of last possible slot in "America/New_York" timezone
  * @param {string} roTimezone -- Timezone like 'America/Los_Angeles' of the ro
  * @param {array} hearings    -- List of hearings scheduled for a specific date
  **/
-const calculateAvailableTimeslots = ({ slotCount, startTime, roTimezone, hearings }) => {
+const calculateAvailableTimeslots = ({ slotCount, startTime, endTime, roTimezone, hearings }) => {
   // Extract the hearing time, interpret it as in the roTimezone
   const hearingTimes = hearings.map((hearing) =>
     moment.tz(hearing.hearingTime, 'HH:mm', roTimezone)
@@ -501,7 +502,7 @@ const calculateAvailableTimeslots = ({ slotCount, startTime, roTimezone, hearing
   // - We want 8 hours of slots: 8 = 15:30 - 08:30 + 1
   const availableSlots = _.times(slotCount).map((index) => {
     // Add the index to the start time so we assign 1 value per hour
-    const slotTime = moment.tz(startTime, 'HH:mm', 'America/New_York').add(index, 'hours');
+    const slotTime = moment.tz(startTime, 'HH:mm', roTimezone).add(index, 'hours');
 
     // This slot is not available (full) if there's a scheduled hearing less than an hour before
     // or after the slot.
@@ -511,9 +512,11 @@ const calculateAvailableTimeslots = ({ slotCount, startTime, roTimezone, hearing
     const slotFull = hearingTimes.some((scheduledHearingTime) =>
       Math.abs(slotTime.diff(scheduledHearingTime, 'minutes')) < 60
     );
+    const endTimeMoment = moment.tz(endTime, 'HH:mm', 'America/New_York');
+    const slotAfterRoHours = slotTime.isAfter(endTimeMoment);
 
     // Return null if there is a filled time slot, otherwise return the hearingTime
-    if (slotFull) {
+    if (slotFull || slotAfterRoHours) {
       return null;
     }
 
@@ -583,9 +586,11 @@ export const setTimeSlots = (hearings, ro, roTimezone = 'America/New_York') => {
 
   const slotCount = 8;
   const startTime = ro === 'C' ? '09:00' : '08:30';
+  const endTime = ro === 'C' ? '16:00' : '15:30';
   const availableSlots = calculateAvailableTimeslots({
     slotCount,
     startTime,
+    endTime,
     roTimezone,
     hearings: scheduledHearings
   });
