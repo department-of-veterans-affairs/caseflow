@@ -29,7 +29,7 @@ describe('formatDocketSwitchRecommendation', () => {
       expect(res).toMatch(
         new RegExp('\\*\\*Recommendation:\\*\\* Grant all issues {2}\\n {2}\\n')
       );
-      expect(res).toMatch(new RegExp(`\\*\\*Draft letter:\\*\\* [View link](${hyperlink})`));
+      expect(res).toMatch(`**Draft letter:** [View link](${hyperlink})`);
       expect(res).toMatchSnapshot();
     });
   });
@@ -47,21 +47,21 @@ describe('formatDocketSwitchRecommendation', () => {
   //       disposition,
   //     });
 
-  //     expect(res).toMatch(
-  //       new RegExp(`\\*\\*Summary:\\*\\* ${summary} {2}\\n {2}\\n`)
-  //     );
-  //     expect(res).toMatch(
-  //       new RegExp('\\*\\*Is this a timely request:\\*\\* Yes {2}\\n {2}\\n')
-  //     );
-  //     expect(res).toMatch(
-  //       new RegExp(
-  //         '\\*\\*Recommendation:\\*\\* Grant a partial switch {2}\\n {2}\\n'
-  //       )
-  //     );
-  //     expect(res).toMatch(new RegExp(`\\*\\*Draft letter:\\*\\* [View link](${hyperlink})`));
-  //     expect(res).toMatchSnapshot();
-  //   });
-  // });
+      expect(res).toMatch(
+        new RegExp(`\\*\\*Summary:\\*\\* ${summary} {2}\\n {2}\\n`)
+      );
+      expect(res).toMatch(
+        new RegExp('\\*\\*Is this a timely request:\\*\\* Yes {2}\\n {2}\\n')
+      );
+      expect(res).toMatch(
+        new RegExp(
+          '\\*\\*Recommendation:\\*\\* Grant a partial switch {2}\\n {2}\\n'
+        )
+      );
+      expect(res).toMatch(`**Draft letter:** [View link](${hyperlink})`);
+      expect(res).toMatchSnapshot();
+    });
+  });
 
   // describe('with denied disposition', () => {
   //   beforeAll(() => {
@@ -76,18 +76,18 @@ describe('formatDocketSwitchRecommendation', () => {
   //       disposition,
   //     });
 
-  //     expect(res).toMatch(
-  //       new RegExp(`\\*\\*Summary:\\*\\* ${summary} {2}\\n {2}\\n`)
-  //     );
-  //     expect(res).toMatch(
-  //       new RegExp('\\*\\*Is this a timely request:\\*\\* Yes {2}\\n {2}\\n')
-  //     );
-  //     expect(res).toMatch(
-  //       new RegExp('\\*\\*Recommendation:\\*\\* Deny all issues {2}\\n {2}\\n')
-  //     );
-  //     expect(res).toMatch(new RegExp(`\\*\\*Draft letter:\\*\\* [View link](${hyperlink})`));
-  //     expect(res).toMatchSnapshot();
-  //   });
-  // });
+      expect(res).toMatch(
+        new RegExp(`\\*\\*Summary:\\*\\* ${summary} {2}\\n {2}\\n`)
+      );
+      expect(res).toMatch(
+        new RegExp('\\*\\*Is this a timely request:\\*\\* Yes {2}\\n {2}\\n')
+      );
+      expect(res).toMatch(
+        new RegExp('\\*\\*Recommendation:\\*\\* Deny all issues {2}\\n {2}\\n')
+      );
+      expect(res).toMatch(`**Draft letter:** [View link](${hyperlink})`);
+      expect(res).toMatchSnapshot();
+    });
+  });
 });
 

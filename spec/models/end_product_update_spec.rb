@@ -4,8 +4,13 @@ describe EndProductUpdate do
   describe "#perform!" do
     let(:original_decision_review) { create(:higher_level_review, :processed, same_office: false) }
     let(:claim_date) { Time.zone.yesterday }
+    let!(:veteran) { create(:veteran) }
     let!(:epe) do
-      create(:end_product_establishment, code: old_code, source: original_decision_review, claim_date: claim_date)
+      create(:end_product_establishment,
+             code: old_code,
+             source: original_decision_review,
+             claim_date: claim_date,
+             veteran_file_number: veteran.file_number)
     end
     let(:epu) do
       create(:end_product_update,
@@ -81,9 +86,9 @@ describe EndProductUpdate do
           expect(original_decision_review).to have_received(:create_stream!).once
 
           new_stream = epu.end_product_establishment.source
+
           expect(new_stream).to_not be original_decision_review
           expect(original_decision_review.benefit_type).to eq old_benefit_type
-
           expect(new_stream.benefit_type).to eq new_benefit_type
           expect(new_stream.same_office).to eq original_decision_review.same_office
           expect(epu.request_issues).to all have_attributes(benefit_type: new_benefit_type)
@@ -101,7 +106,6 @@ describe EndProductUpdate do
 
             expect(original_decision_review.end_product_establishments.count).to eq 2
             expect { subject }.to change { original_decision_review.end_product_establishments.count }.by(-1)
-
             expect(original_decision_review).to_not have_received(:create_stream!)
             expect(original_decision_review.benefit_type).to eq old_benefit_type
             expect(epu.end_product_establishment.source).to eq existing_stream
