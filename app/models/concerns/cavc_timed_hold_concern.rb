@@ -6,6 +6,8 @@
 module CavcTimedHoldConcern
   extend ActiveSupport::Concern
 
+  # To-do: increase code coverage of this class
+  :nocov:
   def update_timed_hold
     ActiveRecord::Base.transaction do
       children.open.where(type: :TimedHoldTask).last&.cancelled!
@@ -32,4 +34,5 @@ module CavcTimedHoldConcern
     # convert to the number of days from today
     (end_date - Time.zone.today).to_i
   end
+  :nocov:
 end
