@@ -31,8 +31,12 @@ class ClaimReviewController < ApplicationController
     epe = claim_review.end_product_establishments.find_by(code: params[:previous_code])
     render json: { error_code: "EP not found" }, status: :not_found if epe.nil?
 
-    perform_ep_update!(epe)
-    render json: {}
+    edit_ep = perform_ep_update!(epe)
+    if edit_ep.error?
+      render json: { error_code: epe.code }, status: :unprocessable_entity
+    else
+      render json: { veteran: claim_review.veteran }
+    end
   end
 
   private
