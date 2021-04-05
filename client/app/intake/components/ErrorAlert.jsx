@@ -124,7 +124,7 @@ export default class ErrorAlert extends React.PureComponent {
         body: (
           <Fragment>
            We were unable to edit the claim label. Please try again and if this error persists,
-           <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer"> submit a YourIT ticket</a>.
+            <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer"> submit a YourIT ticket</a>.
           </Fragment>
         )
       }
