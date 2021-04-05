@@ -333,7 +333,7 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
         find("button", text: "Confirm").click
 
         expect(page).to_not have_content(COPY::EDIT_CLAIM_LABEL_MODAL_NOTE)
-        expect(page).to have_content("We are unable to edit the claim label.")
+        expect(page).to have_content("We were unable to edit the claim label.")
 
         epu = EndProductUpdate.find_by(error: "bgs error", status: "error")
 
