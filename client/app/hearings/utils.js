@@ -486,8 +486,8 @@ export const dispositionLabel = (disposition) => HEARING_DISPOSITION_TYPE_TO_LAB
 /**
  * Method to calculate an array of available time slots, no filled timeslots or hearings are included
  * @param {string} slotCount  -- Max number of slots to generate
- * @param {string} startTime  -- Time of first possible slot in "America/New_York" timezone
- * @param {string} endTime    -- Time of last possible slot in "America/New_York" timezone
+ * @param {string} startTime  -- Time of first possible slot in roTimezone
+ * @param {string} endTime    -- Time of last possible slot in roTimezone
  * @param {string} roTimezone -- Timezone like 'America/Los_Angeles' of the ro
  * @param {array} hearings    -- List of hearings scheduled for a specific date
  **/
