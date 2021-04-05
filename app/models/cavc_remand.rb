@@ -39,7 +39,7 @@ class CavcRemand < CaseflowRecord
   }
 
   # To-do: increase code coverage of this class
-  :nocov:
+  # :nocov:
   # called from the Add Cavc Date Modal
   def add_cavc_dates(params)
     if already_has_mandate?
@@ -144,5 +144,5 @@ class CavcRemand < CaseflowRecord
   def cavc_task
     CavcTask.open.find_by(appeal_id: remand_appeal_id)
   end
-  :nocov:
+  # :nocov:
 end
