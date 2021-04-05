@@ -50,7 +50,7 @@ describe ChangeHearingRequestTypeTask do
                 "status": "completed",
                 "business_payloads": {
                   "values": {
-                    "changed_request_type": "V",
+                    "changed_hearing_request_type": "V",
                     "closest_regional_office": nil
                   }
                 }
@@ -75,7 +75,7 @@ describe ChangeHearingRequestTypeTask do
                 "status": "completed",
                 "business_payloads": {
                   "values": {
-                    "changed_request_type": "C",
+                    "changed_hearing_request_type": "C",
                     "closest_regional_office": "C"
                   }
                 }
@@ -100,7 +100,7 @@ describe ChangeHearingRequestTypeTask do
                 "status": "completed",
                 "business_payloads": {
                   "values": {
-                    "changed_request_type": "R",
+                    "changed_hearing_request_type": "R",
                     "closest_regional_office": "RO17"
                   }
                 }

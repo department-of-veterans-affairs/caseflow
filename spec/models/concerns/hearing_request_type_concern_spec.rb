@@ -7,19 +7,19 @@ describe HearingRequestTypeConcern do
   let(:readable_virtual) { LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:virtual] }
 
   context "with a legacy appeal" do
-    let(:changed_request_type) { nil }
-    let(:original_request_type) { nil }
+    let(:changed_hearing_request_type) { nil }
+    let(:original_hearing_request_type) { nil }
     let!(:appeal) do
       create(
         :legacy_appeal,
         vacols_case: vacols_case,
-        changed_request_type: changed_request_type,
-        original_request_type: original_request_type
+        changed_hearing_request_type: changed_hearing_request_type,
+        original_hearing_request_type: original_hearing_request_type
       )
     end
 
-    context "#original_hearing_request_type" do
-      subject { appeal.original_hearing_request_type }
+    context "#formatted_original_hearing_request_type" do
+      subject { appeal.formatted_original_hearing_request_type }
 
       context "when central_office" do
         let(:vacols_case) { create(:case, :central_office_hearing) }
@@ -29,9 +29,9 @@ describe HearingRequestTypeConcern do
           expect(appeal.readable_original_hearing_request_type).to eq readable_central
         end
 
-        it "does not save the value to original_request_type" do
+        it "does not save the value to original_hearing_request_type" do
           subject
-          expect(appeal.reload.original_request_type).to be_nil
+          expect(appeal.reload.original_hearing_request_type).to be_nil
         end
       end
 
@@ -60,47 +60,47 @@ describe HearingRequestTypeConcern do
       context "when central_office" do
         let(:vacols_case) { create(:case, :central_office_hearing) }
 
-        it "saves the value to original_request_type" do
+        it "saves the value to original_hearing_request_type" do
           subject
-          expect(appeal.original_request_type).to eq :central_office.to_s
+          expect(appeal.original_hearing_request_type).to eq :central_office.to_s
         end
       end
 
       context "when travel_board" do
         context "when video_hearing_requested is true" do
           let(:vacols_case) { create(:case, :video_hearing_requested, :travel_board_hearing) }
-          it "saves the value to original_request_type" do
+          it "saves the value to original_hearing_request_type" do
             subject
-            expect(appeal.original_request_type).to eq :video.to_s
+            expect(appeal.original_hearing_request_type).to eq :video.to_s
           end
         end
 
         context "when video_hearing_requested is false" do
           let(:vacols_case) { create(:case, :travel_board_hearing) }
 
-          it "saves the value to original_request_type" do
+          it "saves the value to original_hearing_request_type" do
             subject
-            expect(appeal.original_request_type).to eq :travel_board.to_s
+            expect(appeal.original_hearing_request_type).to eq :travel_board.to_s
           end
         end
 
         context "when request type overriden in Caseflow to video" do
-          let(:changed_request_type) { HearingDay::REQUEST_TYPES[:video] }
+          let(:changed_hearing_request_type) { HearingDay::REQUEST_TYPES[:video] }
           let(:vacols_case) { create(:case, :travel_board_hearing) }
 
           it "saves the original request type" do
             subject
-            expect(appeal.original_request_type).to eq :travel_board.to_s
+            expect(appeal.original_hearing_request_type).to eq :travel_board.to_s
           end
         end
 
         context "when request type overriden in Caseflow to virtual" do
-          let(:changed_request_type) { HearingDay::REQUEST_TYPES[:virtual] }
+          let(:changed_hearing_request_type) { HearingDay::REQUEST_TYPES[:virtual] }
           let(:vacols_case) { create(:case, :travel_board_hearing) }
 
           it "saves the original request type" do
             subject
-            expect(appeal.original_request_type).to eq :travel_board.to_s
+            expect(appeal.original_hearing_request_type).to eq :travel_board.to_s
           end
         end
       end
@@ -110,15 +110,15 @@ describe HearingRequestTypeConcern do
 
         it "saves a nil value" do
           subject
-          expect(appeal.original_request_type).to be_nil
+          expect(appeal.original_hearing_request_type).to be_nil
         end
 
-        context "original_request_type already has a value" do
-          let(:original_request_type) { "travel_board" }
+        context "original_hearing_request_type already has a value" do
+          let(:original_hearing_request_type) { "travel_board" }
 
           it "doesn't overwrite the saved value with nil" do
             subject
-            expect(appeal.original_request_type).to eq "travel_board"
+            expect(appeal.original_hearing_request_type).to eq "travel_board"
           end
         end
       end
@@ -133,9 +133,9 @@ describe HearingRequestTypeConcern do
 
           it { is_expected.to eq(:central_office) }
 
-          it "does not save the value to original_request_type" do
+          it "does not save the value to original_hearing_request_type" do
             subject
-            expect(appeal.original_request_type).to be_nil
+            expect(appeal.original_hearing_request_type).to be_nil
           end
         end
 
@@ -155,14 +155,14 @@ describe HearingRequestTypeConcern do
       end
 
       context "when request type overriden in Caseflow to video" do
-        let(:changed_request_type) { HearingDay::REQUEST_TYPES[:video] }
+        let(:changed_hearing_request_type) { HearingDay::REQUEST_TYPES[:video] }
         let(:vacols_case) { create(:case, :travel_board_hearing) }
 
         it { is_expected.to eq(:video) }
       end
 
       context "when request type overriden in Caseflow to virtual" do
-        let(:changed_request_type) { HearingDay::REQUEST_TYPES[:virtual] }
+        let(:changed_hearing_request_type) { HearingDay::REQUEST_TYPES[:virtual] }
         let(:vacols_case) { create(:case, :travel_board_hearing) }
 
         it { is_expected.to eq(:virtual) }
@@ -181,7 +181,7 @@ describe HearingRequestTypeConcern do
           :legacy_appeal,
           :with_schedule_hearing_tasks,
           vacols_case: vacols_case,
-          changed_request_type: changed_request_type
+          changed_hearing_request_type: changed_hearing_request_type
         )
       end
       let(:current_user) { create(:user, roles: ["Edit HearSched"]) }
@@ -197,7 +197,7 @@ describe HearingRequestTypeConcern do
           {
             business_payloads: {
               values: {
-                changed_request_type: HearingDay::REQUEST_TYPES[:virtual],
+                changed_hearing_request_type: HearingDay::REQUEST_TYPES[:virtual],
                 closest_regional_office: "C"
               }
             }
@@ -225,14 +225,14 @@ describe HearingRequestTypeConcern do
       end
 
       context "when there are two paper trail events" do
-        let(:changed_request_type1) { HearingDay::REQUEST_TYPES[:central] }
-        let(:changed_request_type2) { HearingDay::REQUEST_TYPES[:video] }
+        let(:changed_hearing_request_type1) { HearingDay::REQUEST_TYPES[:central] }
+        let(:changed_hearing_request_type2) { HearingDay::REQUEST_TYPES[:video] }
         let(:requested_change1) do
           {
             status: Constants.TASK_STATUSES.completed,
             business_payloads: {
               values: {
-                changed_request_type: changed_request_type1,
+                changed_hearing_request_type: changed_hearing_request_type1,
                 closest_regional_office: "C"
               }
             }
@@ -243,7 +243,7 @@ describe HearingRequestTypeConcern do
             status: Constants.TASK_STATUSES.completed,
             business_payloads: {
               values: {
-                changed_request_type: changed_request_type2,
+                changed_hearing_request_type: changed_hearing_request_type2,
                 closest_regional_office: nil
               }
             }
@@ -316,8 +316,8 @@ describe HearingRequestTypeConcern do
       )
     end
 
-    context "#original_hearing_request_type" do
-      subject { appeal.original_hearing_request_type }
+    context "#formatted_original_hearing_request_type" do
+      subject { appeal.formatted_original_hearing_request_type }
 
       context "when closest regional office is the central office" do
         let(:closest_regional_office) { HearingDay::REQUEST_TYPES[:central] }
@@ -327,9 +327,9 @@ describe HearingRequestTypeConcern do
           expect(appeal.readable_original_hearing_request_type).to eq readable_central
         end
 
-        it "does not save the value to original_request_type" do
+        it "does not save the value to original_hearing_request_type" do
           subject
-          expect(appeal.reload.original_request_type).to be_nil
+          expect(appeal.reload.original_hearing_request_type).to be_nil
         end
       end
 
