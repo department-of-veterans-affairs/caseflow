@@ -32,8 +32,9 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
     end
 
     let(:docket_number) { "12-1234" }
-    let(:date) { "11/11/2020" }
-    let(:later_date) { "12/21/2020" }
+    # Use a decision date within the last 90 days so that it is automatically put on hold for MDR
+    let(:date) { 40.days.ago.to_date.strftime("%-m/%-d/%Y") }
+    let(:later_date) { 20.days.ago.to_date.strftime("%-m/%-d/%Y") }
     let(:instructions) { "Please process this remand" }
     let(:mandate_instructions) { "Mandate received!" }
     let(:judge_name) { Constants::CAVC_JUDGE_FULL_NAMES.first }
