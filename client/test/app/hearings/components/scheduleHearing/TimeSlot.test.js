@@ -3,6 +3,7 @@ import React from 'react';
 import { TimeSlot } from 'app/hearings/components/scheduleHearing/TimeSlot';
 import { render, fireEvent, screen } from '@testing-library/react';
 import { roTimezones, setTimeSlots, formatTimeSlotLabel } from 'app/hearings/utils';
+import { axe } from 'jest-axe';
 
 const time = '08:30';
 const time2 = '09:30';
@@ -14,6 +15,24 @@ const fetchScheduledHearings = jest.fn();
 
 let roTimezone = '';
 let slotCount = '';
+
+it('renders correctly', () => {
+  const { container } = render(
+    <TimeSlot roTimezone={roTimezone} hearings={emptyHearings} fetchScheduledHearings={fetchScheduledHearings} />
+  );
+
+  expect(container).toMatchSnapshot();
+});
+
+it('passes a11y testing', async () => {
+  const { container } = render(
+    <TimeSlot roTimezone={roTimezone} hearings={emptyHearings} fetchScheduledHearings={fetchScheduledHearings} />
+  );
+
+  const results = await axe(container);
+
+  expect(results).toHaveNoViolations();
+});
 
 describe('TimeSlot', () => {
   beforeEach(() => {
