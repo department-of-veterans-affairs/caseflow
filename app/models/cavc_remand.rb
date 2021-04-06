@@ -21,7 +21,8 @@ class CavcRemand < CaseflowRecord
   validates :federal_circuit, inclusion: { in: [true, false] }, if: -> { remand? && mdr? }
 
   before_create :normalize_cavc_docket_number
-  before_save :establish_appeal_stream, if: :cavc_remand_form_complete?
+  before_create :establish_appeal_stream, if: :cavc_remand_form_complete?
+  after_create :initialize_tasks
 
   enum cavc_decision_type: {
     Constants.CAVC_DECISION_TYPES.remand.to_sym => Constants.CAVC_DECISION_TYPES.remand,
@@ -37,7 +38,10 @@ class CavcRemand < CaseflowRecord
     Constants.CAVC_REMAND_SUBTYPES.mdr.to_sym => Constants.CAVC_REMAND_SUBTYPES.mdr
   }
 
-  def update(params)
+  # To-do: increase code coverage of this class
+  # :nocov:
+  # called from the Add Cavc Date Modal
+  def add_cavc_dates(params)
     if already_has_mandate?
       fail Caseflow::Error::CannotUpdateMandatedRemands
     end
@@ -46,7 +50,34 @@ class CavcRemand < CaseflowRecord
     end_mandate_hold
   end
 
+  # called from the Edit Remand Form
+  def update(params)
+    # Identify changes
+    decision_issue_ids_as_ints = params[:decision_issue_ids].map(&:to_i)
+    decision_issue_ids_add = decision_issue_ids_as_ints - decision_issue_ids
+    decision_issue_ids_remove = decision_issue_ids - decision_issue_ids_as_ints
+    new_decision_date = (Date.parse(params[:decision_date]) - decision_date).to_i.abs > 0
+
+    # Update self
+    update!(params)
+
+    # Apply changes to other records
+    if decision_issue_ids_add.any? || decision_issue_ids_remove.any?
+      update_request_issues(add: decision_issue_ids_add, remove: decision_issue_ids_remove)
+    end
+
+    update_timed_hold if new_decision_date
+  end
+
   private
+
+  def update_timed_hold
+    if mandate_not_required?
+      parent_task_types = [:MdrTask, :MandateHoldTask]
+      # There should only be 1 open timed_hold_parent_task
+      remand_appeal.tasks.open.where(type: parent_task_types).find_each(&:update_timed_hold)
+    end
+  end
 
   def update_with_instructions(params)
     params[:instructions] = flattened_instructions(params)
@@ -77,12 +108,23 @@ class CavcRemand < CaseflowRecord
 
   def establish_appeal_stream
     self.remand_appeal ||= source_appeal.create_stream(:court_remand).tap do |cavc_appeal|
-      DecisionIssue.find(decision_issue_ids).map do |cavc_remanded_issue|
-        cavc_remanded_issue.create_contesting_request_issue!(cavc_appeal)
-      end
+      update_request_issues(cavc_appeal, add: decision_issue_ids)
       AdvanceOnDocketMotion.copy_granted_motions_to_appeal(source_appeal, cavc_appeal)
-      InitialTasksFactory.new(cavc_appeal, self).create_root_and_sub_tasks!
     end
+  end
+
+  def update_request_issues(cavc_appeal = remand_appeal, add: [], remove: [])
+    DecisionIssue.find(add).map do |cavc_remanded_issue|
+      cavc_remanded_issue.create_contesting_request_issue!(cavc_appeal)
+    end
+    DecisionIssue.find(remove).map do |cavc_remanded_issue|
+      req_issues = remand_appeal.request_issues.where(contested_decision_issue_id: cavc_remanded_issue.id)
+      req_issues.delete_all
+    end
+  end
+
+  def initialize_tasks
+    InitialTasksFactory.new(remand_appeal).create_root_and_sub_tasks!
   end
 
   def end_mandate_hold
@@ -102,4 +144,5 @@ class CavcRemand < CaseflowRecord
   def cavc_task
     CavcTask.open.find_by(appeal_id: remand_appeal_id)
   end
+  # :nocov:
 end

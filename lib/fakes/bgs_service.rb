@@ -200,17 +200,41 @@ class Fakes::BGSService
   end
 
   # rubocop:disable Metrics/ParameterLists
+  # rubocop:disable Metrics/MethodLength
   def update_benefit_claim(veteran_file_number:, payee_code:, claim_date:, benefit_type_code:, modifier:, new_code:)
     matching_eps = select_end_products(veteran_file_number,
                                        modifier: modifier,
                                        payee_code: payee_code,
                                        claim_date: claim_date)
+
+    # BGS throws a ShareError if matching_ep is blank
+    veteran = Veteran.find_by(file_number: veteran_file_number)
+    fail BGS::ShareError, "No Veteran Found" unless veteran
+
+    if matching_eps.blank?
+      return { benefit_claim_record: { pre_dschrg_type_cd: nil },
+               life_cycle_record: nil,
+               participant_record: nil,
+               return_cod: "GUIE50004",
+               return_message: "Benefit Claim not found on Corporate Database",
+               suspence_record: nil }
+    end
+
     matching_eps.each do |ep|
       ep[:claim_type_code] = new_code
       self.class.store_end_product_record(veteran_file_number, ep)
     end
+
+    # Actual success message
+    { benefit_claim_record: { pre_dschrg_type_cd: nil },
+      life_cycle_record: nil,
+      participant_record: nil,
+      return_code: "GUIE02210",
+      return_message: "A benefit claim has been changed",
+      suspence_record: nil }
   end
   # rubocop:enable Metrics/ParameterLists
+  # rubocop:enable Metrics/MethodLength
 
   def fetch_veteran_info(vbms_id)
     # BGS throws a ShareError if the veteran has too high sensitivity

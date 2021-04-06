@@ -46,7 +46,8 @@ const AddCavcDatesModal = ({ appealId, decisionType, error, highlightInvalid, hi
         judgement_date: judgementDate,
         mandate_date: mandateDate,
         remand_appeal_id: appealId,
-        instructions
+        instructions,
+        source_form: 'add_cavc_dates_modal',
       }
     };
 

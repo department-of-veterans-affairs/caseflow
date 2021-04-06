@@ -6,10 +6,14 @@ describe MdrTask, :postgres do
   let(:org_nonadmin) { create(:user) { |u| CavcLitigationSupport.singleton.add_user(u) } }
   let(:other_user) { create(:user) }
 
+  let(:decision_date) { 5.days.ago.to_date }
+  let(:cavc_remand) { create(:cavc_remand, decision_date: decision_date) }
+  let(:appeal) { cavc_remand.remand_appeal }
+  let(:cavc_task) { appeal.tasks.open.where(type: :CavcTask).last }
+
   describe ".create" do
     subject { described_class.create(parent: parent_task, appeal: appeal) }
-    let(:appeal) { create(:appeal) }
-    let!(:parent_task) { create(:cavc_task, appeal: appeal) }
+    let(:parent_task) { cavc_task }
     let(:parent_task_class) { CavcTask }
 
     it_behaves_like "task requiring specific parent"
@@ -36,7 +40,7 @@ describe MdrTask, :postgres do
         expect(child_timed_hold_tasks.count).to eq 1
         expect(child_timed_hold_tasks.first.assigned_to).to eq CavcLitigationSupport.singleton
         expect(child_timed_hold_tasks.first.status).to eq Constants.TASK_STATUSES.assigned
-        expect(child_timed_hold_tasks.first.timer_end_time.to_date).to eq(Time.zone.now.to_date + 90.days)
+        expect(child_timed_hold_tasks.first.timer_end_time.to_date).to eq(decision_date + 90.days)
 
         expect(new_task.label).to eq COPY::MDR_TASK_LABEL
         expect(new_task.default_instructions).to eq [COPY::MDR_WINDOW_TASK_DEFAULT_INSTRUCTIONS]
@@ -45,7 +49,7 @@ describe MdrTask, :postgres do
   end
 
   describe "#available_actions" do
-    let!(:mdr_task) { MdrTask.create_with_hold(create(:cavc_task)) }
+    let!(:mdr_task) { described_class.create_with_hold(cavc_task) }
 
     context "immediately after MdrTask is created" do
       it "returns available actions when MdrTask is on hold" do
@@ -59,9 +63,9 @@ describe MdrTask, :postgres do
       end
     end
 
-    context "after 90 days have passed" do
+    context "after more than 90 days have passed since decision_date" do
       before do
-        Timecop.travel(Time.zone.now + 90.days + 1.hour)
+        Timecop.travel(decision_date + 91.days)
         TaskTimerJob.perform_now
       end
       it "marks MdrTask as assigned" do
