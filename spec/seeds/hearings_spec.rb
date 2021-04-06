@@ -10,7 +10,6 @@ describe Seeds::Hearings do
 
     it "creates all kinds of hearings", :aggregate_failures do
       expect { subject }.to_not raise_error
-      byebug
       expect(Hearing.count).to eq(464)
       expect(LegacyHearing.count).to eq(460)
       expect(HearingDay.count).to eq(564)
