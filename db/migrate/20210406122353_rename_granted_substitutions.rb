@@ -2,7 +2,7 @@ class RenameGrantedSubstitutions < Caseflow::Migration
   def up
     create_table :appellant_substitutions, comment: "Store appellant substitution form data" do |t|
       t.date "substitution_date", null: false, comment: "Date of substitution"
-      t.references "substitute_participant_id", null: false, comment: "Participant ID of substitute appellant"
+      t.string "substitute_participant_id", null: false, comment: "Participant ID of substitute appellant"
       t.string "poa_participant_id", null: false, comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id"
 
       t.references :source_appeal, null: false, foreign_key: { to_table: :appeals }, comment: "The relevant source appeal for this substitution"
