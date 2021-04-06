@@ -37,7 +37,6 @@ checks:
       threshold: # language-specific defaults. an override will affect all languages.
     exclude_patterns:
     - 'client/app/queue/cavc/utils.js'
-    - 'db/migrate/*_rename_*.rb'
 
 plugins:
   brakeman:
@@ -51,6 +50,8 @@ plugins:
         ruby:
         javascript:
           mass_threshold: 50
+    exclude_patterns:
+    - 'db/migrate/*'
   eslint:
     enabled: true
   fixme:
