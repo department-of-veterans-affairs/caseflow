@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-describe GrantedSubstitution do
+describe AppellantSubstitution do
   describe ".create!" do
-    subject { GrantedSubstitution.create!(params) }
+    subject { described_class.create!(params) }
 
     let(:created_by) { create(:user) }
     let(:source_appeal) { create(:appeal) }
     let(:substitution_date) { 5.days.ago.to_date }
-    let(:substitute) { create(:claimant) }
+    let(:substitute) { create(:person) }
     let(:poa_participant_id) { "13579" }
 
     let(:params) do
@@ -15,7 +15,7 @@ describe GrantedSubstitution do
         created_by: created_by,
         source_appeal: source_appeal,
         substitution_date: substitution_date,
-        substitute_id: substitute&.id,
+        substitute_participant_id: substitute&.participant_id,
         poa_participant_id: poa_participant_id
       }
     end
@@ -40,8 +40,9 @@ describe GrantedSubstitution do
       end
       context "source appeal has non-age-related AOD Motion" do
         let(:source_appeal) { create(:appeal, :active, :advanced_on_docket_due_to_motion) }
+        let(:person) { source_appeal.claimant.person }
+        let(:substitute) { person }
         it "copies AOD motions to new CAVC remand appeal" do
-          person = source_appeal.claimant.person
           expect(AdvanceOnDocketMotion.granted_for_person?(person, source_appeal)).to be true
           aod_motions_count = AdvanceOnDocketMotion.for_appeal_and_person(source_appeal, person).count
           expect(source_appeal.aod?).to be true
