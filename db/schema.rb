@@ -130,12 +130,11 @@ ActiveRecord::Schema.define(version: 2021_04_06_122353) do
     t.bigint "created_by_id", null: false, comment: "User that created this record"
     t.string "poa_participant_id", null: false, comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id"
     t.bigint "source_appeal_id", null: false, comment: "The relevant source appeal for this substitution"
-    t.bigint "substitute_participant_id_id", null: false, comment: "Participant ID of substitute appellant"
+    t.string "substitute_participant_id", null: false, comment: "Participant ID of substitute appellant"
     t.date "substitution_date", null: false, comment: "Date of substitution"
     t.bigint "target_appeal_id", null: false, comment: "The new appeal resulting from this substitution"
     t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.index ["source_appeal_id"], name: "index_appellant_substitutions_on_source_appeal_id"
-    t.index ["substitute_participant_id_id"], name: "index_appellant_substitutions_on_substitute_participant_id_id"
     t.index ["target_appeal_id"], name: "index_appellant_substitutions_on_target_appeal_id"
   end
 
