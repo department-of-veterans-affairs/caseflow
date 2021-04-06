@@ -12,7 +12,7 @@ describe Seeds::Hearings do
       expect { subject }.to_not raise_error
       expect(Hearing.count).to eq(464) # Seeds::Users.new.seed! creates 4 hearings
       expect(LegacyHearing.count).to eq(460)
-      expect(HearingDay.count).to eq(564)
+      expect(HearingDay.count).to eq(564) # Seeds::Users.new.seed! creates 4 hearing days
     end
   end
 end
