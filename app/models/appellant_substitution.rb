@@ -28,7 +28,7 @@ class AppellantSubstitution < CaseflowRecord
   private
 
   def establish_appeal_stream
-    self.target_appeal ||= source_appeal.create_stream(:granted_substitution).tap do |target_appeal|
+    self.target_appeal ||= source_appeal.create_stream(:substitution).tap do |target_appeal|
       AdvanceOnDocketMotion.copy_granted_motions_to_appeal(source_appeal, target_appeal)
       InitialTasksFactory.new(target_appeal).create_root_and_sub_tasks!
     end
