@@ -76,6 +76,7 @@ export const TimeSlot = ({
               disableRadioOptions
               id={hearingTimeId}
               localZone={roTimezone}
+              timesInZone={roTimezone}
               onChange={(scheduledTimeString) => {
                 const convertedTime = convertEasternTimeToRoZone(scheduledTimeString, roTimezone);
 
