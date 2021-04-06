@@ -57,7 +57,7 @@ module Seeds
         # Pick a random time from the list
         scheduled_time = SCHEDULE_TIMES[rand(0...SCHEDULE_TIMES.size)]
 
-        create_legacy_hearing(day: day, scheduled_time_string_est: scheduled_time) # 8:30AM ET
+        create_legacy_hearing(day: day, scheduled_time_string_est: scheduled_time)
       end
     end
 
