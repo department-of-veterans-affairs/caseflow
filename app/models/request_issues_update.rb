@@ -56,7 +56,7 @@ class RequestIssuesUpdate < CaseflowRecord
     # re-assign user to whomever edited the Claim.
     # this works around issue when original user is no longer authorized for VBMS.
     review.end_product_establishments.each { |epe| epe.user = user } if review.processed_in_vbms?
-    
+
     review.establish!
     edited_issues.each { |issue| RequestIssueContention.new(issue).update_text! }
     potential_end_products_to_remove = []
