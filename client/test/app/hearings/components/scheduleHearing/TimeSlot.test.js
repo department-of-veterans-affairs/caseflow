@@ -16,8 +16,9 @@ const defaultProps = {
 const setup = (props = {}) => {
   const utils = render(<TimeSlot {...defaultProps} {...props} />);
   const container = utils.container;
+  const timeSlots = setTimeSlots(props.hearings || defaultProps.hearings);
 
-  return { container, utils };
+  return { container, utils, timeSlots };
 };
 
 describe('TimeSlot', () => {
@@ -35,15 +36,15 @@ describe('TimeSlot', () => {
   });
 
   it('should have 1 button for each time slot and 1 button to change to custom time', () => {
-    const { utils } = setup();
+    const { utils, timeSlots } = setup();
 
-    expect(utils.getAllByRole('button')).toHaveLength(setTimeSlots(defaultProps.hearings).length + 1);
+    expect(utils.getAllByRole('button')).toHaveLength(timeSlots.length + 1);
     expect(document.getElementsByClassName('time-slot-button-toggle')).toHaveLength(1);
     expect(document.getElementsByClassName('time-slot-container')).toHaveLength(2);
   });
 
   test('Changes between custom and pre-defined times when button link clicked', () => {
-    const { utils } = setup();
+    const { utils, timeSlots } = setup();
 
     // Click the toggle
     fireEvent.click(screen.getByText('Choose a custom time'));
@@ -57,20 +58,20 @@ describe('TimeSlot', () => {
     fireEvent.click(screen.getByText('Choose a time slot'));
 
     // Check that the correct elements are displayed
-    expect(utils.getAllByRole('button')).toHaveLength(setTimeSlots(defaultProps.hearings).length + 1);
+    expect(utils.getAllByRole('button')).toHaveLength(timeSlots.length + 1);
     expect(document.getElementsByClassName('time-slot-button-toggle')).toHaveLength(1);
     expect(document.getElementsByClassName('time-slot-container')).toHaveLength(2);
   });
 
   test('Selects a time slot when clicked', () => {
-    const { utils } = setup();
+    const { utils, timeSlots } = setup();
 
     // Click 2 different hearing times
     fireEvent.click(screen.getByText(formatTimeSlotLabel('08:30', defaultProps.roTimezone)));
     fireEvent.click(screen.getByText(formatTimeSlotLabel('09:30', defaultProps.roTimezone)));
 
     // Check that the correct elements are displayed
-    expect(utils.getAllByRole('button')).toHaveLength(setTimeSlots(defaultProps.hearings).length + 1);
+    expect(utils.getAllByRole('button')).toHaveLength(timeSlots.length + 1);
     expect(document.getElementsByClassName('time-slot-button-selected')).toHaveLength(1);
   });
 })
