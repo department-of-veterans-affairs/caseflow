@@ -7,11 +7,9 @@ module Seeds
     include PowerOfAttorneyMapper
 
     # Create the available hearing times and issue counts to pull from
-    SCHEDULE_TIMES = %w[8:15 9:30 10:15 13:30 14:00 15:00 15:15 16:15].freeze
+    AMA_SCHEDULE_TIMES = %w[8:15 9:30 10:15].freeze
+    LEGACY_SCHEDULE_TIMES = %w[13:30 14:00 15:00 15:15 16:15].freeze
     ISSUE_COUNTS = %w[1 2 3 4 12].freeze
-
-    # Define the list of ROs to exclude
-    EXCLUDE_LIST = %w[DSUSER VACO NWQ].freeze
 
     # Define how many hearings per day and how many hearing days to create
     HEARINGS_PER_DAY = 3
@@ -43,7 +41,7 @@ module Seeds
     def create_ama_hearings_for_day(day, count)
       count.times do
         # Pick a random time from the list
-        scheduled_time = SCHEDULE_TIMES[rand(0...SCHEDULE_TIMES.size)]
+        scheduled_time = AMA_SCHEDULE_TIMES[rand(0...AMA_SCHEDULE_TIMES.size)]
 
         # Pick a random issue count from the list
         issue_count = ISSUE_COUNTS[rand(0...ISSUE_COUNTS.size)]
@@ -55,7 +53,7 @@ module Seeds
     def create_legacy_hearings_for_day(day, count)
       count.times do
         # Pick a random time from the list
-        scheduled_time = SCHEDULE_TIMES[rand(0...SCHEDULE_TIMES.size)]
+        scheduled_time = LEGACY_SCHEDULE_TIMES[rand(0...LEGACY_SCHEDULE_TIMES.size)]
 
         create_legacy_hearing(day: day, scheduled_time_string_est: scheduled_time)
       end
@@ -87,7 +85,7 @@ module Seeds
 
     def create_hearing_days_with_hearings
       # Create the list of ROs to generate hearing days
-      ro_list = Constants::REGIONAL_OFFICE_INFORMATION.keys - EXCLUDE_LIST
+      ro_list = RegionalOffice.ros_with_hearings.merge("C" => RegionalOffice::CITIES["C"]) + "R"
 
       ro_list.each do |ro_key|
         # Default the hearing day to today
