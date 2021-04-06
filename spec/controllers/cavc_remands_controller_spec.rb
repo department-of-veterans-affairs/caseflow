@@ -160,7 +160,7 @@ RSpec.describe CavcRemandsController, type: :controller do
     include_examples "required cavc lit support user"
   end
 
-  describe "PATCH /appeals/:appeal_id/cavc_remands" do
+  describe "PATCH /appeals/:appeal_id/cavc_remands via add_cavc_dates_modal" do
     # create an existing cavc remand
     let(:cavc_remand) { create(:cavc_remand, :mdr) }
     let(:remand_appeal_id) { cavc_remand.remand_appeal_id }
@@ -170,6 +170,7 @@ RSpec.describe CavcRemandsController, type: :controller do
     let(:instructions) { "Do this!" }
     let(:params) do
       {
+        source_form: "add_cavc_dates_modal",
         remand_appeal_id: remand_appeal_uuid,
         appeal_id: remand_appeal_uuid,
         judgement_date: judgement_date,

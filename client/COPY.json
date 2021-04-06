@@ -132,6 +132,7 @@
   "POST_DISPATCH_TITLE": "Post-dispatch actions",
   "ADD_CAVC_BUTTON": "+ Add CAVC Remand",
   "ADD_CAVC_PAGE_TITLE": "Add a Court remand",
+  "EDIT_CAVC_PAGE_TITLE": "Edit a Court remand",
   "ADD_CAVC_DESCRIPTION": "Complete the details below to intake this Court remand for further processing",
   "CAVC_DOCKET_NUMBER_LABEL": "What is the court docket number?",
   "CAVC_DOCKET_NUMBER_ERROR": "Please enter a valid docket number provided by CAVC (12-3456).",
@@ -172,6 +173,8 @@
   "CAVC_REMAND_MANDATE_QUESTION": "Are judgement and mandate dates provided?",
   "CAVC_REMAND_MANDATE_DATES_LABEL": "Judgement and mandate date",
   "CAVC_REMAND_MANDATE_DATES_SAME_DESCRIPTION": "Same as Court's decision date",
+  "CAVC_REMAND_EDIT_SUCCESS_TITLE": "You have successfully edited this CAVC Remand",
+  "CAVC_REMAND_EDIT_SUCCESS_DETAIL": "These changes are reflected in the CAVC Remand section.",
 
   "CAVC_EXTENSION_REQUEST_TITLE": "Review extension request",
   "CAVC_EXTENSION_REQUEST_DECISION_LABEL": "How will you proceed?",
@@ -185,6 +188,7 @@
   "CAVC_EXTENSION_REQUEST_DENY_SUCCESS_DETAIL": "This task can be completed to distribute to a judge for further processing",
 
   "ADD_CAVC_DATES_TITLE": "Add Court dates",
+  "CORRECT_CAVC_REMAND_LINK": "Edit Remand",
 
   "EDIT_NOD_DATE_MODAL_TITLE": "Edit NOD Date",
   "EDIT_NOD_DATE_MODAL_DESCRIPTION": "**Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.**",
@@ -562,7 +566,7 @@
   "SELF_ASSIGNED_MAIL_TASK_CREATION_SUCCESS_TITLE": "You have successfully created a new %s mail task",
   "SELF_ASSIGNED_MAIL_TASK_CREATION_SUCCESS_MESSAGE": "This task will remain in your Queue. Assign or take action on this at any time through your actions dropdown.",
 
-  "CASE_TIMELINE_HEADER": "Below is the history of this case. Soon, you'll be able to see many more details.",
+  "CASE_TIMELINE_HEADER": "Below is the history of this case.",
   "CASE_TIMELINE_DISPATCHED_FROM_BVA": "Dispatched from BVA",
   "CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING": "Dispatch from BVA pending",
   "CASE_TIMELINE_FORM_9_RECEIVED": "Form 9 received",
