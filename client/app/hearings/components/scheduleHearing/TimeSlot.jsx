@@ -1,6 +1,7 @@
 // External Dependencies
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment-timezone';
 
 // Local Dependencies
 import { setTimeSlots } from '../../utils';
@@ -42,8 +43,8 @@ export const TimeSlot = ({
   // Determine the column length to evenly distribute the time slots
   const columnLength = Math.ceil(slots.length / 2);
 
-  const convertRoTimeToEasternZone = (timeInRoZone, roTimezone) =>
-    moment.tz(timeInRoZone, 'HH:mm', roTimezone).tz('America/New_York');
+  const convertRoTimeToEasternZone = (timeInRoZone, roZone) =>
+    moment.tz(timeInRoZone, 'HH:mm', roZone).tz('America/New_York');
 
   return (
     <React.Fragment>
@@ -70,8 +71,7 @@ export const TimeSlot = ({
               disableRadioOptions
               id={hearingTimeId}
               localZone={roTimezone}
-              onChange={(scheduledTimeString) =>
-                onChange('scheduledTimeString', convertRoTimeToEasternZone(scheduledTimeString, roTimezone))}
+              onChange={(scheduledTimeString) => onChange('scheduledTimeString', scheduledTimeString)}
               value={convertRoTimeToEasternZone(hearing?.scheduledTimeString, roTimezone)}
             />
           ) : (
