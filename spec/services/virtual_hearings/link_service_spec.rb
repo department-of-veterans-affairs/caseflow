@@ -60,10 +60,8 @@ describe VirtualHearings::LinkService do
 
         query = Hash[*uri.query.split(/&|=/)]
         expect(query["conference"]).to eq "BVA0000001@#{URL_HOST}"
-        expect(query["name"]).to eq VirtualHearings::LinkService::JUDGE_NAME
         expect(query["pin"]).to eq "3998472"
         expect(query["callType"]).to eq "video"
-        expect(query["join"]).to eq "1"
       end
     end
   end
@@ -85,10 +83,8 @@ describe VirtualHearings::LinkService do
 
         query = Hash[*uri.query.split(/&|=/)]
         expect(query["conference"]).to eq "BVA0000001@#{URL_HOST}"
-        expect(query["name"]).to eq VirtualHearings::LinkService::GUEST_NAME
         expect(query["pin"]).to eq "7470125694"
         expect(query["callType"]).to eq "video"
-        expect(query["join"]).to eq "1"
       end
     end
   end

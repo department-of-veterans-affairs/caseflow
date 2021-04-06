@@ -10,21 +10,17 @@ class VirtualHearings::LinkService
   class URLHostMissingError < StandardError; end
   class URLPathMissingError < StandardError; end
   class PINMustBePresentError < StandardError; end
-  class NameMustBePresentError < StandardError; end
-
-  JUDGE_NAME = "Judge"
-  GUEST_NAME = "Guest"
 
   def initialize
     @conference_id = nil
   end
 
   def host_link
-    link(host_pin, JUDGE_NAME)
+    link(host_pin)
   end
 
   def guest_link
-    link(guest_pin, GUEST_NAME)
+    link(guest_pin)
   end
 
   def host_pin
@@ -41,11 +37,10 @@ class VirtualHearings::LinkService
 
   private
 
-  def link(pin, name)
+  def link(pin)
     fail PINMustBePresentError if pin.blank?
-    fail NameMustBePresentError if name.blank?
 
-    "#{base_url}/?conference=#{alias_with_host}&name=#{name}&pin=#{pin}&callType=video&join=1"
+    "#{base_url}/?conference=#{alias_with_host}&pin=#{pin}&callType=video"
   end
 
   def pin_hash(seed)
