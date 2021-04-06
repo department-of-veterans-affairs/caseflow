@@ -87,9 +87,9 @@ module Seeds
 
     def create_hearing_days_with_hearings
       # Create the list of ROs to generate hearing days
-      @ro_list = Constants::REGIONAL_OFFICE_INFORMATION.keys - EXCLUDE_LIST
+      ro_list = Constants::REGIONAL_OFFICE_INFORMATION.keys - EXCLUDE_LIST
 
-      @ro_list.each do |ro_key|
+      ro_list.each do |ro_key|
         # Default the hearing day to today
         scheduled_for = Time.zone.today
 
