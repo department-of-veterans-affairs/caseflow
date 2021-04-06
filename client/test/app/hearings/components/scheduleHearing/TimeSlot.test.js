@@ -22,57 +22,75 @@ const setup = (props = {}) => {
 };
 
 describe('TimeSlot', () => {
-  it('renders correctly', () => {
-    const { container } = setup();
+  describe('has correct visual elements', () => {
+    it('renders correctly', () => {
+      const { container } = setup();
 
-    expect(container).toMatchSnapshot();
+      expect(container).toMatchSnapshot();
+    });
+
+    it('passes a11y testing', async () => {
+      const { container } = setup();
+      const results = await axe(container);
+
+      expect(results).toHaveNoViolations();
+    });
+
+    it('should have 1 button for each time slot and 1 button to change to custom time', () => {
+      const { utils, timeSlots } = setup();
+
+      expect(utils.getAllByRole('button')).toHaveLength(timeSlots.length + 1);
+      expect(document.getElementsByClassName('time-slot-button-toggle')).toHaveLength(1);
+      expect(document.getElementsByClassName('time-slot-container')).toHaveLength(2);
+    });
+
+    it('changes between custom and pre-defined times when button link clicked', () => {
+      const { utils, timeSlots } = setup();
+
+      // Click the toggle
+      fireEvent.click(screen.getByText('Choose a custom time'));
+
+      // Check that the correct elements are displayed
+      expect(utils.getAllByRole('button')).toHaveLength(1);
+      expect(document.getElementsByClassName('time-slot-button-toggle')).toHaveLength(1);
+      expect(document.getElementsByClassName('time-slot-container')).toHaveLength(0);
+
+      // Click the toggle
+      fireEvent.click(screen.getByText('Choose a time slot'));
+
+      // Check that the correct types of elements are displayed
+      expect(utils.getAllByRole('button')).toHaveLength(timeSlots.length + 1);
+      expect(document.getElementsByClassName('time-slot-button-toggle')).toHaveLength(1);
+      expect(document.getElementsByClassName('time-slot-container')).toHaveLength(2);
+    });
+
+    it('selects a time slot when clicked', () => {
+      const { utils, timeSlots } = setup();
+
+      // Click 2 different hearing times
+      fireEvent.click(screen.getByText(formatTimeSlotLabel('08:30', defaultProps.roTimezone)));
+      fireEvent.click(screen.getByText(formatTimeSlotLabel('09:30', defaultProps.roTimezone)));
+
+      // Check that the correct elements are displayed
+      expect(utils.getAllByRole('button')).toHaveLength(timeSlots.length + 1);
+      expect(document.getElementsByClassName('time-slot-button-selected')).toHaveLength(1);
+    });
   });
 
-  it('passes a11y testing', async () => {
-    const { container } = setup();
-    const results = await axe(container);
-
-    expect(results).toHaveNoViolations();
+  describe('has correct time options in multiple timezones', () => {
+    it('has correct slot times when the ro is in different timezones', () => {
+      // Check that the slot times are correct
+      // Toggle back and forth, check that they're still correct
+    });
+    it('has correct custom dropdown options when the ro is in different timezones', () => {
+      // Check that the dropdown times are correct
+      // Toggle back and forth, check that they're still correct
+    });
   });
 
-  it('should have 1 button for each time slot and 1 button to change to custom time', () => {
-    const { utils, timeSlots } = setup();
-
-    expect(utils.getAllByRole('button')).toHaveLength(timeSlots.length + 1);
-    expect(document.getElementsByClassName('time-slot-button-toggle')).toHaveLength(1);
-    expect(document.getElementsByClassName('time-slot-container')).toHaveLength(2);
-  });
-
-  test('Changes between custom and pre-defined times when button link clicked', () => {
-    const { utils, timeSlots } = setup();
-
-    // Click the toggle
-    fireEvent.click(screen.getByText('Choose a custom time'));
-
-    // Check that the correct elements are displayed
-    expect(utils.getAllByRole('button')).toHaveLength(1);
-    expect(document.getElementsByClassName('time-slot-button-toggle')).toHaveLength(1);
-    expect(document.getElementsByClassName('time-slot-container')).toHaveLength(0);
-
-    // Click the toggle
-    fireEvent.click(screen.getByText('Choose a time slot'));
-
-    // Check that the correct elements are displayed
-    expect(utils.getAllByRole('button')).toHaveLength(timeSlots.length + 1);
-    expect(document.getElementsByClassName('time-slot-button-toggle')).toHaveLength(1);
-    expect(document.getElementsByClassName('time-slot-container')).toHaveLength(2);
-  });
-
-  test('Selects a time slot when clicked', () => {
-    const { utils, timeSlots } = setup();
-
-    // Click 2 different hearing times
-    fireEvent.click(screen.getByText(formatTimeSlotLabel('08:30', defaultProps.roTimezone)));
-    fireEvent.click(screen.getByText(formatTimeSlotLabel('09:30', defaultProps.roTimezone)));
-
-    // Check that the correct elements are displayed
-    expect(utils.getAllByRole('button')).toHaveLength(timeSlots.length + 1);
-    expect(document.getElementsByClassName('time-slot-button-selected')).toHaveLength(1);
+  describe('schedules for the time selected when the ro is in different timezones', () => {
+    it('schedules a hearing in different timezones', () => {});
+    it('produces a hearing at the correct time in different timezones', () => {});
   });
 })
 ;
