@@ -41,6 +41,10 @@ export const TimeSlot = ({
     onChange('scheduledTimeString', timeInRoTimezone);
   };
 
+  const convertEasternTimeToRoZone = (time, targetZone) =>
+    moment.tz(time, 'HH:mm', 'America/New_York').tz(targetZone).
+      format('HH:mm');
+
   // Create a hearing Time ID to associate the label with the appropriate form element
   const hearingTimeId = `hearing-time-${hearing?.scheduledTimeString}`;
 
@@ -72,8 +76,13 @@ export const TimeSlot = ({
               disableRadioOptions
               id={hearingTimeId}
               localZone={roTimezone}
-              onChange={(scheduledTimeString) => onChange('scheduledTimeString', scheduledTimeString)}
-              value={hearing?.scheduledTimeString}
+              onChange={(scheduledTimeString) => {
+                const convertedTime = convertEasternTimeToRoZone(scheduledTimeString, roTimezone);
+
+                onChange('scheduledTimeString', convertedTime);
+              }
+              }
+              value={convertEasternTimeToRoZone(hearing?.scheduledTimeString, roTimezone)}
             />
           ) : (
             <div className="time-slot-button-container">
