@@ -9,69 +9,54 @@ const time = '08:30';
 const time2 = '09:30';
 const emptyHearings = [];
 
-// Create the mock functions
-const onChange = jest.fn();
-const fetchScheduledHearings = jest.fn();
+const roTimezone = roTimezones()[0];
+const slotCount = setTimeSlots(emptyHearings).length;
 
-let roTimezone = '';
-let slotCount = '';
+const defaultProps = {
+  roTimezone,
+  hearings: emptyHearings,
+  fetchScheduledHearings: jest.fn(),
+  onChange: jest.fn()
+};
 
-it('renders correctly', () => {
-  const { container } = render(
-    <TimeSlot roTimezone={roTimezone} hearings={emptyHearings} fetchScheduledHearings={fetchScheduledHearings} />
-  );
+const setup = (props = {}) => {
+  const utils = render(<TimeSlot {...defaultProps} {...props} />);
+  const container = utils.container;
 
-  expect(container).toMatchSnapshot();
-});
-
-it('passes a11y testing', async () => {
-  const { container } = render(
-    <TimeSlot roTimezone={roTimezone} hearings={emptyHearings} fetchScheduledHearings={fetchScheduledHearings} />
-  );
-
-  const results = await axe(container);
-
-  expect(results).toHaveNoViolations();
-});
+  return { container, utils };
+};
 
 describe('TimeSlot', () => {
-  beforeEach(() => {
+  it('renders correctly', () => {
+    const { container } = setup();
 
-    roTimezone = roTimezones()[0];
-    slotCount = setTimeSlots(emptyHearings).length;
+    expect(container).toMatchSnapshot();
   });
 
-  test('Matches snapshot with default props', () => {
-    // Run the test
-    const button = render(
-      <TimeSlot roTimezone={roTimezone} hearings={emptyHearings} fetchScheduledHearings={fetchScheduledHearings} />
-    );
+  it('passes a11y testing', async () => {
+    const { container } = setup();
+    const results = await axe(container);
 
-    // There should be 1 button for each time slot and 1 button to change to custom time
-    expect(button.getAllByRole('button')).toHaveLength(slotCount + 1);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('should have 1 button for each time slot and 1 button to change to custom time', () => {
+    const { utils } = setup();
+
+    expect(utils.getAllByRole('button')).toHaveLength(slotCount + 1);
     expect(document.getElementsByClassName('time-slot-button-toggle')).toHaveLength(1);
     expect(document.getElementById(`hearing-time-${time}`)).toBeNull();
     expect(document.getElementsByClassName('time-slot-container')).toHaveLength(2);
-    expect(button).toMatchSnapshot();
   });
 
   test('Changes between custom and pre-defined times when button link clicked', () => {
-    // Run the test
-    const timeSlot = render(
-      <TimeSlot
-        roTimezone={roTimezone}
-        hearings={emptyHearings}
-        onChange={onChange}
-        fetchScheduledHearings={fetchScheduledHearings}
-        hearing={{ scheduledTimeString: time }}
-      />
-    );
+    const { utils } = setup({ hearing: { scheduledTimeString: time } });
 
     // Click the toggle
     fireEvent.click(screen.getByText('Choose a custom time'));
 
     // Check that the correct elements are displayed
-    expect(timeSlot.getAllByRole('button')).toHaveLength(1);
+    expect(utils.getAllByRole('button')).toHaveLength(1);
     expect(document.getElementsByClassName('time-slot-button-toggle')).toHaveLength(1);
     expect(document.getElementsByClassName('time-slot-container')).toHaveLength(0);
 
@@ -79,33 +64,21 @@ describe('TimeSlot', () => {
     fireEvent.click(screen.getByText('Choose a time slot'));
 
     // Check that the correct elements are displayed
-    expect(timeSlot.getAllByRole('button')).toHaveLength(slotCount + 1);
+    expect(utils.getAllByRole('button')).toHaveLength(slotCount + 1);
     expect(document.getElementsByClassName('time-slot-button-toggle')).toHaveLength(1);
     expect(document.getElementsByClassName('time-slot-container')).toHaveLength(2);
-
-    expect(timeSlot).toMatchSnapshot();
   });
 
   test('Selects a time slot when clicked', () => {
-    // Run the test
-    const timeSlot = render(
-      <TimeSlot
-        roTimezone={roTimezone}
-        hearings={emptyHearings}
-        onChange={onChange}
-        fetchScheduledHearings={fetchScheduledHearings}
-        hearing={{ scheduledTimeString: time }}
-      />
-    );
+    const { utils } = setup({ hearing: { scheduledTimeString: time } });
 
     // Click 2 different hearing times
     fireEvent.click(screen.getByText(formatTimeSlotLabel(time, roTimezone)));
     fireEvent.click(screen.getByText(formatTimeSlotLabel(time2, roTimezone)));
 
     // Check that the correct elements are displayed
-    expect(timeSlot.getAllByRole('button')).toHaveLength(slotCount + 1);
+    expect(utils.getAllByRole('button')).toHaveLength(slotCount + 1);
     expect(document.getElementsByClassName('time-slot-button-selected')).toHaveLength(1);
-    expect(timeSlot).toMatchSnapshot();
   });
 })
 ;

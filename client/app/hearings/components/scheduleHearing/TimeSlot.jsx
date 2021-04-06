@@ -41,7 +41,7 @@ export const TimeSlot = ({
     onChange('scheduledTimeString', timeInRoTimezone);
   };
 
-  const convertEasternTimeToRoZone = (time, targetZone) =>
+  const convertEasternTimeToRoZone = (time, targetZone = 'America/New_York') =>
     moment.tz(time, 'HH:mm', 'America/New_York').tz(targetZone).
       format('HH:mm');
 
