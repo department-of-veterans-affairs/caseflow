@@ -64,6 +64,13 @@ class CaseListView extends React.PureComponent {
       });
   };
 
+  sortAppeals = () => {
+    this.props.appeals.sort((a,b)=> {
+      if (a.decisionDate == null) return -1;
+      return  (a.id < b.id ? 1 : -1);
+    });
+  };
+
   searchPageHeading = () => <React.Fragment>
     <h1 className="cf-push-left" {...fullWidth}>{COPY.CASE_SEARCH_HOME_PAGE_HEADING}</h1>
     <p>{COPY.CASE_SEARCH_INPUT_INSTRUCTION}</p>
@@ -87,6 +94,7 @@ class CaseListView extends React.PureComponent {
     // Using the first appeal in the list to get the Veteran's name and ID. We expect that data to be
     // the same for all appeals in the list.
     if (this.props.appeals.length > 0) {
+      this.sortAppeals();
       const firstAppeal = this.props.appeals[0];
 
       heading = `${appealsCount} ${pluralize('case', appealsCount)} found for
