@@ -85,7 +85,7 @@ module Seeds
 
     def create_hearing_days_with_hearings
       # Create the list of ROs to generate hearing days
-      ro_list = RegionalOffice.ros_with_hearings.merge("C" => RegionalOffice::CITIES["C"]) + "R"
+      ro_list = RegionalOffice.ros_with_hearings.merge("C" => RegionalOffice::CITIES["C"]).keys + ["R"]
 
       ro_list.each do |ro_key|
         # Default the hearing day to today
