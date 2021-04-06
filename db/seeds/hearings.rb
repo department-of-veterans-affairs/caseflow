@@ -96,7 +96,7 @@ module Seeds
         # Set the count of hearing days to schedule for this RO
         count = get_hearing_days_count(ro_key)
 
-        # Calculate the offset of days based on a 30 day month to spread the genearted days
+        # Calculate the offset of days based on a 30 day month to spread the generated days
         offset = (30.to_f / count).ceil
 
         # Generate hearing days for each RO
