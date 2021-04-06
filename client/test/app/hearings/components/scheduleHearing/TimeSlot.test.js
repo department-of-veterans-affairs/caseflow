@@ -12,7 +12,6 @@ const defaultProps = {
   fetchScheduledHearings: jest.fn(),
   onChange: jest.fn()
 };
-const slotCount = setTimeSlots(defaultProps.hearings).length;
 
 const setup = (props = {}) => {
   const utils = render(<TimeSlot {...defaultProps} {...props} />);
@@ -38,7 +37,7 @@ describe('TimeSlot', () => {
   it('should have 1 button for each time slot and 1 button to change to custom time', () => {
     const { utils } = setup();
 
-    expect(utils.getAllByRole('button')).toHaveLength(slotCount + 1);
+    expect(utils.getAllByRole('button')).toHaveLength(setTimeSlots(defaultProps.hearings).length + 1);
     expect(document.getElementsByClassName('time-slot-button-toggle')).toHaveLength(1);
     expect(document.getElementsByClassName('time-slot-container')).toHaveLength(2);
   });
@@ -58,7 +57,7 @@ describe('TimeSlot', () => {
     fireEvent.click(screen.getByText('Choose a time slot'));
 
     // Check that the correct elements are displayed
-    expect(utils.getAllByRole('button')).toHaveLength(slotCount + 1);
+    expect(utils.getAllByRole('button')).toHaveLength(setTimeSlots(defaultProps.hearings).length + 1);
     expect(document.getElementsByClassName('time-slot-button-toggle')).toHaveLength(1);
     expect(document.getElementsByClassName('time-slot-container')).toHaveLength(2);
   });
@@ -71,7 +70,7 @@ describe('TimeSlot', () => {
     fireEvent.click(screen.getByText(formatTimeSlotLabel('09:30', defaultProps.roTimezone)));
 
     // Check that the correct elements are displayed
-    expect(utils.getAllByRole('button')).toHaveLength(slotCount + 1);
+    expect(utils.getAllByRole('button')).toHaveLength(setTimeSlots(defaultProps.hearings).length + 1);
     expect(document.getElementsByClassName('time-slot-button-selected')).toHaveLength(1);
   });
 })
