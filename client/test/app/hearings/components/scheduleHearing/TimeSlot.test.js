@@ -5,19 +5,14 @@ import { render, fireEvent, screen } from '@testing-library/react';
 import { roTimezones, setTimeSlots, formatTimeSlotLabel } from 'app/hearings/utils';
 import { axe } from 'jest-axe';
 
-const time = '08:30';
-const time2 = '09:30';
 const emptyHearings = [];
-
-const roTimezone = roTimezones()[0];
-const slotCount = setTimeSlots(emptyHearings).length;
-
 const defaultProps = {
-  roTimezone,
+  roTimezone: roTimezones()[0],
   hearings: emptyHearings,
   fetchScheduledHearings: jest.fn(),
   onChange: jest.fn()
 };
+const slotCount = setTimeSlots(defaultProps.hearings).length;
 
 const setup = (props = {}) => {
   const utils = render(<TimeSlot {...defaultProps} {...props} />);
@@ -45,12 +40,11 @@ describe('TimeSlot', () => {
 
     expect(utils.getAllByRole('button')).toHaveLength(slotCount + 1);
     expect(document.getElementsByClassName('time-slot-button-toggle')).toHaveLength(1);
-    expect(document.getElementById(`hearing-time-${time}`)).toBeNull();
     expect(document.getElementsByClassName('time-slot-container')).toHaveLength(2);
   });
 
   test('Changes between custom and pre-defined times when button link clicked', () => {
-    const { utils } = setup({ hearing: { scheduledTimeString: time } });
+    const { utils } = setup();
 
     // Click the toggle
     fireEvent.click(screen.getByText('Choose a custom time'));
@@ -70,11 +64,11 @@ describe('TimeSlot', () => {
   });
 
   test('Selects a time slot when clicked', () => {
-    const { utils } = setup({ hearing: { scheduledTimeString: time } });
+    const { utils } = setup();
 
     // Click 2 different hearing times
-    fireEvent.click(screen.getByText(formatTimeSlotLabel(time, roTimezone)));
-    fireEvent.click(screen.getByText(formatTimeSlotLabel(time2, roTimezone)));
+    fireEvent.click(screen.getByText(formatTimeSlotLabel('08:30', defaultProps.roTimezone)));
+    fireEvent.click(screen.getByText(formatTimeSlotLabel('09:30', defaultProps.roTimezone)));
 
     // Check that the correct elements are displayed
     expect(utils.getAllByRole('button')).toHaveLength(slotCount + 1);
