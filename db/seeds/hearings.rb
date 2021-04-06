@@ -8,7 +8,7 @@ module Seeds
 
     # Create the available hearing times and issue counts to pull from
     AMA_SCHEDULE_TIMES = %w[8:15 9:30 10:15].freeze
-    LEGACY_SCHEDULE_TIMES = %w[13:30 14:00 15:00 15:15 16:15].freeze
+    LEGACY_SCHEDULE_TIMES = %w[8:15 9:30 10:15 11:00 11:45].freeze
     ISSUE_COUNTS = %w[1 2 3 4 12].freeze
 
     # Define how many hearings per day and how many hearing days to create
