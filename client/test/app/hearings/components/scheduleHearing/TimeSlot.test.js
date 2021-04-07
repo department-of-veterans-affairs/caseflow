@@ -2,7 +2,7 @@ import React from 'react';
 
 import { TimeSlot } from 'app/hearings/components/scheduleHearing/TimeSlot';
 import { render, fireEvent, screen } from '@testing-library/react';
-import { roTimezones, setTimeSlots, formatTimeSlotLabel, hearingTimeOptsWithZone } from 'app/hearings/utils';
+import { setTimeSlots, formatTimeSlotLabel, hearingTimeOptsWithZone } from 'app/hearings/utils';
 import { axe } from 'jest-axe';
 
 import REGIONAL_OFFICE_INFORMATION from '../../../../../constants/REGIONAL_OFFICE_INFORMATION';
@@ -11,6 +11,10 @@ import HEARING_TIME_OPTIONS from '../../../../../constants/HEARING_TIME_OPTIONS'
 import moment from 'moment-timezone/moment-timezone';
 
 const emptyHearings = [];
+const oneHearing = [{
+  hearingTime: '10:15',
+  externalId: '249a1443-0de4-44fd-bd93-58c30f14c703'
+}];
 const defaultRoCode = 'RO39';
 const defaultProps = {
   // Denver
@@ -22,7 +26,10 @@ const defaultProps = {
 };
 
 const setup = (props = {}) => {
-  const utils = render(<TimeSlot {...defaultProps} {...props} />);
+  const mergedProps = { ...defaultProps, ...props };
+
+  console.log(mergedProps.hearings);
+  const utils = render(<TimeSlot {...mergedProps} />);
   const container = utils.container;
   const timeSlots = setTimeSlots(
     props.hearings || defaultProps.hearings,
@@ -161,7 +168,7 @@ describe('TimeSlot', () => {
     });
   });
 
-  describe('has correct time options in multiple timezones', () => {
+  describe('has correct behavior in multiple timezones', () => {
     const regionalOfficeCodes = [
       // New York, Eastern time
       'RO06',
@@ -180,7 +187,7 @@ describe('TimeSlot', () => {
     });
 
     regionalOffices.forEach((ro) => {
-      it('has correct slot times when the ro is in different timezones', () => {
+      it('has correct slot times', () => {
         const { timeSlots, utils } = setup({ roTimezone: ro.timezone });
 
         // Sanity check, but also remove linting problems because expects are in sub-functions
@@ -192,7 +199,7 @@ describe('TimeSlot', () => {
         firstAndLastSlotsAreCorrect(ro, timeSlots);
       });
 
-      it('has correct custom dropdown options when the ro is in different timezones', () => {
+      it('has correct custom dropdown options', () => {
         const { dropdownItems, utils } = setup({ roTimezone: ro.timezone });
 
         toggleToCustom(utils);
@@ -204,7 +211,7 @@ describe('TimeSlot', () => {
         firstLastAndCountOfDropdownItemsCorrect(ro, dropdownItems);
       });
 
-      it('has correct times for scheduling a hearing in different timezones', () => {
+      it('has correct time values to submit to backend', () => {
         const { timeSlots, dropdownItems } = setup({ roTimezone: ro.timezone });
 
         // Check that the value for the slot matches what we send when we schedule
@@ -220,6 +227,24 @@ describe('TimeSlot', () => {
           expect(item.label).toContain(expectedLabelPart);
         });
       });
+      it('hearings have correct times', () => {
+        const { utils, timeSlots } = setup({ hearings: oneHearing, roTimezone: ro.timezone });
+
+        // The timeSlots list actually contains a mix of hearings and slots, pull out the one hearing
+        const hearingInSlotList = timeSlots.filter((item) => item.full === true);
+
+        expect(hearingInSlotList.length).toEqual(1);
+        const time = moment.tz(hearingInSlotList[0].hearingTime, 'HH:mm', 'America/New_York').format('h:mm A');
+        const expectedLabelPart = `${time} Eastern`;
+        // const buttons = utils.getByText(expectedLabelPart);
+
+        // expect(buttons.length).toEqual(1);
+
+        // expect(hearing.label).toContain(expectedLabelPart);
+
+      });
+      it('hides slots based on scheduled hearings', () => {});
+      it('hides slots based on the beginning and end of the work day', () => {});
     });
   });
 })
