@@ -8,7 +8,8 @@ class AppellantSubstitution < CaseflowRecord
   belongs_to :target_appeal, class_name: "Appeal"
 
   validates :created_by, :source_appeal, :substitution_date,
-            :claimant_type, :substitute_participant_id,
+            :claimant_type, # Claimant record type for the substitute
+            :substitute_participant_id,
             :poa_participant_id,
             presence: true
 

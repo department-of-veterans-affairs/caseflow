@@ -9,6 +9,7 @@ class AppellantSubstitutionsController < ApplicationController
   REQUIRED_PARAMS = [
     :source_appeal_id,
     :substitution_date,
+    :claimant_type,
     :substitute_participant_id,
     :poa_participant_id,
     :created_by_id

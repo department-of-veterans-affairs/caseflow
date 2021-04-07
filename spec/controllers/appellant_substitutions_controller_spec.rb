@@ -36,6 +36,7 @@ RSpec.describe AppellantSubstitutionsController, type: :controller do
         source_appeal_id: source_appeal_id,
         appeal_id: source_appeal_id,
         substitution_date: substitution_date,
+        claimant_type: DependentClaimant.name,
         substitute_participant_id: substitute_participant_id,
         poa_participant_id: poa_participant_id
       }
