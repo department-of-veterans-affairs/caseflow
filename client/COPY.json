@@ -762,6 +762,8 @@
   "DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_NEW_DOCKET": "Some issues(s) on this appeal are on a different docket.",
   "DOCKET_SWITCH_PARTIAL_GRANTED_LABEL_NEW_DOCKET": "The issues and active tasks can be found on the ",
 
+  "GRANTED_SUBSTITUTION_SELECT_APPELLANT_TITLE": "Select substitute appellant",
+  "GRANTED_SUBSTITUTION_SELECT_APPELLANT_SUBHEAD": "Complete the details below to create the appeal for the granted substitute for this case.",
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
   "CORRECT_REQUEST_ISSUES_WITHDRAW": "Withdraw",
