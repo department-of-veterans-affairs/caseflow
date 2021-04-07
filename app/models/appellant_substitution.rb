@@ -8,10 +8,13 @@ class AppellantSubstitution < CaseflowRecord
   belongs_to :target_appeal, class_name: "Appeal"
 
   validates :created_by, :source_appeal, :substitution_date,
-            :substitute_participant_id, :poa_participant_id,
+            :claimant_type, :substitute_participant_id,
+            :poa_participant_id,
             presence: true
 
   before_save :establish_appeal_stream
+
+  attr_accessor :claimant_type
 
   def substitute_claimant
     Claimant.find_by(participant_id: substitute_participant_id)
@@ -28,9 +31,18 @@ class AppellantSubstitution < CaseflowRecord
   private
 
   def establish_appeal_stream
-    self.target_appeal ||= source_appeal.create_stream(:substitution).tap do |target_appeal|
-      AdvanceOnDocketMotion.copy_granted_motions_to_appeal(source_appeal, target_appeal)
-      InitialTasksFactory.new(target_appeal).create_root_and_sub_tasks!
-    end
+    Claimant.create_without_intake!(participant_id: substitute_participant_id, payee_code: nil, type: claimant_type)
+    unassociated_claimants = Claimant.where(participant_id: substitute_participant_id, decision_review: nil)
+    self.target_appeal ||= source_appeal.create_stream(:substitution, new_claimants: unassociated_claimants)
+      .tap do |target_appeal|
+        # AOD Status: If the deceased appellant’s appeal was AOD, the substitute appellant will also receive
+        # the benefit of the AOD status. This is the case for both situations where a case is returned to
+        # the Board following the grant of a substitution request  AND/OR pursuant to an appeal of a denial
+        # of a substitution request. See 38 C.F.R. § 20.800(f).
+        subtitute_person = target_appeal.claimant.person
+        AdvanceOnDocketMotion.transfer_granted_motions_to_person(source_appeal, target_appeal, subtitute_person)
+
+        InitialTasksFactory.new(target_appeal).create_root_and_sub_tasks!
+      end
   end
 end

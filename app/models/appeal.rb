@@ -5,6 +5,7 @@
 # This is the type of appeal created by the Veterans Appeals Improvement and Modernization Act (AMA),
 # which went into effect Feb 19, 2019.
 
+# rubocop:disable Metrics/ClassLength
 class Appeal < DecisionReview
   include AppealConcern
   include BgsService
@@ -103,7 +104,8 @@ class Appeal < DecisionReview
     stream_type&.titlecase || "Original"
   end
 
-  def create_stream(stream_type)
+  # rubocop:disable Metrics/MethodLength
+  def create_stream(stream_type, new_claimants: nil)
     ActiveRecord::Base.transaction do
       Appeal.create!(slice(
         :aod_based_on_age,
@@ -118,11 +120,16 @@ class Appeal < DecisionReview
         stream_docket_number: docket_number,
         established_at: Time.zone.now
       )).tap do |stream|
-        stream.copy_claimants!(claimants)
+        if new_claimants
+          new_claimants.each { |claimant| claimant.update(decision_review: stream) }
+        else
+          stream.copy_claimants!(claimants)
+        end
         stream.reload # so that stream.claimants returns updated list
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def vacate_type
     return nil unless vacate?
@@ -573,3 +580,4 @@ class Appeal < DecisionReview
     "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
 end
+# rubocop:enable Metrics/ClassLength
