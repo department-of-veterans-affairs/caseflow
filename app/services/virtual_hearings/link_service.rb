@@ -11,8 +11,8 @@ class VirtualHearings::LinkService
   class URLPathMissingError < StandardError; end
   class PINMustBePresentError < StandardError; end
 
-  def initialize
-    @conference_id = nil
+  def initialize(conference_id = nil)
+    @conference_id = conference_id
   end
 
   def host_link
