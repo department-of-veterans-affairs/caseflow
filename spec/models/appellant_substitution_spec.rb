@@ -34,19 +34,19 @@ describe AppellantSubstitution do
     context "when source appeal is AOD" do
       context "source appeal is AOD due to claimant's age" do
         let(:source_appeal) { create(:appeal, :active, :advanced_on_docket_due_to_age) }
-        it "creates new CAVC remand appeal with AOD due to age" do
+        it "creates new appeal with AOD due to age" do
           expect(source_appeal.aod_based_on_age).to be true
 
           appellant_substitution = subject
-          cavc_appeal = appellant_substitution.target_appeal
-          expect(cavc_appeal.aod_based_on_age).to eq appellant_substitution.source_appeal.aod_based_on_age
+          target_appeal = appellant_substitution.target_appeal
+          expect(target_appeal.aod_based_on_age).to eq appellant_substitution.source_appeal.aod_based_on_age
         end
       end
       context "source appeal has non-age-related AOD Motion" do
         let(:source_appeal) { create(:appeal, :active, :advanced_on_docket_due_to_motion) }
         # The original person associated with AOD may be the claimant or veteran; in this case, it is the claimant
         let(:aod_person) { source_appeal.claimant.person }
-        it "copies AOD motions to new CAVC remand appeal" do
+        it "copies AOD motions to new appeal" do
           expect(AdvanceOnDocketMotion.granted_for_person?(aod_person, source_appeal)).to be true
           expect(AdvanceOnDocketMotion.for_appeal(source_appeal).count).to eq 2
           aod_motions_count = AdvanceOnDocketMotion.for_appeal_and_person(source_appeal, aod_person).count
@@ -64,6 +64,26 @@ describe AppellantSubstitution do
           expect(AdvanceOnDocketMotion.for_appeal_and_person(target_appeal, target_appeal_aod_person).count).to eq 1
           expect(AdvanceOnDocketMotion.granted_for_person?(target_appeal.claimant.person, target_appeal)).to be true
           expect(target_appeal.aod?).to be true
+        end
+      end
+      context "source appeal has decision issues" do
+        let(:source_appeal) { create(:appeal, :active, :with_request_issues) }
+        let!(:decision_issue) do
+          create(:decision_issue, decision_review: source_appeal,
+                                  request_issues: [source_appeal.request_issues.first])
+        end
+        it "copies request issues and decision issues to new appeal" do
+          expect(source_appeal.request_issues.count).to be > 0
+          expect(source_appeal.decision_issues.count).to eq 1
+          # Check association between decision_issue and request_issue
+          expect(source_appeal.decision_issues.first.request_issues).to include source_appeal.request_issues.first
+
+          appellant_substitution = subject
+          target_appeal = appellant_substitution.target_appeal
+          expect(target_appeal.request_issues.count).to eq request_issues.count
+          expect(target_appeal.decision_issues.count).to eq 1
+          expect(target_appeal.decision_issues.first.request_issues).to include target_appeal.request_issues.first
+          binding.pry
         end
       end
     end
