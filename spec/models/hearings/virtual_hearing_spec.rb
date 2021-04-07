@@ -312,7 +312,7 @@ describe VirtualHearing do
         virtual_hearing.reload
 
         expect { virtual_hearing.rebuild_and_save_links }
-          .to raise_error(VirtualHearing::VirtualHearingLinkMismatchError)
+          .to raise_error(VirtualHearing::LinkMismatchError)
       end
 
       context "with a virtual hearing that has a nil alias_with_host" do

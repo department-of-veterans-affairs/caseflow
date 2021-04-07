@@ -34,7 +34,7 @@
 ##
 class VirtualHearing < CaseflowRecord
   class NoAliasWithHostPresentError < StandardError; end
-  class VirtualHearingLinkMismatchError < StandardError; end
+  class LinkMismatchError < StandardError; end
 
   include UpdatedByUserConcern
 
@@ -225,7 +225,7 @@ class VirtualHearing < CaseflowRecord
     if link_service.alias_with_host != alias_with_host ||
        link_service.host_pin != host_pin_long ||
        link_service.guest_pin != guest_pin_long
-      fail VirtualHearingLinkMismatchError
+      fail LinkMismatchError
     end
 
     update!(host_hearing_link: link_service.host_link, guest_hearing_link: link_service.guest_link)
