@@ -64,6 +64,7 @@ const toggleBackAndForth = (utils) => {
 
 const firstAndLastSlotsAreCorrect = (ro, timeSlots) => {
   if (ro.label === 'Central') {
+    console.log(timeSlots[0].time.format('HH:mm z'));
     const nineAmRoZone = moment.tz('09:00', 'HH:mm', ro.timezone);
     const fourPmEastern = moment.tz('16:00', 'HH:mm', 'America/New_York');
 
@@ -162,8 +163,6 @@ describe('TimeSlot', () => {
   });
 
   describe('has correct time options in multiple timezones', () => {
-
-    /*
     const regionalOfficeCodes = [
       // New York, Eastern time
       'RO06',
@@ -176,37 +175,36 @@ describe('TimeSlot', () => {
       // Oakland, Pacific time
       'RO43',
     ];
-    const timezones = regionalOfficeCodes.map((roCode) => REGIONAL_OFFICE_INFORMATION[roCode]);
-
-    timezones.map((zone) => {
-      */
-
-    it('has correct slot times when the ro is in different timezones', () => {
-      const ro = { timezone: 'America/Los_Angeles' };
-      const { timeSlots, utils } = setup({ roTimezone: ro.timezone });
-
-      // Sanity check, but also remove linting problems because expects are in sub-functions
-      expect(timeSlots.length > 0).toEqual(true);
-      firstAndLastSlotsAreCorrect(ro, timeSlots);
-
-      // Toggle back and forth, check that they're still correct
-      toggleBackAndForth(utils);
-      firstAndLastSlotsAreCorrect(ro, timeSlots);
+    const regionalOffices = regionalOfficeCodes.map((roCode) => {
+      return { ro: roCode, timezone: REGIONAL_OFFICE_INFORMATION[roCode].timezone
+      };
     });
 
-    it('has correct custom dropdown options when the ro is in different timezones', () => {
-      const ro = { timezone: 'America/Los_Angeles' };
-      const { dropdownItems, utils } = setup({ roTimezone: ro.timezone });
+    regionalOffices.map((ro) => {
+      it('has correct slot times when the ro is in different timezones', () => {
+        const { timeSlots, utils } = setup({ roTimezone: ro.timezone });
 
-      toggleToCustom(utils);
-      // Check that the dropdown times are correct
-      expect(dropdownItems.length > 0).toEqual(true);
-      firstLastAndCountOfDropdownItemsCorrect(ro, dropdownItems);
-      // Toggle back and forth, check that they're still correct
-      toggleBackAndForth(utils);
-      firstLastAndCountOfDropdownItemsCorrect(ro, dropdownItems);
+        // Sanity check, but also remove linting problems because expects are in sub-functions
+        expect(timeSlots.length > 0).toEqual(true);
+        firstAndLastSlotsAreCorrect(ro, timeSlots);
+
+        // Toggle back and forth, check that they're still correct
+        toggleBackAndForth(utils);
+        firstAndLastSlotsAreCorrect(ro, timeSlots);
+      });
+
+      it('has correct custom dropdown options when the ro is in different timezones', () => {
+        const { dropdownItems, utils } = setup({ roTimezone: ro.timezone });
+
+        toggleToCustom(utils);
+        // Check that the dropdown times are correct
+        expect(dropdownItems.length > 0).toEqual(true);
+        firstLastAndCountOfDropdownItemsCorrect(ro, dropdownItems);
+        // Toggle back and forth, check that they're still correct
+        toggleBackAndForth(utils);
+        firstLastAndCountOfDropdownItemsCorrect(ro, dropdownItems);
+      });
     });
-    // });
   });
 
   describe('schedules for the time selected when the ro is in different timezones', () => {
