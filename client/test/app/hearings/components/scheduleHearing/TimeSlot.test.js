@@ -82,13 +82,27 @@ const firstAndLastSlotsAreCorrect = (ro, timeSlots) => {
     expect(timeSlots[timeSlots.length - 1].time.isSame(threeThirtyPmEastern, 'hour')).toEqual(true);
   }
 };
+const firstDropdownItemCorrect = (ro, item) => {
+  const eightFifteenRoTimeMoment = moment.tz('08:15', 'HH:mm', ro.timezone);
+  const easternTimeString = eightFifteenRoTimeMoment.tz('America/New_York').format('h:mm');
+  const roTimeString = eightFifteenRoTimeMoment.tz(ro.timezone).format('h:mm');
+
+  expect(item.label).toContain(easternTimeString);
+  expect(item.label).toContain(roTimeString);
+};
+const lastDropdownItemCorrect = (ro, item) => {
+  const fourFortyFiveRoTimeMoment = moment.tz('16:45', 'HH:mm', ro.timezone);
+  const easternTimeString = fourFortyFiveRoTimeMoment.tz('America/New_York').format('h:mm');
+  const roTimeString = fourFortyFiveRoTimeMoment.tz(ro.timezone).format('h:mm');
+
+  expect(item.label).toContain(easternTimeString);
+  expect(item.label).toContain(roTimeString);
+};
+
 const firstLastAndCountOfDropdownItemsCorrect = (ro, dropdownItems) => {
-  const firstLabel = formatTimeSlotLabel(moment.tz('8:15', 'HH:mm', ro.timezone).tz('America/New_York').
-    format('HH:mm'), ro.timezone);
-  // const lastLabel = formatTimeSlotLabel('10:30', ro.timezone);
-
-  expect(dropdownItems[0].label).toEqual(firstLabel);
-
+  firstDropdownItemCorrect(ro, dropdownItems[0]);
+  lastDropdownItemCorrect(ro, dropdownItems[dropdownItems.length - 1]);
+  expect(dropdownItems.length).toEqual(35);
 };
 
 describe('TimeSlot', () => {
