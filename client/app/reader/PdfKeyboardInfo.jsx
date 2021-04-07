@@ -86,6 +86,6 @@ export const categoryInstructions = [
     shortcut: <span><code><code>alt</code> + <code>shift</code></code> + <code>m</code></span> },
   { categoryInstruction: 'Add/Remove Procedural',
     shortcut: <span><code><code>alt</code> + <code>shift</code></code> + <code>p</code></span> },
-  { categoryInstruction: 'Add/Remove Other',
+  { categoryInstruction: 'Add/Remove Other Evidence',
     shortcut: <span><code><code>alt</code> + <code>shift</code></code> + <code>o</code></span> },
 ];
