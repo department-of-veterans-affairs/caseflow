@@ -1,8 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import LinkToAppeal from '../assignHearings/LinkToAppeal';
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
+import { renderAppealType } from '../../../queue/utils';
+import { HearingRequestType } from '../assignHearings/AssignHearingsFields';
+
+export const Dot = ({ spacing }) => (
+  <span style={{ margin: `0 ${spacing || 0}px` }}>&#183;</span>
+);
+
+Dot.propTypes = {
+  spacing: PropTypes.number
+};
 
 export const TimeSlotDetail = ({
   issueCount,
@@ -13,26 +23,41 @@ export const TimeSlotDetail = ({
   showDetails,
   showType,
   caseType,
-  appealId,
-  requestType,
+  aod,
+  appealExternalId,
+  readableRequestType,
+  itemSpacing,
+  isFormerTravel,
+  constrainWidth,
+  hearingDay,
+  regionalOffice,
 }) => {
-  const issueLabel =
-    issueCount === 1 ? `${issueCount} issue` : `${issueCount} issues`;
+  const issueLabel = issueCount === 1 ? `${issueCount} issue` : `${issueCount} issues`;
 
   return (
     <React.Fragment>
       {label}
       {showDetails && (
-        <div className="time-slot-details">
-          {issueLabel} <span>&#183;</span>{' '}
-          <DocketTypeBadge name={docketName} number={docketNumber} />{' '}
-          <span>&#183;</span> {poaName}
+        <div className="time-slot-details" style={constrainWidth && { textOverflow: 'ellipsis', overflow: 'hidden' }}>
+          {issueLabel} <Dot spacing={itemSpacing} />{' '}
+          <DocketTypeBadge name={docketName} number={docketNumber} />{showType && docketNumber}
+          <Dot spacing={itemSpacing} />
+          {poaName}
         </div>
       )}
       {showType && (
         <div className="time-slot-details">
-          {caseType} <span>&#183;</span> {requestType}
-          <span>&#183;</span> <Link to={`/queue/appeals/${appealId}`}>View Case Details</Link>
+          {renderAppealType({ caseType, isAdvancedOnDocket: aod })}
+          <Dot spacing={itemSpacing} />
+          <HearingRequestType hearingRequestType={readableRequestType} isFormerTravel={isFormerTravel} />
+          <Dot spacing={itemSpacing} />
+          <LinkToAppeal
+            appealExternalId={appealExternalId}
+            hearingDay={hearingDay}
+            regionalOffice={regionalOffice}
+          >
+            View Case Details
+          </LinkToAppeal>
         </div>
       )}
     </React.Fragment>
@@ -40,14 +65,20 @@ export const TimeSlotDetail = ({
 };
 
 TimeSlotDetail.propTypes = {
+  constrainWidth: PropTypes.bool,
+  hearingDay: PropTypes.object,
+  regionalOffice: PropTypes.string,
   issueCount: PropTypes.number,
   docketName: PropTypes.string,
   caseType: PropTypes.string,
-  appealId: PropTypes.string,
-  requestType: PropTypes.string,
+  appealExternalId: PropTypes.string,
+  readableRequestType: PropTypes.string,
   label: PropTypes.string,
   docketNumber: PropTypes.string,
   showDetails: PropTypes.bool,
   showType: PropTypes.bool,
+  aod: PropTypes.bool,
+  isFormerTravel: PropTypes.bool,
+  itemSpacing: PropTypes.number,
   poaName: PropTypes.string,
 };

@@ -41,6 +41,9 @@ export const virtualHearing = {
 };
 
 export const amaHearing = {
+  poaName: 'AMERICAN LEGION',
+  currentIssueCount: 1,
+  caseType: 'Original',
   aod: false,
   advanceOnDocketMotion: null,
   appealExternalId: '005334f7-b5c6-490c-a310-7dc5db22c8c3',
@@ -59,7 +62,6 @@ export const amaHearing = {
   centralOfficeTimeString: '03:30',
   claimantId: 4,
   closestRegionalOffice: null,
-  currentIssueCount: 0,
   disposition: null,
   dispositionEditable: true,
   docketName: 'hearing',
@@ -107,6 +109,9 @@ export const amaHearing = {
 };
 
 export const legacyHearing = {
+  poaName: 'AMERICAN LEGION',
+  currentIssueCount: 1,
+  caseType: 'Original',
   aod: false,
   advanceOnDocketMotion: null,
   appealExternalId: '0bf0263c-d863-4405-9b2e-f55cff77c6c3',
@@ -124,7 +129,6 @@ export const legacyHearing = {
   centralOfficeTimeString: '04:00',
   claimantId: 604,
   closestRegionalOffice: null,
-  currentIssueCount: 0,
   disposition: null,
   dispositionEditable: true,
   docketName: 'legacy',
@@ -185,6 +189,8 @@ export const legacyHearing = {
 };
 
 export const defaultHearing = {
+  caseType: 'Original',
+  poaName: 'AMERICAN LEGION',
   aod: false,
   advanceOnDocketMotion: null,
   appealExternalId: '0bf0263c-d863-4405-9b2e-f55cff77c6c4',

@@ -1,18 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
-import DocketTypeBadge from '../../../components/DocketTypeBadge';
-import { ReadOnly } from '../details/ReadOnly';
-import { renderAppealType } from '../../../queue/utils';
-import { formatDateStr } from '../../../util/DateUtil';
+import { TimeSlotCard } from './TimeSlotCard';
 
-export const AssignHearingsList = ({ appeal }) => {
-  return (
-    <div />
-  );
+export const AssignHearingsList = ({
+  hearings,
+  hearingDay,
+  regionalOffice,
+}) => {
+  return hearings.map((hearing) => (
+    <TimeSlotCard
+      key={hearing.appealExternalId}
+      hearing={hearing}
+      hearingDay={hearingDay}
+      regionalOffice={regionalOffice}
+    />
+  ));
 };
 
 AssignHearingsList.propTypes = {
   appeal: PropTypes.object,
+  hearingDay: PropTypes.object,
+  regionalOffice: PropTypes.string,
 };

@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import DocketTypeBadge from '../../../components/DocketTypeBadge';
 import Button from 'app/components/Button';
 import { TimeSlotDetail } from './TimeSlotDetail';
 
@@ -35,6 +34,7 @@ export const TimeSlotButton = ({
       <div>
         <div style={{ flex: 1 }}>
           <TimeSlotDetail
+            constrainWidth
             showDetails={full && issueCount !== null && poaName}
             label={formatTimeSlotLabel(hearingTime, roTimezone)}
             issueCount={issueCount}

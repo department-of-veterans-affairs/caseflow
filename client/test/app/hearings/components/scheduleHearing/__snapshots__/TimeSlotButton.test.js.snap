@@ -111,18 +111,21 @@ Object {
               8:15 AM EDT
               <div
                 class="time-slot-details"
+                style="text-overflow: ellipsis; overflow: hidden;"
               >
                 2 issues
                  
-                <span>
+                <span
+                  style="margin: 0px 0px;"
+                >
                   ·
                 </span>
                  
-                 
-                <span>
+                <span
+                  style="margin: 0px 0px;"
+                >
                   ·
                 </span>
-                 
                 Something
               </div>
             </div>
@@ -146,18 +149,21 @@ Object {
             8:15 AM EDT
             <div
               class="time-slot-details"
+              style="text-overflow: ellipsis; overflow: hidden;"
             >
               2 issues
                
-              <span>
+              <span
+                style="margin: 0px 0px;"
+              >
                 ·
               </span>
                
-               
-              <span>
+              <span
+                style="margin: 0px 0px;"
+              >
                 ·
               </span>
-               
               Something
             </div>
           </div>

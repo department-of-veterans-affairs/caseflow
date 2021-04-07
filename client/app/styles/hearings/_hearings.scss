@@ -387,8 +387,6 @@
   font-weight: 400;
   font-size: medium;
   white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
   width: 295px;
   margin-top: 5px;
 }
@@ -413,6 +411,24 @@
 
 .time-slot-button-toggle.usa-button {
   padding-left: 0;
+}
+
+.time-slot-card {
+  width: 100%;
+  border: 2px solid $color-gray-lighter;
+  border-radius: 5px;
+  padding: 15px 10px;
+  margin: 20px 0;
+}
+
+.time-slot-card-time {
+  margin-top: 0;
+  margin-left: 20px;
+}
+
+.time-slot-card-label {
+  font-weight: 700;
+  font-size: 19px;
 }
 
 // Appeal Information Styles

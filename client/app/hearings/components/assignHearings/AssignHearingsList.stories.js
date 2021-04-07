@@ -1,12 +1,10 @@
 import React from 'react';
 
-import { amaAppeal, powerOfAttorney } from '../../../../test/data/appeals';
-
-import { LEGACY_APPEAL_TYPES } from '../../../queue/constants';
 import { AssignHearingsList } from './AssignHearingsList';
+import { amaHearing, legacyHearing, defaultHearing } from '../../../../test/data/hearings';
 
 export default {
-  title: 'Hearings/Components/Schedule Hearing/AssignHearingsList',
+  title: 'Hearings/Components/Assign Hearings/AssignHearingsList',
   component: AssignHearingsList,
   argTypes: {
     appeal: { table: { disable: true } },
@@ -23,10 +21,7 @@ const Template = (args) => {
 
 export const Basic = Template.bind({});
 Basic.args = {
+  hearings: [defaultHearing, amaHearing, legacyHearing]
 };
 Basic.argTypes = {
-  issueCount: { control: { type: 'number' } },
-  caseType: { control: { type: 'select', options: ['Original', LEGACY_APPEAL_TYPES.CAVC_REMAND] } },
-  docketName: { control: { type: 'select', options: ['', 'legacy', 'hearings'] } },
-  veteranDateOfDeath: { control: { type: 'date' } }
 };

@@ -1,17 +1,50 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import DocketTypeBadge from '../../../components/DocketTypeBadge';
-import { ReadOnly } from '../details/ReadOnly';
-import { renderAppealType } from '../../../queue/utils';
-import { formatDateStr } from '../../../util/DateUtil';
+import { TimeSlotDetail, Dot } from '../scheduleHearing/TimeSlotDetail';
+import { HearingAppellantName } from './AssignHearingsFields';
+import { HearingTime } from '../HearingTime';
 
-export const TimeSlotCard = ({ appeal }) => {
+export const TimeSlotCard = ({ hearing, hearingDay, regionalOffice }) => {
   return (
-    <div />
+    <div className="usa-grid time-slot-card">
+      <div className="usa-width-one-fourth">
+        <HearingTime
+          primaryLabel="RO"
+          hearing={hearing}
+          paragraphStyles="time-slot-card-time"
+          labelStyles="time-slot-card-label"
+          breakCharacter=""
+        />
+      </div>
+      <div className="usa-width-three-fourths">
+        <TimeSlotDetail
+          {...hearing}
+          hearingDay={hearingDay}
+          regionalOffice={regionalOffice}
+          issueCount={hearing.currentIssueCount}
+          showType
+          showDetails
+          itemSpacing={5}
+          label={
+            <span className="time-slot-card-label">
+              <HearingAppellantName
+                hearing={{
+                  ...hearing,
+                  veteranFileNumber: `Veteran ID: ${hearing.veteranFileNumber}`,
+                }}
+                spacingCharacter={<Dot spacing={2} />}
+              />
+            </span>
+          }
+        />
+      </div>
+    </div>
   );
 };
 
 TimeSlotCard.propTypes = {
-  appeal: PropTypes.object,
+  hearing: PropTypes.object,
+  hearingDay: PropTypes.object,
+  regionalOffice: PropTypes.string,
 };
