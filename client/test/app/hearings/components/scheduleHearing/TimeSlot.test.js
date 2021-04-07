@@ -64,7 +64,6 @@ const toggleBackAndForth = (utils) => {
 
 const firstAndLastSlotsAreCorrect = (ro, timeSlots) => {
   if (ro.label === 'Central') {
-    console.log(timeSlots[0].time.format('HH:mm z'));
     const nineAmRoZone = moment.tz('09:00', 'HH:mm', ro.timezone);
     const fourPmEastern = moment.tz('16:00', 'HH:mm', 'America/New_York');
 
@@ -180,7 +179,7 @@ describe('TimeSlot', () => {
       };
     });
 
-    regionalOffices.map((ro) => {
+    regionalOffices.forEach((ro) => {
       it('has correct slot times when the ro is in different timezones', () => {
         const { timeSlots, utils } = setup({ roTimezone: ro.timezone });
 
@@ -204,12 +203,24 @@ describe('TimeSlot', () => {
         toggleBackAndForth(utils);
         firstLastAndCountOfDropdownItemsCorrect(ro, dropdownItems);
       });
-    });
-  });
 
-  describe('schedules for the time selected when the ro is in different timezones', () => {
-    it('schedules a hearing in different timezones', () => {});
-    it('produces a hearing at the correct time in different timezones', () => {});
+      it('has correct times for scheduling a hearing in different timezones', () => {
+        const { timeSlots, dropdownItems } = setup({ roTimezone: ro.timezone });
+
+        // Check that the value for the slot matches what we send when we schedule
+        timeSlots.forEach((slot) => {
+          expect(slot.time.tz('America/New_York').format('HH:mm')).toEqual(slot.hearingTime);
+        });
+
+        // Check that the value for the dropdown matches what we send when we schedule
+        dropdownItems.forEach((item) => {
+          const time = moment.tz(item.value, 'HH:mm', 'America/New_York').format('h:mm A');
+          const expectedLabelPart = `${time} Eastern`;
+
+          expect(item.label).toContain(expectedLabelPart);
+        });
+      });
+    });
   });
 })
 ;
