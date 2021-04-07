@@ -33,6 +33,9 @@
 #   `pending`: This indicates that the conference has yet to be created.
 ##
 class VirtualHearing < CaseflowRecord
+  class NoAliasWithHostPresentError < StandardError; end
+  class VirtualHearingLinkMismatchError < StandardError; end
+
   include UpdatedByUserConcern
 
   class << self
@@ -207,6 +210,25 @@ class VirtualHearing < CaseflowRecord
 
   def use_vc_test_link?
     guest_hearing_link.present? && host_hearing_link.present?
+  end
+
+  # rebuild and save the virtual hearing links using the original pins;
+  # to be used if the format of the links has changed
+  def rebuild_and_save_links
+    fail NoAliasWithHostPresentError if alias_with_host.blank?
+
+    conference_id = alias_with_host[/BVA(\d+)@/, 1]
+    link_service = VirtualHearings::LinkService.new(conference_id)
+
+    # confirm that we extracted the conference ID correctly,
+    # and that the original link was generated with the link service
+    if link_service.alias_with_host != alias_with_host ||
+       link_service.host_pin != host_pin_long ||
+       link_service.guest_pin != guest_pin_long
+      fail VirtualHearingLinkMismatchError
+    end
+
+    update!(host_hearing_link: link_service.host_link, guest_hearing_link: link_service.guest_link)
   end
 
   private
