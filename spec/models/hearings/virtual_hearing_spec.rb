@@ -298,7 +298,6 @@ describe VirtualHearing do
   end
 
   context "rebuild_and_save_links" do
-
     before do
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return PIN_KEY
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return URL_HOST
