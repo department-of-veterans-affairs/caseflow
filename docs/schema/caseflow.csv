@@ -86,6 +86,16 @@ appeal_views,id,integer PK,x,x,,,,
 appeal_views,last_viewed_at,datetime,,,,,,
 appeal_views,updated_at,datetime ∗,x,,,,,
 appeal_views,user_id,integer ∗ FK,x,,x,,x,
+appellant_substitutions,,,,,,,,Store appellant substitution form data
+appellant_substitutions,created_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
+appellant_substitutions,created_by_id,integer (8) ∗ FK,x,,x,,,User that created this record
+appellant_substitutions,id,integer (8) PK,x,x,,,,
+appellant_substitutions,poa_participant_id,string ∗,x,,,,,"Identifier of the appellant's POA, if they have a CorpDB participant_id"
+appellant_substitutions,source_appeal_id,integer (8) ∗ FK,x,,x,,x,The relevant source appeal for this substitution
+appellant_substitutions,substitute_participant_id,string ∗,x,,,,,Participant ID of substitute appellant
+appellant_substitutions,substitution_date,date ∗,x,,,,,Date of substitution
+appellant_substitutions,target_appeal_id,integer (8) ∗ FK,x,,x,,x,The new appeal resulting from this substitution
+appellant_substitutions,updated_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
 attorney_case_reviews,,,,,,,,
 attorney_case_reviews,attorney_id,integer FK,,,x,,,
 attorney_case_reviews,created_at,datetime ∗,x,,,,,
@@ -532,16 +542,6 @@ global_admin_logins,id,integer PK,x,x,,,,
 global_admin_logins,target_css_id,string,,,,,,
 global_admin_logins,target_station_id,string,,,,,,
 global_admin_logins,updated_at,datetime,,,,,x,
-granted_substitutions,,,,,,,,Store Granted Substitution form data
-granted_substitutions,created_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
-granted_substitutions,created_by_id,integer (8) ∗ FK,x,,x,,,User that created this record
-granted_substitutions,id,integer (8) PK,x,x,,,,
-granted_substitutions,poa_participant_id,string ∗,x,,,,,"Identifier of the appellant's POA, if they have a CorpDB participant_id"
-granted_substitutions,source_appeal_id,integer (8) ∗ FK,x,,x,,x,The relevant source appeal for this substitution
-granted_substitutions,substitute_id,integer (8) ∗ FK,x,,x,,,References claimants table
-granted_substitutions,substitution_date,date ∗,x,,,,,Date of granted substitution
-granted_substitutions,target_appeal_id,integer (8) ∗ FK,x,,x,,x,The new appeal resulting from this granted substitution
-granted_substitutions,updated_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
 hearings,,,,,,,,
 hearings,appeal_id,integer ∗ FK,x,,x,,,Appeal ID; use as FK to appeals
 hearings,bva_poc,string,,,,,,Hearing coordinator full name
