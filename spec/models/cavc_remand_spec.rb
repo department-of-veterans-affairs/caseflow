@@ -272,9 +272,8 @@ describe CavcRemand do
   end
 
   describe ".update" do
-    let!(:source_appeal){ create(:appeal, :dispatched) }
-    let!(:decision_issue_ids){ [source_appeal.reload.decision_issues.last.id] }
-    let!(:cavc_remand) { create(:cavc_remand, :jmr, source_appeal: source_appeal, decision_issue_ids: decision_issue_ids) }
+    let!(:cavc_remand) { create(:cavc_remand, :jmpr, 
+      decision_issues_selected_count: 1) }
     
     let(:params) do 
       {
@@ -299,8 +298,7 @@ describe CavcRemand do
       let(:updated_decision_issue_ids) { [remaining_decision_issue_id] }
 
       it "successfully removes decision issue ids that should be removed" do
-        # binding.pry
-        expect(cavc_remand.remand_appeal.request_issues.length).to eq(3)
+        expect(cavc_remand.remand_appeal.request_issues.length).to eq(1)
         expect { subject }.not_to raise_error
   
         expect(cavc_remand.decision_issue_ids[0]).to eq(remaining_decision_issue_id)
@@ -320,8 +318,6 @@ describe CavcRemand do
         expect(cavc_remand.decision_issue_ids.length).to eq(3)
         expect(cavc_remand.remand_appeal.reload.request_issues.length).to eq(3)
       end
-    end
-
     end
 
     it "calls update_timed_hold if there is a new decision date" do
