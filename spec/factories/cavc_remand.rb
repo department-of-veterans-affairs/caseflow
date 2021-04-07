@@ -63,6 +63,10 @@ FactoryBot.define do
       remand_subtype { Constants::CAVC_REMAND_SUBTYPES["mdr"] }
     end
 
+    trait :jmr do
+      remand_subtype { Constants::CAVC_REMAND_SUBTYPES["jmr"] }
+    end
+
     trait :straight_reversal do
       cavc_decision_type { Constants::CAVC_DECISION_TYPES["straight_reversal"] }
       remand_subtype { nil }

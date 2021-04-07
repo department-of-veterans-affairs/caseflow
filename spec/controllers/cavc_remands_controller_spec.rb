@@ -242,7 +242,8 @@ RSpec.describe CavcRemandsController, type: :controller do
     let(:remand_appeal_uuid) { Appeal.find(cavc_remand.remand_appeal_id).uuid }
     let(:cavc_judge_full_name) { Constants::CAVC_JUDGE_FULL_NAMES.first }
     let(:cavc_decision_type) { Constants::CAVC_DECISION_TYPES["remand"] }
-    let(:remand_subtype) { Constants::CAVC_REMAND_SUBTYPES["jmr"] }
+    let(:federal_circuit) { false }
+    let(:remand_subtype) { Constants::CAVC_REMAND_SUBTYPES["mdr"] }
     let(:instructions) { "update only the instructions!!" }
     let(:decision_date) { 7.days.ago }
     let(:judgement_date) { 6.days.ago.to_date }
@@ -273,7 +274,8 @@ RSpec.describe CavcRemandsController, type: :controller do
         judgement_date: judgement_date,
         mandate_date: mandate_date,
         decision_issue_ids: decision_issue_ids,
-        represented_by_attorney: true
+        represented_by_attorney: true,
+        federal_circuit: federal_circuit
       }
     end
 

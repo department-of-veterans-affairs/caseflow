@@ -1,34 +1,35 @@
 # frozen_string_literal: true
 
 describe CavcRemand do
+
+  let(:created_by) { create(:user) }
+  let(:updated_by) { create(:user) }
+  let(:source_appeal) { create(:appeal) }
+  let(:cavc_docket_number) { "123-1234567" }
+  let(:represented_by_attorney) { true }
+  let(:cavc_judge_full_name) { Constants::CAVC_JUDGE_FULL_NAMES.first }
+  let(:cavc_decision_type) { Constants::CAVC_DECISION_TYPES.keys.first }
+  let(:remand_subtype) { Constants::CAVC_REMAND_SUBTYPES.keys.first }
+  let(:decision_date) { 5.days.ago.to_date }
+  let(:judgement_date) { 4.days.ago.to_date }
+  let(:mandate_date) { 3.days.ago.to_date }
+  let(:decision_issues) do
+    create_list(
+      :decision_issue,
+      3,
+      :rating,
+      decision_review: source_appeal,
+      disposition: "denied",
+      description: "Decision issue description",
+      decision_text: "decision issue"
+    )
+  end
+  let(:decision_issue_ids) { decision_issues.map(&:id) }
+  let(:federal_circuit) { nil }
+  let(:instructions) { "Instructions!" }
+
   describe ".create!" do
     subject { CavcRemand.create!(params) }
-
-    let(:created_by) { create(:user) }
-    let(:updated_by) { create(:user) }
-    let(:source_appeal) { create(:appeal) }
-    let(:cavc_docket_number) { "123-1234567" }
-    let(:represented_by_attorney) { true }
-    let(:cavc_judge_full_name) { Constants::CAVC_JUDGE_FULL_NAMES.first }
-    let(:cavc_decision_type) { Constants::CAVC_DECISION_TYPES.keys.first }
-    let(:remand_subtype) { Constants::CAVC_REMAND_SUBTYPES.keys.first }
-    let(:decision_date) { 5.days.ago.to_date }
-    let(:judgement_date) { 4.days.ago.to_date }
-    let(:mandate_date) { 3.days.ago.to_date }
-    let(:decision_issues) do
-      create_list(
-        :decision_issue,
-        3,
-        :rating,
-        decision_review: source_appeal,
-        disposition: "denied",
-        description: "Decision issue description",
-        decision_text: "decision issue"
-      )
-    end
-    let(:decision_issue_ids) { decision_issues.map(&:id) }
-    let(:federal_circuit) { nil }
-    let(:instructions) { "Instructions!" }
 
     let(:params) do
       {
@@ -271,25 +272,20 @@ describe CavcRemand do
   end
 
   describe ".update" do
-    let(:cavc_remand) { create(:cavc_remand) }
-    let(:created_by) { create(:user) }
-    let(:updated_by) { create(:user) }
-    let(:source_appeal) { create(:appeal) }
-    let(:cavc_judge_full_name) { Constants::CAVC_JUDGE_FULL_NAMES.last }
-    let(:decision_date) { 7.days.ago.to_s }
-    let(:judgement_date) { 5.days.ago.to_s }
-    let(:mandate_date) { 3.days.ago.to_s }
+    let!(:source_appeal){ create(:appeal, :dispatched) }
+    let!(:decision_issue_ids){ [source_appeal.reload.decision_issues.last.id] }
+    let!(:cavc_remand) { create(:cavc_remand, :jmr, source_appeal: source_appeal, decision_issue_ids: decision_issue_ids) }
+    
     let(:params) do 
       {
-        created_by: created_by,
-        updated_by: updated_by,
+        decision_issue_ids: updated_decision_issue_ids,
         source_appeal_id: source_appeal.id,
         cavc_decision_type: Constants::CAVC_DECISION_TYPES.keys.first,
         cavc_docket_number: "123-1234567",
         cavc_judge_full_name: cavc_judge_full_name,
-        decision_date: decision_date,
-        judgement_date: judgement_date,
-        mandate_date: mandate_date,
+        decision_date: decision_date.to_s,
+        judgement_date: judgement_date.to_s,
+        mandate_date: mandate_date.to_s,
         instructions: "Instructions here!",
         represented_by_attorney: true,
         remand_subtype: Constants.CAVC_REMAND_SUBTYPES.jmr,
@@ -297,34 +293,45 @@ describe CavcRemand do
     end
 
     subject { cavc_remand.update(params) }
+    
+    context "removes decision issue ids" do
+      let(:remaining_decision_issue_id) { cavc_remand.decision_issue_ids.first }
+      let(:updated_decision_issue_ids) { [remaining_decision_issue_id] }
 
-    it "successfully removes decision issue ids that should be removed" do
-      remaining_decision_issue_id = cavc_remand.decision_issue_ids.first()
-      deleted_decision_issue_ids = cavc_remand.decision_issue_ids - [remaining_decision_issue_id]
-      params[:decision_issue_ids] =  [remaining_decision_issue_id]
-
-      expect { subject }.not_to raise_error
-
-      expect(cavc_remand.decision_issue_ids[0]).to eq(remaining_decision_issue_id)
-      expect(cavc_remand.decision_issue_ids.length).to eq(1)
-
-      DecisionIssue.find([remaining_decision_issue_id]).map do |cavc_remanded_issue|
-        issue = cavc_remand.remand_appeal.request_issues.where(contested_decision_issue_id: cavc_remanded_issue.id)
-        expect(issue).not_to be_empty
-      end
-      
-      DecisionIssue.find(deleted_decision_issue_ids).map do |cavc_remanded_issue|
-        issue = cavc_remand.remand_appeal.request_issues.where(contested_decision_issue_id: cavc_remanded_issue.id)
-        expect(issue).to be_empty
+      it "successfully removes decision issue ids that should be removed" do
+        # binding.pry
+        expect(cavc_remand.remand_appeal.request_issues.length).to eq(3)
+        expect { subject }.not_to raise_error
+  
+        expect(cavc_remand.decision_issue_ids[0]).to eq(remaining_decision_issue_id)
+        expect(cavc_remand.decision_issue_ids.length).to eq(1)
+        expect(cavc_remand.remand_appeal.reload.request_issues.length).to eq(1)
       end
     end
 
-    it "successfully adds decision issue ids that should be added" do 
+    context "adds decision issue ids" do
+      let(:updated_decision_issue_ids) { source_appeal.decision_issue_ids }
+
+      it "successfully adds decision issue ids that should be added" do
+        binding.pry
+        expect(cavc_remand.remand_appeal.request_issues.length).to eq(1)
+        expect { subject }.not_to raise_error
+  
+        expect(cavc_remand.decision_issue_ids.length).to eq(3)
+        expect(cavc_remand.remand_appeal.reload.request_issues.length).to eq(3)
+      end
+    end
 
     end
 
     it "calls update_timed_hold if there is a new decision date" do
-      # assert that the timed hold task is updated
+      # assert that the timed hold task is updated when a mandate is not required
+      params[:remand_subtype] = Constants.CAVC_REMAND_SUBTYPES.mdr
+      params[:federal_circuit] = false 
+
+      expect { subject }.not_to raise_error
+      # Discuss: not sure why this fails.  it goes into the method when I call it.
+      expect(cavc_remand).to receive(:update_timed_hold).exactly(1).times
     end
   end
 end
