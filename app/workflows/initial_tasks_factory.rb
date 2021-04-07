@@ -4,13 +4,12 @@
 # Factory to create tasks for a new appeal based on appeal characteristics.
 
 class InitialTasksFactory
-  def initialize(appeal, cavc_remand = nil)
+  def initialize(appeal)
     @appeal = appeal
     @root_task = RootTask.find_or_create_by!(appeal: appeal)
 
     if @appeal.cavc?
-      @cavc_remand = cavc_remand
-      @cavc_remand ||= appeal.cavc_remand
+      @cavc_remand = appeal.cavc_remand
 
       fail "CavcRemand required for CAVC-Remand appeal #{@appeal.id}" unless @cavc_remand
     end
