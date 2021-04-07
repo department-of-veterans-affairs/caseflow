@@ -36,8 +36,8 @@ class AppellantSubstitution < CaseflowRecord
     unassociated_claimants = Claimant.where(participant_id: substitute_participant_id, decision_review: nil)
     self.target_appeal ||= source_appeal.create_stream(:substitution, new_claimants: unassociated_claimants)
       .tap do |target_appeal|
-        copy_request_and_decision_issues(source_appeal, target_appeal)
-    
+        copy_request_issues(source_appeal, target_appeal)
+
         # AOD Status: If the deceased appellant’s appeal was AOD, the substitute appellant will also receive
         # the benefit of the AOD status. This is the case for both situations where a case is returned to
         # the Board following the grant of a substitution request  AND/OR pursuant to an appeal of a denial
@@ -49,19 +49,11 @@ class AppellantSubstitution < CaseflowRecord
       end
   end
 
-  def copy_request_and_decision_issues(source_appeal, target_appeal)
-    source_appeal.request_issues.map do |request_issue|
-      request_issue.dup do |request_issue_copy|
+  def copy_request_issues(source_appeal, target_appeal)
+    source_appeal.request_issues.order(:id).map do |request_issue|
+      request_issue.dup.tap do |request_issue_copy|
         request_issue_copy.decision_review = target_appeal
         request_issue_copy.save!
-        
-        request_issue.decision_issues.map do |decision_issue|
-          decision_issue.dup do |decision_issue_copy|
-            decision_issue_copy.decision_review = target_appeal
-            decision_issue_copy.request_issues << request_issue
-            decision_issue_copy.save!
-          end
-        end
       end
     end
   end

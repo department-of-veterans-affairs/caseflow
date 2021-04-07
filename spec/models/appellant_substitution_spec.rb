@@ -66,24 +66,15 @@ describe AppellantSubstitution do
           expect(target_appeal.aod?).to be true
         end
       end
-      context "source appeal has decision issues" do
+      context "source appeal has request issues" do
         let(:source_appeal) { create(:appeal, :active, :with_request_issues) }
-        let!(:decision_issue) do
-          create(:decision_issue, decision_review: source_appeal,
-                                  request_issues: [source_appeal.request_issues.first])
-        end
-        it "copies request issues and decision issues to new appeal" do
+        it "copies request issues but not decision issues to new appeal" do
           expect(source_appeal.request_issues.count).to be > 0
-          expect(source_appeal.decision_issues.count).to eq 1
-          # Check association between decision_issue and request_issue
-          expect(source_appeal.decision_issues.first.request_issues).to include source_appeal.request_issues.first
 
           appellant_substitution = subject
           target_appeal = appellant_substitution.target_appeal
-          expect(target_appeal.request_issues.count).to eq request_issues.count
-          expect(target_appeal.decision_issues.count).to eq 1
-          expect(target_appeal.decision_issues.first.request_issues).to include target_appeal.request_issues.first
-          binding.pry
+          expect(target_appeal.request_issues.count).to eq source_appeal.request_issues.count
+          expect(target_appeal.decision_issues.count).to eq 0
         end
       end
     end
