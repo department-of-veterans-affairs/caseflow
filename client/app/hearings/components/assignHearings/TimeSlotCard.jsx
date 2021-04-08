@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { TimeSlotDetail, Dot } from '../scheduleHearing/TimeSlotDetail';
+import { TimeSlotDetail } from '../scheduleHearing/TimeSlotDetail';
 import { HearingAppellantName } from './AssignHearingsFields';
 import { HearingTime } from '../HearingTime';
+import { Dot } from '../../../components/Dot';
 
 export const TimeSlotCard = ({ hearing, hearingDay, regionalOffice }) => {
   return (

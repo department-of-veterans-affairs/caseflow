@@ -5,14 +5,7 @@ import LinkToAppeal from '../assignHearings/LinkToAppeal';
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
 import { renderAppealType } from '../../../queue/utils';
 import { HearingRequestType } from '../assignHearings/AssignHearingsFields';
-
-export const Dot = ({ spacing }) => (
-  <span style={{ margin: `0 ${spacing || 0}px` }}>&#183;</span>
-);
-
-Dot.propTypes = {
-  spacing: PropTypes.number
-};
+import { Dot } from '../../../components/Dot';
 
 export const TimeSlotDetail = ({
   issueCount,
@@ -39,18 +32,20 @@ export const TimeSlotDetail = ({
       {label}
       {showDetails && (
         <div className="time-slot-details" style={constrainWidth && { textOverflow: 'ellipsis', overflow: 'hidden' }}>
-          {issueLabel} <Dot spacing={itemSpacing} />{' '}
-          <DocketTypeBadge name={docketName} number={docketNumber} />{showType && docketNumber}
-          <Dot spacing={itemSpacing} />
+          {issueLabel}{' '}
+          <Dot spacing={itemSpacing} />{' '}
+          <DocketTypeBadge name={docketName} number={docketNumber} />{' '}
+          {showType && docketNumber}{' '}
+          <Dot spacing={itemSpacing} />{' '}
           {poaName}
         </div>
       )}
       {showType && (
         <div className="time-slot-details">
-          {renderAppealType({ caseType, isAdvancedOnDocket: aod })}
-          <Dot spacing={itemSpacing} />
-          <HearingRequestType hearingRequestType={readableRequestType} isFormerTravel={isFormerTravel} />
-          <Dot spacing={itemSpacing} />
+          {renderAppealType({ caseType, isAdvancedOnDocket: aod })}{' '}
+          <Dot spacing={itemSpacing} />{' '}
+          <HearingRequestType hearingRequestType={readableRequestType} isFormerTravel={isFormerTravel} />{' '}
+          <Dot spacing={itemSpacing} />{' '}
           <LinkToAppeal
             appealExternalId={appealExternalId}
             hearingDay={hearingDay}
@@ -73,7 +68,10 @@ TimeSlotDetail.propTypes = {
   caseType: PropTypes.string,
   appealExternalId: PropTypes.string,
   readableRequestType: PropTypes.string,
-  label: PropTypes.string,
+  label: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]),
   docketNumber: PropTypes.string,
   showDetails: PropTypes.bool,
   showType: PropTypes.bool,

@@ -19,7 +19,10 @@ HearingAppellantName.defaultProps = {
 };
 
 HearingAppellantName.propTypes = {
-  spacingCharacter: PropTypes.string,
+  spacingCharacter: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]),
   hearing: PropTypes.shape({
     appellantFirstName: PropTypes.string,
     appellantLastName: PropTypes.string,

@@ -356,6 +356,19 @@ export const centralHearing = {
   worksheetIssues: {},
 };
 
+export const defaultHearingDay = {
+  hearingId: 36,
+  regionalOffice: 'RO17',
+  timezone: 'America/New_York',
+  scheduledFor: '2020-08-15',
+  requestType: 'V',
+  room: '001',
+  roomLabel: '',
+  filledSlots: 0,
+  totalSlots: 12,
+  hearingDate: '2020-08-15'
+};
+
 export const hearingDateOptions = [
   {
     label: ' ',
@@ -366,18 +379,7 @@ export const hearingDateOptions = [
   },
   {
     label: '08/15/2020 (0/12)  ',
-    value: {
-      hearingId: 36,
-      regionalOffice: 'RO17',
-      timezone: 'America/New_York',
-      scheduledFor: '2020-08-15',
-      requestType: 'V',
-      room: '001',
-      roomLabel: '',
-      filledSlots: 0,
-      totalSlots: 12,
-      hearingDate: '2020-08-15'
-    }
+    value: defaultHearingDay
   },
   {
     label: '08/21/2020 (2/12) 1 (1W200A) ',
@@ -470,6 +472,20 @@ export const scheduleVeteranResponse = {
       data: [scheduleHearingTask]
     }
   }
+};
+export const getHearingType = (hearing) => {
+  const lastRowLabel = `${hearing.caseType} · ${hearing.readableRequestType} · View Case Details`;
+
+  return lastRowLabel;
+};
+
+export const getHearingDetails = (hearing, showNumber) => {
+  const docketNumber = showNumber && ` ${hearing.docketNumber}`;
+  const issues = `${hearing.currentIssueCount} issues`;
+  const docket = `${hearing.docketName.toUpperCase().charAt(0)}Hearing Request${docketNumber}`;
+  const secondRowLabel = `${issues} · ${docket} · ${hearing.poaName}`;
+
+  return secondRowLabel;
 };
 
 /* eslint-enable max-lines */
