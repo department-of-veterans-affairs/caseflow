@@ -86,4 +86,29 @@ describe MdrTask, :postgres do
       end
     end
   end
+
+  describe "#update_timed_hold" do
+    let(:parent_task) { appeal.tasks.open.where(type: :CavcTask).last }
+    let!(:mdr_task) { MdrTask.create_with_hold(parent_task) }
+
+    subject { mdr_task.update_timed_hold }
+
+    context "when the task calls update_timed_hold" do
+      it "it will create a new timed hold task" do
+        original_count = mdr_task.children.where(type: :TimedHoldTask).length
+        
+        expect { subject }.not_to raise_error
+
+        expect(mdr_task.children.where(type: :TimedHoldTask).length).to eq original_count + 1
+      end
+
+      it "it will cancel the existing timed hold task" do
+        expect(TimedHoldTask.first.status).to_not eq Constants.TASK_STATUSES.cancelled
+        
+        expect { subject }.not_to raise_error
+
+        expect(TimedHoldTask.first.status).to eq Constants.TASK_STATUSES.cancelled
+      end
+    end
+  end
 end
