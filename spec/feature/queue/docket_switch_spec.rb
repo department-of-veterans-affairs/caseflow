@@ -142,7 +142,6 @@ RSpec.feature "Docket Switch", :all_dbs do
           # Fill out form
           fill_in("context", with: context)
           find("label[for=disposition_#{disposition}]").click
-          fill_in("hyperlink", with: hyperlink)
 
           # The previously assigned COTB attorney should be selected
           expect(page).to have_content(cotb_attorney.full_name)
@@ -173,7 +172,6 @@ RSpec.feature "Docket Switch", :all_dbs do
           judge_ruling_text = Constants::DOCKET_SWITCH_DISPOSITIONS[disposition]["judgeRulingText"]
 
           expect(page).to have_content "I am proceeding with a #{judge_ruling_text}"
-          expect(page).to have_content "Signed ruling letter:\n#{hyperlink}"
           expect(page).to have_content(context)
         end
       end

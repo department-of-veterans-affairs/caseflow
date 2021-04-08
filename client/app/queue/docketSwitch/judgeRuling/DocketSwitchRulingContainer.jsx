@@ -16,13 +16,11 @@ import { addressDocketSwitchRuling } from '../docketSwitchSlice';
 
 export const formatDocketSwitchRuling = ({
   disposition,
-  hyperlink,
   context,
 }) => {
   const parts = [];
 
   parts.push(`I am proceeding with a ${DISPOSITIONS[disposition].judgeRulingText}.`);
-  parts.push(`Signed ruling letter:  \n${hyperlink}`);
   parts.push(context);
 
   return parts.join('  \n  \n');

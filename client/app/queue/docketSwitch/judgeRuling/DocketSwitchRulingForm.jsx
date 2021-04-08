@@ -26,7 +26,6 @@ const schema = yup.object().shape({
     mixed().
     oneOf(Object.keys(DISPOSITIONS)).
     required(),
-  hyperlink: yup.string(),
   context: yup.string().required(),
   attorney: yup.
     object().
@@ -87,14 +86,6 @@ export const DocketSwitchRulingForm = ({
           inputRef={register}
           strongLabel
           vertical
-        />
-
-        <TextField
-          inputRef={register}
-          name="hyperlink"
-          label="Insert hyperlink to signed ruling letter"
-          strongLabel
-          optional
         />
 
         <TextareaField
