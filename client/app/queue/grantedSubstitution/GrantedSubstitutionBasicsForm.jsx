@@ -73,7 +73,7 @@ export const GrantedSubstitutionBasicsForm = ({
         <RadioField
           errorMessage={errors?.participantId?.message}
           inputRef={register}
-          label="Please select the granted substitute from the following claimants."
+          label="Please select the substitute from the following claimants."
           name="participantId"
           options={relationships}
           strongLabel
