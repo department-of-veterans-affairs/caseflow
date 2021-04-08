@@ -170,6 +170,8 @@ describe('TimeSlot', () => {
 
   describe('has correct behavior in multiple timezones', () => {
     const regionalOfficeCodes = [
+      // Manilla, which is -earlier- than Eastern
+      'RO58',
       // New York, Eastern time
       'RO06',
       // DC, Eastern time, central RO is special
