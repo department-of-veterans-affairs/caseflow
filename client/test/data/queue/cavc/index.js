@@ -23,3 +23,16 @@ export const supportedDecisionTypes = [
   'death_dismissal',
 ];
 export const supportedRemandTypes = ['jmr', 'jmpr', 'mdr'];
+
+export const existingValuesJmr = {
+  docketNumber: '12-345678',
+  attorney: 'yes',
+  judge: 'Clerk',
+  decisionType: 'remand',
+  remandType: 'jmr',
+  decisionDate: format(sub(new Date(), { days: 7 }), 'yyyy-MM-dd'),
+  judgementDate: format(sub(new Date(), { days: 6 }), 'yyyy-MM-dd'),
+  mandateDate: format(sub(new Date(), { days: 6 }), 'yyyy-MM-dd'),
+  issueIds: [1, 2, 3],
+  instructions: 'Lorem ipsum dolor sit amet',
+};

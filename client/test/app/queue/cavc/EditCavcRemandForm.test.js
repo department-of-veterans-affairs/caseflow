@@ -13,9 +13,11 @@ import { axe } from 'jest-axe';
 
 import COPY from 'app/../COPY';
 import { EditCavcRemandForm } from 'app/queue/cavc/EditCavcRemandForm';
+import { format, sub } from 'date-fns';
 
 import {
   existingValues,
+  existingValuesJmr,
   decisionIssues,
   supportedDecisionTypes,
   supportedRemandTypes,
@@ -50,6 +52,7 @@ const fillAttorney = async () => {
     within(radioGroup).getByRole('radio', { name: /yes/i })
   );
 };
+
 const fillJudge = async () => {
   await selectEvent.select(screen.getByLabelText(/cavc judge's name/i), [
     existingValues.judge,
@@ -72,8 +75,8 @@ const fillStatic = async () => {
   await fillJudge();
   await fillDecisionDate();
   await fillInstructions();
-  fillDecisionType();
-  fillRemandType();
+  //fillDecisionType();
+  //fillRemandType();
 };
 
 describe('EditCavcRemandForm', () => {
@@ -163,11 +166,28 @@ describe('EditCavcRemandForm', () => {
 
         expect(container).toMatchSnapshot();
         expect(screen.getByText(COPY.EDIT_CAVC_PAGE_TITLE)).toBeInTheDocument();
+      });
+
+      it('fires onCancel', () => {
+        setup({ existingValues });
+        expect(onCancel).not.toHaveBeenCalled();
+  
+        userEvent.click(screen.getByRole('button', { name: /cancel/i }));
+        expect(onCancel).toHaveBeenCalled();
+      });
+    });
+
+    describe('with remand decision', () => {
+      it('renders expected fields that are the same for all types', () => {
+        const { container } = setup({ existingValues });
 
         expect(screen.getByRole('textbox', { name: /what is the court docket number\?/i })).toBeInTheDocument();
         expect(screen.getByText(/was the appellant represented by an attorney\?/i)).toBeInTheDocument();
-        //expect(screen.getByText(/yes/i)).toBeInTheDocument();
-        //expect(screen.getByText(/no/i)).toBeInTheDocument();
+
+        const group = screen.getByRole('group', { name: /was the appellant represented by an attorney\?/i });
+        within(group).getByText(/yes/i);
+        within(group).getByText(/no/i);
+
         expect(screen.getByText(/what is the cavc judge's name\?/i)).toBeInTheDocument();
         expect(screen.getByRole('textbox', { name: /how are you proceeding\?/i })).toBeInTheDocument();
 
@@ -177,25 +197,40 @@ describe('EditCavcRemandForm', () => {
         
         expect(screen.getByLabelText(/what is the court's decision date\?/i)).toBeInTheDocument();
 
-        //existingValues.remandType = mdr, so there is no judgement or mandate date fields to display
-        expect(screen.queryByLabelText(/what is the court's judgement date\?/i)).not.toBeInTheDocument();
-        expect(screen.queryByLabelText(/what is the court's mandate date\?/i)).not.toBeInTheDocument();
-
         //issues section
         expect(screen.getByText(/which issues are being addressed by the court\?/i)).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /unselect all/i })).toBeInTheDocument();
         expect(screen.getByText(/please unselect any tasks you would like to remove:/i)).toBeInTheDocument();
         expect(screen.getByRole('textbox', { name: /provide context and instructions for this action/i
           })).toBeInTheDocument();
+
+        expect(container).toMatchSnapshot();
       });
-    });
 
-    it('fires onCancel', () => {
-      setup({ existingValues });
-      expect(onCancel).not.toHaveBeenCalled();
+      it('renders expected fields for mdr remandType', () => {
+        const { container } = setup({ existingValues });
 
-      userEvent.click(screen.getByRole('button', { name: /cancel/i }));
-      expect(onCancel).toHaveBeenCalled();
+        expect(screen.queryByLabelText(/what is the court's judgement date\?/i)).not.toBeInTheDocument();
+        expect(screen.queryByLabelText(/what is the court's mandate date\?/i)).not.toBeInTheDocument();
+
+        //expect(screen.findByText(/choosing mdr will/i)).toBeInTheDocument();
+
+        //expect(screen.findByText(federalcircuit question)).toBeInTheDocument();
+
+        expect(container).toMatchSnapshot();
+      });
+
+      it('renders expected fields for jmr remandType', () => {
+        const { container } = setup( {existingValuesJmr} );
+        existingValues.remandType = 'jmr';
+        existingValues.judgementDate = format(sub(new Date(), { days: 6 }), 'yyyy-MM-dd');
+        existingValues.mandateDate = format(sub(new Date(), { days: 6 }), 'yyyy-MM-dd');
+
+        expect(screen.queryByLabelText(/what is the court's judgement date\?/i)).toBeInTheDocument();
+        expect(screen.queryByLabelText(/what is the court's mandate date\?/i)).toBeInTheDocument();
+
+        expect(container).toMatchSnapshot();
+      });
     });
   });
 });
