@@ -42,6 +42,7 @@ describe AppellantSubstitution do
           expect(target_appeal.aod_based_on_age).to eq appellant_substitution.source_appeal.aod_based_on_age
         end
       end
+
       context "source appeal has non-age-related AOD Motion" do
         let(:source_appeal) { create(:appeal, :active, :advanced_on_docket_due_to_motion) }
         # The original person associated with AOD may be the claimant or veteran; in this case, it is the claimant
@@ -66,6 +67,7 @@ describe AppellantSubstitution do
           expect(target_appeal.aod?).to be true
         end
       end
+
       context "source appeal has request issues" do
         let(:source_appeal) { create(:appeal, :active, :with_request_issues) }
         it "copies request issues but not decision issues to new appeal" do
