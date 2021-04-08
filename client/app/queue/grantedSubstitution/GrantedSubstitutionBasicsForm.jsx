@@ -19,6 +19,7 @@ const schema = yup.object().shape({
     date().
     required().
     nullable().
+    max(new Date(), 'Date cannot be in the future').
     transform((value, originalValue) => (originalValue === '' ? null : value)),
   participantId: yup.string().required('You must select a claimant'),
 });
@@ -59,10 +60,20 @@ export const GrantedSubstitutionBasicsForm = ({
           strongLabel
         />
 
+        <p>
+          TODO
+          <ul>
+            <li><s>Do not allow selecting future dates</s></li>
+            <li>Disable Submit button unless form is populated</li>
+            <li>Link to this form from Case Details on appropriate conditions</li>
+            <li>Remove this TODO section 😃</li>
+          </ul>
+        </p>
+
         <RadioField
           errorMessage={errors?.participantId?.message}
           inputRef={register}
-          label="Please select the granted substitute from the following claimants"
+          label="Please select the granted substitute from the following claimants."
           name="participantId"
           options={relationships}
           strongLabel
