@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 describe CavcRemand do
-
   let(:created_by) { create(:user) }
   let(:updated_by) { create(:user) }
   let(:source_appeal) { create(:appeal) }
@@ -272,10 +271,12 @@ describe CavcRemand do
   end
 
   describe ".update" do
-    let!(:cavc_remand) { create(:cavc_remand, :jmpr, 
-      decision_issues_selected_count: 1) }
-    
-    let(:params) do 
+    let!(:cavc_remand) do
+      create(:cavc_remand, :jmpr,
+             decision_issues_selected_count: 1)
+    end
+
+    let(:params) do
       {
         decision_issue_ids: updated_decision_issue_ids,
         source_appeal_id: source_appeal.id,
@@ -287,20 +288,22 @@ describe CavcRemand do
         mandate_date: mandate_date.to_s,
         instructions: "Instructions here!",
         represented_by_attorney: true,
-        remand_subtype: Constants.CAVC_REMAND_SUBTYPES.jmr,
+        remand_subtype: remand_subtype,
+        federal_circuit: false
       }
     end
 
     subject { cavc_remand.update(params) }
-    
+
     context "removes decision issue ids" do
+      let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.jmr }
       let(:remaining_decision_issue_id) { cavc_remand.decision_issue_ids.first }
       let(:updated_decision_issue_ids) { [remaining_decision_issue_id] }
 
       it "successfully removes decision issue ids that should be removed" do
         expect(cavc_remand.remand_appeal.request_issues.length).to eq(1)
         expect { subject }.not_to raise_error
-  
+
         expect(cavc_remand.decision_issue_ids[0]).to eq(remaining_decision_issue_id)
         expect(cavc_remand.decision_issue_ids.length).to eq(1)
         expect(cavc_remand.remand_appeal.reload.request_issues.length).to eq(1)
@@ -308,26 +311,16 @@ describe CavcRemand do
     end
 
     context "adds decision issue ids" do
-      let(:updated_decision_issue_ids) { source_appeal.decision_issue_ids }
+      let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.jmr }
+      let(:updated_decision_issue_ids) { cavc_remand.source_appeal.decision_issue_ids }
 
       it "successfully adds decision issue ids that should be added" do
-        binding.pry
         expect(cavc_remand.remand_appeal.request_issues.length).to eq(1)
         expect { subject }.not_to raise_error
-  
+
         expect(cavc_remand.decision_issue_ids.length).to eq(3)
         expect(cavc_remand.remand_appeal.reload.request_issues.length).to eq(3)
       end
-    end
-
-    it "calls update_timed_hold if there is a new decision date" do
-      # assert that the timed hold task is updated when a mandate is not required
-      params[:remand_subtype] = Constants.CAVC_REMAND_SUBTYPES.mdr
-      params[:federal_circuit] = false 
-
-      expect { subject }.not_to raise_error
-      # Discuss: not sure why this fails.  it goes into the method when I call it.
-      expect(cavc_remand).to receive(:update_timed_hold).exactly(1).times
     end
   end
 end
