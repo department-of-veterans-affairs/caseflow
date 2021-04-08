@@ -83,7 +83,7 @@ export const categoryColumns = [{ header: 'Add/Remove categories',
 
 export const categoryInstructions = [
   { categoryInstruction: 'Add/Remove Medical',
-    shortcut: <span><code><code>alt</code> + <code>shift</code></code> + <code>m</code></span> },
+    shortcut: <span><code>alt</code> + <code>shift</code> + <code>m</code></span> },
   { categoryInstruction: 'Add/Remove Procedural',
     shortcut: <span><code><code>alt</code> + <code>shift</code></code> + <code>p</code></span> },
   { categoryInstruction: 'Add/Remove Other Evidence',
