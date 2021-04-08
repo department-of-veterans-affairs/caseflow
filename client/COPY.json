@@ -132,6 +132,7 @@
   "POST_DISPATCH_TITLE": "Post-dispatch actions",
   "ADD_CAVC_BUTTON": "+ Add CAVC Remand",
   "ADD_CAVC_PAGE_TITLE": "Add a Court remand",
+  "EDIT_CAVC_PAGE_TITLE": "Edit a Court remand",
   "ADD_CAVC_DESCRIPTION": "Complete the details below to intake this Court remand for further processing",
   "CAVC_DOCKET_NUMBER_LABEL": "What is the court docket number?",
   "CAVC_DOCKET_NUMBER_ERROR": "Please enter a valid docket number provided by CAVC (12-3456).",
@@ -172,6 +173,8 @@
   "CAVC_REMAND_MANDATE_QUESTION": "Are judgement and mandate dates provided?",
   "CAVC_REMAND_MANDATE_DATES_LABEL": "Judgement and mandate date",
   "CAVC_REMAND_MANDATE_DATES_SAME_DESCRIPTION": "Same as Court's decision date",
+  "CAVC_REMAND_EDIT_SUCCESS_TITLE": "You have successfully edited this CAVC Remand",
+  "CAVC_REMAND_EDIT_SUCCESS_DETAIL": "These changes are reflected in the CAVC Remand section.",
 
   "CAVC_EXTENSION_REQUEST_TITLE": "Review extension request",
   "CAVC_EXTENSION_REQUEST_DECISION_LABEL": "How will you proceed?",
@@ -185,6 +188,7 @@
   "CAVC_EXTENSION_REQUEST_DENY_SUCCESS_DETAIL": "This task can be completed to distribute to a judge for further processing",
 
   "ADD_CAVC_DATES_TITLE": "Add Court dates",
+  "CORRECT_CAVC_REMAND_LINK": "Edit Remand",
 
   "EDIT_NOD_DATE_MODAL_TITLE": "Edit NOD Date",
   "EDIT_NOD_DATE_MODAL_DESCRIPTION": "**Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.**",
@@ -562,7 +566,7 @@
   "SELF_ASSIGNED_MAIL_TASK_CREATION_SUCCESS_TITLE": "You have successfully created a new %s mail task",
   "SELF_ASSIGNED_MAIL_TASK_CREATION_SUCCESS_MESSAGE": "This task will remain in your Queue. Assign or take action on this at any time through your actions dropdown.",
 
-  "CASE_TIMELINE_HEADER": "Below is the history of this case. Soon, you'll be able to see many more details.",
+  "CASE_TIMELINE_HEADER": "Below is the history of this case.",
   "CASE_TIMELINE_DISPATCHED_FROM_BVA": "Dispatched from BVA",
   "CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING": "Dispatch from BVA pending",
   "CASE_TIMELINE_FORM_9_RECEIVED": "Form 9 received",
@@ -885,6 +889,9 @@
   "CONFIRM_CLAIM_LABEL_MODAL_TITLE": "Confirm new claim label",
   "CONFIRM_CLAIM_LABEL_MODAL_BODY": "Select \"confirm\" to save and complete editing this claim label. If the claim label is not updated in VBMS in 24 hours, please submit a YourIT ticket.",
 
+  "EDIT_EP_CLAIM_LABEL_SUCCESS_ALERT_TITLE": "You have successfully edited the claim label",
+  "EDIT_EP_CLAIM_LABEL_SUCCESS_ALERT_MESSAGE": "If the claim label is not updated in VBMS in 24 hours, please submit a YourIt ticket.",
+  
   "INTAKE_CORRECTION_TYPE_MODAL_TITLE": "Set Correction Type",
   "INTAKE_CORRECTION_TYPE_MODAL_COPY": "This issue will be added to a 930 EP for correction. If a mistake was found during quality review, please select whether it was discovered by the local or national quality review team. Otherwise, select control.",
   "INTAKE_LEGACY_OPT_IN_MESSAGE": "Did the Veteran check the \"OPT-IN from SOC/SSOC\" box on the form?",
@@ -915,7 +922,7 @@
 
   "SCHEDULE_VETERAN_FULL_HEARING_DAY_TITLE": "This hearing day is full",
   "SCHEDULE_VETERAN_FULL_HEARING_DAY_MESSAGE_DETAIL": "You are about to schedule this Veteran on a full docket. Please verify before scheduling.",
-  "SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL": "Email notifications will be sent to the Veteran and POA/Representative.",
+  "SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL": "When you schedule the hearing, the %s and Judge will receive an email with connection information for the virtual hearing.",
 
   "REMOVE_HEARING_DAY_MESSAGE_TITLE": "Remove Hearing Day",
   "REMOVE_HEARING_DAY_MESSAGE_DETAIL": "Once the hearing day is removed, users will no longer be able to schedule Veterans for this %s hearing day on %s.",
@@ -950,6 +957,8 @@
   "CENTRAL_OFFICE_CHANGE_TO_VIRTUAL": "Email notifications will be sent to the %s, POA / Representative, and Veterans Law Judge (VLJ).",
 
   "VIDEO_CHANGE_FROM_VIRTUAL": "Emails will be sent to the %s and POA / Representative to notify them that their virtual hearing link is no longer valid and they must appear in-person at their designated Regional Office or alternate hearing location.",
+
+  "CONVERT_HEARING_TITLE": "Convert to %s Hearing",
 
   "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE": "Change to Virtual Hearing",
   "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_TITLE": "Change to Video Hearing",

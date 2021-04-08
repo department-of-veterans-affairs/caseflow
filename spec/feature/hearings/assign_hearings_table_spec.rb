@@ -426,7 +426,7 @@ RSpec.feature "Assign Hearings Table" do
               folder: create(:folder, tinum: "3") # docket number
             ),
             closest_regional_office: closest_regional_office,
-            changed_request_type: HearingDay::REQUEST_TYPES[:virtual]
+            changed_hearing_request_type: HearingDay::REQUEST_TYPES[:virtual]
           )
         )
       end

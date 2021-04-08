@@ -74,11 +74,23 @@ class WorkQueue::AppealSerializer
     object.claimant&.address
   end
 
-  attribute :appellant_relationship do |object|
-    object.claimant&.relationship
+  attribute :appellant_tz, &:appellant_tz
+
+  attribute :appellant_relationship, &:appellant_relationship
+
+  attribute :cavc_remand do |object|
+    if object.cavc_remand
+      WorkQueue::CavcRemandSerializer.new(object.cavc_remand).serializable_hash[:data][:attributes]
+    end
   end
 
-  attribute :cavc_remand
+  attribute :remand_source_appeal_id do |appeal|
+    appeal.cavc_remand&.source_appeal&.uuid
+  end
+
+  attribute :remand_judge_name do |appeal|
+    appeal.cavc_remand&.source_appeal&.reviewing_judge_name
+  end
 
   attribute :veteran_death_date
 
