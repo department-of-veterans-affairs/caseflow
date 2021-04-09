@@ -9,6 +9,8 @@ import { detailListStyling, getDetailField } from './Detail';
 import { getAppealValue } from './QueueActions';
 import Address from './components/Address';
 import BareList from '../components/BareList';
+import Button from '../components/Button';
+import Alert from '../components/Alert';
 import COPY from '../../COPY';
 
 /**
@@ -86,6 +88,12 @@ export const PowerOfAttorneyNameUnconnected = ({ powerOfAttorney }) => (
  * Component that displays details about the power of attorney.
  */
 export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney }) => {
+
+
+  const updatePOA = () => {
+    console.log('you clicked me')
+  };
+
   const details = [
     {
       label: powerOfAttorney.representative_type,
@@ -107,10 +115,26 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney }) => {
     });
   }
 
+  const alert = { 
+    message: 'POA Updated Successfully',
+    type: 'success'
+  };
+
   return (
     <ul {...detailListStyling}>
+      <Button
+        type="button"
+        name="Refresh Poa"
+        classNames={['cf-push-right']}
+        onClick={() => updatePOA()}
+      >
+        Refresh POA
+      </Button>
       <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
-      <p><em>{COPY.CASE_DETAILS_INCORRECT_POA}</em></p>
+      <Alert
+        message={alert.message}
+        type={alert.type}
+      />
     </ul>
   );
 };
