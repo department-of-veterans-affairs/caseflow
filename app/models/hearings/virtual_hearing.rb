@@ -119,6 +119,13 @@ class VirtualHearing < CaseflowRecord
     host_pin_long || self[:host_pin]
   end
 
+  # for guest_link and host_link:
+  # links generated January 2021 and later are stored in guest_hearing_link and
+  # host_hearing_link; links generated before January 2021 are assembled from
+  # variables as seen below. We are continuing to support both, even after all
+  # hearings scheduled pre 1/2021 are held, to ensure that there is an accurate
+  # historical record of the links that were used to hold the hearing. We will
+  # refactor our handling of pre- and post-1/2021 links with CASEFLOW-1336.
   def guest_link
     return guest_hearing_link if guest_hearing_link.present?
 
