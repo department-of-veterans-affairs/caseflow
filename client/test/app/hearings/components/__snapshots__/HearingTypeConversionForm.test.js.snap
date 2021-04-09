@@ -77,6 +77,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
       "removed": false,
       "status": "not_distributed",
       "vacateType": null,
+      "veteranDateOfDeath": null,
       "veteranFileNumber": "123456789",
       "veteranFullName": "Abellona Valtas",
       "veteranInfo": Object {
@@ -145,6 +146,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
           }
         }
         readOnly={true}
+        schedulingToVirtual={true}
         showDivider={false}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
@@ -251,6 +253,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
           }
         }
         readOnly={true}
+        schedulingToVirtual={true}
         showDivider={false}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
@@ -469,6 +472,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
       "removed": false,
       "status": "not_distributed",
       "vacateType": null,
+      "veteranDateOfDeath": null,
       "veteranFileNumber": "123456789",
       "veteranFullName": "Abellona Valtas",
       "veteranInfo": Object {
@@ -535,6 +539,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
           }
         }
         readOnly={true}
+        schedulingToVirtual={true}
         showDivider={false}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
@@ -619,6 +624,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
           }
         }
         readOnly={true}
+        schedulingToVirtual={true}
         showDivider={false}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
@@ -837,6 +843,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
       "removed": false,
       "status": "not_distributed",
       "vacateType": null,
+      "veteranDateOfDeath": null,
       "veteranFileNumber": "123456789",
       "veteranFullName": "Abellona Valtas",
       "veteranInfo": Object {
@@ -903,6 +910,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
           }
         }
         readOnly={true}
+        schedulingToVirtual={true}
         showDivider={false}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
@@ -987,6 +995,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
           }
         }
         readOnly={true}
+        schedulingToVirtual={true}
         showDivider={false}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
@@ -1205,6 +1214,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
       "removed": false,
       "status": "not_distributed",
       "vacateType": null,
+      "veteranDateOfDeath": null,
       "veteranFileNumber": "123456789",
       "veteranFullName": "Abellona Valtas",
       "veteranInfo": Object {
@@ -1271,6 +1281,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
           }
         }
         readOnly={true}
+        schedulingToVirtual={true}
         showDivider={false}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
@@ -1355,6 +1366,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
           }
         }
         readOnly={true}
+        schedulingToVirtual={true}
         showDivider={false}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}

@@ -32,8 +32,9 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
     end
 
     let(:docket_number) { "12-1234" }
-    let(:date) { "11/11/2020" }
-    let(:later_date) { "12/21/2020" }
+    # Use a decision date within the last 90 days so that it is automatically put on hold for MDR
+    let(:date) { 40.days.ago.to_date.strftime("%-m/%-d/%Y") }
+    let(:later_date) { 20.days.ago.to_date.strftime("%-m/%-d/%Y") }
     let(:instructions) { "Please process this remand" }
     let(:mandate_instructions) { "Mandate received!" }
     let(:judge_name) { Constants::CAVC_JUDGE_FULL_NAMES.first }
@@ -249,8 +250,8 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           find("label", text: "Yes, this case has been appealed to the Federal Circuit").click
           page.find("button", text: "Submit").click
 
-          expect(page).to have_content COPY::CAVC_REMAND_CREATED_TITLE
-          expect(page).to have_content COPY::CAVC_REMAND_MDR_CREATED_DETAIL
+          expect(page).to have_content(COPY::CAVC_REMAND_CREATED_TITLE)
+          expect(page).to have_content(COPY::CAVC_REMAND_MDR_CREATED_DETAIL)
         end
 
         step "cavc user confirms data on case details page" do
@@ -464,6 +465,42 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
       end
     end
   end
+
+  # describe "when editing a cavc remand" do
+  #   let(:remand_appeal) { create(:appeal, :type_cavc_remand) }
+  #   let(:source_appeal) { remand_appeal.cavc_remand.source_appeal }
+
+  #   context "with feature toggles enabled" do
+  #     before do
+  #       FeatureToggle.enable!(:cavc_remand)
+  #       FeatureToggle.enable!(:mdr_cavc_remand)
+  #       FeatureToggle.enable!(:reversal_cavc_remand)
+  #       FeatureToggle.enable!(:dismissal_cavc_remand)
+  #       FeatureToggle.enable!(:can_edit_cavc_remands)
+  #     end
+  #     after do
+  #       FeatureToggle.disable!(:cavc_remand)
+  #       FeatureToggle.disable!(:mdr_cavc_remand)
+  #       FeatureToggle.disable!(:reversal_cavc_remand)
+  #       FeatureToggle.disable!(:dismissal_cavc_remand)
+  #       FeatureToggle.disable!(:can_edit_cavc_remands)
+  #     end
+
+  #     it "allows editing of an existing remand" do
+  #       step "check 'Edit remand' link does not appear for users not in the CAVC Team" do
+  #         User.authenticate!(user: other_user)
+  #         visit "queue/appeals/#{remand_appeal.external_id}"
+  #         expect(page).to_not have_content "Edit remand"
+  #       end
+
+  #       step "check 'Edit remand' link appears" do
+  #         User.authenticate!(user: org_admin)
+  #         visit "queue/appeals/#{remand_appeal.external_id}"
+  #         expect(page).to have_content "Edit Remand"
+  #       end
+  #     end
+  #   end
+  # end
 
   before { Colocated.singleton.add_user(create(:user)) }
 

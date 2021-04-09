@@ -40,7 +40,8 @@ export const mapDataToInitialState = function(props = {}) {
     requestIssuesUpdateErrorCode: null,
     afterIssues: null,
     beforeIssues: null,
-    updatedIssues: null
+    updatedIssues: null,
+    editEpUpdateError: null
   };
 };
 
@@ -83,6 +84,10 @@ export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
         }
       },
       requestIssuesUpdateErrorCode: { $set: action.payload.responseErrorCode }
+    });
+  case ACTIONS.EDIT_EP_CLAIM_LABEL_FAILED:
+    return update(state, {
+      editEpUpdateError: { $set: action.payload.errorCode}
     });
   default:
     return applyCommonReducers(state, action);

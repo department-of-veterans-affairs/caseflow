@@ -32,6 +32,7 @@ export const initialState = {
   veteranCaseListIsVisible: false,
   canEditAod: false,
   canEditNodDate: false,
+  canEditCavcRemands: false,
   hearingDay: {
     hearingDate: null,
     regionalOffice: null
@@ -79,6 +80,10 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
   case ACTIONS.SET_CAN_EDIT_NOD_DATE:
     return update(state, {
       canEditNodDate: { $set: action.payload.canEditNodDate }
+    });
+  case ACTIONS.SET_CAN_EDIT_CAVC_REMANDS:
+    return update(state, {
+      canEditCavcRemands: { $set: action.payload.canEditCavcRemands }
     });
   case ACTIONS.SET_CAN_VIEW_OVERTIME_STATUS:
     return update(state, {
