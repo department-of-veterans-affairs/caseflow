@@ -96,7 +96,7 @@ describe MdrTask, :postgres do
     context "when the task calls update_timed_hold" do
       it "it will create a new timed hold task" do
         original_count = mdr_task.children.where(type: :TimedHoldTask).length
-        
+
         expect { subject }.not_to raise_error
 
         expect(mdr_task.children.where(type: :TimedHoldTask).length).to eq original_count + 1
@@ -104,7 +104,7 @@ describe MdrTask, :postgres do
 
       it "it will cancel the existing timed hold task" do
         expect(TimedHoldTask.first.status).to_not eq Constants.TASK_STATUSES.cancelled
-        
+
         expect { subject }.not_to raise_error
 
         expect(TimedHoldTask.first.status).to eq Constants.TASK_STATUSES.cancelled

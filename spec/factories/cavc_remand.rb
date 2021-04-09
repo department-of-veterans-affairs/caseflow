@@ -54,7 +54,7 @@ FactoryBot.define do
 
         cavc_remand.decision_issue_ids = if evaluator.decision_issues_selected_count
                                            cavc_remand.source_appeal.decision_issues
-                                            .first(evaluator.decision_issues_selected_count).pluck(:id)
+                                             .first(evaluator.decision_issues_selected_count).pluck(:id)
                                          else
                                            cavc_remand.source_appeal.decision_issues.pluck(:id)
                                          end
