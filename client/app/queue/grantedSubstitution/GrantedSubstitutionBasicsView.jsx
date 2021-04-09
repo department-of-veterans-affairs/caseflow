@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns';
 
 import { appealWithDetailSelector } from 'app/queue/selectors';
-import { GrantedSubstitutionForm } from './GrantedSubstitutionBasicsForm';
+import { GrantedSubstitutionBasicsForm } from './GrantedSubstitutionBasicsForm';
 
 import { updateData, stepForward } from './grantedSubstitution.slice';
 
@@ -16,7 +16,7 @@ export const GrantedSubstitutionBasicsView = () => {
     appealWithDetailSelector(state, { appealId })
   );
 
-  const { formData: prevValues } = useSelector((state) => state.grantedSubstitution);
+  const { formData: prevValues } = useSelector((state) => state.substituteAppellant);
 
   const handleCancel = () => history.push(`/queue/appeals/${appealId}`);
   const handleSubmit = async (formData) => {
@@ -32,6 +32,6 @@ export const GrantedSubstitutionBasicsView = () => {
   };
 
   return (
-    <GrantedSubstitutionForm onCancel={handleCancel} onSubmit={handleSubmit} />
+    <GrantedSubstitutionBasicsForm onCancel={handleCancel} onSubmit={handleSubmit} />
   );
 };

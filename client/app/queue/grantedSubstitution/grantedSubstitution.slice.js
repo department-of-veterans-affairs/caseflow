@@ -16,7 +16,7 @@ const initialState = {
 };
 
 const grantedSubstitutionSlice = createSlice({
-  name: 'docketSwitch',
+  name: 'substituteAppellant',
   initialState,
   reducers: {
     cancel: () => ({ ...initialState }),
