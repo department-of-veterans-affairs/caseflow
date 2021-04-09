@@ -18,7 +18,7 @@ export const AddressForm = ({ control, register, watch, setValue }) => {
     <React.Fragment>
       <FieldDiv>
         <TextField
-          name="address1"
+          name="addressLine1"
           label="Street address 1"
           inputRef={register}
           strongLabel
@@ -26,7 +26,7 @@ export const AddressForm = ({ control, register, watch, setValue }) => {
       </FieldDiv>
       <FieldDiv>
         <TextField
-          name="address2"
+          name="addressLine2"
           label="Street address 2"
           inputRef={register}
           optional
@@ -36,7 +36,7 @@ export const AddressForm = ({ control, register, watch, setValue }) => {
       {watchPartyType === 'organization' && (
         <StreetAddress>
           <TextField
-            name="address3"
+            name="addressLine3"
             label="Street address 3"
             inputRef={register}
             optional
@@ -88,7 +88,7 @@ const CityState = styled.div`
   display: grid;
   grid-gap: 10px;
   grid-template-columns: 320px 130px;
-  margin-bottom: 0em;
+  margin-bottom: 1em;
   margin-top: -1em;
   align-items: center;
   input {

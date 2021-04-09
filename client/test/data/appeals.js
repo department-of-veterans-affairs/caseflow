@@ -20,7 +20,7 @@ export const defaultAssignHearing = {
 
 export const powerOfAttorney = {
   representative_type: 'Attorney',
-  representative_name: 'Attorney McAttorneyFace',
+  representative_name: 'Clarence Darrow',
   representative_address: {
     address_line_1: '9999 MISSION ST',
     address_line_2: 'UBER',
@@ -50,7 +50,7 @@ export const veteranInfo = {
       country: 'USA'
     }
   }
-}
+};
 
 export const appealData = {
   docketName: 'hearing',
@@ -105,6 +105,7 @@ export const appealData = {
   documentID: null,
   caseReviewId: null,
   canEditDocumentId: false,
+  veteranDateOfDeath: null,
   attorneyCaseRewriteDetails: {
     note_from_attorney: null,
     untimely_evidence: null
@@ -130,7 +131,7 @@ export const legacyAppeal = {
   docketName: 'Legacy',
   hearings: [],
   isLegacyAppeal: true
-}
+};
 
 export const legacyAppealForTravelBoard = {
   ...legacyAppeal,
@@ -140,7 +141,7 @@ export const legacyAppealForTravelBoard = {
   },
   readableHearingRequestType: 'Travel',
   readableOriginalHearingRequestType: 'Travel'
-}
+};
 
 export const veteranInfoWithoutEmail = {
   veteranInfo: {
@@ -149,7 +150,7 @@ export const veteranInfoWithoutEmail = {
       email_address: null
     }
   }
-}
+};
 
 export const openHearingAppeal = {
   ...appealData,

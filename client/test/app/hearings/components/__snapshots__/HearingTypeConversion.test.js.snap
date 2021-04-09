@@ -68,7 +68,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
           "zip": "94103",
         },
         "representative_email_address": "tom.brady@caseflow.gov",
-        "representative_name": "Attorney McAttorneyFace",
+        "representative_name": "Clarence Darrow",
         "representative_type": "Attorney",
       },
       "readableHearingRequestType": "Travel",
@@ -77,6 +77,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
       "removed": false,
       "status": "not_distributed",
       "vacateType": null,
+      "veteranDateOfDeath": null,
       "veteranFileNumber": "123456789",
       "veteranFullName": "Abellona Valtas",
       "veteranInfo": Object {
@@ -169,7 +170,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
             "zip": "94103",
           },
           "representative_email_address": "tom.brady@caseflow.gov",
-          "representative_name": "Attorney McAttorneyFace",
+          "representative_name": "Clarence Darrow",
           "representative_type": "Attorney",
         },
         "readableHearingRequestType": "Travel",
@@ -178,6 +179,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
         "removed": false,
         "status": "not_distributed",
         "vacateType": null,
+        "veteranDateOfDeath": null,
         "veteranFileNumber": "123456789",
         "veteranFullName": "Abellona Valtas",
         "veteranInfo": Object {
@@ -377,6 +379,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                 }
               }
               readOnly={true}
+              schedulingToVirtual={true}
               showDivider={false}
               showMissingEmailAlert={true}
               showOnlyAppellantName={true}
@@ -483,6 +486,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                 }
               }
               readOnly={true}
+              schedulingToVirtual={true}
               showDivider={false}
               showMissingEmailAlert={true}
               showOnlyAppellantName={true}

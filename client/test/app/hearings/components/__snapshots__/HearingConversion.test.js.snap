@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`HearingConversion Displays read-only when type is virtual 1`] = `
+exports[`HearingConversion Displays read-only when hearing type is switched from virtual 1`] = `
 <HearingConversion
   hearing={
     Object {
@@ -59,7 +59,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
       "regionalOfficeKey": "C",
       "regionalOfficeName": "Central",
       "regionalOfficeTimezone": "America/New_York",
-      "representative": "Attorney McAttorneyFace",
+      "representative": "Clarence Darrow",
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
       "representativeTz": "America/Denver",
@@ -81,7 +81,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
       "virtualHearing": Object {
         "aliasWithHost": "BVA0000009@care.evn.va.gov",
         "appellantEmail": "Bob.Smith@test.com",
-        "appellantTz": null,
+        "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
@@ -89,7 +89,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
         "hostPin": "8600030#",
         "jobCompleted": true,
         "representativeEmail": "tom.brady@caseflow.gov",
-        "representativeTz": null,
+        "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
         "status": "active",
       },
@@ -107,9 +107,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
         Array [
           "virtualHearing",
           Object {
-            "appellantTz": "America/Los_Angeles",
             "false": "tom.brady@caseflow.gov",
-            "representativeTz": "America/Denver",
           },
         ],
       ],
@@ -4162,7 +4160,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
             "regionalOfficeKey": "C",
             "regionalOfficeName": "Central",
             "regionalOfficeTimezone": "America/New_York",
-            "representative": "Attorney McAttorneyFace",
+            "representative": "Clarence Darrow",
             "representativeEmailAddress": "tom.brady@caseflow.gov",
             "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
             "representativeTz": "America/Denver",
@@ -4187,6 +4185,8 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
           }
         }
         readOnly={true}
+        schedulingToVirtual={false}
+        showTimezoneField={true}
         type="change_from_virtual"
         update={
           [MockFunction] {
@@ -4194,9 +4194,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
               Array [
                 "virtualHearing",
                 Object {
-                  "appellantTz": "America/Los_Angeles",
                   "false": "tom.brady@caseflow.gov",
-                  "representativeTz": "America/Denver",
                 },
               ],
             ],
@@ -4208,13 +4206,11 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
             ],
           }
         }
-        video={false}
-        virtual={false}
         virtualHearing={
           Object {
             "aliasWithHost": "BVA0000009@care.evn.va.gov",
             "appellantEmail": "Bob.Smith@test.com",
-            "appellantTz": null,
+            "appellantTz": "America/Denver",
             "clientHost": "care.evn.va.gov",
             "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
             "guestPin": "2684353125#",
@@ -4222,7 +4218,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
             "hostPin": "8600030#",
             "jobCompleted": true,
             "representativeEmail": "tom.brady@caseflow.gov",
-            "representativeTz": null,
+            "representativeTz": "America/Los_Angeles",
             "requestCancelled": false,
             "status": "active",
           }
@@ -4239,14 +4235,31 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
           <h2>
             Veteran
           </h2>
+          <ReadOnly
+            label="Veteran Name"
+            text="Bob Smith"
+          >
+            <div
+              data-css-1a5irm0=""
+            >
+              <strong>
+                Veteran Name
+              </strong>
+              <pre>
+                Bob Smith
+              </pre>
+            </div>
+          </ReadOnly>
           <AddressLine
             addressCity="SAN FRANCISCO"
             addressLine1="9999 MISSION ST"
             addressState="CA"
             addressZip="94103"
+            label="Veteran Mailing Address"
             name="Bob Smith"
           >
             <ReadOnly
+              label="Veteran Mailing Address"
               text="Bob Smith
 9999 MISSION ST
 SAN FRANCISCO, CA 94103"
@@ -4254,6 +4267,9 @@ SAN FRANCISCO, CA 94103"
               <div
                 data-css-1a5irm0=""
               >
+                <strong>
+                  Veteran Mailing Address
+                </strong>
                 <pre>
                   Bob Smith
 9999 MISSION ST
@@ -4282,9 +4298,7 @@ SAN FRANCISCO, CA 94103
                       Array [
                         "virtualHearing",
                         Object {
-                          "appellantTz": "America/Los_Angeles",
                           "false": "tom.brady@caseflow.gov",
-                          "representativeTz": "America/Denver",
                         },
                       ],
                     ],
@@ -4376,7 +4390,7 @@ SAN FRANCISCO, CA 94103
             "regionalOfficeKey": "C",
             "regionalOfficeName": "Central",
             "regionalOfficeTimezone": "America/New_York",
-            "representative": "Attorney McAttorneyFace",
+            "representative": "Clarence Darrow",
             "representativeEmailAddress": "tom.brady@caseflow.gov",
             "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
             "representativeTz": "America/Denver",
@@ -4401,6 +4415,8 @@ SAN FRANCISCO, CA 94103
           }
         }
         readOnly={true}
+        schedulingToVirtual={false}
+        showTimezoneField={true}
         type="change_from_virtual"
         update={
           [MockFunction] {
@@ -4408,9 +4424,7 @@ SAN FRANCISCO, CA 94103
               Array [
                 "virtualHearing",
                 Object {
-                  "appellantTz": "America/Los_Angeles",
                   "false": "tom.brady@caseflow.gov",
-                  "representativeTz": "America/Denver",
                 },
               ],
             ],
@@ -4422,13 +4436,11 @@ SAN FRANCISCO, CA 94103
             ],
           }
         }
-        video={false}
-        virtual={false}
         virtualHearing={
           Object {
             "aliasWithHost": "BVA0000009@care.evn.va.gov",
             "appellantEmail": "Bob.Smith@test.com",
-            "appellantTz": null,
+            "appellantTz": "America/Denver",
             "clientHost": "care.evn.va.gov",
             "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
             "guestPin": "2684353125#",
@@ -4436,7 +4448,7 @@ SAN FRANCISCO, CA 94103
             "hostPin": "8600030#",
             "jobCompleted": true,
             "representativeEmail": "tom.brady@caseflow.gov",
-            "representativeTz": null,
+            "representativeTz": "America/Los_Angeles",
             "requestCancelled": false,
             "status": "active",
           }
@@ -4488,9 +4500,7 @@ SAN FRANCISCO, CA 94103
                       Array [
                         "virtualHearing",
                         Object {
-                          "appellantTz": "America/Los_Angeles",
                           "false": "tom.brady@caseflow.gov",
-                          "representativeTz": "America/Denver",
                         },
                       ],
                     ],
@@ -4592,7 +4602,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
       "regionalOfficeKey": "C",
       "regionalOfficeName": "Central",
       "regionalOfficeTimezone": "America/New_York",
-      "representative": "Attorney McAttorneyFace",
+      "representative": "Clarence Darrow",
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
       "representativeTz": "America/Denver",
@@ -4614,7 +4624,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
       "virtualHearing": Object {
         "aliasWithHost": "BVA0000009@care.evn.va.gov",
         "appellantEmail": "Bob.Smith@test.com",
-        "appellantTz": null,
+        "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
@@ -4622,7 +4632,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
         "hostPin": "8600030#",
         "jobCompleted": true,
         "representativeEmail": "tom.brady@caseflow.gov",
-        "representativeTz": null,
+        "representativeTz": "America/Los_Angeles",
         "requestCancelled": false,
         "status": "active",
       },
@@ -4640,9 +4650,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
         Array [
           "virtualHearing",
           Object {
-            "appellantTz": "America/Los_Angeles",
             "false": "tom.brady@caseflow.gov",
-            "representativeTz": "America/Denver",
           },
         ],
       ],
@@ -8578,7 +8586,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
             "regionalOfficeKey": "C",
             "regionalOfficeName": "Central",
             "regionalOfficeTimezone": "America/New_York",
-            "representative": "Attorney McAttorneyFace",
+            "representative": "Clarence Darrow",
             "representativeEmailAddress": "tom.brady@caseflow.gov",
             "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
             "representativeTz": "America/Denver",
@@ -8603,6 +8611,8 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
           }
         }
         readOnly={false}
+        schedulingToVirtual={true}
+        showTimezoneField={true}
         type="change_to_virtual"
         update={
           [MockFunction] {
@@ -8610,9 +8620,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
               Array [
                 "virtualHearing",
                 Object {
-                  "appellantTz": "America/Los_Angeles",
                   "false": "tom.brady@caseflow.gov",
-                  "representativeTz": "America/Denver",
                 },
               ],
             ],
@@ -8624,13 +8632,11 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
             ],
           }
         }
-        video={false}
-        virtual={true}
         virtualHearing={
           Object {
             "aliasWithHost": "BVA0000009@care.evn.va.gov",
             "appellantEmail": "Bob.Smith@test.com",
-            "appellantTz": null,
+            "appellantTz": "America/Denver",
             "clientHost": "care.evn.va.gov",
             "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
             "guestPin": "2684353125#",
@@ -8638,7 +8644,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
             "hostPin": "8600030#",
             "jobCompleted": true,
             "representativeEmail": "tom.brady@caseflow.gov",
-            "representativeTz": null,
+            "representativeTz": "America/Los_Angeles",
             "requestCancelled": false,
             "status": "active",
           }
@@ -8655,14 +8661,31 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
           <h2>
             Veteran
           </h2>
+          <ReadOnly
+            label="Veteran Name"
+            text="Bob Smith"
+          >
+            <div
+              data-css-1a5irm0=""
+            >
+              <strong>
+                Veteran Name
+              </strong>
+              <pre>
+                Bob Smith
+              </pre>
+            </div>
+          </ReadOnly>
           <AddressLine
             addressCity="SAN FRANCISCO"
             addressLine1="9999 MISSION ST"
             addressState="CA"
             addressZip="94103"
+            label="Veteran Mailing Address"
             name="Bob Smith"
           >
             <ReadOnly
+              label="Veteran Mailing Address"
               text="Bob Smith
 9999 MISSION ST
 SAN FRANCISCO, CA 94103"
@@ -8670,6 +8693,9 @@ SAN FRANCISCO, CA 94103"
               <div
                 data-css-1a5irm0=""
               >
+                <strong>
+                  Veteran Mailing Address
+                </strong>
                 <pre>
                   Bob Smith
 9999 MISSION ST
@@ -8691,7 +8717,7 @@ SAN FRANCISCO, CA 94103
                 readOnly={false}
                 required={true}
                 time="03:30"
-                value={null}
+                value="America/Denver"
               >
                 <SearchableDropdown
                   clearOnSelect={false}
@@ -9483,7 +9509,7 @@ SAN FRANCISCO, CA 94103
                       },
                     }
                   }
-                  value={null}
+                  value="America/Denver"
                 >
                   <div
                     className=""
@@ -10298,7 +10324,13 @@ SAN FRANCISCO, CA 94103
                               "input": [Function],
                             }
                           }
-                          value={null}
+                          value={
+                            Object {
+                              "index": -1,
+                              "label": "Mountain Time (US & Canada) (1:30 AM)",
+                              "value": "America/Denver",
+                            }
+                          }
                         >
                           <Select
                             backspaceRemovesValue={true}
@@ -11118,14 +11150,20 @@ SAN FRANCISCO, CA 94103
                             }
                             tabIndex="0"
                             tabSelectsValue={true}
-                            value={null}
+                            value={
+                              Object {
+                                "index": -1,
+                                "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                "value": "America/Denver",
+                              }
+                            }
                           >
                             <SelectContainer
                               clearValue={[Function]}
                               cx={[Function]}
                               getStyles={[Function]}
                               getValue={[Function]}
-                              hasValue={false}
+                              hasValue={true}
                               innerProps={
                                 Object {
                                   "id": undefined,
@@ -12724,7 +12762,11 @@ SAN FRANCISCO, CA 94103
                                   },
                                   "tabIndex": "0",
                                   "tabSelectsValue": true,
-                                  "value": null,
+                                  "value": Object {
+                                    "index": -1,
+                                    "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                    "value": "America/Denver",
+                                  },
                                 }
                               }
                               setValue={[Function]}
@@ -12782,7 +12824,7 @@ SAN FRANCISCO, CA 94103
                                     cx={[Function]}
                                     getStyles={[Function]}
                                     getValue={[Function]}
-                                    hasValue={false}
+                                    hasValue={true}
                                     innerProps={
                                       Object {
                                         "onMouseDown": [Function],
@@ -14383,7 +14425,11 @@ SAN FRANCISCO, CA 94103
                                         },
                                         "tabIndex": "0",
                                         "tabSelectsValue": true,
-                                        "value": null,
+                                        "value": Object {
+                                          "index": -1,
+                                          "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                          "value": "America/Denver",
+                                        },
                                       }
                                     }
                                     setValue={[Function]}
@@ -14458,7 +14504,7 @@ SAN FRANCISCO, CA 94103
                                           cx={[Function]}
                                           getStyles={[Function]}
                                           getValue={[Function]}
-                                          hasValue={false}
+                                          hasValue={true}
                                           isDisabled={false}
                                           isMulti={false}
                                           isRtl={false}
@@ -16050,7 +16096,11 @@ SAN FRANCISCO, CA 94103
                                               },
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
-                                              "value": null,
+                                              "value": Object {
+                                                "index": -1,
+                                                "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                "value": "America/Denver",
+                                              },
                                             }
                                           }
                                           setValue={[Function]}
@@ -16087,7 +16137,7 @@ SAN FRANCISCO, CA 94103
                                           <EmotionCssPropInternal
                                             __EMOTION_LABEL_PLEASE_DO_NOT_USE__="ValueContainer"
                                             __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                            className="cf-select__value-container"
+                                            className="cf-select__value-container cf-select__value-container--has-value"
                                             css={
                                               Object {
                                                 "WebkitOverflowScrolling": "touch",
@@ -16103,19 +16153,24 @@ SAN FRANCISCO, CA 94103
                                             }
                                           >
                                             <div
-                                              className="cf-select__value-container css-g1d714-ValueContainer"
+                                              className="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
                                             >
-                                              <Placeholder
+                                              <SingleValue
                                                 clearValue={[Function]}
                                                 cx={[Function]}
+                                                data={
+                                                  Object {
+                                                    "index": -1,
+                                                    "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                    "value": "America/Denver",
+                                                  }
+                                                }
                                                 getStyles={[Function]}
                                                 getValue={[Function]}
-                                                hasValue={false}
+                                                hasValue={true}
                                                 isDisabled={false}
-                                                isFocused={false}
                                                 isMulti={false}
                                                 isRtl={false}
-                                                key="placeholder"
                                                 options={
                                                   Array [
                                                     Object {
@@ -17704,7 +17759,11 @@ SAN FRANCISCO, CA 94103
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": null,
+                                                    "value": Object {
+                                                      "index": -1,
+                                                      "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                      "value": "America/Denver",
+                                                    },
                                                   }
                                                 }
                                                 setValue={[Function]}
@@ -17739,29 +17798,33 @@ SAN FRANCISCO, CA 94103
                                                 }
                                               >
                                                 <EmotionCssPropInternal
-                                                  __EMOTION_LABEL_PLEASE_DO_NOT_USE__="Placeholder"
+                                                  __EMOTION_LABEL_PLEASE_DO_NOT_USE__="SingleValue"
                                                   __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                                  className="cf-select__placeholder"
+                                                  className="cf-select__single-value"
                                                   css={
                                                     Object {
                                                       "boxSizing": "border-box",
-                                                      "color": "hsl(0, 0%, 50%)",
-                                                      "label": "placeholder",
+                                                      "color": "hsl(0, 0%, 20%)",
+                                                      "label": "singleValue",
                                                       "marginLeft": 2,
                                                       "marginRight": 2,
+                                                      "maxWidth": "calc(100% - 8px)",
+                                                      "overflow": "hidden",
                                                       "position": "absolute",
+                                                      "textOverflow": "ellipsis",
                                                       "top": "50%",
                                                       "transform": "translateY(-50%)",
+                                                      "whiteSpace": "nowrap",
                                                     }
                                                   }
                                                 >
                                                   <div
-                                                    className="cf-select__placeholder css-1wa3eu0-placeholder"
+                                                    className="cf-select__single-value css-1uccc91-singleValue"
                                                   >
-                                                    Select a timezone
+                                                    Mountain Time (US & Canada) (1:30 AM)
                                                   </div>
                                                 </EmotionCssPropInternal>
-                                              </Placeholder>
+                                              </SingleValue>
                                               <Input
                                                 aria-autocomplete="list"
                                                 autoCapitalize="none"
@@ -18595,7 +18658,11 @@ SAN FRANCISCO, CA 94103
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": null,
+                                                    "value": Object {
+                                                      "index": -1,
+                                                      "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                      "value": "America/Denver",
+                                                    },
                                                   }
                                                 }
                                                 spellCheck="false"
@@ -18738,7 +18805,7 @@ SAN FRANCISCO, CA 94103
                                           cx={[Function]}
                                           getStyles={[Function]}
                                           getValue={[Function]}
-                                          hasValue={false}
+                                          hasValue={true}
                                           isDisabled={false}
                                           isMulti={false}
                                           isRtl={false}
@@ -20330,7 +20397,11 @@ SAN FRANCISCO, CA 94103
                                               },
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
-                                              "value": null,
+                                              "value": Object {
+                                                "index": -1,
+                                                "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                "value": "America/Denver",
+                                              },
                                             }
                                           }
                                           setValue={[Function]}
@@ -20386,7 +20457,7 @@ SAN FRANCISCO, CA 94103
                                                 cx={[Function]}
                                                 getStyles={[Function]}
                                                 getValue={[Function]}
-                                                hasValue={false}
+                                                hasValue={true}
                                                 isDisabled={false}
                                                 isFocused={false}
                                                 isMulti={false}
@@ -21979,7 +22050,11 @@ SAN FRANCISCO, CA 94103
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": null,
+                                                    "value": Object {
+                                                      "index": -1,
+                                                      "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                      "value": "America/Denver",
+                                                    },
                                                   }
                                                 }
                                                 setValue={[Function]}
@@ -22039,7 +22114,7 @@ SAN FRANCISCO, CA 94103
                                                 cx={[Function]}
                                                 getStyles={[Function]}
                                                 getValue={[Function]}
-                                                hasValue={false}
+                                                hasValue={true}
                                                 innerProps={
                                                   Object {
                                                     "aria-hidden": "true",
@@ -23639,7 +23714,11 @@ SAN FRANCISCO, CA 94103
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": null,
+                                                    "value": Object {
+                                                      "index": -1,
+                                                      "label": "Mountain Time (US & Canada) (1:30 AM)",
+                                                      "value": "America/Denver",
+                                                    },
                                                   }
                                                 }
                                                 setValue={[Function]}
@@ -23785,9 +23864,7 @@ SAN FRANCISCO, CA 94103
                       Array [
                         "virtualHearing",
                         Object {
-                          "appellantTz": "America/Los_Angeles",
                           "false": "tom.brady@caseflow.gov",
-                          "representativeTz": "America/Denver",
                         },
                       ],
                     ],
@@ -23931,7 +24008,7 @@ SAN FRANCISCO, CA 94103
             "regionalOfficeKey": "C",
             "regionalOfficeName": "Central",
             "regionalOfficeTimezone": "America/New_York",
-            "representative": "Attorney McAttorneyFace",
+            "representative": "Clarence Darrow",
             "representativeEmailAddress": "tom.brady@caseflow.gov",
             "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
             "representativeTz": "America/Denver",
@@ -23956,6 +24033,8 @@ SAN FRANCISCO, CA 94103
           }
         }
         readOnly={false}
+        schedulingToVirtual={true}
+        showTimezoneField={true}
         type="change_to_virtual"
         update={
           [MockFunction] {
@@ -23963,9 +24042,7 @@ SAN FRANCISCO, CA 94103
               Array [
                 "virtualHearing",
                 Object {
-                  "appellantTz": "America/Los_Angeles",
                   "false": "tom.brady@caseflow.gov",
-                  "representativeTz": "America/Denver",
                 },
               ],
             ],
@@ -23977,13 +24054,11 @@ SAN FRANCISCO, CA 94103
             ],
           }
         }
-        video={false}
-        virtual={true}
         virtualHearing={
           Object {
             "aliasWithHost": "BVA0000009@care.evn.va.gov",
             "appellantEmail": "Bob.Smith@test.com",
-            "appellantTz": null,
+            "appellantTz": "America/Denver",
             "clientHost": "care.evn.va.gov",
             "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
             "guestPin": "2684353125#",
@@ -23991,7 +24066,7 @@ SAN FRANCISCO, CA 94103
             "hostPin": "8600030#",
             "jobCompleted": true,
             "representativeEmail": "tom.brady@caseflow.gov",
-            "representativeTz": null,
+            "representativeTz": "America/Los_Angeles",
             "requestCancelled": false,
             "status": "active",
           }
@@ -24038,7 +24113,7 @@ SAN FRANCISCO, CA 94103
                 readOnly={false}
                 required={true}
                 time="03:30"
-                value={null}
+                value="America/Los_Angeles"
               >
                 <SearchableDropdown
                   clearOnSelect={false}
@@ -24830,7 +24905,7 @@ SAN FRANCISCO, CA 94103
                       },
                     }
                   }
-                  value={null}
+                  value="America/Los_Angeles"
                 >
                   <div
                     className=""
@@ -25645,7 +25720,13 @@ SAN FRANCISCO, CA 94103
                               "input": [Function],
                             }
                           }
-                          value={null}
+                          value={
+                            Object {
+                              "index": -0,
+                              "label": "Pacific Time (US & Canada) (12:30 AM)",
+                              "value": "America/Los_Angeles",
+                            }
+                          }
                         >
                           <Select
                             backspaceRemovesValue={true}
@@ -26465,14 +26546,20 @@ SAN FRANCISCO, CA 94103
                             }
                             tabIndex="0"
                             tabSelectsValue={true}
-                            value={null}
+                            value={
+                              Object {
+                                "index": -0,
+                                "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                "value": "America/Los_Angeles",
+                              }
+                            }
                           >
                             <SelectContainer
                               clearValue={[Function]}
                               cx={[Function]}
                               getStyles={[Function]}
                               getValue={[Function]}
-                              hasValue={false}
+                              hasValue={true}
                               innerProps={
                                 Object {
                                   "id": undefined,
@@ -28071,7 +28158,11 @@ SAN FRANCISCO, CA 94103
                                   },
                                   "tabIndex": "0",
                                   "tabSelectsValue": true,
-                                  "value": null,
+                                  "value": Object {
+                                    "index": -0,
+                                    "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                    "value": "America/Los_Angeles",
+                                  },
                                 }
                               }
                               setValue={[Function]}
@@ -28129,7 +28220,7 @@ SAN FRANCISCO, CA 94103
                                     cx={[Function]}
                                     getStyles={[Function]}
                                     getValue={[Function]}
-                                    hasValue={false}
+                                    hasValue={true}
                                     innerProps={
                                       Object {
                                         "onMouseDown": [Function],
@@ -29730,7 +29821,11 @@ SAN FRANCISCO, CA 94103
                                         },
                                         "tabIndex": "0",
                                         "tabSelectsValue": true,
-                                        "value": null,
+                                        "value": Object {
+                                          "index": -0,
+                                          "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                          "value": "America/Los_Angeles",
+                                        },
                                       }
                                     }
                                     setValue={[Function]}
@@ -29805,7 +29900,7 @@ SAN FRANCISCO, CA 94103
                                           cx={[Function]}
                                           getStyles={[Function]}
                                           getValue={[Function]}
-                                          hasValue={false}
+                                          hasValue={true}
                                           isDisabled={false}
                                           isMulti={false}
                                           isRtl={false}
@@ -31397,7 +31492,11 @@ SAN FRANCISCO, CA 94103
                                               },
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
-                                              "value": null,
+                                              "value": Object {
+                                                "index": -0,
+                                                "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                "value": "America/Los_Angeles",
+                                              },
                                             }
                                           }
                                           setValue={[Function]}
@@ -31434,7 +31533,7 @@ SAN FRANCISCO, CA 94103
                                           <EmotionCssPropInternal
                                             __EMOTION_LABEL_PLEASE_DO_NOT_USE__="ValueContainer"
                                             __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                            className="cf-select__value-container"
+                                            className="cf-select__value-container cf-select__value-container--has-value"
                                             css={
                                               Object {
                                                 "WebkitOverflowScrolling": "touch",
@@ -31450,19 +31549,24 @@ SAN FRANCISCO, CA 94103
                                             }
                                           >
                                             <div
-                                              className="cf-select__value-container css-g1d714-ValueContainer"
+                                              className="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
                                             >
-                                              <Placeholder
+                                              <SingleValue
                                                 clearValue={[Function]}
                                                 cx={[Function]}
+                                                data={
+                                                  Object {
+                                                    "index": -0,
+                                                    "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                    "value": "America/Los_Angeles",
+                                                  }
+                                                }
                                                 getStyles={[Function]}
                                                 getValue={[Function]}
-                                                hasValue={false}
+                                                hasValue={true}
                                                 isDisabled={false}
-                                                isFocused={false}
                                                 isMulti={false}
                                                 isRtl={false}
-                                                key="placeholder"
                                                 options={
                                                   Array [
                                                     Object {
@@ -33051,7 +33155,11 @@ SAN FRANCISCO, CA 94103
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": null,
+                                                    "value": Object {
+                                                      "index": -0,
+                                                      "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                      "value": "America/Los_Angeles",
+                                                    },
                                                   }
                                                 }
                                                 setValue={[Function]}
@@ -33086,29 +33194,33 @@ SAN FRANCISCO, CA 94103
                                                 }
                                               >
                                                 <EmotionCssPropInternal
-                                                  __EMOTION_LABEL_PLEASE_DO_NOT_USE__="Placeholder"
+                                                  __EMOTION_LABEL_PLEASE_DO_NOT_USE__="SingleValue"
                                                   __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                                  className="cf-select__placeholder"
+                                                  className="cf-select__single-value"
                                                   css={
                                                     Object {
                                                       "boxSizing": "border-box",
-                                                      "color": "hsl(0, 0%, 50%)",
-                                                      "label": "placeholder",
+                                                      "color": "hsl(0, 0%, 20%)",
+                                                      "label": "singleValue",
                                                       "marginLeft": 2,
                                                       "marginRight": 2,
+                                                      "maxWidth": "calc(100% - 8px)",
+                                                      "overflow": "hidden",
                                                       "position": "absolute",
+                                                      "textOverflow": "ellipsis",
                                                       "top": "50%",
                                                       "transform": "translateY(-50%)",
+                                                      "whiteSpace": "nowrap",
                                                     }
                                                   }
                                                 >
                                                   <div
-                                                    className="cf-select__placeholder css-1wa3eu0-placeholder"
+                                                    className="cf-select__single-value css-1uccc91-singleValue"
                                                   >
-                                                    Select a timezone
+                                                    Pacific Time (US & Canada) (12:30 AM)
                                                   </div>
                                                 </EmotionCssPropInternal>
-                                              </Placeholder>
+                                              </SingleValue>
                                               <Input
                                                 aria-autocomplete="list"
                                                 autoCapitalize="none"
@@ -33942,7 +34054,11 @@ SAN FRANCISCO, CA 94103
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": null,
+                                                    "value": Object {
+                                                      "index": -0,
+                                                      "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                      "value": "America/Los_Angeles",
+                                                    },
                                                   }
                                                 }
                                                 spellCheck="false"
@@ -34085,7 +34201,7 @@ SAN FRANCISCO, CA 94103
                                           cx={[Function]}
                                           getStyles={[Function]}
                                           getValue={[Function]}
-                                          hasValue={false}
+                                          hasValue={true}
                                           isDisabled={false}
                                           isMulti={false}
                                           isRtl={false}
@@ -35677,7 +35793,11 @@ SAN FRANCISCO, CA 94103
                                               },
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
-                                              "value": null,
+                                              "value": Object {
+                                                "index": -0,
+                                                "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                "value": "America/Los_Angeles",
+                                              },
                                             }
                                           }
                                           setValue={[Function]}
@@ -35733,7 +35853,7 @@ SAN FRANCISCO, CA 94103
                                                 cx={[Function]}
                                                 getStyles={[Function]}
                                                 getValue={[Function]}
-                                                hasValue={false}
+                                                hasValue={true}
                                                 isDisabled={false}
                                                 isFocused={false}
                                                 isMulti={false}
@@ -37326,7 +37446,11 @@ SAN FRANCISCO, CA 94103
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": null,
+                                                    "value": Object {
+                                                      "index": -0,
+                                                      "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                      "value": "America/Los_Angeles",
+                                                    },
                                                   }
                                                 }
                                                 setValue={[Function]}
@@ -37386,7 +37510,7 @@ SAN FRANCISCO, CA 94103
                                                 cx={[Function]}
                                                 getStyles={[Function]}
                                                 getValue={[Function]}
-                                                hasValue={false}
+                                                hasValue={true}
                                                 innerProps={
                                                   Object {
                                                     "aria-hidden": "true",
@@ -38986,7 +39110,11 @@ SAN FRANCISCO, CA 94103
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": null,
+                                                    "value": Object {
+                                                      "index": -0,
+                                                      "label": "Pacific Time (US & Canada) (12:30 AM)",
+                                                      "value": "America/Los_Angeles",
+                                                    },
                                                   }
                                                 }
                                                 setValue={[Function]}
@@ -39130,9 +39258,7 @@ SAN FRANCISCO, CA 94103
                       Array [
                         "virtualHearing",
                         Object {
-                          "appellantTz": "America/Los_Angeles",
                           "false": "tom.brady@caseflow.gov",
-                          "representativeTz": "America/Denver",
                         },
                       ],
                     ],

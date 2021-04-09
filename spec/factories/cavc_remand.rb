@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :cavc_remand do
-    sequence(:cavc_docket_number, 9_000) # arbitrary
+    sequence(:cavc_docket_number, 1000) { |n| "12-#{n}" } # arbitrary
     represented_by_attorney { true }
     cavc_judge_full_name { Constants::CAVC_JUDGE_FULL_NAMES.first }
     cavc_decision_type { Constants::CAVC_DECISION_TYPES["remand"] }
@@ -13,6 +13,7 @@ FactoryBot.define do
     federal_circuit { (remand_subtype == Constants::CAVC_REMAND_SUBTYPES["mdr"]) ? false : nil }
     instructions { "Sample CAVC Remand from factory" }
     created_by { User.first || create(:user) }
+    updated_by { User.first || create(:user) }
 
     transient do
       judge { JudgeTeam.first&.admin || create(:user).tap { |u| create(:staff, :judge_role, user: u) } }
@@ -44,6 +45,10 @@ FactoryBot.define do
                                            associated_judge: evaluator.judge,
                                            associated_attorney: evaluator.attorney)
         FactoryBotHelper.create_issues_for(cavc_remand.source_appeal)
+        cavc_remand.source_appeal.reload.decision_issues.each_with_index do |di, i|
+          di.description += " ##{i + 1}"
+          di.save!
+        end
 
         cavc_remand.decision_issue_ids = if !evaluator.decision_issue_ids.empty?
                                            evaluator.decision_issue_ids
@@ -78,13 +83,14 @@ FactoryBot.define do
     def self.create_issues_for(appeal)
       description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
       notes = "Pain disorder with 100\% evaluation per examination"
-      FactoryBot.create_list(:request_issue, 2,
-                             :rating,
-                             :with_rating_decision_issue,
-                             decision_review: appeal,
-                             veteran_participant_id: appeal.veteran.participant_id,
-                             contested_issue_description: description,
-                             notes: notes)
+      issues_mapping = FactoryBot.create_list(:request_issue, 3,
+                                              :rating,
+                                              :with_rating_decision_issue,
+                                              decision_review: appeal,
+                                              veteran_participant_id: appeal.veteran.participant_id,
+                                              contested_issue_description: description,
+                                              notes: notes).zip(appeal.decision_issues)
+      issues_mapping.each { |req_issue, dec_issue| req_issue.decision_issues << dec_issue }
     end
   end
 end
