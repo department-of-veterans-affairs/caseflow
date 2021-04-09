@@ -77,7 +77,7 @@ module Seeds
       create_cavc_lit_support_user
       create_pulac_cerullo_user
       create_mail_team_user
-      create_clerk_of_the_board_user
+      create_clerk_of_the_board_users
       create_case_search_only_user
       create_judge_teams
       create_dvc_teams
@@ -347,15 +347,18 @@ module Seeds
       MailTeam.singleton.add_user(u)
     end
 
-    def create_clerk_of_the_board_user
-      u = create(
+    def create_clerk_of_the_board_users
+      atty = create(
         :user,
         :with_vacols_attorney_record,
         station_id: 101,
         css_id: "COB_USER",
         full_name: "Clark ClerkOfTheBoardUser Bard"
       )
-      ClerkOfTheBoard.singleton.add_user(u)
+      ClerkOfTheBoard.singleton.add_user(atty)
+      judge = create(:user, full_name: "Judith COTB Judge", css_id: "BVACOTBJUDGE")
+      create(:staff, :judge_role, sdomainid: judge.css_id)
+      ClerkOfTheBoard.singleton.add_user(judge)
     end
 
     def create_case_search_only_user

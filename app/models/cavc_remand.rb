@@ -38,8 +38,6 @@ class CavcRemand < CaseflowRecord
     Constants.CAVC_REMAND_SUBTYPES.mdr.to_sym => Constants.CAVC_REMAND_SUBTYPES.mdr
   }
 
-  # To-do: increase code coverage of this class
-  # :nocov:
   # called from the Add Cavc Date Modal
   def add_cavc_dates(params)
     if already_has_mandate?
@@ -109,6 +107,10 @@ class CavcRemand < CaseflowRecord
   def establish_appeal_stream
     self.remand_appeal ||= source_appeal.create_stream(:court_remand).tap do |cavc_appeal|
       update_request_issues(cavc_appeal, add: decision_issue_ids)
+
+      person = source_appeal.claimant.person
+      fail "Claimants on appeals are expected to be the same" unless person == cavc_appeal.claimant.person
+
       AdvanceOnDocketMotion.copy_granted_motions_to_appeal(source_appeal, cavc_appeal)
     end
   end
