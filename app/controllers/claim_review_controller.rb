@@ -28,7 +28,7 @@ class ClaimReviewController < ApplicationController
 
   validates :edit_ep, using: ClaimReviewSchemas.edit_ep
   def edit_ep
-    epe = claim_review.end_product_establishments.find_by(code: params[:previous_code])
+    epe = claim_review.end_product_establishments.find_by(code: claim_label_edit_params[:previous_code])
     render json: { error_code: "EP not found" }, status: :not_found if epe.nil?
 
     edit_ep = perform_ep_update!(epe)
@@ -37,6 +37,8 @@ class ClaimReviewController < ApplicationController
     else
       render json: { veteran: claim_review.veteran }
     end
+    rescue StandardError => error
+     render json: { error_code: epe.code }, status: :unprocessable_entity 
   end
 
   private
@@ -158,9 +160,6 @@ class ClaimReviewController < ApplicationController
       user: current_user
     )
     ep_update.perform!
-    ep_update
-  rescue StandardError => error
-    ep_update.update!(status: "error", error: error)
     ep_update
   end
 end
