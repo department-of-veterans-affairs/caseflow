@@ -153,8 +153,8 @@ class ClaimReviewController < ApplicationController
     ep_update = EndProductUpdate.create!(
       end_product_establishment: epe,
       original_decision_review: claim_review,
-      original_code: params[:previous_code],
-      new_code: params[:selected_code],
+      original_code: claim_label_edit_params[:previous_code],
+      new_code: claim_label_edit_params[:selected_code],
       user: current_user
     )
     ep_update.perform!
