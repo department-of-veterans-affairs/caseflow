@@ -342,38 +342,38 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
       end
     end
 
-context "shows edit claim" do
-  let(:decision_review_remanded) { nil }
+    context "shows edit claim" do
+      let(:decision_review_remanded) { nil }
 
-    let!(:supplemental_claim) do
-    SupplementalClaim.create!(
-      veteran_file_number: veteran.file_number,
-      receipt_date: receipt_date,
-      benefit_type: benefit_type,
-      decision_review_remanded: decision_review_remanded,
-      veteran_is_not_claimant: true
-    )
-  end
+      let!(:supplemental_claim) do
+        SupplementalClaim.create!(
+          veteran_file_number: veteran.file_number,
+          receipt_date: receipt_date,
+          benefit_type: benefit_type,
+          decision_review_remanded: decision_review_remanded,
+          veteran_is_not_claimant: true
+        )
+      end
 
-  # create intake
-  let!(:intake) do
-    Intake.create!(
-      user_id: current_user.id,
-      detail: supplemental_claim,
-      veteran_file_number: veteran.file_number,
-      started_at: Time.zone.now,
-      completed_at: Time.zone.now,
-      completion_status: "success",
-      type: "SupplementalClaimIntake"
-    )
-  end
+      # create intake
+      let!(:intake) do
+        Intake.create!(
+          user_id: current_user.id,
+          detail: supplemental_claim,
+          veteran_file_number: veteran.file_number,
+          started_at: Time.zone.now,
+          completed_at: Time.zone.now,
+          completion_status: "success",
+          type: "SupplementalClaimIntake"
+        )
+      end
 
-   let(:rating_ep_claim_id) do
-    EndProductEstablishment.find_by(
-      source: supplemental_claim,
-      code: "040SCR"
-    ).reference_id
-  end
+      let(:rating_ep_claim_id) do
+        EndProductEstablishment.find_by(
+          source: supplemental_claim,
+          code: "040SCR"
+        ).reference_id
+      end
 
       let(:rating_request_issue) do
         create(
@@ -415,7 +415,7 @@ context "shows edit claim" do
         nr_row = page.find("tr", text: nr_label, match: :prefer_exact)
         nr_row.find("button", text: "Edit claim label").click
         safe_click ".cf-select"
-    
+
         fill_in "Select the correct EP claim label", with: new_ep_code
         find("#select-claim-label").send_keys :enter
         find("button", text: "Continue").click
@@ -423,9 +423,9 @@ context "shows edit claim" do
         expect(page).to have_content(COPY::CONFIRM_CLAIM_LABEL_MODAL_TITLE)
 
         find("button", text: "Confirm").click
-        
+
         expect(page).to_not have_content(COPY::EDIT_CLAIM_LABEL_MODAL_NOTE)
-        expect(page).to_not have_current_path("/search?veteran_ids=#{supplemental_claim.veteran.id}") 
+        expect(page).to_not have_current_path("/search?veteran_ids=#{supplemental_claim.veteran.id}")
       end
     end
   end
