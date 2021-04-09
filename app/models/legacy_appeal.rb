@@ -346,6 +346,10 @@ class LegacyAppeal < CaseflowRecord
     power_of_attorney.bgs_representative_email_address
   end
 
+  def poa_last_synced_at
+    power_of_attorney.bgs_poa_last_synced_at
+  end
+
   def legacy_appeal_representative
     @legacy_appeal_representative ||= LegacyAppealRepresentative.new(
       power_of_attorney: power_of_attorney,
