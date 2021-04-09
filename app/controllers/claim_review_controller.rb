@@ -145,6 +145,10 @@ class ClaimReviewController < ApplicationController
     "You have successfully withdrawn a review."
   end
 
+  def claim_label_edit_params
+    params.permit(:previous_code, :selected_code)
+  end
+
   def perform_ep_update!(epe)
     ep_update = EndProductUpdate.create!(
       end_product_establishment: epe,
@@ -155,5 +159,8 @@ class ClaimReviewController < ApplicationController
     )
     ep_update.perform!
     ep_update
+  rescue StandardError => error
+    ep_update.update!(status: "error", error: error)
+    # ep_update
   end
 end
