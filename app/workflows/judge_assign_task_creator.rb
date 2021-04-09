@@ -18,6 +18,10 @@ class JudgeAssignTaskCreator
     task
   end
 
+  def close_distribution_tasks_for_appeal
+    appeal.tasks.where(type: DistributionTask.name).update(status: :completed)
+  end
+
   private
 
   attr_reader :appeal, :judge
@@ -26,7 +30,4 @@ class JudgeAssignTaskCreator
     @task ||= JudgeAssignTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: judge)
   end
 
-  def close_distribution_tasks_for_appeal
-    appeal.tasks.where(type: DistributionTask.name).update(status: :completed)
-  end
 end

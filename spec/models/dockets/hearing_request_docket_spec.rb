@@ -226,7 +226,7 @@ describe HearingRequestDocket, :all_dbs do
       end
     end
 
-    context "when an appeal aleady has a distribution" do
+    context "when an appeal already has a distribution" do
       subject do
         HearingRequestDocket.new.distribute_appeals(distribution, priority: false, limit: 10, genpop: "any")
       end
