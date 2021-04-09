@@ -7,6 +7,7 @@ RSpec.feature "Docket Switch", :all_dbs do
     cotb_org.add_user(cotb_attorney)
     cotb_org.add_user(cotb_non_attorney)
     create(:staff, :judge_role, sdomainid: judge.css_id)
+    cotb_org.add_user(judge)
   end
   after { FeatureToggle.disable!(:docket_switch) }
 
@@ -84,8 +85,8 @@ RSpec.feature "Docket Switch", :all_dbs do
       find("label[for=disposition_#{disposition}]").click
       fill_in("hyperlink", with: hyperlink)
 
-      # The previously assigned judge should be selected
-      expect(page).to have_content(judge_assign_task.assigned_to.display_name)
+      find(".cf-select__control", text: "Select judge").click
+      find("div", class: "cf-select__option", text: judge.display_name).click
 
       click_button(text: "Submit")
 
@@ -110,7 +111,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(page).to have_content "Summary: #{summary}"
       expect(page).to have_content "Is this a timely request: #{timely.capitalize}"
       expect(page).to have_content "Recommendation: Grant all issues"
-      expect(page).to have_content "Draft letter: #{hyperlink}"
+      expect(page).to have_content "Draft letter: View link"
     end
   end
 

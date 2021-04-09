@@ -117,6 +117,7 @@ class Test::UsersController < ApplicationController
 
   # Set end products in DEMO
   def set_end_products
+    BGSService.end_product_records ||= {}
     BGSService.end_product_records[:default] = new_default_end_products
 
     head :ok

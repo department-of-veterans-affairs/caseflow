@@ -50,7 +50,7 @@ export const HearingTypeConversion = ({
           status: TASK_STATUSES.completed,
           business_payloads: {
             values: {
-              changed_request_type: changedRequestType,
+              changed_hearing_request_type: changedRequestType,
               closest_regional_office: appeal?.closestRegionalOffice || appeal?.regionalOffice?.key
             }
           }
