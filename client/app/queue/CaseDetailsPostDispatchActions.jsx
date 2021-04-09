@@ -1,5 +1,5 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link, useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { COLORS } from '../constants/AppConstants';
@@ -12,11 +12,17 @@ const containerStyling = css({
   borderRadius: '.4rem',
   padding: '1.5rem 4rem 2.75rem',
   marginTop: '2rem!important',
-  boxShadow: `0 8px 6px -6px ${COLORS.GREY_LIGHT}`
+  boxShadow: `0 8px 6px -6px ${COLORS.GREY_LIGHT}`,
 });
 
 const titleStyling = css({
-  marginBottom: '1.25rem'
+  marginBottom: '1.25rem',
+});
+
+const buttonContainer = css({
+  '& > *:not(:last-child)': {
+    marginRight: '2rem',
+  },
 });
 
 /**
@@ -25,27 +31,34 @@ const titleStyling = css({
  *  - @param {string} appealId The external id of the dispatched appeal we are taking action on
  *  - @param {Object} history  Provided with react router to be able to route to another page
  */
-const CaseDetailsPostDispatchActions = (props) => {
+export const CaseDetailsPostDispatchActions = (props) => {
+  const { appealId } = props;
+  const { push } = useHistory();
 
   const routeToCavcRemand = () => {
-    const { history, appealId } = props;
-
-    history.push(`/queue/appeals/${appealId}/add_cavc_remand`);
+    push(`/queue/appeals/${appealId}/add_cavc_remand`);
   };
 
   return (
     <div {...containerStyling}>
       <h2 {...titleStyling}>{COPY.POST_DISPATCH_TITLE}</h2>
-      <Button name={COPY.ADD_CAVC_BUTTON} onClick={routeToCavcRemand} />
+      <div className={buttonContainer}>
+        <Button name={COPY.ADD_CAVC_BUTTON} onClick={routeToCavcRemand} />
+        <Button
+          onClick={() =>
+            push(`/queue/appeals/${appealId}/substitute_appellant`)
+          }
+        >
+          {COPY.SUBSTITUTE_APPELLANT_BUTTON}
+        </Button>
+      </div>
     </div>
   );
 };
 
 CaseDetailsPostDispatchActions.propTypes = {
   appealId: PropTypes.string.isRequired,
-  history: PropTypes.object
+  history: PropTypes.object,
 };
 
-export default withRouter(
-  (CaseDetailsPostDispatchActions)
-);
+export default withRouter(CaseDetailsPostDispatchActions);
