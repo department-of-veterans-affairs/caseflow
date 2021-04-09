@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 // import { editAppeal, poaSyncDateUpdates } from '../QueueActions';
 // import { useDispatch, useSelector } from 'react-redux';
 // import ApiUtil from '../../util/ApiUtil';
@@ -14,29 +15,12 @@ export const textStyling = css({
   fontSize: '.8em'
 });
 
-export const PoaSyncDate = () => {
-
+export const PoaRefresh = ({ powerOfAttorney }) => {
   const poaSyncInfo = {
-    poaSyncDate: '04/05/2021'
+    poaSyncDate: powerOfAttorney.poa_last_synced_at
   };
 
   const lastSyncedCopy = sprintf(COPY.CASE_DETAILS_POA_LAST_SYNC_DATE_COPY, poaSyncInfo);
-  // const dispatch = useDispatch();
-  // const handleClick = ({ poaDate }) => {
-
-  //   const payload = {
-  //     data: {
-  //       last_synced_at: poaDate
-  //     },
-  //   };
-
-  //   ApiUtil.patch(`/appeals/${appealId}/poa_date_update`, payload).then((data) => {
-  //     dispatch(editAppeal(appealId, {
-  //       poaDate: data.body.poaDate
-  //     }));
-  //     dispatch(poaSyncDateUpdates(appealId, data.body.poaSyncDate));
-  //   });
-  // };
 
   return (
     <div {...textStyling}>
@@ -44,4 +28,11 @@ export const PoaSyncDate = () => {
       <i {...boldText}>{lastSyncedCopy}</i>
     </div>
   );
+};
+
+PoaRefresh.propTypes = {
+  powerOfAttorney: PropTypes.shape({
+    poa_last_synced_at: PropTypes.string
+  })
+
 };

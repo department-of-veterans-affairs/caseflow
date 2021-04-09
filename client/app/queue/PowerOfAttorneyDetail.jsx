@@ -9,7 +9,7 @@ import { detailListStyling, getDetailField } from './Detail';
 import { getAppealValue } from './QueueActions';
 import Address from './components/Address';
 import BareList from '../components/BareList';
-import { PoaSyncDate } from './components/PoaSyncDate';
+import { PoaRefresh } from './components/PoaSyncDate';
 import COPY from '../../COPY';
 
 /**
@@ -110,7 +110,7 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney }) => {
 
   return (
     <div>
-      <PoaSyncDate {...detailListStyling} />
+      <PoaRefresh powerOfAttorney={powerOfAttorney} {...detailListStyling} />
       <ul {...detailListStyling}>
         <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
       </ul>
