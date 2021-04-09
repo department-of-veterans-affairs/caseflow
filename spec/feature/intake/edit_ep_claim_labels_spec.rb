@@ -407,7 +407,7 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
       end
       let(:new_ep_code) { "040BDER" }
 
-      fit "handles error in when Ep is not updated" do
+      it "handles error in when Ep is not updated" do
         allow_any_instance_of(ClaimReviewController).to receive(:perform_ep_update!).and_raise(StandardError)
 
         visit "supplemental_claims/#{rating_ep_claim_id}/edit"
@@ -415,14 +415,15 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
         nr_row = page.find("tr", text: nr_label, match: :prefer_exact)
         nr_row.find("button", text: "Edit claim label").click
         safe_click ".cf-select"
-    
+
         fill_in "Select the correct EP claim label", with: new_ep_code
         find("#select-claim-label").send_keys :enter
         find("button", text: "Continue").click
 
         expect(page).to have_content(COPY::CONFIRM_CLAIM_LABEL_MODAL_TITLE)
         find("button", text: "Confirm").click
-         binding.pry
+
+        expect(page).to have_content("We were unable to edit the claim label.")
         expect(page).to_not have_content(COPY::EDIT_CLAIM_LABEL_MODAL_NOTE)
         expect(page).to_not have_current_path("/search?veteran_ids=#{supplemental_claim.veteran.id}")
       end

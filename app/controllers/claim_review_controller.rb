@@ -37,8 +37,9 @@ class ClaimReviewController < ApplicationController
     else
       render json: { veteran: claim_review.veteran }
     end
+   
     rescue StandardError => error
-     render json: { error_code: epe.code }, status: :unprocessable_entity 
+    render json: { error_code: epe.code }, status: :unprocessable_entity
   end
 
   private
