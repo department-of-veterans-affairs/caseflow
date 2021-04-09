@@ -290,7 +290,7 @@ RSpec.describe CavcRemandsController, type: :controller do
       response_body = JSON.parse(response.body)
 
       expect(response_body["cavc_remand"]["remand_appeal_id"]).to eq(existing_remand.reload.id)
-      expect(response_body["cavc_remand"]["instructions"]).to include(instructions)
+      expect(response_body["cavc_remand"]["instructions"]).to eq(instructions)
     end
   end
 end

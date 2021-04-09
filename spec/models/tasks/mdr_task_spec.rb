@@ -103,7 +103,7 @@ describe MdrTask, :postgres do
       end
 
       it "it will cancel the existing timed hold task" do
-        expect(TimedHoldTask.first.status).to_not eq Constants.TASK_STATUSES.cancelled
+        expect(TimedHoldTask.first.status).not_to eq Constants.TASK_STATUSES.cancelled
 
         expect { subject }.not_to raise_error
 
