@@ -12,7 +12,7 @@ export const HearingTime = ({
   showIssueCount,
   showRegionalOfficeName,
   showRequestType,
-  labelStyles,
+  labelClasses,
   breakCharacter,
   paragraphClasses,
   primaryLabel,
