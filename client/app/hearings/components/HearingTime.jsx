@@ -14,7 +14,7 @@ export const HearingTime = ({
   showRequestType,
   labelStyles,
   breakCharacter,
-  paragraphStyles,
+  paragraphClasses,
   primaryLabel,
 }) => {
   // Default to using EST for all times before conversion
