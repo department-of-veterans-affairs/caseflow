@@ -161,6 +161,6 @@ class ClaimReviewController < ApplicationController
     ep_update
   rescue StandardError => error
     ep_update.update!(status: "error", error: error)
-    # ep_update
+    ep_update
   end
 end
