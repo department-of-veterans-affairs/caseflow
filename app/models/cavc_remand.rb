@@ -107,6 +107,10 @@ class CavcRemand < CaseflowRecord
   def establish_appeal_stream
     self.remand_appeal ||= source_appeal.create_stream(:court_remand).tap do |cavc_appeal|
       update_request_issues(cavc_appeal, add: decision_issue_ids)
+
+      person = source_appeal.claimant.person
+      fail "Claimants on appeals are expected to be the same" unless person == cavc_appeal.claimant.person
+
       AdvanceOnDocketMotion.copy_granted_motions_to_appeal(source_appeal, cavc_appeal)
     end
   end
@@ -142,4 +146,5 @@ class CavcRemand < CaseflowRecord
   def cavc_task
     CavcTask.open.find_by(appeal_id: remand_appeal_id)
   end
+  # :nocov:
 end

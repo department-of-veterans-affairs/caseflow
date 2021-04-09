@@ -9,7 +9,7 @@ describe CachedAppealService do
       create(
         :legacy_appeal,
         vacols_case: vacols_case,
-        changed_request_type: HearingDay::REQUEST_TYPES[:virtual]
+        changed_hearing_request_type: HearingDay::REQUEST_TYPES[:virtual]
       )
     end
 

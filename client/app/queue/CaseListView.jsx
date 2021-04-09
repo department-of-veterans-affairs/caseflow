@@ -29,8 +29,8 @@ import {
   appealsByCaseflowVeteranId,
   claimReviewsByCaseflowVeteranId
 } from './selectors';
-
 import COPY from '../../COPY';
+import Alert from '../components/Alert';
 
 const horizontalRuleStyling = css({
   border: 0,
@@ -40,6 +40,16 @@ const horizontalRuleStyling = css({
 });
 
 class CaseListView extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    const alert = sessionStorage.getItem('veteranSearchPageAlert');
+
+    if (alert) {
+      sessionStorage.removeItem('veteranSearchPageAlert');
+    }
+    this.state = { alert: JSON.parse(alert) };
+  }
+
   createLoadPromise = () => {
     const { appeals, claimReviews, caseflowVeteranIds } = this.props;
 
@@ -87,17 +97,19 @@ class CaseListView extends React.PureComponent {
       heading = `No cases found for “${firstClaimReview.veteranFullName} (${firstClaimReview.veteranFileNumber})”`;
     }
 
-    return <div>
-      {this.searchPageHeading()}
-      <br /><br />
-      <h2 className="cf-push-left" {...fullWidth}>{heading}</h2>
+    return <React.Fragment>
+      <div>
+        {this.searchPageHeading()}
+        <br /><br />
+        <h2 className="cf-push-left" {...fullWidth}>{heading}</h2>
 
-      <h3 className="cf-push-left" {...fullWidth}>{COPY.CASE_LIST_TABLE_TITLE}</h3>
-      <CaseListTable appeals={this.props.appeals} />
+        <h3 className="cf-push-left" {...fullWidth}>{COPY.CASE_LIST_TABLE_TITLE}</h3>
+        <CaseListTable appeals={this.props.appeals} />
 
-      <h3 className="cf-push-left" {...fullWidth}>{COPY.OTHER_REVIEWS_TABLE_TITLE}</h3>
-      <OtherReviewsTable reviews={this.props.claimReviews} />
-    </div>;
+        <h3 className="cf-push-left" {...fullWidth}>{COPY.OTHER_REVIEWS_TABLE_TITLE}</h3>
+        <OtherReviewsTable reviews={this.props.claimReviews} />
+      </div>
+    </React.Fragment>;
   }
 
   render() {
@@ -115,6 +127,11 @@ class CaseListView extends React.PureComponent {
         }}
         failStatusMessageProps={{ title: COPY.CASE_SEARCH_DATA_LOAD_FAILED_MESSAGE }}
         failStatusMessageChildren={failStatusMessageChildren}>
+        {!_.isEmpty(this.state.alert) && (
+          <Alert type={this.state.alert.type} title={this.state.alert.title} scrollOnAlert={false}>
+            {this.state.alert.detail}
+          </Alert>
+        )}
         {this.caseListTable()}
       </LoadingDataDisplay>
     </AppSegment>;
@@ -126,7 +143,7 @@ CaseListView.propTypes = {
   caseflowVeteranIds: PropTypes.arrayOf(PropTypes.string),
   claimReviews: PropTypes.arrayOf(PropTypes.object),
   onReceiveAppeals: PropTypes.func,
-  onReceiveClaimReviews: PropTypes.func
+  onReceiveClaimReviews: PropTypes.func,
 };
 
 CaseListView.defaultProps = {
@@ -142,8 +159,10 @@ const mapStateToProps = (state, ownProps) => {
     (id) => claimReviewsByCaseflowVeteranId(state, { caseflowVeteranId: id })
   );
 
-  return { appeals,
-    claimReviews };
+  return {
+    appeals,
+    claimReviews,
+  };
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
