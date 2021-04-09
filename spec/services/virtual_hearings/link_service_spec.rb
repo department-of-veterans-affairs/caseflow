@@ -62,7 +62,7 @@ describe VirtualHearings::LinkService do
           expect(uri.host).to eq URL_HOST
           expect(uri.path).to eq "#{URL_PATH}/"
 
-          query = Hash[*uri.query.split(/&|=/)]
+          query = Rack::Utils.parse_query(uri.query)
           expect(query["conference"]).to eq "BVA0000001@#{URL_HOST}"
           expect(query["pin"]).to eq "3998472"
           expect(query["callType"]).to eq "video"
@@ -112,7 +112,7 @@ describe VirtualHearings::LinkService do
           expect(uri.host).to eq URL_HOST
           expect(uri.path).to eq "#{URL_PATH}/"
 
-          query = Hash[*uri.query.split(/&|=/)]
+          query = Rack::Utils.parse_query(uri.query)
           expect(query["conference"]).to eq "BVA0000001@#{URL_HOST}"
           expect(query["pin"]).to eq "7470125694"
           expect(query["callType"]).to eq "video"
