@@ -52,7 +52,6 @@ class RequestIssuesUpdate < CaseflowRecord
   # it is queued via submit_for_processing! in the perform! method above.
   def establish!
     attempted!
-    binding.pry
 
     # re-assign user to whomever edited the Claim.
     # this works around issue when original user is no longer authorized for VBMS.
