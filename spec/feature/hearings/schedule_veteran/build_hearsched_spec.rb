@@ -234,7 +234,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
 
     def zone_is_eastern(regional_office)
-      RegionalOffice.find!(regional_office).timezone == 'America/New_York'
+      RegionalOffice.find!(regional_office).timezone == "America/New_York"
     end
 
     # Method to choose the custom hearing time dropdown
