@@ -61,6 +61,8 @@ export const CaseDetailsView = (props) => {
   const veteranCaseListIsVisible = useSelector((state) => state.ui.veteranCaseListIsVisible);
   const currentUserIsOnCavcLitSupport = useSelector((state) => state.ui.organizations.some(
     (organization) => organization.name === 'CAVC Litigation Support'));
+  const currentUserOnCotbOrIntake = useSelector((state) => state.ui.organizations.some(
+    (organization) => ['Clerk of the Board', 'Intake'].includes(organization.name)));
   const modalIsOpen = window.location.pathname.includes('modal');
 
   const resetState = () => {
@@ -96,7 +98,9 @@ export const CaseDetailsView = (props) => {
   const doPulacCerulloReminder = useMemo(() => needsPulacCerulloAlert(appeal, tasks), [appeal, tasks]);
 
   const appealIsDispached = appeal.status === 'dispatched';
-  const showPostDispatch = appealIsDispached && currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand;
+  const supportCavcRemand = currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand;
+  const supportSubstituteAppellant = currentUserOnCotbOrIntake && props.featureToggles.recognized_granted_substitution_after_dd;
+  const showPostDispatch = appealIsDispached && (supportCavcRemand || supportSubstituteAppellant);
 
   return (
     <React.Fragment>
