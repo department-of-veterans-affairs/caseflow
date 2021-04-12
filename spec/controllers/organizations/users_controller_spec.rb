@@ -287,7 +287,7 @@ describe Organizations::UsersController, :postgres, type: :controller do
     before { User.stub = bva_admin_user }
 
     context "when user is a non-judge in the organization" do
-      it "returns an error" do
+      it "removes user from organization" do
         expect(OrganizationsUser.where(organization: org).count).to eq(2)
         subject
         resp = JSON.parse(response.body)
