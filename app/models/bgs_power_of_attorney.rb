@@ -56,6 +56,24 @@ class BgsPowerOfAttorney < CaseflowRecord
     def fetch_bgs_poa_by_participant_id(pid)
       bgs.fetch_poas_by_participant_ids([pid])[pid.to_s]
     end
+
+    # Use participant_id and/or veteran_file_number to fetch a BgsPowerOfAttorney record that's
+    # cached in Caseflow, hitting BGS if necessary. If neither Caseflow record nor BGS record is
+    # found, return nil.
+    def find_or_fetch_by(participant_id:, veteran_file_number:)
+      if participant_id.present?
+        begin
+          return find_or_create_by_claimant_participant_id(participant_id)
+        rescue ActiveRecord::RecordInvalid # not found in BGS
+        end
+      end
+      if veteran_file_number.present?
+        begin
+          return find_or_create_by_file_number(veteran_file_number)
+        rescue ActiveRecord::RecordInvalid # not found in BGS
+        end
+      end
+    end
   end
 
   def representative_email_address
