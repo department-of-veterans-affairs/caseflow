@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 // import { editAppeal, poaSyncDateUpdates } from '../QueueActions';
 // import { useDispatch, useSelector } from 'react-redux';
 // import ApiUtil from '../../util/ApiUtil';
-import Button from '../../components/Button';
-import Alert from '../../components/Alert';
+import { formatDateStr } from '../../util/DateUtil';
 import COPY from '../../../COPY';
 import { css } from 'glamor';
 import { sprintf } from 'sprintf-js';
@@ -20,7 +19,7 @@ export const textStyling = css({
 
 export const PoaRefresh = ({ powerOfAttorney }) => {
   const poaSyncInfo = {
-    poaSyncDate: powerOfAttorney.poa_last_synced_at
+    poaSyncDate: formatDateStr(powerOfAttorney.poa_last_synced_at)
   };
 
   const lastSyncedCopy = sprintf(COPY.CASE_DETAILS_POA_LAST_SYNC_DATE_COPY, poaSyncInfo);
