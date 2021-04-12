@@ -31,14 +31,14 @@ const setup = (props = {}) => {
   const utils = render(<TimeSlot {...mergedProps} />);
   const container = utils.container;
   const timeSlots = setTimeSlots(
-    props.hearings || defaultProps.hearings,
-    props.ro || defaultProps.ro,
-    props.roTimezone || defaultProps.roTimezone,
+    mergedProps.hearings,
+    mergedProps.ro,
+    mergedProps.roTimezone,
   );
   const dropdownItems = hearingTimeOptsWithZone(
     HEARING_TIME_OPTIONS,
-    props.roTimezone || defaultProps.roTimezone,
-    props.roTimezone || defaultProps.roTimezone,
+    mergedProps.roTimezone,
+    mergedProps.roTimezone
   );
 
   return { container, utils, timeSlots, dropdownItems };
@@ -251,8 +251,6 @@ describe('TimeSlot', () => {
         // expect(hearing.label).toContain(expectedLabelPart);
 
       });
-      it('hides slots based on scheduled hearings', () => {});
-      it('hides slots based on the beginning and end of the work day', () => {});
     });
   });
 })
