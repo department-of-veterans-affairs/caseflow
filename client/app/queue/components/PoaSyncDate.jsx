@@ -23,20 +23,6 @@ export const PoaRefresh = ({ powerOfAttorney }) => {
     poaSyncDate: powerOfAttorney.poa_last_synced_at
   };
 
-  const updatePOA = () => {
-    fetch('/appeals/693be0ff-98ce-4d31-b4aa-43d65a1083d6/update_power_of_attorney')
-      .then(res => res.json())
-      .then(
-        (result) => {
-          alert = {
-            type: result.status,
-            message: result.message
-          }
-          console.log(alert)
-        }
-      )
-  };
-
   const lastSyncedCopy = sprintf(COPY.CASE_DETAILS_POA_LAST_SYNC_DATE_COPY, poaSyncInfo);
 
   return (

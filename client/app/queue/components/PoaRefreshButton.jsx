@@ -7,9 +7,10 @@ import Button from '../../components/Button';
 import Alert from '../../components/Alert';
 import { css } from 'glamor';
 
-export const PoaRefreshButton = ({ powerOfAttorney }) => {
+export const PoaRefreshButton = ({ appealId }) => {
+	console.log(appealId)
   const updatePOA = () => {
-    fetch('/appeals/693be0ff-98ce-4d31-b4aa-43d65a1083d6/update_power_of_attorney')
+    fetch(`/appeals/${appealId}/update_power_of_attorney`)
       .then(res => res.json())
       .then(
         (result) => {
@@ -17,7 +18,6 @@ export const PoaRefreshButton = ({ powerOfAttorney }) => {
             type: result.status,
             message: result.message
           }
-          console.log(alert)
         }
       )
   };

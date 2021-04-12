@@ -21,6 +21,7 @@ import COPY from '../../COPY';
  */
 const powerOfAttorneyFromAppealSelector = (appealId) =>
   (state) => {
+    console.log('here');
     const loadingPowerOfAttorney = _.get(state.queue.loadingAppealDetail[appealId], 'powerOfAttorney');
 
     if (loadingPowerOfAttorney?.loading) {
@@ -32,7 +33,7 @@ const powerOfAttorneyFromAppealSelector = (appealId) =>
     return {
       powerOfAttorney: appeal?.powerOfAttorney,
       loading: false,
-      error: loadingPowerOfAttorney?.error
+      error: loadingPowerOfAttorney?.error,
     };
   }
 ;
@@ -48,7 +49,6 @@ const PowerOfAttorneyDetailWrapper = (WrappedComponent) => {
       powerOfAttorneyFromAppealSelector(appealId),
       shallowEqual
     );
-
     if (!powerOfAttorney) {
       if (loading) {
         return <React.Fragment>{COPY.CASE_DETAILS_LOADING}</React.Fragment>;
@@ -66,7 +66,7 @@ const PowerOfAttorneyDetailWrapper = (WrappedComponent) => {
     const hasPowerOfAttorneyDetails = powerOfAttorney.representative_type && powerOfAttorney.representative_name;
 
     return hasPowerOfAttorneyDetails ?
-      <WrappedComponent powerOfAttorney={powerOfAttorney} /> :
+      <WrappedComponent powerOfAttorney={powerOfAttorney} appealId={appealId} /> :
       <p><em>{COPY.CASE_DETAILS_NO_POA}</em></p>;
   };
 
@@ -88,7 +88,7 @@ export const PowerOfAttorneyNameUnconnected = ({ powerOfAttorney }) => (
 /**
  * Component that displays details about the power of attorney.
  */
-export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney }) => {
+export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId }) => {
   const details = [
     {
       label: powerOfAttorney.representative_type,
@@ -113,7 +113,7 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney }) => {
   return (
     <div>
       <PoaRefresh powerOfAttorney={powerOfAttorney} {...detailListStyling} />
-      <PoaRefreshButton powerOfAttorney={powerOfAttorney} />
+      <PoaRefreshButton appealId={appealId} />
       <ul {...detailListStyling}>
         <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
       </ul>
