@@ -246,19 +246,12 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         find(".time-slot-button-toggle", text: "Choose a custom time").click
       end
 
-      time_string = if is_eastern_only && !slots_enabled && !direct_enabled
+      time_string = if is_eastern_only || !direct_enabled
                       time
                     else
                       "#{time} AM E"
                     end
-      #time_string = if is_eastern_only && !append_eastern_if_slots_enabled
-      #                /#{time} AM E(S|D)T/
-      #              elsif direct_scheduling_enabled && is_eastern_only
-      #                time
-      #              else
-      #                "#{time} AM Eastern"
-      #              end
-#
+
       click_dropdown(text: time_string, name: "optionalHearingTime0")
     end
 
