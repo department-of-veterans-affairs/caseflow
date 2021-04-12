@@ -1,5 +1,8 @@
 /* eslint-disable max-lines */
+import { times } from 'lodash';
 import { scheduleHearingTask } from './tasks';
+import moment from 'moment';
+import regionalOfficesJsonResponse from './regionalOfficesJsonResponse';
 
 export const virtualHearingEmails = {
   emailEvents: [
@@ -465,5 +468,21 @@ export const scheduleVeteranResponse = {
     }
   }
 };
+
+export const generateHearingDays = (regionalOffice, count) =>
+  Object.assign({}, times(count).map((index) => ({
+    regionalOffice,
+    id: index,
+    readableRequestType: regionalOffice === 'C' ? 'Central' : 'Video',
+    hearingId: index,
+    timezone: regionalOfficesJsonResponse.regional_offices[regionalOffice].timezone,
+    scheduledFor: moment().add(index, 'days').
+      format('MM-DD-YYYY'),
+    requestType: regionalOffice === 'C' ? 'C' : 'V',
+    room: '1',
+    roomLabel: '1 (1W200A)',
+    filledSlots: 2,
+    totalSlots: 12,
+  })));
 
 /* eslint-enable max-lines */

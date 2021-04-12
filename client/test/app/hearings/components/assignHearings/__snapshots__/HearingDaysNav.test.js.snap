@@ -1,0 +1,5122 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HearingDaysNav Applies the selected class based on the selectedHearingDay prop 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <div
+        class="usa-width-one-sixth"
+        data-css-9yeyph=""
+      >
+        <div
+          class="hearing-day-list"
+        >
+          <ul
+            class="usa-sidenav-list"
+            data-css-1oz9df6=""
+          >
+            <label>
+              July 2020
+            </label>
+            <li>
+              <span>
+                <button
+                  class="selected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-134acs1=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Mon Jul 6
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Tue Jul 7
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Wed Jul 8
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Thu Jul 9
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Fri Jul 10
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div
+        class="usa-width-one-sixth"
+        data-css-9yeyph=""
+      >
+        <div
+          class="hearing-day-list"
+        >
+          <ul
+            class="usa-sidenav-list"
+            data-css-1oz9df6=""
+          >
+            <label>
+              July 2020
+            </label>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Mon Jul 6
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="selected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-134acs1=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Tue Jul 7
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Wed Jul 8
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Thu Jul 9
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Fri Jul 10
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class="usa-width-one-sixth"
+      data-css-9yeyph=""
+    >
+      <div
+        class="hearing-day-list"
+      >
+        <ul
+          class="usa-sidenav-list"
+          data-css-1oz9df6=""
+        >
+          <label>
+            July 2020
+          </label>
+          <li>
+            <span>
+              <button
+                class="selected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-134acs1=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Mon Jul 6
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Tue Jul 7
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Wed Jul 8
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Thu Jul 9
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Fri Jul 10
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`HearingDaysNav Applies the selected class based on the selectedHearingDay prop 2`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <div
+        class="usa-width-one-sixth"
+        data-css-9yeyph=""
+      >
+        <div
+          class="hearing-day-list"
+        >
+          <ul
+            class="usa-sidenav-list"
+            data-css-1oz9df6=""
+          >
+            <label>
+              July 2020
+            </label>
+            <li>
+              <span>
+                <button
+                  class="selected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-134acs1=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Mon Jul 6
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Tue Jul 7
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Wed Jul 8
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Thu Jul 9
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Fri Jul 10
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div
+        class="usa-width-one-sixth"
+        data-css-9yeyph=""
+      >
+        <div
+          class="hearing-day-list"
+        >
+          <ul
+            class="usa-sidenav-list"
+            data-css-1oz9df6=""
+          >
+            <label>
+              July 2020
+            </label>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Mon Jul 6
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="selected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-134acs1=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Tue Jul 7
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Wed Jul 8
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Thu Jul 9
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Fri Jul 10
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class="usa-width-one-sixth"
+      data-css-9yeyph=""
+    >
+      <div
+        class="hearing-day-list"
+      >
+        <ul
+          class="usa-sidenav-list"
+          data-css-1oz9df6=""
+        >
+          <label>
+            July 2020
+          </label>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Mon Jul 6
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="selected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-134acs1=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Tue Jul 7
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Wed Jul 8
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Thu Jul 9
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Fri Jul 10
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`HearingDaysNav Matches snapshot with default props 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <div
+        class="usa-width-one-sixth"
+        data-css-9yeyph=""
+      >
+        <div
+          class="hearing-day-list"
+        >
+          <ul
+            class="usa-sidenav-list"
+            data-css-1oz9df6=""
+          >
+            <label>
+              July 2020
+            </label>
+            <li>
+              <span>
+                <button
+                  class="selected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-134acs1=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Mon Jul 6
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Tue Jul 7
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Wed Jul 8
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Thu Jul 9
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Fri Jul 10
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class="usa-width-one-sixth"
+      data-css-9yeyph=""
+    >
+      <div
+        class="hearing-day-list"
+      >
+        <ul
+          class="usa-sidenav-list"
+          data-css-1oz9df6=""
+        >
+          <label>
+            July 2020
+          </label>
+          <li>
+            <span>
+              <button
+                class="selected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-134acs1=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Mon Jul 6
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Tue Jul 7
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Wed Jul 8
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Thu Jul 9
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Fri Jul 10
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`HearingDaysNav Runs scroll event callback when scrolling in the list container 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <div
+        class="usa-width-one-sixth"
+        data-css-9yeyph=""
+      >
+        <div
+          class="hearing-day-list"
+        >
+          <ul
+            class="usa-sidenav-list"
+            data-css-1oz9df6=""
+          >
+            <label>
+              July 2020
+            </label>
+            <li>
+              <span>
+                <button
+                  class="selected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-134acs1=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Mon Jul 6
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Tue Jul 7
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Wed Jul 8
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Thu Jul 9
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Fri Jul 10
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Sat Jul 11
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Sun Jul 12
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Mon Jul 13
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Tue Jul 14
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Wed Jul 15
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Thu Jul 16
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Fri Jul 17
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Sat Jul 18
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Sun Jul 19
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Mon Jul 20
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Tue Jul 21
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Wed Jul 22
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Thu Jul 23
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Fri Jul 24
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Sat Jul 25
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Sun Jul 26
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Mon Jul 27
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Tue Jul 28
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Wed Jul 29
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Thu Jul 30
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Fri Jul 31
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <label>
+              August 2020
+            </label>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Sat Aug 1
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Sun Aug 2
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Mon Aug 3
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Tue Aug 4
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Wed Aug 5
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class="usa-width-one-sixth"
+      data-css-9yeyph=""
+    >
+      <div
+        class="hearing-day-list"
+      >
+        <ul
+          class="usa-sidenav-list"
+          data-css-1oz9df6=""
+        >
+          <label>
+            July 2020
+          </label>
+          <li>
+            <span>
+              <button
+                class="selected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-134acs1=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Mon Jul 6
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Tue Jul 7
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Wed Jul 8
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Thu Jul 9
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Fri Jul 10
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Sat Jul 11
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Sun Jul 12
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Mon Jul 13
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Tue Jul 14
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Wed Jul 15
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Thu Jul 16
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Fri Jul 17
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Sat Jul 18
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Sun Jul 19
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Mon Jul 20
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Tue Jul 21
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Wed Jul 22
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Thu Jul 23
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Fri Jul 24
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Sat Jul 25
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Sun Jul 26
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Mon Jul 27
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Tue Jul 28
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Wed Jul 29
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Thu Jul 30
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Fri Jul 31
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <label>
+            August 2020
+          </label>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Sat Aug 1
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Sun Aug 2
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Mon Aug 3
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Tue Aug 4
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Wed Aug 5
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`HearingDaysNav Runs the change hearing day event callback on click 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <div
+        class="usa-width-one-sixth"
+        data-css-9yeyph=""
+      >
+        <div
+          class="hearing-day-list"
+        >
+          <ul
+            class="usa-sidenav-list"
+            data-css-1oz9df6=""
+          >
+            <label>
+              July 2020
+            </label>
+            <li>
+              <span>
+                <button
+                  class="selected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-134acs1=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Mon Jul 6
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Tue Jul 7
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Wed Jul 8
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Thu Jul 9
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+            <li>
+              <span>
+                <button
+                  class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                  data-css-4kvc51=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      data-css-16v9b8i=""
+                    >
+                      <div
+                        data-css-1o3wy7o=""
+                      >
+                        Fri Jul 10
+                      </div>
+                      <div
+                        data-css-134a1o=""
+                      >
+                        Video · 1
+                      </div>
+                    </div>
+                    <div
+                      data-css-1fnaqki=""
+                    >
+                      <div
+                        data-css-lrak98=""
+                      >
+                        0 of 12
+                      </div>
+                      <div>
+                        scheduled
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </span>
+              <hr
+                data-css-1lubu4a=""
+              />
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class="usa-width-one-sixth"
+      data-css-9yeyph=""
+    >
+      <div
+        class="hearing-day-list"
+      >
+        <ul
+          class="usa-sidenav-list"
+          data-css-1oz9df6=""
+        >
+          <label>
+            July 2020
+          </label>
+          <li>
+            <span>
+              <button
+                class="selected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-134acs1=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Mon Jul 6
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Tue Jul 7
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Wed Jul 8
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Thu Jul 9
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+          <li>
+            <span>
+              <button
+                class="unselected-hearing-day-info-button cf-btn-link usa-button"
+                data-css-4kvc51=""
+                type="button"
+              >
+                <div>
+                  <div
+                    data-css-16v9b8i=""
+                  >
+                    <div
+                      data-css-1o3wy7o=""
+                    >
+                      Fri Jul 10
+                    </div>
+                    <div
+                      data-css-134a1o=""
+                    >
+                      Video · 1
+                    </div>
+                  </div>
+                  <div
+                    data-css-1fnaqki=""
+                  >
+                    <div
+                      data-css-lrak98=""
+                    >
+                      0 of 12
+                    </div>
+                    <div>
+                      scheduled
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </span>
+            <hr
+              data-css-1lubu4a=""
+            />
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;

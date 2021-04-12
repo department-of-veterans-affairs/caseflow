@@ -345,6 +345,26 @@
   min-height: 680px;
 }
 
+// Hearings Schedule Styles
+.hearing-day-list {
+  // Each item = 73px * 10 = 730px
+  max-height: 730px;
+  overflow: hidden;
+  overflow-y: auto;
+
+  label {
+    color: $color-primary;
+    font-weight: 700;
+    font-size: 19px;
+    position: sticky;
+    // Fixes strange behavior where the list text is slightly visible on scroll
+    top: -1px;
+    padding-bottom: 10px;
+    width: 100%;
+    background-color: $color-white;
+  }
+}
+
 // Time Slot Styles
 .time-slot-label {
   font-weight: bold;

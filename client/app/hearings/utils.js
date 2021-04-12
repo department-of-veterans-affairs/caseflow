@@ -652,4 +652,46 @@ export const separatorIfJudgeOrRoomPresent = (hearingDay) => hearingDayHasJudgeO
 // This is necessecary otherwise 'null' is displayed when there's no room or judge
 export const hearingRoomOrEmptyString = (hearingDay) => hearingDay.room ? hearingDay.room : '';
 
+/**
+ * Method to group an object of days by month/year
+ * @param {Object} days -- List of days to group
+ */
+export const groupHearingDays = (days) => Object.values(days).reduce((list, day) => {
+  // Set the key to be the full month name and full year
+  const key = moment(day.scheduledFor).format('MMMM YYYY');
+
+  return {
+    ...list,
+    [key]: [...(list[key] || []), day]
+  };
+}, {});
+
+/**
+ * Curry function to attach the hearing day select GA event
+ * @param {func} cb -- Callback function to run after sending the GA event
+ */
+export const selectHearingDayEvent = (cb) => (hearingDay) => {
+  // Convert the date string into a moment object
+  const date = moment(hearingDay.scheduledFor).startOf('day');
+
+  // Take the absolute value of the difference using the start of day to be consistent regardless of user time
+  const diff = Math.abs(moment().startOf('day').
+    diff(date, 'days'));
+
+  // Send the analytics event
+  window.analyticsEvent(
+    // Category
+    'Hearings',
+    // Action
+    'Available Hearing Days – Select',
+    // Label
+    '',
+    // Value
+    `${diff} days between selected hearing day and today`
+  );
+
+  // Change the hearing day to the selected hearing day
+  cb(hearingDay);
+};
 /* eslint-enable camelcase */
+

@@ -8,13 +8,14 @@ export const tableNumberStyling = css({
 });
 
 // Used by AssignHearings, contains multiple HearingDayInfoButton(s)
-const hearingDayButtonWidth = '80%';
+const hearingDayButtonWidth = 276;
 
 export const hearingDayListHorizontalRuleStyle = css({
   border: 0,
-  width: hearingDayButtonWidth,
   borderTop: `1px solid ${COLORS.GREY_LIGHT}`,
-  margin: 'auto',
+  marginTop: 0,
+  marginBottom: 0,
+  marginRight: `calc(100% - ${hearingDayButtonWidth}px)`
 });
 
 export const sectionNavigationListStyling = css({
@@ -24,7 +25,7 @@ export const sectionNavigationListStyling = css({
   }
 });
 
-export const roSelectionStyling = css({ marginTop: '10px', textAlign: 'center' });
+export const roSelectionStyling = css({ marginTop: '10px', minWidth: 300 });
 
 // Used by HearingDayInfoButton
 const buttonCommonStyle = {
