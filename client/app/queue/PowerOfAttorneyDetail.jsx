@@ -89,9 +89,18 @@ export const PowerOfAttorneyNameUnconnected = ({ powerOfAttorney }) => (
  */
 export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney }) => {
 
-
   const updatePOA = () => {
-    console.log('you clicked me')
+    fetch('/appeals/693be0ff-98ce-4d31-b4aa-43d65a1083d6/update_power_of_attorney')
+      .then(res => res.json())
+      .then(
+        (result) => {
+          alert = {
+            type: result.status,
+            message: result.message
+          }
+          console.log(alert)
+        }
+      )
   };
 
   const details = [
@@ -115,11 +124,6 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney }) => {
     });
   }
 
-  const alert = { 
-    message: 'POA Updated Successfully',
-    type: 'success'
-  };
-
   return (
     <ul {...detailListStyling}>
       <Button
@@ -131,10 +135,7 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney }) => {
         Refresh POA
       </Button>
       <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
-      <Alert
-        message={alert.message}
-        type={alert.type}
-      />
+      {alert}
     </ul>
   );
 };

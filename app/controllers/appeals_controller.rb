@@ -58,14 +58,26 @@ class AppealsController < ApplicationController
   end
 
   def power_of_attorney
-    render json: {
-      representative_type: appeal.representative_type,
-      representative_name: appeal.representative_name,
-      representative_address: appeal.representative_address,
-      representative_email_address: appeal.representative_email_address,
-      representative_tz: appeal.representative_tz,
-      poa_last_synced_at: appeal.poa_last_synced_at
-    }
+    render json: power_of_attorney_data
+  end
+
+  def update_power_of_attorney
+    next_update_allowed_at = appeal.poa_last_synced_at + 10.minutes
+    if next_update_allowed_at > Time.now
+      time_until_next_refresh = ((next_update_allowed_at - Time.now/60)).ceil
+      render json: {
+        status: 'error',
+        message: "You can try again in #{time_until_next_refresh} minutes"
+      }
+    else 
+      if appeal.update_cached_attributes!
+        render json: {
+          status: 'success',
+          message: 'POA Updated Successfully',
+          power_of_attorney: power_of_attorney_data
+        }
+      end
+    end
   end
 
   def most_recent_hearing
@@ -236,5 +248,16 @@ class AppealsController < ApplicationController
 
   def docket_number?(search)
     !search.nil? && search.match?(/\d{6}-{1}\d+$/)
+  end
+
+  def power_of_attorney_data
+    {
+      representative_type: appeal.representative_type,
+      representative_name: appeal.representative_name,
+      representative_address: appeal.representative_address,
+      representative_email_address: appeal.representative_email_address,
+      representative_tz: appeal.representative_tz,
+      poa_last_synced_at: appeal.poa_last_synced_at
+    }
   end
 end

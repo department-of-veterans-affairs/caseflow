@@ -340,6 +340,7 @@ class LegacyAppeal < CaseflowRecord
            :representative_is_organization?,
            :representative_is_vso?,
            :representative_is_colocated_vso?,
+           :fetch_bgs_record,
            to: :legacy_appeal_representative
 
   def representative_email_address
