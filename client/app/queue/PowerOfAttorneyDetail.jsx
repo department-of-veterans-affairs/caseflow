@@ -9,11 +9,8 @@ import { detailListStyling, getDetailField } from './Detail';
 import { getAppealValue } from './QueueActions';
 import Address from './components/Address';
 import BareList from '../components/BareList';
-
-import Button from '../components/Button';
-import Alert from '../components/Alert';
-
 import { PoaRefresh } from './components/PoaSyncDate';
+import { PoaRefreshButton } from './components/PoaRefreshButton';
 
 import COPY from '../../COPY';
 
@@ -92,21 +89,6 @@ export const PowerOfAttorneyNameUnconnected = ({ powerOfAttorney }) => (
  * Component that displays details about the power of attorney.
  */
 export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney }) => {
-
-  const updatePOA = () => {
-    fetch('/appeals/693be0ff-98ce-4d31-b4aa-43d65a1083d6/update_power_of_attorney')
-      .then(res => res.json())
-      .then(
-        (result) => {
-          alert = {
-            type: result.status,
-            message: result.message
-          }
-          console.log(alert)
-        }
-      )
-  };
-
   const details = [
     {
       label: powerOfAttorney.representative_type,
@@ -129,21 +111,9 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney }) => {
   }
 
   return (
-    <ul {...detailListStyling}>
-      <Button
-        type="button"
-        name="Refresh Poa"
-        classNames={['cf-push-right']}
-        onClick={() => updatePOA()}
-      >
-        Refresh POA
-      </Button>
-      <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
-      {alert}
-    </ul>
-
     <div>
       <PoaRefresh powerOfAttorney={powerOfAttorney} {...detailListStyling} />
+      <PoaRefreshButton powerOfAttorney={powerOfAttorney} />
       <ul {...detailListStyling}>
         <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
       </ul>
