@@ -64,13 +64,15 @@ class BgsPowerOfAttorney < CaseflowRecord
       if participant_id.present?
         begin
           return find_or_create_by_claimant_participant_id(participant_id)
-        rescue ActiveRecord::RecordInvalid # not found in BGS
+        rescue ActiveRecord::RecordInvalid
+          # not found in BGS
         end
       end
       if veteran_file_number.present?
         begin
-          return find_or_create_by_file_number(veteran_file_number)
-        rescue ActiveRecord::RecordInvalid # not found in BGS
+          find_or_create_by_file_number(veteran_file_number)
+        rescue ActiveRecord::RecordInvalid
+          # not found in BGS
         end
       end
     end

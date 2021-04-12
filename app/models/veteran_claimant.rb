@@ -8,6 +8,7 @@ class VeteranClaimant < BgsRelatedClaimant
   def find_power_of_attorney
     BgsPowerOfAttorney.find_or_fetch_by(
       participant_id: participant_id,
-      veteran_file_number: decision_review.veteran_file_number)
+      veteran_file_number: decision_review.veteran_file_number
+    )
   end
 end
