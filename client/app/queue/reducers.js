@@ -172,6 +172,22 @@ const editNodDateUpdates = (state, action) => {
   });
 };
 
+// const poaSyncDateUpdates = (state, action) => {
+//   const poaSyncDateUpdate = ApiUtil.convertToCamelCase(action.payload.poaSyncDate);
+
+//   poaSyncDateUpdate.appealId = action.payload.appealId;
+
+//   return update(state, {
+//     appealDetails: {
+//       [action.payload.appealId]: {
+//         poaSyncDateUpdates: {
+//           $push: [poaSyncDate]
+//         }
+//       }
+//     }
+//   });
+// };
+
 const setOvertime = (state, action) => {
   return update(state, {
     appeals: {
