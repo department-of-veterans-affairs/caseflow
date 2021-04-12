@@ -105,7 +105,7 @@ class SupplementalClaim < ClaimReview
       payee_code: payee_code || EndProduct::DEFAULT_PAYEE_CODE,
       code: issue.end_product_code,
       claimant_participant_id: claimant_participant_id,
-      station: ep_station,
+      station: end_product_station,
       benefit_type_code: veteran.benefit_type_code,
       user: end_product_establishment_source&.user,
       limited_poa_code: issue.limited_poa_code,
