@@ -186,7 +186,7 @@ describe HearingRequestTypeConcern do
       end
       let(:current_user) { create(:user, roles: ["Edit HearSched"]) }
       let(:vacols_case) { create(:case, :travel_board_hearing) }
-      let(:hearing_task) { appeal.tasks.find_by(type: "ScheduleHearingTask") }
+      let(:schedule_hearing_task) { appeal.tasks.find_by(type: "ScheduleHearingTask") }
 
       before do
         HearingsManagement.singleton.add_user(current_user)
@@ -195,6 +195,7 @@ describe HearingRequestTypeConcern do
       context "when there's one paper trail event" do
         let(:requested_change) do
           {
+            status: Constants.TASK_STATUSES.completed,
             business_payloads: {
               values: {
                 changed_hearing_request_type: HearingDay::REQUEST_TYPES[:virtual],
@@ -206,21 +207,53 @@ describe HearingRequestTypeConcern do
 
         before do
           # this will create the event
-          hearing_task.update_from_params(requested_change, current_user)
+          schedule_hearing_task.update_from_params(requested_change, current_user)
         end
 
         it "returns changed request type if version is `current`" do
           expect(ChangeHearingRequestTypeTask.count).to eq(1)
           change_request_type_task = appeal.tasks.find_by(type: "ChangeHearingRequestTypeTask")
           current_type = appeal.readable_current_hearing_request_type_for_task(change_request_type_task.id)
-          expect(current_type).to eq(LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:virtual])
+          expect(current_type).to eq(readable_virtual)
         end
 
         it "returns the original request type if version is `prev`" do
           expect(ChangeHearingRequestTypeTask.count).to eq(1)
           change_request_type_task = appeal.tasks.find_by(type: "ChangeHearingRequestTypeTask")
-          current_type = appeal.readable_previous_hearing_request_type_for_task(change_request_type_task.id)
-          expect(current_type).to eq(LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:travel_board])
+          previous_type = appeal.readable_previous_hearing_request_type_for_task(change_request_type_task.id)
+          expect(previous_type).to eq(readable_travel)
+        end
+
+        context "there's a previously canceled ChangeHearingRequestTypeTask" do
+          let(:canceled_ht) { create(:hearing_task, appeal: appeal) }
+          let(:canceled_sht) { create(:schedule_hearing_task, appeal: appeal, parent: canceled_ht) }
+          let!(:canceled_chrtt) { create(:change_hearing_request_type_task, appeal: appeal, parent: canceled_sht) }
+          # make sure we're referring to the non-canceled tasks
+          let(:schedule_hearing_task) do
+            appeal.tasks.where("id NOT IN (?)", canceled_sht.id).find_by(type: "ScheduleHearingTask")
+          end
+          let(:chrtt_id) do
+            appeal.tasks.where("id NOT IN (?)", canceled_chrtt.id).find_by(type: "ChangeHearingRequestTypeTask").id
+          end
+
+          before do
+            canceled_ht.cancel_task_and_child_subtasks
+          end
+
+          it "has an appeal with a canceled and completed ChangeHearingRequestTypeTask" do
+            expect(ChangeHearingRequestTypeTask.where(status: Constants.TASK_STATUSES.completed).count).to eq(1)
+            expect(ChangeHearingRequestTypeTask.where(status: Constants.TASK_STATUSES.cancelled).count).to eq(1)
+          end
+
+          it "returns changed request type if version is `current`" do
+            current_type = appeal.readable_current_hearing_request_type_for_task(chrtt_id)
+            expect(current_type).to eq(readable_virtual)
+          end
+
+          it "returns the original request type if version is `prev`" do
+            previous_type = appeal.readable_previous_hearing_request_type_for_task(chrtt_id)
+            expect(previous_type).to eq(readable_travel)
+          end
         end
       end
 
@@ -252,10 +285,10 @@ describe HearingRequestTypeConcern do
 
         before do
           # this will create the first event
-          hearing_task.update_from_params(requested_change1, current_user)
+          schedule_hearing_task.update_from_params(requested_change1, current_user)
 
           # this will create the second event
-          hearing_task.update_from_params(requested_change2, current_user)
+          schedule_hearing_task.update_from_params(requested_change2, current_user)
         end
 
         it "returns changed request type if version is `current`" do
@@ -268,8 +301,8 @@ describe HearingRequestTypeConcern do
           second_request_type = appeal
             .readable_current_hearing_request_type_for_task(change_request_type_tasks.last.id)
 
-          expect(first_request_type).to eq(LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:central])
-          expect(second_request_type).to eq(LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:video])
+          expect(first_request_type).to eq(readable_central)
+          expect(second_request_type).to eq(readable_video)
         end
 
         it "returns the original request type if version is `prev`" do
@@ -283,8 +316,8 @@ describe HearingRequestTypeConcern do
           second_request_type = appeal
             .readable_previous_hearing_request_type_for_task(change_request_type_tasks.last.id)
 
-          expect(first_request_type).to eq(LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:travel_board])
-          expect(second_request_type).to eq(LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:central])
+          expect(first_request_type).to eq(readable_travel)
+          expect(second_request_type).to eq(readable_central)
         end
 
         context "when a task id that's not on the appeal is passed" do
@@ -292,8 +325,8 @@ describe HearingRequestTypeConcern do
             bad_task_id = appeal.tasks.order(:id).pluck(:id).last + 1
             previous_request_type = appeal.readable_previous_hearing_request_type_for_task(bad_task_id)
             current_request_type = appeal.readable_current_hearing_request_type_for_task(bad_task_id)
-            expect(previous_request_type).to eq LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:travel_board]
-            expect(current_request_type).to eq LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:travel_board]
+            expect(previous_request_type).to eq readable_travel
+            expect(current_request_type).to eq readable_travel
           end
         end
       end
