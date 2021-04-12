@@ -31,3 +31,11 @@ Basic.parameters = {
       'Used by an Intake or Clerk of the Board user to grant a substitute appellant for an appeal',
   },
 };
+
+export const ExistingValues = Template.bind({});
+ExistingValues.args = {
+  existingValues: {
+    substitutionDate: '2021-02-15',
+    participantId: relationships[1].value,
+  },
+};

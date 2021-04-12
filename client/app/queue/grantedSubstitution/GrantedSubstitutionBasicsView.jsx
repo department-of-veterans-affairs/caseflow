@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useHistory, useParams } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns';
@@ -6,7 +6,11 @@ import { format } from 'date-fns';
 import { appealWithDetailSelector } from 'app/queue/selectors';
 import { GrantedSubstitutionBasicsForm } from './GrantedSubstitutionBasicsForm';
 
-import { updateData, stepForward } from './grantedSubstitution.slice';
+import {
+  updateData,
+  stepForward,
+  fetchRelationships,
+} from './grantedSubstitution.slice';
 
 export const GrantedSubstitutionBasicsView = () => {
   const { appealId } = useParams();
@@ -16,22 +20,38 @@ export const GrantedSubstitutionBasicsView = () => {
     appealWithDetailSelector(state, { appealId })
   );
 
-  const { formData: prevValues } = useSelector((state) => state.substituteAppellant);
+  const {
+    formData: existingValues,
+    relationships,
+    loadingRelationships,
+  } = useSelector((state) => state.substituteAppellant);
 
   const handleCancel = () => history.push(`/queue/appeals/${appealId}`);
   const handleSubmit = async (formData) => {
     // Here we'll dispatch action to update Redux store with our form data
     // Initially, we may also dispatch async thunk action to submit the basics to the backend because of how stories are sliced
 
-    dispatch(updateData({
-      formData: {
-        ...formData,
-        substitutionDate: format(formData.substitutionDate, 'yyyy-MM-dd'),
-      },
-    }));
+    dispatch(
+      updateData({
+        formData: {
+          ...formData,
+          substitutionDate: format(formData.substitutionDate, 'yyyy-MM-dd'),
+        },
+      })
+    );
   };
 
+  useEffect(() => {
+    dispatch(fetchRelationships({ appealId }));
+  }, []);
+
   return (
-    <GrantedSubstitutionBasicsForm onCancel={handleCancel} onSubmit={handleSubmit} />
+    <GrantedSubstitutionBasicsForm
+      existingValues={existingValues}
+      onCancel={handleCancel}
+      onSubmit={handleSubmit}
+      relationships={relationships}
+      loadingRelationships={loadingRelationships}
+    />
   );
 };

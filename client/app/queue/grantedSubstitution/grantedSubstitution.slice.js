@@ -1,7 +1,23 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { formatRelationships } from '../../intake/util';
 
 import ApiUtil from '../../util/ApiUtil';
-import { onReceiveAmaTasks } from '../QueueActions';
+
+export const fetchRelationships = createAsyncThunk(
+  'grantedSubstitution/fetchRelationships',
+  async ({ appealId }) => {
+    try {
+      const res = await ApiUtil.get(`/appeals/${appealId}/veteran`, {
+        query: { relationships: true },
+      });
+
+      return res?.body?.veteran?.relationships;
+    } catch (error) {
+      console.error('Error fetching relationships', error);
+      throw error;
+    }
+  }
+);
 
 const initialState = {
   step: 0,
@@ -13,6 +29,13 @@ const initialState = {
     substitutionDate: null,
     participantId: null,
   },
+
+  /**
+   * This stores existing relationships, if present
+   * This data is not usually part of appeal details due to performance
+   */
+  relationships: null,
+  loadingRelationships: false
 };
 
 const grantedSubstitutionSlice = createSlice({
@@ -30,6 +53,15 @@ const grantedSubstitutionSlice = createSlice({
         ...updates,
         newTasks: updates?.newTasks,
       };
+    },
+  },
+  extraReducers: {
+    [fetchRelationships.pending]: (state) => {
+      state.loadingRelationships = true;
+    },
+    [fetchRelationships.fulfilled]: (state, action) => {
+      state.relationships = action.payload ? formatRelationships(action.payload) : null;
+      state.loadingRelationships = false;
     },
   },
 });

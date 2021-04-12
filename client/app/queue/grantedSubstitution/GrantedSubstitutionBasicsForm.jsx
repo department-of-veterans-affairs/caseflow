@@ -17,7 +17,7 @@ import RadioField from 'app/components/RadioField';
 const schema = yup.object().shape({
   substitutionDate: yup.
     date().
-    required().
+    required('Substitution Date is required').
     nullable().
     max(new Date(), 'Date cannot be in the future').
     transform((value, originalValue) => (originalValue === '' ? null : value)),
@@ -27,9 +27,11 @@ const schema = yup.object().shape({
 const sectionStyle = css({ marginBottom: '24px' });
 
 export const GrantedSubstitutionBasicsForm = ({
+  existingValues,
   onCancel,
   onSubmit,
   relationships = [],
+  loadingRelationships = false,
 }) => {
   const {
     errors,
@@ -37,7 +39,8 @@ export const GrantedSubstitutionBasicsForm = ({
     handleSubmit,
     register,
   } = useForm({
-    defaultValues: {}, // Use this for repopulating form from redux when user navigates back
+    // Use this for repopulating form from redux when user navigates back
+    defaultValues: { ...existingValues },
     resolver: yupResolver(schema),
   });
 
@@ -60,29 +63,25 @@ export const GrantedSubstitutionBasicsForm = ({
           strongLabel
         />
 
-        <p>
-          TODO
-          <ul>
-            <li><s>Do not allow selecting future dates</s></li>
-            <li>Disable Submit button unless form is populated</li>
-            <li>Link to this form from Case Details on appropriate conditions</li>
-            <li>Remove this TODO section 😃</li>
-          </ul>
-        </p>
-
-        <RadioField
-          errorMessage={errors?.participantId?.message}
-          inputRef={register}
-          label="Please select the substitute from the following claimants."
-          name="participantId"
-          options={relationships}
-          strongLabel
-          vertical
-        />
+        {!loadingRelationships && relationships && (
+          <RadioField
+            errorMessage={errors?.participantId?.message}
+            inputRef={register}
+            label="Please select the substitute from the following claimants."
+            name="participantId"
+            options={relationships}
+            strongLabel
+            vertical
+          />
+        )}
+        {loadingRelationships && <div>Fetching relationships...</div>}
+        {!loadingRelationships && !relationships && (
+          <div>No existing relationships found</div>
+        )}
       </AppSegment>
       <div className="controls cf-app-segment">
         <Button type="submit" name="submit" classNames={['cf-right-side']}>
-          Submit
+          Continue
         </Button>
         {onCancel && (
           <Button
@@ -100,6 +99,10 @@ export const GrantedSubstitutionBasicsForm = ({
   );
 };
 GrantedSubstitutionBasicsForm.propTypes = {
+  existingValues: PropTypes.shape({
+    substitutionDate: PropTypes.string,
+    participantId: PropTypes.string,
+  }),
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
   relationships: PropTypes.arrayOf(
@@ -108,4 +111,5 @@ GrantedSubstitutionBasicsForm.propTypes = {
       displayText: PropTypes.string,
     })
   ),
+  loadingRelationships: PropTypes.bool,
 };
