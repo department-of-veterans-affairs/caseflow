@@ -50,8 +50,8 @@ export const HearingTime = ({
           <b>{hearing.isVirtual ? 'Virtual' : hearing.readableRequestType}</b>
         </p>
       )}
-      <p className={paragraphStyles}>
-        <span className={labelStyles}>{primaryTime}</span>
+      <p className={paragraphClasses}>
+        <span className={labelClasses}>{primaryTime}</span>
         {primaryTime !== secondaryTime && (
           <>
             {breakCharacter}
@@ -82,8 +82,8 @@ HearingTime.defaultProps = {
 HearingTime.propTypes = {
   primaryLabel: PropTypes.string,
   breakCharacter: PropTypes.string,
-  labelStyles: PropTypes.string,
-  paragraphStyles: PropTypes.string,
+  labelClasses: PropTypes.string,
+  paragraphClasses: PropTypes.string,
   hearing: PropTypes.shape({
     virtualHearing: PropTypes.object,
     currentIssueCount: PropTypes.number,

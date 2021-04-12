@@ -13,8 +13,8 @@ export const TimeSlotCard = ({ hearing, hearingDay, regionalOffice }) => {
         <HearingTime
           primaryLabel="RO"
           hearing={hearing}
-          paragraphStyles="time-slot-card-time"
-          labelStyles="time-slot-card-label"
+          paragraphClasses="time-slot-card-time"
+          labelClasses="time-slot-card-label"
           breakCharacter=""
         />
       </div>
