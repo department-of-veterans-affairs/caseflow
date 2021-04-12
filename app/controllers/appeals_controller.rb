@@ -62,7 +62,7 @@ class AppealsController < ApplicationController
   end
 
   def update_power_of_attorney
-    next_update_allowed_at = appeal.poa_last_synced_at + 10.seconds
+    next_update_allowed_at = appeal.poa_last_synced_at + 10.minutes
     if next_update_allowed_at > Time.now
       time_until_next_refresh = ((next_update_allowed_at - Time.now)/60).ceil
       render json: {
