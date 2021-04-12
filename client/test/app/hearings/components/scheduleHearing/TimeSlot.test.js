@@ -28,7 +28,6 @@ const defaultProps = {
 const setup = (props = {}) => {
   const mergedProps = { ...defaultProps, ...props };
 
-  console.log(mergedProps.hearings);
   const utils = render(<TimeSlot {...mergedProps} />);
   const container = utils.container;
   const timeSlots = setTimeSlots(
@@ -81,10 +80,17 @@ const firstAndLastSlotsAreCorrect = (ro, timeSlots) => {
   }
   if (ro.label !== 'Central') {
     const eightThirtyAmRoZone = moment.tz('8:30', 'HH:mm', ro.timezone);
+    const eightThirtyAmEastern = moment.tz('8:30', 'HH:mm', 'America/New_York');
     const threeThirtyPmEastern = moment.tz('15:30', 'HH:mm', 'America/New_York');
 
-    // First slot is at 8:30am roTime
-    expect(timeSlots[0].time.isSame(eightThirtyAmRoZone, 'hour')).toEqual(true);
+    // This deals with Manila, which has a UTC offset of +8
+    if (eightThirtyAmRoZone.isBefore(eightThirtyAmEastern)) {
+      expect(timeSlots[0].time.isSame(eightThirtyAmEastern, 'hour')).toEqual(true);
+    }
+    // This is the more used case, for Eastern, Central, Mountain, and Pacific times
+    if (eightThirtyAmRoZone.isSameOrAfter(eightThirtyAmEastern)) {
+      expect(timeSlots[0].time.isSame(eightThirtyAmRoZone, 'hour')).toEqual(true);
+    }
     // Last slot is at 3:30pm eastern
     expect(timeSlots[timeSlots.length - 1].time.isSame(threeThirtyPmEastern, 'hour')).toEqual(true);
   }
@@ -238,9 +244,9 @@ describe('TimeSlot', () => {
         expect(hearingInSlotList.length).toEqual(1);
         const time = moment.tz(hearingInSlotList[0].hearingTime, 'HH:mm', 'America/New_York').format('h:mm A');
         const expectedLabelPart = `${time} Eastern`;
-        // const buttons = utils.getByText(expectedLabelPart);
+        const buttons = utils.getByText(expectedLabelPart);
 
-        // expect(buttons.length).toEqual(1);
+        expect(buttons.length).toEqual(1);
 
         // expect(hearing.label).toContain(expectedLabelPart);
 
