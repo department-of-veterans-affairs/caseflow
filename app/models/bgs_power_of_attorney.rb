@@ -60,7 +60,7 @@ class BgsPowerOfAttorney < CaseflowRecord
     # Use participant_id and/or veteran_file_number to fetch a BgsPowerOfAttorney record that's
     # cached in Caseflow, hitting BGS if necessary. If neither Caseflow record nor BGS record is
     # found, return nil.
-    def find_or_fetch_by(participant_id:, veteran_file_number:)
+    def find_or_fetch_by(participant_id: nil, veteran_file_number: nil)
       if participant_id.present?
         begin
           return find_or_create_by_claimant_participant_id(participant_id)
