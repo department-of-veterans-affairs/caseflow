@@ -291,6 +291,8 @@ describe Organizations::UsersController, :postgres, type: :controller do
         expect(OrganizationsUser.where(organization: org).count).to eq(2)
         subject
         resp = JSON.parse(response.body)
+        # response has the removed user
+        expect(resp["users"]["data"].first["attributes"]["css_id"]).to eq user.css_id
 
         expect(OrganizationsUser.where(organization: org).count).to eq(1)
         expect(org.admins.count).to eq(1)
