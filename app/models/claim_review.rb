@@ -329,14 +329,4 @@ class ClaimReview < DecisionReview
   def create_stream!(attributes)
     self.class.create(attributes).tap { |new_stream| new_stream.copy_claimants!(claimants) }
   end
-
-  def end_product_establishment_source
-    # There should only be one pending request issues update at a time
-    active_request_issues_update = request_issues_updates.never_attempted.first
-    request_issues_updates.present? ? active_request_issues_update : intake
-  end
-
-  def ep_station
-    end_product_establishment_source&.user&.station_id || "499" # National Work Queue
-  end
 end
