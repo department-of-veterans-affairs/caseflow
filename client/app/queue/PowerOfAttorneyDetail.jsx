@@ -21,7 +21,6 @@ import COPY from '../../COPY';
  */
 const powerOfAttorneyFromAppealSelector = (appealId) =>
   (state) => {
-    console.log('here');
     const loadingPowerOfAttorney = _.get(state.queue.loadingAppealDetail[appealId], 'powerOfAttorney');
 
     if (loadingPowerOfAttorney?.loading) {

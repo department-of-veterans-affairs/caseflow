@@ -62,7 +62,7 @@ class AppealsController < ApplicationController
   end
 
   def update_power_of_attorney
-    next_update_allowed_at = appeal.poa_last_synced_at + 10.minutes
+    next_update_allowed_at = appeal.poa_last_synced_at + 10.seconds
     if next_update_allowed_at > Time.now
       time_until_next_refresh = ((next_update_allowed_at - Time.now)/60).ceil
       render json: {
@@ -70,7 +70,7 @@ class AppealsController < ApplicationController
         message: "You can try again in #{time_until_next_refresh} minutes"
       }
     else 
-      if appeal.update_cached_attributes!
+      if appeal.update_cached_attributes! && appeal.save_with_updated_bgs_record!
         render json: {
           status: 'success',
           message: 'POA Updated Successfully',
