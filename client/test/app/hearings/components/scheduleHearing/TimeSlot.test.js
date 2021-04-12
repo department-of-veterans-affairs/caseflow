@@ -13,14 +13,19 @@ import moment from 'moment-timezone/moment-timezone';
 const emptyHearings = [];
 const oneHearing = [{
   hearingTime: '10:15',
-  externalId: '249a1443-0de4-44fd-bd93-58c30f14c703'
+  externalId: '249a1443-0de4-44fd-bd93-58c30f14c703',
+  issueCount: 1,
+  poaName: 'AMERICAN POA EXAMPLE',
+  docketName: 'L',
+  docketNumber: '158-2284',
+
 }];
 const defaultRoCode = 'RO39';
 const defaultProps = {
   // Denver
   ro: defaultRoCode,
   roTimezone: REGIONAL_OFFICE_INFORMATION[defaultRoCode].timezone,
-  hearings: emptyHearings,
+  scheduledHearingsList: emptyHearings,
   fetchScheduledHearings: jest.fn(),
   onChange: jest.fn()
 };
@@ -31,7 +36,7 @@ const setup = (props = {}) => {
   const utils = render(<TimeSlot {...mergedProps} />);
   const container = utils.container;
   const timeSlots = setTimeSlots(
-    mergedProps.hearings,
+    mergedProps.scheduledHearingsList,
     mergedProps.ro,
     mergedProps.roTimezone,
   );
@@ -236,19 +241,22 @@ describe('TimeSlot', () => {
         });
       });
       it('hearings have correct times', () => {
-        const { utils, timeSlots } = setup({ hearings: oneHearing, roTimezone: ro.timezone });
+        const { timeSlots } = setup({ scheduledHearingsList: oneHearing, roTimezone: ro.timezone });
 
         // The timeSlots list actually contains a mix of hearings and slots, pull out the one hearing
         const hearingInSlotList = timeSlots.filter((item) => item.full === true);
 
+        // Should only have one scheduled hearing
         expect(hearingInSlotList.length).toEqual(1);
-        const time = moment.tz(hearingInSlotList[0].hearingTime, 'HH:mm', 'America/New_York').format('h:mm A');
-        const expectedLabelPart = `${time} Eastern`;
-        const buttons = utils.getByText(expectedLabelPart);
+        // Extract the time in Eastern
+        const time = moment.tz(hearingInSlotList[0].hearingTime, 'HH:mm', 'America/New_York').format('h:mm A z');
 
-        expect(buttons.length).toEqual(1);
+        // Get the button, with that time
+        const hearingButton = document.getElementsByClassName('time-slot-button-full');
 
-        // expect(hearing.label).toContain(expectedLabelPart);
+        // Only one scheduled button should appear, it should have the correct time
+        expect(hearingButton).toHaveLength(1);
+        expect(hearingButton[0]).toHaveTextContent(time);
 
       });
     });
