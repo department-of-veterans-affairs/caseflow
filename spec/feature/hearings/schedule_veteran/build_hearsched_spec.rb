@@ -233,19 +233,32 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       end
     end
 
+    def zone_is_eastern(regional_office)
+      RegionalOffice.find!(regional_office).timezone == 'America/New_York'
+    end
+
     # Method to choose the custom hearing time dropdown
-    def select_custom_hearing_time(time, append_eastern_if_slots_enabled = false)
+    def select_custom_hearing_time(time, is_eastern_only = true)
       slots_enabled = FeatureToggle.enabled?(:enable_hearing_time_slots)
+      direct_enabled = FeatureToggle.enabled?(:schedule_veteran_virtual_hearing)
+
       if slots_enabled
         find(".time-slot-button-toggle", text: "Choose a custom time").click
       end
 
-      time_string = if append_eastern_if_slots_enabled && slots_enabled
-                      "#{time} AM Eastern"
-                    else
+      time_string = if is_eastern_only && !slots_enabled && !direct_enabled
                       time
+                    else
+                      "#{time} AM E"
                     end
-
+      #time_string = if is_eastern_only && !append_eastern_if_slots_enabled
+      #                /#{time} AM E(S|D)T/
+      #              elsif direct_scheduling_enabled && is_eastern_only
+      #                time
+      #              else
+      #                "#{time} AM Eastern"
+      #              end
+#
       click_dropdown(text: time_string, name: "optionalHearingTime0")
     end
 
@@ -514,7 +527,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
             text: "Holdrege, NE (VHA) 0 miles away",
             name: "appealHearingLocation"
           )
-          select_custom_hearing_time("10:00", true)
+          select_custom_hearing_time("10:15", zone_is_eastern(regional_office))
           click_button("Schedule", exact: true)
 
           expect(page).to have_content(COPY::SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL)
@@ -540,7 +553,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
             text: "Holdrege, NE (VHA) 0 miles away",
             name: "appealHearingLocation"
           )
-          select_custom_hearing_time("10:00", true)
+          select_custom_hearing_time("10:15", zone_is_eastern(regional_office))
           click_button("Schedule", exact: true)
           click_on "Back to Schedule Veterans"
 
@@ -585,7 +598,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
             text: "Holdrege, NE (VHA) 0 miles away",
             name: "appealHearingLocation"
           )
-          select_custom_hearing_time("10:00", true)
+          select_custom_hearing_time("10:15", zone_is_eastern(regional_office))
           click_button("Schedule", exact: true)
 
           expect(page).to have_content(COPY::SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL)
@@ -615,7 +628,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           text: "Holdrege, NE (VHA) 0 miles away",
           name: "appealHearingLocation"
         )
-        select_custom_hearing_time("10:00")
+        select_custom_hearing_time("10:15", true)
         click_button("Schedule", exact: true)
 
         expect(page).to have_content(COPY::SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL)
@@ -643,13 +656,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         expect(page).to have_content("Schedule Veteran for a Hearing")
         click_dropdown(name: "hearingType", text: "Virtual")
         click_dropdown(name: "hearingDate", index: 1)
-
-        expected_time_radio_text = if ro_key == "C"
-                                     "#{time} AM Eastern Time (US & Canada)"
-                                   else
-                                     "#{time} AM Mountain Time (US & Canada) / 10:30 AM Eastern Time (US & Canada)"
-                                   end
-        select_custom_hearing_time(expected_time_radio_text)
+        select_custom_hearing_time(time, ro_key == "C")
 
         # Fill in appellant details
         click_dropdown(name: "appellantTz", index: 1)
@@ -690,7 +697,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
       before { cache_appeals }
 
-      it_behaves_like "scheduling a virtual hearing", "C", "9:00"
+      it_behaves_like "scheduling a virtual hearing", "C", "11:00"
     end
 
     shared_examples "change from Video hearing" do
@@ -698,7 +705,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
       before { cache_appeals }
 
-      it_behaves_like "scheduling a virtual hearing", "RO39", "8:30"
+      it_behaves_like "scheduling a virtual hearing", "RO39", "10:30"
     end
 
     shared_examples "withdraw a hearing" do
