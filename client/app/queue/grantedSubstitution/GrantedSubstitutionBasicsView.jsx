@@ -3,7 +3,6 @@ import { useHistory, useParams } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns';
 
-import { appealWithDetailSelector } from 'app/queue/selectors';
 import { GrantedSubstitutionBasicsForm } from './GrantedSubstitutionBasicsForm';
 
 import {
@@ -16,9 +15,6 @@ export const GrantedSubstitutionBasicsView = () => {
   const { appealId } = useParams();
   const dispatch = useDispatch();
   const history = useHistory();
-  const appeal = useSelector((state) =>
-    appealWithDetailSelector(state, { appealId })
-  );
 
   const {
     formData: existingValues,
@@ -39,8 +35,12 @@ export const GrantedSubstitutionBasicsView = () => {
         },
       })
     );
+
+    // Advance progressbar
+    dispatch(stepForward());
   };
 
+  // Load veteran relationships for this appeal
   useEffect(() => {
     dispatch(fetchRelationships({ appealId }));
   }, []);

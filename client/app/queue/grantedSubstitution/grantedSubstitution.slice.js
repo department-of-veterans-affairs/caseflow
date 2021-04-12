@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { formatRelationships } from '../../intake/util';
 
-import ApiUtil from '../../util/ApiUtil';
+import ApiUtil from 'app/util/ApiUtil';
+import { formatRelationships } from 'app/intake/util';
 
 export const fetchRelationships = createAsyncThunk(
-  'grantedSubstitution/fetchRelationships',
+  'substituteAppellant/fetchRelationships',
   async ({ appealId }) => {
     try {
       const res = await ApiUtil.get(`/appeals/${appealId}/veteran`, {
@@ -35,7 +35,7 @@ const initialState = {
    * This data is not usually part of appeal details due to performance
    */
   relationships: null,
-  loadingRelationships: false
+  loadingRelationships: false,
 };
 
 const grantedSubstitutionSlice = createSlice({
@@ -60,7 +60,9 @@ const grantedSubstitutionSlice = createSlice({
       state.loadingRelationships = true;
     },
     [fetchRelationships.fulfilled]: (state, action) => {
-      state.relationships = action.payload ? formatRelationships(action.payload) : null;
+      state.relationships = action.payload ?
+        formatRelationships(action.payload) :
+        null;
       state.loadingRelationships = false;
     },
   },
@@ -69,7 +71,7 @@ const grantedSubstitutionSlice = createSlice({
 // We can likely use a variant of this to submit to the backend
 // (need more info on what we are saving and what is being returned)
 export const completeDocketSwitchGranted = createAsyncThunk(
-  'grantedSubstitution/submit',
+  'substituteAppellant/submit',
   async (data) => {
     try {
       const res = await ApiUtil.post('/appellant_substitutions', { data });
