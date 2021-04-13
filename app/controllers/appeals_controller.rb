@@ -62,7 +62,8 @@ class AppealsController < ApplicationController
   end
 
   def update_power_of_attorney
-    next_update_allowed_at = appeal.poa_last_synced_at + 10.minutes
+    poa = BgsPowerOfAttorney.find(params[:poaId])
+    next_update_allowed_at = poa.poa_last_synced_at + 10.minutes
     if next_update_allowed_at > Time.now
       time_until_next_refresh = ((next_update_allowed_at - Time.now)/60).ceil
       render json: {
@@ -71,7 +72,8 @@ class AppealsController < ApplicationController
       }
     else 
       begin 
-        appeal.save_with_updated_bgs_record!
+        poa.update_cached_attributes!
+        poa.save_with_updated_bgs_record!
         render json: {
           status: 'success',
           message: 'POA Updated Successfully',
@@ -258,6 +260,7 @@ class AppealsController < ApplicationController
 
   def power_of_attorney_data
     {
+      representative_id: appeal.power_of_attorney.id,
       representative_type: appeal.representative_type,
       representative_name: appeal.representative_name,
       representative_address: appeal.representative_address,

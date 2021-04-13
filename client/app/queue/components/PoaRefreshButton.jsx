@@ -5,10 +5,10 @@ import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
 import { setPoaRefreshAlert } from '../uiReducer/uiActions';
 
-export const PoaRefreshButton = ({ appealId }) => {
+export const PoaRefreshButton = ({ appealId, poaId }) => {
   const dispatch = useDispatch();
   const updatePOA = () => {
-    ApiUtil.patch(`/appeals/${appealId}/update_power_of_attorney`).then((data) => {
+    ApiUtil.patch(`/appeals/${appealId}/update_power_of_attorney/${poaId}`).then((data) => {
       dispatch(setPoaRefreshAlert(data.body.status, data.body.message));
     });
   };
