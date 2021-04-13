@@ -580,7 +580,7 @@ describe "SanitizedJsonExporter/Importer" do
         }
         expect(sji.reused_records.transform_values(&:count)).to eq reused_record_counts
 
-        check_all_differences(sje, sji, [appeal])
+        check_all_differences(sje, sji, appeal)
       end
     end
 
@@ -650,11 +650,11 @@ describe "SanitizedJsonExporter/Importer" do
           expect(task.assigned_to).not_to be_nil if task.assigned_to_id
         end
 
-        check_all_differences(sje, sji, [cavc_source_appeal, cavc_appeal].sort_by(&:id))
+        check_all_differences(sje, sji, cavc_source_appeal, cavc_appeal)
       end
     end
 
-    def check_all_differences(sje, sji, orig_appeals)
+    def check_all_differences(sje, sji, *orig_appeals)
       not_processed_counts = sje.records_hash.transform_values(&:count).to_a -
                              sji.imported_records.transform_values(&:count).to_a -
                              sji.reused_records.transform_values(&:count).to_a
