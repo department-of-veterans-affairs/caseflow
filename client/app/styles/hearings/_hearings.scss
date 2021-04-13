@@ -365,6 +365,12 @@
   }
 }
 
+@media screen and (min-width: 1224px) and (max-width: 1680px) {
+  .usa-width-three-fourths.assign-hearing-tabs {
+    width: 65%;
+  }
+}
+
 // Time Slot Styles
 .time-slot-label {
   font-weight: bold;
