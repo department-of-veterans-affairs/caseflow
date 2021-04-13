@@ -18,7 +18,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
     # Specifying date for test run due to hard-coded dates being used below
     # Workaround due to weird interaction between using fill_in with dynamic dates and controlled DateSelector fields
     before do
-      Timecop.travel(Time.new(2021,04,13))
+      Timecop.travel(Time.zone.local(2021, 4, 13))
     end
 
     after do
