@@ -70,11 +70,17 @@ class AppealsController < ApplicationController
         message: "You can try again in #{time_until_next_refresh} minutes"
       }
     else 
-      if appeal.update_cached_attributes! && appeal.save_with_updated_bgs_record!
+      begin 
+        appeal.save_with_updated_bgs_record!
         render json: {
           status: 'success',
           message: 'POA Updated Successfully',
           power_of_attorney: power_of_attorney_data
+        }
+      rescue ActiveRecord::RecordNotUnique => e
+        render json: {
+          status: 'error',
+          message: 'Something went wrong'
         }
       end
     end
