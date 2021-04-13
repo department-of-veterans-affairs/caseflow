@@ -25,7 +25,8 @@ export const SubstituteAppellantBasicsView = () => {
   const handleCancel = () => history.push(`/queue/appeals/${appealId}`);
   const handleSubmit = async (formData) => {
     // Here we'll dispatch action to update Redux store with our form data
-    // Initially, we may also dispatch async thunk action to submit the basics to the backend because of how stories are sliced
+    // Initially, we may also dispatch async thunk action to submit the basics
+    // to the backend because of how stories are sliced
 
     dispatch(
       updateData({

@@ -1,5 +1,5 @@
 import React from 'react';
-import { withRouter, Link, useHistory } from 'react-router-dom';
+import { withRouter, useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { COLORS } from '../constants/AppConstants';
