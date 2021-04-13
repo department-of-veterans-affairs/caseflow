@@ -9,6 +9,7 @@ import {
   updateData,
   stepForward,
   fetchRelationships,
+  cancel,
 } from './substituteAppellant.slice';
 
 export const SubstituteAppellantBasicsView = () => {
@@ -22,7 +23,13 @@ export const SubstituteAppellantBasicsView = () => {
     loadingRelationships,
   } = useSelector((state) => state.substituteAppellant);
 
-  const handleCancel = () => history.push(`/queue/appeals/${appealId}`);
+  const handleCancel = () => {
+    // Reset Redux store
+    dispatch(cancel());
+
+    // Redirect to Case Details page
+    history.push(`/queue/appeals/${appealId}`);
+  };
   const handleSubmit = async (formData) => {
     // Here we'll dispatch action to update Redux store with our form data
     // Initially, we may also dispatch async thunk action to submit the basics
