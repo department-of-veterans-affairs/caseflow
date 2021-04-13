@@ -31,6 +31,7 @@ class PowerOfAttorney
            :representative_address,
            :representative_email_address,
            :participant_id,
+           :poa_last_synced_at,
            to: :bgs_power_of_attorney, prefix: :bgs
 
   class << self
