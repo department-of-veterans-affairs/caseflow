@@ -15,8 +15,8 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   has_many :messages
   has_one :vacols_user, class_name: "CachedUser", foreign_key: :sdomainid, primary_key: :css_id
 
-  # Alternative: where('roles @> ARRAY[?]::varchar[]', role)
-  scope :with_role, ->(role) { where('? = ANY(roles)', role) }
+  # Alternative: where("roles @> ARRAY[?]::varchar[]", role)
+  scope :with_role, ->(role) { where("? = ANY(roles)", role) }
 
   BOARD_STATION_ID = "101"
   LAST_LOGIN_PRECISION = 5.minutes
