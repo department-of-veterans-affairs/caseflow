@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { MagnifyingGlass } from './RenderFunctions';
@@ -29,5 +30,9 @@ const CaseSearchLink = (props) => <div {...containerStyling}>
     <p {...textStyling}>Search cases</p>
   </Link>
 </div>;
+
+CaseSearchLink.propTypes = {
+  newWindow: PropTypes.bool
+};
 
 export default CaseSearchLink;
