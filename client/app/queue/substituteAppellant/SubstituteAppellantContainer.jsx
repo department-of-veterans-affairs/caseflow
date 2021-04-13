@@ -5,7 +5,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import ProgressBar from 'app/components/ProgressBar';
 import { useSelector } from 'react-redux';
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router';
-import { GrantedSubstitutionBasicsView } from './GrantedSubstitutionBasicsView';
+import { SubstituteAppellantBasicsView } from './SubstituteAppellantBasicsView';
 
 const sections = [
   'Select substitute appellant',
@@ -34,7 +34,7 @@ export const SubstituteAppellantContainer = () => {
       <Switch>
         <Redirect exact from={[url, `${url}/`]} to={`${url}/basics`} />
         <Route path={`${path}/basics`} title="Substitute Appellant | Caseflow">
-          <GrantedSubstitutionBasicsView />
+          <SubstituteAppellantBasicsView />
         </Route>
       </Switch>
     </AppSegment>

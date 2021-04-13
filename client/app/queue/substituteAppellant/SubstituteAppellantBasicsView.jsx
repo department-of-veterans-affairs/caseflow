@@ -3,15 +3,15 @@ import { useHistory, useParams } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns';
 
-import { GrantedSubstitutionBasicsForm } from './GrantedSubstitutionBasicsForm';
+import { SubstituteAppellantBasicsForm } from './SubstituteAppellantBasicsForm';
 
 import {
   updateData,
   stepForward,
   fetchRelationships,
-} from './grantedSubstitution.slice';
+} from './substituteAppellant.slice';
 
-export const GrantedSubstitutionBasicsView = () => {
+export const SubstituteAppellantBasicsView = () => {
   const { appealId } = useParams();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -46,7 +46,7 @@ export const GrantedSubstitutionBasicsView = () => {
   }, []);
 
   return (
-    <GrantedSubstitutionBasicsForm
+    <SubstituteAppellantBasicsForm
       existingValues={existingValues}
       onCancel={handleCancel}
       onSubmit={handleSubmit}

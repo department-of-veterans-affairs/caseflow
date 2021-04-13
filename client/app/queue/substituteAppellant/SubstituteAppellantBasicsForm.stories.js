@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { GrantedSubstitutionBasicsForm } from './GrantedSubstitutionBasicsForm';
+import { SubstituteAppellantBasicsForm } from './SubstituteAppellantBasicsForm';
 
 const relationships = [
   { value: '123456', displayText: 'John Doe, Spouse' },
@@ -8,8 +8,8 @@ const relationships = [
 ];
 
 export default {
-  title: 'Queue/Granted Substitution/GrantedSubstitutionBasicsForm',
-  component: GrantedSubstitutionBasicsForm,
+  title: 'Queue/Substitute Appellant/SubstituteAppellantBasicsForm',
+  component: SubstituteAppellantBasicsForm,
   decorators: [],
   parameters: {},
   args: {
@@ -21,7 +21,7 @@ export default {
   },
 };
 
-const Template = (args) => <GrantedSubstitutionBasicsForm {...args} />;
+const Template = (args) => <SubstituteAppellantBasicsForm {...args} />;
 
 export const Basic = Template.bind({});
 

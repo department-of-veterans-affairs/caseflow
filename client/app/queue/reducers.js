@@ -15,7 +15,7 @@ import teamManagementReducer from './teamManagement/reducers';
 import commonComponentsReducer from '../components/common/reducers';
 import mtvReducer from './mtv/reducers';
 import docketSwitchReducer from './docketSwitch/docketSwitchSlice';
-import substituteAppellantReducer from './grantedSubstitution/grantedSubstitution.slice';
+import substituteAppellantReducer from './substituteAppellant/substituteAppellant.slice';
 
 // TODO: Remove this when we move entirely over to the appeals search.
 import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';

@@ -26,7 +26,7 @@ const schema = yup.object().shape({
 
 const sectionStyle = css({ marginBottom: '24px' });
 
-export const GrantedSubstitutionBasicsForm = ({
+export const SubstituteAppellantBasicsForm = ({
   existingValues,
   onCancel,
   onSubmit,
@@ -98,7 +98,7 @@ export const GrantedSubstitutionBasicsForm = ({
     </form>
   );
 };
-GrantedSubstitutionBasicsForm.propTypes = {
+SubstituteAppellantBasicsForm.propTypes = {
   existingValues: PropTypes.shape({
     substitutionDate: PropTypes.string,
     participantId: PropTypes.string,

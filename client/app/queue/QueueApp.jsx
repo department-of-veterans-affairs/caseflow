@@ -88,7 +88,7 @@ import { FlashAlerts } from '../nonComp/components/Alerts';
 import { PulacCerulloReminderModal } from './pulacCerullo/PulacCerulloReminderModal';
 import { motionToVacateRoutes } from './mtv/motionToVacateRoutes';
 import { docketSwitchRoutes } from './docketSwitch/docketSwitchRoutes';
-import { grantedSubstitutionRoutes } from './grantedSubstitution/routes';
+import { substituteAppellantRoutes } from './substituteAppellant/routes';
 import ScheduleVeteran from '../hearings/components/ScheduleVeteran';
 import HearingTypeConversion from '../hearings/components/HearingTypeConversion';
 import HearingTypeConversionModal from '../hearings/components/HearingTypeConversionModal';
@@ -700,7 +700,7 @@ class QueueApp extends React.PureComponent {
 
               {docketSwitchRoutes.page}
 
-              {grantedSubstitutionRoutes.page}
+              {substituteAppellantRoutes.page}
             </Switch>
 
             {/* Modal routes are in their own Switch so they will display above the base routes */}

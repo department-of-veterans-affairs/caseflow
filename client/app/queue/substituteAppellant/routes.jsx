@@ -13,7 +13,7 @@ const PageRoutes = [
 
 const ModalRoutes = [];
 
-export const grantedSubstitutionRoutes = {
+export const substituteAppellantRoutes = {
   page: PageRoutes,
   modal: ModalRoutes,
 };

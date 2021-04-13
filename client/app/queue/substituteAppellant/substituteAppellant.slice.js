@@ -38,7 +38,7 @@ const initialState = {
   loadingRelationships: false,
 };
 
-const grantedSubstitutionSlice = createSlice({
+const substituteAppellantSlice = createSlice({
   name: 'substituteAppellant',
   initialState,
   reducers: {
@@ -93,6 +93,6 @@ export const {
   stepForward,
   stepBack,
   updateData,
-} = grantedSubstitutionSlice.actions;
+} = substituteAppellantSlice.actions;
 
-export default grantedSubstitutionSlice.reducer;
+export default substituteAppellantSlice.reducer;
