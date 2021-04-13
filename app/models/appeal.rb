@@ -405,6 +405,7 @@ class Appeal < DecisionReview
            :representative_type,
            :representative_address,
            :representative_email_address,
+           :poa_last_synced_at,
            to: :power_of_attorney, allow_nil: true
 
   def power_of_attorneys
