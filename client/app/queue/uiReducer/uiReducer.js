@@ -37,7 +37,8 @@ export const initialState = {
     hearingDate: null,
     regionalOffice: null
   },
-  targetUser : {}
+  targetUser : {},
+  poaAlert: {}
 };
 
 const setMessageState = (state, message, msgType) => update(state, {
@@ -64,13 +65,18 @@ const setModalState = (state, visibility, modalType) => update(state, {
   }
 });
 
-const setPOARefreshState = (state, alertType, message) => setPOARefreshAlertState(state, alertType, message);
-
 const showModal = (state, modalType) => setModalState(state, true, modalType);
 const hideModal = (state, modalType) => setModalState(state, false, modalType);
 
 const workQueueUiReducer = (state = initialState, action = {}) => {
   switch (action.type) {
+  case ACTIONS.SET_POA_REFRESH_ALERT:
+    return update(state, {
+      poaAlert: {
+        alertType: { $set: action.payload.alertType },
+        message: { $set: action.payload.message }
+      }
+    });
   case ACTIONS.SET_SELECTING_JUDGE:
     return update(state, {
       selectingJudge: { $set: action.payload.selectingJudge }

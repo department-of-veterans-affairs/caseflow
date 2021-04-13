@@ -49,6 +49,7 @@ const PowerOfAttorneyDetailWrapper = (WrappedComponent) => {
       powerOfAttorneyFromAppealSelector(appealId),
       shallowEqual
     );
+    const poaAlert = useSelector((state) => state.ui.poaAlert);
     if (!powerOfAttorney) {
       if (loading) {
         return <React.Fragment>{COPY.CASE_DETAILS_LOADING}</React.Fragment>;
@@ -66,13 +67,17 @@ const PowerOfAttorneyDetailWrapper = (WrappedComponent) => {
     const hasPowerOfAttorneyDetails = powerOfAttorney.representative_type && powerOfAttorney.representative_name;
 
     return hasPowerOfAttorneyDetails ?
-      <WrappedComponent powerOfAttorney={powerOfAttorney} appealId={appealId} /> :
+      <WrappedComponent powerOfAttorney={powerOfAttorney} appealId={appealId} poaAlert={poaAlert} /> :
       <p><em>{COPY.CASE_DETAILS_NO_POA}</em></p>;
   };
 
   wrappedComponent.propTypes = {
     appealId: PropTypes.string,
-    getAppealValue: PropTypes.func
+    getAppealValue: PropTypes.func,
+    poaAlert: PropTypes.shape({
+      alertType: PropTypes.string,
+      message: PropTypes.string
+    })
   };
 
   return wrappedComponent;
@@ -88,7 +93,7 @@ export const PowerOfAttorneyNameUnconnected = ({ powerOfAttorney }) => (
 /**
  * Component that displays details about the power of attorney.
  */
-export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId }) => {
+export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, poaAlert }) => {
   const details = [
     {
       label: powerOfAttorney.representative_type,
@@ -110,20 +115,21 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId }) 
     });
   }
 
-  const showAlert = useState(false);
-  const reponseAlert = useSelector((state) => state.ui.poa_refresh_alert);
-
   return (
-    <div>
-      <PoaRefresh powerOfAttorney={powerOfAttorney} {...detailListStyling} />
-      <PoaRefreshButton appealId={appealId} />
-      <ul {...detailListStyling}>
-        <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
-      </ul>
-      if (showAlert) {
-        <Alert type={reponseAlert.alertType ? reponseAlert.alertType : 'error'} message={reponseAlert.message} />
-      }
-    </div>
+    <React.Fragment>
+      <div>
+        <PoaRefresh powerOfAttorney={powerOfAttorney} {...detailListStyling} />
+        <PoaRefreshButton appealId={appealId} />
+        <ul {...detailListStyling}>
+          <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
+        </ul>
+        { poaAlert.message && poaAlert.alertType && (
+          <div>
+            <Alert type={poaAlert.alertType} message={poaAlert.message} />
+          </div>
+        )}
+      </div>
+    </React.Fragment>
   );
 };
 

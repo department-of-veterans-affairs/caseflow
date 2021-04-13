@@ -56,8 +56,8 @@ export const showSuccessMessage = (message) => ({
   }
 });
 
-export const setPOARefreshAlertState = (alertType, message) => ({
-  type: ACTIONS.SET_POA_REFRESH_ALERT_STATE,
+export const setPoaRefreshAlert = (alertType, message) => ({
+  type: ACTIONS.SET_POA_REFRESH_ALERT,
   payload: {
     alertType,
     message
