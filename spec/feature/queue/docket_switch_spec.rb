@@ -366,6 +366,11 @@ RSpec.feature "Docket Switch", :all_dbs do
       )
       expect(page).to have_content format(COPY::DOCKET_SWITCH_GRANTED_SUCCESS_MESSAGE)
 
+      # Queue display updates
+      find("span", text: "View all cases").click
+      expect(find_by_id("table-row-1")).to have_content("Docket Switch (Inactive)", appeal.docket_number)
+      expect(page).to have_no_content(COPY::CASE_LIST_TABLE_ASSIGNEE_IS_CURRENT_USER_LABEL)
+
       # Verify that full grant completed correctly
       docket_switch = DocketSwitch.find_by(old_docket_stream_id: appeal.id)
       expect(docket_switch).to_not be_nil
