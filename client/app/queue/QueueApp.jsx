@@ -12,6 +12,7 @@ import {
   setCanEditAod,
   setCanEditNodDate,
   setCanViewOvertimeStatus,
+  setCanEditCavcRemands,
   setFeatureToggles,
   setUserRole,
   setUserCssId,
@@ -92,11 +93,13 @@ import HearingTypeConversion from '../hearings/components/HearingTypeConversion'
 import HearingTypeConversionModal from '../hearings/components/HearingTypeConversionModal';
 import CavcReviewExtensionRequestModal from './components/CavcReviewExtensionRequestModal';
 import { PrivateRoute } from '../components/PrivateRoute';
+import { EditCavcRemandView } from './cavc/EditCavcRemandView';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setCanEditAod(this.props.canEditAod);
     this.props.setCanEditNodDate(this.props.userCanViewEditNodDate);
+    this.props.setCanEditCavcRemands(this.props.canEditCavcRemands);
     this.props.setCanViewOvertimeStatus(this.props.userCanViewOvertimeStatus);
     this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserRole(this.props.userRole);
@@ -249,6 +252,10 @@ class QueueApp extends React.PureComponent {
 
   routedAddCavcRemand = (props) => (
     <AddCavcRemandView {...props.match.params} />
+  );
+
+  routedEditCavcRemand = () => (
+    <EditCavcRemandView />
   );
 
   routedAdvancedOnDocketMotion = (props) => (
@@ -655,6 +662,12 @@ class QueueApp extends React.PureComponent {
               />
               <PageRoute
                 exact
+                path="/queue/appeals/:appealId/edit_cavc_remand"
+                title="Edit Cavc Remand | Caseflow"
+                render={this.routedEditCavcRemand}
+              />
+              <PageRoute
+                exact
                 path="/organizations/:organization/users"
                 title="Organization Users | Caseflow"
                 render={this.routedOrganizationUsers}
@@ -1035,6 +1048,7 @@ QueueApp.propTypes = {
   setCanEditAod: PropTypes.func,
   setCanViewOvertimeStatus: PropTypes.func,
   setCanEditNodDate: PropTypes.func,
+  setCanEditCavcRemands: PropTypes.func,
   canEditAod: PropTypes.bool,
   setFeatureToggles: PropTypes.func,
   featureToggles: PropTypes.object,
@@ -1054,6 +1068,7 @@ QueueApp.propTypes = {
   userCanViewOvertimeStatus: PropTypes.bool,
   userCanViewEditNodDate: PropTypes.bool,
   userCanAssignHearingSchedule: PropTypes.bool,
+  canEditCavcRemands: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({
@@ -1065,6 +1080,7 @@ const mapDispatchToProps = (dispatch) =>
     {
       setCanEditAod,
       setCanEditNodDate,
+      setCanEditCavcRemands,
       setCanViewOvertimeStatus,
       setFeatureToggles,
       setUserRole,
