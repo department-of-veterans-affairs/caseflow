@@ -154,7 +154,7 @@ export const CaseDetailsView = (props) => {
         </div>
       )}
       {!modalIsOpen && showPostDispatch && (
-        <CaseDetailsPostDispatchActions appealId={appealId} />
+        <CaseDetailsPostDispatchActions appealId={appealId} addCavcRemand={supportCavcRemand} addSubstitute={supportSubstituteAppellant} />
       )}
       {(!modalIsOpen || props.userCanScheduleVirtualHearings) && <UserAlerts />}
       <AppSegment filledBackground>
