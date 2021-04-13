@@ -6,6 +6,23 @@ module Seeds
   class Hearings < Base
     include PowerOfAttorneyMapper
 
+    # Create the available hearing times and issue counts to pull from
+    AMA_SCHEDULE_TIMES = %w[13:30 14:00 15:00 15:15 16:15].freeze # times in UTC
+    LEGACY_SCHEDULE_TIMES = %w[8:15 9:30 10:15 11:00 11:45].freeze # times in EST
+    ISSUE_COUNTS = %w[1 2 3 4 12].freeze
+
+    # Define how many hearings per day and how many hearing days to create
+    HEARINGS_PER_DAY = 3
+    DEFAULT_COUNT = 5
+    LARGE_COUNT = 90
+    MEDIUM_COUNT = 20
+
+    # Define the list of ROs with a large count of Days
+    LARGE_RO_DAYS = %w[RO17].freeze
+
+    # Define the list of ROs with a medium count of Days
+    MEDIUM_RO_DAYS = %w[RO43].freeze
+
     def initialize
       @bfkey = 1234
       @bfcorkey = 5678
@@ -21,40 +38,81 @@ module Seeds
 
     private
 
-    def create_ama_hearings_for_day(day)
-      create_ama_hearing(day: day, scheduled_time_string_utc: "14:00", issue_count: 1) # 9:00AM ET
-      create_ama_hearing(day: day, scheduled_time_string_utc: "15:00", issue_count: 3) # 10:00AM ET
-      create_ama_hearing(day: day, scheduled_time_string_utc: "16:15", issue_count: 4) # 11:15AM ET
+    def create_ama_hearings_for_day(day, count)
+      count.times do
+        # Pick a random time from the list
+        scheduled_time = AMA_SCHEDULE_TIMES[rand(0...AMA_SCHEDULE_TIMES.size)]
+
+        # Pick a random issue count from the list
+        issue_count = ISSUE_COUNTS[rand(0...ISSUE_COUNTS.size)]
+
+        create_ama_hearing(day: day, scheduled_time_string_utc: scheduled_time, issue_count: issue_count.to_i)
+      end
     end
 
-    def create_legacy_hearings_for_day(day)
-      create_legacy_hearing(day: day, scheduled_time_string_est: "8:15") # 8:30AM ET
-      create_legacy_hearing(day: day, scheduled_time_string_est: "9:30") # 9:30AM ET
-      create_legacy_hearing(day: day, scheduled_time_string_est: "10:15") # 10:30AM ET
+    def create_legacy_hearings_for_day(day, count)
+      count.times do
+        # Pick a random time from the list
+        scheduled_time = LEGACY_SCHEDULE_TIMES[rand(0...LEGACY_SCHEDULE_TIMES.size)]
+
+        create_legacy_hearing(day: day, scheduled_time_string_est: scheduled_time)
+      end
     end
 
     def create_mixed_legacy_ama_for_day(day)
-      create_ama_hearing(day: day, scheduled_time_string_utc: "13:30", issue_count: 4) # 8:30AM ET
-      create_ama_hearing(day: day, scheduled_time_string_utc: "15:15", issue_count: 12) # 10:15AM ET
-      create_legacy_hearing(day: day, scheduled_time_string_est: "13:00") # 1:00PM ET
-      create_legacy_hearing(day: day, scheduled_time_string_est: "14:00") # 2:00PM ET
+      create_ama_hearings_for_day(day, 2)
+      create_legacy_hearings_for_day(day, 2)
+    end
+
+    def get_next_hearing_day(hearing_day, index, offset)
+      if index == 0
+        Time.first_business_day(hearing_day)
+      else
+        next_hearing_day = (index * offset).days
+        Time.first_business_day(hearing_day + next_hearing_day)
+      end
+    end
+
+    def get_hearing_days_count(ro_key)
+      if LARGE_RO_DAYS.include?(ro_key)
+        LARGE_COUNT
+      elsif MEDIUM_RO_DAYS.include?(ro_key)
+        MEDIUM_COUNT
+      else
+        DEFAULT_COUNT
+      end
     end
 
     def create_hearing_days_with_hearings
-      # For Central, Virtual (R), and five other R0s
-      %w[C R RO17 RO19 RO31 RO43 RO45].each do |ro_key|
-        # Note: The multiples of '11'.days below are likely unimportant. Keeping them b/c that's how it was.
-        day = hearing_day_for_ro(ro_key: ro_key, scheduled_for: Time.zone.today)
-        create_ama_hearings_for_day(day)
+      # Create the list of ROs to generate hearing days
+      ro_list = RegionalOffice.ros_with_hearings.merge("C" => RegionalOffice::CITIES["C"]).keys + ["R"]
 
-        day = hearing_day_for_ro(ro_key: ro_key, scheduled_for: Time.zone.today + 11.days)
-        create_legacy_hearings_for_day(day)
+      ro_list.each do |ro_key|
+        # Default the hearing day to today
+        scheduled_for = Time.zone.today
 
-        day = hearing_day_for_ro(ro_key: ro_key, scheduled_for: Time.zone.today + 22.days)
-        create_mixed_legacy_ama_for_day(day)
+        # Set the count of hearing days to schedule for this RO
+        count = get_hearing_days_count(ro_key)
 
-        hearing_day_for_ro(ro_key: ro_key, scheduled_for: Time.zone.today + 33.days)
-        hearing_day_for_ro(ro_key: ro_key, scheduled_for: Time.zone.today + 44.days)
+        # Calculate the offset of days based on a 30 day month to spread the generated days
+        offset = (30.to_f / count).ceil
+
+        # Generate hearing days for each RO
+        count.times do |index|
+          # Get the next available hearing day factoring in the current index and date offset
+          date = get_next_hearing_day(scheduled_for, index, offset)
+          day = hearing_day_for_ro(ro_key: ro_key.to_s, scheduled_for: date)
+
+          # Create full hearing days for the first 3 dates
+          case index
+          when 0
+            create_ama_hearings_for_day(day, HEARINGS_PER_DAY)
+          when 1
+            create_legacy_hearings_for_day(day, HEARINGS_PER_DAY)
+          when 2
+            create_mixed_legacy_ama_for_day(day)
+          end
+        end
       end
     end
 

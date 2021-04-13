@@ -26,7 +26,7 @@ describe VirtualHearings::CreateConferenceJob do
     subject { create_job }
 
     shared_examples "sent email event objects are created" do
-      it "creates sent email events", :aggregate_failuress do
+      it "creates sent email events", :aggregate_failures do
         subject.perform_now
 
         virtual_hearing.reload
@@ -294,9 +294,9 @@ describe VirtualHearings::CreateConferenceJob do
           expected_guest_pin = "7470125694"
           expected_host_pin = "3998472"
           expected_host_link = "https://#{URL_HOST}#{URL_PATH}/?conference=#{expected_alias_with_host}"\
-            "&name=Judge&pin=#{expected_host_pin}&callType=video&join=1"
+            "&pin=#{expected_host_pin}&callType=video"
           expected_guest_link = "https://#{URL_HOST}#{URL_PATH}/?conference=#{expected_alias_with_host}"\
-            "&name=Guest&pin=#{expected_guest_pin}&callType=video&join=1"
+            "&pin=#{expected_guest_pin}&callType=video"
 
           virtual_hearing.reload
           expect(virtual_hearing.host_hearing_link).to eq(expected_host_link)
