@@ -144,7 +144,8 @@ class VirtualHearing < CaseflowRecord
 
   def test_link(title)
     if use_vc_test_link?
-      "https://vc.va.gov/bva-app?conference=test_call&name=#{email_recipient_name(title)}&join=1"
+      host_and_path = "#{ENV['VIRTUAL_HEARING_URL_HOST']}#{ENV['VIRTUAL_HEARING_URL_PATH']}"
+      "https://#{host_and_path}?conference=test_call&name=#{email_recipient_name(title)}&join=1"
     else
       "https://care.va.gov/webapp2/conference/test_call?name=#{email_recipient_name(title)}&join=1"
     end
