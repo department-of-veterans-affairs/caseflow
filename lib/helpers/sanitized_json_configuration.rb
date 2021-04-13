@@ -22,61 +22,62 @@ class SanitizedJsonConfiguration
           initial_appeals = records[Appeal]
           (initial_appeals +
           initial_appeals.map { |appeal| self.class.appeals_associated_with(appeal) }.flatten.uniq.compact
-          ).uniq
+          ).uniq.sort_by(&:id)
         end
       },
       Veteran => {
         track_imported_ids: true,
         sanitize_fields: %w[file_number first_name last_name middle_name ssn],
-        retrieval: ->(records) { records[Appeal].map(&:veteran) }
+        retrieval: ->(records) { records[Appeal].map(&:veteran).sort_by(&:id) }
       },
       AppealIntake => {
         sanitize_fields: %w[veteran_file_number],
-        retrieval: ->(records) { records[Appeal].map(&:intake) }
+        retrieval: ->(records) { records[Appeal].map(&:intake).compact.sort_by(&:id) }
       },
       Claimant => {
-        retrieval: ->(records) { records[Appeal].map(&:claimants).flatten }
+        retrieval: ->(records) { records[Appeal].map(&:claimants).flatten.sort_by(&:id) }
       },
       Task => {
         sanitize_fields: %w[instructions],
-        retrieval: ->(records) { records[Appeal].map(&:tasks).flatten.sort_by(&:id).extend(TaskAssignment) }
+        retrieval: ->(records) { reorder_for_import(records[Appeal].map(&:tasks).flatten).extend(TaskAssignment) }
       },
       TaskTimer => {
-        retrieval: ->(records) { TaskTimer.where(task_id: records[Task].map(&:id)) }
+        retrieval: ->(records) { TaskTimer.where(task_id: records[Task].map(&:id)).sort_by(&:id) }
       },
       RequestIssue => {
         sanitize_fields: ["notes", "contested_issue_description", /_(notes|text|description)/],
-        retrieval: ->(records) { records[Appeal].map(&:request_issues).flatten }
+        retrieval: ->(records) { records[Appeal].map(&:request_issues).flatten.sort_by(&:id) }
       },
       DecisionIssue => {
         sanitize_fields: %w[decision_text description],
-        retrieval: ->(records) { records[Appeal].map(&:decision_issues).flatten }
+        retrieval: ->(records) { records[Appeal].map(&:decision_issues).flatten.sort_by(&:id) }
       },
       RequestDecisionIssue => {
-        retrieval: ->(records) { RequestDecisionIssue.where(request_issue: records[RequestIssue]) }
+        retrieval: ->(records) { RequestDecisionIssue.where(request_issue: records[RequestIssue]).sort_by(&:id) }
       },
       CavcRemand => { # dependent on DecisionIssue records
         # cavc_judge_full_name is selected from Constants::CAVC_JUDGE_FULL_NAMES; no need to sanitize
         sanitize_fields: %w[instructions],
-        retrieval: ->(records) { records[Appeal].map(&:cavc_remand).compact }
+        retrieval: ->(records) { records[Appeal].map(&:cavc_remand).compact.sort_by(&:id) }
       },
       Hearing => {
         sanitize_fields: %w[bva_poc military_service notes representative_name summary witness],
         retrieval: lambda do |records|
-          (records[Appeal].map(&:hearings) + records[Task].with_type("HearingTask").map(&:hearing)).flatten.uniq.compact
+          (records[Appeal].map(&:hearings) + records[Task].with_type("HearingTask").map(&:hearing))
+            .flatten.uniq.compact.sort_by(&:id)
         end
       },
       HearingDay => {
         sanitize_fields: %w[bva_poc notes],
-        retrieval: ->(records) { records[Hearing].map(&:hearing_day).uniq.compact }
+        retrieval: ->(records) { records[Hearing].map(&:hearing_day).uniq.compact.sort_by(&:id) }
       },
       VirtualHearing => {
         sanitize_fields: %w[alias alias_with_host appellant_email conference_id guest_hearing_link guest_pin
                             guest_pin_long host_hearing_link host_pin host_pin_long judge_email representative_email],
-        retrieval: ->(records) { records[Hearing].map(&:virtual_hearing).uniq.compact }
+        retrieval: ->(records) { records[Hearing].map(&:virtual_hearing).uniq.compact.sort_by(&:id) }
       },
       HearingTaskAssociation => {
-        retrieval: ->(records) { HearingTaskAssociation.where(hearing: records[Hearing]) }
+        retrieval: ->(records) { HearingTaskAssociation.where(hearing: records[Hearing]).order(:id) }
       },
 
       User => {
@@ -87,16 +88,16 @@ class SanitizedJsonConfiguration
           cavc_remands = records[CavcRemand]
           hearings = records[Hearing]
 
-          tasks.map(&:assigned_by).compact + tasks.map(&:cancelled_by).compact +
-            tasks.assigned_to_user.map(&:assigned_to) +
-            cavc_remands.map { |cavc_remand| [cavc_remand.created_by, cavc_remand.updated_by] }.flatten.uniq.compact +
-            records[Appeal].map(&:intake).compact.map(&:user).uniq.compact +
-            records[AppealIntake].map { |intake| intake&.user }.uniq.compact +
-            records[HearingDay].map { |hday| [hday.created_by, hday.updated_by, hday.judge] }.flatten.uniq.compact +
-            hearings.map { |hearing| [hearing.created_by, hearing.updated_by, hearing.judge] }.flatten.uniq.compact +
-            hearings.map(&:virtual_hearing).uniq.compact.map do |vh|
-              [vh.created_by, vh.updated_by]
-            end.flatten.uniq.compact
+          users = tasks.map(&:assigned_by).compact + tasks.map(&:cancelled_by).compact +
+                  tasks.assigned_to_user.map(&:assigned_to) +
+                  cavc_remands.map { |cavc_remand| [cavc_remand.created_by, cavc_remand.updated_by] }.flatten +
+                  records[Appeal].map(&:intake).compact.map(&:user) +
+                  records[AppealIntake].map { |intake| intake&.user } +
+                  records[HearingDay].map { |hday| [hday.created_by, hday.updated_by, hday.judge] }.flatten +
+                  hearings.map { |hearing| [hearing.created_by, hearing.updated_by, hearing.judge] }.flatten +
+                  hearings.map(&:virtual_hearing).uniq.compact.map { |vh| [vh.created_by, vh.updated_by] }.flatten
+
+          users.uniq.compact.sort_by(&:id)
         end
       },
       Organization => {
@@ -132,6 +133,21 @@ class SanitizedJsonConfiguration
   end
 
   private
+
+  def reorder_for_import(tasks)
+    tasks = tasks.sort_by(&:id)
+    reordered_tasks = tasks.select { |task| task["parent_id"].nil? }
+    tasks -= reordered_tasks
+    while tasks.any?
+      task_ids = reordered_tasks.pluck("id")
+      next_tasks = tasks.select { |t| task_ids.include?(t["parent_id"]) }
+      fail "Tasks with unknown parent task still remain" if next_tasks.blank?
+
+      reordered_tasks += next_tasks
+      tasks -= next_tasks
+    end
+    reordered_tasks
+  end
 
   def extract_configuration(config_field, configuration, default_value = nil)
     configuration.select { |klass, _| klass < ActiveRecord::Base }
