@@ -82,15 +82,26 @@ describe AppealRequestIssuesPolicy, :postgres do
     context "when user is a member of the Case Review team, and the appeal has
             already been assigned to an attorney" do
       let(:user) { create(:user) }
-
-      it "returns false" do
-        CaseReview.singleton.add_user(user)
+      let!(:attorney_task) {
         create(:task,
                type: "AttorneyTask",
                appeal: appeal,
                assigned_to: build_stubbed(:user))
+      }
+      before { CaseReview.singleton.add_user(user) }
 
-        expect(subject).to be false
+      it { binding.pry; is_expected.to be false }
+
+      context "when the attorney task has been completed and the case is not in active review" do
+        let!(:attorney_task) {
+          create(:task,
+                 :completed,
+                 type: "AttorneyTask",
+                 appeal: appeal,
+                 assigned_to: build_stubbed(:user))
+        }
+
+        it { is_expected.to be true }
       end
     end
   end
