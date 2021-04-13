@@ -140,7 +140,7 @@ class SanitizedJsonConfiguration
     tasks -= reordered_tasks
     while tasks.any?
       task_ids = reordered_tasks.pluck("id")
-      next_tasks = tasks.select { |t| task_ids.include?(t["parent_id"]) }
+      next_tasks = tasks.select { |task| task_ids.include?(task["parent_id"]) }
       fail "Tasks with unknown parent task still remain" if next_tasks.blank?
 
       reordered_tasks += next_tasks
