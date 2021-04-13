@@ -7,7 +7,12 @@ import { useSelector } from 'react-redux';
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router';
 import { GrantedSubstitutionBasicsView } from './GrantedSubstitutionBasicsView';
 
-const sections = ['Select substitute appellant'];
+const sections = [
+  'Select substitute appellant',
+  'Select POA',
+  'Create task',
+  'Review',
+];
 
 export const SubstituteAppellantContainer = () => {
   const { path, url } = useRouteMatch();

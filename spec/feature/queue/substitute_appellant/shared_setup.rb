@@ -57,7 +57,7 @@ RSpec.shared_examples("fill substitution form") do
       fill_in "When was substitution granted for this appellant?", with: substitution_date
 
       # Select second relationship
-      find("label[for=participantId_#{relationships[1].ptcpnt_id}]").click
+      find("label[for=participantId_#{relationships[1][:ptcpnt_id]}").click
 
       page.find("button", text:"Continue").click
     end
