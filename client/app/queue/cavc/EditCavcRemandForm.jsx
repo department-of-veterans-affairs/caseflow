@@ -248,7 +248,7 @@ export const EditCavcRemandForm = ({
           />
         </div>
 
-        {watchDecisionType && !watchDecisionType.includes('remand') && (
+        {(watchDecisionType && !watchDecisionType.includes('remand')) ? (
           <RadioField
             inputRef={register}
             styling={radioLabelStyling}
@@ -257,8 +257,17 @@ export const EditCavcRemandForm = ({
             options={YesNoOpts}
             strongLabel
             errorMessage={errors?.remandDatesProvided?.message}
-          />
-        )}
+          />) :
+          (<div style={{ display: 'none' }}>
+            <RadioField
+              inputRef={register}
+              name="remandDatesProvided"
+              options={YesNoOpts}
+            />
+          </div>)
+        }
+        {/* Above is another Workaround: must have component that uses `register`
+            with `remandDatesProvided` name so that it can be used by yup */}
 
         <DateSelector
           inputRef={register}
