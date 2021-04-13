@@ -180,8 +180,8 @@ class AddIssuesPage extends React.Component {
     );
     this.setState({
       showConfirmClaimLabelModal: true,
-      previousEpCode: null,
-      selectedEpCode: null,
+      previousEpCode: this.state.previousEpCode,
+      selectedEpCode: this.state.selectedEpCode,
       loading: true
     });
   }
