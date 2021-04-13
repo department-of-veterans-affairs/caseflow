@@ -57,7 +57,8 @@ class AddIssuesPage extends React.Component {
       originalIssueLength,
       issueRemoveIndex: 0,
       issueIndex: 0,
-      addingIssue: false
+      addingIssue: false,
+      loading: false
     };
   }
 
@@ -175,12 +176,13 @@ class AddIssuesPage extends React.Component {
       this.props.intakeForms[this.props.formType].claimId,
       this.props.formType,
       this.state.previousEpCode,
-      this.state.selectedEpCode,
+      this.state.selectedEpCode
     );
     this.setState({
-      showConfirmClaimLabelModal: false,
+      showConfirmClaimLabelModal: true,
       previousEpCode: null,
-      selectedEpCode: null
+      selectedEpCode: null,
+      loading: true
     });
   }
 
@@ -432,6 +434,7 @@ class AddIssuesPage extends React.Component {
             newEpCode={this.state.selectedEpCode}
             onCancel={this.closeEditClaimLabelModal}
             onSubmit={this.submitClaimLabelEdit}
+            loading={this.state.loading}
           />
         )}
         <h1 className="cf-txt-c">{messageHeader}</h1>
