@@ -1,7 +1,7 @@
 import { bindActionCreators } from 'redux';
 import { connect, shallowEqual, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState } from 'react';
 import _ from 'lodash';
 
 import { appealWithDetailSelector } from './selectors';
@@ -13,6 +13,7 @@ import { PoaRefresh } from './components/PoaSyncDate';
 import { PoaRefreshButton } from './components/PoaRefreshButton';
 
 import COPY from '../../COPY';
+import Alert from '../components/Alert';
 
 /**
  * Returns a selector to fetch the power of attorney details from the Redux state.
@@ -109,6 +110,9 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId }) 
     });
   }
 
+  const showAlert = useState(false);
+  const reponseAlert = useSelector((state) => state.ui.poa_refresh_alert);
+
   return (
     <div>
       <PoaRefresh powerOfAttorney={powerOfAttorney} {...detailListStyling} />
@@ -116,6 +120,9 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId }) 
       <ul {...detailListStyling}>
         <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
       </ul>
+      if (showAlert) {
+        <Alert type={reponseAlert.alertType ? reponseAlert.alertType : 'error'} message={reponseAlert.message} />
+      }
     </div>
   );
 };

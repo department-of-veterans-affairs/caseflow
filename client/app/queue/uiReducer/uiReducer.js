@@ -64,6 +64,8 @@ const setModalState = (state, visibility, modalType) => update(state, {
   }
 });
 
+const setPOARefreshState = (state, alertType, message) => setPOARefreshAlertState(state, alertType, message);
+
 const showModal = (state, modalType) => setModalState(state, true, modalType);
 const hideModal = (state, modalType) => setModalState(state, false, modalType);
 
