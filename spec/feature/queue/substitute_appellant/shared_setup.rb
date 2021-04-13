@@ -1,9 +1,12 @@
+
+# frozen_string_literal: true
+
 RSpec.shared_context("with Clerk of the Board user") do
   let(:cotb_org) { ClerkOfTheBoard.singleton }
 
   before do
-      cotb_org.add_user(user)
-      User.authenticate!(user: user)
+    cotb_org.add_user(user)
+    User.authenticate!(user: user)
   end
 end
 
@@ -21,13 +24,13 @@ RSpec.shared_context "with existing relationships" do
         first_name: "BOB",
         last_name: "VANCE",
         ptcpnt_id: "5382910292",
-        relationship_type: "Spouse" 
+        relationship_type: "Spouse"
       },
       {
         first_name: "BILLY",
         last_name: "VANCE",
         ptcpnt_id: "12345",
-        relationship_type: "Child" 
+        relationship_type: "Child"
       },
       {
         first_name: "BLAKE",
@@ -40,9 +43,9 @@ RSpec.shared_context "with existing relationships" do
 
   before do
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(relationships)
-  end 
+  end
 end
-  
+
 RSpec.shared_examples("fill substitution form") do
   it "allows user to designate a subsitute appellant" do
     step "user sets basic info for substitution" do
@@ -59,7 +62,7 @@ RSpec.shared_examples("fill substitution form") do
       # Select second relationship
       find("label[for=participantId_#{relationships[1][:ptcpnt_id]}").click
 
-      page.find("button", text:"Continue").click
+      page.find("button", text: "Continue").click
     end
 
     # Insert other steps here
