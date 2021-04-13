@@ -10,7 +10,7 @@ import {
   stepForward,
   fetchRelationships,
   cancel,
-} from './substituteAppellant.slice';
+} from '../substituteAppellant.slice';
 
 export const SubstituteAppellantBasicsView = () => {
   const { appealId } = useParams();

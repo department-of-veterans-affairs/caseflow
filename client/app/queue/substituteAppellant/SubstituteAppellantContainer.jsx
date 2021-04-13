@@ -5,7 +5,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import ProgressBar from 'app/components/ProgressBar';
 import { useSelector } from 'react-redux';
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router';
-import { SubstituteAppellantBasicsView } from './SubstituteAppellantBasicsView';
+import { SubstituteAppellantBasicsView } from './basics/SubstituteAppellantBasicsView';
 
 const sections = [
   'Select substitute appellant',
