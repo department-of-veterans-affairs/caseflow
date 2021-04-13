@@ -84,7 +84,10 @@ module HearingRequestTypeConcern
   end
 
   def changeset_at_index_for_task(task_id)
-    request_type_index = tasks.where(type: "ChangeHearingRequestTypeTask").order(:id).map(&:id).index(task_id)
+    request_type_index = tasks.where(
+      type: "ChangeHearingRequestTypeTask",
+      status: Constants.TASK_STATUSES.completed
+    ).order(:id).map(&:id).index(task_id)
     return nil if request_type_index.blank?
 
     # support versions that were recorded before the column name changed

@@ -23,14 +23,16 @@ FactoryBot.define do
       end
       veteran { create(:veteran) }
       docket_type { Constants.AMA_DOCKETS.evidence_submission }
+      decision_issues_selected_count { nil }
     end
 
     after(:build) do |cavc_remand, evaluator|
       if evaluator.source_appeal
         cavc_remand.source_appeal = evaluator.source_appeal
 
-        cavc_remand.decision_issue_ids = if !evaluator.decision_issue_ids.empty?
-                                           evaluator.decision_issue_ids
+        cavc_remand.decision_issue_ids = if evaluator.decision_issues_selected_count
+                                           evaluator.source_appeal.decision_issues
+                                             .first(evaluator.decision_issues_selected_count).pluck(:id)
                                          elsif !evaluator.source_appeal.decision_issues.empty?
                                            evaluator.source_appeal.decision_issues.pluck(:id)
                                          else
@@ -50,8 +52,9 @@ FactoryBot.define do
           di.save!
         end
 
-        cavc_remand.decision_issue_ids = if !evaluator.decision_issue_ids.empty?
-                                           evaluator.decision_issue_ids
+        cavc_remand.decision_issue_ids = if evaluator.decision_issues_selected_count
+                                           cavc_remand.source_appeal.decision_issues
+                                             .first(evaluator.decision_issues_selected_count).pluck(:id)
                                          else
                                            cavc_remand.source_appeal.decision_issues.pluck(:id)
                                          end
@@ -61,6 +64,14 @@ FactoryBot.define do
     trait :mdr do
       no_mandate
       remand_subtype { Constants::CAVC_REMAND_SUBTYPES["mdr"] }
+    end
+
+    trait :jmr do
+      remand_subtype { Constants::CAVC_REMAND_SUBTYPES["jmr"] }
+    end
+
+    trait :jmpr do
+      remand_subtype { Constants::CAVC_REMAND_SUBTYPES["jmpr"] }
     end
 
     trait :straight_reversal do
