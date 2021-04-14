@@ -113,7 +113,7 @@ describe StuckVirtualHearingsChecker, :postgres do
     end
   end
 
-  context "there is a virtual hearing that happened within the past 24 hours where all emails weren't sent" do
+  context "there is an eligible virtual hearing that happened within the past 24 hours" do
     let(:time_now) { Time.zone.local(2021, 4, 14, 13, 30, 0) }
     let(:hearing_day) { create(:hearing_day, scheduled_for: time_now - 1.day) }
     let(:scheduled_time) { (time_now - 20.hours).strftime("%I:%M%p") }
@@ -143,7 +143,7 @@ describe StuckVirtualHearingsChecker, :postgres do
     end
   end
 
-  context "there is a legacy virtual hearing" do
+  context "there is an eligible legacy virtual hearing" do
     let!(:virtual_hearing_no_emails) do
       create(
         :virtual_hearing, :initialized,
