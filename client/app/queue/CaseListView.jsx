@@ -69,6 +69,7 @@ class CaseListView extends React.PureComponent {
       if (appeal.decisionDate === null) {
         return 1;
       }
+      
       return 0;
     });
   };
