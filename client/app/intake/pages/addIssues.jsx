@@ -310,12 +310,12 @@ class AddIssuesPage extends React.Component {
 
     let rowObjects = fieldsForFormType;
 
-    const issueSectionRow = (sectionIssues, fieldTitle, endProductCode = 0) => {
+    const issueSectionRow = (sectionIssues, fieldTitle) => {
       return {
         field: fieldTitle,
         content: (
           <div>
-            {endProductWithError === endProductCode && (
+            {endProductWithError && (
               <ErrorAlert errorCode="unable_to_edit_ep" />
             )}
             { !fieldTitle.includes('issues') && <span><strong>Requested issues</strong></span> }
