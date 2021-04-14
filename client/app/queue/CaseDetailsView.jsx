@@ -143,7 +143,7 @@ export const CaseDetailsView = (props) => {
             issues={appeal.issues}
             decisionIssues={appeal.decisionIssues}
           />
-          <PowerOfAttorneyDetail title="Power of Attorney" appealId={appealId} />
+          <PowerOfAttorneyDetail title="Appellant's Power of Attorney" appealId={appealId} />
           {(appeal.hearings.length || appeal.completedHearingOnPreviousAppeal) && (
             <CaseHearingsDetail title="Hearings" appeal={appeal} />
           )}
