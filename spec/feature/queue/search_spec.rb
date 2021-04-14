@@ -426,6 +426,34 @@ feature "Search", :all_dbs do
       end
     end
 
+    context "when multiple appeals found" do
+      let!(:veteran) { create(:veteran, first_name: "Testy", last_name: "McTesterson") }
+      let!(:today) { Time.zone.today }
+
+      let!(:decision_document) do
+        [ 
+          create(:decision_document, decision_date: today - 1.days, appeal: create(:appeal, veteran: veteran)),
+          create(:decision_document, decision_date: today - 2.days, appeal: create(:appeal, veteran: veteran)),
+          create(:appeal, veteran: veteran)
+        ]
+      end
+
+      def perform_search(search_term)
+        visit "/search"
+        fill_in "searchBarEmptyList", with: search_term
+        click_on "Search"
+      end
+
+      context "when appeal exists" do
+        it "displays results in correct order" do
+          perform_search(veteran.ssn)
+          puts page.inspect
+          expect(page).to have_content("3 cases found for")
+        end
+      end
+
+    end
+
     context "when appeal is associated with ssn not file number" do
       let!(:veteran) { create(:veteran, file_number: "00000000", ssn: Generators::Random.unique_ssn) }
       let!(:legacy_appeal) do
