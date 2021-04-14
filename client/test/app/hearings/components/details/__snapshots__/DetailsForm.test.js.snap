@@ -6193,6 +6193,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
         </div>
         <div>
           <TextareaField
+            characterLimitTopRight={false}
             disabled={false}
             maxlength={1000}
             name="Notes"
@@ -16489,6 +16490,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
         </div>
         <div>
           <TextareaField
+            characterLimitTopRight={false}
             disabled={false}
             maxlength={1000}
             name="Notes"
@@ -28236,6 +28238,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
         </div>
         <div>
           <TextareaField
+            characterLimitTopRight={false}
             disabled={false}
             maxlength={1000}
             name="Notes"
@@ -39984,6 +39987,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
         </div>
         <div>
           <TextareaField
+            characterLimitTopRight={false}
             disabled={false}
             maxlength={1000}
             name="Notes"
@@ -51694,6 +51698,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
         </div>
         <div>
           <TextareaField
+            characterLimitTopRight={false}
             disabled={false}
             maxlength={1000}
             name="Notes"

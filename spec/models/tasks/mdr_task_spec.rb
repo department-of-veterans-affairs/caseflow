@@ -68,6 +68,10 @@ describe MdrTask, :postgres do
         Timecop.travel(decision_date + 91.days)
         TaskTimerJob.perform_now
       end
+      after do
+        Timecop.return
+      end
+
       it "marks MdrTask as assigned" do
         expect(mdr_task.reload.status).to eq Constants.TASK_STATUSES.assigned
         child_timed_hold_tasks = mdr_task.children.where(type: :TimedHoldTask)
@@ -83,6 +87,31 @@ describe MdrTask, :postgres do
         expect(mdr_task.available_actions(org_admin)).to match_array(actions)
         expect(mdr_task.available_actions(org_nonadmin)).to match_array(actions)
         expect(mdr_task.available_actions(other_user)).to be_empty
+      end
+    end
+  end
+
+  describe "#update_timed_hold" do
+    let(:parent_task) { appeal.tasks.open.where(type: :CavcTask).last }
+    let!(:mdr_task) { MdrTask.create_with_hold(parent_task) }
+
+    subject { mdr_task.update_timed_hold }
+
+    context "when the task calls update_timed_hold" do
+      it "it will create a new timed hold task" do
+        original_count = mdr_task.children.where(type: :TimedHoldTask).length
+
+        expect { subject }.not_to raise_error
+
+        expect(mdr_task.children.where(type: :TimedHoldTask).length).to eq original_count + 1
+      end
+
+      it "it will cancel the existing timed hold task" do
+        expect(TimedHoldTask.first.status).not_to eq Constants.TASK_STATUSES.cancelled
+
+        expect { subject }.not_to raise_error
+
+        expect(TimedHoldTask.first.status).to eq Constants.TASK_STATUSES.cancelled
       end
     end
   end
