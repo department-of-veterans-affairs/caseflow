@@ -335,7 +335,7 @@ RSpec.feature "Case details", :all_dbs do
         end
       end
 
-      context "when an unrecognized appellant has a POA" do
+      context "when an unrecognized appellant doesn't have a POA" do
         let!(:claimant) do
           create(
             :claimant,
@@ -347,12 +347,10 @@ RSpec.feature "Case details", :all_dbs do
 
         let(:ua) { create(:unrecognized_appellant) }
 
-        context "when a POA is unrecognized" do
-          scenario "details view renders unrecognized POA copy" do
-            visit "/queue/appeals/#{appeal.uuid}"
+        scenario "details view renders unrecognized POA copy" do
+          visit "/queue/appeals/#{appeal.uuid}"
 
-            expect(page).to have_content(COPY::CASE_DETAILS_UNRECOGNIZED_POA)
-          end
+          expect(page).to have_content(COPY::CASE_DETAILS_NO_POA)
         end
       end
     end
