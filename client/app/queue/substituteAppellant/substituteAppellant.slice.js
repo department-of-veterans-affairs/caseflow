@@ -81,12 +81,13 @@ export const completeSubstituteAppellant = createAsyncThunk(
       const res = await ApiUtil.post('/appellant_substitutions', { data });
       const attrs = res.body?.data?.attributes;
 
+      // TODO: process returned values
       return {
-        oldAppealId: attrs?.old_appeal_uuid,
-        newAppealId: attrs?.new_appeal_uuid,
+        substitution: attrs?.substitution,
+        target_appeal: attrs?.target_appeal,
       };
     } catch (error) {
-      console.error('Error granting docket switch', error);
+      console.error('Error when creating appellant substitution', error);
       throw error;
     }
   }
