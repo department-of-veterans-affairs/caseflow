@@ -50,9 +50,10 @@ RSpec.shared_examples("fill substitution form") do
   it "allows user to designate a subsitute appellant" do
     step "user sets basic info for substitution" do
       visit "/queue/appeals/#{appeal.uuid}"
+      binding.pry
 
       # Navigate to substitution page
-      page.find("button", text: "+ Add substitute").click
+      page.find("button", text: "+ Add Substitute").click
 
       expect(page).to have_content "Select substitute appellant"
 
