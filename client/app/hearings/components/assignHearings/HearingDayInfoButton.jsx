@@ -33,12 +33,14 @@ export const HearingDayInfoButton = ({ id, hearingDay, selected, onSelectedHeari
   const formattedSlotRatio = formatSlotRatio(hearingDay);
   const formattedDate = moment(hearingDay.scheduledFor).format('ddd MMM D');
 
+  const classNames = selected ? ['selected-hearing-day-info-button'] : ['unselected-hearing-day-info-button'];
+
   return (
     <Tooltip id={`hearing-day-${id}`} text={judgeOrRoom} position="bottom" tabIndex={-1}>
       <Button
         styling={selected ? buttonSelectedStyle : buttonUnselectedStyle}
         onClick={() => onSelectedHearingDayChange(hearingDay)}
-        // classNames={classNames}
+        classNames={classNames}
         linkStyling>
 
         <div>

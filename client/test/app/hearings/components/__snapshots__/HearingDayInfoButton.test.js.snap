@@ -14,7 +14,7 @@ exports[`HearingDayInfoButton renders correctly 1`] = `
   >
     <span>
       <button
-        class="cf-submit cf-btn-link usa-button"
+        class="unselected-hearing-day-info-button cf-btn-link usa-button"
         data-css-1fa3cif=""
         type="button"
       >
