@@ -35,7 +35,6 @@ export const SubstituteAppellantBasicsForm = ({
 }) => {
   const {
     errors,
-    formState: { touched },
     handleSubmit,
     register,
   } = useForm({
