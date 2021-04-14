@@ -12,7 +12,7 @@ class NodDateUpdatesController < ApplicationController
     new_date = params[:receipt_date]
     untimely_issues_report = appeal.untimely_issues_report(new_date)
 
-    unless untimely_issues_report
+    if untimely_issues_report.blank?
       nod_date_update = NodDateUpdate.create!(updated_params)
       appeal.update_receipt_date!(receipt_date: params[:receipt_date])
       render json: {
