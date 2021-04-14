@@ -62,8 +62,7 @@ class AppealsController < ApplicationController
   end
 
   def update_power_of_attorney
-    poa = BgsPowerOfAttorney.find(params[:poaId])
-    next_update_allowed_at = poa.poa_last_synced_at + 10.minutes
+    next_update_allowed_at = appeal.poa_last_synced_at + 10.minutes
     if next_update_allowed_at > Time.now
       time_until_next_refresh = ((next_update_allowed_at - Time.now)/60).ceil
       render json: {
@@ -71,19 +70,12 @@ class AppealsController < ApplicationController
         message: "You can try again in #{time_until_next_refresh} minutes"
       }
     else 
-      begin 
-        poa.update_cached_attributes!
-        poa.save_with_updated_bgs_record!
-        render json: {
-          status: 'success',
-          message: 'POA Updated Successfully',
-          power_of_attorney: power_of_attorney_data
-        }
-      rescue ActiveRecord::RecordNotUnique => e
-        render json: {
-          status: 'error',
-          message: 'Something went wrong'
-        }
+      if appeal.is_a?(Appeal)
+        poa = BgsPowerOfAttorney.find(params[:poaId])
+        render json: update_bgs_poa(poa)
+      elsif appeal.is_a?(LegacyAppeal)
+        poa = appeal.power_of_attorney
+        render json: update_vacols_poa(poa)
       end
     end
   end
@@ -267,7 +259,32 @@ class AppealsController < ApplicationController
         representative_tz: appeal.representative_tz,
         poa_last_synced_at: appeal.poa_last_synced_at
       }
-    poa_data[:representative_type] = appeal.power_of_attorney.id if appeal.is_a?(Appeal)
+    poa_data[:representative_id] = appeal.power_of_attorney.id if appeal.is_a?(Appeal)
+    poa_data[:representative_id] = appeal.power_of_attorney.vacols_id if appeal.is_a?(LegacyAppeal)
     poa_data
+  end
+
+  def update_bgs_poa(poa)
+    begin 
+      poa.update_cached_attributes!
+      poa.save_with_updated_bgs_record!
+      {
+        status: 'success',
+        message: 'POA Updated Successfully',
+        power_of_attorney: power_of_attorney_data
+      }
+    rescue ActiveRecord::RecordNotUnique => e
+      {
+        status: 'error',
+        message: 'Something went wrong'
+      }
+    end
+  end
+
+  def update_vacols_poa(poa)
+    Rails.logger.debug("*********************")
+Rails.logger.debug(poa.inspect)
+Rails.logger.debug("*********************")
+    bgs_poa = fetch_bgs_power_of_attorney_by_file_number(poa.file_number, appeal.id)
   end
 end

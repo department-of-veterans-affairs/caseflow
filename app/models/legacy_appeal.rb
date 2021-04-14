@@ -347,6 +347,13 @@ class LegacyAppeal < CaseflowRecord
     power_of_attorney.bgs_representative_email_address
   end
 
+  def representative_id
+    Rails.logger.debug("*********************")
+Rails.logger.debug(power_of_attorney.class)
+Rails.logger.debug("*********************")
+    power_of_attorney.vacols_id
+  end
+
   def poa_last_synced_at
     power_of_attorney.bgs_poa_last_synced_at
   end
