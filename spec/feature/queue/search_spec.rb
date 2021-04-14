@@ -431,8 +431,8 @@ feature "Search", :all_dbs do
       let!(:today) { Time.zone.today }
 
       let!(:decision_document) do
-        [ 
-          create(:decision_document, decision_date: today - 1.days, appeal: create(:appeal, veteran: veteran)),
+        [
+          create(:decision_document, decision_date: today - 1.day, appeal: create(:appeal, veteran: veteran)),
           create(:decision_document, decision_date: today - 2.days, appeal: create(:appeal, veteran: veteran)),
           create(:appeal, veteran: veteran)
         ]
@@ -447,11 +447,9 @@ feature "Search", :all_dbs do
       context "when appeal exists" do
         it "displays results in correct order" do
           perform_search(veteran.ssn)
-          puts page.inspect
           expect(page).to have_content("3 cases found for")
         end
       end
-
     end
 
     context "when appeal is associated with ssn not file number" do
