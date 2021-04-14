@@ -236,4 +236,26 @@ describe Organization, :postgres do
       )
     end
   end
+
+  describe ".destroy" do
+    context "when organization has members and is destroyed" do
+      let(:org) { create(:organization) }
+      let(:member_cnt) { 3 }
+      let(:users) { create_list(:user, member_cnt) }
+      before { users.each { |u| org.add_user(u) } }
+
+      subject { org.destroy }
+
+      it "should also destroy associated OrganizationsUser records" do
+        expect(Organization.count).to eq(1)
+        expect(org.users.length).to eq(member_cnt)
+        expect(OrganizationsUser.count).to eq(member_cnt)
+
+        expect(subject).to eq(org)
+
+        expect(Organization.count).to eq(0)
+        expect(OrganizationsUser.count).to eq(0)
+      end
+    end
+  end
 end
