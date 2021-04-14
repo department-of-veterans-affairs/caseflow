@@ -15,6 +15,16 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
   describe "when intaking a cavc remand" do
     before { BvaDispatch.singleton.add_user(create(:user)) }
 
+    # Specifying date for test run due to hard-coded dates being used below
+    # Workaround due to weird interaction between using fill_in with dynamic dates and controlled DateSelector fields
+    before do
+      Timecop.travel(Time.zone.local(2021, 4, 13))
+    end
+
+    after do
+      Timecop.return
+    end
+
     let(:appeal) { create(:appeal, :dispatched) }
 
     let(:notes) { "Pain disorder with 100\% evaluation per examination" }
@@ -33,8 +43,8 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
 
     let(:docket_number) { "12-1234" }
     # Use a decision date within the last 90 days so that it is automatically put on hold for MDR
-    let(:date) { 40.days.ago.to_date.strftime("%-m/%-d/%Y") }
-    let(:later_date) { 20.days.ago.to_date.strftime("%-m/%-d/%Y") }
+    let(:date) { "3/13/2021" }
+    let(:later_date) { "3/23/2021" }
     let(:instructions) { "Please process this remand" }
     let(:mandate_instructions) { "Mandate received!" }
     let(:judge_name) { Constants::CAVC_JUDGE_FULL_NAMES.first }
