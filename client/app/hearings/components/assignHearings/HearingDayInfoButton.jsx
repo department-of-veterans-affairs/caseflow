@@ -36,31 +36,31 @@ export const HearingDayInfoButton = ({ id, hearingDay, selected, onSelectedHeari
   const classNames = selected ? ['selected-hearing-day-info-button'] : ['unselected-hearing-day-info-button'];
 
   return (
-    <Tooltip id={`hearing-day-${id}`} text={judgeOrRoom} position="bottom" tabIndex={-1}>
-      <Button
-        styling={selected ? buttonSelectedStyle : buttonUnselectedStyle}
-        onClick={() => onSelectedHearingDayChange(hearingDay)}
-        classNames={classNames}
-        linkStyling>
+    <Button
+      styling={selected ? buttonSelectedStyle : buttonUnselectedStyle}
+      onClick={() => onSelectedHearingDayChange(hearingDay)}
+      classNames={classNames}
+      linkStyling>
 
-        <div>
-          <div {...leftColumnStyle} >
-            <div {...dateStyle}>
-              {formattedDate}
-            </div>
-            <div {...typeAndJudgeStyle}>
-              {`${formattedHearingType} ${separator} ${judgeOrRoom}`}
-            </div>
+      <div>
+        <div {...leftColumnStyle} >
+          <div {...dateStyle}>
+            {formattedDate}
           </div>
-          <div {...rightColumnStyle} >
-            <div {...slotDisplayStyle}>
-              {formattedSlotRatio}
-            </div>
-            <div>scheduled</div>
+          <div {...typeAndJudgeStyle}>
+            <Tooltip id={`hearing-day-${id}`} text={judgeOrRoom} position="bottom" tabIndex={-1}>
+              {`${formattedHearingType} ${separator} ${judgeOrRoom}`}
+            </Tooltip>
           </div>
         </div>
-      </Button>
-    </Tooltip>
+        <div {...rightColumnStyle} >
+          <div {...slotDisplayStyle}>
+            {formattedSlotRatio}
+          </div>
+          <div>scheduled</div>
+        </div>
+      </div>
+    </Button>
   );
 };
 
