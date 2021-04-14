@@ -50,12 +50,12 @@ RSpec.shared_examples("fill substitution form") do
   it "allows user to designate a subsitute appellant" do
     step "user sets basic info for substitution" do
       visit "/queue/appeals/#{appeal.uuid}"
-      binding.pry
 
       # Navigate to substitution page
       page.find("button", text: "+ Add Substitute").click
 
       expect(page).to have_content "Select substitute appellant"
+      expect(page).to have_css(".cf-progress-bar-activated", text: "1. Select substitute appellant")
 
       # Fill form
       fill_in "When was substitution granted for this appellant?", with: substitution_date
@@ -66,14 +66,41 @@ RSpec.shared_examples("fill substitution form") do
       page.find("button", text: "Continue").click
     end
 
-    # Insert other steps here
+    step "select POA form" do
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}/substitute_appellant/poa")
 
-    # Final step
-    step "user sees success alertt on case details page" do
-      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+      expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_SELECT_POA_TITLE
+      expect(page).to have_css(".cf-progress-bar-activated", text: "1. Select substitute appellant")
+      expect(page).to have_css(".cf-progress-bar-activated", text: "2. Select POA")
 
-      # Expect to see success alert
+      page.find("button", text: "Continue").click
     end
+
+    step "create tasks form" do
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}/substitute_appellant/tasks")
+
+      expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_SELECT_POA_TITLE
+      expect(page).to have_css(".cf-progress-bar-activated", text: "1. Select substitute appellant")
+      expect(page).to have_css(".cf-progress-bar-activated", text: "2. Select POA")
+      expect(page).to have_css(".cf-progress-bar-activated", text: "3. Create task")
+
+      page.find("button", text: "Continue").click
+    end
+
+    step "review/confirm page" do
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}/substitute_appellant/review")
+
+      expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_SELECT_POA_TITLE
+      expect(page).to have_css(".cf-progress-bar-activated", text: "1. Select substitute appellant")
+      expect(page).to have_css(".cf-progress-bar-activated", text: "2. Select POA")
+      expect(page).to have_css(".cf-progress-bar-activated", text: "3. Create task")
+      expect(page).to have_css(".cf-progress-bar-activated", text: "4. Review")
+
+      page.find("button", text: "Confirm").click
+    end
+
+    # Flesh out other steps
+    # After final step, verify routing to Case Details for new appeal and success alert
   end
 end
 

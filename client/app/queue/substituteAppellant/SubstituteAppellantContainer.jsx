@@ -11,10 +11,10 @@ import { SubstituteAppellantTasksView } from './tasks/SubstituteAppellantTasksVi
 import { SubstituteAppellantReviewContainer } from './review/SubstituteAppellantReviewContainer';
 
 const sections = [
-  'Select substitute appellant',
-  'Select POA',
-  'Create task',
-  'Review',
+  '1. Select substitute appellant',
+  '2. Select POA',
+  '3. Create task',
+  '4. Review',
 ];
 
 export const SubstituteAppellantContainer = () => {
