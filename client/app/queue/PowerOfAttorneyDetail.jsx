@@ -5,7 +5,7 @@ import React from 'react';
 import _ from 'lodash';
 
 import { appealWithDetailSelector } from './selectors';
-import { detailListStyling, getDetailField } from './Detail';
+import { detailListStyling, getDetailField, unrecognizedPOA } from './Detail';
 import { getAppealValue } from './QueueActions';
 import Address from './components/Address';
 import BareList from '../components/BareList';
@@ -64,7 +64,7 @@ const PowerOfAttorneyDetailWrapper = (WrappedComponent) => {
 
     return hasPowerOfAttorneyDetails ?
       <WrappedComponent powerOfAttorney={powerOfAttorney} /> :
-      <p><em>{COPY.CASE_DETAILS_NO_POA}</em></p>;
+      <p {...unrecognizedPOA}><em>{COPY.CASE_DETAILS_NO_POA}</em></p>;
   };
 
   wrappedComponent.propTypes = {
