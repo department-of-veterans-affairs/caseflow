@@ -1,3 +1,5 @@
+$cf-hearing-day-label-color: #323a45;
+
 .worksheet-header {
   .cf-push-right {
     padding-top: 25px;
@@ -353,7 +355,7 @@
   overflow-y: auto;
 
   label {
-    color: #323a45;
+    color: $cf-hearing-day-label-color;
     font-weight: 700;
     font-size: 19px;
     position: sticky;
