@@ -9,6 +9,11 @@ export const detailListStyling = css({
   marginBottom: '3rem'
 });
 
+export const unrecognizedPOA = css({
+  fontStyle: 'italic',
+  color: 'grey',
+});
+
 export const getDetailField = ({ label, value }) => () => (
   <><span {...boldText}>{label}:</span>{' '}{value}</>
 );
