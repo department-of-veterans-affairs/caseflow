@@ -68,6 +68,10 @@ describe MdrTask, :postgres do
         Timecop.travel(decision_date + 91.days)
         TaskTimerJob.perform_now
       end
+      after do
+        Timecop.return
+      end
+
       it "marks MdrTask as assigned" do
         expect(mdr_task.reload.status).to eq Constants.TASK_STATUSES.assigned
         child_timed_hold_tasks = mdr_task.children.where(type: :TimedHoldTask)
