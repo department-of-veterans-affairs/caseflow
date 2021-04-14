@@ -705,7 +705,7 @@ export const statusLabel = (appeal) => {
       return <span {...css({ color: COLORS.RED })}>{capitalize(appeal.status)}</span>;
       break;
     case 'docket_switched':
-      return 'Docket Switch (Inactive)';
+      return COPY.CASE_LIST_TABLE_DOCKET_SWITCH_LABEL;
       break;
     default:
       return appeal.status ? StringUtil.snakeCaseToCapitalized(appeal.status) : '';
