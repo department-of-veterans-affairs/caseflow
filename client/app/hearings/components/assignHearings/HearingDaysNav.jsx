@@ -26,8 +26,9 @@ export const HearingDaysNav = ({ upcomingHearingDays, selectedHearingDay, onSele
               <label>{month}</label>
               {orderBy(hearingDays[month], 'scheduledFor', 'asc').map(
                 (hearingDay) => (
-                  <li key={hearingDay.id} >
+                  <li key={hearingDay.id}>
                     <HearingDayInfoButton
+                      id={hearingDay.id}
                       selected={selectedHearingDay?.id === hearingDay?.id}
                       hearingDay={hearingDay}
                       onSelectedHearingDayChange={selectHearingDayEvent(onSelectedHearingDayChange)}

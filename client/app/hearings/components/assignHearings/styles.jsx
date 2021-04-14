@@ -32,7 +32,6 @@ const buttonCommonStyle = {
   width: hearingDayButtonWidth,
   paddingTop: '1.5rem',
   paddingBottom: '1.5rem',
-  outline: 'none'
 };
 
 export const buttonUnselectedStyle = css(
@@ -43,6 +42,7 @@ export const buttonSelectedStyle = css(
   {
     ...buttonCommonStyle,
     ...{
+      fontWeight: 700,
       backgroundColor: COLORS.BLUE_DARKEST,
       color: COLORS.WHITE,
       borderRadius: '0.1rem 0.1rem 0 0',
@@ -79,6 +79,7 @@ export const rightColumnStyle = css({
 });
 
 export const typeAndJudgeStyle = css({
+  fontSize: 15,
   textOverflow: 'ellipsis',
   overflowX: 'hidden',
   overflowY: 'hidden',

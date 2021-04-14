@@ -622,7 +622,7 @@ export const vljFullnameOrEmptyString = (hearingDay) => {
   const last = hearingDay?.judgeLastName;
 
   if (last && first) {
-    return `${last}, ${first}`;
+    return `VLJ ${last}, ${first}`;
   }
 
   return '';
