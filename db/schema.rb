@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_06_122353) do
+ActiveRecord::Schema.define(version: 2021_04_12_224203) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1655,7 +1655,9 @@ ActiveRecord::Schema.define(version: 2021_04_06_122353) do
   add_foreign_key "hearings", "users", column: "created_by_id"
   add_foreign_key "hearings", "users", column: "judge_id"
   add_foreign_key "hearings", "users", column: "updated_by_id"
+  add_foreign_key "ihp_drafts", "organizations"
   add_foreign_key "intakes", "users"
+  add_foreign_key "job_notes", "users"
   add_foreign_key "judge_case_reviews", "users", column: "attorney_id"
   add_foreign_key "judge_case_reviews", "users", column: "judge_id"
   add_foreign_key "legacy_appeals", "appeal_series"
@@ -1664,8 +1666,10 @@ ActiveRecord::Schema.define(version: 2021_04_06_122353) do
   add_foreign_key "legacy_hearings", "users", column: "created_by_id"
   add_foreign_key "legacy_hearings", "users", column: "updated_by_id"
   add_foreign_key "legacy_issue_optins", "legacy_issues"
+  add_foreign_key "messages", "users"
   add_foreign_key "nod_date_updates", "appeals"
   add_foreign_key "nod_date_updates", "users"
+  add_foreign_key "organizations_users", "organizations"
   add_foreign_key "organizations_users", "users"
   add_foreign_key "post_decision_motions", "appeals"
   add_foreign_key "post_decision_motions", "tasks"
@@ -1682,4 +1686,5 @@ ActiveRecord::Schema.define(version: 2021_04_06_122353) do
   add_foreign_key "user_quotas", "users"
   add_foreign_key "virtual_hearings", "users", column: "created_by_id"
   add_foreign_key "virtual_hearings", "users", column: "updated_by_id"
+  add_foreign_key "vso_configs", "organizations"
 end
