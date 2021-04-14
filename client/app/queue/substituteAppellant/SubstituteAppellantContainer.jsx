@@ -6,6 +6,7 @@ import ProgressBar from 'app/components/ProgressBar';
 import { useSelector } from 'react-redux';
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router';
 import { SubstituteAppellantBasicsView } from './basics/SubstituteAppellantBasicsView';
+import { SubstituteAppellantPoaView } from './poa/SubstituteAppellantPoaView';
 
 const sections = [
   'Select substitute appellant',
@@ -35,6 +36,10 @@ export const SubstituteAppellantContainer = () => {
         <Redirect exact from={[url, `${url}/`]} to={`${url}/basics`} />
         <Route path={`${path}/basics`} title="Substitute Appellant | Caseflow">
           <SubstituteAppellantBasicsView />
+        </Route>
+
+        <Route path={`${path}/poa`} title="Substitute Appellant | Caseflow">
+          <SubstituteAppellantPoaView />
         </Route>
       </Switch>
     </AppSegment>

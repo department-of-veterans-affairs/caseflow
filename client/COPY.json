@@ -765,6 +765,10 @@
   "SUBSTITUTE_APPELLANT_BUTTON": "+ Add Substitute",
   "SUBSTITUTE_APPELLANT_SELECT_APPELLANT_TITLE": "Select substitute appellant",
   "SUBSTITUTE_APPELLANT_SELECT_APPELLANT_SUBHEAD": "Complete the details below to create the appeal for the substitute for this case.",
+  "SUBSTITUTE_APPELLANT_SELECT_POA_TITLE": "Select POA",
+  "SUBSTITUTE_APPELLANT_CREATE_TASK_TITLE": "Create task",
+  "SUBSTITUTE_APPELLANT_REVIEW_TITLE": "Review and confirm",
+  "SUBSTITUTE_APPELLANT_REVIEW_SUBHEAD": "Review the details below to make sure the information is correct before submitting. If you need to make changes, please go back to the associated section.",
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
   "CORRECT_REQUEST_ISSUES_WITHDRAW": "Withdraw",
