@@ -385,7 +385,7 @@
 
 .time-slot-details {
   font-weight: 400;
-  font-size: medium;
+  font-size: 15px;
   white-space: nowrap;
   width: 295px;
   margin-top: 5px;
@@ -418,12 +418,13 @@
   border: 2px solid $color-gray-lighter;
   border-radius: 5px;
   padding: 15px 10px;
-  margin: 20px 0;
+  margin: 24px 0;
 }
 
 .time-slot-card-time {
   margin-top: 0;
   margin-left: 20px;
+  font-size: 15px;
 }
 
 .time-slot-card-label {
@@ -432,6 +433,7 @@
 }
 
 .no-hearings-label {
+  margin-top: 30px;
   text-align: center;
 }
 
