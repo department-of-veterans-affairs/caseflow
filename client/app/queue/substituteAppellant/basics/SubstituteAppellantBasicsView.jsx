@@ -40,6 +40,8 @@ export const SubstituteAppellantBasicsView = () => {
         formData: {
           ...formData,
           substitutionDate: format(formData.substitutionDate, 'yyyy-MM-dd'),
+          // Currently hardcoding claimantType until future work where this is selectable
+          claimantType: 'DependentClaimant'
         },
       })
     );
