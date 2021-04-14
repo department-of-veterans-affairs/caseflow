@@ -68,6 +68,9 @@ describe MandateHoldTask, :postgres do
         Timecop.travel(decision_date + 91.days)
         TaskTimerJob.perform_now
       end
+      after do
+        Timecop.return
+      end
       it "marks MandateHoldTask as assigned" do
         expect(mandate_task.reload.status).to eq Constants.TASK_STATUSES.assigned
         child_timed_hold_tasks = mandate_task.children.where(type: :TimedHoldTask)
