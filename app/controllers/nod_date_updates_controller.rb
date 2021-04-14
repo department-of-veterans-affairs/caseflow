@@ -23,8 +23,8 @@ class NodDateUpdatesController < ApplicationController
       }, status: :created
     else
       render json: {
-        affectedIssues: timeliness_issues_report[:affected_issues].map(&:serialize),
-        unaffectedIssues: timeliness_issues_report[:unaffected_issues].map(&:serialize)
+        affectedIssues: untimely_issues_report[:affected_issues].map(&:serialize),
+        unaffectedIssues: untimely_issues_report[:unaffected_issues].map(&:serialize)
       }
     end
   end
