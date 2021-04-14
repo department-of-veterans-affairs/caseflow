@@ -111,6 +111,8 @@ class BgsPowerOfAttorney < CaseflowRecord
     self.last_synced_at = Time.zone.now
   end
 
+  alias_attribute :poa_last_synced_at, :last_synced_at
+
   def save_with_updated_bgs_record!
     return save! unless found?
 
