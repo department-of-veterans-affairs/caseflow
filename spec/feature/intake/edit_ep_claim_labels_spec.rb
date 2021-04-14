@@ -341,5 +341,92 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
         expect(epu.end_product_establishment.reload.code).to eq(ep_code)
       end
     end
+
+    context "shows edit claim" do
+      let(:decision_review_remanded) { nil }
+
+      let!(:supplemental_claim) do
+        SupplementalClaim.create!(
+          veteran_file_number: veteran.file_number,
+          receipt_date: receipt_date,
+          benefit_type: benefit_type,
+          decision_review_remanded: decision_review_remanded,
+          veteran_is_not_claimant: true
+        )
+      end
+
+      # create intake
+      let!(:intake) do
+        Intake.create!(
+          user_id: current_user.id,
+          detail: supplemental_claim,
+          veteran_file_number: veteran.file_number,
+          started_at: Time.zone.now,
+          completed_at: Time.zone.now,
+          completion_status: "success",
+          type: "SupplementalClaimIntake"
+        )
+      end
+
+      let(:rating_ep_claim_id) do
+        EndProductEstablishment.find_by(
+          source: supplemental_claim,
+          code: "040SCR"
+        ).reference_id
+      end
+
+      let(:rating_request_issue) do
+        create(
+          :request_issue,
+          contested_rating_issue_reference_id: "def456",
+          contested_rating_issue_profile_date: rating.profile_date,
+          decision_review: supplemental_claim,
+          benefit_type: benefit_type,
+          contested_issue_description: "PTSD denied"
+        )
+      end
+
+      let(:nonrating_request_issue) do
+        create(
+          :request_issue,
+          :nonrating,
+          decision_review: supplemental_claim,
+          benefit_type: benefit_type,
+          contested_issue_description: "Apportionment"
+        )
+      end
+
+      before do
+        supplemental_claim.create_issues!(
+          [
+            rating_request_issue,
+            nonrating_request_issue
+          ]
+        )
+        supplemental_claim.establish!
+      end
+      let(:new_ep_code) { "040BDER" }
+
+      it "handles error in when Ep is not updated" do
+        allow_any_instance_of(ClaimReviewController).to receive(:perform_ep_update!).and_raise(StandardError)
+
+        visit "supplemental_claims/#{rating_ep_claim_id}/edit"
+        nr_label = Constants::EP_CLAIM_TYPES[nonrating_request_issue.end_product_establishment.code]["official_label"]
+        nr_row = page.find("tr", text: nr_label, match: :prefer_exact)
+        nr_row.find("button", text: "Edit claim label").click
+        safe_click ".cf-select"
+
+        fill_in "Select the correct EP claim label", with: new_ep_code
+        find("#select-claim-label").send_keys :enter
+        find("button", text: "Continue").click
+
+        expect(page).to have_content(COPY::CONFIRM_CLAIM_LABEL_MODAL_TITLE)
+        find("button", text: "Confirm").click
+
+        expect(page).to have_content("We were unable to edit the claim label.")
+        expect(page).to_not have_content(COPY::EDIT_CLAIM_LABEL_MODAL_NOTE)
+        expect(page).to_not have_current_path("/search?veteran_ids=#{supplemental_claim.veteran.id}")
+      end
+    end
   end
 end
