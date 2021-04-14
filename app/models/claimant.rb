@@ -52,7 +52,8 @@ class Claimant < CaseflowRecord
   end
 
   def power_of_attorney
-    @power_of_attorney ||= find_power_of_attorney
+    #@power_of_attorney ||= 
+    find_power_of_attorney
   end
 
   def representative_participant_id
@@ -70,12 +71,18 @@ class Claimant < CaseflowRecord
   end
 
   def find_power_of_attorney_by_pid
+Rails.logger.debug("*********************")
+Rails.logger.debug('fpoabpid')
+Rails.logger.debug("*********************")
     BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(participant_id)
   rescue ActiveRecord::RecordInvalid # not found at BGS by PID
     nil
   end
 
   def find_power_of_attorney_by_file_number
+Rails.logger.debug("*********************")
+Rails.logger.debug('fpoabfn')
+Rails.logger.debug("*********************")
     BgsPowerOfAttorney.find_or_create_by_file_number(decision_review.veteran_file_number)
   rescue ActiveRecord::RecordInvalid # not found at BGS
     nil
