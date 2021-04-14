@@ -5,11 +5,11 @@ import React from 'react';
 import { useHistory, useParams } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { SubstituteAppellantPoaForm } from './SubstituteAppellantPoaForm';
+import { SubstituteAppellantTasksForm } from './SubstituteAppellantTasksForm';
 
 import { stepForward, cancel, stepBack } from '../substituteAppellant.slice';
 
-export const SubstituteAppellantPoaView = () => {
+export const SubstituteAppellantTasksView = () => {
   const { appealId } = useParams();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -36,11 +36,11 @@ export const SubstituteAppellantPoaView = () => {
     dispatch(stepForward());
 
     // Move to next page
-    history.push(`/queue/appeals/${appealId}/substitute_appellant/tasks`);
+    history.push(`/queue/appeals/${appealId}/substitute_appellant/review`);
   };
 
   return (
-    <SubstituteAppellantPoaForm
+    <SubstituteAppellantTasksForm
       existingValues={existingValues}
       onBack={handleBack}
       onCancel={handleCancel}

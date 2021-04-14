@@ -5,11 +5,11 @@ import React from 'react';
 import { useHistory, useParams } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { SubstituteAppellantPoaForm } from './SubstituteAppellantPoaForm';
+import { SubstituteAppellantReview } from './SubstituteAppellantReview';
 
-import { stepForward, cancel, stepBack } from '../substituteAppellant.slice';
+import { cancel, stepBack } from '../substituteAppellant.slice';
 
-export const SubstituteAppellantPoaView = () => {
+export const SubstituteAppellantReviewContainer = () => {
   const { appealId } = useParams();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -29,18 +29,16 @@ export const SubstituteAppellantPoaView = () => {
     // Redirect to Case Details page
     history.push(`/queue/appeals/${appealId}`);
   };
-  const handleSubmit = async (formData) => {
-    // Here we'll dispatch updateData action to update Redux store with our form data
+  const handleSubmit = async () => {
+    // Here we'll dispatch completeSubstituteAppellant action to submit data from Redux to the API
+    dispatch(completeSubstituteAppellant(existingValues));
 
-    // Advance progressbar
-    dispatch(stepForward());
-
-    // Move to next page
-    history.push(`/queue/appeals/${appealId}/substitute_appellant/tasks`);
+    // Redirect to Case Details page... but maybe for new appeal...?
+    history.push(`/queue/appeals/${appealId}`);
   };
 
   return (
-    <SubstituteAppellantPoaForm
+    <SubstituteAppellantReview
       existingValues={existingValues}
       onBack={handleBack}
       onCancel={handleCancel}

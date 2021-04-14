@@ -10,7 +10,7 @@ import { css } from 'glamor';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import {
-  SUBSTITUTE_APPELLANT_SELECT_POA_TITLE,
+  SUBSTITUTE_APPELLANT_CREATE_TASKS_TITLE,
   SUBSTITUTE_APPELLANT_SELECT_APPELLANT_SUBHEAD,
 } from 'app/../COPY';
 import CheckoutButtons from 'app/queue/docketSwitch/grant/CheckoutButtons';
@@ -19,7 +19,7 @@ const schema = yup.object().shape({});
 
 const sectionStyle = css({ marginBottom: '24px' });
 
-export const SubstituteAppellantPoaForm = ({
+export const SubstituteAppellantTasksForm = ({
   existingValues,
   onBack,
   onCancel,
@@ -39,7 +39,7 @@ export const SubstituteAppellantPoaForm = ({
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <AppSegment filledBackground>
-        <h1>{SUBSTITUTE_APPELLANT_SELECT_POA_TITLE}</h1>
+        <h1>{SUBSTITUTE_APPELLANT_CREATE_TASKS_TITLE}</h1>
         <div {...sectionStyle}>
           {SUBSTITUTE_APPELLANT_SELECT_APPELLANT_SUBHEAD}
         </div>
@@ -55,7 +55,7 @@ export const SubstituteAppellantPoaForm = ({
     </form>
   );
 };
-SubstituteAppellantPoaForm.propTypes = {
+SubstituteAppellantTasksForm.propTypes = {
   existingValues: PropTypes.shape({}),
   onBack: PropTypes.func,
   onCancel: PropTypes.func,

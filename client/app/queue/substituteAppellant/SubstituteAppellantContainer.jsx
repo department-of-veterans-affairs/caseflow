@@ -7,6 +7,8 @@ import { useSelector } from 'react-redux';
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router';
 import { SubstituteAppellantBasicsView } from './basics/SubstituteAppellantBasicsView';
 import { SubstituteAppellantPoaView } from './poa/SubstituteAppellantPoaView';
+import { SubstituteAppellantTasksView } from './tasks/SubstituteAppellantTasksView';
+import { SubstituteAppellantReviewContainer } from './review/SubstituteAppellantReviewContainer';
 
 const sections = [
   'Select substitute appellant',
@@ -40,6 +42,14 @@ export const SubstituteAppellantContainer = () => {
 
         <Route path={`${path}/poa`} title="Substitute Appellant | Caseflow">
           <SubstituteAppellantPoaView />
+        </Route>
+
+        <Route path={`${path}/tasks`} title="Substitute Appellant | Caseflow">
+          <SubstituteAppellantTasksView />
+        </Route>
+
+        <Route path={`${path}/review`} title="Substitute Appellant | Caseflow">
+          <SubstituteAppellantReviewContainer />
         </Route>
       </Switch>
     </AppSegment>
