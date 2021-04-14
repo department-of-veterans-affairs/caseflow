@@ -163,7 +163,7 @@ class Appeal < DecisionReview
   end
 
   def active_request_issues_or_decision_issues
-    decision_issues.empty? ? request_issues.active.all : fetch_all_decision_issues
+    decision_issues.empty? ? active_request_issues : fetch_all_decision_issues
   end
 
   def fetch_all_decision_issues
@@ -179,7 +179,7 @@ class Appeal < DecisionReview
   end
 
   def every_request_issue_has_decision?
-    eligible_request_issues.all? { |request_issue| request_issue.decision_issues.present? }
+    active_request_issues.all? { |request_issue| request_issue.decision_issues.present? }
   end
 
   def latest_attorney_case_review
@@ -195,7 +195,7 @@ class Appeal < DecisionReview
     task ? task.assigned_to.try(:full_name) : ""
   end
 
-  def eligible_request_issues
+  def active_request_issues
     # It's possible that two users create issues around the same time and the sequencer gets thrown off
     # (https://stackoverflow.com/questions/5818463/rails-created-at-timestamp-order-disagrees-with-id-order)
     request_issues.active.all.sort_by(&:id)
@@ -383,9 +383,8 @@ class Appeal < DecisionReview
   end
 
   def untimely_issues_report(new_date)
-    active_issues = request_issues.active
-    affected_issues = active_issues.reject { |request_issue| request_issue.timely_issue?(new_date.to_date) }
-    unaffected_issues = active_issues - affected_issues
+    affected_issues = active_request_issues.reject { |request_issue| request_issue.timely_issue?(new_date.to_date) }
+    unaffected_issues = active_request_issues - affected_issues
 
     return if affected_issues.blank?
 
