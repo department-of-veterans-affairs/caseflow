@@ -427,15 +427,14 @@ feature "Search", :all_dbs do
     end
 
     context "when multiple appeals found" do
-      let!(:veteran) { create(:veteran, first_name: "Testy", last_name: "McTesterson") }
-      let!(:today) { Time.zone.today }
+      let(:veteran) { create(:veteran, first_name: "Testy", last_name: "McTesterson") }
+      let(:today) { Time.zone.today }
 
-      let!(:decision_document) do
-        [
-          create(:decision_document, decision_date: today - 1.day, appeal: create(:appeal, veteran: veteran)),
-          create(:decision_document, decision_date: today - 2.days, appeal: create(:appeal, veteran: veteran)),
-          create(:appeal, veteran: veteran)
-        ]
+      let!(:appeal_wo_decision_date) { create(:appeal, veteran: veteran) }
+
+      before do
+        create(:decision_document, decision_date: today - 1.day, appeal: create(:appeal, veteran: veteran))
+        create(:decision_document, decision_date: today - 2.days, appeal: create(:appeal, veteran: veteran))
       end
 
       def perform_search(search_term)
@@ -445,9 +444,12 @@ feature "Search", :all_dbs do
       end
 
       context "when appeal exists" do
-        it "displays results in correct order" do
+        it "displays appeal without decision_date before those with decision dates" do
           perform_search(veteran.ssn)
+          # binding.pry
           expect(page).to have_content("3 cases found for")
+          first_row = page.all("tbody tr").first
+          expect(first_row).to have_content(appeal_wo_decision_date.stream_docket_number)
         end
       end
     end
