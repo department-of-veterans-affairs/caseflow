@@ -382,18 +382,19 @@ class Appeal < DecisionReview
     update!(stream_docket_number: default_docket_number_from_receipt_date)
   end
 
-  def validate_all_issues_timely!(new_date)
-    affected_issues = request_issues.reject { |request_issue| request_issue.timely_issue?(new_date.to_date) }
-    unaffected_issues = request_issues - affected_issues
+  def untimely_issues_report(new_date)
+    active_issues = request_issues.active
+    affected_issues = active_issues.reject { |request_issue| request_issue.timely_issue?(new_date.to_date) }
+    unaffected_issues = active_issues - affected_issues
 
     return if affected_issues.blank?
 
-    timeliness_issues_report = {
+    issues_report = {
       affected_issues: affected_issues,
       unaffected_issues: unaffected_issues
     }
 
-    timeliness_issues_report
+    issues_report
   end
 
   # Currently AMA only supports one claimant per decision review
