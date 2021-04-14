@@ -12,24 +12,23 @@ export const UnscheduledNotes = ({
   updatedAt,
   onChange,
   uniqueId,
-  unscheduledNotes,
-  ...props
+  unscheduledNotes
 }) => {
   return (
     <React.Fragment>
       <TextareaField
         maxlength={1000}
-        label='Notes'
+        label="Notes"
         name={`${uniqueId}-unscheduled-notes`}
         strongLabel
         onChange={(notes) => onChange(notes)}
-        labelStyling={css({float: 'left'})}
-        styling={css({marginBottom: 1})}
+        labelStyling={css({ float: 'left' })}
+        styling={css({ marginBottom: 1 })}
         value={unscheduledNotes ?? ''}
         characterLimitTopRight
       />
       {updatedByCssId && updatedAt && unscheduledNotes &&
-        <span style={{color: COLORS.GREY}}>
+        <span style={{ color: COLORS.GREY }}>
           {`Last updated by ${updatedByCssId} on ${moment(updatedAt).format('MM/DD/YYYY')}`}
         </span>
       }
@@ -42,5 +41,5 @@ UnscheduledNotes.propTypes = {
   updatedAt: PropTypes.string,
   unscheduledNotes: PropTypes.string,
   onChange: PropTypes.func,
-  uniqueId: PropTypes.integer
+  uniqueId: PropTypes.number
 };
