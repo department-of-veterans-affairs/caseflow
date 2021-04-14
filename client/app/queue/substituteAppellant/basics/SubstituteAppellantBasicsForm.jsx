@@ -7,8 +7,8 @@ import { css } from 'glamor';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import {
-  GRANTED_SUBSTITUTION_SELECT_APPELLANT_TITLE,
-  GRANTED_SUBSTITUTION_SELECT_APPELLANT_SUBHEAD,
+  SUBSTITUTE_APPELLANT_SELECT_APPELLANT_TITLE,
+  SUBSTITUTE_APPELLANT_SELECT_APPELLANT_SUBHEAD,
 } from 'app/../COPY';
 import Button from 'app/components/Button';
 import DateSelector from 'app/components/DateSelector';
@@ -47,9 +47,9 @@ export const SubstituteAppellantBasicsForm = ({
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <AppSegment filledBackground>
-        <h1>{GRANTED_SUBSTITUTION_SELECT_APPELLANT_TITLE}</h1>
+        <h1>{SUBSTITUTE_APPELLANT_SELECT_APPELLANT_TITLE}</h1>
         <div {...sectionStyle}>
-          {GRANTED_SUBSTITUTION_SELECT_APPELLANT_SUBHEAD}
+          {SUBSTITUTE_APPELLANT_SELECT_APPELLANT_SUBHEAD}
         </div>
 
         <DateSelector
