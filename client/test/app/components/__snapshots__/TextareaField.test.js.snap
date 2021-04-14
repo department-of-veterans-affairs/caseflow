@@ -428,6 +428,76 @@ exports[`TextareaField Matches snapshot with default props 1`] = `
 </TextareaField>
 `;
 
+exports[`TextareaField Respects characterLimitTopRight prop on the textarea field 1`] = `
+<TextareaField
+  characterLimitTopRight={true}
+  disabled={false}
+  maxlength={10}
+  name="Test Field"
+  onChange={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "hello",
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
+  optional={false}
+  required={false}
+  value="Notes"
+>
+  <div
+    className="cf-form-textarea"
+  >
+    <label
+      className="question-label"
+      htmlFor="Test Field"
+    >
+      <FormLabel
+        name="Test Field"
+        optional={false}
+        required={false}
+      >
+        <span>
+          Test Field
+        </span>
+      </FormLabel>
+    </label>
+    <p
+      style={
+        Object {
+          "float": "right",
+          "marginBottom": 0,
+        }
+      }
+    >
+      <i>
+        5
+         
+        characters
+         
+        left
+      </i>
+    </p>
+    <textarea
+      disabled={false}
+      id="Test Field"
+      maxLength={10}
+      name="Test Field"
+      onChange={[Function]}
+      value="Notes"
+    />
+  </div>
+</TextareaField>
+`;
+
 exports[`TextareaField Respects disabled prop on the textarea field 1`] = `
 <TextareaField
   characterLimitTopRight={false}

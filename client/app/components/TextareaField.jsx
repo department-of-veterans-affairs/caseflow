@@ -104,7 +104,7 @@ TextareaField.defaultProps = {
   disabled: false,
   optional: false,
   required: false,
-  characterLimitTopRight: false,
+  characterLimitTopRight: false
 };
 
 TextareaField.propTypes = {
