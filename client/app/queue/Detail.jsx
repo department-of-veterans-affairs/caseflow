@@ -9,7 +9,7 @@ export const detailListStyling = css({
   marginBottom: '3rem'
 });
 
-export const unrecognizedPOA = css({
+export const noPOA = css({
   fontStyle: 'italic',
   color: 'grey',
 });
