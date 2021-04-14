@@ -1,24 +1,21 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-
-import QueueTableBuilder from './QueueTableBuilder';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import Alert from '../components/Alert';
 
-import { judgeLegacyDecisionReviewTasksSelector } from './selectors';
+import Alert from '../components/Alert';
+import QueueTableBuilder from './QueueTableBuilder';
 
 import {
   resetErrorMessages,
   resetSuccessMessages,
-  resetSaveState,
-  showErrorMessage
+  resetSaveState
 } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
+import { judgeLegacyDecisionReviewTasksSelector } from './selectors';
 
 import COPY from '../../COPY';
 
@@ -56,6 +53,24 @@ class JudgeDecisionReviewTaskListView extends React.PureComponent {
   };
 }
 
+JudgeDecisionReviewTaskListView.propTypes = {
+  tasks: PropTypes.array.isRequired,
+  resetSaveState: PropTypes.func,
+  resetSuccessMessages: PropTypes.func,
+  resetErrorMessages: PropTypes.func,
+  clearCaseSelectSearch: PropTypes.func,
+  messages: PropTypes.shape({
+    error: PropTypes.shape({
+      title: PropTypes.string,
+      detail: PropTypes.string
+    }),
+    success: PropTypes.shape({
+      title: PropTypes.string,
+      detail: PropTypes.string
+    })
+  })
+};
+
 const mapStateToProps = (state) => {
   const {
     ui: {
@@ -79,21 +94,3 @@ const mapDispatchToProps = (dispatch) => (
 );
 
 export default connect(mapStateToProps, mapDispatchToProps)(JudgeDecisionReviewTaskListView);
-
-JudgeDecisionReviewTaskListView.propTypes = {
-  tasks: PropTypes.array.isRequired,
-  resetSaveState: PropTypes.func,
-  resetSuccessMessages: PropTypes.func,
-  resetErrorMessages: PropTypes.func,
-  clearCaseSelectSearch: PropTypes.func,
-  messages: PropTypes.shape({
-    error: PropTypes.shape({
-      title: PropTypes.string,
-      detail: PropTypes.string
-    }),
-    success: PropTypes.shape({
-      title: PropTypes.string,
-      detail: PropTypes.string
-    })
-  })
-};
