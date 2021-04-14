@@ -3,7 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
 
-import { SubstituteAppellantBasicsForm } from 'app/queue/substituteAppellant/SubstituteAppellantBasicsForm';
+import { SubstituteAppellantBasicsForm } from 'app/queue/substituteAppellant/basics/SubstituteAppellantBasicsForm';
 
 const relationships = [
   { value: '123456', displayText: 'John Doe, Spouse' },
@@ -55,15 +55,11 @@ describe('SubstituteAppellantBasicsForm', () => {
         setup();
 
         const submit = screen.getByRole('button', { name: /continue/i });
-        const field = screen.getByLabelText(/when was substitution granted/i);
 
         // Submit to trigger validation
         await userEvent.click(submit);
 
         expect(onSubmit).not.toHaveBeenCalled();
-
-        // By default this field is focused, so no error message until it loses focus
-        fireEvent.blur(field);
 
         await waitFor(() => {
           expect(
