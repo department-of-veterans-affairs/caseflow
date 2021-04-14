@@ -8,7 +8,8 @@ import {
 
 import EP_CLAIM_TYPES from 'constants/EP_CLAIM_TYPES';
 
-export const ConfirmClaimLabelModal = ({ previousEpCode, newEpCode, onCancel, onSubmit }) => {
+export const ConfirmClaimLabelModal = ({ previousEpCode, newEpCode, onCancel, onSubmit, loading }) => {
+
   const buttons = [
     {
       classNames: ['cf-modal-link', 'cf-btn-link'],
@@ -18,6 +19,7 @@ export const ConfirmClaimLabelModal = ({ previousEpCode, newEpCode, onCancel, on
     {
       classNames: ['usa-button', 'usa-button-primary'],
       name: 'Confirm',
+      loading,
       onClick: () => onSubmit?.({
         previousEpCode,
         newEpCode
@@ -52,4 +54,5 @@ ConfirmClaimLabelModal.propTypes = {
   newEpCode: PropTypes.string.isRequired,
   onCancel: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired
 };
