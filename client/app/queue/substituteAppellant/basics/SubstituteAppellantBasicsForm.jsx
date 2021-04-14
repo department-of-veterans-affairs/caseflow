@@ -55,9 +55,7 @@ export const SubstituteAppellantBasicsForm = ({
         <DateSelector
           inputRef={register}
           type="date"
-          errorMessage={
-            touched.substitutionDate && errors.substitutionDate?.message
-          }
+          errorMessage={errors.substitutionDate?.message}
           name="substitutionDate"
           label="When was substitution granted for this appellant?"
           strongLabel
