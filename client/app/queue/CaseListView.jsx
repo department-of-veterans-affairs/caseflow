@@ -65,12 +65,10 @@ class CaseListView extends React.PureComponent {
   };
 
   sortAppeals = () => {
-    this.props.appeals.sort((appealA, appealB) => {
-      if (appealA.decisionDate === null) {
-        return -1;
+    this.props.appeals.sort((appeal) => {
+      if (appeal.decisionDate === null) {
+        return 1;
       }
-
-      return (appealA.id < appealB.id ? 1 : -1);
     });
   };
 

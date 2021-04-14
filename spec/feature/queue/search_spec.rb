@@ -443,10 +443,9 @@ feature "Search", :all_dbs do
         click_on "Search"
       end
 
-      context "when appeal exists" do
+      context "when appeals exist" do
         it "displays appeal without decision_date before those with decision dates" do
           perform_search(veteran.ssn)
-          # binding.pry
           expect(page).to have_content("3 cases found for")
           first_row = page.all("tbody tr").first
           expect(first_row).to have_content(appeal_wo_decision_date.stream_docket_number)
