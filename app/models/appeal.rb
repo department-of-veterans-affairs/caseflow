@@ -122,6 +122,9 @@ class Appeal < DecisionReview
       )).tap do |stream|
         if new_claimants
           new_claimants.each { |claimant| claimant.update(decision_review: stream) }
+
+          # Why isn't this a calculated value instead of stored in the DB?
+          stream.update(veteran_is_not_claimant: !new_claimants.map(&:person).include?(veteran.person))
         else
           stream.copy_claimants!(claimants)
         end

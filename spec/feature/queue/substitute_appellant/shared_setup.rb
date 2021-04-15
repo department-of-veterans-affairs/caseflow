@@ -99,8 +99,18 @@ RSpec.shared_examples("fill substitution form") do
       page.find("button", text: "Confirm").click
     end
 
-    # Flesh out other steps
-    # After final step, verify routing to Case Details for new appeal and success alert
+    step "view new appeal in Case Details page" do
+      expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_SUCCESS_TITLE
+      appellant_substitution = AppellantSubstitution.find_by(source_appeal_id: appeal.id)
+      new_appeal = appellant_substitution.target_appeal
+      expect(page).to have_current_path("/queue/appeals/#{new_appeal.uuid}")
+      
+      # New appeal should have the same docket
+      expect(page).to have_content appeal.stream_docket_number
+
+      expect(page).to have_content new_appeal.claimant.person.name
+      expect(page).to have_content "Relation to Veteran: Child"
+    end
   end
 end
 

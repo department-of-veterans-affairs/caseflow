@@ -57,8 +57,12 @@ class AppellantSubstitution < CaseflowRecord
 
   def copy_request_issues(source_appeal, target_appeal)
     source_appeal.request_issues.order(:id).map do |request_issue|
+      # This block of code may be a source of bugs as new columns are added to request_issues.
+      # It may be better to copy specific attributes, than duplicate everything.
       request_issue.dup.tap do |request_issue_copy|
         request_issue_copy.decision_review = target_appeal
+        # Do not copy decisions for new appeal
+        request_issue_copy.decision_date = nil
         request_issue_copy.save!
       end
     end

@@ -29,6 +29,8 @@ describe AppellantSubstitution do
       expect(subject.substitute_claimant).to eq subject.target_appeal.claimant
       expect(subject.substitute_person).to eq subject.target_appeal.claimant.person
       expect(subject.substitute_person).not_to eq subject.source_appeal.claimant.person
+
+      expect(subject.target_appeal.veteran_is_not_claimant).to eq true
     end
 
     context "when source appeal is AOD" do
@@ -69,14 +71,20 @@ describe AppellantSubstitution do
       end
 
       context "source appeal has request issues" do
-        let(:source_appeal) { create(:appeal, :active, :with_request_issues) }
+        let(:source_appeal) { create(:appeal, :active, :with_request_issues).reload }
         it "copies request issues but not decision issues to new appeal" do
           expect(source_appeal.request_issues.count).to be > 0
 
           appellant_substitution = subject
           target_appeal = appellant_substitution.target_appeal
           expect(target_appeal.request_issues.count).to eq source_appeal.request_issues.count
+          expect(target_appeal.request_issues.pluck(:benefit_type)).to eq source_appeal.request_issues.pluck(:benefit_type)
+          expect(target_appeal.request_issues.pluck(:contested_issue_description))
+            .to eq source_appeal.request_issues.pluck(:contested_issue_description)
+          expect(target_appeal.request_issues.pluck(:notes)).to eq source_appeal.request_issues.pluck(:notes)
+
           expect(target_appeal.decision_issues.count).to eq 0
+          expect(target_appeal.request_issues.pluck(:decision_date).uniq).to eq [nil]
         end
       end
     end
