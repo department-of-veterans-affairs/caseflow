@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { MagnifyingGlass } from './RenderFunctions';
@@ -18,6 +19,7 @@ const textStyling = css({
   color: COLORS.PRIMARY,
   display: 'table-cell',
   fontSize: '1.7rem',
+  fontWeight: 900,
   lineHeight: '4em',
   marginBottom: 0
 });
@@ -25,8 +27,12 @@ const textStyling = css({
 const CaseSearchLink = (props) => <div {...containerStyling}>
   <Link href="/search" target={props.newWindow ? '_blank' : '_self'}>
     <span {...iconStyling}><MagnifyingGlass color={COLORS.PRIMARY} /></span>
-    <h3 {...textStyling}>Search cases</h3>
+    <p {...textStyling}>Search cases</p>
   </Link>
 </div>;
+
+CaseSearchLink.propTypes = {
+  newWindow: PropTypes.bool
+};
 
 export default CaseSearchLink;
