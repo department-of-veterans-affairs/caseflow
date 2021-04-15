@@ -797,6 +797,12 @@ describe RequestIssuesUpdate, :all_dbs do
       expect(review.end_product_establishments.map(&:user).uniq).to eq([riu.user])
     end
 
+    it "should re-assign EPE station to RequestIssuesUpdate station" do
+      expect(review.end_product_establishments.map(&:station)).to_not include(riu.user.station_id)
+      subject
+      expect(review.end_product_establishments.map(&:station).uniq).to eq([riu.user.station_id])
+    end
+
     context "when the request issue doesn't have a contention" do
       let(:edited_issue_contention) { nil }
       let(:edited_issue) { create(:request_issue, decision_review: review, edited_description: edited_description) }
