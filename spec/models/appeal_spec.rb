@@ -1225,34 +1225,48 @@ describe Appeal, :all_dbs do
   end
 
   describe "validate issue timeliness" do
-    let(:timely_request_issue) { create(:request_issue, id: 1, decision_date: 381.days.ago) }
+    subject { appeal.untimely_issues_report(receipt_date) }
+
+    let(:appeal) { create(:appeal, request_issues: request_issues) }
+    let(:receipt_date) { 7.days.ago }
+    let(:request_issues) { [timely_request_issue] }
+    let(:timely_request_issue) { create(:request_issue, decision_date: receipt_date - 365.days) }
+    let(:untimely_request_issue) { create(:request_issue, decision_date: 2.years.ago) }
+    let(:inactive_untimely_request_issue) { create(:request_issue, :removed, decision_date: 2.years.ago) }
     let(:untimely_request_issue_with_exemption) do
       create(:request_issue,
-             id: 2,
              decision_date: 2.years.ago,
              untimely_exemption: true)
     end
-    let(:request_issues) { [timely_request_issue, untimely_request_issue_with_exemption] }
-    let(:appeal) { create(:appeal, request_issues: request_issues) }
-    subject { appeal.validate_all_issues_timely!(receipt_date) }
 
-    context "should fail validation" do
-      let(:receipt_date) { 7.days.ago }
+    context "appeal only has issues that are timely with the new date" do
+      let(:request_issues) { [timely_request_issue, untimely_request_issue_with_exemption] }
 
-      it "if timely issue without exemption becomes untimely" do
-        expect(subject[:affected_issues].first.id).to eq(1)
-      end
+      it { is_expected.to be nil }
 
-      it "but exempt issues should still be timely" do
-        expect(subject[:unaffected_issues].first.id).to eq(2)
+      context "The receipt date is before the decision date" do
+        let(:receipt_date) { 3.years.ago }
+        let(:timely_request_issue) { create(:request_issue, decision_date: 365.days.ago) }
+
+        it "considers the issues untimely" do
+          expect(subject[:affected_issues].count).to eq(request_issues.count)
+          expect(subject[:unaffected_issues].count).to eq(0)
+        end
       end
     end
 
-    context "should fail validation" do
-      let(:receipt_date) { 3.years.ago }
+    context "appeal has an issue that would be untimely with the new date" do
+      let(:request_issues) { [timely_request_issue, untimely_request_issue] }
 
-      it "if receipt date is before decision date regardless of exemption" do
-        expect(subject[:affected_issues].count).to eq(2)
+      it "reflects the untimely issue" do
+        expect(subject[:affected_issues].first.id).to eq(untimely_request_issue.id)
+        expect(subject[:unaffected_issues].first.id).to eq(timely_request_issue.id)
+      end
+
+      context "the untimely issue is closed" do
+        let(:request_issues) { [timely_request_issue, inactive_untimely_request_issue] }
+
+        it { is_expected.to be nil }
       end
     end
   end
