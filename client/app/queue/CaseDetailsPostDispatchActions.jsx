@@ -32,21 +32,21 @@ const buttonContainer = css({
  *  - @param {Object} history  Provided with react router to be able to route to another page
  */
 export const CaseDetailsPostDispatchActions = (props) => {
-  const { appealId, addCavcRemand, addSubstitute } = props;
+  const { appealId, includeCavcRemand, includeSubstitute } = props;
   const { push } = useHistory();
 
   return (
     <div {...containerStyling}>
       <h2 {...titleStyling}>{COPY.POST_DISPATCH_TITLE}</h2>
       <div className={buttonContainer}>
-        {addCavcRemand && (
+        {includeCavcRemand && (
           <Button
             name={COPY.ADD_CAVC_BUTTON}
             onClick={() => push(`/queue/appeals/${appealId}/add_cavc_remand`)}
           />
         )}
 
-        {addSubstitute && (
+        {includeSubstitute && (
           <Button
             onClick={() =>
               push(`/queue/appeals/${appealId}/substitute_appellant`)
@@ -62,8 +62,8 @@ export const CaseDetailsPostDispatchActions = (props) => {
 
 CaseDetailsPostDispatchActions.propTypes = {
   appealId: PropTypes.string.isRequired,
-  addCavcRemand: PropTypes.bool,
-  addSubstitute: PropTypes.bool,
+  includeCavcRemand: PropTypes.bool,
+  includeSubstitute: PropTypes.bool,
 };
 
 export default CaseDetailsPostDispatchActions;

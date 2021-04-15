@@ -156,8 +156,8 @@ export const CaseDetailsView = (props) => {
       {!modalIsOpen && showPostDispatch && (
         <CaseDetailsPostDispatchActions
           appealId={appealId}
-          addCavcRemand={supportCavcRemand}
-          addSubstitute={supportSubstituteAppellant}
+          includeCavcRemand={supportCavcRemand}
+          includeSubstitute={supportSubstituteAppellant}
         />
       )}
       {(!modalIsOpen || props.userCanScheduleVirtualHearings) && <UserAlerts />}
