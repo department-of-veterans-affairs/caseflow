@@ -29,7 +29,11 @@ class AppealRequestIssuesPolicy
   end
 
   def case_is_not_in_active_review?
-    Task.where(appeal: appeal, type: "AttorneyTask").empty?
+    Task.where(
+      appeal: appeal,
+      type: "AttorneyTask",
+      status: [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.in_progress]
+    ).empty?
   end
 
   def hearing_is_assigned_to_judge_user?
