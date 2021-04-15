@@ -33,11 +33,7 @@ export const SubstituteAppellantBasicsForm = ({
   relationships = [],
   loadingRelationships = false,
 }) => {
-  const {
-    errors,
-    handleSubmit,
-    register,
-  } = useForm({
+  const { errors, handleSubmit, register } = useForm({
     // Use this for repopulating form from redux when user navigates back
     defaultValues: { ...existingValues },
     resolver: yupResolver(schema),
@@ -60,7 +56,10 @@ export const SubstituteAppellantBasicsForm = ({
           strongLabel
         />
 
-        {!loadingRelationships && relationships && (
+        {loadingRelationships && <div>Fetching relationships...</div>}
+        {!loadingRelationships && relationships?.length ? (
+          <div>No existing relationships found</div>
+        ) : (
           <RadioField
             errorMessage={errors?.participantId?.message}
             inputRef={register}
@@ -70,10 +69,6 @@ export const SubstituteAppellantBasicsForm = ({
             strongLabel
             vertical
           />
-        )}
-        {loadingRelationships && <div>Fetching relationships...</div>}
-        {!loadingRelationships && !relationships && (
-          <div>No existing relationships found</div>
         )}
       </AppSegment>
       <div className="controls cf-app-segment">
