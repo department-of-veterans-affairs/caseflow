@@ -34,7 +34,10 @@ class AppellantSubstitution < CaseflowRecord
 
   def establish_appeal_stream
     unassociated_claimant = Claimant.create!(participant_id: substitute_participant_id, payee_code: nil, type: claimant_type)
-    find_or_create_power_of_attorney_for(unassociated_claimant)
+
+    # To-do: Implement this and the DB schema once we understand the requirements for selecting a POA for unknown appellants.
+    # find_or_create_power_of_attorney_for(unassociated_claimant)
+
     self.target_appeal ||= source_appeal.create_stream(:substitution, new_claimants: [unassociated_claimant])
       .tap do |target_appeal|
         copy_request_issues(source_appeal, target_appeal)
@@ -53,7 +56,7 @@ class AppellantSubstitution < CaseflowRecord
   end
 
   def find_or_create_power_of_attorney_for(unassociated_claimant)
-    return power_of_attorney if unassociated_claimant.power_of_attorney.poa_participant_id == poa_participant_id
+    return power_of_attorney if unassociated_claimant.power_of_attorney&.poa_participant_id == poa_participant_id
 
     # To-do: fail "Not yet implemented: create BgsPowerOfAttorney for unknown substitute"
   end
