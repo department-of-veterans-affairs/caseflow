@@ -11,23 +11,24 @@ import { SubstituteAppellantTasksView } from './tasks/SubstituteAppellantTasksVi
 import { SubstituteAppellantReviewContainer } from './review/SubstituteAppellantReviewContainer';
 
 const sections = [
-  '1. Select substitute appellant',
-  '2. Select POA',
-  '3. Create task',
-  '4. Review',
+  'Select substitute appellant',
+  // 'Select POA',
+  'Create task',
+  'Review',
 ];
 
 export const SubstituteAppellantContainer = () => {
   const { path, url } = useRouteMatch();
 
-  // These can be used to access the appeal or task via other selectors
-  // const { appealId, taskId } = useParams();
-
   const step = useSelector((state) => state.substituteAppellant.step);
 
   // Keep our progress bar updated based on current step
   const pbSections = useMemo(
-    () => sections.map((title, idx) => ({ title, current: idx === step })),
+    () =>
+      sections.map((title, idx) => ({
+        title: `${idx + 1}. ${title}`,
+        current: idx === step,
+      })),
     [step]
   );
 

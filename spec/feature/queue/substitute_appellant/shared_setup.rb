@@ -55,7 +55,7 @@ RSpec.shared_examples("fill substitution form") do
       page.find("button", text: "+ Add Substitute").click
 
       expect(page).to have_content "Select substitute appellant"
-      expect(page).to have_css(".cf-progress-bar-activated", text: "1. Select substitute appellant")
+      expect(page).to have_css(".cf-progress-bar-activated", text: "Select substitute appellant")
 
       # Fill form
       fill_in "When was substitution granted for this appellant?", with: substitution_date
@@ -66,23 +66,24 @@ RSpec.shared_examples("fill substitution form") do
       page.find("button", text: "Continue").click
     end
 
-    step "select POA form" do
-      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}/substitute_appellant/poa")
+    # POA step will be relevant for future work
+    # step "select POA form" do
+    #   expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}/substitute_appellant/poa")
 
-      expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_SELECT_POA_TITLE
-      expect(page).to have_css(".cf-progress-bar-activated", text: "1. Select substitute appellant")
-      expect(page).to have_css(".cf-progress-bar-activated", text: "2. Select POA")
+    #   expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_SELECT_POA_TITLE
+    #   expect(page).to have_css(".cf-progress-bar-activated", text: "Select substitute appellant")
+    #   expect(page).to have_css(".cf-progress-bar-activated", text: "Select POA")
 
-      page.find("button", text: "Continue").click
-    end
+    #   page.find("button", text: "Continue").click
+    # end
 
     step "create tasks form" do
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}/substitute_appellant/tasks")
 
-      expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_SELECT_POA_TITLE
-      expect(page).to have_css(".cf-progress-bar-activated", text: "1. Select substitute appellant")
-      expect(page).to have_css(".cf-progress-bar-activated", text: "2. Select POA")
-      expect(page).to have_css(".cf-progress-bar-activated", text: "3. Create task")
+      expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_CREATE_TASKS_TITLE
+      expect(page).to have_css(".cf-progress-bar-activated", text: "Select substitute appellant")
+      # expect(page).to have_css(".cf-progress-bar-activated", text: "Select POA")
+      expect(page).to have_css(".cf-progress-bar-activated", text: "Create task")
 
       page.find("button", text: "Continue").click
     end
@@ -90,11 +91,11 @@ RSpec.shared_examples("fill substitution form") do
     step "review/confirm page" do
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}/substitute_appellant/review")
 
-      expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_SELECT_POA_TITLE
-      expect(page).to have_css(".cf-progress-bar-activated", text: "1. Select substitute appellant")
-      expect(page).to have_css(".cf-progress-bar-activated", text: "2. Select POA")
-      expect(page).to have_css(".cf-progress-bar-activated", text: "3. Create task")
-      expect(page).to have_css(".cf-progress-bar-activated", text: "4. Review")
+      expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_REVIEW_TITLE
+      expect(page).to have_css(".cf-progress-bar-activated", text: "Select substitute appellant")
+      # expect(page).to have_css(".cf-progress-bar-activated", text: "Select POA")
+      expect(page).to have_css(".cf-progress-bar-activated", text: "Create task")
+      expect(page).to have_css(".cf-progress-bar-activated", text: "Review")
 
       page.find("button", text: "Confirm").click
     end

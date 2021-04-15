@@ -49,7 +49,7 @@ export const SubstituteAppellantBasicsView = () => {
     // Advance progressbar
     dispatch(stepForward());
 
-    history.push(`/queue/appeals/${appealId}/substitute_appellant/poa`);
+    history.push(`/queue/appeals/${appealId}/substitute_appellant/tasks`);
   };
 
   // Load veteran relationships for this appeal
