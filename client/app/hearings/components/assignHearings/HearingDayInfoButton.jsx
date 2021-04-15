@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import moment from 'moment';
 
+import Tooltip from '../../../components/Tooltip';
 import Button from '../../../components/Button';
 import {
   buttonSelectedStyle,
@@ -10,7 +11,8 @@ import {
   leftColumnStyle,
   rightColumnStyle,
   typeAndJudgeStyle,
-  slotDisplayStyle
+  slotDisplayStyle,
+  scheduledDisplayStyle
 } from './styles';
 
 import {
@@ -22,7 +24,7 @@ import {
   hearingRoomOrEmptyString
 } from '../../utils';
 
-export const HearingDayInfoButton = ({ hearingDay, selected, onSelectedHearingDayChange }) => {
+export const HearingDayInfoButton = ({ id, hearingDay, selected, onSelectedHearingDayChange }) => {
   // Format the pieces of information from hearingDay
   const formattedHearingType = formatHearingType(hearingDay.readableRequestType);
   const judgeOrRoom = hearingDayHasJudge(hearingDay) ?
@@ -39,21 +41,24 @@ export const HearingDayInfoButton = ({ hearingDay, selected, onSelectedHearingDa
       styling={selected ? buttonSelectedStyle : buttonUnselectedStyle}
       onClick={() => onSelectedHearingDayChange(hearingDay)}
       classNames={classNames}
-      linkStyling>
-      <div >
+      linkStyling
+    >
+      <div>
         <div {...leftColumnStyle} >
           <div {...dateStyle}>
             {formattedDate}
           </div>
           <div {...typeAndJudgeStyle}>
-            {`${formattedHearingType} ${separator} ${judgeOrRoom}`}
+            <Tooltip id={`hearing-day-${id}`} text={judgeOrRoom} position="bottom" tabIndex={-1}>
+              {`${formattedHearingType} ${separator} ${judgeOrRoom}`}
+            </Tooltip>
           </div>
         </div>
         <div {...rightColumnStyle} >
           <div {...slotDisplayStyle}>
             {formattedSlotRatio}
           </div>
-          <div>scheduled</div>
+          <div {...scheduledDisplayStyle}>scheduled</div>
         </div>
       </div>
     </Button>
@@ -61,6 +66,7 @@ export const HearingDayInfoButton = ({ hearingDay, selected, onSelectedHearingDa
 };
 
 HearingDayInfoButton.propTypes = {
+  id: PropTypes.number,
   hearingDay: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object

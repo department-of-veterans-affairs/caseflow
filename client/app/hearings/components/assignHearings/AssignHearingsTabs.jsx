@@ -41,7 +41,7 @@ export default class AssignHearingsTabs extends React.PureComponent {
     const availableSlots = _.get(selectedHearingDay, 'totalSlots', 0) - Object.keys(hearingsForSelected).length;
 
     return (
-      <div className="usa-width-three-fourths">
+      <div className="usa-width-three-fourths assign-hearing-tabs">
         {!_.isNil(selectedHearingDay) &&
           <h1>
             {`${moment(selectedHearingDay.scheduledFor).format('ddd M/DD/YYYY')}  

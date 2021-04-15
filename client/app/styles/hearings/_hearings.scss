@@ -1,3 +1,5 @@
+$cf-hearing-day-label-color: #323a45;
+
 .worksheet-header {
   .cf-push-right {
     padding-top: 25px;
@@ -343,6 +345,32 @@
 // Schedule Veteran Styles
 .schedule-veteran-page {
   min-height: 680px;
+}
+
+// Hearings Schedule Styles
+.hearing-day-list {
+  // Each item = 73px * 10 = 730px
+  max-height: 730px;
+  overflow: hidden;
+  overflow-y: auto;
+
+  label {
+    color: $cf-hearing-day-label-color;
+    font-weight: 700;
+    font-size: 19px;
+    position: sticky;
+    // Fixes strange behavior where the list text is slightly visible on scroll
+    top: -1px;
+    padding-top: 10px;
+    width: 100%;
+    background-color: $color-white;
+  }
+}
+
+@media screen and (min-width: 1224px) and (max-width: 1680px) {
+  .usa-width-three-fourths.assign-hearing-tabs {
+    width: 65%;
+  }
 }
 
 // Time Slot Styles
