@@ -348,6 +348,10 @@ class Appeal < DecisionReview
     CavcRemand.find_by(remand_appeal: self)
   end
 
+  def appellant_substitution
+    AppellantSubstitution.find_by(target_appeal: self)
+  end
+
   def status
     @status ||= BVAAppealStatus.new(appeal: self)
   end

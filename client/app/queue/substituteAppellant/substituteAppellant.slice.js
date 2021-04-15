@@ -78,10 +78,9 @@ export const completeSubstituteAppellant = createAsyncThunk(
   'substituteAppellant/submit',
   async (data) => {
     try {
-      const res = await ApiUtil.post('/appellant_substitutions', { data });
-      const attrs = res.body?.data?.attributes;
+      const res = await ApiUtil.post(`/appeals/${data.source_appeal_id}/appellant_substitution`, { data });
+      const attrs = res.body;
 
-      // TODO: process returned values
       return {
         substitution: attrs?.substitution,
         target_appeal: attrs?.target_appeal,

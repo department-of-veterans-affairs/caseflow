@@ -24,7 +24,7 @@ RSpec.describe AppellantSubstitutionsController, type: :controller do
     end
   end
 
-  describe "POST /appeals/:appeal_id/cavc_remands" do
+  describe "POST /appeals/:appeal_id/appellant_substitutions" do
     let(:source_appeal) { create(:appeal, :dispatched) }
     let(:source_appeal_id) { source_appeal.uuid }
     let(:substitution_date) { 5.days.ago.to_date }
@@ -33,8 +33,8 @@ RSpec.describe AppellantSubstitutionsController, type: :controller do
 
     let(:params) do
       {
+        appeal_id: source_appeal_id, # from URL
         source_appeal_id: source_appeal_id,
-        appeal_id: source_appeal_id,
         substitution_date: substitution_date,
         claimant_type: DependentClaimant.name,
         substitute_participant_id: substitute_participant_id,
