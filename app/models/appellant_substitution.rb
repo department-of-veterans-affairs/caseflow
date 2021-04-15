@@ -13,7 +13,8 @@ class AppellantSubstitution < CaseflowRecord
             :poa_participant_id,
             presence: true
 
-  before_save :establish_appeal_stream
+  before_create :establish_appeal_stream
+  after_create :initialize_tasks
 
   attr_accessor :claimant_type
 
@@ -44,9 +45,11 @@ class AppellantSubstitution < CaseflowRecord
         # of a substitution request. See 38 C.F.R. § 20.800(f).
         subtitute_person = target_appeal.claimant.person
         AdvanceOnDocketMotion.transfer_granted_motions_to_person(source_appeal, target_appeal, subtitute_person)
-
-        InitialTasksFactory.new(target_appeal).create_root_and_sub_tasks!
       end
+  end
+
+  def initialize_tasks
+    InitialTasksFactory.new(target_appeal).create_root_and_sub_tasks!
   end
 
   def find_or_create_power_of_attorney_for(unassociated_claimant)
