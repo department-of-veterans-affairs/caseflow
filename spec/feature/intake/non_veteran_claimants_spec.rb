@@ -196,6 +196,11 @@ feature "Non-veteran claimants", :postgres do
       expect(claimant.power_of_attorney.name).to eq("Attorney's Law Firm")
       appeal = Appeal.find_by(docket_type: "evidence_submission")
 
+      # verify poa shows on edit page
+      expect(page).to have_content("correct the issues")
+      click_on "correct the issues"
+      expect(claimant.power_of_attorney.name).to eq("Attorney's Law Firm")
+
       # Case details page
       visit "queue/appeals/#{appeal.uuid}"
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
