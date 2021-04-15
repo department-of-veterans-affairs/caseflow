@@ -57,19 +57,20 @@ export const SubstituteAppellantBasicsForm = ({
         />
 
         {loadingRelationships && <div>Fetching relationships...</div>}
-        {!loadingRelationships && !relationships?.length ? (
-          <div>No existing relationships found</div>
-        ) : (
-          <RadioField
-            errorMessage={errors?.participantId?.message}
-            inputRef={register}
-            label="Please select the substitute from the following claimants."
-            name="participantId"
-            options={relationships}
-            strongLabel
-            vertical
-          />
-        )}
+        {!loadingRelationships &&
+          (relationships ? (
+            <RadioField
+              errorMessage={errors?.participantId?.message}
+              inputRef={register}
+              label="Please select the substitute from the following claimants."
+              name="participantId"
+              options={relationships}
+              strongLabel
+              vertical
+            />
+          ) : (
+            <div>No existing relationships found</div>
+          ))}
       </AppSegment>
       <div className="controls cf-app-segment">
         <Button type="submit" name="submit" classNames={['cf-right-side']}>
