@@ -1,6 +1,3 @@
-/* eslint-disable */
-// REMOVE ABOVE LINE BEFORE CONTINUING WORK ON THIS FILE
-
 import React from 'react';
 import { useHistory, useParams } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
@@ -42,6 +39,7 @@ export const SubstituteAppellantReviewContainer = () => {
       substitute_participant_id: existingValues.participantId,
       poa_participant_id: '123456789' // To-do: populate with appropriate user input
     }
+
     try {
       const res = await dispatch(completeSubstituteAppellant(payload));
 
@@ -54,7 +52,6 @@ export const SubstituteAppellantReviewContainer = () => {
       );
       history.push(`/queue/appeals/${res.payload.target_appeal.uuid}`);
     } catch (error) {
-      console.error(error)
       dispatch(
         showErrorMessage({
           title: 'Error',
@@ -73,4 +70,3 @@ export const SubstituteAppellantReviewContainer = () => {
     />
   );
 };
-/* eslint-enable */
