@@ -18,7 +18,7 @@ export const PoaRefreshButton = ({ appealId, poaId }) => {
         <Button
             type="button"
             name="Refresh Poa"
-            classNames={['cf-push-right']}
+            classNames={['usa-button-secondary', 'cf-push-right']}
             onClick={() => updatePOA()}
           >
             Refresh POA
