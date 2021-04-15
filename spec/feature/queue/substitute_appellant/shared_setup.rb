@@ -108,6 +108,7 @@ RSpec.shared_examples("fill substitution form") do
       # New appeal should have the same docket
       expect(page).to have_content appeal.stream_docket_number
 
+      # Substitue claimant is shown
       expect(page).to have_content new_appeal.claimant.person.name
       expect(page).to have_content "Relation to Veteran: Child"
     end
