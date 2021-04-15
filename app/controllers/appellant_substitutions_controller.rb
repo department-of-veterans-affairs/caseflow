@@ -18,7 +18,7 @@ class AppellantSubstitutionsController < ApplicationController
   def create
     new_substitution = AppellantSubstitution.create!(create_params)
     target_appeal = new_substitution.target_appeal.reload
-    render json: { substitution: new_substitution, target_appeal: target_appeal }, status: :created
+    render json: { substitution: new_substitution, targetAppeal: target_appeal }, status: :created
   end
 
   private

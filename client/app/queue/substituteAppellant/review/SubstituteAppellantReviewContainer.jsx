@@ -51,7 +51,7 @@ export const SubstituteAppellantReviewContainer = () => {
           detail: COPY.SUBSTITUTE_APPELLANT_SUCCESS_DETAIL,
         })
       );
-      history.push(`/queue/appeals/${res.payload.target_appeal.uuid}`);
+      history.push(`/queue/appeals/${res.payload.targetAppeal.uuid}`);
     } catch (error) {
       dispatch(
         showErrorMessage({

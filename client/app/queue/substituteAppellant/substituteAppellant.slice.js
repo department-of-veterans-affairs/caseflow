@@ -82,7 +82,7 @@ export const completeSubstituteAppellant = createAsyncThunk(
 
       return {
         substitution: attrs?.substitution,
-        target_appeal: attrs?.target_appeal,
+        targetAppeal: attrs?.targetAppeal,
       };
     } catch (error) {
       console.error('Error when creating appellant substitution', error);
