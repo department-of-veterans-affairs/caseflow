@@ -85,3 +85,7 @@ export const typeAndJudgeStyle = css({
   overflowY: 'hidden',
   whiteSpace: 'nowrap'
 });
+
+export const scheduledDisplayStyle = css({
+  fontSize: 15,
+});

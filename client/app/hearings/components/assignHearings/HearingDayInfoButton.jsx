@@ -11,7 +11,8 @@ import {
   leftColumnStyle,
   rightColumnStyle,
   typeAndJudgeStyle,
-  slotDisplayStyle
+  slotDisplayStyle,
+  scheduledDisplayStyle
 } from './styles';
 
 import {
@@ -57,7 +58,7 @@ export const HearingDayInfoButton = ({ id, hearingDay, selected, onSelectedHeari
           <div {...slotDisplayStyle}>
             {formattedSlotRatio}
           </div>
-          <div>scheduled</div>
+          <div {...scheduledDisplayStyle}>scheduled</div>
         </div>
       </div>
     </Button>
