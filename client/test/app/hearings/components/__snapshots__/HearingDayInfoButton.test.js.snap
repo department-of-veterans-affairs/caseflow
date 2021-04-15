@@ -53,7 +53,9 @@ exports[`HearingDayInfoButton renders correctly 1`] = `
           >
             2 of 8
           </div>
-          <div>
+          <div
+            data-css-heqg99=""
+          >
             scheduled
           </div>
         </div>
