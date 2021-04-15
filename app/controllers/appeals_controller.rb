@@ -66,8 +66,8 @@ class AppealsController < ApplicationController
     if next_update_allowed_at > Time.zone.now
       time_until_next_refresh = ((next_update_allowed_at - Time.zone.now) / 60).ceil
       render json: {
-        status: "error",
-        message: "You can try again in #{time_until_next_refresh} minutes"
+        status: "info",
+        message: "Information is current at this time. Please try again in #{time_until_next_refresh} minutes"
       }
     elsif appeal.is_a?(Appeal)
       poa = BgsPowerOfAttorney.find(params[:poaId])
