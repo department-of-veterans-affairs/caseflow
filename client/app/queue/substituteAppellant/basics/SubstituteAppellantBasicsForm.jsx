@@ -57,7 +57,7 @@ export const SubstituteAppellantBasicsForm = ({
         />
 
         {loadingRelationships && <div>Fetching relationships...</div>}
-        {!loadingRelationships && relationships?.length ? (
+        {!loadingRelationships && !relationships?.length ? (
           <div>No existing relationships found</div>
         ) : (
           <RadioField
