@@ -6193,6 +6193,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
         </div>
         <div>
           <TextareaField
+            characterLimitTopRight={false}
             disabled={false}
             maxlength={1000}
             name="Notes"
@@ -10305,6 +10306,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
+      "caseType": "Original",
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
@@ -10340,6 +10342,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
       "militaryService": "",
       "notes": null,
       "paperCase": false,
+      "poaName": "AMERICAN LEGION",
       "prepped": null,
       "readableLocation": null,
       "readableRequestType": "Video",
@@ -16487,6 +16490,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
         </div>
         <div>
           <TextareaField
+            characterLimitTopRight={false}
             disabled={false}
             maxlength={1000}
             name="Notes"
@@ -16553,6 +16557,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
         "bvaPoc": null,
+        "caseType": "Original",
         "centralOfficeTimeString": "04:00",
         "claimantId": 604,
         "closestRegionalOffice": null,
@@ -16588,6 +16593,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
         "militaryService": "",
         "notes": null,
         "paperCase": false,
+        "poaName": "AMERICAN LEGION",
         "prepped": null,
         "readableLocation": null,
         "readableRequestType": "Video",
@@ -16644,6 +16650,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
         "bvaPoc": null,
+        "caseType": "Original",
         "centralOfficeTimeString": "04:00",
         "claimantId": 604,
         "closestRegionalOffice": null,
@@ -16679,6 +16686,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
         "militaryService": "",
         "notes": null,
         "paperCase": false,
+        "poaName": "AMERICAN LEGION",
         "prepped": null,
         "readableLocation": null,
         "readableRequestType": "Video",
@@ -20421,6 +20429,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                 "appellantZip": "94103",
                 "availableHearingLocations": Object {},
                 "bvaPoc": null,
+                "caseType": "Original",
                 "centralOfficeTimeString": "04:00",
                 "claimantId": 604,
                 "closestRegionalOffice": null,
@@ -20456,6 +20465,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                 "militaryService": "",
                 "notes": null,
                 "paperCase": false,
+                "poaName": "AMERICAN LEGION",
                 "prepped": null,
                 "readableLocation": null,
                 "readableRequestType": "Video",
@@ -20624,6 +20634,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
+      "caseType": "Original",
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
@@ -20659,6 +20670,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
       "militaryService": "",
       "notes": null,
       "paperCase": false,
+      "poaName": "AMERICAN LEGION",
       "prepped": null,
       "readableLocation": null,
       "readableRequestType": "Video",
@@ -28226,6 +28238,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
         </div>
         <div>
           <TextareaField
+            characterLimitTopRight={false}
             disabled={false}
             maxlength={1000}
             name="Notes"
@@ -28292,6 +28305,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
         "bvaPoc": null,
+        "caseType": "Original",
         "centralOfficeTimeString": "04:00",
         "claimantId": 604,
         "closestRegionalOffice": null,
@@ -28327,6 +28341,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
         "militaryService": "",
         "notes": null,
         "paperCase": false,
+        "poaName": "AMERICAN LEGION",
         "prepped": null,
         "readableLocation": null,
         "readableRequestType": "Video",
@@ -28383,6 +28398,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
         "bvaPoc": null,
+        "caseType": "Original",
         "centralOfficeTimeString": "04:00",
         "claimantId": 604,
         "closestRegionalOffice": null,
@@ -28418,6 +28434,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
         "militaryService": "",
         "notes": null,
         "paperCase": false,
+        "poaName": "AMERICAN LEGION",
         "prepped": null,
         "readableLocation": null,
         "readableRequestType": "Video",
@@ -32160,6 +32177,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                 "appellantZip": "94103",
                 "availableHearingLocations": Object {},
                 "bvaPoc": null,
+                "caseType": "Original",
                 "centralOfficeTimeString": "04:00",
                 "claimantId": 604,
                 "closestRegionalOffice": null,
@@ -32195,6 +32213,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                 "militaryService": "",
                 "notes": null,
                 "paperCase": false,
+                "poaName": "AMERICAN LEGION",
                 "prepped": null,
                 "readableLocation": null,
                 "readableRequestType": "Video",
@@ -32363,6 +32382,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
+      "caseType": "Original",
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
@@ -32398,6 +32418,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
       "militaryService": "",
       "notes": null,
       "paperCase": false,
+      "poaName": "AMERICAN LEGION",
       "prepped": null,
       "readableLocation": null,
       "readableRequestType": "Video",
@@ -39966,6 +39987,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
         </div>
         <div>
           <TextareaField
+            characterLimitTopRight={false}
             disabled={false}
             maxlength={1000}
             name="Notes"
@@ -40032,6 +40054,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
         "bvaPoc": null,
+        "caseType": "Original",
         "centralOfficeTimeString": "04:00",
         "claimantId": 604,
         "closestRegionalOffice": null,
@@ -40067,6 +40090,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
         "militaryService": "",
         "notes": null,
         "paperCase": false,
+        "poaName": "AMERICAN LEGION",
         "prepped": null,
         "readableLocation": null,
         "readableRequestType": "Video",
@@ -40123,6 +40147,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
         "bvaPoc": null,
+        "caseType": "Original",
         "centralOfficeTimeString": "04:00",
         "claimantId": 604,
         "closestRegionalOffice": null,
@@ -40158,6 +40183,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
         "militaryService": "",
         "notes": null,
         "paperCase": false,
+        "poaName": "AMERICAN LEGION",
         "prepped": null,
         "readableLocation": null,
         "readableRequestType": "Video",
@@ -43900,6 +43926,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                 "appellantZip": "94103",
                 "availableHearingLocations": Object {},
                 "bvaPoc": null,
+                "caseType": "Original",
                 "centralOfficeTimeString": "04:00",
                 "claimantId": 604,
                 "closestRegionalOffice": null,
@@ -43935,6 +43962,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                 "militaryService": "",
                 "notes": null,
                 "paperCase": false,
+                "poaName": "AMERICAN LEGION",
                 "prepped": null,
                 "readableLocation": null,
                 "readableRequestType": "Video",
@@ -44103,6 +44131,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
       "appellantZip": "94103",
       "availableHearingLocations": Object {},
       "bvaPoc": null,
+      "caseType": "Original",
       "centralOfficeTimeString": "04:00",
       "claimantId": 604,
       "closestRegionalOffice": null,
@@ -44138,6 +44167,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
       "militaryService": "",
       "notes": null,
       "paperCase": false,
+      "poaName": "AMERICAN LEGION",
       "prepped": null,
       "readableLocation": null,
       "readableRequestType": "Video",
@@ -51668,6 +51698,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
         </div>
         <div>
           <TextareaField
+            characterLimitTopRight={false}
             disabled={false}
             maxlength={1000}
             name="Notes"
@@ -51734,6 +51765,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
         "appellantZip": "94103",
         "availableHearingLocations": Object {},
         "bvaPoc": null,
+        "caseType": "Original",
         "centralOfficeTimeString": "04:00",
         "claimantId": 604,
         "closestRegionalOffice": null,
@@ -51769,6 +51801,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
         "militaryService": "",
         "notes": null,
         "paperCase": false,
+        "poaName": "AMERICAN LEGION",
         "prepped": null,
         "readableLocation": null,
         "readableRequestType": "Video",
