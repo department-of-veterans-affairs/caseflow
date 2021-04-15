@@ -44,6 +44,9 @@ export const virtualHearing = {
 };
 
 export const amaHearing = {
+  poaName: 'AMERICAN LEGION',
+  currentIssueCount: 1,
+  caseType: 'Original',
   aod: false,
   advanceOnDocketMotion: null,
   appealExternalId: '005334f7-b5c6-490c-a310-7dc5db22c8c3',
@@ -62,7 +65,6 @@ export const amaHearing = {
   centralOfficeTimeString: '03:30',
   claimantId: 4,
   closestRegionalOffice: null,
-  currentIssueCount: 0,
   disposition: null,
   dispositionEditable: true,
   docketName: 'hearing',
@@ -110,6 +112,9 @@ export const amaHearing = {
 };
 
 export const legacyHearing = {
+  poaName: 'AMERICAN LEGION',
+  currentIssueCount: 1,
+  caseType: 'Original',
   aod: false,
   advanceOnDocketMotion: null,
   appealExternalId: '0bf0263c-d863-4405-9b2e-f55cff77c6c3',
@@ -127,7 +132,6 @@ export const legacyHearing = {
   centralOfficeTimeString: '04:00',
   claimantId: 604,
   closestRegionalOffice: null,
-  currentIssueCount: 0,
   disposition: null,
   dispositionEditable: true,
   docketName: 'legacy',
@@ -188,6 +192,8 @@ export const legacyHearing = {
 };
 
 export const defaultHearing = {
+  caseType: 'Original',
+  poaName: 'AMERICAN LEGION',
   aod: false,
   advanceOnDocketMotion: null,
   appealExternalId: '0bf0263c-d863-4405-9b2e-f55cff77c6c4',
@@ -353,6 +359,19 @@ export const centralHearing = {
   worksheetIssues: {},
 };
 
+export const defaultHearingDay = {
+  hearingId: 36,
+  regionalOffice: 'RO17',
+  timezone: 'America/New_York',
+  scheduledFor: '2020-08-15',
+  requestType: 'V',
+  room: '001',
+  roomLabel: '',
+  filledSlots: 0,
+  totalSlots: 12,
+  hearingDate: '2020-08-15'
+};
+
 export const hearingDateOptions = [
   {
     label: ' ',
@@ -363,18 +382,7 @@ export const hearingDateOptions = [
   },
   {
     label: '08/15/2020 (0/12)  ',
-    value: {
-      hearingId: 36,
-      regionalOffice: 'RO17',
-      timezone: 'America/New_York',
-      scheduledFor: '2020-08-15',
-      requestType: 'V',
-      room: '001',
-      roomLabel: '',
-      filledSlots: 0,
-      totalSlots: 12,
-      hearingDate: '2020-08-15'
-    }
+    value: defaultHearingDay
   },
   {
     label: '08/21/2020 (2/12) 1 (1W200A) ',
@@ -467,6 +475,20 @@ export const scheduleVeteranResponse = {
       data: [scheduleHearingTask]
     }
   }
+};
+export const getHearingType = (hearing) => {
+  const lastRowLabel = `${hearing.caseType} · ${hearing.readableRequestType} · View Case Details`;
+
+  return lastRowLabel;
+};
+
+export const getHearingDetails = (hearing, showNumber) => {
+  const docketNumber = showNumber && ` ${hearing.docketNumber}`;
+  const issues = `${hearing.currentIssueCount} issues`;
+  const docket = `${hearing.docketName.toUpperCase().charAt(0)}Hearing Request${docketNumber}`;
+  const secondRowLabel = `${issues} · ${docket} · ${hearing.poaName}`;
+
+  return secondRowLabel;
 };
 
 export const generateHearingDays = (regionalOffice, count) =>
