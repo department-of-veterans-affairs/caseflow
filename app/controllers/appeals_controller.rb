@@ -63,20 +63,18 @@ class AppealsController < ApplicationController
 
   def update_power_of_attorney
     next_update_allowed_at = appeal.poa_last_synced_at + 10.minutes
-    if next_update_allowed_at > Time.now
-      time_until_next_refresh = ((next_update_allowed_at - Time.now)/60).ceil
+    if next_update_allowed_at > Time.zone.now
+      time_until_next_refresh = ((next_update_allowed_at - Time.zone.now) / 60).ceil
       render json: {
-        status: 'error',
+        status: "error",
         message: "You can try again in #{time_until_next_refresh} minutes"
       }
-    else 
-      if appeal.is_a?(Appeal)
-        poa = BgsPowerOfAttorney.find(params[:poaId])
-        render json: update_bgs_poa(poa)
-      elsif appeal.is_a?(LegacyAppeal)
-        poa = appeal.power_of_attorney
-        render json: update_vacols_poa(poa)
-      end
+    elsif appeal.is_a?(Appeal)
+      poa = BgsPowerOfAttorney.find(params[:poaId])
+      render json: update_bgs_poa(poa)
+    elsif appeal.is_a?(LegacyAppeal)
+      poa = appeal.power_of_attorney
+      render json: update_vacols_poa(poa)
     end
   end
 
@@ -252,39 +250,50 @@ class AppealsController < ApplicationController
 
   def power_of_attorney_data
     poa_data = {
-        representative_type: appeal.representative_type,
-        representative_name: appeal.representative_name,
-        representative_address: appeal.representative_address,
-        representative_email_address: appeal.representative_email_address,
-        representative_tz: appeal.representative_tz,
-        poa_last_synced_at: appeal.poa_last_synced_at
-      }
+      representative_type: appeal.representative_type,
+      representative_name: appeal.representative_name,
+      representative_address: appeal.representative_address,
+      representative_email_address: appeal.representative_email_address,
+      representative_tz: appeal.representative_tz,
+      poa_last_synced_at: appeal.poa_last_synced_at
+    }
     poa_data[:representative_id] = appeal.power_of_attorney.id if appeal.is_a?(Appeal)
     poa_data[:representative_id] = appeal.power_of_attorney.vacols_id if appeal.is_a?(LegacyAppeal)
     poa_data
   end
 
   def update_bgs_poa(poa)
-    begin 
+    begin
       poa.update_cached_attributes!
       poa.save_with_updated_bgs_record!
       {
-        status: 'success',
-        message: 'POA Updated Successfully',
+        status: "success",
+        message: "POA Updated Successfully",
         power_of_attorney: power_of_attorney_data
       }
-    rescue ActiveRecord::RecordNotUnique => e
+    rescue ActiveRecord::RecordNotUnique
       {
-        status: 'error',
-        message: 'Something went wrong'
+        status: "error",
+        message: "Something went wrong"
       }
     end
   end
 
   def update_vacols_poa(poa)
-    Rails.logger.debug("*********************")
-Rails.logger.debug(poa.inspect)
-Rails.logger.debug("*********************")
-    bgs_poa = fetch_bgs_power_of_attorney_by_file_number(poa.file_number, appeal.id)
+    begin
+      bgs_poa = BgsPowerOfAttorney.find_or_create_by_file_number(poa.file_number)
+      bgs_poa.update_cached_attributes!
+      bgs_poa.save_with_updated_bgs_record!
+      {
+        status: "success",
+        message: "POA Updated Successfully",
+        power_of_attorney: power_of_attorney_data
+      }
+    rescue ActiveRecord::RecordNotUnique
+      {
+        status: "error",
+        message: "Something went wrong"
+      }
+    end
   end
 end
