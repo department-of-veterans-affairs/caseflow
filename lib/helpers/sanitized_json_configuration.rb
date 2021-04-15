@@ -42,7 +42,7 @@ class SanitizedJsonConfiguration
         retrieval: ->(records) { reorder_for_import(records[Appeal].map(&:tasks).flatten).extend(TaskAssignment) }
       },
       TaskTimer => {
-        retrieval: ->(records) { TaskTimer.where(task_id: records[Task].map(&:id)).sort_by(&:id) }
+        retrieval: ->(records) { TaskTimer.where(task_id: records[Task].map(&:id)).order(:id) }
       },
       RequestIssue => {
         sanitize_fields: ["notes", "contested_issue_description", /_(notes|text|description)/],
@@ -53,7 +53,7 @@ class SanitizedJsonConfiguration
         retrieval: ->(records) { records[Appeal].map(&:decision_issues).flatten.sort_by(&:id) }
       },
       RequestDecisionIssue => {
-        retrieval: ->(records) { RequestDecisionIssue.where(request_issue: records[RequestIssue]).sort_by(&:id) }
+        retrieval: ->(records) { RequestDecisionIssue.where(request_issue: records[RequestIssue]).order(:id) }
       },
       CavcRemand => { # dependent on DecisionIssue records
         # cavc_judge_full_name is selected from Constants::CAVC_JUDGE_FULL_NAMES; no need to sanitize
