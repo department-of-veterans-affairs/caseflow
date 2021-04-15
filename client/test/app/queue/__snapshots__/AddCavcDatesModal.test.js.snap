@@ -502,6 +502,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                             </TextField>
                           </DateSelector>
                           <TextareaField
+                            characterLimitTopRight={false}
                             disabled={false}
                             errorMessage={null}
                             label="Provide context and instructions for this action"
@@ -1122,6 +1123,7 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                             </TextField>
                           </DateSelector>
                           <TextareaField
+                            characterLimitTopRight={false}
                             disabled={false}
                             errorMessage={null}
                             label="Provide context and instructions for this action"
