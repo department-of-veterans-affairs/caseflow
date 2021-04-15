@@ -30,7 +30,6 @@ class WorkQueue::VeteranSerializer
 
   attribute :relationships do |object, params|
     if params[:relationships].to_s == "true" && object.veteran&.relationships
-      # Intake::RelationshipSerializer.new(object).serializable_hash[:data][:attributes]
       object.veteran&.relationships&.map(&:serialize)
     end
   end
