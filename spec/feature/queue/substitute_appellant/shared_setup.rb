@@ -1,4 +1,3 @@
-
 # frozen_string_literal: true
 
 RSpec.shared_context("with Clerk of the Board user") do
