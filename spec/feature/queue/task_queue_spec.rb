@@ -1013,6 +1013,9 @@ feature "Task queue", :all_dbs do
       it "should display both legacy and caseflow review tasks" do
         visit("/queue")
         expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
+        expect(page).to have_content(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, 2)
+        expect(page).to have_content(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 0)
+        expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
       end
 
       it "should be able to add admin actions from case details" do
