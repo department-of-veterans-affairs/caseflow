@@ -693,5 +693,6 @@ export const selectHearingDayEvent = (cb) => (hearingDay) => {
   // Change the hearing day to the selected hearing day
   cb(hearingDay);
 };
+
 /* eslint-enable camelcase */
 

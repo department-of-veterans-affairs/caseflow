@@ -41,8 +41,8 @@ export const HearingDayInfoButton = ({ id, hearingDay, selected, onSelectedHeari
       styling={selected ? buttonSelectedStyle : buttonUnselectedStyle}
       onClick={() => onSelectedHearingDayChange(hearingDay)}
       classNames={classNames}
-      linkStyling>
-
+      linkStyling
+    >
       <div>
         <div {...leftColumnStyle} >
           <div {...dateStyle}>
