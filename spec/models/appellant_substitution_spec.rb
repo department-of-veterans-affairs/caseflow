@@ -21,7 +21,7 @@ describe AppellantSubstitution do
       }
     end
 
-    it "creates the record" do
+    it "creates the record and new appeal is ready for distribution" do
       expect { subject }.not_to raise_error
       params.each_key { |key| expect(subject.send(key)).to eq params[key] }
 
@@ -31,6 +31,7 @@ describe AppellantSubstitution do
       expect(subject.substitute_person).not_to eq subject.source_appeal.claimant.person
 
       expect(subject.target_appeal.veteran_is_not_claimant).to eq true
+      expect(subject.target_appeal.tasks.open.map(&:type)).to include "DistributionTask"
     end
 
     context "when source appeal is AOD" do
