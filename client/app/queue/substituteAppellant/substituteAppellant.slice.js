@@ -72,8 +72,7 @@ const substituteAppellantSlice = createSlice({
   },
 });
 
-// We can likely use a variant of this to submit to the backend
-// (need more info on what we are saving and what is being returned)
+// Submit to the backend
 export const completeSubstituteAppellant = createAsyncThunk(
   'substituteAppellant/submit',
   async (data) => {

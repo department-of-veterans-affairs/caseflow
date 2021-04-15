@@ -37,8 +37,9 @@ export const SubstituteAppellantReviewContainer = () => {
       substitution_date: existingValues.substitutionDate,
       claimant_type: existingValues.claimantType,
       substitute_participant_id: existingValues.participantId,
-      poa_participant_id: '123456789' // To-do: populate with appropriate user input
-    }
+      // To-do: populate with appropriate user input
+      poa_participant_id: '123456789'
+    };
 
     try {
       const res = await dispatch(completeSubstituteAppellant(payload));
