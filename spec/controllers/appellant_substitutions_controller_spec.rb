@@ -56,10 +56,10 @@ RSpec.describe AppellantSubstitutionsController, type: :controller do
         expect(response_body["substitution"]["source_appeal_id"]).to eq(source_appeal.id)
         expect(AppellantSubstitution.count).to eq(substitution_count + 1)
 
-        expect(response_body["target_appeal"]["id"])
+        expect(response_body["targetAppeal"]["id"])
           .to eq(AppellantSubstitution.find(response_body["substitution"]["id"]).target_appeal_id)
-        expect(response_body["target_appeal"]["stream_docket_number"]).to eq(source_appeal.docket_number)
-        expect(response_body["target_appeal"]["stream_type"]).to eq(Appeal.stream_types["substitution"])
+        expect(response_body["targetAppeal"]["stream_docket_number"]).to eq(source_appeal.docket_number)
+        expect(response_body["targetAppeal"]["stream_type"]).to eq(Appeal.stream_types["substitution"])
         expect(Appeal.substitution.count).to eq(substitution_appeals_count + 1)
       end
     end
