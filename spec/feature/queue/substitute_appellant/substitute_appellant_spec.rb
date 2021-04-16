@@ -17,4 +17,3 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
     end
   end
 end
-

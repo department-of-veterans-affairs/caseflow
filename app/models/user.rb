@@ -357,8 +357,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def queue_tabs
-    return [assigned_tasks_tab] if judge_in_vacols? && !attorney_in_vacols?
-
     [
       assigned_tasks_tab,
       on_hold_tasks_tab,
