@@ -60,6 +60,7 @@ export const AddressForm = ({ control, register, watch, setValue }) => {
               }}
               defaultValue={defaultState}
               strongLabel
+              isClearable
             />
           )}
         />
