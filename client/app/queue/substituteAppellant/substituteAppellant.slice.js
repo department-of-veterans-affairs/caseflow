@@ -72,21 +72,20 @@ const substituteAppellantSlice = createSlice({
   },
 });
 
-// We can likely use a variant of this to submit to the backend
-// (need more info on what we are saving and what is being returned)
+// Submit to the backend
 export const completeSubstituteAppellant = createAsyncThunk(
   'substituteAppellant/submit',
   async (data) => {
     try {
-      const res = await ApiUtil.post('/appellant_substitutions', { data });
-      const attrs = res.body?.data?.attributes;
+      const res = await ApiUtil.post(`/appeals/${data.source_appeal_id}/appellant_substitution`, { data });
+      const attrs = res.body;
 
       return {
-        oldAppealId: attrs?.old_appeal_uuid,
-        newAppealId: attrs?.new_appeal_uuid,
+        substitution: attrs?.substitution,
+        targetAppeal: attrs?.targetAppeal,
       };
     } catch (error) {
-      console.error('Error granting docket switch', error);
+      console.error('Error when creating appellant substitution', error);
       throw error;
     }
   }

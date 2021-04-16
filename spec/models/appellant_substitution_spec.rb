@@ -21,7 +21,7 @@ describe AppellantSubstitution do
       }
     end
 
-    it "creates the record" do
+    it "creates the record and new appeal is ready for distribution" do
       expect { subject }.not_to raise_error
       params.each_key { |key| expect(subject.send(key)).to eq params[key] }
 
@@ -29,24 +29,28 @@ describe AppellantSubstitution do
       expect(subject.substitute_claimant).to eq subject.target_appeal.claimant
       expect(subject.substitute_person).to eq subject.target_appeal.claimant.person
       expect(subject.substitute_person).not_to eq subject.source_appeal.claimant.person
+
+      expect(subject.target_appeal.veteran_is_not_claimant).to eq true
+      expect(subject.target_appeal.tasks.open.map(&:type)).to include "DistributionTask"
     end
 
     context "when source appeal is AOD" do
       context "source appeal is AOD due to claimant's age" do
         let(:source_appeal) { create(:appeal, :active, :advanced_on_docket_due_to_age) }
-        it "creates new CAVC remand appeal with AOD due to age" do
+        it "creates new appeal with AOD due to age" do
           expect(source_appeal.aod_based_on_age).to be true
 
           appellant_substitution = subject
-          cavc_appeal = appellant_substitution.target_appeal
-          expect(cavc_appeal.aod_based_on_age).to eq appellant_substitution.source_appeal.aod_based_on_age
+          target_appeal = appellant_substitution.target_appeal
+          expect(target_appeal.aod_based_on_age).to eq appellant_substitution.source_appeal.aod_based_on_age
         end
       end
+
       context "source appeal has non-age-related AOD Motion" do
         let(:source_appeal) { create(:appeal, :active, :advanced_on_docket_due_to_motion) }
         # The original person associated with AOD may be the claimant or veteran; in this case, it is the claimant
         let(:aod_person) { source_appeal.claimant.person }
-        it "copies AOD motions to new CAVC remand appeal" do
+        it "copies AOD motions to new appeal" do
           expect(AdvanceOnDocketMotion.granted_for_person?(aod_person, source_appeal)).to be true
           expect(AdvanceOnDocketMotion.for_appeal(source_appeal).count).to eq 2
           aod_motions_count = AdvanceOnDocketMotion.for_appeal_and_person(source_appeal, aod_person).count
@@ -64,6 +68,25 @@ describe AppellantSubstitution do
           expect(AdvanceOnDocketMotion.for_appeal_and_person(target_appeal, target_appeal_aod_person).count).to eq 1
           expect(AdvanceOnDocketMotion.granted_for_person?(target_appeal.claimant.person, target_appeal)).to be true
           expect(target_appeal.aod?).to be true
+        end
+      end
+
+      context "source appeal has request issues" do
+        let(:source_appeal) { create(:appeal, :active, :with_request_issues).reload }
+        it "copies request issues but not decision issues to new appeal" do
+          expect(source_appeal.request_issues.count).to be > 0
+
+          appellant_substitution = subject
+          target_appeal = appellant_substitution.target_appeal
+          expect(target_appeal.request_issues.count).to eq source_appeal.request_issues.count
+          expect(target_appeal.request_issues.pluck(:benefit_type))
+            .to eq source_appeal.request_issues.pluck(:benefit_type)
+          expect(target_appeal.request_issues.pluck(:contested_issue_description))
+            .to eq source_appeal.request_issues.pluck(:contested_issue_description)
+          expect(target_appeal.request_issues.pluck(:notes)).to eq source_appeal.request_issues.pluck(:notes)
+
+          expect(target_appeal.decision_issues.count).to eq 0
+          expect(target_appeal.request_issues.pluck(:decision_date).uniq).to eq [nil]
         end
       end
     end
