@@ -80,9 +80,9 @@ export const CaseDetailsView = (props) => {
       (organization) => organization.name === 'CAVC Litigation Support'
     )
   );
-  const currentUserOnCotbOrIntake = useSelector((state) =>
+  const currentUserOnClerkOfTheBoard = useSelector((state) =>
     state.ui.organizations.some((organization) =>
-      ['Clerk of the Board', 'Intake'].includes(organization.name)
+      ['Clerk of the Board'].includes(organization.name)
     )
   );
   const modalIsOpen = window.location.pathname.includes('modal');
@@ -132,7 +132,7 @@ export const CaseDetailsView = (props) => {
   const supportCavcRemand =
     currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand;
   const supportSubstituteAppellant =
-    currentUserOnCotbOrIntake &&
+    currentUserOnClerkOfTheBoard &&
     props.featureToggles.recognized_granted_substitution_after_dd;
   const showPostDispatch =
     appealIsDispached && (supportCavcRemand || supportSubstituteAppellant);
