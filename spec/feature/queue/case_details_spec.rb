@@ -350,7 +350,7 @@ RSpec.feature "Case details", :all_dbs do
         scenario "details view renders unrecognized POA copy" do
           visit "/queue/appeals/#{appeal.uuid}"
 
-          expect(page).to have_content(COPY::CASE_DETAILS_NO_POA)
+          expect(page).to have_content(COPY::CASE_DETAILS_UNRECOGNIZED_POA)
         end
       end
     end
