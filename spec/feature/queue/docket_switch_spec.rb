@@ -121,6 +121,7 @@ RSpec.feature "Docket Switch", :all_dbs do
         appeal: appeal,
         parent: root_task,
         assigned_to: judge,
+        instructions: ["**Summary:** Test\n\n**Draft letter:** [View link](http://example.com)"],
         assigned_by: cotb_attorney
       )
     end
@@ -141,7 +142,6 @@ RSpec.feature "Docket Switch", :all_dbs do
           # Fill out form
           fill_in("context", with: context)
           find("label[for=disposition_#{disposition}]").click
-          fill_in("hyperlink", with: hyperlink)
 
           # The previously assigned COTB attorney should be selected
           expect(page).to have_content(cotb_attorney.full_name)
@@ -168,11 +168,11 @@ RSpec.feature "Docket Switch", :all_dbs do
           # Check that task got created and shows instructions on Case Details
           User.authenticate!(user: cotb_attorney)
           visit "/queue/appeals/#{appeal.uuid}"
-          find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+          first("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
           judge_ruling_text = Constants::DOCKET_SWITCH_DISPOSITIONS[disposition]["judgeRulingText"]
 
           expect(page).to have_content "I am proceeding with a #{judge_ruling_text}"
-          expect(page).to have_content "Signed ruling letter:\n#{hyperlink}"
+          expect(page).to have_content "Signed ruling letter: View link"
           expect(page).to have_content(context)
         end
       end

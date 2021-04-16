@@ -13,6 +13,7 @@ import ApiUtil from '../util/ApiUtil';
 import { RESET_VIRTUAL_HEARING } from './contexts/HearingsFormContext';
 import HEARING_REQUEST_TYPES from '../../constants/HEARING_REQUEST_TYPES';
 import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP';
+import COPY from '../../COPY.json'
 
 export const isPreviouslyScheduledHearing = (hearing) =>
   hearing?.disposition === HEARING_DISPOSITION_TYPES.postponed ||
@@ -179,6 +180,11 @@ export const virtualHearingRoleForUser = (user, hearing) =>
   user.userCanAssignHearingSchedule || user.userId === hearing?.judgeId ?
     VIRTUAL_HEARING_HOST :
     VIRTUAL_HEARING_GUEST;
+
+export const virtualHearingLinkLabelFull = (role, type) =>
+  role === VIRTUAL_HEARING_HOST ?
+    COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL_FULL :
+    COPY.REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL;
 
 export const pollVirtualHearingData = (hearingId, onSuccess) => (
   // Did not specify retryCount so if api call fails, it'll stop polling.
@@ -348,8 +354,9 @@ export const timezones = (time) => {
       commonsCount += 1;
     }
 
-    //ensure that before the user selects a time it won't display 'Invalid Date' next to zone
-    const zoneLabel = dateTime.isValid() ? `${zone} (${moment(dateTime, 'HH:mm').tz(TIMEZONES[zone]).format('h:mm A')})` : `${zone}`
+    // ensure that before the user selects a time it won't display 'Invalid Date' next to zone
+    const zoneLabel = dateTime.isValid() ? `${zone} (${moment(dateTime, 'HH:mm').tz(TIMEZONES[zone]).
+      format('h:mm A')})` : `${zone}`;
 
     // Return the formatted options
     return {
@@ -507,12 +514,17 @@ const calculateAvailableTimeslots = ({ slotCount, startTime, roTimezone, hearing
     // A 10:45 appointment will:
     // - Hide a 10:30 slot (it's full, so we return null)
     // - Hide a 11:30 slot (it's full, so we return null)
+    //
+    // Also, don't show slots that are before 8:30am (starTime) in RO time.
+    // so if there's a slot for 8:30am eastern (5:30am Pacific), don't show that
+    // if we have an roTimezone of 'America/Los_Angeles' (or other west coast)
     const slotFull = hearingTimes.some((scheduledHearingTime) =>
-      Math.abs(slotTime.diff(scheduledHearingTime, 'minutes')) < 60
+      (Math.abs(slotTime.diff(scheduledHearingTime, 'minutes')) < 60)
     );
+    const slotOutsideTimeRange = slotTime.isBefore(moment.tz(startTime, 'HH:mm', roTimezone));
 
     // Return null if there is a filled time slot, otherwise return the hearingTime
-    if (slotFull) {
+    if (slotFull || slotOutsideTimeRange) {
       return null;
     }
 

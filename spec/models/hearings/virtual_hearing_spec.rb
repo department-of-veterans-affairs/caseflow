@@ -59,26 +59,6 @@ describe VirtualHearing do
     end
   end
 
-  context "#test_link" do
-    context "vh created with new link generation" do
-      def link(name)
-        "https://vc.va.gov/bva-app?conference=test_call&name=#{name}&join=1"
-      end
-
-      include_context "virtual hearing created with new link generation"
-      include_examples "all test link behaviors"
-    end
-
-    context "vh not created with new link generation" do
-      def link(name)
-        "https://care.va.gov/webapp2/conference/test_call?name=#{name}&join=1"
-      end
-
-      include_context "virtual hearing not created with new link generation"
-      include_examples "all test link behaviors"
-    end
-  end
-
   context "#guest_pin" do
     let(:virtual_hearing) do
       create(
@@ -365,6 +345,26 @@ describe VirtualHearing do
 
         expect(virtual_hearing.guest_hearing_link).to include alias_with_host
         expect(virtual_hearing.guest_hearing_link).to include guest_pin_long
+      end
+    end
+
+    context "#test_link" do
+      context "vh created with new link generation" do
+        def link(name)
+          "https://#{URL_HOST}#{URL_PATH}?conference=test_call&name=#{name}&join=1"
+        end
+
+        include_context "virtual hearing created with new link generation"
+        include_examples "all test link behaviors"
+      end
+
+      context "vh not created with new link generation" do
+        def link(name)
+          "https://care.va.gov/webapp2/conference/test_call?name=#{name}&join=1"
+        end
+
+        include_context "virtual hearing not created with new link generation"
+        include_examples "all test link behaviors"
       end
     end
   end
