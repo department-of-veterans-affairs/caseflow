@@ -13,6 +13,7 @@ import ApiUtil from '../util/ApiUtil';
 import { RESET_VIRTUAL_HEARING } from './contexts/HearingsFormContext';
 import HEARING_REQUEST_TYPES from '../../constants/HEARING_REQUEST_TYPES';
 import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP';
+import COPY from '../../COPY.json'
 
 export const isPreviouslyScheduledHearing = (hearing) =>
   hearing?.disposition === HEARING_DISPOSITION_TYPES.postponed ||
@@ -179,6 +180,11 @@ export const virtualHearingRoleForUser = (user, hearing) =>
   user.userCanAssignHearingSchedule || user.userId === hearing?.judgeId ?
     VIRTUAL_HEARING_HOST :
     VIRTUAL_HEARING_GUEST;
+
+export const virtualHearingLinkLabelFull = (role, type) =>
+  role === VIRTUAL_HEARING_HOST ?
+    COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL_FULL :
+    COPY.REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL;
 
 export const pollVirtualHearingData = (hearingId, onSuccess) => (
   // Did not specify retryCount so if api call fails, it'll stop polling.

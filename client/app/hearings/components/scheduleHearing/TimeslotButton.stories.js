@@ -9,10 +9,17 @@ export default {
   component: TimeSlotButton,
   argTypes: {
     onClick: { table: { disable: true } },
-    docketName: { control: { type: 'select', options: ['', 'legacy', 'hearings'] } },
+    docketName: {
+      control: { type: 'select', options: ['', 'legacy', 'hearings'] },
+    },
     issueCount: { control: { type: 'number' } },
-    poaName: { control: { type: 'select', options: ['', 'American Legion'] } },
-  }
+    poaName: {
+      control: {
+        type: 'select',
+        options: ['', 'American Legion', 'Some Super Long POA name that should be truncated'],
+      },
+    },
+  },
 };
 
 const Template = (args) => {

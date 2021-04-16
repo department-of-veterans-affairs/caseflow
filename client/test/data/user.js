@@ -23,6 +23,12 @@ export const userWithJudgeRole = {
   userHasHearingPrepRole: true,
 };
 
+export const vsoUser = {
+  ...anyUser,
+  userCanVsoHearingSchedule: true,
+  userCanAssignHearingSchedule: false
+}
+
 export const userUseFullPageVideoToVirtual = {
   ...userWithVirtualHearingsFeatureEnabled,
   userUseFullPageVideoToVirtual: true,

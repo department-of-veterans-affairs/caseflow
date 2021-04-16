@@ -26,6 +26,7 @@ class EndProductUpdate < CaseflowRecord
     end
   rescue StandardError => error
     update!(error: error, status: "error")
+    raise error
   end
 
   private
