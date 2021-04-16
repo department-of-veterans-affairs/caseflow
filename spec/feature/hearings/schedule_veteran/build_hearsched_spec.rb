@@ -219,8 +219,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       # Get the timezone abbreviation like "EDT", "PDT", from the long timezone
       ro_timezone_abbreviation = Time.zone.now.in_time_zone(ro_timezone).strftime("%Z")
 
-      # Parse the local time string, then produce a result in EDT like "11:30 EDT"
-      Time.zone.parse("#{time} #{ro_timezone_abbreviation}").strftime("%-I:%M %p %Z")
+      # Parse the local time string (like "09:00 PDT"), then produce a result in EDT like "11:30 EDT"
+      Time.zone.parse("#{time} #{ro_timezone_abbreviation}").in_time_zone("America/New_York").strftime("%-I:%M %p %Z")
     end
 
     # Method to choose either the hearing time slot buttons or hearing time radio buttons
