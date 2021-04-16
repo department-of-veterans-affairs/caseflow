@@ -118,7 +118,8 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       it "should process the request succesfully" do
         get :index, params: { user_id: user.id, role: "judge" }
         response_body = JSON.parse(response.body)["queue_config"]["tabs"]
-        expect(response_body.size).to eq 1
+        # judges should now have assigned, on-hold, and completed tabs
+        expect(response_body.size).to eq 3
         response_body = response_body[0]["tasks"]
 
         assigned = response_body.find { |task| task["id"] == task8.id.to_s }
