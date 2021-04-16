@@ -52,8 +52,7 @@ class Claimant < CaseflowRecord
   end
 
   def power_of_attorney
-    #@power_of_attorney ||= 
-    find_power_of_attorney
+    @power_of_attorney ||= find_power_of_attorney
   end
 
   def representative_participant_id
