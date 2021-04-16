@@ -268,24 +268,39 @@ describe Organizations::UsersController, :postgres, type: :controller do
     end
   end
 
-  describe "DELETE /organizations/:org_url/users/:user_id", skip: "Flake" do
+  describe "DELETE /organizations/:org_url/users/:user_id" do
     subject { post(:destroy, params: params, as: :json) }
 
     let!(:params) { { organization_url: org.url, id: user.id } }
 
     let(:org) { create(:judge_team, :has_judge_team_lead_as_admin) }
-    let(:user) { org.judge }
-    let(:admin) do
-      create(:user).tap do |u|
-        OrganizationsUser.make_user_admin(u, org)
+    let!(:user) do
+      create(:user).tap do |user|
+        org.add_user(user)
       end
     end
 
-    before do
-      User.stub = admin
+    let(:bva_admin_user) do
+      create(:user).tap { |bva_admin| Bva.singleton.add_user(bva_admin) }
     end
 
-    context "when user is the judge in the organization" do
+    before { User.stub = bva_admin_user }
+
+    context "when user is a non-judge in the organization" do
+      it "removes user from organization" do
+        expect(OrganizationsUser.where(organization: org).count).to eq(2)
+        subject
+        resp = JSON.parse(response.body)
+        # response has the removed user
+        expect(resp["users"]["data"].first["attributes"]["css_id"]).to eq user.css_id
+
+        expect(OrganizationsUser.where(organization: org).count).to eq(1)
+        expect(org.admins.count).to eq(1)
+        expect(org.non_admins.count).to eq(0)
+      end
+    end
+
+    context "when user is the judge in the organization", skip: "Flake" do
       it "returns an error" do
         subject
 
