@@ -36,7 +36,8 @@ class AppellantSubstitution < CaseflowRecord
     unassociated_claimant = Claimant.create!(
       participant_id: substitute_participant_id,
       payee_code: nil,
-      type: claimant_type)
+      type: claimant_type
+    )
 
     # To-do: Implement this and the DB schema once we understand the requirements for selecting a
     # POA for unknown appellants.
