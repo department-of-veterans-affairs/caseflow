@@ -85,7 +85,10 @@ class AppealsController < ApplicationController
   # the only data that is being pulled from BGS, the rest are from VACOLS for now
   def veteran
     render json: {
-      veteran: ::WorkQueue::VeteranSerializer.new(appeal).serializable_hash[:data][:attributes]
+      veteran: ::WorkQueue::VeteranSerializer.new(
+        appeal,
+        params: { relationships: params["relationships"] }
+      ).serializable_hash[:data][:attributes]
     }
   end
 
