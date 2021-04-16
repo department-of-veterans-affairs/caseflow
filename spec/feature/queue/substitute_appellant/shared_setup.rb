@@ -22,11 +22,11 @@ RSpec.shared_context "with existing relationships" do
     [
       build(:relationship, :spouse, veteran_file_number: veteran_file_number).serialize,
       build(:relationship, :child, veteran_file_number: veteran_file_number).serialize,
-      build(:relationship, :other, veteran_file_number: veteran_file_number).serialize,
-    ].map do |item| 
+      build(:relationship, :other, veteran_file_number: veteran_file_number).serialize
+    ].map do |item|
       item[:ptcpnt_id] = item.delete :participant_id
       item
-    end 
+    end
   end
 
   before do

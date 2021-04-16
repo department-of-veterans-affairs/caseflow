@@ -2,10 +2,10 @@
 
 FactoryBot.define do
   factory :relationship do
-    sequence(:participant_id, 500_000_000)
+    sequence(:participant_id, 600_000_000)
     veteran_file_number { create(:veteran).file_number }
-    first_name { Faker::Name.first_name.upcase.tr('\'', '') }
-    last_name { Faker::Name.last_name.downcase.tr('\'', '') }
+    first_name { Faker::Name.first_name.upcase.tr("\'", "") }
+    last_name { Faker::Name.last_name.downcase.tr("\'", "") }
 
     trait :spouse do
       relationship_type { "Spouse" }
