@@ -93,7 +93,7 @@ RSpec.shared_examples("fill substitution form") do
       appellant_substitution = AppellantSubstitution.find_by(source_appeal_id: appeal.id)
       new_appeal = appellant_substitution.target_appeal
       expect(page).to have_current_path("/queue/appeals/#{new_appeal.uuid}")
-      
+
       # New appeal should have the same docket
       expect(page).to have_content appeal.stream_docket_number
 

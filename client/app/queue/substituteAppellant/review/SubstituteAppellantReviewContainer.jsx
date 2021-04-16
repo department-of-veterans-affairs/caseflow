@@ -55,7 +55,7 @@ export const SubstituteAppellantReviewContainer = () => {
     } catch (error) {
       dispatch(
         showErrorMessage({
-          title: 'Error',
+          title: 'Error when substituting appellant',
           detail: JSON.parse(error.message).errors[0].detail,
         })
       );

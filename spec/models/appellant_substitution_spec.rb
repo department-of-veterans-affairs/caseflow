@@ -79,7 +79,8 @@ describe AppellantSubstitution do
           appellant_substitution = subject
           target_appeal = appellant_substitution.target_appeal
           expect(target_appeal.request_issues.count).to eq source_appeal.request_issues.count
-          expect(target_appeal.request_issues.pluck(:benefit_type)).to eq source_appeal.request_issues.pluck(:benefit_type)
+          expect(target_appeal.request_issues.pluck(:benefit_type))
+            .to eq source_appeal.request_issues.pluck(:benefit_type)
           expect(target_appeal.request_issues.pluck(:contested_issue_description))
             .to eq source_appeal.request_issues.pluck(:contested_issue_description)
           expect(target_appeal.request_issues.pluck(:notes)).to eq source_appeal.request_issues.pluck(:notes)

@@ -33,9 +33,13 @@ class AppellantSubstitution < CaseflowRecord
   private
 
   def establish_appeal_stream
-    unassociated_claimant = Claimant.create!(participant_id: substitute_participant_id, payee_code: nil, type: claimant_type)
+    unassociated_claimant = Claimant.create!(
+      participant_id: substitute_participant_id,
+      payee_code: nil,
+      type: claimant_type)
 
-    # To-do: Implement this and the DB schema once we understand the requirements for selecting a POA for unknown appellants.
+    # To-do: Implement this and the DB schema once we understand the requirements for selecting a
+    # POA for unknown appellants.
     # find_or_create_power_of_attorney_for(unassociated_claimant)
 
     self.target_appeal ||= source_appeal.create_stream(:substitution, new_claimants: [unassociated_claimant])
