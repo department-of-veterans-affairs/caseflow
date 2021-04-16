@@ -156,6 +156,7 @@ export const EditCavcRemandForm = ({
   const watchDecisionType = watch('decisionType');
   const watchRemandType = watch('remandType');
   const watchRemandDatesProvided = watch('remandDatesProvided');
+  const watchMandateSame = watch('mandateSame');
   const watchIssueIds = watch('issueIds');
 
   const isRemandType = (type) =>
@@ -172,12 +173,14 @@ export const EditCavcRemandForm = ({
     [watchRemandType, watchRemandDatesProvided]
   );
 
+  // This may be moot, since when fields are removed, values get reset
+  // When editing, remandType can't be changed, so this should never fire
   useEffect(() => {
     if (!mandateDatesAvailable) {
       setValue('judgementDate', '');
       setValue('mandateDate', '');
     }
-  }, [watchRemandType, watchRemandDatesProvided]);
+  }, [mandateDatesAvailable]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -269,7 +272,7 @@ export const EditCavcRemandForm = ({
             </>
           ))}
 
-        {watchDecisionType && !watchDecisionType.includes('remand') ? (
+        {watchDecisionType && !watchDecisionType.includes('remand') && (
           <RadioField
             inputRef={register}
             styling={radioLabelStyling}
@@ -279,17 +282,7 @@ export const EditCavcRemandForm = ({
             strongLabel
             errorMessage={errors?.remandDatesProvided?.message}
           />
-        ) : (
-          <div style={{ display: 'none' }}>
-            <RadioField
-              inputRef={register}
-              name="remandDatesProvided"
-              options={YesNoOpts}
-            />
-          </div>
         )}
-        {/* Above is another Workaround: must have component that uses `register`
-            with `remandDatesProvided` name so that it can be used by yup */}
 
         <DateSelector
           inputRef={register}
@@ -302,7 +295,19 @@ export const EditCavcRemandForm = ({
 
         {isRemandType('mdr') && <MdrBanner />}
 
-        {mandateDatesAvailable && (
+        {mode === 'add' && mandateDatesAvailable && (
+          <>
+            <legend>
+              <strong>{COPY.CAVC_REMAND_MANDATE_DATES_LABEL}</strong>
+            </legend>
+            <Checkbox
+              inputRef={register}
+              label={COPY.CAVC_REMAND_MANDATE_DATES_SAME_DESCRIPTION}
+              name="mandateSame"
+            />
+          </>
+        )}
+        {mandateDatesAvailable && !watchMandateSame && (
           <div>
             <DateSelector
               inputRef={register}
