@@ -3676,6 +3676,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   </fieldset>
                 </CheckboxGroup>
                 <TextareaField
+                  characterLimitTopRight={false}
                   disabled={false}
                   errorMessage={null}
                   label="Provide context and instructions for this action"

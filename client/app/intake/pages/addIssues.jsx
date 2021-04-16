@@ -57,7 +57,8 @@ class AddIssuesPage extends React.Component {
       originalIssueLength,
       issueRemoveIndex: 0,
       issueIndex: 0,
-      addingIssue: false
+      addingIssue: false,
+      loading: false
     };
   }
 
@@ -175,12 +176,13 @@ class AddIssuesPage extends React.Component {
       this.props.intakeForms[this.props.formType].claimId,
       this.props.formType,
       this.state.previousEpCode,
-      this.state.selectedEpCode,
+      this.state.selectedEpCode
     );
     this.setState({
-      showConfirmClaimLabelModal: false,
-      previousEpCode: null,
-      selectedEpCode: null
+      showConfirmClaimLabelModal: true,
+      previousEpCode: this.state.previousEpCode,
+      selectedEpCode: this.state.selectedEpCode,
+      loading: true
     });
   }
 
@@ -308,12 +310,12 @@ class AddIssuesPage extends React.Component {
 
     let rowObjects = fieldsForFormType;
 
-    const issueSectionRow = (sectionIssues, fieldTitle, endProductCode = 0) => {
+    const issueSectionRow = (sectionIssues, fieldTitle) => {
       return {
         field: fieldTitle,
         content: (
           <div>
-            {endProductWithError === endProductCode && (
+            {endProductWithError && (
               <ErrorAlert errorCode="unable_to_edit_ep" />
             )}
             { !fieldTitle.includes('issues') && <span><strong>Requested issues</strong></span> }
@@ -432,6 +434,7 @@ class AddIssuesPage extends React.Component {
             newEpCode={this.state.selectedEpCode}
             onCancel={this.closeEditClaimLabelModal}
             onSubmit={this.submitClaimLabelEdit}
+            loading={this.state.loading}
           />
         )}
         <h1 className="cf-txt-c">{messageHeader}</h1>

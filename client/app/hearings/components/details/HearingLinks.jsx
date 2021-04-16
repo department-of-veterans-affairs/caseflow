@@ -110,24 +110,21 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
     return null;
   }
 
-  const vljVirtualHearingLabel =
-    virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST ?
-      COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL :
-      COPY.REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL;
+  const showHostLink = virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST;
 
   return (
     <div {...rowThirds} {...hearingLinksContainer}>
-      <LinkContainer
+      {showHostLink && <LinkContainer
         hearing={hearing}
         isVirtual={isVirtual}
-        label={vljVirtualHearingLabel}
+        label={COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL}
         link={virtualHearing?.hostLink}
         linkText={COPY.VLJ_VIRTUAL_HEARINGS_LINK_TEXT}
         role="VLJ"
         user={user}
         virtualHearing={virtualHearing}
         wasVirtual={wasVirtual}
-      />
+      />}
       <LinkContainer
         hearing={hearing}
         isVirtual={isVirtual}
