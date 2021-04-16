@@ -77,7 +77,7 @@ describe('AddClaimantForm', () => {
       await waitFor(() => {
         expect(onSubmit).toHaveBeenCalled();
       });
-    });
+    }, 15000);
   });
 
   describe('default values', () => {
