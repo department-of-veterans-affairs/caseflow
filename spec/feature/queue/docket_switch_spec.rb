@@ -173,6 +173,7 @@ RSpec.feature "Docket Switch", :all_dbs do
           judge_ruling_text = Constants::DOCKET_SWITCH_DISPOSITIONS[disposition]["judgeRulingText"]
 
           expect(page).to have_content "I am proceeding with a #{judge_ruling_text}"
+          expect(page).to have_content "Signed ruling letter: View link"
           expect(page).to have_content(context)
         end
       end

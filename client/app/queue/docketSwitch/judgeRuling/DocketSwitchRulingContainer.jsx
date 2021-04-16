@@ -43,7 +43,8 @@ export const DocketSwitchRulingContainer = () => {
 
   // Use regex to pull draft letter hyperlink out from the current task's instructions, if possible.
   // It will be reused in the subsequent task's instructions.
-  const hyperlink = (/\*\*Draft letter:\*\* \[[^\]]+\]\(([^)]+)\)/).exec(task.instructions.join('\n'))?.[1];
+  const draftInstructions = task.instructions.join('\n');
+  const hyperlink = (/\*\*Draft letter:\*\* \[[^\]]+\]\(([^)]+)\)/).exec(draftInstructions)?.[1];
 
   // eslint-disable-next-line no-console
   const handleSubmit = async (formData) => {
