@@ -103,4 +103,3 @@ RSpec.shared_examples("fill substitution form") do
     # After final step, verify routing to Case Details for new appeal and success alert
   end
 end
-
