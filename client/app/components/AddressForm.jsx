@@ -34,7 +34,7 @@ export const AddressForm = ({ control, register, watch, setValue }) => {
         />
       </FieldDiv>
       {watchPartyType === 'organization' && (
-        <StreetAddress style={{ marginBottom: '30px' }}>
+        <StreetAddress>
           <TextField
             name="addressLine3"
             label="Street address 3"
@@ -105,7 +105,7 @@ const ZipCountry = styled.div`
 
 const StreetAddress = styled.div`
   margin-top: -0.5em;
-  margin-bottom: -0.65em;
+  margin-bottom: 1.75em;
 `;
 
 const FieldDiv = styled.div`
