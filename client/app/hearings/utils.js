@@ -182,7 +182,7 @@ export const virtualHearingRoleForUser = (user, hearing) =>
     VIRTUAL_HEARING_HOST :
     VIRTUAL_HEARING_GUEST;
 
-export const virtualHearingLinkLabelFull = (role, type) =>
+export const virtualHearingLinkLabelFull = (role) =>
   role === VIRTUAL_HEARING_HOST ?
     COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL_FULL :
     COPY.REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL;
