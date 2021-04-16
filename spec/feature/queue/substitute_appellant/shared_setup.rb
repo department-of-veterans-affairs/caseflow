@@ -17,27 +17,16 @@ RSpec.shared_context("with feature toggle") do
 end
 
 RSpec.shared_context "with existing relationships" do
+  let(:veteran_file_number) { appeal.veteran.file_number }
   let(:relationships) do
     [
-      {
-        first_name: "BOB",
-        last_name: "VANCE",
-        ptcpnt_id: "5382910292",
-        relationship_type: "Spouse"
-      },
-      {
-        first_name: "BILLY",
-        last_name: "VANCE",
-        ptcpnt_id: "12345",
-        relationship_type: "Child"
-      },
-      {
-        first_name: "BLAKE",
-        last_name: "VANCE",
-        ptcpnt_id: "11111",
-        relationship_type: "Other"
-      }
-    ]
+      build(:relationship, :spouse, veteran_file_number: veteran_file_number).serialize,
+      build(:relationship, :child, veteran_file_number: veteran_file_number).serialize,
+      build(:relationship, :other, veteran_file_number: veteran_file_number).serialize,
+    ].map do |item| 
+      item[:ptcpnt_id] = item.delete :participant_id
+      item
+    end 
   end
 
   before do
