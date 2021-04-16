@@ -63,18 +63,18 @@ describe('formatDocketSwitchRecommendation', () => {
     });
   });
 
-  // describe('with denied disposition', () => {
-  //   beforeAll(() => {
-  //     disposition = 'denied';
-  //   });
+  describe('with denied disposition', () => {
+    beforeAll(() => {
+      disposition = 'denied';
+    });
 
-  //   it('properly formats', () => {
-  //     const res = formatDocketSwitchRecommendation({
-  //       summary,
-  //       timely,
-  //       hyperlink,
-  //       disposition,
-  //     });
+    it('properly formats', () => {
+      const res = formatDocketSwitchRecommendation({
+        summary,
+        timely,
+        hyperlink,
+        disposition,
+      });
 
       expect(res).toMatch(
         new RegExp(`\\*\\*Summary:\\*\\* ${summary} {2}\\n {2}\\n`)
