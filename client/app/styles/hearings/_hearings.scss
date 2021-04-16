@@ -352,7 +352,7 @@ $cf-hearing-day-label-color: #323a45;
   // Each item = 73px * 10 = 730px
   max-height: 730px;
   overflow: hidden;
-  overflow-y: auto;
+  overflow-y: scroll;
 
   label {
     color: $cf-hearing-day-label-color;
