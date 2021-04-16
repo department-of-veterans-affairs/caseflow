@@ -89,7 +89,7 @@ const CityState = styled.div`
   grid-gap: 10px;
   grid-template-columns: 320px 130px;
   margin-bottom: 1em;
-  margin-top: -1em;
+  margin-top: -0.75em;
   align-items: center;
   input {
     margin-bottom: 0;
