@@ -34,7 +34,7 @@ export const AddressForm = ({ control, register, watch, setValue }) => {
         />
       </FieldDiv>
       {watchPartyType === 'organization' && (
-        <StreetAddress>
+        <StreetAddress style={{ marginBottom: '30px' }}>
           <TextField
             name="addressLine3"
             label="Street address 3"
@@ -44,7 +44,7 @@ export const AddressForm = ({ control, register, watch, setValue }) => {
           />
         </StreetAddress>
       )}
-      <CityState style={{ marginTop: '20px' }}>
+      <CityState>
         <TextField name="city" label="City" inputRef={register} strongLabel />
         <Controller
           control={control}
@@ -64,7 +64,7 @@ export const AddressForm = ({ control, register, watch, setValue }) => {
           )}
         />
       </CityState>
-      <ZipCountry>
+      <ZipCountry >
         <TextField name="zip" label="Zip" inputRef={register} strongLabel />
         <TextField
           name="country"
@@ -100,7 +100,7 @@ const ZipCountry = styled.div`
   display: grid;
   grid-gap: 10px;
   grid-template-columns: 140px 310px;
-  margin-bottom: -0.65em;
+  margin-bottom: -0.75em;
 `;
 
 const StreetAddress = styled.div`
