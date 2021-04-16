@@ -552,15 +552,15 @@ class Task < CaseflowRecord
     save!(status: Constants.TASK_STATUSES.cancelled)
   end
 
-  def handle_task_count_validation(task)
+  def handle_task_count_validation(task_to_validate)
     begin
-      task.save!
+      task_to_validate.save!
       # We ignore the no_multiples_of_noncancelled_task validation during the reassign flow
     rescue ActiveRecord::RecordInvalid => error
       if error.message != "Validation failed: Type there should not be multiple tasks of this type"
         raise
       else
-        task.save(validate: false)
+        task_to_validate.save(validate: false)
       end
     end
   end

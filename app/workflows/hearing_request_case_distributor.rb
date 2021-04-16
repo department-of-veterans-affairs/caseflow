@@ -41,10 +41,10 @@ class HearingRequestCaseDistributor
     else
       judge_task = current_judge_assign_tasks.first
       updated_assign_tasks = judge_task.reassign({
-        assigned_to_type: distribution.judge.class.name,
-        assigned_to_id: distribution.judge.id,
-        appeal: appeal
-      }, current_user)
+                                                   assigned_to_type: distribution.judge.class.name,
+                                                   assigned_to_id: distribution.judge.id,
+                                                   appeal: appeal
+                                                 }, current_user)
       JudgeAssignTaskCreator.new(appeal: appeal, judge: distribution.judge).close_distribution_tasks_for_appeal
       updated_assign_tasks.find { |task| task.type == "JudgeAssignTask" && task.open? }
     end
