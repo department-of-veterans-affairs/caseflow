@@ -341,7 +341,7 @@ RSpec.feature "Case details", :all_dbs do
             :claimant,
             unrecognized_appellant: ua,
             decision_review: appeal,
-            type: "OtherClaimant",
+            type: "OtherClaimant"
           )
         end
 
