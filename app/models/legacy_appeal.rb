@@ -348,9 +348,6 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def representative_id
-    Rails.logger.debug("*********************")
-Rails.logger.debug(power_of_attorney.class)
-Rails.logger.debug("*********************")
     power_of_attorney.vacols_id
   end
 
