@@ -44,7 +44,7 @@ export const AddressForm = ({ control, register, watch, setValue }) => {
           />
         </StreetAddress>
       )}
-      <CityState>
+      <CityState style={{ marginTop: '20px' }}>
         <TextField name="city" label="City" inputRef={register} strongLabel />
         <Controller
           control={control}
