@@ -1,6 +1,3 @@
-/* eslint-disable */
-// REMOVE ABOVE LINE BEFORE CONTINUING WORK ON THIS FILE
-
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -38,4 +35,3 @@ SubstituteAppellantReview.propTypes = {
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
 };
-/* eslint-enable */
