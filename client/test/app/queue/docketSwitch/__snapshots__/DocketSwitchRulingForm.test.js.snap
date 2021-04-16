@@ -22,7 +22,7 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
           </strong>
         </p>
         <p>
-          The hyperlink takes you to a draft ruling letter based on the recommended ruling. Please feel free to make any necessary edits to the ruling letter. You may then sign the letter. Inserting a hyperlink to a signed ruling letter is recommended, but optional.
+          The hyperlink takes you to a draft ruling letter based on the recommended ruling. Please feel free to make any necessary edits to the ruling letter. You may then sign the letter.
         </p>
         <p>
           If you have any questions, or need assistance making edits to the ruling letter, please 
@@ -148,31 +148,6 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
           </div>
         </div>
       </fieldset>
-      <div
-        class="cf-form-textinput   "
-      >
-        <label
-          for="hyperlink"
-        >
-          <strong>
-            <span>
-              Insert hyperlink to signed ruling letter
-              <span
-                class="cf-optional"
-              >
-                Optional
-              </span>
-            </span>
-          </strong>
-        </label>
-        <input
-          class="cf-form-textinput"
-          id="hyperlink"
-          name="hyperlink"
-          type="text"
-          value=""
-        />
-      </div>
       <div
         class="cf-form-textarea"
       >
