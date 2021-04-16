@@ -33,6 +33,7 @@
   "CASE_LIST_TABLE_TASKS_COLUMN_TITLE": "Tasks",
   "CASE_LIST_TABLE_ASSIGNEE_IS_CURRENT_USER_LABEL": "Assigned to you",
   "CASE_LIST_TABLE_POST_DECISION_LABEL": "Post-decision",
+  "CASE_LIST_TABLE_DOCKET_SWITCH_LABEL": "Docket Switched (Inactive)",
   "CASE_LIST_TABLE_CASE_STORAGE_LABEL": "Case storage",
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL": "Switch views",
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CASES_LABEL": "Your cases",
@@ -900,7 +901,7 @@
 
   "EDIT_EP_CLAIM_LABEL_SUCCESS_ALERT_TITLE": "You have successfully edited the claim label",
   "EDIT_EP_CLAIM_LABEL_SUCCESS_ALERT_MESSAGE": "If the claim label is not updated in VBMS in 24 hours, please submit a YourIt ticket.",
-  
+
   "INTAKE_CORRECTION_TYPE_MODAL_TITLE": "Set Correction Type",
   "INTAKE_CORRECTION_TYPE_MODAL_COPY": "This issue will be added to a 930 EP for correction. If a mistake was found during quality review, please select whether it was discovered by the local or national quality review team. Otherwise, select control.",
   "INTAKE_LEGACY_OPT_IN_MESSAGE": "Did the Veteran check the \"OPT-IN from SOC/SSOC\" box on the form?",
