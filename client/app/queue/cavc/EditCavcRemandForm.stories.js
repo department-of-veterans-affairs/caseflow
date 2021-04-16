@@ -34,8 +34,8 @@ Editing.args = {
     docketNumber: '12-3333',
     attorney: 'yes',
     judge: 'Panel',
-    decisionType: 'Remand',
-    remandType: 'Memorandum Decision on Remand (MDR)',
+    decisionType: 'remand',
+    remandType: 'mdr',
     decisionDate: format(sub(new Date(), { days: 7 }), 'yyyy-MM-dd'),
     issueIds: [2, 3],
     instructions: 'Lorem ipsum dolor sit amet'
