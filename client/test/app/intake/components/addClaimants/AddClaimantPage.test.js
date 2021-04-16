@@ -97,6 +97,6 @@ describe('AddClaimantPage', () => {
       await waitFor(() => {
         expect(submit).not.toBeDisabled();
       });
-    });
+    }, 15000);
   });
 });
