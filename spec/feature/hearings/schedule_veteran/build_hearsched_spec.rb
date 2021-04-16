@@ -294,7 +294,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       scenario "Schedule Veteran for video" do
         cache_appeals
         navigate_to_schedule_veteran
-        select_hearing_time("8:30 ")
+        select_hearing_time("8:30")
         click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
         expect(page).not_to have_content("Could not find hearing locations for this veteran")
         expect(page).not_to have_content("There are no upcoming hearing dates for this regional office.")
