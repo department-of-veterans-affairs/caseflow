@@ -1546,7 +1546,7 @@ RSpec.feature "Case details", :all_dbs do
                receipt_date: 10.months.ago.to_date.mdY,
                request_issues: request_issues)
       end
-      subject { appeal.validate_all_issues_timely!(receipt_date) }
+      subject { appeal.untimely_issues_report(receipt_date) }
       let(:cob_user) { create(:user, css_id: "COB_USER", station_id: "101") }
 
       before do
