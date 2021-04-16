@@ -99,7 +99,7 @@ RSpec.shared_examples("fill substitution form") do
 
       # Substitue claimant is shown
       expect(page).to have_content new_appeal.claimant.person.name
-      expect(page).to have_content "Relation to Veteran: Child"
+      expect(page).to have_content /Relation to Veteran: (Child|Spouse)/
     end
   end
 end
