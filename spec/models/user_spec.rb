@@ -185,6 +185,15 @@ describe User, :all_dbs do
     end
   end
 
+  context "scope with_role" do
+    subject { User.with_role("VSO") }
+    let!(:user2) { create(:user, roles: ["VSO"]) }
+    before { user.update(roles: ["System Admin", "VSO", "Certify Appeal"]) }
+    it "returns all users with role" do
+      expect(subject).to match_array [user, user2]
+    end
+  end
+
   context "#job_title" do
     let!(:user) { create(:user, css_id: "BVAAABSHIRE", station_id: "101") }
     subject { user.job_title }
