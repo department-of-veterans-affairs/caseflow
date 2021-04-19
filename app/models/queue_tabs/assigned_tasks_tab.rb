@@ -29,7 +29,6 @@ class AssignedTasksTab < QueueTab
 
   # rubocop:disable Metrics/AbcSize
   def column_names
-    # acting VLJs are both judge_in_vacols and attorney_in_vacols and should see the attorney columns
     return QueueTab.attorney_column_names if assignee.attorney_in_vacols?
     return QueueTab.judge_column_names if assignee.judge_in_vacols?
 
