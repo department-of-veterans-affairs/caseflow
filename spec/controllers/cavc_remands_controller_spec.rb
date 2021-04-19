@@ -25,7 +25,7 @@ RSpec.describe CavcRemandsController, type: :controller do
   end
 
   describe "POST /appeals/:appeal_id/cavc_remands" do
-    let(:source_appeal) { create(:appeal) }
+    let(:source_appeal) { create(:appeal, :dispatched) }
     let(:source_appeal_id) { source_appeal.uuid }
     let(:cavc_docket_number) { "123-1234567" }
     let(:represented_by_attorney) { true }

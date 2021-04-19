@@ -1,8 +1,9 @@
 import React from 'react';
 
 import { HearingLinks } from 'app/hearings/components/details/HearingLinks';
-import { anyUser } from 'test/data/user';
+import { anyUser, vsoUser } from 'test/data/user';
 import { inProgressvirtualHearing } from 'test/data/virtualHearings';
+import { virtualHearing, amaHearing } from 'test/data/hearings';
 import { mount } from 'enzyme';
 import VirtualHearingLink from
   'app/hearings/components/VirtualHearingLink';
@@ -57,4 +58,20 @@ describe('HearingLinks', () => {
       form.find('span').filterWhere((node) => node.text() === 'Expired')
     ).toHaveLength(2);
   });
+
+  test('Only displays Guest Link when user is not a host', () => {
+    const form = mount(
+      <HearingLinks
+        hearing={amaHearing}
+        isVirtual
+        user={vsoUser}
+        virtualHearing={virtualHearing.virtualHearing}
+      />
+    );
+
+    expect(form).toMatchSnapshot();
+    expect(form.find(VirtualHearingLink)).toHaveLength(1);
+    // Ensure it's the guest link
+    expect(form.find(VirtualHearingLink).prop('link')).toEqual(amaHearing.virtualHearing.guestLink)
+  })
 });

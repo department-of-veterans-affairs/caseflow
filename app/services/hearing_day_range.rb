@@ -99,7 +99,6 @@ class HearingDayRange
     video_hearing_days_request_types = HearingDayRequestTypeQuery.new.call
 
     all_hearing_days
-      .select { |hearing_day, scheduled_hearings| self.class.open_hearing_day?(hearing_day, scheduled_hearings) }
       .map do |hearing_day, scheduled_hearings|
         hearing_day_serialized = ::HearingDaySerializer.new(
           hearing_day,

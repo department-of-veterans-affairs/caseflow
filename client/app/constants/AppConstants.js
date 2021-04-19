@@ -20,7 +20,8 @@ export const COLORS = {
   PRIMARY: '#0071bc',
   BASE: '#212121',
   RED: '#E31C3D',
-  RED_DARK: '#cd2026'
+  RED_DARK: '#cd2026',
+  BLUE_DARKEST: '#122E51'
 };
 
 export const LOGO_COLORS = {
