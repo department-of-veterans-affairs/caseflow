@@ -34,7 +34,7 @@ module SanitizedJsonDifference
     @configuration.records_to_export(orig_initial_records).each_with_object({}) do |(klass, orig_records), result|
       key = klass.table_name
       reused_records_list = ignore_reused_records ? reused_records[key] : []
-      result[key] = SanitizedJsonDifference.diff_record_lists(orig_records.compact.uniq.sort_by(&:id),
+      result[key] = SanitizedJsonDifference.diff_record_lists(orig_records.compact.uniq,
                                                               imported_records[key],
                                                               reused_records_list,
                                                               mapped_fields[klass])
