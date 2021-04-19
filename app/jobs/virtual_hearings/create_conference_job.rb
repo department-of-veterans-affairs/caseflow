@@ -84,7 +84,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     begin
       send_emails(email_type) if virtual_hearing.active?
     rescue StandardError => error
-      capture_exception(error: error)
+      Raven.capture_exception(error: error, extra: { virtual_hearing_id: virtual_hearing.id, email_type: email_type })
     end
 
     if virtual_hearing.can_be_established?
@@ -215,7 +215,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
         alias_with_host: link_service.alias_with_host
       )
     rescue StandardError => error
-      capture_exception(error: error)
+      Raven.capture_exception(error: error)
       raise VirtualHearingLinkGenerationFailed
     end
   end
