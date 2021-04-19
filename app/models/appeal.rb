@@ -183,7 +183,7 @@ class Appeal < DecisionReview
   end
 
   def latest_attorney_case_review
-    return @latest_attorney_case_review if defined?(@latest_attorney_case_review)
+    return @latest_attorney_case_review if defined?(@latest_attorney_case_review) && !@latest_attorney_case_review.nil?
 
     @latest_attorney_case_review = AttorneyCaseReview
       .where(task_id: tasks.pluck(:id))
