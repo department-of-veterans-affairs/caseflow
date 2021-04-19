@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NumberField renders correctly 1`] = `
+<div>
+  <div
+    class="cf-form-int-input"
+  >
+    <div
+      class="cf-form-textinput   "
+    >
+      <label
+        for="number-things"
+      >
+        <span>
+          Enter the number of things
+        </span>
+      </label>
+      <input
+        aria-label="number-things"
+        class="cf-form-textinput"
+        id="number-things"
+        name="number-things"
+        type="text"
+        value=""
+      />
+    </div>
+  </div>
+</div>
+`;

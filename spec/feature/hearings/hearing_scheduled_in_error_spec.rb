@@ -60,7 +60,7 @@ RSpec.feature "Remove hearing scheduled in error" do
     let(:fill_in_veteran_email) { "vet@testingEmail.com" }
     let(:fill_in_representative_email) { "email@testingEmail.com" }
     let(:expected_alert) do
-      COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % appeal.veteran&.name
+      COPY::VIRTUAL_HEARING_SUCCESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % appeal.veteran&.name
     end
   end
 
@@ -124,7 +124,7 @@ RSpec.feature "Remove hearing scheduled in error" do
     find("label", text: COPY::RESCHEDULE_IMMEDIATELY_DISPLAY_TEXT).click
     fill_in "scheduled-in-error-notes", with: fill_in_notes
     click_button("Submit")
-    expect(page).to have_content("Schedule Veteran for a Hearing")
+    expect(page).to have_content("Schedule Veteran for a Hearing", wait: 30)
   end
 
   def fill_case_details_reschedule_form
@@ -134,7 +134,7 @@ RSpec.feature "Remove hearing scheduled in error" do
     find("label", text: COPY::RESCHEDULE_IMMEDIATELY_DISPLAY_TEXT).click
     fill_in "Notes", with: fill_in_notes
     click_button("Submit")
-    expect(page).to have_content("Schedule Veteran for a Hearing")
+    expect(page).to have_content("Schedule Veteran for a Hearing", wait: 30)
   end
 
   def fill_schedule_veteran_form(virtual = false)

@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router';
+import { unwrapResult } from '@reduxjs/toolkit';
 import { parseISO } from 'date-fns';
 import StringUtil from 'app/util/StringUtil';
 import { appealWithDetailSelector } from 'app/queue/selectors';
@@ -27,6 +28,7 @@ export const DocketSwitchReviewConfirmContainer = () => {
   const { appealId, taskId } = useParams();
   const { goBack, push } = useHistory();
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
@@ -83,11 +85,13 @@ export const DocketSwitchReviewConfirmContainer = () => {
     };
 
     try {
-      await dispatch(completeDocketSwitchGranted(docketSwitch));
+      setLoading(true);
+      const resultAction = await dispatch(completeDocketSwitchGranted(docketSwitch));
+      const { newAppealId } = unwrapResult(resultAction);
 
       dispatch(showSuccessMessage(successMessage));
       dispatch(stepForward());
-      push(`/queue/appeals/${appealId}`);
+      push(`/queue/appeals/${newAppealId}`);
     } catch (error) {
       // Perhaps show an alert that indicates error, advise trying again...?
       console.error('Error Granting Docket Switch', error);
@@ -112,11 +116,13 @@ export const DocketSwitchReviewConfirmContainer = () => {
   }, [formData.taskIds, amaTasks]);
 
   const tasksAdded = useMemo(() => {
-    return formData.newTasks.map(({ type, instructions }) => {
-      const label = colocatedAdminActions[reformatTaskType(type)];
+    if (formData.newTasks) {
+      return formData.newTasks.map(({ type, instructions }) => {
+        const label = colocatedAdminActions[reformatTaskType(type)];
 
-      return { type, label, instructions };
-    });
+        return { type, label, instructions };
+      });
+    }
   }, [formData.newTasks, colocatedAdminActions]);
 
   return (
@@ -124,12 +130,13 @@ export const DocketSwitchReviewConfirmContainer = () => {
       claimantName={appeal.claimantName}
       docketFrom={StringUtil.snakeCaseToCapitalized(appeal.docketName)}
       docketTo={StringUtil.snakeCaseToCapitalized(formData.docketType)}
-      docketSwitchReceiptDate={new Date(formData.receiptDate)}
+      docketSwitchReceiptDate={parseISO(formData.receiptDate)}
       issuesSwitched={issuesSwitched}
       issuesRemaining={issuesRemaining}
       onBack={goBack}
       onCancel={handleCancel}
       onSubmit={handleSubmit}
+      loading={loading}
       originalReceiptDate={receiptDate}
       tasksAdded={tasksAdded}
       tasksKept={tasksSwitched}

@@ -53,6 +53,8 @@ let patchSpy;
 const setState = jest.fn();
 const useStateMock = (initState) => [initState, setState];
 const setScheduledHearingMock = jest.fn();
+const fetchScheduledHearingsMock = jest.fn();
+
 const scheduleVeteranProps = {
   showSuccessMessage: jest.fn(),
   onChangeFormData: changeSpy,
@@ -60,6 +62,7 @@ const scheduleVeteranProps = {
   appealId: amaAppeal.externalId,
   taskId: scheduledHearing.taskId,
   setScheduledHearing: setScheduledHearingMock,
+  fetchScheduledHearings: fetchScheduledHearingsMock,
 };
 
 describe('ScheduleVeteran', () => {
@@ -108,7 +111,7 @@ describe('ScheduleVeteran', () => {
     expect(scheduleVeteran.find(AppSegment)).toHaveLength(1);
     expect(scheduleVeteran.find(ScheduleVeteranForm)).toHaveLength(1);
     expect(scheduleVeteran.find(AppSegment).text()).not.toContain(
-      COPY.SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL
+      'will receive an email with connection information for the virtual hearing.'
     );
     expect(scheduleVeteran).toMatchSnapshot();
   });
@@ -504,6 +507,7 @@ describe('ScheduleVeteran', () => {
     // Render the scheduleVeteran component
     const scheduleVeteran = mount(
       <ScheduleVeteran
+        fetchScheduledHearings={fetchScheduledHearingsMock}
         scheduledHearing={scheduledHearing}
         onChangeFormData={changeSpy}
         appeals={appealsData}
@@ -564,6 +568,7 @@ describe('ScheduleVeteran', () => {
     // Render the scheduleVeteran component
     const scheduleVeteran = mount(
       <ScheduleVeteran
+        fetchScheduledHearings={fetchScheduledHearingsMock}
         scheduledHearing={scheduledHearing}
         onChangeFormData={changeSpy}
         goBack={cancelSpy}
@@ -590,7 +595,7 @@ describe('ScheduleVeteran', () => {
     expect(scheduleVeteran.find(RepresentativeSection)).toHaveLength(1);
     expect(scheduleVeteran.find(AppellantSection)).toHaveLength(1);
     expect(scheduleVeteran.find(AppSegment).text()).toContain(
-      COPY.SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL
+      'will receive an email with connection information for the virtual hearing.'
     );
     expect(scheduleVeteran).toMatchSnapshot();
   });

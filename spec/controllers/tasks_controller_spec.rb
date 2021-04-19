@@ -897,7 +897,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
               status: Constants.TASK_STATUSES.completed,
               business_payloads: {
                 values: {
-                  changed_request_type: HearingDay::REQUEST_TYPES[:video]
+                  changed_hearing_request_type: HearingDay::REQUEST_TYPES[:video]
                 }
               }
             },
@@ -907,12 +907,12 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
         it "sucessfully updates appeal and closes related tasks", :aggregate_failures do
           # Ensure that the changed request type is nil before we take action
-          expect(legacy_appeal.changed_request_type).to eq(nil)
+          expect(legacy_appeal.changed_hearing_request_type).to eq(nil)
           subject
 
           # Ensure the update successfully completed the task and changed the appeal
           expect(response.status).to eq 200
-          expect(legacy_appeal.reload.changed_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
+          expect(legacy_appeal.reload.changed_hearing_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
           expect(action.reload.status).to eq(Constants.TASK_STATUSES.completed)
           expect(ChangeHearingRequestTypeTask.find_by(
             appeal: legacy_appeal

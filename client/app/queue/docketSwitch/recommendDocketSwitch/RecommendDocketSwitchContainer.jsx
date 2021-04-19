@@ -1,19 +1,20 @@
-import React, { useEffect, useMemo } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useParams } from 'react-router';
-import { fetchJudges } from '../../QueueActions';
+import { useHistory, useParams, useRouteMatch } from 'react-router';
+import { appealWithDetailSelector, rootTasksForAppeal, taskById } from 'app/queue/selectors';
+import { taskActionData } from 'app/queue/utils';
 
-import { appealWithDetailSelector, rootTasksForAppeal } from '../../selectors';
-import DISPOSITIONS from '../../../../constants/DOCKET_SWITCH_DISPOSITIONS';
-import { createDocketSwitchRulingTask } from './recommendDocketSwitchSlice';
+import DISPOSITIONS from 'constants/DOCKET_SWITCH_DISPOSITIONS';
+
 import { RecommendDocketSwitchForm } from './RecommendDocketSwitchForm';
 import {
   DOCKET_SWITCH_RECOMMENDATION_SUCCESS_TITLE,
   DOCKET_SWITCH_RECOMMENDATION_SUCCESS_MESSAGE,
-} from '../../../../COPY';
+} from 'app/../COPY';
 
 import { sprintf } from 'sprintf-js';
-import { showSuccessMessage } from '../../uiReducer/uiActions';
+import { showSuccessMessage } from 'app/queue/uiReducer/uiActions';
+import { completeTask, createDocketSwitchRulingTask } from '../docketSwitchSlice';
 
 // This takes form data and generates Markdown-formatted text to be saved as task instructions
 export const formatDocketSwitchRecommendation = ({
@@ -29,35 +30,25 @@ export const formatDocketSwitchRecommendation = ({
   parts.push(`**Summary:** ${summary}`);
   parts.push(`**Is this a timely request:** ${timelyCaps}`);
   parts.push(`**Recommendation:** ${DISPOSITIONS[disposition].displayText}`);
-  parts.push(`**Draft letter:** ${hyperlink}`);
+  if (hyperlink) {
+    parts.push(`**Draft letter:** [View link](${hyperlink})`);
+  }
 
   // Separate each chunk by two line breaks
   return parts.join('  \n  \n');
 };
 
 export const RecommendDocketSwitchContainer = () => {
-  const { appealId } = useParams();
+  const { appealId, taskId } = useParams();
   const { goBack, push } = useHistory();
   const dispatch = useDispatch();
 
   const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
   const rootTask = useSelector((state) => rootTasksForAppeal(state, { appealId }))[0];
+  const task = useSelector((state) => taskById(state, { taskId }));
 
-  const judges = useSelector((state) => state.queue.judges);
-  const judgeOptions = useMemo(
-    () =>
-      Object.values(judges).map(({ id: value, display_name: label }) => ({
-        label,
-        value,
-      })),
-    [judges]
-  );
-
-  // We want to default the judge selection to the VLJ currently assigned to the case, if exists
-  const defaultJudgeId = useMemo(() => {
-    // eslint-disable-next-line no-undefined
-    return appeal.assignedJudge?.id ?? undefined;
-  }, [judges, appeal]);
+  const match = useRouteMatch();
+  const options = taskActionData({ task, match })?.options;
 
   // eslint-disable-next-line no-console
   const handleSubmit = async (formData) => {
@@ -84,6 +75,8 @@ export const RecommendDocketSwitchContainer = () => {
     try {
       await dispatch(createDocketSwitchRulingTask(data));
 
+      await dispatch(completeTask({ taskId }));
+
       dispatch(showSuccessMessage(successMessage));
       push('/queue');
     } catch (error) {
@@ -92,18 +85,12 @@ export const RecommendDocketSwitchContainer = () => {
     }
   };
 
-  useEffect(() => {
-    if (!judgeOptions.length) {
-      dispatch(fetchJudges());
-    }
-  });
-
   return (
     <RecommendDocketSwitchForm
       onCancel={goBack}
       onSubmit={handleSubmit}
-      judgeOptions={judgeOptions}
-      defaultJudgeId={defaultJudgeId}
+      judgeOptions={options}
+      defaultJudgeId={null}
       appellantName={appeal.appellantFullName}
     />
   );

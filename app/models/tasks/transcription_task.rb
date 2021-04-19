@@ -22,7 +22,7 @@ class TranscriptionTask < Task
     DistributionTask
   ].freeze
 
-  validates :parent, presence: true, parentTask: { task_types: VALID_PARENT_TYPES }
+  validates :parent, presence: true, parentTask: { task_types: VALID_PARENT_TYPES }, on: :create
 
   def available_actions(user)
     hearing_admin_actions = available_hearing_user_actions(user)

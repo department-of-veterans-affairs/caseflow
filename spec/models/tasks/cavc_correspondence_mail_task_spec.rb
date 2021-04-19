@@ -19,11 +19,11 @@ describe CavcCorrespondenceMailTask do
       described_class.create_from_params({ appeal: appeal, parent_id: appeal.root_task.id }, mail_user)
     end
 
+    # organization-level-tasks
     let(:mail_task_actions) do
       [
         Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
         Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
-        Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
         Constants.TASK_ACTIONS.CANCEL_TASK.to_h
       ]
     end
@@ -75,6 +75,7 @@ describe CavcCorrespondenceMailTask do
         end
       end
     end
+
     context "when assigned to a User" do
       let(:mail_user_task) do
         described_class.create_from_params({ appeal: appeal,

@@ -15,6 +15,16 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
   describe "when intaking a cavc remand" do
     before { BvaDispatch.singleton.add_user(create(:user)) }
 
+    # Specifying date for test run due to hard-coded dates being used below
+    # Workaround due to weird interaction between using fill_in with dynamic dates and controlled DateSelector fields
+    before do
+      Timecop.travel(Time.zone.local(2021, 4, 13))
+    end
+
+    after do
+      Timecop.return
+    end
+
     let(:appeal) { create(:appeal, :dispatched) }
 
     let(:notes) { "Pain disorder with 100\% evaluation per examination" }
@@ -32,8 +42,9 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
     end
 
     let(:docket_number) { "12-1234" }
-    let(:date) { "11/11/2020" }
-    let(:later_date) { "12/21/2020" }
+    # Use a decision date within the last 90 days so that it is automatically put on hold for MDR
+    let(:date) { "3/13/2021" }
+    let(:later_date) { "3/23/2021" }
     let(:instructions) { "Please process this remand" }
     let(:mandate_instructions) { "Mandate received!" }
     let(:judge_name) { Constants::CAVC_JUDGE_FULL_NAMES.first }
@@ -90,6 +101,13 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           fill_in "decision-date", with: date
           fill_in "context-and-instructions-textBox", with: "Please process this remand"
 
+          # unselect an issue
+          find(".checkbox-wrapper-issuesList").find("label[for=\"2\"]").click
+          expect(page).to have_content COPY::JMR_SELECTION_ISSUE_INFO_BANNER
+          # select the issue; all issues must be selected for JMR
+          find(".checkbox-wrapper-issuesList").find("label[for=\"2\"]").click
+          expect(page).to_not have_content COPY::JMR_SELECTION_ISSUE_INFO_BANNER
+
           page.find("button", text: "Submit").click
 
           expect(page).to have_content COPY::CAVC_REMAND_CREATED_TITLE
@@ -119,15 +137,28 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           visit "queue/appeals/#{appeal.external_id}"
           page.find("button", text: "+ Add CAVC Remand").click
 
-          # unselect an issue and manually fill in judgement and mandate dates
           fill_in "docket-number", with: docket_number
           click_dropdown(text: judge_name)
           find("label", text: "Joint Motion for Partial Remand (JMPR)").click
+
+          # manually fill in judgement and mandate dates
           fill_in "decision-date", with: date
           find(".checkbox-wrapper-mandate-dates-same-toggle").find("label[for=\"mandate-dates-same-toggle\"]").click
           fill_in "judgement-date", with: date
           fill_in "mandate-date", with: date
-          find(".checkbox-wrapper-undefined").find("label[for=\"3\"]").click
+
+          # unselect all issues
+          find(".checkbox-wrapper-issuesList").find("label[for=\"1\"]").click
+          expect(page).to_not have_content COPY::JMPR_SELECTION_ISSUE_INFO_BANNER
+          find(".checkbox-wrapper-issuesList").find("label[for=\"2\"]").click
+          expect(page).to_not have_content COPY::JMPR_SELECTION_ISSUE_INFO_BANNER
+          find(".checkbox-wrapper-issuesList").find("label[for=\"3\"]").click
+          expect(page).to have_content COPY::JMPR_SELECTION_ISSUE_INFO_BANNER
+
+          # only need one issue selected for JMPR
+          find(".checkbox-wrapper-issuesList").find("label[for=\"2\"]").click
+          expect(page).to_not have_content COPY::JMPR_SELECTION_ISSUE_INFO_BANNER
+
           fill_in "context-and-instructions-textBox", with: "Please process this remand"
 
           page.find("button", text: "Submit").click
@@ -170,7 +201,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           fill_in "judgement-date", with: later_date
           fill_in "mandate-date", with: later_date
           find(".checkbox-wrapper-mandate-dates-same-toggle").find("label[for=\"mandate-dates-same-toggle\"]").click
-          find(".checkbox-wrapper-undefined").find("label[for=\"3\"]").click
+          find(".checkbox-wrapper-issuesList").find("label[for=\"3\"]").click
           fill_in "context-and-instructions-textBox", with: "Please process this remand"
 
           page.find("button", text: "Submit").click
@@ -210,15 +241,27 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           expect(page).to have_content COPY::CAVC_FEDERAL_CIRCUIT_HEADER
           expect(page).to have_content COPY::CAVC_FEDERAL_CIRCUIT_LABEL
 
-          # unselect an issue and don't fill in judgement date or mandate date
+          # don't fill in judgement date or mandate date
           fill_in "decision-date", with: date
-          find(".checkbox-wrapper-undefined").find("label[for=\"3\"]").click
+
+          # unselect all issues
+          find(".checkbox-wrapper-issuesList").find("label[for=\"1\"]").click
+          expect(page).to_not have_content COPY::MDR_SELECTION_ISSUE_INFO_BANNER
+          find(".checkbox-wrapper-issuesList").find("label[for=\"2\"]").click
+          expect(page).to_not have_content COPY::MDR_SELECTION_ISSUE_INFO_BANNER
+          find(".checkbox-wrapper-issuesList").find("label[for=\"3\"]").click
+          expect(page).to have_content COPY::MDR_SELECTION_ISSUE_INFO_BANNER
+
+          # only need one issue selected for MDR
+          find(".checkbox-wrapper-issuesList").find("label[for=\"3\"]").click
+          expect(page).to_not have_content COPY::MDR_SELECTION_ISSUE_INFO_BANNER
+
           fill_in "context-and-instructions-textBox", with: instructions
           find("label", text: "Yes, this case has been appealed to the Federal Circuit").click
           page.find("button", text: "Submit").click
 
-          expect(page).to have_content COPY::CAVC_REMAND_CREATED_TITLE
-          expect(page).to have_content COPY::CAVC_REMAND_MDR_CREATED_DETAIL
+          expect(page).to have_content(COPY::CAVC_REMAND_CREATED_TITLE)
+          expect(page).to have_content(COPY::CAVC_REMAND_MDR_CREATED_DETAIL)
         end
 
         step "cavc user confirms data on case details page" do
@@ -300,7 +343,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           click_dropdown(text: judge_name)
           find("label", text: "Straight Reversal").click
           fill_in "decision-date", with: date
-          find(".checkbox-wrapper-undefined").find("label[for=\"2\"]").click
+          find(".checkbox-wrapper-issuesList").find("label[for=\"2\"]").click
           fill_in "context-and-instructions-textBox", with: instructions
           page.find("button", text: "Submit").click
 
@@ -336,7 +379,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           page.all(".cf-form-radio-inline")[1].find("label[for=\"remand-provided-toggle_false\"]").click
           expect(page).to have_content COPY::CAVC_REMAND_NO_MANDATE_TEXT
           fill_in "decision-date", with: date
-          find(".checkbox-wrapper-undefined").find("label[for=\"2\"]").click
+          find(".checkbox-wrapper-issuesList").find("label[for=\"2\"]").click
           fill_in "context-and-instructions-textBox", with: instructions
           page.find("button", text: "Submit").click
 
@@ -428,6 +471,71 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
 
           expect(page.has_no_content?("#{COPY::CASE_DETAILS_CAVC_JUDGEMENT_DATE}:")).to eq(true)
           expect(page.has_no_content?("#{COPY::CASE_DETAILS_CAVC_MANDATE_DATE}:")).to eq(true)
+        end
+      end
+    end
+  end
+
+  describe "when editing a cavc remand" do
+    let(:remand_appeal) { create(:appeal, :type_cavc_remand) }
+    let(:source_appeal) { remand_appeal.cavc_remand.source_appeal }
+    let(:cavc_remand) { remand_appeal.cavc_remand }
+    let(:new_judge_name) { Constants::CAVC_JUDGE_FULL_NAMES.second }
+    let(:updated_instructions) { " this has been edited" }
+
+    context "with feature toggles enabled" do
+      before do
+        FeatureToggle.enable!(:cavc_remand)
+        FeatureToggle.enable!(:mdr_cavc_remand)
+        FeatureToggle.enable!(:reversal_cavc_remand)
+        FeatureToggle.enable!(:dismissal_cavc_remand)
+        FeatureToggle.enable!(:can_edit_cavc_remands)
+      end
+      after do
+        FeatureToggle.disable!(:cavc_remand)
+        FeatureToggle.disable!(:mdr_cavc_remand)
+        FeatureToggle.disable!(:reversal_cavc_remand)
+        FeatureToggle.disable!(:dismissal_cavc_remand)
+        FeatureToggle.disable!(:can_edit_cavc_remands)
+      end
+
+      it "allows editing of an existing remand" do
+        step "check 'Edit remand' link does not appear for users not in the CAVC Team" do
+          User.authenticate!(user: other_user)
+          visit "queue/appeals/#{remand_appeal.external_id}"
+          expect(page).to_not have_content "Edit remand"
+        end
+
+        step "check 'Edit remand' link appears" do
+          User.authenticate!(user: org_admin)
+          visit "queue/appeals/#{remand_appeal.external_id}"
+          expect(page).to have_content "Edit Remand"
+        end
+
+        step "verify that existing values are present" do
+          click_on "Edit Remand"
+          expect(page).to have_content COPY::EDIT_CAVC_PAGE_TITLE.to_s
+
+          expect(page).to have_field(
+            COPY::CAVC_TYPE_LABEL,
+            with: Constants::CAVC_DECISION_TYPE_NAMES[cavc_remand[:cavc_decision_type]]
+          )
+          expect(page).to have_field(
+            COPY::CAVC_SUB_TYPE_LABEL,
+            with: Constants::CAVC_REMAND_SUBTYPE_NAMES[cavc_remand[:remand_subtype]]
+          )
+        end
+
+        step "edit certain fields" do
+          click_dropdown(text: new_judge_name)
+          fill_in "instructions", with: updated_instructions, fill_options: { clear: :backspace }
+          page.find("button", text: "Submit").click
+        end
+
+        step "verify updates" do
+          expect(page).to have_content "CAVC Remand"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGE}: #{new_judge_name}"
+          expect(page).to have_content updated_instructions
         end
       end
     end
@@ -721,7 +829,19 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
       end
 
       it "allows users to process CavcRemandProcessedLetterResponseWindowTask" do
-        task.update!(assigned_to: org_nonadmin)
+        step "admin assigns task to user" do
+          # Logged in as CAVC Lit Support admin
+          User.authenticate!(user: org_admin)
+          visit "queue/appeals/#{task.appeal.external_id}"
+          find(".cf-select__control", text: "Select an action").click
+
+          find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label).click
+          find(".cf-select__control", text: org_admin.full_name).click
+          find("div", class: "cf-select__option", text: org_nonadmin.full_name).click
+          fill_in "taskInstructions", with: "Assigning to user."
+          click_on "Submit"
+          expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin.full_name
+        end
 
         step "assigned user adds schedule hearing task" do
           # Logged in as assignee
@@ -775,12 +895,30 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           expect(page).to have_content "#{CavcGrantedExtensionRequestTask.name} completed"
         end
 
+        step "reassign to another user" do
+          timed_hold_task = task.appeal.tasks.open.where(type: :TimedHoldTask).first
+          expect(timed_hold_task.parent.assigned_to).to eq org_nonadmin
+
+          click_dropdown(text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.label)
+          find(".cf-select__control", text: COPY::ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER).click
+          find("div", class: "cf-select__option", text: org_nonadmin2.full_name).click
+          fill_in "taskInstructions", with: "Reassigning to org_nonadmin3 to check that TimedHoldTask moves."
+          click_on "Submit"
+          expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin2.full_name
+
+          # open timed_hold_task is moved to new parent task assigned to org_nonadmin2
+          expect(timed_hold_task.reload.parent.assigned_to).to eq org_nonadmin2
+        end
+
         step "assigned user completes task" do
+          User.authenticate!(user: org_nonadmin2)
+          visit "queue/appeals/#{task.appeal.external_id}"
+
           click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
           click_on "Submit"
 
           find(".cf-select__control", text: "Select an action").click
-          response_window_task_row = page.find("#currently-active-tasks").find_all("tr")[2]
+          response_window_task_row = page.find("#currently-active-tasks").find_all("tr")[0]
           expect(response_window_task_row).to have_content("TASK\n#{COPY::CRP_LETTER_RESP_WINDOW_TASK_LABEL}")
           expect(response_window_task_row.find_all(".cf-select__option").length).to eq 9
 

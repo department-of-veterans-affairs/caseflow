@@ -28,6 +28,8 @@ feature "Non-veteran claimants", :postgres do
     }
   end
 
+  let(:decision_date) { 3.months.ago.mdY }
+
   context "with non_veteran_claimants feature toggle" do
     before { FeatureToggle.enable!(:non_veteran_claimants) }
     after { FeatureToggle.disable!(:non_veteran_claimants) }
@@ -65,12 +67,6 @@ feature "Non-veteran claimants", :postgres do
       expect(page).to have_content("Claimant's address")
       expect(page).to have_content(attorney.name)
       expect(page).to have_content(attorney.address_line_1.titleize)
-      expect(page).to have_content("Do you have a VA Form 21-22 for this claimant?")
-      expect(page).to have_button("Continue to next step", disabled: true)
-
-      within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
-        find("label", text: "No", match: :prefer_exact).click
-      end
 
       expect(page).to have_button("Continue to next step", disabled: false)
 
@@ -82,11 +78,12 @@ feature "Non-veteran claimants", :postgres do
       expect(page).to have_content("Type to search...")
 
       safe_click ".dropdown-listedAttorney"
-      fill_in("listedAttorney", with: "Name not listed").send_keys :enter
+      fill_in("Claimant's name", with: "Name not lis")
+      expect(page).to have_content("Name not listed")
+      find("div", class: "cf-select__menu", text: "Name not listed")
       select_claimant(0)
 
       expect(page).to have_content("Is the claimant an organization or individual?")
-      expect(page).to have_content("Do you have a VA Form 21-22 for this claimant?")
 
       # Check validation for unlisted attorney
       within_fieldset("Is the claimant an organization or individual?") do
@@ -98,14 +95,10 @@ feature "Non-veteran claimants", :postgres do
       fill_in("State", with: "California").send_keys :enter
       fill_in("Zip", with: "12345").send_keys :enter
       fill_in("Country", with: "United States").send_keys :enter
-      within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
-        find("label", text: "No", match: :prefer_exact).click
-      end
 
       expect(page).to have_button("Continue to next step", disabled: false)
 
       click_button "Continue to next step"
-
       submit_confirmation_modal
 
       # Submission currently out of scope; consider stub as next path might be conditional
@@ -144,6 +137,7 @@ feature "Non-veteran claimants", :postgres do
 
       # fill in form information
       add_new_claimant
+
       within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
         find("label", text: "Yes", match: :prefer_exact).click
       end
@@ -164,8 +158,11 @@ feature "Non-veteran claimants", :postgres do
 
       # Fill in Name not listed
       safe_click ".dropdown-listedAttorney"
-      fill_in("listedAttorney", with: "Name not listed").send_keys :enter
+      fill_in("Representative's name", with: "Name not lis")
+      expect(page).to have_content("Name not listed")
+      find("div", class: "cf-select__menu", text: "Name not listed")
       select_claimant(0)
+
       expect(page).to have_content("Is the representative an organization or individual?")
 
       # Check validation for unlisted attorney
@@ -183,6 +180,97 @@ feature "Non-veteran claimants", :postgres do
 
       # Submission currently out of scope; consider stub as next path might be conditional
       expect(page).to have_current_path("/intake/add_issues")
+      expect(page).to have_content("Claimant's POA")
+      expect(page).to have_content(new_individual_claimant[:first_name])
+
+      # Add request issues
+      click_intake_add_issue
+      add_intake_nonrating_issue(date: decision_date)
+      expect(page).to have_content("Active Duty Adjustments")
+      click_intake_finish
+      expect(page).to have_current_path("/intake/completed")
+
+      # verify that current intake with claimant_type other was created
+      expect(Intake.last.detail.claimant_type).to eq("other")
+      claimant = Claimant.find_by(type: "OtherClaimant")
+      expect(claimant.power_of_attorney.name).to eq("Attorney's Law Firm")
+      appeal = Appeal.find_by(docket_type: "evidence_submission")
+
+      # verify poa shows on edit page
+      expect(page).to have_content("correct the issues")
+      click_on "correct the issues"
+      expect(claimant.power_of_attorney.name).to eq("Attorney's Law Firm")
+
+      # Case details page
+      visit "queue/appeals/#{appeal.uuid}"
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+      expect(page).to have_content(new_individual_claimant[:first_name])
+      expect(claimant.relationship).to eq("Other")
+    end
+
+    it "allows selecting claimant not listed and validates spouse is saved on review page" do
+      start_appeal(veteran)
+      visit "/intake"
+
+      expect(page).to have_current_path("/intake/review_request")
+
+      within_fieldset("Is the claimant someone other than the Veteran?") do
+        find("label", text: "Yes", match: :prefer_exact).click
+      end
+
+      expect(page).to have_selector("label[for=claimant-options_claimant_not_listed]")
+
+      within_fieldset(COPY::SELECT_CLAIMANT_LABEL) do
+        find("label", text: "Claimant not listed", match: :prefer_exact).click
+      end
+
+      click_intake_continue
+
+      expect(page).to have_current_path("/intake/add_claimant")
+      expect(page).to have_content("Add Claimant")
+
+      fill_in("Relationship to the Veteran", with: "Spouse").send_keys :enter
+
+      # fill in form information
+      fill_in "First name", with: "Darlyn"
+      fill_in "Last name", with: "Duck"
+      fill_in "Street address 1", with: "1234 Justice St."
+      fill_in "City", with: "Anytown"
+      fill_in("State", with: "California").send_keys :enter
+      fill_in("Zip", with: "12345").send_keys :enter
+      fill_in("Country", with: "United States").send_keys :enter
+      within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
+        find("label", text: "No", match: :prefer_exact).click
+      end
+
+      expect(page).to have_button("Continue to next step", disabled: false)
+
+      click_button "Continue to next step"
+
+      expect(page).to have_content("Darlyn Duck")
+
+      submit_confirmation_modal
+
+      claimant = Claimant.find_by(type: "OtherClaimant")
+
+      expect(claimant.name).to eq("Darlyn Duck")
+      expect(claimant.relationship).to eq("Spouse")
+
+      expect(page).to have_content(COPY::ADD_CLAIMANT_CONFIRM_MODAL_NO_POA)
+
+      # Add request issues
+      click_intake_add_issue
+      add_intake_nonrating_issue(date: decision_date)
+      expect(page).to have_content("Active Duty Adjustments")
+      click_intake_finish
+      expect(page).to have_current_path("/intake/completed")
+
+      appeal = Appeal.find_by(docket_type: "evidence_submission")
+      # Case details page
+      visit "queue/appeals/#{appeal.uuid}"
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+      expect(claimant.name).to eq("Darlyn Duck")
+      expect(claimant.relationship).to eq("Spouse")
     end
   end
 

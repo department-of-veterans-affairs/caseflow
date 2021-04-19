@@ -7,6 +7,7 @@ RSpec.feature "Docket Switch", :all_dbs do
     cotb_org.add_user(cotb_attorney)
     cotb_org.add_user(cotb_non_attorney)
     create(:staff, :judge_role, sdomainid: judge.css_id)
+    cotb_org.add_user(judge)
   end
   after { FeatureToggle.disable!(:docket_switch) }
 
@@ -29,10 +30,16 @@ RSpec.feature "Docket Switch", :all_dbs do
     end
   end
 
-  let(:root_task) { create(:root_task, :completed, appeal: appeal) }
+  let(:root_task) { create(:root_task, appeal: appeal) }
   let(:cotb_attorney) { create(:user, :with_vacols_attorney_record, full_name: "Clark Bard") }
   let!(:cotb_non_attorney) { create(:user, full_name: "Aang Bender") }
   let(:judge) { create(:user, :with_vacols_judge_record, full_name: "Judge the First", css_id: "JUDGE_1") }
+  let(:other_organization) { Organization.create!(name: "Other organization", url: "other") }
+  let!(:aod_motion_mail_task) { create(:aod_motion_mail_task, appeal: appeal, parent: root_task) }
+  let(:translation_task) do
+    create(:translation_task, appeal: appeal, parent: root_task, assigned_to: other_organization)
+  end
+  let!(:foia_task) { create(:foia_task, appeal: appeal, parent: translation_task) }
 
   describe "create DocketSwitchMailTask" do
     it "allows Clerk of the Board users to create DocketSwitchMailTask" do
@@ -78,8 +85,8 @@ RSpec.feature "Docket Switch", :all_dbs do
       find("label[for=disposition_#{disposition}]").click
       fill_in("hyperlink", with: hyperlink)
 
-      # The previously assigned judge should be selected
-      expect(page).to have_content(judge_assign_task.assigned_to.display_name)
+      find(".cf-select__control", text: "Select judge").click
+      find("div", class: "cf-select__option", text: judge.display_name).click
 
       click_button(text: "Submit")
 
@@ -88,6 +95,9 @@ RSpec.feature "Docket Switch", :all_dbs do
 
       # Success banner
       expect(page).to have_content(COPY::DOCKET_SWITCH_RECOMMENDATION_SUCCESS_MESSAGE)
+
+      # Ensure we've completed the mail task
+      expect(docket_switch_mail_task.reload).to have_attributes(status: Constants.TASK_STATUSES.completed)
 
       judge_task = DocketSwitchRulingTask.find_by(assigned_to: judge)
       expect(judge_task).to_not be_nil
@@ -101,7 +111,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(page).to have_content "Summary: #{summary}"
       expect(page).to have_content "Is this a timely request: #{timely.capitalize}"
       expect(page).to have_content "Recommendation: Grant all issues"
-      expect(page).to have_content "Draft letter: #{hyperlink}"
+      expect(page).to have_content "Draft letter: View link"
     end
   end
 
@@ -112,6 +122,7 @@ RSpec.feature "Docket Switch", :all_dbs do
         appeal: appeal,
         parent: root_task,
         assigned_to: judge,
+        instructions: ["**Summary:** Test\n\n**Draft letter:** [View link](http://example.com)"],
         assigned_by: cotb_attorney
       )
     end
@@ -132,7 +143,6 @@ RSpec.feature "Docket Switch", :all_dbs do
           # Fill out form
           fill_in("context", with: context)
           find("label[for=disposition_#{disposition}]").click
-          fill_in("hyperlink", with: hyperlink)
 
           # The previously assigned COTB attorney should be selected
           expect(page).to have_content(cotb_attorney.full_name)
@@ -153,14 +163,17 @@ RSpec.feature "Docket Switch", :all_dbs do
           expect(next_task.parent).to be_a(task_type)
           expect(next_task.parent.assigned_to).to be_a(ClerkOfTheBoard)
 
+          # Ensure judge task is now on hold
+          expect(docket_switch_ruling_task.reload).to have_attributes(status: Constants.TASK_STATUSES.on_hold)
+
           # Check that task got created and shows instructions on Case Details
           User.authenticate!(user: cotb_attorney)
           visit "/queue/appeals/#{appeal.uuid}"
-          find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+          first("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
           judge_ruling_text = Constants::DOCKET_SWITCH_DISPOSITIONS[disposition]["judgeRulingText"]
 
           expect(page).to have_content "I am proceeding with a #{judge_ruling_text}"
-          expect(page).to have_content "Signed ruling letter:\n#{hyperlink}"
+          expect(page).to have_content "Signed ruling letter: View link"
           expect(page).to have_content(context)
         end
       end
@@ -218,7 +231,9 @@ RSpec.feature "Docket Switch", :all_dbs do
       )
     end
 
-    let(:colocated_user) { create(:user) }
+    let(:colocated_user) do
+      create(:user).tap { |user| Colocated.singleton.add_user(user) }
+    end
     let!(:colocated_staff) { create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
 
     let!(:existing_admin_action1) do
@@ -300,9 +315,11 @@ RSpec.feature "Docket Switch", :all_dbs do
 
       expect(page).to have_content(format(COPY::DOCKET_SWITCH_GRANTED_REQUEST_LABEL, appeal.claimant.name))
       expect(page).to have_content(COPY::DOCKET_SWITCH_GRANTED_REQUEST_INSTRUCTIONS)
-
       fill_in "What is the Receipt Date of the docket switch request?", with: receipt_date
 
+      expect(find_field(
+        "What is the Receipt Date of the docket switch request?"
+      ).value).to have_content(receipt_date.to_s)
       # select full grants
       within_fieldset("How are you proceeding with this request to switch dockets?") do
         find("label", text: "Grant all issues").click
@@ -337,11 +354,11 @@ RSpec.feature "Docket Switch", :all_dbs do
         "/queue/appeals/#{appeal.uuid}/tasks/#{docket_switch_granted_task.id}/docket_switch/checkout/grant/confirm"
       )
       expect(page).to have_content appeal.veteran_full_name
+      expect(page).to have_content(receipt_date.strftime("%-m/%-d/%Y"))
 
       click_button(text: "Confirm docket switch")
 
       # Return back to user's queue
-      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
       expect(page).to have_content format(
         COPY::DOCKET_SWITCH_FULL_GRANTED_SUCCESS_TITLE,
         appeal.claimant.name,
@@ -349,14 +366,34 @@ RSpec.feature "Docket Switch", :all_dbs do
       )
       expect(page).to have_content format(COPY::DOCKET_SWITCH_GRANTED_SUCCESS_MESSAGE)
 
+      # Queue display updates
+      find("span", text: "View all cases").click
+
+      expect(find_by_id("table-row-1")).to have_content(COPY::CASE_LIST_TABLE_DOCKET_SWITCH_LABEL, appeal.docket_number)
+      expect(page).to have_no_content(COPY::CASE_LIST_TABLE_ASSIGNEE_IS_CURRENT_USER_LABEL)
+
       # Verify that full grant completed correctly
+      docket_switch = DocketSwitch.find_by(old_docket_stream_id: appeal.id)
+
+      expect(docket_switch).to_not be_nil
+      expect(docket_switch.new_docket_stream.docket_type).to eq(docket_switch.docket_type)
+      expect(page).to have_current_path("/queue/appeals/#{docket_switch.new_docket_stream.uuid}")
       expect(docket_switch_granted_task.reload.status).to eq Constants.TASK_STATUSES.completed
       expect(existing_admin_action1.reload.status).to eq Constants.TASK_STATUSES.cancelled
-
-      docket_switch = DocketSwitch.find_by(old_docket_stream_id: appeal.id)
-      expect(docket_switch).to_not be_nil
       expect(docket_switch.disposition).to eq "granted"
       expect(docket_switch.docket_type).to eq "direct_review"
+
+      new_completed_task = DocketSwitchGrantedTask.find_by(
+        appeal: docket_switch.new_docket_stream,
+        assigned_to_type: "User"
+      )
+      expect(new_completed_task).to_not be_nil
+
+      visit "/queue"
+      click_on "Completed"
+
+      # Both the original and new appeal stream have the Granted Docket Switch task
+      expect(page).to have_content("Granted Docket Switch").twice
     end
 
     it "allows attorney to complete a partial docket switch" do
@@ -390,13 +427,11 @@ RSpec.feature "Docket Switch", :all_dbs do
 
       expect(page).to have_button("Continue", disabled: false)
       click_button(text: "Continue")
-      # Should now be on confirmation page
+      # Should now be on add/remove tasks page
       expect(page).to have_content("Switch Docket: Add/Remove Tasks")
       expect(page).to have_content("You are switching from Evidence Submission to Direct Review")
 
       click_button(text: "Continue")
-
-      click_button(text: "Confirm docket switch")
 
       # Should now be on confirmation page
       expect(page).to have_current_path(
@@ -414,7 +449,6 @@ RSpec.feature "Docket Switch", :all_dbs do
 
       click_button(text: "Confirm docket switch")
       # Return back to user's queue
-      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
       expect(page).to have_content format(
         COPY::DOCKET_SWITCH_PARTIAL_GRANTED_SUCCESS_TITLE,
         appeal.claimant.name,
@@ -428,8 +462,9 @@ RSpec.feature "Docket Switch", :all_dbs do
 
       docket_switch = DocketSwitch.find_by(old_docket_stream_id: appeal.id)
       expect(docket_switch).to_not be_nil
-      expect(docket_switch.disposition).to eq "partially_granted"
-      expect(docket_switch.docket_type).to eq "direct_review"
+      expect(docket_switch.new_docket_stream.docket_type).to eq(docket_switch.docket_type)
+      expect(page).to have_current_path("/queue/appeals/#{docket_switch.new_docket_stream.uuid}")
+      expect(docket_switch).to have_attributes(disposition: "partially_granted", docket_type: "direct_review")
     end
 
     it "allows attorney to edit tasks and proceed to confirmation page" do
@@ -556,15 +591,30 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(page).to have_button("Confirm docket switch", disabled: false)
 
       click_button(text: "Confirm docket switch")
-      # Add checks for post-submit
 
-      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
       expect(page).to have_content format(
         COPY::DOCKET_SWITCH_PARTIAL_GRANTED_SUCCESS_TITLE,
         appeal.claimant.name,
         new_task_type
       )
       expect(page).to have_content format(COPY::DOCKET_SWITCH_GRANTED_SUCCESS_MESSAGE)
+
+      docket_switch = DocketSwitch.find_by(old_docket_stream_id: appeal.id)
+      expect(docket_switch).to_not be_nil
+      expect(docket_switch.new_docket_stream.docket_type).to eq(docket_switch.docket_type)
+
+      new_tasks = docket_switch.new_docket_stream.reload.tasks
+      aod_motion_mail_task = new_tasks.find { |task| task.type == "AodMotionMailTask" }
+      foia_task = new_tasks.find { |task| task.type == "FoiaTask" }
+      expect(aod_motion_mail_task).to be_active
+      expect(foia_task).to be_active
+      expect(page).to have_current_path("/queue/appeals/#{docket_switch.new_docket_stream.uuid}")
+
+      new_completed_task = DocketSwitchGrantedTask.find_by(
+        appeal: docket_switch.new_docket_stream,
+        assigned_to_type: "User"
+      )
+      expect(new_completed_task).to_not be_nil
     end
   end
 end

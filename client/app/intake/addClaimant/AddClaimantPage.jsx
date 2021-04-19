@@ -24,7 +24,7 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
   const { goBack, push } = useHistory();
 
   const [confirmModal, setConfirmModal] = useState(false);
-  const { claimant, poa } = useSelector((state) => state.addClaimant);
+  const { claimant } = useSelector((state) => state.addClaimant);
 
   /* eslint-disable no-unused-vars */
   // This code will likely be needed in submission (see handleConfirm)
@@ -44,25 +44,41 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
   const intakeData = useMemo(() => {
     return selectedForm ? intakeForms[camelCase(formType)] : null;
   }, [intakeForms, formType, selectedForm]);
-  /* eslint-enable no-unused-vars */
 
+  const methods = useAddClaimantForm({ defaultValues: claimant });
+  const {
+    formState: { isValid },
+    handleSubmit,
+    watch
+  } = methods;
+
+  const relationship = watch('relationship');
   const toggleConfirm = () => setConfirmModal((val) => !val);
   const handleConfirm = () => {
-    // TODO - trigger action to submit data to backend
-    // dispatch(submitReview(intakeId, intakeData, selectedForm.formName));
+    const listedAttorney = claimant?.listedAttorney?.value;
 
-    // Redirect to next step (likely needs conditional on review type)
+    if (relationship === 'attorney' && listedAttorney !== 'not_listed') {
+      intakeData.claimantType = 'attorney';
+      intakeData.claimant = listedAttorney;
+    } else {
+      intakeData.unlistedClaimant = claimant;
+    }
+    dispatch(submitReview(intakeId, intakeData, selectedForm.formName));
+    dispatch(clearClaimant());
     push('/add_issues');
   };
 
   const onSubmit = (formData) => {
-    // Add stuff to redux store
+    if (formData.firstName) {
+      formData.partyType = 'individual';
+    }
+
     dispatch(editClaimantInformation({ formData }));
 
-    if (formData.vaForm === 'true') {
+    if (formData.poaForm === 'true') {
       push('/add_power_of_attorney');
     } else {
-      // In case user has come back to this page and changed value on vaForm
+      // In case user has come back to this page and changed value on poaForm
       dispatch(clearPoa());
 
       // Regardless, show confirmation modal
@@ -72,15 +88,6 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
 
   const handleBack = () => goBack();
 
-  const methods = useAddClaimantForm({ defaultValues: claimant });
-  const {
-    formState: { isValid },
-    handleSubmit,
-    watch,
-  } = methods;
-
-  const relationship = watch('relationship');
-
   useEffect(() => {
     if (
       relationship &&
@@ -88,7 +95,6 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
       claimant?.relationship !== relationship
     ) {
       dispatch(clearClaimant());
-      // reset();
     }
   }, [relationship, claimant]);
 
@@ -113,7 +119,6 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
             onCancel={toggleConfirm}
             onConfirm={handleConfirm}
             claimant={claimant}
-            poa={poa}
           />
         )}
       </IntakeLayout>

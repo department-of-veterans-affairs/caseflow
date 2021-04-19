@@ -60,10 +60,13 @@ RSpec.describe DocketSwitch, type: :model do
         let(:disposition) { "granted" }
         let(:granted_request_issue_ids) { nil }
 
-        it "moves all request issues to a new appeal stream and archives the original appeal" do
+        it "moves all request issues to a new appeal stream and marks the original appeal as docket switched" do
           expect(docket_switch_task).to be_assigned
 
           subject
+
+          # new stream has a the new docket type
+          expect(docket_switch.new_docket_stream.docket_type).to eq(docket_switch.docket_type)
 
           # all request issues are copied to new appeal stream, accessible as new_docket_stream
           expect(docket_switch.new_docket_stream.request_issues.count).to eq appeal.request_issues.count
@@ -74,8 +77,13 @@ RSpec.describe DocketSwitch, type: :model do
           # Docket switch task gets completed
           expect(docket_switch_task).to be_completed
 
-          # Appeal Status API shows original stream's status of archived
-          expect(appeal.status.to_sym).to eq :archived
+          # Appeal Status API shows original stream's status of docket switched
+          expect(appeal.status.to_sym).to eq :docket_switched
+
+          # Docket switch task has been copied to new appeal stream
+          new_completed_task = DocketSwitchGrantedTask.find_by(appeal: docket_switch.new_docket_stream)
+          expect(new_completed_task).to_not be_nil
+          expect(new_completed_task).to be_completed
         end
       end
 
@@ -88,6 +96,9 @@ RSpec.describe DocketSwitch, type: :model do
 
           subject
 
+          # new stream has a the new docket type
+          expect(docket_switch.new_docket_stream.docket_type).to eq(docket_switch.docket_type)
+
           # granted request issues are copied to new appeal stream
           expect(docket_switch.new_docket_stream.request_issues.count).to eq 2
 
@@ -97,6 +108,14 @@ RSpec.describe DocketSwitch, type: :model do
 
           # Docket switch task gets completed
           expect(docket_switch_task).to be_completed
+
+          # Docket switch task has been copied to new appeal stream
+          new_completed_task = DocketSwitchGrantedTask.find_by(
+            appeal: docket_switch.new_docket_stream,
+            assigned_to_type: "User"
+          )
+          expect(new_completed_task).to_not be_nil
+          expect(new_completed_task).to be_completed
 
           # To do: Check for correct appeal status after task handling logic is implemented
         end

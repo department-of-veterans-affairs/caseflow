@@ -61,21 +61,21 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
     }
   >
     <div
-      className="cf-form-dropdown dropdown-hearingType"
+      className=""
     >
-      <label
-        className="question-label"
-        htmlFor="hearingType"
-      >
-        <strong>
-          <span>
-            Hearing Type
-          </span>
-        </strong>
-      </label>
       <div
-        className=""
+        className="cf-form-dropdown dropdown-hearingType"
       >
+        <label
+          className="question-label"
+          htmlFor="hearingType"
+        >
+          <strong>
+            <span>
+              Hearing Type
+            </span>
+          </strong>
+        </label>
         <div
           className="cf-select"
         >
@@ -1519,21 +1519,21 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
     }
   >
     <div
-      className="cf-form-dropdown dropdown-hearingType"
+      className=""
     >
-      <label
-        className="question-label"
-        htmlFor="hearingType"
-      >
-        <strong>
-          <span>
-            Hearing Type
-          </span>
-        </strong>
-      </label>
       <div
-        className=""
+        className="cf-form-dropdown dropdown-hearingType"
       >
+        <label
+          className="question-label"
+          htmlFor="hearingType"
+        >
+          <strong>
+            <span>
+              Hearing Type
+            </span>
+          </strong>
+        </label>
         <div
           className="cf-select"
         >
@@ -2973,7 +2973,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -2981,7 +2981,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
@@ -3010,21 +3010,21 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
     }
   >
     <div
-      className="cf-form-dropdown dropdown-hearingType"
+      className=""
     >
-      <label
-        className="question-label"
-        htmlFor="hearingType"
-      >
-        <strong>
-          <span>
-            Hearing Type
-          </span>
-        </strong>
-      </label>
       <div
-        className=""
+        className="cf-form-dropdown dropdown-hearingType"
       >
+        <label
+          className="question-label"
+          htmlFor="hearingType"
+        >
+          <strong>
+            <span>
+              Hearing Type
+            </span>
+          </strong>
+        </label>
         <div
           className="cf-select"
         >
@@ -4479,7 +4479,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": null,
+      "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
@@ -4487,7 +4487,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": null,
+      "representativeTz": "America/Los_Angeles",
       "requestCancelled": false,
       "status": "active",
     }
@@ -4516,21 +4516,21 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
     }
   >
     <div
-      className="cf-form-dropdown dropdown-hearingType"
+      className=""
     >
-      <label
-        className="question-label"
-        htmlFor="hearingType"
-      >
-        <strong>
-          <span>
-            Hearing Type
-          </span>
-        </strong>
-      </label>
       <div
-        className=""
+        className="cf-form-dropdown dropdown-hearingType"
       >
+        <label
+          className="question-label"
+          htmlFor="hearingType"
+        >
+          <strong>
+            <span>
+              Hearing Type
+            </span>
+          </strong>
+        </label>
         <div
           className="cf-select"
         >

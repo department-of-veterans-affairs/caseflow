@@ -3,24 +3,48 @@
 # This is for updating the claim label for end products established from Caseflow
 
 class EndProductUpdate < CaseflowRecord
+  include BgsService
+
   belongs_to :end_product_establishment, optional: false
   belongs_to :original_decision_review, polymorphic: true, optional: false
   belongs_to :user, optional: false
 
-  delegate :request_issues, to: :end_product_establishment
+  delegate :request_issues, :claim_date, :benefit_type_code, :payee_code, :modifier, :veteran_file_number,
+           to: :end_product_establishment
 
   enum status: { success: "success", error: "error" }
 
+  class UpdateClaimFailedInVBMS < StandardError; end
+
   def perform!
     transaction do
+      update_bgs_claim
       end_product_establishment.update(code: new_code)
       update_correction_type
       update_issue_type
       update_benefit_type
     end
+  rescue StandardError => error
+    update!(error: error, status: "error")
+    raise error
   end
 
   private
+
+  def update_bgs_claim
+    response = bgs.update_benefit_claim(
+      veteran_file_number: veteran_file_number,
+      payee_code: payee_code,
+      claim_date: claim_date,
+      benefit_type_code: benefit_type_code,
+      modifier: modifier,
+      new_code: new_code
+    )
+
+    if response[:return_message] != "A benefit claim has been changed"
+      fail UpdateClaimFailedInVBMS, response[:return_message]
+    end
+  end
 
   def update_correction_type
     correction_type = new_code_hash[:correction_type]

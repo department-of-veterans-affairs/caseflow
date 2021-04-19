@@ -72,21 +72,21 @@ exports[`AddClaimantModal renders correctly 1`] = `
               </p>
             </div>
             <div
-              class="cf-form-dropdown dropdown-relationship"
+              class=""
             >
-              <label
-                class="question-label"
-                for="relationship"
-              >
-                <strong>
-                  <span>
-                    Claimant's relationship to the Veteran
-                  </span>
-                </strong>
-              </label>
               <div
-                class=""
+                class="cf-form-dropdown dropdown-relationship"
               >
+                <label
+                  class="question-label"
+                  for="relationship"
+                >
+                  <strong>
+                    <span>
+                      Claimant's relationship to the Veteran
+                    </span>
+                  </strong>
+                </label>
                 <div
                   class="cf-select"
                 >
@@ -159,21 +159,21 @@ exports[`AddClaimantModal renders correctly 1`] = `
               </div>
             </div>
             <div
-              class="cf-form-dropdown dropdown-claimant"
+              class=""
             >
-              <label
-                class="question-label"
-                for="claimant"
-              >
-                <strong>
-                  <span>
-                    Claimant's name
-                  </span>
-                </strong>
-              </label>
               <div
-                class=""
+                class="cf-form-dropdown dropdown-claimant"
               >
+                <label
+                  class="question-label"
+                  for="claimant"
+                >
+                  <strong>
+                    <span>
+                      Claimant's name
+                    </span>
+                  </strong>
+                </label>
                 <div
                   class="cf-select"
                 >

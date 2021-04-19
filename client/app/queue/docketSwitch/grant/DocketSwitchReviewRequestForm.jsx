@@ -7,6 +7,8 @@ import { CheckoutButtons } from './CheckoutButtons';
 import {
   DOCKET_SWITCH_GRANTED_REQUEST_LABEL,
   DOCKET_SWITCH_GRANTED_REQUEST_INSTRUCTIONS,
+  DOCKET_SWITCH_REVIEW_REQUEST_PRIOR_TO_RAMP_DATE_ERROR,
+  DOCKET_SWITCH_REVIEW_REQUEST_FUTURE_DATE_ERROR
 } from 'app/../COPY';
 import { sprintf } from 'sprintf-js';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -18,7 +20,11 @@ import CheckboxGroup from 'app/components/CheckboxGroup';
 import DISPOSITIONS from 'constants/DOCKET_SWITCH_DISPOSITIONS';
 
 const schema = yup.object().shape({
-  receiptDate: yup.date().required(),
+  receiptDate: yup.date().required().
+    nullable().
+    transform((value, originalValue) => originalValue === '' ? null : value).
+    min('2017-11-01', DOCKET_SWITCH_REVIEW_REQUEST_PRIOR_TO_RAMP_DATE_ERROR).
+    max(new Date(), DOCKET_SWITCH_REVIEW_REQUEST_FUTURE_DATE_ERROR),
   disposition: yup.
     mixed().
     oneOf(Object.keys(DISPOSITIONS)).
@@ -39,6 +45,7 @@ const docketTypeRadioOptions = [
 ];
 
 export const DocketSwitchReviewRequestForm = ({
+  defaultValues,
   onSubmit,
   onCancel,
   appellantName,
@@ -52,11 +59,15 @@ export const DocketSwitchReviewRequestForm = ({
     formState,
     trigger,
     watch,
+    errors
   } = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange',
     reValidateMode: 'onChange',
+    defaultValues,
   });
+  const { touched } = formState;
+
   const sectionStyle = css({ marginBottom: '24px' });
 
   const issueOptions = useMemo(
@@ -81,7 +92,8 @@ export const DocketSwitchReviewRequestForm = ({
   const filteredDocketTypeOpts = useMemo(() => {
     return docketTypeRadioOptions.map(({ value, displayText }) => ({
       value,
-      displayText: value === docketFrom ? `${displayText} (current docket)` : displayText,
+      displayText:
+        value === docketFrom ? `${displayText} (current docket)` : displayText,
       disabled: value === docketFrom,
     }));
   }, [docketTypeRadioOptions, docketFrom]);
@@ -93,17 +105,29 @@ export const DocketSwitchReviewRequestForm = ({
     trigger();
   }, [watchDisposition]);
 
-  const [issue, setIssues] = useState({});
+  const [issueVals, setIssueVals] = useState({});
 
   // We have to do a bit of manual manipulation for issue IDs due to nature of CheckboxGroup
   const handleIssueChange = (evt) => {
-    const newIssues = { ...issue, [evt.target.name]: evt.target.checked };
+    const newIssues = { ...issueVals, [evt.target.name]: evt.target.checked };
 
-    setIssues(newIssues);
+    setIssueVals(newIssues);
 
     // Form wants to track only the selected issue IDs
     return Object.keys(newIssues).filter((key) => newIssues[key]);
   };
+
+  // Handle prepopulating issue checkboxes if defaultValues are present
+  useEffect(() => {
+    if (defaultValues?.issueIds) {
+      const newIssues = { ...issueVals };
+
+      for (const id of defaultValues.issueIds) {
+        newIssues[id] = true;
+      }
+      setIssueVals(newIssues);
+    }
+  }, [defaultValues]);
 
   // Need a bit of extra handling before passing along
   const formatFormData = (formData) => {
@@ -129,6 +153,7 @@ export const DocketSwitchReviewRequestForm = ({
         <DateSelector
           inputRef={register}
           type="date"
+          errorMessage={touched.receiptDate && errors.receiptDate?.message}
           name="receiptDate"
           label="What is the Receipt Date of the docket switch request?"
           strongLabel
@@ -147,7 +172,6 @@ export const DocketSwitchReviewRequestForm = ({
           <Controller
             name="issueIds"
             control={control}
-            defaultValue={[]}
             render={({ onChange: onCheckChange }) => {
               return (
                 <CheckboxGroup
@@ -156,6 +180,7 @@ export const DocketSwitchReviewRequestForm = ({
                   strongLabel
                   options={issueOptions}
                   onChange={(event) => onCheckChange(handleIssueChange(event))}
+                  values={issueVals}
                 />
               );
             }}
@@ -190,4 +215,12 @@ DocketSwitchReviewRequestForm.propTypes = {
   appellantName: PropTypes.string.isRequired,
   docketFrom: PropTypes.string.isRequired,
   issues: PropTypes.array,
+  defaultValues: PropTypes.shape({
+    disposition: PropTypes.string,
+    receiptDate: PropTypes.string,
+    docketType: PropTypes.string,
+    issueIds: PropTypes.arrayOf(
+      PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    ),
+  }),
 };

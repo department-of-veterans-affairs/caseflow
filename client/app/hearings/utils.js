@@ -9,11 +9,12 @@ import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMA
 // To see how values were determined: https://github.com/department-of-veterans-affairs/caseflow/pull/14556#discussion_r447102582
 import TIMEZONES from '../../constants/TIMEZONES';
 import { COMMON_TIMEZONES, REGIONAL_OFFICE_ZONE_ALIASES } from '../constants/AppConstants';
+import { VIDEO_HEARING_LABEL } from './constants';
 import ApiUtil from '../util/ApiUtil';
 import { RESET_VIRTUAL_HEARING } from './contexts/HearingsFormContext';
 import HEARING_REQUEST_TYPES from '../../constants/HEARING_REQUEST_TYPES';
 import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP';
-
+import COPY from '../../COPY.json'
 
 export const isPreviouslyScheduledHearing = (hearing) =>
   hearing?.disposition === HEARING_DISPOSITION_TYPES.postponed ||
@@ -180,6 +181,11 @@ export const virtualHearingRoleForUser = (user, hearing) =>
   user.userCanAssignHearingSchedule || user.userId === hearing?.judgeId ?
     VIRTUAL_HEARING_HOST :
     VIRTUAL_HEARING_GUEST;
+
+export const virtualHearingLinkLabelFull = (role) =>
+  role === VIRTUAL_HEARING_HOST ?
+    COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL_FULL :
+    COPY.REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL;
 
 export const pollVirtualHearingData = (hearingId, onSuccess) => (
   // Did not specify retryCount so if api call fails, it'll stop polling.
@@ -349,13 +355,15 @@ export const timezones = (time) => {
       commonsCount += 1;
     }
 
+    // ensure that before the user selects a time it won't display 'Invalid Date' next to zone
+    const zoneLabel = dateTime.isValid() ? `${zone} (${moment(dateTime, 'HH:mm').tz(TIMEZONES[zone]).
+      format('h:mm A')})` : `${zone}`;
+
     // Return the formatted options
     return {
       index,
       value: TIMEZONES[zone],
-      label: `${zone} (${moment(dateTime, 'HH:mm').
-        tz(TIMEZONES[zone]).
-        format('h:mm A')})`
+      label: zoneLabel
     };
   });
 
@@ -480,7 +488,222 @@ export const formatChangeRequestType = (type) => {
   }
 };
 
-export const dispositionLabel = (disposition) => HEARING_DISPOSITION_TYPE_TO_LABEL_MAP[disposition] ?? 'None'
+export const dispositionLabel = (disposition) => HEARING_DISPOSITION_TYPE_TO_LABEL_MAP[disposition] ?? 'None';
 
+/**
+ * Method to calculate an array of available time slots, no filled timeslots or hearings are included
+ * @param {string} slotCount  -- Max number of slots to generate
+ * @param {string} startTime  -- Time of first possible slot in "America/New_York" timezone
+ * @param {string} roTimezone -- Timezone like 'America/Los_Angeles' of the ro
+ * @param {array} hearings    -- List of hearings scheduled for a specific date
+ **/
+const calculateAvailableTimeslots = ({ slotCount, startTime, roTimezone, hearings }) => {
+  // Extract the hearing time, interpret it as in the roTimezone
+  const hearingTimes = hearings.map((hearing) =>
+    moment.tz(hearing.hearingTime, 'HH:mm', roTimezone)
+  );
+
+  // This works because:
+  // - There is one possible slot per hour: 8:30, 9:30, 10:30, ...
+  // - We want 8 hours of slots: 8 = 15:30 - 08:30 + 1
+  const availableSlots = _.times(slotCount).map((index) => {
+    // Add the index to the start time so we assign 1 value per hour
+    const slotTime = moment.tz(startTime, 'HH:mm', 'America/New_York').add(index, 'hours');
+
+    // This slot is not available (full) if there's a scheduled hearing less than an hour before
+    // or after the slot.
+    // A 10:45 appointment will:
+    // - Hide a 10:30 slot (it's full, so we return null)
+    // - Hide a 11:30 slot (it's full, so we return null)
+    //
+    // Also, don't show slots that are before 8:30am (starTime) in RO time.
+    // so if there's a slot for 8:30am eastern (5:30am Pacific), don't show that
+    // if we have an roTimezone of 'America/Los_Angeles' (or other west coast)
+    const slotFull = hearingTimes.some((scheduledHearingTime) =>
+      (Math.abs(slotTime.diff(scheduledHearingTime, 'minutes')) < 60)
+    );
+    const slotOutsideTimeRange = slotTime.isBefore(moment.tz(startTime, 'HH:mm', roTimezone));
+
+    // Return null if there is a filled time slot, otherwise return the hearingTime
+    if (slotFull || slotOutsideTimeRange) {
+      return null;
+    }
+
+    // If the slot is not full, return the slot
+    return {
+      slotId: index,
+      time: slotTime,
+    };
+  });
+
+  return _.compact(availableSlots);
+};
+
+/**
+ * Method to convert all timezones to 'America/New_York, add an id for React, and
+ * combine the available slots and hearings
+ * @param {string} roTimezone        -- Like "America/Los_Angeles"
+ * @param {string} availableSlots    -- Array of unfilled slots
+ * @param {string} scheduledHearings -- Array of hearings
+ **/
+const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings }) => {
+  const slots = availableSlots.map((slot) => ({
+    ...slot,
+    key: `${slot?.slotId}-${slot?.time_string}`,
+    full: false,
+    // This is a moment object, always in "America/New_York" as returned by calculateAvailableTimeslots
+    hearingTime: slot.time.format('HH:mm')
+  }));
+
+  const formattedHearings = scheduledHearings.map((hearing) => ({
+    ...hearing,
+    key: hearing?.externalId,
+    full: true,
+    // The hearingTime is in roTimezone, but it looks like "09:30", this takes that "09:30"
+    // in roTimezone, and converts it to Eastern zone because slots are always in eastern.
+    hearingTime: moment.tz(hearing?.hearingTime, 'HH:mm', roTimezone).clone().
+      tz('America/New_York').
+      format('HH:mm')
+  }));
+
+  const slotsAndHearings = slots.concat(formattedHearings);
+
+  return _.sortBy(slotsAndHearings, 'hearingTime');
+
+};
+
+/**
+ * Method to set the available time slots based on the hearings scheduled
+ * @param {array} hearings    -- List of hearings scheduled for a specific date
+ * @param {string} ro         -- The ro id, can be RXX, C, or V
+ * @param {string} roTimezone -- Like "America/Los_Angeles"
+ *
+ * The 'hearingTime' in the returned array is always in 'America/New_York' timezone.
+ *
+ * Each hearing passed in has a hearingTime property:
+ * - This time is in the timezone of the ro that this individual hearing has in the db.
+ * - hearingTime is a string like '09:45'
+ * - It is generated by HearingTimeService::scheduled_time_string
+ */
+export const setTimeSlots = (hearings, ro, roTimezone = 'America/New_York') => {
+  // Safe assign the hearings array in case there are no scheduled hearings
+  const scheduledHearings = hearings || [];
+
+  const slotCount = 8;
+  const startTime = ro === 'C' ? '09:00' : '08:30';
+  const availableSlots = calculateAvailableTimeslots({
+    slotCount,
+    startTime,
+    roTimezone,
+    hearings: scheduledHearings
+  });
+
+  return combineSlotsAndHearings({
+    roTimezone,
+    availableSlots,
+    scheduledHearings
+  });
+
+};
+
+export const formatTimeSlotLabel = (time, zone) => {
+  const roTime = zoneName(time, zone, 'z');
+  const coTime = zoneName(time, COMMON_TIMEZONES[3], 'z');
+
+  if (roTime === coTime) {
+    return coTime;
+  }
+
+  return `${roTime} (${coTime})`;
+};
+
+// Given the hearingType, if it starts with 'video' return Video or the
+// passed in hearintType
+export const formatHearingType = (hearingType) => {
+  if (hearingType.toLowerCase().startsWith('video')) {
+    return VIDEO_HEARING_LABEL;
+  }
+
+  return hearingType;
+};
+
+// Given a hearing day, return the judges last, first or ''
+export const vljFullnameOrEmptyString = (hearingDay) => {
+  const first = hearingDay?.judgeFirstName;
+  const last = hearingDay?.judgeLastName;
+
+  if (last && first) {
+    return `VLJ ${last}, ${first}`;
+  }
+
+  return '';
+};
+
+// Make a string like "2 of 12" given a hearing day:
+// - 2 is the number of hearings scheduled for that day
+// - 12 is the 'totalSlots' which comes from HearingDay and depends on ro
+export const formatSlotRatio = (hearingDay) => {
+  const scheduledHearings = _.get(hearingDay, 'hearings', {});
+  const scheduledHearingCount = Object.keys(scheduledHearings).length;
+  const totalSlotCount = _.get(hearingDay, 'totalSlots', 0);
+  const formattedSlotRatio = `${scheduledHearingCount} of ${totalSlotCount}`;
+
+  return formattedSlotRatio;
+};
+
+// Check if there's a judge assigned
+export const hearingDayHasJudge = (hearingDay) => hearingDay.judgeFirstName && hearingDay.judgeLastName;
+// Check if there's a room assigned (there never is for virtual)
+const hearingDayHasRoom = (hearingDay) => Boolean(hearingDay.room);
+// Check if there's a judge or room assigned
+const hearingDayHasJudgeOrRoom = (hearingDay) => hearingDayHasJudge(hearingDay) || hearingDayHasRoom(hearingDay);
+
+// Make the '·' separator appear or disappear
+export const separatorIfJudgeOrRoomPresent = (hearingDay) => hearingDayHasJudgeOrRoom(hearingDay) ? '·' : '';
+// This is necessecary otherwise 'null' is displayed when there's no room or judge
+export const hearingRoomOrEmptyString = (hearingDay) => hearingDay.room ? hearingDay.room : '';
+
+/**
+ * Method to group an object of days by month/year
+ * @param {Object} days -- List of days to group
+ */
+export const groupHearingDays = (days) => Object.values(days).reduce((list, day) => {
+  // Set the key to be the full month name and full year
+  const key = moment(day.scheduledFor).format('MMMM YYYY');
+
+  return {
+    ...list,
+    [key]: [...(list[key] || []), day]
+  };
+}, {});
+
+/**
+ * Curry function to attach the hearing day select GA event
+ * @param {func} cb -- Callback function to run after sending the GA event
+ */
+export const selectHearingDayEvent = (cb) => (hearingDay) => {
+  // Convert the date string into a moment object
+  const date = moment(hearingDay.scheduledFor).startOf('day');
+
+  // Take the absolute value of the difference using the start of day to be consistent regardless of user time
+  const diff = Math.abs(moment().startOf('day').
+    diff(date, 'days'));
+
+  // Send the analytics event
+  window.analyticsEvent(
+    // Category
+    'Hearings',
+    // Action
+    'Available Hearing Days – Select',
+    // Label
+    '',
+    // Value
+    `${diff} days between selected hearing day and today`
+  );
+
+  // Change the hearing day to the selected hearing day
+  cb(hearingDay);
+};
 
 /* eslint-enable camelcase */
+

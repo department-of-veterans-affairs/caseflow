@@ -207,6 +207,54 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       end
     end
 
+    # Method to convert time zones
+    def convert_local_time_to_eastern_timezone(time)
+      # Reach through hearing_day for the regional_office timezone
+      ro_timezone = if hearing_day.central_office?
+                      "America/New_York"
+                    else
+                      RegionalOffice.find!(hearing_day.regional_office).timezone
+                    end
+
+      # Get the timezone abbreviation like "EDT", "PDT", from the long timezone
+      ro_timezone_abbreviation = Time.zone.now.in_time_zone(ro_timezone).strftime("%Z")
+
+      # Parse the local time string (like "09:00 PDT"), then produce a result in EDT like "11:30 EDT"
+      Time.zone.parse("#{time} #{ro_timezone_abbreviation}").in_time_zone("America/New_York").strftime("%-I:%M %p %Z")
+    end
+
+    # Method to choose either the hearing time slot buttons or hearing time radio buttons
+    def select_hearing_time(time)
+      if FeatureToggle.enabled?(:enable_hearing_time_slots)
+        eastern_time = convert_local_time_to_eastern_timezone(time)
+        find(".time-slot-button", text: eastern_time).click
+      else
+        find(".cf-form-radio-option", text: time).click
+      end
+    end
+
+    def zone_is_eastern(regional_office)
+      RegionalOffice.find!(regional_office).timezone == "America/New_York"
+    end
+
+    # Method to choose the custom hearing time dropdown
+    def select_custom_hearing_time(time, is_eastern_only = true)
+      slots_enabled = FeatureToggle.enabled?(:enable_hearing_time_slots)
+      direct_enabled = FeatureToggle.enabled?(:schedule_veteran_virtual_hearing)
+
+      if slots_enabled
+        find(".time-slot-button-toggle", text: "Choose a custom time").click
+      end
+
+      time_string = if is_eastern_only || !direct_enabled
+                      time
+                    else
+                      "#{time} AM E"
+                    end
+
+      click_dropdown(text: time_string, name: "optionalHearingTime0")
+    end
+
     shared_examples "scheduling a central hearing" do
       include_context "central_hearings"
 
@@ -227,7 +275,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         # Wait for the contents of the dropdown to finish loading before clicking into the dropdown.
         expect(page).to have_content(hearing_location_dropdown_label)
         click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
-        find(".cf-form-radio-option", text: "9:00").click
+        select_hearing_time("9:00")
         click_button("Schedule", exact: true)
         click_on "Back to Schedule Veterans"
         expect(page).to have_content("Schedule Veterans")
@@ -246,7 +294,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       scenario "Schedule Veteran for video" do
         cache_appeals
         navigate_to_schedule_veteran
-        find(".cf-form-radio-option", text: "8:30").click
+        select_hearing_time("8:30")
         click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
         expect(page).not_to have_content("Could not find hearing locations for this veteran")
         expect(page).not_to have_content("There are no upcoming hearing dates for this regional office.")
@@ -430,7 +478,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         click_dropdown({ text: "Denver" }, find(".dropdown-regionalOffice"))
         click_dropdown(name: "hearingDate", index: 1)
 
-        find("label", text: "8:30").click
+        select_hearing_time("8:30")
         expect(page).to_not have_content("Finding hearing locations", wait: 30)
         click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
         click_on "Schedule"
@@ -472,7 +520,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
             text: "Holdrege, NE (VHA) 0 miles away",
             name: "appealHearingLocation"
           )
-          click_dropdown(text: "10:00", name: "optionalHearingTime0")
+          select_custom_hearing_time("10:15", zone_is_eastern(regional_office))
           click_button("Schedule", exact: true)
 
           expect(page).to have_content(COPY::SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL)
@@ -498,7 +546,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
             text: "Holdrege, NE (VHA) 0 miles away",
             name: "appealHearingLocation"
           )
-          click_dropdown(text: "10:00", name: "optionalHearingTime0")
+          select_custom_hearing_time("10:15", zone_is_eastern(regional_office))
           click_button("Schedule", exact: true)
           click_on "Back to Schedule Veterans"
 
@@ -543,7 +591,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
             text: "Holdrege, NE (VHA) 0 miles away",
             name: "appealHearingLocation"
           )
-          click_dropdown(text: "10:00", name: "optionalHearingTime0")
+          select_custom_hearing_time("10:15", zone_is_eastern(regional_office))
           click_button("Schedule", exact: true)
 
           expect(page).to have_content(COPY::SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL)
@@ -573,7 +621,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           text: "Holdrege, NE (VHA) 0 miles away",
           name: "appealHearingLocation"
         )
-        click_dropdown(text: "10:00", name: "optionalHearingTime0")
+        select_custom_hearing_time("10:15", true)
         click_button("Schedule", exact: true)
 
         expect(page).to have_content(COPY::SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL)
@@ -595,26 +643,20 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       end
     end
 
-    shared_examples "scheduling a virtual hearing" do |fill_in_timezones, ro_key, time|
+    shared_examples "scheduling a virtual hearing" do |ro_key, time|
       scenario "can successfully schedule virtual hearing" do
         navigate_to_schedule_veteran
         expect(page).to have_content("Schedule Veteran for a Hearing")
         click_dropdown(name: "hearingType", text: "Virtual")
         click_dropdown(name: "hearingDate", index: 1)
-
-        expected_time_radio_text = if fill_in_timezones
-                                     "#{time} AM Eastern Time (US & Canada)"
-                                   else
-                                     "#{time} AM Mountain Time (US & Canada) / 10:30 AM Eastern Time (US & Canada)"
-                                   end
-        find(".cf-form-radio-option", text: expected_time_radio_text).click
+        select_custom_hearing_time(time, ro_key == "C")
 
         # Fill in appellant details
-        click_dropdown(name: "appellantTz", index: 1) if fill_in_timezones
+        click_dropdown(name: "appellantTz", index: 1)
         fill_in "Veteran Email", with: fill_in_veteran_email
 
         # Fill in POA/Representative details
-        click_dropdown(name: "representativeTz", index: 1) if fill_in_timezones
+        click_dropdown(name: "representativeTz", index: 1)
         fill_in "POA/Representative Email", with: fill_in_representative_email
 
         click_button("Schedule")
@@ -643,188 +685,221 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       end
     end
 
-    context "with schedule direct to video/virtual feature enabled" do
-      # Ensure the feature flag is enabled before testing
-      before do
-        FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
+    shared_examples "change from Central hearing" do
+      include_context "central_hearings"
+
+      before { cache_appeals }
+
+      it_behaves_like "scheduling a virtual hearing", "C", "11:00"
+    end
+
+    shared_examples "change from Video hearing" do
+      include_context "video_hearing"
+
+      before { cache_appeals }
+
+      it_behaves_like "scheduling a virtual hearing", "RO39", "10:30"
+    end
+
+    shared_examples "withdraw a hearing" do
+      def schedule_hearing(appeal_link)
+        visit appeal_link
+        click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
+        click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
+
+        room_label = HearingRooms.find!(hearing_day.room)&.label
+        date_label = hearing_day.scheduled_for.to_formatted_s(:short_date)
+        dropdown_label = "#{date_label} (0/#{hearing_day.total_slots}) #{room_label}"
+
+        click_dropdown(
+          text: dropdown_label,
+          name: "hearingDate"
+        )
+        select_hearing_time("8:30")
+        click_button("Schedule", exact: true)
       end
 
-      it_behaves_like "scheduling a central hearing"
+      shared_examples "withdrawing ama hearing" do |scheduled = false|
+        scenario "Withdraw Veteran's hearing request" do
+          visit "queue/appeals/#{appeal.uuid}"
 
-      it_behaves_like "scheduling a video hearing"
+          click_dropdown(text: Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h[:label])
+          expect(page).to have_content(COPY::WITHDRAW_HEARING["AMA"]["MODAL_BODY"])
+          fill_in "taskInstructions", with: "Withdrawing hearing"
 
-      it_behaves_like "scheduling an AMA hearing"
+          click_on "Submit"
 
-      it_behaves_like "scheduling a Legacy hearing"
+          expect(page).to have_content("You have successfully withdrawn")
+          expect(page).to have_content(COPY::WITHDRAW_HEARING["AMA"]["SUCCESS_MESSAGE"])
+          expect(appeal.tasks.where(type: EvidenceSubmissionWindowTask.name).count).to eq(1)
 
-      it_behaves_like "an appeal with a full hearing day"
-
-      it_behaves_like "an appeal where there is an open hearing"
-
-      context "when changing from Central hearing" do
-        include_context "central_hearings"
-
-        before { cache_appeals }
-
-        it_behaves_like "scheduling a virtual hearing", true, "C", "9:00"
+          if scheduled
+            expect(appeal.tasks.where(type: ScheduleHearingTask.name).first.status).to eq(
+              Constants.TASK_STATUSES.completed
+            )
+            expect(appeal.tasks.where(type: AssignHearingDispositionTask.name).first.status).to eq(
+              Constants.TASK_STATUSES.cancelled
+            )
+            expect(appeal.hearings.last.cancelled?).to eq(true)
+          else
+            expect(appeal.tasks.where(type: ScheduleHearingTask.name).first.status).to eq(
+              Constants.TASK_STATUSES.cancelled
+            )
+          end
+        end
       end
 
-      context "when changing from Video hearing" do
-        include_context "video_hearing"
+      shared_examples "withdrawing legacy hearing" do |scheduled = false|
+        scenario "Withdraw Veteran's hearing request" do
+          visit "queue/appeals/#{legacy_appeal.vacols_id}"
 
-        before { cache_appeals }
-
-        it_behaves_like "scheduling a virtual hearing", false, "RO39", "8:30"
-      end
-
-      context "withdraw hearing" do
-        def schedule_hearing(appeal_link)
-          visit appeal_link
-          click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
-          find(".cf-form-radio-option", text: "8:30").click
-          click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
-
-          room_label = HearingRooms.find!(hearing_day.room)&.label
-          date_label = hearing_day.scheduled_for.to_formatted_s(:short_date)
-          dropdown_label = "#{date_label} (0/#{hearing_day.total_slots}) #{room_label}"
-
-          click_dropdown(
-            text: dropdown_label,
-            name: "hearingDate"
+          click_dropdown(text: Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h[:label])
+          expect(page.html).to include(
+            COPY::WITHDRAW_HEARING["LEGACY_NON_COLOCATED_PRIVATE_ATTORNEY"]["MODAL_BODY"]
           )
-          click_button("Schedule", exact: true)
-        end
+          fill_in "taskInstructions", with: "Withdrawing hearing"
 
-        shared_examples "withdrawing ama hearing" do |scheduled = false|
-          scenario "Withdraw Veteran's hearing request" do
-            visit "queue/appeals/#{appeal.uuid}"
+          click_on "Submit"
 
-            click_dropdown(text: Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h[:label])
-            expect(page).to have_content(COPY::WITHDRAW_HEARING["AMA"]["MODAL_BODY"])
-            fill_in "taskInstructions", with: "Withdrawing hearing"
+          expect(page).to have_content("You have successfully withdrawn")
+          expect(page.html).to include(
+            COPY::WITHDRAW_HEARING["LEGACY_NON_COLOCATED_PRIVATE_ATTORNEY"]["SUCCESS_MESSAGE"]
+          )
 
-            click_on "Submit"
+          expect(legacy_appeal.case_record.bfhr).to eq("5")
+          expect(legacy_appeal.case_record.bfha).to eq("5")
 
-            expect(page).to have_content("You have successfully withdrawn")
-            expect(page).to have_content(COPY::WITHDRAW_HEARING["AMA"]["SUCCESS_MESSAGE"])
-            expect(appeal.tasks.where(type: EvidenceSubmissionWindowTask.name).count).to eq(1)
-
-            if scheduled
-              expect(appeal.tasks.where(type: ScheduleHearingTask.name).first.status).to eq(
-                Constants.TASK_STATUSES.completed
-              )
-              expect(appeal.tasks.where(type: AssignHearingDispositionTask.name).first.status).to eq(
-                Constants.TASK_STATUSES.cancelled
-              )
-              expect(appeal.hearings.last.cancelled?).to eq(true)
-            else
-              expect(appeal.tasks.where(type: ScheduleHearingTask.name).first.status).to eq(
-                Constants.TASK_STATUSES.cancelled
-              )
-            end
-          end
-        end
-
-        shared_examples "withdrawing legacy hearing" do |scheduled = false|
-          scenario "Withdraw Veteran's hearing request" do
-            visit "queue/appeals/#{legacy_appeal.vacols_id}"
-
-            click_dropdown(text: Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h[:label])
-            expect(page.html).to include(
-              COPY::WITHDRAW_HEARING["LEGACY_NON_COLOCATED_PRIVATE_ATTORNEY"]["MODAL_BODY"]
+          if scheduled
+            expect(legacy_appeal.tasks.where(type: ScheduleHearingTask.name).first.status).to eq(
+              Constants.TASK_STATUSES.completed
             )
-            fill_in "taskInstructions", with: "Withdrawing hearing"
-
-            click_on "Submit"
-
-            expect(page).to have_content("You have successfully withdrawn")
-            expect(page.html).to include(
-              COPY::WITHDRAW_HEARING["LEGACY_NON_COLOCATED_PRIVATE_ATTORNEY"]["SUCCESS_MESSAGE"]
+            expect(legacy_appeal.tasks.where(type: AssignHearingDispositionTask.name).first.status).to eq(
+              Constants.TASK_STATUSES.cancelled
             )
-
-            expect(legacy_appeal.case_record.bfhr).to eq("5")
-            expect(legacy_appeal.case_record.bfha).to eq("5")
-
-            if scheduled
-              expect(legacy_appeal.tasks.where(type: ScheduleHearingTask.name).first.status).to eq(
-                Constants.TASK_STATUSES.completed
-              )
-              expect(legacy_appeal.tasks.where(type: AssignHearingDispositionTask.name).first.status).to eq(
-                Constants.TASK_STATUSES.cancelled
-              )
-              expect(legacy_appeal.hearings.last.cancelled?).to eq(true)
-            else
-              expect(legacy_appeal.tasks.where(type: ScheduleHearingTask.name).first.status).to eq(
-                Constants.TASK_STATUSES.cancelled
-              )
-            end
+            expect(legacy_appeal.hearings.last.cancelled?).to eq(true)
+          else
+            expect(legacy_appeal.tasks.where(type: ScheduleHearingTask.name).first.status).to eq(
+              Constants.TASK_STATUSES.cancelled
+            )
           end
         end
+      end
 
-        before { cache_appeals }
+      before { cache_appeals }
 
-        context "Scheduled hearing" do
-          context "AMA appeal" do
-            include_context "ama_hearing"
+      context "Scheduled hearing" do
+        context "AMA appeal" do
+          include_context "ama_hearing"
 
-            before do
-              schedule_hearing("queue/appeals/#{appeal.uuid}")
-            end
-
-            it_behaves_like "withdrawing ama hearing", true
+          before do
+            schedule_hearing("queue/appeals/#{appeal.uuid}")
           end
 
-          context "Legacy appeal" do
-            include_context "legacy_hearing"
-
-            let!(:hearing_day) do
-              create(
-                :hearing_day,
-                request_type: HearingDay::REQUEST_TYPES[:video],
-                scheduled_for: Time.zone.today + 160,
-                regional_office: regional_office,
-                room: "1"
-              )
-            end
-
-            before do
-              schedule_hearing("queue/appeals/#{legacy_appeal.vacols_id}")
-            end
-
-            it_behaves_like "withdrawing legacy hearing", true
-          end
+          it_behaves_like "withdrawing ama hearing", true
         end
 
-        context "Unscheduled hearing" do
-          context "AMA appeal" do
-            include_context "ama_hearing"
+        context "Legacy appeal" do
+          include_context "legacy_hearing"
 
-            it_behaves_like "withdrawing ama hearing"
+          let!(:hearing_day) do
+            create(
+              :hearing_day,
+              request_type: HearingDay::REQUEST_TYPES[:video],
+              scheduled_for: Time.zone.today + 160,
+              regional_office: regional_office,
+              room: "1"
+            )
           end
 
-          context "Legacy appeal" do
-            include_context "legacy_hearing"
-
-            let!(:hearing_day) do
-              create(
-                :hearing_day,
-                request_type: HearingDay::REQUEST_TYPES[:video],
-                scheduled_for: Time.zone.today + 160,
-                regional_office: regional_office,
-                room: "1"
-              )
-            end
-
-            it_behaves_like "withdrawing legacy hearing"
+          before do
+            schedule_hearing("queue/appeals/#{legacy_appeal.vacols_id}")
           end
+
+          it_behaves_like "withdrawing legacy hearing", true
+        end
+      end
+
+      context "Unscheduled hearing" do
+        context "AMA appeal" do
+          include_context "ama_hearing"
+
+          it_behaves_like "withdrawing ama hearing"
+        end
+
+        context "Legacy appeal" do
+          include_context "legacy_hearing"
+
+          let!(:hearing_day) do
+            create(
+              :hearing_day,
+              request_type: HearingDay::REQUEST_TYPES[:video],
+              scheduled_for: Time.zone.today + 160,
+              regional_office: regional_office,
+              room: "1"
+            )
+          end
+
+          it_behaves_like "withdrawing legacy hearing"
         end
       end
     end
 
-    context "with schedule direct to video/virtual feature disabled" do
-      # Ensure the feature flag is disabled before testing
+    context "with enable_time_slots feature disabled" do
+      # Ensure the feature flag is enabled before testing
       before do
-        FeatureToggle.disable!(:schedule_veteran_virtual_hearing)
+        FeatureToggle.disable!(:enable_hearing_time_slots)
+      end
+
+      context "with schedule direct to video/virtual feature enabled" do
+        # Ensure the feature flag is enabled before testing
+        before do
+          FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
+        end
+
+        it_behaves_like "scheduling a central hearing"
+
+        it_behaves_like "scheduling a video hearing"
+
+        it_behaves_like "scheduling an AMA hearing"
+
+        it_behaves_like "scheduling a Legacy hearing"
+
+        it_behaves_like "an appeal with a full hearing day"
+
+        it_behaves_like "an appeal where there is an open hearing"
+
+        it_behaves_like "change from Central hearing"
+
+        it_behaves_like "change from Video hearing"
+
+        it_behaves_like "withdraw a hearing"
+      end
+
+      context "with schedule direct to video/virtual feature disabled" do
+        # Ensure the feature flag is disabled before testing
+        before do
+          FeatureToggle.disable!(:schedule_veteran_virtual_hearing)
+        end
+
+        it_behaves_like "scheduling a central hearing"
+
+        it_behaves_like "scheduling a video hearing"
+
+        it_behaves_like "scheduling an AMA hearing"
+
+        it_behaves_like "scheduling a Legacy hearing"
+
+        it_behaves_like "an appeal with a full hearing day"
+
+        it_behaves_like "an appeal where there is an open hearing"
+      end
+    end
+
+    context "with enable_time_slots feature enabled" do
+      # Ensure the feature flag is enabled before testing
+      before do
+        FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
+        FeatureToggle.enable!(:enable_hearing_time_slots)
       end
 
       it_behaves_like "scheduling a central hearing"
@@ -838,6 +913,12 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       it_behaves_like "an appeal with a full hearing day"
 
       it_behaves_like "an appeal where there is an open hearing"
+
+      it_behaves_like "change from Central hearing"
+
+      it_behaves_like "change from Video hearing"
+
+      it_behaves_like "withdraw a hearing"
     end
   end
 

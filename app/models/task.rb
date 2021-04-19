@@ -511,6 +511,10 @@ class Task < CaseflowRecord
   def when_child_task_created(child_task)
     cancel_timed_hold unless child_task.is_a?(TimedHoldTask)
 
+    put_on_hold_due_to_new_child_task
+  end
+
+  def put_on_hold_due_to_new_child_task
     if !on_hold?
       Raven.capture_message("Closed task #{id} re-opened because child task created") if !open?
       update!(status: :on_hold)

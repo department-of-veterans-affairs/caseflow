@@ -29,6 +29,8 @@ class DocketSwitch::TaskHandler
   delegate :docket_switchable_tasks, to: :old_docket_stream
 
   def call
+    complete_docket_switch_tasks
+
     return if disposition == "denied"
 
     create_new_tasks
@@ -38,6 +40,11 @@ class DocketSwitch::TaskHandler
   end
 
   private
+
+  def complete_docket_switch_tasks
+    DocketSwitchAbstractAttorneyTask.where(appeal: old_docket_stream).update(status: Constants.TASK_STATUSES.completed)
+    DocketSwitchRulingTask.where(appeal: old_docket_stream).update(status: Constants.TASK_STATUSES.completed)
+  end
 
   # For full grants, cancel all tasks on the original stream
   # For partial grants, some tasks remain open such as root, distribution and tasks related to the original docket
@@ -63,11 +70,11 @@ class DocketSwitch::TaskHandler
   end
 
   def persistent_tasks
-    @persistent_tasks ||= docket_switchable_tasks.select { |task| selected_task_ids.include?(task.id) }
+    @persistent_tasks ||= docket_switchable_tasks.select { |task| selected_task_ids.include?(task.id.to_s) }
   end
 
   def attorney_user
-    granted_task = old_docket_stream.tasks.find { |task| task.is_a?(DocketSwitchGrantedTask) }
+    granted_task = old_docket_stream.tasks.find_by(type: "DocketSwitchGrantedTask", assigned_to_type: "User")
 
     granted_task&.assigned_to
   end

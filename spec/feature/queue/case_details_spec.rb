@@ -206,7 +206,7 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to have_content("About the Veteran")
         expect(page.has_no_content?("About the Appellant")).to eq(true)
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
-        expect(page).to have_content("1/10/1935")
+        expect(page).to have_content("1/1/1990")
         expect(page).to have_content(appeal.veteran_address_line_1)
         expect(page).to_not have_content("Regional Office")
       end
@@ -251,7 +251,7 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to have_content("About the Veteran")
         expect(page.has_no_content?("About the Appellant")).to eq(true)
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
-        expect(page).to_not have_content("1/10/1935")
+        expect(page).to_not have_content("1/1/1990")
         expect(page).to_not have_content("5/25/2016")
         expect(page).to_not have_content("Regional Office")
       end
@@ -332,6 +332,25 @@ RSpec.feature "Case details", :all_dbs do
           expect(page).to have_content("About the Veteran")
           expect(page).to have_content("About the Appellant")
           expect(page).to have_content("Relation to Veteran: #{claimant.relationship}")
+        end
+      end
+
+      context "when an unrecognized appellant doesn't have a POA" do
+        let!(:claimant) do
+          create(
+            :claimant,
+            unrecognized_appellant: ua,
+            decision_review: appeal,
+            type: "OtherClaimant"
+          )
+        end
+
+        let(:ua) { create(:unrecognized_appellant) }
+
+        scenario "details view renders unrecognized POA copy" do
+          visit "/queue/appeals/#{appeal.uuid}"
+
+          expect(page).to have_content(COPY::CASE_DETAILS_UNRECOGNIZED_POA)
         end
       end
     end
@@ -811,6 +830,43 @@ RSpec.feature "Case details", :all_dbs do
       end
       it "should not display the edit link" do
         expect(find("#caseTitleDetailsSubheader")).to_not have_content("Edit")
+      end
+    end
+  end
+
+  describe "Appeal has requested to switch dockets" do
+    let!(:full_grant_docket_switch) { create(:docket_switch) }
+    let!(:partial_grant_docket_switch) { create(:docket_switch, :partially_granted) }
+    let!(:denied_docket_switch) { create(:docket_switch, :denied) }
+    context "appeal has received full grant docket switch" do
+      it "should display alert banner on old appeal stream page" do
+        visit "/queue/appeals/#{full_grant_docket_switch.old_docket_stream.uuid}"
+        expect(page).to have_content COPY::DOCKET_SWITCH_FULL_GRANTED_TITLE
+        click_link "switched appeal stream."
+        expect(page).to have_current_path("/queue/appeals/#{full_grant_docket_switch.new_docket_stream.uuid}")
+      end
+    end
+
+    context "appeal has received partial grant docket switch" do
+      it "should display alert banner on old appeal stream page" do
+        visit "/queue/appeals/#{partial_grant_docket_switch.old_docket_stream.uuid}"
+        expect(page).to have_content COPY::DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_OLD_DOCKET
+        click_link "switched appeal stream."
+        expect(page).to have_current_path("/queue/appeals/#{partial_grant_docket_switch.new_docket_stream.uuid}")
+      end
+
+      it "should display alert banner on new appeal stream page" do
+        visit "/queue/appeals/#{partial_grant_docket_switch.new_docket_stream.uuid}"
+        expect(page).to have_content COPY::DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_NEW_DOCKET
+        click_link "other appeal stream."
+        expect(page).to have_current_path("/queue/appeals/#{partial_grant_docket_switch.old_docket_stream.uuid}")
+      end
+    end
+
+    context "appeal has been denied request to switch dockets" do
+      it "should not display alert banner" do
+        visit "/queue/appeals/#{denied_docket_switch.old_docket_stream.uuid}"
+        expect(page).to_not have_content COPY::DOCKET_SWITCH_FULL_GRANTED_TITLE
       end
     end
   end
@@ -1332,7 +1388,7 @@ RSpec.feature "Case details", :all_dbs do
 
           expect(appeal.nod_date).to_not be_nil
           expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
-          expect(page).to have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
+          expect(page).to_not have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
         end
       end
 
@@ -1348,7 +1404,7 @@ RSpec.feature "Case details", :all_dbs do
 
           expect(appeal.nod_date).to_not be_nil
           expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
-          expect(page).to have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
+          expect(page).to_not have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
         end
       end
 
@@ -1365,7 +1421,89 @@ RSpec.feature "Case details", :all_dbs do
 
           expect(appeal.nod_date).to_not be_nil
           expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
-          expect(page).to have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
+          expect(page).to_not have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
+        end
+      end
+
+      context "when the user clicks on the edit nod button" do
+        let(:cob_user) { create(:user, css_id: "COB_USER", station_id: "101") }
+
+        before do
+          ClerkOfTheBoard.singleton.add_user(cob_user)
+          User.authenticate!(user: cob_user)
+        end
+
+        let(:veteran_full_name) { veteran.first_name + veteran.last_name }
+        let(:nod_date) { "11/11/2020" }
+        let(:later_nod_date) { Time.zone.now.next_year(2).mdY }
+        let(:before_earliest_date) { "12/31/2017" }
+        before { FeatureToggle.enable!(:edit_nod_date) }
+        after { FeatureToggle.disable!(:edit_nod_date) }
+
+        it "user enters an NOD Date after original NOD Date" do
+          visit "queue/appeals/#{appeal.uuid}"
+          page.find("button", text: "Edit NOD Date").click
+          fill_in "nodDate", with: nod_date
+          find(".cf-form-dropdown", text: "Reason for edit").click
+          find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
+          expect(page).to have_content COPY::EDIT_NOD_DATE_WARNING_ALERT_MESSAGE
+        end
+
+        it "user enters a future NOD Date" do
+          visit "queue/appeals/#{appeal.uuid}"
+          page.find("button", text: "Edit NOD Date").click
+          fill_in "nodDate", with: later_nod_date
+          find(".cf-form-dropdown", text: "Reason for edit").click
+          find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
+          expect(page).to have_content COPY::EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE
+          click_on "Submit"
+          expect(page).to_not have_content COPY::EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE
+        end
+
+        it "user enters an NOD Date before 01/01/2018" do
+          visit "queue/appeals/#{appeal.uuid}"
+          page.find("button", text: "Edit NOD Date").click
+          fill_in "nodDate", with: before_earliest_date
+          find(".cf-form-dropdown", text: "Reason for edit").click
+          find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
+          expect(page).to have_content COPY::EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE
+          click_on "Submit"
+          expect(page).to_not have_content COPY::EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE
+        end
+
+        it "user enters a reason with invalid Date" do
+          visit "queue/appeals/#{appeal.uuid}"
+          page.find("button", text: "Edit NOD Date").click
+          fill_in "nodDate", with: nod_date
+          find(:css, "input[id$='nodDate']").click.send_keys(:delete)
+          find(".cf-form-dropdown", text: "Reason for edit").click
+          find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
+          expect(page).to have_content "Invalid date."
+          click_on "Submit"
+          expect(page).to_not have_content COPY::EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE
+        end
+
+        it "user enters a valid NOD Date and reason" do
+          visit "queue/appeals/#{appeal.uuid}"
+          page.find("button", text: "Edit NOD Date").click
+          fill_in "nodDate", with: nod_date
+          find(".cf-form-dropdown", text: "Reason for edit").click
+          find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
+          click_on "Submit"
+          expect(page).to have_content(format(COPY::EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE
+                                              .tr("(", "{").gsub(")s", "}"),
+                                              appellantName: "Bobby Winters",
+                                              nodDateStr: "01/03/2019",
+                                              receiptDateStr: nod_date))
+        end
+
+        it "user enters a valid NOD Date but no reason" do
+          visit "queue/appeals/#{appeal.uuid}"
+          page.find("button", text: "Edit NOD Date").click
+          fill_in "nodDate", with: nod_date
+          click_on "Submit"
+          expect(page).to have_content "Required."
+          expect(page).to_not have_content COPY::EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE
         end
       end
     end
@@ -1427,13 +1565,13 @@ RSpec.feature "Case details", :all_dbs do
                receipt_date: 10.months.ago.to_date.mdY,
                request_issues: request_issues)
       end
-      subject { appeal.validate_all_issues_timely!(receipt_date) }
-      let(:judge_user) { create(:user, css_id: "BVAAABSHIRE", station_id: "101") }
+      subject { appeal.untimely_issues_report(receipt_date) }
+      let(:cob_user) { create(:user, css_id: "COB_USER", station_id: "101") }
 
       before do
         FeatureToggle.enable!(:edit_nod_date)
-        BvaDispatch.singleton.add_user(judge_user)
-        User.authenticate!(user: judge_user)
+        ClerkOfTheBoard.singleton.add_user(cob_user)
+        User.authenticate!(user: cob_user)
       end
 
       after { FeatureToggle.disable!(:edit_nod_date) }

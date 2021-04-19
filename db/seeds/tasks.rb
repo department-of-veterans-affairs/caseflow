@@ -388,7 +388,10 @@ module Seeds
         30.times do
           appeal = create(
             :appeal,
+            :with_request_issues,
             :hearing_docket,
+            veteran_is_not_claimant: Faker::Boolean.boolean,
+            stream_type: Constants.AMA_STREAM_TYPES.original,
             claimants: [
               create(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO_#{rand(10**10)}")
             ],

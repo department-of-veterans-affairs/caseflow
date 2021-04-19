@@ -76,6 +76,10 @@ describe Veteran, :all_dbs do
           expect(subject.accessible?).to eq(true)
           expect(subject.first_name).to be_nil
         end
+
+        it "returns nil when accessing zip_code" do
+          expect(subject.zip_code).to be_nil
+        end
       end
     end
 
@@ -907,5 +911,22 @@ describe Veteran, :all_dbs do
     end
 
     it { is_expected.to eq("94117") }
+  end
+
+  describe "#date_of_death" do
+    context "when nil is cached and BGS returns a date of death" do
+      let(:date_of_death) { nil }
+      let(:new_date_of_death) { Date.new(2021, 3, 8) }
+      let(:bgs_date_of_death) { "03/08/2021" }
+      before do
+        allow(veteran).to receive(:fetch_bgs_record).and_return(date_of_death: bgs_date_of_death)
+      end
+
+      subject { veteran.date_of_death }
+      it "saves the non-nil value to Caseflow DB" do
+        expect(subject).to eq(new_date_of_death)
+        expect(veteran[:date_of_death]).to eq(new_date_of_death)
+      end
+    end
   end
 end

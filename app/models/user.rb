@@ -15,7 +15,11 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   has_many :messages
   has_one :vacols_user, class_name: "CachedUser", foreign_key: :sdomainid, primary_key: :css_id
 
+  # Alternative: where("roles @> ARRAY[?]::varchar[]", role)
+  scope :with_role, ->(role) { where("? = ANY(roles)", role) }
+
   BOARD_STATION_ID = "101"
+  LAST_LOGIN_PRECISION = 5.minutes
 
   # Ephemeral values obtained from CSS on auth. Stored in user's session
   attr_writer :regional_office
@@ -97,8 +101,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_view_edit_nod_date?
-    (attorney? || judge? || BvaIntake.singleton.users.include?(self) ||
-      ClerkOfTheBoard.singleton.users.include?(self)) && FeatureToggle.enabled?(:edit_nod_date, user: self)
+    ClerkOfTheBoard.singleton.users.include?(self) && FeatureToggle.enabled?(:edit_nod_date, user: self)
   end
 
   def can_vso_hearing_schedule?
@@ -115,6 +118,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def can_edit_issues?
     CaseReview.singleton.users.include?(self) || can_intake_appeals?
+  end
+
+  def can_edit_cavc_remands?
+    CavcLitigationSupport.singleton.admins.include?(self)
   end
 
   def can_intake_appeals?
@@ -487,7 +494,9 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
       attrs = attrs_from_session(session, user_session)
 
       user ||= create!(attrs.merge(css_id: css_id.upcase))
-      user.update!(attrs.merge(last_login_at: Time.zone.now))
+      now = Time.zone.now
+      attrs[:last_login_at] = now if !user.last_login_at || now - user.last_login_at > LAST_LOGIN_PRECISION
+      user.update!(attrs)
       user_session["pg_user_id"] = user.id
       user
     end

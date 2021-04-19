@@ -28,7 +28,7 @@ import * as glamor from 'glamor';
 import classnames from 'classnames';
 import { times } from 'lodash';
 import LoadingScreen from 'app/components/LoadingScreen';
-import Pagination from 'app/components/Pagination';
+import Pagination from 'app/components/Pagination/Pagination';
 
 jest.mock('classnames');
 

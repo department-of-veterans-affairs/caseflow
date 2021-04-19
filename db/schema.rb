@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_22_214631) do
+ActiveRecord::Schema.define(version: 2021_04_16_192302) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -94,7 +94,7 @@ ActiveRecord::Schema.define(version: 2021_02_22_214631) do
 
   create_table "appeals", comment: "Decision reviews intaken for AMA appeals to the board (also known as a notice of disagreement).", force: :cascade do |t|
     t.boolean "aod_based_on_age", comment: "If true, appeal is advance-on-docket due to claimant's age."
-    t.string "changed_request_type", comment: "The new hearing type preference for an appellant that needs a hearing scheduled"
+    t.string "changed_hearing_request_type", comment: "The new hearing type preference for an appellant that needs a hearing scheduled"
     t.string "closest_regional_office", comment: "The code for the regional office closest to the Veteran on the appeal."
     t.datetime "created_at"
     t.date "docket_range_date", comment: "Date that appeal was added to hearing docket range."
@@ -107,7 +107,7 @@ ActiveRecord::Schema.define(version: 2021_02_22_214631) do
     t.datetime "establishment_processed_at", comment: "Timestamp for when the establishment has succeeded in processing."
     t.datetime "establishment_submitted_at", comment: "Timestamp for when the the intake was submitted for asynchronous processing."
     t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review."
-    t.string "original_request_type", comment: "The hearing type preference for an appellant before any changes were made in Caseflow"
+    t.string "original_hearing_request_type", comment: "The hearing type preference for an appellant before any changes were made in Caseflow"
     t.string "poa_participant_id", comment: "Used to identify the power of attorney (POA) at the time the appeal was dispatched to BVA. Sometimes the POA changes in BGS after the fact, and BGS only returns the current representative."
     t.date "receipt_date", comment: "Receipt date of the appeal form. Used to determine which issues are within the timeliness window to be appealed. Only issues decided prior to the receipt date will show up as contestable issues."
     t.string "stream_docket_number", comment: "Multiple appeals with the same docket number indicate separate appeal streams, mimicking the structure of legacy appeals."
@@ -123,6 +123,19 @@ ActiveRecord::Schema.define(version: 2021_02_22_214631) do
     t.index ["updated_at"], name: "index_appeals_on_updated_at"
     t.index ["uuid"], name: "index_appeals_on_uuid"
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
+  end
+
+  create_table "appellant_substitutions", comment: "Store appellant substitution form data", force: :cascade do |t|
+    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.bigint "created_by_id", null: false, comment: "User that created this record"
+    t.string "poa_participant_id", null: false, comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id"
+    t.bigint "source_appeal_id", null: false, comment: "The relevant source appeal for this substitution"
+    t.string "substitute_participant_id", null: false, comment: "Participant ID of substitute appellant"
+    t.date "substitution_date", null: false, comment: "Date of substitution"
+    t.bigint "target_appeal_id", null: false, comment: "The new appeal resulting from this substitution"
+    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.index ["source_appeal_id"], name: "index_appellant_substitutions_on_source_appeal_id"
+    t.index ["target_appeal_id"], name: "index_appellant_substitutions_on_target_appeal_id"
   end
 
   create_table "attorney_case_reviews", id: :serial, force: :cascade do |t|
@@ -900,7 +913,7 @@ ActiveRecord::Schema.define(version: 2021_02_22_214631) do
 
   create_table "legacy_appeals", force: :cascade do |t|
     t.bigint "appeal_series_id"
-    t.string "changed_request_type", comment: "The new hearing type preference for an appellant that needs a hearing scheduled"
+    t.string "changed_hearing_request_type", comment: "The new hearing type preference for an appellant that needs a hearing scheduled"
     t.string "closest_regional_office"
     t.boolean "contaminated_water_at_camp_lejeune", default: false
     t.datetime "created_at"
@@ -919,7 +932,7 @@ ActiveRecord::Schema.define(version: 2021_02_22_214631) do
     t.boolean "mustard_gas", default: false
     t.boolean "national_cemetery_administration", default: false
     t.boolean "nonrating_issue", default: false
-    t.string "original_request_type", comment: "The hearing type preference for an appellant before any changes were made in Caseflow"
+    t.string "original_hearing_request_type", comment: "The hearing type preference for an appellant before any changes were made in Caseflow"
     t.boolean "pension_united_states", default: false
     t.boolean "private_attorney_or_agent", default: false
     t.boolean "radiation", default: false
@@ -1230,6 +1243,7 @@ ActiveRecord::Schema.define(version: 2021_02_22_214631) do
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
     t.index ["ineligible_reason"], name: "index_request_issues_on_ineligible_reason"
     t.index ["updated_at"], name: "index_request_issues_on_updated_at"
+    t.index ["veteran_participant_id"], name: "index_veteran_participant_id"
   end
 
   create_table "request_issues_updates", comment: "Keeps track of edits to request issues on a decision review that happen after the initial intake, such as removing and adding issues.  When the decision review is processed in VBMS, this also tracks whether adding or removing contentions in VBMS for the update has succeeded.", force: :cascade do |t|
@@ -1457,13 +1471,13 @@ ActiveRecord::Schema.define(version: 2021_02_22_214631) do
     t.index ["updated_at"], name: "index_user_quotas_on_updated_at"
   end
 
-  create_table "users", id: :serial, force: :cascade do |t|
+  create_table "users", id: :serial, comment: "Authenticated Caseflow users", force: :cascade do |t|
     t.datetime "created_at"
     t.string "css_id", null: false
     t.datetime "efolder_documents_fetched_at", comment: "Date when efolder documents were cached in s3 for this user"
     t.string "email"
     t.string "full_name"
-    t.datetime "last_login_at"
+    t.datetime "last_login_at", comment: "The last time the user-agent (browser) provided session credentials; see User.from_session for precision"
     t.string "roles", array: true
     t.string "selected_regional_office"
     t.string "station_id", null: false
@@ -1507,6 +1521,7 @@ ActiveRecord::Schema.define(version: 2021_02_22_214631) do
   end
 
   create_table "veterans", force: :cascade do |t|
+    t.datetime "bgs_last_synced_at", comment: "The last time cached BGS attributes were synced"
     t.string "closest_regional_office"
     t.datetime "created_at"
     t.date "date_of_death", comment: "Date of Death reported by BGS, cached locally"
@@ -1617,9 +1632,19 @@ ActiveRecord::Schema.define(version: 2021_02_22_214631) do
   add_foreign_key "annotations", "users"
   add_foreign_key "api_views", "api_keys"
   add_foreign_key "appeal_views", "users"
+  add_foreign_key "appellant_substitutions", "appeals", column: "source_appeal_id"
+  add_foreign_key "appellant_substitutions", "appeals", column: "target_appeal_id"
+  add_foreign_key "appellant_substitutions", "users", column: "created_by_id"
+  add_foreign_key "cavc_remands", "appeals", column: "remand_appeal_id"
+  add_foreign_key "cavc_remands", "appeals", column: "source_appeal_id"
+  add_foreign_key "cavc_remands", "users", column: "created_by_id"
+  add_foreign_key "cavc_remands", "users", column: "updated_by_id"
   add_foreign_key "certifications", "users"
   add_foreign_key "claims_folder_searches", "users"
   add_foreign_key "dispatch_tasks", "users"
+  add_foreign_key "distributed_cases", "distributions"
+  add_foreign_key "distributed_cases", "tasks"
+  add_foreign_key "distributions", "users", column: "judge_id"
   add_foreign_key "docket_switches", "appeals", column: "new_docket_stream_id"
   add_foreign_key "docket_switches", "appeals", column: "old_docket_stream_id"
   add_foreign_key "docket_switches", "tasks"
@@ -1628,19 +1653,28 @@ ActiveRecord::Schema.define(version: 2021_02_22_214631) do
   add_foreign_key "end_product_updates", "end_product_establishments"
   add_foreign_key "end_product_updates", "users"
   add_foreign_key "hearing_days", "users", column: "created_by_id"
+  add_foreign_key "hearing_days", "users", column: "judge_id"
   add_foreign_key "hearing_days", "users", column: "updated_by_id"
+  add_foreign_key "hearing_task_associations", "tasks", column: "hearing_task_id"
   add_foreign_key "hearing_views", "users"
   add_foreign_key "hearings", "users", column: "created_by_id"
+  add_foreign_key "hearings", "users", column: "judge_id"
   add_foreign_key "hearings", "users", column: "updated_by_id"
+  add_foreign_key "ihp_drafts", "organizations"
   add_foreign_key "intakes", "users"
+  add_foreign_key "job_notes", "users"
+  add_foreign_key "judge_case_reviews", "users", column: "attorney_id"
+  add_foreign_key "judge_case_reviews", "users", column: "judge_id"
   add_foreign_key "legacy_appeals", "appeal_series"
   add_foreign_key "legacy_hearings", "hearing_days"
   add_foreign_key "legacy_hearings", "users"
   add_foreign_key "legacy_hearings", "users", column: "created_by_id"
   add_foreign_key "legacy_hearings", "users", column: "updated_by_id"
   add_foreign_key "legacy_issue_optins", "legacy_issues"
+  add_foreign_key "messages", "users"
   add_foreign_key "nod_date_updates", "appeals"
   add_foreign_key "nod_date_updates", "users"
+  add_foreign_key "organizations_users", "organizations"
   add_foreign_key "organizations_users", "users"
   add_foreign_key "post_decision_motions", "appeals"
   add_foreign_key "post_decision_motions", "tasks"
@@ -1648,9 +1682,16 @@ ActiveRecord::Schema.define(version: 2021_02_22_214631) do
   add_foreign_key "ramp_election_rollbacks", "users"
   add_foreign_key "request_issues_updates", "users"
   add_foreign_key "schedule_periods", "users"
+  add_foreign_key "sent_hearing_email_events", "users", column: "sent_by_id"
+  add_foreign_key "task_timers", "tasks"
+  add_foreign_key "tasks", "tasks", column: "parent_id"
+  add_foreign_key "tasks", "users", column: "assigned_by_id"
+  add_foreign_key "tasks", "users", column: "cancelled_by_id"
   add_foreign_key "unrecognized_appellants", "claimants"
   add_foreign_key "unrecognized_appellants", "unrecognized_party_details"
   add_foreign_key "unrecognized_appellants", "unrecognized_party_details", column: "unrecognized_power_of_attorney_id"
   add_foreign_key "user_quotas", "users"
+  add_foreign_key "virtual_hearings", "users", column: "created_by_id"
   add_foreign_key "virtual_hearings", "users", column: "updated_by_id"
+  add_foreign_key "vso_configs", "organizations"
 end
