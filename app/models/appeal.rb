@@ -122,6 +122,9 @@ class Appeal < DecisionReview
       )).tap do |stream|
         if new_claimants
           new_claimants.each { |claimant| claimant.update(decision_review: stream) }
+
+          # Why isn't this a calculated value instead of stored in the DB?
+          stream.update(veteran_is_not_claimant: !new_claimants.map(&:person).include?(veteran.person))
         else
           stream.copy_claimants!(claimants)
         end
@@ -346,6 +349,10 @@ class Appeal < DecisionReview
     return nil if !cavc?
 
     CavcRemand.find_by(remand_appeal: self)
+  end
+
+  def appellant_substitution
+    AppellantSubstitution.find_by(target_appeal: self)
   end
 
   def status

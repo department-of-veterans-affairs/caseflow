@@ -3,26 +3,17 @@
 exports[`formatDocketSwitchRuling with denied disposition properly formats 1`] = `
 "I am proceeding with a denial.  
   
-Signed ruling letter:  
-https://example.com/file.txt  
-  
 Lorem ipsum dolor sit amet, consectetur adipiscing elit..."
 `;
 
 exports[`formatDocketSwitchRuling with granted disposition properly formats 1`] = `
 "I am proceeding with a full switch.  
   
-Signed ruling letter:  
-https://example.com/file.txt  
-  
 Lorem ipsum dolor sit amet, consectetur adipiscing elit..."
 `;
 
 exports[`formatDocketSwitchRuling with partially_granted disposition properly formats 1`] = `
 "I am proceeding with a partial switch.  
-  
-Signed ruling letter:  
-https://example.com/file.txt  
   
 Lorem ipsum dolor sit amet, consectetur adipiscing elit..."
 `;
