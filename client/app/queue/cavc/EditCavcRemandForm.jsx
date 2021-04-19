@@ -243,7 +243,7 @@ export const EditCavcRemandForm = ({
               readOnly
               strongLabel
             />
-            <input type="hidden" inputRef={register} name="decisionType" />
+            <input type="hidden" ref={register} name="decisionType" />
           </>
         )}
 
@@ -268,7 +268,7 @@ export const EditCavcRemandForm = ({
                 readOnly
                 strongLabel
               />
-              <input type="hidden" inputRef={register} name="remandType" />
+              <input type="hidden" ref={register} name="remandType" />
             </>
           ))}
 
