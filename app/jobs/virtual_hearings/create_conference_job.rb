@@ -81,7 +81,11 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     create_conference unless virtual_hearing.active?
 
     # when a conference has been created and emails sent, the virtual hearing can be established
-    send_emails(email_type) if virtual_hearing.active?
+    begin
+      send_emails(email_type) if virtual_hearing.active?
+    rescue StandardError => error
+      capture_exception(error: error)
+    end
 
     if virtual_hearing.can_be_established?
       Rails.logger.info("Attempting to flag virtual hearing establishment as processed...")
