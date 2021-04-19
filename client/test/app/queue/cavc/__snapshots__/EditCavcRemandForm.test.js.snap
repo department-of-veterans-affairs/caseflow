@@ -2894,6 +2894,7 @@ exports[`EditCavcRemandForm editing existing all feature toggles enabled renders
       <input
         name="decisionType"
         type="hidden"
+        value="remand"
       />
       <div
         class="cf-form-textinput   "
@@ -2919,6 +2920,7 @@ exports[`EditCavcRemandForm editing existing all feature toggles enabled renders
       <input
         name="remandType"
         type="hidden"
+        value="mdr"
       />
       <div
         class="cf-form-textinput   "
