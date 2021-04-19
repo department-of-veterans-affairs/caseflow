@@ -222,14 +222,6 @@ export const editNodDateUpdates = (appealId, nodDateUpdate) => ({
   }
 });
 
-// export const poaSyncDateUpdates = (appealId, poaSyncDate) => ({
-//   type: ACTIONS.POA_SYNC_DATE_UPDATES,
-//   payload: {
-//     appealId,
-//     poaSyncDate
-//   }
-// });
-
 export const clearAppealDetails = (appealId) => ({
   type: ACTIONS.CLEAR_APPEAL,
   payload: {

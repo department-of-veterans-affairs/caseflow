@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PoaRefresh renders correctly 1`] = `
+<div>
+  <div
+    data-css-2kqkly=""
+  >
+    <i>
+      Power of Attorney (POA) data comes from VBMS. To refresh POA, please click the "Refresh POA" button.
+    </i>
+    <i
+      data-css-l6c9n4=""
+    >
+      POA last refreshed on 04/08/2021
+    </i>
+  </div>
+</div>
+`;

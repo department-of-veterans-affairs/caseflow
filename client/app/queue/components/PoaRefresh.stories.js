@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { PoaSyncDate } from './PoaSyncDate';
+import { PoaRefresh } from './PoaRefresh';
 
 const Template = (args) => (
-  <PoaSyncDate {...args} />
+  <PoaRefresh {...args} />
 );
 
 export const POASyncDate = Template.bind({});
