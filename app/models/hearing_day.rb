@@ -144,9 +144,38 @@ class HearingDay < CaseflowRecord
   end
 
   def total_slots
+    # 04-19-2021 number_of_slots database column added
+    return number_of_slots unless number_of_slots.nil?
+
+    # If central or virtual return number based on request type
     return SLOTS_BY_REQUEST_TYPE[request_type] if central_office_or_virtual?
 
+    # Return 12, all timezones are set to 12
     SLOTS_BY_TIMEZONE[RegionalOffice.find!(regional_office).timezone]
+  end
+
+  def slot_length
+    # 04-19-2021 slot_length_minutes database column added
+    return slot_length_minutes unless slot_length_minutes.nil?
+
+    default_slot_length = 60
+    default_slot_length
+  end
+
+  # This strips off the incorrect date info that rails appends (no time of day object available)
+  def time_of_day_with_zone(datetime)
+    datetime.in_time_zone("America/New_York").strftime("%T%:z")
+  end
+
+  def begins_at_time
+    return time_of_day_with_zone(begins_at) unless begins_at.nil?
+
+    # Return 09:00 eastern if central
+    return time_of_day_with_zone("09:00".in_time_zone("America/New_York")) if central_office?
+
+    # Return 08:30 in roTimezone
+    regional_office_timezone = RegionalOffice.find!(regional_office).timezone
+    time_of_day_with_zone("08:30".in_time_zone(regional_office_timezone))
   end
 
   def judge_first_name
