@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_16_192302) do
+ActiveRecord::Schema.define(version: 2021_04_19_200234) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -714,6 +714,7 @@ ActiveRecord::Schema.define(version: 2021_04_16_192302) do
   end
 
   create_table "hearing_days", force: :cascade do |t|
+    t.datetime "begins_at"
     t.string "bva_poc", comment: "Hearing coordinator full name"
     t.datetime "created_at", null: false, comment: "Automatic timestamp of when hearing day was created"
     t.bigint "created_by_id", null: false, comment: "The ID of the user who created the Hearing Day"
@@ -721,10 +722,12 @@ ActiveRecord::Schema.define(version: 2021_04_16_192302) do
     t.integer "judge_id", comment: "User ID of judge who is assigned to the hearing day"
     t.boolean "lock", comment: "Determines if the hearing day is locked and can't be edited"
     t.text "notes", comment: "Any notes about hearing day"
+    t.integer "number_of_slots"
     t.string "regional_office", comment: "Regional office key associated with hearing day"
     t.string "request_type", null: false, comment: "Hearing request types for all associated hearings; can be one of: 'T', 'C' or 'V'"
     t.string "room", comment: "The room at BVA where the hearing will take place"
     t.date "scheduled_for", null: false, comment: "The date when all associated hearings will take place"
+    t.integer "slot_length_minutes"
     t.datetime "updated_at", null: false, comment: "Automatic timestamp of when hearing day was updated"
     t.bigint "updated_by_id", null: false, comment: "The ID of the user who most recently updated the Hearing Day"
     t.index ["created_by_id"], name: "index_hearing_days_on_created_by_id"
