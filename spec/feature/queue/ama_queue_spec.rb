@@ -527,7 +527,7 @@ feature "AmaQueue", :all_dbs do
           "sent to #{judge_user.full_name} for review."
         )
 
-        expect(appeal.latest_attorney_case_review.overtime).to be(overtime)
+        expect(appeal.reload.latest_attorney_case_review.overtime).to be(overtime)
       end
 
       step "judge returns case to attorney for corrections" do
