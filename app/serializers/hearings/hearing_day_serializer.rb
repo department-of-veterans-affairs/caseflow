@@ -27,7 +27,7 @@ class HearingDaySerializer
   attribute :scheduled_for
   attribute :total_slots
   attribute :slot_length
-  attribute :begins_at_time
+  attribute :begins_at
   attribute :updated_by_id
   attribute :updated_at
 

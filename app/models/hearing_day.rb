@@ -167,8 +167,11 @@ class HearingDay < CaseflowRecord
     datetime.in_time_zone("America/New_York").strftime("%T%:z")
   end
 
-  def begins_at_time
-    return time_of_day_with_zone(begins_at) unless begins_at.nil?
+  # Overrides the 'begins_at' column so we can strip out the incorrect date information
+  # that Rails adds. Rails does not have way to store/access time without date info.
+  def begins_at
+    db_begins_at_value = self[:begins_at]
+    return time_of_day_with_zone(db_begins_at_value) unless db_begins_at_value.nil?
 
     # Return 09:00 eastern if central
     return time_of_day_with_zone("09:00".in_time_zone("America/New_York")) if central_office?
