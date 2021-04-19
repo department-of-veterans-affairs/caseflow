@@ -17,8 +17,8 @@ export const AddressBlock = ({ entity }) => {
       {entity.addressLine2 && <div>{entity.addressLine2}</div>}
       {entity.addressLine3 && <div>{entity.addressLine3}</div>}
       <div>
-        {`${entity.city ?? ''}, ${entity.state ?? ''} ${entity.country ?? ''} ${
-          entity.zip
+        {`${entity.city ?? ''}, ${entity.state ?? ''} ${entity.zip ?? ''} ${
+          entity.country
         }`}
       </div>
       {entity.phoneNumber && <div>{entity.phoneNumber}</div>}
