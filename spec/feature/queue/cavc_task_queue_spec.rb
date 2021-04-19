@@ -516,8 +516,14 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           click_on "Edit Remand"
           expect(page).to have_content COPY::EDIT_CAVC_PAGE_TITLE.to_s
 
-          expect(page).to have_field(COPY::CAVC_TYPE_LABEL, with: Constants::CAVC_DECISION_TYPE_NAMES[cavc_remand[:cavc_decision_type ]])
-          expect(page).to have_field(COPY::CAVC_SUB_TYPE_LABEL, with: Constants::CAVC_REMAND_SUBTYPE_NAMES[cavc_remand[:remand_subtype]])
+          expect(page).to have_field(
+            COPY::CAVC_TYPE_LABEL,
+            with: Constants::CAVC_DECISION_TYPE_NAMES[cavc_remand[:cavc_decision_type]]
+          )
+          expect(page).to have_field(
+            COPY::CAVC_SUB_TYPE_LABEL,
+            with: Constants::CAVC_REMAND_SUBTYPE_NAMES[cavc_remand[:remand_subtype]]
+          )
         end
 
         step "edit certain fields" do
