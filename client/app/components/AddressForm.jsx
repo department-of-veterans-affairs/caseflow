@@ -5,6 +5,7 @@ import { Controller } from 'react-hook-form';
 import { STATES } from '../constants/AppConstants';
 import TextField from 'app/components/TextField';
 import SearchableDropdown from 'app/components/SearchableDropdown';
+import { createFilter } from 'react-select';
 
 export const AddressForm = ({ control, register, watch, setValue }) => {
   const watchPartyType = watch('partyType');
@@ -54,6 +55,7 @@ export const AddressForm = ({ control, register, watch, setValue }) => {
               {...rest}
               label="State"
               options={STATES}
+              filterOption={createFilter({ matchFrom: 'start' })}
               onChange={(valObj) => {
                 onChange(valObj);
                 setValue('state', valObj?.label);
