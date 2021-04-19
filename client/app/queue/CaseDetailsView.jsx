@@ -199,7 +199,7 @@ export const CaseDetailsView = (props) => {
             decisionIssues={appeal.decisionIssues}
           />
           <PowerOfAttorneyDetail
-            title="Power of Attorney"
+            title="Appellant's Power of Attorney"
             appealId={appealId}
           />
           {(appeal.hearings.length ||
