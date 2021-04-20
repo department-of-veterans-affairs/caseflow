@@ -552,6 +552,7 @@ class Task < CaseflowRecord
     save!(status: Constants.TASK_STATUSES.cancelled)
   end
 
+  # :reek:FeatureEnvy
   def handle_task_count_validation(task_to_validate)
     begin
       task_to_validate.save!
