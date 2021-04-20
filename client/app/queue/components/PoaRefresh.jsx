@@ -4,6 +4,7 @@ import { formatDateStr } from '../../util/DateUtil';
 import COPY from '../../../COPY';
 import { css } from 'glamor';
 import { sprintf } from 'sprintf-js';
+import { useSelector } from 'react-redux';
 
 import { boldText } from '../constants';
 
@@ -19,13 +20,16 @@ export const PoaRefresh = ({ powerOfAttorney }) => {
   };
 
   const lastSyncedCopy = sprintf(COPY.CASE_DETAILS_POA_LAST_SYNC_DATE_COPY, poaSyncInfo);
+  const viewPoaRefresh = useSelector((state) => state.ui.featureToggles.view_poa_refresh);
 
-  return (
+  return <React.Fragment>
+    {viewPoaRefresh &&
     <div {...textStyling}>
       <i>Power of Attorney (POA) data comes from VBMS. To refresh POA, please click the "Refresh POA" button.</i>
       <i {...boldText}>{lastSyncedCopy}</i>
     </div>
-  );
+    }
+  </React.Fragment>;
 };
 
 PoaRefresh.propTypes = {
