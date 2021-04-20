@@ -62,11 +62,8 @@ export const TimeSlot = ({
           </div>
           {custom ? (
             <TimePicker
-              hideLabel
-              enableZone
-              disableRadioOptions
               id={hearingTimeId}
-              localZone={roTimezone}
+              regionalOffice={hearing?.regionalOffice}
               onChange={(scheduledTimeString) => onChange('scheduledTimeString', scheduledTimeString)}
               value={hearing?.scheduledTimeString}
             />
