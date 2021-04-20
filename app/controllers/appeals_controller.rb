@@ -72,7 +72,7 @@ class AppealsController < ApplicationController
     elsif appeal.is_a?(Appeal)
       poa = BgsPowerOfAttorney.find(params[:poaId])
       render json: update_bgs_poa(poa)
-    elsif appeal.is_a?(LegacyAppeal)
+    else
       poa = appeal.power_of_attorney
       render json: update_vacols_poa(poa)
     end
@@ -182,7 +182,7 @@ class AppealsController < ApplicationController
   def json_appeals(appeal)
     if appeal.is_a?(Appeal)
       WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
-    elsif appeal.is_a?(LegacyAppeal)
+    else
       WorkQueue::LegacyAppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
     end
   end

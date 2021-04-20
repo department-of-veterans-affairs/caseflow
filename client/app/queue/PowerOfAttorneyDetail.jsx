@@ -1,7 +1,7 @@
 import { bindActionCreators } from 'redux';
 import { connect, shallowEqual, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React from 'react';
 import _ from 'lodash';
 
 import { appealWithDetailSelector } from './selectors';
@@ -50,6 +50,7 @@ const PowerOfAttorneyDetailWrapper = (WrappedComponent) => {
       shallowEqual
     );
     const poaAlert = useSelector((state) => state.ui.poaAlert);
+    
     if (!powerOfAttorney) {
       if (loading) {
         return <React.Fragment>{COPY.CASE_DETAILS_LOADING}</React.Fragment>;
@@ -138,7 +139,13 @@ PowerOfAttorneyNameUnconnected.propTypes = PowerOfAttorneyDetailUnconnected.prop
     representative_type: PropTypes.string,
     representative_name: PropTypes.string,
     representative_address: PropTypes.object,
-    representative_email_address: PropTypes.string
+    representative_email_address: PropTypes.string,
+    representative_id: PropTypes.integer
+  },
+  appealId: PropTypes.integer,
+  poaAlert: PropTypes.shape({
+    message: PropTypes.string,
+    alertType: PropTypes.string,
   })
 };
 
