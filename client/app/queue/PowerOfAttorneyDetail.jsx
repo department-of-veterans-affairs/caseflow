@@ -50,7 +50,7 @@ const PowerOfAttorneyDetailWrapper = (WrappedComponent) => {
       shallowEqual
     );
     const poaAlert = useSelector((state) => state.ui.poaAlert);
-    
+
     if (!powerOfAttorney) {
       if (loading) {
         return <React.Fragment>{COPY.CASE_DETAILS_LOADING}</React.Fragment>;
@@ -140,13 +140,13 @@ PowerOfAttorneyNameUnconnected.propTypes = PowerOfAttorneyDetailUnconnected.prop
     representative_name: PropTypes.string,
     representative_address: PropTypes.object,
     representative_email_address: PropTypes.string,
-    representative_id: PropTypes.integer
-  },
-  appealId: PropTypes.integer,
+    representative_id: PropTypes.number
+  }),
   poaAlert: PropTypes.shape({
     message: PropTypes.string,
     alertType: PropTypes.string,
-  })
+  }),
+  appealId: PropTypes.number
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators(

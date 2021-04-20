@@ -8,22 +8,22 @@ import { setPoaRefreshAlert } from '../uiReducer/uiActions';
 
 export const PoaRefreshButton = ({ appealId, poaId }) => {
   const dispatch = useDispatch();
-  const [buttonText, setButtonText] = useState('Refresh POA');  
+  const [buttonText, setButtonText] = useState('Refresh POA');
   const viewPoaRefreshButton = useSelector((state) => state.ui.featureToggles.view_poa_refresh_button);
 
   const updatePOA = () => {
-    setButtonText(<SmallLoader message='Refresh POA' spinnerColor='#417505' />);
+    setButtonText(<SmallLoader message="Refresh POA" spinnerColor="#417505" />);
     ApiUtil.patch(`/appeals/${appealId}/update_power_of_attorney/${poaId}`).then((data) => {
       dispatch(setPoaRefreshAlert(data.body.status, data.body.message));
       setButtonText('Refresh POA');
-   });
+    });
   };
 
   return <React.Fragment>
-    {viewPoaRefreshButton && ( <div>
+    {viewPoaRefreshButton && (<div>
       <Button
-        type='button'
-        name='Refresh Poa'
+        type="button"
+        name="Refresh Poa"
         classNames={['usa-button-secondary', 'cf-push-right']}
         onClick={() => updatePOA()}
       >
@@ -31,14 +31,13 @@ export const PoaRefreshButton = ({ appealId, poaId }) => {
       </Button>
     </div>
     )}
-  </React.Fragment>
+  </React.Fragment>;
 };
 
 PoaRefreshButton.propTypes = {
   powerOfAttorney: PropTypes.shape({
     poa_last_synced_at: PropTypes.string,
-    appealId: PropTypes.integer,
-    poalId: PropTypes.integer
-  });
-
+  }),
+  appealId: PropTypes.number,
+  poaId: PropTypes.number
 };
