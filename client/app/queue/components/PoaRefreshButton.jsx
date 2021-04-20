@@ -9,7 +9,7 @@ import { setPoaRefreshAlert } from '../uiReducer/uiActions';
 export const PoaRefreshButton = ({ appealId, poaId }) => {
   const dispatch = useDispatch();
   const [buttonText, setButtonText] = useState('Refresh POA');
-  const viewPoaRefreshButton = useSelector((state) => state.ui.featureToggles.view_poa_refresh_button);
+  const viewPoaRefreshButton = useSelector((state) => state.ui.featureToggles.poa_refresh);
 
   const updatePOA = () => {
     setButtonText(<SmallLoader message="Refresh POA" spinnerColor="#417505" />);

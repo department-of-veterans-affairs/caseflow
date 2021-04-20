@@ -1,8 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// import { editAppeal, poaSyncDateUpdates } from '../QueueActions';
-// import { useDispatch, useSelector } from 'react-redux';
-// import ApiUtil from '../../util/ApiUtil';
 import { formatDateStr } from '../../util/DateUtil';
 import COPY from '../../../COPY';
 import { css } from 'glamor';
