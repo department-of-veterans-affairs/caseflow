@@ -328,19 +328,18 @@ describe HearingDay, :all_dbs do
   end
 
   context "begins_at" do
-    subject { hearing_day.begins_at }
-    let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
-    let(:begins_at) { nil }
-    let(:hearing_day) do
-      create(
-        :hearing_day,
-        request_type: request_type,
-        regional_office: regional_office_key,
-        begins_at: begins_at
-      )
-    end
-
     context "no db value for begins_at" do
+      subject { hearing_day.begins_at }
+      let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
+      let(:begins_at) { nil }
+      let(:hearing_day) do
+        create(
+          :hearing_day,
+          request_type: request_type,
+          regional_office: regional_office_key,
+          begins_at: begins_at
+        )
+      end
       context "a virtual day" do
         let(:request_type) { HearingDay::REQUEST_TYPES[:virtual] }
         let(:regional_office_key) { nil }
@@ -359,11 +358,11 @@ describe HearingDay, :all_dbs do
         context "a video day at RO (#{ro})" do
           let(:regional_office_key) { ro }
           let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
+
           regional_office_info = RegionalOffice::CITIES[ro]
-          regional_office_timezone = regional_office_info["timezone"]
+          regional_office_timezone = regional_office_info[:timezone]
 
           it "begins_at 08:30 ro timezone" do
-            puts "subject #{subject}"
             expect(Time.zone.parse(subject)).to eq("08:30".in_time_zone(regional_office_timezone))
           end
         end
@@ -372,7 +371,16 @@ describe HearingDay, :all_dbs do
 
     context "with a db value for begins_at" do
       subject { hearing_day.begins_at }
+      let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
       let(:begins_at) { "13:38:00-05:00" }
+      let(:hearing_day) do
+        create(
+          :hearing_day,
+          request_type: request_type,
+          regional_office: regional_office_key,
+          begins_at: begins_at
+        )
+      end
 
       context "a virtual day" do
         let(:request_type) { HearingDay::REQUEST_TYPES[:virtual] }
@@ -403,8 +411,18 @@ describe HearingDay, :all_dbs do
 
   context "slot_length " do
     context "no db value for slot_length_minutes" do
+      subject { hearing_day.slot_length }
+      let(:hearing_day) { create(:hearing_day) }
+      it "uses default value of 60" do
+        expect(subject).to eq(60)
+      end
     end
     context "with a db value for slot_length_minutes" do
+      subject { hearing_day.slot_length }
+      let(:hearing_day) { create(:hearing_day, slot_length_minutes: 45) }
+      it "uses db value for slot_length_minutes" do
+        expect(subject).to eq(45)
+      end
     end
   end
 
