@@ -80,8 +80,12 @@ class HearingDay < CaseflowRecord
     request_type == REQUEST_TYPES[:central]
   end
 
+  def virtual?
+    request_type == REQUEST_TYPES[:virtual]
+  end
+
   def central_office_or_virtual?
-    [REQUEST_TYPES[:central], REQUEST_TYPES[:virtual]].include?(request_type)
+    central_office? || virtual?
   end
 
   def scheduled_for_as_date
@@ -171,14 +175,18 @@ class HearingDay < CaseflowRecord
   # that Rails adds. Rails does not have way to store/access time without date info.
   def begins_at
     db_begins_at_value = self[:begins_at]
+
+    # Return the value in the column if its present
     return time_of_day_with_zone(db_begins_at_value) unless db_begins_at_value.nil?
 
-    # Return 09:00 eastern if central
+    # 09:00 eastern if central
     return time_of_day_with_zone("09:00".in_time_zone("America/New_York")) if central_office?
 
-    # Return 08:30 in roTimezone
-    regional_office_timezone = RegionalOffice.find!(regional_office).timezone
-    time_of_day_with_zone("08:30".in_time_zone(regional_office_timezone))
+    # 08:30 eastern if virtual
+    return time_of_day_with_zone("08:30".in_time_zone("America/New_York")) if virtual?
+
+    # 08:30 in roTimezone otherwise
+    time_of_day_with_zone("08:30".in_time_zone(RegionalOffice.find!(regional_office).timezone))
   end
 
   def judge_first_name
