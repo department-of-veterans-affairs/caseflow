@@ -238,7 +238,7 @@ describe HearingDay, :all_dbs do
 
   # A representative list of ROs (existing was testing all of them)
   selected_ro_ids = [
-    # Special looking ROs
+    # Special looking ROs, these don't work due to missing ro timezones?
     #"R", # Virtual hearing ro, [No timezone]
     #"VACO", # VA Central Office, "America/New_York"
     #"DSUSER", # Digital Service HQ, "America/New_York"
@@ -253,17 +253,17 @@ describe HearingDay, :all_dbs do
   ]
 
   context ".total_slots" do
-    subject { hearing_day.total_slots }
-    let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
-    let(:hearing_day) do
-      create(
-        :hearing_day,
-        request_type: request_type,
-        regional_office: regional_office_key
-      )
-    end
-
     context "with no db value for number_of_slots" do
+      subject { hearing_day.total_slots }
+      let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
+      let(:hearing_day) do
+        create(
+          :hearing_day,
+          request_type: request_type,
+          regional_office: regional_office_key
+        )
+      end
+
       context "a virtual day" do
         let(:request_type) { HearingDay::REQUEST_TYPES[:virtual] }
         let(:regional_office_key) { nil }
@@ -271,6 +271,7 @@ describe HearingDay, :all_dbs do
           expect(subject).to be(8)
         end
       end
+
       context "a central day" do
         let(:regional_office_key) { nil }
         let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
