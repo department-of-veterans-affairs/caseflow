@@ -264,7 +264,6 @@ class AppealsController < ApplicationController
 
   def update_bgs_poa(poa)
     begin
-      poa.update_cached_attributes!
       poa.save_with_updated_bgs_record!
       {
         status: "success",
@@ -282,7 +281,6 @@ class AppealsController < ApplicationController
   def update_vacols_poa(poa)
     begin
       bgs_poa = BgsPowerOfAttorney.find_or_create_by_file_number(poa.file_number)
-      bgs_poa.update_cached_attributes!
       bgs_poa.save_with_updated_bgs_record!
       {
         status: "success",
