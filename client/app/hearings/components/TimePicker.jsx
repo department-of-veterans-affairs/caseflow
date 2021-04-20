@@ -4,11 +4,12 @@ import moment from 'moment-timezone';
 
 import HEARING_TIME_OPTIONS from '../../../constants/HEARING_TIME_OPTIONS';
 import SearchableDropdown from '../../components/SearchableDropdown';
+import { formatTimeSlotLabel } from '../utils';
 
 export const TimePicker = ({
   componentIndex,
   onChange,
-  regionalOffice,
+  roTimezone,
   value,
 }) => {
 
@@ -16,8 +17,17 @@ export const TimePicker = ({
   // 8:30 AM Pacific Time (US & Canada) / 11:30 AM Eastern Time (US & Canada)
   // Values should have UTC offsets like this:
   // value: "08:30:00-07:00"
-  const formatOptions = (roTimezone, options) => {
-    return options;
+  const formatOptions = (zone, options) => {
+    const formattedOptions = options.map((option) => {
+      return {
+        // We interpret the 'value' as being in roTimezone
+        value: moment.tz(option.value, 'HH:mm', zone),
+        // The label is the same as the label on the timeslots
+        label: formatTimeSlotLabel(option.value, zone)
+      };
+    });
+
+    return formattedOptions;
   };
 
   return (
@@ -26,7 +36,7 @@ export const TimePicker = ({
       label="Hearing Time"
       strongLabel
       placeholder="Select a time"
-      options={formatOptions(regionalOffice?.timezone, HEARING_TIME_OPTIONS)}
+      options={formatOptions(roTimezone, HEARING_TIME_OPTIONS)}
       value={value}
       onChange={(option) => onChange(option ? option.value : null)}
     />
@@ -38,6 +48,6 @@ TimePicker.defaultProps = { componentIndex: 0 };
 TimePicker.propTypes = {
   componentIndex: PropTypes.number,
   onChange: PropTypes.func,
-  regionalOffice: PropTypes.string,
+  roTimezone: PropTypes.string,
   value: PropTypes.string,
 };
