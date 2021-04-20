@@ -167,6 +167,8 @@ class HearingDay < CaseflowRecord
   end
 
   # This strips off the incorrect date info that rails appends (no time of day object available)
+  # I want to keep this in this file since it's closely related.
+  # :reek:UtilityFunction
   def time_of_day_with_zone(datetime)
     datetime.in_time_zone("America/New_York").strftime("%T%:z")
   end

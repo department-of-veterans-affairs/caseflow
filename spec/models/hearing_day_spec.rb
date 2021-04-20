@@ -239,11 +239,11 @@ describe HearingDay, :all_dbs do
   # A representative list of ROs (existing was testing all of them)
   selected_ro_ids = [
     # Special looking ROs, these don't work due to missing ro timezones?
-    #"R", # Virtual hearing ro, [No timezone]
-    #"VACO", # VA Central Office, "America/New_York"
-    #"DSUSER", # Digital Service HQ, "America/New_York"
-    #"NWQ", # ?, looks different, "America/New_York"
-    #"SO49", # El Paso Satellite, "America/Chicago"
+    # "R", # Virtual hearing ro, [No timezone]
+    # "VACO", # VA Central Office, "America/New_York"
+    # "DSUSER", # Digital Service HQ, "America/New_York"
+    # "NWQ", # ?, looks different, "America/New_York"
+    # "SO49", # El Paso Satellite, "America/Chicago"
     # One from each timezone
     "RO01", # Boston, "America/New_York"
     "RO20", # Nashville, "America/Chicago"
