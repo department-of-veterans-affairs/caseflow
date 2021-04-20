@@ -7,7 +7,7 @@ import { setTimeSlots } from '../../utils';
 import { TimeSlotButton } from './TimeSlotButton';
 import Button from '../../../components/Button';
 import SmallLoader from '../../../components/SmallLoader';
-import { HearingTime } from '../modalForms/HearingTime';
+import { TimePicker } from '../TimePicker';
 import { LOGO_COLORS } from '../../../constants/AppConstants';
 
 export const TimeSlot = ({
@@ -61,7 +61,7 @@ export const TimeSlot = ({
             </Button>
           </div>
           {custom ? (
-            <HearingTime
+            <TimePicker
               hideLabel
               enableZone
               disableRadioOptions
