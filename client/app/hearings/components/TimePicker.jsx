@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import moment from 'moment-timezone';
 
 import HEARING_TIME_OPTIONS from '../../../constants/HEARING_TIME_OPTIONS';
 import SearchableDropdown from '../../components/SearchableDropdown';
@@ -16,11 +17,17 @@ export const TimePicker = ({
 
   const formatOptions = (zone, options) => {
     const formattedOptions = options.map((option) => {
+      // This 'value' gets interpreted on save as roTimezone, though how that happens is complicated,
+      // see hearing.rb::scheduled_for docs.
+      // The point of this is so that for a west coast RO the dropdown starts at 8:15 pacific
+      // rather than 8:15 eastern
+      const correctedTime = moment.tz(option.value, 'HH:mm', roTimezone).tz('America/New_York').
+        format('HH:mm');
+
       return {
-        // We interpret the 'value' as being in roTimezone by not changing it
         value: option.value,
         // The label is the same as the label on the timeslots
-        label: formatTimeSlotLabel(option.value, zone)
+        label: formatTimeSlotLabel(correctedTime, zone)
       };
     });
 
