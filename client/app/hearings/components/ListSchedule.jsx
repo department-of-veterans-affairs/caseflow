@@ -8,6 +8,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import Button from '../../components/Button';
 import PropTypes from 'prop-types';
 import { CSVLink } from 'react-csv';
+import { formatHearingType } from '../utils';
 import {
   toggleTypeFilterVisibility, toggleLocationFilterVisibility,
   toggleVljFilterVisibility, onReceiveHearingSchedule,
@@ -19,7 +20,7 @@ import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ListScheduleDateSearch from './ListScheduleDateSearch';
 import moment from 'moment';
 
-import { LIST_SCHEDULE_VIEWS, VIDEO_HEARING_LABEL } from '../constants';
+import { LIST_SCHEDULE_VIEWS } from '../constants';
 import DropdownButton from '../../components/DropdownButton';
 import WindowUtil from '../../util/WindowUtil';
 
@@ -186,13 +187,7 @@ class ListSchedule extends React.Component {
         align: 'left',
         tableData: hearingScheduleRows,
         enableFilter: true,
-        filterValueTransform: (hearingType) => {
-          if (hearingType.toLowerCase().startsWith('video')) {
-            return VIDEO_HEARING_LABEL;
-          }
-
-          return hearingType;
-        },
+        filterValueTransform: formatHearingType,
         anyFiltersAreSet: true,
         label: 'Filter by type',
         columnName: 'readableRequestType',

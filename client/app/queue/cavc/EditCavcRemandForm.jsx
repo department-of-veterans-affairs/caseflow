@@ -29,8 +29,8 @@ import {
   NoMandateBanner,
 } from './Alerts';
 import {
-  // allDecisionTypeOpts,
-  // allRemandTypeOpts,
+  allDecisionTypeOpts,
+  allRemandTypeOpts,
   generateSchema,
 } from './utils';
 
@@ -60,11 +60,15 @@ const buttonStyling = css({ paddingLeft: '0' });
 export const EditCavcRemandForm = ({
   decisionIssues,
   existingValues = {},
-  // supportedDecisionTypes = [],
-  // supportedRemandTypes = [],
+  supportedDecisionTypes = [],
+  supportedRemandTypes = [],
   onCancel,
   onSubmit,
 }) => {
+  const mode = useMemo(() => (isEmpty(existingValues) ? 'add' : 'edit'), [
+    existingValues,
+  ]);
+
   const schema = useMemo(
     () => generateSchema({ maxIssues: decisionIssues.length }),
     [decisionIssues]
@@ -81,21 +85,21 @@ export const EditCavcRemandForm = ({
     },
   });
 
-  // const filteredDecisionTypes = useMemo(
-  //   () =>
-  //     allDecisionTypeOpts.filter((item) =>
-  //       supportedDecisionTypes.includes(item.value)
-  //     ),
-  //   [supportedDecisionTypes]
-  // );
+  const filteredDecisionTypes = useMemo(
+    () =>
+      allDecisionTypeOpts.filter((item) =>
+        supportedDecisionTypes.includes(item.value)
+      ),
+    [supportedDecisionTypes]
+  );
 
-  // const filteredRemandTypes = useMemo(
-  //   () =>
-  //     allRemandTypeOpts.filter((item) =>
-  //       supportedRemandTypes.includes(item.value)
-  //     ),
-  //   [supportedRemandTypes]
-  // );
+  const filteredRemandTypes = useMemo(
+    () =>
+      allRemandTypeOpts.filter((item) =>
+        supportedRemandTypes.includes(item.value)
+      ),
+    [supportedRemandTypes]
+  );
 
   const issueOptions = useMemo(
     () =>
@@ -152,6 +156,7 @@ export const EditCavcRemandForm = ({
   const watchDecisionType = watch('decisionType');
   const watchRemandType = watch('remandType');
   const watchRemandDatesProvided = watch('remandDatesProvided');
+  const watchMandateSame = watch('mandateSame');
   const watchIssueIds = watch('issueIds');
 
   const isRemandType = (type) =>
@@ -168,12 +173,14 @@ export const EditCavcRemandForm = ({
     [watchRemandType, watchRemandDatesProvided]
   );
 
+  // This may be moot, since when fields are removed, values get reset
+  // When editing, remandType can't be changed, so this should never fire
   useEffect(() => {
     if (!mandateDatesAvailable) {
       setValue('judgementDate', '');
       setValue('mandateDate', '');
     }
-  }, [watchRemandType, watchRemandDatesProvided]);
+  }, [mandateDatesAvailable]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -215,40 +222,57 @@ export const EditCavcRemandForm = ({
             />
           )}
         />
-        <br />
-        <TextField
-          defaultValue={CAVC_DECISION_TYPE_NAMES[watchDecisionType]}
-          value={CAVC_DECISION_TYPE_NAMES[watchDecisionType]}
-          label={COPY.CAVC_TYPE_LABEL}
-          readOnly={Boolean(register)}
-          name="decisonType"
-          strongLabel
-        />
 
-        {watchDecisionType?.includes('remand') && (
-          <TextField
-            defaultValue={CAVC_REMAND_SUBTYPE_NAMES[watchRemandType]}
-            value={CAVC_REMAND_SUBTYPE_NAMES[watchRemandType]}
-            label={COPY.CAVC_SUB_TYPE_LABEL}
-            readOnly={Boolean(register)}
-            name="remandType"
+        {mode === 'add' ? (
+          <RadioField
+            errorMessage={errors?.decisionType?.message}
+            inputRef={register}
+            styling={radioLabelStyling}
+            label={COPY.CAVC_TYPE_LABEL}
+            name="decisionType"
+            options={filteredDecisionTypes}
             strongLabel
+            vertical
           />
+        ) : (
+          <>
+            <TextField
+              name="decisionTypeDisplay"
+              value={CAVC_DECISION_TYPE_NAMES[(existingValues?.decisionType)]}
+              label={COPY.CAVC_TYPE_LABEL}
+              readOnly
+              strongLabel
+            />
+            <input type="hidden" ref={register} name="decisionType" />
+          </>
         )}
 
-        {/* Workaround: must have TextField that has a proper value and uses `register` to pass validation */}
-        <div style={{ display: 'none' }}>
-          <TextField
-            inputRef={register}
-            name="decisionType"
-          />
-          <TextField
-            inputRef={register}
-            name="remandType"
-          />
-        </div>
+        {watchDecisionType?.includes('remand') &&
+          (mode === 'add' ? (
+            <RadioField
+              inputRef={register}
+              errorMessage={errors?.remandType?.message}
+              styling={radioLabelStyling}
+              label={COPY.CAVC_SUB_TYPE_LABEL}
+              name="remandType"
+              options={filteredRemandTypes}
+              strongLabel
+              vertical
+            />
+          ) : (
+            <>
+              <TextField
+                name="remandTypeDisplay"
+                value={CAVC_REMAND_SUBTYPE_NAMES[(existingValues?.remandType)]}
+                label={COPY.CAVC_SUB_TYPE_LABEL}
+                readOnly
+                strongLabel
+              />
+              <input type="hidden" ref={register} name="remandType" />
+            </>
+          ))}
 
-        {(watchDecisionType && !watchDecisionType.includes('remand')) ? (
+        {watchDecisionType && !watchDecisionType.includes('remand') && (
           <RadioField
             inputRef={register}
             styling={radioLabelStyling}
@@ -257,17 +281,8 @@ export const EditCavcRemandForm = ({
             options={YesNoOpts}
             strongLabel
             errorMessage={errors?.remandDatesProvided?.message}
-          />) :
-          (<div style={{ display: 'none' }}>
-            <RadioField
-              inputRef={register}
-              name="remandDatesProvided"
-              options={YesNoOpts}
-            />
-          </div>)
-        }
-        {/* Above is another Workaround: must have component that uses `register`
-            with `remandDatesProvided` name so that it can be used by yup */}
+          />
+        )}
 
         <DateSelector
           inputRef={register}
@@ -280,7 +295,19 @@ export const EditCavcRemandForm = ({
 
         {isRemandType('mdr') && <MdrBanner />}
 
-        {mandateDatesAvailable && (
+        {mode === 'add' && mandateDatesAvailable && (
+          <>
+            <legend>
+              <strong>{COPY.CAVC_REMAND_MANDATE_DATES_LABEL}</strong>
+            </legend>
+            <Checkbox
+              inputRef={register}
+              label={COPY.CAVC_REMAND_MANDATE_DATES_SAME_DESCRIPTION}
+              name="mandateSame"
+            />
+          </>
+        )}
+        {mandateDatesAvailable && !watchMandateSame && (
           <div>
             <DateSelector
               inputRef={register}
@@ -309,23 +336,23 @@ export const EditCavcRemandForm = ({
         )}
 
         {/* If the following is hidden for death_dismissal, no issues are submitted. */}
-        {(
+        {
           <React.Fragment>
-            { !watchDecisionType?.includes('death_dismissal') &&
-                <>
-                  <legend>
-                    <strong>{COPY.CAVC_ISSUES_LABEL}</strong>
-                  </legend>
-                  <Button
-                    name={watchIssueIds.length ? 'Unselect all' : 'Select all'}
-                    styling={buttonStyling}
-                    linkStyling
-                    onClick={
-                      watchIssueIds?.length ? unselectAllIssues : selectAllIssues
-                    }
-                  />
-                </>
-            }
+            {!watchDecisionType?.includes('death_dismissal') && (
+              <>
+                <legend>
+                  <strong>{COPY.CAVC_ISSUES_LABEL}</strong>
+                </legend>
+                <Button
+                  name={watchIssueIds.length ? 'Unselect all' : 'Select all'}
+                  styling={buttonStyling}
+                  linkStyling
+                  onClick={
+                    watchIssueIds?.length ? unselectAllIssues : selectAllIssues
+                  }
+                />
+              </>
+            )}
 
             <Controller
               name="issueIds"
@@ -349,7 +376,7 @@ export const EditCavcRemandForm = ({
               }}
             />
           </React.Fragment>
-        )}
+        }
 
         {isRemandType('jmr') && !allIssuesSelected && <JmrIssuesBanner />}
         {isRemandType('jmpr') && !watchIssueIds?.length && <JmprIssuesBanner />}
@@ -424,5 +451,5 @@ EditCavcRemandForm.propTypes = {
   onSubmit: PropTypes.func,
   supportedDecisionTypes: PropTypes.arrayOf(PropTypes.string),
   supportedRemandTypes: PropTypes.arrayOf(PropTypes.string),
-  readOnly: PropTypes.bool
+  readOnly: PropTypes.bool,
 };
