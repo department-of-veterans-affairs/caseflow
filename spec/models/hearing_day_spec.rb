@@ -250,9 +250,24 @@ describe HearingDay, :all_dbs do
         )
       end
 
-      RegionalOffice.all.each do |ro|
-        context "at RO (#{ro.key})" do
-          let(:regional_office_key) { ro.key }
+      # A representative list of ROs (rather than just doing all)
+      selected_ro_ids = [
+        # Special looking ROs
+        "R", # Virtual hearing ro, [No timezone]
+        "VACO", # VA Central Office, "America/New_York"
+        "DSUSER", # Digital Service HQ, "America/New_York"
+        "NWQ", # ?, looks different, "America/New_York"
+        "SO49", # El Paso Satellite, "America/Chicago"
+        # One from each timezone
+        "RO01", # Boston, "America/New_York"
+        "RO20", # Nashville, "America/Chicago"
+        "RO39", # Denver, "America/Denver"
+        "RO45", # Phoenix, "America/Phoenix"
+        "RO46"  # Seattle, "America/Los_Angeles"
+      ]
+      selected_ro_ids.each do |ro|
+        context "at RO (#{ro})" do
+          let(:regional_office_key) { ro }
 
           it "has 12 slots" do
             expect(subject).to be(12)
