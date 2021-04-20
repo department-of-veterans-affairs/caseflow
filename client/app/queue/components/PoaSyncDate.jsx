@@ -9,7 +9,6 @@ import { css } from 'glamor';
 import { sprintf } from 'sprintf-js';
 
 import { boldText } from '../constants';
-import { PoaRefreshButton } from './PoaRefreshButton';
 
 export const textStyling = css({
   display: 'flex',
