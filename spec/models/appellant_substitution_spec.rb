@@ -58,11 +58,13 @@ describe AppellantSubstitution do
           expect(AdvanceOnDocketMotion.for_appeal(source_appeal).count).to eq 2
           aod_motions_count = AdvanceOnDocketMotion.for_appeal_and_person(source_appeal, aod_person).count
           expect(source_appeal.aod?).to be true
+          expect(source_appeal.cavc?).to be false
 
           appellant_substitution = subject
           # Source appeal's AODMotion are unchanged
           expect(AdvanceOnDocketMotion.for_appeal(source_appeal).count).to eq 2
           expect(AdvanceOnDocketMotion.for_appeal_and_person(source_appeal, aod_person).count).to eq aod_motions_count
+          expect(source_appeal.cavc?).to be false
 
           target_appeal = appellant_substitution.target_appeal
           # AODMotion are transferred to substitute claimant
@@ -71,6 +73,19 @@ describe AppellantSubstitution do
           expect(AdvanceOnDocketMotion.for_appeal_and_person(target_appeal, target_appeal_aod_person).count).to eq 1
           expect(AdvanceOnDocketMotion.granted_for_person?(target_appeal.claimant.person, target_appeal)).to be true
           expect(target_appeal.aod?).to be true
+        end
+      end
+      context "source appeal has CAVC status" do
+        let(:source_appeal) { create(:appeal, :type_cavc_remand) }
+        it "copies CAVC status to new appeal" do
+          expect(source_appeal.cavc?).to be true
+
+          appellant_substitution = subject
+          # Source appeal's CAVC status is unchanged
+          expect(source_appeal.cavc?).to be true
+
+          target_appeal = appellant_substitution.target_appeal
+          expect(target_appeal.cavc?).to be true
         end
       end
 
