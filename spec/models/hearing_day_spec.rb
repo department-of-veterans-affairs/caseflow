@@ -238,62 +238,91 @@ describe HearingDay, :all_dbs do
 
   context ".total_slots" do
     subject { hearing_day.total_slots }
+    let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
+    let(:hearing_day) do
+      create(
+        :hearing_day,
+        request_type: request_type,
+        regional_office: regional_office_key
+      )
+    end
 
-    context "for a video day" do
-      let(:room) { "1" }
-      let(:hearing_day) do
-        create(
-          :hearing_day,
-          request_type: HearingDay::REQUEST_TYPES[:video],
-          regional_office: regional_office_key,
-          room: room
-        )
+    # A representative list of ROs (existing was testing all of them, unclear if this is necessary)
+    selected_ro_ids = [
+      # Special looking ROs
+      "R", # Virtual hearing ro, [No timezone]
+      "VACO", # VA Central Office, "America/New_York"
+      "DSUSER", # Digital Service HQ, "America/New_York"
+      "NWQ", # ?, looks different, "America/New_York"
+      "SO49", # El Paso Satellite, "America/Chicago"
+      # One from each timezone
+      "RO01", # Boston, "America/New_York"
+      "RO20", # Nashville, "America/Chicago"
+      "RO39", # Denver, "America/Denver"
+      "RO45", # Phoenix, "America/Phoenix"
+      "RO46"  # Seattle, "America/Los_Angeles"
+    ]
+
+    context "with no value for number_of_slots" do
+      context "a virtual day" do
+        let(:request_type) { HearingDay::REQUEST_TYPES[:virtual] }
+        let(:regional_office_key) { nil }
+        it "has 8 slots" do
+          expect(subject).to be(8)
+        end
+      end
+      context "a central day" do
+        let(:regional_office_key) { nil }
+        let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
+        it "has 10 slots" do
+          expect(subject).to be(10)
+        end
       end
 
-      # A representative list of ROs (rather than just doing all)
-      selected_ro_ids = [
-        # Special looking ROs
-        "R", # Virtual hearing ro, [No timezone]
-        "VACO", # VA Central Office, "America/New_York"
-        "DSUSER", # Digital Service HQ, "America/New_York"
-        "NWQ", # ?, looks different, "America/New_York"
-        "SO49", # El Paso Satellite, "America/Chicago"
-        # One from each timezone
-        "RO01", # Boston, "America/New_York"
-        "RO20", # Nashville, "America/Chicago"
-        "RO39", # Denver, "America/Denver"
-        "RO45", # Phoenix, "America/Phoenix"
-        "RO46"  # Seattle, "America/Los_Angeles"
-      ]
       selected_ro_ids.each do |ro|
-        context "at RO (#{ro})" do
+        context "a video day at RO (#{ro})" do
           let(:regional_office_key) { ro }
-
+          let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
           it "has 12 slots" do
             expect(subject).to be(12)
-          end
-
-          context "with no room" do
-            let(:room) { nil }
-
-            it "has 12 slots" do
-              expect(subject).to be(12)
-            end
           end
         end
       end
     end
 
-    context "for a central day" do
+    context "with number_of_slots set to 13" do
+      subject { hearing_day.total_slots }
+      let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
+      let(:number_of_slots) { 13 }
       let(:hearing_day) do
         create(
           :hearing_day,
-          request_type: HearingDay::REQUEST_TYPES[:central]
+          request_type: request_type,
+          regional_office: regional_office_key,
+          number_of_slots: number_of_slots
         )
       end
 
-      it "has 10 slots" do
-        expect(subject).to be(10)
+      context "a virtual day" do
+        let(:request_type) { HearingDay::REQUEST_TYPES[:virtual] }
+        let(:regional_office_key) { nil }
+        it "has 13 slots" do
+          expect(subject).to be(13)
+        end
+      end
+      context "a central day" do
+        let(:regional_office_key) { nil }
+        let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
+        it "has 13 slots" do
+          expect(subject).to be(13)
+        end
+      end
+      context "a video day at RO (RO20)" do
+        let(:regional_office_key) { "RO20" }
+        let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
+        it "has 13 slots" do
+          expect(subject).to be(13)
+        end
       end
     end
   end
