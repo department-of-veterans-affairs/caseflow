@@ -55,8 +55,8 @@ class RequestIssuesUpdate < CaseflowRecord
 
     # re-assign user to whomever edited the Claim.
     # this works around issue when original user is no longer authorized for VBMS.
-    review.end_product_establishments.each do |epe|
-      if review.processed_in_vbms?
+    if review.processed_in_vbms?
+      review.end_product_establishments.each do |epe|
         epe.user = user
         epe.station = user.station_id
       end
