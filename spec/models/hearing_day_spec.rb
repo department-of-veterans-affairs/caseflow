@@ -236,6 +236,22 @@ describe HearingDay, :all_dbs do
     end
   end
 
+  # A representative list of ROs (existing was testing all of them)
+  selected_ro_ids = [
+    # Special looking ROs
+    #"R", # Virtual hearing ro, [No timezone]
+    #"VACO", # VA Central Office, "America/New_York"
+    #"DSUSER", # Digital Service HQ, "America/New_York"
+    #"NWQ", # ?, looks different, "America/New_York"
+    #"SO49", # El Paso Satellite, "America/Chicago"
+    # One from each timezone
+    "RO01", # Boston, "America/New_York"
+    "RO20", # Nashville, "America/Chicago"
+    "RO39", # Denver, "America/Denver"
+    "RO45", # Phoenix, "America/Phoenix"
+    "RO46"  # Seattle, "America/Los_Angeles"
+  ]
+
   context ".total_slots" do
     subject { hearing_day.total_slots }
     let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
@@ -247,23 +263,7 @@ describe HearingDay, :all_dbs do
       )
     end
 
-    # A representative list of ROs (existing was testing all of them, unclear if this is necessary)
-    selected_ro_ids = [
-      # Special looking ROs
-      "R", # Virtual hearing ro, [No timezone]
-      "VACO", # VA Central Office, "America/New_York"
-      "DSUSER", # Digital Service HQ, "America/New_York"
-      "NWQ", # ?, looks different, "America/New_York"
-      "SO49", # El Paso Satellite, "America/Chicago"
-      # One from each timezone
-      "RO01", # Boston, "America/New_York"
-      "RO20", # Nashville, "America/Chicago"
-      "RO39", # Denver, "America/Denver"
-      "RO45", # Phoenix, "America/Phoenix"
-      "RO46"  # Seattle, "America/Los_Angeles"
-    ]
-
-    context "with no value for number_of_slots" do
+    context "with no db value for number_of_slots" do
       context "a virtual day" do
         let(:request_type) { HearingDay::REQUEST_TYPES[:virtual] }
         let(:regional_office_key) { nil }
@@ -324,6 +324,87 @@ describe HearingDay, :all_dbs do
           expect(subject).to be(13)
         end
       end
+    end
+  end
+
+  context "begins_at" do
+    subject { hearing_day.begins_at }
+    let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
+    let(:begins_at) { nil }
+    let(:hearing_day) do
+      create(
+        :hearing_day,
+        request_type: request_type,
+        regional_office: regional_office_key,
+        begins_at: begins_at
+      )
+    end
+
+    context "no db value for begins_at" do
+      context "a virtual day" do
+        let(:request_type) { HearingDay::REQUEST_TYPES[:virtual] }
+        let(:regional_office_key) { nil }
+        it "begins_at 8:30 eastern" do
+          expect(Time.zone.parse(subject)).to eq("08:30".in_time_zone("America/New_York"))
+        end
+      end
+      context "a central day" do
+        let(:regional_office_key) { nil }
+        let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
+        it "begins_at 9:00 eastern" do
+          expect(Time.zone.parse(subject)).to eq("09:00".in_time_zone("America/New_York"))
+        end
+      end
+      selected_ro_ids.each do |ro|
+        context "a video day at RO (#{ro})" do
+          let(:regional_office_key) { ro }
+          let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
+          regional_office_info = RegionalOffice::CITIES[ro]
+          regional_office_timezone = regional_office_info["timezone"]
+
+          it "begins_at 08:30 ro timezone" do
+            puts "subject #{subject}"
+            expect(Time.zone.parse(subject)).to eq("08:30".in_time_zone(regional_office_timezone))
+          end
+        end
+      end
+    end
+
+    context "with a db value for begins_at" do
+      subject { hearing_day.begins_at }
+      let(:begins_at) { "13:38:00-05:00" }
+
+      context "a virtual day" do
+        let(:request_type) { HearingDay::REQUEST_TYPES[:virtual] }
+        let(:regional_office_key) { nil }
+        it "begins_at db value" do
+          expect(Time.zone.parse(subject)).to eq(Time.zone.parse(begins_at))
+        end
+      end
+      context "a central day" do
+        let(:regional_office_key) { nil }
+        let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
+        it "begins_at db value" do
+          expect(Time.zone.parse(subject)).to eq(Time.zone.parse(begins_at))
+        end
+      end
+      selected_ro_ids.each do |ro|
+        context "a video day at RO (#{ro})" do
+          let(:regional_office_key) { ro }
+          let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
+
+          it "begins_at db value" do
+            expect(Time.zone.parse(subject)).to eq(Time.zone.parse(begins_at))
+          end
+        end
+      end
+    end
+  end
+
+  context "slot_length " do
+    context "no db value for slot_length_minutes" do
+    end
+    context "with a db value for slot_length_minutes" do
     end
   end
 
