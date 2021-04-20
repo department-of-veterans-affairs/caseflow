@@ -615,9 +615,6 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       it "returns a successful response" do
         subject
 
-Rails.logger.debug("*********************")
-Rails.logger.debug(subject.body)
-Rails.logger.debug("*********************")
         assert_response(:success)
         expect(JSON.parse(subject.body)["representative_type"]).to eq "Attorney"
         expect(JSON.parse(subject.body)["representative_name"]).to eq "Clarence Darrow"
