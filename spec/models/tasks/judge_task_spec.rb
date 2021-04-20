@@ -24,8 +24,8 @@ describe JudgeTask, :all_dbs do
 
     subject { second_assign_task }
 
-    context "only two judge assign tasks can be created for an appeal" do
-      it "throws an error when a third task is created" do
+    context "only one judge assign task can be created for an appeal" do
+      it "throws an error when a second task is created" do
         expect { subject }.to raise_error do |error|
           expect(error).to be_a(ActiveRecord::RecordInvalid)
         end

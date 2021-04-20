@@ -36,7 +36,7 @@ class HearingRequestCaseDistributor
 
   def create_judge_assign_task_for_appeal(appeal)
     judge_assign_task_creator = JudgeAssignTaskCreator.new(appeal: appeal, judge: distribution.judge)
-    current_judge_assign_tasks = appeal.tasks.select { |task| task.type == "JudgeAssignTask" && task.open? }
+    current_judge_assign_tasks = appeal.tasks.select { |task| task.type == JudgeAssignTask.name && task.open? }
     if current_judge_assign_tasks.empty?
       judge_assign_task_creator.call
     else
@@ -47,7 +47,7 @@ class HearingRequestCaseDistributor
                                                    appeal: appeal
                                                  }, current_user)
       judge_assign_task_creator.close_distribution_tasks_for_appeal
-      updated_assign_tasks.find { |task| task.type == "JudgeAssignTask" && task.open? }
+      updated_assign_tasks.find { |task| task.type == JudgeAssignTask.name && task.open? }
     end
   end
 

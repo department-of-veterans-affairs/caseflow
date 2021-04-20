@@ -486,7 +486,7 @@ class Task < CaseflowRecord
   end
 
   def latest_attorney_case_review
-    return @latest_attorney_case_review if defined?(@latest_attorney_case_review) && !@latest_attorney_case_review.nil?
+    return @latest_attorney_case_review if defined?(@latest_attorney_case_review)
 
     @latest_attorney_case_review = AttorneyCaseReview
       .where(task_id: Task.where(appeal: appeal)
@@ -546,7 +546,7 @@ class Task < CaseflowRecord
   end
 
   def update_status(replacement)
-    if replacement.type != "JudgeAssignTask"
+    if replacement.type != JudgeAssignTask.name
       replacement.update!(status: status)
     end
     save!(status: Constants.TASK_STATUSES.cancelled)
@@ -557,7 +557,7 @@ class Task < CaseflowRecord
       task_to_validate.save!
       # We ignore the no_multiples_of_noncancelled_task validation during the reassign flow
     rescue ActiveRecord::RecordInvalid => error
-      if error.message != "Validation failed: Type there should not be multiple tasks of this type"
+      if error.message != "Validation failed: Type #{COPY::INVALID_MULTIPLE_TASKS}"
         raise
       else
         task_to_validate.save(validate: false)
@@ -830,7 +830,7 @@ class Task < CaseflowRecord
     tasks = appeal.reload.tasks
     target_tasks = tasks.select { |task| task.type == type && task.open? }
     if target_tasks.length >= 1
-      errors.add(:type, "there should not be multiple tasks of this type")
+      errors.add(:type, COPY::INVALID_MULTIPLE_TASKS)
     end
   end
 
