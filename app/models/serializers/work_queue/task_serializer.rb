@@ -158,4 +158,8 @@ class WorkQueue::TaskSerializer
   attribute :can_move_on_docket_switch do |object|
     object.try(:can_move_on_docket_switch?)
   end
+
+  attribute :unscheduled_hearing_notes do |object|
+    object.try(:unscheduled_hearing_notes)
+  end
 end
