@@ -336,6 +336,11 @@ class Veteran < CaseflowRecord
     save!
   end
 
+  # This is a solely a convenience method for the console.
+  def find_or_create_poa
+    BgsPowerOfAttorney.find_or_create_by_file_number(file_number)
+  end
+
   class << self
     def find_or_create_by_file_number(file_number, sync_name: false)
       find_by_file_number_and_sync(file_number, sync_name: sync_name) || create_by_file_number(file_number)
