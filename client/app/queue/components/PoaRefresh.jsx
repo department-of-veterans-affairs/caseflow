@@ -10,8 +10,7 @@ import { boldText } from '../constants';
 
 export const textStyling = css({
   display: 'flex',
-  justifyContent: 'space-between',
-  fontSize: '.8em'
+  justifyContent: 'space-between'
 });
 
 export const PoaRefresh = ({ powerOfAttorney }) => {

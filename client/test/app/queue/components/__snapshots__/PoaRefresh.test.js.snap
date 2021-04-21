@@ -1,18 +1,21 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`PoaRefresh renders correctly 1`] = `
-<div>
-  <div
-    data-css-2kqkly=""
-  >
-    <i>
-      Power of Attorney (POA) data comes from VBMS. To refresh POA, please click the "Refresh POA" button.
-    </i>
-    <i
-      data-css-l6c9n4=""
-    >
-      POA last refreshed on 04/08/2021
-    </i>
-  </div>
-</div>
+exports[`PoaRefresh feature toggles poa_last_synced_at hides PoaRefresh text when not toggled 1`] = `
+<PoaRefresh
+  powerOfAttorney={
+    Object {
+      "poa_last_synced_at": "04/08/2021",
+    }
+  }
+/>
+`;
+
+exports[`PoaRefresh feature toggles poa_last_synced_at shows PoaRefresh text when toggled 1`] = `
+<PoaRefresh
+  powerOfAttorney={
+    Object {
+      "poa_last_synced_at": "04/08/2021",
+    }
+  }
+/>
 `;

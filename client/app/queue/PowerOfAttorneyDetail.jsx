@@ -110,12 +110,11 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney }) => {
 
   return (
     <div>
-      <PoaRefresh powerOfAttorney={powerOfAttorney} {...detailListStyling} />
+      <p><em>{ powerOfAttorney.representative_type === 'Unrecognized representative' ?
+        COPY.CASE_DETAILS_UNRECOGNIZED_POA :
+        <PoaRefresh powerOfAttorney={powerOfAttorney} {...detailListStyling} />}</em></p>
       <ul {...detailListStyling}>
         <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
-        <p><em>{ powerOfAttorney.representative_type === 'Unrecognized representative' ?
-          COPY.CASE_DETAILS_UNRECOGNIZED_POA :
-          COPY.CASE_DETAILS_INCORRECT_POA }</em></p>
       </ul>
     </div>
   );
