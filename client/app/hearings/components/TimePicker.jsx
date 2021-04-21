@@ -37,8 +37,7 @@ export const TimePicker = ({
   return (
     <SearchableDropdown
       name={`optionalHearingTime${componentIndex}`}
-      label="Hearing Time"
-      strongLabel
+      hideLabel
       placeholder="Select a time"
       options={formatOptions(roTimezone, HEARING_TIME_OPTIONS)}
       value={value}
