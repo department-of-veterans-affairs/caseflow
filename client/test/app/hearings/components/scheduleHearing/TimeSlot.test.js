@@ -9,6 +9,7 @@ import REGIONAL_OFFICE_INFORMATION from '../../../../../constants/REGIONAL_OFFIC
 import HEARING_TIME_OPTIONS from '../../../../../constants/HEARING_TIME_OPTIONS';
 
 import moment from 'moment-timezone/moment-timezone';
+import { drop } from 'lodash';
 
 const emptyHearings = [];
 const oneHearing = [{
@@ -21,13 +22,14 @@ const oneHearing = [{
 
 }];
 const defaultRoCode = 'RO39';
+const mockOnChange = jest.fn();
 const defaultProps = {
   // Denver
   ro: defaultRoCode,
   roTimezone: REGIONAL_OFFICE_INFORMATION[defaultRoCode].timezone,
   scheduledHearingsList: emptyHearings,
   fetchScheduledHearings: jest.fn(),
-  onChange: jest.fn()
+  onChange: mockOnChange
 };
 
 const setup = (props = {}) => {
@@ -62,6 +64,7 @@ const toggleTo = ({ toSlots, utils }) => {
 
 const toggleToSlots = (utils) => toggleTo({ toSlots: true, utils });
 const toggleToCustom = (utils) => toggleTo({ toSlots: false, utils });
+
 const toggleBackAndForth = (utils) => {
   if (toggleToCustomLink(utils)) {
     toggleToCustom(utils);
@@ -71,6 +74,21 @@ const toggleBackAndForth = (utils) => {
     toggleToSlots(utils);
     toggleToCustom(utils);
   }
+};
+
+const clickTimeslot = (time, timezone) => {
+  fireEvent.click(screen.getByText(formatTimeSlotLabel(time, timezone)));
+};
+
+// This doesn't work yet
+const clickDropwdownItem = (time, timezone) => {
+  const dropdownContainer = document.getElementsByClassName('dropdown-optionalHearingTime0')[0];
+
+  const select = dropdownContainer.querySelector('.cf-select');
+
+  fireEvent.keyPress(select, { key: 'ArrowDown', code: '40' });
+  fireEvent.keyPress(select, { key: 'ArrowDown', code: '40' });
+  fireEvent.keyPress(select, { key: 'Enter', code: '13' });
 };
 
 const firstAndLastSlotsAreCorrect = (ro, timeSlots) => {
@@ -138,7 +156,7 @@ describe('TimeSlot', () => {
       expect(results).toHaveNoViolations();
     });
 
-    it('should have 1 button for each time slot and 1 button to change to custom time', () => {
+    it('should have 1 container for each time slot column and 1 button to change to custom time', () => {
       const { utils, timeSlots } = setup();
 
       expect(utils.getAllByRole('button')).toHaveLength(timeSlots.length + 1);
@@ -170,8 +188,8 @@ describe('TimeSlot', () => {
       const { utils, timeSlots } = setup();
 
       // Click 2 different hearing times
-      fireEvent.click(screen.getByText(formatTimeSlotLabel('10:30', defaultProps.roTimezone)));
-      fireEvent.click(screen.getByText(formatTimeSlotLabel('11:30', defaultProps.roTimezone)));
+      clickTimeslot('10:30', defaultProps.roTimezone);
+      clickTimeslot('11:30', defaultProps.roTimezone);
 
       // Check that the correct elements are displayed
       expect(utils.getAllByRole('button')).toHaveLength(timeSlots.length + 1);
@@ -225,27 +243,25 @@ describe('TimeSlot', () => {
       });
 
       it('has correct time values to submit to backend', () => {
-        // TODO Mock onChange (passed to TimeSlot)
-        // - Check that onChange is called with correct value when clicking a slot
-        // - Check that onChange is called with correct value when choosing a dropdown value
+        const { utils } = setup({ roTimezone: ro.timezone });
 
-        /*
-        const { timeSlots, dropdownItems } = setup({ roTimezone: ro.timezone });
+        const roTime = '12:30';
 
-        // Check that the value for the slot matches what we send when we schedule
-        timeSlots.forEach((slot) => {
-          expect(slot.time.tz('America/New_York').tz(ro.timezone).
-            format('HH:mm')).toEqual(slot.hearingTime);
-        });
+        // Click on the timeslot button for 12:30pm local
+        clickTimeslot(roTime, ro.timezone);
+        const easternTime = moment.tz(roTime, 'HH:mm', 'America/New_York').tz(ro.timezone).
+          format('HH:mm');
 
-        // Check that the value for the dropdown matches what we send when we schedule
-        dropdownItems.forEach((item) => {
-          const time = moment.tz(item.value, 'HH:mm', 'America/New_York').format('h:mm A');
-          const expectedLabelPart = `${time} Eastern`;
+        // Expect that we called onChange with 12:30pm ro timezone
+        expect(mockOnChange).toHaveBeenLastCalledWith('scheduledTimeString', easternTime);
 
-          expect(item.label).toContain(expectedLabelPart);
-        });
-        */
+        // Switch to dropdown
+        toggleToCustom(utils);
+        // TODO Clicking on a value in the dropdown is complicated, haven't figured out how yet
+        // clickDropwdownItem('10:30', ro.timezone);
+        // Expect that we called onChange with 10:30am ro timezone
+        // expect(mockOnChange).toHaveBeenLastCalledWith('scheduledTimeString', '08:45');
+
       });
       it('hearings have correct times', () => {
         const { timeSlots } = setup({ scheduledHearingsList: oneHearing, roTimezone: ro.timezone });
