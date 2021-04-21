@@ -65,9 +65,10 @@ class AppealsController < ApplicationController
     next_update_allowed_at = appeal.poa_last_synced_at + 10.minutes
     if next_update_allowed_at > Time.zone.now
       time_until_next_refresh = ((next_update_allowed_at - Time.zone.now) / 60).ceil
+      message = "Information is current at this time. Please try again in #{time_until_next_refresh} minutes"
       render json: {
         status: "info",
-        message: "Information is current at this time. Please try again in #{time_until_next_refresh} minutes"
+        message: message
       }
     elsif appeal.is_a?(Appeal)
       poa = BgsPowerOfAttorney.find(params[:poaId])
@@ -271,7 +272,7 @@ class AppealsController < ApplicationController
       {
         status: "success",
         message: "POA Updated Successfully",
-        power_of_attorney: power_of_attorney_data
+        power_of_attorney: PowerOfAttorneySerializer.new(power_of_attorney_data)
       }
     rescue ActiveRecord::RecordNotUnique
       {
@@ -288,7 +289,7 @@ class AppealsController < ApplicationController
       {
         status: "success",
         message: "POA Updated Successfully",
-        power_of_attorney: power_of_attorney_data
+        power_of_attorney: PowerOfAttorneySerializer.new(power_of_attorney_data)
       }
     rescue ActiveRecord::RecordNotUnique
       {
