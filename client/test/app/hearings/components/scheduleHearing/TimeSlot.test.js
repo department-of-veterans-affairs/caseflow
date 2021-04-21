@@ -9,7 +9,6 @@ import REGIONAL_OFFICE_INFORMATION from '../../../../../constants/REGIONAL_OFFIC
 import HEARING_TIME_OPTIONS from '../../../../../constants/HEARING_TIME_OPTIONS';
 
 import moment from 'moment-timezone/moment-timezone';
-import { drop } from 'lodash';
 
 const emptyHearings = [];
 const oneHearing = [{
@@ -28,6 +27,9 @@ const defaultProps = {
   ro: defaultRoCode,
   roTimezone: REGIONAL_OFFICE_INFORMATION[defaultRoCode].timezone,
   scheduledHearingsList: emptyHearings,
+  beginsAt: '',
+  numberOfSlots: '',
+  slotLengthMinutes: '',
   fetchScheduledHearings: jest.fn(),
   onChange: mockOnChange
 };
@@ -37,11 +39,7 @@ const setup = (props = {}) => {
 
   const utils = render(<TimeSlot {...mergedProps} />);
   const container = utils.container;
-  const timeSlots = setTimeSlots(
-    mergedProps.scheduledHearingsList,
-    mergedProps.ro,
-    mergedProps.roTimezone,
-  );
+  const timeSlots = setTimeSlots(mergedProps);
   const dropdownItems = hearingTimeOptsWithZone(
     HEARING_TIME_OPTIONS,
     mergedProps.roTimezone,
