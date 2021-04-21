@@ -65,7 +65,8 @@ exports[`AddClaimantConfirmationModal individual claimant missing last name show
                 </strong>
               </div>
               <div>
-                Jane McClaimant 
+                 Jane 
+        McClaimant 
               </div>
               <div />
               <div>
@@ -317,7 +318,8 @@ exports[`AddClaimantConfirmationModal with POA renders correctly 1`] = `
                 </strong>
               </div>
               <div>
-                Jane McClaimant Doe
+                 Jane 
+        McClaimant Doe
               </div>
               <div />
               <div>
@@ -336,7 +338,8 @@ exports[`AddClaimantConfirmationModal with POA renders correctly 1`] = `
                 </strong>
               </div>
               <div>
-                Paul Ern O'Attorney
+                 Paul 
+        Ern O'Attorney
               </div>
               <div />
               <div>
@@ -444,7 +447,8 @@ exports[`AddClaimantConfirmationModal without POA renders correctly 1`] = `
                 </strong>
               </div>
               <div>
-                Jane McClaimant Doe
+                 Jane 
+        McClaimant Doe
               </div>
               <div />
               <div>
