@@ -9,7 +9,7 @@ import _ from 'lodash';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
-import { appealWithDetailSelector, getAllTasksForAppeal } from './selectors';
+import { appealWithDetailSelector, getAllTasksForAppeal, hearingTasksForAppeal } from './selectors';
 import {
   stopPollingHearing,
   transitionAlert,
@@ -137,6 +137,10 @@ export const CaseDetailsView = (props) => {
   const showPostDispatch =
     appealIsDispached && (supportCavcRemand || supportSubstituteAppellant);
 
+  const openHearingTasks = useSelector(
+    (state) => hearingTasksForAppeal(state, { appealId: appeal.externalId })
+  );
+
   return (
     <React.Fragment>
       {!modalIsOpen && error && (
@@ -203,8 +207,9 @@ export const CaseDetailsView = (props) => {
             appealId={appealId}
           />
           {(appeal.hearings.length ||
-            appeal.completedHearingOnPreviousAppeal) && (
-            <CaseHearingsDetail title="Hearings" appeal={appeal} />
+            appeal.completedHearingOnPreviousAppeal ||
+            openHearingTasks.length) && (
+            <CaseHearingsDetail title="Hearings" appeal={appeal} tasks={openHearingTasks} />
           )}
           <VeteranDetail title="About the Veteran" appealId={appealId} />
           {!_.isNull(appeal.appellantFullName) &&
