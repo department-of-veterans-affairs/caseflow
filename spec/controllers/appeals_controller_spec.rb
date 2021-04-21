@@ -625,7 +625,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
     end
   end
 
-  describe "Update appeal Power of Atotrney" do
+  describe "Update appeal Power of Attorney" do
     let!(:user) { User.authenticate!(roles: ["System Admin"]) }
     let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
     let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
@@ -635,9 +635,8 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
     context "update the appeals POA information" do
       it "didn't update because too recently updated" do
         subject
-        puts subject.body
         expected_response = "Information is current at this time. Please try again in 10 minutes"
-        expect(JSON.parse(subject.body)["message"]).to eq expected_response
+        expect(subject.body).to eq expected_response
       end
     end
   end
