@@ -62,13 +62,11 @@ class AppealsController < ApplicationController
   end
 
   def update_power_of_attorney
-    next_update_allowed_at = appeal.poa_last_synced_at + 10.minutes if appeal.poa_last_synced_at.present?
-    if next_update_allowed_at && next_update_allowed_at > Time.zone.now
-      # time_until_next_refresh = ((next_update_allowed_at - Time.zone.now) / 60).ceil
-      # message = "Information is current at this time. Please try again in #{time_until_next_refresh} minutes"
+    if cooldown_period
+      message = "Information is current at this time. Please try again in #{cooldown_period} minutes"
       render json: {
         status: "info",
-        message: "Information is current at this time."
+        message: message
       }
     elsif appeal.is_a?(Appeal)
       poa = BgsPowerOfAttorney.find(params[:poaId])
@@ -77,6 +75,8 @@ class AppealsController < ApplicationController
       poa = appeal.power_of_attorney
       render json: update_vacols_poa(poa)
     end
+  rescue StandardError => error
+    render json: { error: error } 
   end
 
   def most_recent_hearing
@@ -297,5 +297,14 @@ class AppealsController < ApplicationController
         message: "Something went wrong"
       }
     end
+  end
+
+  def cooldown_period
+    next_update_allowed_at = appeal.poa_last_synced_at + 10.minutes if appeal.poa_last_synced_at.present?
+    if next_update_allowed_at && next_update_allowed_at > Time.zone.now
+      return ((next_update_allowed_at - Time.zone.now) / 60).ceil
+    end
+
+    false
   end
 end
