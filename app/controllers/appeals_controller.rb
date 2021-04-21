@@ -67,13 +67,13 @@ class AppealsController < ApplicationController
       render json: {
         status: "info",
         message: message
-      }
+      } and return
     elsif appeal.is_a?(Appeal)
       poa = BgsPowerOfAttorney.find(params[:poaId])
-      render json: update_bgs_poa(poa)
+      render json: update_bgs_poa(poa) and return
     else
       poa = appeal.power_of_attorney
-      render json: update_vacols_poa(poa)
+      render json: update_vacols_poa(poa) and return
     end
   end
 
