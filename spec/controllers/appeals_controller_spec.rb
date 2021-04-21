@@ -633,9 +633,26 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
       it "didn't update because too recently updated" do
         subject
-        expected_response = "Information is current at this time. Please try again in 10 minutes"
+        expected_response = "Information is current at this time."
         expect(JSON.parse(subject.body)["message"]).to eq expected_response
       end
     end
+
+    # context "update the appeals POA information" do
+    #   subject do
+    #     # poa = appeal.power_of_attorney
+    #     binding.pry
+    #     # bgs_poa = BgsPowerOfAttorney.find(poa.vacols_id)
+    #     # bgs_poa.last_synced_at = Time.zone.now - 20.minutes
+    #     # bgs_poa.save!
+    #     patch :update_power_of_attorney, params: { appeal_id: appeal.id, poaId: appeal.power_of_attorney.vacols_id }
+    #   end
+    #   it "did update POA" do
+    #     subject
+    #     # binding.pry
+    #     # expected_response = "Information is current at this time. Please try again in 10 minutes"
+    #     # expect(JSON.parse(subject.body)["message"]).to eq expected_response
+    #   end
+    # end
   end
 end
