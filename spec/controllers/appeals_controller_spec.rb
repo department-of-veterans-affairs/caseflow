@@ -635,6 +635,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
     context "update the appeals POA information" do
       it "didn't update because too recently updated" do
         subject
+        puts subject.body
         expected_response = "Information is current at this time. Please try again in 10 minutes"
         expect(JSON.parse(subject.body)["message"]).to eq expected_response
       end
