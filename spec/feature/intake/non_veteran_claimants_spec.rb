@@ -67,9 +67,6 @@ feature "Non-veteran claimants", :postgres do
       expect(page).to have_content("Claimant's address")
       expect(page).to have_content(attorney.name)
       expect(page).to have_content(attorney.address_line_1.titleize)
-      within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
-        find("label", text: "No", match: :prefer_exact).click
-      end
 
       expect(page).to have_button("Continue to next step", disabled: false)
 
@@ -98,9 +95,6 @@ feature "Non-veteran claimants", :postgres do
       fill_in("State", with: "California").send_keys :enter
       fill_in("Zip", with: "12345").send_keys :enter
       fill_in("Country", with: "United States").send_keys :enter
-      within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
-        find("label", text: "No", match: :prefer_exact).click
-      end
 
       expect(page).to have_button("Continue to next step", disabled: false)
 
