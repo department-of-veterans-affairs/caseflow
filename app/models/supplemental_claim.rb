@@ -107,7 +107,7 @@ class SupplementalClaim < ClaimReview
       claimant_participant_id: claimant_participant_id,
       station: end_product_station,
       benefit_type_code: veteran.benefit_type_code,
-      user: end_product_created_by,
+      user: end_product_user,
       limited_poa_code: issue.limited_poa_code,
       limited_poa_access: issue.limited_poa_access
     )

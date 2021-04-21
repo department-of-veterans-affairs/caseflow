@@ -329,4 +329,19 @@ class ClaimReview < DecisionReview
   def create_stream!(attributes)
     self.class.create(attributes).tap { |new_stream| new_stream.copy_claimants!(claimants) }
   end
+
+   def end_product_establishment_source
+    # There should only be one pending request issues update at a time
+    # active_request_issues_update = request_issues_updates.never_attempted.first
+    binding.pry
+    request_issues_updates.try(:never_attempted)&.first || intake
+  end
+
+  def end_product_station
+    end_product_establishment_source&.user&.station_id || "499" # National Work Queue
+  end
+
+  def end_product_user
+    end_product_establishment_source&.user
+  end
 end
