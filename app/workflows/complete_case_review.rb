@@ -42,8 +42,12 @@ class CompleteCaseReview
     if QualityReviewCaseSelector.select_case_for_quality_review?
       QualityReviewTask.create_from_root_task(root_task)
     else
-      BvaDispatchTask.create_from_root_task(root_task)
+      BvaDispatchTask.create_from_root_task(root_task) if open_qr_tasks.blank?
     end
+  end
+
+  def open_qr_tasks
+    case_review.task.appeal.tasks.open.where(type: :QualityReviewTask)
   end
 
   def response_errors
