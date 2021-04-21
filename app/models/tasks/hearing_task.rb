@@ -67,6 +67,35 @@ class HearingTask < Task
     children.open.detect { |child| child.type == AssignHearingDispositionTask.name }
   end
 
+  def unscheduled_hearing_notes
+    last_version =
+      versions.sort_by(&:created_at).reverse.detect { |v| v&.changeset&.keys&.include?("instructions") }
+
+    return if last_version.nil?
+
+    {
+      updated_at: last_version.created_at,
+      updated_by_css_id: User.find(last_version.whodunnit).css_id,
+      notes: instructions&.first
+    }
+  end
+
+  def update_notes_as_instructions(notes)
+    update!(instructions: [notes])
+  end
+
+  def update_from_params(params, current_user)
+    payload_values = params.delete(:business_payloads)&.dig(:values)
+
+    if payload_values&.[](:notes).present?
+      update_notes_as_instructions(payload_values[:notes])
+
+      [self]
+    else
+      super(params, current_user)
+    end
+  end
+
   private
 
   def update_legacy_appeal_location
