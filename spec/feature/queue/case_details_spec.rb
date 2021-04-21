@@ -349,7 +349,6 @@ RSpec.feature "Case details", :all_dbs do
 
         scenario "details view renders unrecognized POA copy" do
           visit "/queue/appeals/#{appeal.uuid}"
-
           expect(page).to have_content(COPY::CASE_DETAILS_UNRECOGNIZED_POA)
         end
       end
@@ -374,6 +373,34 @@ RSpec.feature "Case details", :all_dbs do
         # Expect to find content we know to be on the page so that we wait for the page to load.
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
         expect(page.has_no_content?("Select an action")).to eq(true)
+      end
+    end
+
+    context "POA refresh button isn't shown without feature toggle enabled" do
+      let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
+      let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
+
+      before { FeatureToggle.disable!(:poa_refresh) }
+      after { FeatureToggle.enable!(:poa_refresh) }
+
+      scenario "button isn't on the page" do
+        visit "/queue/appeals/#{appeal.vacols_id}"
+        expect(page).not_to have_content("Refresh POA")
+      end
+    end
+
+    context "POA refresh button is shown with feature toggle enabled" do
+      let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
+      let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
+
+      before { FeatureToggle.enable!(:poa_refresh) }
+      after { FeatureToggle.disable!(:poa_refresh) }
+
+      scenario "button is on the page" do
+        visit "/queue/appeals/#{appeal.vacols_id}"
+        expect(page).to have_content("Refresh POA")
       end
     end
 
