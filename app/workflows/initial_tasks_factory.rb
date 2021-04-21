@@ -18,7 +18,7 @@ class InitialTasksFactory
   def create_root_and_sub_tasks!
     create_vso_tracking_tasks
     ActiveRecord::Base.transaction do
-      create_subtasks! if @appeal.original? || @appeal.cavc?
+      create_subtasks! if @appeal.original? || @appeal.cavc? || @appeal.substitution?
     end
   end
 
