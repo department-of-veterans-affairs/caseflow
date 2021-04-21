@@ -646,31 +646,33 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
     end
   end
 
-  # describe "Update appeal Power of Attorney" do
-  #   let!(:user) { User.authenticate!(roles: ["System Admin"]) }
-  #   let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
-  #   let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
-  #   let(:get_params) { { appeal_id: appeal.vacols_id } }
-  #   let!(:poa) do
-  #     create(
-  #       :bgs_power_of_attorney,
-  #       :with_name_cached,
-  #       appeal: appeal,
-  #       last_synced_at: Time.zone.now - 1.day ,
-  #       representative_name: "A. Rep"
-  #     )
-  #   end
+  describe "Update appeal Power of Attorney" do
+    let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+    let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
+    let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
+    let(:patch_params) { { appeal_id: appeal.id, poaId: appeal.power_of_attorney.vacols_id } }
+    let!(:poa) do
+      # Skip after_save callback to not auto-update last_synced_at attribute of BGS_POA
+      BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
+      create(
+        :bgs_power_of_attorney,
+        :with_name_cached,
+        appeal: appeal,
+        last_synced_at: 1.day.ago,
+        representative_name: "A. Rep"
+      )
+    end
 
-  #   context "update the appeals POA information" do
-  #     subject do
-  #       patch :update_power_of_attorney, params: { appeal_id: appeal.id, poaId: appeal.power_of_attorney.vacols_id }
-  #     end
-  #     it "did update POA" do
-  #       subject
-  #       binding.pry
-  #       # expected_response = "Information is current at this time. Please try again in 10 minutes"
-  #       # expect(JSON.parse(subject.body)["message"]).to eq expected_response
-  #     end
-  #   end
-  # end
+    context "update the appeals POA information" do
+      subject do
+        patch :update_power_of_attorney, params: patch_params
+      end
+      it "did update POA" do
+        subject
+
+        expect(JSON.parse(subject.body)["status"]).to eq "success"
+        expect(JSON.parse(subject.body)["message"]).to eq "POA Updated Successfully"
+      end
+    end
+  end
 end

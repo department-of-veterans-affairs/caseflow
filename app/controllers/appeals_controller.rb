@@ -75,8 +75,6 @@ class AppealsController < ApplicationController
       poa = appeal.power_of_attorney
       render json: update_vacols_poa(poa)
     end
-  rescue StandardError => error
-    render json: { error: error } 
   end
 
   def most_recent_hearing
@@ -272,7 +270,7 @@ class AppealsController < ApplicationController
       {
         status: "success",
         message: "POA Updated Successfully",
-        power_of_attorney: PowerOfAttorneySerializer.new(power_of_attorney_data)
+        power_of_attorney: power_of_attorney_data
       }
     rescue ActiveRecord::RecordNotUnique
       {
@@ -289,7 +287,7 @@ class AppealsController < ApplicationController
       {
         status: "success",
         message: "POA Updated Successfully",
-        power_of_attorney: PowerOfAttorneySerializer.new(power_of_attorney_data)
+        power_of_attorney: power_of_attorney_data
       }
     rescue ActiveRecord::RecordNotUnique
       {
