@@ -603,15 +603,17 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
     end
   end
 
-  describe "Get appeal Power of Atotrney" do
+  describe "Get appeal Power of Attorney" do
     let!(:user) { User.authenticate!(roles: ["System Admin"]) }
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
     let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
     let(:get_params) { { appeal_id: appeal.vacols_id } }
 
-    subject { get(:power_of_attorney, params: get_params) }
-
     context "get the appeals POA information" do
+      subject do
+        get :power_of_attorney, params: get_params
+      end
+
       it "returns a successful response" do
         subject
 
@@ -623,20 +625,16 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         expect(JSON.parse(subject.body)["representative_id"]).to eq appeal.power_of_attorney.vacols_id
       end
     end
-  end
 
-  describe "Update appeal Power of Attorney" do
-    let!(:user) { User.authenticate!(roles: ["System Admin"]) }
-    let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
-    let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
-    let(:get_params) { { appeal_id: appeal.vacols_id } }
-
-    subject { patch(:update_power_of_attorney, params: { appeal_id: appeal.id, poaId: 1 }) }
     context "update the appeals POA information" do
+      subject do
+        patch :update_power_of_attorney, params: { appeal_id: appeal.id, poaId: appeal.power_of_attorney.vacols_id }
+      end
+
       it "didn't update because too recently updated" do
         subject
         expected_response = "Information is current at this time. Please try again in 10 minutes"
-        expect(subject.body).to eq expected_response
+        expect(JSON.parse(subject.body)["message"]).to eq expected_response
       end
     end
   end
