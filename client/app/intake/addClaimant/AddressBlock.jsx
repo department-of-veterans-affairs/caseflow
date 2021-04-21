@@ -10,7 +10,7 @@ export const AddressBlock = ({ entity }) => {
     <>
       {isOrg && <div>{entity.name}</div>}
       {!isOrg && (
-        <div>{`${entity.firstName ?? ''} ${entity.middleName ??
+        <div>{`${entity.title ?? ''} ${entity.firstName ?? ''} ${entity.middleName ??
           ''} ${entity.lastName ?? ''}`}</div>
       )}
       <div>{entity.addressLine1 ?? ''}</div>

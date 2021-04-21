@@ -21,14 +21,16 @@ export const shapeAddressBlock = (entity) => {
     entity?.listedAttorney?.value &&
     entity?.listedAttorney?.value !== 'not_listed'
   ) {
-    const [firstName, lastName] = entity.listedAttorney?.label.split(' ');
+    const [title, firstName, middleName, lastName] = entity.listedAttorney?.label.split(' ');
     const addressLine1 = entity.listedAttorney?.address.address_line_1;
     const addressLine2 = entity.listedAttorney?.address.address_line_2;
     const addressLine3 = entity.listedAttorney?.address.address_line_3;
 
     return {
       ...entity,
+      title,
       firstName,
+      middleName,
       lastName,
       addressLine1,
       addressLine2,
