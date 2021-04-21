@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
@@ -22,6 +24,7 @@ export const shapeAddressBlock = (entity) => {
     entity?.listedAttorney?.value !== 'not_listed'
   ) {
     const [title, firstName, middleName, lastName] = entity.listedAttorney?.label.split(' ');
+    // eslint-disable-next-line
     const addressLine1 = entity.listedAttorney?.address.address_line_1;
     const addressLine2 = entity.listedAttorney?.address.address_line_2;
     const addressLine3 = entity.listedAttorney?.address.address_line_3;
