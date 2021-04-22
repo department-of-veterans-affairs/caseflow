@@ -394,13 +394,42 @@ RSpec.feature "Case details", :all_dbs do
       let!(:user) { User.authenticate!(roles: ["System Admin"]) }
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
       let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
-
+      let!(:poa) do
+        # Skip after_save callback to not auto-update last_synced_at attribute of BGS_POA
+        BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
+        create(
+          :bgs_power_of_attorney,
+          :with_name_cached,
+          appeal: appeal,
+          last_synced_at: 1.day.ago,
+        )
+      end
+    
       before { FeatureToggle.enable!(:poa_refresh) }
       after { FeatureToggle.disable!(:poa_refresh) }
 
-      scenario "button is on the page" do
+      scenario "button is on the page and updates" do
         visit "/queue/appeals/#{appeal.vacols_id}"
         expect(page).to have_content("Refresh POA")
+        click_on "Refresh POA"
+        binding.pry
+        expect(page).to have_content("POA Updated Successfully")
+      end
+
+      let!(:poa) do
+        create(
+          :bgs_power_of_attorney,
+          :with_name_cached,
+          appeal: appeal
+        )
+      end
+    
+      scenario "button is on the page and is in cooldown" do
+        visit "/queue/appeals/#{appeal.vacols_id}"
+        expect(page).to have_content("Refresh POA")
+        click_on "Refresh POA"
+        binding.pry
+        expect(page).to have_content("Information is current at this time. Please try again in 10 minutes")
       end
     end
 
