@@ -123,7 +123,8 @@ export const setTimeSlots = ({
   ro,
   roTimezone = 'America/New_York',
   beginsAt,
-  numberOfSlots
+  numberOfSlots,
+  slotLengthMinutes
 }) => {
   // Safe assign the hearings array in case there are no scheduled hearings
   const hearings = scheduledHearingsList || [];
@@ -132,11 +133,11 @@ export const setTimeSlots = ({
   const defaultNumberOfSlots = 8;
   const defaultBeginsAt = ro === 'C' ? '09:00' : '08:30';
   const momentDefaultBeginsAt = moment.tz(defaultBeginsAt, 'HH:mm', 'America/New_York');
-  const slotLengthMinutes = 60;
+  const defaultSlotLengthMinutes = 60;
 
   const availableSlots = calculateAvailableTimeslots({
     numberOfSlots: numberOfSlots ? numberOfSlots : defaultNumberOfSlots,
-    slotLengthMinutes,
+    slotLengthMinutes: slotLengthMinutes ? slotLengthMinutes : defaultSlotLengthMinutes,
     beginsAt: beginsAt ? beginsAt : momentDefaultBeginsAt,
     roTimezone,
     hearings
