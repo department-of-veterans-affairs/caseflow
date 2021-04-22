@@ -608,6 +608,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
     let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
     let(:get_params) { { appeal_id: appeal.vacols_id } }
+    let(:patch_params) { { appeal_id: appeal.id, poaId: appeal.power_of_attorney.vacols_id } }
     let!(:poa) do
       create(
         :bgs_power_of_attorney,
@@ -635,7 +636,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
     context "update the appeals POA information" do
       subject do
-        patch :update_power_of_attorney, params: { appeal_id: appeal.id, poaId: appeal.power_of_attorney.vacols_id }
+        patch :update_power_of_attorney, params: patch_params
       end
 
       it "didn't update because too recently updated" do
@@ -661,7 +662,6 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         :with_name_cached,
         appeal: appeal,
         last_synced_at: 1.day.ago,
-        representative_name: "A. Rep"
       )
     end
 
