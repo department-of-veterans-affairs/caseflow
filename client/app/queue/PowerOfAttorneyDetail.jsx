@@ -120,7 +120,7 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
     <React.Fragment>
       <div>
         <PoaRefresh powerOfAttorney={powerOfAttorney} {...detailListStyling} />
-        { powerOfAttorney.representative_type != 'Unrecognized representative' && (
+        { powerOfAttorney.representative_type !== 'Unrecognized representative' && (
             <PoaRefreshButton appealId={appealId} poaId={powerOfAttorney.representative_id} />
         )}
         <ul {...detailListStyling}>
