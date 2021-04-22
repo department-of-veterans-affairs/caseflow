@@ -3,8 +3,8 @@
 # Model to store Appellant Substitution information captured from the Granted Substitution creation process
 
 class AppellantSubstitution < CaseflowRecord
-  belongs_to :created_by, class_name: "User"
-  belongs_to :source_appeal, class_name: "Appeal"
+  belongs_to :created_by, class_name: "User", optional: false
+  belongs_to :source_appeal, class_name: "Appeal", optional: false
   belongs_to :target_appeal, class_name: "Appeal"
 
   validates :created_by, :source_appeal, :substitution_date,

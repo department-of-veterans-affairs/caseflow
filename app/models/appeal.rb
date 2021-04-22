@@ -33,6 +33,8 @@ class Appeal < DecisionReview
   # The has_one here provides the docket_switch object to the newly created appeal upon completion of the docket switch
   has_one :docket_switch, class_name: "DocketSwitch", foreign_key: :new_docket_stream_id
 
+  has_one :appellant_substitution, foreign_key: :target_appeal_id
+
   has_many :record_synced_by_job, as: :record
   has_one :work_mode, as: :appeal
   has_one :latest_informal_hearing_presentation_task, lambda {
@@ -352,10 +354,6 @@ class Appeal < DecisionReview
 
   def appellant_substitution?
     !!appellant_substitution
-  end
-
-  def appellant_substitution
-    AppellantSubstitution.find_by(target_appeal: self)
   end
 
   def status
