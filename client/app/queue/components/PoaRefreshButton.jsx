@@ -13,7 +13,7 @@ export const PoaRefreshButton = ({ appealId, poaId }) => {
 
   const updatePOA = () => {
     setButtonText(<SmallLoader message="Refresh POA" spinnerColor="#417505" />);
-    ApiUtil.patch(`/appeals/${appealId}/update_power_of_attorney/${poaId}`).then((data) => {
+    ApiUtil.post(`/appeals/${appealId}/update_power_of_attorney/${poaId}`).then((data) => {
       dispatch(setPoaRefreshAlert(data.body.status, data.body.message));
       setButtonText('Refresh POA');
     });

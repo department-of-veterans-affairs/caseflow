@@ -635,13 +635,13 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
     context "update the appeals POA information" do
       subject do
-        patch :update_power_of_attorney, params: { appeal_id: appeal.id, poaId: appeal.power_of_attorney.vacols_id }
+        post :update_power_of_attorney, params: { appeal_id: appeal.id, poaId: appeal.power_of_attorney.vacols_id }
       end
 
       it "didn't update because too recently updated" do
         subject
         expected_response = "Information is current at this time. Please try again in 10 minutes"
-        expect(subject.body).to eq expected_response
+        expect(JSON.parse(subject.body)["message"]).to eq expected_response
       end
     end
   end
@@ -665,13 +665,13 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
     context "update the appeals POA information" do
       subject do
-        patch :update_power_of_attorney, params: patch_params
+        post :update_power_of_attorney, params: patch_params
       end
       it "did update POA" do
         subject
 
-        expect(subject.body).to eq "success"
-        expect(subject.body).to eq "POA Updated Successfully"
+        expect(JSON.parse(subject.body)["status"]).to eq "success"
+        expect(JSON.parse(subject.body)["message"]).to eq "POA Updated Successfully"
       end
     end
   end
