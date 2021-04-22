@@ -412,7 +412,6 @@ RSpec.feature "Case details", :all_dbs do
         visit "/queue/appeals/#{appeal.vacols_id}"
         expect(page).to have_content("Refresh POA")
         click_on "Refresh POA"
-        binding.pry
         expect(page).to have_content("POA Updated Successfully")
       end
 
@@ -428,7 +427,6 @@ RSpec.feature "Case details", :all_dbs do
         visit "/queue/appeals/#{appeal.vacols_id}"
         expect(page).to have_content("Refresh POA")
         click_on "Refresh POA"
-        binding.pry
         expect(page).to have_content("Information is current at this time. Please try again in 10 minutes")
       end
     end
