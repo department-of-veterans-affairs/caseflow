@@ -2,7 +2,7 @@
 
 class AppealsController < ApplicationController
   before_action :react_routed
-  before_action :set_application, only: [:document_count, :power_of_attorney]
+  before_action :set_application, only: [:document_count, :power_of_attorney, :update_power_of_attorney]
   # Only whitelist endpoints VSOs should have access to.
   skip_before_action :deny_vso_access, only: [
     :index,
