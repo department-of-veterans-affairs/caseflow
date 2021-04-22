@@ -64,7 +64,7 @@ class AppealsController < ApplicationController
   def update_power_of_attorney
     if cooldown_period
       message = "Information is current at this time. Please try again in #{cooldown_period} minutes"
-      (render json: {
+      render json: {
         status: "info",
         message: message
       }
