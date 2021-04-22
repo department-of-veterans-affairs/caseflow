@@ -70,6 +70,10 @@ export const documentIdColumn = () => {
 
       const nameAbbrev = `${preparer.firstName.substring(0, 1)}. ${preparer.lastName}`;
 
+      if (!task.documentId) {
+        return;
+      }
+
       return <React.Fragment>
         {task.documentId}<br />from {nameAbbrev}
       </React.Fragment>;
