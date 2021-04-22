@@ -640,6 +640,8 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
       it "didn't update because too recently updated" do
         subject
+
+        assert_response(:success)
         expected_response = "Information is current at this time. Please try again in 10 minutes"
         expect(JSON.parse(subject.body)["message"]).to eq expected_response
       end
@@ -670,6 +672,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       it "did update POA" do
         subject
 
+        assert_response(:success)
         expect(JSON.parse(subject.body)["status"]).to eq "success"
         expect(JSON.parse(subject.body)["message"]).to eq "POA Updated Successfully"
       end
