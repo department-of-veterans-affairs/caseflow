@@ -293,7 +293,13 @@ describe('TimeSlot', () => {
         const numberOfSlots = 8;
         const slotLengthMinutes = 60;
         const beginsAt = moment('2021-04-21T08:30:00-04:00').tz('America/New_York');
-        const { timeSlots } = setup({ scheduledHearingsList: oneHearing, roTimezone: ro.timezone, numberOfSlots, beginsAt, slotLengthMinutes });
+        const { timeSlots } = setup({
+          scheduledHearingsList: oneHearing,
+          roTimezone: ro.timezone,
+          numberOfSlots,
+          beginsAt,
+          slotLengthMinutes
+        });
 
         // The timeSlots list actually contains a mix of hearings and slots, pull out the one hearing
         const hearingInSlotList = timeSlots.filter((item) => item.full === true);
