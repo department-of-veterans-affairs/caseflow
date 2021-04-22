@@ -2,7 +2,8 @@ import React from 'react';
 
 import { TimeSlot } from 'app/hearings/components/scheduleHearing/TimeSlot';
 import { render, fireEvent, screen } from '@testing-library/react';
-import { setTimeSlots, formatTimeSlotLabel, hearingTimeOptsWithZone } from 'app/hearings/utils';
+import { formatTimeSlotLabel, hearingTimeOptsWithZone } from 'app/hearings/utils';
+import { setTimeSlots } from 'app/hearings/timeslot_utils';
 import { axe } from 'jest-axe';
 
 import REGIONAL_OFFICE_INFORMATION from '../../../../../constants/REGIONAL_OFFICE_INFORMATION';

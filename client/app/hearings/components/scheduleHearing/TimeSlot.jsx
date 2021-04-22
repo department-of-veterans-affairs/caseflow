@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment-timezone';
 
 // Local Dependencies
-import { setTimeSlots } from '../../utils';
+import { setTimeSlots } from '../../timeslot_utils';
 import { TimeSlotButton } from './TimeSlotButton';
 import Button from '../../../components/Button';
 import SmallLoader from '../../../components/SmallLoader';
