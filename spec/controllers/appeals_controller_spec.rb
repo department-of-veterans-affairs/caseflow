@@ -653,17 +653,18 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
     let!(:user) { User.authenticate!(roles: ["System Admin"]) }
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
     let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
-    let(:patch_params) { { appeal_id: appeal.id, poaId: appeal.power_of_attorney.vacols_id } }
     let!(:poa) do
-      # Skip after_save callback to not auto-update last_synced_at attribute of BGS_POA
-      BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
-      create(
-        :bgs_power_of_attorney,
-        :with_name_cached,
-        appeal: appeal,
-        last_synced_at: 1.day.ago,
-      )
-    end
+        # Skip after_save callback to not auto-update last_synced_at attribute of BGS_POA
+        BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
+        create(
+          :bgs_power_of_attorney,
+          :with_name_cached,
+          appeal: appeal,
+          last_synced_at: 1.day.ago,
+        )
+      end
+    let(:patch_params) { { appeal_id: appeal.id, poaId: poa.id } }
+    
 
     context "update the appeals POA information" do
       subject do
@@ -671,6 +672,8 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       end
       it "did update POA" do
         subject
+
+        binding.pry
 
         assert_response(:success)
         expect(JSON.parse(subject.body)["status"]).to eq "success"
