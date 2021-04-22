@@ -59,9 +59,6 @@ class AppellantSubstitution < CaseflowRecord
 
   def initialize_tasks
     InitialTasksFactory.new(target_appeal).create_root_and_sub_tasks!
-
-    # TODO: move this back to method establish_appeal_stream
-    target_appeal.court_remand! if source_appeal.cavc?
   end
 
   def find_or_create_power_of_attorney_for(unassociated_claimant)

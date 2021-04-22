@@ -349,7 +349,9 @@ class Appeal < DecisionReview
   def cavc_remand
     return nil if !cavc?
 
-    CavcRemand.find_by(remand_appeal: self)
+    return CavcRemand.find_by(remand_appeal: self) if CavcRemand.find_by(remand_appeal: self)
+
+    appellant_substitution.source_appeal.cavc_remand if appellant_substitution?
   end
 
   def appellant_substitution?
