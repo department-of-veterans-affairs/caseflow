@@ -126,11 +126,6 @@ export const setTimeSlots = ({ scheduledHearingsList, ro, roTimezone = 'America/
   const defaultBeginsAt = ro === 'C' ? '09:00' : '08:30';
   const momentDefaultBeginsAt = moment.tz(defaultBeginsAt, 'HH:mm', 'America/New_York');
   const slotLengthMinutes = 60;
-  //
-  // TODO this should come from somewhere else? It'll be used later by custom time slection
-  const defaultCustomSlot = customSlot ? customSlot : {};
-  // What about IDs? It's easy to put this custom time OVER an existing slot
-  //
 
   const availableSlots = calculateAvailableTimeslots({
     numberOfSlots,
@@ -147,11 +142,12 @@ export const setTimeSlots = ({ scheduledHearingsList, ro, roTimezone = 'America/
     }));
     */
 
-  return combineSlotsAndHearings({
+  const slotsAndHearings = combineSlotsAndHearings({
     roTimezone,
     availableSlots,
     hearings
   });
 
+  return slotsAndHearings;
 };
 
