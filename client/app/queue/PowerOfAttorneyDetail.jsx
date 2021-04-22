@@ -11,7 +11,6 @@ import Address from './components/Address';
 import BareList from '../components/BareList';
 import { PoaRefresh } from './components/PoaSyncDate';
 import { PoaRefreshButton } from './components/PoaRefreshButton';
-
 import COPY from '../../COPY';
 import Alert from '../components/Alert';
 
@@ -119,21 +118,15 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
   return (
     <React.Fragment>
       <div>
-        <PoaRefresh powerOfAttorney={powerOfAttorney} {...detailListStyling} />
         { powerOfAttorney.representative_type !== 'Unrecognized representative' && (
           <PoaRefreshButton appealId={appealId} poaId={powerOfAttorney.representative_id} />
         )}
+        <p><em>{ powerOfAttorney.representative_type === 'Unrecognized representative' ?
+          COPY.CASE_DETAILS_UNRECOGNIZED_POA :
+         <PoaRefresh powerOfAttorney={powerOfAttorney} {...detailListStyling} />}</em></p>
         <ul {...detailListStyling}>
           <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
-          <p><em>{ powerOfAttorney.representative_type === 'Unrecognized representative' ?
-            COPY.CASE_DETAILS_UNRECOGNIZED_POA :
-            COPY.CASE_DETAILS_INCORRECT_POA }</em></p>
         </ul>
-        { poaAlert.message && poaAlert.alertType && (
-          <div>
-            <Alert type={poaAlert.alertType} message={poaAlert.message} />
-          </div>
-        )}
       </div>
     </React.Fragment>
   );
