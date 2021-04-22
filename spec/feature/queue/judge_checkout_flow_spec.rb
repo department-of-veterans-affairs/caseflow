@@ -72,9 +72,17 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       click_on "Continue"
 
       expect(page).to have_content("Issue 2 of 2")
-      all("label", text: "No notice sent")[1].click
-      expect(page).to have_content("Pre AOJ", count: 2, wait: 5)
-      all("label", text: "Pre AOJ")[1].click
+
+      # all("label", text: "No notice sent")[1].click
+      containing_div = find("h2", text: "Issue 2 of 2").find(:xpath, "..")
+      checkbox = containing_div.find("label", text: "No notice sent")
+      checkbox.click
+
+      # expect(page).to have_content("Pre AOJ", count: 2, wait: 5)
+      # all("label", text: "Pre AOJ")[1].click
+      containing_fieldset = checkbox.find(:xpath, "ancestor::fieldset")
+      radiobutton = containing_fieldset.find("label", text: "Pre AOJ")
+      radiobutton.click
       click_on "Continue"
 
       # Evaluate Decision page
