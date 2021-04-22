@@ -94,7 +94,8 @@ class WorkQueue::AppealSerializer
 
   attribute :appellant_substitution do |object|
     if object.appellant_substitution
-      WorkQueue::AppellantSubstitutionSerializer.new(object.appellant_substitution).serializable_hash[:data][:attributes]
+      WorkQueue::AppellantSubstitutionSerializer.new(object.appellant_substitution)
+        .serializable_hash[:data][:attributes]
     end
   end
 
