@@ -500,7 +500,9 @@ export const dispositionLabel = (disposition) => HEARING_DISPOSITION_TYPE_TO_LAB
 // Get the possible times like "['2021-04-22T08:30:00-04:00', '2021-04-22T09:30:00-04:00', ... ]"
 const getPossibleSlotTimes = ({ beginsAt, slotLengthMinutes, numberOfSlots }) => {
   const slotTimeReducer = (accumulator, index) => accumulator.concat(index * slotLengthMinutes);
+
   const minutesAfterBeginsAt = _.times(numberOfSlots).reduce(slotTimeReducer, []);
+
   const possibleSlotTimes = minutesAfterBeginsAt.map((minutesAfter) => {
     return beginsAt.clone().add(minutesAfter, 'minutes');
   });
@@ -623,21 +625,20 @@ export const setTimeSlots = ({ scheduledHearingsList, ro, roTimezone = 'America/
 
   const numberOfSlots = 8;
   // TODO this default determination should be removed and provided by the db
-  const hardcodedBeginsAt = ro === 'C' ? '09:00' : '08:30';
-  const momentHardcodedBeginsAt = moment.tz(hardcodedBeginsAt, 'HH:mm', 'America/New_York');
+  const defaultBeginsAt = ro === 'C' ? '09:00' : '08:30';
+  const momentDefaultBeginsAt = moment.tz(defaultBeginsAt, 'HH:mm', 'America/New_York');
   const slotLengthMinutes = 60;
   //
   const availableSlots = calculateAvailableTimeslots({
     numberOfSlots,
     slotLengthMinutes,
-    beginsAt: beginsAt ? beginsAt : momentHardcodedBeginsAt,
+    beginsAt: beginsAt ? beginsAt : momentDefaultBeginsAt,
     roTimezone,
     hearings
   });
 
-  console.log('availableSlots.length', availableSlots.length);
-
   /*
+  console.log('availableSlots.length', availableSlots.length);
   console.log('availableSlots', availableSlots.map((slot) => {
     return { time: slot.time.format('LLL'), id: slot.slotId };
   }));
