@@ -672,7 +672,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       it "did update POA" do
         subject
 
-        expected_path = "/appeals/#{appeal.id}/update_power_of_attorney/#{appeal.power_of_attorney.vacols_id}"
+        expected_path = ""
         expect(subject.request.fullpath).to eq expected_path
         expect(subject.request.method).to eq "PATCH"
         assert_response(:success)
