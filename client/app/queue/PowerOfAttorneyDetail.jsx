@@ -118,15 +118,21 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
   return (
     <React.Fragment>
       <div>
-        { powerOfAttorney.representative_type !== 'Unrecognized representative' && (
-          <PoaRefreshButton appealId={appealId} poaId={powerOfAttorney.representative_id} />
-        )}
         <p><em>{ powerOfAttorney.representative_type === 'Unrecognized representative' ?
           COPY.CASE_DETAILS_UNRECOGNIZED_POA :
-         <PoaRefresh powerOfAttorney={powerOfAttorney} {...detailListStyling} />}</em></p>
+         <PoaRefresh powerOfAttorney={powerOfAttorney} {...detailListStyling} />}</em>
+          { powerOfAttorney.representative_type !== 'Unrecognized representative' && (
+            <PoaRefreshButton appealId={appealId} poaId={powerOfAttorney.representative_id} />
+         )}
+        </p>
         <ul {...detailListStyling}>
           <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
         </ul>
+        { poaAlert.message && poaAlert.alertType && (
+          <div>
+            <Alert type={poaAlert.alertType} message={poaAlert.message} />
+          </div>
+        )}
       </div>
     </React.Fragment>
   );
