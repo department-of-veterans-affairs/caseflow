@@ -635,9 +635,8 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
     context "update the appeals POA information" do
       subject do
-        post :update_power_of_attorney, params: { appeal_id: appeal.id, poaId: appeal.power_of_attorney.vacols_id }
+        patch "/appeals/#{appeal.id}/update_power_of_attorney/#{appeal.power_of_attorney.vacols_id}"
       end
-
       it "didn't update because too recently updated" do
         subject
 
@@ -667,7 +666,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
     context "update the appeals POA information" do
       subject do
-        post :update_power_of_attorney, params: patch_params
+        patch "/appeals/#{appeal.id}/update_power_of_attorney/#{appeal.power_of_attorney.vacols_id}"
       end
       it "did update POA" do
         subject
