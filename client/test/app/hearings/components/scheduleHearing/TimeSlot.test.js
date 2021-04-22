@@ -10,6 +10,8 @@ import REGIONAL_OFFICE_INFORMATION from '../../../../../constants/REGIONAL_OFFIC
 import HEARING_TIME_OPTIONS from '../../../../../constants/HEARING_TIME_OPTIONS';
 
 import moment from 'moment-timezone/moment-timezone';
+import { number } from 'prop-types';
+import { last } from 'lodash';
 
 const emptyHearings = [];
 const oneHearing = [{
@@ -28,7 +30,7 @@ const defaultProps = {
   ro: defaultRoCode,
   roTimezone: REGIONAL_OFFICE_INFORMATION[defaultRoCode].timezone,
   scheduledHearingsList: emptyHearings,
-  numberOfSlots: '12',
+  numberOfSlots: '8',
   slotLengthMinutes: '60',
   fetchScheduledHearings: jest.fn(),
   onChange: mockOnChange
@@ -116,6 +118,7 @@ const firstAndLastSlotsAreCorrect = (ro, timeSlots) => {
     expect(timeSlots[timeSlots.length - 1].time.isSame(threeThirtyPmEastern, 'hour')).toEqual(true);
   }
 };
+
 const firstDropdownItemCorrect = (ro, item) => {
   const eightFifteenRoTimeMoment = moment.tz('08:15', 'HH:mm', ro.timezone);
   const easternTimeString = eightFifteenRoTimeMoment.tz('America/New_York').format('h:mm');
@@ -140,6 +143,7 @@ const firstLastAndCountOfDropdownItemsCorrect = (ro, dropdownItems) => {
 };
 
 describe('TimeSlot', () => {
+
   describe('has correct visual elements', () => {
     it('renders correctly', () => {
       const { container } = setup();
@@ -199,10 +203,10 @@ describe('TimeSlot', () => {
     const regionalOfficeCodes = [
       // Manilla, which is -earlier- than Eastern
       'RO58',
+      // Central office ro, eastern
+      'C',
       // New York, Eastern time
       'RO06',
-      // DC, Eastern time, central RO is special
-      'C',
       // St. Paul, Central time
       'RO76',
       // Denver, Mountain time
@@ -216,42 +220,44 @@ describe('TimeSlot', () => {
     });
 
     regionalOffices.forEach((ro) => {
-      it('only shows slots after beginsAt', () => {
-        [
+      [
         // I really want to put the comment inline, disable eslint locally to allow
         /* eslint-disable line-comment-position */
-          '2021-04-22T08:30:00-04:00', // 8:30 eastern
-          '2021-04-22T12:30:00-07:00', // 9:30 eastern
-          '2021-04-22T11:30:00-05:00', // 10:30 eastern
-          '2021-04-22T14:30:00-06:00', // 12:30 eastern
-          '2021-04-22T15:30:00-05:00', // 14:30 eastern, last slot
+        '2021-04-21T08:30:00-04:00', // 8:30 eastern
+        '2021-04-21T12:30:00-07:00', // 9:30 eastern
+        '2021-04-21T11:30:00-05:00', // 10:30 eastern
+        '2021-04-21T14:30:00-06:00', // 12:30 eastern
+        '2021-04-21T15:30:00-05:00', // 14:30 eastern, last slot
         /* eslint-enable line-comment-position */
-        ].forEach((beginsAt) => {
-          const momentBeginsAt = moment(beginsAt).tz('America/New_York');
-          const { timeSlots } = setup({ roTimezone: ro.timezone, beginsAt: momentBeginsAt });
+      ].forEach((beginsAtString) => {
+        it('shows all slots after beginsAt if those slots dont spill into the next day', () => {
+          const beginsAt = moment(beginsAtString).tz('America/New_York');
+          const numberOfSlots = 8;
+          const slotLengthMinutes = 60;
+          const { timeSlots } = setup({ roTimezone: ro.timezone, beginsAt, numberOfSlots, slotLengthMinutes });
 
-          if (timeSlots.length > 0) {
-            // First timeslot is the same as the beginsAt time
-            expect(timeSlots[0].time.isSame(momentBeginsAt)).toEqual(true);
-          }
-          // TODO Last timeslot is different for central, also wrong at the moment
-          /*
-          if (ro.label === 'Central') {
-            console.log('centralSlots', timeSlots.map((slot) => slot.time.format('HH:mm Z')));
-            const fourPmEastern = moment.tz('2021-04-22T16:00:00-04:00', 'America/New_York');
+          // Got the correct number of timeslots
+          expect(timeSlots.length).toEqual(numberOfSlots);
+          // First timeslot is the same as the beginsAt time
+          expect(timeSlots[0].time.isSame(beginsAt)).toEqual(true);
 
-            expect(timeSlots[timeSlots.length - 1].time.isSame(fourPmEastern, 'hour')).toEqual(true);
-          }
-          if (ro.label !== 'Central') {
-            console.log('notCentralSlots', timeSlots.map((slot) => slot.time.format('LLL')));
-            const threeThirtyPmEastern = moment.tz('2021-04-22T15:30:00-04:00', 'America/New_York');
+          // Last slot time is correct
+          const lastSlotTime = timeSlots[timeSlots.length - 1].time;
+          const expectedLastSlotTime = beginsAt.add((numberOfSlots - 1) * slotLengthMinutes, 'minute');
 
-            console.log('threethirty', threeThirtyPmEastern.format('LLL'));
+          expect((lastSlotTime).isSame(expectedLastSlotTime)).toEqual(true);
 
-            expect(timeSlots[timeSlots.length - 1].time.isSame(threeThirtyPmEastern)).toEqual(true);
-          }
-          */
         });
+      });
+
+      it('doesnt show slots after midnight', () => {
+        const beginsAt = moment('2021-04-21T23:45:00-04:00').tz('America/New_York');
+        const numberOfSlots = 8;
+        const slotLengthMinutes = 60;
+        const { timeSlots } = setup({ roTimezone: ro.timezone, beginsAt, numberOfSlots, slotLengthMinutes });
+
+        // Should only produce the one slot at beginsAt
+        expect(timeSlots.length).toEqual(1);
       });
 
       it('has correct custom dropdown options', () => {
@@ -266,7 +272,7 @@ describe('TimeSlot', () => {
         firstLastAndCountOfDropdownItemsCorrect(ro, dropdownItems);
       });
 
-      it('has correct time values to submit to backend', () => {
+      it('slots have correct time values to submit to backend', () => {
         const { utils } = setup({ roTimezone: ro.timezone });
 
         const roTime = '11:30';
@@ -280,29 +286,40 @@ describe('TimeSlot', () => {
 
         // Switch to dropdown
         toggleToCustom(utils);
-        // TODO Clicking on a value in the dropdown is complicated, haven't figured out how yet
-        // clickDropwdownItem('10:30', ro.timezone);
-        // Expect that we called onChange with 10:30am ro timezone
-        // expect(mockOnChange).toHaveBeenLastCalledWith('scheduledTimeString', '08:45');
 
       });
-      it('hearings have correct times', () => {
-        const { timeSlots } = setup({ scheduledHearingsList: oneHearing, roTimezone: ro.timezone });
+
+      it('hearings display correct times and hide slots appropriately', () => {
+        const numberOfSlots = 8;
+        const slotLengthMinutes = 60;
+        const beginsAt = moment('2021-04-21T08:30:00-04:00').tz('America/New_York');
+        const { timeSlots } = setup({ scheduledHearingsList: oneHearing, roTimezone: ro.timezone, numberOfSlots, beginsAt, slotLengthMinutes });
 
         // The timeSlots list actually contains a mix of hearings and slots, pull out the one hearing
         const hearingInSlotList = timeSlots.filter((item) => item.full === true);
 
         // Should only have one scheduled hearing
         expect(hearingInSlotList.length).toEqual(1);
-        // Extract the time in Eastern
-        const time = moment.tz(hearingInSlotList[0].hearingTime, 'HH:mm', 'America/New_York').format('h:mm A z');
+
+        // Extract the hearing time in Eastern
+        const hearingTime = moment.tz(hearingInSlotList[0].hearingTime, 'HH:mm', 'America/New_York');
+
+        // Get the time of the last slot
+        const lastSlotTime = timeSlots[timeSlots.length - 1].time;
+
+        // If the hearing is between two slots it hides two slots
+        if (hearingTime.isBetween(beginsAt, lastSlotTime)) {
+          expect(timeSlots.length).toEqual(hearingInSlotList.length + numberOfSlots - 2);
+        }
 
         // Get the button, with that time
         const hearingButton = document.getElementsByClassName('time-slot-button-full');
 
         // Only one scheduled button should appear, it should have the correct time
+        const timeString = hearingTime.format('h:mm A z');
+
         expect(hearingButton).toHaveLength(1);
-        expect(hearingButton[0]).toHaveTextContent(time);
+        expect(hearingButton[0]).toHaveTextContent(timeString);
 
       });
     });
