@@ -73,11 +73,9 @@ RSpec.feature "Judge checkout flow", :all_dbs do
 
       expect(page).to have_content("Issue 2 of 2")
       expect(page).to have_content("Continue") # helps prevent flake due to page auto-scrolling
-      containing_div = find("h2", text: "Issue 2 of 2").find(:xpath, "..")
-      checkbox = containing_div.find("label", text: "No notice sent")
-      checkbox.click
-      containing_fieldset = checkbox.find(:xpath, "ancestor::fieldset")
-      containing_fieldset.find("label", text: "Pre AOJ").click
+      all("label", text: "No notice sent")[1].click
+      expect(page).to have_content("Pre AOJ", count: 2, wait: 5)
+      all("label", text: "Pre AOJ")[1].click
       click_on "Continue"
 
       # Evaluate Decision page
