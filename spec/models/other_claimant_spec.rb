@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 describe OtherClaimant, :postgres do
+  let(:claimant) { create(:claimant, type: "OtherClaimant") }
+
   describe "#save_unrecognized_details!" do
-    let(:claimant) { create(:claimant, type: "OtherClaimant") }
     let(:first_name) { "John" }
     let(:last_name) { nil }
     let(:name) { nil }
@@ -111,6 +112,19 @@ describe OtherClaimant, :postgres do
           expect(subject.power_of_attorney.address).to_not be_nil
         end
       end
+    end
+  end
+
+  describe "#representative_type" do
+    let(:atty) { create(:bgs_attorney, record_type: "POA Agent") }
+    let!(:unrecognized_appellant) do
+      create(:unrecognized_appellant, claimant: claimant, poa_participant_id: atty.participant_id)
+    end
+
+    subject { claimant.representative_type }
+
+    it "returns the correct type for a known representative" do
+      expect(subject).to eq("Agent")
     end
   end
 end
