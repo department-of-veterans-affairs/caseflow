@@ -515,6 +515,7 @@ const extractMomentHearingTimes = ({ hearings, roTimezone }) => {
   );
 };
 
+// Filter slots based on the various rules about which ones should appear
 const removeUnavailableSlots = ({ hearingTimes, possibleSlotTimes, roTimezone }) => {
 
   const availableSlotsReducer = (accumulator, momentPossibleTime) => {
