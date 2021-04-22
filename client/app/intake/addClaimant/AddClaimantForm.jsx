@@ -252,7 +252,7 @@ const Suffix = styled.div`
 
 const PhoneNumber = styled.div`
   width: 240px;
-  margin-bottom: 2em;
+  margin-bottom: 1.5em;
 `;
 
 const ClaimantAddress = styled.div`

@@ -89,7 +89,7 @@ const CityState = styled.div`
   grid-gap: 10px;
   grid-template-columns: 320px 130px;
   margin-bottom: 1em;
-  margin-top: -1em;
+  margin-top: -0.75em;
   align-items: center;
   input {
     margin-bottom: 0;
@@ -100,12 +100,12 @@ const ZipCountry = styled.div`
   display: grid;
   grid-gap: 10px;
   grid-template-columns: 140px 310px;
-  margin-bottom: -0.65em;
+  margin-bottom: -0.75em;
 `;
 
 const StreetAddress = styled.div`
   margin-top: -0.5em;
-  margin-bottom: -0.65em;
+  margin-bottom: 1.75em;
 `;
 
 const FieldDiv = styled.div`

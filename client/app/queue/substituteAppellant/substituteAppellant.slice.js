@@ -68,6 +68,7 @@ const substituteAppellantSlice = createSlice({
     [fetchRelationships.rejected]: (state) => {
       // In case of error, empty relationships array (will display message re no relationships found)
       state.relationships = null;
+      state.loadingRelationships = false;
     },
   },
 });
