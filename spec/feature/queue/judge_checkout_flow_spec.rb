@@ -45,8 +45,8 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       sji.imported_records[Appeal.table_name].first.tap do |appeal|
         appeal.root_task.update(status: :on_hold)
 
-        # Withdraw remanded decision issue because CircleCI's Capybara fails clicking boxes for the 2nd issue
-        decision_issue = appeal.reload.decision_issues.select(&:remanded?).last
+        # Withdraw a remanded decision issue because CircleCI's Capybara fails clicking boxes for the 2nd issue
+        decision_issue = appeal.reload.decision_issues.remanded.order(:id).first
         decision_issue.update(disposition: :withdrawn)
       end.reload
     end
