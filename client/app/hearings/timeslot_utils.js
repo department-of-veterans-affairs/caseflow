@@ -1,11 +1,11 @@
 import moment from 'moment-timezone';
-import _ from 'lodash';
+import { times, sortBy } from 'lodash';
 
 // Get the possible times like "['2021-04-22T08:30:00-04:00', '2021-04-22T09:30:00-04:00', ... ]"
 const getPossibleSlotTimes = ({ beginsAt, slotLengthMinutes, numberOfSlots }) => {
   const slotTimeReducer = (accumulator, index) => accumulator.concat(index * slotLengthMinutes);
 
-  const minutesAfterBeginsAt = _.times(numberOfSlots).reduce(slotTimeReducer, []);
+  const minutesAfterBeginsAt = times(numberOfSlots).reduce(slotTimeReducer, []);
 
   const possibleSlotTimes = minutesAfterBeginsAt.map((minutesAfter) => {
     return beginsAt.clone().add(minutesAfter, 'minutes');
@@ -106,7 +106,7 @@ const combineSlotsAndHearings = ({ roTimezone, availableSlots, hearings }) => {
 
   const slotsAndHearings = slots.concat(formattedHearings);
 
-  return _.sortBy(slotsAndHearings, 'hearingTime');
+  return sortBy(slotsAndHearings, 'hearingTime');
 
 };
 
