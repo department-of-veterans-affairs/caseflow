@@ -73,7 +73,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
 
       expect(page).to have_content("Issue 2 of 2")
       all("label", text: "No notice sent", count: 2)[1].click
-      expect(page).to have_content("Pre AOJ", count: 2, wait: 5)
+      # expect(page).to have_content("Pre AOJ", count: 2, wait: 5)
       all("label", text: "Pre AOJ", count: 2)[1].click
       sleep 1 # helps prevent flake
       expect(page).to have_content("Continue") # helps prevent flake due to page auto-scrolling
