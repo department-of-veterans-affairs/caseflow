@@ -25,6 +25,9 @@ describe AppellantSubstitution do
       expect { subject }.not_to raise_error
       params.each_key { |key| expect(subject.send(key)).to eq params[key] }
 
+      expect(subject.target_appeal.appellant_substitution).to eq subject
+      expect(subject.target_appeal.appellant_substitution?).to eq true
+      expect(subject.target_appeal.stream_type).to eq subject.source_appeal.stream_type
       expect(subject.target_appeal.docket_number).to eq subject.source_appeal.docket_number
       expect(subject.substitute_claimant).to eq subject.target_appeal.claimant
       expect(subject.substitute_person).to eq subject.target_appeal.claimant.person

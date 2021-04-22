@@ -43,7 +43,8 @@ class AppellantSubstitution < CaseflowRecord
     # POA for unknown appellants.
     # find_or_create_power_of_attorney_for(unassociated_claimant)
 
-    self.target_appeal ||= source_appeal.create_stream(:substitution, new_claimants: [unassociated_claimant])
+    self.target_appeal ||= source_appeal.create_stream(source_appeal.stream_type,
+                                                       new_claimants: [unassociated_claimant])
       .tap do |target_appeal|
         copy_request_issues(source_appeal, target_appeal)
 
