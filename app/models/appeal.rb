@@ -349,8 +349,11 @@ class Appeal < DecisionReview
   def cavc_remand
     return nil if !cavc?
 
+    # If this appeal is a direct result of a CavcRemand, then return it
     return CavcRemand.find_by(remand_appeal: self) if CavcRemand.find_by(remand_appeal: self)
 
+    # If this appeal went through appellant_substitution after a CavcRemand, then use the source_appeal,
+    # which is the same stream_type (cavc? == true) as this appeal.
     appellant_substitution.source_appeal.cavc_remand if appellant_substitution?
   end
 
