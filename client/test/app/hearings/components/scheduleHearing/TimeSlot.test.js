@@ -80,45 +80,6 @@ const clickTimeslot = (time, timezone) => {
   fireEvent.click(screen.getByText(formatTimeSlotLabel(time, timezone)));
 };
 
-// This doesn't work yet
-const clickDropwdownItem = (time, timezone) => {
-  const dropdownContainer = document.getElementsByClassName('dropdown-optionalHearingTime0')[0];
-
-  const select = dropdownContainer.querySelector('.cf-select');
-
-  fireEvent.keyPress(select, { key: 'ArrowDown', code: '40' });
-  fireEvent.keyPress(select, { key: 'ArrowDown', code: '40' });
-  fireEvent.keyPress(select, { key: 'Enter', code: '13' });
-};
-
-const firstAndLastSlotsAreCorrect = (ro, timeSlots) => {
-  if (ro.label === 'Central') {
-    const nineAmRoZone = moment.tz('09:00', 'HH:mm', ro.timezone);
-    const fourPmEastern = moment.tz('16:00', 'HH:mm', 'America/New_York');
-
-    // First slot is at 8:30am roTime
-    expect(timeSlots[0].time.isSame(nineAmRoZone, 'hour')).toEqual(true);
-    // Last slot is at 3:30pm eastern
-    expect(timeSlots[timeSlots.length - 1].time.isSame(fourPmEastern, 'hour')).toEqual(true);
-  }
-  if (ro.label !== 'Central') {
-    const eightThirtyAmRoZone = moment.tz('8:30', 'HH:mm', ro.timezone);
-    const eightThirtyAmEastern = moment.tz('8:30', 'HH:mm', 'America/New_York');
-    const threeThirtyPmEastern = moment.tz('15:30', 'HH:mm', 'America/New_York');
-
-    // This deals with Manila, which has a UTC offset of +8
-    if (eightThirtyAmRoZone.isBefore(eightThirtyAmEastern)) {
-      expect(timeSlots[0].time.isSame(eightThirtyAmEastern, 'hour')).toEqual(true);
-    }
-    // This is the more used case, for Eastern, Central, Mountain, and Pacific times
-    if (eightThirtyAmRoZone.isSameOrAfter(eightThirtyAmEastern)) {
-      expect(timeSlots[0].time.isSame(eightThirtyAmRoZone, 'hour')).toEqual(true);
-    }
-    // Last slot is at 3:30pm eastern
-    expect(timeSlots[timeSlots.length - 1].time.isSame(threeThirtyPmEastern, 'hour')).toEqual(true);
-  }
-};
-
 const firstDropdownItemCorrect = (ro, item) => {
   const eightFifteenRoTimeMoment = moment.tz('08:15', 'HH:mm', ro.timezone);
   const easternTimeString = eightFifteenRoTimeMoment.tz('America/New_York').format('h:mm');
