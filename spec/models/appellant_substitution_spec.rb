@@ -50,7 +50,7 @@ describe AppellantSubstitution do
       end
 
       context "source appeal has non-age-related AOD Motion" do
-        let(:source_appeal) { create(:appeal, :active, :advanced_on_docket_due_to_motion) }
+        let(:source_appeal) { create(:appeal, :dispatched, :advanced_on_docket_due_to_motion) }
         # The original person associated with AOD may be the claimant or veteran; in this case, it is the claimant
         let(:aod_person) { source_appeal.claimant.person }
         it "copies AOD motions to new appeal" do
@@ -76,7 +76,7 @@ describe AppellantSubstitution do
         end
       end
       context "source appeal has CAVC status" do
-        let(:source_appeal) { create(:appeal, :type_cavc_remand) }
+        let(:source_appeal) { create(:appeal, :dispatched, :type_cavc_remand) }
         it "copies CAVC status to new appeal" do
           expect(source_appeal.cavc?).to be true
 
@@ -86,6 +86,21 @@ describe AppellantSubstitution do
 
           target_appeal = appellant_substitution.target_appeal
           expect(target_appeal.cavc?).to be true
+        end
+      end
+      context "source appeal has AOD and CAVC status" do
+        let(:source_appeal) { create(:appeal, :dispatched, :type_cavc_remand, :advanced_on_docket_due_to_motion) }
+        it "copies AOD and CAVC status to new appeal" do
+          expect(source_appeal.aod?).to be true
+          expect(source_appeal.cavc?).to be true
+
+          appellant_substitution = subject
+          # Source appeal's CAVC status is unchanged
+          expect(source_appeal.cavc?).to be true
+
+          target_appeal = appellant_substitution.target_appeal
+          expect(target_appeal.cavc?).to be true
+          expect(target_appeal.aod?).to be true
         end
       end
 
