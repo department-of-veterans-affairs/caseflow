@@ -66,4 +66,4 @@ How will we safely ship this work? Are there migrations, external dependencies t
  - [ ] Tech spec drafter: Turn tech spec into next-step actionable tickets.
     - [ ] Write tickets as is necessary
     - [ ] Other developers provide more formal feedback as is necessary.
-- [ ] Once the tech spec is finalized, open a PR to add it to the docs/tech-specs directory following [these instructions](docs/tech-specs/README.md)
+- [ ] Once the tech spec is finalized, open a PR to add it to the docs/tech-specs directory following [these instructions](https://github.com/department-of-veterans-affairs/caseflow/tree/master/docs/tech-specs/README.md)
