@@ -4,7 +4,7 @@ exports[`SelectClaimant with default value props renders correctly 1`] = `
 <div>
   <div
     class="cf-different-claimant"
-    style="margin-top: 18.95px;"
+    style="margin-top: 10px;"
   >
     <fieldset
       class="usa-fieldset-inputs cf-form-radio "
@@ -64,7 +64,7 @@ exports[`SelectClaimant with formType 'appeal' deceasedAppellants toggled OFF re
 <div>
   <div
     class="cf-different-claimant"
-    style="margin-top: 18.95px;"
+    style="margin-top: 10px;"
   >
     <fieldset
       class="usa-fieldset-inputs cf-form-radio "
@@ -125,7 +125,7 @@ exports[`SelectClaimant with formType 'appeal' deceasedAppellants toggled ON ren
 <div>
   <div
     class="cf-different-claimant"
-    style="margin-top: 18.95px;"
+    style="margin-top: 10px;"
   >
     <fieldset
       class="usa-fieldset-inputs cf-form-radio "
@@ -185,7 +185,7 @@ exports[`SelectClaimant with formType 'appeal' nonVeteranClaimants enabled rende
 <div>
   <div
     class="cf-different-claimant"
-    style="margin-top: 18.95px;"
+    style="margin-top: 10px;"
   >
     <fieldset
       class="usa-fieldset-inputs cf-form-radio "
@@ -249,7 +249,7 @@ exports[`SelectClaimant with formType 'appeal' nonVeteranClaimants enabled rende
             <span>
               <p
                 id="claimantLabel"
-                style="margin-top: 8.95px; margin-bottom: 0px;"
+                style="margin-top: 8.95px; margin-bottom: -25px;"
               >
                 Please select the claimant listed on the form. If the claimant is not listed, please select "Claimant not listed" and add their information in the next step.
                 <br />
@@ -322,7 +322,7 @@ exports[`SelectClaimant with formType not 'appeal' deceasedAppellants toggled OF
 <div>
   <div
     class="cf-different-claimant"
-    style="margin-top: 18.95px;"
+    style="margin-top: 10px;"
   >
     <fieldset
       class="usa-fieldset-inputs cf-form-radio "
@@ -383,7 +383,7 @@ exports[`SelectClaimant with formType not 'appeal' deceasedAppellants toggled ON
 <div>
   <div
     class="cf-different-claimant"
-    style="margin-top: 18.95px;"
+    style="margin-top: 10px;"
   >
     <fieldset
       class="usa-fieldset-inputs cf-form-radio "

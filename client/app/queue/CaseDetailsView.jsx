@@ -10,10 +10,18 @@ import _ from 'lodash';
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
 import { appealWithDetailSelector, getAllTasksForAppeal } from './selectors';
-import { stopPollingHearing, transitionAlert, clearAlerts } from '../components/common/actions';
+import {
+  stopPollingHearing,
+  transitionAlert,
+  clearAlerts,
+} from '../components/common/actions';
 import { getQueryParams } from '../util/QueryParamsUtil';
 import { needsPulacCerulloAlert } from './pulacCerullo';
-import { resetErrorMessages, resetSuccessMessages, setHearingDay } from './uiReducer/uiActions';
+import {
+  resetErrorMessages,
+  resetSuccessMessages,
+  setHearingDay,
+} from './uiReducer/uiActions';
 import Alert from '../components/Alert';
 import AppellantDetail from './AppellantDetail';
 import COPY from '../../COPY';
@@ -38,29 +46,45 @@ const horizontalRuleStyling = css({
   border: 0,
   borderTop: `1px solid ${COLORS.GREY_LIGHT}`,
   marginTop: '3rem',
-  marginBottom: '3rem'
+  marginBottom: '3rem',
 });
 
 const anchorEditLinkStyling = css({
   fontSize: '1.5rem',
   fontWeight: 'normal',
-  margin: '5px'
+  margin: '5px',
 });
 
 const alertPaddingStyle = css({
-  marginTop: '2rem'
+  marginTop: '2rem',
 });
 
 export const CaseDetailsView = (props) => {
   const { appealId } = props;
-  const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
-  const tasks = useSelector((state) => getAllTasksForAppeal(state, { appealId }));
-  const canEditCavcRemands = useSelector((state) => state.ui.canEditCavcRemands);
+  const appeal = useSelector((state) =>
+    appealWithDetailSelector(state, { appealId })
+  );
+  const tasks = useSelector((state) =>
+    getAllTasksForAppeal(state, { appealId })
+  );
+  const canEditCavcRemands = useSelector(
+    (state) => state.ui.canEditCavcRemands
+  );
   const success = useSelector((state) => state.ui.messages.success);
   const error = useSelector((state) => state.ui.messages.error);
-  const veteranCaseListIsVisible = useSelector((state) => state.ui.veteranCaseListIsVisible);
-  const currentUserIsOnCavcLitSupport = useSelector((state) => state.ui.organizations.some(
-    (organization) => organization.name === 'CAVC Litigation Support'));
+  const veteranCaseListIsVisible = useSelector(
+    (state) => state.ui.veteranCaseListIsVisible
+  );
+  const currentUserIsOnCavcLitSupport = useSelector((state) =>
+    state.ui.organizations.some(
+      (organization) => organization.name === 'CAVC Litigation Support'
+    )
+  );
+  const currentUserOnClerkOfTheBoard = useSelector((state) =>
+    state.ui.organizations.some((organization) =>
+      ['Clerk of the Board'].includes(organization.name)
+    )
+  );
   const modalIsOpen = window.location.pathname.includes('modal');
 
   const resetState = () => {
@@ -68,11 +92,15 @@ export const CaseDetailsView = (props) => {
     props.clearAlerts();
   };
 
-  const pollHearing = () => startPolling({ externalId: props.scheduledHearingId }, {
-    setShouldStartPolling: props.stopPollingHearing,
-    resetState,
-    props
-  });
+  const pollHearing = () =>
+    startPolling(
+      { externalId: props.scheduledHearingId },
+      {
+        setShouldStartPolling: props.stopPollingHearing,
+        resetState,
+        props,
+      }
+    );
 
   useEffect(() => {
     window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
@@ -83,20 +111,31 @@ export const CaseDetailsView = (props) => {
       resetState();
     }
 
-    const { hearingDate, regionalOffice } = getQueryParams(window.location.search);
+    const { hearingDate, regionalOffice } = getQueryParams(
+      window.location.search
+    );
 
     if (hearingDate && regionalOffice) {
       props.setHearingDay({
         hearingDate,
-        regionalOffice
+        regionalOffice,
       });
     }
   }, []);
 
-  const doPulacCerulloReminder = useMemo(() => needsPulacCerulloAlert(appeal, tasks), [appeal, tasks]);
+  const doPulacCerulloReminder = useMemo(
+    () => needsPulacCerulloAlert(appeal, tasks),
+    [appeal, tasks]
+  );
 
   const appealIsDispached = appeal.status === 'dispatched';
-  const showPostDispatch = appealIsDispached && currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand;
+  const supportCavcRemand =
+    currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand;
+  const supportSubstituteAppellant =
+    currentUserOnClerkOfTheBoard &&
+    props.featureToggles.recognized_granted_substitution_after_dd;
+  const showPostDispatch =
+    appealIsDispached && (supportCavcRemand || supportSubstituteAppellant);
 
   return (
     <React.Fragment>
@@ -114,20 +153,34 @@ export const CaseDetailsView = (props) => {
           </Alert>
         </div>
       )}
-      {!modalIsOpen && showPostDispatch && <CaseDetailsPostDispatchActions appealId={appealId} />}
+      {!modalIsOpen && showPostDispatch && (
+        <CaseDetailsPostDispatchActions
+          appealId={appealId}
+          includeCavcRemand={supportCavcRemand}
+          includeSubstitute={supportSubstituteAppellant}
+        />
+      )}
       {(!modalIsOpen || props.userCanScheduleVirtualHearings) && <UserAlerts />}
       <AppSegment filledBackground>
         <CaseTitle appeal={appeal} />
-        { appeal.veteranDateOfDeath && props.featureToggles.fnod_banner && <FnodBanner appeal={appeal} /> }
+        {appeal.veteranDateOfDeath && props.featureToggles.fnod_banner && (
+          <FnodBanner appeal={appeal} />
+        )}
         <CaseTitleDetails
           appealId={appealId}
           redirectUrl={window.location.pathname}
           userCanAccessReader={props.userCanAccessReader}
         />
         {veteranCaseListIsVisible && (
-          <VeteranCasesView caseflowVeteranId={appeal.caseflowVeteranId} veteranId={appeal.veteranFileNumber} />
+          <VeteranCasesView
+            caseflowVeteranId={appeal.caseflowVeteranId}
+            veteranId={appeal.veteranFileNumber}
+          />
         )}
-        <TaskSnapshot appealId={appealId} showPulacCerulloAlert={doPulacCerulloReminder} />
+        <TaskSnapshot
+          appealId={appealId}
+          showPulacCerulloAlert={doPulacCerulloReminder}
+        />
         <hr {...horizontalRuleStyling} />
         <StickyNavContentArea>
           <CaseDetailsIssueList
@@ -136,34 +189,44 @@ export const CaseDetailsView = (props) => {
             additionalHeaderContent={
               appeal.canEditRequestIssues && (
                 <span className="cf-push-right" {...anchorEditLinkStyling}>
-                  <Link href={`/appeals/${appealId}/edit`}>{COPY.CORRECT_REQUEST_ISSUES_LINK}</Link>
+                  <Link href={`/appeals/${appealId}/edit`}>
+                    {COPY.CORRECT_REQUEST_ISSUES_LINK}
+                  </Link>
                 </span>
               )
             }
             issues={appeal.issues}
             decisionIssues={appeal.decisionIssues}
           />
-          <PowerOfAttorneyDetail title="Power of Attorney" appealId={appealId} />
-          {(appeal.hearings.length || appeal.completedHearingOnPreviousAppeal) && (
+          <PowerOfAttorneyDetail
+            title="Appellant's Power of Attorney"
+            appealId={appealId}
+          />
+          {(appeal.hearings.length ||
+            appeal.completedHearingOnPreviousAppeal) && (
             <CaseHearingsDetail title="Hearings" appeal={appeal} />
           )}
           <VeteranDetail title="About the Veteran" appealId={appealId} />
-          {!_.isNull(appeal.appellantFullName) && appeal.appellantIsNotVeteran && (
+          {!_.isNull(appeal.appellantFullName) &&
+            appeal.appellantIsNotVeteran && (
             <AppellantDetail title="About the Appellant" appeal={appeal} />
           )}
 
-          {!_.isNull(appeal.cavcRemand) && appeal.cavcRemand &&
-          (<CavcDetail
-            title="CAVC Remand"
-            additionalHeaderContent={
-              canEditCavcRemands && (
-                <span className="cf-push-right" {...anchorEditLinkStyling}>
-                  <Link to={`/queue/appeals/${appealId}/edit_cavc_remand`}>{COPY.CORRECT_CAVC_REMAND_LINK}</Link>
-                </span>
-              )
-            }
-            {...appeal.cavcRemand}
-          />)}
+          {!_.isNull(appeal.cavcRemand) && appeal.cavcRemand && (
+            <CavcDetail
+              title="CAVC Remand"
+              additionalHeaderContent={
+                canEditCavcRemands && (
+                  <span className="cf-push-right" {...anchorEditLinkStyling}>
+                    <Link to={`/queue/appeals/${appealId}/edit_cavc_remand`}>
+                      {COPY.CORRECT_CAVC_REMAND_LINK}
+                    </Link>
+                  </span>
+                )
+              }
+              {...appeal.cavcRemand}
+            />
+          )}
 
           <CaseTimeline title="Case Timeline" appeal={appeal} />
         </StickyNavContentArea>
@@ -188,13 +251,13 @@ CaseDetailsView.propTypes = {
   userCanScheduleVirtualHearings: PropTypes.bool,
   scheduledHearingId: PropTypes.string,
   pollHearing: PropTypes.bool,
-  stopPollingHearing: PropTypes.func
+  stopPollingHearing: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
   scheduledHearingId: state.components.scheduledHearing.externalId,
   pollHearing: state.components.scheduledHearing.polling,
-  featureToggles: state.ui.featureToggles
+  featureToggles: state.ui.featureToggles,
 });
 
 const mapDispatchToProps = (dispatch) =>
@@ -205,7 +268,7 @@ const mapDispatchToProps = (dispatch) =>
       resetSuccessMessages,
       transitionAlert,
       stopPollingHearing,
-      setHearingDay
+      setHearingDay,
     },
     dispatch
   );

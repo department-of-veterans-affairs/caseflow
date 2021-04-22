@@ -15,6 +15,9 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   has_many :messages
   has_one :vacols_user, class_name: "CachedUser", foreign_key: :sdomainid, primary_key: :css_id
 
+  # Alternative: where("roles @> ARRAY[?]::varchar[]", role)
+  scope :with_role, ->(role) { where("? = ANY(roles)", role) }
+
   BOARD_STATION_ID = "101"
   LAST_LOGIN_PRECISION = 5.minutes
 
@@ -98,8 +101,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_view_edit_nod_date?
-    (attorney? || judge? || BvaIntake.singleton.users.include?(self) ||
-      ClerkOfTheBoard.singleton.users.include?(self)) && FeatureToggle.enabled?(:edit_nod_date, user: self)
+    ClerkOfTheBoard.singleton.users.include?(self) && FeatureToggle.enabled?(:edit_nod_date, user: self)
   end
 
   def can_vso_hearing_schedule?

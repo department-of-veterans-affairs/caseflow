@@ -24,7 +24,7 @@ const headerContainerStyling = css({
 });
 
 const headerStyling = css({
-  paddingLeft: 0
+  paddingLeft: 0,
 });
 
 export const DetailsHeader = (

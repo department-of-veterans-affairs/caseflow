@@ -38,6 +38,7 @@ class Claimant < CaseflowRecord
            :representative_type,
            :representative_address,
            :representative_email_address,
+           :poa_last_synced_at,
            to: :power_of_attorney,
            allow_nil: true
 
@@ -64,20 +65,9 @@ class Claimant < CaseflowRecord
 
   private
 
+  # to be overridden by any subclasses if a different approach is preferable
   def find_power_of_attorney
-    find_power_of_attorney_by_pid || find_power_of_attorney_by_file_number
-  end
-
-  def find_power_of_attorney_by_pid
-    BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(participant_id)
-  rescue ActiveRecord::RecordInvalid # not found at BGS by PID
-    nil
-  end
-
-  def find_power_of_attorney_by_file_number
-    BgsPowerOfAttorney.find_or_create_by_file_number(decision_review.veteran_file_number)
-  rescue ActiveRecord::RecordInvalid # not found at BGS
-    nil
+    BgsPowerOfAttorney.find_or_fetch_by(participant_id: participant_id)
   end
 
   def bgs_address_service

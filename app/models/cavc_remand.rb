@@ -38,8 +38,6 @@ class CavcRemand < CaseflowRecord
     Constants.CAVC_REMAND_SUBTYPES.mdr.to_sym => Constants.CAVC_REMAND_SUBTYPES.mdr
   }
 
-  # To-do: increase code coverage of this class
-  # :nocov:
   # called from the Add Cavc Date Modal
   def add_cavc_dates(params)
     if already_has_mandate?
@@ -63,7 +61,7 @@ class CavcRemand < CaseflowRecord
 
     # Apply changes to other records
     if decision_issue_ids_add.any? || decision_issue_ids_remove.any?
-      update_request_issues(add: decision_issue_ids_add, remove: decision_issue_ids_remove)
+      update_request_issues(add_ids: decision_issue_ids_add, remove_ids: decision_issue_ids_remove)
     end
 
     update_timed_hold if new_decision_date
@@ -108,16 +106,20 @@ class CavcRemand < CaseflowRecord
 
   def establish_appeal_stream
     self.remand_appeal ||= source_appeal.create_stream(:court_remand).tap do |cavc_appeal|
-      update_request_issues(cavc_appeal, add: decision_issue_ids)
+      update_request_issues(cavc_appeal, add_ids: decision_issue_ids)
+
+      person = source_appeal.claimant.person
+      fail "Claimants on appeals are expected to be the same" unless person == cavc_appeal.claimant.person
+
       AdvanceOnDocketMotion.copy_granted_motions_to_appeal(source_appeal, cavc_appeal)
     end
   end
 
-  def update_request_issues(cavc_appeal = remand_appeal, add: [], remove: [])
-    DecisionIssue.find(add).map do |cavc_remanded_issue|
+  def update_request_issues(cavc_appeal = remand_appeal, add_ids: [], remove_ids: [])
+    DecisionIssue.find(add_ids).map do |cavc_remanded_issue|
       cavc_remanded_issue.create_contesting_request_issue!(cavc_appeal)
     end
-    DecisionIssue.find(remove).map do |cavc_remanded_issue|
+    DecisionIssue.find(remove_ids).map do |cavc_remanded_issue|
       req_issues = remand_appeal.request_issues.where(contested_decision_issue_id: cavc_remanded_issue.id)
       req_issues.delete_all
     end
