@@ -116,6 +116,7 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney }) => {
       <ul {...detailListStyling}>
         <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
       </ul>
+      <p><em>{ COPY.CASE_DETAILS_POA_EXPLAINER }</em></p>
     </div>
   );
 };
