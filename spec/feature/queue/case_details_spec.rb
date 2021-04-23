@@ -415,7 +415,7 @@ RSpec.feature "Case details", :all_dbs do
         BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
         poa.last_synced_at = Time.now - 5.years
         poa.save!
-  
+        BgsPowerOfAttorney.reset_callbacks
         visit "/queue/appeals/#{appeal.uuid}"
         expect(page).to have_content("Refresh POA")
         click_on "Refresh POA"
