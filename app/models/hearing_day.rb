@@ -170,6 +170,7 @@ class HearingDay < CaseflowRecord
   # - Time, a string like "08:30"
   # - Timezone, a string like "America/Los_Angeles"
   # - Date, a ruby Date
+  # :reek:UtilityFunction
   def combine_time_and_date(time, timezone, date)
     # Parse the time string into a ruby Time instance with zone
     time_with_zone = time.in_time_zone(timezone)
