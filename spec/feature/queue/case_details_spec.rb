@@ -397,7 +397,7 @@ RSpec.feature "Case details", :all_dbs do
         create(
           :bgs_power_of_attorney,
           :with_name_cached,
-          appeal: appeal,
+          appeal: appeal
         )
       end
     
@@ -411,17 +411,6 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to have_content("Information is current at this time. Please try again in 10 minutes")
       end
 
-      # let!(:poa) do
-      #   # Skip after_save callback to not auto-update last_synced_at attribute of BGS_POA
-      #   # BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
-      #   create(
-      #     :bgs_power_of_attorney,
-      #     :with_name_cached,
-      #     appeal: appeal,
-      #     last_synced_at: Time.now - 5.years
-      #   )
-      # end
-
       scenario "button is on the page and updates" do
         BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
         poa.last_synced_at = Time.now - 5.years
@@ -429,7 +418,6 @@ RSpec.feature "Case details", :all_dbs do
   
         visit "/queue/appeals/#{appeal.uuid}"
         expect(page).to have_content("Refresh POA")
-        binding.pry
         click_on "Refresh POA"
         expect(page).to have_content("POA Updated Successfully")
       end
