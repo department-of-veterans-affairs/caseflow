@@ -386,7 +386,7 @@ RSpec.feature "Case details", :all_dbs do
 
       scenario "button isn't on the page" do
         visit "/queue/appeals/#{appeal.vacols_id}"
-        expect(page).not_to have_content("Refresh POA")
+        expect(page.has_no_content?("Refresh POA")).to eq(true)
       end
     end
 
@@ -400,7 +400,7 @@ RSpec.feature "Case details", :all_dbs do
           appeal: appeal
         )
       end
-    
+
       before { FeatureToggle.enable!(:poa_refresh) }
       after { FeatureToggle.disable!(:poa_refresh) }
 
@@ -413,9 +413,9 @@ RSpec.feature "Case details", :all_dbs do
 
       scenario "button is on the page and updates" do
         BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
-        poa.last_synced_at = Time.now - 5.years
+        poa.last_synced_at = Time.zone.now - 5.years
         poa.save!
-  
+
         visit "/queue/appeals/#{appeal.uuid}"
         expect(page).to have_content("Refresh POA")
         click_on "Refresh POA"
