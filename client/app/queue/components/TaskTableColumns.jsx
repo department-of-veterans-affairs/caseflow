@@ -18,6 +18,7 @@ import COPY from '../../../COPY';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 import DOCKET_NAME_FILTERS from '../../../constants/DOCKET_NAME_FILTERS';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS';
+import { isEmpty } from 'lodash';
 
 import {
   CATEGORIES,
