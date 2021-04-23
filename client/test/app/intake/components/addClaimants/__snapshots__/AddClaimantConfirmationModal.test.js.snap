@@ -8,7 +8,7 @@ exports[`AddClaimantConfirmationModal individual claimant missing last name show
     aria-modal="true"
     class="cf-modal active "
     id="modal_id"
-    role="alertdialog"
+    role="dialog"
   >
     <div
       class="cf-modal-body"
@@ -142,7 +142,7 @@ exports[`AddClaimantConfirmationModal organization claimant renders correctly 1`
     aria-modal="true"
     class="cf-modal active "
     id="modal_id"
-    role="alertdialog"
+    role="dialog"
   >
     <div
       class="cf-modal-body"
@@ -260,7 +260,7 @@ exports[`AddClaimantConfirmationModal with POA renders correctly 1`] = `
     aria-modal="true"
     class="cf-modal active "
     id="modal_id"
-    role="alertdialog"
+    role="dialog"
   >
     <div
       class="cf-modal-body"
@@ -387,7 +387,7 @@ exports[`AddClaimantConfirmationModal without POA renders correctly 1`] = `
     aria-modal="true"
     class="cf-modal active "
     id="modal_id"
-    role="alertdialog"
+    role="dialog"
   >
     <div
       class="cf-modal-body"
