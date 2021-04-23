@@ -3,8 +3,8 @@
 # Model to store Appellant Substitution information captured from the Granted Substitution creation process
 
 class AppellantSubstitution < CaseflowRecord
-  belongs_to :created_by, class_name: "User"
-  belongs_to :source_appeal, class_name: "Appeal"
+  belongs_to :created_by, class_name: "User", optional: false
+  belongs_to :source_appeal, class_name: "Appeal", optional: false
   belongs_to :target_appeal, class_name: "Appeal"
 
   validates :created_by, :source_appeal, :substitution_date,
@@ -43,7 +43,8 @@ class AppellantSubstitution < CaseflowRecord
     # POA for unknown appellants.
     # find_or_create_power_of_attorney_for(unassociated_claimant)
 
-    self.target_appeal ||= source_appeal.create_stream(:substitution, new_claimants: [unassociated_claimant])
+    self.target_appeal ||= source_appeal.create_stream(source_appeal.stream_type,
+                                                       new_claimants: [unassociated_claimant])
       .tap do |target_appeal|
         copy_request_issues(source_appeal, target_appeal)
 
