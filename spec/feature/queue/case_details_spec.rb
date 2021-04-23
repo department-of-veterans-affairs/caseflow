@@ -1833,7 +1833,7 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
 
-    context "ama appeal", focus: true do
+    context "ama appeal" do
       let!(:appeal) do
         create(:appeal, :hearing_docket, closest_regional_office: "C")
       end
@@ -1845,7 +1845,7 @@ RSpec.feature "Case details", :all_dbs do
       include_examples "edit unscheduled notes"
     end
 
-    context "legacy appeal", focus: true do
+    context "legacy appeal" do
       let!(:appeal) do
         create(
           :legacy_appeal,
