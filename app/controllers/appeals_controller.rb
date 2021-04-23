@@ -259,8 +259,10 @@ class AppealsController < ApplicationController
       representative_tz: appeal.representative_tz,
       poa_last_synced_at: appeal.poa_last_synced_at
     }
-    poa_data[:representative_id] = appeal.power_of_attorney.id if appeal.is_a?(Appeal)
-    poa_data[:representative_id] = appeal.power_of_attorney.vacols_id if appeal.is_a?(LegacyAppeal)
+    unless appeal.power_of_attorney.is_a?(UnrecognizedPowerOfAttorney)
+      poa_data[:representative_id] = appeal.power_of_attorney.id if appeal.is_a?(Appeal)
+      poa_data[:representative_id] = appeal.power_of_attorney.vacols_id if appeal.is_a?(LegacyAppeal)
+    end
     poa_data
   end
 
