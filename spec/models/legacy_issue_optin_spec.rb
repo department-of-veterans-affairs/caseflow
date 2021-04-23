@@ -5,7 +5,7 @@ describe LegacyIssueOptin, :all_dbs do
   let(:remand_case) do
     create(:case, :status_remand, bfkey: "remand", case_issues: [remand_issue])
   end
-  let(:lio) { create(:legacy_issue_optin, request_issue: request_issue) }
+  let(:lio) { create(:legacy_issue_optin, request_issue: request_issue, optin_processed_at: Time.zone.now - 5.hours) }
   let(:request_issue) { create(:request_issue, vacols_id: remand_case.bfkey, vacols_sequence_id: remand_issue.issseq) }
 
   describe ".related_remand_issues" do

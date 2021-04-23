@@ -14,6 +14,8 @@ class LegacyIssueOptin < CaseflowRecord
       joins(:request_issue)
         .where("request_issues.vacols_id = ?", vacols_id)
         .where(original_disposition_code: REMAND_DISPOSITION_CODES)
+        .where(rollback_processed_at: nil)
+        .where.not(optin_processed_at: nil)
     end
 
     def revert_opted_in_remand_issues(vacols_id)
