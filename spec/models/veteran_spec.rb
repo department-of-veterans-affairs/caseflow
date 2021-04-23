@@ -929,4 +929,13 @@ describe Veteran, :all_dbs do
       end
     end
   end
+
+  describe "#find_or_create_poa" do
+    subject { veteran.find_or_create_poa }
+
+    it "calls BgsPowerOfAttorney" do
+      expect(BgsPowerOfAttorney).to receive(:find_or_create_by_file_number).with(veteran.file_number)
+      subject
+    end
+  end
 end
