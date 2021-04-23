@@ -173,13 +173,25 @@ class HearingDay < CaseflowRecord
     datetime.in_time_zone("America/New_York").strftime("%T%:z")
   end
 
-  # Overrides the 'begins_at' column so we can strip out the incorrect date information
-  # that Rails adds. Rails does not have way to store/access time without date info.
-  def begins_at
-    db_begins_at_value = self[:begins_at]
+  def combine_time_and_date(time, timezone)
+    time_with_zone = time.in_time_zone(timezone)
+    time_and_date_string = "#{scheduled_for.strftime('%F')} #{time_with_zone.strftime('%T')}"
+    combined_datetime = time_and_date_string.in_time_zone(timezone)
+    formatted_datetime_string = combined_datetime.iso8601
 
-    # Return the value in the column if its present
-    return time_of_day_with_zone(db_begins_at_value) unless db_begins_at_value.nil?
+    formatted_datetime_string
+  end
+
+  # Creates a begins_at datetime with timezone from these parts
+  # - scheduled_for, date
+  # - begins_at_time_string, time
+  # - regional office, timezone
+  def begins_at
+    # If 'begins_at_time_string' column has a value, combine with scheduled_for date and regional_office timezone
+    if !begins_at_time_string.nil?
+      timezone = (virtual? || central_office?) ? "America/New_York" : RegionalOffice.find!(regional_office).timezone
+      return combine_time_and_date(begins_at_time_string, timezone)
+    end
 
     # 09:00 eastern if central
     return time_of_day_with_zone("09:00".in_time_zone("America/New_York")) if central_office?
