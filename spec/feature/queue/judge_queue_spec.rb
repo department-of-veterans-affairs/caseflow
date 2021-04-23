@@ -4,7 +4,7 @@ RSpec.feature "Judge queue", :all_dbs do
   let(:judge) { create(:user) }
   let!(:vacols_judge) { create(:staff, :judge_role, user: judge) }
 
-  let(:attorney) { create(:user, full_name: 'Test Attorney') }
+  let(:attorney) { create(:user) }
   let!(:vacols_attorney) { create(:staff, :attorney_role, user: attorney) }
 
   let!(:judge_team) { JudgeTeam.create_for_judge(judge).tap { |team| team.add_user(attorney) } }
@@ -21,7 +21,7 @@ RSpec.feature "Judge queue", :all_dbs do
     context "with assigned case" do
       let(:appeal) { create(:appeal) }
       let(:root_task) { create(:root_task, appeal: appeal) }
-      let!(:judge_task) {create_list(:ama_task, 2, :assigned, assigned_to: judge, parent: root_task)}
+      let!(:judge_task) { create_list(:ama_task, 2, :assigned, assigned_to: judge, parent: root_task) }
 
       it "displays all three judge's tabs" do
         visit("/queue")
