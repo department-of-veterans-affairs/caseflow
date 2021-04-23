@@ -1015,6 +1015,14 @@ feature "Task queue", :all_dbs do
         expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
       end
 
+      it "should not display the on-hold and completed tabs if feature toggle is not enabled" do
+        # have not enabled :judge_queue_tabs feature toggle for this test
+        visit("/queue")
+        expect(page).to have_content(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, 2)
+        expect(page).to_not have_content(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE)
+        expect(page).to_not have_content(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
+      end
+
       it "should be able to add admin actions from case details" do
         Colocated.singleton.add_user(create(:user))
         visit("/queue")
