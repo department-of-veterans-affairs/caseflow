@@ -190,13 +190,13 @@ class CaseHearingsDetail extends React.PureComponent {
   getUnscheduledHearingElements = () => {
     const {
       appeal,
-      tasks
+      hearingTasks
     } = this.props;
 
-    return tasks.map((task, index) => <div
-      key={task.id} {...hearingsListStyling} {...css({ marginTop: '1em' })}
+    return hearingTasks.map((task, index) => <div
+      key={task.taskId} {...hearingsListStyling} {...css({ marginTop: '1em' })}
     >
-      <span {...boldText}>{COPY.UNSCHEDULED_HEARING_TITLE}{tasks.length > 1 ?
+      <span {...boldText}>{COPY.UNSCHEDULED_HEARING_TITLE}{hearingTasks.length > 1 ?
         ` ${index + 1}` : ''}:</span>
       <BareList compact
         listStyle={css(marginLeft, noTopBottomMargin)}
@@ -212,7 +212,7 @@ class CaseHearingsDetail extends React.PureComponent {
         hearings,
         completedHearingOnPreviousAppeal,
       },
-      tasks
+      hearingTasks
     } = this.props;
 
     const hearingsListElements = [{
@@ -231,7 +231,7 @@ class CaseHearingsDetail extends React.PureComponent {
             {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL_POST_LINK}
           </React.Fragment>
         }
-        {!_.isEmpty(tasks) && this.getUnscheduledHearingElements()}
+        {!_.isEmpty(hearingTasks) && this.getUnscheduledHearingElements()}
         {!_.isEmpty(hearings) &&
           <BareList
             ListElementComponent="ul"
@@ -265,7 +265,7 @@ CaseHearingsDetail.propTypes = {
   }),
   showVeteranCaseList: PropTypes.func,
   userIsVsoEmployee: PropTypes.bool,
-  tasks: PropTypes.array
+  hearingTasks: PropTypes.array
 };
 
 const mapStateToProps = (state) => {

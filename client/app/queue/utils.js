@@ -628,6 +628,15 @@ export const taskActionData = ({ task, match }) => {
   return null;
 };
 
+export const parentTasks = (childrenTasks, allTasks) => {
+  const parentTaskIds = _.map(childrenTasks, 'parentId')
+  const parentTasks = parentTaskIds.map((parentId) => {
+    return _.find(allTasks, ['taskId', parentId.toString()]);
+  })
+
+  return parentTasks
+}
+
 export const nullToFalse = (key, obj) => {
   if (obj[key] === null) {
     obj[key] = false;
