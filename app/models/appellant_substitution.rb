@@ -52,8 +52,8 @@ class AppellantSubstitution < CaseflowRecord
         # the benefit of the AOD status. This is the case for both situations where a case is returned to
         # the Board following the grant of a substitution request  AND/OR pursuant to an appeal of a denial
         # of a substitution request. See 38 C.F.R. § 20.800(f).
-        subtitute_person = target_appeal.claimant.person
-        AdvanceOnDocketMotion.transfer_granted_motions_to_person(source_appeal, target_appeal, subtitute_person)
+        substitute_person = target_appeal.claimant.person
+        AdvanceOnDocketMotion.transfer_granted_motions_to_person(source_appeal, target_appeal, substitute_person)
       end
   end
 
