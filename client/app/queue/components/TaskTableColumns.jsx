@@ -1,7 +1,7 @@
 import * as React from 'react';
 import moment from 'moment';
 import pluralize from 'pluralize';
-import _ from 'lodash';
+import { _, isEmpty } from 'lodash';
 
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import BadgeArea from './BadgeArea';
@@ -18,7 +18,6 @@ import COPY from '../../../COPY';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 import DOCKET_NAME_FILTERS from '../../../constants/DOCKET_NAME_FILTERS';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS';
-import { isEmpty } from 'lodash';
 
 import {
   CATEGORIES,
