@@ -714,7 +714,7 @@ ActiveRecord::Schema.define(version: 2021_04_19_200234) do
   end
 
   create_table "hearing_days", force: :cascade do |t|
-    t.datetime "begins_at", comment: "When the hearing day begins, hearings and slots should not come before this time"
+    t.string "begins_at_time_string", comment: "When the hearing day begins, slots will not appear before this time"
     t.string "bva_poc", comment: "Hearing coordinator full name"
     t.datetime "created_at", null: false, comment: "Automatic timestamp of when hearing day was created"
     t.bigint "created_by_id", null: false, comment: "The ID of the user who created the Hearing Day"
