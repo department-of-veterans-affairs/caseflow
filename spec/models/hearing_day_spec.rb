@@ -390,33 +390,32 @@ describe HearingDay, :all_dbs do
         )
       end
 
+      def format_begins_at_from_db(time_string, scheduled_for)
+        db_hour, db_minute = time_string.split(":")
+
+        scheduled_for.in_time_zone("America/New_York").change(hour: db_hour, min: db_minute)
+      end
+
       context "a virtual day" do
         let(:request_type) { HearingDay::REQUEST_TYPES[:virtual] }
         let(:regional_office_key) { nil }
         it "begins_at db value" do
-          db_hour, db_minute = begins_at_time_string.split(":")
-          expected_begins_at = scheduled_for.in_time_zone("America/New_York").change(hour: db_hour, min: db_minute)
-          expect(Time.zone.parse(subject)).to eq(expected_begins_at)
+          expect(Time.zone.parse(subject)).to eq(format_begins_at_from_db(begins_at_time_string, scheduled_for))
         end
       end
       context "a central day" do
         let(:regional_office_key) { nil }
         let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
         it "begins_at db value" do
-          db_hour, db_minute = begins_at_time_string.split(":")
-          expected_begins_at = scheduled_for.in_time_zone("America/New_York").change(hour: db_hour, min: db_minute)
-          expect(Time.zone.parse(subject)).to eq(expected_begins_at)
+          expect(Time.zone.parse(subject)).to eq(format_begins_at_from_db(begins_at_time_string, scheduled_for))
         end
       end
       selected_ro_ids.each do |ro|
         context "a video day at RO (#{ro})" do
           let(:regional_office_key) { ro }
           let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
-
           it "begins_at db value" do
-            db_hour, db_minute = begins_at_time_string.split(":")
-            expected_begins_at = scheduled_for.in_time_zone("America/New_York").change(hour: db_hour, min: db_minute)
-            expect(Time.zone.parse(subject)).to eq(expected_begins_at)
+            expect(Time.zone.parse(subject)).to eq(format_begins_at_from_db(begins_at_time_string, scheduled_for))
           end
         end
       end
