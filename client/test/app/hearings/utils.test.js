@@ -1,4 +1,4 @@
-import { setTimeSlots } from 'app/hearings/timeslot_utils';
+import { setTimeSlots } from 'app/hearings/utils';
 import { uniq } from 'lodash';
 
 // Store a constant for the last available time to test against

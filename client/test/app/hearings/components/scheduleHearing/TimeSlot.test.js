@@ -5,8 +5,8 @@ import { axe } from 'jest-axe';
 import moment from 'moment-timezone/moment-timezone';
 // caseflow
 import { TimeSlot } from 'app/hearings/components/scheduleHearing/TimeSlot';
-import { formatTimeSlotLabel, hearingTimeOptsWithZone } from 'app/hearings/utils';
-import { setTimeSlots } from 'app/hearings/timeslot_utils';
+import { formatTimeSlotLabel, hearingTimeOptsWithZone, setTimeSlots } from 'app/hearings/utils';
+
 // constants
 import REGIONAL_OFFICE_INFORMATION from '../../../../../constants/REGIONAL_OFFICE_INFORMATION';
 import HEARING_TIME_OPTIONS from '../../../../../constants/HEARING_TIME_OPTIONS';
