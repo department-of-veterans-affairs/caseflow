@@ -257,10 +257,6 @@ describe('TimeSlot', () => {
 
         // Switch to dropdown
         toggleToCustom(utils);
-        // TODO Clicking on a value in the dropdown is complicated, haven't figured out how yet
-        // clickDropwdownItem('10:30', ro.timezone);
-        // Expect that we called onChange with 10:30am ro timezone
-        // expect(mockOnChange).toHaveBeenLastCalledWith('scheduledTimeString', '08:45');
 
       });
       it('hearings have correct times', () => {
