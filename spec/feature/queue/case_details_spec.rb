@@ -392,42 +392,46 @@ RSpec.feature "Case details", :all_dbs do
 
     context "POA refresh button is shown with feature toggle enabled" do
       let!(:user) { User.authenticate!(roles: ["System Admin"]) }
-      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
-      let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
+      let(:appeal) { create(:appeal, veteran: create(:veteran)) }
       let!(:poa) do
-        # Skip after_save callback to not auto-update last_synced_at attribute of BGS_POA
-        BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
         create(
           :bgs_power_of_attorney,
           :with_name_cached,
           appeal: appeal,
-          last_synced_at: 1.day.ago,
         )
       end
     
       before { FeatureToggle.enable!(:poa_refresh) }
       after { FeatureToggle.disable!(:poa_refresh) }
 
-      scenario "button is on the page and updates" do
-        visit "/queue/appeals/#{appeal.vacols_id}"
-        expect(page).to have_content("Refresh POA")
-        click_on "Refresh POA"
-        expect(page).to have_content("POA Updated Successfully")
-      end
-
-      let!(:poa) do
-        create(
-          :bgs_power_of_attorney,
-          :with_name_cached,
-          appeal: appeal
-        )
-      end
-    
       scenario "button is on the page and is in cooldown" do
-        visit "/queue/appeals/#{appeal.vacols_id}"
+        visit "/queue/appeals/#{appeal.uuid}"
         expect(page).to have_content("Refresh POA")
         click_on "Refresh POA"
         expect(page).to have_content("Information is current at this time. Please try again in 10 minutes")
+      end
+
+      # let!(:poa) do
+      #   # Skip after_save callback to not auto-update last_synced_at attribute of BGS_POA
+      #   # BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
+      #   create(
+      #     :bgs_power_of_attorney,
+      #     :with_name_cached,
+      #     appeal: appeal,
+      #     last_synced_at: Time.now - 5.years
+      #   )
+      # end
+
+      scenario "button is on the page and updates" do
+        BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
+        poa.last_synced_at = Time.now - 5.years
+        poa.save!
+  
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page).to have_content("Refresh POA")
+        binding.pry
+        click_on "Refresh POA"
+        expect(page).to have_content("POA Updated Successfully")
       end
     end
 
