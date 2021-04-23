@@ -9,7 +9,7 @@ import { detailListStyling, getDetailField } from './Detail';
 import { getAppealValue } from './QueueActions';
 import Address from './components/Address';
 import BareList from '../components/BareList';
-import { PoaRefresh } from './components/PoaSyncDate';
+import { PoaRefresh } from './components/PoaRefresh';
 import { PoaRefreshButton } from './components/PoaRefreshButton';
 import COPY from '../../COPY';
 import Alert from '../components/Alert';

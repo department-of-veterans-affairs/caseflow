@@ -39,6 +39,6 @@ PoaRefreshButton.propTypes = {
   powerOfAttorney: PropTypes.shape({
     poa_last_synced_at: PropTypes.string,
   }),
-  appealId: PropTypes.number,
+  appealId: PropTypes.string,
   poaId: PropTypes.number
 };
