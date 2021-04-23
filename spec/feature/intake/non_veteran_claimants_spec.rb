@@ -120,7 +120,7 @@ feature "Non-veteran claimants", :postgres do
       fill_in search_bar_title, with: veteran_file_number
       click_on "Search"
       expect(page).to have_current_path("/intake/review_request")
-      fill_in "What is the Receipt Date of this form?", with: Date.today.mdY
+      fill_in "What is the Receipt Date of this form?", with: Time.zone.today.mdY
       click_intake_continue
       within_fieldset("Which review option did the Veteran request?") do
         find("label", text: "Evidence Submission", match: :prefer_exact).click
@@ -237,7 +237,7 @@ feature "Non-veteran claimants", :postgres do
       fill_in search_bar_title, with: veteran_file_number
       click_on "Search"
       expect(page).to have_current_path("/intake/review_request")
-      fill_in "What is the Receipt Date of this form?", with: Date.today.mdY
+      fill_in "What is the Receipt Date of this form?", with: Time.zone.today.mdY
       click_intake_continue
       within_fieldset("Which review option did the Veteran request?") do
         find("label", text: "Evidence Submission", match: :prefer_exact).click
