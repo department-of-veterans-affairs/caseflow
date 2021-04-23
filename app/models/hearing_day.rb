@@ -166,41 +166,33 @@ class HearingDay < CaseflowRecord
     default_slot_length
   end
 
-  # This strips off the incorrect date info that rails appends (no time of day object available)
-  # I want to keep this in this file since it's closely related.
-  # :reek:UtilityFunction
-  def time_of_day_with_zone(datetime)
-    datetime.in_time_zone("America/New_York").strftime("%T%:z")
-  end
-
-  def combine_time_and_date(time, timezone)
+  # Creates a datetime with timezone from these parts
+  # - scheduled_for, date
+  # - begins_at_time_string, time
+  # - regional office, timezon
+  def combine_time_and_date(time, timezone, date)
     time_with_zone = time.in_time_zone(timezone)
-    time_and_date_string = "#{scheduled_for.strftime('%F')} #{time_with_zone.strftime('%T')}"
+    time_and_date_string = "#{date.strftime('%F')} #{time_with_zone.strftime('%T')}"
     combined_datetime = time_and_date_string.in_time_zone(timezone)
     formatted_datetime_string = combined_datetime.iso8601
 
     formatted_datetime_string
   end
 
-  # Creates a begins_at datetime with timezone from these parts
-  # - scheduled_for, date
-  # - begins_at_time_string, time
-  # - regional office, timezone
   def begins_at
-    # If 'begins_at_time_string' column has a value, combine with scheduled_for date and regional_office timezone
-    if !begins_at_time_string.nil?
-      timezone = (virtual? || central_office?) ? "America/New_York" : RegionalOffice.find!(regional_office).timezone
-      return combine_time_and_date(begins_at_time_string, timezone)
+    # If 'begins_at_time_string' column has a value, use that
+    unless begins_at_time_string.nil?
+      return combine_time_and_date(begins_at_time_string, "America/New_York", scheduled_for)
     end
 
     # 09:00 eastern if central
-    return time_of_day_with_zone("09:00".in_time_zone("America/New_York")) if central_office?
+    return combine_time_and_date("09:00", "America/New_York", scheduled_for) if central_office?
 
     # 08:30 eastern if virtual
-    return time_of_day_with_zone("08:30".in_time_zone("America/New_York")) if virtual?
+    return combine_time_and_date("08:30", "America/New_York", scheduled_for) if virtual?
 
     # 08:30 in roTimezone otherwise
-    time_of_day_with_zone("08:30".in_time_zone(RegionalOffice.find!(regional_office).timezone))
+    combine_time_and_date("08:30", RegionalOffice.find!(regional_office).timezone, scheduled_for)
   end
 
   def judge_first_name
