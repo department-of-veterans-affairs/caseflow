@@ -70,7 +70,7 @@ export const documentIdColumn = () => {
 
       const nameAbbrev = `${preparer.firstName.substring(0, 1)}. ${preparer.lastName}`;
 
-      if (!task.documentId) {
+      if ((!task.documentId) || (isEmpty(task.documentId))) {
         return;
       }
 

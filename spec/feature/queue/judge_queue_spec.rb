@@ -4,12 +4,10 @@ RSpec.feature "Judge queue", :all_dbs do
   let(:judge) { create(:user) }
   let!(:vacols_judge) { create(:staff, :judge_role, user: judge) }
 
-  let(:attorney) { create(:user) }
+  let(:attorney) { create(:user, full_name: 'Test Attorney') }
   let!(:vacols_attorney) { create(:staff, :attorney_role, user: attorney) }
 
-  let!(:judge_team) do
-    JudgeTeam.create_for_judge(judge).tap { |jt| jt.add_user(attorney) }
-  end
+  let!(:judge_team) { JudgeTeam.create_for_judge(judge).tap { |team| team.add_user(attorney) } }
 
   let(:root_task) { create(:root_task, appeal: appeal) }
 
@@ -23,18 +21,11 @@ RSpec.feature "Judge queue", :all_dbs do
     context "with assigned case" do
       let(:appeal) { create(:appeal) }
       let(:root_task) { create(:root_task, appeal: appeal) }
-      let(:judge_task) do
-        create(
-          :ama_judge_decision_review_task,
-          appeal: appeal,
-          assigned_to: judge,
-          parent: root_task
-        )
-      end
+      let!(:judge_task) {create_list(:ama_task, 2, :assigned, assigned_to: judge, parent: root_task)}
 
       it "displays all three judge's tabs" do
         visit("/queue")
-        expect(page).to have_content(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, 1)
+        expect(page).to have_content(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, 2)
         expect(page).to have_content(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 0)
         expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
       end
@@ -48,7 +39,13 @@ RSpec.feature "Judge queue", :all_dbs do
         judge_onhold_tasks.each { |task| task.update!(status: Constants.TASK_STATUSES.on_hold) }
       end
 
-      it "displays on-hold tasks" do
+      it "displays the right counts for assigned and on-hold tasks on the tab" do
+        visit("/queue")
+        expect(find("button", text: format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, 2)))
+        expect(find("button", text: format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 4)))
+      end
+
+      it "displays the right number of on-hold tasks" do
         visit("/queue")
         find("button", text: format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 4)).click
         expect(find("tbody").find_all("tr").length).to eq(4)
@@ -56,7 +53,6 @@ RSpec.feature "Judge queue", :all_dbs do
     end
 
     context "with 3 completed tasks" do
-      let!(:judge_active_tasks) { create_list(:ama_task, 4, :assigned, assigned_to: judge) }
       let!(:judge_closed_tasks) { create_list(:ama_task, 3, :assigned, assigned_to: judge) }
 
       before do
