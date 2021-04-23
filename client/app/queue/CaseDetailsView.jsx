@@ -9,13 +9,19 @@ import _ from 'lodash';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
-import { appealWithDetailSelector, getAllTasksForAppeal, hearingTasksForAppeal } from './selectors';
+import {
+  appealWithDetailSelector,
+  getAllTasksForAppeal,
+  scheduleHearingTasksForAppeal,
+  hearingTasksForAppeal
+} from './selectors';
 import {
   stopPollingHearing,
   transitionAlert,
   clearAlerts,
 } from '../components/common/actions';
 import { getQueryParams } from '../util/QueryParamsUtil';
+import { parentTasks } from './utils';
 import { needsPulacCerulloAlert } from './pulacCerullo';
 import {
   resetErrorMessages,
@@ -137,9 +143,13 @@ export const CaseDetailsView = (props) => {
   const showPostDispatch =
     appealIsDispached && (supportCavcRemand || supportSubstituteAppellant);
 
-  const openHearingTasks = useSelector(
+  const openScheduledHearingTasks = useSelector(
+    (state) => scheduleHearingTasksForAppeal(state, { appealId: appeal.externalId })
+  );
+  const allHearingTasks = useSelector(
     (state) => hearingTasksForAppeal(state, { appealId: appeal.externalId })
   );
+  const parentHearingTasks = parentTasks(openScheduledHearingTasks, allHearingTasks);
 
   return (
     <React.Fragment>
@@ -208,8 +218,8 @@ export const CaseDetailsView = (props) => {
           />
           {(appeal.hearings.length ||
             appeal.completedHearingOnPreviousAppeal ||
-            openHearingTasks.length) && (
-            <CaseHearingsDetail title="Hearings" appeal={appeal} tasks={openHearingTasks} />
+            openScheduledHearingTasks.length) && (
+            <CaseHearingsDetail title="Hearings" appeal={appeal} hearingTasks={parentHearingTasks} />
           )}
           <VeteranDetail title="About the Veteran" appealId={appealId} />
           {!_.isNull(appeal.appellantFullName) &&

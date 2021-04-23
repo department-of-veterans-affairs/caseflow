@@ -71,11 +71,9 @@ class HearingTask < Task
     last_version =
       versions.sort_by(&:created_at).reverse.detect { |v| v&.changeset&.keys&.include?("instructions") }
 
-    return if last_version.nil?
-
     {
-      updated_at: last_version.created_at,
-      updated_by_css_id: User.find(last_version.whodunnit).css_id,
+      updated_at: last_version&.created_at,
+      updated_by_css_id: User.where(id: last_version&.whodunnit).first&.css_id,
       notes: instructions&.first
     }
   end
@@ -90,7 +88,7 @@ class HearingTask < Task
     if payload_values&.[](:notes).present?
       update_notes_as_instructions(payload_values[:notes])
 
-      [self]
+      [self] + self.children
     else
       super(params, current_user)
     end

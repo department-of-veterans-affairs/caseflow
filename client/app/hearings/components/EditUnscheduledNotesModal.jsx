@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { sprintf } from 'sprintf-js';
-import { get } from 'lodash';
 
 import COPY from '../../../COPY';
 import { onReceiveAmaTasks } from '../../queue/QueueActions';
@@ -23,7 +22,6 @@ export const EditUnscheduledNotesModal = ({
   const [loading, setLoading] = useState(false);
   const [unscheduledNotes, setUnscheduledNotes] = useState(task?.unscheduledHearingNotes?.notes);
 
-  console.log(task)
   const submit = async () => {
     try {
       const data = {
@@ -51,12 +49,15 @@ export const EditUnscheduledNotesModal = ({
       const error = {
         title: COPY.SAVE_UNSCHEDULED_NOTES_ERROR_TITLE,
         detail: COPY.SAVE_UNSCHEDULED_NOTES_ERROR_DETAIL
-      }
+      };
+
       props.showErrorMessage(error);
     } finally {
       setLoading(false);
-      onCancel(); // close the modal
-      window.scrollTo(0, 0); // Focus the top of the page to display alert
+      // close the modal
+      onCancel();
+      // Focus the top of the page to display alert
+      window.scrollTo(0, 0);
     }
   };
 
@@ -76,7 +77,7 @@ export const EditUnscheduledNotesModal = ({
       />
     </Modal>
   );
-}
+};
 
 EditUnscheduledNotesModal.propTypes = {
   task: PropTypes.object,
@@ -85,7 +86,7 @@ EditUnscheduledNotesModal.propTypes = {
   onReceiveAmaTasks: PropTypes.func,
   showErrorMessage: PropTypes.func,
   showSuccessMessage: PropTypes.func
-}
+};
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
@@ -97,4 +98,4 @@ const mapDispatchToProps = (dispatch) =>
     dispatch
   );
 
-export default connect(null, mapDispatchToProps)(EditUnscheduledNotesModal)
+export default connect(null, mapDispatchToProps)(EditUnscheduledNotesModal);

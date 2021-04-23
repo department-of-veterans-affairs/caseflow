@@ -45,7 +45,7 @@ UnscheduledNotes.propTypes = {
   updatedAt: PropTypes.string,
   unscheduledNotes: PropTypes.string,
   onChange: PropTypes.func,
-  uniqueId: PropTypes.number,
+  uniqueId: PropTypes.string,
   readonly: PropTypes.bool,
   styling: PropTypes.object
 };

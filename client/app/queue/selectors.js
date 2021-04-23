@@ -139,7 +139,7 @@ export const scheduleHearingTasksForAppeal = createSelector(
 
 export const hearingTasksForAppeal = createSelector(
   [getAllTasksForAppeal],
-  (tasks) => _.filter(incompleteTasksSelector(tasks), (task) => task.type === 'HearingTask')
+  (tasks) => _.filter(tasks, (task) => task.type === 'HearingTask')
 );
 
 export const rootTasksForAppeal = createSelector(
