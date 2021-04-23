@@ -16,63 +16,64 @@ describe('CaseHearingDetail', () => {
     status: 'on_hold'
   })
   const defaultProps = {
-    tasks: [hearingTask],
+    hearingTasks: [hearingTask],
     appeal: openHearingAppeal,
     title: 'Hearings'
   }
 
-  // it('renders correctly', () => {
-  //   const { container } = render(
-  //     <CaseHearingsDetail {...defaultProps} />, { wrapper: queueWrapper }
-  //   );
+  it('renders correctly', () => {
+    const { container } = render(
+      <CaseHearingsDetail {...defaultProps} />, { wrapper: queueWrapper }
+    );
 
-  //   expect(container).toMatchSnapshot();
-  // });
+    expect(container).toMatchSnapshot();
+  });
 
-  // it('passes a11y testing', async () => {
-  //   const { container } = render(
-  //     <CaseHearingsDetail {...defaultProps} />,
-  //     { wrapper: queueWrapper }
-  //   );
+  it('passes a11y testing', async () => {
+    const { container } = render(
+      <CaseHearingsDetail {...defaultProps} />,
+      { wrapper: queueWrapper }
+    );
 
-  //   const results = await axe(container);
+    const results = await axe(container);
 
-  //   expect(results).toHaveNoViolations();
-  // });
+    expect(results).toHaveNoViolations();
+  });
 
-  // it('displays Unscheduled Hearings', async () => {
-  //   const notes = 'Prefilled notes'
-  //   const hearingTaskWithNotesData = {
-  //     ...hearingTask,
-  //     unscheduledHearingNotes: {
-  //       updatedAt: '2020-09-08T10:03:49.210-04:00',
-  //       updatedByCssId: 'BVASYELLOW',
-  //       notes: notes
-  //     }
-  //   }
-  //   render(
-  //     <CaseHearingsDetail {...defaultProps} tasks={[hearingTaskWithNotesData]} />,
-  //     { wrapper: queueWrapper }
-  //   );
+  it('displays Unscheduled Hearings', async () => {
+    const notes = 'Prefilled notes'
+    const hearingTaskWithNotesData = {
+      ...hearingTask,
+      unscheduledHearingNotes: {
+        updatedAt: '2020-09-08T10:03:49.210-04:00',
+        updatedByCssId: 'BVASYELLOW',
+        notes: notes
+      }
+    }
+    render(
+      <CaseHearingsDetail {...defaultProps} hearingTasks={[hearingTaskWithNotesData]} />,
+      { wrapper: queueWrapper }
+    );
 
-  //   expect(screen.getByText(`${COPY.UNSCHEDULED_HEARING_TITLE}:`)).toBeInTheDocument()
-  //   expect(screen.getByText('Type:')).toBeInTheDocument()
-  //   expect(screen.getByText('Notes:')).toBeInTheDocument()
-  //   expect(screen.getByText('Edit')).toBeInTheDocument()
-  //   expect(screen.getByText(notes)).toBeInTheDocument()
-  //   expect(screen.getByText('Last updated by BVASYELLOW on 09/08/2020'))
-  //     .toBeInTheDocument()
-  // })
+    expect(screen.getByText(`${COPY.UNSCHEDULED_HEARING_TITLE}:`)).toBeInTheDocument()
+    expect(screen.getByText(`${COPY.UNSCHEDULED_HEARING_TITLE}:`)).toBeInTheDocument()
 
-  // it('displays both Unscheduled Hearing and Scheduled Hearing', () => {
-  //   render(
-  //     <CaseHearingsDetail {...defaultProps} appeal={openHearingAppeal} />,
-  //     { wrapper: queueWrapper }
-  //   );
+    expect(screen.getByText('Notes:')).toBeInTheDocument()
+    expect(screen.getByText('Edit')).toBeInTheDocument()
+    expect(screen.getByText(notes)).toBeInTheDocument()
+    expect(screen.getByText('Last updated by BVASYELLOW on 09/08/2020'))
+      .toBeInTheDocument()
+  })
 
-  //   expect(screen.getByText(`${COPY.UNSCHEDULED_HEARING_TITLE}:`)).toBeInTheDocument()
-  //   expect(screen.getByText('Hearing:')).toBeInTheDocument()
-  // })
+  it('displays both Unscheduled Hearing and Scheduled Hearing', () => {
+    render(
+      <CaseHearingsDetail {...defaultProps} appeal={openHearingAppeal} />,
+      { wrapper: queueWrapper }
+    );
+
+    expect(screen.getByText(`${COPY.UNSCHEDULED_HEARING_TITLE}:`)).toBeInTheDocument()
+    expect(screen.getByText('Hearing:')).toBeInTheDocument()
+  })
 
   it('displays multiple hearings in correct order', () => {
     const appealWithTwoHearings = {
@@ -102,15 +103,15 @@ describe('CaseHearingDetail', () => {
     expect(within(hearingTwo).getByText('8/7/20')).toBeInTheDocument()
   })
 
-//   it('displays two Unscheduled hearing if there are two Hearing Tasks', () => {
-//     render(
-//       <CaseHearingsDetail
-//         {...defaultProps}
-//         tasks={[hearingTask, generateAmaTask({...hearingTask, taskId: '4'})]} />,
-//       { wrapper: queueWrapper }
-//     );
+  it('displays two Unscheduled hearing if there are two Hearing Tasks', () => {
+    render(
+      <CaseHearingsDetail
+        {...defaultProps}
+        hearingTasks={[hearingTask, generateAmaTask({...hearingTask, taskId: '4'})]} />,
+      { wrapper: queueWrapper }
+    );
 
-//     expect(screen.getByText(`${COPY.UNSCHEDULED_HEARING_TITLE} 1:`)).toBeInTheDocument()
-//     expect(screen.getByText(`${COPY.UNSCHEDULED_HEARING_TITLE} 2:`)).toBeInTheDocument()
-//   })
+    expect(screen.getByText(`${COPY.UNSCHEDULED_HEARING_TITLE} 1:`)).toBeInTheDocument()
+    expect(screen.getByText(`${COPY.UNSCHEDULED_HEARING_TITLE} 2:`)).toBeInTheDocument()
+  })
 })
