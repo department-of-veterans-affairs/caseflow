@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import userEvent from '@testing-library/user-event';
 
@@ -49,9 +49,15 @@ describe('UnscheduledNotes', () => {
   });
 
   it('displays character limit info when notes is present', () => {
-    const container = render(<UnscheduledNotes {...defaultProps} />);
+    render(<UnscheduledNotes {...defaultProps} />);
 
     const charLimitMessage = `${maxCharLimit - inputText.length} characters left`
-    expect(container.getByText(charLimitMessage)).toBeInTheDocument()
+    expect(screen.getByText(charLimitMessage)).toBeInTheDocument()
   });
+
+  it('does not display textfield when readonly is passed as prop', () => {
+    render(<UnscheduledNotes {...defaultProps} readonly/>);
+
+    expect(screen.queryByLabelText('Notes')).not.toBeInTheDocument()
+  })
 })
