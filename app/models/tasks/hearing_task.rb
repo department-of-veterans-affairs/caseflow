@@ -75,7 +75,7 @@ class HearingTask < Task
 
     {
       updated_at: last_version&.created_at,
-      updated_by_css_id: User.find_by(id: last_version&.whodunnit).first&.css_id,
+      updated_by_css_id: User.find_by(id: last_version&.whodunnit)&.css_id,
       notes: instructions&.first
     }
   end
