@@ -50,6 +50,12 @@ RSpec.feature "Judge queue", :all_dbs do
         find("button", text: format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 4)).click
         expect(find("tbody").find_all("tr").length).to eq(4)
       end
+
+      it "does not display the from info in DocumentID column for on-hold tasks" do
+        visit("/queue")
+        find("button", text: format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 4)).click
+        expect(page).not_to have_content("from L. Roth")
+      end
     end
 
     context "with 3 completed tasks" do
