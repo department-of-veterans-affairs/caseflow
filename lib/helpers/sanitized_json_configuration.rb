@@ -36,14 +36,14 @@ class SanitizedJsonConfiguration
       },
       JudgeCaseReview => {
         sanitize_fields: %w[comment],
-        retrieval: ->(records) do
+        retrieval: lambda do records
           jdrtask_ids = Task.where(type: JudgeTask.descendants.map(&:name), appeal: records[Appeal]).ids
           JudgeCaseReview.where(task_id: jdrtask_ids).order(:id)
         end
       },
       AttorneyCaseReview => {
         sanitize_fields: %w[comment],
-        retrieval: ->(records) do
+        retrieval: lambda do records
           atty_task_ids = Task.where(type: AttorneyTask.descendants.map(&:name), appeal: records[Appeal]).ids
           AttorneyCaseReview.where(task_id: atty_task_ids).order(:id)
         end
