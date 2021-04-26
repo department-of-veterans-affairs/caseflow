@@ -238,7 +238,6 @@ class HearingDay < CaseflowRecord
     changed_hash
   end
 
-
   # Creates a datetime with timezone from these parts
   # - Time, a string like "08:30"
   # - Timezone, a string like "America/Los_Angeles"
