@@ -48,14 +48,23 @@ RSpec.feature "Judge queue", :all_dbs do
           expect(page).to have_content(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 0)
           expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
         end
+
+        context "with documents" do
+          let(:doc_id) { appeal.attorney_case_reviews.first.document_id }
+
+          it "displays the from info in DocumentID column for relevant tasks" do
+            visit("/queue")
+            expect(page).to have_content("#{doc_id} from L. Roth", normalize_ws: true)
+          end
+        end
       end
 
       context "without feature toggle" do
         it "displays single view (no tabs)" do
           visit("/queue")
-          expect(page).not_to have_content(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, 2)
-          expect(page).not_to have_content(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 0)
-          expect(page).not_to have_content(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
+          expect(page.has_no_content?(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE)).to eq(true)
+          expect(page.has_no_content?(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE)).to eq(true)
+          expect(page.has_no_content?(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)).to eq(true)
         end
       end
     end
@@ -80,10 +89,12 @@ RSpec.feature "Judge queue", :all_dbs do
         expect(find("tbody").find_all("tr").length).to eq(4)
       end
 
-      it "does not display the from info in DocumentID column for on-hold tasks" do
-        visit("/queue")
-        find("button", text: format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 4)).click
-        expect(page).not_to have_content("from L. Roth")
+      context "without documents" do
+        it "does not display the from info in DocumentID column for on-hold tasks" do
+          visit("/queue")
+          find("button", text: format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 4)).click
+          expect(page.has_no_content?("from L. Roth")).to eq(true)
+        end
       end
     end
 
