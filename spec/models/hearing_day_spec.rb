@@ -236,15 +236,9 @@ describe HearingDay, :all_dbs do
     end
   end
 
-  # A representative list of ROs (existing was testing all of them)
+  # One ro from each timezone in the continental US
   selected_ro_ids = [
-    # Special looking ROs, these don't work due to missing ro timezones?
-    # "R", # Virtual hearing ro, [No timezone]
-    # "VACO", # VA Central Office, "America/New_York"
-    # "DSUSER", # Digital Service HQ, "America/New_York"
-    # "NWQ", # ?, looks different, "America/New_York"
-    # "SO49", # El Paso Satellite, "America/Chicago"
-    # One from each timezone
+    "RO58", # Manila, "Asia/Manila"
     "RO01", # Boston, "America/New_York"
     "RO20", # Nashville, "America/Chicago"
     "RO39", # Denver, "America/Denver"
@@ -255,7 +249,6 @@ describe HearingDay, :all_dbs do
   context "total_slots" do
     context "with no db value for number_of_slots" do
       subject { hearing_day.total_slots }
-      let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
       let(:hearing_day) do
         create(
           :hearing_day,
@@ -293,7 +286,6 @@ describe HearingDay, :all_dbs do
 
     context "with number_of_slots set to 13" do
       subject { hearing_day.total_slots }
-      let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
       let(:number_of_slots) { 13 }
       let(:hearing_day) do
         create(
@@ -331,7 +323,6 @@ describe HearingDay, :all_dbs do
   context "begins_at" do
     context "no db value for begins_at" do
       subject { hearing_day.begins_at }
-      let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
       let(:begins_at_time_string) { nil }
       let(:scheduled_for) { Date.tomorrow } # Same as default, but need it for expects
       let(:hearing_day) do
@@ -377,7 +368,6 @@ describe HearingDay, :all_dbs do
 
     context "with a db value for begins_at" do
       subject { hearing_day.begins_at }
-      let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
       let(:begins_at_time_string) { "13:38" }
       let(:scheduled_for) { Date.tomorrow } # Same as default, but need it for expects
       let(:hearing_day) do
