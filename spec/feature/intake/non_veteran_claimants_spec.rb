@@ -73,7 +73,7 @@ feature "Non-veteran claimants", :postgres do
       expect(page).to have_content("Type to search...")
 
       safe_click ".dropdown-listedAttorney"
-      fill_in("Claimant's name", with: "Name not lis")
+      fill_in("Claimant's name", with: "Name not listed")
       expect(page).to have_content("Name not listed")
       find("div", class: "cf-select__menu", text: "Name not listed")
       select_claimant(0)
@@ -87,7 +87,7 @@ feature "Non-veteran claimants", :postgres do
       fill_in "Organization name", with: "Attorney's Law Firm"
       fill_in "Street address 1", with: "1234 Justice St."
       fill_in "City", with: "Anytown"
-      fill_in("State", with: "California").send_keys :enter
+      fill_in("State", with: "CA").send_keys :enter
       fill_in("Zip", with: "12345").send_keys :enter
       fill_in("Country", with: "United States").send_keys :enter
 
@@ -191,7 +191,7 @@ feature "Non-veteran claimants", :postgres do
 
       # Fill in Name not listed
       safe_click ".dropdown-listedAttorney"
-      fill_in("Representative's name", with: "Name not lis")
+      fill_in("Representative's name", with: "Name not listed")
       expect(page).to have_content("Name not listed")
       find("div", class: "cf-select__menu", text: "Name not listed")
       select_claimant(0)
@@ -310,7 +310,7 @@ feature "Non-veteran claimants", :postgres do
       fill_in "Last name", with: "Duck"
       fill_in "Street address 1", with: "1234 Justice St."
       fill_in "City", with: "Anytown"
-      fill_in("State", with: "California").send_keys :enter
+      fill_in("State", with: "CA").send_keys :enter
       fill_in("Zip", with: "12345").send_keys :enter
       fill_in("Country", with: "United States").send_keys :enter
       within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
@@ -368,7 +368,7 @@ feature "Non-veteran claimants", :postgres do
     fill_in "Organization name", with: "Attorney's Law Firm"
     fill_in "Street address 1", with: "1234 Justice St."
     fill_in "City", with: "Anytown"
-    fill_in("State", with: "California").send_keys :enter
+    fill_in("State", with: "CA").send_keys :enter
     fill_in("Zip", with: "12345").send_keys :enter
     fill_in("Country", with: "United States").send_keys :enter
   end
