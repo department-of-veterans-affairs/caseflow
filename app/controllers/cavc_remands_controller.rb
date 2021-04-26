@@ -38,18 +38,27 @@ class CavcRemandsController < ApplicationController
     REMAND_REQUIRED_PARAMS,
     JMR_REQUIRED_PARAMS,
     MDR_REQUIRED_PARAMS,
-    :remand_subtype
+    :remand_subtype,
+    :source_form
   ].flatten.freeze
 
   def create
-    new_cavc_remand = CavcRemand.create!(create_params)
+    new_cavc_remand = CavcRemand.create!(creation_params)
     cavc_appeal = new_cavc_remand.remand_appeal.reload
     render json: { cavc_remand: new_cavc_remand, cavc_appeal: cavc_appeal }, status: :created
   end
 
   def update
-    cavc_remand.update(update_params)
-    render json: { cavc_remand: cavc_remand, cavc_appeal: cavc_remand.remand_appeal }, status: :ok
+    if params["source_form"] == "add_cavc_dates_modal" # EditCavcTodo: replace all occurrences with a constant
+      cavc_remand.add_cavc_dates(add_cavc_dates_params.except(:source_form))
+    else
+      cavc_remand.update(creation_params.except(:source_form))
+    end
+
+    render json: {
+      cavc_remand: WorkQueue::CavcRemandSerializer.new(cavc_remand).serializable_hash[:data][:attributes],
+      cavc_appeal: cavc_remand.remand_appeal
+    }, status: :ok
   end
 
   private
@@ -69,12 +78,12 @@ class CavcRemandsController < ApplicationController
     end
   end
 
-  def update_params
+  def add_cavc_dates_params
     params.require(UPDATE_PARAMS)
-    params.permit(UPDATE_PARAMS).reject { |param| param == "remand_appeal_id" }
+    params.permit(PERMITTED_PARAMS).except("remand_appeal_id")
   end
 
-  def create_params
+  def creation_params
     params.merge!(created_by_id: current_user.id, updated_by_id: current_user.id, source_appeal_id: source_appeal.id)
     params.require(required_params_by_decisiontype_and_subtype)
     params.permit(PERMITTED_PARAMS).merge(params.permit(decision_issue_ids: []))

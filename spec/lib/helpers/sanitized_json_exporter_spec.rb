@@ -623,9 +623,9 @@ describe "SanitizedJsonExporter/Importer" do
           "tasks" => 16,
           "task_timers" => 2,
           "cavc_remands" => 1,
-          "decision_issues" => 2,
-          "request_issues" => 4,
-          "request_decision_issues" => 2
+          "decision_issues" => 3,
+          "request_issues" => 6,
+          "request_decision_issues" => 3
         }
         expect(sji.imported_records.transform_values(&:count)).to include record_counts
         reused_record_counts = {
@@ -650,7 +650,7 @@ describe "SanitizedJsonExporter/Importer" do
           expect(task.assigned_to).not_to be_nil if task.assigned_to_id
         end
 
-        check_all_differences(sje, sji, cavc_appeal, cavc_source_appeal)
+        check_all_differences(sje, sji, cavc_source_appeal, cavc_appeal)
       end
     end
 

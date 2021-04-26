@@ -1,3 +1,5 @@
+$cf-hearing-day-label-color: #323a45;
+
 .worksheet-header {
   .cf-push-right {
     padding-top: 25px;
@@ -340,6 +342,38 @@
   }
 }
 
+// Schedule Veteran Styles
+.schedule-veteran-page {
+  min-height: 680px;
+}
+
+// Hearings Schedule Styles
+.hearing-day-list {
+  // Each item = 73px * 10 = 730px
+  max-height: 730px;
+  overflow: hidden;
+  overflow-y: auto;
+
+  label {
+    color: $cf-hearing-day-label-color;
+    font-weight: 700;
+    font-size: 19px;
+    position: sticky;
+    // Fixes strange behavior where the list text is slightly visible on scroll
+    top: -1px;
+    padding-top: 10px;
+    width: 100%;
+    background-color: $color-white;
+  }
+}
+
+@media screen and (min-width: 1224px) and (max-width: 1680px) {
+  .usa-width-three-fourths.assign-hearing-tabs {
+    width: 65%;
+  }
+}
+
+// Time Slot Styles
 .time-slot-label {
   font-weight: bold;
 }
@@ -379,10 +413,8 @@
 
 .time-slot-details {
   font-weight: 400;
-  font-size: medium;
+  font-size: 15px;
   white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
   width: 295px;
   margin-top: 5px;
 }
@@ -407,4 +439,63 @@
 
 .time-slot-button-toggle.usa-button {
   padding-left: 0;
+}
+
+.time-slot-card {
+  width: 100%;
+  border: 2px solid $color-gray-lighter;
+  border-radius: 5px;
+  padding: 15px 10px;
+  margin: 24px 0;
+}
+
+.time-slot-card-time {
+  margin-top: 0;
+  margin-left: 20px;
+  font-size: 15px;
+}
+
+.time-slot-card-label {
+  font-weight: 700;
+  font-size: 19px;
+}
+
+.no-hearings-label {
+  margin-top: 30px;
+  text-align: center;
+}
+
+// Appeal Information Styles
+.schedule-veteran-appeals-info {
+  width: 100%;
+  background-color: $caseflow-background;
+  border: 2px solid $color-gray-lighter;
+  border-radius: 2%;
+  padding: 25px 20px;
+  max-width: 300px;
+
+  pre {
+    white-space: normal;
+    word-wrap: break-word;
+    width: 200px;
+  }
+
+  a > div {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 200px;
+  }
+}
+
+.usa-width-one-fourth.schedule-veteran-appeal-info-container {
+  margin-right: 30px;
+  width: 300px;
+  height: 400px;
+  position: sticky;
+  top: 15px;
+
+  h2 {
+    margin-bottom: 10px;
+  }
 }

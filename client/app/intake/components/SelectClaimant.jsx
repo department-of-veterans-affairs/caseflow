@@ -144,6 +144,8 @@ export const SelectClaimant = (props) => {
     });
   };
   const handleSelectNonVeteran = (value) => {
+    const claimantType = value === 'claimant_not_listed' ? 'other' : 'dependent';
+
     if (newClaimant && value === newClaimant.value) {
       setClaimant({
         claimant: value || null,
@@ -152,7 +154,8 @@ export const SelectClaimant = (props) => {
         claimantType: newClaimant.claimantType,
       });
     } else {
-      setClaimant({ claimant: value, claimantType: 'dependent' });
+      setClaimant({ claimant: value,
+        claimantType });
     }
   };
   const handleAddClaimant = ({
@@ -195,7 +198,7 @@ export const SelectClaimant = (props) => {
     return (
       <p
         id="claimantLabel"
-        style={{ marginTop: '8.95px', marginBottom: '0px' }}
+        style={{ marginTop: '8.95px', marginBottom: '-25px' }}
       >
         {nonVeteranClaimants ?
           SELECT_CLAIMANT_LABEL :
@@ -283,7 +286,7 @@ export const SelectClaimant = (props) => {
   }
 
   return (
-    <div className="cf-different-claimant" style={{ marginTop: '18.95px' }}>
+    <div className="cf-different-claimant" style={{ marginTop: '10px' }}>
       <RadioField
         name="different-claimant-option"
         label="Is the claimant someone other than the Veteran?"

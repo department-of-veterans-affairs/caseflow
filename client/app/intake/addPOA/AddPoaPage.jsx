@@ -14,7 +14,7 @@ import Address from 'app/queue/components/Address';
 import AddressForm from 'app/components/AddressForm';
 import TextField from 'app/components/TextField';
 import { useDispatch, useSelector } from 'react-redux';
-import { editPoaInformation } from 'app/intake/reducers/addClaimantSlice';
+import { editPoaInformation, clearPoa, clearClaimant } from 'app/intake/reducers/addClaimantSlice';
 import { AddClaimantConfirmationModal } from '../addClaimant/AddClaimantConfirmationModal';
 import { formatAddress } from '../addClaimant/utils';
 import { FORM_TYPES } from '../constants';
@@ -67,7 +67,7 @@ export const AddPoaPage = () => {
     register,
     watch,
     formState: { isValid },
-    handleSubmit,
+    handleSubmit
   } = methods;
 
   /* eslint-disable no-unused-vars */
@@ -92,10 +92,12 @@ export const AddPoaPage = () => {
 
   const toggleConfirm = () => setConfirmModal((val) => !val);
   const handleConfirm = () => {
-    // TODO - trigger action to submit data to backend
-    // dispatch(submitReview(intakeId, intakeData, selectedForm.formName));
+    intakeData.unlistedClaimant = claimant;
+    intakeData.poa = poa;
 
-    // Redirect to next step (likely needs conditional on review type)
+    dispatch(submitReview(intakeId, intakeData, selectedForm.formName));
+    dispatch(clearPoa());
+    dispatch(clearClaimant());
     push('/add_issues');
   };
 
@@ -108,12 +110,13 @@ export const AddPoaPage = () => {
   const handleBack = () => goBack();
 
   const watchPartyType = watch('partyType');
-  const showAdditionalFields = watchPartyType;
   const showIndividualNameFields = watchPartyType === 'individual';
 
-  const listedAttorney = watch('listedAttorney');
-  const attorneyNotListed = listedAttorney?.value === 'not_listed';
+  const watchListedAttorney = watch('listedAttorney');
+  const attorneyNotListed = watchListedAttorney?.value === 'not_listed';
   const showPartyType = attorneyNotListed;
+  const showAdditionalFields = watchPartyType && showPartyType;
+
   const asyncFn = useCallback(
     debounce((search, callback) => {
       getAttorneyClaimantOpts(search, fetchAttorneys).then((res) =>
@@ -144,27 +147,29 @@ export const AddPoaPage = () => {
             name="listedAttorney"
             defaultValue={null}
             render={({ ...rest }) => (
-              <SearchableDropdown
-                {...rest}
-                label="Representative's name"
-                filterOption={filterOption}
-                async={asyncFn}
-                defaultOptions
-                debounce={250}
-                strongLabel
-                isClearable
-                placeholder="Type to search..."
-              />
+              <FieldDiv>
+                <SearchableDropdown
+                  {...rest}
+                  label="Representative's name"
+                  filterOption={filterOption}
+                  async={asyncFn}
+                  defaultOptions
+                  debounce={250}
+                  strongLabel
+                  isClearable
+                  placeholder="Type to search..."
+                />
+              </FieldDiv>
             )}
           />
 
-          {listedAttorney?.address && (
+          {watchListedAttorney?.address && (
             <div>
               <ClaimantAddress>
                 <strong>Representative's address</strong>
               </ClaimantAddress>
               <br />
-              <Address address={listedAttorney?.address} />
+              <Address address={watchListedAttorney?.address} />
             </div>
           )}
 
@@ -220,9 +225,9 @@ export const AddPoaPage = () => {
             </>
           )}
 
-          {watchPartyType === 'organization' && (
+          {showPartyType && watchPartyType === 'organization' && (
             <TextField
-              name="organization"
+              name="name"
               label="Organization name"
               inputRef={register}
               strongLabel
@@ -233,7 +238,7 @@ export const AddPoaPage = () => {
               <AddressForm {...methods} />
               <FieldDiv>
                 <TextField
-                  name="email"
+                  name="emailAddress"
                   label="Representative email"
                   inputRef={register}
                   optional

@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
@@ -21,12 +23,20 @@ export const shapeAddressBlock = (entity) => {
     entity?.listedAttorney?.value &&
     entity?.listedAttorney?.value !== 'not_listed'
   ) {
-    const [firstName, lastName] = entity.listedAttorney?.label.split(' ');
+    const [title, firstName, middleName, lastName] = entity.listedAttorney?.label.split(' ');
+    const addressLine1 = entity.listedAttorney?.address.address_line_1;
+    const addressLine2 = entity.listedAttorney?.address.address_line_2;
+    const addressLine3 = entity.listedAttorney?.address.address_line_3;
 
     return {
       ...entity,
+      title,
       firstName,
+      middleName,
       lastName,
+      addressLine1,
+      addressLine2,
+      addressLine3,
       ...entity.listedAttorney.address,
     };
   }
@@ -59,15 +69,11 @@ export const AddClaimantConfirmationModal = ({
   ];
 
   const showPoa = poa && !isEmpty(poa);
-
   const claimantEntity = useMemo(() => shapeAddressBlock(claimant), [claimant]);
   const poaEntity = useMemo(() => shapeAddressBlock(poa), [poa]);
 
   const missingLastName = useMemo(
-    () =>
-      (['child', 'spouse'].includes(claimantEntity?.relationship) ||
-        claimantEntity?.partyType === 'individual') &&
-      !claimantEntity?.lastName,
+    () => claimantEntity?.firstName && !claimantEntity?.lastName,
     [claimantEntity]
   );
 

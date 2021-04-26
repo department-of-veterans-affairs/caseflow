@@ -154,7 +154,7 @@ describe AppealIntake, :all_dbs do
           decision_review: intake.detail,
           type: "OtherClaimant",
           name: "John Smith",
-          relationship: "child"
+          relationship: "Child"
         )
       end
     end

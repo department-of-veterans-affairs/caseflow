@@ -225,8 +225,8 @@ class CachedAppealService
   def hearing_request_types_for_all_vacols_ids
     @hearing_request_types_for_all_vacols_ids ||= LegacyAppeal
       .where
-      .not(changed_request_type: nil)
-      .pluck(:vacols_id, :changed_request_type, :original_request_type)
+      .not(changed_hearing_request_type: nil)
+      .pluck(:vacols_id, :changed_hearing_request_type, :original_hearing_request_type)
       .map { |group| [group[0], { changed: group[1], original: group[2] }] }
       .to_h
   end

@@ -31,6 +31,7 @@ class PowerOfAttorney
            :representative_address,
            :representative_email_address,
            :participant_id,
+           :poa_last_synced_at,
            to: :bgs_power_of_attorney, prefix: :bgs
 
   class << self
@@ -77,16 +78,12 @@ class PowerOfAttorney
   def fetch_bgs_power_of_attorney_by_file_number
     return if file_number.blank?
 
-    BgsPowerOfAttorney.find_or_create_by_file_number(file_number)
-  rescue ActiveRecord::RecordInvalid # not found at BGS
-    nil
+    BgsPowerOfAttorney.find_or_fetch_by(veteran_file_number: file_number)
   end
 
   def fetch_bgs_power_of_attorney_by_claimant_participant_id
     return if claimant_participant_id.blank?
 
-    BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(claimant_participant_id)
-  rescue ActiveRecord::RecordInvalid # not found at BGS
-    nil
+    BgsPowerOfAttorney.find_or_fetch_by(participant_id: claimant_participant_id)
   end
 end

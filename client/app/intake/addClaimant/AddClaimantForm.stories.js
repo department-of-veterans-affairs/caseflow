@@ -15,8 +15,8 @@ const data = Array.from({ length: totalRecords }, () => ({
     max: 600000000 + totalRecords,
   }),
   address: {
-    address1: faker.address.streetAddress(),
-    address2: faker.address.secondaryAddress(),
+    addressLine1: faker.address.streetAddress(),
+    addressLine2: faker.address.secondaryAddress(),
     city: faker.address.city(),
     state: faker.address.stateAbbr(),
     zip: faker.address.zipCode(),
