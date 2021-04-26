@@ -78,6 +78,17 @@ RSpec.shared_examples("fill substitution form") do
       expect(page).to have_content("Veteran date of death")
       expect(page).to have_content("Substitution granted by the RO")
 
+      # Add admin action
+      page.find("button", text: "+ Add task").click
+      # Ensure all admin actions are available and select "AOJ"
+      click_dropdown(text: "AOJ") do
+        visible_options = page.find_all(".cf-select__option")
+        expect(visible_options.length).to eq Constants::CO_LOCATED_ADMIN_ACTIONS.length
+      end
+
+      fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: admin_action_instructions
+      # End filling admin action
+
       page.find("button", text: "Continue").click
     end
 

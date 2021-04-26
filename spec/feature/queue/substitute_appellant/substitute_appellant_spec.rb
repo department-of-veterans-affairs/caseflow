@@ -8,6 +8,7 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
     let(:appeal) { create(:appeal, :dispatched, veteran: veteran) }
     let(:substitution_date) { Time.zone.today - 5.days }
     let(:user) { create(:user) }
+    let(:admin_action_instructions) { "Lorem ipsum dolor sit amet" }
 
     context "as COTB user" do
       include_context "with Clerk of the Board user"
