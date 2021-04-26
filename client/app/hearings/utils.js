@@ -620,8 +620,10 @@ export const setTimeSlots = ({
 };
 
 export const formatTimeSlotLabel = (time, zone) => {
-  const roTime = zoneName(time, zone, 'z');
-  const coTime = zoneName(time, COMMON_TIMEZONES[3], 'z');
+  const timeFormatString = 'h:mm A z';
+  const roTime = moment.tz(time, 'HH:mm', 'America/New_York').format(timeFormatString);
+  const coTime = moment.tz(time, 'HH:mm', 'America/New_York').tz(zone).
+    format(timeFormatString);
 
   if (roTime === coTime) {
     return coTime;
