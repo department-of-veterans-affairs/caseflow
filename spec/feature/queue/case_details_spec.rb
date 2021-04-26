@@ -211,7 +211,6 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to_not have_content("Regional Office")
       end
 
-      # reek:DuplicatedCode
       context "when there is no POA" do
         before do
           allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return(nil)
@@ -307,7 +306,6 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to_not have_content("Regional Office")
       end
 
-      # reek:DuplicatedCode
       context "when there is no POA" do
         before do
           allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return(nil)
