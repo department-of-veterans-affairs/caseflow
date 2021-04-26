@@ -91,7 +91,7 @@ export const TimeSlot = ({
                     key={slot.key}
                     roTimezone={roTimezone}
                     selected={selected === slot.hearingTime}
-                    onClick={() => handleClick(slot.hearingTime)}
+                    onClick={() => handleChange(slot.hearingTime)}
                   />
                 ))}
               </div>

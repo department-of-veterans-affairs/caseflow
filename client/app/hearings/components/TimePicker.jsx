@@ -1,7 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import moment from 'moment-timezone';
-
 import HEARING_TIME_OPTIONS from '../../../constants/HEARING_TIME_OPTIONS';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import { formatTimeSlotLabel } from '../utils';
