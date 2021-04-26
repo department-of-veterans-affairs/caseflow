@@ -9,7 +9,7 @@ import { parseISO } from 'date-fns';
 import { appealWithDetailSelector } from 'app/queue/selectors';
 import { SubstituteAppellantTasksForm } from './SubstituteAppellantTasksForm';
 
-import { stepForward, cancel, stepBack } from '../substituteAppellant.slice';
+import { stepForward, cancel, stepBack, updateData } from '../substituteAppellant.slice';
 
 
 export const SubstituteAppellantTasksView = () => {
