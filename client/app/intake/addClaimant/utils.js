@@ -9,7 +9,7 @@ import ApiUtil from 'app/util/ApiUtil';
 
 const additionalFieldsRequired = (partyType, relationship) => {
   return ['individual', 'organization'].includes(partyType) || ['spouse', 'child'].includes(relationship);
-}
+};
 
 export const schema = yup.object().shape({
   relationship: yup.string().required(),
@@ -92,6 +92,7 @@ export const useAddClaimantForm = ({ defaultValues = defaultFormValues } = {}) =
   const methods = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange',
+    reValidateMode: 'onChange',
     defaultValues
   });
 
