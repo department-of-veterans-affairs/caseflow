@@ -605,23 +605,34 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
   describe "GET appeals/:id/power_of_attorney" do
     let(:dispatched_appeal) { create(:appeal, :dispatched) }
-    let(:user) { create(:user) }
+    let(:original_poa_last_synced_at) { dispatched_appeal.poa_last_synced_at }
+    let(:claimant_participant_id) { dispatched_appeal.claimant_participant_id }
     let(:request_params) { { appeal_id: dispatched_appeal.uuid } }
     before do
-      User.authenticate!(user: user)
+      allow(controller).to receive(:verify_authentication).and_return(true)
     end
 
     subject { get(:power_of_attorney, params: request_params) }
 
-    it "calls the BgsPowerOfAttorney" do
-      bgs_poa = class_double(BgsPowerOfAttorney)
+    it "updates poa information from BGS" do
+      bgs_poa = instance_double(BgsPowerOfAttorney)
+      expect(BgsPowerOfAttorney).to receive(:find_or_create_by_claimant_participant_id)
+        .with(claimant_participant_id)
+        .and_return(bgs_poa)
+      expect(bgs_poa).to receive(:update_cached_attributes!)
+      allow(bgs_poa).to receive(:representative_address)
+
+      allow(bgs_poa).to receive(:representative_type)
+      allow(bgs_poa).to receive(:representative_name)
+      allow(bgs_poa).to receive(:representative_address)
+      allow(bgs_poa).to receive(:representative_email_address)
+      allow(bgs_poa).to receive(:poa_last_synced_at)
       subject
-      expect(bgs_poa).to receive(:find_or_create_by_claimant_participant_id)
     end
 
-    it "updates cached attributes" do
-      subject
-      expect_any_instance_of(BgsPowerOfAttorney).to receive(:update_cached_attributes!)
+    it "returns an updated poa_last_synced_at value" do
+      expect(subject.status).to eq 200
+      expect(JSON.parse(subject.body)["poa_last_synced_at"]).to be > original_poa_last_synced_at
     end
   end
 end

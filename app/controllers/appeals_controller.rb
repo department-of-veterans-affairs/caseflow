@@ -63,6 +63,7 @@ class AppealsController < ApplicationController
     poa
   end
 
+  # :reek:UtilityFunction
   def find_representative_tz(representative_address)
     rep_address = representative_address.is_a?(Hash) ? Address.new(representative_address) : representative_address
 
@@ -74,6 +75,7 @@ class AppealsController < ApplicationController
     end
   end
 
+  # :reek:FeatureEnvy
   def power_of_attorney
     updated_bgs_poa = force_poa_refresh
     updated_tz = find_representative_tz(updated_bgs_poa.representative_address)
