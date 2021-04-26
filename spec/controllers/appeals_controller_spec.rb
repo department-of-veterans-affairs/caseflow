@@ -602,4 +602,26 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       end
     end
   end
+
+  describe "GET appeals/:id/power_of_attorney" do
+    let(:dispatched_appeal) { create(:appeal, :dispatched) }
+    let(:user) { create(:user) }
+    let(:request_params) { { appeal_id: dispatched_appeal.uuid } }
+    before do
+      User.authenticate!(user: user)
+    end
+
+    subject { get(:power_of_attorney, params: request_params) }
+
+    it "calls the BgsPowerOfAttorney" do
+      bgs_poa = class_double(BgsPowerOfAttorney)
+      subject
+      expect(bgs_poa).to receive(:find_or_create_by_claimant_participant_id)
+    end
+
+    it "updates cached attributes" do
+      subject
+      expect_any_instance_of(BgsPowerOfAttorney).to receive(:update_cached_attributes!)
+    end
+  end
 end
