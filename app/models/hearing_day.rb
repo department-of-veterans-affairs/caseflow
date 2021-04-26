@@ -56,6 +56,8 @@ class HearingDay < CaseflowRecord
     "America/Anchorage" => 12
   }.freeze
 
+  DEFAULT_SLOT_LENGTH = 60
+
   before_create :assign_created_by_user
   after_update :update_children_records
 
@@ -162,27 +164,10 @@ class HearingDay < CaseflowRecord
     # 04-19-2021 slot_length_minutes database column added
     return slot_length_minutes unless slot_length_minutes.nil?
 
-    default_slot_length = 60
-    default_slot_length
+    DEFAULT_SLOT_LENGTH
   end
 
-  # Creates a datetime with timezone from these parts
-  # - Time, a string like "08:30"
-  # - Timezone, a string like "America/Los_Angeles"
-  # - Date, a ruby Date
-  # :reek:UtilityFunction
-  def combine_time_and_date(time, timezone, date)
-    # Parse the time string into a ruby Time instance with zone
-    time_with_zone = time.in_time_zone(timezone)
-    # Make a string like "2021-04-23 08:30:00"
-    time_and_date_string = "#{date.strftime('%F')} #{time_with_zone.strftime('%T')}"
-    # Parse the combined string into a ruby DateTime
-    combined_datetime = time_and_date_string.in_time_zone(timezone)
-    # Format the DateTime to iso8601 like "2021-04-23T08:30:00-06:00"
-    formatted_datetime_string = combined_datetime.iso8601
 
-    formatted_datetime_string
-  end
 
   # In order to display timeslots for the various regional_office we need to know
   # what time the first slot should be. This method that info as a string representing
@@ -271,6 +256,24 @@ class HearingDay < CaseflowRecord
     end
 
     private
+
+    # Creates a datetime with timezone from these parts
+    # - Time, a string like "08:30"
+    # - Timezone, a string like "America/Los_Angeles"
+    # - Date, a ruby Date
+    # :reek:UtilityFunction
+    def combine_time_and_date(time, timezone, date)
+      # Parse the time string into a ruby Time instance with zone
+      time_with_zone = time.in_time_zone(timezone)
+      # Make a string like "2021-04-23 08:30:00"
+      time_and_date_string = "#{date.strftime('%F')} #{time_with_zone.strftime('%T')}"
+      # Parse the combined string into a ruby DateTime
+      combined_datetime = time_and_date_string.in_time_zone(timezone)
+      # Format the DateTime to iso8601 like "2021-04-23T08:30:00-06:00"
+      formatted_datetime_string = combined_datetime.iso8601
+
+      formatted_datetime_string
+    end
 
     def current_user_css_id
       RequestStore.store[:current_user].css_id.upcase
