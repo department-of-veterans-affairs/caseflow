@@ -50,6 +50,24 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
           </tbody>
         </table>
       </section>
+      <h3
+        data-css-1m1s8ka=""
+      >
+        <br />
+        <strong>
+          Would you like to add any additional tasks?
+        </strong>
+        <br />
+      </h3>
+      <div />
+      <button
+        class="cf-submit usa-button-secondary"
+        data-css-byo489=""
+        id="button-+-Add-task"
+        type="button"
+      >
+        + Add task
+      </button>
     </section>
     <div
       class="controls cf-app-segment"
@@ -130,6 +148,24 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
           </tbody>
         </table>
       </section>
+      <h3
+        data-css-1m1s8ka=""
+      >
+        <br />
+        <strong>
+          Would you like to add any additional tasks?
+        </strong>
+        <br />
+      </h3>
+      <div />
+      <button
+        class="cf-submit usa-button-secondary"
+        data-css-byo489=""
+        id="button-+-Add-task"
+        type="button"
+      >
+        + Add task
+      </button>
     </section>
     <div
       class="controls cf-app-segment"

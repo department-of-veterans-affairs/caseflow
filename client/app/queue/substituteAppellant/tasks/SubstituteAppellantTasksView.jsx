@@ -48,6 +48,7 @@ export const SubstituteAppellantTasksView = () => {
     history.push(`/queue/appeals/${appealId}`);
   };
   const handleSubmit = async (formData) => {
+    console.log('handleSubmit', formData);
     // Here we'll dispatch updateData action to update Redux store with our form data
     dispatch(updateData(formData));
 
