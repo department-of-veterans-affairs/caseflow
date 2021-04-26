@@ -112,7 +112,7 @@ module SanitizationTransforms
 
   def obfuscate_sentence(field_name, field_value, obj_class: nil)
     case field_name
-    when "instructions", "description", "decision_text", "notes", /_text$/, /_notes$/, /_description$/
+    when "instructions", "description", "decision_text", "notes", "comment", /_text$/, /_notes$/, /_description$/
       # puts "obfuscate_sentence: #{field_name} = #{field_value}"
       field_value.split.map { |word| word[0..1] }.join(" ")
     when "military_service"

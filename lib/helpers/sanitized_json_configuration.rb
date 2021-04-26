@@ -34,6 +34,20 @@ class SanitizedJsonConfiguration
         sanitize_fields: %w[veteran_file_number],
         retrieval: ->(records) { records[Appeal].map(&:intake).compact.sort_by(&:id) }
       },
+      JudgeCaseReview => {
+        sanitize_fields: %w[comment],
+        retrieval: ->(records) do
+          jdrtask_ids = Task.where(type: JudgeTask.descendants.map(&:name), appeal: records[Appeal]).ids
+          JudgeCaseReview.where(task_id: jdrtask_ids).order(:id)
+        end
+      },
+      AttorneyCaseReview => {
+        sanitize_fields: %w[comment],
+        retrieval: ->(records) do
+          atty_task_ids = Task.where(type: AttorneyTask.descendants.map(&:name), appeal: records[Appeal]).ids
+          AttorneyCaseReview.where(task_id: atty_task_ids).order(:id)
+        end
+      },
       DecisionDocument => {
         retrieval: ->(records) { DecisionDocument.where(appeal: records[Appeal]).order(:id) }
       },
