@@ -127,7 +127,7 @@ describe CavcRemandProcessedLetterResponseWindowTask, :postgres do
     let(:send_task) { org_task }
     let!(:window_task) do
       send_task.update_from_params({ status: Constants.TASK_STATUSES.completed }, org_nonadmin)
-      send_task.appeal.tasks.where(type: CRPLRWindowTask.name).first
+      send_task.appeal.tasks.of_type(:CavcRemandProcessedLetterResponseWindowTask).first
     end
 
     context "window task created after org-assigned SendCRPLetterTask completed" do
@@ -144,7 +144,7 @@ describe CavcRemandProcessedLetterResponseWindowTask, :postgres do
     let!(:window_task) do
       send_task = create(:send_cavc_remand_processed_letter_task)
       send_task.update_from_params({ status: Constants.TASK_STATUSES.completed }, org_nonadmin)
-      send_task.appeal.tasks.where(type: CRPLRWindowTask.name).first
+      send_task.appeal.tasks.of_type(:CavcRemandProcessedLetterResponseWindowTask).first
     end
 
     subject do
