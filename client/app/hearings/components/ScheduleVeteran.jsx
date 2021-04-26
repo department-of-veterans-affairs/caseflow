@@ -14,7 +14,10 @@ import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import COPY from '../../../COPY';
 import HEARING_DISPOSITION_TYPES from '../../../constants/HEARING_DISPOSITION_TYPES';
 import { CENTRAL_OFFICE_HEARING_LABEL, VIDEO_HEARING_LABEL, VIRTUAL_HEARING_LABEL } from '../constants';
-import { appealWithDetailSelector, scheduleHearingTasksForAppeal } from '../../queue/selectors';
+import {
+  appealWithDetailSelector,
+  openScheduleHearingTasksForAppeal
+} from '../../queue/selectors';
 import { showSuccessMessage, showErrorMessage, requestPatch } from '../../queue/uiReducer/uiActions';
 import { onReceiveAppealDetails } from '../../queue/QueueActions';
 import { formatDateStr } from '../../util/DateUtil';
@@ -471,7 +474,7 @@ const mapStateToProps = (state, ownProps) => ({
   scheduledHearingsList: state.components.scheduledHearingsList,
   fetchingHearings: state.components.fetchingHearings,
   scheduledHearing: state.components.scheduledHearing,
-  scheduleHearingTask: scheduleHearingTasksForAppeal(state, {
+  scheduleHearingTask: openScheduleHearingTasksForAppeal(state, {
     appealId: ownProps.appealId,
   })[0],
   openHearing: find(
