@@ -1398,6 +1398,7 @@ ActiveRecord::Schema.define(version: 2021_04_26_181017) do
     t.datetime "updated_at", null: false
     t.index ["appeal_type", "appeal_id"], name: "index_tasks_on_appeal_type_and_appeal_id"
     t.index ["assigned_to_type", "assigned_to_id"], name: "index_tasks_on_assigned_to_type_and_assigned_to_id"
+    t.index ["cancellation_reason"], name: "index_tasks_on_cancellation_reason"
     t.index ["parent_id"], name: "index_tasks_on_parent_id"
     t.index ["status"], name: "index_tasks_on_status"
     t.index ["type"], name: "index_tasks_on_type"
