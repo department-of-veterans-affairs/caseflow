@@ -41,7 +41,7 @@ RSpec.feature "Judge queue", :all_dbs do
       context "with feature toggle" do
         include_context "with feature toggle"
         include_context "with attorney case review"
-        
+
         it "displays all three judge's tabs" do
           visit("/queue")
           expect(page).to have_content(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, 2)
