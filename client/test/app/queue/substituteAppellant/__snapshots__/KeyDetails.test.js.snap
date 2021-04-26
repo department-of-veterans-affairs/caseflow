@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`KeyDetails renders default state correctly 1`] = `
+<div>
+  <section>
+    <h2>
+      Key details
+    </h2>
+    <table
+      class="usa-table-borderless css-1t3jtyy"
+    >
+      <tbody>
+        <tr>
+          <td>
+            NOD received
+          </td>
+          <td>
+            3/27/2021
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Veteran date of death
+          </td>
+          <td>
+            4/11/2021
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Substitution granted by the RO
+          </td>
+          <td>
+            4/16/2021
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+`;
