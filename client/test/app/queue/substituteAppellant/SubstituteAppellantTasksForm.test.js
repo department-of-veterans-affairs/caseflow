@@ -1,6 +1,7 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import selectEvent from 'react-select-event';
 import { axe } from 'jest-axe';
 import { parseISO } from 'date-fns';
 
@@ -60,6 +61,100 @@ describe('SubstituteAppellantTasksForm', () => {
     //     expect(onSubmit).not.toHaveBeenCalled();
     //   });
     // });
+  });
+
+  describe('additional admin actions', () => {
+    const clickAddTask = () =>
+      userEvent.click(screen.getByRole('button', { name: /add task/i }));
+
+    it('shows the form when button is pressed', async () => {
+      setup();
+
+      clickAddTask();
+
+      expect(
+        screen.getByRole('textbox', { name: /select the type of task/i })
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByRole('textbox', { name: /instructions/i })
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByRole('button', { name: /remove/i })
+      ).toBeInTheDocument();
+
+      // Still only one "Add Task" button
+      expect(
+        screen.queryAllByRole('button', { name: /add task/i }).length
+      ).toBe(1);
+    });
+
+    it('supports adding multiple tasks', async () => {
+      setup();
+
+      clickAddTask();
+
+      expect(
+        screen.queryAllByRole('textbox', { name: /select the type of task/i }).
+          length
+      ).toBe(1);
+
+      expect(
+        screen.queryAllByRole('textbox', { name: /instructions/i }).length
+      ).toBe(1);
+
+      // Add a second task
+      clickAddTask();
+
+      expect(
+        screen.queryAllByRole('textbox', { name: /select the type of task/i }).
+          length
+      ).toBe(2);
+
+      expect(
+        screen.queryAllByRole('textbox', { name: /instructions/i }).length
+      ).toBe(2);
+
+      expect(screen.queryAllByRole('button', { name: /remove/i }).length).toBe(
+        2
+      );
+
+      // Still only one "Add Task" button
+      expect(
+        screen.queryAllByRole('button', { name: /add task/i }).length
+      ).toBe(1);
+    });
+
+    it('submits added tasks', async () => {
+      setup();
+
+      clickAddTask();
+
+      await selectEvent.select(
+        screen.getByLabelText(/select the type of task/i),
+        'IHP'
+      );
+
+      userEvent.type(
+        screen.getByRole('textbox', { name: /instructions/i }),
+        'foo bar'
+      );
+
+      await act(async () => {
+        await userEvent.click(
+          screen.getByRole('button', { name: /continue/i })
+        );
+      });
+
+      expect(onSubmit.mock.calls[0][0]?.newTasks?.length).toBe(1);
+      expect(onSubmit.mock.calls[0][0]?.newTasks?.[0]).toEqual(
+        expect.objectContaining({
+          type: 'IhpColocatedTask',
+          instructions: 'foo bar',
+        })
+      );
+    });
   });
 
   describe('with existing form data', () => {
