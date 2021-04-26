@@ -5,8 +5,9 @@ import { Controller } from 'react-hook-form';
 import { STATES } from '../constants/AppConstants';
 import TextField from 'app/components/TextField';
 import SearchableDropdown from 'app/components/SearchableDropdown';
+import { createFilter } from 'react-select';
 
-export const AddressForm = ({ control, register, watch, setValue }) => {
+export const AddressForm = ({ control, register, watch }) => {
   const watchPartyType = watch('partyType');
   const watchState = watch('state');
   const defaultState = useMemo(
@@ -18,7 +19,7 @@ export const AddressForm = ({ control, register, watch, setValue }) => {
     <React.Fragment>
       <FieldDiv>
         <TextField
-          name="address1"
+          name="addressLine1"
           label="Street address 1"
           inputRef={register}
           strongLabel
@@ -26,7 +27,7 @@ export const AddressForm = ({ control, register, watch, setValue }) => {
       </FieldDiv>
       <FieldDiv>
         <TextField
-          name="address2"
+          name="addressLine2"
           label="Street address 2"
           inputRef={register}
           optional
@@ -36,7 +37,7 @@ export const AddressForm = ({ control, register, watch, setValue }) => {
       {watchPartyType === 'organization' && (
         <StreetAddress>
           <TextField
-            name="address3"
+            name="addressLine3"
             label="Street address 3"
             inputRef={register}
             optional
@@ -54,12 +55,11 @@ export const AddressForm = ({ control, register, watch, setValue }) => {
               {...rest}
               label="State"
               options={STATES}
-              onChange={(valObj) => {
-                onChange(valObj);
-                setValue('state', valObj?.label);
-              }}
+              filterOption={createFilter({ matchFrom: 'start' })}
+              onChange={(valObj) => onChange(valObj?.value)}
               defaultValue={defaultState}
               strongLabel
+              isClearable
             />
           )}
         />
@@ -88,8 +88,8 @@ const CityState = styled.div`
   display: grid;
   grid-gap: 10px;
   grid-template-columns: 320px 130px;
-  margin-bottom: 0em;
-  margin-top: -1em;
+  margin-bottom: 1em;
+  margin-top: -0.75em;
   align-items: center;
   input {
     margin-bottom: 0;
@@ -100,12 +100,12 @@ const ZipCountry = styled.div`
   display: grid;
   grid-gap: 10px;
   grid-template-columns: 140px 310px;
-  margin-bottom: -0.65em;
+  margin-bottom: -0.75em;
 `;
 
 const StreetAddress = styled.div`
   margin-top: -0.5em;
-  margin-bottom: -0.65em;
+  margin-bottom: 1.75em;
 `;
 
 const FieldDiv = styled.div`

@@ -14,6 +14,8 @@
 # CAVC Remands Overview: https://github.com/department-of-veterans-affairs/caseflow/wiki/CAVC-Remands
 
 class MandateHoldTask < Task
+  include CavcTimedHoldConcern
+
   VALID_PARENT_TYPES = [
     CavcTask
   ].freeze
@@ -23,14 +25,8 @@ class MandateHoldTask < Task
   before_validation :set_assignee
 
   def self.create_with_hold(parent_task)
-    multi_transaction do
-      create!(parent: parent_task, appeal: parent_task.appeal).tap do |window_task|
-        TimedHoldTask.create_from_parent(
-          window_task,
-          days_on_hold: 90,
-          instructions: [COPY::MANDATE_HOLD_TASK_DEFAULT_INSTRUCTIONS]
-        )
-      end
+    ActiveRecord::Base.transaction do
+      create!(parent: parent_task, appeal: parent_task.appeal).tap(&:create_timed_hold_task)
     end
   end
 

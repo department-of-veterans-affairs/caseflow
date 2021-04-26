@@ -60,12 +60,26 @@ class AdvanceOnDocketMotion < CaseflowRecord
       end
     end
 
+    # Copies granted AODMotions for only persons that appear in both appeals
     def copy_granted_motions_to_appeal(src_appeal, dst_appeal)
-      person = src_appeal.claimant.person
-      fail "Claimants on appeals are expected to be the same" unless person == dst_appeal.claimant.person
+      src_person_ids = [src_appeal.veteran.person, src_appeal.claimants.map(&:person)].flatten.map(&:id)
+      dst_person_ids = [dst_appeal.veteran.person, dst_appeal.claimants.map(&:person)].flatten.map(&:id)
+      where(person_id: src_person_ids, appeal: src_appeal).granted.map do |aod_motion|
+        next unless dst_person_ids.include?(aod_motion.person_id)
 
-      where(person_id: person, appeal: src_appeal).granted.map do |aod_motion|
         aod_motion.dup.tap do |motion_copy|
+          motion_copy.appeal_id = dst_appeal.id
+          motion_copy.save!
+        end
+      end
+    end
+
+    # Transfers all granted AODMotions to target_person and dst_appeal, regardless of original person on AODMotion
+    def transfer_granted_motions_to_person(src_appeal, dst_appeal, target_person)
+      src_person_ids = [src_appeal.veteran.person, src_appeal.claimants.map(&:person)].flatten.map(&:id)
+      where(person_id: src_person_ids, appeal: src_appeal).granted.map do |aod_motion|
+        aod_motion.dup.tap do |motion_copy|
+          motion_copy.person_id = target_person.id
           motion_copy.appeal_id = dst_appeal.id
           motion_copy.save!
         end

@@ -71,6 +71,25 @@ describe OrganizationsUser, :postgres do
     end
   end
 
+  describe "when making organization inactive" do
+    subject { organization.inactive! }
+
+    before { organization.add_user(user) }
+
+    it "doesn't list the organization for the user" do
+      expect(organization.users.count).to eq(1)
+      expect(OrganizationsUser.count).to eq(1)
+      subject
+      # User is no longer part of the inactive organization
+      expect(user.organizations).to_not include organization
+
+      # However, associations queried from the organization are unchanged
+      expect(organization.users.count).to eq(1)
+      # because record in OrganizationsUser table still exists
+      expect(OrganizationsUser.count).to eq(1)
+    end
+  end
+
   describe ".make_user_admin" do
     context "when the organization is not a judge team" do
       before { OrganizationsUser.make_user_admin(user, organization) }

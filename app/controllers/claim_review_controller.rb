@@ -28,11 +28,17 @@ class ClaimReviewController < ApplicationController
 
   validates :edit_ep, using: ClaimReviewSchemas.edit_ep
   def edit_ep
-    epe = claim_review.end_product_establishments.find_by(code: params[:previous_code])
-    render json: { error_code: "EP not found" }, status: :not_found if epe.nil?
+    epe = claim_review.end_product_establishments.find_by(code: claim_label_edit_params[:previous_code])
+    return render json: { error_code: "EP not found" }, status: :not_found if epe.nil?
 
-    perform_ep_update!(epe)
-    render json: {}
+    edit_ep = perform_ep_update!(epe)
+    if edit_ep.error?
+      render json: { error_code: "Error updating ep" }, status: :unprocessable_entity
+    else
+      render json: { veteran: claim_review.veteran }
+    end
+  rescue StandardError
+    render json: { error_code: "Unknown error" }, status: :unprocessable_entity
   end
 
   private
@@ -141,12 +147,16 @@ class ClaimReviewController < ApplicationController
     "You have successfully withdrawn a review."
   end
 
+  def claim_label_edit_params
+    params.permit(:previous_code, :selected_code)
+  end
+
   def perform_ep_update!(epe)
     ep_update = EndProductUpdate.create!(
       end_product_establishment: epe,
       original_decision_review: claim_review,
-      original_code: params[:previous_code],
-      new_code: params[:selected_code],
+      original_code: claim_label_edit_params[:previous_code],
+      new_code: claim_label_edit_params[:selected_code],
       user: current_user
     )
     ep_update.perform!
