@@ -23,10 +23,10 @@ describe LegacyIssueOptin, :all_dbs do
       expect(described_class.related_remand_issues(lio.vacols_id).first).to eq(lio)
     end
 
-    context "the issue has been rolled back" do
-      let(:rollback_date) { Time.zone.now - 1.day }
+    context "the issue has not been opted in" do
+      let(:optin_date) { nil }
 
-      it "doesn't return rolled-back issues" do
+      it "doesn't return non-opted-in issues" do
         expect(described_class.related_remand_issues(lio.vacols_id).count).to eq(0)
       end
     end
