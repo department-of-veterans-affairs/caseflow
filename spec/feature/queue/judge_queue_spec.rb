@@ -70,6 +70,8 @@ RSpec.feature "Judge queue", :all_dbs do
     end
 
     context "with on-hold tasks" do
+      include_context "with feature toggle"
+
       let!(:judge_active_tasks) { create_list(:ama_task, 2, :assigned, assigned_to: judge) }
       let!(:judge_onhold_tasks) { create_list(:ama_task, 4, :assigned, assigned_to: judge) }
 
@@ -99,6 +101,8 @@ RSpec.feature "Judge queue", :all_dbs do
     end
 
     context "with 3 completed tasks" do
+      include_context "with feature toggle"
+
       let!(:judge_closed_tasks) { create_list(:ama_task, 3, :assigned, assigned_to: judge) }
 
       before do
