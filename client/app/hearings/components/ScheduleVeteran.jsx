@@ -18,6 +18,7 @@ import {
   appealWithDetailSelector,
   openScheduleHearingTasksForAppeal
 } from '../../queue/selectors';
+import { prepareAppealForStore } from '../../queue/utils';
 import { showSuccessMessage, showErrorMessage, requestPatch } from '../../queue/uiReducer/uiActions';
 import { onReceiveAppealDetails } from '../../queue/QueueActions';
 import { formatDateStr } from '../../util/DateUtil';
@@ -325,6 +326,11 @@ export const ScheduleVeteran = ({
         });
       }
     } finally {
+      // Reload the appeal so updated hearing details display
+      const response = await ApiUtil.get(`/appeals/${props.appealId}`);
+
+      props.onReceiveAppealDetails(prepareAppealForStore([response?.body?.appeal]));
+
       // Clear the loading state
       setLoading(false);
     }
