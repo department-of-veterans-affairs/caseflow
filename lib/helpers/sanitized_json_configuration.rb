@@ -34,6 +34,9 @@ class SanitizedJsonConfiguration
         sanitize_fields: %w[veteran_file_number],
         retrieval: ->(records) { records[Appeal].map(&:intake).compact.sort_by(&:id) }
       },
+      DecisionDocument => {
+        retrieval: ->(records) { DecisionDocument.where(appeal: records[Appeal]).order(:id) }
+      },
       Claimant => {
         retrieval: ->(records) { records[Appeal].map(&:claimants).flatten.sort_by(&:id) }
       },
