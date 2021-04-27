@@ -19,36 +19,47 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
         <h2>
           Key details
         </h2>
-        <table
-          class="usa-table-borderless css-1t3jtyy"
+        <ul
+          class="css-a7zcn1"
         >
-          <tbody>
-            <tr>
-              <td>
-                NOD received
-              </td>
-              <td>
-                4/1/2021
-              </td>
-            </tr>
-            <tr>
-              <td>
-                Veteran date of death
-              </td>
-              <td>
-                4/15/2021
-              </td>
-            </tr>
-            <tr>
-              <td>
-                Substitution granted by the RO
-              </td>
-              <td>
-                4/20/2021
-              </td>
-            </tr>
-          </tbody>
-        </table>
+          <li>
+            <strong>
+              Notice of disagreement received
+            </strong>
+            <span>
+              4/1/2021
+            </span>
+          </li>
+          <li>
+            <strong>
+              Veteran date of death
+            </strong>
+            <span>
+              4/15/2021
+            </span>
+          </li>
+          <li>
+            <strong>
+              Substitution granted by the RO
+            </strong>
+            <span>
+              4/20/2021
+            </span>
+          </li>
+        </ul>
+        <div
+          class="css-2zljw9"
+        >
+          <a
+            href="/queue/appeals/abc123"
+            target="_blank"
+          >
+            View original case details 
+            <i
+              class="fa fa-external-link"
+            />
+          </a>
+        </div>
       </section>
       <h3
         data-css-1m1s8ka=""
@@ -117,36 +128,47 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
         <h2>
           Key details
         </h2>
-        <table
-          class="usa-table-borderless css-1t3jtyy"
+        <ul
+          class="css-a7zcn1"
         >
-          <tbody>
-            <tr>
-              <td>
-                NOD received
-              </td>
-              <td>
-                4/1/2021
-              </td>
-            </tr>
-            <tr>
-              <td>
-                Veteran date of death
-              </td>
-              <td>
-                4/15/2021
-              </td>
-            </tr>
-            <tr>
-              <td>
-                Substitution granted by the RO
-              </td>
-              <td>
-                4/20/2021
-              </td>
-            </tr>
-          </tbody>
-        </table>
+          <li>
+            <strong>
+              Notice of disagreement received
+            </strong>
+            <span>
+              4/1/2021
+            </span>
+          </li>
+          <li>
+            <strong>
+              Veteran date of death
+            </strong>
+            <span>
+              4/15/2021
+            </span>
+          </li>
+          <li>
+            <strong>
+              Substitution granted by the RO
+            </strong>
+            <span>
+              4/20/2021
+            </span>
+          </li>
+        </ul>
+        <div
+          class="css-2zljw9"
+        >
+          <a
+            href="/queue/appeals/abc123"
+            target="_blank"
+          >
+            View original case details 
+            <i
+              class="fa fa-external-link"
+            />
+          </a>
+        </div>
       </section>
       <h3
         data-css-1m1s8ka=""

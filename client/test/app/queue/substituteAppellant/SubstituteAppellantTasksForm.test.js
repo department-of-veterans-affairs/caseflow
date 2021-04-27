@@ -6,12 +6,14 @@ import { axe } from 'jest-axe';
 import { parseISO } from 'date-fns';
 
 import { SubstituteAppellantTasksForm } from 'app/queue/substituteAppellant/tasks/SubstituteAppellantTasksForm';
+import { MemoryRouter } from 'react-router';
 
 describe('SubstituteAppellantTasksForm', () => {
   const onSubmit = jest.fn();
   const onCancel = jest.fn();
 
   const defaults = {
+    appealId: 'abc123',
     nodDate: parseISO('2021-04-01'),
     dateOfDeath: parseISO('2021-04-15'),
     substitutionDate: parseISO('2021-04-20'),
@@ -20,7 +22,11 @@ describe('SubstituteAppellantTasksForm', () => {
   };
 
   const setup = (props) =>
-    render(<SubstituteAppellantTasksForm {...defaults} {...props} />);
+    render(
+      <MemoryRouter>
+        <SubstituteAppellantTasksForm {...defaults} {...props} />
+      </MemoryRouter>
+    );
 
   beforeEach(() => {
     jest.clearAllMocks();
