@@ -4,20 +4,15 @@ import { format, isDate, parseISO } from 'date-fns';
 import { css } from 'glamor';
 
 const styles = {
-  mainTable: css({
-    '& > tbody > tr > td': {
-      verticalAlign: 'top',
-      ':first-child': {
-        fontWeight: 'bold',
-      },
-    },
-    '& table': {
-      margin: 0,
-      '& tr:first-of-type td': {
-        borderTop: 'none',
-      },
-      '& tr:last-of-type td': {
-        borderBottom: 'none',
+  detailList: css({
+    listStyle: 'none',
+    margin: 0,
+    padding: 0,
+    '& > li': {
+      '& > strong': {
+        ':after': {
+          content: ': ',
+        },
       },
     },
   }),
@@ -40,22 +35,20 @@ export const KeyDetails = (props) => {
   return (
     <section>
       <h2>Key details</h2>
-      <table className={`usa-table-borderless ${styles.mainTable}`}>
-        <tbody>
-          <tr>
-            <td>NOD received</td>
-            <td>{nodDate}</td>
-          </tr>
-          <tr>
-            <td>Veteran date of death</td>
-            <td>{dateOfDeath}</td>
-          </tr>
-          <tr>
-            <td>Substitution granted by the RO</td>
-            <td>{substitutionDate}</td>
-          </tr>
-        </tbody>
-      </table>
+      <ul className={styles.detailList}>
+        <li>
+          <strong>Notice of disagreement received</strong>
+          <span>{nodDate}</span>
+        </li>
+        <li>
+          <strong>Veteran date of death</strong>
+          <span>{dateOfDeath}</span>
+        </li>
+        <li>
+          <strong>Substitution granted by the RO</strong>
+          <span>{substitutionDate}</span>
+        </li>
+      </ul>
     </section>
   );
 };

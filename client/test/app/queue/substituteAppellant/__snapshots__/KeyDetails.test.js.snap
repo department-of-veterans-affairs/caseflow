@@ -6,36 +6,34 @@ exports[`KeyDetails renders default state correctly 1`] = `
     <h2>
       Key details
     </h2>
-    <table
-      class="usa-table-borderless css-1t3jtyy"
+    <ul
+      class="css-a7zcn1"
     >
-      <tbody>
-        <tr>
-          <td>
-            NOD received
-          </td>
-          <td>
-            3/27/2021
-          </td>
-        </tr>
-        <tr>
-          <td>
-            Veteran date of death
-          </td>
-          <td>
-            4/11/2021
-          </td>
-        </tr>
-        <tr>
-          <td>
-            Substitution granted by the RO
-          </td>
-          <td>
-            4/16/2021
-          </td>
-        </tr>
-      </tbody>
-    </table>
+      <li>
+        <strong>
+          Notice of disagreement received
+        </strong>
+        <span>
+          3/28/2021
+        </span>
+      </li>
+      <li>
+        <strong>
+          Veteran date of death
+        </strong>
+        <span>
+          4/12/2021
+        </span>
+      </li>
+      <li>
+        <strong>
+          Substitution granted by the RO
+        </strong>
+        <span>
+          4/17/2021
+        </span>
+      </li>
+    </ul>
   </section>
 </div>
 `;
