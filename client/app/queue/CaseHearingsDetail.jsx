@@ -117,18 +117,19 @@ class CaseHearingsDetail extends React.PureComponent {
       appeal: { hearings },
       userIsVsoEmployee
     } = this.props;
-    const orderedHearings = _.orderBy(hearings, 'date', 'desc');
+    const orderedHearings = _.orderBy(hearings, 'createdAt', 'desc');
     const uniqueOrderedHearings = _.uniqWith(orderedHearings, _.isEqual);
 
     if (orderedHearings.length > 1) {
       _.extend(hearingElementsStyle, marginLeft);
     }
 
+    const hearingsLength = uniqueOrderedHearings.length;
     const hearingElements = _.map(uniqueOrderedHearings, (hearing) => <div
       key={hearing.externalId} {...hearingElementsStyle}
     >
-      <span {...boldText}>Hearing{uniqueOrderedHearings.length > 1 ?
-        ` ${uniqueOrderedHearings.indexOf(hearing) + 1}` : ''}:</span>
+      <span {...boldText}>Hearing{hearingsLength > 1 ?
+        ` ${hearingsLength - (uniqueOrderedHearings.indexOf(hearing))}` : ''}:</span>
       <BareList compact
         listStyle={css(marginLeft, noTopBottomMargin)}
         ListElementComponent="ul"
