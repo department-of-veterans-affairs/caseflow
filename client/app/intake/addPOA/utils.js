@@ -33,11 +33,12 @@ export const schema = yup.object().shape({
     is: (value) => ['individual', 'organization'].includes(value),
     then: yup.string().required(),
   }),
-  zip: yup.number().when('partyType', {
+  zip: yup.string().when('partyType', {
     is: (value) => ['individual', 'organization'].includes(value),
     then: yup.
-      number().
+      string().
       min(5).
+      max(25).
       required(),
   }),
   country: yup.string().when('partyType', {
@@ -51,7 +52,7 @@ export const schema = yup.object().shape({
 export const useAddPoaForm = ({ defaultValues = {} } = {}) => {
   const methods = useForm({
     resolver: yupResolver(schema),
-    mode: 'onChange',
+    mode: 'onBlur',
     defaultValues,
   });
 
