@@ -9,6 +9,7 @@ import { AddClaimantForm } from 'app/intake/addClaimant/AddClaimantForm';
 
 import { useAddClaimantForm } from 'app/intake/addClaimant/utils';
 import { fillForm, relationshipOpts } from './testUtils';
+import { ERROR_EMAIL_INVALID_FORMAT } from 'app/../COPY';
 
 const FormWrapper = ({ children, defaultValues }) => {
   const methods = useAddClaimantForm({ defaultValues });
@@ -46,7 +47,7 @@ describe('AddClaimantForm', () => {
   });
 
   describe('form validation', () => {
-    it('disables submit until all fields valid', async () => {
+    it('disables submit until all  fields valid', async () => {
       setup();
 
       expect(onSubmit).not.toHaveBeenCalled();
@@ -77,6 +78,29 @@ describe('AddClaimantForm', () => {
       await waitFor(() => {
         expect(onSubmit).toHaveBeenCalled();
       });
+    }, 15000);
+
+    it('renders inline email validation error', async () => {
+      setup();
+
+      // Select option
+      await selectEvent.select(
+        screen.getByLabelText('Relationship to the Veteran'),
+        [relationshipOpts[2].label]
+      );
+
+      // Enter invalid emailAddress
+      const emailInput = screen.getByRole('textbox', { name: /Claimant email Optional/i });
+
+      expect(emailInput.value).toBe('');
+
+      await waitFor(() => {
+        fireEvent.change(emailInput, { target: { value: 'email@address' } });
+        expect(emailInput.value).toBe('email@address');
+        screen.getByRole('radio', { name: /no/i }).focus();
+      });
+
+      expect(await screen.findByText(ERROR_EMAIL_INVALID_FORMAT)).toBeVisible();
     }, 15000);
   });
 
