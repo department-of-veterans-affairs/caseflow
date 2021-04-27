@@ -15,7 +15,6 @@ import { AddClaimantForm } from './AddClaimantForm';
 import { IntakeLayout } from '../components/IntakeLayout';
 import { AddClaimantButtons } from './AddClaimantButtons';
 import { useAddClaimantForm, fetchAttorneys } from './utils';
-// eslint-disable-next-line no-unused-vars
 import { submitReview } from '../actions/decisionReview';
 import { FORM_TYPES, PAGE_PATHS, INTAKE_STATES } from '../constants';
 import { getIntakeStatus } from '../selectors';
@@ -27,9 +26,6 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
   const [confirmModal, setConfirmModal] = useState(false);
   const { claimant } = useSelector((state) => state.addClaimant);
 
-  /* eslint-disable no-unused-vars */
-  // This code will likely be needed in submission (see handleConfirm)
-  // Remove eslint-disable once used
   const { formType, id: intakeId } = useSelector((state) => state.intake);
 
   const intakeForms = useSelector(

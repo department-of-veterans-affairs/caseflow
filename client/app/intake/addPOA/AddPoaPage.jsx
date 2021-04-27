@@ -20,7 +20,6 @@ import { AddClaimantConfirmationModal } from '../addClaimant/AddClaimantConfirma
 import { formatAddress } from '../addClaimant/utils';
 import { FORM_TYPES, PAGE_PATHS, INTAKE_STATES } from '../constants';
 import { getIntakeStatus } from '../selectors';
-// eslint-disable-next-line no-unused-vars
 import { submitReview } from '../actions/decisionReview';
 
 const partyTypeOpts = [
