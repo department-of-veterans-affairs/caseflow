@@ -20,7 +20,7 @@ class ExportController < ApplicationController
                 :show_pii_query_param, :treee_fields,
                 :available_fields,
                 :task_tree_as_text, :intake_as_text,
-                :timeline_data, :network_graph_data
+                :sje, :timeline_data, :network_graph_data
 
   def export_as_text
     [
@@ -29,6 +29,7 @@ class ExportController < ApplicationController
     ].join("\n\n")
   end
 
+  # :nocov:
   def available_fields
     (Task.column_names + TaskTreeRenderModule::PRESET_VALUE_FUNCS.keys).map(&:to_s)
   end
@@ -88,21 +89,20 @@ class ExportController < ApplicationController
   def timeline_data
     data = sje.records_hash[Task.table_name].map do |record|
       record = record.clone
-      end_time = (record['closed_at']-record['assigned_at'] > 120) ? record['closed_at'] : nil if record['closed_at']
-      {id: "#{Task.name}#{record['id']}", 
-       content: "#{record['type']}_#{record['id']}", 
-       start: record['assigned_at'],
-       end: end_time
-      }
+      end_time = (record["closed_at"] - record["assigned_at"] > 120) ? record["closed_at"] : nil if record["closed_at"]
+      { id: "#{Task.name}#{record['id']}",
+        content: "#{record['type']}_#{record['id']}",
+        start: record["assigned_at"],
+        end: end_time }
     end
     data += sje.records_hash[Intake.table_name].map do |record|
       record = record.clone
-      end_time = (record['completed_at']-record['created_at'] > 120) ? record['completed_at'] : nil if record['completed_at']
-      {id: "#{record['type']}#{record['id']}", 
-       content: "#{record['type']}_#{record['id']}", 
-       start: record['created_at'],
-       end: end_time
-      }
+      significant_duration = record["completed_at"] - record["created_at"] > 120
+      end_time = significant_duration ? record["completed_at"] : nil if record["completed_at"]
+      { id: "#{record['type']}#{record['id']}",
+        content: "#{record['type']}_#{record['id']}",
+        start: record["created_at"],
+        end: end_time }
     end
   end
 
@@ -139,8 +139,10 @@ class ExportController < ApplicationController
     prep_nodes(Claimant, nodes,
                label_for: ->(_klass, record) { "#{record['type']}_#{record['participant_id']}" })
     sje.records_hash[Claimant.table_name].each do |claimant|
-      edges << { to: "#{Claimant.name}#{claimant['id']}", from: "#{claimant['decision_review_type']}#{claimant['decision_review_id']}" }
-      edges << { from: "#{Claimant.name}#{claimant['id']}", to: "#{Person.name}#{claimant['participant_id']}" }
+      edges << { to: "#{Claimant.name}#{claimant['id']}",
+                 from: "#{claimant['decision_review_type']}#{claimant['decision_review_id']}" }
+      edges << { from: "#{Claimant.name}#{claimant['id']}",
+                 to: "#{Person.name}#{claimant['participant_id']}" }
     end
 
     prep_nodes(Appeal, nodes)
@@ -150,8 +152,12 @@ class ExportController < ApplicationController
 
     prep_nodes(AppealIntake, nodes)
     sje.records_hash[AppealIntake.table_name].each do |intake|
-      edges << { from: "#{User.name}#{intake['user_id']}", to: "#{AppealIntake.name}#{intake['id']}" } if intake["user_id"]
-      edges << { from: "#{AppealIntake.name}#{intake['id']}", to: "#{intake['detail_type']}#{intake['detail_id']}" }
+      if intake["user_id"]
+        edges << { from: "#{User.name}#{intake['user_id']}",
+                   to: "#{AppealIntake.name}#{intake['id']}" }
+      end
+      edges << { from: "#{AppealIntake.name}#{intake['id']}",
+                 to: "#{intake['detail_type']}#{intake['detail_id']}" }
     end
 
     prep_nodes(Task, nodes,
@@ -173,15 +179,16 @@ class ExportController < ApplicationController
     prep_nodes(RequestIssue, nodes,
                label_for: ->(_klass, record) { "#{record['type']}_#{record['id']}" })
     sje.records_hash[RequestIssue.table_name].each do |ri|
-      edges << { to: "#{RequestIssue.name}#{ri['id']}", from: "#{ri['decision_review_type']}#{ri['decision_review_id']}" }
+      edges << { to: "#{RequestIssue.name}#{ri['id']}",
+                 from: "#{ri['decision_review_type']}#{ri['decision_review_id']}" }
     end
 
     { nodes: nodes, edges: edges }
   end
 
   def prep_nodes(klass, nodes,
-                label_for: ->(clazz, record) { "#{clazz.name}_#{record['id']}" },
-                id_for: ->(clazz, record) { "#{clazz.name}#{record['id']}" })
+                 label_for: ->(clazz, record) { "#{clazz.name}_#{record['id']}" },
+                 id_for: ->(clazz, record) { "#{clazz.name}#{record['id']}" })
     sje.records_hash[klass.table_name].each do |record|
       record = record.clone
       record["label"] = label_for.call(klass, record)
@@ -224,4 +231,5 @@ class ExportController < ApplicationController
       message: COPY::ACCESS_DENIED_TITLE
     ).serialize_response)
   end
+  # :nocov:
 end
