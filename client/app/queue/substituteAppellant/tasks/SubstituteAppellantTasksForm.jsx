@@ -1,6 +1,3 @@
-/* eslint-disable */
-// REMOVE ABOVE LINE BEFORE CONTINUING WORK ON THIS FILE
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
@@ -18,7 +15,12 @@ import { KeyDetails } from './KeyDetails';
 
 const schema = yup.object().shape({});
 
-const sectionStyle = css({ marginBottom: '24px' });
+const sectionStyle = css({
+  marginBottom: '24px',
+  '& h2': {
+    marginBottom: '.8rem',
+  },
+});
 
 export const SubstituteAppellantTasksForm = ({
   appealId,
@@ -30,12 +32,7 @@ export const SubstituteAppellantTasksForm = ({
   onCancel,
   onSubmit,
 }) => {
-  const {
-    errors,
-    formState: { touched },
-    handleSubmit,
-    register,
-  } = useForm({
+  const { handleSubmit } = useForm({
     // Use this for repopulating form from redux when user navigates back
     defaultValues: { ...existingValues },
     resolver: yupResolver(schema),
@@ -49,6 +46,7 @@ export const SubstituteAppellantTasksForm = ({
           {SUBSTITUTE_APPELLANT_SELECT_APPELLANT_SUBHEAD}
         </div>
         <KeyDetails
+          className={sectionStyle}
           appealId={appealId}
           nodDate={nodDate}
           dateOfDeath={dateOfDeath}
@@ -59,7 +57,7 @@ export const SubstituteAppellantTasksForm = ({
         <CheckoutButtons
           onCancel={onCancel}
           onBack={onBack}
-          onSubmit={onSubmit}
+          onSubmit={handleSubmit(onSubmit)}
           submitText="Continue"
         />
       </div>
@@ -69,8 +67,16 @@ export const SubstituteAppellantTasksForm = ({
 SubstituteAppellantTasksForm.propTypes = {
   appealId: PropTypes.string,
   existingValues: PropTypes.shape({}),
+  nodDate: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.string]),
+  dateOfDeath: PropTypes.oneOfType([
+    PropTypes.instanceOf(Date),
+    PropTypes.string,
+  ]),
+  substitutionDate: PropTypes.oneOfType([
+    PropTypes.instanceOf(Date),
+    PropTypes.string,
+  ]),
   onBack: PropTypes.func,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
 };
-/* eslint-enable */

@@ -43,7 +43,7 @@ export const KeyDetails = (props) => {
   }, [props]);
 
   return (
-    <section>
+    <section className={props.className}>
       <h2>Key details</h2>
       <ul className={styles.detailList}>
         <li>
@@ -69,6 +69,7 @@ export const KeyDetails = (props) => {
 };
 KeyDetails.propTypes = {
   appealId: PropTypes.string.isRequired,
+  className: PropTypes.string,
   nodDate: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.string]),
   dateOfDeath: PropTypes.oneOfType([
     PropTypes.instanceOf(Date),
