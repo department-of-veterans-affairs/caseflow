@@ -41,6 +41,13 @@ module SanitizationTransforms
     end
   end
 
+  def unique_citation_number(field_name, field_value, obj_class: nil)
+    case field_name
+    when "citation_number"
+      "A00" + Faker::Number.number(digits: 2).to_s + field_value[-4..field_value.length]
+    end
+  end
+
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
   def random_person_name(field_name, _field_value, obj_class: nil)
     case field_name

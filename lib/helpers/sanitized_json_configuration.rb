@@ -36,19 +36,22 @@ class SanitizedJsonConfiguration
       },
       JudgeCaseReview => {
         sanitize_fields: %w[comment],
-        retrieval: lambda do records
-          jdrtask_ids = Task.where(type: JudgeTask.descendants.map(&:name), appeal: records[Appeal]).ids
-          JudgeCaseReview.where(task_id: jdrtask_ids).order(:id)
+        retrieval: lambda do |records|
+          judge_task_ids = Task.where(type: JudgeTask.descendants.map(&:name), appeal: records[Appeal]).ids
+          JudgeCaseReview.where(task_id: judge_task_ids).order(:id)
         end
       },
       AttorneyCaseReview => {
         sanitize_fields: %w[comment],
-        retrieval: lambda do records
+        retrieval: lambda do |records|
           atty_task_ids = Task.where(type: AttorneyTask.descendants.map(&:name), appeal: records[Appeal]).ids
           AttorneyCaseReview.where(task_id: atty_task_ids).order(:id)
         end
       },
       DecisionDocument => {
+        # citation_number must be unique and doesn't reference anything else in Caseflow,
+        # so transform the number so we can import into the same DB as the original record
+        sanitize_fields: %w[citation_number],
         retrieval: ->(records) { DecisionDocument.where(appeal: records[Appeal]).order(:id) }
       },
       Claimant => {
