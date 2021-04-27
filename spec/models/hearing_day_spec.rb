@@ -323,14 +323,14 @@ describe HearingDay, :all_dbs do
   context "begins_at" do
     context "no db value for begins_at" do
       subject { hearing_day.begins_at }
-      let(:begins_at_time_string) { nil }
+      let(:first_slot_time) { nil }
       let(:scheduled_for) { Date.tomorrow } # Same as default, but need it for expects
       let(:hearing_day) do
         create(
           :hearing_day,
           request_type: request_type,
           regional_office: regional_office_key,
-          begins_at_time_string: begins_at_time_string,
+          first_slot_time: first_slot_time,
           scheduled_for: scheduled_for
         )
       end
@@ -368,14 +368,14 @@ describe HearingDay, :all_dbs do
 
     context "with a db value for begins_at" do
       subject { hearing_day.begins_at }
-      let(:begins_at_time_string) { "13:38" }
+      let(:first_slot_time) { "13:38" }
       let(:scheduled_for) { Date.tomorrow } # Same as default, but need it for expects
       let(:hearing_day) do
         create(
           :hearing_day,
           request_type: request_type,
           regional_office: regional_office_key,
-          begins_at_time_string: begins_at_time_string,
+          first_slot_time: first_slot_time,
           scheduled_for: scheduled_for
         )
       end
@@ -390,14 +390,14 @@ describe HearingDay, :all_dbs do
         let(:request_type) { HearingDay::REQUEST_TYPES[:virtual] }
         let(:regional_office_key) { nil }
         it "begins_at db value" do
-          expect(Time.zone.parse(subject)).to eq(format_begins_at_from_db(begins_at_time_string, scheduled_for))
+          expect(Time.zone.parse(subject)).to eq(format_begins_at_from_db(first_slot_time, scheduled_for))
         end
       end
       context "a central day" do
         let(:regional_office_key) { nil }
         let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
         it "begins_at db value" do
-          expect(Time.zone.parse(subject)).to eq(format_begins_at_from_db(begins_at_time_string, scheduled_for))
+          expect(Time.zone.parse(subject)).to eq(format_begins_at_from_db(first_slot_time, scheduled_for))
         end
       end
       selected_ro_ids.each do |ro|
@@ -405,7 +405,7 @@ describe HearingDay, :all_dbs do
           let(:regional_office_key) { ro }
           let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
           it "begins_at db value" do
-            expect(Time.zone.parse(subject)).to eq(format_begins_at_from_db(begins_at_time_string, scheduled_for))
+            expect(Time.zone.parse(subject)).to eq(format_begins_at_from_db(first_slot_time, scheduled_for))
           end
         end
       end
