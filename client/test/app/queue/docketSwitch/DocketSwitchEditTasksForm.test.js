@@ -109,7 +109,7 @@ describe('DocketSwitchEditTasksForm', () => {
 
       // Cancel modal
       userEvent.click(
-        within(screen.getByRole('alertdialog')).getByRole('button', {
+        within(screen.getByRole('dialog')).getByRole('button', {
           name: /cancel/i,
         })
       );
@@ -122,7 +122,7 @@ describe('DocketSwitchEditTasksForm', () => {
 
       // Confirm/submit modal
       userEvent.click(
-        within(screen.getByRole('alertdialog')).getByRole('button', {
+        within(screen.getByRole('dialog')).getByRole('button', {
           name: /confirm/i,
         })
       );
@@ -141,7 +141,7 @@ describe('DocketSwitchEditTasksForm', () => {
 
       // Cancel modal
       userEvent.click(
-        within(screen.getByRole('alertdialog')).getByRole('button', {
+        within(screen.getByRole('dialog')).getByRole('button', {
           name: /cancel/i,
         })
       );
@@ -160,7 +160,7 @@ describe('DocketSwitchEditTasksForm', () => {
 
       // Confirm/submit modal
       userEvent.click(
-        within(screen.getByRole('alertdialog')).getByRole('button', {
+        within(screen.getByRole('dialog')).getByRole('button', {
           name: /confirm/i,
         })
       );
