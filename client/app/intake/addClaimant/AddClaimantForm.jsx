@@ -9,7 +9,7 @@ import TextField from 'app/components/TextField';
 import AddressForm from 'app/components/AddressForm';
 import Address from 'app/queue/components/Address';
 import * as Constants from '../constants';
-import { ADD_CLAIMANT_PAGE_DESCRIPTION } from 'app/../COPY';
+import { ADD_CLAIMANT_PAGE_DESCRIPTION, ERROR_EMAIL_INVALID_FORMAT } from 'app/../COPY';
 import { fetchAttorneys, formatAddress } from './utils';
 import { debounce } from 'lodash';
 
@@ -49,14 +49,18 @@ const filterOption = () => true;
 export const AddClaimantForm = ({
   onAttorneySearch = fetchAttorneys,
   onSubmit,
+  validationErrors
 }) => {
   const methods = useFormContext();
   const { control, register, watch, handleSubmit, setValue } = methods;
+
+  const emailValidationError = validationErrors?.emailAddress && ERROR_EMAIL_INVALID_FORMAT;
 
   const watchRelationship = watch('relationship');
   const dependentRelationship = ['spouse', 'child'].includes(watchRelationship);
   const watchPartyType = watch('partyType');
   const watchListedAttorney = watch('listedAttorney');
+
   const attorneyRelationship = watchRelationship === 'attorney';
   const attorneyNotListed = watchListedAttorney?.value === 'not_listed';
   const listedAttorney = attorneyRelationship && watchListedAttorney?.value && !attorneyNotListed;
@@ -203,6 +207,7 @@ export const AddClaimantForm = ({
             <AddressForm {...methods} />
             <FieldDiv>
               <TextField
+                validationError={emailValidationError}
                 name="emailAddress"
                 label="Claimant email"
                 inputRef={register}
@@ -240,6 +245,7 @@ AddClaimantForm.propTypes = {
   onAttorneySearch: PropTypes.func,
   onBack: PropTypes.func,
   onSubmit: PropTypes.func,
+  validationErrors: PropTypes.object
 };
 
 const FieldDiv = styled.div`
