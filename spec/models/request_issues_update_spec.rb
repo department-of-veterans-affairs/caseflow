@@ -364,7 +364,9 @@ describe RequestIssuesUpdate, :all_dbs do
             expect(EndProductEstablishment.find_by(code: "030HLRNR", source: review)).to eq(nil)
 
             subject
-            ep = EndProductEstablishment.find_by(code: "030HLRNR", source: review, user_id: edit_user.id, station: edit_user.station_id)
+            ep = EndProductEstablishment.find_by(
+              code: "030HLRNR", source: review, user_id: edit_user.id, station: edit_user.station_id
+            )
             expect(ep).to_not be_nil
             # informal conference should also have been created
             expect(ep.development_item_reference_id).to_not be_nil
