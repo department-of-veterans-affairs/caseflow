@@ -1,14 +1,23 @@
-import { sub } from 'date-fns';
 import React from 'react';
+import { sub } from 'date-fns';
+import { MemoryRouter } from 'react-router';
+import uuid from 'uuid';
 
 import { SubstituteAppellantTasksForm } from './SubstituteAppellantTasksForm';
 
 export default {
   title: 'Queue/Substitute Appellant/SubstituteAppellantTasksForm',
   component: SubstituteAppellantTasksForm,
-  decorators: [],
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
   parameters: {},
   args: {
+    appealId: uuid.v4(),
     nodDate: sub(new Date(), { days: 30 }),
     dateOfDeath: sub(new Date(), { days: 15 }),
     substitutionDate: sub(new Date(), { days: 10 }),

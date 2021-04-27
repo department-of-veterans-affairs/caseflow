@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { format, isDate, parseISO } from 'date-fns';
 import { css } from 'glamor';
+import { Link } from 'react-router-dom';
 
 const styles = {
   detailList: css({
@@ -16,6 +17,15 @@ const styles = {
       },
     },
   }),
+  caseDetails: css({
+    marginTop: '1rem',
+    '& > a': {
+      fontWeight: 'bold',
+      '& > i': {
+        verticalAlign: 'middle'
+      }
+    }
+  })
 };
 
 export const KeyDetails = (props) => {
@@ -49,10 +59,16 @@ export const KeyDetails = (props) => {
           <span>{substitutionDate}</span>
         </li>
       </ul>
+      <div className={styles.caseDetails}>
+        <Link to={`/queue/appeals/${props.appealId}`} target="_blank">
+          View original case details <i className="fa fa-external-link"></i>
+        </Link>
+      </div>
     </section>
   );
 };
 KeyDetails.propTypes = {
+  appealId: PropTypes.string.isRequired,
   nodDate: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.string]),
   dateOfDeath: PropTypes.oneOfType([
     PropTypes.instanceOf(Date),

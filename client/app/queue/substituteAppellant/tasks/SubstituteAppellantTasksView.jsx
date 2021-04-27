@@ -60,6 +60,7 @@ export const SubstituteAppellantTasksView = () => {
 
   return (
     <SubstituteAppellantTasksForm
+      appealId={appealId}
       existingValues={existingValues}
       nodDate={nodDate}
       dateOfDeath={dateOfDeath}

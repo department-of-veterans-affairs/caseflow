@@ -1,15 +1,24 @@
 import React from 'react';
 
+import { MemoryRouter } from 'react-router';
 import { sub } from 'date-fns';
+import uuid from 'uuid';
 
 import { KeyDetails } from './KeyDetails';
 
 export default {
   title: 'Queue/Substitute Appellant/KeyDetails',
   component: KeyDetails,
-  decorators: [],
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
   parameters: {},
   args: {
+    appealId: uuid.v4(),
     nodDate: sub(new Date(), { days: 30 }),
     dateOfDeath: sub(new Date(), { days: 15 }),
     substitutionDate: sub(new Date(), { days: 10 }),

@@ -21,6 +21,7 @@ const schema = yup.object().shape({});
 const sectionStyle = css({ marginBottom: '24px' });
 
 export const SubstituteAppellantTasksForm = ({
+  appealId,
   existingValues,
   nodDate,
   dateOfDeath,
@@ -48,6 +49,7 @@ export const SubstituteAppellantTasksForm = ({
           {SUBSTITUTE_APPELLANT_SELECT_APPELLANT_SUBHEAD}
         </div>
         <KeyDetails
+          appealId={appealId}
           nodDate={nodDate}
           dateOfDeath={dateOfDeath}
           substitutionDate={substitutionDate}
@@ -65,6 +67,7 @@ export const SubstituteAppellantTasksForm = ({
   );
 };
 SubstituteAppellantTasksForm.propTypes = {
+  appealId: PropTypes.string,
   existingValues: PropTypes.shape({}),
   onBack: PropTypes.func,
   onCancel: PropTypes.func,
