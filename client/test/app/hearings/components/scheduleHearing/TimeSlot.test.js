@@ -3,10 +3,10 @@ import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import moment from 'moment-timezone/moment-timezone';
+import { uniq } from 'lodash';
 // caseflow
 import { TimeSlot } from 'app/hearings/components/scheduleHearing/TimeSlot';
 import { formatTimeSlotLabel, hearingTimeOptsWithZone, setTimeSlots } from 'app/hearings/utils';
-
 // constants
 import REGIONAL_OFFICE_INFORMATION from '../../../../../constants/REGIONAL_OFFICE_INFORMATION';
 import HEARING_TIME_OPTIONS from '../../../../../constants/HEARING_TIME_OPTIONS';
@@ -296,6 +296,28 @@ describe('TimeSlot', () => {
           // If the hearing is between two slots it hides two slots
           if (hearingTime.isBetween(beginsAt, lastSlotTime)) {
             expect(timeSlots.length).toEqual(hearingInSlotList.length + numberOfSlots - 2);
+          }
+
+          // If we have slots, check that they are hidden/shown correctly
+          if (lastSlotTime) {
+          // If the hearing is at the beginning or end of the day, which puts it within slotLengthMinutes
+          // of only one slot, hide one slot
+            const withinAnHourOfBeginsAt = Math.abs(beginsAt.diff(hearingTime, 'minutes')) < 60;
+            const withinAnHourOflastSlotTime = Math.abs(lastSlotTime.diff(hearingTime, 'minutes')) < 60;
+
+            if (withinAnHourOfBeginsAt && hearingTime.isBefore(beginsAt)) {
+              expect(timeSlots.length).toEqual(hearingInSlotList.length + numberOfSlots - 1);
+            }
+            if (withinAnHourOflastSlotTime && hearingTime.isAfter(lastSlotTime)) {
+              expect(timeSlots.length).toEqual(hearingInSlotList.length + numberOfSlots - 1);
+            }
+          }
+
+          // If we have slots, check that the ids are unique
+          if (lastSlotTime) {
+            const uniqueKeys = uniq(timeSlots.map((slot) => slot.key));
+
+            expect(timeSlots.length).toEqual(uniqueKeys.length);
           }
 
           // Get the button, with that time
