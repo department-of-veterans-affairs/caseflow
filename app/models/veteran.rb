@@ -341,6 +341,7 @@ class Veteran < CaseflowRecord
       end
       self[local_attr] = fetched_attr
     end
+    self.bgs_last_synced_at = Time.zone.now
     save!
   end
 

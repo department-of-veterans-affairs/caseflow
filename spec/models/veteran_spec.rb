@@ -941,8 +941,10 @@ describe Veteran, :all_dbs do
 
     context "when date of death is present" do
       it "saves date of death in the correct date format" do
+        expect(veteran.bgs_last_synced_at).to be_nil
         subject
         expect(veteran[:date_of_death]).to eq(new_date_of_death)
+        expect(veteran.bgs_last_synced_at).to be_within(1.second).of Time.zone.now
       end
     end
   end
