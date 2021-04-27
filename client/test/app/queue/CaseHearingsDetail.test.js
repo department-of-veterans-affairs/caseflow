@@ -83,6 +83,7 @@ describe('CaseHearingDetail', () => {
         {
           ...amaAppealHearingData,
           date: '2020-10-07T03:30:00.000-04:00',
+          createdAt: '2020-09-07T03:30:00.000-04:00',
           externalId: 'b5790483-f10f-4d52-b82a-2ae67a5ad4a8'
         }
       ]
@@ -97,9 +98,9 @@ describe('CaseHearingDetail', () => {
       screen.getByText(`${COPY.CASE_DETAILS_HEARING_LIST_LABEL}:`)
     ).toBeInTheDocument()
 
-    const hearingOne = screen.getByText('Hearing 1:').closest('div')
+    const hearingOne = screen.getByText('Hearing 2:').closest('div')
     expect(within(hearingOne).getByText('10/7/20')).toBeInTheDocument()
-    const hearingTwo = screen.getByText('Hearing 2:').closest('div')
+    const hearingTwo = screen.getByText('Hearing 1:').closest('div')
     expect(within(hearingTwo).getByText('8/7/20')).toBeInTheDocument()
   })
 
