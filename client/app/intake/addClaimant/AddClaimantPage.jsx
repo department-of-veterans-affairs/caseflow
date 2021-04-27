@@ -4,7 +4,7 @@ import { useHistory } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormProvider } from 'react-hook-form';
 import { camelCase } from 'lodash';
-
+import { Redirect } from 'react-router-dom';
 import {
   clearClaimant,
   clearPoa,
@@ -17,7 +17,8 @@ import { AddClaimantButtons } from './AddClaimantButtons';
 import { useAddClaimantForm, fetchAttorneys } from './utils';
 // eslint-disable-next-line no-unused-vars
 import { submitReview } from '../actions/decisionReview';
-import { FORM_TYPES } from '../constants';
+import { FORM_TYPES, PAGE_PATHS, INTAKE_STATES } from '../constants';
+import { getIntakeStatus } from '../selectors';
 
 export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
   const dispatch = useDispatch();
@@ -30,6 +31,7 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
   // This code will likely be needed in submission (see handleConfirm)
   // Remove eslint-disable once used
   const { formType, id: intakeId } = useSelector((state) => state.intake);
+
   const intakeForms = useSelector(
     ({ higherLevelReview, supplementalClaim, appeal }) => ({
       appeal,
@@ -44,6 +46,12 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
   const intakeData = useMemo(() => {
     return selectedForm ? intakeForms[camelCase(formType)] : null;
   }, [intakeForms, formType, selectedForm]);
+  const intakeStatus = getIntakeStatus(useSelector((state) => state));
+
+  // Redirect to Review page if review page data is not present (e.g. from a page reload)
+  if (intakeStatus === INTAKE_STATES.STARTED && !intakeData.receiptDate) {
+    return <Redirect to={PAGE_PATHS.REVIEW} />;
+  }
 
   const methods = useAddClaimantForm({ defaultValues: claimant });
   const {
