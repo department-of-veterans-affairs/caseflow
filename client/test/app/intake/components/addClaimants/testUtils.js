@@ -14,7 +14,7 @@ export const relationshipOpts = [
 const organization = 'Tista';
 const street1 = '1000 Monticello';
 const city = 'Washington';
-const zip = '2000';
+const zip = '20000';
 const country = 'USA';
 
 export const fillForm = async () => {
