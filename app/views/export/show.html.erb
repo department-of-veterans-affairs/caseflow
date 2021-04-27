@@ -28,10 +28,11 @@
     <hr/>
   </details>
 
-  <h3>Appeal</h3>
-  <p>
-  AOD: <%= appeal.aod? %>, CAVC: <%= appeal.cavc? %>
-  </p>
+  <h2>Basic Info about this Appeal</h2>
+  <ul>
+    <li>status: <%= appeal.status.status.to_s %></li>
+    <li>priority? AOD: <%= appeal.aod? %>, CAVC: <%= appeal.cavc? %></li>
+  </ul>
 
   <h3>Task tree</h3>
   <code style="color: green">
@@ -51,6 +52,16 @@
   </code>
   <pre style="font-size:0.84em; padding:10px"><code><%= intake_as_text %></code></pre>
   <hr/>
+
+  <h2>Related Appeals and Associated Records</h2>
+  <p>The following subsections are created from the <b><%= show_pii_query_param ? "unsanitized" : "sanitized" %></b>
+    <%= link_to('json export', {action: 'show', format: "json"}) %>, which are composed of these appeals:
+    <ul>
+      <% sje.records_hash["appeals"].each do |appeal| %>
+        <li>Appeal id: <%= appeal["id"] %>, uuid: <%= appeal["uuid"] %></li>
+      <% end %>
+    </ul>
+  </p>
 
   <h3>Timeline</h3>
   <div id="timeline"></div>
