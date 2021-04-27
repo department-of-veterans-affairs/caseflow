@@ -12,8 +12,8 @@ import { COLORS } from '../constants/AppConstants';
 import {
   appealWithDetailSelector,
   getAllTasksForAppeal,
-  scheduleHearingTasksForAppeal,
-  hearingTasksForAppeal
+  openScheduleHearingTasksForAppeal,
+  allHearingTasksForAppeal
 } from './selectors';
 import {
   stopPollingHearing,
@@ -144,10 +144,10 @@ export const CaseDetailsView = (props) => {
     appealIsDispached && (supportCavcRemand || supportSubstituteAppellant);
 
   const openScheduledHearingTasks = useSelector(
-    (state) => scheduleHearingTasksForAppeal(state, { appealId: appeal.externalId })
+    (state) => openScheduleHearingTasksForAppeal(state, { appealId: appeal.externalId })
   );
   const allHearingTasks = useSelector(
-    (state) => hearingTasksForAppeal(state, { appealId: appeal.externalId })
+    (state) => allHearingTasksForAppeal(state, { appealId: appeal.externalId })
   );
   const parentHearingTasks = parentTasks(openScheduledHearingTasks, allHearingTasks);
 
