@@ -25,7 +25,7 @@ RSpec.describe CavcRemandsController, type: :controller do
   end
 
   describe "POST /appeals/:appeal_id/cavc_remands" do
-    let(:source_appeal) { create(:appeal) }
+    let(:source_appeal) { create(:appeal, :dispatched) }
     let(:source_appeal_id) { source_appeal.uuid }
     let(:cavc_docket_number) { "123-1234567" }
     let(:represented_by_attorney) { true }
@@ -231,5 +231,66 @@ RSpec.describe CavcRemandsController, type: :controller do
     end
 
     include_examples "required cavc lit support user"
+  end
+
+  describe "PATCH /appeals/:appeal_id/cavc_remands without cavc_dates_modal in the params" do
+    let(:source_appeal) { create(:appeal) }
+    let(:source_appeal_id) { source_appeal.uuid }
+    let(:cavc_remand) { create(:cavc_remand, :mdr) }
+    let(:cavc_docket_number) { "123-1234567" }
+    let(:remand_appeal_id) { cavc_remand.remand_appeal_id }
+    let(:remand_appeal_uuid) { Appeal.find(cavc_remand.remand_appeal_id).uuid }
+    let(:cavc_judge_full_name) { Constants::CAVC_JUDGE_FULL_NAMES.first }
+    let(:cavc_decision_type) { Constants::CAVC_DECISION_TYPES["remand"] }
+    let(:federal_circuit) { false }
+    let(:remand_subtype) { Constants::CAVC_REMAND_SUBTYPES["mdr"] }
+    let(:instructions) { "update only the instructions!!" }
+    let(:decision_date) { 7.days.ago }
+    let(:judgement_date) { 6.days.ago.to_date }
+    let(:mandate_date) { 3.days.ago.to_date }
+    let(:decision_issues) do
+      create_list(
+        :decision_issue,
+        2,
+        :rating,
+        decision_review: source_appeal,
+        disposition: "remanded",
+        description: "description here",
+        decision_text: "decision issue"
+      )
+    end
+    let(:decision_issue_ids) { decision_issues.map(&:id) }
+    let(:params) do
+      {
+        source_appeal_id: source_appeal_id,
+        remand_appeal_id: remand_appeal_uuid,
+        appeal_id: remand_appeal_uuid,
+        cavc_docket_number: cavc_docket_number,
+        cavc_judge_full_name: cavc_judge_full_name,
+        cavc_decision_type: cavc_decision_type,
+        remand_subtype: remand_subtype,
+        instructions: instructions,
+        decision_date: decision_date,
+        judgement_date: judgement_date,
+        mandate_date: mandate_date,
+        decision_issue_ids: decision_issue_ids,
+        represented_by_attorney: true,
+        federal_circuit: federal_circuit
+      }
+    end
+
+    subject { patch :update, params: params }
+
+    it "updates the CAVC remand" do
+      existing_remand = Appeal.find(remand_appeal_id)
+
+      expect { subject }.not_to raise_error
+
+      expect(response.status).to eq(200)
+      response_body = JSON.parse(response.body)
+
+      expect(response_body["cavc_remand"]["remand_appeal_id"]).to eq(existing_remand.reload.id)
+      expect(response_body["cavc_remand"]["instructions"]).to eq(instructions)
+    end
   end
 end

@@ -93,8 +93,7 @@ export const AddClaimantForm = ({
               label="Relationship to the Veteran"
               options={relationshipOpts}
               onChange={(valObj) => {
-                onChange(valObj);
-                setValue('relationship', valObj?.value);
+                onChange(valObj.value);
               }}
               strongLabel
             />
@@ -252,7 +251,7 @@ const Suffix = styled.div`
 
 const PhoneNumber = styled.div`
   width: 240px;
-  margin-bottom: 2em;
+  margin-bottom: 1.5em;
 `;
 
 const ClaimantAddress = styled.div`

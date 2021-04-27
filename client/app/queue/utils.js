@@ -670,7 +670,7 @@ export const collapseColumn = (requireDasRecord) => (task) => (hasDASRecord(task
  */
 export const labelForLocation = (appeal, userId) => {
   // If there is no location or the appeal is cancelled, don't show a location
-  if (!appeal.assignedToLocation || appeal.status === 'cancelled') {
+  if (!appeal.assignedToLocation || ['cancelled', 'docket_switched'].includes(appeal.status)) {
     return '';
   }
 
@@ -699,9 +699,15 @@ export const labelForLocation = (appeal, userId) => {
  * @param {object} appeal -- The appeal for which to determine the status
  * @returns {string} -- The value of the current location either as a string or JSX
  */
-export const statusLabel = (appeal) =>
-  appeal.status === 'cancelled' ? (
-    <span {...css({ color: COLORS.RED })}>{capitalize(appeal.status)}</span>
-  ) : (
-    appeal.status ? StringUtil.snakeCaseToCapitalized(appeal.status) : ''
-  );
+export const statusLabel = (appeal) => {
+  switch(appeal.status) {
+    case 'cancelled':
+      return <span {...css({ color: COLORS.RED })}>{capitalize(appeal.status)}</span>;
+      break;
+    case 'docket_switched':
+      return COPY.CASE_LIST_TABLE_DOCKET_SWITCH_LABEL;
+      break;
+    default:
+      return appeal.status ? StringUtil.snakeCaseToCapitalized(appeal.status) : '';
+  };
+};

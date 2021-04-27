@@ -23,7 +23,6 @@ import SearchableDropdown from 'app/components/SearchableDropdown';
 import TranscriptionRequestInputs from
   'app/hearings/components/details/TranscriptionRequestInputs';
 import VirtualHearingModal from 'app/hearings/components/VirtualHearingModal';
-import ApiUtil from 'app/util/ApiUtil';
 import toJson from 'enzyme-to-json';
 
 // Define the function spies

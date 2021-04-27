@@ -15,8 +15,8 @@
       ga('send', 'pageview', page);
     }
 
-    window.analyticsEvent = function(category, action, label) {
-      ga('send', 'event', category, action, label)
+    window.analyticsEvent = function(category, action, label, value) {
+      ga('send', 'event', category, action, label, value)
     }
 
     window.analyticsTiming = function(fieldsObject) {
