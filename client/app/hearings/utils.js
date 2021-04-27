@@ -614,8 +614,8 @@ export const setTimeSlots = (hearings, ro, roTimezone = 'America/New_York') => {
 
 export const formatTimeSlotLabel = (time, zone) => {
   const timeFormatString = 'h:mm A z';
-  const roTime = moment.tz(time, 'HH:mm', 'America/New_York').format(timeFormatString);
-  const coTime = moment.tz(time, 'HH:mm', 'America/New_York').tz(zone).
+  const coTime = moment.tz(time, 'HH:mm', 'America/New_York').format(timeFormatString);
+  const roTime = moment.tz(time, 'HH:mm', 'America/New_York').tz(zone).
     format(timeFormatString);
 
   if (roTime === coTime) {
