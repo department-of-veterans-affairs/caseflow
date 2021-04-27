@@ -929,4 +929,21 @@ describe Veteran, :all_dbs do
       end
     end
   end
+
+  describe "#update_cached_attributes!" do
+    let(:new_date_of_death) { Date.new(2021, 3, 8) }
+    let(:bgs_date_of_death) { "03/08/2021" }
+    before do
+      allow(veteran).to receive(:fetch_bgs_record).and_return(date_of_death: bgs_date_of_death)
+    end
+
+    subject { veteran.update_cached_attributes! }
+
+    context "when date of death is present" do
+      it "saves date of death in the correct date format" do
+        subject
+        expect(veteran[:date_of_death]).to eq(new_date_of_death)
+      end
+    end
+  end
 end
