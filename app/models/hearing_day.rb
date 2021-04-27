@@ -56,7 +56,7 @@ class HearingDay < CaseflowRecord
     "America/Anchorage" => 12
   }.freeze
 
-  DEFAULT_SLOT_LENGTH = 60
+  DEFAULT_SLOT_LENGTH = 60 # in minutes
 
   before_create :assign_created_by_user
   after_update :update_children_records
@@ -243,7 +243,7 @@ class HearingDay < CaseflowRecord
   # - Timezone, a string like "America/Los_Angeles"
   # - Date, a ruby Date
   # :reek:UtilityFunction
-  def combine_time_and_date(time, timezone, date)
+  def combine_time_and_date(time, timezone = "America/New_York", date = scheduled_for)
     # Parse the time string into a ruby Time instance with zone
     time_with_zone = time.in_time_zone(timezone)
     # Make a string like "2021-04-23 08:30:00"
