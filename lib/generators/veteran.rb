@@ -96,7 +96,9 @@ class Generators::Veteran
 
     def build(attrs = {})
       record = default_attrs(attrs[:file_number]).merge(attrs)
-      record[:date_of_death] = record[:date_of_death].strftime("%m/%d/%Y") if record[:date_of_death].respond_to?(:strftime)
+      unless [NilClass, String].include?(record[:date_of_death].class)
+        record[:date_of_death] = record[:date_of_death].strftime("%m/%d/%Y")
+      end
       Fakes::BGSService.store_veteran_record(attrs[:file_number], record)
       Veteran.new(file_number: attrs[:file_number],
                   first_name: attrs[:first_name],
