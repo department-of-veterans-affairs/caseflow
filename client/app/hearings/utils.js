@@ -523,7 +523,7 @@ const calculateAvailableTimeslots = ({ numberOfSlots, beginsAt, roTimezone, sche
       (Math.abs(possibleTime.diff(scheduledHearingTime, 'minutes')) < 60)
     );
     // Make sure that times don't go past midnight into the next day
-    const slotNotOnCorrectDate = !possibleTime.isSame(hearingTimes[0], 'date');
+    const slotNotOnCorrectDate = !possibleTime.isSame(beginsAt, 'date');
 
     // Combine all the conditions that make a slot unavailable
     const slotIsUnavailable =
