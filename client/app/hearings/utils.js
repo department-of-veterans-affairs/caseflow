@@ -604,9 +604,9 @@ export const setTimeSlots = ({
   const defaultSlotLengthMinutes = 60;
 
   const availableSlots = calculateAvailableTimeslots({
-    numberOfSlots: numberOfSlots ? numberOfSlots : defaultNumberOfSlots,
-    slotLengthMinutes: slotLengthMinutes ? slotLengthMinutes : defaultSlotLengthMinutes,
-    beginsAt: beginsAt ? beginsAt : momentDefaultBeginsAt,
+    numberOfSlots: numberOfSlots || defaultNumberOfSlots,
+    slotLengthMinutes: slotLengthMinutes || defaultSlotLengthMinutes,
+    beginsAt: beginsAt || momentDefaultBeginsAt,
     roTimezone,
     scheduledHearings
   });
