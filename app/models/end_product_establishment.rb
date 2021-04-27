@@ -423,7 +423,6 @@ class EndProductEstablishment < CaseflowRecord
 
   # This looks for a new rating associated to this end product when deciding the claim
   # Not to be confused with associating contentions to rating issues when establishing a claim
-  #.find is going to return the first successful match, need to change to .select
   def fetch_associated_rating
     Rails.cache.fetch(associated_rating_cache_key, expires_in: 3.hours) do
       potential_decision_ratings.find do |rating|
