@@ -59,7 +59,6 @@ class RequestIssuesUpdate < CaseflowRecord
     #   review.end_product_establishments.each do |epe|
     #     epe.user = user
     #     epe.station = user.station_id
-    #     epe.save!
     #   end
     # end
 
@@ -158,6 +157,7 @@ class RequestIssuesUpdate < CaseflowRecord
   end
 
   def process_issues!
+    binding.pry
     review.create_issues!(added_issues)
     process_removed_issues!
     process_legacy_issues!

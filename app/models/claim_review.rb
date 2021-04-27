@@ -333,7 +333,6 @@ class ClaimReview < DecisionReview
    def end_product_establishment_source
     # There should only be one pending request issues update at a time
     # active_request_issues_update = request_issues_updates.never_attempted.first
-    binding.pry
     request_issues_updates.try(:never_attempted)&.first || intake
   end
 

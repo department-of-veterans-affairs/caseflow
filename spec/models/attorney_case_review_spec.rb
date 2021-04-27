@@ -391,6 +391,7 @@ describe AttorneyCaseReview, :all_dbs do
           end
 
           it "should not create draft decision record" do
+            binding.pry
             expect { subject }.to raise_error(Caseflow::Error::RemandReasonRepositoryError)
             expect(AttorneyCaseReview.count).to eq 0
           end
