@@ -377,6 +377,52 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
 
+    context "POA refresh on case load" do
+      let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+      let(:appeal) { create(:appeal, veteran: create(:veteran)) }
+      let!(:poa) do
+        create(
+          :bgs_power_of_attorney,
+          :with_name_cached,
+          appeal: appeal
+        )
+      end
+
+      scenario "it's been less than 16 hours, so doesn't refresh NEWTEST" do
+        BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
+        one_hour_ago = Time.zone.now - 1.hour
+        poa.last_synced_at = one_hour_ago
+        poa.save!
+        BgsPowerOfAttorney.reset_callbacks(:save)
+
+        visit "/queue/appeals/#{appeal.external_id}"
+        expect(poa.last_synced_at).to eq(one_hour_ago)
+      end
+    end
+
+    context "POA refresh on case load" do
+      let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+      let(:appeal) { create(:appeal, veteran: create(:veteran)) }
+      let!(:poa) do
+        create(
+          :bgs_power_of_attorney,
+          :with_name_cached,
+          appeal: appeal
+        )
+      end
+
+      scenario "it's been more than 16 hours, so does refresh NEWTEST" do
+        BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
+        poa.last_synced_at = Time.zone.now - 2.days
+        poa.save!
+        BgsPowerOfAttorney.reset_callbacks(:save)
+
+        visit "/queue/appeals/#{appeal.external_id}"
+        sleep 5
+        expect(BgsPowerOfAttorney.find(poa.id).last_synced_at).to eq(Time.zone.now)
+      end
+    end
+
     context "veteran records have been merged and Veteran has multiple active phone numbers in SHARE" do
       let!(:appeal) do
         create(
