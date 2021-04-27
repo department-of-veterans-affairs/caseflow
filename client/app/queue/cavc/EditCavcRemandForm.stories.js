@@ -28,15 +28,52 @@ const Template = (args) => <EditCavcRemandForm {...args} />;
 
 export const Default = Template.bind({});
 
-export const Editing = Template.bind({});
-Editing.args = {
+export const EditingRemand = Template.bind({});
+EditingRemand.storyName = 'Editing (Remand)';
+EditingRemand.args = {
   existingValues: {
     docketNumber: '12-3333',
     attorney: 'yes',
     judge: 'Panel',
-    decisionType: 'Remand',
-    remandType: 'Memorandum Decision on Remand (MDR)',
+    decisionType: 'remand',
+    remandType: 'mdr',
     decisionDate: format(sub(new Date(), { days: 7 }), 'yyyy-MM-dd'),
+    issueIds: [2, 3],
+    instructions: 'Lorem ipsum dolor sit amet'
+  },
+};
+
+export const EditingReversal = Template.bind({});
+EditingReversal.storyName = 'Editing (Reversal)';
+EditingReversal.args = {
+  existingValues: {
+    docketNumber: '12-3333',
+    attorney: 'yes',
+    judge: 'Panel',
+    decisionType: 'straight_reversal',
+    remandType: null,
+    remandDatesProvided: 'yes',
+    decisionDate: format(sub(new Date(), { days: 7 }), 'yyyy-MM-dd'),
+    judgementDate: format(sub(new Date(), { days: 5 }), 'yyyy-MM-dd'),
+    mandateDate: format(sub(new Date(), { days: 5 }), 'yyyy-MM-dd'),
+    issueIds: [2, 3],
+    instructions: 'Lorem ipsum dolor sit amet'
+  },
+};
+
+export const EditingDismissal = Template.bind({});
+EditingDismissal.storyName = 'Editing (Dismissal)';
+EditingDismissal.args = {
+  existingValues: {
+    docketNumber: '12-3333',
+    attorney: 'yes',
+    judge: 'Panel',
+    decisionType: 'death_dismissal',
+    remandType: null,
+    remandDatesProvided: 'yes',
+    decisionDate: format(sub(new Date(), { days: 7 }), 'yyyy-MM-dd'),
+    judgementDate: format(sub(new Date(), { days: 5 }), 'yyyy-MM-dd'),
+    mandateDate: format(sub(new Date(), { days: 5 }), 'yyyy-MM-dd'),
     issueIds: [2, 3],
     instructions: 'Lorem ipsum dolor sit amet'
   },

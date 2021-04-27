@@ -30,7 +30,7 @@ FactoryBot.define do
     end
 
     trait :initialized do
-      alias_name { rand(1..9).to_s[0..6] }
+      alias_name { format("%07<id>d", id: rand(99..10_001)) }
       conference_id { rand(1..9) }
       after(:build, &:generate_conference_pins)
     end
@@ -51,12 +51,10 @@ FactoryBot.define do
       host_pin_long { "3998472" }
       guest_pin_long { "7470125694" }
       host_hearing_link do
-        "https://example.va.gov/sample/?conference=#{alias_with_host}" \
-          "&name=Judge&pin=#{host_pin_long}&callType=video&join=1"
+        "https://example.va.gov/sample/?conference=#{alias_with_host}&pin=#{host_pin_long}&callType=video"
       end
       guest_hearing_link do
-        "https://example.va.gov/sample/?conference=#{alias_with_host}" \
-        "&name=Guest&pin=#{guest_pin_long}&callType=video&join=1"
+        "https://example.va.gov/sample/?conference=#{alias_with_host}&pin=#{guest_pin_long}&callType=video"
       end
     end
 
