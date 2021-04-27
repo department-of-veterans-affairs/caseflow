@@ -26,7 +26,8 @@ export const TimeSlot = ({
   const [custom, setCustom] = useState(false);
 
   // Filter the available time slots to fill in the hearings
-  const slots = setTimeSlots({ scheduledHearingsList, ro, roTimezone });
+  const { beginsAt, numberOfSlots, slotLengthMinutes } = hearing?.hearingDay;
+  const slots = setTimeSlots({ scheduledHearingsList, ro, roTimezone, beginsAt, numberOfSlots, slotLengthMinutes });
 
   // Setup the click handler for each time slot
   const handleChange = (time) => {
