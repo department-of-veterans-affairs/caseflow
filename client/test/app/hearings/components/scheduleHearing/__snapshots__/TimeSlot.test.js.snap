@@ -34,7 +34,7 @@ exports[`TimeSlot has correct visual elements renders correctly 1`] = `
             <div
               style="flex: 1;"
             >
-              10:30 AM EDT (8:30 AM MDT)
+              8:30 AM MDT (10:30 AM EDT)
             </div>
             <div>
               <i
@@ -53,7 +53,7 @@ exports[`TimeSlot has correct visual elements renders correctly 1`] = `
             <div
               style="flex: 1;"
             >
-              11:30 AM EDT (9:30 AM MDT)
+              9:30 AM MDT (11:30 AM EDT)
             </div>
             <div>
               <i
@@ -72,7 +72,7 @@ exports[`TimeSlot has correct visual elements renders correctly 1`] = `
             <div
               style="flex: 1;"
             >
-              12:30 PM EDT (10:30 AM MDT)
+              10:30 AM MDT (12:30 PM EDT)
             </div>
             <div>
               <i
@@ -95,7 +95,7 @@ exports[`TimeSlot has correct visual elements renders correctly 1`] = `
             <div
               style="flex: 1;"
             >
-              1:30 PM EDT (11:30 AM MDT)
+              11:30 AM MDT (1:30 PM EDT)
             </div>
             <div>
               <i
@@ -114,7 +114,7 @@ exports[`TimeSlot has correct visual elements renders correctly 1`] = `
             <div
               style="flex: 1;"
             >
-              2:30 PM EDT (12:30 PM MDT)
+              12:30 PM MDT (2:30 PM EDT)
             </div>
             <div>
               <i
@@ -133,7 +133,7 @@ exports[`TimeSlot has correct visual elements renders correctly 1`] = `
             <div
               style="flex: 1;"
             >
-              3:30 PM EDT (1:30 PM MDT)
+              1:30 PM MDT (3:30 PM EDT)
             </div>
             <div>
               <i
