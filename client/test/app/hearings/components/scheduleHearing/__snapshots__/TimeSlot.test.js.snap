@@ -34,44 +34,6 @@ exports[`TimeSlot has correct visual elements renders correctly 1`] = `
             <div
               style="flex: 1;"
             >
-              8:30 AM EDT (6:30 AM MDT)
-            </div>
-            <div>
-              <i
-                class="fa fa-angle-right time-slot-arrow"
-              />
-            </div>
-          </div>
-        </button>
-      </span>
-      <span>
-        <button
-          class="usa-button-secondary time-slot-button usa-button"
-          type="button"
-        >
-          <div>
-            <div
-              style="flex: 1;"
-            >
-              9:30 AM EDT (7:30 AM MDT)
-            </div>
-            <div>
-              <i
-                class="fa fa-angle-right time-slot-arrow"
-              />
-            </div>
-          </div>
-        </button>
-      </span>
-      <span>
-        <button
-          class="usa-button-secondary time-slot-button usa-button"
-          type="button"
-        >
-          <div>
-            <div
-              style="flex: 1;"
-            >
               10:30 AM EDT (8:30 AM MDT)
             </div>
             <div>
@@ -101,10 +63,6 @@ exports[`TimeSlot has correct visual elements renders correctly 1`] = `
           </div>
         </button>
       </span>
-    </div>
-    <div
-      class="time-slot-container"
-    >
       <span>
         <button
           class="usa-button-secondary time-slot-button usa-button"
@@ -124,6 +82,10 @@ exports[`TimeSlot has correct visual elements renders correctly 1`] = `
           </div>
         </button>
       </span>
+    </div>
+    <div
+      class="time-slot-container"
+    >
       <span>
         <button
           class="usa-button-secondary time-slot-button usa-button"
