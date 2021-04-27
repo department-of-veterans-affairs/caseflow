@@ -714,20 +714,20 @@ ActiveRecord::Schema.define(version: 2021_04_19_200234) do
   end
 
   create_table "hearing_days", force: :cascade do |t|
-    t.string "begins_at_time_string", comment: "When the hearing day begins, slots will not appear before this time"
     t.string "bva_poc", comment: "Hearing coordinator full name"
     t.datetime "created_at", null: false, comment: "Automatic timestamp of when hearing day was created"
     t.bigint "created_by_id", null: false, comment: "The ID of the user who created the Hearing Day"
     t.datetime "deleted_at", comment: "Automatic timestamp of when hearing day was deleted"
+    t.string "first_slot_time", comment: "The first time slot available; interpreted as the local time at Central office or the RO"
     t.integer "judge_id", comment: "User ID of judge who is assigned to the hearing day"
     t.boolean "lock", comment: "Determines if the hearing day is locked and can't be edited"
     t.text "notes", comment: "Any notes about hearing day"
-    t.integer "number_of_slots", comment: "The number of slots possible for this day"
+    t.integer "number_of_slots", comment: "The number of time slots possible for this day"
     t.string "regional_office", comment: "Regional office key associated with hearing day"
     t.string "request_type", null: false, comment: "Hearing request types for all associated hearings; can be one of: 'T', 'C' or 'V'"
     t.string "room", comment: "The room at BVA where the hearing will take place"
     t.date "scheduled_for", null: false, comment: "The date when all associated hearings will take place"
-    t.integer "slot_length_minutes", comment: "How long each timeslot is for this day"
+    t.integer "slot_length_minutes", comment: "The length in minutes of each time slot for this day"
     t.datetime "updated_at", null: false, comment: "Automatic timestamp of when hearing day was updated"
     t.bigint "updated_by_id", null: false, comment: "The ID of the user who most recently updated the Hearing Day"
     t.index ["created_by_id"], name: "index_hearing_days_on_created_by_id"
