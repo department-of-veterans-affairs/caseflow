@@ -69,7 +69,7 @@ export const KeyDetails = (props) => {
 };
 KeyDetails.propTypes = {
   appealId: PropTypes.string.isRequired,
-  className: PropTypes.string,
+  className: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   nodDate: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.string]),
   dateOfDeath: PropTypes.oneOfType([
     PropTypes.instanceOf(Date),
