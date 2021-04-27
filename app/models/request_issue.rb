@@ -213,7 +213,7 @@ class RequestIssue < CaseflowRecord
     return unless decision_review.is_a?(ClaimReview)
 
     update!(benefit_type: decision_review.benefit_type, veteran_participant_id: veteran.participant_id)
-    binding.pry
+
     epe = decision_review.end_product_establishment_for_issue(self, request_issues_update)
     update!(end_product_establishment: epe) if epe
 
