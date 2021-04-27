@@ -24,6 +24,7 @@ class AppealsUpdatedSinceQuery
     request_decision_issues
     request_issues_updates
     work_mode
+    appellant_substitution
   ].freeze
 
   attr_reader :since_date

@@ -14,7 +14,7 @@ import Address from 'app/queue/components/Address';
 import AddressForm from 'app/components/AddressForm';
 import TextField from 'app/components/TextField';
 import { useDispatch, useSelector } from 'react-redux';
-import { editPoaInformation, clearPoa } from 'app/intake/reducers/addClaimantSlice';
+import { editPoaInformation, clearPoa, clearClaimant } from 'app/intake/reducers/addClaimantSlice';
 import { AddClaimantConfirmationModal } from '../addClaimant/AddClaimantConfirmationModal';
 import { formatAddress } from '../addClaimant/utils';
 import { FORM_TYPES } from '../constants';
@@ -97,6 +97,7 @@ export const AddPoaPage = () => {
 
     dispatch(submitReview(intakeId, intakeData, selectedForm.formName));
     dispatch(clearPoa());
+    dispatch(clearClaimant());
     push('/add_issues');
   };
 
