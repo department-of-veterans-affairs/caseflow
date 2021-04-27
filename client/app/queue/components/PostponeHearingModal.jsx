@@ -6,14 +6,12 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 import { taskById, appealWithDetailSelector } from '../selectors';
-import { onReceiveAmaTasks, onReceiveAppealDetails } from '../QueueActions';
+import { onReceiveAmaTasks } from '../QueueActions';
 import { requestPatch, showErrorMessage } from '../uiReducer/uiActions';
 import QueueFlowModal from './QueueFlowModal';
-import { taskActionData, prepareAppealForStore } from '../utils';
+import { taskActionData } from '../utils';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import { setScheduledHearing } from '../../components/common/actions';
-
-import ApiUtil from '../../util/ApiUtil';
 
 import RadioField from '../../components/RadioField';
 import AssignHearingForm from '../../hearings/components/modalForms/AssignHearingForm';
@@ -207,10 +205,6 @@ class PostponeHearingModal extends React.Component {
         (resp) => {
           this.setState({ isPosting: false });
           this.props.onReceiveAmaTasks(resp.body.tasks.data);
-          // Reload the appeal so updated hearing details display
-          ApiUtil.get(`/appeals/${this.props.appealId}`).then((response) => {
-            this.props.onReceiveAppealDetails(prepareAppealForStore([response?.body?.appeal]));
-          });
         },
         () => {
           this.setState({ isPosting: false });
@@ -276,7 +270,6 @@ PostponeHearingModal.propTypes = {
     externalId: PropTypes.string,
     veteranFullName: PropTypes.string,
   }),
-  appealId: PropTypes.string,
   assignHearing: PropTypes.shape({
     apiFormattedValues: PropTypes.shape({
       scheduled_time_string: PropTypes.string,
@@ -306,8 +299,7 @@ PostponeHearingModal.propTypes = {
   task: PropTypes.shape({
     taskId: PropTypes.string,
   }),
-  userCanScheduleVirtualHearings: PropTypes.bool,
-  onReceiveAppealDetails: PropTypes.func,
+  userCanScheduleVirtualHearings: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -324,8 +316,7 @@ const mapDispatchToProps = (dispatch) =>
       setScheduledHearing,
       requestPatch,
       onReceiveAmaTasks,
-      showErrorMessage,
-      onReceiveAppealDetails
+      showErrorMessage
     },
     dispatch
   );
