@@ -168,27 +168,27 @@ class HearingDay < CaseflowRecord
   end
 
   # In order to display timeslots for the various regional_office we need to know
-  # what time the first slot should be. This method that info as a string representing
-  # an iso8601 formatted datetime
+  # what time the first slot should be. This method returns that information as
+  # a string representing an iso8601 formatted datetime
   #
   # Examples:
   # "2021-04-23T08:30:00-04:00"
   # "2021-04-23T09:00:00-04:00"
   # "2021-04-23T08:00:00-06:00"
   #
-  # This may seem unnessecarily complex, when we could just send a time string like "08:30"
-  # However, that does not end up being simpler in practice. It just moves the work
-  # of knowing/figuring out the timezone elsewhere.
+  # This may seem unnessecarily complex, when we could more simply send a time string like "08:30"
+  # Sending a string like "08:30" does not end up being simpler in practice. It moves the work
+  # of knowing/figuring out the timezone elsewhere (the front-end).
   #
   # The iso8601 strings come from a combination of these three pieces:
-  # - Time: begins_at_time_string, or a default string like "09:00"
-  #    - begins_at_time_string is ALWAYS in eastern time.
+  # - Time: first_slot_time, or a default string like "09:00"
+  #    - first_slot_time is ALWAYS in eastern time.
   # - Timezone: regional office's timezone property like "America/Los_Angeles"
   # - Date: from the scheduled_for column for this hearing_day
   def begins_at
-    # If 'begins_at_time_string' column has a value, use that
-    unless begins_at_time_string.nil?
-      return combine_time_and_date(begins_at_time_string, "America/New_York", scheduled_for)
+    # If 'first_slot_time' column has a value, use that
+    unless first_slot_time.nil?
+      return combine_time_and_date(first_slot_time, "America/New_York", scheduled_for)
     end
 
     # if no value in db and central, 09:00
@@ -197,7 +197,7 @@ class HearingDay < CaseflowRecord
     # if no value in db and virtual, 08:30
     return combine_time_and_date("08:30", "America/New_York", scheduled_for) if virtual?
 
-    # if no value in db and video (not central or virtual): begins_at_time_string is 08:30
+    # if no value in db and video (not central or virtual): first_slot_time is 08:30
     combine_time_and_date("08:30", RegionalOffice.find!(regional_office).timezone, scheduled_for)
   end
 
@@ -243,7 +243,7 @@ class HearingDay < CaseflowRecord
   # - Timezone, a string like "America/Los_Angeles"
   # - Date, a ruby Date
   # :reek:UtilityFunction
-  def combine_time_and_date(time, timezone = "America/New_York", date = scheduled_for)
+  def combine_time_and_date(time, timezone, date)
     # Parse the time string into a ruby Time instance with zone
     time_with_zone = time.in_time_zone(timezone)
     # Make a string like "2021-04-23 08:30:00"
