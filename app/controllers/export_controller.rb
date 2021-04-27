@@ -29,7 +29,6 @@ class ExportController < ApplicationController
     ].join("\n\n")
   end
 
-  # :nocov:
   def available_fields
     (Task.column_names + TaskTreeRenderModule::PRESET_VALUE_FUNCS.keys).map(&:to_s)
   end
@@ -86,16 +85,28 @@ class ExportController < ApplicationController
     @sje ||= SanitizedJsonExporter.new(appeal, sanitize: !show_pii_query_param, verbosity: 0)
   end
 
+  # :nocov:
+  # :reek:FeatureEnvy
   def timeline_data
-    data = sje.records_hash[Task.table_name].map do |record|
+    tasks_as_timeline_data + intakes_as_timeline_data
+  end
+
+  # :reek:FeatureEnvy
+  def tasks_as_timeline_data
+    sje.records_hash[Task.table_name].map do |record|
       record = record.clone
-      end_time = (record["closed_at"] - record["assigned_at"] > 120) ? record["closed_at"] : nil if record["closed_at"]
+      significant_duration = record["closed_at"] - record["assigned_at"] > 120
+      end_time = significant_duration ? record["closed_at"] : nil if record["closed_at"]
       { id: "#{Task.name}#{record['id']}",
         content: "#{record['type']}_#{record['id']}",
         start: record["assigned_at"],
         end: end_time }
     end
-    data += sje.records_hash[Intake.table_name].map do |record|
+  end
+
+  # :reek:FeatureEnvy
+  def intakes_as_timeline_data
+    sje.records_hash[Intake.table_name].map do |record|
       record = record.clone
       significant_duration = record["completed_at"] - record["created_at"] > 120
       end_time = significant_duration ? record["completed_at"] : nil if record["completed_at"]
@@ -112,32 +123,33 @@ class ExportController < ApplicationController
     @network_graph_data ||= create_network_graph_data
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def create_network_graph_data
     nodes = []
     edges = []
 
-    prep_nodes(Veteran, nodes,
-               id_for: ->(klass, record) { "#{klass.name}#{record['file_number']}" })
+    nodes += prep_nodes(Veteran,
+                        id_for: ->(klass, record) { "#{klass.name}#{record['file_number']}" })
     sje.records_hash[Veteran.table_name].each do |veteran|
       edges << { from: "#{Veteran.name}#{veteran['file_number']}", to: "#{Person.name}#{veteran['participant_id']}" }
     end
 
-    prep_nodes(Person, nodes,
-               id_for: ->(klass, record) { "#{klass.name}#{record['participant_id']}" },
-               label_for: ->(klass, record) { "#{klass.name}_#{record['participant_id']}" })
+    nodes += prep_nodes(Person,
+                        id_for: ->(klass, record) { "#{klass.name}#{record['participant_id']}" },
+                        label_for: ->(klass, record) { "#{klass.name}_#{record['participant_id']}" })
 
-    prep_nodes(User, nodes,
-               label_for: ->(klass, record) { "#{klass.name}_#{record['css_id']}" })
+    nodes += prep_nodes(User,
+                        label_for: ->(klass, record) { "#{klass.name}_#{record['css_id']}" })
 
-    prep_nodes(Organization, nodes,
-               label_for: ->(_klass, record) { "#{record['type']}_#{record['name']}" })
+    nodes += prep_nodes(Organization,
+                        label_for: ->(_klass, record) { "#{record['type']}_#{record['name']}" })
     sje.records_hash[OrganizationsUser.table_name].each do |ou|
       edges << { from: "#{Organization.name}#{ou['organization_id']}", to: "#{User.name}#{ou['user_id']}",
                  label: ou["admin"] ? "admin" : nil }
     end
 
-    prep_nodes(Claimant, nodes,
-               label_for: ->(_klass, record) { "#{record['type']}_#{record['participant_id']}" })
+    nodes += prep_nodes(Claimant,
+                        label_for: ->(_klass, record) { "#{record['type']}_#{record['participant_id']}" })
     sje.records_hash[Claimant.table_name].each do |claimant|
       edges << { to: "#{Claimant.name}#{claimant['id']}",
                  from: "#{claimant['decision_review_type']}#{claimant['decision_review_id']}" }
@@ -145,12 +157,12 @@ class ExportController < ApplicationController
                  to: "#{Person.name}#{claimant['participant_id']}" }
     end
 
-    prep_nodes(Appeal, nodes)
+    nodes += prep_nodes(Appeal)
     sje.records_hash[Appeal.table_name].each do |appeal|
       edges << { from: "#{Appeal.name}#{appeal['id']}", to: "#{Veteran.name}#{appeal['veteran_file_number']}" }
     end
 
-    prep_nodes(AppealIntake, nodes)
+    nodes += prep_nodes(AppealIntake)
     sje.records_hash[AppealIntake.table_name].each do |intake|
       if intake["user_id"]
         edges << { from: "#{User.name}#{intake['user_id']}",
@@ -160,9 +172,9 @@ class ExportController < ApplicationController
                  to: "#{intake['detail_type']}#{intake['detail_id']}" }
     end
 
-    prep_nodes(Task, nodes,
-               label_for: ->(_klass, record) { "#{record['type']}_#{record['id']}" })
-
+    nodes += prep_nodes(Task,
+                        label_for: ->(_klass, record) { "#{record['type']}_#{record['id']}" })
+    # Create edges for Tasks
     klass = Task
     sje.records_hash[klass.table_name].each do |task|
       task_id = "#{Task.name}#{task['id']}"
@@ -176,8 +188,8 @@ class ExportController < ApplicationController
       edges << { from: "#{User.name}#{task['cancelled_by_id']}", to: task_id } if task["cancelled_by_id"]
     end
 
-    prep_nodes(RequestIssue, nodes,
-               label_for: ->(_klass, record) { "#{record['type']}_#{record['id']}" })
+    nodes += prep_nodes(RequestIssue,
+                        label_for: ->(_klass, record) { "#{record['type']}_#{record['id']}" })
     sje.records_hash[RequestIssue.table_name].each do |ri|
       edges << { to: "#{RequestIssue.name}#{ri['id']}",
                  from: "#{ri['decision_review_type']}#{ri['decision_review_id']}" }
@@ -185,18 +197,21 @@ class ExportController < ApplicationController
 
     { nodes: nodes, edges: edges }
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
-  def prep_nodes(klass, nodes,
+  # :reek:FeatureEnvy
+  def prep_nodes(klass,
                  label_for: ->(clazz, record) { "#{clazz.name}_#{record['id']}" },
                  id_for: ->(clazz, record) { "#{clazz.name}#{record['id']}" })
-    sje.records_hash[klass.table_name].each do |record|
-      record = record.clone
-      record["label"] = label_for.call(klass, record)
-      record["id"] = id_for.call(klass, record)
-      record["tableName"] = klass.table_name
-      nodes << record
+    sje.records_hash[klass.table_name].map do |record|
+      record.clone.tap do |clone_record|
+        clone_record["label"] = label_for.call(klass, clone_record)
+        clone_record["id"] = id_for.call(klass, clone_record)
+        clone_record["tableName"] = klass.table_name
+      end
     end
   end
+  # :nocov:
 
   def legacy_appeal?
     appeal.is_a?(LegacyAppeal)
@@ -231,5 +246,4 @@ class ExportController < ApplicationController
       message: COPY::ACCESS_DENIED_TITLE
     ).serialize_response)
   end
-  # :nocov:
 end
