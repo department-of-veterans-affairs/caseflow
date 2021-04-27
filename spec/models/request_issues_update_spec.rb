@@ -791,18 +791,6 @@ describe RequestIssuesUpdate, :all_dbs do
       expect(edited_issue.reload.contention_updated_at).to eq(Time.zone.now)
     end
 
-    it "should re-assign EPE user to RequestIssuesUpdate user" do
-      expect(review.end_product_establishments.map(&:user)).to_not include(riu.user)
-      subject
-      expect(review.end_product_establishments.map(&:user).uniq).to eq([riu.user])
-    end
-
-    it "should re-assign EPE station to RequestIssuesUpdate station" do
-      expect(review.end_product_establishments.map(&:station)).to_not include(riu.user.station_id)
-      subject
-      expect(review.end_product_establishments.map(&:station).uniq).to eq([riu.user.station_id])
-    end
-
     context "when the request issue doesn't have a contention" do
       let(:edited_issue_contention) { nil }
       let(:edited_issue) { create(:request_issue, decision_review: review, edited_description: edited_description) }
