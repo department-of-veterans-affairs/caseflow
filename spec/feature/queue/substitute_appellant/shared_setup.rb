@@ -74,7 +74,7 @@ RSpec.shared_examples("fill substitution form") do
       expect(page).to have_css(".cf-progress-bar-activated", text: "Create task")
 
       expect(page).to have_content("Key details")
-      expect(page).to have_content("NOD received")
+      expect(page).to have_content("Notice of disagreement received")
       expect(page).to have_content("Veteran date of death")
       expect(page).to have_content("Substitution granted by the RO")
 

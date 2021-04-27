@@ -7,15 +7,19 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
       class="cf-app-segment cf-app-segment--alt"
       role="main"
     >
-      <h1>
-        Create task
-      </h1>
-      <div
-        data-css-1sbm5ab=""
+      <section
+        class="css-1kmvzpy"
       >
-        Complete the details below to create the appeal for the substitute for this case.
-      </div>
-      <section>
+        <h1>
+          Create tasks
+        </h1>
+        <div>
+          Complete the details below to create the appeal for the substitute for this case.
+        </div>
+      </section>
+      <section
+        class="css-1rhlyut"
+      >
         <h2>
           Key details
         </h2>
@@ -98,15 +102,19 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
       class="cf-app-segment cf-app-segment--alt"
       role="main"
     >
-      <h1>
-        Create task
-      </h1>
-      <div
-        data-css-1sbm5ab=""
+      <section
+        class="css-1kmvzpy"
       >
-        Complete the details below to create the appeal for the substitute for this case.
-      </div>
-      <section>
+        <h1>
+          Create tasks
+        </h1>
+        <div>
+          Complete the details below to create the appeal for the substitute for this case.
+        </div>
+      </section>
+      <section
+        class="css-1rhlyut"
+      >
         <h2>
           Key details
         </h2>
