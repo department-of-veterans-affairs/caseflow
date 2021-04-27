@@ -214,7 +214,7 @@ RSpec.feature "Case details", :all_dbs do
       context "when there is no POA" do
         before do
           allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return(nil)
-          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(nil)
+          allow(BgsPowerOfAttorney).to receive(:fetch_bgs_poa_by_participant_id).and_return(nil)
         end
 
         scenario "contains message for no POA" do

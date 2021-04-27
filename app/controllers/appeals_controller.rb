@@ -58,8 +58,15 @@ class AppealsController < ApplicationController
   end
 
   def force_poa_refresh
-    poa = BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(appeal.claimant_participant_id)
-    poa.update_cached_attributes!
+    if appeal.is_a?(LegacyAppeal)
+      participant_id = appeal.appellant[:representative][:participant_id]
+      poa = BgsPowerOfAttorney.fetch_bgs_poa_by_participant_id(participant_id)
+      poa&.update_cached_attributes!
+    end
+    if appeal.is_a?(Appeal)
+      poa = BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(appeal.claimant_participant_id)
+      poa&.update_cached_attributes!
+    end
     poa
   end
 
@@ -78,14 +85,14 @@ class AppealsController < ApplicationController
   # :reek:FeatureEnvy
   def power_of_attorney
     updated_bgs_poa = force_poa_refresh
-    updated_tz = find_representative_tz(updated_bgs_poa.representative_address)
+    updated_tz = find_representative_tz(updated_bgs_poa&.representative_address)
     render json: {
-      representative_type: updated_bgs_poa.representative_type,
-      representative_name: updated_bgs_poa.representative_name,
-      representative_address: updated_bgs_poa.representative_address,
-      representative_email_address: updated_bgs_poa.representative_email_address,
+      representative_type: updated_bgs_poa&.representative_type,
+      representative_name: updated_bgs_poa&.representative_name,
+      representative_address: updated_bgs_poa&.representative_address,
+      representative_email_address: updated_bgs_poa&.representative_email_address,
       representative_tz: updated_tz,
-      poa_last_synced_at: updated_bgs_poa.poa_last_synced_at
+      poa_last_synced_at: updated_bgs_poa&.poa_last_synced_at
     }
   end
 
