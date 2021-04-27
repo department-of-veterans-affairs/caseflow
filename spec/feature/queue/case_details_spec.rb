@@ -352,6 +352,16 @@ RSpec.feature "Case details", :all_dbs do
       end
 
       context "when an unrecognized appellant doesn't have a POA" do
+        before do
+          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return(nil)
+
+          allow_any_instance_of(BgsPowerOfAttorney).to receive(:representative_type)
+            .and_return("Unrecognized representative")
+
+          allow(BgsPowerOfAttorney).to receive(:fetch_bgs_poa_by_participant_id).and_return(nil)
+          allow(BgsPowerOfAttorney).to receive(:find_or_create_by_claimant_participant_id).and_return(nil)
+        end
+
         let!(:claimant) do
           create(
             :claimant,
@@ -365,7 +375,7 @@ RSpec.feature "Case details", :all_dbs do
 
         scenario "details view renders unrecognized POA copy" do
           visit "/queue/appeals/#{appeal.uuid}"
-
+          
           expect(page).to have_content(COPY::CASE_DETAILS_UNRECOGNIZED_POA)
         end
       end
