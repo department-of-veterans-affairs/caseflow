@@ -84,8 +84,10 @@ class ClaimReview < DecisionReview
 
   # Save issues and assign it the appropriate end product establishment.
   # Create that end product establishment if it doesn't exist.
-  def create_issues!(new_issues)
-    new_issues.each(&:create_for_claim_review!)
+  def create_issues!(new_issues, request_issues_update = nil)
+    new_issues.each do |issue|
+      issue.create_for_claim_review!(request_issues_update)
+    end
     request_issues.reload
   end
 
@@ -238,14 +240,14 @@ class ClaimReview < DecisionReview
     ClaimReviewActiveTaskCancellation.new(self).call
   end
 
-  def end_product_establishment_for_issue(issue)
+  def end_product_establishment_for_issue(issue, request_issues_update = nil)
     return unless issue.eligible? && processed_in_vbms?
 
     end_product_establishments.find_by(
       "(code = ?) AND (synced_status IS NULL OR synced_status NOT IN (?))",
       issue.end_product_code,
       EndProduct::INACTIVE_STATUSES
-    ) || new_end_product_establishment(issue)
+    ) || new_end_product_establishment(issue, request_issues_update)
   end
 
   def cancel_establishment!
@@ -328,19 +330,5 @@ class ClaimReview < DecisionReview
   # Currently this is only in use for claims processed in VBMS which are not impacted
   def create_stream!(attributes)
     self.class.create(attributes).tap { |new_stream| new_stream.copy_claimants!(claimants) }
-  end
-
-   def end_product_establishment_source
-    # There should only be one pending request issues update at a time
-    # active_request_issues_update = request_issues_updates.never_attempted.first
-    request_issues_updates.try(:never_attempted)&.first || intake
-  end
-
-  def end_product_station
-    end_product_establishment_source&.user&.station_id || "499" # National Work Queue
-  end
-
-  def end_product_user
-    end_product_establishment_source&.user
   end
 end

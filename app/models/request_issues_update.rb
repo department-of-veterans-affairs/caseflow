@@ -19,9 +19,8 @@ class RequestIssuesUpdate < CaseflowRecord
   def perform!
     return false unless validate_before_perform
     return false if processed?
-    binding.pry
+
     transaction do
-      submit_for_processing!
       process_issues!
       review.mark_rating_request_issues_to_reassociate!
       update!(
@@ -33,6 +32,7 @@ class RequestIssuesUpdate < CaseflowRecord
       )
       create_business_line_tasks! if added_issues.present?
       cancel_active_tasks
+      submit_for_processing!
     end
 
     process_job
@@ -52,15 +52,6 @@ class RequestIssuesUpdate < CaseflowRecord
   # it is queued via submit_for_processing! in the perform! method above.
   def establish!
     attempted!
-
-    # re-assign user to whomever edited the Claim.
-    # this works around issue when original user is no longer authorized for VBMS.
-    # if review.processed_in_vbms?
-    #   review.end_product_establishments.each do |epe|
-    #     epe.user = user
-    #     epe.station = user.station_id
-    #   end
-    # end
 
     review.establish!
     edited_issues.each { |issue| RequestIssueContention.new(issue).update_text! }
@@ -157,8 +148,7 @@ class RequestIssuesUpdate < CaseflowRecord
   end
 
   def process_issues!
-    binding.pry
-    review.create_issues!(added_issues)
+    review.create_issues!(added_issues, self)
     process_removed_issues!
     process_legacy_issues!
     process_withdrawn_issues!
