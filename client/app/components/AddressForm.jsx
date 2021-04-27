@@ -78,7 +78,7 @@ export const AddressForm = ({ control, register, watch, setValue }) => {
 };
 
 AddressForm.propTypes = {
-  control: PropTypes.func,
+  control: PropTypes.object,
   register: PropTypes.func,
   watch: PropTypes.func,
   setValue: PropTypes.func,
