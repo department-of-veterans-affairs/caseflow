@@ -14,13 +14,18 @@ import {
   SUBSTITUTE_APPELLANT_SELECT_APPELLANT_SUBHEAD,
 } from 'app/../COPY';
 import CheckoutButtons from 'app/queue/docketSwitch/grant/CheckoutButtons';
+import { KeyDetails } from './KeyDetails';
 
 const schema = yup.object().shape({});
 
 const sectionStyle = css({ marginBottom: '24px' });
 
 export const SubstituteAppellantTasksForm = ({
+  appealId,
   existingValues,
+  nodDate,
+  dateOfDeath,
+  substitutionDate,
   onBack,
   onCancel,
   onSubmit,
@@ -43,6 +48,12 @@ export const SubstituteAppellantTasksForm = ({
         <div {...sectionStyle}>
           {SUBSTITUTE_APPELLANT_SELECT_APPELLANT_SUBHEAD}
         </div>
+        <KeyDetails
+          appealId={appealId}
+          nodDate={nodDate}
+          dateOfDeath={dateOfDeath}
+          substitutionDate={substitutionDate}
+        />
       </AppSegment>
       <div className="controls cf-app-segment">
         <CheckoutButtons
@@ -56,6 +67,7 @@ export const SubstituteAppellantTasksForm = ({
   );
 };
 SubstituteAppellantTasksForm.propTypes = {
+  appealId: PropTypes.string,
   existingValues: PropTypes.shape({}),
   onBack: PropTypes.func,
   onCancel: PropTypes.func,
