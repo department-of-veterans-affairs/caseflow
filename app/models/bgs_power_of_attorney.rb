@@ -34,6 +34,7 @@ class BgsPowerOfAttorney < CaseflowRecord
     def find_or_create_by_file_number(file_number)
       poa = find_or_create_by!(file_number: file_number)
       poa.save_with_updated_bgs_record! if poa&.expired?
+      poa
     rescue ActiveRecord::RecordNotUnique
       # We've noticed that this error is thrown because of a race-condition
       # where multiple processes are trying to create the same object.
@@ -44,7 +45,8 @@ class BgsPowerOfAttorney < CaseflowRecord
 
     def find_or_create_by_claimant_participant_id(claimant_participant_id)
       poa = find_or_create_by!(claimant_participant_id: claimant_participant_id)
-      poa.save_with_updated_bgs_record! if poa&.expired? 
+      poa.save_with_updated_bgs_record! if poa&.expired?
+      poa
     rescue ActiveRecord::RecordNotUnique
       # Handle race conditions similarly to find_or_create_by_file_number.
       # For an example of this in the wild, see Sentry event 17c302faae0b48bcb0e1816a58e8b7f5.

@@ -4,6 +4,36 @@ describe BgsPowerOfAttorney do
   let(:claimant_participant_id) { "1129318238" }
   let(:file_number) { "66660000" }
 
+  describe 'record expirations' do
+    context "by_claimant_participant_id" do
+      let!(:poa) { create(:bgs_power_of_attorney, claimant_participant_id: claimant_participant_id) }
+
+      it "record is not expired" do
+        poa.last_synced_at = 1.day.ago
+        expect(poa.expired?).to eq(true)
+      end
+
+      it "record is expired" do
+        poa.last_synced_at = Time.now
+        expect(poa.expired?).to eq(false)
+      end
+    end
+
+    context "by_file_number" do
+      let!(:poa) { create(:bgs_power_of_attorney, file_number: file_number) }
+
+      it "record is not expired" do
+        poa.last_synced_at = 1.day.ago
+        expect(poa.expired?).to eq(true)
+      end
+
+      it "record is expired" do
+        poa.last_synced_at = Time.now
+        expect(poa.expired?).to eq(false)
+      end
+    end
+  end
+
   describe ".find_or_create_by_claimant_participant_id" do
     subject { described_class.find_or_create_by_claimant_participant_id(claimant_participant_id) }
 
