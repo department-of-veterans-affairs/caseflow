@@ -1813,18 +1813,18 @@ RSpec.feature "Case details", :all_dbs do
 
     shared_examples "edit unscheduled notes" do
       it "edits unscheduled successully" do
-        id = appeal.is_a?(Appeal) ? appeal.uuid : appeal.vacols_id
+        id = appeal.external_id
 
         visit("/queue/appeals/#{id}")
 
-        within('div#hearing-details') do
+        within("div#hearing-details") do
           expect(page).to have_content(COPY::UNSCHEDULED_HEARING_TITLE)
           expect(page).to have_content("Type: #{appeal.readable_current_hearing_request_type}")
           click_button("Edit", exact: true)
           fill_in "Notes", with: fill_in_notes
           click_button("Save", exact: true)
           expect(page).to have_content(fill_in_notes)
-          expect(page).to have_content("Last updated by BVASYELLOW on 01/01/2020")
+          expect(page).to have_content("Last updated by BVASYELLOW on #{Time.zone.now.strftime('%m/%d/%Y')}")
         end
 
         expect(page).to have_content(
