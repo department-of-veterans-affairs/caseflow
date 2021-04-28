@@ -9,10 +9,13 @@ import { AddClaimantForm } from 'app/intake/addClaimant/AddClaimantForm';
 
 import { useAddClaimantForm } from 'app/intake/addClaimant/utils';
 import { fillForm, relationshipOpts } from './testUtils';
-import { ERROR_EMAIL_INVALID_FORMAT } from 'app/../COPY';
+
+let validationErrors;
 
 const FormWrapper = ({ children, defaultValues }) => {
   const methods = useAddClaimantForm({ defaultValues });
+
+  validationErrors = methods.formState.errors;
 
   return <FormProvider {...methods}>{children}</FormProvider>;
 };
@@ -105,7 +108,7 @@ describe('AddClaimantForm', () => {
       userEvent.tab();
 
       await waitFor(() => {
-        expect(screen.findByText(ERROR_EMAIL_INVALID_FORMAT)).toBeVisible();
+        expect(validationErrors.emailAddress).toBeDefined();
       });
     }, 15000);
   });
