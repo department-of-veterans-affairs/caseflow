@@ -42,6 +42,7 @@ export const PAGE_PATHS = {
   SEARCH: '/search',
   REVIEW: '/review_request',
   ADD_CLAIMANT: '/add_claimant',
+  ADD_POWER_OF_ATTORNEY: '/add_power_of_attorney',
   FINISH: '/finish',
   ADD_ISSUES: '/add_issues',
   COMPLETED: '/completed',
@@ -50,7 +51,13 @@ export const PAGE_PATHS = {
   CONFIRMATION: '/confirmation',
   CLEARED_EPS: '/cleared_eps',
   OUTCODED: '/outcoded',
-  ADD_POWER_OF_ATTORNEY: '/add_power_of_attorney'
+};
+
+export const INTAKE_STATES = {
+  NONE: 'NONE',
+  STARTED: 'STARTED',
+  REVIEWED: 'REVIEWED',
+  COMPLETED: 'COMPLETED'
 };
 
 export const BOOLEAN_RADIO_OPTIONS = [
@@ -144,13 +151,6 @@ export const ACTIONS = {
   PROCESS_FINISH_ERROR: 'PROCESS_FINISH_ERROR',
   NO_ISSUES_SELECTED_ERROR: 'NO_ISSUES_SELECTED_ERROR',
   SET_EDIT_CONTENTION_TEXT: 'SET_EDIT_CONTENTION_TEXT'
-};
-
-export const INTAKE_STATES = {
-  NONE: 'NONE',
-  STARTED: 'STARTED',
-  REVIEWED: 'REVIEWED',
-  COMPLETED: 'COMPLETED'
 };
 
 export const REVIEW_OPTIONS = {
