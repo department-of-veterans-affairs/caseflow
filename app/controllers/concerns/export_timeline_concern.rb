@@ -9,11 +9,14 @@ module ExportTimelineConcern
       record = record.clone
       significant_duration = record["closed_at"] - record["created_at"] > 120 if record["closed_at"]
       end_time = significant_duration ? record["closed_at"] : nil
-      { id: "#{Task.name}#{record['id']}",
+      {
+        id: "#{Task.name}#{record['id']}",
         tableName: Task.table_name,
+        status: record['status'],
         content: "#{record['type']}_#{record['id']}",
         start: record["created_at"],
-        end: end_time }
+        end: end_time
+      }
     end
   end
 
@@ -23,11 +26,13 @@ module ExportTimelineConcern
       record = record.clone
       significant_duration = record["completed_at"] - record["created_at"] > 120 if record["completed_at"]
       end_time = significant_duration ? record["completed_at"] : nil
-      { id: "#{record['type']}#{record['id']}",
+      {
+        id: "#{record['type']}#{record['id']}",
         tableName: Intake.table_name,
         content: "#{record['type']}_#{record['id']}",
         start: record["created_at"],
-        end: end_time }
+        end: end_time
+      }
     end
   end
 end

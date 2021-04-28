@@ -6,7 +6,6 @@ class ExportController < ApplicationController
 
   def show
     return render_access_error unless current_user.admin?
-    return "(LegacyAppeals are not yet supported)".to_json if legacy_appeal?
 
     no_cache
 

@@ -10,7 +10,8 @@ const taskNodeColor = {
   completed: "#00bb00"
 }
 const nodeDecoration = {
-  intakes: { shape: "ellipse" },
+  intakes: { shape: "diamond" },
+  cavc_remands: { shape: "triangle" },
   appeals: { shape: "star", size: 30, color: "#ff8888" },
   claimants: { shape: "ellipse" },
   veterans: { shape: "icon", icon: { code: "\uf29a" } },
@@ -18,7 +19,8 @@ const nodeDecoration = {
   users: { shape: "icon", size: 10, icon: { code: "\uf007", color: "gray" } },
   organizations: { shape: "icon", icon: { code: "\uf0e8", color: "gray" } },
   tasks: { shape: "box", color: (node)=>taskNodeColor[node.status] },
-  request_issues: { shape: "box", color: "#ffa500" }
+  request_issues: { shape: "box", color: "#ffa500" },
+  decision_issues: { shape: "box", color: "#ffe100" }
 };
 
 function decorateNodes(nodes){
@@ -71,9 +73,27 @@ function addNetworkGraph(elementId, network_graph_data){
   return new vis.Network(netgraph, { nodes: nodesView, edges: edgesView }, network_options);
 }
 
+const itemDecoration = {
+  tasks: { style: (item)=>"background-color: "+taskNodeColor[item.status] }
+};
+
+function decorateTimelineItems(items){
+  items.forEach(item => {
+    if(!itemDecoration.hasOwnProperty(item.tableName)) return;
+    for ([key, value] of Object.entries(itemDecoration[item.tableName])) {
+      if (typeof value === 'function') {
+        value = value(item)
+      }
+      item[key] = value
+    }
+  });
+  // console.log(items)
+  return items;
+}
+
 function addTimeline(elementId, timeline_data){
   const timeline = document.getElementById(elementId);
-  const items = new vis.DataSet(timeline_data);
+  const items = new vis.DataSet(decorateTimelineItems(timeline_data));
   const timeline_options = {
     width: '95%'
   };
