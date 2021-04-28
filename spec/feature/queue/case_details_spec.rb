@@ -469,7 +469,7 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to have_content("POA Updated Successfully")
       end
     end
-    
+
     context "veteran records have been merged and Veteran has multiple active phone numbers in SHARE" do
       let!(:appeal) do
         create(
