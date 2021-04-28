@@ -59,7 +59,7 @@ class SanitizedJsonConfiguration
       },
       Task => {
         sanitize_fields: %w[instructions],
-        retrieval: ->(records) { reorder_for_import(records[Appeal].map(&:tasks).flatten).extend(TaskAssignment) }
+        retrieval: ->(records) { reorder_for_import(Task.where(appeal: records[Appeal])).extend(TaskAssignment) }
       },
       TaskTimer => {
         retrieval: ->(records) { TaskTimer.where(task_id: records[Task].map(&:id)).order(:id) }
