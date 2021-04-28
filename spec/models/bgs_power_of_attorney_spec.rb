@@ -4,7 +4,7 @@ describe BgsPowerOfAttorney do
   let(:claimant_participant_id) { "1129318238" }
   let(:file_number) { "66660000" }
 
-  describe 'record expirations' do
+  describe "record expirations" do
     context "by_claimant_participant_id" do
       let!(:poa) { create(:bgs_power_of_attorney, claimant_participant_id: claimant_participant_id) }
 
@@ -14,7 +14,7 @@ describe BgsPowerOfAttorney do
       end
 
       it "record is expired" do
-        poa.last_synced_at = Time.now
+        poa.last_synced_at = Time.zone.now
         expect(poa.expired?).to eq(false)
       end
     end
@@ -28,7 +28,7 @@ describe BgsPowerOfAttorney do
       end
 
       it "record is expired" do
-        poa.last_synced_at = Time.now
+        poa.last_synced_at = Time.zone.now
         expect(poa.expired?).to eq(false)
       end
     end

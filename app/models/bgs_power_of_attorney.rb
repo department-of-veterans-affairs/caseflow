@@ -154,10 +154,6 @@ class BgsPowerOfAttorney < CaseflowRecord
   end
 
   def expired?
-Rails.logger.debug("*********************")
-Rails.logger.debug("expired?")
-Rails.logger.debug(last_synced_at && last_synced_at < 16.hours.ago)
-Rails.logger.debug("*********************")
     last_synced_at && last_synced_at < 16.hours.ago
   end
 
