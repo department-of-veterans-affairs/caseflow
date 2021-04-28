@@ -412,16 +412,16 @@ describe HearingDay, :all_dbs do
     end
   end
 
-  context "slot_length " do
+  context "slot_length_minutes" do
     context "no db value for slot_length_minutes" do
-      subject { hearing_day.slot_length }
+      subject { hearing_day.slot_length_minutes }
       let(:hearing_day) { create(:hearing_day) }
       it "uses default value of 60" do
         expect(subject).to eq(60)
       end
     end
     context "with a db value for slot_length_minutes" do
-      subject { hearing_day.slot_length }
+      subject { hearing_day.slot_length_minutes }
       let(:hearing_day) { create(:hearing_day, slot_length_minutes: 45) }
       it "uses db value for slot_length_minutes" do
         expect(subject).to eq(45)
