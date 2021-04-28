@@ -95,7 +95,11 @@ class Generators::Veteran
     # rubocop:enable Metrics/MethodLength
 
     def build(attrs = {})
-      Fakes::BGSService.store_veteran_record(attrs[:file_number], default_attrs(attrs[:file_number]).merge(attrs))
+      record = default_attrs(attrs[:file_number]).merge(attrs)
+      unless [NilClass, String].include?(record[:date_of_death].class)
+        record[:date_of_death] = record[:date_of_death].strftime("%m/%d/%Y")
+      end
+      Fakes::BGSService.store_veteran_record(attrs[:file_number], record)
       Veteran.new(file_number: attrs[:file_number],
                   first_name: attrs[:first_name],
                   last_name: attrs[:last_name],
