@@ -546,7 +546,7 @@ describe "SanitizedJsonExporter/Importer" do
         create(:hearing, appeal: appeal, hearing_day: hearing_day).tap do |hearing|
           create(:hearing_task_association,
                  hearing: hearing,
-                 hearing_task: appeal.tasks.where(type: :HearingTask).last)
+                 hearing_task: appeal.tasks.of_type(:HearingTask).last)
           create(:assign_hearing_disposition_task,
                  parent: hearing.hearing_task_association.hearing_task,
                  appeal: hearing.appeal)
@@ -597,11 +597,11 @@ describe "SanitizedJsonExporter/Importer" do
       let!(:org_admin) { create(:user) { |u| OrganizationsUser.make_user_admin(u, CavcLitigationSupport.singleton) } }
       let(:org_nonadmin) { create(:user) { |u| CavcLitigationSupport.singleton.add_user(u) } }
       let(:window_task) do
-        send_task = cavc_appeal.tasks.open.where(type: :SendCavcRemandProcessedLetterTask).last
+        send_task = cavc_appeal.tasks.open.of_type(:SendCavcRemandProcessedLetterTask).last
         child_send_task = create(:send_cavc_remand_processed_letter_task, parent: send_task, assigned_to: org_nonadmin)
         child_send_task.update_from_params({ status: Constants.TASK_STATUSES.completed }, org_nonadmin)
 
-        cavc_appeal.tasks.where(type: CavcRemandProcessedLetterResponseWindowTask.name).first
+        cavc_appeal.tasks.of_type(:CavcRemandProcessedLetterResponseWindowTask).first
       end
 
       let!(:sje) do

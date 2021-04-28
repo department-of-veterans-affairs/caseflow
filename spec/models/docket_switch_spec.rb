@@ -110,9 +110,8 @@ RSpec.describe DocketSwitch, type: :model do
           expect(docket_switch_task).to be_completed
 
           # Docket switch task has been copied to new appeal stream
-          new_completed_task = DocketSwitchGrantedTask.find_by(
-            appeal: docket_switch.new_docket_stream,
-            assigned_to_type: "User"
+          new_completed_task = DocketSwitchGrantedTask.assigned_to_any_user.find_by(
+            appeal: docket_switch.new_docket_stream
           )
           expect(new_completed_task).to_not be_nil
           expect(new_completed_task).to be_completed

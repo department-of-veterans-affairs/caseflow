@@ -152,7 +152,7 @@ describe "Withdrawing an appeal", :postgres do
   end
 
   def all_blocking_mail_tasks(tasks)
-    tasks.where(type: "CongressionalInterestMailTask")
+    tasks.of_type(:CongressionalInterestMailTask)
   end
 
   def appeal
