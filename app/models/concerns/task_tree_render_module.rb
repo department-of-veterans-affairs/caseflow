@@ -81,7 +81,9 @@ module TaskTreeRenderModule
 
   # called by rows and used by config.value_funcs_hash
   def row_objects(_config)
-    is_a?(Task) ? appeal.tasks : tasks
+    rows = is_a?(Task) ? appeal.tasks : tasks
+    # eager load
+    rows.includes(:assigned_by, :assigned_to, :cancelled_by)
   end
 
   def row_label(_config)

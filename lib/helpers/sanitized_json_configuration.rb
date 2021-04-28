@@ -19,9 +19,8 @@ class SanitizedJsonConfiguration
         track_imported_ids: true,
         sanitize_fields: %w[veteran_file_number],
         retrieval: lambda do |records|
-          initial_appeals = records[Appeal]
-          (initial_appeals +
-          initial_appeals.map { |appeal| self.class.appeals_associated_with(appeal) }.flatten.uniq.compact
+          (records[Appeal] +
+            records[Appeal].map { |appeal| self.class.appeals_associated_with(appeal) }.flatten.uniq.compact
           ).uniq.sort_by(&:id)
         end
       },
@@ -59,10 +58,10 @@ class SanitizedJsonConfiguration
       },
       Task => {
         sanitize_fields: %w[instructions],
-        retrieval: ->(records) { reorder_for_import(Task.where(appeal: records[Appeal])).extend(TaskAssignment) }
+        retrieval: ->(records) { reorder_for_import(Task.where(appeal: records[Appeal])) }
       },
       TaskTimer => {
-        retrieval: ->(records) { TaskTimer.where(task_id: records[Task].map(&:id)).order(:id) }
+        retrieval: ->(records) { TaskTimer.where(task_id: records[Task].pluck(:id)).order(:id) }
       },
       RequestIssue => {
         sanitize_fields: ["notes", "contested_issue_description", /_(notes|text|description)/],
@@ -83,8 +82,9 @@ class SanitizedJsonConfiguration
       Hearing => {
         sanitize_fields: %w[bva_poc military_service notes representative_name summary witness],
         retrieval: lambda do |records|
-          (records[Appeal].map(&:hearings) + records[Task].with_type("HearingTask").map(&:hearing))
-            .flatten.uniq.compact.sort_by(&:id)
+          (records[Appeal].map(&:hearings) +
+            Task.where(id: records[Task].pluck(:id), type: :HearingTask).map(&:hearing)
+          ).flatten.uniq.compact.sort_by(&:id)
         end
       },
       HearingDay => {
@@ -104,12 +104,13 @@ class SanitizedJsonConfiguration
         track_imported_ids: true,
         sanitize_fields: %w[css_id email full_name],
         retrieval: lambda do |records|
-          tasks = records[Task]
+          # eager load task associations
+          tasks = Task.where(id: records[Task].pluck(:id)).includes(:assigned_by, :assigned_to, :cancelled_by)
           cavc_remands = records[CavcRemand]
           hearings = records[Hearing]
 
           users = tasks.map(&:assigned_by).compact + tasks.map(&:cancelled_by).compact +
-                  tasks.assigned_to_user.map(&:assigned_to) +
+                  tasks.assigned_to_any_user.map(&:assigned_to) +
                   cavc_remands.map { |cavc_remand| [cavc_remand.created_by, cavc_remand.updated_by] }.flatten +
                   records[Appeal].map(&:intake).compact.map(&:user) +
                   records[AppealIntake].map { |intake| intake&.user } +
@@ -123,7 +124,9 @@ class SanitizedJsonConfiguration
       Organization => {
         track_imported_ids: true,
         retrieval: lambda do |records|
-          records[Task].assigned_to_org.map(&:assigned_to) + records[User].map(&:organizations).flatten.uniq
+          (Task.where(id: records[Task].pluck(:id), assigned_to_type: "Organization").map(&:assigned_to) +
+            records[User].map(&:organizations).flatten.uniq
+          ).uniq.compact.sort_by(&:id)
         end
       },
       OrganizationsUser => {
@@ -137,20 +140,6 @@ class SanitizedJsonConfiguration
     }
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
-
-  module TaskAssignment
-    def assigned_to_user
-      select { |task| task.assigned_to_type == "User" }
-    end
-
-    def assigned_to_org
-      select { |task| task.assigned_to_type == "Organization" }
-    end
-
-    def with_type(task_type)
-      select { |task| task.type == task_type }
-    end
-  end
 
   private
 
