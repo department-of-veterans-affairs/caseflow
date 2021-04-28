@@ -93,8 +93,7 @@ export const AddClaimantForm = ({
               label="Relationship to the Veteran"
               options={relationshipOpts}
               onChange={(valObj) => {
-                onChange(valObj);
-                setValue('relationship', valObj?.value);
+                onChange(valObj.value);
               }}
               strongLabel
             />
