@@ -237,13 +237,16 @@ class ExportController < ApplicationController
       NETWORK_GRAPH_CONFIG[:edges].keys.map(&:table_name)
   end
 
-  # :reek:FeatureEnvy
-  def create_network_graph_data
+  def extra_nodes
     # Reminder of records to add
     # pp "----- record_types_not_in_network_graph: #{record_types_not_in_network_graph}"
+    record_types_not_in_network_graph.map { |tablename| prep_nodes(tablename.classify.constantize) }.flatten
+  end
 
+  # :reek:FeatureEnvy
+  def create_network_graph_data
     {
-      nodes: NETWORK_GRAPH_CONFIG[:nodes].keys.map { |klass| prep_nodes(klass) }.flatten,
+      nodes: NETWORK_GRAPH_CONFIG[:nodes].keys.map { |klass| prep_nodes(klass) }.flatten + extra_nodes,
       edges: NETWORK_GRAPH_CONFIG[:edges].keys.map { |klass| prep_edges(klass) }.flatten
     }
   end
@@ -251,8 +254,8 @@ class ExportController < ApplicationController
   # :reek:FeatureEnvy
   # The `id` of the nodes are referenced by edges
   def prep_nodes(klass, label_for: nil, id_for: nil)
-    id_for ||= NETWORK_GRAPH_CONFIG[:nodes][klass][:id_for] || ->(record) { "#{klass.name}#{record['id']}" }
-    label_for ||= NETWORK_GRAPH_CONFIG[:nodes][klass][:label_for] || ->(record) { "#{klass.name}_#{record['id']}" }
+    id_for ||= NETWORK_GRAPH_CONFIG[:nodes][klass]&.[](:id_for) || ->(record) { "#{klass.name}#{record['id']}" }
+    label_for ||= NETWORK_GRAPH_CONFIG[:nodes][klass]&.[](:label_for) || ->(record) { "#{klass.name}_#{record['id']}" }
     sje.records_hash[klass.table_name].map do |record|
       record.clone.tap do |clone_record|
         clone_record["label"] = label_for.call(clone_record)
