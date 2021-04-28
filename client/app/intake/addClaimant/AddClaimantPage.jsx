@@ -47,7 +47,7 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
 
   const methods = useAddClaimantForm({ defaultValues: claimant });
   const {
-    formState: { isValid, errors },
+    formState: { isValid },
     handleSubmit,
     watch
   } = methods;
@@ -112,7 +112,6 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
         <AddClaimantForm
           onBack={handleBack}
           onSubmit={onSubmit}
-          validationErrors={errors}
           onAttorneySearch={onAttorneySearch}
         />
         {confirmModal && (
