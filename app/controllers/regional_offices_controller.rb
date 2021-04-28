@@ -36,7 +36,9 @@ class RegionalOfficesController < ApplicationController
         room: day.room,
         room_label: HearingRooms.find!(day.room)&.label || "",
         filled_slots: hearings.size,
-        total_slots: day.total_slots
+        total_slots: day.total_slots,
+        begins_at: day.begins_at,
+        slot_length_minutes: day.slot_length_minutes
       }
     end
   end

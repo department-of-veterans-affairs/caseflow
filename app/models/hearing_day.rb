@@ -160,9 +160,9 @@ class HearingDay < CaseflowRecord
     SLOTS_BY_TIMEZONE[RegionalOffice.find!(regional_office).timezone]
   end
 
-  def slot_length
+  def slot_length_minutes
     # 04-19-2021 slot_length_minutes database column added
-    return slot_length_minutes unless slot_length_minutes.nil?
+    return read_attribute(:slot_length_minutes) unless read_attribute(:slot_length_minutes).nil?
 
     DEFAULT_SLOT_LENGTH
   end
