@@ -15,14 +15,14 @@ module TaskTreeRenderModule
     ASGN_DATE: ->(task) { task.created_at&.strftime("%Y-%m-%d") },
     ASGN_TIME: ->(task) { task.created_at&.strftime("%H-%M-%S") },
     ASGN_BY: lambda { |task|
-      ConsoleTreeRenderer.send_chain(task.includes(:assigned_by), [:assigned_by, :type])&.to_s ||
-        ConsoleTreeRenderer.send_chain(task.includes(:assigned_by), [:assigned_by, :name])&.to_s ||
-        ConsoleTreeRenderer.send_chain(task.includes(:assigned_by), [:assigned_by, :css_id])&.to_s
+      ConsoleTreeRenderer.send_chain(task, [:assigned_by, :type])&.to_s ||
+        ConsoleTreeRenderer.send_chain(task, [:assigned_by, :name])&.to_s ||
+        ConsoleTreeRenderer.send_chain(task, [:assigned_by, :css_id])&.to_s
     },
     ASGN_TO: lambda { |task|
-      ConsoleTreeRenderer.send_chain(task.includes(:assigned_to), [:assigned_to, :type])&.to_s ||
-        ConsoleTreeRenderer.send_chain(task.includes(:assigned_to), [:assigned_to, :name])&.to_s ||
-        ConsoleTreeRenderer.send_chain(task.includes(:assigned_to), [:assigned_to, :css_id])&.to_s
+      ConsoleTreeRenderer.send_chain(task, [:assigned_to, :type])&.to_s ||
+        ConsoleTreeRenderer.send_chain(task, [:assigned_to, :name])&.to_s ||
+        ConsoleTreeRenderer.send_chain(task, [:assigned_to, :css_id])&.to_s
     }
   }.freeze
 

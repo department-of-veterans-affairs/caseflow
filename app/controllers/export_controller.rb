@@ -85,7 +85,6 @@ class ExportController < ApplicationController
     @sje ||= SanitizedJsonExporter.new(appeal, sanitize: !show_pii_query_param, verbosity: 0)
   end
 
-  # :nocov:
   # :reek:FeatureEnvy
   def timeline_data
     tasks_as_timeline_data + intakes_as_timeline_data
@@ -95,11 +94,11 @@ class ExportController < ApplicationController
   def tasks_as_timeline_data
     sje.records_hash[Task.table_name].map do |record|
       record = record.clone
-      significant_duration = record["closed_at"] - record["assigned_at"] > 120
+      significant_duration = record["closed_at"] - record["created_at"] > 120 if record["closed_at"]
       end_time = significant_duration ? record["closed_at"] : nil if record["closed_at"]
       { id: "#{Task.name}#{record['id']}",
         content: "#{record['type']}_#{record['id']}",
-        start: record["assigned_at"],
+        start: record["created_at"],
         end: end_time }
     end
   end
@@ -123,95 +122,156 @@ class ExportController < ApplicationController
     @network_graph_data ||= create_network_graph_data
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-  def create_network_graph_data
-    nodes = []
-    edges = []
+  NETWORK_GRAPH_CONFIG = {
+    nodes: {
+      Veteran => {
+        id_for: ->(record) { "#{Veteran.name}#{record['file_number']}" }
+      },
+      Person => {
+        id_for: ->(record) { "#{Person.name}#{record['participant_id']}" },
+        label_for: ->(record) { "#{Person.name}_#{record['participant_id']}" }
+      },
+      User => {
+        label_for: ->(record) { record["css_id"] }
+      },
+      Organization => {
+        label_for: ->(record) { "#{record['type']}_#{record['name']}" }
+      },
+      Claimant => {
+        label_for: ->(record) { "#{record['type']}_#{record['participant_id']}" }
+      },
+      Appeal => {
+      },
+      AppealIntake => {
+      },
+      CavcRemand => {
+        label_for: ->(record) { [record["remand_subtype"], record["cavc_decision_type"], record["id"]].join("_") }
+      },
+      Task => {
+        label_for: ->(record) { "#{record['type']}_#{record['id']}" }
+      },
+      RequestIssue => {
+        label_for: ->(record) { "#{record['type']}_#{record['id']}" }
+      },
+      DecisionIssue => {
+        label_for: ->(record) { "#{record['benefit_type']}_decision#{record['id']}" }
+      }
+    },
+    edges: {
+      Appeal => [{
+        from_id_for: ->(record) { "#{Appeal.name}#{record['id']}" },
+        to_id_for: ->(record) { "#{Veteran.name}#{record['veteran_file_number']}" }
+      }],
+      AppealIntake => [{
+        from_id_for: ->(record) { "#{AppealIntake.name}#{record['id']}" },
+        to_id_for: ->(record) { "#{record['detail_type']}#{record['detail_id']}" }
+      }, {
+        from_id_for: ->(record) { "#{User.name}#{record['user_id']}" },
+        to_id_for: ->(record) { "#{AppealIntake.name}#{record['id']}" }
+      }],
+      CavcRemand => [{
+        from_id_for: ->(record) { "#{CavcRemand.name}#{record['id']}" },
+        to_id_for: ->(record) { "#{Appeal.name}#{record['remand_appeal_id']}" }
+      }, {
+        from_id_for: ->(record) { "#{Appeal.name}#{record['source_appeal_id']}" },
+        to_id_for: ->(record) { "#{CavcRemand.name}#{record['id']}" }
+      }, {
+        from_id_for: ->(record) { "#{User.name}#{record['created_by_id']}" },
+        to_id_for: ->(record) { "#{CavcRemand.name}#{record['id']}" }
+      }],
+      Veteran => [{
+        from_id_for: ->(record) { "#{Veteran.name}#{record['file_number']}" },
+        to_id_for: ->(record) { "#{Person.name}#{record['participant_id']}" }
+      }],
+      Claimant => [{
+        from_id_for: ->(record) { "#{Claimant.name}#{record['id']}" },
+        to_id_for: ->(record) { "#{Person.name}#{record['participant_id']}" }
+      }, {
+        from_id_for: ->(record) { "#{record['decision_review_type']}#{record['decision_review_id']}" },
+        to_id_for: ->(record) { "#{Claimant.name}#{record['id']}" }
+      }],
+      OrganizationsUser => [{
+        from_id_for: ->(record) { "#{Organization.name}#{record['organization_id']}" },
+        to_id_for: ->(record) { "#{User.name}#{record['user_id']}" },
+        label_for: ->(record) { record["admin"] ? "admin" : nil }
+      }],
+      RequestIssue => [{
+        from_id_for: ->(record) { "#{record['decision_review_type']}#{record['decision_review_id']}" },
+        to_id_for: ->(record) { "#{RequestIssue.name}#{record['id']}" }
+      }],
+      RequestDecisionIssue => [{
+        from_id_for: ->(record) { "#{RequestIssue.name}#{record['request_issue_id']}" },
+        to_id_for: ->(record) { "#{DecisionIssue.name}#{record['decision_issue_id']}" }
+      }],
+      Task => [{
+        from_id_for: lambda do |record|
+                       if record["parent_id"]
+                         "#{Task.name}#{record['parent_id']}"
+                       elsif record["appeal_id"]
+                         "#{record['appeal_type']}#{record['appeal_id']}"
+                       end
+                     end,
+        to_id_for: ->(record) { "#{Task.name}#{record['id']}" }
+      }, {
+        from_id_for: lambda do |record|
+          record["assigned_to_id"] ? "#{record['assigned_to_type']}#{record['assigned_to_id']}" : nil
+        end,
+        to_id_for: ->(record) { "#{Task.name}#{record['id']}" },
+        label_for: ->(_record) { "assigned_to" }
+      }, {
+        from_id_for: ->(record) { record["assigned_by_id"] ? "#{User.name}#{record['assigned_by_id']}" : nil },
+        to_id_for: ->(record) { "#{Task.name}#{record['id']}" },
+        label_for: ->(_record) { "assigned_by" }
+      }, {
+        from_id_for: ->(record) { record["cancelled_by_id"] ? "#{User.name}#{record['cancelled_by_id']}" : nil },
+        to_id_for: ->(record) { "#{Task.name}#{record['id']}" },
+        label_for: ->(_record) { "cancelled_by" }
+      }]
+    }
+  }.freeze
 
-    nodes += prep_nodes(Veteran,
-                        id_for: ->(klass, record) { "#{klass.name}#{record['file_number']}" })
-    sje.records_hash[Veteran.table_name].each do |veteran|
-      edges << { from: "#{Veteran.name}#{veteran['file_number']}", to: "#{Person.name}#{veteran['participant_id']}" }
-    end
-
-    nodes += prep_nodes(Person,
-                        id_for: ->(klass, record) { "#{klass.name}#{record['participant_id']}" },
-                        label_for: ->(klass, record) { "#{klass.name}_#{record['participant_id']}" })
-
-    nodes += prep_nodes(User,
-                        label_for: ->(klass, record) { "#{klass.name}_#{record['css_id']}" })
-
-    nodes += prep_nodes(Organization,
-                        label_for: ->(_klass, record) { "#{record['type']}_#{record['name']}" })
-    sje.records_hash[OrganizationsUser.table_name].each do |ou|
-      edges << { from: "#{Organization.name}#{ou['organization_id']}", to: "#{User.name}#{ou['user_id']}",
-                 label: ou["admin"] ? "admin" : nil }
-    end
-
-    nodes += prep_nodes(Claimant,
-                        label_for: ->(_klass, record) { "#{record['type']}_#{record['participant_id']}" })
-    sje.records_hash[Claimant.table_name].each do |claimant|
-      edges << { to: "#{Claimant.name}#{claimant['id']}",
-                 from: "#{claimant['decision_review_type']}#{claimant['decision_review_id']}" }
-      edges << { from: "#{Claimant.name}#{claimant['id']}",
-                 to: "#{Person.name}#{claimant['participant_id']}" }
-    end
-
-    nodes += prep_nodes(Appeal)
-    sje.records_hash[Appeal.table_name].each do |appeal|
-      edges << { from: "#{Appeal.name}#{appeal['id']}", to: "#{Veteran.name}#{appeal['veteran_file_number']}" }
-    end
-
-    nodes += prep_nodes(AppealIntake)
-    sje.records_hash[AppealIntake.table_name].each do |intake|
-      if intake["user_id"]
-        edges << { from: "#{User.name}#{intake['user_id']}",
-                   to: "#{AppealIntake.name}#{intake['id']}" }
-      end
-      edges << { from: "#{AppealIntake.name}#{intake['id']}",
-                 to: "#{intake['detail_type']}#{intake['detail_id']}" }
-    end
-
-    nodes += prep_nodes(Task,
-                        label_for: ->(_klass, record) { "#{record['type']}_#{record['id']}" })
-    # Create edges for Tasks
-    klass = Task
-    sje.records_hash[klass.table_name].each do |task|
-      task_id = "#{Task.name}#{task['id']}"
-      if task["parent_id"]
-        edges << { from: "#{klass.name}#{task['parent_id']}", to: task_id }
-      elsif task["appeal_id"]
-        edges << { from: "#{task['appeal_type']}#{task['appeal_id']}", to: task_id }
-      end
-      edges << { to: "#{task['assigned_to_type']}#{task['assigned_to_id']}", from: task_id } if task["assigned_to_id"]
-      edges << { from: "#{User.name}#{task['assigned_by_id']}", to: task_id } if task["assigned_by_id"]
-      edges << { from: "#{User.name}#{task['cancelled_by_id']}", to: task_id } if task["cancelled_by_id"]
-    end
-
-    nodes += prep_nodes(RequestIssue,
-                        label_for: ->(_klass, record) { "#{record['type']}_#{record['id']}" })
-    sje.records_hash[RequestIssue.table_name].each do |ri|
-      edges << { to: "#{RequestIssue.name}#{ri['id']}",
-                 from: "#{ri['decision_review_type']}#{ri['decision_review_id']}" }
-    end
-
-    { nodes: nodes, edges: edges }
+  # Returns list of tablenames for records that are not yet in the graph
+  def record_types_not_in_network_graph
+    sje.records_hash.keys - %w[metadata task_timers] -
+      NETWORK_GRAPH_CONFIG[:nodes].keys.map(&:table_name) -
+      NETWORK_GRAPH_CONFIG[:edges].keys.map(&:table_name)
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   # :reek:FeatureEnvy
-  def prep_nodes(klass,
-                 label_for: ->(clazz, record) { "#{clazz.name}_#{record['id']}" },
-                 id_for: ->(clazz, record) { "#{clazz.name}#{record['id']}" })
+  def create_network_graph_data
+    # Reminder of records to add
+    # pp "----- record_types_not_in_network_graph: #{record_types_not_in_network_graph}"
+
+    {
+      nodes: NETWORK_GRAPH_CONFIG[:nodes].keys.map { |klass| prep_nodes(klass) }.flatten,
+      edges: NETWORK_GRAPH_CONFIG[:edges].keys.map { |klass| prep_edges(klass) }.flatten
+    }
+  end
+
+  # :reek:FeatureEnvy
+  # The `id` of the nodes are referenced by edges
+  def prep_nodes(klass, label_for: nil, id_for: nil)
+    id_for ||= NETWORK_GRAPH_CONFIG[:nodes][klass][:id_for] || ->(record) { "#{klass.name}#{record['id']}" }
+    label_for ||= NETWORK_GRAPH_CONFIG[:nodes][klass][:label_for] || ->(record) { "#{klass.name}_#{record['id']}" }
     sje.records_hash[klass.table_name].map do |record|
       record.clone.tap do |clone_record|
-        clone_record["label"] = label_for.call(klass, clone_record)
-        clone_record["id"] = id_for.call(klass, clone_record)
+        clone_record["label"] = label_for.call(clone_record)
+        clone_record["id"] = id_for.call(clone_record)
         clone_record["tableName"] = klass.table_name
       end
     end
   end
-  # :nocov:
+
+  # :reek:FeatureEnvy
+  def prep_edges(klass)
+    NETWORK_GRAPH_CONFIG[:edges][klass].map do |edge_config|
+      sje.records_hash[klass.table_name].map do |record|
+        { from: edge_config[:from_id_for].call(record),
+          to: edge_config[:to_id_for].call(record),
+          label: edge_config[:label_for]&.call(record) }
+      end
+    end.flatten
+  end
 
   def legacy_appeal?
     appeal.is_a?(LegacyAppeal)

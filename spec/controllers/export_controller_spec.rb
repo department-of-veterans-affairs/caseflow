@@ -2,7 +2,6 @@
 
 require "helpers/sanitized_json_configuration.rb"
 require "helpers/sanitized_json_exporter.rb"
-require "helpers/sanitized_json_importer.rb"
 require "helpers/intake_renderer.rb"
 
 describe ExportController, :all_dbs, type: :controller do

@@ -218,7 +218,10 @@ class SanitizedJsonConfiguration
   end
 
   def self.appeals_associated_with(appeal)
-    appeal.cavc_remand&.source_appeal
+    [
+      appeal.cavc_remand&.source_appeal,
+      appeal.appellant_substitution&.source_appeal
+    ].compact
     # To-do: include other source appeals, e.g., those with the same docket number
   end
 
