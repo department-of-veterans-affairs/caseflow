@@ -116,7 +116,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       visit dispositions_url
 
       within("header") do
-        expect(page).to have_css("h2", text: "National Cemetery Administration")
+        expect(page).to have_css("p", text: "National Cemetery Administration")
       end
       expect(page).to have_content("National Cemetery Administration")
       expect(page).to have_content("Decision")

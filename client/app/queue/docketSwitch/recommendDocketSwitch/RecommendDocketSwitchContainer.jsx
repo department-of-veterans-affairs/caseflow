@@ -30,7 +30,9 @@ export const formatDocketSwitchRecommendation = ({
   parts.push(`**Summary:** ${summary}`);
   parts.push(`**Is this a timely request:** ${timelyCaps}`);
   parts.push(`**Recommendation:** ${DISPOSITIONS[disposition].displayText}`);
-  parts.push(`**Draft letter:** ${hyperlink}`);
+  if (hyperlink) {
+    parts.push(`**Draft letter:** [View link](${hyperlink})`);
+  }
 
   // Separate each chunk by two line breaks
   return parts.join('  \n  \n');

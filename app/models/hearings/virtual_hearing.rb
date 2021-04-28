@@ -33,6 +33,9 @@
 #   `pending`: This indicates that the conference has yet to be created.
 ##
 class VirtualHearing < CaseflowRecord
+  class NoAliasWithHostPresentError < StandardError; end
+  class LinkMismatchError < StandardError; end
+
   include UpdatedByUserConcern
 
   class << self
@@ -116,6 +119,13 @@ class VirtualHearing < CaseflowRecord
     host_pin_long || self[:host_pin]
   end
 
+  # for guest_link and host_link:
+  # links generated January 2021 and later are stored in guest_hearing_link and
+  # host_hearing_link; links generated before January 2021 are assembled from
+  # variables as seen below. We are continuing to support both, even after all
+  # hearings scheduled pre 1/2021 are held, to ensure that there is an accurate
+  # historical record of the links that were used to hold the hearing. We will
+  # refactor our handling of pre- and post-1/2021 links with CASEFLOW-1336.
   def guest_link
     return guest_hearing_link if guest_hearing_link.present?
 
@@ -134,7 +144,15 @@ class VirtualHearing < CaseflowRecord
 
   def test_link(title)
     if use_vc_test_link?
-      "https://vc.va.gov/bva-app?conference=test_call&name=#{email_recipient_name(title)}&join=1"
+      if ENV["VIRTUAL_HEARING_URL_HOST"].blank?
+        fail(VirtualHearings::LinkService::URLHostMissingError, message: COPY::URL_HOST_MISSING_ERROR_MESSAGE)
+      end
+      if ENV["VIRTUAL_HEARING_URL_PATH"].blank?
+        fail(VirtualHearings::LinkService::URLPathMissingError, message: COPY::URL_PATH_MISSING_ERROR_MESSAGE)
+      end
+
+      host_and_path = "#{ENV['VIRTUAL_HEARING_URL_HOST']}#{ENV['VIRTUAL_HEARING_URL_PATH']}"
+      "https://#{host_and_path}?conference=test_call&name=#{email_recipient_name(title)}&join=1"
     else
       "https://care.va.gov/webapp2/conference/test_call?name=#{email_recipient_name(title)}&join=1"
     end
@@ -207,6 +225,25 @@ class VirtualHearing < CaseflowRecord
 
   def use_vc_test_link?
     guest_hearing_link.present? && host_hearing_link.present?
+  end
+
+  # rebuild and save the virtual hearing links using the original pins;
+  # to be used if the format of the links has changed
+  def rebuild_and_save_links
+    fail NoAliasWithHostPresentError if alias_with_host.blank?
+
+    conference_id = alias_with_host[/BVA(\d+)@/, 1]
+    link_service = VirtualHearings::LinkService.new(conference_id)
+
+    # confirm that we extracted the conference ID correctly,
+    # and that the original link was generated with the link service
+    if link_service.alias_with_host != alias_with_host ||
+       link_service.host_pin != host_pin_long ||
+       link_service.guest_pin != guest_pin_long
+      fail LinkMismatchError
+    end
+
+    update!(host_hearing_link: link_service.host_link, guest_hearing_link: link_service.guest_link)
   end
 
   private

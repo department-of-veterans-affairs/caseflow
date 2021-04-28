@@ -43,7 +43,7 @@ api_views,updated_at,datetime,,,,,,
 api_views,vbms_id,string,,,,,,
 appeals,,,,,,,,Decision reviews intaken for AMA appeals to the board (also known as a notice of disagreement).
 appeals,aod_based_on_age,boolean,,,,,x,"If true, appeal is advance-on-docket due to claimant's age."
-appeals,changed_request_type,string,,,,,,The new hearing type preference for an appellant that needs a hearing scheduled
+appeals,changed_hearing_request_type,string,,,,,,The new hearing type preference for an appellant that needs a hearing scheduled
 appeals,closest_regional_office,string,,,,,,The code for the regional office closest to the Veteran on the appeal.
 appeals,created_at,datetime,,,,,,
 appeals,docket_range_date,date,,,,,,Date that appeal was added to hearing docket range.
@@ -57,7 +57,7 @@ appeals,establishment_processed_at,datetime,,,,,,Timestamp for when the establis
 appeals,establishment_submitted_at,datetime,,,,,,Timestamp for when the the intake was submitted for asynchronous processing.
 appeals,id,integer (8) PK,x,x,,,,
 appeals,legacy_opt_in_approved,boolean,,,,,,Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review.
-appeals,original_request_type,string,,,,,,The hearing type preference for an appellant before any changes were made in Caseflow
+appeals,original_hearing_request_type,string,,,,,,The hearing type preference for an appellant before any changes were made in Caseflow
 appeals,poa_participant_id,string,,,,,,"Used to identify the power of attorney (POA) at the time the appeal was dispatched to BVA. Sometimes the POA changes in BGS after the fact, and BGS only returns the current representative."
 appeals,receipt_date,date ∗,x,,,,,Receipt date of the appeal form. Used to determine which issues are within the timeliness window to be appealed. Only issues decided prior to the receipt date will show up as contestable issues.
 appeals,stream_docket_number,string,,,,,,"Multiple appeals with the same docket number indicate separate appeal streams, mimicking the structure of legacy appeals."
@@ -86,6 +86,16 @@ appeal_views,id,integer PK,x,x,,,,
 appeal_views,last_viewed_at,datetime,,,,,,
 appeal_views,updated_at,datetime ∗,x,,,,,
 appeal_views,user_id,integer ∗ FK,x,,x,,x,
+appellant_substitutions,,,,,,,,Store appellant substitution form data
+appellant_substitutions,created_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
+appellant_substitutions,created_by_id,integer (8) ∗ FK,x,,x,,,User that created this record
+appellant_substitutions,id,integer (8) PK,x,x,,,,
+appellant_substitutions,poa_participant_id,string ∗,x,,,,,"Identifier of the appellant's POA, if they have a CorpDB participant_id"
+appellant_substitutions,source_appeal_id,integer (8) ∗ FK,x,,x,,x,The relevant source appeal for this substitution
+appellant_substitutions,substitute_participant_id,string ∗,x,,,,,Participant ID of substitute appellant
+appellant_substitutions,substitution_date,date ∗,x,,,,,Date of substitution
+appellant_substitutions,target_appeal_id,integer (8) ∗ FK,x,,x,,x,The new appeal resulting from this substitution
+appellant_substitutions,updated_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
 attorney_case_reviews,,,,,,,,
 attorney_case_reviews,attorney_id,integer FK,,,x,,,
 attorney_case_reviews,created_at,datetime ∗,x,,,,,
@@ -532,16 +542,6 @@ global_admin_logins,id,integer PK,x,x,,,,
 global_admin_logins,target_css_id,string,,,,,,
 global_admin_logins,target_station_id,string,,,,,,
 global_admin_logins,updated_at,datetime,,,,,x,
-granted_substitutions,,,,,,,,Store Granted Substitution form data
-granted_substitutions,created_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
-granted_substitutions,created_by_id,integer (8) ∗ FK,x,,x,,,User that created this record
-granted_substitutions,id,integer (8) PK,x,x,,,,
-granted_substitutions,poa_participant_id,string ∗,x,,,,,"Identifier of the appellant's POA, if they have a CorpDB participant_id"
-granted_substitutions,source_appeal_id,integer (8) ∗ FK,x,,x,,x,The relevant source appeal for this substitution
-granted_substitutions,substitute_id,integer (8) ∗ FK,x,,x,,,References claimants table
-granted_substitutions,substitution_date,date ∗,x,,,,,Date of granted substitution
-granted_substitutions,target_appeal_id,integer (8) ∗ FK,x,,x,,x,The new appeal resulting from this granted substitution
-granted_substitutions,updated_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
 hearings,,,,,,,,
 hearings,appeal_id,integer ∗ FK,x,,x,,,Appeal ID; use as FK to appeals
 hearings,bva_poc,string,,,,,,Hearing coordinator full name
@@ -689,7 +689,7 @@ judge_case_reviews,task_id,string ∗ FK,x,,x,,,
 judge_case_reviews,updated_at,datetime ∗,x,,,,x,
 legacy_appeals,,,,,,,,
 legacy_appeals,appeal_series_id,integer (8) FK,,,x,,x,
-legacy_appeals,changed_request_type,string,,,,,,The new hearing type preference for an appellant that needs a hearing scheduled
+legacy_appeals,changed_hearing_request_type,string,,,,,,The new hearing type preference for an appellant that needs a hearing scheduled
 legacy_appeals,closest_regional_office,string,,,,,,
 legacy_appeals,contaminated_water_at_camp_lejeune,boolean,,,,,,
 legacy_appeals,created_at,datetime,,,,,,
@@ -709,7 +709,7 @@ legacy_appeals,manlincon_compliance,boolean,,,,,,
 legacy_appeals,mustard_gas,boolean,,,,,,
 legacy_appeals,national_cemetery_administration,boolean,,,,,,
 legacy_appeals,nonrating_issue,boolean,,,,,,
-legacy_appeals,original_request_type,string,,,,,,The hearing type preference for an appellant before any changes were made in Caseflow
+legacy_appeals,original_hearing_request_type,string,,,,,,The hearing type preference for an appellant before any changes were made in Caseflow
 legacy_appeals,pension_united_states,boolean,,,,,,
 legacy_appeals,private_attorney_or_agent,boolean,,,,,,
 legacy_appeals,radiation,boolean,,,,,,

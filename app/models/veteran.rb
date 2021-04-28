@@ -328,7 +328,7 @@ class Veteran < CaseflowRecord
       begin
         fetched_attr = bgs_record[bgs_attr]
         self[local_attr] = (local_attr == :date_of_death) ? Date.strptime(fetched_attr, "%m/%d/%Y") : fetched_attr
-      rescue StandardError
+      rescue ArgumentError
         nil
       end
     end

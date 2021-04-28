@@ -358,9 +358,11 @@ export const prepareAppealForStore = (appeals) => {
       issues: prepareAppealIssuesForStore(appeal),
       decisionIssues: appeal.attributes.decision_issues,
       canEditRequestIssues: appeal.attributes.can_edit_request_issues,
+      canEditCavcRemands: appeal.attributes.can_edit_cavc_remands,
       appellantIsNotVeteran: appeal.attributes.appellant_is_not_veteran,
       appellantFullName: appeal.attributes.appellant_full_name,
       appellantAddress: appeal.attributes.appellant_address,
+      appellantTz: appeal.attributes.appellant_tz,
       appellantRelationship: appeal.attributes.appellant_relationship,
       assignedToLocation: appeal.attributes.assigned_to_location,
       veteranDateOfBirth: appeal.attributes.veteran_date_of_birth,
@@ -386,7 +388,9 @@ export const prepareAppealForStore = (appeals) => {
       canEditDocumentId: appeal.attributes.can_edit_document_id,
       attorneyCaseRewriteDetails: appeal.attributes.attorney_case_rewrite_details,
       docketSwitch: appeal.attributes.docket_switch,
-      switchedDockets: appeal.attributes.switched_dockets
+      switchedDockets: appeal.attributes.switched_dockets,
+      remandSourceAppealId: appeal.attributes.remand_source_appeal_id,
+      remandJudgeName: appeal.attributes.remand_judge_name
     };
 
     return accumulator;
@@ -666,7 +670,7 @@ export const collapseColumn = (requireDasRecord) => (task) => (hasDASRecord(task
  */
 export const labelForLocation = (appeal, userId) => {
   // If there is no location or the appeal is cancelled, don't show a location
-  if (!appeal.assignedToLocation || appeal.status === 'cancelled') {
+  if (!appeal.assignedToLocation || ['cancelled', 'docket_switched'].includes(appeal.status)) {
     return '';
   }
 
@@ -695,9 +699,15 @@ export const labelForLocation = (appeal, userId) => {
  * @param {object} appeal -- The appeal for which to determine the status
  * @returns {string} -- The value of the current location either as a string or JSX
  */
-export const statusLabel = (appeal) =>
-  appeal.status === 'cancelled' ? (
-    <span {...css({ color: COLORS.RED })}>{capitalize(appeal.status)}</span>
-  ) : (
-    appeal.status ? StringUtil.snakeCaseToCapitalized(appeal.status) : ''
-  );
+export const statusLabel = (appeal) => {
+  switch(appeal.status) {
+    case 'cancelled':
+      return <span {...css({ color: COLORS.RED })}>{capitalize(appeal.status)}</span>;
+      break;
+    case 'docket_switched':
+      return COPY.CASE_LIST_TABLE_DOCKET_SWITCH_LABEL;
+      break;
+    default:
+      return appeal.status ? StringUtil.snakeCaseToCapitalized(appeal.status) : '';
+  };
+};

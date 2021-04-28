@@ -29,6 +29,8 @@ class WorkQueue::LegacyAppealSerializer
 
   attribute :appellant_address, &:appellant_address
 
+  attribute :appellant_tz, &:appellant_tz
+
   attribute :appellant_relationship
   attribute :assigned_to_location
   attribute :vbms_id, &:sanitized_vbms_id

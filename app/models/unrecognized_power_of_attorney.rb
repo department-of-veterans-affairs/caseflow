@@ -21,4 +21,12 @@ class UnrecognizedPowerOfAttorney
   def representative_type
     "Unrecognized representative"
   end
+
+  def participant_id
+    nil
+  end
+
+  def poa_last_synced_at
+    unrecognized_party_detail.updated_at
+  end
 end
