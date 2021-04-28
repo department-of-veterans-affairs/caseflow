@@ -27,7 +27,7 @@ export const TimeSlot = ({
 
   // Filter the available time slots to fill in the hearings
   const beginsAt = hearing?.hearingDay?.beginsAt;
-  const numberOfSlots = hearing?.hearingDay?.numberOfSlots;
+  const numberOfSlots = hearing?.hearingDay?.totalSlots;
   const slotLengthMinutes = hearing?.hearingDay?.slotLengthMinutes;
   const slots = setTimeSlots({ scheduledHearingsList, ro, roTimezone, beginsAt, numberOfSlots, slotLengthMinutes });
 

@@ -504,15 +504,19 @@ export const dispositionLabel = (disposition) => HEARING_DISPOSITION_TYPE_TO_LAB
  * @param {array} hearings    -- List of hearings scheduled for a specific date
  **/
 const calculateAvailableTimeslots = ({ numberOfSlots, beginsAt, roTimezone, scheduledHearings, slotLengthMinutes }) => {
-  // Extract the hearing time, interpret it as in the roTimezone
-  const hearingTimes = scheduledHearings.map((hearing) =>
-    moment.tz(hearing.hearingTime, 'HH:mm', roTimezone)
-  );
+  // Extract the hearing time, add the hearing_day date from beginsAt, set the timezone be the ro timezone
+  const hearingTimes = scheduledHearings.map((hearing) => {
+    const [hearingHour, hearingMinute] = hearing.hearingTime.split(':');
+    const hearingTimeMoment = beginsAt.clone().set({ hour: hearingHour, minute: hearingMinute });
+
+    // Change which zone the time is in but don't conver, "08:15 EDT" -> "08:15 PDT"
+    return hearingTimeMoment.tz(roTimezone, true);
+  });
 
   // Loop numberOfSlots number of times
   const availableSlots = _.times(numberOfSlots).map((index) => {
     // Create the possible time by adding our offset * slotLengthMinutes to beginsAt
-    const possibleTime = moment.tz(beginsAt, 'HH:mm', 'America/New_York').add(index * slotLengthMinutes, 'minutes');
+    const possibleTime = beginsAt.clone().add(index * slotLengthMinutes, 'minutes');
 
     // This slot is not available (full) if there's a scheduled hearing less than an hour before
     // or after the slot.
@@ -520,15 +524,13 @@ const calculateAvailableTimeslots = ({ numberOfSlots, beginsAt, roTimezone, sche
     // - Hide a 10:30 slot (it's full, so we return null)
     // - Hide a 11:30 slot (it's full, so we return null)
     const hearingWithinHourOfSlot = hearingTimes.some((scheduledHearingTime) =>
-      (Math.abs(possibleTime.diff(scheduledHearingTime, 'minutes')) < 60)
+      (Math.abs(possibleTime.diff(scheduledHearingTime, 'minutes')) < slotLengthMinutes)
     );
     // Make sure that times don't go past midnight into the next day
     const slotNotOnCorrectDate = !possibleTime.isSame(beginsAt, 'date');
 
     // Combine all the conditions that make a slot unavailable
-    const slotIsUnavailable =
-            hearingWithinHourOfSlot ||
-            slotNotOnCorrectDate;
+    const slotIsUnavailable = hearingWithinHourOfSlot || slotNotOnCorrectDate;
 
     // Return null if there is a filled time slot, otherwise return the hearingTime
     return slotIsUnavailable ? null : {
@@ -597,16 +599,17 @@ export const setTimeSlots = ({
   // Safe assign the hearings array in case there are no scheduled hearings
   const scheduledHearings = scheduledHearingsList || [];
 
-  // TODO this default determination should be removed and provided by the db?
   const defaultNumberOfSlots = 8;
   const defaultBeginsAt = ro === 'C' ? '09:00' : '08:30';
   const momentDefaultBeginsAt = moment.tz(defaultBeginsAt, 'HH:mm', 'America/New_York');
+  const momentBeginsAt = moment(beginsAt);
+
   const defaultSlotLengthMinutes = 60;
 
   const availableSlots = calculateAvailableTimeslots({
     numberOfSlots: numberOfSlots || defaultNumberOfSlots,
     slotLengthMinutes: slotLengthMinutes || defaultSlotLengthMinutes,
-    beginsAt: beginsAt || momentDefaultBeginsAt,
+    beginsAt: beginsAt ? momentBeginsAt : momentDefaultBeginsAt,
     roTimezone,
     scheduledHearings
   });
