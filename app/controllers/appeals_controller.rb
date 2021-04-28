@@ -57,36 +57,14 @@ class AppealsController < ApplicationController
     handle_non_critical_error("document_count", error)
   end
 
-  def force_poa_refresh
-    poa = BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(appeal.claimant_participant_id)
-    poa&.update_cached_attributes!
-    poa
-  end
-
-  # :reek:UtilityFunction
-  def find_representative_tz(representative_address)
-    rep_address = representative_address.is_a?(Hash) ? Address.new(representative_address) : representative_address
-
-    begin
-      TimezoneService.address_to_timezone(rep_address).identifier
-    rescue StandardError => error
-      Raven.capture_exception(error)
-      nil
-    end
-  end
-
   def power_of_attorney
-    if appeal.is_a?(Appeal)
-      poa = force_poa_refresh
-      updated_tz = find_representative_tz(poa&.representative_address)
-    end
     render json: {
-      representative_type: poa ? poa&.representative_type : appeal.representative_type,
-      representative_name: poa ? poa&.representative_name : appeal.representative_name,
-      representative_address: poa ? poa&.representative_address : appeal.representative_address,
-      representative_email_address: poa ? poa&.representative_email_address : appeal.representative_email_address,
-      representative_tz: poa ? updated_tz : find_representative_tz(appeal.representative_address),
-      poa_last_synced_at: poa ? poa&.poa_last_synced_at : appeal.poa_last_synced_at
+      representative_type: appeal.representative_type,
+      representative_name: appeal.representative_name,
+      representative_address: appeal.representative_address,
+      representative_email_address: appeal.representative_email_address,
+      representative_tz: appeal.representative_tz,
+      poa_last_synced_at: appeal.poa_last_synced_at
     }
   end
 

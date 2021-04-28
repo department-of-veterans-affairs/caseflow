@@ -19,6 +19,21 @@ export const fetchRelationships = createAsyncThunk(
   }
 );
 
+export const refreshAppellantPoa = createAsyncThunk(
+  'substituteAppellant/refreshAppellantPoa',
+  async ({ participantId }) => {
+    try {
+      const res = await ApiUtil.put(`/claimants/${participantId}/poa`);
+
+      return res?.body?.poa
+    } catch (error) {
+      console.error('Error fetching appellant poa', error);
+      throw error;
+    }
+  }
+);
+
+
 const initialState = {
   step: 0,
 

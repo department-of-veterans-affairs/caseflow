@@ -602,37 +602,4 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       end
     end
   end
-
-  describe "GET appeals/:id/power_of_attorney" do
-    let(:dispatched_appeal) { create(:appeal, :dispatched) }
-    let(:original_poa_last_synced_at) { dispatched_appeal.poa_last_synced_at }
-    let(:claimant_participant_id) { dispatched_appeal.claimant_participant_id }
-    let(:request_params) { { appeal_id: dispatched_appeal.uuid } }
-    before do
-      allow(controller).to receive(:verify_authentication).and_return(true)
-    end
-
-    subject { get(:power_of_attorney, params: request_params) }
-
-    it "updates poa information from BGS" do
-      bgs_poa = instance_double(BgsPowerOfAttorney)
-      expect(BgsPowerOfAttorney).to receive(:find_or_create_by_claimant_participant_id)
-        .with(claimant_participant_id)
-        .and_return(bgs_poa)
-      expect(bgs_poa).to receive(:update_cached_attributes!)
-      allow(bgs_poa).to receive(:representative_address)
-
-      allow(bgs_poa).to receive(:representative_type)
-      allow(bgs_poa).to receive(:representative_name)
-      allow(bgs_poa).to receive(:representative_address)
-      allow(bgs_poa).to receive(:representative_email_address)
-      allow(bgs_poa).to receive(:poa_last_synced_at)
-      subject
-    end
-
-    it "returns an updated poa_last_synced_at value" do
-      expect(subject.status).to eq 200
-      expect(JSON.parse(subject.body)["poa_last_synced_at"]).to be > original_poa_last_synced_at
-    end
-  end
 end

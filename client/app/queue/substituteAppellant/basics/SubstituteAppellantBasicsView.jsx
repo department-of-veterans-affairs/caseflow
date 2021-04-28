@@ -10,6 +10,7 @@ import {
   stepForward,
   fetchRelationships,
   cancel,
+  refreshAppellantPoa,
 } from '../substituteAppellant.slice';
 
 export const SubstituteAppellantBasicsView = () => {
@@ -45,6 +46,11 @@ export const SubstituteAppellantBasicsView = () => {
         },
       })
     );
+    
+    const { participantId } = formData
+    dispatch(
+      refreshAppellantPoa({ participantId })
+    )
 
     // Advance progressbar
     dispatch(stepForward());

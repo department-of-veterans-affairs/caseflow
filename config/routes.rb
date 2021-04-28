@@ -118,6 +118,8 @@ Rails.application.routes.draw do
     end
   end
 
+  put '/claimants/:participant_id/poa', to: 'claimants#refresh_claimant_poa'
+
   resources :appeals, param: :appeal_id, only: [:index, :show, :edit] do
     member do
       get :document_count
