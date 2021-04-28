@@ -377,30 +377,21 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
 
-    context "POA refresh on case load" do
+    context "POA refresh text isn't shown without feature toggle enabled" do
       let!(:user) { User.authenticate!(roles: ["System Admin"]) }
-      let(:appeal) { create(:appeal, veteran: create(:veteran)) }
-      let!(:poa) do
-        create(
-          :bgs_power_of_attorney,
-          :with_name_cached,
-          appeal: appeal
-        )
-      end
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
+      let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
 
-      scenario "it's been less than 16 hours, so doesn't refresh NEWTEST" do
-        BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
-        one_hour_ago = Time.zone.now - 1.hour
-        poa.last_synced_at = one_hour_ago
-        poa.save!
-        BgsPowerOfAttorney.reset_callbacks(:save)
+      before { FeatureToggle.disable!(:poa_sync_date) }
+      after { FeatureToggle.enable!(:poa_sync_date) }
 
-        visit "/queue/appeals/#{appeal.external_id}"
-        expect(poa.last_synced_at).to eq(one_hour_ago)
+      scenario "text isn't on the page" do
+        visit "/queue/appeals/#{appeal.vacols_id}"
+        expect(page.has_no_content?(COPY::CASE_DETAILS_POA_LAST_SYNC_DATE_COPY)).to eq(true)
       end
     end
 
-    context "POA refresh on case load" do
+    context "POA refresh text is shown with feature toggle enabled" do
       let!(:user) { User.authenticate!(roles: ["System Admin"]) }
       let(:appeal) { create(:appeal, veteran: create(:veteran)) }
       let!(:poa) do
@@ -411,15 +402,25 @@ RSpec.feature "Case details", :all_dbs do
         )
       end
 
-      scenario "it's been more than 16 hours, so does refresh NEWTEST" do
-        BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
-        poa.last_synced_at = Time.zone.now - 2.days
-        poa.save!
-        BgsPowerOfAttorney.reset_callbacks(:save)
+      before { FeatureToggle.enable!(:poa_sync_date) }
+      after { FeatureToggle.disable!(:poa_sync_date) }
 
-        visit "/queue/appeals/#{appeal.external_id}"
-        sleep 5
-        expect(BgsPowerOfAttorney.find(poa.id).last_synced_at).to eq(Time.zone.now)
+      scenario "text is on the page" do
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page).to have_content("POA last refreshed on")
+      end
+    end
+
+    context "POA refresh text isn't shown when no POA is found" do
+      let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+      let(:appeal) { create(:appeal, veteran: create(:veteran)) }
+
+      before { FeatureToggle.enable!(:poa_sync_date) }
+      after { FeatureToggle.disable!(:poa_sync_date) }
+
+      scenario "text is not on the page" do
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page.has_no_content?(COPY::CASE_DETAILS_POA_LAST_SYNC_DATE_COPY)).to eq(true)
       end
     end
 
