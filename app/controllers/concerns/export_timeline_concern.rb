@@ -12,7 +12,7 @@ module ExportTimelineConcern
       {
         id: "#{Task.name}#{record['id']}",
         tableName: Task.table_name,
-        status: record['status'],
+        status: record["status"],
         content: "#{record['type']}_#{record['id']}",
         start: record["created_at"],
         end: end_time
