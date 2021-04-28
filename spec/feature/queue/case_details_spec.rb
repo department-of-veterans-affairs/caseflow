@@ -315,7 +315,7 @@ RSpec.feature "Case details", :all_dbs do
         scenario "contains message for no POA" do
           visit "/queue"
           click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
-          expect(page).to have_content("Power of Attorney")
+          expect(page).to have_content("Appellant's Power of Attorney")
           expect(page).to have_content(COPY::CASE_DETAILS_NO_POA)
         end
       end
@@ -375,7 +375,7 @@ RSpec.feature "Case details", :all_dbs do
 
         scenario "details view renders unrecognized POA copy" do
           visit "/queue/appeals/#{appeal.uuid}"
-          
+
           expect(page).to have_content(COPY::CASE_DETAILS_UNRECOGNIZED_POA)
         end
       end
