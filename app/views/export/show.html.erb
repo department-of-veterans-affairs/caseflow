@@ -30,7 +30,7 @@
 
   <h2>Basic Info about this Appeal</h2>
   <ul>
-    <li>status: <%= appeal.status.status.to_s %></li>
+    <li>status: <%= appeal_status.to_s %></li>
     <li>priority? AOD: <%= appeal.aod? %>, CAVC: <%= appeal.cavc? %></li>
   </ul>
 
@@ -53,38 +53,6 @@
   <pre style="font-size:0.84em; padding:10px"><code><%= intake_as_text %></code></pre>
   <hr/>
 
-  <h2>Related Appeals and Associated Records</h2>
-  <p>The following subsections are created from the <b><%= show_pii_query_param ? "unsanitized" : "sanitized" %></b>
-    <%= link_to('json export', {action: 'show', format: "json"}) %>, which are composed of these appeals:
-    <ul>
-      <% sje.records_hash["appeals"].each do |appeal| %>
-        <li>Appeal id: <%= appeal["id"] %>, uuid: <%= appeal["uuid"] %></li>
-      <% end %>
-    </ul>
-  </p>
-
-  <h3>Timeline</h3>
-  <div id="timeline"></div>
-  <hr/>
-
-  <h3>Network graph</h3>
-  <details>
-    <summary style="color: blue">Filter nodes</summary>
-    <div id="nodeFilters" style="width: 200px; height: 300px; overflow-y: scroll; padding:10px">
-      <% ["tasks", "users", "organizations"].each do |tableName| %>
-        <input type="checkbox" name="<%=tableName%>" id="<%=tableName%>" value="<%=tableName%>" checked />
-        <label for="<%=tableName%>"><%=tableName%></label>
-      <% end %>
-    </div>
-  </details>
-  <div id="netgraph"></div>
-  <details>
-    <summary style="color: blue">Network graph data</summary>
-    <pre style="font-size:0.75em; padding:10px"><code><%= JSON.pretty_generate(network_graph_data) %></code></pre>
-  </details>
-  <hr/>
-
-  <!-- JavaScript -->
   <%= javascript_include_tag 'export-appeal' %>
   <script type="text/javascript">
     // Handle Task Tree field checkboxes
@@ -94,13 +62,48 @@
     }
     updateTaskTreeLink();
     $('#treeefields input').change( () => updateTaskTreeLink() );
-    
-    // Network graph
-    var network_graph_data = <%= network_graph_data.to_json.html_safe %>;
-    addNetworkGraph("netgraph", network_graph_data);
-
-    // Timeline
-    var timeline_data = <%= timeline_data.to_json.html_safe %>;
-    addTimeline('timeline', timeline_data);
   </script>
+
+  <% unless legacy_appeal? %>
+    <h2>Related Appeals and Associated Records</h2>
+    <p>The following subsections are created from the <b><%= show_pii_query_param ? "unsanitized" : "sanitized" %></b>
+      <%= link_to('json export', {action: 'show', format: "json"}) %>, which are composed of these appeals:
+      <ul>
+        <% sje.records_hash["appeals"].each do |appeal| %>
+          <li>Appeal id: <%= appeal["id"] %>, uuid: <%= appeal["uuid"] %></li>
+        <% end %>
+      </ul>
+    </p>
+
+    <h3>Timeline</h3>
+    <div id="timeline"></div>
+    <hr/>
+
+    <h3>Network graph</h3>
+    <details>
+      <summary style="color: blue">Filter nodes</summary>
+      <div id="nodeFilters" style="width: 200px; height: 300px; overflow-y: scroll; padding:10px">
+        <% ["tasks", "users", "organizations"].each do |tableName| %>
+          <input type="checkbox" name="<%=tableName%>" id="<%=tableName%>" value="<%=tableName%>" checked />
+          <label for="<%=tableName%>"><%=tableName%></label>
+        <% end %>
+      </div>
+    </details>
+    <div id="netgraph"></div>
+    <details>
+      <summary style="color: blue">Network graph data</summary>
+      <pre style="font-size:0.75em; padding:10px"><code><%= JSON.pretty_generate(network_graph_data) %></code></pre>
+    </details>
+    <hr/>
+
+    <script type="text/javascript">
+      // Network graph
+      var network_graph_data = <%= network_graph_data.to_json.html_safe %>;
+      addNetworkGraph("netgraph", network_graph_data);
+  
+      // Timeline
+      var timeline_data = <%= timeline_data.to_json.html_safe %>;
+      addTimeline('timeline', timeline_data);
+    </script>
+  <% end %>
 </div>

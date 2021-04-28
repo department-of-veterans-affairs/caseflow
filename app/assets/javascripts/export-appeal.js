@@ -31,7 +31,7 @@ function decorateNodes(nodes){
       node[key] = value
     }
   });
-  console.log(nodes)
+  // console.log(nodes)
   return nodes;
 }
 
