@@ -46,11 +46,12 @@ export const SubstituteAppellantBasicsView = () => {
         },
       })
     );
-    
-    const { participantId } = formData
+
+    const { participantId } = formData;
+
     dispatch(
       refreshAppellantPoa({ participantId })
-    )
+    );
 
     // Advance progressbar
     dispatch(stepForward());
