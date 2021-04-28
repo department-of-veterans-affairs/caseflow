@@ -222,7 +222,7 @@ class CaseHearingsDetail extends React.PureComponent {
     }];
 
     return (
-      <React.Fragment>
+      <div id="hearing-details">
         {caseType === LEGACY_APPEAL_TYPES.POST_REMAND && completedHearingOnPreviousAppeal &&
           <React.Fragment>
             {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL}&nbsp;
@@ -247,7 +247,7 @@ class CaseHearingsDetail extends React.PureComponent {
             onCancel={this.closeModal}
           />
         }
-      </React.Fragment>
+      </div>
     );
   };
 }
