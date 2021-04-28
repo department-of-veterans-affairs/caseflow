@@ -89,18 +89,24 @@ describe('AddClaimantForm', () => {
         [relationshipOpts[2].label]
       );
 
-      // Enter invalid emailAddress
       const emailInput = screen.getByRole('textbox', { name: /Claimant email Optional/i });
 
       expect(emailInput.value).toBe('');
 
-      await waitFor(() => {
-        fireEvent.change(emailInput, { target: { value: 'email@address' } });
-        expect(emailInput.value).toBe('email@address');
-        screen.getByRole('radio', { name: /no/i }).focus();
-      });
+      // input invalid email addressses
+      await userEvent.type(emailInput, 'email@address');
+      expect(emailInput.value).toBe('email@address');
 
-      expect(await screen.findByText(ERROR_EMAIL_INVALID_FORMAT)).toBeVisible();
+      // trigger onBlur
+      // Focus is on tab
+      expect(emailInput).toBe(document.activeElement);
+
+      // Press the TAB key
+      userEvent.tab();
+
+      await waitFor(() => {
+        expect(screen.findByText(ERROR_EMAIL_INVALID_FORMAT)).toBeVisible();
+      });
     }, 15000);
   });
 
