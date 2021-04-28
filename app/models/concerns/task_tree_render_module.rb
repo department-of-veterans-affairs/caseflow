@@ -10,10 +10,10 @@ module TaskTreeRenderModule
     CRE_TIME: ->(task) { task.created_at&.strftime("%H-%M-%S") },
     UPD_DATE: ->(task) { task.updated_at&.strftime("%Y-%m-%d") },
     UPD_TIME: ->(task) { task.updated_at&.strftime("%H-%M-%S") },
-    CLO_DATE: ->(task) { task.updated_at&.strftime("%Y-%m-%d") },
-    CLO_TIME: ->(task) { task.updated_at&.strftime("%H-%M-%S") },
-    ASGN_DATE: ->(task) { task.created_at&.strftime("%Y-%m-%d") },
-    ASGN_TIME: ->(task) { task.created_at&.strftime("%H-%M-%S") },
+    CLO_DATE: ->(task) { task.closed_at&.strftime("%Y-%m-%d") },
+    CLO_TIME: ->(task) { task.closed_at&.strftime("%H-%M-%S") },
+    ASGN_DATE: ->(task) { task.assigned_at&.strftime("%Y-%m-%d") },
+    ASGN_TIME: ->(task) { task.assigned_at&.strftime("%H-%M-%S") },
     ASGN_BY: lambda { |task|
       ConsoleTreeRenderer.send_chain(task, [:assigned_by, :type])&.to_s ||
         ConsoleTreeRenderer.send_chain(task, [:assigned_by, :name])&.to_s ||
