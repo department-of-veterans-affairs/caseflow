@@ -75,27 +75,18 @@ class AppealsController < ApplicationController
     end
   end
 
-  # :reek:FeatureEnvy
   def power_of_attorney
     if appeal.is_a?(Appeal)
-      updated_bgs_poa = force_poa_refresh
-      updated_tz = find_representative_tz(updated_bgs_poa&.representative_address)
-      render json: {
-        representative_type: updated_bgs_poa&.representative_type,
-        representative_name: updated_bgs_poa&.representative_name,
-        representative_address: updated_bgs_poa&.representative_address,
-        representative_email_address: updated_bgs_poa&.representative_email_address,
-        representative_tz: updated_tz,
-        poa_last_synced_at: updated_bgs_poa&.poa_last_synced_at
-      }
+      poa = force_poa_refresh
+      updated_tz = find_representative_tz(poa&.representative_address)
     end
     render json: {
-      representative_type: appeal.representative_type,
-      representative_name: appeal.representative_name,
-      representative_address: appeal.representative_address,
-      representative_email_address: appeal.representative_email_address,
-      representative_tz: updated_tz,
-      poa_last_synced_at: appeal.poa_last_synced_at
+      representative_type: poa ? poa&.representative_type : appeal.representative_type,
+      representative_name: poa ? poa&.representative_name : appeal.representative_name,
+      representative_address: poa ? poa&.representative_address : appeal.representative_address,
+      representative_email_address: poa ? poa&.representative_email_address : appeal.representative_email_address,
+      representative_tz: poa ? updated_tz : find_representative_tz(appeal.representative_address),
+      poa_last_synced_at: poa ? poa&.poa_last_synced_at : appeal.poa_last_synced_at
     }
   end
 
