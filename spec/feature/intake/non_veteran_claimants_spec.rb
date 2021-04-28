@@ -10,7 +10,7 @@ feature "Non-veteran claimants", :postgres do
   end
 
   let(:veteran_file_number) { "123412345" }
-  let(:veteran) do
+  let!(:veteran) do
     Generators::Veteran.build(file_number: veteran_file_number, first_name: "Ed", last_name: "Merica")
   end
   let(:benefit_type) { "compensation" }
@@ -120,19 +120,7 @@ feature "Non-veteran claimants", :postgres do
       fill_in search_bar_title, with: veteran_file_number
       click_on "Search"
       expect(page).to have_current_path("/intake/review_request")
-      fill_in "What is the Receipt Date of this form?", with: Time.zone.today.mdY
-      click_intake_continue
-      within_fieldset("Which review option did the Veteran request?") do
-        find("label", text: "Evidence Submission", match: :prefer_exact).click
-      end
-      within_fieldset("Is the claimant someone other than the Veteran?") do
-        find("label", text: "Yes", match: :prefer_exact).click
-      end
-      within_fieldset(COPY::SELECT_CLAIMANT_LABEL) do
-        find("label", text: "Claimant not listed", match: :prefer_exact).click
-      end
-      select_agree_to_withdraw_legacy_issues(false)
-      click_intake_continue
+      populate_review_data
 
       expect(page).to have_current_path("/intake/add_claimant")
       expect(page).to have_no_content(appeal.claimant.name)
@@ -237,19 +225,7 @@ feature "Non-veteran claimants", :postgres do
       fill_in search_bar_title, with: veteran_file_number
       click_on "Search"
       expect(page).to have_current_path("/intake/review_request")
-      fill_in "What is the Receipt Date of this form?", with: Time.zone.today.mdY
-      click_intake_continue
-      within_fieldset("Which review option did the Veteran request?") do
-        find("label", text: "Evidence Submission", match: :prefer_exact).click
-      end
-      within_fieldset("Is the claimant someone other than the Veteran?") do
-        find("label", text: "Yes", match: :prefer_exact).click
-      end
-      within_fieldset(COPY::SELECT_CLAIMANT_LABEL) do
-        find("label", text: "Claimant not listed", match: :prefer_exact).click
-      end
-      select_agree_to_withdraw_legacy_issues(false)
-      click_intake_continue
+      populate_review_data
 
       expect(page).to have_current_path("/intake/add_claimant")
       expect(page).to have_content("Add Claimant")
@@ -341,6 +317,59 @@ feature "Non-veteran claimants", :postgres do
       expect(claimant.name).to eq("Darlyn Duck")
       expect(claimant.relationship).to eq("Spouse")
     end
+
+    it "returns to review page if data is reloaded before saving" do
+      visit "/intake"
+      select_form(Constants.INTAKE_FORM_NAMES.appeal)
+      safe_click ".cf-submit.usa-button"
+      expect(page).to have_content(search_page_title)
+      fill_in search_bar_title, with: veteran_file_number
+      click_on "Search"
+      expect(page).to have_current_path("/intake/review_request")
+      populate_review_data
+
+      expect(page).to have_current_path("/intake/add_claimant")
+      expect(page).to have_content("Add Claimant")
+
+      fill_in("Relationship to the Veteran", with: "Other").send_keys :enter
+      expect(page).to have_content("Is the claimant an organization or individual?")
+      within_fieldset("Is the claimant an organization or individual?") do
+        find("label", text: "Individual", match: :prefer_exact).click
+      end
+      add_new_claimant
+
+      visit "/intake/add_claimant"
+
+      # Re-routes back to Review page
+      expect(page).to have_current_path("/intake/review_request")
+      populate_review_data
+      expect(page).to have_current_path("/intake/add_claimant")
+      fill_in("Relationship to the Veteran", with: "Spouse").send_keys :enter
+      add_new_claimant
+
+      within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
+        find("label", text: "Yes", match: :prefer_exact).click
+      end
+      click_button "Continue to next step"
+      expect(page).to have_current_path("/intake/add_power_of_attorney")
+      expect(page).to have_content("Add Claimant's POA")
+
+      # add poa
+      safe_click ".dropdown-listedAttorney"
+      fill_in("Representative's name", with: "Name not listed")
+      expect(page).to have_content("Name not listed")
+      find("div", class: "cf-select__menu", text: "Name not listed")
+      select_claimant(0)
+      within_fieldset("Is the representative an organization or individual?") do
+        find("label", text: "Organization", match: :prefer_exact).click
+      end
+      add_new_poa
+
+      visit "/intake/add_power_of_attorney"
+
+      # Re-routes back to Review page
+      expect(page).to have_current_path("/intake/review_request")
+    end
   end
 
   def add_existing_attorney(attorney)
@@ -384,5 +413,21 @@ feature "Non-veteran claimants", :postgres do
     click_button "Confirm"
 
     expect(page).to_not have_content(COPY::ADD_CLAIMANT_CONFIRM_MODAL_TITLE)
+  end
+
+  def populate_review_data
+    fill_in "What is the Receipt Date of this form?", with: Time.zone.today.mdY
+    click_intake_continue
+    within_fieldset("Which review option did the Veteran request?") do
+      find("label", text: "Evidence Submission", match: :prefer_exact).click
+    end
+    within_fieldset("Is the claimant someone other than the Veteran?") do
+      find("label", text: "Yes", match: :prefer_exact).click
+    end
+    within_fieldset(COPY::SELECT_CLAIMANT_LABEL) do
+      find("label", text: "Claimant not listed", match: :prefer_exact).click
+    end
+    select_agree_to_withdraw_legacy_issues(false)
+    click_intake_continue
   end
 end
