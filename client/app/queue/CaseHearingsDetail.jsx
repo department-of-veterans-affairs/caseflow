@@ -12,6 +12,11 @@ import {
 } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Tooltip from '../components/Tooltip';
+import { pencilSymbol } from '../components/RenderFunctions';
+import Button from '../components/Button';
+
+import EditUnscheduledNotesModal from '../hearings/components/EditUnscheduledNotesModal';
+import { UnscheduledNotes } from '../hearings/components/UnscheduledNotes';
 
 import COPY from '../../COPY';
 import { DateString } from '../util/DateUtil';
@@ -45,6 +50,15 @@ const hearingElementsStyle = css({
 });
 
 class CaseHearingsDetail extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      modalOpen: false,
+      selectedTask: null
+    };
+  }
+
   getHearingAttrs = (hearing, userIsVsoEmployee) => {
     const hearingAttrs = [{
       label: 'Type',
@@ -103,18 +117,19 @@ class CaseHearingsDetail extends React.PureComponent {
       appeal: { hearings },
       userIsVsoEmployee
     } = this.props;
-    const orderedHearings = _.orderBy(hearings, 'date', 'asc');
+    const orderedHearings = _.orderBy(hearings, 'createdAt', 'desc');
     const uniqueOrderedHearings = _.uniqWith(orderedHearings, _.isEqual);
 
     if (orderedHearings.length > 1) {
       _.extend(hearingElementsStyle, marginLeft);
     }
 
+    const hearingsLength = uniqueOrderedHearings.length;
     const hearingElements = _.map(uniqueOrderedHearings, (hearing) => <div
       key={hearing.externalId} {...hearingElementsStyle}
     >
-      <span {...boldText}>Hearing{uniqueOrderedHearings.length > 1 ?
-        ` ${uniqueOrderedHearings.indexOf(hearing) + 1}` : ''}:</span>
+      <span {...boldText}>Hearing{hearingsLength > 1 ?
+        ` ${hearingsLength - (uniqueOrderedHearings.indexOf(hearing))}` : ''}:</span>
       <BareList compact
         listStyle={css(marginLeft, noTopBottomMargin)}
         ListElementComponent="ul"
@@ -142,22 +157,72 @@ class CaseHearingsDetail extends React.PureComponent {
     this.props.showVeteranCaseList();
   }
 
+  openModal = (task) => this.setState({ modalOpen: true, selectedTask: task })
+
+  closeModal = () => this.setState({ modalOpen: false, selectedTask: null })
+
+  getUnscheduledHearingAttrs = (task, appeal) => {
+    return [
+      {
+        label: 'Type',
+        value: appeal?.readableHearingRequestType
+      },
+      {
+        label: 'Notes',
+        value: <React.Fragment>
+          <Button styling={css({ padding: 0 })} linkStyling onClick={() => this.openModal(task)} >
+            <span {...css({ position: 'absolute' })}>{pencilSymbol()}</span>
+            <span {...css({ marginLeft: '24px' })}>Edit</span>
+          </Button>
+          <br />
+          {task?.unscheduledHearingNotes?.notes && <UnscheduledNotes
+            readonly
+            styling={{ marginLeft: '2rem' }}
+            unscheduledNotes={task?.unscheduledHearingNotes?.notes}
+            updatedAt={task?.unscheduledHearingNotes?.updatedAt}
+            updatedByCssId={task?.unscheduledHearingNotes?.updatedByCssId}
+            uniqueId={task?.taskId} />
+          }
+        </React.Fragment>
+      },
+    ];
+  }
+
+  getUnscheduledHearingElements = () => {
+    const {
+      appeal,
+      hearingTasks
+    } = this.props;
+
+    return hearingTasks.map((task, index) => <div
+      key={task.taskId} {...hearingsListStyling} {...css({ marginTop: '1em' })}
+    >
+      <span {...boldText}>{COPY.UNSCHEDULED_HEARING_TITLE}{hearingTasks.length > 1 ?
+        ` ${index + 1}` : ''}:</span>
+      <BareList compact
+        listStyle={css(marginLeft, noTopBottomMargin)}
+        ListElementComponent="ul"
+        items={this.getUnscheduledHearingAttrs(task, appeal).map(this.getDetailField)} />
+    </div>);
+  }
+
   render = () => {
     const {
       appeal: {
         caseType,
         hearings,
-        completedHearingOnPreviousAppeal
-      }
+        completedHearingOnPreviousAppeal,
+      },
+      hearingTasks
     } = this.props;
 
-    const listElements = [{
+    const hearingsListElements = [{
       label: hearings.length > 1 ? COPY.CASE_DETAILS_HEARING_LIST_LABEL : '',
       valueFunction: this.getHearingInfo
     }];
 
     return (
-      <React.Fragment>
+      <div id="hearing-details">
         {caseType === LEGACY_APPEAL_TYPES.POST_REMAND && completedHearingOnPreviousAppeal &&
           <React.Fragment>
             {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL}&nbsp;
@@ -167,14 +232,22 @@ class CaseHearingsDetail extends React.PureComponent {
             {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL_POST_LINK}
           </React.Fragment>
         }
+        {!_.isEmpty(hearingTasks) && this.getUnscheduledHearingElements()}
         {!_.isEmpty(hearings) &&
           <BareList
             ListElementComponent="ul"
-            items={listElements.map(this.getDetailField)}
+            items={hearingsListElements.map(this.getDetailField)}
             listStyle={hearingsListStyling}
           />
         }
-      </React.Fragment>
+        {this.state.modalOpen && this.state.selectedTask &&
+          <EditUnscheduledNotesModal
+            task={this.state.selectedTask}
+            appeal={this.props.appeal}
+            onCancel={this.closeModal}
+          />
+        }
+      </div>
     );
   };
 }
@@ -192,7 +265,8 @@ CaseHearingsDetail.propTypes = {
     completedHearingOnPreviousAppeal: PropTypes.bool
   }),
   showVeteranCaseList: PropTypes.func,
-  userIsVsoEmployee: PropTypes.bool
+  userIsVsoEmployee: PropTypes.bool,
+  hearingTasks: PropTypes.array
 };
 
 const mapStateToProps = (state) => {
