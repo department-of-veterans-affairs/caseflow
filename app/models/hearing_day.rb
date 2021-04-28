@@ -162,7 +162,7 @@ class HearingDay < CaseflowRecord
 
   def slot_length_minutes
     # 04-19-2021 slot_length_minutes database column added
-    return read_attribute(:slot_length_minutes) unless read_attribute(:slot_length_minutes).nil?
+    return self[:slot_length_minutes] unless self[:slot_length_minutes].nil?
 
     DEFAULT_SLOT_LENGTH
   end
