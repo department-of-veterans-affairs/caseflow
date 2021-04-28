@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# Used by ExportController to build the data for visualizing a network graph based on
+# exported data from SanitizedJsonExporter.
+
 # rubocop:disable Metrics/ModuleLength
 module ExportNetworkGraphConcern
   extend ActiveSupport::Concern

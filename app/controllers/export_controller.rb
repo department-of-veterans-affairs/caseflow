@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+# This controller allows exporting appeals and associated records via the browser. 
+# This avoids having logging into prod, running export commands, and scp-ing the file locally.
+# The endpoint is only accessible to System Admins (user.admin? => true).
+# The data is also used to display visualizations for the specified appeal.
+
 class ExportController < ApplicationController
   include ExportTimelineConcern
   include ExportNetworkGraphConcern

@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# Used by ExportController to build the data for visualizing a timeline based on
+# exported data from SanitizedJsonExporter.
+
 module ExportTimelineConcern
   extend ActiveSupport::Concern
 

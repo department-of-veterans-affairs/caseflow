@@ -2,6 +2,13 @@
 //= require vis-network/dist/vis-network.min.js
 //= require vis-timeline/dist/vis-timeline-graph2d.min.js
 
+/**
+ * Support code for app/views/export/show.html.erb,
+ * associated with app/controllers/export_controller.rb.
+ * Also see accompanying app/assets/stylesheets/export_appeal.css.
+ * These are added to the application in config/initializers/assets.rb.
+ */
+
 const taskNodeColor = {
   assigned: "#00dd00",
   in_progress: "#00ff00",
