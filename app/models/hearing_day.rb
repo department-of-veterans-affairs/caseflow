@@ -77,6 +77,9 @@ class HearingDay < CaseflowRecord
               in: REQUEST_TYPES.values,
               message: "is invalid"
             }
+  validates :first_slot_time,
+            format: { with: /\A\d{2}:\d{2}\z/, message: "doesn't match hh:mm time format" },
+            allow_nil: true
 
   def central_office?
     request_type == REQUEST_TYPES[:central]
