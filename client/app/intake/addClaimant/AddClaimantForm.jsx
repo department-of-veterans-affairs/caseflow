@@ -49,12 +49,11 @@ const filterOption = () => true;
 export const AddClaimantForm = ({
   onAttorneySearch = fetchAttorneys,
   onSubmit,
-  validationErrors
 }) => {
   const methods = useFormContext();
-  const { control, register, watch, handleSubmit, setValue } = methods;
+  const { control, register, watch, handleSubmit, setValue, errors } = methods;
 
-  const emailValidationError = validationErrors?.emailAddress && ERROR_EMAIL_INVALID_FORMAT;
+  const emailValidationError = errors ?.emailAddress && ERROR_EMAIL_INVALID_FORMAT;
 
   const watchRelationship = watch('relationship');
   const dependentRelationship = ['spouse', 'child'].includes(watchRelationship);
@@ -245,7 +244,6 @@ AddClaimantForm.propTypes = {
   onAttorneySearch: PropTypes.func,
   onBack: PropTypes.func,
   onSubmit: PropTypes.func,
-  validationErrors: PropTypes.object
 };
 
 const FieldDiv = styled.div`
