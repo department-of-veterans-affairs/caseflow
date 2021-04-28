@@ -1,6 +1,7 @@
+import moment from 'moment-timezone';
+import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import HEARING_TIME_OPTIONS from '../../../constants/HEARING_TIME_OPTIONS';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import { formatTimeSlotLabel } from '../utils';
 
@@ -13,14 +14,22 @@ export const TimePicker = ({
   value,
 }) => {
 
+  // List starts at 0:00 and ends at 11:45 eastern
   // Set the label, option.value (time) is in eastern
-  const formatOptions = (zone, options) => {
-    return options.map((option) => {
+  const generateTimes = (zone) => {
+    const midnight = moment.tz('00:00', 'HH:mm', 'America/New_York');
+    // 96 == 24hrs * (60min/4) == every fifteen minutes
+    const options = times(96).map((index) => {
+      const optionValue = midnight.clone().add(index * 15, 'minutes').
+        format('HH:mm');
+
       return {
-        value: option.value,
-        label: formatTimeSlotLabel(option.value, zone)
+        value: optionValue,
+        label: formatTimeSlotLabel(optionValue, zone)
       };
     });
+
+    return options;
   };
 
   return (
@@ -28,7 +37,7 @@ export const TimePicker = ({
       name={`optionalHearingTime${componentIndex}`}
       hideLabel
       placeholder="Select a time"
-      options={formatOptions(roTimezone, HEARING_TIME_OPTIONS)}
+      options={generateTimes(roTimezone)}
       value={value}
       onChange={(option) => onChange(option ? option.value : null)}
     />
