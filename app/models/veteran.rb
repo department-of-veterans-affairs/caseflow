@@ -339,10 +339,6 @@ class Veteran < CaseflowRecord
     save!
   end
 
-  def set_bgs_last_synced_at!
-    self.bgs_last_synced_at = Time.zone.now
-  end
-
   class << self
     def find_or_create_by_file_number(file_number, sync_name: false)
       find_by_file_number_and_sync(file_number, sync_name: sync_name) || create_by_file_number(file_number)
