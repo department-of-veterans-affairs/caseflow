@@ -19,21 +19,17 @@ export const TimeSlot = ({
   fetchingHearings,
   ro
 }) => {
+  // Create local state to hold the selected time before saving
+  const [selected, setSelected] = useState('');
+
+  // Create a local state to switch between the dropdown for custom times
+  const [custom, setCustom] = useState(false);
 
   // Filter the available time slots to fill in the hearings
   const beginsAt = hearing?.hearingDay?.beginsAt;
   const numberOfSlots = hearing?.hearingDay?.totalSlots;
   const slotLengthMinutes = hearing?.hearingDay?.slotLengthMinutes;
   const slots = setTimeSlots({ scheduledHearingsList, ro, roTimezone, beginsAt, numberOfSlots, slotLengthMinutes });
-
-  // Set the default time so the long dropdown starts in a reasonable place, also selects a slot by default
-  const eightThirtyRoTime = moment.tz('08:30', 'HH:mm', roTimezone).tz('America/New_York').
-    format('HH:mm');
-  // Create local state to hold the selected time before saving
-  const [selected, setSelected] = useState(beginsAt ? moment(beginsAt).format('HH:mm') : eightThirtyRoTime);
-
-  // Create a local state to switch between the dropdown for custom times
-  const [custom, setCustom] = useState(false);
 
   // Setup the click handler for each time slot
   const handleChange = (time) => {
@@ -76,7 +72,7 @@ export const TimeSlot = ({
               id={hearingTimeId}
               roTimezone={roTimezone}
               onChange={handleChange}
-              value={selected}
+              value={hearing?.scheduledTimeString}
             />
           ) : (
             <div className="time-slot-button-container">
