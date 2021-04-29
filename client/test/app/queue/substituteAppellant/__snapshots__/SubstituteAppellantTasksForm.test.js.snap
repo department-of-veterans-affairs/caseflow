@@ -1,0 +1,191 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SubstituteAppellantTasksForm with blank form renders default state correctly 1`] = `
+<div>
+  <form>
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <section
+        class="css-1kmvzpy"
+      >
+        <h1>
+          Create tasks
+        </h1>
+        <div>
+          Complete the details below to create the appeal for the substitute for this case.
+        </div>
+      </section>
+      <section
+        class="css-1rhlyut"
+      >
+        <h2>
+          Procedural details
+        </h2>
+        <ul
+          class="css-a7zcn1"
+        >
+          <li>
+            <strong>
+              Notice of disagreement received
+            </strong>
+            <span>
+              4/1/2021
+            </span>
+          </li>
+          <li>
+            <strong>
+              Veteran date of death
+            </strong>
+            <span>
+              4/15/2021
+            </span>
+          </li>
+          <li>
+            <strong>
+              Substitution granted by the RO
+            </strong>
+            <span>
+              4/20/2021
+            </span>
+          </li>
+        </ul>
+        <div
+          class="css-2zljw9"
+        >
+          <a
+            href="/queue/appeals/abc123"
+            target="_blank"
+          >
+            View original case details 
+            <i
+              class="fa fa-external-link"
+            />
+          </a>
+        </div>
+      </section>
+    </section>
+    <div
+      class="controls cf-app-segment"
+    >
+      <div
+        data-css-63oe3q=""
+      >
+        <span>
+          <button
+            class="cf-right-side usa-button"
+            data-css-wn5k45=""
+            id="button-next-button"
+            type="button"
+          >
+            Continue
+          </button>
+        </span>
+        <button
+          class="cf-btn-link cf-right-side usa-button"
+          id="button-cancel-button"
+          type="button"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`SubstituteAppellantTasksForm with existing form data renders default state correctly 1`] = `
+<div>
+  <form>
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <section
+        class="css-1kmvzpy"
+      >
+        <h1>
+          Create tasks
+        </h1>
+        <div>
+          Complete the details below to create the appeal for the substitute for this case.
+        </div>
+      </section>
+      <section
+        class="css-1rhlyut"
+      >
+        <h2>
+          Procedural details
+        </h2>
+        <ul
+          class="css-a7zcn1"
+        >
+          <li>
+            <strong>
+              Notice of disagreement received
+            </strong>
+            <span>
+              4/1/2021
+            </span>
+          </li>
+          <li>
+            <strong>
+              Veteran date of death
+            </strong>
+            <span>
+              4/15/2021
+            </span>
+          </li>
+          <li>
+            <strong>
+              Substitution granted by the RO
+            </strong>
+            <span>
+              4/20/2021
+            </span>
+          </li>
+        </ul>
+        <div
+          class="css-2zljw9"
+        >
+          <a
+            href="/queue/appeals/abc123"
+            target="_blank"
+          >
+            View original case details 
+            <i
+              class="fa fa-external-link"
+            />
+          </a>
+        </div>
+      </section>
+    </section>
+    <div
+      class="controls cf-app-segment"
+    >
+      <div
+        data-css-63oe3q=""
+      >
+        <span>
+          <button
+            class="cf-right-side usa-button"
+            data-css-wn5k45=""
+            id="button-next-button"
+            type="button"
+          >
+            Continue
+          </button>
+        </span>
+        <button
+          class="cf-btn-link cf-right-side usa-button"
+          id="button-cancel-button"
+          type="button"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+`;
