@@ -130,7 +130,7 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
         </ul>
         { poaAlert.message && poaAlert.alertType && (
           <div>
-            <Alert type={poaAlert.alertType} message={poaAlert.message} />
+            <Alert type={poaAlert.alertType} message={poaAlert.message} scrollOnAlert={false} />
           </div>
         )}
       </div>
