@@ -27,6 +27,6 @@ class JudgeAssignTaskCreator
   end
 
   def close_distribution_tasks_for_appeal
-    appeal.tasks.where(type: DistributionTask.name).update(status: :completed)
+    appeal.tasks.of_type(:DistributionTask).update(status: :completed)
   end
 end

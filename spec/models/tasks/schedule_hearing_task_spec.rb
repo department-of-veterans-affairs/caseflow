@@ -232,7 +232,7 @@ describe ScheduleHearingTask, :all_dbs do
         it "completes the task and creates an EvidenceSubmissionWindowTask" do
           expect(subject.count).to eq(2)
           expect(schedule_hearing_task.status).to eq(Constants.TASK_STATUSES.cancelled)
-          expect(appeal.tasks.where(type: EvidenceSubmissionWindowTask.name).count).to eq(1)
+          expect(appeal.tasks.of_type(:EvidenceSubmissionWindowTask).count).to eq(1)
         end
       end
     end

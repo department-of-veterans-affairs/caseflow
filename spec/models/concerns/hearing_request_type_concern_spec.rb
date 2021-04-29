@@ -293,7 +293,7 @@ describe HearingRequestTypeConcern do
 
         it "returns changed request type if version is `current`" do
           expect(ChangeHearingRequestTypeTask.count).to eq(2)
-          change_request_type_tasks = appeal.tasks.where(type: "ChangeHearingRequestTypeTask")
+          change_request_type_tasks = appeal.tasks.of_type(:ChangeHearingRequestTypeTask)
 
           # Set the changed request types
           first_request_type = appeal
@@ -308,7 +308,7 @@ describe HearingRequestTypeConcern do
         it "returns the original request type if version is `prev`" do
           expect(ChangeHearingRequestTypeTask.count).to eq(2)
 
-          change_request_type_tasks = appeal.tasks.where(type: "ChangeHearingRequestTypeTask")
+          change_request_type_tasks = appeal.tasks.of_type(:ChangeHearingRequestTypeTask)
 
           # Set the changed request types
           first_request_type = appeal
