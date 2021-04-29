@@ -189,7 +189,7 @@ module Seeds
         root_task = vacate_stream.tasks.find_by(type: "RootTask")
         BvaDispatchTask.create_from_root_task(root_task)
         dispatch_user = vacate_stream.tasks
-          .reload.find_by(type: "BvaDispatchTask", assigned_to_type: "User").assigned_to
+          .reload.assigned_to_any_user.find_by(type: "BvaDispatchTask").assigned_to
         last_six = file_number[-6..-1]
         citation_number = "A19#{last_six}"
         outcode_params = {

@@ -195,7 +195,7 @@ class Appeal < DecisionReview
   end
 
   def reviewing_judge_name
-    task = tasks.not_cancelled.where(type: JudgeDecisionReviewTask.name).order(created_at: :desc).first
+    task = tasks.not_cancelled.of_type(:JudgeDecisionReviewTask).order(created_at: :desc).first
     task ? task.assigned_to.try(:full_name) : ""
   end
 
@@ -236,11 +236,11 @@ class Appeal < DecisionReview
   end
 
   def active?
-    tasks.open.where(type: RootTask.name).any?
+    tasks.open.of_type(:RootTask).any?
   end
 
   def ready_for_distribution?
-    tasks.active.where(type: DistributionTask.name).any?
+    tasks.active.of_type(:DistributionTask).any?
   end
 
   def ready_for_distribution_at
