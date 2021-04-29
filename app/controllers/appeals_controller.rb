@@ -305,7 +305,7 @@ class AppealsController < ApplicationController
         message: "POA Updated Successfully",
         power_of_attorney: power_of_attorney_data
       }
-    rescue => e
+    rescue ActiveRecord::RecordNotUnique
       {
         status: "error",
         message: "Something went wrong"
