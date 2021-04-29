@@ -50,7 +50,7 @@ describe "Fixing dispatched appeals" do
 
       # Close out appeal
       appeal.root_task.completed!
-      appeal.tasks.where(type: :TrackVeteranTask).map(&:completed!)
+      appeal.tasks.of_type(:TrackVeteranTask).map(&:completed!)
 
       # 5. Recreate and reattach the decision document to the appeal because it was sent to the Veteran
       # and no edits have been made

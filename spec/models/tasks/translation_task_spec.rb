@@ -22,7 +22,7 @@ describe TranslationTask, :postgres do
 
   describe ".create_from_parent" do
     let(:appeal) { create(:appeal, :with_post_intake_tasks, docket_type: Constants.AMA_DOCKETS.direct_review) }
-    let(:distribution_task) { appeal.tasks.open.where(type: DistributionTask.name).first }
+    let(:distribution_task) { appeal.tasks.open.of_type(:DistributionTask).first }
 
     subject { TranslationTask.create_from_parent(distribution_task) }
 
