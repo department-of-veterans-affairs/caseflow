@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { FormProvider, Controller } from 'react-hook-form';
+import { Redirect } from 'react-router-dom';
 import { useAddPoaForm } from './utils';
 import { ADD_CLAIMANT_POA_PAGE_DESCRIPTION } from 'app/../COPY';
 import { IntakeLayout } from '../components/IntakeLayout';
@@ -14,11 +15,11 @@ import Address from 'app/queue/components/Address';
 import AddressForm from 'app/components/AddressForm';
 import TextField from 'app/components/TextField';
 import { useDispatch, useSelector } from 'react-redux';
-import { editPoaInformation, clearPoa } from 'app/intake/reducers/addClaimantSlice';
+import { editPoaInformation, clearPoa, clearClaimant } from 'app/intake/reducers/addClaimantSlice';
 import { AddClaimantConfirmationModal } from '../addClaimant/AddClaimantConfirmationModal';
 import { formatAddress } from '../addClaimant/utils';
-import { FORM_TYPES } from '../constants';
-// eslint-disable-next-line no-unused-vars
+import { FORM_TYPES, PAGE_PATHS, INTAKE_STATES } from '../constants';
+import { getIntakeStatus } from '../selectors';
 import { submitReview } from '../actions/decisionReview';
 
 const partyTypeOpts = [
@@ -70,10 +71,8 @@ export const AddPoaPage = () => {
     handleSubmit
   } = methods;
 
-  /* eslint-disable no-unused-vars */
-  // This code will likely be needed in submission (see handleConfirm)
-  // Remove eslint-disable once used
   const { formType, id: intakeId } = useSelector((state) => state.intake);
+
   const intakeForms = useSelector(
     ({ higherLevelReview, supplementalClaim, appeal }) => ({
       appeal,
@@ -88,7 +87,16 @@ export const AddPoaPage = () => {
   const intakeData = useMemo(() => {
     return selectedForm ? intakeForms[camelCase(formType)] : null;
   }, [intakeForms, formType, selectedForm]);
-  /* eslint-enable no-unused-vars */
+  const intakeStatus = getIntakeStatus(useSelector((state) => state));
+
+  // Redirect to page where data needs to be re-populated (e.g. from a page reload)
+  if (intakeStatus === INTAKE_STATES.STARTED) {
+    if (!intakeData.receiptDate) {
+      return <Redirect to={PAGE_PATHS.REVIEW} />;
+    } else if (!claimant?.relationship) {
+      return <Redirect to={PAGE_PATHS.ADD_CLAIMANT} />;
+    }
+  }
 
   const toggleConfirm = () => setConfirmModal((val) => !val);
   const handleConfirm = () => {
@@ -97,6 +105,7 @@ export const AddPoaPage = () => {
 
     dispatch(submitReview(intakeId, intakeData, selectedForm.formName));
     dispatch(clearPoa());
+    dispatch(clearClaimant());
     push('/add_issues');
   };
 

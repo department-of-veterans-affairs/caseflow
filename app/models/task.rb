@@ -51,6 +51,10 @@ class Task < CaseflowRecord
     Constants.TASK_STATUSES.cancelled.to_sym => Constants.TASK_STATUSES.cancelled
   }
 
+  enum cancellation_reason: {
+    Constants.TASK_CANCELLATION_REASONS.poa_change.to_sym => Constants.TASK_CANCELLATION_REASONS.poa_change
+  }
+
   # This suppresses a warning about the :open scope overwriting the Kernel#open method
   # https://ruby-doc.org/core-2.6.3/Kernel.html#method-i-open
   class << self; undef_method :open; end
@@ -66,6 +70,11 @@ class Task < CaseflowRecord
   scope :recently_completed, -> { completed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now) }
 
   scope :incomplete_or_recently_completed, -> { open.or(recently_completed) }
+
+  scope :of_type, ->(task_type) { where(type: task_type) }
+
+  scope :assigned_to_any_user, -> { where(assigned_to_type: "User") }
+  scope :assigned_to_any_org, -> { where(assigned_to_type: "Organization") }
 
   # Equivalent to .reject(&:hide_from_queue_table_view) but offloads that to the database.
   scope :visible_in_queue_table_view, lambda {
