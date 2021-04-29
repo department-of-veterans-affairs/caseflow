@@ -268,13 +268,7 @@ class AppealsController < ApplicationController
 
   def update_bgs_poa(poa)
     begin
-      if poa.bgs_record == :not_found
-        poa.destroy
-        message = "Successfully refreshed. No power of attorney information was found at this time."
-      else
-        poa.save_with_updated_bgs_record!
-        message = "POA Updated Successfully"
-      end
+      message = poa.update_or_delete
       {
         status: "success",
         message: message,
@@ -292,13 +286,7 @@ class AppealsController < ApplicationController
     begin
       bgs_poa = BgsPowerOfAttorney.find_or_create_by_file_number(poa.file_number)
       if bgs_poa.bgs_record == :not_found
-        c = appeal.claimant
-        claimant_poa = c.power_of_attorney if !c.is_a?(Hash)
-        if claimant_poa && claimant_poa.bga_record == :not_found
-          claimant_poa.destroy
-        else 
-          bgs_poa.destroy
-        end
+        delete_vacols_poa(bgs_poa)
         message = "Successfully refreshed. No power of attorney information was found at this time."
       else
         bgs_poa.save_with_updated_bgs_record!
@@ -314,6 +302,16 @@ class AppealsController < ApplicationController
         status: "error",
         message: "Something went wrong"
       }
+    end
+  end
+
+  def delete_vacols_poa(poa)
+    claimant = appeal.claimant
+    claimant_poa = claimant.power_of_attorney if !claimant.is_a?(Hash)
+    if claimant_poa && claimant_poa.bga_record == :not_found
+      claimant_poa.destroy
+    else
+      poa.destroy
     end
   end
 
