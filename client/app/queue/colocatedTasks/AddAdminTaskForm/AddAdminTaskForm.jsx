@@ -24,7 +24,7 @@ const actionOptions = Object.entries(colocatedAdminActions).map(
 
 const { capitalizeFirst, snakeCaseToCamelCase, camelCaseToSnakeCase } = StringUtil;
 
-export const DocketSwitchAddAdminTaskForm = ({ baseName, item, onRemove }) => {
+export const AddAdminTaskForm = ({ baseName, item, onRemove }) => {
   const { control, errors, register } = useFormContext();
   const selectRef = useRef();
 
@@ -92,7 +92,7 @@ export const DocketSwitchAddAdminTaskForm = ({ baseName, item, onRemove }) => {
   );
 };
 
-DocketSwitchAddAdminTaskForm.propTypes = {
+AddAdminTaskForm.propTypes = {
   baseName: PropTypes.string.isRequired,
   item: PropTypes.shape({
     type: PropTypes.shape({ value: PropTypes.string, label: PropTypes.string }),
