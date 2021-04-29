@@ -1,7 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import moment from 'moment-timezone';
-
 import HEARING_TIME_OPTIONS from '../../../constants/HEARING_TIME_OPTIONS';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import { formatTimeSlotLabel } from '../utils';
@@ -15,23 +13,14 @@ export const TimePicker = ({
   value,
 }) => {
 
+  // Set the label, option.value (time) is in eastern
   const formatOptions = (zone, options) => {
-    const formattedOptions = options.map((option) => {
-      // This 'value' gets interpreted on save as roTimezone, though how that happens is complicated,
-      // see hearing.rb::scheduled_for docs.
-      // The point of this is so that for a west coast RO the dropdown starts at 8:15 pacific
-      // rather than 8:15 eastern
-      const correctedTime = moment.tz(option.value, 'HH:mm', roTimezone).tz('America/New_York').
-        format('HH:mm');
-
+    return options.map((option) => {
       return {
         value: option.value,
-        // The label is the same as the label on the timeslots
-        label: formatTimeSlotLabel(correctedTime, zone)
+        label: formatTimeSlotLabel(option.value, zone)
       };
     });
-
-    return formattedOptions;
   };
 
   return (
@@ -41,8 +30,6 @@ export const TimePicker = ({
       placeholder="Select a time"
       options={formatOptions(roTimezone, HEARING_TIME_OPTIONS)}
       value={value}
-      // This is responsible for updating the 'scheduledTimeString' which is in eastern
-      // it is not responsible for updating what's selected in the dropdown
       onChange={(option) => onChange(option ? option.value : null)}
     />
   );
