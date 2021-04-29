@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_16_192302) do
+ActiveRecord::Schema.define(version: 2021_04_26_181017) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1385,6 +1385,7 @@ ActiveRecord::Schema.define(version: 2021_04_16_192302) do
     t.integer "assigned_by_id"
     t.integer "assigned_to_id", null: false
     t.string "assigned_to_type", null: false
+    t.string "cancellation_reason", comment: "Reason for latest cancellation status"
     t.integer "cancelled_by_id", comment: "ID of user that cancelled the task. Backfilled from versions table. Can be nil if task was cancelled before this column was added or if there is no user logged in when the task is cancelled"
     t.datetime "closed_at"
     t.datetime "created_at", null: false
@@ -1397,6 +1398,7 @@ ActiveRecord::Schema.define(version: 2021_04_16_192302) do
     t.datetime "updated_at", null: false
     t.index ["appeal_type", "appeal_id"], name: "index_tasks_on_appeal_type_and_appeal_id"
     t.index ["assigned_to_type", "assigned_to_id"], name: "index_tasks_on_assigned_to_type_and_assigned_to_id"
+    t.index ["cancellation_reason"], name: "index_tasks_on_cancellation_reason"
     t.index ["parent_id"], name: "index_tasks_on_parent_id"
     t.index ["status"], name: "index_tasks_on_status"
     t.index ["type"], name: "index_tasks_on_type"
