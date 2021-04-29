@@ -7,14 +7,16 @@ exports[`SubstituteAppellantBasicsForm with blank form renders default state cor
       class="cf-app-segment cf-app-segment--alt"
       role="main"
     >
-      <h1>
-        Select substitute appellant
-      </h1>
-      <div
-        data-css-1sbm5ab=""
+      <section
+        class="css-1kmvzpy"
       >
-        Complete the details below to create the appeal for the substitute for this case.
-      </div>
+        <h1>
+          Select substitute appellant
+        </h1>
+        <div>
+          Complete the details below to create the appeal for the substitute for this case.
+        </div>
+      </section>
       <div
         class="cf-form-textinput   "
       >
@@ -122,14 +124,16 @@ exports[`SubstituteAppellantBasicsForm with existing form data renders default s
       class="cf-app-segment cf-app-segment--alt"
       role="main"
     >
-      <h1>
-        Select substitute appellant
-      </h1>
-      <div
-        data-css-1sbm5ab=""
+      <section
+        class="css-1kmvzpy"
       >
-        Complete the details below to create the appeal for the substitute for this case.
-      </div>
+        <h1>
+          Select substitute appellant
+        </h1>
+        <div>
+          Complete the details below to create the appeal for the substitute for this case.
+        </div>
+      </section>
       <div
         class="cf-form-textinput   "
       >
