@@ -106,7 +106,7 @@ describe DocketSwitch::TaskHandler, :all_dbs do
         expect(docket_task.reload).to be_cancelled
 
         new_docket_task = new_docket_stream.reload.tasks.find { |task| task.type == "ScheduleHearingTask" }
-        persistent_task_copy = new_docket_stream.tasks.find_by(type: "TranslationTask", assigned_to_type: "User")
+        persistent_task_copy = new_docket_stream.tasks.assigned_to_any_user.find_by(type: "TranslationTask")
         new_admin_action = new_docket_stream.tasks.find do |task|
           task.type == "AojColocatedTask" && task.assigned_to_type == "User"
         end
@@ -135,7 +135,7 @@ describe DocketSwitch::TaskHandler, :all_dbs do
         expect(docket_task.reload).to be_active
 
         new_docket_task = new_docket_stream.reload.tasks.find { |task| task.type == "ScheduleHearingTask" }
-        persistent_task_copy = new_docket_stream.tasks.find_by(type: "TranslationTask", assigned_to_type: "User")
+        persistent_task_copy = new_docket_stream.tasks.assigned_to_any_user.find_by(type: "TranslationTask")
         new_admin_action = new_docket_stream.tasks.find do |task|
           task.type == "AojColocatedTask" && task.assigned_to_type == "User"
         end
