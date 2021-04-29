@@ -3,7 +3,7 @@ Dating back to at least August 2020 (according to the original issue), we have b
 
 #### Services involved
 - **VBMS**: where users are entering updated POA information
-- **BGS**: the api Caseflow interacts with to retrieve POA information
+- **BGS**: the API Caseflow interacts with to retrieve POA information
 - **corpDB**: the DB that stores POA information that BGS retrieves
 
 #### Relevant Issues/Epics
@@ -33,11 +33,11 @@ Prioritization for the distribution of appeals is based on their type, currently
 
 To determine priority of distributed appeals, we can reference the [`priority`](https://github.com/department-of-veterans-affairs/caseflow/blob/e49f79f733037461fd93b5e4d86bd174021c8d76/db/schema.rb#L461) boolean on the `distributed_cases` table
 
-Undistributed appeals are on dockets awaiting distribution, for AMA those dockets are Direct Review, Evidence Submission & Hearing Request. All 3 of the respective models for these dockets are subclasses of the Docket model which has a [`priority`](https://github.com/department-of-veterans-affairs/caseflow/blob/e49f79f733037461fd93b5e4d86bd174021c8d76/app/models/docket.rb#L106) method we can utilize to determine priority status.
+Undistributed appeals are on dockets awaiting distribution, for AMA those dockets are Direct Review, Evidence Submission & Hearing Request. All 3 of the respective models for these dockets are subclasses of the `Docket` model which has a [`priority`](https://github.com/department-of-veterans-affairs/caseflow/blob/e49f79f733037461fd93b5e4d86bd174021c8d76/app/models/docket.rb#L106) method we can utilize to determine priority status.
 
-Legacy cases belong to a single docket.  This Case Docket model has a [`priority_ready_appeal_vacols_ids`](https://github.com/department-of-veterans-affairs/caseflow/blob/e49f79f733037461fd93b5e4d86bd174021c8d76/app/models/vacols/case_docket.rb#L276) method to determine their priority status. 
+Legacy cases belong to a single docket.  This `VACOLS::CaseDocket` model has a [`priority_ready_appeal_vacols_ids`](https://github.com/department-of-veterans-affairs/caseflow/blob/e49f79f733037461fd93b5e4d86bd174021c8d76/app/models/vacols/case_docket.rb#L276) method to determine their priority status. 
 #### 3. When was the POA last updated
-We should also take into consideration the last time that the POA record was updated, which we track on the `bgs_power_of_attorneys` table with [`last_synced_at`](https://github.com/department-of-veterans-affairs/caseflow/blob/4e042c15144e926ec065e4e4869ca236158690ff/db/schema.rb#L194).  If we have synced the record in the last 24 (or potentially even 48) hours it is most likely unnecessary to re-update the record. #15538 
+We should also take into consideration the last time that the POA record was updated, which we track on the `bgs_power_of_attorneys` table with [`last_synced_at`](https://github.com/department-of-veterans-affairs/caseflow/blob/4e042c15144e926ec065e4e4869ca236158690ff/db/schema.rb#L194).  If we have synced the record in the last 16 hours it is most likely unnecessary to re-update the record. #15538 
 ### Non goals
 Removing non-existent POA records
 There is a related issue currently where we are not removing POA records that come back as `not_found` from the BGS.  We should update our logic to remove the POA record from the Caseflow DB if it does (originally noted in [#15043](https://github.com/department-of-veterans-affairs/caseflow/issues/15043)).  It would be a "nice to have" but probably technically out of scope here as we still have yet to identify exactly what the cause is.
@@ -64,9 +64,9 @@ For this approach we need to update POAs based on the priority appeals outlined 
 We would add methods to WarmBgsCachesJob each concerned with retrieving and updating the POA records for the particular docket types (i.e. `warm_poa_and_cache_for_direct_review_appeals`).
 
 In terms of numbers of priority AMA appeals on the various dockets at the time of this writing the breakdown is:
-Direct Review: 969
-Evidence Submission: 600
-Hearing Request: 4251 
+Direct Review: 969 (`DirectReviewDocket.new.count(priority: true)`)
+Evidence Submission: 600 (`EvidenceSubmissionDocket.new.count(priority: true)`)
+Hearing Request: 4251 (`HearingRequestDocket.new.count(priority: true)`)
 
 ### Option 3:  A combination of Options 1 & 2
 If it was determined that either of the approaches would not provide enough coverage in combination with the refresh button, we could undertake both efforts.
@@ -82,10 +82,10 @@ Updating the methods on the BgsPowerOfAttorney model seems to be most preferable
 We do not alter WarmBgsCachesJob taking this path. This is tech debt we can address later.  
 ## Implementation of POA refresh button
 ![Screen Shot 2021-04-06 at 12 33 06 PM](https://user-images.githubusercontent.com/18618189/113746476-5e0bd900-96d4-11eb-81bd-f7d53936b009.png)
-The button will need to send a request to the `AppealsController` and trigger a call to the [`save_with_updated_bgs_record! `](https://github.com/department-of-veterans-affairs/caseflow/blob/4e042c15144e926ec065e4e4869ca236158690ff/app/models/bgs_power_of_attorney.rb#L114) method on the BgsPowerOfAttorney model in order to retrieve the updated record.
+The button will need to send a request to the `AppealsController` and trigger a call to the [`save_with_updated_bgs_record! `](https://github.com/department-of-veterans-affairs/caseflow/blob/4e042c15144e926ec065e4e4869ca236158690ff/app/models/bgs_power_of_attorney.rb#L114) method on the `BgsPowerOfAttorney` model in order to retrieve the updated record.
 
 We want to prevent the user continuously hitting the refresh button and triggering multiple calls to BGS.  To address this 
 1. We should be able to utilize the Button components [loading](https://github.com/department-of-veterans-affairs/caseflow/blob/e49f79f733037461fd93b5e4d86bd174021c8d76/client/app/components/Button.jsx#L25) attribute to prevent this from occurring.
-2. We can set a an expiration on the last synced time similar to what is suggested for the update of the methods on BgsPowerOfAttorney model, only allowing for the user to refresh after a certain period of time.
+2. We can set a an expiration on the last synced time similar to what is suggested for the update of the methods on `BgsPowerOfAttorney` model, only allowing for the user to refresh after a certain period of time.
 
 Finally we will show the user an inline success banner in the POA portion of case details informing them the POA has been refreshed. 
