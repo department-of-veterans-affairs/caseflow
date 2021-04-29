@@ -9,7 +9,7 @@ describe MdrTask, :postgres do
   let(:decision_date) { 5.days.ago.to_date }
   let(:cavc_remand) { create(:cavc_remand, decision_date: decision_date) }
   let(:appeal) { cavc_remand.remand_appeal }
-  let(:cavc_task) { appeal.tasks.open.where(type: :CavcTask).last }
+  let(:cavc_task) { appeal.tasks.open.of_type(:CavcTask).last }
 
   describe ".create" do
     subject { described_class.create(parent: parent_task, appeal: appeal) }
@@ -36,7 +36,7 @@ describe MdrTask, :postgres do
 
         expect(appeal.tasks).to include new_task
         expect(parent_task.children).to include new_task
-        child_timed_hold_tasks = new_task.children.where(type: :TimedHoldTask)
+        child_timed_hold_tasks = new_task.children.of_type(:TimedHoldTask)
         expect(child_timed_hold_tasks.count).to eq 1
         expect(child_timed_hold_tasks.first.assigned_to).to eq CavcLitigationSupport.singleton
         expect(child_timed_hold_tasks.first.status).to eq Constants.TASK_STATUSES.assigned
@@ -54,7 +54,7 @@ describe MdrTask, :postgres do
     context "immediately after MdrTask is created" do
       it "returns available actions when MdrTask is on hold" do
         expect(mdr_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
-        child_timed_hold_tasks = mdr_task.children.where(type: :TimedHoldTask)
+        child_timed_hold_tasks = mdr_task.children.of_type(:TimedHoldTask)
         expect(child_timed_hold_tasks.first.status).to eq Constants.TASK_STATUSES.assigned
 
         expect(mdr_task.available_actions(org_admin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
@@ -74,7 +74,7 @@ describe MdrTask, :postgres do
 
       it "marks MdrTask as assigned" do
         expect(mdr_task.reload.status).to eq Constants.TASK_STATUSES.assigned
-        child_timed_hold_tasks = mdr_task.children.where(type: :TimedHoldTask)
+        child_timed_hold_tasks = mdr_task.children.of_type(:TimedHoldTask)
         expect(child_timed_hold_tasks.first.status).to eq Constants.TASK_STATUSES.completed
       end
 
@@ -92,18 +92,18 @@ describe MdrTask, :postgres do
   end
 
   describe "#update_timed_hold" do
-    let(:parent_task) { appeal.tasks.open.where(type: :CavcTask).last }
+    let(:parent_task) { appeal.tasks.open.of_type(:CavcTask).last }
     let!(:mdr_task) { MdrTask.create_with_hold(parent_task) }
 
     subject { mdr_task.update_timed_hold }
 
     context "when the task calls update_timed_hold" do
       it "it will create a new timed hold task" do
-        original_count = mdr_task.children.where(type: :TimedHoldTask).length
+        original_count = mdr_task.children.of_type(:TimedHoldTask).length
 
         expect { subject }.not_to raise_error
 
-        expect(mdr_task.children.where(type: :TimedHoldTask).length).to eq original_count + 1
+        expect(mdr_task.children.of_type(:TimedHoldTask).length).to eq original_count + 1
       end
 
       it "it will cancel the existing timed hold task" do

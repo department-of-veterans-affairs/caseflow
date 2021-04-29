@@ -32,7 +32,7 @@ describe CavcRemandProcessedLetterResponseWindowTask, :postgres do
 
         expect(appeal.tasks).to include new_task
         expect(parent_task.children).to include new_task
-        child_timed_hold_tasks = new_task.children.where(type: :TimedHoldTask)
+        child_timed_hold_tasks = new_task.children.of_type(:TimedHoldTask)
         expect(child_timed_hold_tasks.count).to eq 1
         expect(child_timed_hold_tasks.first.assigned_to).to eq CavcLitigationSupport.singleton
         expect(child_timed_hold_tasks.first.status).to eq Constants.TASK_STATUSES.assigned
@@ -51,7 +51,7 @@ describe CavcRemandProcessedLetterResponseWindowTask, :postgres do
       context "while window task is on-hold" do
         context "window task assigned to org" do
           it "returns on-hold actions available to org" do
-            child_timed_hold_task = window_task.children.where(type: :TimedHoldTask).active.first
+            child_timed_hold_task = window_task.children.of_type(:TimedHoldTask).active.first
             expect(child_timed_hold_task.status).to eq Constants.TASK_STATUSES.assigned
 
             expect(window_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
@@ -68,7 +68,7 @@ describe CavcRemandProcessedLetterResponseWindowTask, :postgres do
           end
 
           it "returns on-hold actions available to user" do
-            child_timed_hold_task = user_window_task.children.where(type: :TimedHoldTask).active.first
+            child_timed_hold_task = user_window_task.children.of_type(:TimedHoldTask).active.first
             expect(child_timed_hold_task.status).to eq Constants.TASK_STATUSES.assigned
 
             expect(user_window_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
@@ -83,7 +83,7 @@ describe CavcRemandProcessedLetterResponseWindowTask, :postgres do
       context "after timed-hold window ends (due to cancellation or time passed)" do
         context "window task assigned to org" do
           it "returns actions available to org" do
-            child_timed_hold_task = window_task.children.where(type: :TimedHoldTask).active.first
+            child_timed_hold_task = window_task.children.of_type(:TimedHoldTask).active.first
             expect(child_timed_hold_task.status).to eq Constants.TASK_STATUSES.assigned
 
             Timecop.travel(Time.zone.now + 90.days + 1.hour)
@@ -104,7 +104,7 @@ describe CavcRemandProcessedLetterResponseWindowTask, :postgres do
           end
 
           it "returns actions available to user" do
-            child_timed_hold_task = user_window_task.children.where(type: :TimedHoldTask).active.first
+            child_timed_hold_task = user_window_task.children.of_type(:TimedHoldTask).active.first
             expect(child_timed_hold_task.status).to eq Constants.TASK_STATUSES.assigned
 
             Timecop.travel(Time.zone.now + 80.days + 1.hour)
@@ -157,17 +157,17 @@ describe CavcRemandProcessedLetterResponseWindowTask, :postgres do
     context "when assigning task to person" do
       context "open TimedHoldTask child exists" do
         it "has open TimedHoldTask child under newly created child task" do
-          timed_hold_task = subject.children.open.where(type: :TimedHoldTask).first
+          timed_hold_task = subject.children.open.of_type(:TimedHoldTask).first
           expect(timed_hold_task.status).to eq "assigned"
         end
       end
       context "no open TimedHoldTask child exists" do
         before do
-          timed_hold_task = window_task.children.open.where(type: :TimedHoldTask).first
+          timed_hold_task = window_task.children.open.of_type(:TimedHoldTask).first
           timed_hold_task.cancelled!
         end
         it "does not have TimedHoldTask child under newly created child task" do
-          timed_hold_task = subject.children.open.where(type: :TimedHoldTask).first
+          timed_hold_task = subject.children.open.of_type(:TimedHoldTask).first
           expect(timed_hold_task).to eq nil
         end
       end

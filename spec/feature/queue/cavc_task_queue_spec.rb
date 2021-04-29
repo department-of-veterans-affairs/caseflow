@@ -896,7 +896,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         end
 
         step "reassign to another user" do
-          timed_hold_task = task.appeal.tasks.open.where(type: :TimedHoldTask).first
+          timed_hold_task = task.appeal.tasks.open.of_type(:TimedHoldTask).first
           expect(timed_hold_task.parent.assigned_to).to eq org_nonadmin
 
           click_dropdown(text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.label)
