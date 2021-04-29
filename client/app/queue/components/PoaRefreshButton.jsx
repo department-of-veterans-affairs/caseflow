@@ -5,6 +5,11 @@ import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
 import SmallLoader from '../../components/SmallLoader';
 import { setPoaRefreshAlert } from '../uiReducer/uiActions';
+import { css } from 'glamor';
+
+export const spacingStyling = css({
+  marginTop: '8px'
+});
 
 export const PoaRefreshButton = ({ appealId, poaId }) => {
   const dispatch = useDispatch();
@@ -21,7 +26,7 @@ export const PoaRefreshButton = ({ appealId, poaId }) => {
   };
 
   return <React.Fragment>
-    {viewPoaRefreshButton && (<div>
+    {viewPoaRefreshButton && (<div {...spacingStyling}>
       <Button
         type="button"
         name="Refresh Poa"
