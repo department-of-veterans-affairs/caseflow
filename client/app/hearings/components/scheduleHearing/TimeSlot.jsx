@@ -1,13 +1,14 @@
 // External Dependencies
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment-timezone';
 
 // Local Dependencies
 import { setTimeSlots } from '../../utils';
 import { TimeSlotButton } from './TimeSlotButton';
 import Button from '../../../components/Button';
 import SmallLoader from '../../../components/SmallLoader';
-import { HearingTime } from '../modalForms/HearingTime';
+import { TimePicker } from '../TimePicker';
 import { LOGO_COLORS } from '../../../constants/AppConstants';
 
 export const TimeSlot = ({
@@ -32,8 +33,11 @@ export const TimeSlot = ({
     // Set the selected time slot
     setSelected(time);
 
-    // Use the onChange callback to set the hearing time
-    onChange('scheduledTimeString', time);
+    // Convert to ro timezone, then set the hearing time in reducer
+    const timeInRoZone = moment.tz(time, 'HH:mm', 'America/New_York').tz(roTimezone).
+      format('HH:mm');
+
+    onChange('scheduledTimeString', timeInRoZone);
   };
 
   // Create a hearing Time ID to associate the label with the appropriate form element
@@ -61,12 +65,9 @@ export const TimeSlot = ({
             </Button>
           </div>
           {custom ? (
-            <HearingTime
-              hideLabel
-              enableZone
-              disableRadioOptions
+            <TimePicker
               id={hearingTimeId}
-              localZone={roTimezone}
+              roTimezone={roTimezone}
               onChange={(scheduledTimeString) => onChange('scheduledTimeString', scheduledTimeString)}
               value={hearing?.scheduledTimeString}
             />
