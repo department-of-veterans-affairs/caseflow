@@ -25,6 +25,9 @@ describe AppellantSubstitution do
       expect { subject }.not_to raise_error
       params.each_key { |key| expect(subject.send(key)).to eq params[key] }
 
+      expect(subject.target_appeal.appellant_substitution).to eq subject
+      expect(subject.target_appeal.appellant_substitution?).to eq true
+      expect(subject.target_appeal.stream_type).to eq subject.source_appeal.stream_type
       expect(subject.target_appeal.docket_number).to eq subject.source_appeal.docket_number
       expect(subject.substitute_claimant).to eq subject.target_appeal.claimant
       expect(subject.substitute_person).to eq subject.target_appeal.claimant.person
@@ -47,7 +50,7 @@ describe AppellantSubstitution do
       end
 
       context "source appeal has non-age-related AOD Motion" do
-        let(:source_appeal) { create(:appeal, :active, :advanced_on_docket_due_to_motion) }
+        let(:source_appeal) { create(:appeal, :dispatched, :advanced_on_docket_due_to_motion) }
         # The original person associated with AOD may be the claimant or veteran; in this case, it is the claimant
         let(:aod_person) { source_appeal.claimant.person }
         it "copies AOD motions to new appeal" do
@@ -55,11 +58,13 @@ describe AppellantSubstitution do
           expect(AdvanceOnDocketMotion.for_appeal(source_appeal).count).to eq 2
           aod_motions_count = AdvanceOnDocketMotion.for_appeal_and_person(source_appeal, aod_person).count
           expect(source_appeal.aod?).to be true
+          expect(source_appeal.cavc?).to be false
 
           appellant_substitution = subject
           # Source appeal's AODMotion are unchanged
           expect(AdvanceOnDocketMotion.for_appeal(source_appeal).count).to eq 2
           expect(AdvanceOnDocketMotion.for_appeal_and_person(source_appeal, aod_person).count).to eq aod_motions_count
+          expect(source_appeal.cavc?).to be false
 
           target_appeal = appellant_substitution.target_appeal
           # AODMotion are transferred to substitute claimant
@@ -68,6 +73,44 @@ describe AppellantSubstitution do
           expect(AdvanceOnDocketMotion.for_appeal_and_person(target_appeal, target_appeal_aod_person).count).to eq 1
           expect(AdvanceOnDocketMotion.granted_for_person?(target_appeal.claimant.person, target_appeal)).to be true
           expect(target_appeal.aod?).to be true
+
+          # InitialTasksFactory should not have auto-created EvidenceSubmissionWindowTask
+          expect(EvidenceSubmissionWindowTask.where(appeal: target_appeal).count).to eq 0
+        end
+      end
+      context "source appeal has CAVC status" do
+        let(:source_appeal) { create(:appeal, :dispatched, :type_cavc_remand) }
+        it "copies CAVC status to new appeal" do
+          expect(source_appeal.cavc?).to be true
+
+          appellant_substitution = subject
+          # Source appeal's CAVC status is unchanged
+          expect(source_appeal.cavc?).to be true
+
+          target_appeal = appellant_substitution.target_appeal
+          expect(target_appeal.cavc?).to be true
+
+          # InitialTasksFactory should not have auto-created SendCavcRemandProcessedLetterTask
+          expect(SendCavcRemandProcessedLetterTask.where(appeal: target_appeal).count).to eq 0
+        end
+      end
+      context "source appeal has AOD and CAVC status" do
+        let(:source_appeal) { create(:appeal, :dispatched, :type_cavc_remand, :advanced_on_docket_due_to_motion) }
+        it "copies AOD and CAVC status to new appeal" do
+          expect(source_appeal.aod?).to be true
+          expect(source_appeal.cavc?).to be true
+
+          appellant_substitution = subject
+          # Source appeal's CAVC status is unchanged
+          expect(source_appeal.cavc?).to be true
+
+          target_appeal = appellant_substitution.target_appeal
+          expect(target_appeal.cavc?).to be true
+          expect(target_appeal.aod?).to be true
+
+          # InitialTasksFactory should not have auto-created typical initial tasks
+          expect(EvidenceSubmissionWindowTask.where(appeal: target_appeal).count).to eq 0
+          expect(SendCavcRemandProcessedLetterTask.where(appeal: target_appeal).count).to eq 0
         end
       end
 

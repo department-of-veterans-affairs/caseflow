@@ -114,8 +114,8 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
         expect { subject }.to_not raise_error
         expect(user_task.status).to eq Constants.TASK_STATUSES.completed
 
-        window_task = user_task.appeal.tasks.where(type: CavcRemandProcessedLetterResponseWindowTask.name).first
-        child_timed_hold_tasks = window_task.children.where(type: :TimedHoldTask)
+        window_task = user_task.appeal.tasks.of_type(:CavcRemandProcessedLetterResponseWindowTask).first
+        child_timed_hold_tasks = window_task.children.of_type(:TimedHoldTask)
         expect(child_timed_hold_tasks.first.timer_end_time.to_date).to eq(Time.zone.now.to_date + 90.days)
       end
 

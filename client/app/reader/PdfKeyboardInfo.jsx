@@ -73,3 +73,19 @@ export const documentsColumns = [{ header: 'Navigate reader',
 { header: 'Shortcut',
   valueName: 'shortcut',
   align: 'left' }];
+
+export const categoryColumns = [{ header: 'Add/Remove categories',
+  valueName: 'categoryInstruction',
+  align: 'left' },
+{ header: 'Shortcut',
+  valueName: 'shortcut',
+  align: 'left' }];
+
+export const categoryInstructions = [
+  { categoryInstruction: 'Add/Remove Medical',
+    shortcut: <span><code>alt</code> + <code>shift</code> + <code>m</code></span> },
+  { categoryInstruction: 'Add/Remove Procedural',
+    shortcut: <span><code><code>alt</code> + <code>shift</code></code> + <code>p</code></span> },
+  { categoryInstruction: 'Add/Remove Other Evidence',
+    shortcut: <span><code><code>alt</code> + <code>shift</code></code> + <code>o</code></span> },
+];
