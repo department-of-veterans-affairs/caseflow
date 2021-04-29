@@ -143,7 +143,7 @@ module ExportNetworkGraphConcern
 
   def extra_nodes
     # Reminder of records to add
-    pp "----- record_types_not_in_network_graph:", record_types_not_in_network_graph
+    # pp "----- record_types_not_in_network_graph:", record_types_not_in_network_graph
     record_types_not_in_network_graph.map { |tablename| prep_nodes(tablename.classify.constantize) }.flatten
   end
 
