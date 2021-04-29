@@ -151,8 +151,7 @@ class BgsPowerOfAttorney < CaseflowRecord
 
   def update_or_delete(claimant = nil)
     if bgs_record == :not_found
-      claimant_poa = claimant.power_of_attorney if claimant && !claimant.is_a?(Hash)
-      if claimant_poa && claimant_poa.bga_record == :not_found
+      if claimant && !claimant.is_a?(Hash) && claimant.should_delete_power_of_attorney?
         claimant_poa.destroy
       else
         destroy
