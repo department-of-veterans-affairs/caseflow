@@ -507,8 +507,7 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to have_content("Refresh POA")
         allow_any_instance_of(BgsPowerOfAttorney).to receive(:bgs_record).and_return(:not_found)
         click_on "Refresh POA"
-        binding.pry
-        expect(page).to have_content("POA Updated Successfully")
+        expect(page).to have_content("Successfully refreshed. No power of attorney information was found at this time.")
       end
     end
 

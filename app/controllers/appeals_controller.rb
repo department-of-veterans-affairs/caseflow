@@ -270,12 +270,14 @@ class AppealsController < ApplicationController
     begin
       if poa.bgs_record == :not_found
         poa.destroy
+        message = "Successfully refreshed. No power of attorney information was found at this time."
       else
         poa.save_with_updated_bgs_record!
+        message = "POA Updated Successfully"
       end
       {
         status: "success",
-        message: "POA Updated Successfully",
+        message: message,
         power_of_attorney: power_of_attorney_data
       }
     rescue ActiveRecord::RecordNotUnique
@@ -297,12 +299,14 @@ class AppealsController < ApplicationController
         else 
           bgs_poa.destroy
         end
+        message = "Successfully refreshed. No power of attorney information was found at this time."
       else
         bgs_poa.save_with_updated_bgs_record!
+        message = "POA Updated Successfully"
       end
       {
         status: "success",
-        message: "POA Updated Successfully",
+        message: message,
         power_of_attorney: power_of_attorney_data
       }
     rescue ActiveRecord::RecordNotUnique
