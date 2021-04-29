@@ -26,10 +26,13 @@ export const TimeSlot = ({
   const [custom, setCustom] = useState(false);
 
   // Filter the available time slots to fill in the hearings
-  const slots = setTimeSlots(scheduledHearingsList, ro, roTimezone);
+  const beginsAt = hearing?.hearingDay?.beginsAt;
+  const numberOfSlots = hearing?.hearingDay?.totalSlots;
+  const slotLengthMinutes = hearing?.hearingDay?.slotLengthMinutes;
+  const slots = setTimeSlots({ scheduledHearingsList, ro, roTimezone, beginsAt, numberOfSlots, slotLengthMinutes });
 
   // Setup the click handler for each time slot
-  const handleClick = (time) => {
+  const handleChange = (time) => {
     // Set the selected time slot
     setSelected(time);
 
@@ -68,7 +71,7 @@ export const TimeSlot = ({
             <TimePicker
               id={hearingTimeId}
               roTimezone={roTimezone}
-              onChange={(scheduledTimeString) => onChange('scheduledTimeString', scheduledTimeString)}
+              onChange={handleChange}
               value={hearing?.scheduledTimeString}
             />
           ) : (
@@ -80,7 +83,7 @@ export const TimeSlot = ({
                     key={slot.key}
                     roTimezone={roTimezone}
                     selected={selected === slot.hearingTime}
-                    onClick={() => handleClick(slot.hearingTime)}
+                    onClick={() => handleChange(slot.hearingTime)}
                   />
                 ))}
               </div>
@@ -91,7 +94,7 @@ export const TimeSlot = ({
                     key={slot.key}
                     roTimezone={roTimezone}
                     selected={selected === slot.hearingTime}
-                    onClick={() => handleClick(slot.hearingTime)}
+                    onClick={() => handleChange(slot.hearingTime)}
                   />
                 ))}
               </div>
