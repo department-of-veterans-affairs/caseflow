@@ -1,10 +1,10 @@
 import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { DocketSwitchAddAdminTaskForm } from './DocketSwitchAddAdminTaskForm';
+import { AddAdminTaskForm } from './AddAdminTaskForm';
 
 export default {
-  title: 'Queue/Docket Switch/DocketSwitchAddAdminTaskForm',
-  component: DocketSwitchAddAdminTaskForm,
+  title: 'Queue/Docket Switch/AddAdminTaskForm',
+  component: AddAdminTaskForm,
   decorators: [
     (storyFn) => {
       const methods = useForm();
@@ -21,7 +21,7 @@ export default {
     onRemove: { action: 'onRemove' },
   },
 };
-const Template = (args) => <DocketSwitchAddAdminTaskForm {...args} />;
+const Template = (args) => <AddAdminTaskForm {...args} />;
 
 export const Basic = Template.bind({});
 Basic.parameters = {
