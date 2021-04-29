@@ -5,9 +5,9 @@
 shared_examples "successful creation" do
   it "should create the SCM task and JudgeAssign task" do
     expect { subject }.not_to raise_error
-    scm_task =  appeal.tasks.where(type: described_class.name).first
+    scm_task =  appeal.tasks.of_type(described_class.name).first
     expect(scm_task.status).to eq(Constants.TASK_STATUSES.completed)
-    judge_task = appeal.tasks.open.where(type: JudgeAssignTask.name).first
+    judge_task = appeal.tasks.open.of_type(:JudgeAssignTask).first
     expect(judge_task.status).to eq(Constants.TASK_STATUSES.assigned)
   end
 end
@@ -53,7 +53,7 @@ shared_examples "appeal past distribution" do
              :assigned_to_judge,
              docket_type: Constants.AMA_DOCKETS.direct_review)
     end
-    let(:dist_task) { appeal.tasks.where(type: DistributionTask.name).first }
+    let(:dist_task) { appeal.tasks.of_type(:DistributionTask).first }
 
     subject do
       described_class.create!(appeal: appeal,

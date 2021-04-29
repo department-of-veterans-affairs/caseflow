@@ -207,7 +207,7 @@ describe JudgeTask, :all_dbs do
             expect(root_task.appeal.tasks.count).to eq(2), root_task.appeal.tasks.to_a.to_s
             expect { subject }.to_not raise_error
             expect(root_task.appeal.tasks.count).to eq(3), root_task.appeal.tasks.to_a.to_s
-            expect(root_task.appeal.tasks.where(type: JudgeDecisionReviewTask.name).count).to eq(2)
+            expect(root_task.appeal.tasks.of_type(:JudgeDecisionReviewTask).count).to eq(2)
           end
         end
       end
