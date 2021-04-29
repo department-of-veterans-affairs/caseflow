@@ -1048,6 +1048,7 @@ tasks,assigned_at,datetime,,,,,,
 tasks,assigned_by_id,integer FK,,,x,,,
 tasks,assigned_to_id,integer ∗ FK,x,,x,,x,
 tasks,assigned_to_type,string ∗,x,,,,x,
+tasks,cancellation_reason,string,,,,,x,Reason for latest cancellation status
 tasks,cancelled_by_id,integer FK,,,x,,,ID of user that cancelled the task. Backfilled from versions table. Can be nil if task was cancelled before this column was added or if there is no user logged in when the task is cancelled
 tasks,closed_at,datetime,,,,,,
 tasks,created_at,datetime ∗,x,,,,,
