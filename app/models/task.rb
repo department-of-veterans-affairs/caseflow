@@ -51,6 +51,10 @@ class Task < CaseflowRecord
     Constants.TASK_STATUSES.cancelled.to_sym => Constants.TASK_STATUSES.cancelled
   }
 
+  enum cancellation_reason: {
+    Constants.TASK_CANCELLATION_REASONS.poa_change.to_sym => Constants.TASK_CANCELLATION_REASONS.poa_change
+  }
+
   # This suppresses a warning about the :open scope overwriting the Kernel#open method
   # https://ruby-doc.org/core-2.6.3/Kernel.html#method-i-open
   class << self; undef_method :open; end
