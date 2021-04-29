@@ -29,4 +29,8 @@ class JudgeAssignTaskCreator
   def task
     @task ||= JudgeAssignTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: judge)
   end
+
+  def close_distribution_tasks_for_appeal
+    appeal.tasks.of_type(:DistributionTask).update(status: :completed)
+  end
 end
