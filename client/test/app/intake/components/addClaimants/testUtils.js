@@ -32,6 +32,7 @@ export const fillForm = async () => {
 
   //   Enter city
   await userEvent.type(screen.getByRole('textbox', { name: /City/i }), city);
+
   // select state
   await selectEvent.select(screen.getByLabelText('State'), [STATES[7].label]);
 
