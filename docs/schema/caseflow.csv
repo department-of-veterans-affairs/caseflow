@@ -566,21 +566,21 @@ hearings,updated_by_id,integer (8) FK,,,x,,x,The ID of the user who most recentl
 hearings,uuid,uuid ∗,x,,,,x,
 hearings,witness,string,,,,,,Witness/Observer present during hearing
 hearing_days,,,,,,,,
-hearing_days,begins_at_time_string,string,,,,,,"When the hearing day begins, slots will not appear before this time"
 hearing_days,bva_poc,string,,,,,,Hearing coordinator full name
 hearing_days,created_at,datetime ∗,x,,,,,Automatic timestamp of when hearing day was created
 hearing_days,created_by_id,integer (8) ∗ FK,x,,x,,x,The ID of the user who created the Hearing Day
 hearing_days,deleted_at,datetime,,,,,x,Automatic timestamp of when hearing day was deleted
+hearing_days,first_slot_time,string (5),,,,,,The first time slot available; interpreted as the local time at Central office or the RO
 hearing_days,id,integer (8) PK,x,x,,,,
 hearing_days,judge_id,integer FK,,,x,,,User ID of judge who is assigned to the hearing day
 hearing_days,lock,boolean,,,,,,Determines if the hearing day is locked and can't be edited
 hearing_days,notes,text,,,,,,Any notes about hearing day
-hearing_days,number_of_slots,integer,,,,,,The number of slots possible for this day
+hearing_days,number_of_slots,integer,,,,,,The number of time slots possible for this day
 hearing_days,regional_office,string,,,,,,Regional office key associated with hearing day
 hearing_days,request_type,string ∗,x,,,,,"Hearing request types for all associated hearings; can be one of: 'T', 'C' or 'V'"
 hearing_days,room,string,,,,,,The room at BVA where the hearing will take place
 hearing_days,scheduled_for,date ∗,x,,,,,The date when all associated hearings will take place
-hearing_days,slot_length_minutes,integer,,,,,,How long each timeslot is for this day
+hearing_days,slot_length_minutes,integer,,,,,,The length in minutes of each time slot for this day
 hearing_days,updated_at,datetime ∗,x,,,,x,Automatic timestamp of when hearing day was updated
 hearing_days,updated_by_id,integer (8) ∗ FK,x,,x,,x,The ID of the user who most recently updated the Hearing Day
 hearing_issue_notes,,,,,,,,

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_19_200234) do
+ActiveRecord::Schema.define(version: 2021_04_26_181017) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -718,7 +718,7 @@ ActiveRecord::Schema.define(version: 2021_04_19_200234) do
     t.datetime "created_at", null: false, comment: "Automatic timestamp of when hearing day was created"
     t.bigint "created_by_id", null: false, comment: "The ID of the user who created the Hearing Day"
     t.datetime "deleted_at", comment: "Automatic timestamp of when hearing day was deleted"
-    t.string "first_slot_time", comment: "The first time slot available; interpreted as the local time at Central office or the RO"
+    t.string "first_slot_time", limit: 5, comment: "The first time slot available; interpreted as the local time at Central office or the RO"
     t.integer "judge_id", comment: "User ID of judge who is assigned to the hearing day"
     t.boolean "lock", comment: "Determines if the hearing day is locked and can't be edited"
     t.text "notes", comment: "Any notes about hearing day"
