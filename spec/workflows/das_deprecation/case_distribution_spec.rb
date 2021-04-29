@@ -31,7 +31,7 @@ describe DasDeprecation::CaseDistribution, :all_dbs do
       it "assigns task to the judge" do
         DasDeprecation::CaseDistribution.create_judge_assign_task(record, judge)
         legacy_appeal = LegacyAppeal.find_by(vacols_id: record["bfkey"])
-        expect(legacy_appeal.tasks.where(type: JudgeAssignTask.name).first.assigned_to)
+        expect(legacy_appeal.tasks.of_type(:JudgeAssignTask).first.assigned_to)
           .to eq(judge)
       end
 

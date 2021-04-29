@@ -71,6 +71,11 @@ class Task < CaseflowRecord
 
   scope :incomplete_or_recently_completed, -> { open.or(recently_completed) }
 
+  scope :of_type, ->(task_type) { where(type: task_type) }
+
+  scope :assigned_to_any_user, -> { where(assigned_to_type: "User") }
+  scope :assigned_to_any_org, -> { where(assigned_to_type: "Organization") }
+
   # Equivalent to .reject(&:hide_from_queue_table_view) but offloads that to the database.
   scope :visible_in_queue_table_view, lambda {
     where.not(
