@@ -373,7 +373,7 @@ class Appeal < DecisionReview
     fail "benefit_type on Appeal is set per RequestIssue"
   end
 
-  def create_issues!(new_issues)
+  def create_issues!(new_issues, _request_issues_update = nil)
     new_issues.each do |issue|
       issue.benefit_type ||= issue.contested_benefit_type || issue.guess_benefit_type
       issue.veteran_participant_id = veteran.participant_id
