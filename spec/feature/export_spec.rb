@@ -2,7 +2,6 @@
 
 require "helpers/sanitized_json_configuration.rb"
 require "helpers/sanitized_json_exporter.rb"
-# require "helpers/sanitized_json_importer.rb"
 require "helpers/intake_renderer.rb"
 
 RSpec.feature "Export JSON" do
@@ -44,16 +43,8 @@ RSpec.feature "Export JSON" do
     # intake.complete!(params)
 
     visit "export/appeals/#{appeal.uuid}"
-    # binding.pry
     expect(page).to have_content("Appeal.find(#{appeal.id})")
   end
-
-  # let(:dispatched_appeal) { create(:appeal, :dispatched)}
-  # scenario "admin visits export page for dispatched appeal" do
-  #   visit "export/appeals/#{dispatched_appeal.uuid}"
-  #   binding.pry
-  #   expect(page).to have_content("Appeal.find(#{dispatched_appeal.id})")
-  # end
 
   # 3 appeals are involved: `source_appeal` goes through CAVC remand to create `cavc_remand.remand_appeal`,
   # which goes through appellant substitution to create `appellant_substitution.target_appeal`.
@@ -92,7 +83,6 @@ RSpec.feature "Export JSON" do
   end
   scenario "admin visits export page for appellant_substitution CAVC-remanded appeal" do
     visit "export/appeals/#{appellant_substitution.target_appeal.uuid}"
-    # binding.pry
     expect(page).to have_content("Appeal.find(#{appellant_substitution.target_appeal.id})")
   end
 end
