@@ -13,6 +13,14 @@ RSpec.describe ClaimantsController, :all_dbs, type: :controller do
 
     subject { put(:refresh_claimant_poa, params: request_params) }
 
+    it "updates poa information from BGS" do
+      expect(BgsPowerOfAttorney).to receive(:find_or_create_by_claimant_participant_id)
+        .with(participant_id)
+        .and_return(original_poa)
+      expect(original_poa).to receive(:update_cached_attributes!)
+      subject
+    end
+
     it "returns an updated poa_last_synced_at value" do
       expect(subject.status).to eq 200
       expect(JSON.parse(subject.body)["poa"]["last_synced_at"]).to be > original_poa_last_synced_at
