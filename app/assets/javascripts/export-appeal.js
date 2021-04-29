@@ -16,18 +16,23 @@ const taskNodeColor = {
   cancelled: "#8a8",
   completed: "#00bb00"
 }
+
+// See icons at https://fontawesome.com/icons
 const nodeDecoration = {
   intakes: { shape: "diamond" },
   cavc_remands: { shape: "triangle" },
   appeals: { shape: "star", size: 30, color: "#ff8888" },
-  claimants: { shape: "ellipse" },
+  claimants: { shape: "ellipse", color: "#d3d3d3" },
   veterans: { shape: "icon", icon: { code: "\uf29a" } },
   people: { shape: "icon", icon: { code: "\uf2bb", color: "gray" } },
   users: { shape: "icon", size: 10, icon: { code: "\uf007", color: "gray" } },
-  organizations: { shape: "icon", icon: { code: "\uf0e8", color: "gray" } },
+  organizations: { shape: "icon", icon: { code: "\uf0e8", color: "#a3a3a3" } },
   tasks: { shape: "box", color: (node)=>taskNodeColor[node.status] },
   request_issues: { shape: "box", color: "#ffa500" },
-  decision_issues: { shape: "box", color: "#ffe100" }
+  decision_issues: { shape: "box", color: "#ffe100" },
+  decision_documents: { shape: "icon", icon: { code: "\uf15b", color: "#660000" } },
+  attorney_case_reviews: { shape: "icon", icon: { code: "\uf07a", color: "#660033" } },
+  judge_case_reviews: { shape: "icon", icon: { code: "\uf07a", color: "#660000" } }
 };
 
 function decorateNodes(nodes){

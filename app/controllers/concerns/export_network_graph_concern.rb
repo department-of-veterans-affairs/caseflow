@@ -25,10 +25,8 @@ module ExportNetworkGraphConcern
       Claimant => {
         label_for: ->(record) { "#{record['type']}_#{record['participant_id']}" }
       },
-      Appeal => {
-      },
-      AppealIntake => {
-      },
+      Appeal => {},
+      AppealIntake => {},
       CavcRemand => {
         label_for: ->(record) { [record["remand_subtype"], record["cavc_decision_type"], record["id"]].join("_") }
       },
@@ -40,7 +38,10 @@ module ExportNetworkGraphConcern
       },
       DecisionIssue => {
         label_for: ->(record) { "#{record['benefit_type']}_decision#{record['id']}" }
-      }
+      },
+      DecisionDocument => {},
+      AttorneyCaseReview => {},
+      JudgeCaseReview => {}
     },
     edges: {
       Appeal => [{
@@ -88,6 +89,24 @@ module ExportNetworkGraphConcern
         from_id_for: ->(record) { "#{RequestIssue.name}#{record['request_issue_id']}" },
         to_id_for: ->(record) { "#{DecisionIssue.name}#{record['decision_issue_id']}" }
       }],
+      DecisionDocument => [{
+        from_id_for: ->(record) { "#{record['appeal_type']}#{record['appeal_id']}" },
+        to_id_for: ->(record) { "#{DecisionDocument.name}#{record['id']}" }
+      }],
+      JudgeCaseReview => [{
+        from_id_for: ->(record) { "#{Task.name}#{record['task_id']}" },
+        to_id_for: ->(record) { "#{JudgeCaseReview.name}#{record['id']}" }
+      }, {
+        from_id_for: ->(record) { "#{User.name}#{record['judge_id']}" },
+        to_id_for: ->(record) { "#{JudgeCaseReview.name}#{record['id']}" }
+      }],
+      AttorneyCaseReview => [{
+        from_id_for: ->(record) { "#{Task.name}#{record['task_id']}" },
+        to_id_for: ->(record) { "#{AttorneyCaseReview.name}#{record['id']}" }
+      }, {
+        from_id_for: ->(record) { "#{User.name}#{record['attorney_id']}" },
+        to_id_for: ->(record) { "#{AttorneyCaseReview.name}#{record['id']}" }
+      }],
       Task => [{
         from_id_for: lambda do |record|
                        if record["parent_id"]
@@ -124,7 +143,7 @@ module ExportNetworkGraphConcern
 
   def extra_nodes
     # Reminder of records to add
-    # pp "----- record_types_not_in_network_graph:", record_types_not_in_network_graph
+    pp "----- record_types_not_in_network_graph:", record_types_not_in_network_graph
     record_types_not_in_network_graph.map { |tablename| prep_nodes(tablename.classify.constantize) }.flatten
   end
 

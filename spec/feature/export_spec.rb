@@ -48,6 +48,15 @@ RSpec.feature "Export JSON" do
     expect(page).to have_content("Appeal.find(#{appeal.id})")
   end
 
+  # let(:dispatched_appeal) { create(:appeal, :dispatched)}
+  # scenario "admin visits export page for dispatched appeal" do
+  #   visit "export/appeals/#{dispatched_appeal.uuid}"
+  #   binding.pry
+  #   expect(page).to have_content("Appeal.find(#{dispatched_appeal.id})")
+  # end
+
+  # 3 appeals are involved: `source_appeal` goes through CAVC remand to create `cavc_remand.remand_appeal`,
+  # which goes through appellant substitution to create `appellant_substitution.target_appeal`.
   let(:source_appeal) { create(:appeal, :dispatched, :type_cavc_remand, :advanced_on_docket_due_to_motion) }
   let(:created_by) { create(:user) }
   let(:substitute) { create(:claimant) }
@@ -63,6 +72,24 @@ RSpec.feature "Export JSON" do
     )
   end
 
+  before do
+    attorney_task = source_appeal.tasks.of_type(:AttorneyTask).last
+    create(:attorney_case_review, task: attorney_task, attorney: attorney_task.assigned_to)
+    JudgeCaseReview.complete(
+      location: "bva_dispatch",
+      task_id: attorney_task.parent.id,
+      judge: attorney_task.parent.assigned_to,
+      attorney: attorney_task.assigned_to,
+      complexity: "hard",
+      quality: "meets_expectations",
+      comment: "do this",
+      factors_not_considered: %w[theory_contention relevant_records],
+      areas_for_improvement: ["process_violations"],
+      issues: [{ disposition: "allowed", description: "something1",
+                 benefit_type: "compensation", diagnostic_code: "9999",
+                 request_issue_ids: source_appeal.request_issues.ids }]
+    )
+  end
   scenario "admin visits export page for appellant_substitution CAVC-remanded appeal" do
     visit "export/appeals/#{appellant_substitution.target_appeal.uuid}"
     # binding.pry

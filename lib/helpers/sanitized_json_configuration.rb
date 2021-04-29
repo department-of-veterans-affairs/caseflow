@@ -33,20 +33,6 @@ class SanitizedJsonConfiguration
         sanitize_fields: %w[veteran_file_number],
         retrieval: ->(records) { records[Appeal].map(&:intake).compact.sort_by(&:id) }
       },
-      JudgeCaseReview => {
-        sanitize_fields: %w[comment],
-        retrieval: lambda do |records|
-          judge_task_ids = Task.where(type: JudgeTask.descendants.map(&:name), appeal: records[Appeal]).ids
-          JudgeCaseReview.where(task_id: judge_task_ids).order(:id)
-        end
-      },
-      AttorneyCaseReview => {
-        sanitize_fields: %w[comment],
-        retrieval: lambda do |records|
-          atty_task_ids = Task.where(type: AttorneyTask.descendants.map(&:name), appeal: records[Appeal]).ids
-          AttorneyCaseReview.where(task_id: atty_task_ids).order(:id)
-        end
-      },
       DecisionDocument => {
         # citation_number must be unique and doesn't reference anything else in Caseflow,
         # so transform the number so we can import into the same DB as the original record
@@ -61,7 +47,14 @@ class SanitizedJsonConfiguration
         retrieval: ->(records) { reorder_for_import(Task.where(appeal: records[Appeal])) }
       },
       TaskTimer => {
-        retrieval: ->(records) { TaskTimer.where(task_id: records[Task].pluck(:id)).order(:id) }
+        retrieval: ->(records) { TaskTimer.where(task_id: records[Task].map(&:id)).order(:id) }
+      },
+      AttorneyCaseReview => {
+        retrieval: ->(records) { AttorneyCaseReview.where(task_id: records[Task].map(&:id)).order(:id) }
+      },
+      JudgeCaseReview => {
+        sanitize_fields: %w[comment],
+        retrieval: ->(records) { JudgeCaseReview.where(task_id: records[Task].map(&:id)).order(:id) }
       },
       RequestIssue => {
         sanitize_fields: ["notes", "contested_issue_description", /_(notes|text|description)/],
@@ -83,7 +76,7 @@ class SanitizedJsonConfiguration
         sanitize_fields: %w[bva_poc military_service notes representative_name summary witness],
         retrieval: lambda do |records|
           (records[Appeal].map(&:hearings) +
-            Task.where(id: records[Task].pluck(:id), type: :HearingTask).map(&:hearing)
+            Task.where(id: records[Task].map(&:id), type: :HearingTask).map(&:hearing)
           ).flatten.uniq.compact.sort_by(&:id)
         end
       },
@@ -105,7 +98,7 @@ class SanitizedJsonConfiguration
         sanitize_fields: %w[css_id email full_name],
         retrieval: lambda do |records|
           # eager load task associations
-          tasks = Task.where(id: records[Task].pluck(:id)).includes(:assigned_by, :assigned_to, :cancelled_by)
+          tasks = Task.where(id: records[Task].map(&:id)).includes(:assigned_by, :assigned_to, :cancelled_by)
           cavc_remands = records[CavcRemand]
           hearings = records[Hearing]
 
@@ -124,7 +117,7 @@ class SanitizedJsonConfiguration
       Organization => {
         track_imported_ids: true,
         retrieval: lambda do |records|
-          (Task.where(id: records[Task].pluck(:id), assigned_to_type: "Organization").map(&:assigned_to) +
+          (Task.where(id: records[Task].map(&:id), assigned_to_type: "Organization").map(&:assigned_to) +
             records[User].map(&:organizations).flatten.uniq
           ).uniq.compact.sort_by(&:id)
         end
@@ -145,11 +138,11 @@ class SanitizedJsonConfiguration
 
   def reorder_for_import(tasks)
     tasks = tasks.sort_by(&:id)
-    reordered_tasks = tasks.select { |task| task["parent_id"].nil? }
+    reordered_tasks = tasks.select { |task| task.parent_id.nil? }
     tasks -= reordered_tasks
     while tasks.any?
       task_ids = reordered_tasks.pluck("id")
-      child_tasks = tasks.select { |task| task_ids.include?(task["parent_id"]) }
+      child_tasks = tasks.select { |task| task_ids.include?(task.parent_id) }
       fail "Tasks with unknown parent task still remain" if child_tasks.blank?
 
       reordered_tasks += child_tasks
