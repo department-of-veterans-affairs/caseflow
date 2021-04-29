@@ -498,6 +498,7 @@ RSpec.feature "Case details", :all_dbs do
       after { FeatureToggle.disable!(:poa_refresh) }
 
       scenario "attempts to refresh with no BGS data" do
+        BgsPowerOfAttorney.set_callback(:save, :before, :update_cached_attributes!)
         BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
         poa.last_synced_at = Time.zone.now - 5.years
         poa.save!
