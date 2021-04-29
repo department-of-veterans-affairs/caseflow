@@ -130,7 +130,7 @@ export default class Modal extends React.Component {
       <section
         className={`cf-modal active ${className}`}
         id="modal_id"
-        role="alertdialog"
+        role="dialog"
         aria-labelledby="modal_id-title"
         aria-describedby="modal_id-desc"
         aria-modal="true"

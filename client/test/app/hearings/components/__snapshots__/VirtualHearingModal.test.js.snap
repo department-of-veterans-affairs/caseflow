@@ -3791,7 +3791,7 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
         aria-modal="true"
         className="cf-modal active "
         id="modal_id"
-        role="alertdialog"
+        role="dialog"
       >
         <TouchProvider>
           <ScrollLock
@@ -4388,7 +4388,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
         aria-modal="true"
         className="cf-modal active "
         id="modal_id"
-        role="alertdialog"
+        role="dialog"
       >
         <TouchProvider>
           <ScrollLock
@@ -5197,7 +5197,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
         aria-modal="true"
         className="cf-modal active "
         id="modal_id"
-        role="alertdialog"
+        role="dialog"
       >
         <TouchProvider>
           <ScrollLock
@@ -6006,7 +6006,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
         aria-modal="true"
         className="cf-modal active "
         id="modal_id"
-        role="alertdialog"
+        role="dialog"
       >
         <TouchProvider>
           <ScrollLock

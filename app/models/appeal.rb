@@ -33,6 +33,8 @@ class Appeal < DecisionReview
   # The has_one here provides the docket_switch object to the newly created appeal upon completion of the docket switch
   has_one :docket_switch, class_name: "DocketSwitch", foreign_key: :new_docket_stream_id
 
+  has_one :appellant_substitution, foreign_key: :target_appeal_id
+
   has_many :record_synced_by_job, as: :record
   has_one :work_mode, as: :appeal
   has_one :latest_informal_hearing_presentation_task, lambda {
@@ -45,8 +47,7 @@ class Appeal < DecisionReview
     Constants.AMA_STREAM_TYPES.original.to_sym => Constants.AMA_STREAM_TYPES.original,
     Constants.AMA_STREAM_TYPES.vacate.to_sym => Constants.AMA_STREAM_TYPES.vacate,
     Constants.AMA_STREAM_TYPES.de_novo.to_sym => Constants.AMA_STREAM_TYPES.de_novo,
-    Constants.AMA_STREAM_TYPES.court_remand.to_sym => Constants.AMA_STREAM_TYPES.court_remand,
-    Constants.AMA_STREAM_TYPES.substitution.to_sym => Constants.AMA_STREAM_TYPES.substitution
+    Constants.AMA_STREAM_TYPES.court_remand.to_sym => Constants.AMA_STREAM_TYPES.court_remand
   }
 
   after_create :conditionally_set_aod_based_on_age
@@ -348,11 +349,16 @@ class Appeal < DecisionReview
   def cavc_remand
     return nil if !cavc?
 
-    CavcRemand.find_by(remand_appeal: self)
+    # If this appeal is a direct result of a CavcRemand, then return it
+    return CavcRemand.find_by(remand_appeal: self) if CavcRemand.find_by(remand_appeal: self)
+
+    # If this appeal went through appellant_substitution after a CavcRemand, then use the source_appeal,
+    # which is the same stream_type (cavc? == true) as this appeal.
+    appellant_substitution.source_appeal.cavc_remand if appellant_substitution?
   end
 
-  def appellant_substitution
-    AppellantSubstitution.find_by(target_appeal: self)
+  def appellant_substitution?
+    !!appellant_substitution
   end
 
   def status

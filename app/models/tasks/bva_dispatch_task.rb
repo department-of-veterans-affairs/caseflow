@@ -24,7 +24,17 @@ class BvaDispatchTask < Task
 
   class << self
     def create_from_root_task(root_task)
+      return unless ready_for_dispatch?(root_task.appeal)
+
       create!(assigned_to: BvaDispatch.singleton, parent_id: root_task.id, appeal: root_task.appeal)
+    end
+
+    TASK_TYPES_BLOCKING_DISPATCH = [:QualityReviewTask].freeze
+
+    def ready_for_dispatch?(appeal)
+      return false if appeal.tasks.open.where(type: TASK_TYPES_BLOCKING_DISPATCH).any?
+
+      true
     end
 
     def outcode(appeal, params, user)

@@ -177,10 +177,7 @@ class TaskActionRepository
 
     def docket_switch_send_to_judge_data(_task, _user = nil)
       {
-        type: DocketSwitchRulingTask.name,
-        options: ClerkOfTheBoard.singleton.users.select(&:judge?).map do |judge|
-          { value: judge.id, label: judge.display_name }
-        end
+        type: DocketSwitchRulingTask.name
       }
     end
 

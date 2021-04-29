@@ -112,6 +112,7 @@
   "CASE_DETAILS_POA_VSO": "Veteran Service Organization",
   "CASE_DETAILS_POA_AGENT": "Private Agent",
   "CASE_DETAILS_POA_ATTORNEY": "Private Attorney",
+  "CASE_DETAILS_POA_LAST_SYNC_DATE_COPY": "POA last refreshed on %(poaSyncDate)s",
   "CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY": "Edit NOD Date",
   "CASE_DETAILS_FNOD_BANNER_TITLE": "Veteran Date of Death Reported",
   "FNOD_SOURCE": "VBMS",
