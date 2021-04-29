@@ -470,6 +470,49 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
 
+    context "POA refresh when BGS returns nil" do
+      let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+      let!(:appeal) do
+        create(
+          :legacy_appeal,
+          :with_veteran,
+          vacols_case: create(
+            :case,
+            :assigned,
+            user: attorney_user,
+            correspondent: create(:correspondent, sgender: "F", sdob: "1966-05-23")
+          )
+        )
+      end
+      let!(:poa) do
+        create(
+          :bgs_power_of_attorney,
+          :with_name_cached,
+          appeal: appeal
+        )
+      end
+
+      before do
+        FeatureToggle.enable!(:poa_refresh)
+      end
+      after { FeatureToggle.disable!(:poa_refresh) }
+
+      scenario "attempts to refresh with no BGS data" do
+        BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
+        poa.last_synced_at = Time.zone.now - 5.years
+        poa.save!
+
+        visit "/queue"
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        expect(page).to have_content("Refresh POA")
+        allow_any_instance_of(BgsPowerOfAttorney).to receive(:bgs_record).and_return(:not_found)
+        click_on "Refresh POA"
+        binding.pry
+        expect(page).to have_content("POA Updated Successfully")
+      end
+    end
+
+
     context "veteran records have been merged and Veteran has multiple active phone numbers in SHARE" do
       let!(:appeal) do
         create(

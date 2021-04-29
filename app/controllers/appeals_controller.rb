@@ -291,11 +291,12 @@ class AppealsController < ApplicationController
       bgs_poa = BgsPowerOfAttorney.find_or_create_by_file_number(poa.file_number)
       if bgs_poa.bgs_record == :not_found
         c = appeal.claimant
-        claimant_poa = c.power_of_attorney
+        claimant_poa = c.power_of_attorney if !c.is_a?(Hash)
         if claimant_poa && claimant_poa.bga_record == :not_found
           claimant_poa.destroy
+        else 
+          bgs_poa.destroy
         end
-        bgs_poa.destroy
       else
         bgs_poa.save_with_updated_bgs_record!
       end
@@ -304,7 +305,7 @@ class AppealsController < ApplicationController
         message: "POA Updated Successfully",
         power_of_attorney: power_of_attorney_data
       }
-    rescue ActiveRecord::RecordNotUnique
+    rescue => e
       {
         status: "error",
         message: "Something went wrong"
