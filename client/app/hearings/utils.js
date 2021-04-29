@@ -14,7 +14,7 @@ import ApiUtil from '../util/ApiUtil';
 import { RESET_VIRTUAL_HEARING } from './contexts/HearingsFormContext';
 import HEARING_REQUEST_TYPES from '../../constants/HEARING_REQUEST_TYPES';
 import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP';
-import COPY from '../../COPY.json'
+import COPY from '../../COPY.json';
 
 export const isPreviouslyScheduledHearing = (hearing) =>
   hearing?.disposition === HEARING_DISPOSITION_TYPES.postponed ||
@@ -293,6 +293,12 @@ export const hearingTimeOptsWithZone = (options, local) =>
 
     // Set the time in the local timezone
     const localTime = zoneName(item[label], local === true ? '' : local);
+
+    // This fixes some timezone bugs in the TimeSlot component, moment.tz.setDefault changes
+    // -global- settings for moment.
+    // This should definitely be removed, but that's only safe if the above call to setDefault
+    // can also be removed.
+    moment.tz.setDefault();
 
     return {
       ...item,
@@ -607,8 +613,10 @@ export const setTimeSlots = (hearings, ro, roTimezone = 'America/New_York') => {
 };
 
 export const formatTimeSlotLabel = (time, zone) => {
-  const roTime = zoneName(time, zone, 'z');
-  const coTime = zoneName(time, COMMON_TIMEZONES[3], 'z');
+  const timeFormatString = 'h:mm A z';
+  const coTime = moment.tz(time, 'HH:mm', 'America/New_York').format(timeFormatString);
+  const roTime = moment.tz(time, 'HH:mm', 'America/New_York').tz(zone).
+    format(timeFormatString);
 
   if (roTime === coTime) {
     return coTime;
