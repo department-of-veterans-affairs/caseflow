@@ -88,7 +88,7 @@ describe('SubstituteAppellantTasksForm', () => {
     });
 
     describe('form validation', () => {
-      it('fires onSubmit because everything is good to go', async () => {
+      it('is valid with proper existing values', async () => {
         setup({ existingValues });
 
         const submit = screen.getByRole('button', { name: /continue/i });
