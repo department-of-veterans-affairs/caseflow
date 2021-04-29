@@ -4,7 +4,7 @@ exports[`KeyDetails renders default state correctly 1`] = `
 <div>
   <section>
     <h2>
-      Key details
+      Procedural details
     </h2>
     <ul
       class="css-a7zcn1"
@@ -14,7 +14,7 @@ exports[`KeyDetails renders default state correctly 1`] = `
           Notice of disagreement received
         </strong>
         <span>
-          3/28/2021
+          3/30/2021
         </span>
       </li>
       <li>
@@ -22,7 +22,7 @@ exports[`KeyDetails renders default state correctly 1`] = `
           Veteran date of death
         </strong>
         <span>
-          4/12/2021
+          4/14/2021
         </span>
       </li>
       <li>
@@ -30,7 +30,7 @@ exports[`KeyDetails renders default state correctly 1`] = `
           Substitution granted by the RO
         </strong>
         <span>
-          4/17/2021
+          4/19/2021
         </span>
       </li>
     </ul>

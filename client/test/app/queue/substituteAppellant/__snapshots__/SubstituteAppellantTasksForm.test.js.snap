@@ -21,7 +21,7 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
         class="css-1rhlyut"
       >
         <h2>
-          Key details
+          Procedural details
         </h2>
         <ul
           class="css-a7zcn1"
@@ -116,7 +116,7 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
         class="css-1rhlyut"
       >
         <h2>
-          Key details
+          Procedural details
         </h2>
         <ul
           class="css-a7zcn1"

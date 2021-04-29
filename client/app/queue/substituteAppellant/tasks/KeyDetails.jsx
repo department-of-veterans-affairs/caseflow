@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { format, isDate, parseISO } from 'date-fns';
 import { css } from 'glamor';
 import { Link } from 'react-router-dom';
+import { SUBSTITUTE_APPELLANT_KEY_DETAILS_TITLE } from 'app/../COPY';
 
 const styles = {
   detailList: css({
@@ -44,7 +45,7 @@ export const KeyDetails = (props) => {
 
   return (
     <section className={props.className}>
-      <h2>Key details</h2>
+      <h2>{SUBSTITUTE_APPELLANT_KEY_DETAILS_TITLE}</h2>
       <ul className={styles.detailList}>
         <li>
           <strong>Notice of disagreement received</strong>

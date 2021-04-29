@@ -19,8 +19,8 @@ export default {
   parameters: {},
   args: {
     appealId: uuid.v4(),
-    nodDate: sub(new Date(), { days: 30 }),
     dateOfDeath: sub(new Date(), { days: 15 }),
+    nodDate: sub(new Date(), { days: 30 }),
     substitutionDate: sub(new Date(), { days: 10 }),
   },
   argTypes: {},
