@@ -585,8 +585,7 @@ class Task < CaseflowRecord
 
     appeal.overtime = false if appeal.overtime? && reassign_clears_overtime?
 
-    result = [replacement, self, replacement.children].flatten
-    result
+    [replacement, self, replacement.children].flatten
   end
 
   def can_move_on_docket_switch?
@@ -829,7 +828,7 @@ class Task < CaseflowRecord
 
   def no_multiples_of_noncancelled_task
     tasks = appeal.reload.tasks
-    target_tasks = tasks.select { |task| task.type == type && task.open? }
+    target_tasks = tasks.open.of_type(type)
     if target_tasks.length >= 1
       errors.add(:type, COPY::INVALID_MULTIPLE_TASKS)
     end
