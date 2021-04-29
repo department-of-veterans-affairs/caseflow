@@ -300,7 +300,7 @@ FactoryBot.define do
                                 parent: root_task,
                                 assigned_at: evaluator.active_task_assigned_at,
                                 assigned_to: evaluator.associated_judge)
-        appeal.tasks.where(type: DistributionTask.name).update(status: :completed)
+        appeal.tasks.of_type(:DistributionTask).update(status: :completed)
       end
     end
 
@@ -310,7 +310,7 @@ FactoryBot.define do
     trait :at_attorney_drafting do
       assigned_to_judge
       after(:create) do |appeal, evaluator|
-        judge_assign_task = appeal.tasks.where(type: JudgeAssignTask.name).first
+        judge_assign_task = appeal.tasks.of_type(:JudgeAssignTask).first
         AttorneyTaskCreator.new(
           judge_assign_task,
           appeal: judge_assign_task.appeal,
@@ -327,7 +327,7 @@ FactoryBot.define do
       at_attorney_drafting
       after(:create) do |appeal, _evaluator|
         # MISSING: AttorneyCaseReview
-        appeal.tasks.where(type: AttorneyTask.name).first.completed!
+        appeal.tasks.of_type(:AttorneyTask).first.completed!
       end
     end
 
@@ -342,7 +342,7 @@ FactoryBot.define do
         BvaDispatch.singleton.add_user(create(:user)) if BvaDispatch.singleton.users.empty?
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
         BvaDispatchTask.create_from_root_task(root_task)
-        appeal.tasks.where(type: JudgeDecisionReviewTask.name).first.completed!
+        appeal.tasks.of_type(:JudgeDecisionReviewTask).first.completed!
       end
     end
 
@@ -357,7 +357,7 @@ FactoryBot.define do
                appeal: appeal,
                citation_number: "A882#{(appeal.id % 100_000).to_s.rjust(5, '0')}")
         dispatch = AmaAppealDispatch.new(appeal: appeal, params: { bar: "foo" }, user: User.first)
-        appeal.tasks.where(type: BvaDispatchTask.name, assigned_to_type: "User").first.completed!
+        appeal.tasks.of_type(:BvaDispatchTask).assigned_to_any_user.first.completed!
         appeal.root_task.completed!
         dispatch.send(:close_request_issues_as_decided!)
         dispatch.send(:store_poa_participant_id)

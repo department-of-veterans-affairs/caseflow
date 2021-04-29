@@ -317,7 +317,7 @@ exports[`HearingTypeConversion Displays convert to Central text when converting 
           aria-modal="true"
           className="cf-modal active "
           id="modal_id"
-          role="alertdialog"
+          role="dialog"
         >
           <TouchProvider>
             <ScrollLock
@@ -783,7 +783,7 @@ exports[`HearingTypeConversion Displays convert to Video text when converting fr
           aria-modal="true"
           className="cf-modal active "
           id="modal_id"
-          role="alertdialog"
+          role="dialog"
         >
           <TouchProvider>
             <ScrollLock

@@ -8,7 +8,7 @@ exports[`AddClaimantConfirmationModal individual claimant missing last name show
     aria-modal="true"
     class="cf-modal active "
     id="modal_id"
-    role="alertdialog"
+    role="dialog"
   >
     <div
       class="cf-modal-body"
@@ -65,11 +65,12 @@ exports[`AddClaimantConfirmationModal individual claimant missing last name show
                 </strong>
               </div>
               <div>
-                Jane McClaimant 
+                 Jane 
+        McClaimant 
               </div>
               <div />
               <div>
-                San Francisco, CA USA 94123
+                San Francisco, CA 94123 USA
               </div>
               <div>
                 555-123-4567
@@ -142,7 +143,7 @@ exports[`AddClaimantConfirmationModal organization claimant renders correctly 1`
     aria-modal="true"
     class="cf-modal active "
     id="modal_id"
-    role="alertdialog"
+    role="dialog"
   >
     <div
       class="cf-modal-body"
@@ -201,7 +202,7 @@ exports[`AddClaimantConfirmationModal organization claimant renders correctly 1`
               <div />
               <div />
               <div>
-                San Francisco, CA USA 94123
+                San Francisco, CA 94123 USA
               </div>
               <div>
                 555-123-4567
@@ -260,7 +261,7 @@ exports[`AddClaimantConfirmationModal with POA renders correctly 1`] = `
     aria-modal="true"
     class="cf-modal active "
     id="modal_id"
-    role="alertdialog"
+    role="dialog"
   >
     <div
       class="cf-modal-body"
@@ -317,11 +318,12 @@ exports[`AddClaimantConfirmationModal with POA renders correctly 1`] = `
                 </strong>
               </div>
               <div>
-                Jane McClaimant Doe
+                 Jane 
+        McClaimant Doe
               </div>
               <div />
               <div>
-                San Francisco, CA USA 94123
+                San Francisco, CA 94123 USA
               </div>
               <div>
                 555-123-4567
@@ -336,11 +338,12 @@ exports[`AddClaimantConfirmationModal with POA renders correctly 1`] = `
                 </strong>
               </div>
               <div>
-                Paul Ern O'Attorney
+                 Paul 
+        Ern O'Attorney
               </div>
               <div />
               <div>
-                Washington, DC USA 20001
+                Washington, DC 20001 USA
               </div>
               <div>
                 555-321-4567
@@ -387,7 +390,7 @@ exports[`AddClaimantConfirmationModal without POA renders correctly 1`] = `
     aria-modal="true"
     class="cf-modal active "
     id="modal_id"
-    role="alertdialog"
+    role="dialog"
   >
     <div
       class="cf-modal-body"
@@ -444,11 +447,12 @@ exports[`AddClaimantConfirmationModal without POA renders correctly 1`] = `
                 </strong>
               </div>
               <div>
-                Jane McClaimant Doe
+                 Jane 
+        McClaimant Doe
               </div>
               <div />
               <div>
-                San Francisco, CA USA 94123
+                San Francisco, CA 94123 USA
               </div>
               <div>
                 555-123-4567
