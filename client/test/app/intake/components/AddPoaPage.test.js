@@ -41,47 +41,4 @@ describe('AddPoaPage', () => {
       expect(onBack).not.toHaveBeenCalled();
     });
   });
-
-  it('renders inline email validation error', async () => {
-    setup();
-
-    const input = screen.getByLabelText("Representative's name");
-
-    await userEvent.type(input, 'Jane');
-    jest.setTimeout(9000000);
-
-    await selectEvent.select(input, 'Claimant not listed');
-    screen.debug(input);
-
-    const invalidEmail = 'mail@address';
-    const validEmail = 'mail@address.com';
-    const emailTextbox = screen.getByRole('textbox', { name: /Representative email Optional/i });
-
-    const inputEmail = async (email) => {
-      // input email addresss
-      await userEvent.type(emailTextbox, email);
-
-      // trigger onBlur
-      expect(emailTextbox).toBe(document.activeElement);
-      userEvent.tab(); /* press tab key */
-    };
-
-    await inputEmail(invalidEmail);
-
-    await waitFor(() => {
-      expect(emailTextbox.value).toBe(invalidEmail);
-      expect(screen.getByText(ERROR_EMAIL_INVALID_FORMAT)).toBeDefined();
-    });
-
-    // CLEAR INPUT
-    fireEvent.change(emailTextbox, { target: { value: '' } });
-    expect(emailTextbox.value).toBe('');
-
-    await inputEmail(validEmail);
-
-    await waitFor(() => {
-      expect(emailTextbox.value).toBe(validEmail);
-      expect(screen.queryByText(ERROR_EMAIL_INVALID_FORMAT)).toBeNull();
-    });
-  }, 15000);
 });
