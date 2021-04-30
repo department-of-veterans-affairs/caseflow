@@ -16,7 +16,7 @@ import { pageHeader, sectionStyle } from '../styles';
 import { TaskSelectionTable } from './TaskSelectionTable';
 
 const schema = yup.object().shape({
-  taskIds: yup.array(yup.string())
+  taskIds: yup.array(yup.string()),
 });
 
 export const SubstituteAppellantTasksForm = ({
@@ -28,16 +28,18 @@ export const SubstituteAppellantTasksForm = ({
   onBack,
   onCancel,
   onSubmit,
-  tasks,
+  tasks = [],
 }) => {
   const methods = useForm({
     // Use this for repopulating form from redux when user navigates back
-    defaultValues: { ...existingValues },
+    defaultValues: {
+      ...existingValues,
+      taskIds:
+        tasks?.filter((task) => task.selected).map((task) => task.taskId) || [],
+    },
     resolver: yupResolver(schema),
   });
   const { handleSubmit } = methods;
-
-  console.log('tasks', tasks);
 
   return (
     <FormProvider {...methods}>
