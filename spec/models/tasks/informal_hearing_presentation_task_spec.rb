@@ -74,6 +74,40 @@ describe InformalHearingPresentationTask, :postgres do
     end
   end
 
+  describe ".when poa is updated" do
+    context "change IHP task from old POA to new POA" do
+      let(:appeal) { create(:appeal, veteran: create(:veteran)) }
+      let(:vso) { create(:vso) }
+      let(:claimant_participant_id) { "1129318238" }
+      let!(:poa) { create(:bgs_power_of_attorney, claimant_participant_id: claimant_participant_id) }
+      let(:new_ihp_org_task) do
+        create(
+          :informal_hearing_presentation_task,
+          appeal: appeal,
+          assigned_to: vso
+        )
+      end
+      before do
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids)
+          .with([claimant_participant_id]).and_return(Fakes::BGSServicePOA.default_vsos_mapped.last)
+      end
+
+      it "forces update from BGS" do
+        before_poa_pid = poa.poa_participant_id
+        expect(before_poa_pid).to_not be_nil
+
+        poa.save_with_updated_bgs_record!
+
+        expect(poa.poa_participant_id).to_not eq before_poa_pid
+      end
+
+      it "automatically updates IHP to new poa" do
+        # InformalHearingPresentationTask.update_to_new_poa(appeal)
+        InformalHearingPresentationTask.available_actions(vso)
+      end
+    end
+  end
+
   describe "when an IHP task is cancelled" do
     let(:appeal) { create(:appeal) }
     let(:task) do

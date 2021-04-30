@@ -65,4 +65,16 @@ class InformalHearingPresentationTask < Task
       super(params, user)
     end
   end
+
+  def update_to_new_poa(appeal)
+    parent = appeal.tasks.open.where(type: :InformalHearingPresentationTask).first.parent
+    TrackVeteranTask.sync_tracking_tasks(appeal)
+    # If the parent task of the IHP task is not the same, you'll have to set the correct parent task
+    # if parent != parent
+    # newIHP=appeal.tasks.open.where(type: :InformalHearingPresentationTask).first
+    # newIHP.update(parent: parent)
+    # # and set the parent task's status to on_hold
+    # parent.on_hold!
+  end
+
 end

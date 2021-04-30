@@ -25,6 +25,7 @@ class BgsPowerOfAttorney < CaseflowRecord
             :representative_type, presence: true
 
   before_save :update_cached_attributes!
+  after_save :update_ihp_task
 
   class << self
     # Neither file_number nor claimant_participant_id is unique by itself,
@@ -141,6 +142,11 @@ class BgsPowerOfAttorney < CaseflowRecord
       send(attr)
     end
     save!
+  end
+
+  def update_ihp_task
+    appeal = Appeal.find_by(poa_participant_id: self.poa_participant_id)
+    InformalHearingPresentationTask.update_to_new_poa(appeal)
   end
 
   def found?
