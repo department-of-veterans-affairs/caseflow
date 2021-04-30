@@ -74,7 +74,7 @@ The only variation that will be changed will be the second distribution for the 
 - For each requested day find the next available date
     - Starting at the initial index get a Regional Office from the sorted list that is available for the date at that index in the available hearing dates list
     - Decrement the number of requested days (allocations) for the selected Regional Office by 1 and move them to the bottom of the list, when a regional office has no more requested days remove them from the list
-    - Add a hearing day for the selected date and move to the next iteration
+    - Add a hearing day for the selected date and move to the next iteration of inner loop
     - Repeat the previous steps until the remaining requested days to allocate is equal to the difference between the total requested days and the total availability dates (requested - available), then start applying the offset to the index we use to find the next available date so that we do not bunch hearing days together
         - If the next index is on a date that is blacked out for all remaining Regional Offices, increase the index by 1
         - If the next index is on a date that already has the number of hearing days per date plus 1, then increase the index by 1
