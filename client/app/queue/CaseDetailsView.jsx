@@ -70,6 +70,9 @@ export const CaseDetailsView = (props) => {
   const canEditCavcRemands = useSelector(
     (state) => state.ui.canEditCavcRemands
   );
+  const userIsCobAdmin = useSelector(
+    (state) => state.ui.userIsCobAdmin
+  );
   const success = useSelector((state) => state.ui.messages.success);
   const error = useSelector((state) => state.ui.messages.error);
   const veteranCaseListIsVisible = useSelector(
@@ -147,7 +150,7 @@ export const CaseDetailsView = (props) => {
     props.featureToggles.recognized_granted_substitution_after_dd &&
     appeal.caseType === 'Original' && // original, vacate, de_novo, court_remand
     appeal.docketType !== 'hearing' &&
-    appeal.decisionIssues.some(decisionHasDismissedDeathDisposition);
+    (userIsCobAdmin || appeal.decisionIssues.some(decisionHasDismissedDeathDisposition));
 
   // Should we show a post-dispatch box?
   // Both CAVC remands and substitute appellants are AMA-only.
