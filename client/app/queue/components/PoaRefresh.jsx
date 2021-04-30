@@ -17,11 +17,14 @@ export const textStyling = css({
 
 export const syncStyling = css({
   textAlign: 'right',
-  width: '100%'
+  width: '33%',
+  // display: 'flex',
+  // justify-content: 'center',
+  // flex-wrap: 'wrap'
 });
 
-export const divStyling = css({
-  width: '33%'
+export const gutterStyling = css({
+  width: '5%'
 });
 
 export const PoaRefresh = ({ powerOfAttorney, appealId }) => {
@@ -36,9 +39,9 @@ export const PoaRefresh = ({ powerOfAttorney, appealId }) => {
   return <React.Fragment>
     {viewPoaRefresh &&
     <div {...textStyling}>
-      <i>Power of Attorney (POA) data comes from VBMS. To refresh POA, please click the "Refresh POA" button.</i>
-      <div {...divStyling}></div>
-      <div {...boldText}{...syncStyling}><i>{lastSyncedCopy}</i>
+      <em>Power of Attorney (POA) data comes from VBMS. To refresh POA, please click the "Refresh POA" button.</em>
+      <div {...gutterStyling}></div>
+      <div {...boldText}{...syncStyling}><em>{lastSyncedCopy}</em>
         <PoaRefreshButton appealId={appealId} poaId={powerOfAttorney.representative_id} />
       </div>
     </div>
