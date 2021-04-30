@@ -68,7 +68,7 @@ The only variation that will be changed will be the second distribution for the 
 - Sort the Regional Office list by the total requested days
 - Sum the total requested days for all Regional Offices across the date range
 - Sum the total availability dates across all Regional Offices
-- Divide the requested days by the total availability dates to calculate the number of hearing days per date
+- Divide the total requested days by the total availability dates to calculate the average number of hearing days per date
 - Take the remainder of the requested days divided by the total availability dates to calculate the date offset to be used after each availability date has the calculated number of hearing days per date
 - Define the initial date index to be 0 so we start with the first available date
 - For each requested day find the next available date
