@@ -128,14 +128,29 @@ export const CaseDetailsView = (props) => {
     [appeal, tasks]
   );
 
-  const appealIsDispached = appeal.status === 'dispatched';
+  const appealIsDispatched = appeal.status === 'dispatched';
+  // I think we want this instead, but it's kind of off-topic here:
+  // const appealIsDispatched = ['dispatched', 'post_dispatch'].includes(appeal.status);
+
+  // Is CAVC remand supported?
   const supportCavcRemand =
     currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand;
+
+  // We still need to check whether appeal.decisionIssues includes any
+  // where disposition==='death_dismissal'
+  // And, you know, tests.
   const supportSubstituteAppellant =
     currentUserOnClerkOfTheBoard &&
-    props.featureToggles.recognized_granted_substitution_after_dd;
+    props.featureToggles.recognized_granted_substitution_after_dd &&
+    appeal.caseType === 'Original' && // original, vacate, de_novo, court_remand
+    appeal.docketType !== 'hearing' &&
+    appeal.decisionIssuesStatus;
+
+  // Should we show a post-dispatch box?
+  // Both CAVC remands and substitute appellants are AMA-only.
   const showPostDispatch =
-    appealIsDispached && (supportCavcRemand || supportSubstituteAppellant);
+    appealIsDispatched && (supportCavcRemand || supportSubstituteAppellant) &&
+      !appeal.isLegacyAppeal;
 
   return (
     <React.Fragment>

@@ -27,6 +27,13 @@ export const setCanEditNodDate = (canEditNodDate) => ({
   }
 });
 
+export const setUserIsCobAdmin = (userIsCobAdmin) => ({
+  type: ACTIONS.SET_USER_IS_COB_ADMIN,
+  payload: {
+    userIsCobAdmin
+  }
+});
+
 export const setCanViewOvertimeStatus = (canViewOvertimeStatus) => ({
   type: ACTIONS.SET_CAN_VIEW_OVERTIME_STATUS,
   payload: {

@@ -32,6 +32,7 @@ export const initialState = {
   veteranCaseListIsVisible: false,
   canEditAod: false,
   canEditNodDate: false,
+  userIsCobAdmin: false,
   canEditCavcRemands: false,
   hearingDay: {
     hearingDate: null,
@@ -80,6 +81,10 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
   case ACTIONS.SET_CAN_EDIT_NOD_DATE:
     return update(state, {
       canEditNodDate: { $set: action.payload.canEditNodDate }
+    });
+  case ACTIONS.SET_USER_IS_COB_ADMIN:
+    return update(state, {
+      userIsCobAdmin: { $set: action.payload.userIsCobAdmin }
     });
   case ACTIONS.SET_CAN_EDIT_CAVC_REMANDS:
     return update(state, {

@@ -316,7 +316,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     self.class.user_repository.user_info_for_idt(css_id)
   end
 
-  def selectable_organizations
+  def selectable_organizations # TODO: Rename this
     orgs = organizations.select(&:selectable_in_queue?).map do |org|
       {
         name: org.name,

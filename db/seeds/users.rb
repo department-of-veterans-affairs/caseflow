@@ -356,9 +356,14 @@ module Seeds
         full_name: "Clark ClerkOfTheBoardUser Bard"
       )
       ClerkOfTheBoard.singleton.add_user(atty)
+
       judge = create(:user, full_name: "Judith COTB Judge", css_id: "BVACOTBJUDGE")
       create(:staff, :judge_role, sdomainid: judge.css_id)
       ClerkOfTheBoard.singleton.add_user(judge)
+
+      admin = create(:user, full_name: "Ty ClerkOfTheBoardAdmin Cobb", css_id: "BVATCOBB")
+      ClerkOfTheBoard.singleton.add_user(admin)
+      OrganizationsUser.make_user_admin(admin, ClerkOfTheBoard.singleton)
     end
 
     def create_case_search_only_user
