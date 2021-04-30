@@ -164,7 +164,6 @@ feature "Non-veteran claimants", :postgres do
         find("label", text: "Yes", match: :prefer_exact).click
       end
 
-      blur_from "Country"
       expect(page).to have_button("Continue to next step", disabled: false)
       click_button "Continue to next step"
       expect(page).to have_current_path("/intake/add_power_of_attorney")
@@ -243,7 +242,6 @@ feature "Non-veteran claimants", :postgres do
       within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
         find("label", text: "Yes", match: :prefer_exact).click
       end
-      blur_from "Country"
       click_button "Continue to next step"
 
       expect(page).to have_current_path("/intake/add_power_of_attorney")
@@ -296,7 +294,6 @@ feature "Non-veteran claimants", :postgres do
         find("label", text: "No", match: :prefer_exact).click
       end
 
-      blur_from "Country"
       expect(page).to have_button("Continue to next step", disabled: false)
       click_button "Continue to next step"
       expect(page).to have_content(COPY::ADD_CLAIMANT_CONFIRM_MODAL_NO_POA)
@@ -354,7 +351,6 @@ feature "Non-veteran claimants", :postgres do
       within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
         find("label", text: "Yes", match: :prefer_exact).click
       end
-      blur_from "Country"
       click_button "Continue to next step"
       expect(page).to have_current_path("/intake/add_power_of_attorney")
       expect(page).to have_content("Add Claimant's POA")
@@ -396,7 +392,6 @@ feature "Non-veteran claimants", :postgres do
     fill_in("Zip", with: new_individual_claimant[:zip]).send_keys :enter
     fill_in("Country", with: new_individual_claimant[:country]).send_keys :enter
     fill_in "Claimant email", with: new_individual_claimant[:email]
-    blur_from "Claimant email"
   end
 
   def add_new_poa
@@ -406,7 +401,6 @@ feature "Non-veteran claimants", :postgres do
     fill_in("State", with: "CA").send_keys :enter
     fill_in("Zip", with: "12345").send_keys :enter
     fill_in("Country", with: "United States").send_keys :enter
-    blur_from "Country"
   end
 
   def select_claimant(index = 0)
