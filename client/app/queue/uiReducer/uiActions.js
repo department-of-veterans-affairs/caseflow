@@ -56,12 +56,12 @@ export const showSuccessMessage = (message) => ({
   }
 });
 
-export const setPoaRefreshAlert = (alertType, message, power_of_attorney) => ({
+export const setPoaRefreshAlert = (alertType, message, powerOfAttorney) => ({
   type: ACTIONS.SET_POA_REFRESH_ALERT,
   payload: {
     alertType,
     message,
-    power_of_attorney
+    powerOfAttorney
   }
 });
 

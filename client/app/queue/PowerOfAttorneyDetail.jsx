@@ -76,7 +76,8 @@ const PowerOfAttorneyDetailWrapper = (WrappedComponent) => {
     getAppealValue: PropTypes.func,
     poaAlert: PropTypes.shape({
       alertType: PropTypes.string,
-      message: PropTypes.string
+      message: PropTypes.string,
+      powerOfAttorney: PropTypes.object
     })
   };
 
@@ -94,38 +95,40 @@ export const PowerOfAttorneyNameUnconnected = ({ powerOfAttorney }) => (
  * Component that displays details about the power of attorney.
  */
 export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, poaAlert }) => {
-  if (poaAlert.power_of_attorney) {
-    powerOfAttorney = poaAlert.power_of_attorney;
+  let poa = powerOfAttorney;
+
+  if (poaAlert.powerOfAttorney) {
+    poa = poaAlert.powerOfAttorney;
   }
   const details = [
     {
-      label: powerOfAttorney.representative_type,
-      value: powerOfAttorney.representative_name
+      label: poa.representative_type,
+      value: poa.representative_name
     }
   ];
 
-  if (powerOfAttorney.representative_address) {
+  if (poa.representative_address) {
     details.push({
       label: 'Address',
-      value: <Address address={powerOfAttorney.representative_address} />
+      value: <Address address={poa.representative_address} />
     });
   }
 
-  if (powerOfAttorney.representative_email_address) {
+  if (poa.representative_email_address) {
     details.push({
       label: 'Email Address',
-      value: powerOfAttorney.representative_email_address
+      value: poa.representative_email_address
     });
   }
 
   return (
     <React.Fragment>
       <div>
-        <p><em>{ powerOfAttorney.representative_type === 'Unrecognized representative' ?
+        <p><em>{ poa.representative_type === 'Unrecognized representative' ?
           COPY.CASE_DETAILS_UNRECOGNIZED_POA :
-          <PoaRefresh powerOfAttorney={powerOfAttorney} {...detailListStyling} />}</em>
-        { powerOfAttorney.representative_type !== 'Unrecognized representative' && (
-          <PoaRefreshButton appealId={appealId} poaId={powerOfAttorney.representative_id} />
+          <PoaRefresh powerOfAttorney={poa} {...detailListStyling} />}</em>
+        { poa.representative_type !== 'Unrecognized representative' && (
+          <PoaRefreshButton appealId={appealId} poaId={poa.representative_id} />
         )}
         </p>
         <ul {...detailListStyling}>
@@ -152,6 +155,7 @@ PowerOfAttorneyNameUnconnected.propTypes = PowerOfAttorneyDetailUnconnected.prop
   poaAlert: PropTypes.shape({
     message: PropTypes.string,
     alertType: PropTypes.string,
+    powerOfAttorney: PropTypes.object
   }),
   appealId: PropTypes.number
 };
