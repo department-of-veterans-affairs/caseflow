@@ -104,32 +104,30 @@ export const AddClaimantForm = ({
         />
         <br />
         {watchRelationship === 'attorney' && (
-          <>
-            <Controller
-              control={control}
-              name="listedAttorney"
-              defaultValue={null}
-              render={({ onChange, ...rest }) => (
-                <FieldDiv>
-                  <SearchableDropdown
-                    {...rest}
-                    label="Claimant's name"
-                    filterOption={filterOption}
-                    async={asyncFn}
-                    defaultOptions
-                    debounce={250}
-                    strongLabel
-                    isClearable
-                    onChange={(valObj) => {
-                      onChange(valObj);
-                      setValue('listedAttorney', valObj);
-                    }}
-                    placeholder="Type to search..."
-                  />
-                </FieldDiv>
-              )}
-            />
-          </>
+          <Controller
+            control={control}
+            name="listedAttorney"
+            defaultValue={null}
+            render={({ onChange, ...rest }) => (
+              <FieldDiv>
+                <SearchableDropdown
+                  {...rest}
+                  label="Claimant's name"
+                  filterOption={filterOption}
+                  async={asyncFn}
+                  defaultOptions
+                  debounce={250}
+                  strongLabel
+                  isClearable
+                  onChange={(valObj) => {
+                    onChange(valObj);
+                    setValue('listedAttorney', valObj);
+                  }}
+                  placeholder="Type to search..."
+                />
+              </FieldDiv>
+            )}
+          />
         )}
 
         {listedAttorney && watchListedAttorney?.address && (

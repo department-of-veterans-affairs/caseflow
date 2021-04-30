@@ -52,7 +52,7 @@ export const schema = yup.object().shape({
 export const useAddPoaForm = ({ defaultValues = {} } = {}) => {
   const methods = useForm({
     resolver: yupResolver(schema),
-    mode: 'onBlur',
+    mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues,
   });

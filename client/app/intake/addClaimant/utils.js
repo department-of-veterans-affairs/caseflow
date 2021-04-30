@@ -92,7 +92,7 @@ export const defaultFormValues = {
 export const useAddClaimantForm = ({ defaultValues = defaultFormValues } = {}) => {
   const methods = useForm({
     resolver: yupResolver(schema),
-    mode: 'onBlur',
+    mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues
   });

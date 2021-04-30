@@ -63,6 +63,7 @@ feature "Non-veteran claimants", :postgres do
       expect(page).to have_content("Claimant's address")
       expect(page).to have_content(attorney.name)
       expect(page).to have_content(attorney.address_line_1.titleize)
+
       expect(page).to have_button("Continue to next step", disabled: false)
 
       # Verify that this can be removed
@@ -126,7 +127,7 @@ feature "Non-veteran claimants", :postgres do
       expect(page).to have_no_content(appeal.claimant.name)
     end
 
-    fit "allows selecting claimant not listed goes to and add_power_of_attorney path" do
+    it "allows selecting claimant not listed goes to and add_power_of_attorney path" do
       start_appeal(veteran)
       visit "/intake"
 
@@ -162,7 +163,6 @@ feature "Non-veteran claimants", :postgres do
       within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
         find("label", text: "Yes", match: :prefer_exact).click
       end
-
 
       blur_from "Country"
       expect(page).to have_button("Continue to next step", disabled: false)
@@ -296,6 +296,7 @@ feature "Non-veteran claimants", :postgres do
         find("label", text: "No", match: :prefer_exact).click
       end
 
+      blur_from "Country"
       expect(page).to have_button("Continue to next step", disabled: false)
       click_button "Continue to next step"
       expect(page).to have_content(COPY::ADD_CLAIMANT_CONFIRM_MODAL_NO_POA)
@@ -353,6 +354,7 @@ feature "Non-veteran claimants", :postgres do
       within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
         find("label", text: "Yes", match: :prefer_exact).click
       end
+      blur_from "Country"
       click_button "Continue to next step"
       expect(page).to have_current_path("/intake/add_power_of_attorney")
       expect(page).to have_content("Add Claimant's POA")
