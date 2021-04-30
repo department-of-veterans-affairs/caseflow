@@ -316,7 +316,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     self.class.user_repository.user_info_for_idt(css_id)
   end
 
-  def selectable_organizations # TODO: Rename this
+  def selectable_organizations
     orgs = organizations.select(&:selectable_in_queue?)
     judge_team_judges = judge? ? [self] : []
     judge_team_judges |= administered_judge_teams.map(&:judge) if FeatureToggle.enabled?(:judge_admin_scm)
