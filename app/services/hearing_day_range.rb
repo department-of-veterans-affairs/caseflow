@@ -53,7 +53,12 @@ class HearingDayRange
       self.class.ama_hearing_day_for_vso_user?(hearing_day, user)
     end
 
-    remaining_days = days_in_range.where.not(id: ama_days.pluck(:id)).order(:scheduled_for).limit(1000)
+    remaining_days = days_in_range.where.not(id: ama_days.pluck(:id)).order(
+      Arel.sql(
+        "CASE WHEN regional_office = '#{user.regional_office}' THEN 1 ELSE 2 END, "\
+        "scheduled_for"
+      )
+    ).limit(1000)
 
     vacols_hearings_for_remaining_days = HearingRepository.fetch_hearings_for_parents(remaining_days.map(&:id))
 
