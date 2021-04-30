@@ -51,7 +51,7 @@ class CompleteCaseReview
   end
 
   def open_qr_tasks?
-    case_review.task.appeal.tasks.open.where(type: :QualityReviewTask).blank?
+    case_review.task.appeal.tasks.open.of_type(:QualityReviewTask).blank?
   end
 
   def response_errors

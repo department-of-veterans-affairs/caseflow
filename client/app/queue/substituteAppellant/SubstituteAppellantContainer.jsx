@@ -13,7 +13,7 @@ import { SubstituteAppellantReviewContainer } from './review/SubstituteAppellant
 const sections = [
   'Select substitute appellant',
   // 'Select POA',
-  'Create task',
+  'Create tasks',
   'Review',
 ];
 

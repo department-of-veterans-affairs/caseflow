@@ -382,9 +382,8 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(docket_switch.disposition).to eq "granted"
       expect(docket_switch.docket_type).to eq "direct_review"
 
-      new_completed_task = DocketSwitchGrantedTask.find_by(
-        appeal: docket_switch.new_docket_stream,
-        assigned_to_type: "User"
+      new_completed_task = DocketSwitchGrantedTask.assigned_to_any_user.find_by(
+        appeal: docket_switch.new_docket_stream
       )
       expect(new_completed_task).to_not be_nil
 
@@ -609,9 +608,8 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(foia_task).to be_active
       expect(page).to have_current_path("/queue/appeals/#{docket_switch.new_docket_stream.uuid}")
 
-      new_completed_task = DocketSwitchGrantedTask.find_by(
-        appeal: docket_switch.new_docket_stream,
-        assigned_to_type: "User"
+      new_completed_task = DocketSwitchGrantedTask.assigned_to_any_user.find_by(
+        appeal: docket_switch.new_docket_stream
       )
       expect(new_completed_task).to_not be_nil
     end

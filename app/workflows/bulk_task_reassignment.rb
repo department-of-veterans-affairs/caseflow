@@ -130,7 +130,7 @@ class BulkTaskReassignment
 
   def ensure_all_judge_assign_tasks_are_child_free
     open_children_of_judge_assign_tasks = Task.open
-      .where(parent: open_tasks.where(type: JudgeAssignTask.name))
+      .where(parent: open_tasks.of_type(:JudgeAssignTask))
       .pluck(:id)
 
     if open_children_of_judge_assign_tasks.any?
@@ -141,7 +141,7 @@ class BulkTaskReassignment
 
   # We rely on the child attorney task's assigned attorney to determine what judge to reassign the decision review to
   def ensure_all_judge_review_tasks_have_child_attorney_tasks
-    judge_review_task_ids = open_tasks.where(type: JudgeDecisionReviewTask.name).pluck(:id)
+    judge_review_task_ids = open_tasks.of_type(:JudgeDecisionReviewTask).pluck(:id)
     child_attorney_tasks = AttorneyTask.not_cancelled.where(parent_id: judge_review_task_ids)
     judge_review_tasks_without_children = (judge_review_task_ids - child_attorney_tasks.pluck(:parent_id))
 
@@ -153,7 +153,7 @@ class BulkTaskReassignment
   end
 
   def ensure_all_judge_review_tasks_have_new_judge
-    judge_review_tasks = open_tasks.where(type: JudgeDecisionReviewTask.name)
+    judge_review_tasks = open_tasks.of_type(:JudgeDecisionReviewTask)
     child_attorney_tasks = AttorneyTask.not_cancelled.where(parent: judge_review_tasks)
     tasks_without_judges = child_attorney_tasks.select { |task| new_supervising_judge_from_task(task).nil? }
 
@@ -174,7 +174,7 @@ class BulkTaskReassignment
 
   # Cancels any JudgeAssignTasks and puts the cases back to "ready for distribution"
   def reassign_judge_assign_tasks
-    judge_assign_tasks = open_tasks.where(type: JudgeAssignTask.name)
+    judge_assign_tasks = open_tasks.of_type(:JudgeAssignTask)
 
     if judge_assign_tasks.any?
       task_ids = judge_assign_tasks.pluck(:id).sort
@@ -195,7 +195,7 @@ class BulkTaskReassignment
   # JudgeTeam membership.
   # Assumes the attorney has been placed on a new JudgeTeam
   def reassign_judge_review_tasks
-    judge_review_tasks = open_tasks.where(type: JudgeDecisionReviewTask.name)
+    judge_review_tasks = open_tasks.of_type(:JudgeDecisionReviewTask)
 
     if judge_review_tasks.any?
       task_ids = judge_review_tasks.pluck(:id).sort
@@ -228,7 +228,7 @@ class BulkTaskReassignment
 
   # Cancels all AttorneyTasks and their parent JudgeDecisionReviewTask and opens a new JudgeAssignTask for each
   def reassign_attorney_tasks
-    attorney_tasks = open_tasks.where(type: AttorneyTask.name)
+    attorney_tasks = open_tasks.of_type(:AttorneyTask)
 
     if attorney_tasks.any?
       task_ids = attorney_tasks.pluck(:id).sort
