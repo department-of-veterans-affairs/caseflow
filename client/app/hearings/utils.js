@@ -503,7 +503,14 @@ export const dispositionLabel = (disposition) => HEARING_DISPOSITION_TYPE_TO_LAB
  * @param {string} roTimezone -- Timezone like 'America/Los_Angeles' of the ro
  * @param {array} hearings    -- List of hearings scheduled for a specific date
  **/
-const calculateAvailableTimeslots = ({ numberOfSlots, beginsAt, roTimezone, scheduledHearings, slotLengthMinutes }) => {
+const calculateAvailableTimeslots = ({
+  numberOfSlots,
+  beginsAt,
+  roTimezone,
+  scheduledHearings,
+  slotLengthMinutes,
+  lunchBreak
+}) => {
   // Extract the hearing time, add the hearing_day date from beginsAt, set the timezone be the ro timezone
   const hearingTimes = scheduledHearings.map((hearing) => {
     const [hearingHour, hearingMinute] = hearing.hearingTime.split(':');
@@ -517,6 +524,17 @@ const calculateAvailableTimeslots = ({ numberOfSlots, beginsAt, roTimezone, sche
   const availableSlots = _.times(numberOfSlots).map((index) => {
     // Create the possible time by adding our offset * slotLengthMinutes to beginsAt
     const possibleTime = beginsAt.clone().add(index * slotLengthMinutes, 'minutes');
+
+    // If it's after the lunch break, move it forward by the length of the break
+    if (lunchBreak?.time) {
+      // / Get the lunchbreak moment on the correct date
+      const [breakHour, breakMinute] = lunchBreak.time.split(':');
+      const lunchBreakMoment = beginsAt.clone().set({ hour: breakHour, minute: breakMinute });
+
+      if (possibleTime.isSameOrAfter(lunchBreakMoment)) {
+        possibleTime.add(lunchBreak.lengthInMinutes, 'minutes');
+      }
+    }
 
     // This slot is not available (full) if there's a scheduled hearing less than an hour before
     // or after the slot.
@@ -603,6 +621,9 @@ export const setTimeSlots = ({
   const defaultBeginsAt = ro === 'C' ? '09:00' : '08:30';
   const momentDefaultBeginsAt = moment.tz(defaultBeginsAt, 'HH:mm', 'America/New_York');
   const momentBeginsAt = moment(beginsAt);
+  const lunchBreak = (roTimezone === 'America/New_York') ?
+    { time: '12:30', lengthInMinutes: 30 } :
+    {};
 
   const defaultSlotLengthMinutes = 60;
 
@@ -611,7 +632,8 @@ export const setTimeSlots = ({
     slotLengthMinutes: slotLengthMinutes || defaultSlotLengthMinutes,
     beginsAt: beginsAt ? momentBeginsAt : momentDefaultBeginsAt,
     roTimezone,
-    scheduledHearings
+    scheduledHearings,
+    lunchBreak
   });
 
   return combineSlotsAndHearings({
