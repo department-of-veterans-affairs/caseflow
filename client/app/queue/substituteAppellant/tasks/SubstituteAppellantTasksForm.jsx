@@ -3,12 +3,14 @@ import PropTypes from 'prop-types';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import ReactMarkdown from 'react-markdown';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import {
   SUBSTITUTE_APPELLANT_CREATE_TASKS_TITLE,
   SUBSTITUTE_APPELLANT_SELECT_APPELLANT_SUBHEAD,
   SUBSTITUTE_APPELLANT_TASK_SELECTION_TITLE,
+  SUBSTITUTE_APPELLANT_TASK_SELECTION_DESCRIPTION,
 } from 'app/../COPY';
 import CheckoutButtons from 'app/queue/docketSwitch/grant/CheckoutButtons';
 import { KeyDetails } from './KeyDetails';
@@ -59,6 +61,7 @@ export const SubstituteAppellantTasksForm = ({
 
           <div className={sectionStyle}>
             <h2>{SUBSTITUTE_APPELLANT_TASK_SELECTION_TITLE}</h2>
+            <div><ReactMarkdown source={SUBSTITUTE_APPELLANT_TASK_SELECTION_DESCRIPTION} /></div>
             <TaskSelectionTable tasks={tasks} />
           </div>
         </AppSegment>
