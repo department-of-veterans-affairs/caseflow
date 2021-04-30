@@ -3,9 +3,10 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
 import { parseISO } from 'date-fns';
+import { MemoryRouter } from 'react-router';
 
 import { SubstituteAppellantTasksForm } from 'app/queue/substituteAppellant/tasks/SubstituteAppellantTasksForm';
-import { MemoryRouter } from 'react-router';
+import { sampleEvidenceSubmissionTasks } from 'test/data/queue/substituteAppellant/tasks';
 
 describe('SubstituteAppellantTasksForm', () => {
   const onSubmit = jest.fn();
@@ -16,6 +17,7 @@ describe('SubstituteAppellantTasksForm', () => {
     nodDate: parseISO('2021-04-01'),
     dateOfDeath: parseISO('2021-04-15'),
     substitutionDate: parseISO('2021-04-20'),
+    tasks: sampleEvidenceSubmissionTasks(),
     onCancel,
     onSubmit,
   };
@@ -54,18 +56,18 @@ describe('SubstituteAppellantTasksForm', () => {
       expect(results).toHaveNoViolations();
     });
 
-    // describe('form validation', () => {
-    //   it('requires at least some tasks to have been entered', async () => {
-    //     setup();
+    describe('form validation', () => {
+      it('requires at least some tasks to have been entered', async () => {
+        setup();
 
-    //     const submit = screen.getByRole('button', { name: /continue/i });
+        const submit = screen.getByRole('button', { name: /continue/i });
 
-    //     // Submit to trigger validation
-    //     await userEvent.click(submit);
+        // Submit to trigger validation
+        await userEvent.click(submit);
 
-    //     expect(onSubmit).not.toHaveBeenCalled();
-    //   });
-    // });
+        expect(onSubmit).not.toHaveBeenCalled();
+      });
+    });
   });
 
   describe('with existing form data', () => {
