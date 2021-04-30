@@ -136,6 +136,9 @@ export const CaseDetailsView = (props) => {
   const supportCavcRemand =
     currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand;
 
+  const decisionHasDismissedDeathDisposition = (decisionIssue) =>
+    decisionIssue.disposition === 'dismissed_death';
+
   // We still need to check whether appeal.decisionIssues includes any
   // where disposition==='death_dismissal'
   // And, you know, tests.
@@ -144,7 +147,7 @@ export const CaseDetailsView = (props) => {
     props.featureToggles.recognized_granted_substitution_after_dd &&
     appeal.caseType === 'Original' && // original, vacate, de_novo, court_remand
     appeal.docketType !== 'hearing' &&
-    appeal.decisionIssuesStatus;
+    appeal.decisionIssues.some(decisionHasDismissedDeathDisposition);
 
   // Should we show a post-dispatch box?
   // Both CAVC remands and substitute appellants are AMA-only.
