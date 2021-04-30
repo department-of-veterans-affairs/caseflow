@@ -103,7 +103,7 @@ Given the following:
 Then we need to generate 94 (54 * 1 + 40) hearing days
 
 - Each date will get 4 (94 / 20) hearing days
-- Every other 14 (94 % 20) dates within the availability range will get 5 hearing days
+- Every other 14 (94 % 20) dates within the availability range will get additional 1 day making a total of 5 days
 
 **Example B**
 
