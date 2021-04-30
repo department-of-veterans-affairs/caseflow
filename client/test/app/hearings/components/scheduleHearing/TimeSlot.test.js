@@ -30,6 +30,7 @@ const defaultProps = {
   scheduledHearingsList: emptyHearings,
   numberOfSlots: '8',
   slotLengthMinutes: '60',
+  lunchBreak: {},
   fetchScheduledHearings: jest.fn(),
   onChange: mockOnChange
 };
@@ -267,6 +268,21 @@ describe('TimeSlot', () => {
           // Switch to dropdown
           toggleToCustom(utils);
 
+        });
+
+        it('moves following slots when there is a lunch break', () => {
+          const beginsAt = moment('2021-04-21T08:30:00-04:00').tz('America/New_York');
+          const lunchBreak = { time: '12:30', lengthInMinutes: 45 };
+          const { timeSlots } = setup({ lunchBreak, beginsAt });
+
+          expect(timeSlots[0].time.isSame(beginsAt)).toEqual(true);
+
+          const [breakHour, breakMinute] = lunchBreak.time.split(':');
+          const lunchBreakMoment = beginsAt.clone().set({ hour: breakHour, minute: breakMinute });
+          const firstSlotAfterLunchBreak = timeSlots.find((item) => item.time.isSameOrAfter(lunchBreakMoment));
+
+          expect(firstSlotAfterLunchBreak.time.isSame(lunchBreakMoment.add(lunchBreak.lengthInMinutes, 'minutes'))).
+            toEqual(true);
         });
 
         it('hearings display correct times and hide slots appropriately', () => {
