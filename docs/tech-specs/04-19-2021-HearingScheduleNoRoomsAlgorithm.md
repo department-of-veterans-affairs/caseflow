@@ -68,13 +68,13 @@ The only variation that will be changed will be the second distribution for the 
 - Sort the Regional Office list by the total requested days least to most
 - Sum the total requested days for all Regional Offices across the date range
 - Sum the total availability dates across all Regional Offices
-- Divide the requested days by the total availability dates to calculate the number of hearing days per date
+- Divide the total requested days by the total availability dates to calculate the average number of hearing days per date
 - Take the remainder of the requested days divided by the total availability dates to calculate the date offset to be used after each availability date has the calculated number of hearing days per date
 - Define the initial date index to be 0 so we start with the first available date
 - For each hearing day that needs to be scheduled find the next available date and Regional Office available for that date
     - Starting at the initial index get a Regional Office from the sorted list that is available for the date at that index in the available hearing dates list
     - Decrement the number of requested days (allocations) for the selected Regional Office by 1 and move them to the bottom of the list, when a regional office has no more requested days remove them from the list
-    - Add a hearing day for the selected date and move to the next iteration
+    - Add a hearing day for the selected date and move to the next iteration of inner loop
     - Repeat the previous steps until the remaining hearing days to schedule across all ROs is equal to the difference between the total hearing days to schedule and the total availability dates (requested - available), then start applying the offset to the index we use to find the next available date so that we do not bunch hearing days together
         - If the next index is on a date that is blacked out for all remaining Regional Offices, increase the index by 1
         - If the next index is on a date that already has the number of hearing days, then increase the index by 1
@@ -103,7 +103,7 @@ Given the following:
 Then we need to generate 94 (54 * 1 + 40) hearing days
 
 - Each date will get 4 (94 / 20) hearing days
-- Every other 14 (94 % 20) dates within the availability range will get 5 hearing days
+- Every other 14 (94 % 20) dates within the availability range will get additional 1 day making a total of 5 days
 
 **Example B**
 
