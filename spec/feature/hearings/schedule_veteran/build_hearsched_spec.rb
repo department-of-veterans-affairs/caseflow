@@ -225,7 +225,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
     # Method to choose either the hearing time slot buttons or hearing time radio buttons
     def select_hearing_time(time)
-      if FeatureToggle.enabled?(:enable_hearing_time_slots)
+      virtual_hearing_type_selected = page.has_content?("Virtual")
+      if FeatureToggle.enabled?(:enable_hearing_time_slots) && virtual_hearing_type_selected
         eastern_time = convert_local_time_to_eastern_timezone(time)
         find(".time-slot-button", text: eastern_time).click
       else
@@ -241,8 +242,9 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     def select_custom_hearing_time(time, is_eastern_only = true)
       slots_enabled = FeatureToggle.enabled?(:enable_hearing_time_slots)
       direct_enabled = FeatureToggle.enabled?(:schedule_veteran_virtual_hearing)
+      virtual_hearing_type_selected = page.has_content?("Virtual")
 
-      if slots_enabled
+      if slots_enabled && virtual_hearing_type_selected
         find(".time-slot-button-toggle", text: "Choose a custom time").click
       end
 
