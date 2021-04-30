@@ -452,6 +452,11 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
           <strong>
             <span>
               Zip
+              <span
+                class="cf-optional"
+              >
+                Optional
+              </span>
             </span>
           </strong>
         </label>

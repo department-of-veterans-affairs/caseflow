@@ -48,9 +48,7 @@ export const schema = yup.object().shape({
     is: (partyType, relationship) => additionalFieldsRequired(partyType, relationship),
     then: yup.
       string().
-      min(5).
-      max(25).
-      required(),
+      max(25),
   }),
   country: yup.string().when(['partyType', 'relationship'], {
     is: (partyType, relationship) => additionalFieldsRequired(partyType, relationship),

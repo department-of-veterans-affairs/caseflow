@@ -37,9 +37,7 @@ export const schema = yup.object().shape({
     is: (value) => ['individual', 'organization'].includes(value),
     then: yup.
       string().
-      min(5).
-      max(25).
-      required(),
+      max(25),
   }),
   country: yup.string().when('partyType', {
     is: (value) => ['individual', 'organization'].includes(value),

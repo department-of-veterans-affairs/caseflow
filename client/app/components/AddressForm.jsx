@@ -65,7 +65,13 @@ export const AddressForm = ({ control, register, watch }) => {
         />
       </CityState>
       <ZipCountry>
-        <TextField name="zip" label="Zip" inputRef={register} strongLabel />
+        <TextField
+          name="zip"
+          label="Zip"
+          inputRef={register}
+          optional
+          strongLabel
+        />
         <TextField
           name="country"
           label="Country"
