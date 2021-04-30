@@ -74,7 +74,8 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
     return update(state, {
       poaAlert: {
         alertType: { $set: action.payload.alertType },
-        message: { $set: action.payload.message }
+        message: { $set: action.payload.message },
+        power_of_attorney: { $set: action.payload.power_of_attorney }
       }
     });
   case ACTIONS.SET_SELECTING_JUDGE:

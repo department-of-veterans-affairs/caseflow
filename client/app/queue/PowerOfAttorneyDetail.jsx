@@ -94,6 +94,9 @@ export const PowerOfAttorneyNameUnconnected = ({ powerOfAttorney }) => (
  * Component that displays details about the power of attorney.
  */
 export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, poaAlert }) => {
+  if (poaAlert.power_of_attorney) {
+    powerOfAttorney = poaAlert.power_of_attorney;
+  }
   const details = [
     {
       label: powerOfAttorney.representative_type,
