@@ -366,8 +366,7 @@ describe User, :all_dbs do
       it "returns assigned cases link for judge" do
         is_expected.to include(
           name: "Assign #{user.css_id}",
-          url: format("/queue/%<id>s/assign", id: user.css_id),
-          is_admin: true
+          url: format("/queue/%<id>s/assign", id: user.css_id)
         )
       end
     end
@@ -379,8 +378,7 @@ describe User, :all_dbs do
         user.reload
         is_expected.to include(
           name: "Assign #{user.css_id}",
-          url: format("/queue/%<id>s/assign", id: user.css_id),
-          is_admin: true
+          url: format("/queue/%<id>s/assign", id: user.css_id)
         )
       end
     end
@@ -405,13 +403,11 @@ describe User, :all_dbs do
         it "returns assigned cases link for judge" do
           is_expected.to include(
             name: "Assign #{judge.css_id}",
-            url: format("/queue/%<id>s/assign", id: judge.css_id),
-            is_admin: true
+            url: format("/queue/%<id>s/assign", id: judge.css_id)
           )
           is_expected.not_to include(
             name: "Assign #{user.css_id}",
-            url: format("/queue/%<id>s/assign", id: user.id),
-            is_admin: false
+            url: format("/queue/%<id>s/assign", id: user.id)
           )
         end
       end
@@ -926,7 +922,6 @@ describe User, :all_dbs do
         context "when marking the user active" do
           let(:user) { create(:user, status: Constants.USER_STATUSES.inactive) }
           let(:status) { Constants.USER_STATUSES.active }
-          let(:colocated_org_hash) { { name: "VLJ Support Staff", url: "vlj-support", is_admin: false } }
 
           it "does not remove the user from any organizations" do
             expect(user.selectable_organizations.length).to eq 2
@@ -934,7 +929,7 @@ describe User, :all_dbs do
             expect(user.reload.status).to eq status
             expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
             expect(user.selectable_organizations.length).to eq 2
-            expect(user.selectable_organizations).to include colocated_org_hash
+            expect(user.selectable_organizations).to include Colocated.singleton
           end
         end
       end

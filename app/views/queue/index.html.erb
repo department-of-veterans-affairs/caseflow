@@ -4,7 +4,7 @@
     userId: current_user.id,
     userRole: (current_user.vacols_roles.first || "").capitalize,
     userCssId: current_user.css_id,
-    organizations: current_user.selectable_organizations,
+    organizations: current_user.selectable_organizations.map {|o| o.slice(:name, :url)},
     userIsVsoEmployee: current_user.vso_employee?,
     canEditAod: AodTeam.singleton.user_has_access?(current_user),
     caseSearchHomePage: case_search_home_page,
