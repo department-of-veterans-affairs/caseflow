@@ -148,29 +148,31 @@ class HearingSchedule::GenerateHearingDaysSchedule
   #   :num_of_rooms=>1,
   #   :allocated_dates=>{[4, 2021]=>{Thu, 01 Apr 2021=>[{:room_num=>nil}]}, [5, 2021]=>{}, [6, 2021]=>{}}}}
   def allocate_no_room_hearing_days_to_ros
-    # Initialize the count of days to allocate
+    # Add up all the hearing days we need to distribute
     days_to_allocate = @ros.values.pluck(:allocated_days_without_room).sum.to_i
 
     # Determine how many hearings to schedule per date
     hearing_days_per_date = days_to_allocate / @available_days.count
 
-    # Initialize the offset to 0 until all hearing days are full
+    # Determine how far apart to space hearing days once we have assigned an even number to each date
     offset = days_to_allocate % @available_days.count
 
-    # Create a lookup table of available days to ensure an even distribution initializing each to 0 allocations
+    # Create a lookup table of available days to track the number of allocations per date
     available_days = @available_days.product([0]).to_h
 
     # Apply the initial sort to the RO list
     ro_list = sort_ro_list(@ros.each { |k, v| v[:ro_key] = k }.values)
 
+    # Distribute all of the hearing days to each RO in the list
     allocate_hearing_days(days_to_allocate, hearing_days_per_date, ro_list, available_days, offset)
 
+    # Return the list of ROs containing the hearing days per date
     @ros
   end
 
   def allocate_hearing_days(days_to_allocate, hearing_days_per_date, ro_list, available_days, offset)
     days_to_allocate.times do |index|
-      # Find the next hearing day in the list
+      # Find the next RO and hearing day using the offset once all hearing days have the same number scheduled
       available_ro_and_day = if available_days.count { |_k, v| v == hearing_days_per_date } == @available_days.count
                                get_ro_for_hearing_day(ro_list, index, offset)
                              else
@@ -181,7 +183,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
       hearing_day = available_ro_and_day.first
       ro = available_ro_and_day.last
 
-      # Add the hearing day
+      # Add the hearing day to this RO
       @ros[ro[:ro_key]][:allocated_dates][[hearing_day.month, hearing_day.year]][hearing_day].push(room_num: nil)
 
       # Decrement the requested days for this RO
@@ -201,13 +203,11 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
     # If we are shuffling the list, move the first element to the last
     if shuffle
-      ros_with_request = ros_with_request.rotate(1)
+      ros_with_request.rotate(1)
     else
       # Sort the list so the RO with the fewest requests is first
       ros_with_request.sort_by { |ro| ro[:allocated_days_without_room] }
     end
-
-    ros_with_request
   end
 
   def get_ro_for_hearing_day(ro_list, index, offset)
@@ -219,12 +219,34 @@ class HearingSchedule::GenerateHearingDaysSchedule
     end
 
     # Check if there is an available Regional office for this day
-    ro = ro_list.select { |ro_key| ro_key[:available_days].include?(@available_days[hearing_day_index]) }
+    ro = get_next_available_ro(ro_list, @available_days[hearing_day_index])
 
-    if ro.first.nil?
+    if ro.nil?
       get_ro_for_hearing_day(ro_list, index + 1, offset)
     else
-      [@available_days[hearing_day_index], ro.first]
+      [@available_days[hearing_day_index], ro]
+    end
+  end
+
+  def get_next_available_ro(ro_list, hearing_day)
+    ro_list.each_with_index do |ro, index|
+      # Calculate the last index
+      last_index = (ro_list.count - 1)
+
+      # Determine how many days have been schedule for this RO on this date
+      days_per_date = ro[:allocated_dates].values.count { |key| key == hearing_day }
+
+      # Break out of the loop if we have exhausted the list and found no ROs available for this day
+      return nil if index == last_index && !ro[:available_days].include?(hearing_day)
+
+      # Skip ROs that are not available for this date
+      next if !ro[:available_days].include?(hearing_day)
+
+      # Skip if this RO has already been scheduled for this date
+      next if index != last_index && days_per_date >= @number_to_allocate
+
+      # Break out of the loop as soon as we find an available RO
+      return ro
     end
   end
 
