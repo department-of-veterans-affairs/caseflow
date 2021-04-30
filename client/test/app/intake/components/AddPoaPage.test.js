@@ -1,10 +1,8 @@
 import React from 'react';
-import { screen, render, waitFor, fireEvent, wait } from '@testing-library/react';
-import selectEvent from 'react-select-event';
+import { screen, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { AddPoaPage } from 'app/intake/addPOA/AddPoaPage';
 import { IntakeProviders } from '../testUtils';
-import { ERROR_EMAIL_INVALID_FORMAT } from 'app/../COPY';
 
 describe('AddPoaPage', () => {
   const onSubmit = jest.fn();
