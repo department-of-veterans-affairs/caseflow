@@ -35,7 +35,7 @@ export const TimeSlotButton = ({
         <div style={{ flex: 1 }}>
           <TimeSlotDetail
             constrainWidth
-            showDetails={full && issueCount !== null && poaName}
+            showDetails={Boolean(full && issueCount !== null && poaName)}
             label={formatTimeSlotLabel(hearingTime, roTimezone)}
             issueCount={issueCount}
             poaName={poaName}
