@@ -570,14 +570,17 @@ hearing_days,bva_poc,string,,,,,,Hearing coordinator full name
 hearing_days,created_at,datetime ∗,x,,,,,Automatic timestamp of when hearing day was created
 hearing_days,created_by_id,integer (8) ∗ FK,x,,x,,x,The ID of the user who created the Hearing Day
 hearing_days,deleted_at,datetime,,,,,x,Automatic timestamp of when hearing day was deleted
+hearing_days,first_slot_time,string (5),,,,,,The first time slot available; interpreted as the local time at Central office or the RO
 hearing_days,id,integer (8) PK,x,x,,,,
 hearing_days,judge_id,integer FK,,,x,,,User ID of judge who is assigned to the hearing day
 hearing_days,lock,boolean,,,,,,Determines if the hearing day is locked and can't be edited
 hearing_days,notes,text,,,,,,Any notes about hearing day
+hearing_days,number_of_slots,integer,,,,,,The number of time slots possible for this day
 hearing_days,regional_office,string,,,,,,Regional office key associated with hearing day
 hearing_days,request_type,string ∗,x,,,,,"Hearing request types for all associated hearings; can be one of: 'T', 'C' or 'V'"
 hearing_days,room,string,,,,,,The room at BVA where the hearing will take place
 hearing_days,scheduled_for,date ∗,x,,,,,The date when all associated hearings will take place
+hearing_days,slot_length_minutes,integer,,,,,,The length in minutes of each time slot for this day
 hearing_days,updated_at,datetime ∗,x,,,,x,Automatic timestamp of when hearing day was updated
 hearing_days,updated_by_id,integer (8) ∗ FK,x,,x,,x,The ID of the user who most recently updated the Hearing Day
 hearing_issue_notes,,,,,,,,
@@ -1048,6 +1051,7 @@ tasks,assigned_at,datetime,,,,,,
 tasks,assigned_by_id,integer FK,,,x,,,
 tasks,assigned_to_id,integer ∗ FK,x,,x,,x,
 tasks,assigned_to_type,string ∗,x,,,,x,
+tasks,cancellation_reason,string,,,,,x,Reason for latest cancellation status
 tasks,cancelled_by_id,integer FK,,,x,,,ID of user that cancelled the task. Backfilled from versions table. Can be nil if task was cancelled before this column was added or if there is no user logged in when the task is cancelled
 tasks,closed_at,datetime,,,,,,
 tasks,created_at,datetime ∗,x,,,,,

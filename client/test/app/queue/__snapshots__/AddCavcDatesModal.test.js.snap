@@ -305,7 +305,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                   aria-modal="true"
                   className="cf-modal active "
                   id="modal_id"
-                  role="alertdialog"
+                  role="dialog"
                 >
                   <TouchProvider>
                     <ScrollLock
@@ -926,7 +926,7 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                   aria-modal="true"
                   className="cf-modal active "
                   id="modal_id"
-                  role="alertdialog"
+                  role="dialog"
                 >
                   <TouchProvider>
                     <ScrollLock

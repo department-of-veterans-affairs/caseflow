@@ -7,8 +7,33 @@ import CannotSaveAlert from '../reader/CannotSaveAlert';
 import * as Constants from '../reader/constants';
 import { categoryFieldNameOfCategoryName } from './utils';
 import { handleCategoryToggle } from '../reader/Documents/DocumentsActions';
+import PropTypes from 'prop-types';
 
 class SideBarCategories extends PureComponent {
+  componentDidMount() {
+    window.addEventListener('keydown', this.keyHandler);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.keyHandler);
+  }
+
+  keyHandler = (event) => {
+    if (event.altKey) {
+      if (event.shiftKey) {
+        const doc = this.props.doc;
+
+        if (event.code === 'KeyM') {
+          this.props.handleCategoryToggle(doc.id, 'medical', !doc.category_medical);
+        } else if (event.code === 'KeyP') {
+          this.props.handleCategoryToggle(doc.id, 'procedural', !doc.category_procedural);
+        } else if (event.code === 'KeyO') {
+          this.props.handleCategoryToggle(doc.id, 'other', !doc.category_other);
+        }
+      }
+    }
+  }
+
   render() {
     const {
       doc,
@@ -30,6 +55,19 @@ class SideBarCategories extends PureComponent {
     </div>;
   }
 }
+
+SideBarCategories.propTypes = {
+  doc: PropTypes.object,
+  documents: PropTypes.object,
+  id: PropTypes.number,
+  category_medical: PropTypes.bool,
+  category_procedural: PropTypes.bool,
+  category_other: PropTypes.bool,
+  handleCategoryToggle: PropTypes.func,
+  error: PropTypes.object,
+  category: PropTypes.object,
+  visible: PropTypes.bool
+};
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({

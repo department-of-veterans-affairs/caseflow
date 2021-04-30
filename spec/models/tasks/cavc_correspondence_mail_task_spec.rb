@@ -177,7 +177,7 @@ describe CavcCorrespondenceMailTask do
         it "creates an org task each for Mail team and CAVC Lit Support" do
           expect(CavcCorrespondenceMailTask.all.size).to eq(0)
           subject
-          expect(CavcCorrespondenceMailTask.where(assigned_to_type: "Organization").size).to eq(2)
+          expect(CavcCorrespondenceMailTask.assigned_to_any_org.size).to eq(2)
           expect(CavcCorrespondenceMailTask.first.assigned_to).to eq(MailTeam.singleton)
           expect(CavcCorrespondenceMailTask.second.assigned_to).to eq(CavcLitigationSupport.singleton)
         end

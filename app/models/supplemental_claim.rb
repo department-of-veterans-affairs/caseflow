@@ -50,7 +50,7 @@ class SupplementalClaim < ClaimReview
     return unless decision_issues.empty?
     return unless end_product_establishments.any?
 
-    end_product_establishments.first.last_synced_at.to_date
+    end_product_establishments.first.last_synced_at&.to_date
   end
 
   def events
@@ -98,16 +98,16 @@ class SupplementalClaim < ClaimReview
     decision_review_remanded? ? "397" : super
   end
 
-  def new_end_product_establishment(issue)
+  def new_end_product_establishment(issue, request_issues_update = nil)
     end_product_establishments.build(
       veteran_file_number: veteran_file_number,
       claim_date: receipt_date,
       payee_code: payee_code || EndProduct::DEFAULT_PAYEE_CODE,
       code: issue.end_product_code,
       claimant_participant_id: claimant_participant_id,
-      station: end_product_station,
+      station: request_issues_update ? request_issues_update.user.station_id : end_product_station,
       benefit_type_code: veteran.benefit_type_code,
-      user: end_product_created_by,
+      user: request_issues_update ? request_issues_update.user : end_product_created_by,
       limited_poa_code: issue.limited_poa_code,
       limited_poa_access: issue.limited_poa_access
     )

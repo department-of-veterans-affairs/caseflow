@@ -1,0 +1,3106 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditCavcRemandForm adding new all feature toggles enabled renders correctly 1`] = `
+<div>
+  <form>
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <h1>
+        Add a Court remand
+      </h1>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="docketNumber"
+        >
+          <strong>
+            <span>
+              What is the court docket number?
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="docketNumber"
+          name="docketNumber"
+          type="text"
+          value=""
+        />
+      </div>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio-inline "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Was the appellant represented by an attorney?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="attorney_yes"
+              name="attorney"
+              type="radio"
+              value="yes"
+            />
+            <label
+              class=""
+              for="attorney_yes"
+            >
+              Yes
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="attorney_no"
+              name="attorney"
+              type="radio"
+              value="no"
+            />
+            <label
+              class=""
+              for="attorney_no"
+            >
+              No
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <div
+        class=""
+      >
+        <div
+          class="cf-form-dropdown dropdown-judge"
+        >
+          <label
+            class="question-label"
+            for="judge"
+          >
+            <strong>
+              <span>
+                What is the CAVC judge's name?
+              </span>
+            </strong>
+          </label>
+          <div
+            class="cf-select"
+          >
+            <div
+              class=" css-2b097c-container"
+            >
+              <div
+                class="cf-select__control css-yk16xz-control"
+              >
+                <div
+                  class="cf-select__value-container css-g1d714-ValueContainer"
+                >
+                  <div
+                    class="cf-select__placeholder css-1wa3eu0-placeholder"
+                  >
+                    Select...
+                  </div>
+                  <div
+                    class="css-81nyic-Input"
+                  >
+                    <div
+                      class="cf-select__input"
+                      style="display: inline-block;"
+                    >
+                      <input
+                        aria-autocomplete="list"
+                        autocapitalize="none"
+                        autocomplete="off"
+                        autocorrect="off"
+                        id="judge"
+                        spellcheck="false"
+                        style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                        tabindex="0"
+                        type="text"
+                        value=""
+                      />
+                      <div
+                        style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                >
+                  <span
+                    class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                  />
+                  <div
+                    aria-hidden="true"
+                    class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="css-6q0nyr-Svg"
+                      focusable="false"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      width="20"
+                    >
+                      <path
+                        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio "
+        data-css-1m3edv2=""
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              How are you proceeding?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="decisionType_remand"
+              name="decisionType"
+              type="radio"
+              value="remand"
+            />
+            <label
+              class=""
+              for="decisionType_remand"
+            >
+              Remand
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="decisionType_straight_reversal"
+              name="decisionType"
+              type="radio"
+              value="straight_reversal"
+            />
+            <label
+              class=""
+              for="decisionType_straight_reversal"
+            >
+              Straight Reversal
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="decisionType_death_dismissal"
+              name="decisionType"
+              type="radio"
+              value="death_dismissal"
+            />
+            <label
+              class=""
+              for="decisionType_death_dismissal"
+            >
+              Death Dismissal
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="decisionDate"
+        >
+          <strong>
+            <span>
+              What is the Court's decision date?
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="decisionDate"
+          max="9999-12-31"
+          name="decisionDate"
+          placeholder="mm/dd/yyyy"
+          type="date"
+          value=""
+        />
+      </div>
+      <div
+        class="usa-alert usa-alert-info usa-alert-slim"
+        data-css-1umdg7m=""
+        role="alert"
+      >
+        <div
+          class="usa-alert-body"
+        >
+          <div
+            class="usa-alert-text"
+          >
+            This task will be put on hold for 90 days to wait for the Court's judgement and mandate dates. This case will be accessible in the Assigned tab and will return to the team's Unassigned tab when the 90 days has passed.
+          </div>
+        </div>
+      </div>
+      <legend>
+        <strong>
+          Which issues are being addressed by the court?
+        </strong>
+      </legend>
+      <span>
+        <button
+          class="cf-submit cf-btn-link usa-button"
+          data-css-prix5f=""
+          id="button-Unselect-all"
+          type="button"
+        >
+          Unselect all
+        </button>
+      </span>
+      <fieldset
+        class="checkbox-wrapper-issueIds cf-form-checkboxes cf-checkbox-group"
+        data-css-13g2xn1=""
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Please unselect any tasks you would like to remove:
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="1"
+            name="1"
+            type="checkbox"
+          />
+          <label
+            for="1"
+          >
+            Tinnitus, Left Ear
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="2"
+            name="2"
+            type="checkbox"
+          />
+          <label
+            for="2"
+          >
+            Right Knee
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="3"
+            name="3"
+            type="checkbox"
+          />
+          <label
+            for="3"
+          >
+            Right Knee
+          </label>
+        </div>
+      </fieldset>
+      <div
+        class="cf-form-textarea"
+      >
+        <label
+          class="question-label"
+          for="instructions"
+        >
+          <strong>
+            <span>
+              Provide context and instructions for this action
+            </span>
+          </strong>
+        </label>
+        <textarea
+          id="instructions"
+          name="instructions"
+        />
+      </div>
+    </section>
+    <div
+      class="controls cf-app-segment"
+    >
+      <span>
+        <button
+          class="cf-right-side usa-button"
+          id="submit-submit"
+          type="submit"
+        >
+          Submit
+        </button>
+      </span>
+      <span>
+        <button
+          class="cf-right-side usa-button-secondary usa-button"
+          id="button-Cancel"
+          style="margin-right: 1rem;"
+          type="button"
+        >
+          Cancel
+        </button>
+      </span>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`EditCavcRemandForm adding new with Remand decision renders correctly with jmpr remand type selected 1`] = `
+<div>
+  <form>
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <h1>
+        Add a Court remand
+      </h1>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="docketNumber"
+        >
+          <strong>
+            <span>
+              What is the court docket number?
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="docketNumber"
+          name="docketNumber"
+          type="text"
+          value=""
+        />
+      </div>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio-inline "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Was the appellant represented by an attorney?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="attorney_yes"
+              name="attorney"
+              type="radio"
+              value="yes"
+            />
+            <label
+              class=""
+              for="attorney_yes"
+            >
+              Yes
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="attorney_no"
+              name="attorney"
+              type="radio"
+              value="no"
+            />
+            <label
+              class=""
+              for="attorney_no"
+            >
+              No
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <div
+        class=""
+      >
+        <div
+          class="cf-form-dropdown dropdown-judge"
+        >
+          <label
+            class="question-label"
+            for="judge"
+          >
+            <strong>
+              <span>
+                What is the CAVC judge's name?
+              </span>
+            </strong>
+          </label>
+          <div
+            class="cf-select"
+          >
+            <div
+              class=" css-2b097c-container"
+            >
+              <div
+                class="cf-select__control css-yk16xz-control"
+              >
+                <div
+                  class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                >
+                  <div
+                    class="cf-select__single-value css-1uccc91-singleValue"
+                  >
+                    Panel
+                  </div>
+                  <div
+                    class="css-81nyic-Input"
+                  >
+                    <div
+                      class="cf-select__input"
+                      style="display: inline-block;"
+                    >
+                      <input
+                        aria-autocomplete="list"
+                        autocapitalize="none"
+                        autocomplete="off"
+                        autocorrect="off"
+                        id="judge"
+                        spellcheck="false"
+                        style="box-sizing: content-box; width: 2px; border: 0px; opacity: 0; outline: 0; padding: 0px;"
+                        tabindex="0"
+                        type="text"
+                        value=""
+                      />
+                      <div
+                        style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                >
+                  <span
+                    class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                  />
+                  <div
+                    aria-hidden="true"
+                    class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="css-6q0nyr-Svg"
+                      focusable="false"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      width="20"
+                    >
+                      <path
+                        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio "
+        data-css-1m3edv2=""
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              How are you proceeding?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="decisionType_remand"
+              name="decisionType"
+              type="radio"
+              value="remand"
+            />
+            <label
+              class=""
+              for="decisionType_remand"
+            >
+              Remand
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="decisionType_straight_reversal"
+              name="decisionType"
+              type="radio"
+              value="straight_reversal"
+            />
+            <label
+              class=""
+              for="decisionType_straight_reversal"
+            >
+              Straight Reversal
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="decisionType_death_dismissal"
+              name="decisionType"
+              type="radio"
+              value="death_dismissal"
+            />
+            <label
+              class=""
+              for="decisionType_death_dismissal"
+            >
+              Death Dismissal
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio "
+        data-css-1m3edv2=""
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              What type of remand is this?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="remandType_jmr"
+              name="remandType"
+              type="radio"
+              value="jmr"
+            />
+            <label
+              class=""
+              for="remandType_jmr"
+            >
+              Joint Motion for Remand (JMR)
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="remandType_jmpr"
+              name="remandType"
+              type="radio"
+              value="jmpr"
+            />
+            <label
+              class=""
+              for="remandType_jmpr"
+            >
+              Joint Motion for Partial Remand (JMPR)
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="remandType_mdr"
+              name="remandType"
+              type="radio"
+              value="mdr"
+            />
+            <label
+              class=""
+              for="remandType_mdr"
+            >
+              Memorandum Decision on Remand (MDR)
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="decisionDate"
+        >
+          <strong>
+            <span>
+              What is the Court's decision date?
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="decisionDate"
+          max="9999-12-31"
+          name="decisionDate"
+          placeholder="mm/dd/yyyy"
+          type="date"
+          value=""
+        />
+      </div>
+      <legend>
+        <strong>
+          Judgement and mandate date
+        </strong>
+      </legend>
+      <div
+        class="checkbox-wrapper-mandateSame cf-form-checkboxes"
+      >
+        <div
+          class="cf-form-checkbox"
+        >
+          <input
+            aria-label="mandateSame"
+            id="mandateSame"
+            name="mandateSame"
+            type="checkbox"
+          />
+          <label
+            for="mandateSame"
+          >
+            <span
+              class=""
+            >
+              Same as Court's decision date
+            </span>
+             
+          </label>
+        </div>
+      </div>
+      <legend>
+        <strong>
+          Which issues are being addressed by the court?
+        </strong>
+      </legend>
+      <span>
+        <button
+          class="cf-submit cf-btn-link usa-button"
+          data-css-prix5f=""
+          id="button-Unselect-all"
+          type="button"
+        >
+          Unselect all
+        </button>
+      </span>
+      <fieldset
+        class="checkbox-wrapper-issueIds cf-form-checkboxes cf-checkbox-group"
+        data-css-13g2xn1=""
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Please unselect any tasks you would like to remove:
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="1"
+            name="1"
+            type="checkbox"
+          />
+          <label
+            for="1"
+          >
+            Tinnitus, Left Ear
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="2"
+            name="2"
+            type="checkbox"
+          />
+          <label
+            for="2"
+          >
+            Right Knee
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="3"
+            name="3"
+            type="checkbox"
+          />
+          <label
+            for="3"
+          >
+            Right Knee
+          </label>
+        </div>
+      </fieldset>
+      <div
+        class="cf-form-textarea"
+      >
+        <label
+          class="question-label"
+          for="instructions"
+        >
+          <strong>
+            <span>
+              Provide context and instructions for this action
+            </span>
+          </strong>
+        </label>
+        <textarea
+          id="instructions"
+          name="instructions"
+        />
+      </div>
+    </section>
+    <div
+      class="controls cf-app-segment"
+    >
+      <span>
+        <button
+          class="cf-right-side usa-button"
+          id="submit-submit"
+          type="submit"
+        >
+          Submit
+        </button>
+      </span>
+      <span>
+        <button
+          class="cf-right-side usa-button-secondary usa-button"
+          id="button-Cancel"
+          style="margin-right: 1rem;"
+          type="button"
+        >
+          Cancel
+        </button>
+      </span>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`EditCavcRemandForm adding new with Remand decision renders correctly with jmr remand type selected 1`] = `
+<div>
+  <form>
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <h1>
+        Add a Court remand
+      </h1>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="docketNumber"
+        >
+          <strong>
+            <span>
+              What is the court docket number?
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="docketNumber"
+          name="docketNumber"
+          type="text"
+          value=""
+        />
+      </div>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio-inline "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Was the appellant represented by an attorney?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="attorney_yes"
+              name="attorney"
+              type="radio"
+              value="yes"
+            />
+            <label
+              class=""
+              for="attorney_yes"
+            >
+              Yes
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="attorney_no"
+              name="attorney"
+              type="radio"
+              value="no"
+            />
+            <label
+              class=""
+              for="attorney_no"
+            >
+              No
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <div
+        class=""
+      >
+        <div
+          class="cf-form-dropdown dropdown-judge"
+        >
+          <label
+            class="question-label"
+            for="judge"
+          >
+            <strong>
+              <span>
+                What is the CAVC judge's name?
+              </span>
+            </strong>
+          </label>
+          <div
+            class="cf-select"
+          >
+            <div
+              class=" css-2b097c-container"
+            >
+              <div
+                class="cf-select__control css-yk16xz-control"
+              >
+                <div
+                  class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                >
+                  <div
+                    class="cf-select__single-value css-1uccc91-singleValue"
+                  >
+                    Panel
+                  </div>
+                  <div
+                    class="css-81nyic-Input"
+                  >
+                    <div
+                      class="cf-select__input"
+                      style="display: inline-block;"
+                    >
+                      <input
+                        aria-autocomplete="list"
+                        autocapitalize="none"
+                        autocomplete="off"
+                        autocorrect="off"
+                        id="judge"
+                        spellcheck="false"
+                        style="box-sizing: content-box; width: 2px; border: 0px; opacity: 0; outline: 0; padding: 0px;"
+                        tabindex="0"
+                        type="text"
+                        value=""
+                      />
+                      <div
+                        style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                >
+                  <span
+                    class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                  />
+                  <div
+                    aria-hidden="true"
+                    class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="css-6q0nyr-Svg"
+                      focusable="false"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      width="20"
+                    >
+                      <path
+                        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio "
+        data-css-1m3edv2=""
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              How are you proceeding?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="decisionType_remand"
+              name="decisionType"
+              type="radio"
+              value="remand"
+            />
+            <label
+              class=""
+              for="decisionType_remand"
+            >
+              Remand
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="decisionType_straight_reversal"
+              name="decisionType"
+              type="radio"
+              value="straight_reversal"
+            />
+            <label
+              class=""
+              for="decisionType_straight_reversal"
+            >
+              Straight Reversal
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="decisionType_death_dismissal"
+              name="decisionType"
+              type="radio"
+              value="death_dismissal"
+            />
+            <label
+              class=""
+              for="decisionType_death_dismissal"
+            >
+              Death Dismissal
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio "
+        data-css-1m3edv2=""
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              What type of remand is this?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="remandType_jmr"
+              name="remandType"
+              type="radio"
+              value="jmr"
+            />
+            <label
+              class=""
+              for="remandType_jmr"
+            >
+              Joint Motion for Remand (JMR)
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="remandType_jmpr"
+              name="remandType"
+              type="radio"
+              value="jmpr"
+            />
+            <label
+              class=""
+              for="remandType_jmpr"
+            >
+              Joint Motion for Partial Remand (JMPR)
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="remandType_mdr"
+              name="remandType"
+              type="radio"
+              value="mdr"
+            />
+            <label
+              class=""
+              for="remandType_mdr"
+            >
+              Memorandum Decision on Remand (MDR)
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="decisionDate"
+        >
+          <strong>
+            <span>
+              What is the Court's decision date?
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="decisionDate"
+          max="9999-12-31"
+          name="decisionDate"
+          placeholder="mm/dd/yyyy"
+          type="date"
+          value=""
+        />
+      </div>
+      <legend>
+        <strong>
+          Judgement and mandate date
+        </strong>
+      </legend>
+      <div
+        class="checkbox-wrapper-mandateSame cf-form-checkboxes"
+      >
+        <div
+          class="cf-form-checkbox"
+        >
+          <input
+            aria-label="mandateSame"
+            id="mandateSame"
+            name="mandateSame"
+            type="checkbox"
+          />
+          <label
+            for="mandateSame"
+          >
+            <span
+              class=""
+            >
+              Same as Court's decision date
+            </span>
+             
+          </label>
+        </div>
+      </div>
+      <legend>
+        <strong>
+          Which issues are being addressed by the court?
+        </strong>
+      </legend>
+      <span>
+        <button
+          class="cf-submit cf-btn-link usa-button"
+          data-css-prix5f=""
+          id="button-Unselect-all"
+          type="button"
+        >
+          Unselect all
+        </button>
+      </span>
+      <fieldset
+        class="checkbox-wrapper-issueIds cf-form-checkboxes cf-checkbox-group"
+        data-css-13g2xn1=""
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Please unselect any tasks you would like to remove:
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="1"
+            name="1"
+            type="checkbox"
+          />
+          <label
+            for="1"
+          >
+            Tinnitus, Left Ear
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="2"
+            name="2"
+            type="checkbox"
+          />
+          <label
+            for="2"
+          >
+            Right Knee
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="3"
+            name="3"
+            type="checkbox"
+          />
+          <label
+            for="3"
+          >
+            Right Knee
+          </label>
+        </div>
+      </fieldset>
+      <div
+        class="cf-form-textarea"
+      >
+        <label
+          class="question-label"
+          for="instructions"
+        >
+          <strong>
+            <span>
+              Provide context and instructions for this action
+            </span>
+          </strong>
+        </label>
+        <textarea
+          id="instructions"
+          name="instructions"
+        />
+      </div>
+    </section>
+    <div
+      class="controls cf-app-segment"
+    >
+      <span>
+        <button
+          class="cf-right-side usa-button"
+          id="submit-submit"
+          type="submit"
+        >
+          Submit
+        </button>
+      </span>
+      <span>
+        <button
+          class="cf-right-side usa-button-secondary usa-button"
+          id="button-Cancel"
+          style="margin-right: 1rem;"
+          type="button"
+        >
+          Cancel
+        </button>
+      </span>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`EditCavcRemandForm adding new with Remand decision renders correctly with mdr remand type selected 1`] = `
+<div>
+  <form>
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <h1>
+        Add a Court remand
+      </h1>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="docketNumber"
+        >
+          <strong>
+            <span>
+              What is the court docket number?
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="docketNumber"
+          name="docketNumber"
+          type="text"
+          value=""
+        />
+      </div>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio-inline "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Was the appellant represented by an attorney?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="attorney_yes"
+              name="attorney"
+              type="radio"
+              value="yes"
+            />
+            <label
+              class=""
+              for="attorney_yes"
+            >
+              Yes
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="attorney_no"
+              name="attorney"
+              type="radio"
+              value="no"
+            />
+            <label
+              class=""
+              for="attorney_no"
+            >
+              No
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <div
+        class=""
+      >
+        <div
+          class="cf-form-dropdown dropdown-judge"
+        >
+          <label
+            class="question-label"
+            for="judge"
+          >
+            <strong>
+              <span>
+                What is the CAVC judge's name?
+              </span>
+            </strong>
+          </label>
+          <div
+            class="cf-select"
+          >
+            <div
+              class=" css-2b097c-container"
+            >
+              <div
+                class="cf-select__control css-yk16xz-control"
+              >
+                <div
+                  class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                >
+                  <div
+                    class="cf-select__single-value css-1uccc91-singleValue"
+                  >
+                    Panel
+                  </div>
+                  <div
+                    class="css-81nyic-Input"
+                  >
+                    <div
+                      class="cf-select__input"
+                      style="display: inline-block;"
+                    >
+                      <input
+                        aria-autocomplete="list"
+                        autocapitalize="none"
+                        autocomplete="off"
+                        autocorrect="off"
+                        id="judge"
+                        spellcheck="false"
+                        style="box-sizing: content-box; width: 2px; border: 0px; opacity: 0; outline: 0; padding: 0px;"
+                        tabindex="0"
+                        type="text"
+                        value=""
+                      />
+                      <div
+                        style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                >
+                  <span
+                    class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                  />
+                  <div
+                    aria-hidden="true"
+                    class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="css-6q0nyr-Svg"
+                      focusable="false"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      width="20"
+                    >
+                      <path
+                        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio "
+        data-css-1m3edv2=""
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              How are you proceeding?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="decisionType_remand"
+              name="decisionType"
+              type="radio"
+              value="remand"
+            />
+            <label
+              class=""
+              for="decisionType_remand"
+            >
+              Remand
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="decisionType_straight_reversal"
+              name="decisionType"
+              type="radio"
+              value="straight_reversal"
+            />
+            <label
+              class=""
+              for="decisionType_straight_reversal"
+            >
+              Straight Reversal
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="decisionType_death_dismissal"
+              name="decisionType"
+              type="radio"
+              value="death_dismissal"
+            />
+            <label
+              class=""
+              for="decisionType_death_dismissal"
+            >
+              Death Dismissal
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio "
+        data-css-1m3edv2=""
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              What type of remand is this?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="remandType_jmr"
+              name="remandType"
+              type="radio"
+              value="jmr"
+            />
+            <label
+              class=""
+              for="remandType_jmr"
+            >
+              Joint Motion for Remand (JMR)
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="remandType_jmpr"
+              name="remandType"
+              type="radio"
+              value="jmpr"
+            />
+            <label
+              class=""
+              for="remandType_jmpr"
+            >
+              Joint Motion for Partial Remand (JMPR)
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="remandType_mdr"
+              name="remandType"
+              type="radio"
+              value="mdr"
+            />
+            <label
+              class=""
+              for="remandType_mdr"
+            >
+              Memorandum Decision on Remand (MDR)
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="decisionDate"
+        >
+          <strong>
+            <span>
+              What is the Court's decision date?
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="decisionDate"
+          max="9999-12-31"
+          name="decisionDate"
+          placeholder="mm/dd/yyyy"
+          type="date"
+          value=""
+        />
+      </div>
+      <div
+        class="usa-alert usa-alert-info usa-alert-slim"
+        data-css-1umdg7m=""
+        role="alert"
+      >
+        <div
+          class="usa-alert-body"
+        >
+          <div
+            class="usa-alert-text"
+          >
+            Choosing MDR will set a 90-day hold on this case starting from the Court's decision date listed above. The hold is to wait for the Court's judgement and mandate dates. This remand case will be accessible in your organization's Assigned tab and will return to the team's Unassigned tab when the 90 days are over or the hold is manually ended, at which point the judgement and mandate dates can be entered.
+          </div>
+        </div>
+      </div>
+      <legend>
+        <strong>
+          Which issues are being addressed by the court?
+        </strong>
+      </legend>
+      <span>
+        <button
+          class="cf-submit cf-btn-link usa-button"
+          data-css-prix5f=""
+          id="button-Unselect-all"
+          type="button"
+        >
+          Unselect all
+        </button>
+      </span>
+      <fieldset
+        class="checkbox-wrapper-issueIds cf-form-checkboxes cf-checkbox-group"
+        data-css-13g2xn1=""
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Please unselect any tasks you would like to remove:
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="1"
+            name="1"
+            type="checkbox"
+          />
+          <label
+            for="1"
+          >
+            Tinnitus, Left Ear
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="2"
+            name="2"
+            type="checkbox"
+          />
+          <label
+            for="2"
+          >
+            Right Knee
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="3"
+            name="3"
+            type="checkbox"
+          />
+          <label
+            for="3"
+          >
+            Right Knee
+          </label>
+        </div>
+      </fieldset>
+      <legend>
+        <strong>
+          Notice of Appeal to the Federal Circuit
+        </strong>
+      </legend>
+      <div
+        class="checkbox-wrapper-federalCircuit cf-form-checkboxes"
+      >
+        <div
+          class="cf-form-checkbox"
+        >
+          <input
+            aria-label="federalCircuit"
+            id="federalCircuit"
+            name="federalCircuit"
+            type="checkbox"
+          />
+          <label
+            for="federalCircuit"
+          >
+            <span
+              class=""
+            >
+              Yes, this case has been appealed to the Federal Circuit
+            </span>
+             
+          </label>
+        </div>
+      </div>
+      <div
+        class="cf-form-textarea"
+      >
+        <label
+          class="question-label"
+          for="instructions"
+        >
+          <strong>
+            <span>
+              Provide context and instructions for this action
+            </span>
+          </strong>
+        </label>
+        <textarea
+          id="instructions"
+          name="instructions"
+        />
+      </div>
+    </section>
+    <div
+      class="controls cf-app-segment"
+    >
+      <span>
+        <button
+          class="cf-right-side usa-button"
+          id="submit-submit"
+          type="submit"
+        >
+          Submit
+        </button>
+      </span>
+      <span>
+        <button
+          class="cf-right-side usa-button-secondary usa-button"
+          id="button-Cancel"
+          style="margin-right: 1rem;"
+          type="button"
+        >
+          Cancel
+        </button>
+      </span>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`EditCavcRemandForm adding new with Reversal decision renders correctly when judgement/mandate dates provided set to no 1`] = `
+<div>
+  <form>
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <h1>
+        Add a Court remand
+      </h1>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="docketNumber"
+        >
+          <strong>
+            <span>
+              What is the court docket number?
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="docketNumber"
+          name="docketNumber"
+          type="text"
+          value=""
+        />
+      </div>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio-inline "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Was the appellant represented by an attorney?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="attorney_yes"
+              name="attorney"
+              type="radio"
+              value="yes"
+            />
+            <label
+              class=""
+              for="attorney_yes"
+            >
+              Yes
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="attorney_no"
+              name="attorney"
+              type="radio"
+              value="no"
+            />
+            <label
+              class=""
+              for="attorney_no"
+            >
+              No
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <div
+        class=""
+      >
+        <div
+          class="cf-form-dropdown dropdown-judge"
+        >
+          <label
+            class="question-label"
+            for="judge"
+          >
+            <strong>
+              <span>
+                What is the CAVC judge's name?
+              </span>
+            </strong>
+          </label>
+          <div
+            class="cf-select"
+          >
+            <div
+              class=" css-2b097c-container"
+            >
+              <div
+                class="cf-select__control css-yk16xz-control"
+              >
+                <div
+                  class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                >
+                  <div
+                    class="cf-select__single-value css-1uccc91-singleValue"
+                  >
+                    Panel
+                  </div>
+                  <div
+                    class="css-81nyic-Input"
+                  >
+                    <div
+                      class="cf-select__input"
+                      style="display: inline-block;"
+                    >
+                      <input
+                        aria-autocomplete="list"
+                        autocapitalize="none"
+                        autocomplete="off"
+                        autocorrect="off"
+                        id="judge"
+                        spellcheck="false"
+                        style="box-sizing: content-box; width: 2px; border: 0px; opacity: 0; outline: 0; padding: 0px;"
+                        tabindex="0"
+                        type="text"
+                        value=""
+                      />
+                      <div
+                        style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                >
+                  <span
+                    class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                  />
+                  <div
+                    aria-hidden="true"
+                    class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="css-6q0nyr-Svg"
+                      focusable="false"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      width="20"
+                    >
+                      <path
+                        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio "
+        data-css-1m3edv2=""
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              How are you proceeding?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="decisionType_remand"
+              name="decisionType"
+              type="radio"
+              value="remand"
+            />
+            <label
+              class=""
+              for="decisionType_remand"
+            >
+              Remand
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="decisionType_straight_reversal"
+              name="decisionType"
+              type="radio"
+              value="straight_reversal"
+            />
+            <label
+              class=""
+              for="decisionType_straight_reversal"
+            >
+              Straight Reversal
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="decisionType_death_dismissal"
+              name="decisionType"
+              type="radio"
+              value="death_dismissal"
+            />
+            <label
+              class=""
+              for="decisionType_death_dismissal"
+            >
+              Death Dismissal
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio-inline "
+        data-css-1m3edv2=""
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Are judgement and mandate dates provided?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="remandDatesProvided_yes"
+              name="remandDatesProvided"
+              type="radio"
+              value="yes"
+            />
+            <label
+              class=""
+              for="remandDatesProvided_yes"
+            >
+              Yes
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="remandDatesProvided_no"
+              name="remandDatesProvided"
+              type="radio"
+              value="no"
+            />
+            <label
+              class=""
+              for="remandDatesProvided_no"
+            >
+              No
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="decisionDate"
+        >
+          <strong>
+            <span>
+              What is the Court's decision date?
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="decisionDate"
+          max="9999-12-31"
+          name="decisionDate"
+          placeholder="mm/dd/yyyy"
+          type="date"
+          value=""
+        />
+      </div>
+      <div
+        class="usa-alert usa-alert-info usa-alert-slim"
+        data-css-1umdg7m=""
+        role="alert"
+      >
+        <div
+          class="usa-alert-body"
+        >
+          <div
+            class="usa-alert-text"
+          >
+            This task will be put on hold for 90 days to wait for the Court's judgement and mandate dates. This case will be accessible in the Assigned tab and will return to the team's Unassigned tab when the 90 days has passed.
+          </div>
+        </div>
+      </div>
+      <legend>
+        <strong>
+          Which issues are being addressed by the court?
+        </strong>
+      </legend>
+      <span>
+        <button
+          class="cf-submit cf-btn-link usa-button"
+          data-css-prix5f=""
+          id="button-Unselect-all"
+          type="button"
+        >
+          Unselect all
+        </button>
+      </span>
+      <fieldset
+        class="checkbox-wrapper-issueIds cf-form-checkboxes cf-checkbox-group"
+        data-css-13g2xn1=""
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Please unselect any tasks you would like to remove:
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="1"
+            name="1"
+            type="checkbox"
+          />
+          <label
+            for="1"
+          >
+            Tinnitus, Left Ear
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="2"
+            name="2"
+            type="checkbox"
+          />
+          <label
+            for="2"
+          >
+            Right Knee
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="3"
+            name="3"
+            type="checkbox"
+          />
+          <label
+            for="3"
+          >
+            Right Knee
+          </label>
+        </div>
+      </fieldset>
+      <div
+        class="cf-form-textarea"
+      >
+        <label
+          class="question-label"
+          for="instructions"
+        >
+          <strong>
+            <span>
+              Provide context and instructions for this action
+            </span>
+          </strong>
+        </label>
+        <textarea
+          id="instructions"
+          name="instructions"
+        />
+      </div>
+    </section>
+    <div
+      class="controls cf-app-segment"
+    >
+      <span>
+        <button
+          class="cf-right-side usa-button"
+          id="submit-submit"
+          type="submit"
+        >
+          Submit
+        </button>
+      </span>
+      <span>
+        <button
+          class="cf-right-side usa-button-secondary usa-button"
+          id="button-Cancel"
+          style="margin-right: 1rem;"
+          type="button"
+        >
+          Cancel
+        </button>
+      </span>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`EditCavcRemandForm adding new with Reversal decision renders correctly when judgement/mandate dates provided set to yes 1`] = `
+<div>
+  <form>
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <h1>
+        Add a Court remand
+      </h1>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="docketNumber"
+        >
+          <strong>
+            <span>
+              What is the court docket number?
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="docketNumber"
+          name="docketNumber"
+          type="text"
+          value=""
+        />
+      </div>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio-inline "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Was the appellant represented by an attorney?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="attorney_yes"
+              name="attorney"
+              type="radio"
+              value="yes"
+            />
+            <label
+              class=""
+              for="attorney_yes"
+            >
+              Yes
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="attorney_no"
+              name="attorney"
+              type="radio"
+              value="no"
+            />
+            <label
+              class=""
+              for="attorney_no"
+            >
+              No
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <div
+        class=""
+      >
+        <div
+          class="cf-form-dropdown dropdown-judge"
+        >
+          <label
+            class="question-label"
+            for="judge"
+          >
+            <strong>
+              <span>
+                What is the CAVC judge's name?
+              </span>
+            </strong>
+          </label>
+          <div
+            class="cf-select"
+          >
+            <div
+              class=" css-2b097c-container"
+            >
+              <div
+                class="cf-select__control css-yk16xz-control"
+              >
+                <div
+                  class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                >
+                  <div
+                    class="cf-select__single-value css-1uccc91-singleValue"
+                  >
+                    Panel
+                  </div>
+                  <div
+                    class="css-81nyic-Input"
+                  >
+                    <div
+                      class="cf-select__input"
+                      style="display: inline-block;"
+                    >
+                      <input
+                        aria-autocomplete="list"
+                        autocapitalize="none"
+                        autocomplete="off"
+                        autocorrect="off"
+                        id="judge"
+                        spellcheck="false"
+                        style="box-sizing: content-box; width: 2px; border: 0px; opacity: 0; outline: 0; padding: 0px;"
+                        tabindex="0"
+                        type="text"
+                        value=""
+                      />
+                      <div
+                        style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                >
+                  <span
+                    class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                  />
+                  <div
+                    aria-hidden="true"
+                    class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="css-6q0nyr-Svg"
+                      focusable="false"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      width="20"
+                    >
+                      <path
+                        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio "
+        data-css-1m3edv2=""
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              How are you proceeding?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="decisionType_remand"
+              name="decisionType"
+              type="radio"
+              value="remand"
+            />
+            <label
+              class=""
+              for="decisionType_remand"
+            >
+              Remand
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="decisionType_straight_reversal"
+              name="decisionType"
+              type="radio"
+              value="straight_reversal"
+            />
+            <label
+              class=""
+              for="decisionType_straight_reversal"
+            >
+              Straight Reversal
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="decisionType_death_dismissal"
+              name="decisionType"
+              type="radio"
+              value="death_dismissal"
+            />
+            <label
+              class=""
+              for="decisionType_death_dismissal"
+            >
+              Death Dismissal
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio-inline "
+        data-css-1m3edv2=""
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Are judgement and mandate dates provided?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="remandDatesProvided_yes"
+              name="remandDatesProvided"
+              type="radio"
+              value="yes"
+            />
+            <label
+              class=""
+              for="remandDatesProvided_yes"
+            >
+              Yes
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="remandDatesProvided_no"
+              name="remandDatesProvided"
+              type="radio"
+              value="no"
+            />
+            <label
+              class=""
+              for="remandDatesProvided_no"
+            >
+              No
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="decisionDate"
+        >
+          <strong>
+            <span>
+              What is the Court's decision date?
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="decisionDate"
+          max="9999-12-31"
+          name="decisionDate"
+          placeholder="mm/dd/yyyy"
+          type="date"
+          value=""
+        />
+      </div>
+      <legend>
+        <strong>
+          Judgement and mandate date
+        </strong>
+      </legend>
+      <div
+        class="checkbox-wrapper-mandateSame cf-form-checkboxes"
+      >
+        <div
+          class="cf-form-checkbox"
+        >
+          <input
+            aria-label="mandateSame"
+            id="mandateSame"
+            name="mandateSame"
+            type="checkbox"
+          />
+          <label
+            for="mandateSame"
+          >
+            <span
+              class=""
+            >
+              Same as Court's decision date
+            </span>
+             
+          </label>
+        </div>
+      </div>
+      <legend>
+        <strong>
+          Which issues are being addressed by the court?
+        </strong>
+      </legend>
+      <span>
+        <button
+          class="cf-submit cf-btn-link usa-button"
+          data-css-prix5f=""
+          id="button-Unselect-all"
+          type="button"
+        >
+          Unselect all
+        </button>
+      </span>
+      <fieldset
+        class="checkbox-wrapper-issueIds cf-form-checkboxes cf-checkbox-group"
+        data-css-13g2xn1=""
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Please unselect any tasks you would like to remove:
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="1"
+            name="1"
+            type="checkbox"
+          />
+          <label
+            for="1"
+          >
+            Tinnitus, Left Ear
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="2"
+            name="2"
+            type="checkbox"
+          />
+          <label
+            for="2"
+          >
+            Right Knee
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="3"
+            name="3"
+            type="checkbox"
+          />
+          <label
+            for="3"
+          >
+            Right Knee
+          </label>
+        </div>
+      </fieldset>
+      <div
+        class="cf-form-textarea"
+      >
+        <label
+          class="question-label"
+          for="instructions"
+        >
+          <strong>
+            <span>
+              Provide context and instructions for this action
+            </span>
+          </strong>
+        </label>
+        <textarea
+          id="instructions"
+          name="instructions"
+        />
+      </div>
+    </section>
+    <div
+      class="controls cf-app-segment"
+    >
+      <span>
+        <button
+          class="cf-right-side usa-button"
+          id="submit-submit"
+          type="submit"
+        >
+          Submit
+        </button>
+      </span>
+      <span>
+        <button
+          class="cf-right-side usa-button-secondary usa-button"
+          id="button-Cancel"
+          style="margin-right: 1rem;"
+          type="button"
+        >
+          Cancel
+        </button>
+      </span>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`EditCavcRemandForm editing existing all feature toggles enabled renders correctly 1`] = `
+<div>
+  <form>
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <h1>
+        Edit a Court remand
+      </h1>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="docketNumber"
+        >
+          <strong>
+            <span>
+              What is the court docket number?
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="docketNumber"
+          name="docketNumber"
+          type="text"
+          value=""
+        />
+      </div>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio-inline "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Was the appellant represented by an attorney?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="attorney_yes"
+              name="attorney"
+              type="radio"
+              value="yes"
+            />
+            <label
+              class=""
+              for="attorney_yes"
+            >
+              Yes
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="attorney_no"
+              name="attorney"
+              type="radio"
+              value="no"
+            />
+            <label
+              class=""
+              for="attorney_no"
+            >
+              No
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <div
+        class=""
+      >
+        <div
+          class="cf-form-dropdown dropdown-judge"
+        >
+          <label
+            class="question-label"
+            for="judge"
+          >
+            <strong>
+              <span>
+                What is the CAVC judge's name?
+              </span>
+            </strong>
+          </label>
+          <div
+            class="cf-select"
+          >
+            <div
+              class=" css-2b097c-container"
+            >
+              <div
+                class="cf-select__control css-yk16xz-control"
+              >
+                <div
+                  class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                >
+                  <div
+                    class="cf-select__single-value css-1uccc91-singleValue"
+                  >
+                    Panel
+                  </div>
+                  <div
+                    class="css-81nyic-Input"
+                  >
+                    <div
+                      class="cf-select__input"
+                      style="display: inline-block;"
+                    >
+                      <input
+                        aria-autocomplete="list"
+                        autocapitalize="none"
+                        autocomplete="off"
+                        autocorrect="off"
+                        id="judge"
+                        spellcheck="false"
+                        style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                        tabindex="0"
+                        type="text"
+                        value=""
+                      />
+                      <div
+                        style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                >
+                  <span
+                    class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                  />
+                  <div
+                    aria-hidden="true"
+                    class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="css-6q0nyr-Svg"
+                      focusable="false"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      width="20"
+                    >
+                      <path
+                        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="decisionTypeDisplay"
+        >
+          <strong>
+            <span>
+              How are you proceeding?
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="decisionTypeDisplay"
+          name="decisionTypeDisplay"
+          readonly=""
+          type="text"
+          value="Remand"
+        />
+      </div>
+      <input
+        name="decisionType"
+        type="hidden"
+        value="remand"
+      />
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="remandTypeDisplay"
+        >
+          <strong>
+            <span>
+              What type of remand is this?
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="remandTypeDisplay"
+          name="remandTypeDisplay"
+          readonly=""
+          type="text"
+          value="Memorandum Decision on Remand (MDR)"
+        />
+      </div>
+      <input
+        name="remandType"
+        type="hidden"
+        value="mdr"
+      />
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="decisionDate"
+        >
+          <strong>
+            <span>
+              What is the Court's decision date?
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="decisionDate"
+          max="9999-12-31"
+          name="decisionDate"
+          placeholder="mm/dd/yyyy"
+          type="date"
+          value=""
+        />
+      </div>
+      <div
+        class="usa-alert usa-alert-info usa-alert-slim"
+        data-css-1umdg7m=""
+        role="alert"
+      >
+        <div
+          class="usa-alert-body"
+        >
+          <div
+            class="usa-alert-text"
+          >
+            Choosing MDR will set a 90-day hold on this case starting from the Court's decision date listed above. The hold is to wait for the Court's judgement and mandate dates. This remand case will be accessible in your organization's Assigned tab and will return to the team's Unassigned tab when the 90 days are over or the hold is manually ended, at which point the judgement and mandate dates can be entered.
+          </div>
+        </div>
+      </div>
+      <legend>
+        <strong>
+          Which issues are being addressed by the court?
+        </strong>
+      </legend>
+      <span>
+        <button
+          class="cf-submit cf-btn-link usa-button"
+          data-css-prix5f=""
+          id="button-Unselect-all"
+          type="button"
+        >
+          Unselect all
+        </button>
+      </span>
+      <fieldset
+        class="checkbox-wrapper-issueIds cf-form-checkboxes cf-checkbox-group"
+        data-css-13g2xn1=""
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Please unselect any tasks you would like to remove:
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="1"
+            name="1"
+            type="checkbox"
+          />
+          <label
+            for="1"
+          >
+            Tinnitus, Left Ear
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="2"
+            name="2"
+            type="checkbox"
+          />
+          <label
+            for="2"
+          >
+            Right Knee
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="3"
+            name="3"
+            type="checkbox"
+          />
+          <label
+            for="3"
+          >
+            Right Knee
+          </label>
+        </div>
+      </fieldset>
+      <legend>
+        <strong>
+          Notice of Appeal to the Federal Circuit
+        </strong>
+      </legend>
+      <div
+        class="checkbox-wrapper-federalCircuit cf-form-checkboxes"
+      >
+        <div
+          class="cf-form-checkbox"
+        >
+          <input
+            aria-label="federalCircuit"
+            id="federalCircuit"
+            name="federalCircuit"
+            type="checkbox"
+          />
+          <label
+            for="federalCircuit"
+          >
+            <span
+              class=""
+            >
+              Yes, this case has been appealed to the Federal Circuit
+            </span>
+             
+          </label>
+        </div>
+      </div>
+      <div
+        class="cf-form-textarea"
+      >
+        <label
+          class="question-label"
+          for="instructions"
+        >
+          <strong>
+            <span>
+              Provide context and instructions for this action
+            </span>
+          </strong>
+        </label>
+        <textarea
+          id="instructions"
+          name="instructions"
+        />
+      </div>
+    </section>
+    <div
+      class="controls cf-app-segment"
+    >
+      <span>
+        <button
+          class="cf-right-side usa-button"
+          id="submit-submit"
+          type="submit"
+        >
+          Submit
+        </button>
+      </span>
+      <span>
+        <button
+          class="cf-right-side usa-button-secondary usa-button"
+          id="button-Cancel"
+          style="margin-right: 1rem;"
+          type="button"
+        >
+          Cancel
+        </button>
+      </span>
+    </div>
+  </form>
+</div>
+`;
