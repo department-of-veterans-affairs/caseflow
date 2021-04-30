@@ -428,8 +428,14 @@ RSpec.feature "Case details", :all_dbs do
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
       let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
 
-      before { FeatureToggle.disable!(:poa_refresh) }
-      after { FeatureToggle.enable!(:poa_refresh) }
+      before do
+        FeatureToggle.disable!(:poa_refresh)
+        FeatureToggle.disable!(:poa_sync_date)
+      end
+      after do
+        FeatureToggle.enable!(:poa_refresh)
+        FeatureToggle.enable!(:poa_sync_date)
+      end
 
       scenario "button isn't on the page" do
         visit "/queue/appeals/#{appeal.vacols_id}"
@@ -448,8 +454,14 @@ RSpec.feature "Case details", :all_dbs do
         )
       end
 
-      before { FeatureToggle.enable!(:poa_refresh) }
-      after { FeatureToggle.disable!(:poa_refresh) }
+      before do
+        FeatureToggle.enable!(:poa_refresh)
+        FeatureToggle.enable!(:poa_sync_date)
+      end
+      after do
+        FeatureToggle.disable!(:poa_refresh)
+        FeatureToggle.disable!(:poa_sync_date)
+      end
 
       scenario "button is on the page and is in cooldown" do
         visit "/queue/appeals/#{appeal.uuid}"
@@ -494,8 +506,12 @@ RSpec.feature "Case details", :all_dbs do
 
       before do
         FeatureToggle.enable!(:poa_refresh)
+        FeatureToggle.enable!(:poa_sync_date)
       end
-      after { FeatureToggle.disable!(:poa_refresh) }
+      after do
+        FeatureToggle.disable!(:poa_refresh)
+        FeatureToggle.disable!(:poa_sync_date)
+      end
 
       scenario "attempts to refresh with no BGS data" do
         BgsPowerOfAttorney.set_callback(:save, :before, :update_cached_attributes!)

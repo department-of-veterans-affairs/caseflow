@@ -35,7 +35,6 @@ export const PoaRefresh = ({ powerOfAttorney, appealId }) => {
   const lastSyncedCopy = sprintf(COPY.CASE_DETAILS_POA_LAST_SYNC_DATE_COPY, poaSyncInfo);
   const viewPoaRefresh = useSelector((state) => state.ui.featureToggles.poa_sync_date);
 
-
   return <React.Fragment>
     {viewPoaRefresh &&
     <div {...textStyling}>
@@ -51,7 +50,8 @@ export const PoaRefresh = ({ powerOfAttorney, appealId }) => {
 
 PoaRefresh.propTypes = {
   powerOfAttorney: PropTypes.shape({
-    poa_last_synced_at: PropTypes.string
-  })
-
+    poa_last_synced_at: PropTypes.string,
+    representative_id: PropTypes.number
+  }),
+  appealId: PropTypes.number
 };
