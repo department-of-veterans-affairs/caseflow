@@ -92,7 +92,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
 
       # The bug was that a BvaDispatchTask is created while the QualityReviewTask is open. It should not be created.
-      expect(appeal.tasks.open.where(type: :BvaDispatchTask).count).to eq 0
+      expect(appeal.tasks.open.of_type(:BvaDispatchTask).count).to eq 0
     end
   end
 

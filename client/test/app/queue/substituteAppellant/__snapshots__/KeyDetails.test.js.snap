@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`KeyDetails renders default state correctly 1`] = `
+<div>
+  <section>
+    <h2>
+      Procedural details
+    </h2>
+    <ul
+      class="css-a7zcn1"
+    >
+      <li>
+        <strong>
+          Notice of disagreement received
+        </strong>
+        <span>
+          3/30/2021
+        </span>
+      </li>
+      <li>
+        <strong>
+          Veteran date of death
+        </strong>
+        <span>
+          4/14/2021
+        </span>
+      </li>
+      <li>
+        <strong>
+          Substitution granted by the RO
+        </strong>
+        <span>
+          4/19/2021
+        </span>
+      </li>
+    </ul>
+    <div
+      class="css-2zljw9"
+    >
+      <a
+        href="/queue/appeals/abc123"
+        target="_blank"
+      >
+        View original case details 
+        <i
+          class="fa fa-external-link"
+        />
+      </a>
+    </div>
+  </section>
+</div>
+`;
