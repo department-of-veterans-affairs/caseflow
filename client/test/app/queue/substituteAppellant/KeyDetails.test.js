@@ -23,7 +23,13 @@ describe('KeyDetails', () => {
     );
 
   it('renders default state correctly', () => {
-    const { container } = setup();
+    // Choose a date so snapshot doesn't depend on todays date
+    const aprilThirty = new Date('2021-04-30');
+    const { container } = setup({
+      nodDate: sub(aprilThirty, { days: 30 }),
+      dateOfDeath: sub(aprilThirty, { days: 15 }),
+      substitutionDate: sub(aprilThirty, { days: 10 })
+    });
 
     expect(container).toMatchSnapshot();
   });
