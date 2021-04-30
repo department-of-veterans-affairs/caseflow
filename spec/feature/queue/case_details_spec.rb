@@ -377,6 +377,53 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
 
+    context "POA refresh text isn't shown without feature toggle enabled" do
+      let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
+      let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
+
+      before { FeatureToggle.disable!(:poa_sync_date) }
+      after { FeatureToggle.enable!(:poa_sync_date) }
+
+      scenario "text isn't on the page" do
+        visit "/queue/appeals/#{appeal.vacols_id}"
+        expect(page.has_no_content?(COPY::CASE_DETAILS_POA_LAST_SYNC_DATE_COPY)).to eq(true)
+      end
+    end
+
+    context "POA refresh text is shown with feature toggle enabled" do
+      let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+      let(:appeal) { create(:appeal, veteran: create(:veteran)) }
+      let!(:poa) do
+        create(
+          :bgs_power_of_attorney,
+          :with_name_cached,
+          appeal: appeal
+        )
+      end
+
+      before { FeatureToggle.enable!(:poa_sync_date) }
+      after { FeatureToggle.disable!(:poa_sync_date) }
+
+      scenario "text is on the page" do
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page).to have_content("POA last refreshed on")
+      end
+    end
+
+    context "POA refresh text isn't shown when no POA is found" do
+      let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+      let(:appeal) { create(:appeal, veteran: create(:veteran)) }
+
+      before { FeatureToggle.enable!(:poa_sync_date) }
+      after { FeatureToggle.disable!(:poa_sync_date) }
+
+      scenario "text is not on the page" do
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page.has_no_content?(COPY::CASE_DETAILS_POA_LAST_SYNC_DATE_COPY)).to eq(true)
+      end
+    end
+
     context "veteran records have been merged and Veteran has multiple active phone numbers in SHARE" do
       let!(:appeal) do
         create(

@@ -24,7 +24,7 @@ import CheckboxGroup from 'app/components/CheckboxGroup';
 import Button from 'app/components/Button';
 import StringUtil from 'app/util/StringUtil';
 import DocketSwitchRemoveTaskConfirmationModal from './DocketSwitchRemoveTaskModal';
-import { DocketSwitchAddAdminTaskForm } from './DocketSwitchAddAdminTaskForm';
+import { AddAdminTaskForm } from 'app/queue/colocatedTasks/AddAdminTaskForm/AddAdminTaskForm';
 import tasksByDocketType from 'constants/DOCKET_SWITCH_TASKS_BY_DOCKET_TYPE';
 
 const sectionStyle = css({ marginBottom: '24px' });
@@ -228,7 +228,7 @@ export const DocketSwitchEditTasksForm = ({
             </h3>
             <div>
               {fields.map((item, idx) => (
-                <DocketSwitchAddAdminTaskForm
+                <AddAdminTaskForm
                   key={item.id}
                   item={item}
                   baseName={`newTasks[${idx}]`}

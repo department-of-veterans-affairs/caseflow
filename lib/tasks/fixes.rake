@@ -47,7 +47,7 @@ namespace :fixes do
     # - have no active descendants
     # - have a single child which is an on_hold ScheduleHearingTask with no open descendants
     target_tasks = hearing_tasks.select do |task|
-      task.appeal.tasks.where(type: HearingTask.name).count == 1 &&
+      task.appeal.tasks.of_type(:HearingTask).count == 1 &&
         task.descendants.map(&:active?).exclude?(true) &&
         task.children.count == 1 &&
         task.children.first.type == ScheduleHearingTask.name &&

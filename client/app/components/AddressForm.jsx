@@ -5,8 +5,9 @@ import { Controller } from 'react-hook-form';
 import { STATES } from '../constants/AppConstants';
 import TextField from 'app/components/TextField';
 import SearchableDropdown from 'app/components/SearchableDropdown';
+import { createFilter } from 'react-select';
 
-export const AddressForm = ({ control, register, watch, setValue }) => {
+export const AddressForm = ({ control, register, watch }) => {
   const watchPartyType = watch('partyType');
   const watchState = watch('state');
   const defaultState = useMemo(
@@ -54,12 +55,11 @@ export const AddressForm = ({ control, register, watch, setValue }) => {
               {...rest}
               label="State"
               options={STATES}
-              onChange={(valObj) => {
-                onChange(valObj);
-                setValue('state', valObj?.label);
-              }}
+              filterOption={createFilter({ matchFrom: 'start' })}
+              onChange={(valObj) => onChange(valObj?.value)}
               defaultValue={defaultState}
               strongLabel
+              isClearable
             />
           )}
         />

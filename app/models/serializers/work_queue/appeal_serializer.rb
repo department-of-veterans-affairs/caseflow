@@ -92,6 +92,13 @@ class WorkQueue::AppealSerializer
     appeal.cavc_remand&.source_appeal&.reviewing_judge_name
   end
 
+  attribute :appellant_substitution do |object|
+    if object.appellant_substitution
+      WorkQueue::AppellantSubstitutionSerializer.new(object.appellant_substitution)
+        .serializable_hash[:data][:attributes]
+    end
+  end
+
   attribute :veteran_death_date
 
   attribute :veteran_file_number

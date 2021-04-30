@@ -87,7 +87,7 @@ class DocketSwitch < CaseflowRecord
 
   # We want the granted/denied tasks to be visible on the new stream as well as the old to give user context
   def copy_ds_tasks_to_new_stream
-    new_completed_task = DocketSwitchGrantedTask.find_by(appeal: old_docket_stream, assigned_to_type: "User").dup
+    new_completed_task = DocketSwitchGrantedTask.assigned_to_any_user.find_by(appeal: old_docket_stream).dup
     new_completed_task.assign_attributes(
       appeal_id: new_docket_stream.id,
       parent_id: new_docket_stream.root_task.id,
