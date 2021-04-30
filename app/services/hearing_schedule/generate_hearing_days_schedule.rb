@@ -173,7 +173,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   def allocate_hearing_days(days_to_allocate, hearing_days_per_date, ro_list, available_days, offset)
     days_to_allocate.times do |index|
       # Find the next RO and hearing day using the offset once all hearing days have the same number scheduled
-      available_ro_and_day = if available_days.count { |_k, v| v == hearing_days_per_date } == @available_days.count
+      available_ro_and_day = if available_days.count { |_k, v| v == hearing_days_per_date } == available_days.count
                                get_ro_for_hearing_day(ro_list, index, offset)
                              else
                                get_ro_for_hearing_day(ro_list, index, 0)
@@ -191,6 +191,8 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
       # Increase the lookup table value for this date
       available_days[hearing_day] += 1
+
+      pp "#{ro[:ro_key]} (#{hearing_day} - #{index}): #{check_even_distribution(ro)}"
 
       # Move the selected RO to last and remove if it has no more requests
       ro_list = sort_ro_list(ro_list, true)
@@ -231,7 +233,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   def get_next_available_ro(ro_list, hearing_day)
     ro_list.each_with_index do |ro, index|
       # Calculate the last index
-      last_index = (ro_list.count - 1)
+      last_index = ro_list.count - 1
 
       # Determine how many days have been schedule for this RO on this date
       days_per_date = ro[:allocated_dates].values.count { |key| key == hearing_day }
@@ -248,6 +250,10 @@ class HearingSchedule::GenerateHearingDaysSchedule
       # Break out of the loop as soon as we find an available RO
       return ro
     end
+  end
+
+  def check_even_distribution(ro)
+    ro[:allocated_dates].values.inject(&:merge).values.map(&:count).uniq
   end
 
   # Sort ROs in descending order of the highest ratio of allocated days to rooms and available days
