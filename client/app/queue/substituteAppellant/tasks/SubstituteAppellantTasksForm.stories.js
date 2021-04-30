@@ -4,6 +4,15 @@ import { MemoryRouter } from 'react-router';
 import uuid from 'uuid';
 
 import { SubstituteAppellantTasksForm } from './SubstituteAppellantTasksForm';
+import { sampleEvidenceSubmissionTasks } from 'test/data/queue/substituteAppellant/tasks';
+import { formatTaskData } from 'app/queue/substituteAppellant/tasks/utils';
+
+const allEvidenceSubmissionWindowTasks = sampleEvidenceSubmissionTasks();
+
+console.log('allEvidenceSubmissionWindowTasks', allEvidenceSubmissionWindowTasks);
+const filteredEvidenceSubmissionTasks = formatTaskData(
+  allEvidenceSubmissionWindowTasks
+);
 
 export default {
   title: 'Queue/Substitute Appellant/SubstituteAppellantTasksForm',
@@ -21,6 +30,7 @@ export default {
     nodDate: sub(new Date(), { days: 30 }),
     dateOfDeath: sub(new Date(), { days: 15 }),
     substitutionDate: sub(new Date(), { days: 10 }),
+    tasks: filteredEvidenceSubmissionTasks,
   },
   argTypes: {
     onCancel: { action: 'cancel' },
