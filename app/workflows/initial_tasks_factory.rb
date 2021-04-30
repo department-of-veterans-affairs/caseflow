@@ -36,7 +36,8 @@ class InitialTasksFactory
     distribution_task # ensure distribution_task exists
 
     if @appeal.appellant_substitution?
-      # create tasks based on appellant_substitution form
+      # copy task tree from source appeal
+      # To-do create tasks based on appellant_substitution form
     elsif @appeal.cavc?
       create_cavc_subtasks
     elsif @appeal.evidence_submission_docket?
