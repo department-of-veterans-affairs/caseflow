@@ -168,88 +168,66 @@ describe "SanitizedJsonExporter/Importer" do
     end
   end
 
-  describe "AssocationWrapper#untyped_associations_with User records" do
-    subject { AssocationWrapper.new(target_class).untyped_associations_with(User).fieldnames }
-    context "for Task class" do
-      let(:target_class) { Task }
-      it "returns fieldname associated with User records" do
-        expect(subject).to match_array %w[assigned_by_id cancelled_by_id]
-      end
-    end
-    context "for Hearing class" do
-      let(:target_class) { Hearing }
-      it "returns fieldname associated with User records" do
-        expect(subject).to match_array %w[created_by_id judge_id updated_by_id]
-      end
-    end
-    context "for AppealIntake class" do
-      let(:target_class) { AppealIntake }
-      it "returns fieldname associated with User records" do
-        expect(subject).to match_array %w[user_id]
-      end
-    end
+  describe "SjConfiguration uses of AssocationWrapper" do
+    let(:configuration) { SjConfiguration.new }
+    it "causes SjConfiguration instances to return correct results" do
+      expect(configuration.transform_methods).to include(:random_pin, :obfuscate_sentence, :similar_date)
+      expect(configuration.transform_methods).not_to include(:to_s, :to_i, :instance_methods)
 
-    context "SjConfiguration uses of AssocationWrapper" do
-      let(:configuration) { SjConfiguration.new }
-      it "causes SjConfiguration instances to return correct results" do
-        expect(configuration.transform_methods).to include(:random_pin, :obfuscate_sentence, :similar_date)
-        expect(configuration.transform_methods).not_to include(:to_s, :to_i, :instance_methods)
+      offset_id_fields = {
+        DecisionReview => [],
+        # Veteran => [],
+        AppealIntake => [],
+        JudgeCaseReview => ["task_id"],
+        AttorneyCaseReview => ["task_id"],
+        DecisionDocument => [],
+        Claimant => ["decision_review_id"],
+        Task => %w[parent_id],
+        TaskTimer => ["task_id"],
+        CavcRemand => %w[decision_issue_ids],
+        DecisionIssue => ["decision_review_id"],
+        RequestIssue => %w[contested_decision_issue_id
+                            corrected_by_request_issue_id
+                            decision_review_id
+                            ineligible_due_to_id],
+        RequestDecisionIssue => %w[decision_issue_id request_issue_id],
+        Hearing => %w[hearing_day_id],
+        HearingTaskAssociation => %w[hearing_id hearing_task_id],
+        HearingDay => [],
+        VirtualHearing => ["hearing_id"],
+        OrganizationsUser => []
+      }
+      # pp configuration.offset_id_fields.transform_keys(&:name)
+      expect(configuration.offset_id_fields).to eq offset_id_fields
 
-        offset_id_fields = {
-          DecisionReview => [],
-          # Veteran => [],
-          AppealIntake => [],
-          JudgeCaseReview => ["task_id"],
-          AttorneyCaseReview => ["task_id"],
-          DecisionDocument => [],
-          Claimant => ["decision_review_id"],
-          Task => %w[parent_id],
-          TaskTimer => ["task_id"],
-          CavcRemand => %w[decision_issue_ids],
-          DecisionIssue => ["decision_review_id"],
-          RequestIssue => %w[contested_decision_issue_id
-                             corrected_by_request_issue_id
-                             decision_review_id
-                             ineligible_due_to_id],
-          RequestDecisionIssue => %w[decision_issue_id request_issue_id],
-          Hearing => %w[hearing_day_id],
-          HearingTaskAssociation => %w[hearing_id hearing_task_id],
-          HearingDay => [],
-          VirtualHearing => ["hearing_id"],
-          OrganizationsUser => []
-        }
-        # pp configuration.offset_id_fields.transform_keys(&:name)
-        expect(configuration.offset_id_fields).to eq offset_id_fields
+      reassociate_fields_keys = [:type, "Appeal", "Veteran", "Person", "User", "Organization"]
+      expect(configuration.reassociate_fields.keys).to match_array reassociate_fields_keys
 
-        reassociate_fields_keys = [:type, "Appeal", "Veteran", "Person", "User", "Organization"]
-        expect(configuration.reassociate_fields.keys).to match_array reassociate_fields_keys
+      reassociate_fields_for_polymorphics = {
+        Task => %w[assigned_to_id appeal_id],
+        AppealIntake => ["detail_id"],
+        DecisionDocument => ["appeal_id"]
+      }
+      expect(configuration.reassociate_fields[:type]).to eq(reassociate_fields_for_polymorphics)
 
-        reassociate_fields_for_polymorphics = {
-          Task => %w[assigned_to_id appeal_id],
-          AppealIntake => ["detail_id"],
-          DecisionDocument => ["appeal_id"]
-        }
-        expect(configuration.reassociate_fields[:type]).to eq(reassociate_fields_for_polymorphics)
+      reassociate_fields_for_appeal = {
+        CavcRemand => %w[source_appeal_id remand_appeal_id],
+        Hearing => ["appeal_id"]
+      }
+      expect(configuration.reassociate_fields["Appeal"]).to eq(reassociate_fields_for_appeal)
 
-        reassociate_fields_for_appeal = {
-          CavcRemand => %w[source_appeal_id remand_appeal_id],
-          Hearing => ["appeal_id"]
-        }
-        expect(configuration.reassociate_fields["Appeal"]).to eq(reassociate_fields_for_appeal)
-
-        reassociate_fields_for_user = {
-          AppealIntake => ["user_id"],
-          JudgeCaseReview => %w[judge_id attorney_id],
-          AttorneyCaseReview => %w[reviewing_judge_id attorney_id],
-          Task => %w[assigned_by_id cancelled_by_id],
-          CavcRemand => %w[updated_by_id created_by_id],
-          Hearing => %w[updated_by_id judge_id created_by_id],
-          HearingDay => %w[updated_by_id judge_id created_by_id],
-          VirtualHearing => %w[updated_by_id created_by_id],
-          OrganizationsUser => ["user_id"]
-        }
-        expect(configuration.reassociate_fields["User"]).to eq(reassociate_fields_for_user)
-      end
+      reassociate_fields_for_user = {
+        AppealIntake => ["user_id"],
+        JudgeCaseReview => %w[judge_id attorney_id],
+        AttorneyCaseReview => %w[reviewing_judge_id attorney_id],
+        Task => %w[assigned_by_id cancelled_by_id],
+        CavcRemand => %w[updated_by_id created_by_id],
+        Hearing => %w[updated_by_id judge_id created_by_id],
+        HearingDay => %w[updated_by_id judge_id created_by_id],
+        VirtualHearing => %w[updated_by_id created_by_id],
+        OrganizationsUser => ["user_id"]
+      }
+      expect(configuration.reassociate_fields["User"]).to eq(reassociate_fields_for_user)
     end
   end
 
