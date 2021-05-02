@@ -1,0 +1,47 @@
+digraph subclasses {
+	graph [bb="0,0,505.47,252",
+		rankdir=LR,
+		splines=line
+	];
+	node [label="\N"];
+	"ETL::DecisionReview"	[color=blue,
+		fontcolor=blue,
+		label="ETL::DecisionReview",
+		shape=record,
+		style=dashed,
+		];
+	"ETL::DecisionReview::Appeal"	[
+		label="ETL::DecisionReview::Appeal",
+		];
+	"ETL::DecisionReview" -> "ETL::DecisionReview::Appeal"	[color=blue,
+		style=dotted];
+	"ETL::DecisionReview::HigherLevelReview"	[
+		label="ETL::DecisionReview::HigherLevelReview",
+		];
+	"ETL::DecisionReview" -> "ETL::DecisionReview::HigherLevelReview"	[color=blue,
+		style=dotted];
+	"ETL::DecisionReview::SupplementalClaim"	[
+		label="ETL::DecisionReview::SupplementalClaim",
+		];
+	"ETL::DecisionReview" -> "ETL::DecisionReview::SupplementalClaim"	[color=blue,
+		style=dotted];
+	"ETL::HearingRecord"	[color=blue,
+		fillcolor="#66ccff",
+		fontcolor=blue,
+		label="ETL::HearingRecord",
+		shape=record,
+		style=dashed,
+		];
+	"ETL::Hearing"	[fillcolor="#66ccff",
+		label="ETL::Hearing",
+		style=filled,
+		];
+	"ETL::HearingRecord" -> "ETL::Hearing"	[color=blue,
+		style=dotted];
+	"ETL::LegacyHearing"	[fillcolor="#66ccff",
+		label="ETL::LegacyHearing",
+		style=filled,
+		];
+	"ETL::HearingRecord" -> "ETL::LegacyHearing"	[color=blue,
+		style=dotted];
+}

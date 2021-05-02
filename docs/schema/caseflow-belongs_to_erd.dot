@@ -1,0 +1,755 @@
+digraph belongs_to_erd {
+	graph [bb="0,0,1795.7,3381",
+		rankdir=LR,
+		splines=line
+	];
+	node [label="\N"];
+	AppealSeries	[
+		label=AppealSeries,
+		];
+	LegacyAppeal	[fillcolor=yellow,
+		label=LegacyAppeal,
+		style=filled,
+		];
+	LegacyAppeal -> AppealSeries	[label=appeal_series,
+		];
+	HearingTask	[fillcolor=green,
+		label=HearingTask,
+		style=filled,
+		];
+	HearingTaskAssociation	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label=HearingTaskAssociation,
+		shape=component,
+		style=filled,
+		];
+	HearingTaskAssociation -> HearingTask	[label=hearing_task,
+		];
+	hearing_type	[color=blue,
+		fontcolor=blue,
+		label="hearing_type|Hearing,\nLegacyHearing",
+		shape=record,
+		style=dotted,
+		];
+	HearingTaskAssociation -> hearing_type	[label=hearing,
+		];
+	SchedulePeriod	[color=blue,
+		fillcolor=cyan,
+		fontcolor=blue,
+		label="SchedulePeriod\n  (assoc with User)",
+		shape=record,
+		style=filled,
+		];
+	JudgeSchedulePeriod	[fillcolor=cyan,
+		label="JudgeSchedulePeriod\n  (assoc with User)",
+		style=filled,
+		];
+	SchedulePeriod -> JudgeSchedulePeriod	[color=blue,
+		style=dotted];
+	RoSchedulePeriod	[fillcolor=cyan,
+		label="RoSchedulePeriod\n  (assoc with User)",
+		style=filled,
+		];
+	SchedulePeriod -> RoSchedulePeriod	[color=blue,
+		style=dotted];
+	NonAvailability	[fillcolor="#00aaff",
+		label=NonAvailability,
+		style=filled,
+		];
+	NonAvailability -> SchedulePeriod	[label=schedule_period,
+		];
+	DecisionIssue	[fillcolor="#ff5050",
+		label=DecisionIssue,
+		shape=note,
+		style=filled,
+		];
+	decision_review_type	[color=blue,
+		fillcolor=yellow,
+		fontcolor=blue,
+		label="decision_review_type|Appeal,\nSupplementalClaim,\nHigherLevelReview",
+		shape=record,
+		style=filled,
+		];
+	DecisionIssue -> decision_review_type	[label=decision_review,
+		];
+	RemandReason	[
+		label=RemandReason,
+		];
+	RemandReason -> DecisionIssue	[label=decision_issue,
+		];
+	Task	[color=blue,
+		fillcolor=green,
+		fontcolor=blue,
+		label="Task|(105 tasks)",
+		shape=record,
+		style=filled,
+		];
+	Task -> HearingTask	[color="#6600cc",
+		fontcolor="#6600cc",
+		style=dotted];
+	Task -> Task	[label=parent,
+		];
+	Task -> Task	[color="#6600cc",
+		fontcolor="#6600cc",
+		style=dotted];
+	assigned_to_type	[color=blue,
+		fontcolor=blue,
+		label="assigned_to_type|User,\nOrganization",
+		shape=record,
+		style=dotted,
+		];
+	Task -> assigned_to_type	[label=assigned_to,
+		];
+	appeal_type	[color=blue,
+		fontcolor=blue,
+		label="appeal_type|Appeal,\nLegacyAppeal",
+		shape=record,
+		style=dotted,
+		];
+	Task -> appeal_type	[label=appeal,
+		];
+	"Dispatch::Task"	[
+		label="Dispatch::Task\n  (assoc with User)",
+		];
+	"Dispatch::Task" -> LegacyAppeal	[label=appeal,
+		];
+	Person	[
+		label=Person,
+		];
+	AdvanceOnDocketMotion	[
+		label="AdvanceOnDocketMotion\n  (assoc with User)",
+		];
+	AdvanceOnDocketMotion -> appeal_type	[label=appeal,
+		];
+	AdvanceOnDocketMotion -> Person	[label=person,
+		];
+	Document	[
+		label=Document,
+		];
+	Annotation	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label="Annotation\n  (assoc with User)",
+		shape=component,
+		style=filled,
+		];
+	Annotation -> Document	[label=document,
+		];
+	ApiKey	[
+		label=ApiKey,
+		];
+	ApiView	[
+		label=ApiView,
+		];
+	ApiView -> ApiKey	[label=api_key,
+		];
+	HearingDay	[fillcolor="#66ccff",
+		label="HearingDay\n  (assoc with judge User)",
+		style=filled,
+		];
+	LegacyHearing	[fillcolor="#66ccff",
+		label="LegacyHearing\n  (assoc with User)",
+		style=filled,
+		];
+	LegacyHearing -> LegacyAppeal	[label=appeal,
+		];
+	AppealStreamSnapshot	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label="AppealStreamSnapshot\n(a.k.a. hearing_appeal_stream_snapshots)",
+		shape=component,
+		style=filled,
+		];
+	AppealStreamSnapshot -> LegacyAppeal	[label=appeal,
+		];
+	AppealStreamSnapshot -> LegacyHearing	[label=hearing,
+		];
+	AppealView	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label="AppealView\n  (assoc with User)",
+		shape=component,
+		style=filled,
+		];
+	AppealView -> appeal_type	[label=appeal,
+		];
+	Appeal	[fillcolor=yellow,
+		label=Appeal,
+		style=filled,
+		];
+	AppellantSubstitution	[
+		label=AppellantSubstitution,
+		];
+	AppellantSubstitution -> Appeal	[label=source_appeal,
+		];
+	AppellantSubstitution -> Appeal	[label=target_appeal,
+		];
+	AttorneyCaseReview	[fillcolor="#ff5050",
+		label="AttorneyCaseReview\n  (assoc with attorney User)",
+		shape=note,
+		style=filled,
+		];
+	AttorneyCaseReview -> Task	[label=task,
+		];
+	Claimant	[color=blue,
+		fillcolor=gray,
+		fontcolor=blue,
+		label="Claimant|AttorneyClaimant,\nBgsRelatedClaimant,\nOtherClaimant,\nDependentClaimant,\nVeteranClaimant",
+		shape=record,
+		style=filled,
+		];
+	Claimant -> Person	[label=person,
+		];
+	Claimant -> decision_review_type	[label=decision_review,
+		];
+	BoardGrantEffectuation	[fillcolor="#ff5050",
+		label=BoardGrantEffectuation,
+		shape=note,
+		style=filled,
+		];
+	BoardGrantEffectuation -> DecisionIssue	[label=granted_decision_issue,
+		];
+	BoardGrantEffectuation -> Appeal	[label=appeal,
+		];
+	DecisionDocument	[fillcolor="#ff5050",
+		label=DecisionDocument,
+		shape=note,
+		style=filled,
+		];
+	BoardGrantEffectuation -> DecisionDocument	[label=decision_document,
+		];
+	EndProductEstablishment	[
+		label="EndProductEstablishment\n  (assoc with User)",
+		];
+	BoardGrantEffectuation -> EndProductEstablishment	[label=end_product_establishment,
+		];
+	DecisionDocument -> appeal_type	[label=appeal,
+		];
+	source_type	[color=blue,
+		fontcolor=blue,
+		label="source_type|DecisionDocument,\nSupplementalClaim,\nHigherLevelReview,\nRampRefiling,\nRampElection",
+		shape=record,
+		style=dotted,
+		];
+	EndProductEstablishment -> source_type	[label=source,
+		];
+	CavcRemand	[
+		label=CavcRemand,
+		];
+	CavcRemand -> Appeal	[label=source_appeal,
+		];
+	CavcRemand -> Appeal	[label=remand_appeal,
+		];
+	Certification	[
+		label=Certification,
+		];
+	CertificationCancellation	[
+		label=CertificationCancellation,
+		];
+	CertificationCancellation -> Certification	[label=certification,
+		];
+	ClaimEstablishment	[fillcolor="#ff5050",
+		label=ClaimEstablishment,
+		shape=note,
+		style=filled,
+		];
+	ClaimEstablishment -> "Dispatch::Task"	[label=task,
+		];
+	ClaimsFolderSearch	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label="ClaimsFolderSearch\n  (assoc with User)",
+		shape=component,
+		style=filled,
+		];
+	ClaimsFolderSearch -> appeal_type	[label=appeal,
+		];
+	Distribution	[
+		label="Distribution\n  (assoc with judge User)",
+		];
+	DistributedCase	[
+		label=DistributedCase,
+		];
+	DistributedCase -> Task	[label=task,
+		];
+	DistributedCase -> Distribution	[label=distribution,
+		];
+	DocketSwitch	[
+		label=DocketSwitch,
+		];
+	DocketSwitch -> Task	[label=task,
+		];
+	DocketSwitch -> Appeal	[label=old_docket_stream,
+		];
+	DocketSwitch -> Appeal	[label=new_docket_stream,
+		];
+	DocketSnapshot	[
+		label=DocketSnapshot,
+		];
+	DocketTracer	[
+		label=DocketTracer,
+		];
+	DocketTracer -> DocketSnapshot	[label=docket_snapshot,
+		];
+	DocumentView	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label="DocumentView\n  (assoc with User)",
+		shape=component,
+		style=filled,
+		];
+	DocumentView -> Document	[label=document,
+		];
+	DocumentsTag	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label=DocumentsTag,
+		shape=component,
+		style=filled,
+		];
+	DocumentsTag -> Document	[label=document,
+		];
+	Tag	[
+		label=Tag,
+		];
+	DocumentsTag -> Tag	[label=tag,
+		];
+	EndProductCodeUpdate	[
+		label=EndProductCodeUpdate,
+		];
+	EndProductCodeUpdate -> EndProductEstablishment	[label=end_product_establishment,
+		];
+	EndProductUpdate	[
+		label="EndProductUpdate\n  (assoc with User)",
+		];
+	EndProductUpdate -> EndProductEstablishment	[label=end_product_establishment,
+		];
+	original_decision_review_type	[color=blue,
+		fillcolor=yellow,
+		fontcolor=blue,
+		label="original_decision_review_type|SupplementalClaim,\nHigherLevelReview",
+		shape=record,
+		style=filled,
+		];
+	EndProductUpdate -> original_decision_review_type	[label=original_decision_review,
+		];
+	Hearing	[fillcolor="#66ccff",
+		label="Hearing\n  (assoc with judge User)",
+		style=filled,
+		];
+	Hearing -> HearingDay	[label=hearing_day,
+		];
+	Hearing -> Appeal	[label=appeal,
+		];
+	RequestIssue	[color=blue,
+		fillcolor=orange,
+		fontcolor=blue,
+		label="RequestIssue|RatingRequestIssue,\nNonratingRequestIssue",
+		shape=record,
+		style=filled,
+		];
+	RequestIssue -> DecisionIssue	[label=contested_decision_issue,
+		];
+	RequestIssue -> decision_review_type	[label=decision_review,
+		];
+	RequestIssue -> EndProductEstablishment	[label=end_product_establishment,
+		];
+	RequestIssue -> RequestIssue	[label=correction_request_issue,
+		];
+	RequestIssue -> RequestIssue	[label=ineligible_due_to,
+		];
+	HearingIssueNote	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label=HearingIssueNote,
+		shape=component,
+		style=filled,
+		];
+	HearingIssueNote -> Hearing	[label=hearing,
+		];
+	HearingIssueNote -> RequestIssue	[label=request_issue,
+		];
+	HearingLocation	[fillcolor="#66ccff",
+		label=HearingLocation,
+		style=filled,
+		];
+	HearingLocation -> hearing_type	[label=hearing,
+		];
+	HearingView	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label="HearingView\n  (assoc with User)",
+		shape=component,
+		style=filled,
+		];
+	HearingView -> hearing_type	[label=hearing,
+		];
+	Allocation	[
+		label=Allocation,
+		];
+	Allocation -> SchedulePeriod	[label=schedule_period,
+		];
+	Veteran	[
+		label=Veteran,
+		];
+	AvailableHearingLocations	[fillcolor="#66ccff",
+		label=AvailableHearingLocations,
+		style=filled,
+		];
+	AvailableHearingLocations -> appeal_type	[label=appeal,
+		];
+	AvailableHearingLocations -> Veteran	[label=veteran,
+		];
+	SentHearingEmailEvent	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label="SentHearingEmailEvent\n  (assoc with sent_by User)",
+		shape=component,
+		style=filled,
+		];
+	SentHearingEmailEvent -> hearing_type	[label=hearing,
+		];
+	Transcription	[
+		label=Transcription,
+		];
+	Transcription -> Hearing	[label=hearing,
+		];
+	VirtualHearing	[fillcolor="#66ccff",
+		label=VirtualHearing,
+		style=filled,
+		];
+	VirtualHearing -> hearing_type	[label=hearing,
+		];
+	VirtualHearingEstablishment	[fillcolor="#66ccff",
+		label=VirtualHearingEstablishment,
+		style=filled,
+		];
+	VirtualHearingEstablishment -> VirtualHearing	[label=virtual_hearing,
+		];
+	IhpDraft	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label=IhpDraft,
+		shape=component,
+		style=filled,
+		];
+	IhpDraft -> appeal_type	[label=appeal,
+		];
+	Organization	[fillcolor="#d9d9ee",
+		label=Organization,
+		style=filled,
+		];
+	IhpDraft -> Organization	[label=organization,
+		];
+	JobNote	[
+		label="JobNote\n  (assoc with User)",
+		];
+	SupplementalClaim	[fillcolor=yellow,
+		label=SupplementalClaim,
+		style=filled,
+		];
+	JobNote -> SupplementalClaim	[color=blue,
+		fontcolor=blue,
+		label="JobNote#job",
+		];
+	HigherLevelReview	[fillcolor=yellow,
+		label=HigherLevelReview,
+		style=filled,
+		];
+	JobNote -> HigherLevelReview	[color=blue,
+		fontcolor=blue,
+		label="JobNote#job",
+		];
+	JudgeCaseReview	[fillcolor="#ff5050",
+		label="JudgeCaseReview\n  (assoc with attorney User)",
+		shape=note,
+		style=filled,
+		];
+	JudgeCaseReview -> Task	[label=task,
+		];
+	LegacyIssue	[
+		label=LegacyIssue,
+		];
+	LegacyIssue -> RequestIssue	[label=request_issue,
+		];
+	LegacyIssueOptin	[
+		label=LegacyIssueOptin,
+		];
+	LegacyIssueOptin -> RequestIssue	[label=request_issue,
+		];
+	LegacyIssueOptin -> LegacyIssue	[label=legacy_issue,
+		];
+	Message	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label="Message\n  (assoc with User)",
+		shape=component,
+		style=filled,
+		];
+	Message -> JobNote	[color=blue,
+		fontcolor=blue,
+		label="Message#detail",
+		];
+	Message -> SupplementalClaim	[color=blue,
+		fontcolor=blue,
+		label="Message#detail",
+		];
+	Message -> HigherLevelReview	[color=blue,
+		fontcolor=blue,
+		label="Message#detail",
+		];
+	NodDateUpdate	[
+		label="NodDateUpdate\n  (assoc with User)",
+		];
+	NodDateUpdate -> Appeal	[label=appeal,
+		];
+	OrganizationsUser	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label="OrganizationsUser\n  (assoc with User)",
+		shape=component,
+		style=filled,
+		];
+	OrganizationsUser -> Organization	[label=organization,
+		];
+	PostDecisionMotion	[
+		label=PostDecisionMotion,
+		];
+	PostDecisionMotion -> Task	[label=task,
+		];
+	PostDecisionMotion -> Appeal	[label=appeal,
+		];
+	RampElection	[fillcolor="#cc99ff",
+		label="RampElection\n  (assoc with User)",
+		style=filled,
+		];
+	RampClosedAppeal	[fillcolor="#cc99ff",
+		label=RampClosedAppeal,
+		style=filled,
+		];
+	RampClosedAppeal -> RampElection	[label=ramp_election,
+		];
+	RampReview	[color=blue,
+		fillcolor="#cc99ff",
+		fontcolor=blue,
+		label="RampReview|RampElection,\nRampRefiling",
+		shape=record,
+		style=filled,
+		];
+	RampReview -> RampElection	[color=blue,
+		style=dotted];
+	RampRefiling	[fillcolor="#cc99ff",
+		label="RampRefiling\n  (assoc with User)",
+		style=filled,
+		];
+	RampReview -> RampRefiling	[color=blue,
+		style=dotted];
+	RampElectionRollback	[fillcolor="#cc99ff",
+		label="RampElectionRollback\n  (assoc with User)",
+		style=filled,
+		];
+	RampElectionRollback -> RampElection	[label=ramp_election,
+		];
+	RampIssue	[fillcolor="#cc99ff",
+		label=RampIssue,
+		style=filled,
+		];
+	RampIssue -> RampReview	[color="#6600cc",
+		fontcolor="#6600cc",
+		label="(ramp_)review",
+		];
+	RampIssue -> RampIssue	[label=source_issue,
+		];
+	record_type	[color=blue,
+		fillcolor=yellow,
+		fontcolor=blue,
+		label="record_type|Appeal,\nLegacyAppeal",
+		shape=record,
+		style=filled,
+		];
+	record_type -> decision_review_type	[color="#6600cc",
+		fontcolor="#6600cc",
+		label="(subset of)",
+		];
+	RecordSyncedByJob	[
+		label=RecordSyncedByJob,
+		];
+	RecordSyncedByJob -> record_type	[label=record,
+		];
+	RequestDecisionIssue	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label=RequestDecisionIssue,
+		shape=component,
+		style=filled,
+		];
+	RequestDecisionIssue -> DecisionIssue	[label=decision_issue,
+		];
+	RequestDecisionIssue -> RequestIssue	[label=request_issue,
+		];
+	RequestIssuesUpdate	[
+		label="RequestIssuesUpdate\n  (assoc with User)",
+		];
+	review_type	[color=blue,
+		fillcolor=yellow,
+		fontcolor=blue,
+		label="review_type|Appeal,\nSupplementalClaim,\nHigherLevelReview",
+		shape=record,
+		style=filled,
+		];
+	RequestIssuesUpdate -> review_type	[label=review,
+		];
+	review_type -> decision_review_type	[color="#6600cc",
+		fontcolor="#6600cc",
+		label="a.k.a.",
+		style=dotted];
+	SpecialIssueList	[
+		label=SpecialIssueList,
+		];
+	SpecialIssueList -> appeal_type	[label=appeal,
+		];
+	TaskTimer	[
+		label=TaskTimer,
+		];
+	TaskTimer -> Task	[label=task,
+		];
+	UnrecognizedAppellant	[
+		label=UnrecognizedAppellant,
+		];
+	UnrecognizedAppellant -> Claimant	[label=claimant,
+		];
+	UnrecognizedPartyDetail	[
+		label=UnrecognizedPartyDetail,
+		];
+	UnrecognizedAppellant -> UnrecognizedPartyDetail	[label=unrecognized_party_detail,
+		];
+	UnrecognizedAppellant -> UnrecognizedPartyDetail	[label=unrecognized_power_of_attorney,
+		];
+	UserQuota	[
+		label="UserQuota\n  (assoc with User)",
+		];
+	TeamQuota	[
+		label=TeamQuota,
+		];
+	UserQuota -> TeamQuota	[label=team_quota,
+		];
+	VbmsUploadedDocument	[fillcolor="#ff5050",
+		label=VbmsUploadedDocument,
+		shape=note,
+		style=filled,
+		];
+	VbmsUploadedDocument -> appeal_type	[label=appeal,
+		];
+	VsoConfig	[
+		label=VsoConfig,
+		];
+	VsoConfig -> Organization	[label=organization,
+		];
+	WorksheetIssue	[
+		label=WorksheetIssue,
+		];
+	WorksheetIssue -> LegacyAppeal	[label=appeal,
+		];
+	WorksheetIssue -> Hearing	[label=hearing,
+		];
+	CoNonAvailability	[fillcolor="#00aaff",
+		label=CoNonAvailability,
+		style=filled,
+		];
+	CoNonAvailability -> SchedulePeriod	[label=schedule_period,
+		];
+	RoNonAvailability	[fillcolor="#00aaff",
+		label=RoNonAvailability,
+		style=filled,
+		];
+	RoNonAvailability -> SchedulePeriod	[label=schedule_period,
+		];
+	JudgeNonAvailability	[fillcolor="#00aaff",
+		label=JudgeNonAvailability,
+		style=filled,
+		];
+	JudgeNonAvailability -> SchedulePeriod	[label=schedule_period,
+		];
+	EstablishClaim	[
+		label="EstablishClaim\n  (assoc with User)",
+		];
+	EstablishClaim -> LegacyAppeal	[label=appeal,
+		];
+	DecisionReviewIntake	[fillcolor="#ffffcc",
+		label="DecisionReviewIntake\n  (assoc with User)",
+		shape=cds,
+		style=filled,
+		];
+	DecisionReview	[color=blue,
+		fillcolor=yellow,
+		fontcolor=blue,
+		label="DecisionReview|Appeal,\nClaimReview,\nHigherLevelReview,\nSupplementalClaim",
+		shape=record,
+		style=filled,
+		];
+	DecisionReviewIntake -> DecisionReview	[color=blue,
+		fontcolor=blue,
+		label="DecisionReviewIntake#detail",
+		];
+	RampElectionIntake	[fillcolor="#ffffcc",
+		label="RampElectionIntake\n  (assoc with User)",
+		shape=cds,
+		style=filled,
+		];
+	RampElectionIntake -> RampElection	[color=blue,
+		fontcolor=blue,
+		label="RampElectionIntake#detail",
+		];
+	RampRefilingIntake	[fillcolor="#ffffcc",
+		label="RampRefilingIntake\n  (assoc with User)",
+		shape=cds,
+		style=filled,
+		];
+	RampRefilingIntake -> RampRefiling	[color=blue,
+		fontcolor=blue,
+		label="RampRefilingIntake#detail",
+		];
+	AppealIntake	[fillcolor="#ffffcc",
+		label="AppealIntake\n  (assoc with User)",
+		shape=cds,
+		style=filled,
+		];
+	AppealIntake -> Appeal	[color=blue,
+		fontcolor=blue,
+		label="AppealIntake#detail",
+		];
+	ClaimReviewIntake	[fillcolor="#ffffcc",
+		label="ClaimReviewIntake\n  (assoc with User)",
+		shape=cds,
+		style=filled,
+		];
+	ClaimReview	[color=blue,
+		fillcolor=yellow,
+		fontcolor=blue,
+		label="ClaimReview|HigherLevelReview,\nSupplementalClaim",
+		shape=record,
+		style=filled,
+		];
+	ClaimReviewIntake -> ClaimReview	[color=blue,
+		fontcolor=blue,
+		label="ClaimReviewIntake#detail",
+		];
+	HigherLevelReviewIntake	[fillcolor="#ffffcc",
+		label="HigherLevelReviewIntake\n  (assoc with User)",
+		shape=cds,
+		style=filled,
+		];
+	HigherLevelReviewIntake -> HigherLevelReview	[color=blue,
+		fontcolor=blue,
+		label="HigherLevelReviewIntake#detail",
+		];
+	SupplementalClaimIntake	[fillcolor="#ffffcc",
+		label="SupplementalClaimIntake\n  (assoc with User)",
+		shape=cds,
+		style=filled,
+		];
+	SupplementalClaimIntake -> SupplementalClaim	[color=blue,
+		fontcolor=blue,
+		label="SupplementalClaimIntake#detail",
+		];
+	decision_review_remanded_type	[color=blue,
+		fillcolor=yellow,
+		fontcolor=blue,
+		label="decision_review_remanded_type|Appeal,\nSupplementalClaim,\nHigherLevelReview",
+		shape=record,
+		style=filled,
+		];
+	decision_review_remanded_type -> decision_review_type	[color="#6600cc",
+		fontcolor="#6600cc",
+		label="a.k.a.",
+		style=dotted];
+	SupplementalClaim -> decision_review_remanded_type	[label=decision_review_remanded,
+		];
+}

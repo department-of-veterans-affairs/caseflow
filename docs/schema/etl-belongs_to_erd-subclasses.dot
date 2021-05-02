@@ -1,0 +1,318 @@
+digraph belongs_to_erd_subclasses {
+	graph [bb="0,0,1104.3,2103",
+		rankdir=LR,
+		splines=line
+	];
+	node [label="\N"];
+	AppealSeries	[
+		label=AppealSeries,
+		];
+	LegacyAppeal	[fillcolor=yellow,
+		label=LegacyAppeal,
+		style=filled,
+		];
+	LegacyAppeal -> AppealSeries	[label=appeal_series,
+		];
+	"ETL::Appeal"	[
+		label="ETL::Appeal",
+		];
+	"ETL::Appeal" -> "ETL::Appeal"	[label=parent,
+		];
+	"ETL::Build"	[
+		label="ETL::Build",
+		];
+	"ETL::BuildTable"	[
+		label="ETL::BuildTable",
+		];
+	"ETL::BuildTable" -> "ETL::Build"	[label=etl_build,
+		];
+	"ETL::HearingRecord"	[color=blue,
+		fillcolor="#66ccff",
+		fontcolor=blue,
+		label="ETL::HearingRecord",
+		shape=record,
+		style=dashed,
+		];
+	"ETL::HearingRecord" -> "ETL::Appeal"	[label=appeal,
+		];
+	"ETL::Hearing"	[fillcolor="#66ccff",
+		label="ETL::Hearing",
+		style=filled,
+		];
+	"ETL::HearingRecord" -> "ETL::Hearing"	[color=blue,
+		style=dotted];
+	"ETL::LegacyHearing"	[fillcolor="#66ccff",
+		label="ETL::LegacyHearing",
+		style=filled,
+		];
+	"ETL::HearingRecord" -> "ETL::LegacyHearing"	[color=blue,
+		style=dotted];
+	"ETL::Task"	[
+		label="ETL::Task",
+		];
+	"ETL::Task" -> "ETL::Appeal"	[label=appeal,
+		];
+	"ETL::Task" -> "ETL::Task"	[label=parent,
+		];
+	"ETL::Hearing" -> "ETL::Appeal"	[label=appeal,
+		];
+	"ETL::LegacyHearing" -> "ETL::Appeal"	[label=appeal,
+		];
+	Task	[color=blue,
+		fillcolor=green,
+		fontcolor=blue,
+		label="Task|(105 tasks)",
+		shape=record,
+		style=filled,
+		];
+	Task -> Task	[color="#6600cc",
+		fontcolor="#6600cc",
+		style=dotted];
+	Claimant	[color=blue,
+		fillcolor=gray,
+		fontcolor=blue,
+		label="Claimant|AttorneyClaimant,\nBgsRelatedClaimant,\nOtherClaimant,\nDependentClaimant,\nVeteranClaimant",
+		shape=record,
+		style=filled,
+		];
+	DecisionReview	[color=blue,
+		fillcolor=yellow,
+		fontcolor=blue,
+		label="DecisionReview|Appeal,\nClaimReview,\nHigherLevelReview,\nSupplementalClaim",
+		shape=record,
+		style=filled,
+		];
+	ClaimReview	[color=blue,
+		fillcolor=yellow,
+		fontcolor=blue,
+		label="ClaimReview|HigherLevelReview,\nSupplementalClaim",
+		shape=record,
+		style=filled,
+		];
+	RampReview	[color=blue,
+		fillcolor="#cc99ff",
+		fontcolor=blue,
+		label="RampReview|RampElection,\nRampRefiling",
+		shape=record,
+		style=filled,
+		];
+	RequestIssue	[color=blue,
+		fillcolor=orange,
+		fontcolor=blue,
+		label="RequestIssue|RatingRequestIssue,\nNonratingRequestIssue",
+		shape=record,
+		style=filled,
+		];
+	appeal_type	[color=blue,
+		fontcolor=blue,
+		label="appeal_type|Appeal,\nLegacyAppeal",
+		shape=record,
+		style=dotted,
+		];
+	hearing_type	[color=blue,
+		fontcolor=blue,
+		label="hearing_type|Hearing,\nLegacyHearing",
+		shape=record,
+		style=dotted,
+		];
+	decision_review_type	[color=blue,
+		fillcolor=yellow,
+		fontcolor=blue,
+		label="decision_review_type|Appeal,\nSupplementalClaim,\nHigherLevelReview",
+		shape=record,
+		style=filled,
+		];
+	decision_review_remanded_type	[color=blue,
+		fillcolor=yellow,
+		fontcolor=blue,
+		label="decision_review_remanded_type|Appeal,\nSupplementalClaim,\nHigherLevelReview",
+		shape=record,
+		style=filled,
+		];
+	decision_review_remanded_type -> decision_review_type	[color="#6600cc",
+		fontcolor="#6600cc",
+		label="a.k.a.",
+		style=dotted];
+	review_type	[color=blue,
+		fillcolor=yellow,
+		fontcolor=blue,
+		label="review_type|Appeal,\nSupplementalClaim,\nHigherLevelReview",
+		shape=record,
+		style=filled,
+		];
+	review_type -> decision_review_type	[color="#6600cc",
+		fontcolor="#6600cc",
+		label="a.k.a.",
+		style=dotted];
+	original_decision_review_type	[color=blue,
+		fillcolor=yellow,
+		fontcolor=blue,
+		label="original_decision_review_type|SupplementalClaim,\nHigherLevelReview",
+		shape=record,
+		style=filled,
+		];
+	source_type	[color=blue,
+		fontcolor=blue,
+		label="source_type|DecisionDocument,\nSupplementalClaim,\nHigherLevelReview,\nRampRefiling,\nRampElection",
+		shape=record,
+		style=dotted,
+		];
+	assigned_to_type	[color=blue,
+		fontcolor=blue,
+		label="assigned_to_type|User,\nOrganization",
+		shape=record,
+		style=dotted,
+		];
+	record_type	[color=blue,
+		fillcolor=yellow,
+		fontcolor=blue,
+		label="record_type|Appeal,\nLegacyAppeal",
+		shape=record,
+		style=filled,
+		];
+	record_type -> decision_review_type	[color="#6600cc",
+		fontcolor="#6600cc",
+		label="(subset of)",
+		];
+	Message	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label=Message,
+		shape=component,
+		style=filled,
+		];
+	JobNote	[
+		label=JobNote,
+		];
+	Message -> JobNote	[color=blue,
+		fontcolor=blue,
+		label="Message#detail",
+		];
+	SupplementalClaim	[fillcolor=yellow,
+		label=SupplementalClaim,
+		style=filled,
+		];
+	Message -> SupplementalClaim	[color=blue,
+		fontcolor=blue,
+		label="Message#detail",
+		];
+	HigherLevelReview	[fillcolor=yellow,
+		label=HigherLevelReview,
+		style=filled,
+		];
+	Message -> HigherLevelReview	[color=blue,
+		fontcolor=blue,
+		label="Message#detail",
+		];
+	JobNote -> SupplementalClaim	[color=blue,
+		fontcolor=blue,
+		label="JobNote#job",
+		];
+	JobNote -> HigherLevelReview	[color=blue,
+		fontcolor=blue,
+		label="JobNote#job",
+		];
+	AppealIntake	[fillcolor="#ffffcc",
+		label=AppealIntake,
+		shape=cds,
+		style=filled,
+		];
+	Appeal	[fillcolor=yellow,
+		label=Appeal,
+		style=filled,
+		];
+	AppealIntake -> Appeal	[color=blue,
+		fontcolor=blue,
+		label="AppealIntake#detail",
+		];
+	RampElectionIntake	[fillcolor="#ffffcc",
+		label=RampElectionIntake,
+		shape=cds,
+		style=filled,
+		];
+	RampElection	[fillcolor="#cc99ff",
+		label=RampElection,
+		style=filled,
+		];
+	RampElectionIntake -> RampElection	[color=blue,
+		fontcolor=blue,
+		label="RampElectionIntake#detail",
+		];
+	RampRefilingIntake	[fillcolor="#ffffcc",
+		label=RampRefilingIntake,
+		shape=cds,
+		style=filled,
+		];
+	RampRefiling	[fillcolor="#cc99ff",
+		label=RampRefiling,
+		style=filled,
+		];
+	RampRefilingIntake -> RampRefiling	[color=blue,
+		fontcolor=blue,
+		label="RampRefilingIntake#detail",
+		];
+	HigherLevelReviewIntake	[fillcolor="#ffffcc",
+		label=HigherLevelReviewIntake,
+		shape=cds,
+		style=filled,
+		];
+	HigherLevelReviewIntake -> HigherLevelReview	[color=blue,
+		fontcolor=blue,
+		label="HigherLevelReviewIntake#detail",
+		];
+	SupplementalClaimIntake	[fillcolor="#ffffcc",
+		label=SupplementalClaimIntake,
+		shape=cds,
+		style=filled,
+		];
+	SupplementalClaimIntake -> SupplementalClaim	[color=blue,
+		fontcolor=blue,
+		label="SupplementalClaimIntake#detail",
+		];
+	DecisionReviewIntake	[fillcolor="#ffffcc",
+		label=DecisionReviewIntake,
+		shape=cds,
+		style=filled,
+		];
+	DecisionReviewIntake -> DecisionReview	[color=blue,
+		fontcolor=blue,
+		label="DecisionReviewIntake#detail",
+		];
+	ClaimReviewIntake	[fillcolor="#ffffcc",
+		label=ClaimReviewIntake,
+		shape=cds,
+		style=filled,
+		];
+	ClaimReviewIntake -> ClaimReview	[color=blue,
+		fontcolor=blue,
+		label="ClaimReviewIntake#detail",
+		];
+	RampIssue	[fillcolor="#cc99ff",
+		label=RampIssue,
+		style=filled,
+		];
+	RampIssue -> RampReview	[color="#6600cc",
+		fontcolor="#6600cc",
+		label="(ramp_)review",
+		];
+	"ETL::DecisionReview"	[color=blue,
+		fontcolor=blue,
+		label="ETL::DecisionReview",
+		shape=record,
+		style=dashed,
+		];
+	"ETL::DecisionReview::Appeal"	[
+		label="ETL::DecisionReview::Appeal",
+		];
+	"ETL::DecisionReview" -> "ETL::DecisionReview::Appeal"	[color=blue,
+		style=dotted];
+	"ETL::DecisionReview::HigherLevelReview"	[
+		label="ETL::DecisionReview::HigherLevelReview",
+		];
+	"ETL::DecisionReview" -> "ETL::DecisionReview::HigherLevelReview"	[color=blue,
+		style=dotted];
+	"ETL::DecisionReview::SupplementalClaim"	[
+		label="ETL::DecisionReview::SupplementalClaim",
+		];
+	"ETL::DecisionReview" -> "ETL::DecisionReview::SupplementalClaim"	[color=blue,
+		style=dotted];
+}
