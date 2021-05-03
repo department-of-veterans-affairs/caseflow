@@ -92,7 +92,8 @@ describe('AddClaimantPage', () => {
       });
 
       await fillForm();
-
+      // trigger onBlur
+      userEvent.tab();
       // submit button enabled
       await waitFor(() => {
         expect(submit).not.toBeDisabled();
