@@ -12,7 +12,8 @@ class HearingRequestCaseDistributor
     appeals_to_distribute.map do |appeal, genpop_value|
       Distribution.transaction do
         rename_any_existing_distributed_case(appeal)
-        task = create_judge_assign_task_for_appeal(appeal)
+        judge_assign_task_creator = JudgeAssignTaskCreator.new(appeal: appeal, judge: distribution.judge)
+        task = judge_assign_task_creator.manage_judge_assign_tasks_for_appeal
         create_distribution_case_for_task(task, genpop_value)
       end
     end
@@ -32,23 +33,6 @@ class HearingRequestCaseDistributor
 
   def appeals_to_distribute
     not_genpop_appeals.map { |appeal| [appeal, false] }.concat(only_genpop_appeals.map { |appeal| [appeal, true] })
-  end
-
-  def create_judge_assign_task_for_appeal(appeal)
-    judge_assign_task_creator = JudgeAssignTaskCreator.new(appeal: appeal, judge: distribution.judge)
-    current_judge_assign_tasks = appeal.tasks.open.of_type(:JudgeAssignTask)
-    if current_judge_assign_tasks.blank?
-      judge_assign_task_creator.call
-    else
-      judge_task = current_judge_assign_tasks.first
-      updated_assign_tasks = judge_task.reassign({
-                                                   assigned_to_type: distribution.judge.class.name,
-                                                   assigned_to_id: distribution.judge.id,
-                                                   appeal: appeal
-                                                 }, current_user)
-      judge_assign_task_creator.close_distribution_tasks_for_appeal
-      updated_assign_tasks.find { |task| task.type == JudgeAssignTask.name && task.open? }
-    end
   end
 
   def create_distribution_case_for_task(task, genpop_value)

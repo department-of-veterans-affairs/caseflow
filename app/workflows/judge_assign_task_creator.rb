@@ -18,8 +18,20 @@ class JudgeAssignTaskCreator
     task
   end
 
-  def close_distribution_tasks_for_appeal
-    appeal.tasks.where(type: DistributionTask.name).update(status: :completed)
+  def manage_judge_assign_tasks_for_appeal
+    current_judge_assign_tasks = @appeal.tasks.open.of_type(:JudgeAssignTask)
+    if current_judge_assign_tasks.blank?
+      call
+    else
+      judge_task = current_judge_assign_tasks.first
+      updated_judge_tasks = judge_task.reassign({
+                                                  assigned_to_type: @judge.class.name,
+                                                  assigned_to_id: @judge.id,
+                                                  appeal: appeal
+                                                }, current_user)
+      close_distribution_tasks_for_appeal
+      updated_judge_tasks.find { |task| task.type == JudgeAssignTask.name && task.open? }
+    end
   end
 
   private
