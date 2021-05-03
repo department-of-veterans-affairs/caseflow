@@ -1,8 +1,8 @@
 ---
-name: Echo Tech Spec task
-about: Template for a new tech spec for the echo team
+name: Tech Spec template
+about: Template for a new tech spec
 title: "[SUBJECT] Tech Spec"
-labels: 'Team: Echo 🐬, Type: Tech-Spec'
+labels: 'Type: Tech-Spec'
 assignees: ''
 
 ---
@@ -58,7 +58,7 @@ How will we safely ship this work? Are there migrations, external dependencies t
 
 # Tech Spec Process
 
- - [ ] Tech spec drafter: Schedule time to discuss the tech spec.
+ - [ ] Tech spec drafter: Schedule time to discuss the tech spec with scrum team or whole engineering team depending on the scope of the tech spec
  - [ ] Tech spec drafter: Facilitate that discussion.
  - [ ] Other developers: Read the tech spec before arriving at the discussion.
  - [ ] Other developers: Remind the tech spec drafter if a tech spec has been produced and no meeting has been scheduled.
@@ -66,3 +66,4 @@ How will we safely ship this work? Are there migrations, external dependencies t
  - [ ] Tech spec drafter: Turn tech spec into next-step actionable tickets.
     - [ ] Write tickets as is necessary
     - [ ] Other developers provide more formal feedback as is necessary.
+- [ ] Once the tech spec is finalized, open a PR to add it to the docs/tech-specs directory following [these instructions](https://github.com/department-of-veterans-affairs/caseflow/tree/master/docs/tech-specs/README.md)

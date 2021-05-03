@@ -24,7 +24,7 @@ describe SpecialCaseMovementTask do
                  :with_post_intake_tasks,
                  docket_type: Constants.AMA_DOCKETS.direct_review)
         end
-        let(:dist_task) { appeal.tasks.active.where(type: DistributionTask.name).first }
+        let(:dist_task) { appeal.tasks.active.of_type(:DistributionTask).first }
 
         context "with no blocking tasks" do
           it_behaves_like "successful creation"
@@ -52,7 +52,7 @@ describe SpecialCaseMovementTask do
                  :with_post_intake_tasks,
                  docket_type: Constants.AMA_DOCKETS.evidence_submission)
         end
-        let(:dist_task) { appeal.tasks.open.where(type: DistributionTask.name).first }
+        let(:dist_task) { appeal.tasks.open.of_type(:DistributionTask).first }
 
         context "with distribution task on_hold" do
           it "should error with appeal not ready" do
