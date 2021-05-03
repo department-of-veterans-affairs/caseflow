@@ -209,12 +209,12 @@ class RequestIssue < CaseflowRecord
 
   delegate :veteran, to: :decision_review
 
-  def create_for_claim_review!
+  def create_for_claim_review!(request_issues_update = nil)
     return unless decision_review.is_a?(ClaimReview)
 
     update!(benefit_type: decision_review.benefit_type, veteran_participant_id: veteran.participant_id)
 
-    epe = decision_review.end_product_establishment_for_issue(self)
+    epe = decision_review.end_product_establishment_for_issue(self, request_issues_update)
     update!(end_product_establishment: epe) if epe
 
     RequestIssueCorrectionCleaner.new(self).remove_dta_request_issue! if correction?

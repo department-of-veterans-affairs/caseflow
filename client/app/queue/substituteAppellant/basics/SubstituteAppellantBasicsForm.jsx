@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { css } from 'glamor';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import {
@@ -13,6 +12,7 @@ import {
 import Button from 'app/components/Button';
 import DateSelector from 'app/components/DateSelector';
 import RadioField from 'app/components/RadioField';
+import { pageHeader } from '../styles';
 
 const schema = yup.object().shape({
   substitutionDate: yup.
@@ -23,8 +23,6 @@ const schema = yup.object().shape({
     transform((value, originalValue) => (originalValue === '' ? null : value)),
   participantId: yup.string().required('You must select a claimant'),
 });
-
-const sectionStyle = css({ marginBottom: '24px' });
 
 export const SubstituteAppellantBasicsForm = ({
   existingValues,
@@ -42,10 +40,10 @@ export const SubstituteAppellantBasicsForm = ({
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <AppSegment filledBackground>
-        <h1>{SUBSTITUTE_APPELLANT_SELECT_APPELLANT_TITLE}</h1>
-        <div {...sectionStyle}>
-          {SUBSTITUTE_APPELLANT_SELECT_APPELLANT_SUBHEAD}
-        </div>
+        <section className={pageHeader}>
+          <h1>{SUBSTITUTE_APPELLANT_SELECT_APPELLANT_TITLE}</h1>
+          <div>{SUBSTITUTE_APPELLANT_SELECT_APPELLANT_SUBHEAD}</div>
+        </section>
 
         <DateSelector
           inputRef={register}

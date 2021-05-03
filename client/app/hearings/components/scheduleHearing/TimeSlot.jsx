@@ -1,13 +1,14 @@
 // External Dependencies
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment-timezone';
 
 // Local Dependencies
 import { setTimeSlots } from '../../utils';
 import { TimeSlotButton } from './TimeSlotButton';
 import Button from '../../../components/Button';
 import SmallLoader from '../../../components/SmallLoader';
-import { HearingTime } from '../modalForms/HearingTime';
+import { TimePicker } from '../TimePicker';
 import { LOGO_COLORS } from '../../../constants/AppConstants';
 
 export const TimeSlot = ({
@@ -25,15 +26,21 @@ export const TimeSlot = ({
   const [custom, setCustom] = useState(false);
 
   // Filter the available time slots to fill in the hearings
-  const slots = setTimeSlots(scheduledHearingsList, ro, roTimezone);
+  const beginsAt = hearing?.hearingDay?.beginsAt;
+  const numberOfSlots = hearing?.hearingDay?.totalSlots;
+  const slotLengthMinutes = hearing?.hearingDay?.slotLengthMinutes;
+  const slots = setTimeSlots({ scheduledHearingsList, ro, roTimezone, beginsAt, numberOfSlots, slotLengthMinutes });
 
   // Setup the click handler for each time slot
-  const handleClick = (time) => {
+  const handleChange = (time) => {
     // Set the selected time slot
     setSelected(time);
 
-    // Use the onChange callback to set the hearing time
-    onChange('scheduledTimeString', time);
+    // Convert to ro timezone, then set the hearing time in reducer
+    const timeInRoZone = moment.tz(time, 'HH:mm', 'America/New_York').tz(roTimezone).
+      format('HH:mm');
+
+    onChange('scheduledTimeString', timeInRoZone);
   };
 
   // Create a hearing Time ID to associate the label with the appropriate form element
@@ -61,13 +68,10 @@ export const TimeSlot = ({
             </Button>
           </div>
           {custom ? (
-            <HearingTime
-              hideLabel
-              enableZone
-              disableRadioOptions
+            <TimePicker
               id={hearingTimeId}
-              localZone={roTimezone}
-              onChange={(scheduledTimeString) => onChange('scheduledTimeString', scheduledTimeString)}
+              roTimezone={roTimezone}
+              onChange={handleChange}
               value={hearing?.scheduledTimeString}
             />
           ) : (
@@ -79,7 +83,7 @@ export const TimeSlot = ({
                     key={slot.key}
                     roTimezone={roTimezone}
                     selected={selected === slot.hearingTime}
-                    onClick={() => handleClick(slot.hearingTime)}
+                    onClick={() => handleChange(slot.hearingTime)}
                   />
                 ))}
               </div>
@@ -90,7 +94,7 @@ export const TimeSlot = ({
                     key={slot.key}
                     roTimezone={roTimezone}
                     selected={selected === slot.hearingTime}
-                    onClick={() => handleClick(slot.hearingTime)}
+                    onClick={() => handleChange(slot.hearingTime)}
                   />
                 ))}
               </div>
