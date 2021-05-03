@@ -36,7 +36,7 @@ class HearingRepository
       vacols_record.update_hearing!(hearing_hash.merge(staff_id: vacols_record.slogid)) if hearing_hash.present?
     end
 
-    def create_vacols_hearing(hearing_day, appeal, scheduled_for, hearing_location_attrs)
+    def create_vacols_hearing(hearing_day, appeal, scheduled_for, hearing_location_attrs, notes)
       vacols_record = VACOLS::CaseHearing.create_hearing!(
         folder_nr: appeal.vacols_id,
         hearing_date: VacolsHelper.format_datetime_with_utc_timezone(scheduled_for),
@@ -44,7 +44,8 @@ class HearingRepository
         hearing_type: hearing_day.request_type,
         room: hearing_day.room,
         board_member: hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil,
-        vdbvapoc: hearing_day.bva_poc
+        vdbvapoc: hearing_day.bva_poc,
+        notes1: notes
       )
 
       # Reload the hearing to pull in associated data.
@@ -63,7 +64,8 @@ class HearingRepository
       scheduled_time_string:,
       appeal:,
       hearing_location_attrs: nil,
-      override_full_hearing_day_validation: false
+      override_full_hearing_day_validation: false,
+      notes: nil
     )
       hearing_day = HearingDay.find(hearing_day_id)
 
@@ -74,7 +76,7 @@ class HearingRepository
           scheduled_for: hearing_day.scheduled_for,
           scheduled_time_string: scheduled_time_string
         )
-        vacols_hearing = create_vacols_hearing(hearing_day, appeal, scheduled_for, hearing_location_attrs)
+        vacols_hearing = create_vacols_hearing(hearing_day, appeal, scheduled_for, hearing_location_attrs, notes)
         AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
         vacols_hearing
       else
@@ -83,7 +85,8 @@ class HearingRepository
           hearing_day_id: hearing_day.id,
           hearing_location_attributes: hearing_location_attrs || {},
           scheduled_time: scheduled_time_string,
-          override_full_hearing_day_validation: override_full_hearing_day_validation
+          override_full_hearing_day_validation: override_full_hearing_day_validation,
+          notes: notes
         )
       end
     end

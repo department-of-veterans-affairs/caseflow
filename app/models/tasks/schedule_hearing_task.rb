@@ -214,7 +214,8 @@ class ScheduleHearingTask < Task
       appeal: appeal,
       hearing_location_attrs: task_values[:hearing_location]&.to_hash,
       scheduled_time_string: task_values[:scheduled_time_string],
-      override_full_hearing_day_validation: task_values[:override_full_hearing_day_validation]
+      override_full_hearing_day_validation: task_values[:override_full_hearing_day_validation],
+      notes: task_values[:notes]
     )
   end
 
