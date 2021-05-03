@@ -23,6 +23,7 @@ import { TimeSlot } from './scheduleHearing/TimeSlot';
 import { useDispatch } from 'react-redux';
 import { fetchScheduledHearings } from '../../components/common/actions';
 import { AppealInformation } from './scheduleHearing/AppealInformation';
+import { UnscheduledNotes } from './UnscheduledNotes';
 
 export const ScheduleVeteranForm = ({
   virtual,
@@ -34,6 +35,7 @@ export const ScheduleVeteranForm = ({
   initialHearingDate,
   convertToVirtual,
   userCanViewTimeSlots,
+  hearingTask,
   ...props
 }) => {
   const dispatch = useDispatch();
@@ -47,6 +49,9 @@ export const ScheduleVeteranForm = ({
   const dynamic =
     ro !== appeal?.closestRegionalOffice ||
     isEmpty(appeal?.availableHearingLocations);
+
+  const unscheduledNotes =
+    hearing?.notes || hearingTask.unscheduledHearingNotes.notes;
 
   const getOriginalRequestType = () => {
     if (
@@ -175,8 +180,20 @@ export const ScheduleVeteranForm = ({
                   )}
                 </React.Fragment>
               )}
+
             </React.Fragment>
           )}
+          <UnscheduledNotes
+            onChange={(notes) => {
+              window.analyticsEvent('Hearings', 'Add/edit notes', 'Schedule Veteran');
+
+              return props.onChange('notes', notes);
+            }}
+            unscheduledNotes={unscheduledNotes}
+            updatedAt={hearingTask?.unscheduledHearingNotes?.updatedAt}
+            updatedByCssId={hearingTask?.unscheduledHearingNotes?.updatedByCssId}
+            uniqueId={hearingTask?.taskId}
+          />
         </div>
         {virtual && (
           <div className="usa-width-one-whole" {...marginTop(25)}>
@@ -202,6 +219,7 @@ ScheduleVeteranForm.propTypes = {
   convertToVirtual: PropTypes.func,
   fetchScheduledHearings: PropTypes.func,
   userCanViewTimeSlots: PropTypes.bool,
+  hearingTask: PropTypes.object
 };
 
 /* eslint-enable camelcase */

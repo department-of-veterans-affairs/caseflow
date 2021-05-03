@@ -27,7 +27,7 @@ export const UnscheduledNotes = ({
           strongLabel
           onChange={(notes) => onChange(notes)}
           labelStyling={css({ float: 'left' })}
-          styling={css({ marginBottom: 1 })}
+          styling={css({ marginBottom: 0 })}
           value={unscheduledNotes ?? ''}
           characterLimitTopRight
         />}
