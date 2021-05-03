@@ -1,5 +1,4 @@
 import React from 'react';
-import { action } from '@storybook/addon-actions';
 import { CustomTimeModal } from './CustomTimeModal';
 
 export default {
@@ -12,12 +11,9 @@ export default {
       iframeHeight: 600,
     },
   },
-
-  args: {
-    roTimezone: 'America/Los_Angeles',
-  },
   argTypes: {
-    closeHandler: { action: 'closed' },
+    onConfirm: { action: 'confirmed' },
+    onCancel: { action: 'cancelled' },
   },
 };
 
