@@ -46,14 +46,14 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roTimezone }) => {
   };
 
   // Hide the dropdown arrow on the right side
-  const hideFunction = (provided) => ({
-    ...provided,
-    visibility: 'hidden'
+  const hideStyleFunction = () => ({
+    display: 'none'
   });
   const customStyles = {
-    indicatorsContainer: hideFunction,
-    indicatorSeparator: hideFunction,
-    dropdownIndicator: hideFunction
+    // Hiding this removes the "x" to clear, we want to keep that for now
+    // indicatorsContainer: hideStyleFunction,
+    indicatorSeparator: hideStyleFunction,
+    dropdownIndicator: hideStyleFunction
   };
 
   return (
