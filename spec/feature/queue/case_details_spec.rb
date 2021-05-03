@@ -1683,6 +1683,73 @@ RSpec.feature "Case details", :all_dbs do
         )
       end
     end
+
+    describe "substitute appellant" do
+      before { FeatureToggle.enable!(:recognized_granted_substitution_after_dd) }
+      after { FeatureToggle.disable!(:recognized_granted_substitution_after_dd) }
+
+      let(:docket_type) { "evidence_submission" }
+      let(:case_type) { "original" }
+      let(:appeal) do
+        create(:appeal, :dispatched, :with_request_issues,
+               docket_type: docket_type,
+               stream_type: case_type)
+      end
+      # I think we need to convert request issues to decision issues
+      # I guess we need to add request issues, too. :-P
+
+      let(:cob_user) { create(:user, css_id: "COB_USER", station_id: "101") }
+      before { ClerkOfTheBoard.singleton.add_user(cob_user) }
+
+      shared_examples "does not display the 'Add Substitute' button" do
+        it "does not display the 'Add Substitute' button" do
+          visit "/queue/appeals/#{appeal.external_id}"
+          expect(page).to_not have_content(COPY::SUBSTITUTE_APPELLANT_BUTTON)
+        end
+      end
+
+      context "when the case is a legacy case" do
+        let!(:appeal) { create(:legacy_appeal) }
+
+        it_behaves_like "does not display the 'Add Substitute' button"
+      end
+
+      context "when the feature flag is disabled" do
+        FeatureToggle.disable!(:recognized_granted_substitution_after_dd)
+
+        it_behaves_like "does not display the 'Add Substitute' button"
+      end
+
+      context "When the case type is not 'Original'" do
+        let(:case_type) { "Court Remand" }
+
+        it_behaves_like "does not display the 'Add Substitute' button"
+      end
+
+      context "When the docket type is not 'hearing'" do
+        let(:docket_type) { "evidence_submission" } # Is this clearer? This is already the case.
+
+        context "when the user is not a COB admin" do
+          it_behaves_like "does not display the 'Add Substitute' button"
+        end
+
+        context "when the user is an admin" do
+          it "shows the 'Add Substitute' button" do
+            OrganizationsUser.make_user_admin(cob_user, ClerkOfTheBoard.singleton)
+
+            visit "/queue/appeals/#{appeal.external_id}"
+            expect(ClerkOfTheBoard.singleton.admins).to include(cob_user)
+            expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_BUTTON)
+          end
+        end
+      end
+
+      context "When the docket type is 'hearing'" do
+        let(:docket_type) { "hearing" }
+
+        it_behaves_like "does not display the 'Add Substitute' button"
+      end
+    end
   end
 
   describe "task snapshot" do
