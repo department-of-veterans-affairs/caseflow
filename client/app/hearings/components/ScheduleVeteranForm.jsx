@@ -151,7 +151,7 @@ export const ScheduleVeteranForm = ({
               />
               {hearing.hearingDay?.hearingId && (
                 <React.Fragment>
-                  {userCanViewTimeSlots ? (
+                  {virtual && userCanViewTimeSlots ? (
                     <TimeSlot
                       {...props}
                       ro={ro}
