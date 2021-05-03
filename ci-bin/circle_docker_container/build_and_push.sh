@@ -11,8 +11,8 @@ eval $(aws ecr get-login --no-include-email --region us-gov-west-1)
 
 docker build -t circleci .
 # In case we modify this image and keep the same ruby version, we should use a different tag (i.e. image digest)
-docker tag circleci:latest 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:2.5.3-node-browsers
-if docker push 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:2.5.3-node-browsers ; then
+docker tag circleci:latest 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:2.5.9-node-browsers
+if docker push 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:2.5.9-node-browsers ; then
   echo 'Success the latest docker image has been pushed.'
 else
   echo 'Failed. You likely need to sign in with MFA https://aws.amazon.com/premiumsupport/knowledge-center/authenticate-mfa-cli/'
