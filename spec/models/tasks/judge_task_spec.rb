@@ -34,7 +34,7 @@ describe JudgeTask, :all_dbs do
   end
 
   describe "reassign" do
-    let(:root_task) { RootTask.find(create(:root_task).id) }
+    let(:root_task) { create(:root_task) }
     let(:task) { create(:ama_judge_assign_task, parent: root_task) }
     let(:old_assignee) { task.assigned_to }
     let(:new_assignee) { create(:user) }
@@ -49,6 +49,7 @@ describe JudgeTask, :all_dbs do
 
     context "when a judge task is reassigned" do
       it "should not violate the no_multiples_of_noncancelled_task validation" do
+        allow(Thread).to receive(:current).and_return(skip_duplicate_validation: true)
         expect { subject }.to_not raise_error
       end
     end

@@ -554,28 +554,8 @@ class Task < CaseflowRecord
     end
   end
 
-  def update_status(replacement)
-    if replacement.type != JudgeAssignTask.name
-      replacement.update!(status: status)
-    end
-    save!(status: Constants.TASK_STATUSES.cancelled)
-  end
-
-  # :reek:FeatureEnvy
-  def handle_task_count_validation(task_to_validate)
-    begin
-      task_to_validate.save!
-      # We ignore the no_multiples_of_noncancelled_task validation during the reassign flow
-    rescue ActiveRecord::RecordInvalid => error
-      if error.message != "Validation failed: Type #{COPY::INVALID_MULTIPLE_TASKS}"
-        raise
-      else
-        task_to_validate.save(validate: false)
-      end
-    end
-  end
-
   def reassign(reassign_params, current_user)
+    Thread.current.thread_variable_set(:skip_duplicate_validation, true)
     replacement = dup.tap do |task|
       ActiveRecord::Base.transaction do
         task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
@@ -583,13 +563,15 @@ class Task < CaseflowRecord
         task.instructions = flattened_instructions(reassign_params)
         task.status = Constants.TASK_STATUSES.assigned
 
-        handle_task_count_validation(task)
+        # TODO: ensure that thread-local variables are cleared if the below raises an error
+        task.save!
+        Thread.current[:skip_duplicate_validation] = nil
       end
     end
 
     # Preserve the open children and status of the old task
     children.select(&:stays_with_reassigned_parent?).each { |child| child.update!(parent_id: replacement.id) }
-    update_status(replacement)
+    replacement.update!(status: status)
     update_with_instructions(status: Constants.TASK_STATUSES.cancelled, instructions: reassign_params[:instructions])
 
     appeal.overtime = false if appeal.overtime? && reassign_clears_overtime?
@@ -836,6 +818,10 @@ class Task < CaseflowRecord
   end
 
   def no_multiples_of_noncancelled_task
+    if Thread.current[:skip_duplicate_validation]
+      return
+    end
+
     tasks = appeal.reload.tasks
     target_tasks = tasks.open.of_type(type)
     if target_tasks.length >= 1
