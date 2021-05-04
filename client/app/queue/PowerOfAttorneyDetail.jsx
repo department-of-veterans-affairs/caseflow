@@ -31,7 +31,7 @@ const powerOfAttorneyFromAppealSelector = (appealId) =>
     return {
       powerOfAttorney: appeal?.powerOfAttorney,
       loading: false,
-      error: loadingPowerOfAttorney?.error,
+      error: loadingPowerOfAttorney?.error
     };
   }
 ;
