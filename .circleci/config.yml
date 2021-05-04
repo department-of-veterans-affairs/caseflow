@@ -9,8 +9,8 @@ commands:
           command: ruby -v
 
       - run:
-          name: Update Bundler
-          command: bundle update --bundler
+          name: Update bundler
+          command: gem install bundler
 
       - restore_cache:
           keys:
