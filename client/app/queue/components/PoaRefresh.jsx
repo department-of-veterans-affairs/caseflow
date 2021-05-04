@@ -17,10 +17,7 @@ export const textStyling = css({
 
 export const syncStyling = css({
   textAlign: 'right',
-  width: '33%',
-  // display: 'flex',
-  // justify-content: 'center',
-  // flex-wrap: 'wrap'
+  width: '33%'
 });
 
 export const gutterStyling = css({
