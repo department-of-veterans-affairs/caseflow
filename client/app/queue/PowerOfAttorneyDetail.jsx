@@ -130,6 +130,7 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
         <ul {...detailListStyling}>
           <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
         </ul>
+        <p><em>{ COPY.CASE_DETAILS_POA_EXPLAINER }</em></p>
         { poaAlert.message && poaAlert.alertType && (
           <div>
             <Alert type={poaAlert.alertType} message={poaAlert.message} scrollOnAlert={false} />
