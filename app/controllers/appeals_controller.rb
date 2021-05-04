@@ -66,7 +66,8 @@ class AppealsController < ApplicationController
       message = "Information is current at this time. Please try again in #{cooldown_period} minutes"
       render json: {
         status: "info",
-        message: message
+        message: message,
+        power_of_attorney: power_of_attorney_data
       }
     elsif appeal.is_a?(Appeal)
       poa = BgsPowerOfAttorney.find(params[:poaId])

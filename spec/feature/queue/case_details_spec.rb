@@ -494,6 +494,7 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to have_content("Refresh POA")
         click_on "Refresh POA"
         expect(page).to have_content("Information is current at this time. Please try again in 10 minutes")
+        expect(page).to have_content("POA last refreshed on 01/01/2020")
       end
 
       scenario "button is on the page and updates" do
