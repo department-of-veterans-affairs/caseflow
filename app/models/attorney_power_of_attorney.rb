@@ -7,9 +7,6 @@ class AttorneyPowerOfAttorney
   include ActiveModel::Model
 
   delegate :name, :address, to: :bgs_attorney
-  delegate :representative_email_address,
-           :poa_last_synced_at,
-           to: :bgs_power_of_attorney, prefix: :bgs
 
   attr_accessor :participant_id
 

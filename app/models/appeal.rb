@@ -417,15 +417,10 @@ class Appeal < DecisionReview
   delegate :representative_name,
            :representative_type,
            :representative_address,
+           :representative_email_address,
+           :poa_last_synced_at,
            to: :power_of_attorney, allow_nil: true
 
-  # delegate :representative_email_address,
-  #          :poa_last_synced_at,
-  #          to: :power_of_attorney, allow_nil: true, if: !veteran_is_not_claimant
-
-  delegate :representative_email_address,
-           :poa_last_synced_at,
-           to: :attorney_power_of_attorney, allow_nil: true
 
   def power_of_attorneys
     claimants.map(&:power_of_attorney).compact
