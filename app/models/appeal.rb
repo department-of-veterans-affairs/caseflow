@@ -421,7 +421,6 @@ class Appeal < DecisionReview
            :poa_last_synced_at,
            to: :power_of_attorney, allow_nil: true
 
-
   def power_of_attorneys
     claimants.map(&:power_of_attorney).compact
   end

@@ -7,7 +7,6 @@ class AttorneyPowerOfAttorney
   include ActiveModel::Model
 
   delegate :name, :address, to: :bgs_attorney
-
   attr_accessor :participant_id
 
   alias representative_name name
