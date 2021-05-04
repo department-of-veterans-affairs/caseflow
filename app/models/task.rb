@@ -584,6 +584,7 @@ class Task < CaseflowRecord
     [replacement, self, replacement.children].flatten
   end
 
+  # rubocop:enable Metrics/AbcSize
   def can_move_on_docket_switch?
     return false unless open_with_no_children?
     return false if type.include?("DocketSwitch")

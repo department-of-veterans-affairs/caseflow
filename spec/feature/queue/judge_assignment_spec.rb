@@ -293,6 +293,8 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
   describe "Reassigning an ama appeal to a judge from the case details page" do
     before do
+      # Thread.current.thread_variable_set(:skip_duplicate_validation, true)
+      Thread.current[:skip_duplicate_validation] = true
       create(:ama_judge_assign_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_one)
     end
 
