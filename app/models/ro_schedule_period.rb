@@ -53,12 +53,14 @@ class RoSchedulePeriod < SchedulePeriod
       ro_info[:allocated_dates].each_value do |dates|
         dates.each do |date, rooms|
           rooms.each do |room|
-            byebug
             acc << HearingDayMapper.hearing_day_field_validations(
               request_type: (ro_key == "NVHQ") ? :virtual : :video,
               scheduled_for: Date.new(date.year, date.month, date.day),
               room: room[:room_num],
-              regional_office: (ro_key == "NVHQ") ? nil : ro_key
+              regional_office: (ro_key == "NVHQ") ? nil : ro_key,
+              number_of_slots: ro_info[:number_of_slots],
+              slot_length_minutes: ro_info[:slot_length_minutes],
+              first_slot_time: ro_info[:first_slot_time]
             )
           end
         end

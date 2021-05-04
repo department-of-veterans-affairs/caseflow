@@ -159,7 +159,22 @@ export default class ReviewAssignments extends React.Component {
         header: 'Room',
         align: 'left',
         valueName: 'room'
-      }
+      },
+      {
+        header: 'Time Slot Start',
+        align: 'left',
+        valueName: 'firstSlotTime'
+      },
+      {
+        header: 'Number of Time Slots',
+        align: 'left',
+        valueName: 'numberOfSlots'
+      },
+      {
+        header: 'Time Slot Duration (in minutes)',
+        align: 'left',
+        valueName: 'slotLengthMinutes'
+      },
     ];
 
     if (this.props.schedulePeriod.type === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
@@ -175,7 +190,10 @@ export default class ReviewAssignments extends React.Component {
       type: REQUEST_TYPE_LABELS[hearingDay.requestType],
       regionalOffice: hearingDay.regionalOffice,
       room: hearingDay.room,
-      judge: hearingDay.judgeName
+      judge: hearingDay.judgeName,
+      firstSlotTime: hearingDay.firstSlotTime,
+      numberOfSlots: hearingDay.numberOfSlots,
+      slotLengthMinutes: hearingDay.slotLengthMinutes,
     }));
 
     return <AppSegment filledBackground>
