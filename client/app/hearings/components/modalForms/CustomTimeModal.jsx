@@ -61,6 +61,7 @@ const generateOrderedTimeOptions = (roTimezone) => {
 };
 
 export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => {
+
   const options = generateOrderedTimeOptions(roTimezone);
   const buttons = [
     {
@@ -90,6 +91,14 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => 
   const hideMenu = () => {
     setMenuOpen(false);
   };
+  // Gives access to the value outside the select component
+  const [selectedValue, setSelectedValue] = useState();
+  const [timeInEastern, setTimeInEastern] = useState();
+  const handleChange = (selectedOption) => {
+    setSelectedValue(selectedOption?.value);
+    setTimeInEastern(selectedOption?.value.tz('America/New_York').format('h:mm A'));
+    hideMenu();
+  };
 
   // Hide the dropdown arrow on the right side
   const hideStyleFunction = () => ({
@@ -97,9 +106,27 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => 
   });
   const customStyles = {
     // Hiding this removes the "x" to clear, we want to keep that for now
-    // indicatorsContainer: hideStyleFunction,
     indicatorSeparator: hideStyleFunction,
-    dropdownIndicator: hideStyleFunction
+    dropdownIndicator: hideStyleFunction,
+    // Set the height of the select component
+    /*
+    control: (base) => ({
+      ...base,
+      height: 35,
+      minHeight: 35
+
+    }),
+    clearIndicator: (styles) => ({
+      ...styles,
+      paddingTop: 7,
+      paddingBottom: 7,
+    }),
+    indicatorsContainer: (styles) => ({
+      ...styles,
+      paddingTop: 7,
+      paddingBottom: 7,
+    }),
+    */
   };
 
   const matchesHour = (candidate, input, exact = false) => {
@@ -114,7 +141,7 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => 
       const [hour, minutesAndAmPm] = input.split(':');
 
       // Check that the hour matches exactly and the minutes+ampm are present
-      return matchesHour(candidate, hour, true) && matchesMinutes(candidate, minutesAndAmPm);
+      return matchesHour(candidate, hour, true) && matchesAny(candidate, minutesAndAmPm);
     }
     if (!input.includes(':')) {
     // Produce a time like '400pm' or '800am' for string searching
@@ -144,7 +171,7 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => 
     <Modal title="Create a custom time slot" buttons={buttons} closeHandler={onCancel} id="custom-time-modal">
       <div><strong>Choose a hearing start time for <span style={{ whiteSpace: 'nowrap' }}>{roCity}</span></strong></div>
       <div>Enter time as hh:mm AM/PM, for example "1:00 PM"</div>
-      <div style={{ borderRadius: '5px', background: 'rgb(224, 222, 220)', width: '50%' }}>
+      <div style={{ borderRadius: '5px', background: 'rgb(224, 222, 220)', width: '50%', marginTop: '20px' }}>
         <div style={{ width: '75%', display: 'inline-block' }}>
           <Select
             // Settings for searching
@@ -156,17 +183,20 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => 
             // Don't open until we type
             onInputChange={handleInputChange}
             menuIsOpen={menuOpen}
-            onChange={hideMenu}
             onBlur={hideMenu}
             // Hide the dropdown arrow
             styles={customStyles}
             // Dont show the placeholder text
             placeholder=""
+            // Handle selection changes
+            onChange={handleChange}
           />
         </div>
-        <div style={{ display: 'inline-block' }}><strong>CDT</strong></div>
+        <span style={{ color: 'black' }}><strong>CDT</strong></span>
       </div>
-      <div style={{ height: '150px' }}></div>
+      <div style={{ height: '100px' }}>
+        <p>{timeInEastern ? `The hearing will start at ${timeInEastern} Eastern Time` : ''}</p>
+      </div>
     </Modal>
   );
 };
