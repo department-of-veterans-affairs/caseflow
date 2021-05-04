@@ -11,6 +11,10 @@ export default {
       iframeHeight: 600,
     },
   },
+  args: {
+    roCity: 'Houston, TX',
+    roTimezone: 'America/Chicago'
+  },
   argTypes: {
     onConfirm: { action: 'confirmed' },
     onCancel: { action: 'cancelled' },

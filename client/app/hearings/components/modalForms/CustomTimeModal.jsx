@@ -60,7 +60,7 @@ const generateOrderedTimeOptions = (roTimezone) => {
   return options;
 };
 
-export const CustomTimeModal = ({ onConfirm, onCancel, roTimezone }) => {
+export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => {
   const options = generateOrderedTimeOptions(roTimezone);
   const buttons = [
     {
@@ -107,13 +107,14 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roTimezone }) => {
 
     return exact ? candidateHourString === input : candidateHourString.startsWith(input);
   };
+
   const matchesAny = (candidate, input) => {
     if (input.includes(':')) {
       // Split into hours and minutes
       const [hour, minutesAndAmPm] = input.split(':');
 
-      // Check that the hour matches exactly and the minutes are present
-      return matchesHour(candidate, hour, true) && matchesAny(candidate, minutesAndAmPm);
+      // Check that the hour matches exactly and the minutes+ampm are present
+      return matchesHour(candidate, hour, true) && matchesMinutes(candidate, minutesAndAmPm);
     }
     if (!input.includes(':')) {
     // Produce a time like '400pm' or '800am' for string searching
@@ -141,25 +142,39 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roTimezone }) => {
 
   return (
     <Modal title="Create a custom time slot" buttons={buttons} closeHandler={onCancel} id="custom-time-modal">
-      <div>[placeholder text, line1]</div>
-      <div>[placeholder text, line2]</div>
-      <div>[placeholder text, line3]</div>
-      <Select
-        // Settings for searching
-        isClearable
-        isSearchable
-        options={options}
-        // Custom searching logic
-        filterOption={filterOptions}
-        // Don't open until we type
-        onInputChange={handleInputChange}
-        menuIsOpen={menuOpen}
-        onChange={hideMenu}
-        onBlur={hideMenu}
-        // Hide the dropdown arrow
-        styles={customStyles}
-      />
+      <div><strong>Choose a hearing start time for <span style={{ whiteSpace: 'nowrap' }}>{roCity}</span></strong></div>
+      <div>Enter time as hh:mm AM/PM, for example "1:00 PM"</div>
+      <div style={{ borderRadius: '5px', background: 'rgb(224, 222, 220)', width: '50%' }}>
+        <div style={{ width: '75%', display: 'inline-block' }}>
+          <Select
+            // Settings for searching
+            isClearable
+            isSearchable
+            options={options}
+            // Custom searching logic
+            filterOption={filterOptions}
+            // Don't open until we type
+            onInputChange={handleInputChange}
+            menuIsOpen={menuOpen}
+            onChange={hideMenu}
+            onBlur={hideMenu}
+            // Hide the dropdown arrow
+            styles={customStyles}
+            // Dont show the placeholder text
+            placeholder=""
+          />
+        </div>
+        <div style={{ display: 'inline-block' }}><strong>CDT</strong></div>
+      </div>
+      <div style={{ height: '150px' }}></div>
     </Modal>
   );
+};
+
+CustomTimeModal.propTypes = {
+  roCity: PropTypes.string,
+  roTimezone: PropTypes.string,
+  onCancel: PropTypes.func,
+  onConfirm: PropTypes.func,
 };
 
