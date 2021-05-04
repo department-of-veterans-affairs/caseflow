@@ -103,4 +103,5 @@ Rails.application.configure do
   config.s3_bucket_name = ENV["AWS_BUCKET_NAME"]
 
   config.google_analytics_account = ENV["GA_TRACKING_ID"]
+
 end
