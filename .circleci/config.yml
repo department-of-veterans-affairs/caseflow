@@ -8,6 +8,10 @@ commands:
           name: Ruby version
           command: ruby -v
 
+      - run:
+          name: Update Bundler
+          command: bundle update --bundler
+
       - restore_cache:
           keys:
             - vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
