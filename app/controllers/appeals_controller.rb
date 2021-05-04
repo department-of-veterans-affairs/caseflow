@@ -58,6 +58,7 @@ class AppealsController < ApplicationController
   end
 
   def power_of_attorney
+    # binding.pry
     render json: {
       representative_type: appeal.representative_type,
       representative_name: appeal.representative_name,
