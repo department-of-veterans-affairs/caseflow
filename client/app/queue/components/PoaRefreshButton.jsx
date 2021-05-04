@@ -41,9 +41,6 @@ export const PoaRefreshButton = ({ appealId, poaId }) => {
 };
 
 PoaRefreshButton.propTypes = {
-  powerOfAttorney: PropTypes.shape({
-    poa_last_synced_at: PropTypes.string,
-  }),
   appealId: PropTypes.string,
   poaId: PropTypes.number
 };
