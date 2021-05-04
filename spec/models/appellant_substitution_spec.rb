@@ -37,6 +37,25 @@ describe AppellantSubstitution do
       expect(subject.target_appeal.tasks.open.map(&:type)).to include "DistributionTask"
     end
 
+    context "when source appeal has ScheduleHearingTask and EvidenceSubmissionWindowTask" do
+      context "??" do
+        let(:source_appeal) {
+          create(:appeal, :with_schedule_hearing_tasks, :dispatched) { |appeal|
+            # Cancel any open tasks
+            appeal.tasks.open.map(&:cancelled!)
+          }
+        }
+        it "creates new appeal with AOD due to age" do
+          expect(source_appeal.tasks.of_type(:ScheduleHearingTask).count).to eq 1
+          expect(source_appeal.tasks.of_type(:EvidenceSubmissionWindowTask).count).to eq 1
+
+          appellant_substitution = subject
+          target_appeal = appellant_substitution.target_appeal
+          # binding.pry
+        end
+      end
+    end
+
     context "when source appeal is AOD" do
       context "source appeal is AOD due to claimant's age" do
         let(:source_appeal) { create(:appeal, :active, :advanced_on_docket_due_to_age) }

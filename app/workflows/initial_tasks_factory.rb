@@ -37,7 +37,11 @@ class InitialTasksFactory
 
     if @appeal.appellant_substitution?
       # copy task tree from source appeal
-      # To-do create tasks based on appellant_substitution form
+      source_appeal = @appeal.appellant_substitution.source_appeal
+      # Given a selection of task_ids, select it and all its tree ancestors
+      # TODO for rspec: pull a real tree from prod that has a deep task tree and varied task types
+      task_ids = source_appeal.tasks.of_type([:ScheduleHearingTask, :EvidenceSubmissionWindowTask]).pluck(:id)
+      copy_tasks(task_ids)
     elsif @appeal.cavc?
       create_cavc_subtasks
     elsif @appeal.evidence_submission_docket?
@@ -55,6 +59,19 @@ class InitialTasksFactory
   def distribution_task
     @distribution_task ||= @appeal.tasks.open.find_by(type: :DistributionTask) ||
                            DistributionTask.create!(appeal: @appeal, parent: @root_task)
+  end
+
+  def copy_tasks(task_ids)
+    # Order the tasks so they are created in the same order
+    tasks = Task.where(id: task_ids).order(:id)
+    # TODO: Do we want to exclude tasks assigned to users if the task has a parent org-task
+    tasks.map { |task| task.copy_with_ancestors_to_stream(@appeal) }
+    # TODO: ask if we want to shown a SubstitutionTask in the timeline, like DocketSwitch*Task
+    source_appeal = @appeal.appellant_substitution.source_appeal
+    source_appeal.treee
+    @appeal.reload.treee
+    binding.pry
+    # To-do: create or re-open tasks based on appellant_substitution form
   end
 
   # For AMA appeals. Create appropriate subtasks based on the CAVC Remand subtype
