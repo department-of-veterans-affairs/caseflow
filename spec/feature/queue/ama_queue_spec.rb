@@ -857,7 +857,6 @@ feature "AmaQueue", :all_dbs do
     before { FeatureToggle.enable!(:overtime_revamp) }
     after { FeatureToggle.disable!(:overtime_revamp) }
     it_behaves_like "Judge has a case to assign to an attorney" do
-      Thread.current[:skip_duplicate_validation] = true
       let(:overtime) { true }
       before { appeal.overtime = overtime }
     end

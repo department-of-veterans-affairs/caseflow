@@ -570,7 +570,7 @@ class Task < CaseflowRecord
       # The ensure block guarantees that the thread-local variable skip_duplicate_validation
       # does not leak outside of this method
       ensure
-        Thread.current[:skip_duplicate_validation] = nil
+        Thread.current.thread_variable_set(:skip_duplicate_validation, nil)
       end
     end
 
@@ -824,7 +824,7 @@ class Task < CaseflowRecord
   end
 
   def no_multiples_of_noncancelled_task
-    if Thread.current[:skip_duplicate_validation]
+    if Thread.current.thread_variable_get(:skip_duplicate_validation)
       return
     end
 

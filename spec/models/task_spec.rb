@@ -841,11 +841,6 @@ describe Task, :all_dbs do
 
     before do
       allow_any_instance_of(Organization).to receive(:user_has_access?).and_return(true)
-      Thread.current[:skip_duplicate_validation] = true
-    end
-
-    after do
-      Thread.current[:skip_duplicate_validation] = nil
     end
 
     subject { task.reassign(params, old_assignee) }

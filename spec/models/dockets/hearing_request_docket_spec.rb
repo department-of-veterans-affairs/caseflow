@@ -227,11 +227,6 @@ describe HearingRequestDocket, :all_dbs do
     end
 
     context "when an appeal already has a distribution" do
-      # allow(Thread).to receive(:current).and_return(skip_duplicate_validation: true)
-      before do
-        Thread.current[:skip_duplicate_validation] = true
-      end
-
       subject do
         HearingRequestDocket.new.distribute_appeals(distribution, priority: false, limit: 10, genpop: "any")
       end
