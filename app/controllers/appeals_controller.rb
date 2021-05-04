@@ -287,6 +287,7 @@ class AppealsController < ApplicationController
     begin
       bgs_poa = BgsPowerOfAttorney.find_or_create_by_file_number(poa.file_number)
       message = bgs_poa.update_or_delete(appeal.claimant)
+      # appeal.claimant.power_of_attorney.reload!
       {
         status: "success",
         message: message,
@@ -301,6 +302,7 @@ class AppealsController < ApplicationController
   end
 
   def cooldown_period
+    return false
     next_update_allowed_at = appeal.poa_last_synced_at + 10.minutes if appeal.poa_last_synced_at.present?
     if next_update_allowed_at && next_update_allowed_at > Time.zone.now
       return ((next_update_allowed_at - Time.zone.now) / 60).ceil

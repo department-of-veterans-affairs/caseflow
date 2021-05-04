@@ -129,6 +129,7 @@ class BgsPowerOfAttorney < CaseflowRecord
   def update_cached_attributes!
     stale_attributes.each { |attr| send(attr) } if found?
     self.last_synced_at = Time.zone.now
+    puts self.last_synced_at
   end
 
   alias_attribute :poa_last_synced_at, :last_synced_at
@@ -141,6 +142,7 @@ class BgsPowerOfAttorney < CaseflowRecord
       send(attr)
     end
     save!
+    puts "SAVED!", self.last_synced_at
   end
 
   def found?
@@ -172,9 +174,14 @@ class BgsPowerOfAttorney < CaseflowRecord
   end
 
   def fetch_bgs_record
+    puts self[:claimant_participant_id], "Claimant participant ID"
+    puts self[:file_number], "File Number"
     # prefer FN if both defined since one PID can have multiple FNs
     if self[:claimant_participant_id] && self[:file_number]
-      fetch_bgs_record_by_file_number
+      return {:representative_type=>"Attorney", :representative_name=>"Clarence Darrow", :participant_id=>"600153863", :authzn_change_clmant_addrs_ind=>nil, :authzn_poa_access_ind=>nil, :legacy_poa_cd=>"3QQ", :file_number=>self[:file_number], :claimant_participant_id=>"600085544"}
+      bgs_record = fetch_bgs_record_by_file_number
+      puts bgs_record
+      bgs_record
     elsif self[:claimant_participant_id]
       fetch_bgs_record_by_claimant_participant_id
     elsif self[:file_number]
