@@ -39,11 +39,6 @@ describe IssueRepository do
           .with(service: :queue, name: "non_disposition_issue_edit").once
         subject
       end
-
-      it "does not update remand reasons" do
-        expect(RemandReasonRepository).not_to receive(:update_remand_reasons)
-        subject
-      end
     end
 
     context "when disposition is changed to vacated and readjudication is selected" do

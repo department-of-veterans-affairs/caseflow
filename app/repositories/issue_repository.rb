@@ -78,8 +78,6 @@ class IssueRepository
       BusinessMetrics.record(service: :queue, name: "non_disposition_issue_edit")
     end
 
-    return if record.issdc == issue_attrs[:disposition]
-
     RemandReasonRepository.update_remand_reasons(record, issue_attrs)
   end
 end
