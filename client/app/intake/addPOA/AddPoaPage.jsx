@@ -31,6 +31,7 @@ const fetchAttorneys = async (search = '') => {
   const res = await ApiUtil.get('/intake/attorneys', {
     query: { query: search },
   });
+  
   return res?.body;
 };
 
