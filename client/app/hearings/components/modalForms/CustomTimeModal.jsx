@@ -62,23 +62,13 @@ const generateOrderedTimeOptions = (roTimezone) => {
 
 export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => {
 
-  const options = generateOrderedTimeOptions(roTimezone);
-  const buttons = [
-    {
-      classNames: ['cf-modal-link', 'cf-btn-link'],
-      name: 'Cancel',
-      onClick: onCancel
-    },
-    {
-      classNames: ['usa-button', 'usa-button-primary'],
-      name: 'Create time slot',
-      onClick: onConfirm
-    },
-  ];
+  // Deal with error state
+  const [error, setError] = useState();
 
   // Managing this so we can force it to stay closed until typed into
   const [menuOpen, setMenuOpen] = useState(false);
   const handleInputChange = (query, { action }) => {
+    setError('');
     if (action === 'input-change' && query) {
       setMenuOpen(true);
     }
@@ -100,6 +90,23 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => 
     hideMenu();
   };
 
+  const handleConfirm = () =>
+    selectedValue ? onConfirm(selectedValue) : setError('Please enter a hearing start time.');
+
+  const options = generateOrderedTimeOptions(roTimezone);
+  const buttons = [
+    {
+      classNames: ['cf-modal-link', 'cf-btn-link'],
+      name: 'Cancel',
+      onClick: onCancel
+    },
+    {
+      classNames: ['usa-button', 'usa-button-primary'],
+      name: 'Create time slot',
+      onClick: handleConfirm
+    },
+  ];
+
   // Hide the dropdown arrow on the right side
   const hideStyleFunction = () => ({
     display: 'none'
@@ -111,6 +118,7 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => 
     // Set the height of the select component
     valueContainer: (styles) => ({
       ...styles,
+      border: error ? '2px solid red' : styles.border,
       height: 44,
       minHeight: 44,
     }),
@@ -163,6 +171,11 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => 
     <Modal title="Create a custom time slot" buttons={buttons} closeHandler={onCancel} id="custom-time-modal">
       <div><strong>Choose a hearing start time for <span style={{ whiteSpace: 'nowrap' }}>{roCity}</span></strong></div>
       <div>Enter time as hh:mm AM/PM, for example "1:00 PM"</div>
+
+      <div style={{ color: 'red', paddingTop: '16px' }}>
+        {error}
+      </div>
+
       <div style={{ borderRadius: '5px', background: 'rgb(224, 222, 220)', width: '50%', marginTop: '16px', marginBottom: '16px', display: 'flex', alignItems: 'center' }}>
         <div style={{ width: '75%', display: 'inline-block' }}>
           <Select
@@ -182,12 +195,19 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => 
             placeholder=""
             // Handle selection changes
             onChange={handleChange}
+            // Don't let menu get long enough to scroll
+            maxMenuHeight="300"
           />
         </div>
         <div style={{ width: '25%', display: 'inline-block', color: 'black', textAlign: 'center' }}><strong>CDT</strong></div>
       </div>
       <div style={{ height: '100px' }}>
-        {timeInEastern ? `The hearing will start at ${timeInEastern} Eastern Time` : ''}
+        {timeInEastern &&
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ background: 'rgb(224, 222, 220)', width: '1rem', height: '4rem', display: 'inline-block', marginRight: '1.5rem' }} />
+          <div style={{ display: 'inline-block' }}><i>{`The hearing will start at ${timeInEastern} Eastern Time`}</i></div>
+        </div>
+        }
       </div>
     </Modal>
   );
