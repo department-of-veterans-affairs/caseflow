@@ -40,8 +40,8 @@ const moveTimesToEndOfArray = (newFirstValue, times) => {
 const formatTimesToOptionObjects = (times) => {
   return times.map((time) => {
     return {
-      value: time.format('HH:mm'),
-      label: time.format('h:mm A')
+      label: time.format('h:mm A'),
+      value: time
     };
   });
 };
@@ -102,6 +102,43 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roTimezone }) => {
     dropdownIndicator: hideStyleFunction
   };
 
+  const matchesHour = (candidate, input, exact = false) => {
+    const candidateHourString = candidate.value.format('h');
+
+    return exact ? candidateHourString === input : candidateHourString.startsWith(input);
+  };
+  const matchesAny = (candidate, input) => {
+    if (input.includes(':')) {
+      // Split into hours and minutes
+      const [hour, minutesAndAmPm] = input.split(':');
+
+      // Check that the hour matches exactly and the minutes are present
+      return matchesHour(candidate, hour, true) && matchesAny(candidate, minutesAndAmPm);
+    }
+    if (!input.includes(':')) {
+    // Produce a time like '400pm' or '800am' for string searching
+      const candidateNoColon = candidate.value.format('hhmmA');
+      // Remove spaces, force upper case so AM/PM searching works
+      const inputNoColonOrSpaces = input.replace(' ', '').toUpperCase();
+
+      return candidateNoColon.includes(inputNoColonOrSpaces);
+    }
+  };
+
+  // Custom search logic entry point
+  const filterOptions = (candidate, input) => {
+    // If only one character in the input assume it represents an hour
+    if (input.length === 1) {
+      return matchesHour(candidate, input);
+    }
+    if (input.length === 2 && input.endsWith(':')) {
+      return matchesHour(candidate, input[0], true);
+    }
+    if (input.length >= 2) {
+      return matchesAny(candidate, input);
+    }
+  };
+
   return (
     <Modal title="Create a custom time slot" buttons={buttons} closeHandler={onCancel} id="custom-time-modal">
       <div>[placeholder text, line1]</div>
@@ -112,6 +149,8 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roTimezone }) => {
         isClearable
         isSearchable
         options={options}
+        // Custom searching logic
+        filterOption={filterOptions}
         // Don't open until we type
         onInputChange={handleInputChange}
         menuIsOpen={menuOpen}
@@ -124,8 +163,3 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roTimezone }) => {
   );
 };
 
-CustomTimeModal.propTypes = {
-  roTimezone: PropTypes.string,
-  onCancel: PropTypes.func,
-  onConfirm: PropTypes.func,
-};
