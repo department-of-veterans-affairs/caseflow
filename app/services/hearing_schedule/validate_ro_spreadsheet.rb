@@ -12,8 +12,10 @@ class HearingSchedule::ValidateRoSpreadsheet
   CO_SPREADSHEET_EMPTY_COLUMN = [nil].freeze
 
   HEARING_ALLOCATION_SHEET_TITLE = "Allocation of Regional Office Video Hearings"
-  HEARING_ALLOCATION_SHEET_EXAMPLE_ROW = ["Example", "Ithaca, NY", "RO00", 10, 50].freeze
+  HEARING_ALLOCATION_SHEET_EXAMPLE_ROW = ["Example", "Ithaca, NY", "RO00", 10, 50, 8, 60, "8:30"].freeze
   HEARING_ALLOCATION_SHEET_EMPTY_COLUMN = [nil].freeze
+  MAX_TIME_SLOTS = 12
+  MAX_DURATION_IN_MINUTES = 60
 
   class RoDatesNotUnique < StandardError; end
   class RoDatesNotInRange < StandardError; end
@@ -28,6 +30,10 @@ class HearingSchedule::ValidateRoSpreadsheet
   class AllocationRoListedIncorrectly < StandardError; end
   class AllocationDuplicateRo < StandardError; end
   class AllocationTemplateNotFollowed < StandardError; end
+  class MissingTimeSlotDetails < StandardError; end
+  class InvalidNumberOfSlots < StandardError; end
+  class SlotDurationExceedsMax < StandardError; end
+  class StartTimeNotValidTime < StandardError; end
 
   RO_TEMPLATE_ERROR = "The RO non-availability template was not followed. Redownload the template and try again."
   CO_TEMPLATE_ERROR = "The CO non-availability template was not followed. Redownload the template and try again."
@@ -42,6 +48,10 @@ class HearingSchedule::ValidateRoSpreadsheet
   ALLOCATION_LISTED_INCORRECTLY = "The ROs are listed incorrectly in the allocation spreadsheet. " \
                                   "Redownload the template and try again."
   ALLOCATION_DUPLICATE_RO = "The following ROs are listed more than once in the allocation spreadsheet: "
+  INVALID_NUMBER_OF_SLOTS = "The following allocations contain an invalid number of slots: "
+  SLOT_DURATION_EXCEEDS_MAX = "The following allocations contain an invalid length for time slots: "
+  START_TIME_NOT_VALID_TIME = "The following allocations contain an invalid start time: "
+  MISSING_TIME_SLOT_DETAILS = "The following ROs in the allocations spreadsheet are missing time slot details: "
 
   def initialize(spreadsheet, start_date, end_date)
     get_spreadsheet_data = HearingSchedule::GetSpreadsheetData.new(spreadsheet)
@@ -187,6 +197,68 @@ class HearingSchedule::ValidateRoSpreadsheet
     end
   end
 
+  def filter_missing_time_slot_details
+    @allocation_spreadsheet_data.select do |row|
+      row["first_slot_time"].nil? || row["slot_length_minutes"].nil? || row["number_of_slots"].nil?
+    end.pluck("ro_code").uniq
+  end
+
+  def filter_invalid_number_of_slots
+    @allocation_spreadsheet_data.select do |row|
+      begin
+        row["number_of_slots"] > MAX_TIME_SLOTS || row["number_of_slots"] < 0
+      rescue StandardError => error
+        Rails.logger.error(error)
+        row
+      end
+    end.pluck("ro_code").uniq
+  end
+
+  def filter_slot_lengths_over_duration_limit
+    @allocation_spreadsheet_data.select do |row|
+      begin
+        row["slot_length_minutes"] > MAX_DURATION_IN_MINUTES || row["slot_length_minutes"] < 0
+      rescue StandardError => error
+        Rails.logger.error(error)
+        row
+      end
+    end.pluck("ro_code").uniq
+  end
+
+  def filter_incorrectly_formatted_start_times
+    @allocation_spreadsheet_data.select do |row|
+      begin
+        Time.zone.parse(row["first_slot_time"])
+        next
+      rescue StandardError => error
+        Rails.logger.error(error)
+        row
+      end
+    end.pluck("ro_code").uniq
+  end
+
+  def validate_hearing_allocation_times
+    missing_time_slot_details = filter_missing_time_slot_details
+    if missing_time_slot_details.count > 0
+      @errors << MissingTimeSlotDetails.new(MISSING_TIME_SLOT_DETAILS + missing_time_slot_details.to_s)
+    else
+      invalid_number_of_slots = filter_invalid_number_of_slots
+      if invalid_number_of_slots.count > 0
+        @errors << InvalidNumberOfSlots.new(INVALID_NUMBER_OF_SLOTS + invalid_number_of_slots.to_s)
+      end
+
+      incorrectly_formatted_start_times = filter_incorrectly_formatted_start_times
+      if incorrectly_formatted_start_times.count > 0
+        @errors << StartTimeNotValidTime.new(START_TIME_NOT_VALID_TIME + incorrectly_formatted_start_times.to_s)
+      end
+
+      slot_lengths_over_duration_limit = filter_slot_lengths_over_duration_limit
+      if slot_lengths_over_duration_limit.count > 0
+        @errors << SlotDurationExceedsMax.new(SLOT_DURATION_EXCEEDS_MAX + slot_lengths_over_duration_limit.to_s)
+      end
+    end
+  end
+
   def validate
     validate_ro_non_availability_template
     validate_ro_non_availability_dates
@@ -194,6 +266,7 @@ class HearingSchedule::ValidateRoSpreadsheet
     validate_co_non_availability_dates
     validate_hearing_allocation_template
     validate_hearing_allocation_days
+    validate_hearing_allocation_times
     @errors
   end
 

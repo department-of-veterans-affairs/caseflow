@@ -14,10 +14,12 @@ class Allocation < CaseflowRecord
       allocation = []
       transaction do
         allocation_data.each do |row|
-          allocation << Allocation.create!(schedule_period: schedule_period,
-                                           allocated_days: row["allocated_days"],
-                                           allocated_days_without_room: row["allocated_days_without_room"],
-                                           regional_office: row["ro_code"])
+          allocation << Allocation.create!(
+            schedule_period: schedule_period,
+            allocated_days: row["allocated_days"],
+            allocated_days_without_room: row["allocated_days_without_room"],
+            regional_office: row["ro_code"]
+          )
         end
       end
       allocation
