@@ -313,7 +313,7 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
       </div>
     </div>
     <div
-      class="sc-bdfBwQ flQqHu"
+      class="sc-bdfBwQ eMrOcK"
     >
       <div
         class="cf-form-textinput   "
@@ -396,6 +396,23 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
                 <div
                   class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
                 >
+                  <div
+                    aria-hidden="true"
+                    class="cf-select__indicator cf-select__clear-indicator css-tlfecz-indicatorContainer"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="css-6q0nyr-Svg"
+                      focusable="false"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      width="20"
+                    >
+                      <path
+                        d="M14.348 14.849c-0.469 0.469-1.229 0.469-1.697 0l-2.651-3.030-2.651 3.029c-0.469 0.469-1.229 0.469-1.697 0-0.469-0.469-0.469-1.229 0-1.697l2.758-3.15-2.759-3.152c-0.469-0.469-0.469-1.228 0-1.697s1.228-0.469 1.697 0l2.652 3.031 2.651-3.031c0.469-0.469 1.228-0.469 1.697 0s0.469 1.229 0 1.697l-2.758 3.152 2.758 3.15c0.469 0.469 0.469 1.229 0 1.698z"
+                      />
+                    </svg>
+                  </div>
                   <span
                     class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
                   />
@@ -435,6 +452,11 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
           <strong>
             <span>
               Zip
+              <span
+                class="cf-optional"
+              >
+                Optional
+              </span>
             </span>
           </strong>
         </label>

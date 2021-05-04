@@ -40,7 +40,7 @@ RSpec.feature "Case details", :all_dbs do
     User.authenticate!(user: attorney_user)
   end
 
-  context "hearings pane on attorney task detail view" do
+  context "hearings panel on attorney task detail view" do
     let(:veteran_first_name) { "Linda" }
     let(:veteran_last_name) { "Verne" }
     let!(:veteran) do
@@ -214,7 +214,7 @@ RSpec.feature "Case details", :all_dbs do
       context "when there is no POA" do
         before do
           allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return(nil)
-          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(nil)
+          allow(BgsPowerOfAttorney).to receive(:fetch_bgs_poa_by_participant_id).and_return(nil)
         end
 
         scenario "contains message for no POA" do
@@ -301,7 +301,23 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to have_content(appeal.appellant_relationship)
         expect(page).to have_content(appeal.appellant_address_line_1)
         expect(page).to have_content(COPY::CASE_DETAILS_VETERAN_ADDRESS_SOURCE)
+        expect(page).to have_content(COPY::CASE_DETAILS_POA_EXPLAINER)
+        expect(page).to have_content(appeal.power_of_attorney.bgs_representative_name)
         expect(page).to_not have_content("Regional Office")
+      end
+
+      context "when there is no POA" do
+        before do
+          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return(nil)
+          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(nil)
+        end
+
+        scenario "contains message for no POA" do
+          visit "/queue"
+          click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+          expect(page).to have_content("Appellant's Power of Attorney")
+          expect(page).to have_content(COPY::CASE_DETAILS_NO_POA)
+        end
       end
     end
 
@@ -336,6 +352,16 @@ RSpec.feature "Case details", :all_dbs do
       end
 
       context "when an unrecognized appellant doesn't have a POA" do
+        before do
+          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return(nil)
+
+          allow_any_instance_of(BgsPowerOfAttorney).to receive(:representative_type)
+            .and_return("Unrecognized representative")
+
+          allow(BgsPowerOfAttorney).to receive(:fetch_bgs_poa_by_participant_id).and_return(nil)
+          allow(BgsPowerOfAttorney).to receive(:find_or_create_by_claimant_participant_id).and_return(nil)
+        end
+
         let!(:claimant) do
           create(
             :claimant,
@@ -374,6 +400,53 @@ RSpec.feature "Case details", :all_dbs do
         # Expect to find content we know to be on the page so that we wait for the page to load.
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
         expect(page.has_no_content?("Select an action")).to eq(true)
+      end
+    end
+
+    context "POA refresh text isn't shown without feature toggle enabled" do
+      let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
+      let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
+
+      before { FeatureToggle.disable!(:poa_sync_date) }
+      after { FeatureToggle.enable!(:poa_sync_date) }
+
+      scenario "text isn't on the page" do
+        visit "/queue/appeals/#{appeal.vacols_id}"
+        expect(page.has_no_content?(COPY::CASE_DETAILS_POA_LAST_SYNC_DATE_COPY)).to eq(true)
+      end
+    end
+
+    context "POA refresh text is shown with feature toggle enabled" do
+      let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+      let(:appeal) { create(:appeal, veteran: create(:veteran)) }
+      let!(:poa) do
+        create(
+          :bgs_power_of_attorney,
+          :with_name_cached,
+          appeal: appeal
+        )
+      end
+
+      before { FeatureToggle.enable!(:poa_sync_date) }
+      after { FeatureToggle.disable!(:poa_sync_date) }
+
+      scenario "text is on the page" do
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page).to have_content("POA last refreshed on")
+      end
+    end
+
+    context "POA refresh text isn't shown when no POA is found" do
+      let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+      let(:appeal) { create(:appeal, veteran: create(:veteran)) }
+
+      before { FeatureToggle.enable!(:poa_sync_date) }
+      after { FeatureToggle.disable!(:poa_sync_date) }
+
+      scenario "text is not on the page" do
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page.has_no_content?(COPY::CASE_DETAILS_POA_LAST_SYNC_DATE_COPY)).to eq(true)
       end
     end
 

@@ -119,7 +119,7 @@ describe VaDotGovAddressValidator do
       it "creates Verify Address admin action" do
         appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
 
-        expect(appeal.tasks.where(type: "HearingAdminActionVerifyAddressTask").count).to eq(1)
+        expect(appeal.tasks.of_type(:HearingAdminActionVerifyAddressTask).count).to eq(1)
       end
     end
 
@@ -129,7 +129,7 @@ describe VaDotGovAddressValidator do
       it "creates foreign veteran admin action" do
         appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
 
-        expect(appeal.tasks.where(type: "HearingAdminActionForeignVeteranCaseTask").count).to eq(1)
+        expect(appeal.tasks.of_type(:HearingAdminActionForeignVeteranCaseTask).count).to eq(1)
       end
     end
 
@@ -139,7 +139,7 @@ describe VaDotGovAddressValidator do
       it "creates foreign veteran admin action" do
         appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
 
-        expect(appeal.tasks.where(type: "HearingAdminActionForeignVeteranCaseTask").count).to eq(1)
+        expect(appeal.tasks.of_type(:HearingAdminActionForeignVeteranCaseTask).count).to eq(1)
       end
     end
 
@@ -159,7 +159,7 @@ describe VaDotGovAddressValidator do
         it "creates a verify address admin action" do
           appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
 
-          expect(appeal.tasks.where(type: "HearingAdminActionVerifyAddressTask").count).to eq(1)
+          expect(appeal.tasks.of_type(:HearingAdminActionVerifyAddressTask).count).to eq(1)
         end
 
         context "and veteran's country is Philippines" do
