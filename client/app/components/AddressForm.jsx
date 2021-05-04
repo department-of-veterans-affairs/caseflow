@@ -65,7 +65,13 @@ export const AddressForm = ({ control, register, watch }) => {
         />
       </CityState>
       <ZipCountry>
-        <TextField name="zip" label="Zip" inputRef={register} strongLabel />
+        <TextField
+          name="zip"
+          label="Zip"
+          inputRef={register}
+          optional
+          strongLabel
+        />
         <TextField
           name="country"
           label="Country"
@@ -78,7 +84,7 @@ export const AddressForm = ({ control, register, watch }) => {
 };
 
 AddressForm.propTypes = {
-  control: PropTypes.func,
+  control: PropTypes.object,
   register: PropTypes.func,
   watch: PropTypes.func,
   setValue: PropTypes.func,
@@ -87,7 +93,7 @@ AddressForm.propTypes = {
 const CityState = styled.div`
   display: grid;
   grid-gap: 10px;
-  grid-template-columns: 320px 130px;
+  grid-template-columns: 300px 150px;
   margin-bottom: 1em;
   margin-top: -0.75em;
   align-items: center;

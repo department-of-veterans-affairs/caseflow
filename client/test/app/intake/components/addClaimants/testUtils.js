@@ -14,7 +14,7 @@ export const relationshipOpts = [
 const organization = 'Tista';
 const street1 = '1000 Monticello';
 const city = 'Washington';
-const zip = '2000';
+const zip = '20000';
 const country = 'USA';
 
 export const fillForm = async () => {
@@ -32,6 +32,7 @@ export const fillForm = async () => {
 
   //   Enter city
   await userEvent.type(screen.getByRole('textbox', { name: /City/i }), city);
+
   // select state
   await selectEvent.select(screen.getByLabelText('State'), [STATES[7].label]);
 
