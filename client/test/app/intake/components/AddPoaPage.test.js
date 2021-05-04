@@ -1,6 +1,5 @@
 import React from 'react';
-import { screen, render, fireEvent, within, act, waitFor} from '@testing-library/react';
-import { axe } from 'jest-axe';
+import { screen, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { AddPoaPage } from 'app/intake/addPOA/AddPoaPage';
 import { IntakeProviders } from '../testUtils';
@@ -12,9 +11,9 @@ describe('AddPoaPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
-  const defaults = { onSubmit, onBack};
+  const defaults = { onSubmit, onBack };
   const setup = () => {
-    return render(<AddPoaPage {...defaults}/>, { wrapper: IntakeProviders });
+    return render(<AddPoaPage {...defaults} />, { wrapper: IntakeProviders });
   };
 
   it('renders default state correctly', async () => {
@@ -22,21 +21,22 @@ describe('AddPoaPage', () => {
 
     expect(container).toMatchSnapshot();
     await waitFor(() => {
-    expect(
-      screen.getByText("Add Claimant's POA")
-    ).toBeInTheDocument();
-  });
+      expect(
+        screen.getByText("Add Claimant's POA")
+      ).toBeInTheDocument();
+    });
   });
 
   it('fires onBack', async () => {
-    const { container } = setup();
+    setup();
 
     const backButton = screen.getByRole('button', { name: /back/i });
+
     expect(onBack).not.toHaveBeenCalled();
-  
+
     await waitFor(() => {
-    userEvent.click(backButton)
-    expect(onBack).not.toHaveBeenCalled();
-  });
+      userEvent.click(backButton);
+      expect(onBack).not.toHaveBeenCalled();
+    });
   });
 });
