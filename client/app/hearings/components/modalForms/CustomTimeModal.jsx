@@ -109,24 +109,16 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => 
     indicatorSeparator: hideStyleFunction,
     dropdownIndicator: hideStyleFunction,
     // Set the height of the select component
-    /*
-    control: (base) => ({
-      ...base,
-      height: 35,
-      minHeight: 35
-
-    }),
-    clearIndicator: (styles) => ({
+    valueContainer: (styles) => ({
       ...styles,
-      paddingTop: 7,
-      paddingBottom: 7,
+      height: 44,
+      minHeight: 44,
     }),
-    indicatorsContainer: (styles) => ({
-      ...styles,
-      paddingTop: 7,
-      paddingBottom: 7,
-    }),
-    */
+    // Completely override these styles
+    singleValue: () => ({
+      padding: '0',
+      margin: '0'
+    })
   };
 
   const matchesHour = (candidate, input, exact = false) => {
@@ -171,7 +163,7 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => 
     <Modal title="Create a custom time slot" buttons={buttons} closeHandler={onCancel} id="custom-time-modal">
       <div><strong>Choose a hearing start time for <span style={{ whiteSpace: 'nowrap' }}>{roCity}</span></strong></div>
       <div>Enter time as hh:mm AM/PM, for example "1:00 PM"</div>
-      <div style={{ borderRadius: '5px', background: 'rgb(224, 222, 220)', width: '50%', marginTop: '20px' }}>
+      <div style={{ borderRadius: '5px', background: 'rgb(224, 222, 220)', width: '50%', marginTop: '16px', marginBottom: '16px', display: 'flex', alignItems: 'center' }}>
         <div style={{ width: '75%', display: 'inline-block' }}>
           <Select
             // Settings for searching
@@ -192,10 +184,10 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => 
             onChange={handleChange}
           />
         </div>
-        <span style={{ color: 'black' }}><strong>CDT</strong></span>
+        <div style={{ width: '25%', display: 'inline-block', color: 'black', textAlign: 'center' }}><strong>CDT</strong></div>
       </div>
       <div style={{ height: '100px' }}>
-        <p>{timeInEastern ? `The hearing will start at ${timeInEastern} Eastern Time` : ''}</p>
+        {timeInEastern ? `The hearing will start at ${timeInEastern} Eastern Time` : ''}
       </div>
     </Modal>
   );
