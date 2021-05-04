@@ -345,6 +345,8 @@ class Issue
     end
 
     def rollback_opt_in!(opt_in_issue)
+      return unless opt_in_issue.vacols_issue&.disposition == "O"
+
       update_in_vacols!(
         vacols_id: opt_in_issue.vacols_id,
         vacols_sequence_id: opt_in_issue.vacols_sequence_id,
