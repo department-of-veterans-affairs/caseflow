@@ -554,17 +554,22 @@ class Task < CaseflowRecord
     end
   end
 
+  # rubocop:disable Metrics/AbcSize
   def reassign(reassign_params, current_user)
     Thread.current.thread_variable_set(:skip_duplicate_validation, true)
     replacement = dup.tap do |task|
-      ActiveRecord::Base.transaction do
-        task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
-        task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
-        task.instructions = flattened_instructions(reassign_params)
-        task.status = Constants.TASK_STATUSES.assigned
+      begin
+        ActiveRecord::Base.transaction do
+          task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
+          task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
+          task.instructions = flattened_instructions(reassign_params)
+          task.status = Constants.TASK_STATUSES.assigned
 
-        # TODO: ensure that thread-local variables are cleared if the below raises an error
-        task.save!
+          task.save!
+        end
+      # The ensure block guarantees that the thread-local variable skip_duplicate_validation
+      # does not leak outside of this method
+      ensure
         Thread.current[:skip_duplicate_validation] = nil
       end
     end

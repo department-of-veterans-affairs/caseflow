@@ -47,10 +47,33 @@ describe JudgeTask, :all_dbs do
     end
     subject { task.reassign(params, old_assignee) }
 
-    context "when a judge task is reassigned" do
+    before do
+      Thread.current[:skip_duplicate_validation] = true
+    end
+
+    after do
+      Thread.current[:skip_duplicate_validation] = nil
+    end
+
+    context "when a judge task is reassigned successfully" do
       it "should not violate the no_multiples_of_noncancelled_task validation" do
-        allow(Thread).to receive(:current).and_return(skip_duplicate_validation: true)
         expect { subject }.to_not raise_error
+        expect(Thread.current[:skip_duplicate_validation]).to be_nil
+      end
+    end
+
+    context "when a judge task throws an error during attempted reassignment" do
+      let(:params) do
+        {
+          assigned_to_id: nil,
+          assigned_to_type: new_assignee.class.name,
+          instructions: "instructions"
+        }
+      end
+
+      it "clears out the thread local variable of skip_duplicate_validation" do
+        expect { subject }.to raise_error ActiveRecord::RecordNotFound
+        expect(Thread.current[:skip_duplicate_validation]).to be_nil
       end
     end
   end
