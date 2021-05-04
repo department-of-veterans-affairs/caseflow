@@ -3,6 +3,10 @@
 # rubocop:disable Metrics/ModuleLength
 module IntakeHelpers
   # rubocop: disable Metrics/ParameterLists
+  def blur_from(locator)
+    field = find_field(locator)
+    field.native.send_keys :tab
+  end
 
   def select_form(form_name)
     if FeatureToggle.enabled?(:ramp_intake)

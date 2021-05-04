@@ -915,6 +915,7 @@
   "ERROR_CITY_INVALID_CHARACTERS": "This Veteran's city has invalid characters. Please edit it in VBMS or SHARE so each address field does not have invalid characters (including double spaces) then try again.",
   "ERROR_ADDRESS_TOO_LONG": "This Veteran's address is too long. Please edit it in VBMS or SHARE so each address field is no longer than 20 characters (including spaces) then try again",
   "ERROR_INVALID_ZIP_CODE": "Zip codes in the USA must be 5 characters long. Please check the veteran's address and try again.",
+  "ERROR_EMAIL_INVALID_FORMAT": "Please enter a valid email that follows the format: example@email.com",
 
   "END_HOLD_MODAL_TITLE": "End hold early",
   "END_HOLD_MODAL_BODY": "Do you want to end the hold early?",

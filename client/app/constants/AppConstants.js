@@ -130,4 +130,5 @@ export const STATES = [
   { label: 'WI', value: 'Wisconsin' },
   { label: 'WV', value: 'West Virginia' },
   { label: 'WY', value: 'Wyoming' },
+  { label: 'Other', value: 'Other' },
 ];
