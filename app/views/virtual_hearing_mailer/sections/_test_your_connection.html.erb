@@ -13,7 +13,7 @@
   you plan to use for your hearing</strong>: <%= external_link @test_link %>
 </p>
 <% end %>
-<% if !@virtual_hearing&.use_vc_test_link? %>
+<% if !@virtual_hearing&.uses_generated_hearing_links? %>
 <ul>
   <li>
     If you are using an Apple mobile device, such as an iPhone or iPad, you

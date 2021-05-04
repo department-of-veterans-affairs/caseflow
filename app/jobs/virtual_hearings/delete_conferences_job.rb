@@ -129,7 +129,7 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
   end
 
   def process_virtual_hearing(virtual_hearing)
-    deleted_conference = delete_conference(virtual_hearing)
+    deleted_conference = virtual_hearing.uses_generated_hearing_links? ? true : delete_conference(virtual_hearing)
 
     return false unless deleted_conference
 

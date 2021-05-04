@@ -143,7 +143,7 @@ class VirtualHearing < CaseflowRecord
   end
 
   def test_link(title)
-    if use_vc_test_link?
+    if uses_generated_hearing_links?
       if ENV["VIRTUAL_HEARING_URL_HOST"].blank?
         fail(VirtualHearings::LinkService::URLHostMissingError, message: COPY::URL_HOST_MISSING_ERROR_MESSAGE)
       end
@@ -179,7 +179,7 @@ class VirtualHearing < CaseflowRecord
   # Determines if the hearing conference has been created
   def active?
     # the conference has been created the virtual hearing is active
-    conference_id.present? || (guest_hearing_link.present? && host_hearing_link.present?)
+    conference_id.present? || uses_generated_hearing_links?
   end
 
   # Determines if the conference was deleted
@@ -189,7 +189,7 @@ class VirtualHearing < CaseflowRecord
   # require us to delete the conference but not set `request_cancelled`.
   def closed?
     # the conference has been created the virtual hearing was deleted
-    conference_id.present? && conference_deleted?
+    active? && conference_deleted?
   end
 
   # Determines the status of the Virtual Hearing based on the establishment
@@ -223,7 +223,7 @@ class VirtualHearing < CaseflowRecord
     appellant_email_sent && (representative_email.nil? || representative_email_sent)
   end
 
-  def use_vc_test_link?
+  def uses_generated_hearing_links?
     guest_hearing_link.present? && host_hearing_link.present?
   end
 
