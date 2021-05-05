@@ -498,7 +498,7 @@ RSpec.feature "Case details", :all_dbs do
       end
 
       scenario "button is on the page and updates" do
-        allow_any_instance_of(AppealsController).to receive(:cooldown_period).and_return(false)
+        allow_any_instance_of(AppealsController).to receive(:cooldown_period_remaining).and_return(0)
 
         visit "/queue/appeals/#{appeal.uuid}"
         expect(page).to have_content("Refresh POA")

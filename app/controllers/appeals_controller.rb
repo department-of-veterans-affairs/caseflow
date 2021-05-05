@@ -62,8 +62,8 @@ class AppealsController < ApplicationController
   end
 
   def update_power_of_attorney
-    if cooldown_period
-      message = "Information is current at this time. Please try again in #{cooldown_period} minutes"
+    if cooldown_period_remaining > 0
+      message = "Information is current at this time. Please try again in #{cooldown_period_remaining} minutes"
       render json: {
         status: "info",
         message: message,
@@ -301,12 +301,12 @@ class AppealsController < ApplicationController
     end
   end
 
-  def cooldown_period
+  def cooldown_period_remaining
     next_update_allowed_at = appeal.poa_last_synced_at + 10.minutes if appeal.poa_last_synced_at.present?
     if next_update_allowed_at && next_update_allowed_at > Time.zone.now
       return ((next_update_allowed_at - Time.zone.now) / 60).ceil
     end
 
-    false
+    0
   end
 end
