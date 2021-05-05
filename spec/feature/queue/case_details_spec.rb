@@ -1690,64 +1690,87 @@ RSpec.feature "Case details", :all_dbs do
 
       let(:docket_type) { "evidence_submission" }
       let(:case_type) { "original" }
+      let(:disposition) { "allowed" }
       let(:appeal) do
-        create(:appeal, :dispatched, :with_request_issues,
+        create(:appeal, :dispatched_with_decision_issue,
                docket_type: docket_type,
-               stream_type: case_type)
+               stream_type: case_type,
+               disposition: disposition)
       end
-      # I think we need to convert request issues to decision issues
-      # I guess we need to add request issues, too. :-P
 
       let(:cob_user) { create(:user, css_id: "COB_USER", station_id: "101") }
-      before { ClerkOfTheBoard.singleton.add_user(cob_user) }
+      before do
+        ClerkOfTheBoard.singleton.add_user(cob_user)
+        User.authenticate!(user: cob_user)
+      end
 
-      shared_examples "does not display the 'Add Substitute' button" do
-        it "does not display the 'Add Substitute' button" do
+      shared_examples "the button is not shown" do
+        it "the 'Add Substitute' button is not shown" do
           visit "/queue/appeals/#{appeal.external_id}"
-          expect(page).to_not have_content(COPY::SUBSTITUTE_APPELLANT_BUTTON)
+          sleep 1
+          # FIXME: Without this sleep, the test passes even when the text is present.
+          # How do computers even _work_??
+          expect(page).not_to have_content(COPY::SUBSTITUTE_APPELLANT_BUTTON)
+        end
+      end
+
+      shared_examples "the button is shown" do
+        it "the 'Add Substitute' button is shown" do
+          visit "/queue/appeals/#{appeal.external_id}"
+          expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_BUTTON)
         end
       end
 
       context "when the case is a legacy case" do
         let!(:appeal) { create(:legacy_appeal) }
-
-        it_behaves_like "does not display the 'Add Substitute' button"
+        # FIXME: The page actually shows an error so this isn't a great test
+        it_behaves_like "the button is not shown"
       end
 
       context "when the feature flag is disabled" do
         FeatureToggle.disable!(:recognized_granted_substitution_after_dd)
-
-        it_behaves_like "does not display the 'Add Substitute' button"
+        it_behaves_like "the button is not shown"
+        FeatureToggle.enable!(:recognized_granted_substitution_after_dd)
       end
 
-      context "When the case type is not 'Original'" do
-        let(:case_type) { "Court Remand" }
+      context "When the case type is not 'original'" do
+        let(:case_type) { "de_novo" }
 
-        it_behaves_like "does not display the 'Add Substitute' button"
+        it_behaves_like "the button is not shown"
       end
 
-      context "When the docket type is not 'hearing'" do
-        let(:docket_type) { "evidence_submission" } # Is this clearer? This is already the case.
-
-        context "when the user is not a COB admin" do
-          it_behaves_like "does not display the 'Add Substitute' button"
-        end
-
-        context "when the user is an admin" do
-          it "shows the 'Add Substitute' button" do
-            OrganizationsUser.make_user_admin(cob_user, ClerkOfTheBoard.singleton)
-
-            visit "/queue/appeals/#{appeal.external_id}"
-            expect(ClerkOfTheBoard.singleton.admins).to include(cob_user)
-            expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_BUTTON)
-          end
-        end
-      end
-
-      context "When the docket type is 'hearing'" do
+      context "when the docket type is 'hearing'" do
         let(:docket_type) { "hearing" }
 
-        it_behaves_like "does not display the 'Add Substitute' button"
+        context "when the user is an admin" do
+          before { OrganizationsUser.make_user_admin(cob_user, ClerkOfTheBoard.singleton) }
+          after { OrganizationsUser.remove_admin_rights_from_user(cob_user, ClerkOfTheBoard.singleton) }
+
+          it_behaves_like "the button is not shown"
+        end
+
+        context "when the user is not an admin" do
+          it_behaves_like "the button is not shown"
+        end
+      end
+
+      context "when the disposition is 'Dismissed, Death'" do
+        let(:disposition) { "dismissed_death" }
+
+        it_behaves_like "the button is shown"
+      end
+
+      context "when the disposition is something else" do
+        context "when the user is an admin" do
+          before { OrganizationsUser.make_user_admin(cob_user, ClerkOfTheBoard.singleton) }
+          after { OrganizationsUser.remove_admin_rights_from_user(cob_user, ClerkOfTheBoard.singleton) }
+
+          it_behaves_like "the button is shown"
+        end
+
+        context "when the user is not an admin" do
+          it_behaves_like "the button is not shown"
+        end
       end
     end
   end
