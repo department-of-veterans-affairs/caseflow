@@ -160,21 +160,6 @@ export default class ReviewAssignments extends React.Component {
         align: 'left',
         valueName: 'room'
       },
-      {
-        header: 'Time Slot Start',
-        align: 'left',
-        valueName: 'firstSlotTime'
-      },
-      {
-        header: 'Number of Time Slots',
-        align: 'left',
-        valueName: 'numberOfSlots'
-      },
-      {
-        header: 'Time Slot Duration (in minutes)',
-        align: 'left',
-        valueName: 'slotLengthMinutes'
-      },
     ];
 
     if (this.props.schedulePeriod.type === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
@@ -183,6 +168,25 @@ export default class ReviewAssignments extends React.Component {
         align: 'left',
         valueName: 'judge'
       });
+    } else {
+      hearingAssignmentColumns.push(
+        {
+          header: 'Number of Time Slots',
+          align: 'left',
+          valueName: 'numberOfSlots'
+        },
+        {
+          header: 'Length of Time Slots (Minutes)',
+          align: 'left',
+          valueName: 'slotLengthMinutes'
+        },
+        {
+          header: 'Start Time (Eastern)',
+          align: 'left',
+          valueName: 'firstSlotTime'
+        },
+      );
+
     }
 
     const hearingAssignmentRows = _.map(this.props.schedulePeriod.hearingDays, (hearingDay) => ({
