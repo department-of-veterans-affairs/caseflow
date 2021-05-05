@@ -8,9 +8,9 @@ describe InitialTasksFactory, :postgres do
 
     let(:appeal) do
       create(:appeal, claimants: [
-               create(:claimant, participant_id: participant_id_with_pva),
-               create(:claimant, participant_id: participant_id_with_aml)
-             ])
+              create(:claimant, participant_id: participant_id_with_pva),
+              create(:claimant, participant_id: participant_id_with_aml)
+            ])
     end
 
     before do

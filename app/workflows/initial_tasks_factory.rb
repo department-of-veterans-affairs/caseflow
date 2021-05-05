@@ -39,6 +39,8 @@ class InitialTasksFactory
       # create tasks based on appellant_substitution form
     elsif @appeal.cavc?
       create_cavc_subtasks
+    elsif @appeal.veteran.date_of_death.present?
+      distribution_task.ready_for_distribution!
     elsif @appeal.evidence_submission_docket?
       EvidenceSubmissionWindowTask.create!(appeal: @appeal, parent: distribution_task)
     elsif @appeal.hearing_docket?
@@ -52,8 +54,7 @@ class InitialTasksFactory
   end
 
   def distribution_task
-    @distribution_task ||= @appeal.tasks.open.find_by(type: :DistributionTask) ||
-                           DistributionTask.create!(appeal: @appeal, parent: @root_task)
+    @distribution_task ||= @appeal.tasks.open.find_by(type: :DistributionTask) || DistributionTask.create!(appeal: @appeal, parent: @root_task)
   end
 
   # For AMA appeals. Create appropriate subtasks based on the CAVC Remand subtype
