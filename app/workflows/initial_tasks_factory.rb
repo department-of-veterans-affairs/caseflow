@@ -37,6 +37,8 @@ class InitialTasksFactory
 
     if @appeal.cavc?
       create_cavc_subtasks(distribution_task)
+    elsif @appeal.veteran.date_of_death.present?
+      distribution_task.ready_for_distribution!
     elsif @appeal.evidence_submission_docket?
       EvidenceSubmissionWindowTask.create!(appeal: @appeal, parent: distribution_task)
     elsif @appeal.hearing_docket?
