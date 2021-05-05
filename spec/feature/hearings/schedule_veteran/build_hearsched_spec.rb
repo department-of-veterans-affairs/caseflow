@@ -13,6 +13,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
     let(:fill_in_veteran_email) { "vet@testingEmail.com" }
     let(:fill_in_representative_email) { "email@testingEmail.com" }
+    let(:unscheduled_notes) { "Unscheduled notes" }
+    let(:fill_in_unscheduled_notes) { "Fill in unscheduled notes" }
 
     before do
       HearingsManagement.singleton.add_user(current_user)
@@ -21,7 +23,17 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       HearingAdmin.singleton.add_user(other_user)
     end
 
-    shared_context "central_hearings" do
+    shared_context "hearing subtree" do
+      let!(:root_task) { create(:root_task, appeal: appeal) }
+      let!(:hearing_task) do
+        create(:hearing_task, parent: root_task, instructions: [unscheduled_notes])
+      end
+      let!(:schedule_hearing_task) do
+        create(:schedule_hearing_task, appeal: appeal, parent: hearing_task)
+      end
+    end
+
+    shared_context "central_hearing" do
       let!(:hearing_day) { create(:hearing_day, scheduled_for: Time.zone.today + 30.days) }
       let!(:vacols_case) do
         create(
@@ -30,17 +42,16 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           bfcurloc: "CASEFLOW"
         )
       end
-      let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case, closest_regional_office: "C") }
-      let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: legacy_appeal) }
+      let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case, closest_regional_office: "C") }
 
       let!(:veteran) { create(:veteran, file_number: "123454787") }
       let!(:hearing_location_dropdown_label) { "Hearing Location" }
       let(:appellant_appeal_link_text) do
-        "#{legacy_appeal.appellant[:first_name]} #{legacy_appeal.appellant[:last_name]} | #{veteran.file_number}"
+        "#{appeal.appellant[:first_name]} #{appeal.appellant[:last_name]} | #{veteran.file_number}"
       end
 
       let!(:expected_alert) do
-        COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % legacy_appeal.veteran.name
+        COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % appeal.veteran.name
       end
 
       def navigate_to_schedule_veteran
@@ -76,16 +87,11 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           bfregoff: "RO39"
         )
       end
-      let!(:legacy_appeal) do
+      let!(:appeal) do
         create(
           :legacy_appeal,
           vacols_case: vacols_case,
           closest_regional_office: "RO39"
-        )
-      end
-      let!(:schedule_hearing_task) do
-        create(
-          :schedule_hearing_task, appeal: legacy_appeal
         )
       end
       let!(:veteran) { create(:veteran, file_number: "123456789") }
@@ -93,7 +99,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       let(:room_label) { HearingRooms.find!(hearing_day.room)&.label }
 
       let!(:expected_alert) do
-        COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % legacy_appeal.veteran.name
+        COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % appeal.veteran.name
       end
 
       def navigate_to_schedule_veteran
@@ -256,7 +262,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
 
     shared_examples "scheduling a central hearing" do
-      include_context "central_hearings"
+      include_context "central_hearing"
+      include_context "hearing subtree"
 
       before { cache_appeals }
 
@@ -276,6 +283,13 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         expect(page).to have_content(hearing_location_dropdown_label)
         click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
         select_hearing_time("9:00")
+
+        if FeatureToggle.enabled?(:schedule_veteran_virtual_hearing)
+          # Fill in Unscheduled Notes
+          expect(page).to have_content(unscheduled_notes)
+          fill_in "Notes", with: fill_in_unscheduled_notes
+        end
+
         click_button("Schedule", exact: true)
         click_on "Back to Schedule Veterans"
         expect(page).to have_content("Schedule Veterans")
@@ -285,11 +299,18 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         expect(page.has_no_content?("123454787S")).to eq(true)
         expect(page).to have_content("There are no schedulable veterans")
         expect(VACOLS::CaseHearing.first.folder_nr).to eq vacols_case.bfkey
+
+        if FeatureToggle.enabled?(:schedule_veteran_virtual_hearing)
+          # Ensure new hearing has the unscheduled notes
+          expect(VACOLS::CaseHearing.first.notes1).to eq fill_in_unscheduled_notes
+          expect(LegacyHearing.last.notes).to eq(fill_in_unscheduled_notes)
+        end
       end
     end
 
     shared_examples "scheduling a video hearing" do
       include_context "video_hearing"
+      include_context "hearing subtree"
 
       scenario "Schedule Veteran for video" do
         cache_appeals
@@ -302,6 +323,13 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           text: "#{hearing_day.scheduled_for.to_formatted_s(:short_date)} (0/#{hearing_day.total_slots}) #{room_label}",
           name: "hearingDate"
         )
+
+        if FeatureToggle.enabled?(:schedule_veteran_virtual_hearing)
+          # Fill in Unscheduled Notes
+          expect(page).to have_content(unscheduled_notes)
+          fill_in "Notes", with: fill_in_unscheduled_notes
+        end
+
         click_button("Schedule", exact: true)
         click_on "Back to Schedule Veterans"
         expect(page).to have_content("Schedule Veterans")
@@ -311,6 +339,12 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         expect(page.has_no_content?("123456789S")).to eq(true)
         expect(page).to have_content("There are no schedulable veterans")
         expect(VACOLS::CaseHearing.first.folder_nr).to eq vacols_case.bfkey
+
+        if FeatureToggle.enabled?(:schedule_veteran_virtual_hearing)
+          # Ensure new hearing has the unscheduled notes
+          expect(VACOLS::CaseHearing.first.notes1).to eq fill_in_unscheduled_notes
+          expect(LegacyHearing.last.notes).to eq(fill_in_unscheduled_notes)
+        end
       end
 
       context "but facilities api throws an error" do
@@ -324,7 +358,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         end
 
         scenario "Schedule Veteran for video error" do
-          visit "queue/appeals/#{legacy_appeal.vacols_id}"
+          visit "queue/appeals/#{appeal.vacols_id}"
           click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
           expect(page).to have_css(
             ".usa-alert-error",
@@ -659,6 +693,10 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         click_dropdown(name: "representativeTz", index: 1)
         fill_in "POA/Representative Email", with: fill_in_representative_email
 
+        # Fill in Unscheduled Notes
+        expect(page).to have_content(unscheduled_notes)
+        fill_in "Notes", with: fill_in_unscheduled_notes
+
         click_button("Schedule")
 
         expect(page).to have_content(expected_alert)
@@ -682,11 +720,15 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         expect(events.sent_to_appellant.count).to eq 1
         expect(events.where(email_address: fill_in_representative_email).count).to eq 1
         expect(events.where(recipient_role: "representative").count).to eq 1
+
+        # Ensure new hearing has the unscheduled notes
+        expect(new_hearing.notes).to eq(fill_in_unscheduled_notes)
       end
     end
 
     shared_examples "change from Central hearing" do
-      include_context "central_hearings"
+      include_context "central_hearing"
+      include_context "hearing subtree"
 
       before { cache_appeals }
 
@@ -695,6 +737,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
     shared_examples "change from Video hearing" do
       include_context "video_hearing"
+      include_context "hearing subtree"
 
       before { cache_appeals }
 
