@@ -10,6 +10,7 @@ import Button from '../../../components/Button';
 import SmallLoader from '../../../components/SmallLoader';
 import { TimePicker } from '../TimePicker';
 import { LOGO_COLORS } from '../../../constants/AppConstants';
+import { TimeModal } from '../modalForms/TimeModal';
 
 export const TimeSlot = ({
   scheduledHearingsList,
@@ -24,6 +25,9 @@ export const TimeSlot = ({
 
   // Create a local state to switch between the dropdown for custom times
   const [custom, setCustom] = useState(false);
+  // TODO delete ^^ once testing is done
+  const [timeModal, setTimeModal] = useState(false);
+  const toggleTimeModal = () => setTimeModal((val) => !val);
 
   // Filter the available time slots to fill in the hearings
   const beginsAt = hearing?.hearingDay?.beginsAt;
@@ -59,6 +63,11 @@ export const TimeSlot = ({
       ) : (
         <React.Fragment>
           <div>
+            <Button
+              linkStyling
+              onClick={() => toggleTimeModal()}
+              classNames={['time-slot-button-toggle']}
+            >Open Custom Modal</Button>
             <Button
               linkStyling
               onClick={() => setCustom(!custom)}
@@ -102,6 +111,17 @@ export const TimeSlot = ({
           )}
         </React.Fragment>
       )}
+      {timeModal && <TimeModal
+        onCancel={toggleTimeModal}
+        onConfirm={(time) => {
+          handleChange(time);
+          toggleTimeModal();
+        }}
+        ro={{
+          city: 'Los Angeles, CA',
+          timezone: 'America/Los_Angeles'
+        }}
+      />}
     </React.Fragment>
   );
 };

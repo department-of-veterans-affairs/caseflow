@@ -12,6 +12,7 @@ export default {
     scheduledHearingsList: { table: { disable: true } },
     update: { table: { disable: true } },
     fetchScheduledHearings: { table: { disable: true } },
+    onChange: { action: 'onChange' },
   }
 };
 
