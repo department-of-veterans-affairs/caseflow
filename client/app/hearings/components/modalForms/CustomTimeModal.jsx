@@ -46,20 +46,20 @@ const formatTimesToOptionObjects = (times) => {
   });
 };
 
-const generateOrderedTimeOptions = (roTimezone) => {
-
+// Generate a time for every 15m increment in a day.
+// Then move every time before beginsAt to the end of
+// the array to beginsAt appears first.
+const generateOrderedTimeOptions = (roTimezone, beginsAt = moment.tz('08:30', 'HH:mm', roTimezone)) => {
   // Get an array with every fifteen minute increment in a day
   // [00:00, 00:15, ... , 23:45]
   const times = generateTimes(roTimezone);
   // Move everything after beginsAt to the end of the array
-  const beginsAt = moment.tz('08:30', 'HH:mm', roTimezone);
   const reorderedTimes = moveTimesToEndOfArray(beginsAt, times);
   // Put the times into the format expected by the select
   const options = formatTimesToOptionObjects(reorderedTimes);
 
   return options;
 };
-
 const matchesHour = (candidate, input, exact = false) => {
   const candidateHourString = candidate.value.format('h');
 
@@ -133,9 +133,24 @@ const TimeSelect = ({ roTimezone, onSelect, error, clearError }) => {
     singleValue: () => ({
       padding: '0',
       margin: '0'
+    }),
+    // Change the highlight colors in the dropdown to gray
+    // TODO, when first opening, the highlighted one should be gray
+    option: (styles, { isFocused }) => ({
+      ...styles,
+      color: isFocused ? 'white' : styles.color,
+      backgroundColor: isFocused ? 'rgb(80, 86, 96)' : null,
+      ':hover': {
+        ...styles[':hover'],
+        backgroundColor: 'rgb(80, 86, 96)',
+        color: 'white'
+      },
     })
   };
-  // Managing this so we can force it to stay closed until typed into
+
+  // This code exists to customize when the menu is shown/hidden
+  // our requirements have the menu ONLY shown when there's something
+  // entered in the input and nothing has been selected.
   const [menuOpen, setMenuOpen] = useState(false);
   const hideMenu = () => setMenuOpen(false);
   const showMenu = () => setMenuOpen(true);
