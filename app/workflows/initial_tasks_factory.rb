@@ -42,6 +42,7 @@ class InitialTasksFactory
       # TODO for rspec: pull a real tree from prod that has a deep task tree and varied task types
       task_ids = source_appeal.tasks.of_type([:ScheduleHearingTask, :EvidenceSubmissionWindowTask]).pluck(:id)
       copy_tasks(task_ids)
+      # To-do create tasks based on appellant_substitution form
     elsif @appeal.cavc?
       create_cavc_subtasks
     elsif @appeal.evidence_submission_docket?
