@@ -11,7 +11,7 @@ export default class ProgressBar extends React.Component {
     );
 
     return (
-      <div role="progressbar" className="cf-app-segment">
+      <div role="progressbar" tabIndex="-1" className="cf-app-segment">
         <div className="cf-progress-bar">
           {sections.map((section, i) => {
             if (i <= currentSectionIndex) {
