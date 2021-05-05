@@ -1089,10 +1089,14 @@ exports[`MTVJudgeDisposition with granted disposition selected renders correctly
                     >
                       <input
                         aria-autocomplete="list"
+                        aria-controls="attorney-listbox"
+                        aria-expanded="false"
+                        aria-labelledby="attorney"
                         autocapitalize="none"
                         autocomplete="off"
                         autocorrect="off"
                         id="attorney"
+                        role="combobox"
                         spellcheck="false"
                         style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                         tabindex="0"
@@ -1130,6 +1134,11 @@ exports[`MTVJudgeDisposition with granted disposition selected renders correctly
                   </div>
                 </div>
               </div>
+              <input
+                name="attorney"
+                type="hidden"
+                value=""
+              />
             </div>
           </div>
         </div>
@@ -1529,10 +1538,14 @@ exports[`MTVJudgeDisposition with partially_granted disposition selected renders
                     >
                       <input
                         aria-autocomplete="list"
+                        aria-controls="attorney-listbox"
+                        aria-expanded="false"
+                        aria-labelledby="attorney"
                         autocapitalize="none"
                         autocomplete="off"
                         autocorrect="off"
                         id="attorney"
+                        role="combobox"
                         spellcheck="false"
                         style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                         tabindex="0"
@@ -1570,6 +1583,11 @@ exports[`MTVJudgeDisposition with partially_granted disposition selected renders
                   </div>
                 </div>
               </div>
+              <input
+                name="attorney"
+                type="hidden"
+                value=""
+              />
             </div>
           </div>
         </div>

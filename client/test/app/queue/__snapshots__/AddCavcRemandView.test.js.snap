@@ -548,14 +548,22 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                         className="cf-select"
                       >
                         <StateManager
+                          aria-labelledby="judge-dropdown"
                           cache={false}
                           classNamePrefix="cf-select"
+                          components={
+                            Object {
+                              "Input": [Function],
+                              "MenuList": [Function],
+                            }
+                          }
                           defaultInputValue=""
                           defaultMenuIsOpen={false}
                           defaultValue={null}
                           inputId="judge-dropdown"
                           isLoading={false}
                           isSearchable={true}
+                          name="judge-dropdown"
                           noOptionsMessage={[Function]}
                           onBlurResetsInput={false}
                           onChange={[Function]}
@@ -661,6 +669,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                           value={null}
                         >
                           <Select
+                            aria-labelledby="judge-dropdown"
                             backspaceRemovesValue={true}
                             blurInputOnSelect={true}
                             cache={false}
@@ -668,7 +677,12 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                             classNamePrefix="cf-select"
                             closeMenuOnScroll={false}
                             closeMenuOnSelect={true}
-                            components={Object {}}
+                            components={
+                              Object {
+                                "Input": [Function],
+                                "MenuList": [Function],
+                              }
+                            }
                             controlShouldRenderValue={true}
                             escapeClearsValue={false}
                             filterOption={[Function]}
@@ -691,6 +705,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                             menuShouldBlockScroll={false}
                             menuShouldScrollIntoView={true}
                             minMenuHeight={140}
+                            name="judge-dropdown"
                             noOptionsMessage={[Function]}
                             onBlurResetsInput={false}
                             onChange={[Function]}
@@ -916,6 +931,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                               selectOption={[Function]}
                               selectProps={
                                 Object {
+                                  "aria-labelledby": "judge-dropdown",
                                   "backspaceRemovesValue": true,
                                   "blurInputOnSelect": true,
                                   "cache": false,
@@ -923,7 +939,10 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                   "classNamePrefix": "cf-select",
                                   "closeMenuOnScroll": false,
                                   "closeMenuOnSelect": true,
-                                  "components": Object {},
+                                  "components": Object {
+                                    "Input": [Function],
+                                    "MenuList": [Function],
+                                  },
                                   "controlShouldRenderValue": true,
                                   "defaultOptions": undefined,
                                   "escapeClearsValue": false,
@@ -949,6 +968,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                   "menuShouldBlockScroll": false,
                                   "menuShouldScrollIntoView": true,
                                   "minMenuHeight": 140,
+                                  "name": "judge-dropdown",
                                   "noOptionsMessage": [Function],
                                   "onBlurResetsInput": false,
                                   "onChange": [Function],
@@ -1223,6 +1243,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                     selectOption={[Function]}
                                     selectProps={
                                       Object {
+                                        "aria-labelledby": "judge-dropdown",
                                         "backspaceRemovesValue": true,
                                         "blurInputOnSelect": true,
                                         "cache": false,
@@ -1230,7 +1251,10 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                         "classNamePrefix": "cf-select",
                                         "closeMenuOnScroll": false,
                                         "closeMenuOnSelect": true,
-                                        "components": Object {},
+                                        "components": Object {
+                                          "Input": [Function],
+                                          "MenuList": [Function],
+                                        },
                                         "controlShouldRenderValue": true,
                                         "defaultOptions": undefined,
                                         "escapeClearsValue": false,
@@ -1256,6 +1280,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                         "menuShouldBlockScroll": false,
                                         "menuShouldScrollIntoView": true,
                                         "minMenuHeight": 140,
+                                        "name": "judge-dropdown",
                                         "noOptionsMessage": [Function],
                                         "onBlurResetsInput": false,
                                         "onChange": [Function],
@@ -1538,6 +1563,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                           selectOption={[Function]}
                                           selectProps={
                                             Object {
+                                              "aria-labelledby": "judge-dropdown",
                                               "backspaceRemovesValue": true,
                                               "blurInputOnSelect": true,
                                               "cache": false,
@@ -1545,7 +1571,10 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                               "classNamePrefix": "cf-select",
                                               "closeMenuOnScroll": false,
                                               "closeMenuOnSelect": true,
-                                              "components": Object {},
+                                              "components": Object {
+                                                "Input": [Function],
+                                                "MenuList": [Function],
+                                              },
                                               "controlShouldRenderValue": true,
                                               "defaultOptions": undefined,
                                               "escapeClearsValue": false,
@@ -1571,6 +1600,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                               "menuShouldBlockScroll": false,
                                               "menuShouldScrollIntoView": true,
                                               "minMenuHeight": 140,
+                                              "name": "judge-dropdown",
                                               "noOptionsMessage": [Function],
                                               "onBlurResetsInput": false,
                                               "onChange": [Function],
@@ -1840,6 +1870,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                 selectOption={[Function]}
                                                 selectProps={
                                                   Object {
+                                                    "aria-labelledby": "judge-dropdown",
                                                     "backspaceRemovesValue": true,
                                                     "blurInputOnSelect": true,
                                                     "cache": false,
@@ -1847,7 +1878,10 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                     "classNamePrefix": "cf-select",
                                                     "closeMenuOnScroll": false,
                                                     "closeMenuOnSelect": true,
-                                                    "components": Object {},
+                                                    "components": Object {
+                                                      "Input": [Function],
+                                                      "MenuList": [Function],
+                                                    },
                                                     "controlShouldRenderValue": true,
                                                     "defaultOptions": undefined,
                                                     "escapeClearsValue": false,
@@ -1873,6 +1907,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                     "menuShouldBlockScroll": false,
                                                     "menuShouldScrollIntoView": true,
                                                     "minMenuHeight": 140,
+                                                    "name": "judge-dropdown",
                                                     "noOptionsMessage": [Function],
                                                     "onBlurResetsInput": false,
                                                     "onChange": [Function],
@@ -2041,6 +2076,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                               </Placeholder>
                                               <Input
                                                 aria-autocomplete="list"
+                                                aria-labelledby="judge-dropdown"
                                                 autoCapitalize="none"
                                                 autoComplete="off"
                                                 autoCorrect="off"
@@ -2055,6 +2091,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                 onFocus={[Function]}
                                                 selectProps={
                                                   Object {
+                                                    "aria-labelledby": "judge-dropdown",
                                                     "backspaceRemovesValue": true,
                                                     "blurInputOnSelect": true,
                                                     "cache": false,
@@ -2062,7 +2099,10 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                     "classNamePrefix": "cf-select",
                                                     "closeMenuOnScroll": false,
                                                     "closeMenuOnSelect": true,
-                                                    "components": Object {},
+                                                    "components": Object {
+                                                      "Input": [Function],
+                                                      "MenuList": [Function],
+                                                    },
                                                     "controlShouldRenderValue": true,
                                                     "defaultOptions": undefined,
                                                     "escapeClearsValue": false,
@@ -2088,6 +2128,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                     "menuShouldBlockScroll": false,
                                                     "menuShouldScrollIntoView": true,
                                                     "minMenuHeight": 140,
+                                                    "name": "judge-dropdown",
                                                     "noOptionsMessage": [Function],
                                                     "onBlurResetsInput": false,
                                                     "onChange": [Function],
@@ -2233,103 +2274,315 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                 type="text"
                                                 value=""
                                               >
-                                                <EmotionCssPropInternal
-                                                  __EMOTION_LABEL_PLEASE_DO_NOT_USE__="Input"
-                                                  __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                                  css={
+                                                <Input
+                                                  aria-autocomplete="list"
+                                                  aria-controls="judge-dropdown-listbox"
+                                                  aria-expanded={false}
+                                                  aria-labelledby="judge-dropdown"
+                                                  autoCapitalize="none"
+                                                  autoComplete="off"
+                                                  autoCorrect="off"
+                                                  cx={[Function]}
+                                                  getStyles={[Function]}
+                                                  id="judge-dropdown"
+                                                  innerRef={[Function]}
+                                                  isDisabled={false}
+                                                  isHidden={false}
+                                                  onBlur={[Function]}
+                                                  onChange={[Function]}
+                                                  onFocus={[Function]}
+                                                  role="combobox"
+                                                  selectProps={
                                                     Object {
-                                                      "height": "44px",
+                                                      "aria-labelledby": "judge-dropdown",
+                                                      "backspaceRemovesValue": true,
+                                                      "blurInputOnSelect": true,
+                                                      "cache": false,
+                                                      "captureMenuScroll": false,
+                                                      "classNamePrefix": "cf-select",
+                                                      "closeMenuOnScroll": false,
+                                                      "closeMenuOnSelect": true,
+                                                      "components": Object {
+                                                        "Input": [Function],
+                                                        "MenuList": [Function],
+                                                      },
+                                                      "controlShouldRenderValue": true,
+                                                      "defaultOptions": undefined,
+                                                      "escapeClearsValue": false,
+                                                      "filterOption": [Function],
+                                                      "formatGroupLabel": [Function],
+                                                      "getOptionLabel": [Function],
+                                                      "getOptionValue": [Function],
+                                                      "inputId": "judge-dropdown",
+                                                      "inputValue": "",
+                                                      "isClearable": undefined,
+                                                      "isDisabled": false,
+                                                      "isLoading": false,
+                                                      "isMulti": false,
+                                                      "isOptionDisabled": [Function],
+                                                      "isRtl": false,
+                                                      "isSearchable": true,
+                                                      "loadOptions": undefined,
+                                                      "loadingMessage": [Function],
+                                                      "maxMenuHeight": 300,
+                                                      "menuIsOpen": false,
+                                                      "menuPlacement": "bottom",
+                                                      "menuPosition": "absolute",
+                                                      "menuShouldBlockScroll": false,
+                                                      "menuShouldScrollIntoView": true,
+                                                      "minMenuHeight": 140,
+                                                      "name": "judge-dropdown",
+                                                      "noOptionsMessage": [Function],
+                                                      "onBlurResetsInput": false,
+                                                      "onChange": [Function],
+                                                      "onInputChange": [Function],
+                                                      "onMenuClose": [Function],
+                                                      "onMenuOpen": [Function],
+                                                      "openMenuOnClick": true,
+                                                      "openMenuOnFocus": false,
+                                                      "options": Array [
+                                                        Object {
+                                                          "label": "Clerk",
+                                                          "value": "Clerk",
+                                                        },
+                                                        Object {
+                                                          "label": "Panel",
+                                                          "value": "Panel",
+                                                        },
+                                                        Object {
+                                                          "label": "Per curiam",
+                                                          "value": "Per curiam",
+                                                        },
+                                                        Object {
+                                                          "label": "Alan G. Lance, Sr.",
+                                                          "value": "Alan G. Lance, Sr.",
+                                                        },
+                                                        Object {
+                                                          "label": "Amanda L. Meredith",
+                                                          "value": "Amanda L. Meredith",
+                                                        },
+                                                        Object {
+                                                          "label": "Bruce E. Kasold",
+                                                          "value": "Bruce E. Kasold",
+                                                        },
+                                                        Object {
+                                                          "label": "Coral W. Pietsch",
+                                                          "value": "Coral W. Pietsch",
+                                                        },
+                                                        Object {
+                                                          "label": "Frank Q. Nebeker",
+                                                          "value": "Frank Q. Nebeker",
+                                                        },
+                                                        Object {
+                                                          "label": "Grant C. Jaquith",
+                                                          "value": "Grant C. Jaquith",
+                                                        },
+                                                        Object {
+                                                          "label": "Joseph L. Falvey, Jr.",
+                                                          "value": "Joseph L. Falvey, Jr.",
+                                                        },
+                                                        Object {
+                                                          "label": "Joseph L. Toth",
+                                                          "value": "Joseph L. Toth",
+                                                        },
+                                                        Object {
+                                                          "label": "Kenneth B. Kramer",
+                                                          "value": "Kenneth B. Kramer",
+                                                        },
+                                                        Object {
+                                                          "label": "Lawrence B. Hagel",
+                                                          "value": "Lawrence B. Hagel",
+                                                        },
+                                                        Object {
+                                                          "label": "Margaret Bartley",
+                                                          "value": "Margaret Bartley",
+                                                        },
+                                                        Object {
+                                                          "label": "Mary J. Schoelen",
+                                                          "value": "Mary J. Schoelen",
+                                                        },
+                                                        Object {
+                                                          "label": "Michael P. Allen",
+                                                          "value": "Michael P. Allen",
+                                                        },
+                                                        Object {
+                                                          "label": "Robert N. Davis",
+                                                          "value": "Robert N. Davis",
+                                                        },
+                                                        Object {
+                                                          "label": "Ronald M. Holdaway",
+                                                          "value": "Ronald M. Holdaway",
+                                                        },
+                                                        Object {
+                                                          "label": "Scott J. Laurer",
+                                                          "value": "Scott J. Laurer",
+                                                        },
+                                                        Object {
+                                                          "label": "William A. Moorman",
+                                                          "value": "William A. Moorman",
+                                                        },
+                                                        Object {
+                                                          "label": "William P. Greene, Jr.",
+                                                          "value": "William P. Greene, Jr.",
+                                                        },
+                                                        Object {
+                                                          "label": "William S. Greenberg",
+                                                          "value": "William S. Greenberg",
+                                                        },
+                                                      ],
+                                                      "pageSize": 5,
+                                                      "placeholder": "Select...",
+                                                      "screenReaderStatus": [Function],
+                                                      "searchable": true,
+                                                      "shouldKeyDownEventCreateNewOption": [Function],
+                                                      "styles": Object {
+                                                        "input": [Function],
+                                                      },
+                                                      "tabIndex": "0",
+                                                      "tabSelectsValue": true,
+                                                      "value": null,
                                                     }
                                                   }
+                                                  spellCheck="false"
+                                                  tabIndex="0"
+                                                  theme={
+                                                    Object {
+                                                      "borderRadius": 4,
+                                                      "colors": Object {
+                                                        "danger": "#DE350B",
+                                                        "dangerLight": "#FFBDAD",
+                                                        "neutral0": "hsl(0, 0%, 100%)",
+                                                        "neutral10": "hsl(0, 0%, 90%)",
+                                                        "neutral20": "hsl(0, 0%, 80%)",
+                                                        "neutral30": "hsl(0, 0%, 70%)",
+                                                        "neutral40": "hsl(0, 0%, 60%)",
+                                                        "neutral5": "hsl(0, 0%, 95%)",
+                                                        "neutral50": "hsl(0, 0%, 50%)",
+                                                        "neutral60": "hsl(0, 0%, 40%)",
+                                                        "neutral70": "hsl(0, 0%, 30%)",
+                                                        "neutral80": "hsl(0, 0%, 20%)",
+                                                        "neutral90": "hsl(0, 0%, 10%)",
+                                                        "primary": "#2684FF",
+                                                        "primary25": "#DEEBFF",
+                                                        "primary50": "#B2D4FF",
+                                                        "primary75": "#4C9AFF",
+                                                      },
+                                                      "spacing": Object {
+                                                        "baseUnit": 4,
+                                                        "controlHeight": 38,
+                                                        "menuGutter": 8,
+                                                      },
+                                                    }
+                                                  }
+                                                  type="text"
+                                                  value=""
                                                 >
-                                                  <div
-                                                    className="css-81nyic-Input"
-                                                  >
-                                                    <AutosizeInput
-                                                      aria-autocomplete="list"
-                                                      autoCapitalize="none"
-                                                      autoComplete="off"
-                                                      autoCorrect="off"
-                                                      className="cf-select__input"
-                                                      disabled={false}
-                                                      id="judge-dropdown"
-                                                      injectStyles={true}
-                                                      inputRef={[Function]}
-                                                      inputStyle={
-                                                        Object {
-                                                          "background": 0,
-                                                          "border": 0,
-                                                          "color": "inherit",
-                                                          "fontSize": "inherit",
-                                                          "label": "input",
-                                                          "opacity": 1,
-                                                          "outline": 0,
-                                                          "padding": 0,
-                                                        }
+                                                  <EmotionCssPropInternal
+                                                    __EMOTION_LABEL_PLEASE_DO_NOT_USE__="Input"
+                                                    __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
+                                                    css={
+                                                      Object {
+                                                        "height": "44px",
                                                       }
-                                                      minWidth={1}
-                                                      onBlur={[Function]}
-                                                      onChange={[Function]}
-                                                      onFocus={[Function]}
-                                                      spellCheck="false"
-                                                      tabIndex="0"
-                                                      type="text"
-                                                      value=""
+                                                    }
+                                                  >
+                                                    <div
+                                                      className="css-81nyic-Input"
                                                     >
-                                                      <div
+                                                      <AutosizeInput
+                                                        aria-autocomplete="list"
+                                                        aria-controls="judge-dropdown-listbox"
+                                                        aria-expanded={false}
+                                                        aria-labelledby="judge-dropdown"
+                                                        autoCapitalize="none"
+                                                        autoComplete="off"
+                                                        autoCorrect="off"
                                                         className="cf-select__input"
-                                                        style={
+                                                        disabled={false}
+                                                        id="judge-dropdown"
+                                                        injectStyles={true}
+                                                        inputRef={[Function]}
+                                                        inputStyle={
                                                           Object {
-                                                            "display": "inline-block",
+                                                            "background": 0,
+                                                            "border": 0,
+                                                            "color": "inherit",
+                                                            "fontSize": "inherit",
+                                                            "label": "input",
+                                                            "opacity": 1,
+                                                            "outline": 0,
+                                                            "padding": 0,
                                                           }
                                                         }
+                                                        minWidth={1}
+                                                        onBlur={[Function]}
+                                                        onChange={[Function]}
+                                                        onFocus={[Function]}
+                                                        role="combobox"
+                                                        spellCheck="false"
+                                                        tabIndex="0"
+                                                        type="text"
+                                                        value=""
                                                       >
-                                                        <input
-                                                          aria-autocomplete="list"
-                                                          autoCapitalize="none"
-                                                          autoComplete="off"
-                                                          autoCorrect="off"
-                                                          disabled={false}
-                                                          id="judge-dropdown"
-                                                          onBlur={[Function]}
-                                                          onChange={[Function]}
-                                                          onFocus={[Function]}
-                                                          spellCheck="false"
-                                                          style={
-                                                            Object {
-                                                              "background": 0,
-                                                              "border": 0,
-                                                              "boxSizing": "content-box",
-                                                              "color": "inherit",
-                                                              "fontSize": "inherit",
-                                                              "label": "input",
-                                                              "opacity": 1,
-                                                              "outline": 0,
-                                                              "padding": 0,
-                                                              "width": "2px",
-                                                            }
-                                                          }
-                                                          tabIndex="0"
-                                                          type="text"
-                                                          value=""
-                                                        />
                                                         <div
+                                                          className="cf-select__input"
                                                           style={
                                                             Object {
-                                                              "height": 0,
-                                                              "left": 0,
-                                                              "overflow": "scroll",
-                                                              "position": "absolute",
-                                                              "top": 0,
-                                                              "visibility": "hidden",
-                                                              "whiteSpace": "pre",
+                                                              "display": "inline-block",
                                                             }
                                                           }
-                                                        />
-                                                      </div>
-                                                    </AutosizeInput>
-                                                  </div>
-                                                </EmotionCssPropInternal>
+                                                        >
+                                                          <input
+                                                            aria-autocomplete="list"
+                                                            aria-controls="judge-dropdown-listbox"
+                                                            aria-expanded={false}
+                                                            aria-labelledby="judge-dropdown"
+                                                            autoCapitalize="none"
+                                                            autoComplete="off"
+                                                            autoCorrect="off"
+                                                            disabled={false}
+                                                            id="judge-dropdown"
+                                                            onBlur={[Function]}
+                                                            onChange={[Function]}
+                                                            onFocus={[Function]}
+                                                            role="combobox"
+                                                            spellCheck="false"
+                                                            style={
+                                                              Object {
+                                                                "background": 0,
+                                                                "border": 0,
+                                                                "boxSizing": "content-box",
+                                                                "color": "inherit",
+                                                                "fontSize": "inherit",
+                                                                "label": "input",
+                                                                "opacity": 1,
+                                                                "outline": 0,
+                                                                "padding": 0,
+                                                                "width": "2px",
+                                                              }
+                                                            }
+                                                            tabIndex="0"
+                                                            type="text"
+                                                            value=""
+                                                          />
+                                                          <div
+                                                            style={
+                                                              Object {
+                                                                "height": 0,
+                                                                "left": 0,
+                                                                "overflow": "scroll",
+                                                                "position": "absolute",
+                                                                "top": 0,
+                                                                "visibility": "hidden",
+                                                                "whiteSpace": "pre",
+                                                              }
+                                                            }
+                                                          />
+                                                        </div>
+                                                      </AutosizeInput>
+                                                    </div>
+                                                  </EmotionCssPropInternal>
+                                                </Input>
                                               </Input>
                                             </div>
                                           </EmotionCssPropInternal>
@@ -2438,6 +2691,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                           selectOption={[Function]}
                                           selectProps={
                                             Object {
+                                              "aria-labelledby": "judge-dropdown",
                                               "backspaceRemovesValue": true,
                                               "blurInputOnSelect": true,
                                               "cache": false,
@@ -2445,7 +2699,10 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                               "classNamePrefix": "cf-select",
                                               "closeMenuOnScroll": false,
                                               "closeMenuOnSelect": true,
-                                              "components": Object {},
+                                              "components": Object {
+                                                "Input": [Function],
+                                                "MenuList": [Function],
+                                              },
                                               "controlShouldRenderValue": true,
                                               "defaultOptions": undefined,
                                               "escapeClearsValue": false,
@@ -2471,6 +2728,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                               "menuShouldBlockScroll": false,
                                               "menuShouldScrollIntoView": true,
                                               "minMenuHeight": 140,
+                                              "name": "judge-dropdown",
                                               "noOptionsMessage": [Function],
                                               "onBlurResetsInput": false,
                                               "onChange": [Function],
@@ -2735,6 +2993,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                 selectOption={[Function]}
                                                 selectProps={
                                                   Object {
+                                                    "aria-labelledby": "judge-dropdown",
                                                     "backspaceRemovesValue": true,
                                                     "blurInputOnSelect": true,
                                                     "cache": false,
@@ -2742,7 +3001,10 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                     "classNamePrefix": "cf-select",
                                                     "closeMenuOnScroll": false,
                                                     "closeMenuOnSelect": true,
-                                                    "components": Object {},
+                                                    "components": Object {
+                                                      "Input": [Function],
+                                                      "MenuList": [Function],
+                                                    },
                                                     "controlShouldRenderValue": true,
                                                     "defaultOptions": undefined,
                                                     "escapeClearsValue": false,
@@ -2768,6 +3030,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                     "menuShouldBlockScroll": false,
                                                     "menuShouldScrollIntoView": true,
                                                     "minMenuHeight": 140,
+                                                    "name": "judge-dropdown",
                                                     "noOptionsMessage": [Function],
                                                     "onBlurResetsInput": false,
                                                     "onChange": [Function],
@@ -3043,6 +3306,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                 selectOption={[Function]}
                                                 selectProps={
                                                   Object {
+                                                    "aria-labelledby": "judge-dropdown",
                                                     "backspaceRemovesValue": true,
                                                     "blurInputOnSelect": true,
                                                     "cache": false,
@@ -3050,7 +3314,10 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                     "classNamePrefix": "cf-select",
                                                     "closeMenuOnScroll": false,
                                                     "closeMenuOnSelect": true,
-                                                    "components": Object {},
+                                                    "components": Object {
+                                                      "Input": [Function],
+                                                      "MenuList": [Function],
+                                                    },
                                                     "controlShouldRenderValue": true,
                                                     "defaultOptions": undefined,
                                                     "escapeClearsValue": false,
@@ -3076,6 +3343,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                     "menuShouldBlockScroll": false,
                                                     "menuShouldScrollIntoView": true,
                                                     "minMenuHeight": 140,
+                                                    "name": "judge-dropdown",
                                                     "noOptionsMessage": [Function],
                                                     "onBlurResetsInput": false,
                                                     "onChange": [Function],
@@ -3289,6 +3557,11 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                       </div>
                                     </EmotionCssPropInternal>
                                   </Control>
+                                  <input
+                                    name="judge-dropdown"
+                                    type="hidden"
+                                    value=""
+                                  />
                                 </div>
                               </EmotionCssPropInternal>
                             </SelectContainer>

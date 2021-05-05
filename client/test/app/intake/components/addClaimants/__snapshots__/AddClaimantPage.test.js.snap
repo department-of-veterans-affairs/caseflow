@@ -112,10 +112,14 @@ exports[`AddClaimantPage renders default state correctly 1`] = `
                       >
                         <input
                           aria-autocomplete="list"
+                          aria-controls="relationship-listbox"
+                          aria-expanded="false"
+                          aria-labelledby="relationship"
                           autocapitalize="none"
                           autocomplete="off"
                           autocorrect="off"
                           id="relationship"
+                          role="combobox"
                           spellcheck="false"
                           style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                           tabindex="0"
@@ -153,6 +157,11 @@ exports[`AddClaimantPage renders default state correctly 1`] = `
                     </div>
                   </div>
                 </div>
+                <input
+                  name="relationship"
+                  type="hidden"
+                  value=""
+                />
               </div>
             </div>
           </div>

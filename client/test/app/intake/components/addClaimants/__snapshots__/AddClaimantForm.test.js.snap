@@ -51,10 +51,14 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
                   >
                     <input
                       aria-autocomplete="list"
+                      aria-controls="relationship-listbox"
+                      aria-expanded="false"
+                      aria-labelledby="relationship"
                       autocapitalize="none"
                       autocomplete="off"
                       autocorrect="off"
                       id="relationship"
+                      role="combobox"
                       spellcheck="false"
                       style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                       tabindex="0"
@@ -92,6 +96,11 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
                 </div>
               </div>
             </div>
+            <input
+              name="relationship"
+              type="hidden"
+              value="other"
+            />
           </div>
         </div>
       </div>
@@ -377,10 +386,14 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
                     >
                       <input
                         aria-autocomplete="list"
+                        aria-controls="state-listbox"
+                        aria-expanded="false"
+                        aria-labelledby="state"
                         autocapitalize="none"
                         autocomplete="off"
                         autocorrect="off"
                         id="state"
+                        role="combobox"
                         spellcheck="false"
                         style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                         tabindex="0"
@@ -435,6 +448,11 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
                   </div>
                 </div>
               </div>
+              <input
+                name="state"
+                type="hidden"
+                value="California"
+              />
             </div>
           </div>
         </div>
@@ -647,10 +665,14 @@ exports[`AddClaimantForm renders default state correctly 1`] = `
                   >
                     <input
                       aria-autocomplete="list"
+                      aria-controls="relationship-listbox"
+                      aria-expanded="false"
+                      aria-labelledby="relationship"
                       autocapitalize="none"
                       autocomplete="off"
                       autocorrect="off"
                       id="relationship"
+                      role="combobox"
                       spellcheck="false"
                       style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                       tabindex="0"
@@ -688,6 +710,11 @@ exports[`AddClaimantForm renders default state correctly 1`] = `
                 </div>
               </div>
             </div>
+            <input
+              name="relationship"
+              type="hidden"
+              value=""
+            />
           </div>
         </div>
       </div>

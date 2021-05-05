@@ -222,10 +222,14 @@ exports[`RecommendDocketSwitchForm renders correctly 1`] = `
                       >
                         <input
                           aria-autocomplete="list"
+                          aria-controls="judge-listbox"
+                          aria-expanded="false"
+                          aria-labelledby="judge"
                           autocapitalize="none"
                           autocomplete="off"
                           autocorrect="off"
                           id="judge"
+                          role="combobox"
                           spellcheck="false"
                           style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                           tabindex="0"
@@ -263,6 +267,11 @@ exports[`RecommendDocketSwitchForm renders correctly 1`] = `
                     </div>
                   </div>
                 </div>
+                <input
+                  name="judge"
+                  type="hidden"
+                  value=""
+                />
               </div>
             </div>
           </div>

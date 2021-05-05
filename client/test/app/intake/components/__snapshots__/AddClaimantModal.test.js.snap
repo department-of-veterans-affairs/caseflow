@@ -113,10 +113,14 @@ exports[`AddClaimantModal renders correctly 1`] = `
                           >
                             <input
                               aria-autocomplete="list"
+                              aria-controls="relationship-listbox"
+                              aria-expanded="false"
+                              aria-labelledby="relationship"
                               autocapitalize="none"
                               autocomplete="off"
                               autocorrect="off"
                               id="relationship"
+                              role="combobox"
                               spellcheck="false"
                               style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                               tabindex="0"
@@ -154,6 +158,11 @@ exports[`AddClaimantModal renders correctly 1`] = `
                         </div>
                       </div>
                     </div>
+                    <input
+                      name="relationship"
+                      type="hidden"
+                      value="attorney"
+                    />
                   </div>
                 </div>
               </div>
@@ -200,10 +209,14 @@ exports[`AddClaimantModal renders correctly 1`] = `
                           >
                             <input
                               aria-autocomplete="list"
+                              aria-controls="claimant-listbox"
+                              aria-expanded="false"
+                              aria-labelledby="claimant"
                               autocapitalize="none"
                               autocomplete="off"
                               autocorrect="off"
                               id="claimant"
+                              role="combobox"
                               spellcheck="false"
                               style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                               tabindex="0"
@@ -255,6 +268,11 @@ exports[`AddClaimantModal renders correctly 1`] = `
                         </div>
                       </div>
                     </div>
+                    <input
+                      name="claimant"
+                      type="hidden"
+                      value=""
+                    />
                   </div>
                 </div>
               </div>

@@ -296,14 +296,22 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
           className="cf-select"
         >
           <StateManager
+            aria-labelledby="optionalHearingTime0"
             cache={false}
             classNamePrefix="cf-select"
+            components={
+              Object {
+                "Input": [Function],
+                "MenuList": [Function],
+              }
+            }
             defaultInputValue=""
             defaultMenuIsOpen={false}
             defaultValue={null}
             inputId="optionalHearingTime0"
             isLoading={false}
             isSearchable={true}
+            name="optionalHearingTime0"
             noOptionsMessage={[Function]}
             onBlurResetsInput={false}
             onChange={[Function]}
@@ -466,6 +474,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
             }
           >
             <Select
+              aria-labelledby="optionalHearingTime0"
               backspaceRemovesValue={true}
               blurInputOnSelect={true}
               cache={false}
@@ -473,7 +482,12 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
               classNamePrefix="cf-select"
               closeMenuOnScroll={false}
               closeMenuOnSelect={true}
-              components={Object {}}
+              components={
+                Object {
+                  "Input": [Function],
+                  "MenuList": [Function],
+                }
+              }
               controlShouldRenderValue={true}
               escapeClearsValue={false}
               filterOption={[Function]}
@@ -496,6 +510,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
               menuShouldBlockScroll={false}
               menuShouldScrollIntoView={true}
               minMenuHeight={140}
+              name="optionalHearingTime0"
               noOptionsMessage={[Function]}
               onBlurResetsInput={false}
               onChange={[Function]}
@@ -829,6 +844,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                 selectOption={[Function]}
                 selectProps={
                   Object {
+                    "aria-labelledby": "optionalHearingTime0",
                     "backspaceRemovesValue": true,
                     "blurInputOnSelect": true,
                     "cache": false,
@@ -836,7 +852,10 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                     "classNamePrefix": "cf-select",
                     "closeMenuOnScroll": false,
                     "closeMenuOnSelect": true,
-                    "components": Object {},
+                    "components": Object {
+                      "Input": [Function],
+                      "MenuList": [Function],
+                    },
                     "controlShouldRenderValue": true,
                     "defaultOptions": undefined,
                     "escapeClearsValue": false,
@@ -862,6 +881,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                     "menuShouldBlockScroll": false,
                     "menuShouldScrollIntoView": true,
                     "minMenuHeight": 140,
+                    "name": "optionalHearingTime0",
                     "noOptionsMessage": [Function],
                     "onBlurResetsInput": false,
                     "onChange": [Function],
@@ -1243,6 +1263,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                       selectOption={[Function]}
                       selectProps={
                         Object {
+                          "aria-labelledby": "optionalHearingTime0",
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "cache": false,
@@ -1250,7 +1271,10 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                           "classNamePrefix": "cf-select",
                           "closeMenuOnScroll": false,
                           "closeMenuOnSelect": true,
-                          "components": Object {},
+                          "components": Object {
+                            "Input": [Function],
+                            "MenuList": [Function],
+                          },
                           "controlShouldRenderValue": true,
                           "defaultOptions": undefined,
                           "escapeClearsValue": false,
@@ -1276,6 +1300,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                           "menuShouldBlockScroll": false,
                           "menuShouldScrollIntoView": true,
                           "minMenuHeight": 140,
+                          "name": "optionalHearingTime0",
                           "noOptionsMessage": [Function],
                           "onBlurResetsInput": false,
                           "onChange": [Function],
@@ -1665,6 +1690,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
+                                "aria-labelledby": "optionalHearingTime0",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -1672,7 +1698,10 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                 "classNamePrefix": "cf-select",
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
-                                "components": Object {},
+                                "components": Object {
+                                  "Input": [Function],
+                                  "MenuList": [Function],
+                                },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
                                 "escapeClearsValue": false,
@@ -1698,6 +1727,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                 "menuShouldBlockScroll": false,
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
+                                "name": "optionalHearingTime0",
                                 "noOptionsMessage": [Function],
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
@@ -2078,6 +2108,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
+                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -2085,7 +2116,10 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                       "classNamePrefix": "cf-select",
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
-                                      "components": Object {},
+                                      "components": Object {
+                                        "Input": [Function],
+                                        "MenuList": [Function],
+                                      },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
                                       "escapeClearsValue": false,
@@ -2111,6 +2145,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
+                                      "name": "optionalHearingTime0",
                                       "noOptionsMessage": [Function],
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
@@ -2338,6 +2373,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                 </SingleValue>
                                 <Input
                                   aria-autocomplete="list"
+                                  aria-labelledby="optionalHearingTime0"
                                   autoCapitalize="none"
                                   autoComplete="off"
                                   autoCorrect="off"
@@ -2352,6 +2388,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                   onFocus={[Function]}
                                   selectProps={
                                     Object {
+                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -2359,7 +2396,10 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                       "classNamePrefix": "cf-select",
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
-                                      "components": Object {},
+                                      "components": Object {
+                                        "Input": [Function],
+                                        "MenuList": [Function],
+                                      },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
                                       "escapeClearsValue": false,
@@ -2385,6 +2425,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
+                                      "name": "optionalHearingTime0",
                                       "noOptionsMessage": [Function],
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
@@ -2585,103 +2626,370 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                   type="text"
                                   value=""
                                 >
-                                  <EmotionCssPropInternal
-                                    __EMOTION_LABEL_PLEASE_DO_NOT_USE__="Input"
-                                    __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                    css={
+                                  <Input
+                                    aria-autocomplete="list"
+                                    aria-controls="optionalHearingTime0-listbox"
+                                    aria-expanded={false}
+                                    aria-labelledby="optionalHearingTime0"
+                                    autoCapitalize="none"
+                                    autoComplete="off"
+                                    autoCorrect="off"
+                                    cx={[Function]}
+                                    getStyles={[Function]}
+                                    id="optionalHearingTime0"
+                                    innerRef={[Function]}
+                                    isDisabled={false}
+                                    isHidden={false}
+                                    onBlur={[Function]}
+                                    onChange={[Function]}
+                                    onFocus={[Function]}
+                                    role="combobox"
+                                    selectProps={
                                       Object {
-                                        "height": "44px",
+                                        "aria-labelledby": "optionalHearingTime0",
+                                        "backspaceRemovesValue": true,
+                                        "blurInputOnSelect": true,
+                                        "cache": false,
+                                        "captureMenuScroll": false,
+                                        "classNamePrefix": "cf-select",
+                                        "closeMenuOnScroll": false,
+                                        "closeMenuOnSelect": true,
+                                        "components": Object {
+                                          "Input": [Function],
+                                          "MenuList": [Function],
+                                        },
+                                        "controlShouldRenderValue": true,
+                                        "defaultOptions": undefined,
+                                        "escapeClearsValue": false,
+                                        "filterOption": [Function],
+                                        "formatGroupLabel": [Function],
+                                        "getOptionLabel": [Function],
+                                        "getOptionValue": [Function],
+                                        "inputId": "optionalHearingTime0",
+                                        "inputValue": "",
+                                        "isClearable": undefined,
+                                        "isDisabled": false,
+                                        "isLoading": false,
+                                        "isMulti": false,
+                                        "isOptionDisabled": [Function],
+                                        "isRtl": false,
+                                        "isSearchable": true,
+                                        "loadOptions": undefined,
+                                        "loadingMessage": [Function],
+                                        "maxMenuHeight": 300,
+                                        "menuIsOpen": false,
+                                        "menuPlacement": "bottom",
+                                        "menuPosition": "absolute",
+                                        "menuShouldBlockScroll": false,
+                                        "menuShouldScrollIntoView": true,
+                                        "minMenuHeight": 140,
+                                        "name": "optionalHearingTime0",
+                                        "noOptionsMessage": [Function],
+                                        "onBlurResetsInput": false,
+                                        "onChange": [Function],
+                                        "onInputChange": [Function],
+                                        "onMenuClose": [Function],
+                                        "onMenuOpen": [Function],
+                                        "openMenuOnClick": true,
+                                        "openMenuOnFocus": false,
+                                        "options": Array [
+                                          Object {
+                                            "label": "8:15 AM Eastern Time (US & Canada)",
+                                            "value": "08:15",
+                                          },
+                                          Object {
+                                            "label": "8:30 AM Eastern Time (US & Canada)",
+                                            "value": "08:30",
+                                          },
+                                          Object {
+                                            "label": "8:45 AM Eastern Time (US & Canada)",
+                                            "value": "08:45",
+                                          },
+                                          Object {
+                                            "label": "9:00 AM Eastern Time (US & Canada)",
+                                            "value": "09:00",
+                                          },
+                                          Object {
+                                            "label": "9:15 AM Eastern Time (US & Canada)",
+                                            "value": "09:15",
+                                          },
+                                          Object {
+                                            "label": "9:30 AM Eastern Time (US & Canada)",
+                                            "value": "09:30",
+                                          },
+                                          Object {
+                                            "label": "9:45 AM Eastern Time (US & Canada)",
+                                            "value": "09:45",
+                                          },
+                                          Object {
+                                            "label": "10:00 AM Eastern Time (US & Canada)",
+                                            "value": "10:00",
+                                          },
+                                          Object {
+                                            "label": "10:15 AM Eastern Time (US & Canada)",
+                                            "value": "10:15",
+                                          },
+                                          Object {
+                                            "label": "10:30 AM Eastern Time (US & Canada)",
+                                            "value": "10:30",
+                                          },
+                                          Object {
+                                            "label": "10:45 AM Eastern Time (US & Canada)",
+                                            "value": "10:45",
+                                          },
+                                          Object {
+                                            "label": "11:00 AM Eastern Time (US & Canada)",
+                                            "value": "11:00",
+                                          },
+                                          Object {
+                                            "label": "11:15 AM Eastern Time (US & Canada)",
+                                            "value": "11:15",
+                                          },
+                                          Object {
+                                            "label": "11:30 AM Eastern Time (US & Canada)",
+                                            "value": "11:30",
+                                          },
+                                          Object {
+                                            "label": "11:45 AM Eastern Time (US & Canada)",
+                                            "value": "11:45",
+                                          },
+                                          Object {
+                                            "label": "12:00 PM Eastern Time (US & Canada)",
+                                            "value": "12:00",
+                                          },
+                                          Object {
+                                            "label": "12:15 PM Eastern Time (US & Canada)",
+                                            "value": "12:15",
+                                          },
+                                          Object {
+                                            "label": "12:30 PM Eastern Time (US & Canada)",
+                                            "value": "12:30",
+                                          },
+                                          Object {
+                                            "label": "12:45 PM Eastern Time (US & Canada)",
+                                            "value": "12:45",
+                                          },
+                                          Object {
+                                            "label": "1:00 PM Eastern Time (US & Canada)",
+                                            "value": "13:00",
+                                          },
+                                          Object {
+                                            "label": "1:15 PM Eastern Time (US & Canada)",
+                                            "value": "13:15",
+                                          },
+                                          Object {
+                                            "label": "1:30 PM Eastern Time (US & Canada)",
+                                            "value": "13:30",
+                                          },
+                                          Object {
+                                            "label": "1:45 PM Eastern Time (US & Canada)",
+                                            "value": "13:45",
+                                          },
+                                          Object {
+                                            "label": "2:00 PM Eastern Time (US & Canada)",
+                                            "value": "14:00",
+                                          },
+                                          Object {
+                                            "label": "2:15 PM Eastern Time (US & Canada)",
+                                            "value": "14:15",
+                                          },
+                                          Object {
+                                            "label": "2:30 PM Eastern Time (US & Canada)",
+                                            "value": "14:30",
+                                          },
+                                          Object {
+                                            "label": "2:45 PM Eastern Time (US & Canada)",
+                                            "value": "14:45",
+                                          },
+                                          Object {
+                                            "label": "3:00 PM Eastern Time (US & Canada)",
+                                            "value": "15:00",
+                                          },
+                                          Object {
+                                            "label": "3:15 PM Eastern Time (US & Canada)",
+                                            "value": "15:15",
+                                          },
+                                          Object {
+                                            "label": "3:30 PM Eastern Time (US & Canada)",
+                                            "value": "15:30",
+                                          },
+                                          Object {
+                                            "label": "3:45 PM Eastern Time (US & Canada)",
+                                            "value": "15:45",
+                                          },
+                                          Object {
+                                            "label": "4:00 PM Eastern Time (US & Canada)",
+                                            "value": "16:00",
+                                          },
+                                          Object {
+                                            "label": "4:15 PM Eastern Time (US & Canada)",
+                                            "value": "16:15",
+                                          },
+                                          Object {
+                                            "label": "4:30 PM Eastern Time (US & Canada)",
+                                            "value": "16:30",
+                                          },
+                                          Object {
+                                            "label": "4:45 PM Eastern Time (US & Canada)",
+                                            "value": "16:45",
+                                          },
+                                        ],
+                                        "pageSize": 5,
+                                        "placeholder": "Select a time",
+                                        "screenReaderStatus": [Function],
+                                        "searchable": undefined,
+                                        "shouldKeyDownEventCreateNewOption": [Function],
+                                        "styles": Object {
+                                          "input": [Function],
+                                        },
+                                        "tabIndex": "0",
+                                        "tabSelectsValue": true,
+                                        "value": Object {
+                                          "label": "8:15 AM Eastern Time (US & Canada)",
+                                          "value": "08:15",
+                                        },
                                       }
                                     }
+                                    spellCheck="false"
+                                    tabIndex="0"
+                                    theme={
+                                      Object {
+                                        "borderRadius": 4,
+                                        "colors": Object {
+                                          "danger": "#DE350B",
+                                          "dangerLight": "#FFBDAD",
+                                          "neutral0": "hsl(0, 0%, 100%)",
+                                          "neutral10": "hsl(0, 0%, 90%)",
+                                          "neutral20": "hsl(0, 0%, 80%)",
+                                          "neutral30": "hsl(0, 0%, 70%)",
+                                          "neutral40": "hsl(0, 0%, 60%)",
+                                          "neutral5": "hsl(0, 0%, 95%)",
+                                          "neutral50": "hsl(0, 0%, 50%)",
+                                          "neutral60": "hsl(0, 0%, 40%)",
+                                          "neutral70": "hsl(0, 0%, 30%)",
+                                          "neutral80": "hsl(0, 0%, 20%)",
+                                          "neutral90": "hsl(0, 0%, 10%)",
+                                          "primary": "#2684FF",
+                                          "primary25": "#DEEBFF",
+                                          "primary50": "#B2D4FF",
+                                          "primary75": "#4C9AFF",
+                                        },
+                                        "spacing": Object {
+                                          "baseUnit": 4,
+                                          "controlHeight": 38,
+                                          "menuGutter": 8,
+                                        },
+                                      }
+                                    }
+                                    type="text"
+                                    value=""
                                   >
-                                    <div
-                                      className="css-81nyic-Input"
-                                    >
-                                      <AutosizeInput
-                                        aria-autocomplete="list"
-                                        autoCapitalize="none"
-                                        autoComplete="off"
-                                        autoCorrect="off"
-                                        className="cf-select__input"
-                                        disabled={false}
-                                        id="optionalHearingTime0"
-                                        injectStyles={true}
-                                        inputRef={[Function]}
-                                        inputStyle={
-                                          Object {
-                                            "background": 0,
-                                            "border": 0,
-                                            "color": "inherit",
-                                            "fontSize": "inherit",
-                                            "label": "input",
-                                            "opacity": 1,
-                                            "outline": 0,
-                                            "padding": 0,
-                                          }
+                                    <EmotionCssPropInternal
+                                      __EMOTION_LABEL_PLEASE_DO_NOT_USE__="Input"
+                                      __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
+                                      css={
+                                        Object {
+                                          "height": "44px",
                                         }
-                                        minWidth={1}
-                                        onBlur={[Function]}
-                                        onChange={[Function]}
-                                        onFocus={[Function]}
-                                        spellCheck="false"
-                                        tabIndex="0"
-                                        type="text"
-                                        value=""
+                                      }
+                                    >
+                                      <div
+                                        className="css-81nyic-Input"
                                       >
-                                        <div
+                                        <AutosizeInput
+                                          aria-autocomplete="list"
+                                          aria-controls="optionalHearingTime0-listbox"
+                                          aria-expanded={false}
+                                          aria-labelledby="optionalHearingTime0"
+                                          autoCapitalize="none"
+                                          autoComplete="off"
+                                          autoCorrect="off"
                                           className="cf-select__input"
-                                          style={
+                                          disabled={false}
+                                          id="optionalHearingTime0"
+                                          injectStyles={true}
+                                          inputRef={[Function]}
+                                          inputStyle={
                                             Object {
-                                              "display": "inline-block",
+                                              "background": 0,
+                                              "border": 0,
+                                              "color": "inherit",
+                                              "fontSize": "inherit",
+                                              "label": "input",
+                                              "opacity": 1,
+                                              "outline": 0,
+                                              "padding": 0,
                                             }
                                           }
+                                          minWidth={1}
+                                          onBlur={[Function]}
+                                          onChange={[Function]}
+                                          onFocus={[Function]}
+                                          role="combobox"
+                                          spellCheck="false"
+                                          tabIndex="0"
+                                          type="text"
+                                          value=""
                                         >
-                                          <input
-                                            aria-autocomplete="list"
-                                            autoCapitalize="none"
-                                            autoComplete="off"
-                                            autoCorrect="off"
-                                            disabled={false}
-                                            id="optionalHearingTime0"
-                                            onBlur={[Function]}
-                                            onChange={[Function]}
-                                            onFocus={[Function]}
-                                            spellCheck="false"
-                                            style={
-                                              Object {
-                                                "background": 0,
-                                                "border": 0,
-                                                "boxSizing": "content-box",
-                                                "color": "inherit",
-                                                "fontSize": "inherit",
-                                                "label": "input",
-                                                "opacity": 1,
-                                                "outline": 0,
-                                                "padding": 0,
-                                                "width": "2px",
-                                              }
-                                            }
-                                            tabIndex="0"
-                                            type="text"
-                                            value=""
-                                          />
                                           <div
+                                            className="cf-select__input"
                                             style={
                                               Object {
-                                                "height": 0,
-                                                "left": 0,
-                                                "overflow": "scroll",
-                                                "position": "absolute",
-                                                "top": 0,
-                                                "visibility": "hidden",
-                                                "whiteSpace": "pre",
+                                                "display": "inline-block",
                                               }
                                             }
-                                          />
-                                        </div>
-                                      </AutosizeInput>
-                                    </div>
-                                  </EmotionCssPropInternal>
+                                          >
+                                            <input
+                                              aria-autocomplete="list"
+                                              aria-controls="optionalHearingTime0-listbox"
+                                              aria-expanded={false}
+                                              aria-labelledby="optionalHearingTime0"
+                                              autoCapitalize="none"
+                                              autoComplete="off"
+                                              autoCorrect="off"
+                                              disabled={false}
+                                              id="optionalHearingTime0"
+                                              onBlur={[Function]}
+                                              onChange={[Function]}
+                                              onFocus={[Function]}
+                                              role="combobox"
+                                              spellCheck="false"
+                                              style={
+                                                Object {
+                                                  "background": 0,
+                                                  "border": 0,
+                                                  "boxSizing": "content-box",
+                                                  "color": "inherit",
+                                                  "fontSize": "inherit",
+                                                  "label": "input",
+                                                  "opacity": 1,
+                                                  "outline": 0,
+                                                  "padding": 0,
+                                                  "width": "2px",
+                                                }
+                                              }
+                                              tabIndex="0"
+                                              type="text"
+                                              value=""
+                                            />
+                                            <div
+                                              style={
+                                                Object {
+                                                  "height": 0,
+                                                  "left": 0,
+                                                  "overflow": "scroll",
+                                                  "position": "absolute",
+                                                  "top": 0,
+                                                  "visibility": "hidden",
+                                                  "whiteSpace": "pre",
+                                                }
+                                              }
+                                            />
+                                          </div>
+                                        </AutosizeInput>
+                                      </div>
+                                    </EmotionCssPropInternal>
+                                  </Input>
                                 </Input>
                               </div>
                             </EmotionCssPropInternal>
@@ -2842,6 +3150,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
+                                "aria-labelledby": "optionalHearingTime0",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -2849,7 +3158,10 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                 "classNamePrefix": "cf-select",
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
-                                "components": Object {},
+                                "components": Object {
+                                  "Input": [Function],
+                                  "MenuList": [Function],
+                                },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
                                 "escapeClearsValue": false,
@@ -2875,6 +3187,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                 "menuShouldBlockScroll": false,
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
+                                "name": "optionalHearingTime0",
                                 "noOptionsMessage": [Function],
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
@@ -3246,6 +3559,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
+                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -3253,7 +3567,10 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                       "classNamePrefix": "cf-select",
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
-                                      "components": Object {},
+                                      "components": Object {
+                                        "Input": [Function],
+                                        "MenuList": [Function],
+                                      },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
                                       "escapeClearsValue": false,
@@ -3279,6 +3596,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
+                                      "name": "optionalHearingTime0",
                                       "noOptionsMessage": [Function],
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
@@ -3661,6 +3979,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
+                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -3668,7 +3987,10 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                       "classNamePrefix": "cf-select",
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
-                                      "components": Object {},
+                                      "components": Object {
+                                        "Input": [Function],
+                                        "MenuList": [Function],
+                                      },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
                                       "escapeClearsValue": false,
@@ -3694,6 +4016,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
+                                      "name": "optionalHearingTime0",
                                       "noOptionsMessage": [Function],
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
@@ -3962,6 +4285,11 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                         </div>
                       </EmotionCssPropInternal>
                     </Control>
+                    <input
+                      name="optionalHearingTime0"
+                      type="hidden"
+                      value="08:15"
+                    />
                   </div>
                 </EmotionCssPropInternal>
               </SelectContainer>
@@ -4394,14 +4722,22 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
           className="cf-select"
         >
           <StateManager
+            aria-labelledby="optionalHearingTime0"
             cache={false}
             classNamePrefix="cf-select"
+            components={
+              Object {
+                "Input": [Function],
+                "MenuList": [Function],
+              }
+            }
             defaultInputValue=""
             defaultMenuIsOpen={false}
             defaultValue={null}
             inputId="optionalHearingTime0"
             isLoading={false}
             isSearchable={true}
+            name="optionalHearingTime0"
             noOptionsMessage={[Function]}
             onBlurResetsInput={false}
             onChange={[Function]}
@@ -4564,6 +4900,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
             }
           >
             <Select
+              aria-labelledby="optionalHearingTime0"
               backspaceRemovesValue={true}
               blurInputOnSelect={true}
               cache={false}
@@ -4571,7 +4908,12 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
               classNamePrefix="cf-select"
               closeMenuOnScroll={false}
               closeMenuOnSelect={true}
-              components={Object {}}
+              components={
+                Object {
+                  "Input": [Function],
+                  "MenuList": [Function],
+                }
+              }
               controlShouldRenderValue={true}
               escapeClearsValue={false}
               filterOption={[Function]}
@@ -4594,6 +4936,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
               menuShouldBlockScroll={false}
               menuShouldScrollIntoView={true}
               minMenuHeight={140}
+              name="optionalHearingTime0"
               noOptionsMessage={[Function]}
               onBlurResetsInput={false}
               onChange={[Function]}
@@ -4927,6 +5270,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                 selectOption={[Function]}
                 selectProps={
                   Object {
+                    "aria-labelledby": "optionalHearingTime0",
                     "backspaceRemovesValue": true,
                     "blurInputOnSelect": true,
                     "cache": false,
@@ -4934,7 +5278,10 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                     "classNamePrefix": "cf-select",
                     "closeMenuOnScroll": false,
                     "closeMenuOnSelect": true,
-                    "components": Object {},
+                    "components": Object {
+                      "Input": [Function],
+                      "MenuList": [Function],
+                    },
                     "controlShouldRenderValue": true,
                     "defaultOptions": undefined,
                     "escapeClearsValue": false,
@@ -4960,6 +5307,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                     "menuShouldBlockScroll": false,
                     "menuShouldScrollIntoView": true,
                     "minMenuHeight": 140,
+                    "name": "optionalHearingTime0",
                     "noOptionsMessage": [Function],
                     "onBlurResetsInput": false,
                     "onChange": [Function],
@@ -5341,6 +5689,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                       selectOption={[Function]}
                       selectProps={
                         Object {
+                          "aria-labelledby": "optionalHearingTime0",
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "cache": false,
@@ -5348,7 +5697,10 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                           "classNamePrefix": "cf-select",
                           "closeMenuOnScroll": false,
                           "closeMenuOnSelect": true,
-                          "components": Object {},
+                          "components": Object {
+                            "Input": [Function],
+                            "MenuList": [Function],
+                          },
                           "controlShouldRenderValue": true,
                           "defaultOptions": undefined,
                           "escapeClearsValue": false,
@@ -5374,6 +5726,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                           "menuShouldBlockScroll": false,
                           "menuShouldScrollIntoView": true,
                           "minMenuHeight": 140,
+                          "name": "optionalHearingTime0",
                           "noOptionsMessage": [Function],
                           "onBlurResetsInput": false,
                           "onChange": [Function],
@@ -5763,6 +6116,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
+                                "aria-labelledby": "optionalHearingTime0",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -5770,7 +6124,10 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                 "classNamePrefix": "cf-select",
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
-                                "components": Object {},
+                                "components": Object {
+                                  "Input": [Function],
+                                  "MenuList": [Function],
+                                },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
                                 "escapeClearsValue": false,
@@ -5796,6 +6153,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                 "menuShouldBlockScroll": false,
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
+                                "name": "optionalHearingTime0",
                                 "noOptionsMessage": [Function],
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
@@ -6176,6 +6534,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
+                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -6183,7 +6542,10 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       "classNamePrefix": "cf-select",
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
-                                      "components": Object {},
+                                      "components": Object {
+                                        "Input": [Function],
+                                        "MenuList": [Function],
+                                      },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
                                       "escapeClearsValue": false,
@@ -6209,6 +6571,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
+                                      "name": "optionalHearingTime0",
                                       "noOptionsMessage": [Function],
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
@@ -6436,6 +6799,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                 </SingleValue>
                                 <Input
                                   aria-autocomplete="list"
+                                  aria-labelledby="optionalHearingTime0"
                                   autoCapitalize="none"
                                   autoComplete="off"
                                   autoCorrect="off"
@@ -6450,6 +6814,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                   onFocus={[Function]}
                                   selectProps={
                                     Object {
+                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -6457,7 +6822,10 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       "classNamePrefix": "cf-select",
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
-                                      "components": Object {},
+                                      "components": Object {
+                                        "Input": [Function],
+                                        "MenuList": [Function],
+                                      },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
                                       "escapeClearsValue": false,
@@ -6483,6 +6851,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
+                                      "name": "optionalHearingTime0",
                                       "noOptionsMessage": [Function],
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
@@ -6683,103 +7052,370 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                   type="text"
                                   value=""
                                 >
-                                  <EmotionCssPropInternal
-                                    __EMOTION_LABEL_PLEASE_DO_NOT_USE__="Input"
-                                    __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                    css={
+                                  <Input
+                                    aria-autocomplete="list"
+                                    aria-controls="optionalHearingTime0-listbox"
+                                    aria-expanded={false}
+                                    aria-labelledby="optionalHearingTime0"
+                                    autoCapitalize="none"
+                                    autoComplete="off"
+                                    autoCorrect="off"
+                                    cx={[Function]}
+                                    getStyles={[Function]}
+                                    id="optionalHearingTime0"
+                                    innerRef={[Function]}
+                                    isDisabled={false}
+                                    isHidden={false}
+                                    onBlur={[Function]}
+                                    onChange={[Function]}
+                                    onFocus={[Function]}
+                                    role="combobox"
+                                    selectProps={
                                       Object {
-                                        "height": "44px",
+                                        "aria-labelledby": "optionalHearingTime0",
+                                        "backspaceRemovesValue": true,
+                                        "blurInputOnSelect": true,
+                                        "cache": false,
+                                        "captureMenuScroll": false,
+                                        "classNamePrefix": "cf-select",
+                                        "closeMenuOnScroll": false,
+                                        "closeMenuOnSelect": true,
+                                        "components": Object {
+                                          "Input": [Function],
+                                          "MenuList": [Function],
+                                        },
+                                        "controlShouldRenderValue": true,
+                                        "defaultOptions": undefined,
+                                        "escapeClearsValue": false,
+                                        "filterOption": [Function],
+                                        "formatGroupLabel": [Function],
+                                        "getOptionLabel": [Function],
+                                        "getOptionValue": [Function],
+                                        "inputId": "optionalHearingTime0",
+                                        "inputValue": "",
+                                        "isClearable": undefined,
+                                        "isDisabled": false,
+                                        "isLoading": false,
+                                        "isMulti": false,
+                                        "isOptionDisabled": [Function],
+                                        "isRtl": false,
+                                        "isSearchable": true,
+                                        "loadOptions": undefined,
+                                        "loadingMessage": [Function],
+                                        "maxMenuHeight": 300,
+                                        "menuIsOpen": false,
+                                        "menuPlacement": "bottom",
+                                        "menuPosition": "absolute",
+                                        "menuShouldBlockScroll": false,
+                                        "menuShouldScrollIntoView": true,
+                                        "minMenuHeight": 140,
+                                        "name": "optionalHearingTime0",
+                                        "noOptionsMessage": [Function],
+                                        "onBlurResetsInput": false,
+                                        "onChange": [Function],
+                                        "onInputChange": [Function],
+                                        "onMenuClose": [Function],
+                                        "onMenuOpen": [Function],
+                                        "openMenuOnClick": true,
+                                        "openMenuOnFocus": false,
+                                        "options": Array [
+                                          Object {
+                                            "label": "8:15 am",
+                                            "value": "08:15",
+                                          },
+                                          Object {
+                                            "label": "8:30 am",
+                                            "value": "08:30",
+                                          },
+                                          Object {
+                                            "label": "8:45 am",
+                                            "value": "08:45",
+                                          },
+                                          Object {
+                                            "label": "9:00 am",
+                                            "value": "09:00",
+                                          },
+                                          Object {
+                                            "label": "9:15 am",
+                                            "value": "09:15",
+                                          },
+                                          Object {
+                                            "label": "9:30 am",
+                                            "value": "09:30",
+                                          },
+                                          Object {
+                                            "label": "9:45 am",
+                                            "value": "09:45",
+                                          },
+                                          Object {
+                                            "label": "10:00 am",
+                                            "value": "10:00",
+                                          },
+                                          Object {
+                                            "label": "10:15 am",
+                                            "value": "10:15",
+                                          },
+                                          Object {
+                                            "label": "10:30 am",
+                                            "value": "10:30",
+                                          },
+                                          Object {
+                                            "label": "10:45 am",
+                                            "value": "10:45",
+                                          },
+                                          Object {
+                                            "label": "11:00 am",
+                                            "value": "11:00",
+                                          },
+                                          Object {
+                                            "label": "11:15 am",
+                                            "value": "11:15",
+                                          },
+                                          Object {
+                                            "label": "11:30 am",
+                                            "value": "11:30",
+                                          },
+                                          Object {
+                                            "label": "11:45 am",
+                                            "value": "11:45",
+                                          },
+                                          Object {
+                                            "label": "12:00 pm",
+                                            "value": "12:00",
+                                          },
+                                          Object {
+                                            "label": "12:15 pm",
+                                            "value": "12:15",
+                                          },
+                                          Object {
+                                            "label": "12:30 pm",
+                                            "value": "12:30",
+                                          },
+                                          Object {
+                                            "label": "12:45 pm",
+                                            "value": "12:45",
+                                          },
+                                          Object {
+                                            "label": "1:00 pm",
+                                            "value": "13:00",
+                                          },
+                                          Object {
+                                            "label": "1:15 pm",
+                                            "value": "13:15",
+                                          },
+                                          Object {
+                                            "label": "1:30 pm",
+                                            "value": "13:30",
+                                          },
+                                          Object {
+                                            "label": "1:45 pm",
+                                            "value": "13:45",
+                                          },
+                                          Object {
+                                            "label": "2:00 pm",
+                                            "value": "14:00",
+                                          },
+                                          Object {
+                                            "label": "2:15 pm",
+                                            "value": "14:15",
+                                          },
+                                          Object {
+                                            "label": "2:30 pm",
+                                            "value": "14:30",
+                                          },
+                                          Object {
+                                            "label": "2:45 pm",
+                                            "value": "14:45",
+                                          },
+                                          Object {
+                                            "label": "3:00 pm",
+                                            "value": "15:00",
+                                          },
+                                          Object {
+                                            "label": "3:15 pm",
+                                            "value": "15:15",
+                                          },
+                                          Object {
+                                            "label": "3:30 pm",
+                                            "value": "15:30",
+                                          },
+                                          Object {
+                                            "label": "3:45 pm",
+                                            "value": "15:45",
+                                          },
+                                          Object {
+                                            "label": "4:00 pm",
+                                            "value": "16:00",
+                                          },
+                                          Object {
+                                            "label": "4:15 pm",
+                                            "value": "16:15",
+                                          },
+                                          Object {
+                                            "label": "4:30 pm",
+                                            "value": "16:30",
+                                          },
+                                          Object {
+                                            "label": "4:45 pm",
+                                            "value": "16:45",
+                                          },
+                                        ],
+                                        "pageSize": 5,
+                                        "placeholder": "Select a time",
+                                        "screenReaderStatus": [Function],
+                                        "searchable": undefined,
+                                        "shouldKeyDownEventCreateNewOption": [Function],
+                                        "styles": Object {
+                                          "input": [Function],
+                                        },
+                                        "tabIndex": "0",
+                                        "tabSelectsValue": true,
+                                        "value": Object {
+                                          "label": "1:45 pm",
+                                          "value": "13:45",
+                                        },
                                       }
                                     }
+                                    spellCheck="false"
+                                    tabIndex="0"
+                                    theme={
+                                      Object {
+                                        "borderRadius": 4,
+                                        "colors": Object {
+                                          "danger": "#DE350B",
+                                          "dangerLight": "#FFBDAD",
+                                          "neutral0": "hsl(0, 0%, 100%)",
+                                          "neutral10": "hsl(0, 0%, 90%)",
+                                          "neutral20": "hsl(0, 0%, 80%)",
+                                          "neutral30": "hsl(0, 0%, 70%)",
+                                          "neutral40": "hsl(0, 0%, 60%)",
+                                          "neutral5": "hsl(0, 0%, 95%)",
+                                          "neutral50": "hsl(0, 0%, 50%)",
+                                          "neutral60": "hsl(0, 0%, 40%)",
+                                          "neutral70": "hsl(0, 0%, 30%)",
+                                          "neutral80": "hsl(0, 0%, 20%)",
+                                          "neutral90": "hsl(0, 0%, 10%)",
+                                          "primary": "#2684FF",
+                                          "primary25": "#DEEBFF",
+                                          "primary50": "#B2D4FF",
+                                          "primary75": "#4C9AFF",
+                                        },
+                                        "spacing": Object {
+                                          "baseUnit": 4,
+                                          "controlHeight": 38,
+                                          "menuGutter": 8,
+                                        },
+                                      }
+                                    }
+                                    type="text"
+                                    value=""
                                   >
-                                    <div
-                                      className="css-81nyic-Input"
-                                    >
-                                      <AutosizeInput
-                                        aria-autocomplete="list"
-                                        autoCapitalize="none"
-                                        autoComplete="off"
-                                        autoCorrect="off"
-                                        className="cf-select__input"
-                                        disabled={false}
-                                        id="optionalHearingTime0"
-                                        injectStyles={true}
-                                        inputRef={[Function]}
-                                        inputStyle={
-                                          Object {
-                                            "background": 0,
-                                            "border": 0,
-                                            "color": "inherit",
-                                            "fontSize": "inherit",
-                                            "label": "input",
-                                            "opacity": 1,
-                                            "outline": 0,
-                                            "padding": 0,
-                                          }
+                                    <EmotionCssPropInternal
+                                      __EMOTION_LABEL_PLEASE_DO_NOT_USE__="Input"
+                                      __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
+                                      css={
+                                        Object {
+                                          "height": "44px",
                                         }
-                                        minWidth={1}
-                                        onBlur={[Function]}
-                                        onChange={[Function]}
-                                        onFocus={[Function]}
-                                        spellCheck="false"
-                                        tabIndex="0"
-                                        type="text"
-                                        value=""
+                                      }
+                                    >
+                                      <div
+                                        className="css-81nyic-Input"
                                       >
-                                        <div
+                                        <AutosizeInput
+                                          aria-autocomplete="list"
+                                          aria-controls="optionalHearingTime0-listbox"
+                                          aria-expanded={false}
+                                          aria-labelledby="optionalHearingTime0"
+                                          autoCapitalize="none"
+                                          autoComplete="off"
+                                          autoCorrect="off"
                                           className="cf-select__input"
-                                          style={
+                                          disabled={false}
+                                          id="optionalHearingTime0"
+                                          injectStyles={true}
+                                          inputRef={[Function]}
+                                          inputStyle={
                                             Object {
-                                              "display": "inline-block",
+                                              "background": 0,
+                                              "border": 0,
+                                              "color": "inherit",
+                                              "fontSize": "inherit",
+                                              "label": "input",
+                                              "opacity": 1,
+                                              "outline": 0,
+                                              "padding": 0,
                                             }
                                           }
+                                          minWidth={1}
+                                          onBlur={[Function]}
+                                          onChange={[Function]}
+                                          onFocus={[Function]}
+                                          role="combobox"
+                                          spellCheck="false"
+                                          tabIndex="0"
+                                          type="text"
+                                          value=""
                                         >
-                                          <input
-                                            aria-autocomplete="list"
-                                            autoCapitalize="none"
-                                            autoComplete="off"
-                                            autoCorrect="off"
-                                            disabled={false}
-                                            id="optionalHearingTime0"
-                                            onBlur={[Function]}
-                                            onChange={[Function]}
-                                            onFocus={[Function]}
-                                            spellCheck="false"
-                                            style={
-                                              Object {
-                                                "background": 0,
-                                                "border": 0,
-                                                "boxSizing": "content-box",
-                                                "color": "inherit",
-                                                "fontSize": "inherit",
-                                                "label": "input",
-                                                "opacity": 1,
-                                                "outline": 0,
-                                                "padding": 0,
-                                                "width": "2px",
-                                              }
-                                            }
-                                            tabIndex="0"
-                                            type="text"
-                                            value=""
-                                          />
                                           <div
+                                            className="cf-select__input"
                                             style={
                                               Object {
-                                                "height": 0,
-                                                "left": 0,
-                                                "overflow": "scroll",
-                                                "position": "absolute",
-                                                "top": 0,
-                                                "visibility": "hidden",
-                                                "whiteSpace": "pre",
+                                                "display": "inline-block",
                                               }
                                             }
-                                          />
-                                        </div>
-                                      </AutosizeInput>
-                                    </div>
-                                  </EmotionCssPropInternal>
+                                          >
+                                            <input
+                                              aria-autocomplete="list"
+                                              aria-controls="optionalHearingTime0-listbox"
+                                              aria-expanded={false}
+                                              aria-labelledby="optionalHearingTime0"
+                                              autoCapitalize="none"
+                                              autoComplete="off"
+                                              autoCorrect="off"
+                                              disabled={false}
+                                              id="optionalHearingTime0"
+                                              onBlur={[Function]}
+                                              onChange={[Function]}
+                                              onFocus={[Function]}
+                                              role="combobox"
+                                              spellCheck="false"
+                                              style={
+                                                Object {
+                                                  "background": 0,
+                                                  "border": 0,
+                                                  "boxSizing": "content-box",
+                                                  "color": "inherit",
+                                                  "fontSize": "inherit",
+                                                  "label": "input",
+                                                  "opacity": 1,
+                                                  "outline": 0,
+                                                  "padding": 0,
+                                                  "width": "2px",
+                                                }
+                                              }
+                                              tabIndex="0"
+                                              type="text"
+                                              value=""
+                                            />
+                                            <div
+                                              style={
+                                                Object {
+                                                  "height": 0,
+                                                  "left": 0,
+                                                  "overflow": "scroll",
+                                                  "position": "absolute",
+                                                  "top": 0,
+                                                  "visibility": "hidden",
+                                                  "whiteSpace": "pre",
+                                                }
+                                              }
+                                            />
+                                          </div>
+                                        </AutosizeInput>
+                                      </div>
+                                    </EmotionCssPropInternal>
+                                  </Input>
                                 </Input>
                               </div>
                             </EmotionCssPropInternal>
@@ -6940,6 +7576,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
+                                "aria-labelledby": "optionalHearingTime0",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -6947,7 +7584,10 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                 "classNamePrefix": "cf-select",
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
-                                "components": Object {},
+                                "components": Object {
+                                  "Input": [Function],
+                                  "MenuList": [Function],
+                                },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
                                 "escapeClearsValue": false,
@@ -6973,6 +7613,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                 "menuShouldBlockScroll": false,
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
+                                "name": "optionalHearingTime0",
                                 "noOptionsMessage": [Function],
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
@@ -7344,6 +7985,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
+                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -7351,7 +7993,10 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       "classNamePrefix": "cf-select",
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
-                                      "components": Object {},
+                                      "components": Object {
+                                        "Input": [Function],
+                                        "MenuList": [Function],
+                                      },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
                                       "escapeClearsValue": false,
@@ -7377,6 +8022,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
+                                      "name": "optionalHearingTime0",
                                       "noOptionsMessage": [Function],
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
@@ -7759,6 +8405,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
+                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -7766,7 +8413,10 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       "classNamePrefix": "cf-select",
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
-                                      "components": Object {},
+                                      "components": Object {
+                                        "Input": [Function],
+                                        "MenuList": [Function],
+                                      },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
                                       "escapeClearsValue": false,
@@ -7792,6 +8442,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
+                                      "name": "optionalHearingTime0",
                                       "noOptionsMessage": [Function],
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
@@ -8060,6 +8711,11 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                         </div>
                       </EmotionCssPropInternal>
                     </Control>
+                    <input
+                      name="optionalHearingTime0"
+                      type="hidden"
+                      value="13:45"
+                    />
                   </div>
                 </EmotionCssPropInternal>
               </SelectContainer>
@@ -8366,14 +9022,22 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
           className="cf-select"
         >
           <StateManager
+            aria-labelledby="optionalHearingTime0"
             cache={false}
             classNamePrefix="cf-select"
+            components={
+              Object {
+                "Input": [Function],
+                "MenuList": [Function],
+              }
+            }
             defaultInputValue=""
             defaultMenuIsOpen={false}
             defaultValue={null}
             inputId="optionalHearingTime0"
             isLoading={false}
             isSearchable={true}
+            name="optionalHearingTime0"
             noOptionsMessage={[Function]}
             onBlurResetsInput={false}
             onChange={[Function]}
@@ -8530,6 +9194,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
             }
           >
             <Select
+              aria-labelledby="optionalHearingTime0"
               backspaceRemovesValue={true}
               blurInputOnSelect={true}
               cache={false}
@@ -8537,7 +9202,12 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
               classNamePrefix="cf-select"
               closeMenuOnScroll={false}
               closeMenuOnSelect={true}
-              components={Object {}}
+              components={
+                Object {
+                  "Input": [Function],
+                  "MenuList": [Function],
+                }
+              }
               controlShouldRenderValue={true}
               escapeClearsValue={false}
               filterOption={[Function]}
@@ -8560,6 +9230,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
               menuShouldBlockScroll={false}
               menuShouldScrollIntoView={true}
               minMenuHeight={140}
+              name="optionalHearingTime0"
               noOptionsMessage={[Function]}
               onBlurResetsInput={false}
               onChange={[Function]}
@@ -8888,6 +9559,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                 selectOption={[Function]}
                 selectProps={
                   Object {
+                    "aria-labelledby": "optionalHearingTime0",
                     "backspaceRemovesValue": true,
                     "blurInputOnSelect": true,
                     "cache": false,
@@ -8895,7 +9567,10 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                     "classNamePrefix": "cf-select",
                     "closeMenuOnScroll": false,
                     "closeMenuOnSelect": true,
-                    "components": Object {},
+                    "components": Object {
+                      "Input": [Function],
+                      "MenuList": [Function],
+                    },
                     "controlShouldRenderValue": true,
                     "defaultOptions": undefined,
                     "escapeClearsValue": false,
@@ -8921,6 +9596,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                     "menuShouldBlockScroll": false,
                     "menuShouldScrollIntoView": true,
                     "minMenuHeight": 140,
+                    "name": "optionalHearingTime0",
                     "noOptionsMessage": [Function],
                     "onBlurResetsInput": false,
                     "onChange": [Function],
@@ -9299,6 +9975,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                       selectOption={[Function]}
                       selectProps={
                         Object {
+                          "aria-labelledby": "optionalHearingTime0",
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "cache": false,
@@ -9306,7 +9983,10 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                           "classNamePrefix": "cf-select",
                           "closeMenuOnScroll": false,
                           "closeMenuOnSelect": true,
-                          "components": Object {},
+                          "components": Object {
+                            "Input": [Function],
+                            "MenuList": [Function],
+                          },
                           "controlShouldRenderValue": true,
                           "defaultOptions": undefined,
                           "escapeClearsValue": false,
@@ -9332,6 +10012,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                           "menuShouldBlockScroll": false,
                           "menuShouldScrollIntoView": true,
                           "minMenuHeight": 140,
+                          "name": "optionalHearingTime0",
                           "noOptionsMessage": [Function],
                           "onBlurResetsInput": false,
                           "onChange": [Function],
@@ -9718,6 +10399,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
+                                "aria-labelledby": "optionalHearingTime0",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -9725,7 +10407,10 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                 "classNamePrefix": "cf-select",
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
-                                "components": Object {},
+                                "components": Object {
+                                  "Input": [Function],
+                                  "MenuList": [Function],
+                                },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
                                 "escapeClearsValue": false,
@@ -9751,6 +10436,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                 "menuShouldBlockScroll": false,
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
+                                "name": "optionalHearingTime0",
                                 "noOptionsMessage": [Function],
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
@@ -10124,6 +10810,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
+                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -10131,7 +10818,10 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       "classNamePrefix": "cf-select",
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
-                                      "components": Object {},
+                                      "components": Object {
+                                        "Input": [Function],
+                                        "MenuList": [Function],
+                                      },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
                                       "escapeClearsValue": false,
@@ -10157,6 +10847,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
+                                      "name": "optionalHearingTime0",
                                       "noOptionsMessage": [Function],
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
@@ -10377,6 +11068,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                 </Placeholder>
                                 <Input
                                   aria-autocomplete="list"
+                                  aria-labelledby="optionalHearingTime0"
                                   autoCapitalize="none"
                                   autoComplete="off"
                                   autoCorrect="off"
@@ -10391,6 +11083,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                   onFocus={[Function]}
                                   selectProps={
                                     Object {
+                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -10398,7 +11091,10 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       "classNamePrefix": "cf-select",
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
-                                      "components": Object {},
+                                      "components": Object {
+                                        "Input": [Function],
+                                        "MenuList": [Function],
+                                      },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
                                       "escapeClearsValue": false,
@@ -10424,6 +11120,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
+                                      "name": "optionalHearingTime0",
                                       "noOptionsMessage": [Function],
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
@@ -10621,103 +11318,367 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                   type="text"
                                   value=""
                                 >
-                                  <EmotionCssPropInternal
-                                    __EMOTION_LABEL_PLEASE_DO_NOT_USE__="Input"
-                                    __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                    css={
+                                  <Input
+                                    aria-autocomplete="list"
+                                    aria-controls="optionalHearingTime0-listbox"
+                                    aria-expanded={false}
+                                    aria-labelledby="optionalHearingTime0"
+                                    autoCapitalize="none"
+                                    autoComplete="off"
+                                    autoCorrect="off"
+                                    cx={[Function]}
+                                    getStyles={[Function]}
+                                    id="optionalHearingTime0"
+                                    innerRef={[Function]}
+                                    isDisabled={false}
+                                    isHidden={false}
+                                    onBlur={[Function]}
+                                    onChange={[Function]}
+                                    onFocus={[Function]}
+                                    role="combobox"
+                                    selectProps={
                                       Object {
-                                        "height": "44px",
+                                        "aria-labelledby": "optionalHearingTime0",
+                                        "backspaceRemovesValue": true,
+                                        "blurInputOnSelect": true,
+                                        "cache": false,
+                                        "captureMenuScroll": false,
+                                        "classNamePrefix": "cf-select",
+                                        "closeMenuOnScroll": false,
+                                        "closeMenuOnSelect": true,
+                                        "components": Object {
+                                          "Input": [Function],
+                                          "MenuList": [Function],
+                                        },
+                                        "controlShouldRenderValue": true,
+                                        "defaultOptions": undefined,
+                                        "escapeClearsValue": false,
+                                        "filterOption": [Function],
+                                        "formatGroupLabel": [Function],
+                                        "getOptionLabel": [Function],
+                                        "getOptionValue": [Function],
+                                        "inputId": "optionalHearingTime0",
+                                        "inputValue": "",
+                                        "isClearable": undefined,
+                                        "isDisabled": false,
+                                        "isLoading": false,
+                                        "isMulti": false,
+                                        "isOptionDisabled": [Function],
+                                        "isRtl": false,
+                                        "isSearchable": true,
+                                        "loadOptions": undefined,
+                                        "loadingMessage": [Function],
+                                        "maxMenuHeight": 300,
+                                        "menuIsOpen": false,
+                                        "menuPlacement": "bottom",
+                                        "menuPosition": "absolute",
+                                        "menuShouldBlockScroll": false,
+                                        "menuShouldScrollIntoView": true,
+                                        "minMenuHeight": 140,
+                                        "name": "optionalHearingTime0",
+                                        "noOptionsMessage": [Function],
+                                        "onBlurResetsInput": false,
+                                        "onChange": [Function],
+                                        "onInputChange": [Function],
+                                        "onMenuClose": [Function],
+                                        "onMenuOpen": [Function],
+                                        "openMenuOnClick": true,
+                                        "openMenuOnFocus": false,
+                                        "options": Array [
+                                          Object {
+                                            "label": "8:15 am",
+                                            "value": "08:15",
+                                          },
+                                          Object {
+                                            "label": "8:30 am",
+                                            "value": "08:30",
+                                          },
+                                          Object {
+                                            "label": "8:45 am",
+                                            "value": "08:45",
+                                          },
+                                          Object {
+                                            "label": "9:00 am",
+                                            "value": "09:00",
+                                          },
+                                          Object {
+                                            "label": "9:15 am",
+                                            "value": "09:15",
+                                          },
+                                          Object {
+                                            "label": "9:30 am",
+                                            "value": "09:30",
+                                          },
+                                          Object {
+                                            "label": "9:45 am",
+                                            "value": "09:45",
+                                          },
+                                          Object {
+                                            "label": "10:00 am",
+                                            "value": "10:00",
+                                          },
+                                          Object {
+                                            "label": "10:15 am",
+                                            "value": "10:15",
+                                          },
+                                          Object {
+                                            "label": "10:30 am",
+                                            "value": "10:30",
+                                          },
+                                          Object {
+                                            "label": "10:45 am",
+                                            "value": "10:45",
+                                          },
+                                          Object {
+                                            "label": "11:00 am",
+                                            "value": "11:00",
+                                          },
+                                          Object {
+                                            "label": "11:15 am",
+                                            "value": "11:15",
+                                          },
+                                          Object {
+                                            "label": "11:30 am",
+                                            "value": "11:30",
+                                          },
+                                          Object {
+                                            "label": "11:45 am",
+                                            "value": "11:45",
+                                          },
+                                          Object {
+                                            "label": "12:00 pm",
+                                            "value": "12:00",
+                                          },
+                                          Object {
+                                            "label": "12:15 pm",
+                                            "value": "12:15",
+                                          },
+                                          Object {
+                                            "label": "12:30 pm",
+                                            "value": "12:30",
+                                          },
+                                          Object {
+                                            "label": "12:45 pm",
+                                            "value": "12:45",
+                                          },
+                                          Object {
+                                            "label": "1:00 pm",
+                                            "value": "13:00",
+                                          },
+                                          Object {
+                                            "label": "1:15 pm",
+                                            "value": "13:15",
+                                          },
+                                          Object {
+                                            "label": "1:30 pm",
+                                            "value": "13:30",
+                                          },
+                                          Object {
+                                            "label": "1:45 pm",
+                                            "value": "13:45",
+                                          },
+                                          Object {
+                                            "label": "2:00 pm",
+                                            "value": "14:00",
+                                          },
+                                          Object {
+                                            "label": "2:15 pm",
+                                            "value": "14:15",
+                                          },
+                                          Object {
+                                            "label": "2:30 pm",
+                                            "value": "14:30",
+                                          },
+                                          Object {
+                                            "label": "2:45 pm",
+                                            "value": "14:45",
+                                          },
+                                          Object {
+                                            "label": "3:00 pm",
+                                            "value": "15:00",
+                                          },
+                                          Object {
+                                            "label": "3:15 pm",
+                                            "value": "15:15",
+                                          },
+                                          Object {
+                                            "label": "3:30 pm",
+                                            "value": "15:30",
+                                          },
+                                          Object {
+                                            "label": "3:45 pm",
+                                            "value": "15:45",
+                                          },
+                                          Object {
+                                            "label": "4:00 pm",
+                                            "value": "16:00",
+                                          },
+                                          Object {
+                                            "label": "4:15 pm",
+                                            "value": "16:15",
+                                          },
+                                          Object {
+                                            "label": "4:30 pm",
+                                            "value": "16:30",
+                                          },
+                                          Object {
+                                            "label": "4:45 pm",
+                                            "value": "16:45",
+                                          },
+                                        ],
+                                        "pageSize": 5,
+                                        "placeholder": "Select a time",
+                                        "screenReaderStatus": [Function],
+                                        "searchable": undefined,
+                                        "shouldKeyDownEventCreateNewOption": [Function],
+                                        "styles": Object {
+                                          "input": [Function],
+                                        },
+                                        "tabIndex": "0",
+                                        "tabSelectsValue": true,
+                                        "value": null,
                                       }
                                     }
+                                    spellCheck="false"
+                                    tabIndex="0"
+                                    theme={
+                                      Object {
+                                        "borderRadius": 4,
+                                        "colors": Object {
+                                          "danger": "#DE350B",
+                                          "dangerLight": "#FFBDAD",
+                                          "neutral0": "hsl(0, 0%, 100%)",
+                                          "neutral10": "hsl(0, 0%, 90%)",
+                                          "neutral20": "hsl(0, 0%, 80%)",
+                                          "neutral30": "hsl(0, 0%, 70%)",
+                                          "neutral40": "hsl(0, 0%, 60%)",
+                                          "neutral5": "hsl(0, 0%, 95%)",
+                                          "neutral50": "hsl(0, 0%, 50%)",
+                                          "neutral60": "hsl(0, 0%, 40%)",
+                                          "neutral70": "hsl(0, 0%, 30%)",
+                                          "neutral80": "hsl(0, 0%, 20%)",
+                                          "neutral90": "hsl(0, 0%, 10%)",
+                                          "primary": "#2684FF",
+                                          "primary25": "#DEEBFF",
+                                          "primary50": "#B2D4FF",
+                                          "primary75": "#4C9AFF",
+                                        },
+                                        "spacing": Object {
+                                          "baseUnit": 4,
+                                          "controlHeight": 38,
+                                          "menuGutter": 8,
+                                        },
+                                      }
+                                    }
+                                    type="text"
+                                    value=""
                                   >
-                                    <div
-                                      className="css-81nyic-Input"
-                                    >
-                                      <AutosizeInput
-                                        aria-autocomplete="list"
-                                        autoCapitalize="none"
-                                        autoComplete="off"
-                                        autoCorrect="off"
-                                        className="cf-select__input"
-                                        disabled={false}
-                                        id="optionalHearingTime0"
-                                        injectStyles={true}
-                                        inputRef={[Function]}
-                                        inputStyle={
-                                          Object {
-                                            "background": 0,
-                                            "border": 0,
-                                            "color": "inherit",
-                                            "fontSize": "inherit",
-                                            "label": "input",
-                                            "opacity": 1,
-                                            "outline": 0,
-                                            "padding": 0,
-                                          }
+                                    <EmotionCssPropInternal
+                                      __EMOTION_LABEL_PLEASE_DO_NOT_USE__="Input"
+                                      __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
+                                      css={
+                                        Object {
+                                          "height": "44px",
                                         }
-                                        minWidth={1}
-                                        onBlur={[Function]}
-                                        onChange={[Function]}
-                                        onFocus={[Function]}
-                                        spellCheck="false"
-                                        tabIndex="0"
-                                        type="text"
-                                        value=""
+                                      }
+                                    >
+                                      <div
+                                        className="css-81nyic-Input"
                                       >
-                                        <div
+                                        <AutosizeInput
+                                          aria-autocomplete="list"
+                                          aria-controls="optionalHearingTime0-listbox"
+                                          aria-expanded={false}
+                                          aria-labelledby="optionalHearingTime0"
+                                          autoCapitalize="none"
+                                          autoComplete="off"
+                                          autoCorrect="off"
                                           className="cf-select__input"
-                                          style={
+                                          disabled={false}
+                                          id="optionalHearingTime0"
+                                          injectStyles={true}
+                                          inputRef={[Function]}
+                                          inputStyle={
                                             Object {
-                                              "display": "inline-block",
+                                              "background": 0,
+                                              "border": 0,
+                                              "color": "inherit",
+                                              "fontSize": "inherit",
+                                              "label": "input",
+                                              "opacity": 1,
+                                              "outline": 0,
+                                              "padding": 0,
                                             }
                                           }
+                                          minWidth={1}
+                                          onBlur={[Function]}
+                                          onChange={[Function]}
+                                          onFocus={[Function]}
+                                          role="combobox"
+                                          spellCheck="false"
+                                          tabIndex="0"
+                                          type="text"
+                                          value=""
                                         >
-                                          <input
-                                            aria-autocomplete="list"
-                                            autoCapitalize="none"
-                                            autoComplete="off"
-                                            autoCorrect="off"
-                                            disabled={false}
-                                            id="optionalHearingTime0"
-                                            onBlur={[Function]}
-                                            onChange={[Function]}
-                                            onFocus={[Function]}
-                                            spellCheck="false"
-                                            style={
-                                              Object {
-                                                "background": 0,
-                                                "border": 0,
-                                                "boxSizing": "content-box",
-                                                "color": "inherit",
-                                                "fontSize": "inherit",
-                                                "label": "input",
-                                                "opacity": 1,
-                                                "outline": 0,
-                                                "padding": 0,
-                                                "width": "2px",
-                                              }
-                                            }
-                                            tabIndex="0"
-                                            type="text"
-                                            value=""
-                                          />
                                           <div
+                                            className="cf-select__input"
                                             style={
                                               Object {
-                                                "height": 0,
-                                                "left": 0,
-                                                "overflow": "scroll",
-                                                "position": "absolute",
-                                                "top": 0,
-                                                "visibility": "hidden",
-                                                "whiteSpace": "pre",
+                                                "display": "inline-block",
                                               }
                                             }
-                                          />
-                                        </div>
-                                      </AutosizeInput>
-                                    </div>
-                                  </EmotionCssPropInternal>
+                                          >
+                                            <input
+                                              aria-autocomplete="list"
+                                              aria-controls="optionalHearingTime0-listbox"
+                                              aria-expanded={false}
+                                              aria-labelledby="optionalHearingTime0"
+                                              autoCapitalize="none"
+                                              autoComplete="off"
+                                              autoCorrect="off"
+                                              disabled={false}
+                                              id="optionalHearingTime0"
+                                              onBlur={[Function]}
+                                              onChange={[Function]}
+                                              onFocus={[Function]}
+                                              role="combobox"
+                                              spellCheck="false"
+                                              style={
+                                                Object {
+                                                  "background": 0,
+                                                  "border": 0,
+                                                  "boxSizing": "content-box",
+                                                  "color": "inherit",
+                                                  "fontSize": "inherit",
+                                                  "label": "input",
+                                                  "opacity": 1,
+                                                  "outline": 0,
+                                                  "padding": 0,
+                                                  "width": "2px",
+                                                }
+                                              }
+                                              tabIndex="0"
+                                              type="text"
+                                              value=""
+                                            />
+                                            <div
+                                              style={
+                                                Object {
+                                                  "height": 0,
+                                                  "left": 0,
+                                                  "overflow": "scroll",
+                                                  "position": "absolute",
+                                                  "top": 0,
+                                                  "visibility": "hidden",
+                                                  "whiteSpace": "pre",
+                                                }
+                                              }
+                                            />
+                                          </div>
+                                        </AutosizeInput>
+                                      </div>
+                                    </EmotionCssPropInternal>
+                                  </Input>
                                 </Input>
                               </div>
                             </EmotionCssPropInternal>
@@ -10878,6 +11839,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
+                                "aria-labelledby": "optionalHearingTime0",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -10885,7 +11847,10 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                 "classNamePrefix": "cf-select",
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
-                                "components": Object {},
+                                "components": Object {
+                                  "Input": [Function],
+                                  "MenuList": [Function],
+                                },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
                                 "escapeClearsValue": false,
@@ -10911,6 +11876,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                 "menuShouldBlockScroll": false,
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
+                                "name": "optionalHearingTime0",
                                 "noOptionsMessage": [Function],
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
@@ -11279,6 +12245,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
+                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -11286,7 +12253,10 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       "classNamePrefix": "cf-select",
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
-                                      "components": Object {},
+                                      "components": Object {
+                                        "Input": [Function],
+                                        "MenuList": [Function],
+                                      },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
                                       "escapeClearsValue": false,
@@ -11312,6 +12282,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
+                                      "name": "optionalHearingTime0",
                                       "noOptionsMessage": [Function],
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
@@ -11691,6 +12662,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
+                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -11698,7 +12670,10 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       "classNamePrefix": "cf-select",
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
-                                      "components": Object {},
+                                      "components": Object {
+                                        "Input": [Function],
+                                        "MenuList": [Function],
+                                      },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
                                       "escapeClearsValue": false,
@@ -11724,6 +12699,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
+                                      "name": "optionalHearingTime0",
                                       "noOptionsMessage": [Function],
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
@@ -11989,6 +12965,11 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                         </div>
                       </EmotionCssPropInternal>
                     </Control>
+                    <input
+                      name="optionalHearingTime0"
+                      type="hidden"
+                      value=""
+                    />
                   </div>
                 </EmotionCssPropInternal>
               </SelectContainer>
@@ -12295,14 +13276,22 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
           className="cf-select"
         >
           <StateManager
+            aria-labelledby="optionalHearingTime0"
             cache={false}
             classNamePrefix="cf-select"
+            components={
+              Object {
+                "Input": [Function],
+                "MenuList": [Function],
+              }
+            }
             defaultInputValue=""
             defaultMenuIsOpen={false}
             defaultValue={null}
             inputId="optionalHearingTime0"
             isLoading={false}
             isSearchable={true}
+            name="optionalHearingTime0"
             noOptionsMessage={[Function]}
             onBlurResetsInput={false}
             onChange={[Function]}
@@ -12459,6 +13448,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
             }
           >
             <Select
+              aria-labelledby="optionalHearingTime0"
               backspaceRemovesValue={true}
               blurInputOnSelect={true}
               cache={false}
@@ -12466,7 +13456,12 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
               classNamePrefix="cf-select"
               closeMenuOnScroll={false}
               closeMenuOnSelect={true}
-              components={Object {}}
+              components={
+                Object {
+                  "Input": [Function],
+                  "MenuList": [Function],
+                }
+              }
               controlShouldRenderValue={true}
               escapeClearsValue={false}
               filterOption={[Function]}
@@ -12489,6 +13484,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
               menuShouldBlockScroll={false}
               menuShouldScrollIntoView={true}
               minMenuHeight={140}
+              name="optionalHearingTime0"
               noOptionsMessage={[Function]}
               onBlurResetsInput={false}
               onChange={[Function]}
@@ -12817,6 +13813,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                 selectOption={[Function]}
                 selectProps={
                   Object {
+                    "aria-labelledby": "optionalHearingTime0",
                     "backspaceRemovesValue": true,
                     "blurInputOnSelect": true,
                     "cache": false,
@@ -12824,7 +13821,10 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                     "classNamePrefix": "cf-select",
                     "closeMenuOnScroll": false,
                     "closeMenuOnSelect": true,
-                    "components": Object {},
+                    "components": Object {
+                      "Input": [Function],
+                      "MenuList": [Function],
+                    },
                     "controlShouldRenderValue": true,
                     "defaultOptions": undefined,
                     "escapeClearsValue": false,
@@ -12850,6 +13850,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                     "menuShouldBlockScroll": false,
                     "menuShouldScrollIntoView": true,
                     "minMenuHeight": 140,
+                    "name": "optionalHearingTime0",
                     "noOptionsMessage": [Function],
                     "onBlurResetsInput": false,
                     "onChange": [Function],
@@ -13228,6 +14229,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                       selectOption={[Function]}
                       selectProps={
                         Object {
+                          "aria-labelledby": "optionalHearingTime0",
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "cache": false,
@@ -13235,7 +14237,10 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                           "classNamePrefix": "cf-select",
                           "closeMenuOnScroll": false,
                           "closeMenuOnSelect": true,
-                          "components": Object {},
+                          "components": Object {
+                            "Input": [Function],
+                            "MenuList": [Function],
+                          },
                           "controlShouldRenderValue": true,
                           "defaultOptions": undefined,
                           "escapeClearsValue": false,
@@ -13261,6 +14266,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                           "menuShouldBlockScroll": false,
                           "menuShouldScrollIntoView": true,
                           "minMenuHeight": 140,
+                          "name": "optionalHearingTime0",
                           "noOptionsMessage": [Function],
                           "onBlurResetsInput": false,
                           "onChange": [Function],
@@ -13647,6 +14653,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
+                                "aria-labelledby": "optionalHearingTime0",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -13654,7 +14661,10 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                 "classNamePrefix": "cf-select",
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
-                                "components": Object {},
+                                "components": Object {
+                                  "Input": [Function],
+                                  "MenuList": [Function],
+                                },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
                                 "escapeClearsValue": false,
@@ -13680,6 +14690,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                 "menuShouldBlockScroll": false,
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
+                                "name": "optionalHearingTime0",
                                 "noOptionsMessage": [Function],
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
@@ -14053,6 +15064,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
+                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -14060,7 +15072,10 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       "classNamePrefix": "cf-select",
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
-                                      "components": Object {},
+                                      "components": Object {
+                                        "Input": [Function],
+                                        "MenuList": [Function],
+                                      },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
                                       "escapeClearsValue": false,
@@ -14086,6 +15101,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
+                                      "name": "optionalHearingTime0",
                                       "noOptionsMessage": [Function],
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
@@ -14306,6 +15322,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                 </Placeholder>
                                 <Input
                                   aria-autocomplete="list"
+                                  aria-labelledby="optionalHearingTime0"
                                   autoCapitalize="none"
                                   autoComplete="off"
                                   autoCorrect="off"
@@ -14320,6 +15337,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                   onFocus={[Function]}
                                   selectProps={
                                     Object {
+                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -14327,7 +15345,10 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       "classNamePrefix": "cf-select",
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
-                                      "components": Object {},
+                                      "components": Object {
+                                        "Input": [Function],
+                                        "MenuList": [Function],
+                                      },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
                                       "escapeClearsValue": false,
@@ -14353,6 +15374,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
+                                      "name": "optionalHearingTime0",
                                       "noOptionsMessage": [Function],
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
@@ -14550,103 +15572,367 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                   type="text"
                                   value=""
                                 >
-                                  <EmotionCssPropInternal
-                                    __EMOTION_LABEL_PLEASE_DO_NOT_USE__="Input"
-                                    __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                    css={
+                                  <Input
+                                    aria-autocomplete="list"
+                                    aria-controls="optionalHearingTime0-listbox"
+                                    aria-expanded={false}
+                                    aria-labelledby="optionalHearingTime0"
+                                    autoCapitalize="none"
+                                    autoComplete="off"
+                                    autoCorrect="off"
+                                    cx={[Function]}
+                                    getStyles={[Function]}
+                                    id="optionalHearingTime0"
+                                    innerRef={[Function]}
+                                    isDisabled={false}
+                                    isHidden={false}
+                                    onBlur={[Function]}
+                                    onChange={[Function]}
+                                    onFocus={[Function]}
+                                    role="combobox"
+                                    selectProps={
                                       Object {
-                                        "height": "44px",
+                                        "aria-labelledby": "optionalHearingTime0",
+                                        "backspaceRemovesValue": true,
+                                        "blurInputOnSelect": true,
+                                        "cache": false,
+                                        "captureMenuScroll": false,
+                                        "classNamePrefix": "cf-select",
+                                        "closeMenuOnScroll": false,
+                                        "closeMenuOnSelect": true,
+                                        "components": Object {
+                                          "Input": [Function],
+                                          "MenuList": [Function],
+                                        },
+                                        "controlShouldRenderValue": true,
+                                        "defaultOptions": undefined,
+                                        "escapeClearsValue": false,
+                                        "filterOption": [Function],
+                                        "formatGroupLabel": [Function],
+                                        "getOptionLabel": [Function],
+                                        "getOptionValue": [Function],
+                                        "inputId": "optionalHearingTime0",
+                                        "inputValue": "",
+                                        "isClearable": undefined,
+                                        "isDisabled": false,
+                                        "isLoading": false,
+                                        "isMulti": false,
+                                        "isOptionDisabled": [Function],
+                                        "isRtl": false,
+                                        "isSearchable": true,
+                                        "loadOptions": undefined,
+                                        "loadingMessage": [Function],
+                                        "maxMenuHeight": 300,
+                                        "menuIsOpen": false,
+                                        "menuPlacement": "bottom",
+                                        "menuPosition": "absolute",
+                                        "menuShouldBlockScroll": false,
+                                        "menuShouldScrollIntoView": true,
+                                        "minMenuHeight": 140,
+                                        "name": "optionalHearingTime0",
+                                        "noOptionsMessage": [Function],
+                                        "onBlurResetsInput": false,
+                                        "onChange": [Function],
+                                        "onInputChange": [Function],
+                                        "onMenuClose": [Function],
+                                        "onMenuOpen": [Function],
+                                        "openMenuOnClick": true,
+                                        "openMenuOnFocus": false,
+                                        "options": Array [
+                                          Object {
+                                            "label": "8:15 am",
+                                            "value": "08:15",
+                                          },
+                                          Object {
+                                            "label": "8:30 am",
+                                            "value": "08:30",
+                                          },
+                                          Object {
+                                            "label": "8:45 am",
+                                            "value": "08:45",
+                                          },
+                                          Object {
+                                            "label": "9:00 am",
+                                            "value": "09:00",
+                                          },
+                                          Object {
+                                            "label": "9:15 am",
+                                            "value": "09:15",
+                                          },
+                                          Object {
+                                            "label": "9:30 am",
+                                            "value": "09:30",
+                                          },
+                                          Object {
+                                            "label": "9:45 am",
+                                            "value": "09:45",
+                                          },
+                                          Object {
+                                            "label": "10:00 am",
+                                            "value": "10:00",
+                                          },
+                                          Object {
+                                            "label": "10:15 am",
+                                            "value": "10:15",
+                                          },
+                                          Object {
+                                            "label": "10:30 am",
+                                            "value": "10:30",
+                                          },
+                                          Object {
+                                            "label": "10:45 am",
+                                            "value": "10:45",
+                                          },
+                                          Object {
+                                            "label": "11:00 am",
+                                            "value": "11:00",
+                                          },
+                                          Object {
+                                            "label": "11:15 am",
+                                            "value": "11:15",
+                                          },
+                                          Object {
+                                            "label": "11:30 am",
+                                            "value": "11:30",
+                                          },
+                                          Object {
+                                            "label": "11:45 am",
+                                            "value": "11:45",
+                                          },
+                                          Object {
+                                            "label": "12:00 pm",
+                                            "value": "12:00",
+                                          },
+                                          Object {
+                                            "label": "12:15 pm",
+                                            "value": "12:15",
+                                          },
+                                          Object {
+                                            "label": "12:30 pm",
+                                            "value": "12:30",
+                                          },
+                                          Object {
+                                            "label": "12:45 pm",
+                                            "value": "12:45",
+                                          },
+                                          Object {
+                                            "label": "1:00 pm",
+                                            "value": "13:00",
+                                          },
+                                          Object {
+                                            "label": "1:15 pm",
+                                            "value": "13:15",
+                                          },
+                                          Object {
+                                            "label": "1:30 pm",
+                                            "value": "13:30",
+                                          },
+                                          Object {
+                                            "label": "1:45 pm",
+                                            "value": "13:45",
+                                          },
+                                          Object {
+                                            "label": "2:00 pm",
+                                            "value": "14:00",
+                                          },
+                                          Object {
+                                            "label": "2:15 pm",
+                                            "value": "14:15",
+                                          },
+                                          Object {
+                                            "label": "2:30 pm",
+                                            "value": "14:30",
+                                          },
+                                          Object {
+                                            "label": "2:45 pm",
+                                            "value": "14:45",
+                                          },
+                                          Object {
+                                            "label": "3:00 pm",
+                                            "value": "15:00",
+                                          },
+                                          Object {
+                                            "label": "3:15 pm",
+                                            "value": "15:15",
+                                          },
+                                          Object {
+                                            "label": "3:30 pm",
+                                            "value": "15:30",
+                                          },
+                                          Object {
+                                            "label": "3:45 pm",
+                                            "value": "15:45",
+                                          },
+                                          Object {
+                                            "label": "4:00 pm",
+                                            "value": "16:00",
+                                          },
+                                          Object {
+                                            "label": "4:15 pm",
+                                            "value": "16:15",
+                                          },
+                                          Object {
+                                            "label": "4:30 pm",
+                                            "value": "16:30",
+                                          },
+                                          Object {
+                                            "label": "4:45 pm",
+                                            "value": "16:45",
+                                          },
+                                        ],
+                                        "pageSize": 5,
+                                        "placeholder": "Select a time",
+                                        "screenReaderStatus": [Function],
+                                        "searchable": undefined,
+                                        "shouldKeyDownEventCreateNewOption": [Function],
+                                        "styles": Object {
+                                          "input": [Function],
+                                        },
+                                        "tabIndex": "0",
+                                        "tabSelectsValue": true,
+                                        "value": null,
                                       }
                                     }
+                                    spellCheck="false"
+                                    tabIndex="0"
+                                    theme={
+                                      Object {
+                                        "borderRadius": 4,
+                                        "colors": Object {
+                                          "danger": "#DE350B",
+                                          "dangerLight": "#FFBDAD",
+                                          "neutral0": "hsl(0, 0%, 100%)",
+                                          "neutral10": "hsl(0, 0%, 90%)",
+                                          "neutral20": "hsl(0, 0%, 80%)",
+                                          "neutral30": "hsl(0, 0%, 70%)",
+                                          "neutral40": "hsl(0, 0%, 60%)",
+                                          "neutral5": "hsl(0, 0%, 95%)",
+                                          "neutral50": "hsl(0, 0%, 50%)",
+                                          "neutral60": "hsl(0, 0%, 40%)",
+                                          "neutral70": "hsl(0, 0%, 30%)",
+                                          "neutral80": "hsl(0, 0%, 20%)",
+                                          "neutral90": "hsl(0, 0%, 10%)",
+                                          "primary": "#2684FF",
+                                          "primary25": "#DEEBFF",
+                                          "primary50": "#B2D4FF",
+                                          "primary75": "#4C9AFF",
+                                        },
+                                        "spacing": Object {
+                                          "baseUnit": 4,
+                                          "controlHeight": 38,
+                                          "menuGutter": 8,
+                                        },
+                                      }
+                                    }
+                                    type="text"
+                                    value=""
                                   >
-                                    <div
-                                      className="css-81nyic-Input"
-                                    >
-                                      <AutosizeInput
-                                        aria-autocomplete="list"
-                                        autoCapitalize="none"
-                                        autoComplete="off"
-                                        autoCorrect="off"
-                                        className="cf-select__input"
-                                        disabled={false}
-                                        id="optionalHearingTime0"
-                                        injectStyles={true}
-                                        inputRef={[Function]}
-                                        inputStyle={
-                                          Object {
-                                            "background": 0,
-                                            "border": 0,
-                                            "color": "inherit",
-                                            "fontSize": "inherit",
-                                            "label": "input",
-                                            "opacity": 1,
-                                            "outline": 0,
-                                            "padding": 0,
-                                          }
+                                    <EmotionCssPropInternal
+                                      __EMOTION_LABEL_PLEASE_DO_NOT_USE__="Input"
+                                      __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
+                                      css={
+                                        Object {
+                                          "height": "44px",
                                         }
-                                        minWidth={1}
-                                        onBlur={[Function]}
-                                        onChange={[Function]}
-                                        onFocus={[Function]}
-                                        spellCheck="false"
-                                        tabIndex="0"
-                                        type="text"
-                                        value=""
+                                      }
+                                    >
+                                      <div
+                                        className="css-81nyic-Input"
                                       >
-                                        <div
+                                        <AutosizeInput
+                                          aria-autocomplete="list"
+                                          aria-controls="optionalHearingTime0-listbox"
+                                          aria-expanded={false}
+                                          aria-labelledby="optionalHearingTime0"
+                                          autoCapitalize="none"
+                                          autoComplete="off"
+                                          autoCorrect="off"
                                           className="cf-select__input"
-                                          style={
+                                          disabled={false}
+                                          id="optionalHearingTime0"
+                                          injectStyles={true}
+                                          inputRef={[Function]}
+                                          inputStyle={
                                             Object {
-                                              "display": "inline-block",
+                                              "background": 0,
+                                              "border": 0,
+                                              "color": "inherit",
+                                              "fontSize": "inherit",
+                                              "label": "input",
+                                              "opacity": 1,
+                                              "outline": 0,
+                                              "padding": 0,
                                             }
                                           }
+                                          minWidth={1}
+                                          onBlur={[Function]}
+                                          onChange={[Function]}
+                                          onFocus={[Function]}
+                                          role="combobox"
+                                          spellCheck="false"
+                                          tabIndex="0"
+                                          type="text"
+                                          value=""
                                         >
-                                          <input
-                                            aria-autocomplete="list"
-                                            autoCapitalize="none"
-                                            autoComplete="off"
-                                            autoCorrect="off"
-                                            disabled={false}
-                                            id="optionalHearingTime0"
-                                            onBlur={[Function]}
-                                            onChange={[Function]}
-                                            onFocus={[Function]}
-                                            spellCheck="false"
-                                            style={
-                                              Object {
-                                                "background": 0,
-                                                "border": 0,
-                                                "boxSizing": "content-box",
-                                                "color": "inherit",
-                                                "fontSize": "inherit",
-                                                "label": "input",
-                                                "opacity": 1,
-                                                "outline": 0,
-                                                "padding": 0,
-                                                "width": "2px",
-                                              }
-                                            }
-                                            tabIndex="0"
-                                            type="text"
-                                            value=""
-                                          />
                                           <div
+                                            className="cf-select__input"
                                             style={
                                               Object {
-                                                "height": 0,
-                                                "left": 0,
-                                                "overflow": "scroll",
-                                                "position": "absolute",
-                                                "top": 0,
-                                                "visibility": "hidden",
-                                                "whiteSpace": "pre",
+                                                "display": "inline-block",
                                               }
                                             }
-                                          />
-                                        </div>
-                                      </AutosizeInput>
-                                    </div>
-                                  </EmotionCssPropInternal>
+                                          >
+                                            <input
+                                              aria-autocomplete="list"
+                                              aria-controls="optionalHearingTime0-listbox"
+                                              aria-expanded={false}
+                                              aria-labelledby="optionalHearingTime0"
+                                              autoCapitalize="none"
+                                              autoComplete="off"
+                                              autoCorrect="off"
+                                              disabled={false}
+                                              id="optionalHearingTime0"
+                                              onBlur={[Function]}
+                                              onChange={[Function]}
+                                              onFocus={[Function]}
+                                              role="combobox"
+                                              spellCheck="false"
+                                              style={
+                                                Object {
+                                                  "background": 0,
+                                                  "border": 0,
+                                                  "boxSizing": "content-box",
+                                                  "color": "inherit",
+                                                  "fontSize": "inherit",
+                                                  "label": "input",
+                                                  "opacity": 1,
+                                                  "outline": 0,
+                                                  "padding": 0,
+                                                  "width": "2px",
+                                                }
+                                              }
+                                              tabIndex="0"
+                                              type="text"
+                                              value=""
+                                            />
+                                            <div
+                                              style={
+                                                Object {
+                                                  "height": 0,
+                                                  "left": 0,
+                                                  "overflow": "scroll",
+                                                  "position": "absolute",
+                                                  "top": 0,
+                                                  "visibility": "hidden",
+                                                  "whiteSpace": "pre",
+                                                }
+                                              }
+                                            />
+                                          </div>
+                                        </AutosizeInput>
+                                      </div>
+                                    </EmotionCssPropInternal>
+                                  </Input>
                                 </Input>
                               </div>
                             </EmotionCssPropInternal>
@@ -14807,6 +16093,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
+                                "aria-labelledby": "optionalHearingTime0",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -14814,7 +16101,10 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                 "classNamePrefix": "cf-select",
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
-                                "components": Object {},
+                                "components": Object {
+                                  "Input": [Function],
+                                  "MenuList": [Function],
+                                },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
                                 "escapeClearsValue": false,
@@ -14840,6 +16130,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                 "menuShouldBlockScroll": false,
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
+                                "name": "optionalHearingTime0",
                                 "noOptionsMessage": [Function],
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
@@ -15208,6 +16499,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
+                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -15215,7 +16507,10 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       "classNamePrefix": "cf-select",
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
-                                      "components": Object {},
+                                      "components": Object {
+                                        "Input": [Function],
+                                        "MenuList": [Function],
+                                      },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
                                       "escapeClearsValue": false,
@@ -15241,6 +16536,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
+                                      "name": "optionalHearingTime0",
                                       "noOptionsMessage": [Function],
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
@@ -15620,6 +16916,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
+                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -15627,7 +16924,10 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       "classNamePrefix": "cf-select",
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
-                                      "components": Object {},
+                                      "components": Object {
+                                        "Input": [Function],
+                                        "MenuList": [Function],
+                                      },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
                                       "escapeClearsValue": false,
@@ -15653,6 +16953,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
+                                      "name": "optionalHearingTime0",
                                       "noOptionsMessage": [Function],
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
@@ -15918,6 +17219,11 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                         </div>
                       </EmotionCssPropInternal>
                     </Control>
+                    <input
+                      name="optionalHearingTime0"
+                      type="hidden"
+                      value=""
+                    />
                   </div>
                 </EmotionCssPropInternal>
               </SelectContainer>

@@ -62,10 +62,14 @@ exports[`AddAdminTaskForm renders correctly 1`] = `
                   >
                     <input
                       aria-autocomplete="list"
+                      aria-controls="newTasks[0].type-listbox"
+                      aria-expanded="false"
+                      aria-labelledby="newTasks[0].type"
                       autocapitalize="none"
                       autocomplete="off"
                       autocorrect="off"
                       id="newTasks[0].type"
+                      role="combobox"
                       spellcheck="false"
                       style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                       tabindex="0"
@@ -103,6 +107,11 @@ exports[`AddAdminTaskForm renders correctly 1`] = `
                 </div>
               </div>
             </div>
+            <input
+              name="newTasks[0].type"
+              type="hidden"
+              value=""
+            />
           </div>
         </div>
       </div>
