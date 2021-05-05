@@ -85,7 +85,9 @@ const matchesAny = (candidate, input) => {
 };
 
 const getTimezoneAbbreviation = (timezone) => {
-  return 'CDT';
+  // Create a moment object so we can extract the timezone
+  // abbreviation like 'PDT'
+  return moment.tz('00:00', 'HH:mm', timezone).format('z');
 };
 
 // Custom search logic entry point
@@ -126,8 +128,8 @@ const TimeSelect = ({ roTimezone, onSelect, error, clearError }) => {
     valueContainer: (styles) => ({
       ...styles,
       border: error ? '2px solid red' : styles.border,
-      height: '44px',
-      minHeight: '44px',
+      height: '24px',
+      minHeight: '24px',
     }),
     // Fix selected text positioning problem caused by adjusting height
     singleValue: () => ({

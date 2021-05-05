@@ -12,8 +12,8 @@ export default {
     },
   },
   args: {
-    roCity: 'Houston, TX',
-    roTimezone: 'America/Chicago'
+    roCity: 'Los Angeles, CA',
+    roTimezone: 'America/Los_Angeles'
   },
   argTypes: {
     onConfirm: { action: 'confirmed' },
