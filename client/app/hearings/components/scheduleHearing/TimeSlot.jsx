@@ -8,7 +8,6 @@ import { setTimeSlots } from '../../utils';
 import { TimeSlotButton } from './TimeSlotButton';
 import Button from '../../../components/Button';
 import SmallLoader from '../../../components/SmallLoader';
-import { TimePicker } from '../TimePicker';
 import { LOGO_COLORS } from '../../../constants/AppConstants';
 import { TimeModal } from '../modalForms/TimeModal';
 
@@ -23,9 +22,7 @@ export const TimeSlot = ({
   // Create local state to hold the selected time before saving
   const [selected, setSelected] = useState('');
 
-  // Create a local state to switch between the dropdown for custom times
-  const [custom, setCustom] = useState(false);
-  // TODO delete ^^ once testing is done
+  // Manage the modal for time entry
   const [timeModal, setTimeModal] = useState(false);
   const toggleTimeModal = () => setTimeModal((val) => !val);
 
@@ -67,61 +64,45 @@ export const TimeSlot = ({
               linkStyling
               onClick={() => toggleTimeModal()}
               classNames={['time-slot-button-toggle']}
-            >Open Custom Modal</Button>
-            <Button
-              linkStyling
-              onClick={() => setCustom(!custom)}
-              classNames={['time-slot-button-toggle']}
-            >
-                 Choose a {custom ? 'time slot' : 'custom time'}
-            </Button>
+            >Choose a custom time</Button>
           </div>
-          {custom ? (
-            <TimePicker
-              id={hearingTimeId}
-              roTimezone={roTimezone}
-              onChange={handleChange}
-              value={hearing?.scheduledTimeString}
-            />
-          ) : (
-            <div className="time-slot-button-container">
-              <div className="time-slot-container" >
-                {slots.slice(0, columnLength).map((slot) => (
-                  <TimeSlotButton
-                    {...slot}
-                    key={slot.key}
-                    roTimezone={roTimezone}
-                    selected={selected === slot.hearingTime}
-                    onClick={() => handleChange(slot.hearingTime)}
-                  />
-                ))}
-              </div>
-              <div className="time-slot-container">
-                {slots.slice(columnLength, slots.length).map((slot) => (
-                  <TimeSlotButton
-                    {...slot}
-                    key={slot.key}
-                    roTimezone={roTimezone}
-                    selected={selected === slot.hearingTime}
-                    onClick={() => handleChange(slot.hearingTime)}
-                  />
-                ))}
-              </div>
+          <div className="time-slot-button-container">
+            <div className="time-slot-container" >
+              {slots.slice(0, columnLength).map((slot) => (
+                <TimeSlotButton
+                  {...slot}
+                  key={slot.key}
+                  roTimezone={roTimezone}
+                  selected={selected === slot.hearingTime}
+                  onClick={() => handleChange(slot.hearingTime)}
+                />
+              ))}
             </div>
-          )}
+            <div className="time-slot-container">
+              {slots.slice(columnLength, slots.length).map((slot) => (
+                <TimeSlotButton
+                  {...slot}
+                  key={slot.key}
+                  roTimezone={roTimezone}
+                  selected={selected === slot.hearingTime}
+                  onClick={() => handleChange(slot.hearingTime)}
+                />
+              ))}
+            </div>
+          </div>
+          {timeModal && <TimeModal
+            onCancel={toggleTimeModal}
+            onConfirm={(time) => {
+              handleChange(time);
+              toggleTimeModal();
+            }}
+            ro={{
+              city: 'Los Angeles, CA',
+              timezone: 'America/Los_Angeles'
+            }}
+          />}
         </React.Fragment>
       )}
-      {timeModal && <TimeModal
-        onCancel={toggleTimeModal}
-        onConfirm={(time) => {
-          handleChange(time);
-          toggleTimeModal();
-        }}
-        ro={{
-          city: 'Los Angeles, CA',
-          timezone: 'America/Los_Angeles'
-        }}
-      />}
     </React.Fragment>
   );
 };
