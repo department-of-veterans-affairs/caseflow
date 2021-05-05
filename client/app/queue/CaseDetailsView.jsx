@@ -145,7 +145,7 @@ export const CaseDetailsView = (props) => {
     currentUserOnClerkOfTheBoard &&
     props.featureToggles.recognized_granted_substitution_after_dd &&
     appeal.caseType === 'Original' &&
-    appeal.docketType !== 'hearing' &&
+    appeal.docketName !== 'hearing' &&
     (userIsCobAdmin || appeal.decisionIssues.some(decisionHasDismissedDeathDisposition)) &&
     !appeal.isLegacyAppeal;
 
