@@ -498,14 +498,13 @@ RSpec.feature "Case details", :all_dbs do
       end
 
       scenario "button is on the page and updates" do
-        BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
-        poa.last_synced_at = Time.zone.now - 5.years
-        poa.save!
+        allow_any_instance_of(AppealsController).to receive(:cooldown_period).and_return(false)
 
         visit "/queue/appeals/#{appeal.uuid}"
         expect(page).to have_content("Refresh POA")
         click_on "Refresh POA"
         expect(page).to have_content("POA Updated Successfully")
+        expect(page).to have_content("POA last refreshed on 01/01/2020")
       end
     end
 
