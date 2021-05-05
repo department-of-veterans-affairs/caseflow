@@ -128,8 +128,8 @@ const TimeSelect = ({ roTimezone, onSelect, error, clearError }) => {
     valueContainer: (styles) => ({
       ...styles,
       border: error ? '2px solid red' : styles.border,
-      height: '24px',
-      minHeight: '24px',
+      height: '44px',
+      minHeight: '44px',
     }),
     // Fix selected text positioning problem caused by adjusting height
     singleValue: () => ({
