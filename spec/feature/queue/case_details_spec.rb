@@ -1721,12 +1721,6 @@ RSpec.feature "Case details", :all_dbs do
         end
       end
 
-      context "when the case is a legacy case" do
-        let!(:appeal) { create(:legacy_appeal) }
-        # FIXME: The page actually shows an error so this isn't a great test
-        it_behaves_like "the button is not shown"
-      end
-
       context "when the feature flag is disabled" do
         FeatureToggle.disable!(:recognized_granted_substitution_after_dd)
         it_behaves_like "the button is not shown"
