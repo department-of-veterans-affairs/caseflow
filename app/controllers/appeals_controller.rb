@@ -302,7 +302,6 @@ class AppealsController < ApplicationController
   end
 
   def cooldown_period
-    return false
     next_update_allowed_at = appeal.poa_last_synced_at + 10.minutes if appeal.poa_last_synced_at.present?
     if next_update_allowed_at && next_update_allowed_at > Time.zone.now
       return ((next_update_allowed_at - Time.zone.now) / 60).ceil
