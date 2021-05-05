@@ -6,6 +6,9 @@ import Select from 'react-select';
 import moment from 'moment-timezone';
 // Components
 import Modal from '../../../components/Modal';
+// Styling
+import { css } from 'glamor';
+import { COLORS } from 'app/constants/AppConstants';
 
 //
 // TIME LIST GENERATION START
@@ -121,10 +124,27 @@ const getTimezoneAbbreviation = (timezone) => {
 
 // Should maybe be made part of the "Alert" component?
 const InfoAlert = ({ timeString }) => {
+  const alertContainerStyles = css({
+    display: 'flex',
+    alignItems: 'center'
+  });
+
+  const greyRectangleStyles = css({
+    background: 'rgb(224, 222, 220)',
+    width: '1rem',
+    height: '4rem',
+    display: 'inline-block',
+    marginRight: '1.5rem'
+  });
+  const textDivStyles = css({
+    display: 'inline-block',
+    fontStyle: 'italic'
+  });
+
   return (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <div style={{ background: 'rgb(224, 222, 220)', width: '1rem', height: '4rem', display: 'inline-block', marginRight: '1.5rem' }} />
-      <div style={{ display: 'inline-block' }}><i>{`The hearing will start at ${timeString} Eastern Time`}</i></div>
+    <div {...alertContainerStyles}>
+      <div {...greyRectangleStyles} />
+      <div {...textDivStyles}>{`The hearing will start at ${timeString} Eastern Time`}</div>
     </div>
   );
 };
@@ -135,7 +155,7 @@ InfoAlert.propTypes = {
 
 const TimeSelect = ({ roTimezone, onSelect, error, clearError }) => {
 
-  const customStyles = {
+  const customSelectStyles = {
     // Hide the dropdown arrow on the right side
     indicatorSeparator: () => ({ display: 'none' }),
     dropdownIndicator: () => ({ display: 'none' }),
@@ -186,9 +206,33 @@ const TimeSelect = ({ roTimezone, onSelect, error, clearError }) => {
 
   const options = generateOrderedTimeOptions(roTimezone);
 
+  const containerStyles = css({
+    borderRadius: '5px',
+    // background: 'rgb(224, 222, 220)',
+    background: COLORS.GREY_LIGHT,
+    width: '50%',
+    marginTop: '16px',
+    marginBottom: '32px',
+    display: 'flex',
+    alignItems: 'center'
+  });
+
+  const selectContainerStyles = css({
+    width: '75%',
+    display: 'inline-block'
+  });
+
+  const timezoneAbbreviationContainer = css({
+    width: '25%',
+    display: 'inline-block',
+    textAlign: 'center',
+    color: 'black',
+    fontWeight: 'bold'
+  });
+
   return (
-    <div style={{ borderRadius: '5px', background: 'rgb(224, 222, 220)', width: '50%', marginTop: '16px', marginBottom: '32px', display: 'flex', alignItems: 'center' }}>
-      <div style={{ width: '75%', display: 'inline-block' }}>
+    <div classNames="time-select" {...containerStyles}>
+      <div {...selectContainerStyles}>
         <Select
           // Make this a controlled select
           onChange={onSelect}
@@ -211,10 +255,12 @@ const TimeSelect = ({ roTimezone, onSelect, error, clearError }) => {
           // Don't let menu get long enough to scroll the modal
           maxMenuHeight="300"
           // Hide some elements of react-select, deal with error state, adjust height of component
-          styles={customStyles}
+          styles={customSelectStyles}
         />
       </div>
-      <div style={{ width: '25%', display: 'inline-block', color: 'black', textAlign: 'center' }}><strong>{getTimezoneAbbreviation(roTimezone)}</strong></div>
+      <div {...timezoneAbbreviationContainer}>
+        {getTimezoneAbbreviation(roTimezone)}
+      </div>
     </div>
   );
 };
@@ -253,11 +299,13 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => 
       closeHandler={onCancel}
       id="custom-time-modal"
     >
-      <div style={{ height: '200px' }}>
-        <div><strong>Choose a hearing start time for <span style={{ whiteSpace: 'nowrap' }}>{roCity}</span></strong></div>
+      <div {...css({ height: '200px' })}>
+        <div {...css({ fontWeight: 'bold' })}>
+          Choose a hearing start time for <span {...css({ whiteSpace: 'nowrap' })}>{roCity}</span>
+        </div>
         <div>Enter time as hh:mm AM/PM, for example "1:00 PM"</div>
 
-        {error && <div style={{ color: 'red', paddingTop: '16px' }}>{error}</div>}
+        {error && <div {...css({ color: 'red', paddingTop: '16px' })}>{error}</div>}
 
         <TimeSelect
           roTimezone={roTimezone}
@@ -265,9 +313,11 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => 
           error={error}
           clearError={() => setError('')}
         />
+
         {roTimezone !== 'America/New_York' && selectedOption &&
           <InfoAlert timeString={selectedOption?.value.tz('America/New_York').format('h:mm A')} />
         }
+
       </div>
     </Modal>
   );
