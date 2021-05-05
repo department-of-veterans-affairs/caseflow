@@ -60,14 +60,18 @@ class InitialTasksFactory
   def copy_tasks(task_ids)
     # Order the tasks so they are created in the same order
     tasks = Task.where(id: task_ids).order(:id)
-    # TODO: Do we want to exclude tasks assigned to users if the task has a parent org-task
-    tasks.map { |task| task.copy_with_ancestors_to_stream(@appeal) }
+
+    fail "Could not find all the tasks" if (task_ids - tasks.pluck(:id)).any?
+
+    fail "Expecting only tasks assigned to organizations" if tasks.map(&:assigned_to_type).include?("User")
+
+    tasks.map { |task| task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: ["status"]) }
     # TODO: ask if we want to shown a SubstitutionTask in the timeline, like DocketSwitch*Task
+
     source_appeal = @appeal.appellant_substitution.source_appeal
     source_appeal.treee
     @appeal.reload.treee
     # binding.pry
-    # To-do: create or re-open tasks based on appellant_substitution form
   end
 
   # For AMA appeals. Create appropriate subtasks based on the CAVC Remand subtype

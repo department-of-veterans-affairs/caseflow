@@ -53,6 +53,8 @@ describe AppellantSubstitution do
 
           appellant_substitution = subject
           target_appeal = appellant_substitution.target_appeal
+          expect(target_appeal.tasks.of_type(:ScheduleHearingTask).first.status).to eq "assigned"
+          expect(target_appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.status).to eq "assigned"
           # binding.pry
         end
       end
