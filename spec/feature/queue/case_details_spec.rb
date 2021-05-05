@@ -407,8 +407,8 @@ RSpec.feature "Case details", :all_dbs do
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
       let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
 
-      before { FeatureToggle.disable!(:poa_sync_date) }
-      after { FeatureToggle.enable!(:poa_sync_date) }
+      before { FeatureToggle.disable!(:poa_refresh) }
+      after { FeatureToggle.enable!(:poa_refresh) }
 
       scenario "text isn't on the page" do
         visit "/queue/appeals/#{appeal.vacols_id}"
@@ -427,8 +427,8 @@ RSpec.feature "Case details", :all_dbs do
         )
       end
 
-      before { FeatureToggle.enable!(:poa_sync_date) }
-      after { FeatureToggle.disable!(:poa_sync_date) }
+      before { FeatureToggle.enable!(:poa_refresh) }
+      after { FeatureToggle.disable!(:poa_refresh) }
 
       scenario "text is on the page" do
         visit "/queue/appeals/#{appeal.uuid}"
@@ -440,8 +440,8 @@ RSpec.feature "Case details", :all_dbs do
       let!(:user) { User.authenticate!(roles: ["System Admin"]) }
       let(:appeal) { create(:appeal, veteran: create(:veteran)) }
 
-      before { FeatureToggle.enable!(:poa_sync_date) }
-      after { FeatureToggle.disable!(:poa_sync_date) }
+      before { FeatureToggle.enable!(:poa_refresh) }
+      after { FeatureToggle.disable!(:poa_refresh) }
 
       scenario "text is not on the page" do
         visit "/queue/appeals/#{appeal.uuid}"
@@ -456,11 +456,9 @@ RSpec.feature "Case details", :all_dbs do
 
       before do
         FeatureToggle.disable!(:poa_refresh)
-        FeatureToggle.disable!(:poa_sync_date)
       end
       after do
         FeatureToggle.enable!(:poa_refresh)
-        FeatureToggle.enable!(:poa_sync_date)
       end
 
       scenario "button isn't on the page" do
@@ -482,11 +480,9 @@ RSpec.feature "Case details", :all_dbs do
 
       before do
         FeatureToggle.enable!(:poa_refresh)
-        FeatureToggle.enable!(:poa_sync_date)
       end
       after do
         FeatureToggle.disable!(:poa_refresh)
-        FeatureToggle.disable!(:poa_sync_date)
       end
 
       scenario "button is on the page and is in cooldown" do
@@ -532,11 +528,9 @@ RSpec.feature "Case details", :all_dbs do
 
       before do
         FeatureToggle.enable!(:poa_refresh)
-        FeatureToggle.enable!(:poa_sync_date)
       end
       after do
         FeatureToggle.disable!(:poa_refresh)
-        FeatureToggle.disable!(:poa_sync_date)
       end
 
       scenario "attempts to refresh with no BGS data" do
