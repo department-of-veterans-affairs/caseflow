@@ -63,6 +63,14 @@ class PowerOfAttorney
     end
   end
 
+  def clear_bgs_power_of_attorney!
+    @bgs_power_of_attorney = nil
+  end
+
+  def bgs_power_of_attorney_id
+    bgs_power_of_attorney.id
+  end
+
   private
 
   def bgs_power_of_attorney

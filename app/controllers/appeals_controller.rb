@@ -71,10 +71,10 @@ class AppealsController < ApplicationController
       }
     elsif appeal.is_a?(Appeal)
       poa = BgsPowerOfAttorney.find(params[:poaId])
-      render json: update_bgs_poa(poa)
+      render json: update_ama_poa(poa)
     else
       poa = appeal.power_of_attorney
-      render json: update_vacols_poa(poa)
+      render json: update_legacy_poa(poa)
     end
   end
 
@@ -262,12 +262,12 @@ class AppealsController < ApplicationController
     }
     unless appeal.power_of_attorney.is_a?(UnrecognizedPowerOfAttorney)
       poa_data[:representative_id] = appeal.power_of_attorney&.id if appeal.is_a?(Appeal)
-      poa_data[:representative_id] = appeal.power_of_attorney&.vacols_id if appeal.is_a?(LegacyAppeal)
+      poa_data[:representative_id] = appeal.power_of_attorney&.bgs_power_of_attorney_id if appeal.is_a?(LegacyAppeal)
     end
     poa_data
   end
 
-  def update_bgs_poa(poa)
+  def update_ama_poa(poa)
     begin
       message = poa.update_or_delete
       {
@@ -283,11 +283,11 @@ class AppealsController < ApplicationController
     end
   end
 
-  def update_vacols_poa(poa)
+  def update_legacy_poa(poa)
     begin
       bgs_poa = BgsPowerOfAttorney.find_or_create_by_file_number(poa.file_number)
       message = bgs_poa.update_or_delete(appeal.claimant)
-      # appeal.claimant.power_of_attorney.reload!
+      appeal.power_of_attorney.clear_bgs_power_of_attorney!
       {
         status: "success",
         message: message,
