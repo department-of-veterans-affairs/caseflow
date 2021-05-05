@@ -231,6 +231,8 @@ class HearingSchedule::ValidateRoSpreadsheet
   def filter_incorrectly_formatted_start_times
     @allocation_spreadsheet_data.select do |row|
       begin
+        next if row["allocated_days_without_room"] == 0 && row["first_slot_time"] == 0
+
         Time.zone.parse(row["first_slot_time"])
         next
       rescue StandardError => error
