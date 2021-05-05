@@ -130,7 +130,7 @@ const InfoAlert = ({ timeString }) => {
   });
 
   const greyRectangleStyles = css({
-    background: 'rgb(224, 222, 220)',
+    background: COLORS.GREY_LIGHT,
     width: '1rem',
     height: '4rem',
     display: 'inline-block',
@@ -172,18 +172,37 @@ const TimeSelect = ({ roTimezone, onSelect, error, clearError }) => {
       margin: '0'
     }),
     // Change the highlight colors in the dropdown to gray
-    // TODO, when first opening, the highlighted one should be gray
     option: (styles, { isFocused }) => ({
       ...styles,
       color: isFocused ? 'white' : styles.color,
-      backgroundColor: isFocused ? 'rgb(80, 86, 96)' : null,
+      backgroundColor: isFocused ? COLORS.GREY : null,
       ':hover': {
         ...styles[':hover'],
-        backgroundColor: 'rgb(80, 86, 96)',
+        backgroundColor: COLORS.GREY,
         color: 'white'
       },
     })
   };
+  const containerStyles = css({
+    borderRadius: '5px',
+    background: COLORS.GREY_LIGHT,
+    width: '50%',
+    marginTop: '16px',
+    marginBottom: '32px',
+    display: 'flex',
+    alignItems: 'center'
+  });
+  const selectContainerStyles = css({
+    width: '75%',
+    display: 'inline-block'
+  });
+  const timezoneAbbreviationContainer = css({
+    width: '25%',
+    display: 'inline-block',
+    textAlign: 'center',
+    color: 'black',
+    fontWeight: 'bold'
+  });
 
   // This code exists to customize when the menu is shown/hidden
   // our requirements have the menu ONLY shown when there's something
@@ -205,30 +224,6 @@ const TimeSelect = ({ roTimezone, onSelect, error, clearError }) => {
   };
 
   const options = generateOrderedTimeOptions(roTimezone);
-
-  const containerStyles = css({
-    borderRadius: '5px',
-    // background: 'rgb(224, 222, 220)',
-    background: COLORS.GREY_LIGHT,
-    width: '50%',
-    marginTop: '16px',
-    marginBottom: '32px',
-    display: 'flex',
-    alignItems: 'center'
-  });
-
-  const selectContainerStyles = css({
-    width: '75%',
-    display: 'inline-block'
-  });
-
-  const timezoneAbbreviationContainer = css({
-    width: '25%',
-    display: 'inline-block',
-    textAlign: 'center',
-    color: 'black',
-    fontWeight: 'bold'
-  });
 
   return (
     <div classNames="time-select" {...containerStyles}>
