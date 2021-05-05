@@ -22,6 +22,8 @@ export const EditUnscheduledNotesModal = ({
   const [loading, setLoading] = useState(false);
   const [unscheduledNotes, setUnscheduledNotes] = useState(task?.unscheduledHearingNotes?.notes);
 
+  const disable = loading || unscheduledNotes === task?.unscheduledHearingNotes?.notes;
+
   const submit = async () => {
     try {
       const data = {
@@ -65,7 +67,7 @@ export const EditUnscheduledNotesModal = ({
     <Modal
       title="Edit Notes"
       closeHandler={onCancel}
-      confirmButton={<Button disabled={loading} onClick={submit}>Save</Button>}
+      confirmButton={<Button disabled={disable} onClick={submit}>Save</Button>}
       cancelButton={<Button linkStyling disabled={loading} onClick={onCancel}>Cancel</Button>}
     >
       <UnscheduledNotes

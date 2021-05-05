@@ -31,7 +31,7 @@ export const UnscheduledNotes = ({
           value={unscheduledNotes ?? ''}
           characterLimitTopRight
         />}
-      {updatedByCssId && updatedAt && unscheduledNotes &&
+      {updatedByCssId && updatedAt &&
         <span style={{ color: COLORS.GREY }}>
           {`Last updated by ${updatedByCssId} on ${moment(updatedAt).format('MM/DD/YYYY')}`}
         </span>

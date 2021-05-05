@@ -87,8 +87,8 @@ class HearingTask < Task
   def update_from_params(params, current_user)
     payload_values = params.delete(:business_payloads)&.dig(:values)
 
-    if payload_values&.[](:notes).present?
-      update_notes_as_instructions(payload_values[:notes])
+    if payload_values&.include?(:notes)
+      update_notes_as_instructions(payload_values&.[](:notes))
 
       [self] + children
     else
