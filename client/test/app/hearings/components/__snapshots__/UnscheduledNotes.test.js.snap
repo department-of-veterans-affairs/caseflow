@@ -5,7 +5,7 @@ exports[`UnscheduledNotes renders correctly 1`] = `
   <div>
     <div
       class="cf-form-textarea"
-      data-css-jz0ijb=""
+      data-css-1tc952m=""
     >
       <label
         class="question-label"
@@ -19,7 +19,7 @@ exports[`UnscheduledNotes renders correctly 1`] = `
         </strong>
       </label>
       <p
-        style="float: right; margin-bottom: 0px;"
+        style="float: right; margin-bottom: 0px; line-height: inherit;"
       >
         <i>
           985
