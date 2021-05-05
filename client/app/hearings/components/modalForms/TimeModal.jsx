@@ -267,7 +267,7 @@ TimeSelect.propTypes = {
   clearError: PropTypes.func
 };
 
-export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => {
+export const TimeModal = ({ onCancel, onConfirm, ro }) => {
   // Error message state
   const [error, setError] = useState();
   // Control the TimeSelect component
@@ -307,20 +307,20 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => 
     >
       <div {...css({ height: '200px' })}>
         <div {...css({ fontWeight: 'bold' })}>
-          Choose a hearing start time for <span {...css({ whiteSpace: 'nowrap' })}>{roCity}</span>
+          Choose a hearing start time for <span {...css({ whiteSpace: 'nowrap' })}>{ro.city}</span>
         </div>
         <div>Enter time as hh:mm AM/PM, for example "1:00 PM"</div>
 
         {error && <div {...css({ color: 'red', paddingTop: '16px' })}>{error}</div>}
 
         <TimeSelect
-          roTimezone={roTimezone}
+          roTimezone={ro.timezone}
           onSelect={setSelectedOption}
-          error={error}
+          error={error}P
           clearError={() => setError('')}
         />
 
-        {roTimezone !== 'America/New_York' && selectedOption &&
+        {ro.timezone !== 'America/New_York' && selectedOption &&
           <InfoAlert timeString={selectedOption?.value.tz('America/New_York').format('h:mm A')} />
         }
 
@@ -329,10 +329,12 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => 
   );
 };
 
-CustomTimeModal.propTypes = {
-  roCity: PropTypes.string,
-  roTimezone: PropTypes.string,
+TimeModal.propTypes = {
   onCancel: PropTypes.func,
   onConfirm: PropTypes.func,
+  ro: PropTypes.shape({
+    city: PropTypes.string,
+    timezone: PropTypes.string,
+  }),
 };
 

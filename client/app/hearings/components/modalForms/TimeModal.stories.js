@@ -1,9 +1,9 @@
 import React from 'react';
-import { CustomTimeModal } from './CustomTimeModal';
+import { TimeModal } from './TimeModal';
 
 export default {
-  title: 'Hearings/Components/Modal Forms/CustomTimeModal',
-  component: CustomTimeModal,
+  title: 'Hearings/Components/Modal Forms/TimeModal',
+  component: TimeModal,
   parameters: {
     controls: { expanded: true },
     docs: {
@@ -12,8 +12,10 @@ export default {
     },
   },
   args: {
-    roCity: 'Los Angeles, CA',
-    roTimezone: 'America/Los_Angeles'
+    ro: {
+      city: 'Los Angeles, CA',
+      timezone: 'America/Los_Angeles'
+    }
   },
   argTypes: {
     onConfirm: { action: 'confirmed' },
@@ -23,7 +25,7 @@ export default {
 
 const Template = (args) => {
   return (
-    <CustomTimeModal {...args} />
+    <TimeModal {...args} />
   );
 };
 
