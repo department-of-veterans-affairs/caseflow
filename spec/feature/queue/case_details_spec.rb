@@ -319,6 +319,19 @@ RSpec.feature "Case details", :all_dbs do
           expect(page).to have_content(COPY::CASE_DETAILS_NO_POA)
         end
       end
+
+      context "when there is a POA" do
+        before do
+          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(true)
+        end
+
+        scenario "contains POA information" do
+          visit "/queue"
+          click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+          expect(page).to have_content("Appellant's Power of Attorney")
+          expect(page).to have_content(appeal.power_of_attorney.bgs_representative_name)
+        end
+      end
     end
 
     context "when appellant is an attorney or unlisted claimant" do
