@@ -423,15 +423,13 @@ FactoryBot.define do
                                decision_review: appeal,
                                veteran_participant_id: appeal.veteran.participant_id,
                                contested_issue_description: description,
-                               notes: notes
-                               )
+                               notes: notes)
         decision_issue = create(:decision_issue,
-                                 :rating,
-                                 decision_review: appeal,
-                                 disposition: evaluator.disposition,
-                                 description: "Issue description",
-                                 decision_text: "Decision text"
-                                 )
+                                :rating,
+                                decision_review: appeal,
+                                disposition: evaluator.disposition,
+                                description: "Issue description",
+                                decision_text: "Decision text")
         request_issue.decision_issues << decision_issue
       end
     end
