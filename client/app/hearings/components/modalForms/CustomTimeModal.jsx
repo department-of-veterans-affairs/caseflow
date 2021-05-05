@@ -236,18 +236,18 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => 
       closeHandler={onCancel}
       id="custom-time-modal"
     >
-      <div><strong>Choose a hearing start time for <span style={{ whiteSpace: 'nowrap' }}>{roCity}</span></strong></div>
-      <div>Enter time as hh:mm AM/PM, for example "1:00 PM"</div>
+      <div style={{ height: '200px' }}>
+        <div><strong>Choose a hearing start time for <span style={{ whiteSpace: 'nowrap' }}>{roCity}</span></strong></div>
+        <div>Enter time as hh:mm AM/PM, for example "1:00 PM"</div>
 
-      {error && <div style={{ color: 'red', paddingTop: '16px' }}>{error}</div>}
+        {error && <div style={{ color: 'red', paddingTop: '16px' }}>{error}</div>}
 
-      <TimeSelect
-        roTimezone={roTimezone}
-        onSelect={setSelectedOption}
-        error={error}
-        clearError={() => setError('')}
-      />
-      <div style={{ height: '100px' }}>
+        <TimeSelect
+          roTimezone={roTimezone}
+          onSelect={setSelectedOption}
+          error={error}
+          clearError={() => setError('')}
+        />
         {roTimezone !== 'America/New_York' && selectedOption &&
           <InfoAlert timeString={selectedOption?.value.tz('America/New_York').format('h:mm A')} />
         }
