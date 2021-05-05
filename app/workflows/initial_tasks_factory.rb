@@ -66,7 +66,7 @@ class InitialTasksFactory
     source_appeal = @appeal.appellant_substitution.source_appeal
     source_appeal.treee
     @appeal.reload.treee
-    binding.pry
+    # binding.pry
     # To-do: create or re-open tasks based on appellant_substitution form
   end
 
