@@ -262,7 +262,7 @@ class AppealsController < ApplicationController
     }
     unless appeal.power_of_attorney.is_a?(UnrecognizedPowerOfAttorney)
       poa_data[:representative_id] = appeal.power_of_attorney&.id if appeal.is_a?(Appeal)
-      poa_data[:representative_id] = appeal.power_of_attorney&.bgs_power_of_attorney_id if appeal.is_a?(LegacyAppeal)
+      poa_data[:representative_id] = appeal.power_of_attorney&.bgs_id if appeal.is_a?(LegacyAppeal)
     end
     poa_data
   end
