@@ -42,7 +42,7 @@ const Template = (args) => {
 };
 
 export const Basic = Template.bind({});
-Basic.args = { hearingTime: HEARING_TIME_OPTIONS[0].value, roTimezone: roTimezones()[1] };
+Basic.args = { hearingTime: HEARING_TIME_OPTIONS[0].value, ro: 'RO44', roTimezone: 'America/Los_Angeles' };
 Basic.argTypes = {
   hearingTime: {
     control: {
