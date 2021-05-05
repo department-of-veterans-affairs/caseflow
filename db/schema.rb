@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_16_192302) do
+ActiveRecord::Schema.define(version: 2021_04_26_181017) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -718,13 +718,16 @@ ActiveRecord::Schema.define(version: 2021_04_16_192302) do
     t.datetime "created_at", null: false, comment: "Automatic timestamp of when hearing day was created"
     t.bigint "created_by_id", null: false, comment: "The ID of the user who created the Hearing Day"
     t.datetime "deleted_at", comment: "Automatic timestamp of when hearing day was deleted"
+    t.string "first_slot_time", limit: 5, comment: "The first time slot available; interpreted as the local time at Central office or the RO"
     t.integer "judge_id", comment: "User ID of judge who is assigned to the hearing day"
     t.boolean "lock", comment: "Determines if the hearing day is locked and can't be edited"
     t.text "notes", comment: "Any notes about hearing day"
+    t.integer "number_of_slots", comment: "The number of time slots possible for this day"
     t.string "regional_office", comment: "Regional office key associated with hearing day"
     t.string "request_type", null: false, comment: "Hearing request types for all associated hearings; can be one of: 'T', 'C' or 'V'"
     t.string "room", comment: "The room at BVA where the hearing will take place"
     t.date "scheduled_for", null: false, comment: "The date when all associated hearings will take place"
+    t.integer "slot_length_minutes", comment: "The length in minutes of each time slot for this day"
     t.datetime "updated_at", null: false, comment: "Automatic timestamp of when hearing day was updated"
     t.bigint "updated_by_id", null: false, comment: "The ID of the user who most recently updated the Hearing Day"
     t.index ["created_by_id"], name: "index_hearing_days_on_created_by_id"
@@ -1385,6 +1388,7 @@ ActiveRecord::Schema.define(version: 2021_04_16_192302) do
     t.integer "assigned_by_id"
     t.integer "assigned_to_id", null: false
     t.string "assigned_to_type", null: false
+    t.string "cancellation_reason", comment: "Reason for latest cancellation status"
     t.integer "cancelled_by_id", comment: "ID of user that cancelled the task. Backfilled from versions table. Can be nil if task was cancelled before this column was added or if there is no user logged in when the task is cancelled"
     t.datetime "closed_at"
     t.datetime "created_at", null: false
@@ -1397,6 +1401,7 @@ ActiveRecord::Schema.define(version: 2021_04_16_192302) do
     t.datetime "updated_at", null: false
     t.index ["appeal_type", "appeal_id"], name: "index_tasks_on_appeal_type_and_appeal_id"
     t.index ["assigned_to_type", "assigned_to_id"], name: "index_tasks_on_assigned_to_type_and_assigned_to_id"
+    t.index ["cancellation_reason"], name: "index_tasks_on_cancellation_reason"
     t.index ["parent_id"], name: "index_tasks_on_parent_id"
     t.index ["status"], name: "index_tasks_on_status"
     t.index ["type"], name: "index_tasks_on_type"
