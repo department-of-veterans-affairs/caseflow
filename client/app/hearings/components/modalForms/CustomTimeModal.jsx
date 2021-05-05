@@ -7,6 +7,11 @@ import moment from 'moment-timezone';
 // Components
 import Modal from '../../../components/Modal';
 
+//
+// TIME LIST GENERATION START
+//
+// Get an array with every fifteen minute increment in a day
+// [00:00, 00:15, ... , 23:45]
 const generateTimes = (roTimezone, intervalMinutes = 15) => {
   // Start at midnight '00:00' is the first minute of a day
   const currentTime = moment.tz('00:00', 'HH:mm', roTimezone);
@@ -24,7 +29,7 @@ const generateTimes = (roTimezone, intervalMinutes = 15) => {
 
   return times;
 };
-
+// Move the part of the arrawy after newFirstValue to the end of the array
 const moveTimesToEndOfArray = (newFirstValue, times) => {
   // Find the index of newFirstValue
   const firstValueIndex = times.findIndex((time) => time.isSame(newFirstValue));
@@ -36,7 +41,7 @@ const moveTimesToEndOfArray = (newFirstValue, times) => {
   // Add the values back onto the end of the array
   return afterFirstValue.concat(beforeFirstValue);
 };
-
+// Convert each time in the array into the expected 'option' format for react-select
 const formatTimesToOptionObjects = (times) => {
   return times.map((time) => {
     return {
@@ -45,27 +50,30 @@ const formatTimesToOptionObjects = (times) => {
     };
   });
 };
-
 // Generate a time for every 15m increment in a day.
 // Then move every time before beginsAt to the end of
 // the array to beginsAt appears first.
 const generateOrderedTimeOptions = (roTimezone, beginsAt = moment.tz('08:30', 'HH:mm', roTimezone)) => {
-  // Get an array with every fifteen minute increment in a day
-  // [00:00, 00:15, ... , 23:45]
   const times = generateTimes(roTimezone);
-  // Move everything after beginsAt to the end of the array
   const reorderedTimes = moveTimesToEndOfArray(beginsAt, times);
-  // Put the times into the format expected by the select
   const options = formatTimesToOptionObjects(reorderedTimes);
 
   return options;
 };
+//
+// TIME LIST GENERATION END
+//
+
+//
+// CUSTOM LIST FILTERING START
+//
+// Checks if the input matches the hour of a candidate.value which is a moment object
 const matchesHour = (candidate, input, exact = false) => {
   const candidateHourString = candidate.value.format('h');
 
   return exact ? candidateHourString === input : candidateHourString.startsWith(input);
 };
-
+// Checks if the input matches any part of a candidate.value which is a moment object
 const matchesAny = (candidate, input) => {
   if (input.includes(':')) {
     // Split into hours and minutes
@@ -83,25 +91,32 @@ const matchesAny = (candidate, input) => {
     return candidateNoColon.includes(inputNoColonOrSpaces);
   }
 };
-
-const getTimezoneAbbreviation = (timezone) => {
-  // Create a moment object so we can extract the timezone
-  // abbreviation like 'PDT'
-  return moment.tz('00:00', 'HH:mm', timezone).format('z');
-};
-
-// Custom search logic entry point
+// Filter the options list to display only options that match
+// what's been typed into the input
 const filterOptions = (candidate, input) => {
   // If only one character in the input assume it represents an hour
   if (input.length === 1) {
     return matchesHour(candidate, input);
   }
+  // If one character and ':' in the input assume it represents an hour
   if (input.length === 2 && input.endsWith(':')) {
     return matchesHour(candidate, input[0], true);
   }
+  // For everything else, send to matchesAny, which also handles ':'
   if (input.length >= 2) {
     return matchesAny(candidate, input);
   }
+};
+//
+// CUSTOM LIST FILTERING END
+//
+
+// Given a long timezone like "America/Los_Angeles" return the
+// short version like "PDT" or "PST" (depending on date)
+const getTimezoneAbbreviation = (timezone) => {
+  // Create a moment object so we can extract the timezone
+  // abbreviation like 'PDT'
+  return moment.tz('00:00', 'HH:mm', timezone).format('z');
 };
 
 // Should maybe be made part of the "Alert" component?
