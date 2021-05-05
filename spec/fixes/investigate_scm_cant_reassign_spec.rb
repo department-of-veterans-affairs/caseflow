@@ -16,6 +16,7 @@ describe "CaseMovementTeam task actions" do
 
     it "produces error and user can't reassign to attorney" do
       # To replicate error:
+      # binding.pry # Uncomment this line then do the following manually
       # Clicking on "Assign to attorney" shows the "Assign task" modal. 
       # Clicking on "Select a user" shows "Other". 
       # Clicking on "Other" and starting to type "TALAM" shows the attorney. 
