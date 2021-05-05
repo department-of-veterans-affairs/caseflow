@@ -112,23 +112,24 @@ const InfoAlert = ({ timeString }) => {
   );
 };
 
+InfoAlert.propTypes = {
+  timeString: PropTypes.string
+};
+
 const TimeSelect = ({ roTimezone, onSelect, error, clearError }) => {
-  // Hide the dropdown arrow on the right side
-  const hideStyleFunction = () => ({
-    display: 'none'
-  });
+
   const customStyles = {
-    // Hiding this removes the "x" to clear, we want to keep that for now
-    indicatorSeparator: hideStyleFunction,
-    dropdownIndicator: hideStyleFunction,
+    // Hide the dropdown arrow on the right side
+    indicatorSeparator: () => ({ display: 'none' }),
+    dropdownIndicator: () => ({ display: 'none' }),
     // Set the height of the select component
     valueContainer: (styles) => ({
       ...styles,
       border: error ? '2px solid red' : styles.border,
-      height: 44,
-      minHeight: 44,
+      height: '44px',
+      minHeight: '44px',
     }),
-    // Completely override these styles
+    // Fix selected text positioning problem caused by adjusting height
     singleValue: () => ({
       padding: '0',
       margin: '0'
@@ -136,24 +137,19 @@ const TimeSelect = ({ roTimezone, onSelect, error, clearError }) => {
   };
   // Managing this so we can force it to stay closed until typed into
   const [menuOpen, setMenuOpen] = useState(false);
+  const hideMenu = () => setMenuOpen(false);
+  const showMenu = () => setMenuOpen(true);
   const handleInputChange = (query, { action }) => {
+    // Clear the error as soon as the input is interacted with
     clearError();
+    // Show the menu if there are any characters in the select box
     if (action === 'input-change' && query) {
-      setMenuOpen(true);
+      showMenu();
     }
-    // When deleting, if we end up with a blank string the menu is open
-    // by default. This overrides that behavior and closes the menu
+    // When deleting, if no characters in select box, hide the menu
     if (action === 'input-change' && !query) {
-      setMenuOpen(false);
+      hideMenu();
     }
-  };
-  const hideMenu = () => {
-    setMenuOpen(false);
-  };
-
-  const handleChange = (selectedOption) => {
-    onSelect(selectedOption);
-    hideMenu();
   };
 
   const options = generateOrderedTimeOptions(roTimezone);
@@ -162,24 +158,28 @@ const TimeSelect = ({ roTimezone, onSelect, error, clearError }) => {
     <div style={{ borderRadius: '5px', background: 'rgb(224, 222, 220)', width: '50%', marginTop: '16px', marginBottom: '32px', display: 'flex', alignItems: 'center' }}>
       <div style={{ width: '75%', display: 'inline-block' }}>
         <Select
-        // Settings for searching
+          // Make this a controlled select
+          onChange={onSelect}
+          // Backspace will clear a selected option, also show an 'x' to clear
           isClearable
+          // Make this a searchable react-select
           isSearchable
+          // The array of options
           options={options}
           // Custom searching logic
           filterOption={filterOptions}
-          // Don't open until we type
+          // Several options together to force the menu to be closed until typed into
           onInputChange={handleInputChange}
           menuIsOpen={menuOpen}
           onBlur={hideMenu}
-          // Hide the dropdown arrow
-          styles={customStyles}
+          closeMenuOnSelect
+          blurInputOnSelect
           // Dont show the placeholder text
           placeholder=""
-          // Handle selection changes
-          onChange={handleChange}
-          // Don't let menu get long enough to scroll
+          // Don't let menu get long enough to scroll the modal
           maxMenuHeight="300"
+          // Hide some elements of react-select, deal with error state, adjust height of component
+          styles={customStyles}
         />
       </div>
       <div style={{ width: '25%', display: 'inline-block', color: 'black', textAlign: 'center' }}><strong>{getTimezoneAbbreviation(roTimezone)}</strong></div>
@@ -187,31 +187,40 @@ const TimeSelect = ({ roTimezone, onSelect, error, clearError }) => {
   );
 };
 
+TimeSelect.propTypes = {
+  roTimezone: PropTypes.string,
+  onSelect: PropTypes.func,
+  error: PropTypes.bool,
+  clearError: PropTypes.func
+};
+
 export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => {
-
-  // Deal with error state
+  // Error message state
   const [error, setError] = useState();
-  // Gives access to the value outside the select component
+  // Control the TimeSelect component
   const [selectedOption, setSelectedOption] = useState();
-
+  // Check if we have a value, if yes setError, if not, submit.
   const handleConfirm = () =>
     selectedOption ? onConfirm(selectedOption?.value) : setError('Please enter a hearing start time.');
 
-  const buttons = [
-    {
-      classNames: ['cf-modal-link', 'cf-btn-link'],
-      name: 'Cancel',
-      onClick: onCancel
-    },
-    {
-      classNames: ['usa-button', 'usa-button-primary'],
-      name: 'Create time slot',
-      onClick: handleConfirm
-    },
-  ];
-
   return (
-    <Modal title="Create a custom time slot" buttons={buttons} closeHandler={onCancel} id="custom-time-modal">
+    <Modal
+      title="Create a custom time slot"
+      buttons={[
+        {
+          classNames: ['cf-modal-link', 'cf-btn-link'],
+          name: 'Cancel',
+          onClick: onCancel
+        },
+        {
+          classNames: ['usa-button', 'usa-button-primary'],
+          name: 'Create time slot',
+          onClick: handleConfirm
+        },
+      ]}
+      closeHandler={onCancel}
+      id="custom-time-modal"
+    >
       <div><strong>Choose a hearing start time for <span style={{ whiteSpace: 'nowrap' }}>{roCity}</span></strong></div>
       <div>Enter time as hh:mm AM/PM, for example "1:00 PM"</div>
 
@@ -224,8 +233,7 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => 
         clearError={() => setError('')}
       />
       <div style={{ height: '100px' }}>
-        {roTimezone !== 'America/New_York' &&
-          selectedOption &&
+        {roTimezone !== 'America/New_York' && selectedOption &&
           <InfoAlert timeString={selectedOption?.value.tz('America/New_York').format('h:mm A')} />
         }
       </div>
