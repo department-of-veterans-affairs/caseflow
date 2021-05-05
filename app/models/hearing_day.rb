@@ -38,7 +38,7 @@ class HearingDay < CaseflowRecord
 
   SLOTS_BY_REQUEST_TYPE = {
     REQUEST_TYPES[:central] => 10,
-    REQUEST_TYPES[:virtual] => 8 # TBD. Dummy value for testing until we know more.
+    REQUEST_TYPES[:virtual] => 12 # TBD. Dummy value for testing until we know more.
   }.freeze
 
   SLOTS_BY_TIMEZONE = {

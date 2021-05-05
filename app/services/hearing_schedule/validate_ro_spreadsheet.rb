@@ -14,7 +14,6 @@ class HearingSchedule::ValidateRoSpreadsheet
   HEARING_ALLOCATION_SHEET_TITLE = "Allocation of Regional Office Video Hearings"
   HEARING_ALLOCATION_SHEET_EXAMPLE_ROW = ["Example", "Ithaca, NY", "RO00", 10, 50, 8, 60, "8:30"].freeze
   HEARING_ALLOCATION_SHEET_EMPTY_COLUMN = [nil].freeze
-  MAX_TIME_SLOTS = 12
   MAX_DURATION_IN_MINUTES = 60
 
   class RoDatesNotUnique < StandardError; end
@@ -206,7 +205,9 @@ class HearingSchedule::ValidateRoSpreadsheet
   def filter_invalid_number_of_slots
     @allocation_spreadsheet_data.select do |row|
       begin
-        row["number_of_slots"] > MAX_TIME_SLOTS || row["number_of_slots"] < 0
+        row["number_of_slots"] > HearingDay::SLOTS_BY_REQUEST_TYPE["R"] ||
+          row["number_of_slots"] < 0 ||
+          (row["allocated_days_without_room"] > 0 && row["number_of_slots"] == 0)
       rescue StandardError => error
         Rails.logger.error(error)
         row
@@ -214,10 +215,12 @@ class HearingSchedule::ValidateRoSpreadsheet
     end.pluck("ro_code").uniq
   end
 
-  def filter_slot_lengths_over_duration_limit
+  def filter_invalid_slot_lengths
     @allocation_spreadsheet_data.select do |row|
       begin
-        row["slot_length_minutes"] > MAX_DURATION_IN_MINUTES || row["slot_length_minutes"] < 0
+        row["slot_length_minutes"] > MAX_DURATION_IN_MINUTES ||
+          row["slot_length_minutes"] < 0 ||
+          (row["allocated_days_without_room"] > 0 && row["slot_length_minutes"] == 0)
       rescue StandardError => error
         Rails.logger.error(error)
         row
@@ -252,7 +255,7 @@ class HearingSchedule::ValidateRoSpreadsheet
         @errors << StartTimeNotValidTime.new(START_TIME_NOT_VALID_TIME + incorrectly_formatted_start_times.to_s)
       end
 
-      slot_lengths_over_duration_limit = filter_slot_lengths_over_duration_limit
+      slot_lengths_over_duration_limit = filter_invalid_slot_lengths
       if slot_lengths_over_duration_limit.count > 0
         @errors << SlotDurationExceedsMax.new(SLOT_DURATION_EXCEEDS_MAX + slot_lengths_over_duration_limit.to_s)
       end
