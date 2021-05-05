@@ -60,53 +60,59 @@ const generateOrderedTimeOptions = (roTimezone) => {
   return options;
 };
 
-export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => {
+const matchesHour = (candidate, input, exact = false) => {
+  const candidateHourString = candidate.value.format('h');
 
-  // Deal with error state
-  const [error, setError] = useState();
+  return exact ? candidateHourString === input : candidateHourString.startsWith(input);
+};
 
-  // Managing this so we can force it to stay closed until typed into
-  const [menuOpen, setMenuOpen] = useState(false);
-  const handleInputChange = (query, { action }) => {
-    setError('');
-    if (action === 'input-change' && query) {
-      setMenuOpen(true);
-    }
-    // When deleting, if we end up with a blank string the menu is open
-    // by default. This overrides that behavior and closes the menu
-    if (action === 'input-change' && !query) {
-      setMenuOpen(false);
-    }
-  };
-  const hideMenu = () => {
-    setMenuOpen(false);
-  };
-  // Gives access to the value outside the select component
-  const [selectedValue, setSelectedValue] = useState();
-  const [timeInEastern, setTimeInEastern] = useState();
-  const handleChange = (selectedOption) => {
-    setSelectedValue(selectedOption?.value);
-    setTimeInEastern(selectedOption?.value.tz('America/New_York').format('h:mm A'));
-    hideMenu();
-  };
+const matchesAny = (candidate, input) => {
+  if (input.includes(':')) {
+    // Split into hours and minutes
+    const [hour, minutesAndAmPm] = input.split(':');
 
-  const handleConfirm = () =>
-    selectedValue ? onConfirm(selectedValue) : setError('Please enter a hearing start time.');
+    // Check that the hour matches exactly and the minutes+ampm are present
+    return matchesHour(candidate, hour, true) && matchesAny(candidate, minutesAndAmPm);
+  }
+  if (!input.includes(':')) {
+  // Produce a time like '400pm' or '800am' for string searching
+    const candidateNoColon = candidate.value.format('hhmmA');
+    // Remove spaces, force upper case so AM/PM searching works
+    const inputNoColonOrSpaces = input.replace(' ', '').toUpperCase();
 
-  const options = generateOrderedTimeOptions(roTimezone);
-  const buttons = [
-    {
-      classNames: ['cf-modal-link', 'cf-btn-link'],
-      name: 'Cancel',
-      onClick: onCancel
-    },
-    {
-      classNames: ['usa-button', 'usa-button-primary'],
-      name: 'Create time slot',
-      onClick: handleConfirm
-    },
-  ];
+    return candidateNoColon.includes(inputNoColonOrSpaces);
+  }
+};
 
+const getTimezoneAbbreviation = (timezone) => {
+  return 'CDT';
+};
+
+// Custom search logic entry point
+const filterOptions = (candidate, input) => {
+  // If only one character in the input assume it represents an hour
+  if (input.length === 1) {
+    return matchesHour(candidate, input);
+  }
+  if (input.length === 2 && input.endsWith(':')) {
+    return matchesHour(candidate, input[0], true);
+  }
+  if (input.length >= 2) {
+    return matchesAny(candidate, input);
+  }
+};
+
+// Should maybe be made part of the "Alert" component?
+const InfoAlert = ({ timeString }) => {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div style={{ background: 'rgb(224, 222, 220)', width: '1rem', height: '4rem', display: 'inline-block', marginRight: '1.5rem' }} />
+      <div style={{ display: 'inline-block' }}><i>{`The hearing will start at ${timeString} Eastern Time`}</i></div>
+    </div>
+  );
+};
+
+const TimeSelect = ({ roTimezone, onSelect, error, clearError }) => {
   // Hide the dropdown arrow on the right side
   const hideStyleFunction = () => ({
     display: 'none'
@@ -128,85 +134,99 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => 
       margin: '0'
     })
   };
-
-  const matchesHour = (candidate, input, exact = false) => {
-    const candidateHourString = candidate.value.format('h');
-
-    return exact ? candidateHourString === input : candidateHourString.startsWith(input);
-  };
-
-  const matchesAny = (candidate, input) => {
-    if (input.includes(':')) {
-      // Split into hours and minutes
-      const [hour, minutesAndAmPm] = input.split(':');
-
-      // Check that the hour matches exactly and the minutes+ampm are present
-      return matchesHour(candidate, hour, true) && matchesAny(candidate, minutesAndAmPm);
+  // Managing this so we can force it to stay closed until typed into
+  const [menuOpen, setMenuOpen] = useState(false);
+  const handleInputChange = (query, { action }) => {
+    clearError();
+    if (action === 'input-change' && query) {
+      setMenuOpen(true);
     }
-    if (!input.includes(':')) {
-    // Produce a time like '400pm' or '800am' for string searching
-      const candidateNoColon = candidate.value.format('hhmmA');
-      // Remove spaces, force upper case so AM/PM searching works
-      const inputNoColonOrSpaces = input.replace(' ', '').toUpperCase();
-
-      return candidateNoColon.includes(inputNoColonOrSpaces);
+    // When deleting, if we end up with a blank string the menu is open
+    // by default. This overrides that behavior and closes the menu
+    if (action === 'input-change' && !query) {
+      setMenuOpen(false);
     }
   };
-
-  // Custom search logic entry point
-  const filterOptions = (candidate, input) => {
-    // If only one character in the input assume it represents an hour
-    if (input.length === 1) {
-      return matchesHour(candidate, input);
-    }
-    if (input.length === 2 && input.endsWith(':')) {
-      return matchesHour(candidate, input[0], true);
-    }
-    if (input.length >= 2) {
-      return matchesAny(candidate, input);
-    }
+  const hideMenu = () => {
+    setMenuOpen(false);
   };
+
+  const handleChange = (selectedOption) => {
+    onSelect(selectedOption);
+    hideMenu();
+  };
+
+  const options = generateOrderedTimeOptions(roTimezone);
+
+  return (
+    <div style={{ borderRadius: '5px', background: 'rgb(224, 222, 220)', width: '50%', marginTop: '16px', marginBottom: '32px', display: 'flex', alignItems: 'center' }}>
+      <div style={{ width: '75%', display: 'inline-block' }}>
+        <Select
+        // Settings for searching
+          isClearable
+          isSearchable
+          options={options}
+          // Custom searching logic
+          filterOption={filterOptions}
+          // Don't open until we type
+          onInputChange={handleInputChange}
+          menuIsOpen={menuOpen}
+          onBlur={hideMenu}
+          // Hide the dropdown arrow
+          styles={customStyles}
+          // Dont show the placeholder text
+          placeholder=""
+          // Handle selection changes
+          onChange={handleChange}
+          // Don't let menu get long enough to scroll
+          maxMenuHeight="300"
+        />
+      </div>
+      <div style={{ width: '25%', display: 'inline-block', color: 'black', textAlign: 'center' }}><strong>{getTimezoneAbbreviation(roTimezone)}</strong></div>
+    </div>
+  );
+};
+
+export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => {
+
+  // Deal with error state
+  const [error, setError] = useState();
+  // Gives access to the value outside the select component
+  const [selectedOption, setSelectedOption] = useState();
+
+  const handleConfirm = () =>
+    selectedOption ? onConfirm(selectedOption?.value) : setError('Please enter a hearing start time.');
+
+  const buttons = [
+    {
+      classNames: ['cf-modal-link', 'cf-btn-link'],
+      name: 'Cancel',
+      onClick: onCancel
+    },
+    {
+      classNames: ['usa-button', 'usa-button-primary'],
+      name: 'Create time slot',
+      onClick: handleConfirm
+    },
+  ];
 
   return (
     <Modal title="Create a custom time slot" buttons={buttons} closeHandler={onCancel} id="custom-time-modal">
       <div><strong>Choose a hearing start time for <span style={{ whiteSpace: 'nowrap' }}>{roCity}</span></strong></div>
       <div>Enter time as hh:mm AM/PM, for example "1:00 PM"</div>
 
-      <div style={{ color: 'red', paddingTop: '16px' }}>
-        {error}
-      </div>
+      {error && <div style={{ color: 'red', paddingTop: '16px' }}>{error}</div>}
 
-      <div style={{ borderRadius: '5px', background: 'rgb(224, 222, 220)', width: '50%', marginTop: '16px', marginBottom: '16px', display: 'flex', alignItems: 'center' }}>
-        <div style={{ width: '75%', display: 'inline-block' }}>
-          <Select
-            // Settings for searching
-            isClearable
-            isSearchable
-            options={options}
-            // Custom searching logic
-            filterOption={filterOptions}
-            // Don't open until we type
-            onInputChange={handleInputChange}
-            menuIsOpen={menuOpen}
-            onBlur={hideMenu}
-            // Hide the dropdown arrow
-            styles={customStyles}
-            // Dont show the placeholder text
-            placeholder=""
-            // Handle selection changes
-            onChange={handleChange}
-            // Don't let menu get long enough to scroll
-            maxMenuHeight="300"
-          />
-        </div>
-        <div style={{ width: '25%', display: 'inline-block', color: 'black', textAlign: 'center' }}><strong>CDT</strong></div>
-      </div>
+      <TimeSelect
+        roTimezone={roTimezone}
+        onSelect={setSelectedOption}
+        error={error}
+        clearError={() => setError('')}
+      />
       <div style={{ height: '100px' }}>
-        {timeInEastern &&
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <div style={{ background: 'rgb(224, 222, 220)', width: '1rem', height: '4rem', display: 'inline-block', marginRight: '1.5rem' }} />
-          <div style={{ display: 'inline-block' }}><i>{`The hearing will start at ${timeInEastern} Eastern Time`}</i></div>
-        </div>
+        {roTimezone !== 'America/New_York' &&
+          selectedOption &&
+          <InfoAlert timeString={selectedOption?.value.tz('America/New_York').format('h:mm A')} />
         }
       </div>
     </Modal>
