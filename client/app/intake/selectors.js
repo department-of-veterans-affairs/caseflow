@@ -3,7 +3,7 @@ import { INTAKE_STATES } from './constants';
 import { formatIssues } from './util/issues';
 import _ from 'lodash';
 
-const getIntakeDetailStatus = (intakeDetail) => {
+export const getIntakeDetailStatus = (intakeDetail) => {
   if (intakeDetail.isComplete) {
     return INTAKE_STATES.COMPLETED;
   } else if (intakeDetail.isReviewed) {

@@ -30,7 +30,7 @@ import {
 } from './uiReducer/uiActions';
 import Alert from '../components/Alert';
 import AppellantDetail from './AppellantDetail';
-import COPY from '../../COPY';
+import COPY, { CASE_DETAILS_POA_SUBSTITUTE } from 'app/../COPY';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import CaseHearingsDetail from './CaseHearingsDetail';
 import { CaseTimeline } from './CaseTimeline';
@@ -213,7 +213,7 @@ export const CaseDetailsView = (props) => {
             decisionIssues={appeal.decisionIssues}
           />
           <PowerOfAttorneyDetail
-            title="Appellant's Power of Attorney"
+            title={CASE_DETAILS_POA_SUBSTITUTE}
             appealId={appealId}
           />
           {(appeal.hearings.length ||
