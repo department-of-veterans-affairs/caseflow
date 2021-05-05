@@ -36,60 +36,38 @@ class HearingRepository
       vacols_record.update_hearing!(hearing_hash.merge(staff_id: vacols_record.slogid)) if hearing_hash.present?
     end
 
-    def create_vacols_hearing(hearing_day, appeal, scheduled_for, hearing_location_attrs, notes)
-      vacols_record = VACOLS::CaseHearing.create_hearing!(
-        folder_nr: appeal.vacols_id,
-        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(scheduled_for),
-        vdkey: hearing_day.id,
-        hearing_type: hearing_day.request_type,
-        room: hearing_day.room,
-        board_member: hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil,
-        vdbvapoc: hearing_day.bva_poc,
-        notes1: notes
-      )
-
-      # Reload the hearing to pull in associated data.
-      # Note: using `load_hearing` here is necessary to load in associated data that is not declared in
-      # the table (see `VACOLS::CaseHearing#select_hearings`).
-      vacols_record = VACOLS::CaseHearing.load_hearing(vacols_record.id)
-
-      hearing = LegacyHearing.assign_or_create_from_vacols_record(vacols_record)
-      hearing.hearing_location_attributes = hearing_location_attrs unless hearing_location_attrs.nil?
-      hearing.save!
-      hearing
-    end
-
-    def slot_new_hearing(
-      hearing_day_id,
-      scheduled_time_string:,
-      appeal:,
-      hearing_location_attrs: nil,
-      override_full_hearing_day_validation: false,
-      notes: nil
-    )
-      hearing_day = HearingDay.find(hearing_day_id)
+    # rubocop:disable Metrics/MethodLength
+    def slot_new_hearing(attrs, override_full_hearing_day_validation: false)
+      hearing_day = HearingDay.find(attrs[:hearing_day_id])
 
       fail HearingDayFull if !override_full_hearing_day_validation && hearing_day.hearing_day_full?
 
-      if appeal.is_a?(LegacyAppeal)
+      if attrs[:appeal].is_a?(LegacyAppeal)
         scheduled_for = HearingTimeService.legacy_formatted_scheduled_for(
           scheduled_for: hearing_day.scheduled_for,
-          scheduled_time_string: scheduled_time_string
+          scheduled_time_string: attrs[:scheduled_time_string]
         )
-        vacols_hearing = create_vacols_hearing(hearing_day, appeal, scheduled_for, hearing_location_attrs, notes)
-        AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+        vacols_hearing = create_vacols_hearing(
+          hearing_day: hearing_day,
+          appeal: attrs[:appeal],
+          scheduled_for: scheduled_for,
+          hearing_location_attrs: attrs[:hearing_location_attrs],
+          notes: attrs[:notes]
+        )
+        AppealRepository.update_location!(attrs[:appeal], LegacyAppeal::LOCATION_CODES[:caseflow])
         vacols_hearing
       else
         Hearing.create!(
-          appeal: appeal,
+          appeal: attrs[:appeal],
           hearing_day_id: hearing_day.id,
-          hearing_location_attributes: hearing_location_attrs || {},
-          scheduled_time: scheduled_time_string,
+          hearing_location_attributes: attrs[:hearing_location_attrs] || {},
+          scheduled_time: attrs[:scheduled_time_string],
           override_full_hearing_day_validation: override_full_hearing_day_validation,
-          notes: notes
+          notes: attrs[:notes]
         )
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     def load_vacols_data(hearing)
       vacols_record = MetricsService.record("VACOLS: HearingRepository.load_vacols_data: #{hearing.vacols_id}",
@@ -216,5 +194,28 @@ class HearingRepository
       }
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
+    def create_vacols_hearing(attrs)
+      vacols_record = VACOLS::CaseHearing.create_hearing!(
+        folder_nr: attrs[:appeal].vacols_id,
+        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(attrs[:scheduled_for]),
+        vdkey: attrs[:hearing_day].id,
+        hearing_type: attrs[:hearing_day].request_type,
+        room: attrs[:hearing_day].room,
+        board_member: attrs[:hearing_day].judge ? attrs[:hearing_day].judge.vacols_attorney_id : nil,
+        vdbvapoc: attrs[:hearing_day].bva_poc,
+        notes1: attrs[:notes]
+      )
+
+      # Reload the hearing to pull in associated data.
+      # Note: using `load_hearing` here is necessary to load in associated data that is not declared in
+      # the table (see `VACOLS::CaseHearing#select_hearings`).
+      vacols_record = VACOLS::CaseHearing.load_hearing(vacols_record.id)
+
+      hearing = LegacyHearing.assign_or_create_from_vacols_record(vacols_record)
+      hearing.hearing_location_attributes = attrs[:hearing_location_attrs] unless attrs[:hearing_location_attrs].nil?
+      hearing.save!
+      hearing
+    end
   end
 end

@@ -189,7 +189,7 @@ class AssignHearingDispositionTask < Task
     multi_transaction do
       new_hearing_task = hearing_task.cancel_and_recreate
 
-      new_hearing = HearingRepository.slot_new_hearing(hearing_day_id,
+      new_hearing = HearingRepository.slot_new_hearing(hearing_day_id: hearing_day_id,
                                                        appeal: appeal,
                                                        hearing_location_attrs: hearing_location&.to_hash,
                                                        scheduled_time_string: scheduled_time_string,
