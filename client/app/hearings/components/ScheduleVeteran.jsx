@@ -46,7 +46,7 @@ export const ScheduleVeteran = ({
   openHearing,
   appeal,
   scheduledHearing,
-  scheduleHearingTask,
+  scheduleHearingOrAssignDispositionTask,
   taskId,
   userCanViewTimeSlots,
   allHearingTasks,
@@ -111,8 +111,11 @@ export const ScheduleVeteran = ({
     veteranFullName: appeal?.veteranFullName
   };
 
-  // Get parent hearing task of this Schedule hearing task
-  const parentHearingTask = parentTasks([scheduleHearingTask], allHearingTasks)[0];
+  // Get parent hearing task of this task which could be
+  // Schedule Hearing Task or Assign Hearing Disposition Task
+  const parentHearingTask = parentTasks(
+    [scheduleHearingOrAssignDispositionTask], allHearingTasks
+  )[0];
 
   // Reset the component state
   const reset = () => {
@@ -458,7 +461,7 @@ ScheduleVeteran.propTypes = {
     hearingDate: PropTypes.string,
     regionalOffice: PropTypes.string,
   }),
-  scheduleHearingTask: PropTypes.object,
+  scheduleHearingOrAssignDispositionTask: PropTypes.object,
   onReceiveAppealDetails: PropTypes.func,
   startPollingHearing: PropTypes.func,
   requestPatch: PropTypes.func,
@@ -477,7 +480,7 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     scheduledHearing: state.components.scheduledHearing,
-    scheduleHearingTask: getAllTasksForAppeal(state, {
+    scheduleHearingOrAssignDispositionTask: getAllTasksForAppeal(state, {
       appealId: appeal?.externalId,
     }).find((task) => task?.taskId === ownProps.taskId),
     allHearingTasks: allHearingTasksForAppeal(state, { appealId: appeal?.externalId }),
