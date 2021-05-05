@@ -1710,7 +1710,7 @@ RSpec.feature "Case details", :all_dbs do
           sleep 1
           # FIXME: Without this sleep, the test passes even when the text is present.
           # How do computers even _work_??
-          expect(page).not_to have_content(COPY::SUBSTITUTE_APPELLANT_BUTTON)
+          expect(page.has_no_content?(COPY::SUBSTITUTE_APPELLANT_BUTTON)).to eq(true)
         end
       end
 
