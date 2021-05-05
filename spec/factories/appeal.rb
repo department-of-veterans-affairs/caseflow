@@ -411,7 +411,6 @@ FactoryBot.define do
     end
 
     trait :dispatched_with_decision_issue do
-      # Stuff here
       dispatched
 
       description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
