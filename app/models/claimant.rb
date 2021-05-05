@@ -55,6 +55,12 @@ class Claimant < CaseflowRecord
     @power_of_attorney ||= find_power_of_attorney
   end
 
+  def should_delete_power_of_attorney?
+    return true if power_of_attorney && power_of_attorney.bgs_record == :not_found
+
+    false
+  end
+
   def representative_participant_id
     power_of_attorney&.participant_id
   end

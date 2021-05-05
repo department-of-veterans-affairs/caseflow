@@ -11,7 +11,8 @@ import { CATEGORIES } from './analytics';
 import { COMMENT_ACCORDION_KEY } from '../reader/PdfViewer/actionTypes';
 import { Keyboard } from '../components/RenderFunctions';
 import { commentColumns, commentInstructions, documentsColumns,
-  documentsInstructions, searchColumns, searchInstructions } from './PdfKeyboardInfo';
+  documentsInstructions, searchColumns, searchInstructions,
+  categoryColumns, categoryInstructions } from './PdfKeyboardInfo';
 import { keyOfAnnotation, sortAnnotations }
   from './utils';
 import { makeGetAnnotationsByDocumentId } from './selectors';
@@ -91,10 +92,10 @@ export class PdfSidebar extends React.Component {
   }
 
   keyHandler = (event) => {
-    if (event.altKey) {
-      if (event.code === 'KeyM') {
-        this.props.togglePdfSidebar();
-      }
+    if (event.altKey &&
+        event.code === 'KeyM' &&
+        !event.shiftKey) {
+      this.props.togglePdfSidebar();
     }
   }
 
@@ -225,6 +226,11 @@ export class PdfSidebar extends React.Component {
               <Table
                 columns={commentColumns}
                 rowObjects={commentInstructions}
+                slowReRendersAreOk
+                className="cf-keyboard-modal-table" />
+              <Table
+                columns={categoryColumns}
+                rowObjects={categoryInstructions}
                 slowReRendersAreOk
                 className="cf-keyboard-modal-table" />
             </div>

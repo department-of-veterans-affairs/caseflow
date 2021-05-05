@@ -304,7 +304,7 @@ feature "Intake Add Issues Page", :all_dbs do
       add_intake_nonrating_issue(
         category: "Dependent Child - Biological",
         description: "test",
-        date: 30.days.ago.to_date.strftime("%-m/%-d/%Y")
+        date: 30.days.ago.to_date.strftime("%m/%d/%Y")
       )
       click_on "Establish appeal"
       expect(page).to have_content("correct the issues")
