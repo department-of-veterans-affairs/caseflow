@@ -142,7 +142,7 @@ const InfoAlert = ({ timeString }) => {
   });
 
   return (
-    <div {...alertContainerStyles}>
+    <div classNames="info-alert" {...alertContainerStyles}>
       <div {...greyRectangleStyles} />
       <div {...textDivStyles}>{`The hearing will start at ${timeString} Eastern Time`}</div>
     </div>
