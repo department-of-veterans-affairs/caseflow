@@ -8,7 +8,7 @@ exports[`EditUnscheduledNotesModal renders correctly 1`] = `
     aria-modal="true"
     class="cf-modal active "
     id="modal_id"
-    role="alertdialog"
+    role="dialog"
   >
     <div
       class="cf-modal-body"
