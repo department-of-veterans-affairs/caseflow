@@ -50,8 +50,7 @@ export const ScheduleVeteranForm = ({
     ro !== appeal?.closestRegionalOffice ||
     isEmpty(appeal?.availableHearingLocations);
 
-  const unscheduledNotes =
-    hearing?.notes || hearingTask?.unscheduledHearingNotes?.notes;
+  const unscheduledNotes = hearing?.notes;
 
   const getOriginalRequestType = () => {
     if (

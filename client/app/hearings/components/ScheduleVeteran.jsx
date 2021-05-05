@@ -153,6 +153,8 @@ export const ScheduleVeteran = ({
       });
     }
 
+    props.onChangeFormData('assignHearing', { notes: parentHearingTask?.unscheduledHearingNotes?.notes });
+
     return reset;
   }, []);
 
