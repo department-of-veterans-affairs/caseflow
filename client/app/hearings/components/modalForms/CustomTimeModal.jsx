@@ -122,7 +122,7 @@ const getTimezoneAbbreviation = (timezone) => {
   return moment.tz('00:00', 'HH:mm', timezone).format('z');
 };
 
-// Should maybe be made part of the "Alert" component?
+// Should maybe be made part of the "Alert" component? Seemed very different
 const InfoAlert = ({ timeString }) => {
   const alertContainerStyles = css({
     display: 'flex',
@@ -272,9 +272,20 @@ export const CustomTimeModal = ({ onConfirm, onCancel, roCity, roTimezone }) => 
   const [error, setError] = useState();
   // Control the TimeSelect component
   const [selectedOption, setSelectedOption] = useState();
-  // Check if we have a value, if yes setError, if not, submit.
-  const handleConfirm = () =>
-    selectedOption ? onConfirm(selectedOption?.value) : setError('Please enter a hearing start time.');
+  // Check if we have a value, if yes setError, if not, format and submit.
+  const handleConfirm = () => {
+    if (!selectedOption) {
+      setError('Please enter a hearing start time.');
+    }
+    if (selectedOption) {
+      // Take the moment value and convert it into the format TimeSlot expects
+      // - Eastern timezone
+      // - 13:15 (24hr clock)
+      const formattedValue = selectedOption.value.tz('America/New_York').format('HH:mm');
+
+      onConfirm(formattedValue);
+    }
+  };
 
   return (
     <Modal
