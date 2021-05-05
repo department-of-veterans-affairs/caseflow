@@ -1707,9 +1707,9 @@ RSpec.feature "Case details", :all_dbs do
       shared_examples "the button is not shown" do
         it "the 'Add Substitute' button is not shown" do
           visit "/queue/appeals/#{appeal.external_id}"
-          sleep 1
-          # FIXME: Without this sleep, the test passes even when the text is present.
-          # How do computers even _work_??
+          # This find forces a wait for the page to render. Without it, this test will always pass,
+          # whether the content is present or not!
+          find("div", id: "caseTitleDetailsSubheader")
           expect(page.has_no_content?(COPY::SUBSTITUTE_APPELLANT_BUTTON)).to eq(true)
         end
       end
@@ -1717,6 +1717,7 @@ RSpec.feature "Case details", :all_dbs do
       shared_examples "the button is shown" do
         it "the 'Add Substitute' button is shown" do
           visit "/queue/appeals/#{appeal.external_id}"
+          find("div", id: "caseTitleDetailsSubheader")
           expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_BUTTON)
         end
       end
