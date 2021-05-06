@@ -38,6 +38,7 @@ export const SubstituteAppellantTasksForm = ({
     defaultValues: {
       ...existingValues,
       taskIds:
+        // eslint-disable-next-line max-len
         existingValues?.taskIds?.length ? existingValues?.taskIds : (tasks?.filter((task) => task.selected)).map((task) => task.taskId),
     },
   });
