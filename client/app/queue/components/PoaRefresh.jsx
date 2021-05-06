@@ -30,7 +30,7 @@ export const PoaRefresh = ({ powerOfAttorney, appealId }) => {
   };
 
   const lastSyncedCopy = sprintf(COPY.CASE_DETAILS_POA_LAST_SYNC_DATE_COPY, poaSyncInfo);
-  const viewPoaRefresh = useSelector((state) => state.ui.featureToggles.poa_sync_date);
+  const viewPoaRefresh = useSelector((state) => state.ui.featureToggles.poa_refresh);
 
   return <React.Fragment>
     {viewPoaRefresh &&
