@@ -880,7 +880,7 @@
   "UNTIMELY_EVIDENCE_BULLET_THREE": "Requested the Hearing appeal option and submitted evidence outside of the 90-day window after their hearing",
   "WHAT_IS_INELIGIBLE_EVIDENCE": "What is ineligible evidence?",
 
-  "INVALID_MULTIPLE_TASKS": "there should not be multiple tasks of this type", 
+  "INVALID_MULTIPLE_TASKS": "there should not be multiple open tasks of this type", 
   "INVALID_TASKS_ARGUMENT": "must be an ActiveRecord::Relation object",
   "INVALID_SORT_COLUMN": "must be a QueueColumn",
   "TASK_PAGE_INVALID_ASSIGNEE_MESSAGE": "must be either a User or an Organization",
