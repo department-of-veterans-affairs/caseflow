@@ -194,6 +194,7 @@ export const sampleEvidenceSubmissionTasks = () => {
       type: 'JudgeAssignTask',
       label: 'Assign',
       parentId: 1,
+      closedAt: '2021-04-28T10:33:08.151-04:00',
     },
     {
       type: 'JudgeDecisionReviewTask',
@@ -226,3 +227,4 @@ export const sampleEvidenceSubmissionTasks = () => {
 
   return getAmaTasks(taskTypes);
 };
+

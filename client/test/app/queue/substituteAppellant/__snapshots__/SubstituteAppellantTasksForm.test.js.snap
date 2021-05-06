@@ -71,6 +71,14 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
         <h2>
           Tasks selected for new appeal
         </h2>
+        <div>
+          <p>
+            Listed below are all the tasks from the original appeal. The distribution task will always be selected by default and cannot be unselected to ensure the appeal is routed apprioriately.
+          </p>
+          <p>
+            Determine and select tasks that need to be reactivated. Unselecting a task will undo this.
+          </p>
+        </div>
         <table
           class="usa-table-borderless css-nil"
         >
@@ -236,7 +244,7 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
                 Completed
               </td>
               <td>
-                04/29/2021
+                04/28/2021
               </td>
             </tr>
             <tr>
@@ -491,6 +499,14 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
         <h2>
           Tasks selected for new appeal
         </h2>
+        <div>
+          <p>
+            Listed below are all the tasks from the original appeal. The distribution task will always be selected by default and cannot be unselected to ensure the appeal is routed apprioriately.
+          </p>
+          <p>
+            Determine and select tasks that need to be reactivated. Unselecting a task will undo this.
+          </p>
+        </div>
         <table
           class="usa-table-borderless css-nil"
         >
@@ -558,6 +574,7 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
                   >
                     <input
                       aria-label="taskIds[2]"
+                      checked=""
                       id="taskIds[2]"
                       name="taskIds[2]"
                       type="checkbox"
@@ -595,6 +612,7 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
                   >
                     <input
                       aria-label="taskIds[3]"
+                      checked=""
                       id="taskIds[3]"
                       name="taskIds[3]"
                       type="checkbox"
@@ -656,7 +674,7 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
                 Completed
               </td>
               <td>
-                04/29/2021
+                04/28/2021
               </td>
             </tr>
             <tr>

@@ -9,7 +9,6 @@ import { formatTaskData } from 'app/queue/substituteAppellant/tasks/utils';
 
 const allEvidenceSubmissionWindowTasks = sampleEvidenceSubmissionTasks();
 
-console.log('allEvidenceSubmissionWindowTasks', allEvidenceSubmissionWindowTasks);
 const filteredEvidenceSubmissionTasks = formatTaskData(
   allEvidenceSubmissionWindowTasks
 );
@@ -53,5 +52,6 @@ export const ExistingValues = Template.bind({});
 ExistingValues.args = {
   existingValues: {
     substitutionDate: '2021-02-15',
+    taskIds: [2, 3]
   },
 };

@@ -1,6 +1,6 @@
-import { uniq } from 'lodash';
+import { stubTrue, uniq } from 'lodash';
 import {
-  filterDuplicateTasks,
+  filterTasks,
   formatTaskData,
   shouldAutoSelect,
   shouldDisable,
@@ -36,11 +36,11 @@ describe('utility functions for task manipulation', () => {
     });
   });
 
-  describe('filterDuplicateTasks', () => {
+  describe('filterTasks', () => {
     const tasks = sampleEvidenceSubmissionTasks();
 
-    it('filters out duplicates', () => {
-      const filtered = filterDuplicateTasks(tasks);
+    it('filters tasks', () => {
+      const filtered = filterTasks(tasks);
       const uniqueTypes = uniq(filtered, 'type');
 
       expect(filtered.length).toBeLessThan(tasks.length);
@@ -49,13 +49,27 @@ describe('utility functions for task manipulation', () => {
       expect(filtered).toMatchSnapshot();
     });
 
-    it('prefers user tasks', () => {
-      const filtered = filterDuplicateTasks(tasks);
+    // add logic to test for tasks only being cancelled or closed
+
+    // pass in an array where task.closedAt is null and make sure it doesn't get returned back
+
+    it('prefers org tasks', () => {
+      const filtered = filterTasks(tasks);
       const bvaDispatchTask = filtered.find(
         (task) => task.type === 'BvaDispatchTask'
       );
 
-      expect(bvaDispatchTask?.assignedTo?.isOrganization).toBe(false);
+      expect(bvaDispatchTask?.assignedTo?.isOrganization).toBe(true);
+    });
+
+    it('only allows for completed or cancelled tasks', () => {
+      // needs to be an organization or would be filtered
+      const assignedTo = { isOrganization: true };
+      const filtered = filterTasks([{ closedAt: '2021-04-01', assignedTo }, { closedAt: null, assignedTo }]);
+
+      expect(filtered.length).toBe(1);
+      expect(filtered[0].closedAt).toBeTruthy();
+      expect(filtered).toMatchSnapshot();
     });
   });
 

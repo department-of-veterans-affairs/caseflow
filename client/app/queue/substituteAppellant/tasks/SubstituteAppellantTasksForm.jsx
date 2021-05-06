@@ -34,13 +34,14 @@ export const SubstituteAppellantTasksForm = ({
 }) => {
   const methods = useForm({
     // Use this for repopulating form from redux when user navigates back
+    resolver: yupResolver(schema),
     defaultValues: {
       ...existingValues,
       taskIds:
-        tasks?.filter((task) => task.selected).map((task) => task.taskId) || [],
+        existingValues?.taskIds?.length ? existingValues?.taskIds : (tasks?.filter((task) => task.selected)).map((task) => task.taskId),
     },
-    resolver: yupResolver(schema),
   });
+
   const { handleSubmit } = methods;
 
   return (

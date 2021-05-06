@@ -68,20 +68,26 @@ export const shouldAutoSelect = (taskInfo) => {
 };
 
 // Takes an array of tasks and filters it down to a list of most recent of each type
-export const filterDuplicateTasks = (taskData = []) => {
+export const filterTasks = (taskData = []) => {
   const uniqueTasksByType = {};
 
   for (const task of taskData) {
+    // we only want organization tasks
+    if (!task.assignedTo?.isOrganization) {
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+
+    // we only want completed and cancelled tasks
+    if (!task.closedAt) {
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+
     const newer = uniqueTasksByType[task.type]?.closedAt > task.closedAt;
-    const isChild = task.parentId === uniqueTasksByType[task.type]?.taskId;
 
     // If unrepresented or is newer, add to object
     if (!newer) {
-      uniqueTasksByType[task.type] = task;
-    }
-
-    // Prefer leaf nodes (likely user vs org)
-    if (isChild) {
       uniqueTasksByType[task.type] = task;
     }
   }
@@ -89,11 +95,17 @@ export const filterDuplicateTasks = (taskData = []) => {
   return Object.values(uniqueTasksByType);
 };
 
+export const sortTasks = (taskData) => {
+  return taskData.sort((task1, task2) => task1.closedAt > task2.closedAt ? -1 : 1);
+};
+
 // This returns array of tasks with relevant booleans for hidden/disabled
 export const formatTaskData = (taskData) => {
-  const uniqTasks = filterDuplicateTasks(taskData);
+  const uniqTasks = filterTasks(taskData);
 
-  return uniqTasks.map((taskInfo) => ({
+  const sortedTasks = sortTasks(uniqTasks);
+
+  return sortedTasks.map((taskInfo) => ({
     ...taskInfo,
     hidden: shouldHide(taskInfo),
     disabled: shouldDisable(taskInfo, taskData),

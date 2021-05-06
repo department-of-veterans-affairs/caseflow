@@ -68,11 +68,13 @@ RSpec.shared_examples("fill substitution form") do
     step "create tasks form" do
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}/substitute_appellant/tasks")
 
-      expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_CREATE_TASKS_TITLE
+      expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_SELECT_APPELLANT_TITLE
       expect(page).to have_css(".cf-progress-bar-activated", text: "Select substitute appellant")
       # expect(page).to have_css(".cf-progress-bar-activated", text: "Select POA")
       expect(page).to have_css(".cf-progress-bar-activated", text: "Create task")
+      expect(page).to have_css(".cf-progress-bar-not-activated", text: "Review")
 
+      binding.pry
       expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_KEY_DETAILS_TITLE)
       expect(page).to have_content("Notice of disagreement received")
       expect(page).to have_content("Veteran date of death")

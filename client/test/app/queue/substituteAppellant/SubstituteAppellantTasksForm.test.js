@@ -12,6 +12,20 @@ describe('SubstituteAppellantTasksForm', () => {
   const onSubmit = jest.fn();
   const onCancel = jest.fn();
 
+  // Date constructor uses zero-based offset for months — this is 2021-03-17
+  const fakeDate = new Date(2021, 2, 17, 12);
+
+  beforeAll(() => {
+  // Ensure consistent handling of dates across tests
+    jest.useFakeTimers('modern');
+    jest.setSystemTime(fakeDate);
+  });
+
+  afterAll(() => {
+    // Reset normal timers
+    jest.useRealTimers();
+  });
+
   const defaults = {
     appealId: 'abc123',
     nodDate: parseISO('2021-04-01'),
@@ -49,30 +63,21 @@ describe('SubstituteAppellantTasksForm', () => {
     });
 
     it('passes a11y testing', async () => {
+      // Fake timers causes timeouts for jest-axe
+      jest.useRealTimers();
       const { container } = setup();
 
       const results = await axe(container);
 
       expect(results).toHaveNoViolations();
-    });
-
-    describe('form validation', () => {
-      it('requires at least some tasks to have been entered', async () => {
-        setup();
-
-        const submit = screen.getByRole('button', { name: /continue/i });
-
-        // Submit to trigger validation
-        await userEvent.click(submit);
-
-        expect(onSubmit).not.toHaveBeenCalled();
-      });
+      jest.useFakeTimers('modern');
     });
   });
 
   describe('with existing form data', () => {
     const existingValues = {
       // Insert task data here
+      taskIds: [2, 3]
     };
 
     it('renders default state correctly', () => {
@@ -82,11 +87,14 @@ describe('SubstituteAppellantTasksForm', () => {
     });
 
     it('passes a11y testing', async () => {
+      // Fake timers causes timeouts for jest-axe
+      jest.useRealTimers();
       const { container } = setup({ existingValues });
 
       const results = await axe(container);
 
       expect(results).toHaveNoViolations();
+      jest.useFakeTimers('modern');
     });
 
     describe('form validation', () => {

@@ -62,7 +62,7 @@ export const SubstituteAppellantTasksView = () => {
   };
   const handleSubmit = async (formData) => {
     // Here we'll dispatch updateData action to update Redux store with our form data
-    dispatch(updateData(formData));
+    dispatch(updateData({ formData }));
 
     // Advance progressbar
     dispatch(stepForward());

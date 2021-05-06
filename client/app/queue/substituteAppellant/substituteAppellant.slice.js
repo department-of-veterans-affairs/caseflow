@@ -23,11 +23,12 @@ const initialState = {
   step: 0,
 
   /**
-   * This will hold substitution date, participantId, etc
+   * This will hold substitution date, participantId, taskIds, etc
    */
   formData: {
     substitutionDate: null,
     participantId: null,
+    taskIds: [],
   },
 
   /**
