@@ -26,11 +26,23 @@ export const TimeSlot = ({
   const [timeModal, setTimeModal] = useState(false);
   const toggleTimeModal = () => setTimeModal((val) => !val);
 
-  // Filter the available time slots to fill in the hearings
+  // Extract the necessary values for timeslot calculation from state
   const beginsAt = hearing?.hearingDay?.beginsAt;
   const numberOfSlots = hearing?.hearingDay?.totalSlots;
   const slotLengthMinutes = hearing?.hearingDay?.slotLengthMinutes;
-  const slots = setTimeSlots({ scheduledHearingsList, ro, roTimezone, beginsAt, numberOfSlots, slotLengthMinutes, selectedTimeString: selected });
+  const hearingDayDate = hearing?.hearingDay?.scheduledFor;
+  // Get the timeslots
+  const slots = setTimeSlots({
+    scheduledHearingsList,
+    ro,
+    roTimezone,
+    beginsAt,
+    numberOfSlots,
+    slotLengthMinutes,
+    selectedTimeString:
+    selected,
+    hearingDayDate
+  });
 
   // Setup the click handler for each time slot
   const handleChange = (time) => {

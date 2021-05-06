@@ -585,7 +585,7 @@ const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings
  * @param {array} selectedTimeString -- List of hearings scheduled for a specific date
  * @param {array} slotsAndHearings   -- The ro id, can be RXX, C, or V
  */
-const displaySelectedTimeAsSlot = ({ selectedTimeString, slotsAndHearings }) => {
+const displaySelectedTimeAsSlot = ({ selectedTimeString, slotsAndHearings, hearingDayDate }) => {
   if (!selectedTimeString) {
     return slotsAndHearings;
   }
@@ -595,7 +595,7 @@ const displaySelectedTimeAsSlot = ({ selectedTimeString, slotsAndHearings }) => 
   }
   // Create a timeslot object (same as in combineSlotsAndHearings)
 
-  const selectedTime = moment.tz(selectedTimeString, 'HH:mm', 'America/New_York');
+  const selectedTime = moment.tz(`${selectedTimeString} ${hearingDayDate}`, 'HH:mm YYYY-MM-DD', 'America/New_York');
   const selectedTimeSlot = {
     slotId: 'selected-time',
     key: `selected-time-${selectedTimeString}`,
@@ -635,16 +635,16 @@ export const setTimeSlots = ({
   beginsAt,
   numberOfSlots,
   slotLengthMinutes,
-  selectedTimeString
+  selectedTimeString,
+  hearingDayDate
 }) => {
   // Safe assign the hearings array in case there are no scheduled hearings
   const scheduledHearings = scheduledHearingsList || [];
 
   const defaultNumberOfSlots = 8;
   const defaultBeginsAt = ro === 'C' ? '09:00' : '08:30';
-  const momentDefaultBeginsAt = moment.tz(defaultBeginsAt, 'HH:mm', 'America/New_York');
+  const momentDefaultBeginsAt = moment.tz(`${defaultBeginsAt} ${hearingDayDate}`, 'HH:mm YYYY-MM-DD', 'America/New_York');
   const momentBeginsAt = moment(beginsAt);
-
   const defaultSlotLengthMinutes = 60;
 
   const availableSlots = calculateAvailableTimeslots({
@@ -661,7 +661,7 @@ export const setTimeSlots = ({
     scheduledHearings
   });
 
-  return displaySelectedTimeAsSlot({ selectedTimeString, slotsAndHearings });
+  return displaySelectedTimeAsSlot({ selectedTimeString, slotsAndHearings, hearingDayDate });
 
 };
 
