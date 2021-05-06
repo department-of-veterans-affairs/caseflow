@@ -8,9 +8,9 @@ describe InitialTasksFactory, :postgres do
 
     let(:appeal) do
       create(:appeal, claimants: [
-              create(:claimant, participant_id: participant_id_with_pva),
-              create(:claimant, participant_id: participant_id_with_aml)
-            ])
+               create(:claimant, participant_id: participant_id_with_pva),
+               create(:claimant, participant_id: participant_id_with_aml)
+             ])
     end
 
     before do
@@ -50,8 +50,8 @@ describe InitialTasksFactory, :postgres do
         context "when it has no vso representation" do
           let(:appeal) do
             create(:appeal, docket_type: Constants.AMA_DOCKETS.direct_review, claimants: [
-                    create(:claimant, participant_id: participant_id_with_no_vso)
-                  ])
+                     create(:claimant, participant_id: participant_id_with_no_vso)
+                   ])
           end
 
           before { InitialTasksFactory.new(appeal).create_root_and_sub_tasks! }
@@ -65,12 +65,27 @@ describe InitialTasksFactory, :postgres do
           end
         end
 
+        context "on veteran date of death present" do
+          let(:appeal) do
+            create(:appeal,
+              docket_type: Constants.AMA_DOCKETS.direct_review, claimants: [ create(:claimant, participant_id: participant_id_with_no_vso) ],
+              veteran: create(:veteran, date_of_death: 30.days.ago.to_date)
+            )
+          end
+
+          it "is ready for distribution" do
+            InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+
+            expect(DistributionTask.find_by(appeal: appeal).status).to eq("assigned")
+          end
+        end
+
         context "when it has an ihp-writing vso" do
           let(:appeal) do
             create(:appeal, docket_type: Constants.AMA_DOCKETS.direct_review, claimants: [
-                    create(:claimant, participant_id: participant_id_with_pva),
-                    create(:claimant, participant_id: participant_id_with_aml)
-                  ])
+                     create(:claimant, participant_id: participant_id_with_pva),
+                     create(:claimant, participant_id: participant_id_with_aml)
+                   ])
           end
 
           subject { InitialTasksFactory.new(appeal).create_root_and_sub_tasks! }
@@ -125,9 +140,9 @@ describe InitialTasksFactory, :postgres do
 
         let(:appeal) do
           create(:appeal, docket_type: Constants.AMA_DOCKETS.direct_review, claimants: [
-                  create(:claimant, participant_id: participant_id_with_pva),
-                  create(:claimant, participant_id: participant_id_with_aml)
-                ])
+                   create(:claimant, participant_id: participant_id_with_pva),
+                   create(:claimant, participant_id: participant_id_with_aml)
+                 ])
         end
 
         it "creates a task for each VSO" do
@@ -160,26 +175,11 @@ describe InitialTasksFactory, :postgres do
         end
       end
 
-      context "on veteran date of death present" do
-        let(:appeal) do
-          create(:appeal,
-            docket_type: Constants.AMA_DOCKETS.direct_review, claimants: [ create(:claimant, participant_id: participant_id_with_no_vso) ],
-            veteran: create(:veteran, date_of_death: 30.days.ago.to_date)
-          )
-        end
-
-        it "is ready for distribution" do
-          InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-
-          expect(DistributionTask.find_by(appeal: appeal).status).to eq("assigned")
-        end
-      end
-
       context "on the evidence submission docket is created" do
         let(:appeal) do
           create(:appeal, docket_type: Constants.AMA_DOCKETS.evidence_submission, claimants: [
-                  create(:claimant, participant_id: participant_id_with_no_vso)
-                ])
+                   create(:claimant, participant_id: participant_id_with_no_vso)
+                 ])
         end
 
         it "blocks distribution" do
@@ -192,8 +192,8 @@ describe InitialTasksFactory, :postgres do
       context "on the hearing docket is created" do
         let(:appeal) do
           create(:appeal, docket_type: Constants.AMA_DOCKETS.hearing, claimants: [
-                  create(:claimant, participant_id: participant_id_with_no_vso)
-                ])
+                   create(:claimant, participant_id: participant_id_with_no_vso)
+                 ])
         end
 
         it "blocks distribution with schedule hearing task" do
@@ -228,11 +228,11 @@ describe InitialTasksFactory, :postgres do
       # create(:cavc_remand, ...) indirectly calls InitialTasksFactory#create_root_and_sub_tasks!
       subject do
         create(:cavc_remand,
-              source_appeal: appeal,
-              cavc_decision_type: cavc_decision_type,
-              remand_subtype: remand_subtype,
-              judgement_date: judgement_date,
-              mandate_date: mandate_date)
+               source_appeal: appeal,
+               cavc_decision_type: cavc_decision_type,
+               remand_subtype: remand_subtype,
+               judgement_date: judgement_date,
+               mandate_date: mandate_date)
       end
 
       let(:cavc_decision_type) { Constants.CAVC_DECISION_TYPES.remand }
