@@ -63,6 +63,7 @@ feature "Non-veteran claimants", :postgres do
       expect(page).to have_content("Claimant's address")
       expect(page).to have_content(attorney.name)
       expect(page).to have_content(attorney.address_line_1.titleize)
+
       expect(page).to have_button("Continue to next step", disabled: false)
 
       # Verify that this can be removed

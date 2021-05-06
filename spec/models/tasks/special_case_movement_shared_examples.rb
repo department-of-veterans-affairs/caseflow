@@ -29,7 +29,7 @@ end
 
 shared_examples "wrong parent task type provided" do
   context "with the evidence window task as parent" do
-    let(:evidence_window_task) { appeal.tasks.open.where(type: EvidenceSubmissionWindowTask.name).first }
+    let(:evidence_window_task) { appeal.tasks.open.of_type(:EvidenceSubmissionWindowTask).first }
 
     subject do
       described_class.create!(appeal: appeal,
@@ -76,7 +76,7 @@ shared_examples "non Case Movement user provided" do
              :with_post_intake_tasks,
              docket_type: Constants.AMA_DOCKETS.direct_review)
     end
-    let(:dist_task) { appeal.tasks.active.where(type: DistributionTask.name).first }
+    let(:dist_task) { appeal.tasks.active.of_type(:DistributionTask).first }
 
     subject do
       described_class.create!(appeal: appeal,

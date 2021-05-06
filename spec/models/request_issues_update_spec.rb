@@ -24,12 +24,16 @@ describe RequestIssuesUpdate, :all_dbs do
 
   let!(:veteran) { Generators::Veteran.build(file_number: "789987789") }
 
+  let!(:intake_user) { create(:user) }
+  let(:edit_user) { create(:user) }
+
   let(:rating_end_product_establishment) do
     create(
       :end_product_establishment,
       veteran_file_number: veteran.file_number,
       source: review,
-      code: "030HLRR"
+      code: "030HLRR",
+      user_id: intake_user.id
     )
   end
 
@@ -94,13 +98,11 @@ describe RequestIssuesUpdate, :all_dbs do
 
   let(:request_issues_update) do
     RequestIssuesUpdate.new(
-      user: user,
+      user: edit_user,
       review: review,
       request_issues_data: request_issues_data
     )
   end
-
-  let(:user) { create(:user) }
 
   let(:request_issues_data) { [] }
 
@@ -362,7 +364,9 @@ describe RequestIssuesUpdate, :all_dbs do
             expect(EndProductEstablishment.find_by(code: "030HLRNR", source: review)).to eq(nil)
 
             subject
-            ep = EndProductEstablishment.find_by(code: "030HLRNR", source: review)
+            ep = EndProductEstablishment.find_by(
+              code: "030HLRNR", source: review, user_id: edit_user.id, station: edit_user.station_id
+            )
             expect(ep).to_not be_nil
             # informal conference should also have been created
             expect(ep.development_item_reference_id).to_not be_nil
@@ -379,7 +383,8 @@ describe RequestIssuesUpdate, :all_dbs do
             :end_product_establishment,
             veteran_file_number: veteran.file_number,
             source: review,
-            code: "030HLRNR"
+            code: "030HLRNR",
+            user_id: edit_user.id
           )
         end
 
@@ -789,12 +794,6 @@ describe RequestIssuesUpdate, :all_dbs do
       updated_contention.text = edited_description
       expect(Fakes::VBMSService).to have_received(:update_contention!).with(updated_contention)
       expect(edited_issue.reload.contention_updated_at).to eq(Time.zone.now)
-    end
-
-    it "should re-assign EPE user to RequestIssuesUpdate user" do
-      expect(review.end_product_establishments.map(&:user)).to_not include(riu.user)
-      subject
-      expect(review.end_product_establishments.map(&:user).uniq).to eq([riu.user])
     end
 
     context "when the request issue doesn't have a contention" do
