@@ -70,6 +70,9 @@ export const CaseDetailsView = (props) => {
   const canEditCavcRemands = useSelector(
     (state) => state.ui.canEditCavcRemands
   );
+  const userIsCobAdmin = useSelector(
+    (state) => state.ui.userIsCobAdmin
+  );
   const success = useSelector((state) => state.ui.messages.success);
   const error = useSelector((state) => state.ui.messages.error);
   const veteranCaseListIsVisible = useSelector(
@@ -128,14 +131,25 @@ export const CaseDetailsView = (props) => {
     [appeal, tasks]
   );
 
-  const appealIsDispached = appeal.status === 'dispatched';
+  const appealIsDispatched = appeal.status === 'dispatched';
+
   const supportCavcRemand =
-    currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand;
+    currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand && !appeal.isLegacyAppeal;
+
+  const decisionHasDismissedDeathDisposition = (decisionIssue) =>
+    decisionIssue.disposition === 'dismissed_death';
+
   const supportSubstituteAppellant =
     currentUserOnClerkOfTheBoard &&
-    props.featureToggles.recognized_granted_substitution_after_dd;
+    props.featureToggles.recognized_granted_substitution_after_dd &&
+    appeal.caseType === 'Original' &&
+    // Substitute appellants for hearings will be supported later, but aren't yet:
+    appeal.docketName !== 'hearing' &&
+    (userIsCobAdmin || appeal.decisionIssues.some(decisionHasDismissedDeathDisposition)) &&
+    !appeal.isLegacyAppeal;
+
   const showPostDispatch =
-    appealIsDispached && (supportCavcRemand || supportSubstituteAppellant);
+    appealIsDispatched && (supportCavcRemand || supportSubstituteAppellant);
 
   return (
     <React.Fragment>
