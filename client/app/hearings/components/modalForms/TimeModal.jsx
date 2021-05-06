@@ -247,8 +247,6 @@ const TimeSelect = ({ roTimezone, onSelect, error, clearError }) => {
           blurInputOnSelect
           // Dont show the placeholder text
           placeholder=""
-          // Don't let menu get long enough to scroll the modal
-          maxMenuHeight="300"
           // Hide some elements of react-select, deal with error state, adjust height of component
           styles={customSelectStyles}
         />
@@ -304,6 +302,7 @@ export const TimeModal = ({ onCancel, onConfirm, ro }) => {
       ]}
       closeHandler={onCancel}
       id="custom-time-modal"
+      customStyles={css({ overflow: 'hidden' })}
     >
       <div {...css({ height: '200px' })}>
         <div {...css({ fontWeight: 'bold' })}>
