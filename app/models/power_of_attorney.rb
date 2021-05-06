@@ -32,6 +32,7 @@ class PowerOfAttorney
            :representative_email_address,
            :participant_id,
            :poa_last_synced_at,
+           :id,
            to: :bgs_power_of_attorney, prefix: :bgs
 
   class << self
@@ -61,6 +62,10 @@ class PowerOfAttorney
         rep_type: rep_type
       )
     end
+  end
+
+  def clear_bgs_power_of_attorney!
+    @bgs_power_of_attorney = nil
   end
 
   private
