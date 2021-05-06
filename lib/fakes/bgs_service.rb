@@ -339,7 +339,7 @@ class Fakes::BGSService
 
     record = (self.class.power_of_attorney_records || {})[file_number]
     record ||= default_vso_power_of_attorney_record if file_number == DEFAULT_VSO_POA_FILE_NUMBER
-    record ||= default_power_of_attorney_record
+    record ||= default_power_of_attorney_record(file_number)
 
     get_claimant_poa_from_bgs_poa(record)
   end
@@ -671,9 +671,10 @@ class Fakes::BGSService
     RequestStore[:current_user]
   end
 
-  def default_power_of_attorney_record
+  def default_power_of_attorney_record(file_number = nil)
+    file_number ||= "633792224"
     {
-      file_number: "633792224",
+      file_number: "#{file_number}",
       power_of_attorney:
         {
           legacy_poa_cd: "3QQ",
