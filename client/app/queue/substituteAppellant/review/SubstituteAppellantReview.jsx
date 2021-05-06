@@ -64,7 +64,7 @@ export const SubstituteAppellantReview = ({ existingValues, onBack, onCancel, on
                   Relation to Veteran
                 </td>
                 <td>
-                { relationship && relationship.relationshipType }
+                  { relationship && relationship.relationshipType }
                 </td>
               </tr>
             </tbody>

@@ -1,22 +1,8 @@
 import React from 'react';
-import { sub } from 'date-fns';
 import { MemoryRouter } from 'react-router';
-import uuid from 'uuid';
 
 import { SubstituteAppellantReview } from './SubstituteAppellantReview';
-
-const relationships = [
-  { value: 'CLAIMANT_WITH_PVA_AS_VSO',
-    fullName: 'Bob Vance',
-    relationshipType: 'Spouse',
-    displayText: 'Bob Vance, Spouse',
-  },
-  { value: '"1129318238"',
-    fullName: 'Cathy Smith',
-    relationshipType: 'Child',
-    displayText: 'Cathy Smith, Child',
-  },
-];
+import { queueWrapper as Wrapper } from '../../../../test/data/stores/queueStore';
 
 export default {
   title: 'Queue/Substitute Appellant/SubstituteAppellantReview',
@@ -41,7 +27,27 @@ export default {
   },
 };
 
-const Template = (args) => <SubstituteAppellantReview {...args} />;
+const storeArgs = {
+  substituteAppellant: {
+    relationships:  [
+      { value: 'CLAIMANT_WITH_PVA_AS_VSO',
+        fullName: 'Bob Vance',
+        relationshipType: 'Spouse',
+        displayText: 'Bob Vance, Spouse',
+      },
+      { value: '"1129318238"',
+        fullName: 'Cathy Smith',
+        relationshipType: 'Child',
+        displayText: 'Cathy Smith, Child',
+      },
+    ],
+  }
+};
+const Template = (args) => (
+  <Wrapper {...storeArgs}>
+    <SubstituteAppellantReview {...args} />
+  </Wrapper>
+);
 
 export const Basic = Template.bind({});
 
