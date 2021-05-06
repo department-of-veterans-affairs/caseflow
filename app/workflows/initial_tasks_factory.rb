@@ -35,7 +35,9 @@ class InitialTasksFactory
   def create_subtasks!
     distribution_task # ensure distribution_task exists
 
-    if @appeal.cavc?
+    if @appeal.appellant_substitution?
+      # create tasks based on appellant_substitution form
+    elsif @appeal.cavc?
       create_cavc_subtasks
     elsif @appeal.evidence_submission_docket?
       EvidenceSubmissionWindowTask.create!(appeal: @appeal, parent: distribution_task)
