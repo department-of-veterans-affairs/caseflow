@@ -169,6 +169,62 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     end
   end
 
+  context "when Time Slot Details are missing" do
+    subject do
+      HearingSchedule::ValidateRoSpreadsheet.new(
+        Roo::Spreadsheet.open("spec/support/roMissingTimeSlotDetails.xlsx", extension: :xlsx),
+        Date.parse("01/01/2018"),
+        Date.parse("01/06/2018")
+      ).validate
+    end
+
+    it "returns MissingTimeSlotDetails" do
+      expect(subject).to include HearingSchedule::ValidateRoSpreadsheet::MissingTimeSlotDetails
+    end
+  end
+
+  context "when Number of Time Slots Invalid" do
+    subject do
+      HearingSchedule::ValidateRoSpreadsheet.new(
+        Roo::Spreadsheet.open("spec/support/roInvalidNumberOfTimeSlots.xlsx", extension: :xlsx),
+        Date.parse("01/01/2018"),
+        Date.parse("01/06/2018")
+      ).validate
+    end
+
+    it "returns InvalidNumberOfSlots" do
+      expect(subject).to include HearingSchedule::ValidateRoSpreadsheet::InvalidNumberOfSlots
+    end
+  end
+
+  context "when Time Slot Duration is Invalid" do
+    subject do
+      HearingSchedule::ValidateRoSpreadsheet.new(
+        Roo::Spreadsheet.open("spec/support/roInvalidTimeSlotLength.xlsx", extension: :xlsx),
+        Date.parse("01/01/2018"),
+        Date.parse("01/06/2018")
+      ).validate
+    end
+
+    it "returns SlotDurationExceedsMax" do
+      expect(subject).to include HearingSchedule::ValidateRoSpreadsheet::SlotDurationExceedsMax
+    end
+  end
+
+  context "when Time Slot Start Time is Invalid" do
+    subject do
+      HearingSchedule::ValidateRoSpreadsheet.new(
+        Roo::Spreadsheet.open("spec/support/roInvalidTimeSlotStartTime.xlsx", extension: :xlsx),
+        Date.parse("01/01/2018"),
+        Date.parse("01/06/2018")
+      ).validate
+    end
+
+    it "returns StartTimeNotValidTime" do
+      expect(subject).to include HearingSchedule::ValidateRoSpreadsheet::StartTimeNotValidTime
+    end
+  end
+
   context "when RO spreadsheet is valid" do
     subject do
       HearingSchedule::ValidateRoSpreadsheet.new(
