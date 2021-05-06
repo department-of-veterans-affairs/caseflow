@@ -486,7 +486,7 @@ describe HearingDay, :all_dbs do
       create(:ro_schedule_period)
     end
 
-    fcontext "generate and persist hearing schedule" do
+    context "generate and persist hearing schedule" do
       before do
         HearingDay.create_schedule(schedule_period.algorithm_assignments)
       end
