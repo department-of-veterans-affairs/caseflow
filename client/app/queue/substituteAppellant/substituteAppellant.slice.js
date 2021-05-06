@@ -19,6 +19,21 @@ export const fetchRelationships = createAsyncThunk(
   }
 );
 
+export const refreshAppellantPoa = createAsyncThunk(
+  'substituteAppellant/refreshAppellantPoa',
+  async ({ participantId }) => {
+    try {
+      const res = await ApiUtil.put(`/claimants/${participantId}/poa`);
+
+      return res?.body?.poa
+    } catch (error) {
+      console.error('Error fetching appellant poa', error);
+      throw error;
+    }
+  }
+);
+
+
 const initialState = {
   step: 0,
 
@@ -68,6 +83,7 @@ const substituteAppellantSlice = createSlice({
     [fetchRelationships.rejected]: (state) => {
       // In case of error, empty relationships array (will display message re no relationships found)
       state.relationships = null;
+      state.loadingRelationships = false;
     },
   },
 });

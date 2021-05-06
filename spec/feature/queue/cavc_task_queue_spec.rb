@@ -479,6 +479,9 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
   describe "when editing a cavc remand" do
     let(:remand_appeal) { create(:appeal, :type_cavc_remand) }
     let(:source_appeal) { remand_appeal.cavc_remand.source_appeal }
+    let(:cavc_remand) { remand_appeal.cavc_remand }
+    let(:new_judge_name) { Constants::CAVC_JUDGE_FULL_NAMES.second }
+    let(:updated_instructions) { " this has been edited" }
 
     context "with feature toggles enabled" do
       before do
@@ -512,6 +515,27 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         step "verify that existing values are present" do
           click_on "Edit Remand"
           expect(page).to have_content COPY::EDIT_CAVC_PAGE_TITLE.to_s
+
+          expect(page).to have_field(
+            COPY::CAVC_TYPE_LABEL,
+            with: Constants::CAVC_DECISION_TYPE_NAMES[cavc_remand[:cavc_decision_type]]
+          )
+          expect(page).to have_field(
+            COPY::CAVC_SUB_TYPE_LABEL,
+            with: Constants::CAVC_REMAND_SUBTYPE_NAMES[cavc_remand[:remand_subtype]]
+          )
+        end
+
+        step "edit certain fields" do
+          click_dropdown(text: new_judge_name)
+          fill_in "instructions", with: updated_instructions, fill_options: { clear: :backspace }
+          page.find("button", text: "Submit").click
+        end
+
+        step "verify updates" do
+          expect(page).to have_content "CAVC Remand"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGE}: #{new_judge_name}"
+          expect(page).to have_content updated_instructions
         end
       end
     end
@@ -872,7 +896,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         end
 
         step "reassign to another user" do
-          timed_hold_task = task.appeal.tasks.open.where(type: :TimedHoldTask).first
+          timed_hold_task = task.appeal.tasks.open.of_type(:TimedHoldTask).first
           expect(timed_hold_task.parent.assigned_to).to eq org_nonadmin
 
           click_dropdown(text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.label)

@@ -33,6 +33,8 @@ class Appeal < DecisionReview
   # The has_one here provides the docket_switch object to the newly created appeal upon completion of the docket switch
   has_one :docket_switch, class_name: "DocketSwitch", foreign_key: :new_docket_stream_id
 
+  has_one :appellant_substitution, foreign_key: :target_appeal_id
+
   has_many :record_synced_by_job, as: :record
   has_one :work_mode, as: :appeal
   has_one :latest_informal_hearing_presentation_task, lambda {
@@ -45,8 +47,7 @@ class Appeal < DecisionReview
     Constants.AMA_STREAM_TYPES.original.to_sym => Constants.AMA_STREAM_TYPES.original,
     Constants.AMA_STREAM_TYPES.vacate.to_sym => Constants.AMA_STREAM_TYPES.vacate,
     Constants.AMA_STREAM_TYPES.de_novo.to_sym => Constants.AMA_STREAM_TYPES.de_novo,
-    Constants.AMA_STREAM_TYPES.court_remand.to_sym => Constants.AMA_STREAM_TYPES.court_remand,
-    Constants.AMA_STREAM_TYPES.substitution.to_sym => Constants.AMA_STREAM_TYPES.substitution
+    Constants.AMA_STREAM_TYPES.court_remand.to_sym => Constants.AMA_STREAM_TYPES.court_remand
   }
 
   after_create :conditionally_set_aod_based_on_age
@@ -194,7 +195,7 @@ class Appeal < DecisionReview
   end
 
   def reviewing_judge_name
-    task = tasks.not_cancelled.where(type: JudgeDecisionReviewTask.name).order(created_at: :desc).first
+    task = tasks.not_cancelled.of_type(:JudgeDecisionReviewTask).order(created_at: :desc).first
     task ? task.assigned_to.try(:full_name) : ""
   end
 
@@ -235,11 +236,11 @@ class Appeal < DecisionReview
   end
 
   def active?
-    tasks.open.where(type: RootTask.name).any?
+    tasks.open.of_type(:RootTask).any?
   end
 
   def ready_for_distribution?
-    tasks.active.where(type: DistributionTask.name).any?
+    tasks.active.of_type(:DistributionTask).any?
   end
 
   def ready_for_distribution_at
@@ -348,11 +349,16 @@ class Appeal < DecisionReview
   def cavc_remand
     return nil if !cavc?
 
-    CavcRemand.find_by(remand_appeal: self)
+    # If this appeal is a direct result of a CavcRemand, then return it
+    return CavcRemand.find_by(remand_appeal: self) if CavcRemand.find_by(remand_appeal: self)
+
+    # If this appeal went through appellant_substitution after a CavcRemand, then use the source_appeal,
+    # which is the same stream_type (cavc? == true) as this appeal.
+    appellant_substitution.source_appeal.cavc_remand if appellant_substitution?
   end
 
-  def appellant_substitution
-    AppellantSubstitution.find_by(target_appeal: self)
+  def appellant_substitution?
+    !!appellant_substitution
   end
 
   def status
@@ -367,7 +373,7 @@ class Appeal < DecisionReview
     fail "benefit_type on Appeal is set per RequestIssue"
   end
 
-  def create_issues!(new_issues)
+  def create_issues!(new_issues, _request_issues_update = nil)
     new_issues.each do |issue|
       issue.benefit_type ||= issue.contested_benefit_type || issue.guess_benefit_type
       issue.veteran_participant_id = veteran.participant_id
@@ -413,6 +419,8 @@ class Appeal < DecisionReview
            :representative_address,
            :representative_email_address,
            :poa_last_synced_at,
+           :update_cached_attributes!,
+           :save_with_updated_bgs_record!,
            to: :power_of_attorney, allow_nil: true
 
   def power_of_attorneys

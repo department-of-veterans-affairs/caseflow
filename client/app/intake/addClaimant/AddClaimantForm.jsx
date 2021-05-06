@@ -9,7 +9,7 @@ import TextField from 'app/components/TextField';
 import AddressForm from 'app/components/AddressForm';
 import Address from 'app/queue/components/Address';
 import * as Constants from '../constants';
-import { ADD_CLAIMANT_PAGE_DESCRIPTION } from 'app/../COPY';
+import { ADD_CLAIMANT_PAGE_DESCRIPTION, ERROR_EMAIL_INVALID_FORMAT } from 'app/../COPY';
 import { fetchAttorneys, formatAddress } from './utils';
 import { debounce } from 'lodash';
 
@@ -51,12 +51,15 @@ export const AddClaimantForm = ({
   onSubmit,
 }) => {
   const methods = useFormContext();
-  const { control, register, watch, handleSubmit, setValue } = methods;
+  const { control, register, watch, handleSubmit, setValue, errors } = methods;
+
+  const emailValidationError = errors ?.emailAddress && ERROR_EMAIL_INVALID_FORMAT;
 
   const watchRelationship = watch('relationship');
   const dependentRelationship = ['spouse', 'child'].includes(watchRelationship);
   const watchPartyType = watch('partyType');
   const watchListedAttorney = watch('listedAttorney');
+
   const attorneyRelationship = watchRelationship === 'attorney';
   const attorneyNotListed = watchListedAttorney?.value === 'not_listed';
   const listedAttorney = attorneyRelationship && watchListedAttorney?.value && !attorneyNotListed;
@@ -93,8 +96,7 @@ export const AddClaimantForm = ({
               label="Relationship to the Veteran"
               options={relationshipOpts}
               onChange={(valObj) => {
-                onChange(valObj);
-                setValue('relationship', valObj?.value);
+                onChange(valObj.value);
               }}
               strongLabel
             />
@@ -102,32 +104,30 @@ export const AddClaimantForm = ({
         />
         <br />
         {watchRelationship === 'attorney' && (
-          <>
-            <Controller
-              control={control}
-              name="listedAttorney"
-              defaultValue={null}
-              render={({ onChange, ...rest }) => (
-                <FieldDiv>
-                  <SearchableDropdown
-                    {...rest}
-                    label="Claimant's name"
-                    filterOption={filterOption}
-                    async={asyncFn}
-                    defaultOptions
-                    debounce={250}
-                    strongLabel
-                    isClearable
-                    onChange={(valObj) => {
-                      onChange(valObj);
-                      setValue('listedAttorney', valObj);
-                    }}
-                    placeholder="Type to search..."
-                  />
-                </FieldDiv>
-              )}
-            />
-          </>
+          <Controller
+            control={control}
+            name="listedAttorney"
+            defaultValue={null}
+            render={({ onChange, ...rest }) => (
+              <FieldDiv>
+                <SearchableDropdown
+                  {...rest}
+                  label="Claimant's name"
+                  filterOption={filterOption}
+                  async={asyncFn}
+                  defaultOptions
+                  debounce={250}
+                  strongLabel
+                  isClearable
+                  onChange={(valObj) => {
+                    onChange(valObj);
+                    setValue('listedAttorney', valObj);
+                  }}
+                  placeholder="Type to search..."
+                />
+              </FieldDiv>
+            )}
+          />
         )}
 
         {listedAttorney && watchListedAttorney?.address && (
@@ -203,6 +203,7 @@ export const AddClaimantForm = ({
             <AddressForm {...methods} />
             <FieldDiv>
               <TextField
+                validationError={emailValidationError}
                 name="emailAddress"
                 label="Claimant email"
                 inputRef={register}
@@ -252,7 +253,7 @@ const Suffix = styled.div`
 
 const PhoneNumber = styled.div`
   width: 240px;
-  margin-bottom: 2em;
+  margin-bottom: 1.5em;
 `;
 
 const ClaimantAddress = styled.div`

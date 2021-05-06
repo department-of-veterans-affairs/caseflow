@@ -238,4 +238,30 @@ describe SupplementalClaim, :postgres do
       end
     end
   end
+
+  context "#other_close_event_date" do
+    subject { supplemental_claim.other_close_event_date }
+
+    context "with an end product" do
+      let!(:sc_ep) do
+        create(:end_product_establishment,
+               :cleared, source: supplemental_claim,
+                         last_synced_at: last_synced_at)
+      end
+
+      context "when end product's last_synced_at is nil" do
+        let(:last_synced_at) { nil }
+        it "returns nil" do
+          expect(subject).to be_nil
+        end
+      end
+
+      context "when end product has a last_synced_at" do
+        let(:last_synced_at) { Time.now.utc }
+        it "returns that date" do
+          expect(subject).to eq(last_synced_at.to_date)
+        end
+      end
+    end
+  end
 end

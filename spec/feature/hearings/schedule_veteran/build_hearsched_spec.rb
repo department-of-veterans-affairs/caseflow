@@ -225,7 +225,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
     # Method to choose either the hearing time slot buttons or hearing time radio buttons
     def select_hearing_time(time)
-      if FeatureToggle.enabled?(:enable_hearing_time_slots)
+      virtual_hearing_type_selected = page.has_content?("Virtual")
+      if FeatureToggle.enabled?(:enable_hearing_time_slots) && virtual_hearing_type_selected
         eastern_time = convert_local_time_to_eastern_timezone(time)
         find(".time-slot-button", text: eastern_time).click
       else
@@ -241,8 +242,9 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     def select_custom_hearing_time(time, is_eastern_only = true)
       slots_enabled = FeatureToggle.enabled?(:enable_hearing_time_slots)
       direct_enabled = FeatureToggle.enabled?(:schedule_veteran_virtual_hearing)
+      virtual_hearing_type_selected = page.has_content?("Virtual")
 
-      if slots_enabled
+      if slots_enabled && virtual_hearing_type_selected
         find(".time-slot-button-toggle", text: "Choose a custom time").click
       end
 
@@ -731,18 +733,18 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
           expect(page).to have_content("You have successfully withdrawn")
           expect(page).to have_content(COPY::WITHDRAW_HEARING["AMA"]["SUCCESS_MESSAGE"])
-          expect(appeal.tasks.where(type: EvidenceSubmissionWindowTask.name).count).to eq(1)
+          expect(appeal.tasks.of_type(:EvidenceSubmissionWindowTask).count).to eq(1)
 
           if scheduled
-            expect(appeal.tasks.where(type: ScheduleHearingTask.name).first.status).to eq(
+            expect(appeal.tasks.of_type(:ScheduleHearingTask).first.status).to eq(
               Constants.TASK_STATUSES.completed
             )
-            expect(appeal.tasks.where(type: AssignHearingDispositionTask.name).first.status).to eq(
+            expect(appeal.tasks.of_type(:AssignHearingDispositionTask).first.status).to eq(
               Constants.TASK_STATUSES.cancelled
             )
             expect(appeal.hearings.last.cancelled?).to eq(true)
           else
-            expect(appeal.tasks.where(type: ScheduleHearingTask.name).first.status).to eq(
+            expect(appeal.tasks.of_type(:ScheduleHearingTask).first.status).to eq(
               Constants.TASK_STATUSES.cancelled
             )
           end
@@ -770,15 +772,15 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           expect(legacy_appeal.case_record.bfha).to eq("5")
 
           if scheduled
-            expect(legacy_appeal.tasks.where(type: ScheduleHearingTask.name).first.status).to eq(
+            expect(legacy_appeal.tasks.of_type(:ScheduleHearingTask).first.status).to eq(
               Constants.TASK_STATUSES.completed
             )
-            expect(legacy_appeal.tasks.where(type: AssignHearingDispositionTask.name).first.status).to eq(
+            expect(legacy_appeal.tasks.of_type(:AssignHearingDispositionTask).first.status).to eq(
               Constants.TASK_STATUSES.cancelled
             )
             expect(legacy_appeal.hearings.last.cancelled?).to eq(true)
           else
-            expect(legacy_appeal.tasks.where(type: ScheduleHearingTask.name).first.status).to eq(
+            expect(legacy_appeal.tasks.of_type(:ScheduleHearingTask).first.status).to eq(
               Constants.TASK_STATUSES.cancelled
             )
           end

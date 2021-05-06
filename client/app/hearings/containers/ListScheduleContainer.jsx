@@ -52,7 +52,10 @@ export class ListScheduleContainer extends React.Component {
       dateRangeKey: `${props.startDate}->${props.endDate}`,
       modalOpen: false,
       showModalAlert: false,
-      view: LIST_SCHEDULE_VIEWS.DEFAULT_VIEW
+      view: LIST_SCHEDULE_VIEWS.DEFAULT_VIEW,
+      // This will hold a reference to the button that opens the modal in order to preserve
+      // page flow when the modal is closed
+      modalButton: null
     };
   }
 
@@ -104,11 +107,14 @@ export class ListScheduleContainer extends React.Component {
     this.loadHearingSchedule(params)
   ]);
 
-  openModal = () => {
-    this.setState({ showModalAlert: false,
+  openModal = (event) => {
+    this.setState({
+      showModalAlert: false,
       modalOpen: true,
       serverError: false,
-      noRoomsAvailable: false });
+      noRoomsAvailable: false,
+      modalButton: event.target
+    });
     this.props.onSelectedHearingDayChange('');
     this.props.selectRequestType('');
     this.props.onRegionalOfficeChange('');
@@ -126,7 +132,13 @@ export class ListScheduleContainer extends React.Component {
   };
 
   cancelModal = () => {
-    this.setState({ modalOpen: false });
+    // Move the focus back to the button that opened the modal
+    this.state.modalButton.focus();
+
+    this.setState({
+      modalOpen: false,
+      modalButton: null
+    });
   };
 
   getAlertTitle = () => {

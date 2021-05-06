@@ -1,7 +1,7 @@
 import * as React from 'react';
 import moment from 'moment';
 import pluralize from 'pluralize';
-import _ from 'lodash';
+import { _, isEmpty } from 'lodash';
 
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import BadgeArea from './BadgeArea';
@@ -69,6 +69,10 @@ export const documentIdColumn = () => {
       }
 
       const nameAbbrev = `${preparer.firstName.substring(0, 1)}. ${preparer.lastName}`;
+
+      if ((!task.documentId) || (isEmpty(task.documentId))) {
+        return;
+      }
 
       return <React.Fragment>
         {task.documentId}<br />from {nameAbbrev}

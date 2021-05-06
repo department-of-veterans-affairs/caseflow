@@ -360,13 +360,16 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def queue_tabs
-    return [assigned_tasks_tab] if judge_in_vacols? && !attorney_in_vacols?
-
-    [
-      assigned_tasks_tab,
-      on_hold_tasks_tab,
-      completed_tasks_tab
-    ]
+    # acting VLJs are both judge_in_vacols and attorney_in_vacols and should see the attorney columns
+    if (judge_in_vacols? && !attorney_in_vacols?) && !FeatureToggle.enabled?(:judge_queue_tabs, user: self)
+      [assigned_tasks_tab]
+    else
+      [
+        assigned_tasks_tab,
+        on_hold_tasks_tab,
+        completed_tasks_tab
+      ]
+    end
   end
 
   def self.default_active_tab

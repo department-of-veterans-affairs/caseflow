@@ -9,7 +9,9 @@ import { detailListStyling, getDetailField } from './Detail';
 import { getAppealValue } from './QueueActions';
 import Address from './components/Address';
 import BareList from '../components/BareList';
+import { PoaRefresh } from './components/PoaRefresh';
 import COPY from '../../COPY';
+import Alert from '../components/Alert';
 
 /**
  * Returns a selector to fetch the power of attorney details from the Redux state.
@@ -45,6 +47,7 @@ const PowerOfAttorneyDetailWrapper = (WrappedComponent) => {
       powerOfAttorneyFromAppealSelector(appealId),
       shallowEqual
     );
+    const poaAlert = useSelector((state) => state.ui.poaAlert);
 
     if (!powerOfAttorney) {
       if (loading) {
@@ -63,13 +66,18 @@ const PowerOfAttorneyDetailWrapper = (WrappedComponent) => {
     const hasPowerOfAttorneyDetails = powerOfAttorney.representative_type && powerOfAttorney.representative_name;
 
     return hasPowerOfAttorneyDetails ?
-      <WrappedComponent powerOfAttorney={powerOfAttorney} /> :
+      <WrappedComponent powerOfAttorney={powerOfAttorney} appealId={appealId} poaAlert={poaAlert} /> :
       <p><em>{COPY.CASE_DETAILS_NO_POA}</em></p>;
   };
 
   wrappedComponent.propTypes = {
     appealId: PropTypes.string,
-    getAppealValue: PropTypes.func
+    getAppealValue: PropTypes.func,
+    poaAlert: PropTypes.shape({
+      alertType: PropTypes.string,
+      message: PropTypes.string,
+      powerOfAttorney: PropTypes.object
+    })
   };
 
   return wrappedComponent;
@@ -85,35 +93,51 @@ export const PowerOfAttorneyNameUnconnected = ({ powerOfAttorney }) => (
 /**
  * Component that displays details about the power of attorney.
  */
-export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney }) => {
+export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, poaAlert }) => {
+  let poa = powerOfAttorney;
+
+  if (poaAlert.powerOfAttorney) {
+    poa = poaAlert.powerOfAttorney;
+  }
   const details = [
     {
-      label: powerOfAttorney.representative_type,
-      value: powerOfAttorney.representative_name
+      label: poa.representative_type,
+      value: poa.representative_name
     }
   ];
 
-  if (powerOfAttorney.representative_address) {
+  if (poa.representative_address) {
     details.push({
       label: 'Address',
-      value: <Address address={powerOfAttorney.representative_address} />
+      value: <Address address={poa.representative_address} />
     });
   }
 
-  if (powerOfAttorney.representative_email_address) {
+  if (poa.representative_email_address) {
     details.push({
       label: 'Email Address',
-      value: powerOfAttorney.representative_email_address
+      value: poa.representative_email_address
     });
   }
 
   return (
-    <ul {...detailListStyling}>
-      <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
-      <p><em>{ powerOfAttorney.representative_type === 'Unrecognized representative' ?
-        COPY.CASE_DETAILS_UNRECOGNIZED_POA :
-        COPY.CASE_DETAILS_INCORRECT_POA }</em></p>
-    </ul>
+    <React.Fragment>
+      <div>
+        <p>{ poa.representative_type === 'Unrecognized representative' ?
+          <em>{ COPY.CASE_DETAILS_UNRECOGNIZED_POA }</em> :
+          <PoaRefresh powerOfAttorney={poa} appealId={appealId} {...detailListStyling} />}
+        </p>
+        <ul {...detailListStyling}>
+          <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
+        </ul>
+        <p><em>{ COPY.CASE_DETAILS_POA_EXPLAINER }</em></p>
+        { poaAlert.message && poaAlert.alertType && (
+          <div>
+            <Alert type={poaAlert.alertType} message={poaAlert.message} scrollOnAlert={false} />
+          </div>
+        )}
+      </div>
+    </React.Fragment>
   );
 };
 
@@ -122,8 +146,15 @@ PowerOfAttorneyNameUnconnected.propTypes = PowerOfAttorneyDetailUnconnected.prop
     representative_type: PropTypes.string,
     representative_name: PropTypes.string,
     representative_address: PropTypes.object,
-    representative_email_address: PropTypes.string
-  })
+    representative_email_address: PropTypes.string,
+    representative_id: PropTypes.number
+  }),
+  poaAlert: PropTypes.shape({
+    message: PropTypes.string,
+    alertType: PropTypes.string,
+    powerOfAttorney: PropTypes.object
+  }),
+  appealId: PropTypes.number
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators(

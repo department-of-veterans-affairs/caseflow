@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { DocketSwitchAddAdminTaskForm } from 'app/queue/docketSwitch/grant/DocketSwitchAddAdminTaskForm';
+import { AddAdminTaskForm } from 'app/queue/colocatedTasks/AddAdminTaskForm/AddAdminTaskForm';
 import { FormProvider, useForm } from 'react-hook-form';
 
 // eslint-disable-next-line react/prop-types
@@ -12,7 +12,7 @@ const Wrapper = ({ children }) => {
   return <FormProvider {...methods}>{children}</FormProvider>;
 };
 
-describe('DocketSwitchAddAdminTaskForm', () => {
+describe('AddAdminTaskForm', () => {
   const onRemove = jest.fn();
 
   const baseName = 'newTasks[0]';
@@ -21,7 +21,7 @@ describe('DocketSwitchAddAdminTaskForm', () => {
   const defaults = { baseName, item, onRemove };
 
   const setup = (props = {}) =>
-    render(<DocketSwitchAddAdminTaskForm {...defaults} {...props} />, {
+    render(<AddAdminTaskForm {...defaults} {...props} />, {
       wrapper: Wrapper,
     });
 

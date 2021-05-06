@@ -40,7 +40,7 @@ RSpec.feature "Case details", :all_dbs do
     User.authenticate!(user: attorney_user)
   end
 
-  context "hearings pane on attorney task detail view" do
+  context "hearings panel on attorney task detail view" do
     let(:veteran_first_name) { "Linda" }
     let(:veteran_last_name) { "Verne" }
     let!(:veteran) do
@@ -214,7 +214,7 @@ RSpec.feature "Case details", :all_dbs do
       context "when there is no POA" do
         before do
           allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return(nil)
-          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(nil)
+          allow(BgsPowerOfAttorney).to receive(:fetch_bgs_poa_by_participant_id).and_return(nil)
         end
 
         scenario "contains message for no POA" do
@@ -301,7 +301,23 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to have_content(appeal.appellant_relationship)
         expect(page).to have_content(appeal.appellant_address_line_1)
         expect(page).to have_content(COPY::CASE_DETAILS_VETERAN_ADDRESS_SOURCE)
+        expect(page).to have_content(COPY::CASE_DETAILS_POA_EXPLAINER)
+        expect(page).to have_content(appeal.power_of_attorney.bgs_representative_name)
         expect(page).to_not have_content("Regional Office")
+      end
+
+      context "when there is no POA" do
+        before do
+          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return(nil)
+          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(nil)
+        end
+
+        scenario "contains message for no POA" do
+          visit "/queue"
+          click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+          expect(page).to have_content("Appellant's Power of Attorney")
+          expect(page).to have_content(COPY::CASE_DETAILS_NO_POA)
+        end
       end
     end
 
@@ -336,6 +352,16 @@ RSpec.feature "Case details", :all_dbs do
       end
 
       context "when an unrecognized appellant doesn't have a POA" do
+        before do
+          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return(nil)
+
+          allow_any_instance_of(BgsPowerOfAttorney).to receive(:representative_type)
+            .and_return("Unrecognized representative")
+
+          allow(BgsPowerOfAttorney).to receive(:fetch_bgs_poa_by_participant_id).and_return(nil)
+          allow(BgsPowerOfAttorney).to receive(:find_or_create_by_claimant_participant_id).and_return(nil)
+        end
+
         let!(:claimant) do
           create(
             :claimant,
@@ -349,7 +375,6 @@ RSpec.feature "Case details", :all_dbs do
 
         scenario "details view renders unrecognized POA copy" do
           visit "/queue/appeals/#{appeal.uuid}"
-
           expect(page).to have_content(COPY::CASE_DETAILS_UNRECOGNIZED_POA)
         end
       end
@@ -374,6 +399,152 @@ RSpec.feature "Case details", :all_dbs do
         # Expect to find content we know to be on the page so that we wait for the page to load.
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
         expect(page.has_no_content?("Select an action")).to eq(true)
+      end
+    end
+
+    context "POA refresh text isn't shown without feature toggle enabled" do
+      let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
+      let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
+
+      before { FeatureToggle.disable!(:poa_refresh) }
+      after { FeatureToggle.enable!(:poa_refresh) }
+
+      scenario "text isn't on the page" do
+        visit "/queue/appeals/#{appeal.vacols_id}"
+        expect(page.has_no_content?(COPY::CASE_DETAILS_POA_LAST_SYNC_DATE_COPY)).to eq(true)
+      end
+    end
+
+    context "POA refresh text is shown with feature toggle enabled" do
+      let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+      let(:appeal) { create(:appeal, veteran: create(:veteran)) }
+      let!(:poa) do
+        create(
+          :bgs_power_of_attorney,
+          :with_name_cached,
+          appeal: appeal
+        )
+      end
+
+      before { FeatureToggle.enable!(:poa_refresh) }
+      after { FeatureToggle.disable!(:poa_refresh) }
+
+      scenario "text is on the page" do
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page).to have_content("POA last refreshed on")
+      end
+    end
+
+    context "POA refresh text isn't shown when no POA is found" do
+      let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+      let(:appeal) { create(:appeal, veteran: create(:veteran)) }
+
+      before { FeatureToggle.enable!(:poa_refresh) }
+      after { FeatureToggle.disable!(:poa_refresh) }
+
+      scenario "text is not on the page" do
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page.has_no_content?(COPY::CASE_DETAILS_POA_LAST_SYNC_DATE_COPY)).to eq(true)
+      end
+    end
+
+    context "POA refresh button isn't shown without feature toggle enabled" do
+      let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
+      let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
+
+      before do
+        FeatureToggle.disable!(:poa_refresh)
+      end
+      after do
+        FeatureToggle.enable!(:poa_refresh)
+      end
+
+      scenario "button isn't on the page" do
+        visit "/queue/appeals/#{appeal.vacols_id}"
+        expect(page.has_no_content?("Refresh POA")).to eq(true)
+      end
+    end
+
+    context "POA refresh button is shown with feature toggle enabled" do
+      let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+      let(:appeal) { create(:appeal, veteran: create(:veteran)) }
+      let!(:poa) do
+        create(
+          :bgs_power_of_attorney,
+          :with_name_cached,
+          appeal: appeal
+        )
+      end
+
+      before do
+        FeatureToggle.enable!(:poa_refresh)
+      end
+      after do
+        FeatureToggle.disable!(:poa_refresh)
+      end
+
+      scenario "button is on the page and is in cooldown" do
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page).to have_content("Refresh POA")
+        click_on "Refresh POA"
+        expect(page).to have_content("Information is current at this time. Please try again in 10 minutes")
+        expect(page).to have_content("POA last refreshed on 01/01/2020")
+      end
+
+      scenario "button is on the page and updates" do
+        allow_any_instance_of(AppealsController).to receive(:cooldown_period_remaining).and_return(0)
+
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page).to have_content("Refresh POA")
+        click_on "Refresh POA"
+        expect(page).to have_content("POA Updated Successfully")
+        expect(page).to have_content("POA last refreshed on 01/01/2020")
+      end
+    end
+
+    context "POA refresh when BGS returns nil" do
+      let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+      let!(:appeal) do
+        create(
+          :legacy_appeal,
+          :with_veteran,
+          vacols_case: create(
+            :case,
+            :assigned,
+            user: attorney_user,
+            correspondent: create(:correspondent, sgender: "F", sdob: "1966-05-23")
+          )
+        )
+      end
+      let!(:poa) do
+        create(
+          :bgs_power_of_attorney,
+          :with_name_cached,
+          appeal: appeal
+        )
+      end
+
+      before do
+        FeatureToggle.enable!(:poa_refresh)
+      end
+      after do
+        FeatureToggle.disable!(:poa_refresh)
+      end
+
+      scenario "attempts to refresh with no BGS data" do
+        BgsPowerOfAttorney.set_callback(:save, :before, :update_cached_attributes!)
+        BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
+        poa.last_synced_at = Time.zone.now - 5.years
+        poa.save!
+
+        visit "/queue"
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        expect(page).to have_content("Refresh POA")
+        allow_any_instance_of(BgsPowerOfAttorney).to receive(:bgs_record).and_return(:not_found)
+        click_on "Refresh POA"
+        expect(page).to have_content("Successfully refreshed. No power of attorney information was found at this time.")
       end
     end
 

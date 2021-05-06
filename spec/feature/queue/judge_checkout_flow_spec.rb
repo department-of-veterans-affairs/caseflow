@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require "helpers/sanitized_json_configuration.rb"
+require "helpers/sanitized_json_importer.rb"
+
 RSpec.feature "Judge checkout flow", :all_dbs do
   let(:attorney_user) { create(:default_user) }
   let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
@@ -12,6 +15,85 @@ RSpec.feature "Judge checkout flow", :all_dbs do
     # When a judge completes judge checkout we create either a QR or dispatch task. Make sure we have somebody in
     # the BVA dispatch team so that the creation of that task (which round robin assigns org tasks) does not fail.
     BvaDispatch.singleton.add_user(create(:user))
+  end
+
+  # Replicates bug in prod: https://github.com/department-of-veterans-affairs/caseflow/issues/13416
+  # Scenario: judge opens the Case Details page for the same appeal in two tabs;
+  #   In tab 1, judge goes through checkout and the appeal is (randomly) selected for quality review;
+  #   Then in tab 2, judge goes through checkout and appeal is NOT selected for quality review
+  #     and should NOT create a BvaDispatchTask because the QualityReviewTask is not complete.
+  context "given an AMA appeal that is selected for quality review" do
+    before do
+      FeatureToggle.enable!(:special_issues_revamp)
+
+      Organization.create!(id: 212, url: "bvajlmarch", name: "BVAJLMARCH")
+
+      # force skipping Quality Review (to mimic tab 2)
+      allow(QualityReviewCaseSelector).to receive(:select_case_for_quality_review?).and_return(false)
+    end
+    after { FeatureToggle.disable!(:special_issues_revamp) }
+    let!(:appeal) do
+      sji = SanitizedJsonImporter.from_file("spec/records/appeal-dispatch_before_quality_review_complete.json",
+                                            verbosity: 0)
+      sji.import
+
+      # Remove extraneous tasks
+      Task.find(2_001_653_201).destroy
+      Task.find(2_001_648_871).destroy
+      Task.find(2_001_618_026).destroy
+
+      sji.imported_records[Appeal.table_name].first.tap do |appeal|
+        appeal.root_task.update(status: :on_hold)
+
+        # Withdraw a remanded decision issue because CircleCI's Capybara fails clicking boxes for the 2nd issue
+        decision_issue = appeal.reload.decision_issues.remanded.order(:id).first
+        decision_issue.update(disposition: :withdrawn)
+      end.reload
+    end
+    let(:jdr_task) { Task.find(2_001_579_253) }
+
+    it "prevents appeal dispatch when judge performs checkout again" do
+      User.authenticate!(user: User.find_by_css_id("WHITEYVACO"))
+
+      # Change JudgeDecisionReviewTask status so that "Ready for Dispatch" action is available
+      jdr_task.update(status: :assigned)
+      appeal.request_issues.update_all(closed_at: nil)
+      visit "queue/appeals/#{appeal.uuid}"
+
+      # Restore JudgeDecisionReviewTask status from the first checkout
+      jdr_task.update(status: :completed)
+      # Note that the judge can continue and complete checkout because frontend was loaded before jdr_task was complete
+
+      click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
+      # Special Issues page
+      expect(page).to have_content("Select special issues")
+      find("label", text: "No Special Issues").click
+      click_on "Continue"
+
+      # Decision Issues page
+      click_on "Continue"
+      expect(page).to have_content("Issue 1")
+      find("label", text: "No notice sent").click
+      find("label", text: "Pre AOJ").click
+      click_on "Continue"
+
+      # Evaluate Decision page
+      expect(page).to have_content("Evaluate Decision")
+
+      find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
+      text_to_click = "3 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['meets_expectations']}"
+      find("label", text: text_to_click).click
+      find("#logically_organized", visible: false).sibling("label").click
+      find("#issues_are_not_addressed", visible: false).sibling("label").click
+      fill_in "additional-factors", with: generate_words(5)
+      # Submit POST request
+      click_on "Continue"
+
+      expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
+
+      # The bug was that a BvaDispatchTask is created while the QualityReviewTask is open. It should not be created.
+      expect(appeal.tasks.open.of_type(:BvaDispatchTask).count).to eq 0
+    end
   end
 
   context "given a valid ama appeal with single issue" do
