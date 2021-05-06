@@ -89,11 +89,7 @@ export const ScheduleVeteranForm = ({
       </div>
       <div className="usa-width-one-half">
         <UnscheduledNotes
-          onChange={(notes) => {
-            window.analyticsEvent('Hearings', 'Add/edit notes', 'Schedule Veteran');
-
-            return props.onChange('notes', notes);
-          }}
+          onChange={(notes) => props.onChange('notes', notes)}
           unscheduledNotes={unscheduledNotes}
           updatedAt={hearingTask?.unscheduledHearingNotes?.updatedAt}
           updatedByCssId={hearingTask?.unscheduledHearingNotes?.updatedByCssId}

@@ -279,6 +279,9 @@ export const ScheduleVeteran = ({
 
       window.analyticsEvent('Hearings', 'Schedule Veteran - Schedule');
 
+      if (hearing?.notes !== parentHearingTask?.unscheduledHearingNotes?.notes) {
+        window.analyticsEvent('Hearings', 'Add/edit notes', 'Schedule Veteran');
+      }
       // Find the most recently created AssignHearingDispositionTask. This task will have the ID of the
       // most recently created hearing.
       const mostRecentTask = maxBy(
