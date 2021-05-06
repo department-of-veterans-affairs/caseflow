@@ -163,7 +163,7 @@ describe InitialTasksFactory, :postgres do
       context "on veteran date of death present" do
         let(:appeal) do
           create(:appeal,
-            docket_type: Constants.AMA_DOCKETS.direct_review, claimants: [ create(:claimant, participant_id: participant_id_with_no_vso)],
+            docket_type: Constants.AMA_DOCKETS.direct_review, claimants: [ create(:claimant, participant_id: participant_id_with_no_vso) ],
             veteran: create(:veteran, date_of_death: 30.days.ago.to_date)
           )
         end
