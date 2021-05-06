@@ -1808,7 +1808,7 @@ RSpec.feature "Case details", :all_dbs do
           # This find forces a wait for the page to render. Without it, this test will always pass,
           # whether the content is present or not!
           find("div", id: "caseTitleDetailsSubheader")
-          expect(page.has_no_content?(COPY::SUBSTITUTE_APPELLANT_BUTTON)).to eq(true)
+          expect(page).to have_no_content(COPY::SUBSTITUTE_APPELLANT_BUTTON)
         end
       end
 

@@ -132,8 +132,6 @@ export const CaseDetailsView = (props) => {
   );
 
   const appealIsDispatched = appeal.status === 'dispatched';
-  // I think we want this instead, but it's kind of off-topic here:
-  // const appealIsDispatched = ['dispatched', 'post_dispatch'].includes(appeal.status);
 
   const supportCavcRemand =
     currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand && !appeal.isLegacyAppeal;
@@ -145,6 +143,7 @@ export const CaseDetailsView = (props) => {
     currentUserOnClerkOfTheBoard &&
     props.featureToggles.recognized_granted_substitution_after_dd &&
     appeal.caseType === 'Original' &&
+    // Substitute appellants for hearings will be supported later, but aren't yet:
     appeal.docketName !== 'hearing' &&
     (userIsCobAdmin || appeal.decisionIssues.some(decisionHasDismissedDeathDisposition)) &&
     !appeal.isLegacyAppeal;
