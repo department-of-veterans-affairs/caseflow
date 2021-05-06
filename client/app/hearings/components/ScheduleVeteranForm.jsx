@@ -88,6 +88,18 @@ export const ScheduleVeteranForm = ({
         <AppealInformation appeal={appeal} />
       </div>
       <div className="usa-width-one-half">
+        <UnscheduledNotes
+          onChange={(notes) => {
+            window.analyticsEvent('Hearings', 'Add/edit notes', 'Schedule Veteran');
+
+            return props.onChange('notes', notes);
+          }}
+          unscheduledNotes={unscheduledNotes}
+          updatedAt={hearingTask?.unscheduledHearingNotes?.updatedAt}
+          updatedByCssId={hearingTask?.unscheduledHearingNotes?.updatedByCssId}
+          uniqueId={hearingTask?.taskId}
+        />
+        <div className="cf-help-divider usa-width-two-thirds" />
         <div className="usa-width-one-whole">
           <HearingTypeDropdown
             enableFullPageConversion
@@ -182,17 +194,6 @@ export const ScheduleVeteranForm = ({
 
             </React.Fragment>
           )}
-          <UnscheduledNotes
-            onChange={(notes) => {
-              window.analyticsEvent('Hearings', 'Add/edit notes', 'Schedule Veteran');
-
-              return props.onChange('notes', notes);
-            }}
-            unscheduledNotes={unscheduledNotes}
-            updatedAt={hearingTask?.unscheduledHearingNotes?.updatedAt}
-            updatedByCssId={hearingTask?.unscheduledHearingNotes?.updatedByCssId}
-            uniqueId={hearingTask?.taskId}
-          />
         </div>
         {virtual && (
           <div className="usa-width-one-whole" {...marginTop(25)}>
