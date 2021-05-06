@@ -99,6 +99,7 @@ const taskAttributesFromRawTask = (task) => {
     cancelledBy: {
       cssId: task.attributes.cancelled_by.css_id,
     },
+    cancelReason: task.attributes.cancellation_reason,
     convertedBy: {
       cssId: task.attributes.converted_by.css_id,
     },
