@@ -16,7 +16,7 @@ feature "CaseMovementTeam task actions" do
   # Target state: TBD -- see tcket
   describe "during Quality Review" do
     let!(:appeal) do
-      sji = SanitizedJsonImporter.from_file("spec/records/scm-cant-reassign.json", verbosity: 5)
+      sji = SanitizedJsonImporter.from_file("spec/records/scm-cant-reassign.json", verbosity: 0)
       sji.import
       sji.imported_records[Appeal.table_name].first
     end
