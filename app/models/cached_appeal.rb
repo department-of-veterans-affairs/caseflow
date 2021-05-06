@@ -6,5 +6,5 @@ class CachedAppeal < CaseflowRecord
   # For convenience when working in the Rails console
   scope :ama_appeal, -> { where(appeal_type: "Appeal") }
   scope :legacy_appeal, -> { where(appeal_type: "LegacyAppeal") }
-  scope :docket, ->(docket) { where(docket_type: docket)}
+  scope :docket, ->(docket) { where(docket_type: docket) }
 end
