@@ -36,6 +36,12 @@ class InitialTasksFactory
     distribution_task # ensure distribution_task exists
 
     if @appeal.appellant_substitution?
+      # copy task tree from source appeal
+      source_appeal = @appeal.appellant_substitution.source_appeal
+      # Given a selection of task_ids, select it and all its tree ancestors
+      # TODO for rspec: pull a real tree from prod that has a deep task tree and varied task types
+      task_ids = source_appeal.tasks.where(assigned_to_type: "Organization").of_type([:ScheduleHearingTask,
+        :EvidenceSubmissionWindowTask, :InformalHearingPresentationTask]).pluck(:id) # for testing
       copy_tasks(task_ids)
       # To-do create tasks based on appellant_substitution form
     elsif @appeal.cavc?
@@ -65,8 +71,16 @@ class InitialTasksFactory
 
     fail "Expecting only tasks assigned to organizations" if tasks.map(&:assigned_to_type).include?("User")
 
-    tasks.map { |task| task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: ["status"]) }
+    new_tasks = tasks.map { |task| task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: ["status"]) }
     # TODO: ask if we want to shown a SubstitutionTask in the timeline, like DocketSwitch*Task
+
+    # look up Organziation by given poa_participant_id
+    participant_id="789" # for testing
+    # TO FIX: CAUTION: this is inefficient
+    target_org = Organization.find_by(participant_id: participant_id)
+    # TODO: set the IHPTask to that Org
+    ihp_task = @appeal.appellant_substitution.target_appeal.tasks.of_type(:InformalHearingPresentationTask).first
+    ihp_task.update(assigned_to: target_org)
 
     source_appeal = @appeal.appellant_substitution.source_appeal
     source_appeal.treee
