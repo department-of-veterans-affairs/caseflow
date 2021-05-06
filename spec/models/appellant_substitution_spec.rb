@@ -20,6 +20,7 @@ describe AppellantSubstitution do
         poa_participant_id: poa_participant_id,
         selected_task_ids: [],
         task_params: {}
+        # evidence_submission_hold_end_date: Time.now + 20.days
       }
     end
 
@@ -45,7 +46,6 @@ describe AppellantSubstitution do
           create(:appeal, :with_schedule_hearing_tasks, :dispatched) { |appeal|
             distribution_task = appeal.tasks.of_type(:DistributionTask).first
 
-            # another_user = create(:user, roles: ["VSO"])
             vso_participant_id = "12345"
             org = create(:vso, participant_id: vso_participant_id)
             org_task = create(:informal_hearing_presentation_task, assigned_to: org, parent: distribution_task)
@@ -55,11 +55,13 @@ describe AppellantSubstitution do
             appeal.tasks.open.map(&:cancelled!)
           }
         }
-        let!(:new_poa) { create(:vso, participant_id: "789") }
+        let!(:new_poa) { create(:vso, participant_id: poa_participant_id) }
         it "creates new appeal with AOD due to age" do
           expect(source_appeal.tasks.of_type(:ScheduleHearingTask).count).to eq 1
           expect(source_appeal.tasks.of_type(:EvidenceSubmissionWindowTask).count).to eq 1
           expect(source_appeal.tasks.of_type(:InformalHearingPresentationTask).count).to eq 2
+          source_ihp_task = source_appeal.tasks.of_type(:InformalHearingPresentationTask).assigned_to_any_org.first
+          expect(source_ihp_task.assigned_to.participant_id).not_to eq new_poa.participant_id
 
           appellant_substitution = subject
           target_appeal = appellant_substitution.target_appeal
@@ -72,7 +74,7 @@ describe AppellantSubstitution do
 
           ihp_task = target_appeal.tasks.of_type(:InformalHearingPresentationTask).first
           expect(ihp_task.status).to eq "assigned"
-          expect(ihp_task.assigned_to).to eq new_poa
+          expect(ihp_task.assigned_to.participant_id).to eq new_poa.participant_id
           # binding.pry
         end
       end
