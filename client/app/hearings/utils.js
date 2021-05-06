@@ -558,16 +558,21 @@ const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings
     hearingTime: slot.time.format('HH:mm')
   }));
 
-  const formattedHearings = scheduledHearings.map((hearing) => ({
-    ...hearing,
-    key: hearing?.externalId,
-    full: true,
-    // The hearingTime is in roTimezone, but it looks like "09:30", this takes that "09:30"
-    // in roTimezone, and converts it to Eastern zone because slots are always in eastern.
-    hearingTime: moment.tz(hearing?.hearingTime, 'HH:mm', roTimezone).clone().
-      tz('America/New_York').
-      format('HH:mm')
-  }));
+  const formattedHearings = scheduledHearings.map((hearing) => {
+    const time = moment.tz(hearing?.hearingTime, 'HH:mm', roTimezone).clone().
+      tz('America/New_York');
+
+    return {
+      ...hearing,
+      key: hearing?.externalId,
+      full: true,
+      // Include this because slots have it and we use it for filtering
+      time,
+      // The hearingTime is in roTimezone, but it looks like "09:30", this takes that "09:30"
+      // in roTimezone, and converts it to Eastern zone because slots are always in eastern.
+      hearingTime: time.format('HH:mm')
+    };
+  });
 
   const slotsAndHearings = slots.concat(formattedHearings);
 
@@ -581,21 +586,31 @@ const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings
  * @param {array} slotsAndHearings   -- The ro id, can be RXX, C, or V
  */
 const displaySelectedTimeAsSlot = ({ selectedTimeString, slotsAndHearings }) => {
+  if (!selectedTimeString) {
+    return slotsAndHearings;
+  }
   // If a slot for this time already exists, it will be selected, don't add anything
   if (slotsAndHearings.find((item) => item.hearingTime === selectedTimeString)) {
     return slotsAndHearings;
   }
   // Create a timeslot object (same as in combineSlotsAndHearings)
+
+  const selectedTime = moment.tz(selectedTimeString, 'HH:mm', 'America/New_York');
   const selectedTimeSlot = {
     slotId: 'selected-time',
     key: `selected-time-${selectedTimeString}`,
     full: false,
     hearingTime: selectedTimeString,
-    time: moment.tz(selectedTimeString, 'HH:mm', 'America/New_York'),
+    time: selectedTime,
   };
+
   // Figure out where to insert that timeslot object in existing slots/hearings array
+  const insertIndex = slotsAndHearings.findIndex((item) => {
+    return item.time.isAfter(selectedTime);
+  });
 
   // Insert the timeslot object and return the new array
+  slotsAndHearings.splice(insertIndex, 0, selectedTimeSlot);
 
   return slotsAndHearings;
 };
