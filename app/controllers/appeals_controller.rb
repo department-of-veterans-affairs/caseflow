@@ -62,9 +62,9 @@ class AppealsController < ApplicationController
       representative_type: appeal.representative_type,
       representative_name: appeal.representative_name,
       representative_address: appeal.representative_address,
-      representative_email_address: appeal.appellant_is_not_veteran ? nil : appeal.representative_email_address,
+      representative_email_address: appeal.representative_email_address,
       representative_tz: appeal.representative_tz,
-      poa_last_synced_at: appeal.appellant_is_not_veteran ? nil : appeal.poa_last_synced_at
+      poa_last_synced_at: appeal.poa_last_synced_at
     }
   end
 
