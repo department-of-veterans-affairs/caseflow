@@ -220,6 +220,9 @@ describe LegacyOptinManager, :all_dbs do
         before do
           LegacyOptinManager.new(decision_review: appeal).process!
           LegacyOptinManager.new(decision_review: higher_level_review).process!
+          # Clear vacols_issue instance variable so that it reflects the opted-in dispositions
+          review_issues = appeal.request_issues + higher_level_review.request_issues
+          # review_issues.each { |issue| issue.send(:remove_instance_variable, :@vacols_issue) if instance_variable_defined?(:@vacols_issue) }
         end
 
         let!(:undecided_optin2) { create(:legacy_issue_optin, request_issue: undecided_ri2) }

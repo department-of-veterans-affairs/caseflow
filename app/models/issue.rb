@@ -233,6 +233,19 @@ class Issue
     false
   end
 
+  def rollback_opt_in!(legacy_issue_opt_in)
+    return unless disposition_id == LegacyIssueOptin::VACOLS_DISPOSITION_CODE
+
+    self.class.update_in_vacols!(
+      vacols_id: legacy_issue_opt_in.vacols_id,
+      vacols_sequence_id: legacy_issue_opt_in.vacols_sequence_id,
+      issue_attrs: {
+        disposition: legacy_issue_opt_in.original_disposition_code,
+        disposition_date: legacy_issue_opt_in.original_disposition_date
+      }
+    )
+  end
+
   def legacy_appeal
     @legacy_appeal ||= LegacyAppeal.find_by(vacols_id: id)
   end
@@ -340,21 +353,6 @@ class Issue
         issue_attrs: {
           disposition: disposition_code, # TODO: yes, this key is mis-named in IssueMapper
           disposition_date: Time.zone.today
-        }
-      )
-    end
-
-    def rollback_opt_in!(legacy_issue_opt_in)
-      if legacy_issue_opt_in.request_issue&.vacols_issue&.disposition != LegacyIssueOptin::VACOLS_DISPOSITION_CODE
-        return
-      end
-
-      update_in_vacols!(
-        vacols_id: legacy_issue_opt_in.vacols_id,
-        vacols_sequence_id: legacy_issue_opt_in.vacols_sequence_id,
-        issue_attrs: {
-          disposition: legacy_issue_opt_in.original_disposition_code,
-          disposition_date: legacy_issue_opt_in.original_disposition_date
         }
       )
     end

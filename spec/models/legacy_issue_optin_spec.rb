@@ -17,17 +17,17 @@ describe LegacyIssueOptin, :all_dbs do
   end
   let(:request_issue) { create(:request_issue, vacols_id: remand_case.bfkey, vacols_sequence_id: remand_issue.issseq) }
 
-  describe ".related_remand_issues" do
+  describe ".opt_ins_for_related_remand_issues" do
     it "joins with request_issues" do
-      expect(described_class.related_remand_issues(lio.vacols_id).count).to eq(1)
-      expect(described_class.related_remand_issues(lio.vacols_id).first).to eq(lio)
+      expect(described_class.opt_ins_for_related_remand_issues(lio.vacols_id).count).to eq(1)
+      expect(described_class.opt_ins_for_related_remand_issues(lio.vacols_id).first).to eq(lio)
     end
 
     context "the issue has not been opted in" do
       let(:optin_date) { nil }
 
       it "doesn't return non-opted-in issues" do
-        expect(described_class.related_remand_issues(lio.vacols_id).count).to eq(0)
+        expect(described_class.opt_ins_for_related_remand_issues(lio.vacols_id).count).to eq(0)
       end
     end
   end
