@@ -577,6 +577,31 @@ const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings
 
 /**
  * Method to set the available time slots based on the hearings scheduled
+ * @param {array} selectedTimeString -- List of hearings scheduled for a specific date
+ * @param {array} slotsAndHearings   -- The ro id, can be RXX, C, or V
+ */
+const displaySelectedTimeAsSlot = ({ selectedTimeString, slotsAndHearings }) => {
+  // If a slot for this time already exists, it will be selected, don't add anything
+  if (slotsAndHearings.find((item) => item.hearingTime === selectedTimeString)) {
+    return slotsAndHearings;
+  }
+  // Create a timeslot object (same as in combineSlotsAndHearings)
+  const selectedTimeSlot = {
+    slotId: 'selected-time',
+    key: `selected-time-${selectedTimeString}`,
+    full: false,
+    hearingTime: selectedTimeString,
+    time: moment.tz(selectedTimeString, 'HH:mm', 'America/New_York'),
+  };
+  // Figure out where to insert that timeslot object in existing slots/hearings array
+
+  // Insert the timeslot object and return the new array
+
+  return slotsAndHearings;
+};
+
+/**
+ * Method to set the available time slots based on the hearings scheduled
  * @param {array} scheduledHearingsList  -- List of hearings scheduled for a specific date
  * @param {string} ro         -- The ro id, can be RXX, C, or V
  * @param {string} roTimezone -- Like "America/Los_Angeles"
@@ -594,7 +619,8 @@ export const setTimeSlots = ({
   roTimezone = 'America/New_York',
   beginsAt,
   numberOfSlots,
-  slotLengthMinutes
+  slotLengthMinutes,
+  selectedTimeString
 }) => {
   // Safe assign the hearings array in case there are no scheduled hearings
   const scheduledHearings = scheduledHearingsList || [];
@@ -614,11 +640,13 @@ export const setTimeSlots = ({
     scheduledHearings
   });
 
-  return combineSlotsAndHearings({
+  const slotsAndHearings = combineSlotsAndHearings({
     roTimezone,
     availableSlots,
     scheduledHearings
   });
+
+  return displaySelectedTimeAsSlot({ selectedTimeString, slotsAndHearings });
 
 };
 

@@ -30,7 +30,7 @@ export const TimeSlot = ({
   const beginsAt = hearing?.hearingDay?.beginsAt;
   const numberOfSlots = hearing?.hearingDay?.totalSlots;
   const slotLengthMinutes = hearing?.hearingDay?.slotLengthMinutes;
-  const slots = setTimeSlots({ scheduledHearingsList, ro, roTimezone, beginsAt, numberOfSlots, slotLengthMinutes });
+  const slots = setTimeSlots({ scheduledHearingsList, ro, roTimezone, beginsAt, numberOfSlots, slotLengthMinutes, selectedTimeString: selected });
 
   // Setup the click handler for each time slot
   const handleChange = (time) => {
