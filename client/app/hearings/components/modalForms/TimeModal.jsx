@@ -281,6 +281,7 @@ export const TimeModal = ({ onCancel, onConfirm, ro }) => {
       // - 13:15 (24hr clock)
       const formattedValue = selectedOption.value.tz('America/New_York').format('HH:mm');
 
+      window.analyticsEvent('Hearings', 'Schedule Veteran – Choose a custom time', formattedValue);
       onConfirm(formattedValue);
     }
   };
