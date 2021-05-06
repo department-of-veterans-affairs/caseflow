@@ -55,7 +55,7 @@ class InitialTasksFactory
 
   def distribution_task
     @distribution_task ||= @appeal.tasks.open.find_by(type: :DistributionTask) ||
-                        DistributionTask.create!(appeal: @appeal, parent: @root_task)
+                           DistributionTask.create!(appeal: @appeal, parent: @root_task)
   end
 
   # For AMA appeals. Create appropriate subtasks based on the CAVC Remand subtype
