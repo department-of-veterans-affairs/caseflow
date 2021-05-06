@@ -58,14 +58,24 @@ class AppealsController < ApplicationController
   end
 
   def power_of_attorney
-    render json: {
-      representative_type: appeal.representative_type,
-      representative_name: appeal.representative_name,
-      representative_address: appeal.representative_address,
-      representative_email_address: appeal.representative_email_address,
-      representative_tz: appeal.representative_tz,
-      poa_last_synced_at: appeal.poa_last_synced_at
-    }
+    render json: power_of_attorney_data
+  end
+
+  def update_power_of_attorney
+    if cooldown_period_remaining > 0
+      message = "Information is current at this time. Please try again in #{cooldown_period_remaining} minutes"
+      render json: {
+        status: "info",
+        message: message,
+        power_of_attorney: power_of_attorney_data
+      }
+    elsif appeal.is_a?(Appeal)
+      poa = BgsPowerOfAttorney.find(params[:poaId])
+      render json: update_ama_poa(poa)
+    else
+      poa = appeal.power_of_attorney
+      render json: update_legacy_poa(poa)
+    end
   end
 
   def most_recent_hearing
@@ -175,7 +185,7 @@ class AppealsController < ApplicationController
   def json_appeals(appeal)
     if appeal.is_a?(Appeal)
       WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
-    elsif appeal.is_a?(LegacyAppeal)
+    else
       WorkQueue::LegacyAppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
     end
   end
@@ -239,5 +249,64 @@ class AppealsController < ApplicationController
 
   def docket_number?(search)
     !search.nil? && search.match?(/\d{6}-{1}\d+$/)
+  end
+
+  def power_of_attorney_data
+    poa_data = {
+      representative_type: appeal.representative_type,
+      representative_name: appeal.representative_name,
+      representative_address: appeal.representative_address,
+      representative_email_address: appeal.representative_email_address,
+      representative_tz: appeal.representative_tz,
+      poa_last_synced_at: appeal.poa_last_synced_at
+    }
+    unless appeal.power_of_attorney.is_a?(UnrecognizedPowerOfAttorney)
+      poa_data[:representative_id] = appeal.power_of_attorney&.id if appeal.is_a?(Appeal)
+      poa_data[:representative_id] = appeal.power_of_attorney&.bgs_id if appeal.is_a?(LegacyAppeal)
+    end
+    poa_data
+  end
+
+  def update_ama_poa(poa)
+    begin
+      message = poa.update_or_delete
+      {
+        status: "success",
+        message: message,
+        power_of_attorney: power_of_attorney_data
+      }
+    rescue ActiveRecord::RecordNotUnique
+      {
+        status: "error",
+        message: "Something went wrong"
+      }
+    end
+  end
+
+  def update_legacy_poa(poa)
+    begin
+      bgs_poa = BgsPowerOfAttorney.find_or_create_by_file_number(poa.file_number)
+      message = bgs_poa.update_or_delete(appeal.claimant)
+      appeal.power_of_attorney.clear_bgs_power_of_attorney!
+      {
+        status: "success",
+        message: message,
+        power_of_attorney: power_of_attorney_data
+      }
+    rescue ActiveRecord::RecordNotUnique
+      {
+        status: "error",
+        message: "Something went wrong"
+      }
+    end
+  end
+
+  def cooldown_period_remaining
+    next_update_allowed_at = appeal.poa_last_synced_at + 10.minutes if appeal.poa_last_synced_at.present?
+    if next_update_allowed_at && next_update_allowed_at > Time.zone.now
+      return ((next_update_allowed_at - Time.zone.now) / 60).ceil
+    end
+
+    0
   end
 end
