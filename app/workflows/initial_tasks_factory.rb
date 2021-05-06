@@ -42,7 +42,8 @@ class InitialTasksFactory
       # TODO for rspec: pull a real tree from prod that has a deep task tree and varied task types
       task_ids = source_appeal.tasks.where(assigned_to_type: "Organization").of_type([:ScheduleHearingTask,
         :EvidenceSubmissionWindowTask, :InformalHearingPresentationTask]).pluck(:id) # for testing
-      copy_tasks(task_ids)
+      eswtask_end_date = Time.now + 20.days
+      copy_tasks(task_ids, evidence_submission_end_date: eswtask_end_date)
       # To-do create tasks based on appellant_substitution form
     elsif @appeal.cavc?
       create_cavc_subtasks
@@ -63,7 +64,7 @@ class InitialTasksFactory
                            DistributionTask.create!(appeal: @appeal, parent: @root_task)
   end
 
-  def copy_tasks(task_ids)
+  def copy_tasks(task_ids, evidence_submission_end_date: nil)
     # Order the tasks so they are created in the same order
     tasks = Task.where(id: task_ids).order(:id)
 
@@ -71,21 +72,30 @@ class InitialTasksFactory
 
     fail "Expecting only tasks assigned to organizations" if tasks.map(&:assigned_to_type).include?("User")
 
-    new_tasks = tasks.map { |task| task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: ["status"]) }
     # TODO: ask if we want to shown a SubstitutionTask in the timeline, like DocketSwitch*Task
-
+    
+    new_tasks = tasks.map { |task|
+      # TODO: set the ESW end_date
+      if task.type == "EvidenceSubmissionWindowTask" && evidence_submission_end_date
+        EvidenceSubmissionWindowTask.create!(appeal: @appeal, parent: distribution_task, end_date: evidence_submission_end_date)
+        binding.pry
+      else
+        task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: ["status"])
+      end
+    }
     # look up Organziation by given poa_participant_id
     participant_id="789" # for testing
     # TO FIX: CAUTION: this is inefficient
+    
     target_org = Organization.find_by(participant_id: participant_id)
-    # TODO: set the IHPTask to that Org
-    ihp_task = @appeal.appellant_substitution.target_appeal.tasks.of_type(:InformalHearingPresentationTask).first
-    ihp_task.update(assigned_to: target_org)
+    ihp_task = @appeal.tasks.of_type(:InformalHearingPresentationTask).first
+    # TODO: pass this during task creation
+    ihp_task&.update(assigned_to: target_org)
 
     source_appeal = @appeal.appellant_substitution.source_appeal
     source_appeal.treee
     @appeal.reload.treee
-    # binding.pry
+    binding.pry
   end
 
   # For AMA appeals. Create appropriate subtasks based on the CAVC Remand subtype

@@ -43,8 +43,6 @@ describe AppellantSubstitution do
       context "??" do
         let(:source_appeal) {
           create(:appeal, :with_schedule_hearing_tasks, :dispatched) { |appeal|
-            # Cancel any open tasks
-            appeal.tasks.open.map(&:cancelled!)
             distribution_task = appeal.tasks.of_type(:DistributionTask).first
 
             # another_user = create(:user, roles: ["VSO"])
@@ -52,6 +50,9 @@ describe AppellantSubstitution do
             org = create(:vso, participant_id: vso_participant_id)
             org_task = create(:informal_hearing_presentation_task, assigned_to: org, parent: distribution_task)
             create(:informal_hearing_presentation_task, parent: org_task)
+
+            # Cancel any open tasks
+            appeal.tasks.open.map(&:cancelled!)
           }
         }
         let!(:new_poa) { create(:vso, participant_id: "789") }
@@ -63,9 +64,15 @@ describe AppellantSubstitution do
           appellant_substitution = subject
           target_appeal = appellant_substitution.target_appeal
           expect(target_appeal.tasks.of_type(:ScheduleHearingTask).first.status).to eq "assigned"
-          expect(target_appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.status).to eq "assigned"
-          expect(target_appeal.tasks.of_type(:InformalHearingPresentationTask).first.status).to eq "assigned"
-          expect(target_appeal.tasks.of_type(:InformalHearingPresentationTask).first.assigned_to).to eq new_poa
+
+          esw_task = target_appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first
+          expect(esw_task.status).to eq "assigned"
+          task_timer = TaskTimer.where(task: esw_task).order(:id).last
+          expect(task_timer.last_submitted_at).to eq esw_task.timer_ends_at
+
+          ihp_task = target_appeal.tasks.of_type(:InformalHearingPresentationTask).first
+          expect(ihp_task.status).to eq "assigned"
+          expect(ihp_task.assigned_to).to eq new_poa
           # binding.pry
         end
       end
