@@ -1,4 +1,4 @@
-import { stubTrue, uniq } from 'lodash';
+import { uniq } from 'lodash';
 import {
   filterTasks,
   formatTaskData,
@@ -48,10 +48,6 @@ describe('utility functions for task manipulation', () => {
 
       expect(filtered).toMatchSnapshot();
     });
-
-    // add logic to test for tasks only being cancelled or closed
-
-    // pass in an array where task.closedAt is null and make sure it doesn't get returned back
 
     it('prefers org tasks', () => {
       const filtered = filterTasks(tasks);
