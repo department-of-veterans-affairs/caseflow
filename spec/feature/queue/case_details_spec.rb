@@ -378,6 +378,29 @@ RSpec.feature "Case details", :all_dbs do
           expect(page).to have_content(COPY::CASE_DETAILS_UNRECOGNIZED_POA)
         end
       end
+
+      context "when an unrecognized appellant does have a POA" do
+        before do
+          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(true)
+        end
+
+        let!(:claimant) do
+          create(
+            :claimant,
+            unrecognized_appellant: ua,
+            decision_review: appeal,
+            type: "OtherClaimant"
+          )
+        end
+
+        let(:ua) { create(:unrecognized_appellant) }
+
+        scenario "details view contains POA information" do
+          visit "/queue/appeals/#{appeal.uuid}"
+          expect(page).to have_content("Appellant's Power of Attorney")
+          expect(page).to have_content(appeal.representative_name)
+        end
+      end
     end
 
     context "when attorney has a case assigned in VACOLS without a DECASS record" do
