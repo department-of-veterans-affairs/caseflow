@@ -232,7 +232,7 @@ class HearingSchedule::ValidateRoSpreadsheet
     @allocation_spreadsheet_data.select do |row|
       next if row["allocated_days_without_room"] == 0 && row["first_slot_time"] == 0
 
-      row["first_slot_time"].match(/\A(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]\z/).blank?
+      row["first_slot_time"].to_s.match(/\A(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]\z/).blank?
     end.pluck("ro_code").uniq
   end
 
