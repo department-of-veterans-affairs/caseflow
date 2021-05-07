@@ -50,7 +50,6 @@ describe LegacyOptinManager, :all_dbs do
   let!(:remand_location) { create(:priorloc, lockey: remand_case.bfkey, locstto: "97") }
   let(:remand_issue1) { create(:case_issue, :disposition_remanded, issseq: 1) }
   let(:remand_issue2) { create(:case_issue, :disposition_manlincon_remand, issseq: 2) }
-  let(:remand_issue3) { create(:case_issue, :disposition_remanded, issseq: 3) }
   let(:remand_ri1) { create(:request_issue, vacols_id: remand_case.bfkey, vacols_sequence_id: remand_issue1.issseq) }
   let(:remand_ri2) { create(:request_issue, vacols_id: remand_case.bfkey, vacols_sequence_id: remand_issue2.issseq) }
 
