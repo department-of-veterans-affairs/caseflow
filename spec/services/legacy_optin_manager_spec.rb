@@ -194,17 +194,17 @@ describe LegacyOptinManager, :all_dbs do
 
             subject
 
-            expect(undecided_issue1.issdc).to be_nil
-            expect(undecided_issue1.issdcls).to be_nil
+            expect(vacols_issue("undecided", 1).issdc).to be_nil
+            expect(vacols_issue("undecided", 1).issdcls).to be_nil
 
-            expect(remand_issue1.issdc).to eq(remand_optin1.original_disposition_code)
-            expect(remand_issue1.issdcls).to eq(remand_optin1.original_disposition_date)
+            expect(vacols_issue("remand", 1).issdc).to eq(remand_optin1.original_disposition_code)
+            expect(vacols_issue("remand", 1).issdcls).to eq(remand_optin1.original_disposition_date)
 
-            expect(closed_issue1.issdc).to eq(closed_optin1.original_disposition_code)
-            expect(closed_issue1.issdcls).to eq(closed_disposition_date)
+            expect(vacols_issue("closed", 1).issdc).to eq(closed_optin1.original_disposition_code)
+            expect(vacols_issue("closed", 1).issdcls).to eq(closed_disposition_date)
 
-            expect(gcode_issue1.issdc).to eq(gcode_optin1.original_disposition_code)
-            expect(gcode_issue1.issdcls).to eq(closed_disposition_date)
+            expect(vacols_issue("gcode", 1).issdc).to eq(gcode_optin1.original_disposition_code)
+            expect(vacols_issue("gcode", 1).issdcls).to eq(closed_disposition_date)
 
             expect(undecided_case.reload).to_not be_closed
             expect(remand_case.reload).to_not be_closed
@@ -250,13 +250,13 @@ describe LegacyOptinManager, :all_dbs do
         it "rolls back remand issues, closes the remand, and creates a follow up appeal" do
           subject
 
-          expect(remand_issue1.issdc).to eq(remand_optin1.original_disposition_code)
-          expect(remand_issue1.issdcls).to eq(remand_optin1.original_disposition_date)
-          expect(remand_issue2.issdc).to eq(remand_optin2.original_disposition_code)
-          expect(remand_issue2.issdcls).to eq(remand_optin2.original_disposition_date)
+          expect(vacols_issue("remand", 1).issdc).to eq(remand_optin1.original_disposition_code)
+          expect(vacols_issue("remand", 1).issdcls).to eq(remand_optin1.original_disposition_date)
+          expect(vacols_issue("remand", 2).issdc).to eq(remand_optin2.original_disposition_code)
+          expect(vacols_issue("remand", 2).issdcls).to eq(remand_optin2.original_disposition_date)
 
           # check that remand opted in from another decision review is also rolled back
-          expect(remand_issue3.issdc).to eq(hlr_remand_optin.original_disposition_code)
+          expect(vacols_issue("remand", 3).issdc).to eq(hlr_remand_optin.original_disposition_code)
 
           expect(remand_case.reload.bfmpro).to eq("HIS")
           follow_up_appeal = VACOLS::Case.find_by(bfkey: "remandP")
@@ -324,8 +324,8 @@ describe LegacyOptinManager, :all_dbs do
 
               subject
 
-              expect(undecided_issue2.issdc).to be_nil
-              expect(undecided_issue2.issdcls).to be_nil
+              expect(vacols_issue("undecided", 2).issdc).to be_nil
+              expect(vacols_issue("undecided", 2).issdcls).to be_nil
               expect(undecided_case.reload).to_not be_closed
             end
 
@@ -336,8 +336,8 @@ describe LegacyOptinManager, :all_dbs do
 
               subject
 
-              expect(closed_issue2.issdc).to eq("X")
-              expect(closed_issue2.issdcls).to eq(closed_disposition_date)
+              expect(vacols_issue("closed", 2).issdc).to eq("X")
+              expect(vacols_issue("closed", 2).issdcls).to eq(closed_disposition_date)
 
               expect(already_closed_case.reload).to be_closed
               expect(already_closed_case.bfddec).to eq(closed_disposition_date)
@@ -347,7 +347,7 @@ describe LegacyOptinManager, :all_dbs do
               follow_up_appeal = VACOLS::Case.find_by(bfkey: "remandP")
               follow_up_appeal_issues = VACOLS::CaseIssue.where(isskey: "remandP")
 
-              expect(remand_issue2.issdc).to eq(remand_optin2.original_disposition_code)
+              expect(vacols_issue("remand", 2).issdc).to eq(remand_optin2.original_disposition_code)
               expect(remand_case.reload.bfmpro).to eq("HIS")
               expect(follow_up_appeal.bfdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
               expect(follow_up_appeal_issues.count).to eq(3)
@@ -382,8 +382,8 @@ describe LegacyOptinManager, :all_dbs do
               subject
 
               # Issue is rolled back
-              expect(gcode_issue2.issdc).to eq("G")
-              expect(gcode_issue2.issdcls).to eq(closed_disposition_date)
+              expect(vacols_issue("gcode", 2).issdc).to eq("G")
+              expect(vacols_issue("gcode", 2).issdcls).to eq(closed_disposition_date)
 
               # Legacy appeal is rolled back
               expect(failure_to_respond_case.reload).to be_closed
