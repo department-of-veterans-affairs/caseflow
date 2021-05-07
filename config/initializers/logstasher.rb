@@ -3,7 +3,7 @@ if LogStasher.enabled?
     # This block is run in application_controller context,
     # so you have access to all controller methods
     # You can log custom request fields using this block
-    fields[:user] = RequestStore.store[:current_user]
+    fields[:user] = current_user
     fields[:site] = request.path =~ /^\/api/ ? 'api' : 'user'
   end
 end
