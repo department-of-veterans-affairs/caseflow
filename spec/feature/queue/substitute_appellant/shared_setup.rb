@@ -84,6 +84,7 @@ RSpec.shared_examples("fill substitution form") do
       expect(page).to have_content("Veteran date of death")
       expect(page).to have_content("Substitution granted by the RO")
 
+      binding.pry
       page.find("button", text: "Continue").click
     end
 
