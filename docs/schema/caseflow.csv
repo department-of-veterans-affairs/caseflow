@@ -379,7 +379,7 @@ docket_switches,granted_request_issue_ids,integer,,,,,,"When a docket switch is 
 docket_switches,id,integer (8) PK,x,x,,,,
 docket_switches,new_docket_stream_id,integer (8) FK,,,x,,x,References the new appeal stream with the updated docket; initially null until created by workflow
 docket_switches,old_docket_stream_id,integer (8) ∗ FK,x,,x,,x,References the original appeal stream with old docket
-docket_switches,receipt_date,datetime ∗,x,,,,,
+docket_switches,receipt_date,datetime ∗,x,,,,,Date the board receives the NOD with request for docket switch; entered by user performing docket switch
 docket_switches,task_id,integer (8) ∗ FK,x,,x,,x,The task that triggered the switch
 docket_switches,updated_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
 docket_tracers,,,,,,,,
