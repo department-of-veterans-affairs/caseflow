@@ -1,4 +1,4 @@
-class AddTimeSlotDetailsToAllocations < ActiveRecord::Migration[5.2]
+class AddTimeSlotDetailsToAllocations < Caseflow::Migration
   def change
     add_column :allocations, :number_of_slots, :integer, comment: "The number of time slots possible for this allocation"
     add_column :allocations, :slot_length_minutes, :integer, comment: "The length in minutes of each time slot for this allocation"
