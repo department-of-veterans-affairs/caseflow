@@ -245,16 +245,22 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       virtual_hearing_type_selected = page.has_content?("Virtual")
 
       if slots_enabled && virtual_hearing_type_selected
+        # this needs to change to select the time passed in via the new dropdown
         find(".time-slot-button-toggle", text: "Choose a custom time").click
+        # Type in the time, add am, press enter with \n
+        time_select_input = find(".time-select").find("input")
+        time_select_input.send_keys "#{time}AM", :enter
+        click_button("Create time slot")
+
+      else
+        time_string = if is_eastern_only || !direct_enabled
+                        time
+                      else
+                        "#{time} AM E"
+                      end
+
+        click_dropdown(text: time_string, name: "optionalHearingTime0")
       end
-
-      time_string = if is_eastern_only || !direct_enabled
-                      time
-                    else
-                      "#{time} AM E"
-                    end
-
-      click_dropdown(text: time_string, name: "optionalHearingTime0")
     end
 
     shared_examples "scheduling a central hearing" do
