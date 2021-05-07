@@ -51,7 +51,14 @@ class LegacyIssueOptin < CaseflowRecord
 
   def opt_in!
     transaction do
-      opt_in_vacols_issue!
+      Issue.update_in_vacols!(
+        vacols_id: vacols_id,
+        vacols_sequence_id: vacols_sequence_id,
+        issue_attrs: {
+          disposition: VACOLS_DISPOSITION_CODE,
+          disposition_date: Time.zone.today
+        }
+      )
       update!(optin_processed_at: Time.zone.now)
     end
   end
@@ -102,23 +109,12 @@ class LegacyIssueOptin < CaseflowRecord
     AppealRepository.issues(vacols_id).find { |issue| issue.vacols_sequence_id == vacols_sequence_id }
   end
 
-  def opt_in_vacols_issue!
-    Issue.update_in_vacols!(
-      vacols_id: vacols_id,
-      vacols_sequence_id: vacols_sequence_id,
-      issue_attrs: {
-        disposition: VACOLS_DISPOSITION_CODE,
-        disposition_date: Time.zone.today
-      }
-    )
-  end
-
   private
 
   def revert_open_remand_issues
     # Before a remand is closed, it's "O" dispositions are changed to a "3", so when it's re-opened
     # the "3"s should be reverted back to "O"s
-    self.class.opt_ins_for_related_remand_issues(vacols_id).each(&:opt_in_vacols_issue!)
+    self.class.opt_ins_for_related_remand_issues(vacols_id).each(&:opt_in!)
   end
 
   def legacy_appeal_needs_to_be_reopened?
