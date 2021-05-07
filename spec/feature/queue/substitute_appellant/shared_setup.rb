@@ -35,7 +35,7 @@ RSpec.shared_context "with existing relationships" do
 end
 
 RSpec.shared_examples("fill substitution form") do
-  it "allows user to designate a subsitute appellant" do
+  it "allows user to designate a substitute appellant" do
     step "user sets basic info for substitution" do
       visit "/queue/appeals/#{appeal.uuid}"
 

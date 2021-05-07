@@ -1781,6 +1781,91 @@ RSpec.feature "Case details", :all_dbs do
         )
       end
     end
+
+    describe "substitute appellant" do
+      before { FeatureToggle.enable!(:recognized_granted_substitution_after_dd) }
+      after { FeatureToggle.disable!(:recognized_granted_substitution_after_dd) }
+
+      let(:docket_type) { "evidence_submission" }
+      let(:case_type) { "original" }
+      let(:disposition) { "allowed" }
+      let(:appeal) do
+        create(:appeal, :dispatched_with_decision_issue,
+               docket_type: docket_type,
+               stream_type: case_type,
+               disposition: disposition)
+      end
+
+      let(:cob_user) { create(:user, css_id: "COB_USER", station_id: "101") }
+      before do
+        ClerkOfTheBoard.singleton.add_user(cob_user)
+        User.authenticate!(user: cob_user)
+      end
+
+      shared_examples "the button is not shown" do
+        it "the 'Add Substitute' button is not shown" do
+          visit "/queue/appeals/#{appeal.external_id}"
+          # This find forces a wait for the page to render. Without it, this test will always pass,
+          # whether the content is present or not!
+          find("div", id: "caseTitleDetailsSubheader")
+          expect(page).to have_no_content(COPY::SUBSTITUTE_APPELLANT_BUTTON)
+        end
+      end
+
+      shared_examples "the button is shown" do
+        it "the 'Add Substitute' button is shown" do
+          visit "/queue/appeals/#{appeal.external_id}"
+          find("div", id: "caseTitleDetailsSubheader")
+          expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_BUTTON)
+        end
+      end
+
+      context "when the feature flag is disabled" do
+        FeatureToggle.disable!(:recognized_granted_substitution_after_dd)
+        it_behaves_like "the button is not shown"
+        FeatureToggle.enable!(:recognized_granted_substitution_after_dd)
+      end
+
+      context "When the case type is not 'original'" do
+        let(:case_type) { "de_novo" }
+
+        it_behaves_like "the button is not shown"
+      end
+
+      context "when the docket type is 'hearing'" do
+        let(:docket_type) { "hearing" }
+
+        context "when the user is an admin" do
+          before { OrganizationsUser.make_user_admin(cob_user, ClerkOfTheBoard.singleton) }
+          after { OrganizationsUser.remove_admin_rights_from_user(cob_user, ClerkOfTheBoard.singleton) }
+
+          it_behaves_like "the button is not shown"
+        end
+
+        context "when the user is not an admin" do
+          it_behaves_like "the button is not shown"
+        end
+      end
+
+      context "when the disposition is 'Dismissed, Death'" do
+        let(:disposition) { "dismissed_death" }
+
+        it_behaves_like "the button is shown"
+      end
+
+      context "when the disposition is something else" do
+        context "when the user is an admin" do
+          before { OrganizationsUser.make_user_admin(cob_user, ClerkOfTheBoard.singleton) }
+          after { OrganizationsUser.remove_admin_rights_from_user(cob_user, ClerkOfTheBoard.singleton) }
+
+          it_behaves_like "the button is shown"
+        end
+
+        context "when the user is not an admin" do
+          it_behaves_like "the button is not shown"
+        end
+      end
+    end
   end
 
   describe "task snapshot" do
