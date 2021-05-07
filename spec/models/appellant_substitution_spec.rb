@@ -43,7 +43,9 @@ describe AppellantSubstitution do
     end
 
     context "when source appeal has ScheduleHearingTask and EvidenceSubmissionWindowTask" do
-      let(:selected_task_types) { [:ScheduleHearingTask, :EvidenceSubmissionWindowTask, :InformalHearingPresentationTask] }
+      let(:selected_task_types) do
+        [:ScheduleHearingTask, :EvidenceSubmissionWindowTask, :InformalHearingPresentationTask]
+      end
       let(:selected_task_ids) { source_appeal.tasks.assigned_to_any_org.of_type(selected_task_types).pluck(:id) }
       let(:esw_task) { source_appeal.tasks.assigned_to_any_org.find_by(type: :EvidenceSubmissionWindowTask) }
       let(:task_params) do
@@ -51,7 +53,7 @@ describe AppellantSubstitution do
           esw_task.id => { hold_end_date: evidence_submission_hold_end_date.strftime("%F") }
         }
       end
-      let(:evidence_submission_hold_end_date) { Date.today + 20.days }
+      let(:evidence_submission_hold_end_date) { Time.zone.today + 20.days }
 
       shared_examples "new appeal has user-selected tasks" do
         it "copies only ScheduleHearingTask and EvidenceSubmissionWindowTask to new appeal" do
