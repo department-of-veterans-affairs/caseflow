@@ -27,11 +27,11 @@ export const UnscheduledNotes = ({
           strongLabel
           onChange={(notes) => onChange(notes)}
           labelStyling={css({ float: 'left' })}
-          styling={css({ marginBottom: 1 })}
+          styling={css({ marginBottom: 0 })}
           value={unscheduledNotes ?? ''}
           characterLimitTopRight
         />}
-      {updatedByCssId && updatedAt && unscheduledNotes &&
+      {updatedByCssId && updatedAt &&
         <span style={{ color: COLORS.GREY }}>
           {`Last updated by ${updatedByCssId} on ${moment(updatedAt).format('MM/DD/YYYY')}`}
         </span>

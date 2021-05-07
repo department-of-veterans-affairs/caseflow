@@ -6,6 +6,7 @@ import { ScheduleVeteranForm } from 'app/hearings/components/ScheduleVeteranForm
 import { SearchableDropdown } from 'app/components/SearchableDropdown';
 import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
 import { amaAppeal, defaultHearing, legacyAppealForTravelBoard, virtualHearing } from 'test/data';
+import { generateAmaTask } from 'test/data/tasks';
 import { queueWrapper } from 'test/data/stores/queueStore';
 import HearingTypeDropdown from 'app/hearings/components/details/HearingTypeDropdown';
 import {
@@ -18,6 +19,7 @@ import { AddressLine } from 'app/hearings/components/details/Address';
 import { AppellantSection } from 'app/hearings/components/VirtualHearings/AppellantSection';
 import { RepresentativeSection } from 'app/hearings/components/VirtualHearings/RepresentativeSection';
 import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
+import { UnscheduledNotes } from 'app/hearings/components/UnscheduledNotes';
 
 // Set the spies
 const changeSpy = jest.fn();
@@ -208,4 +210,32 @@ describe('ScheduleVeteranForm', () => {
     ).toEqual({ label: VIRTUAL_HEARING_LABEL, value: true });
     expect(scheduleVeteran).toMatchSnapshot();
   });
+
+  test('Displayes Unschedules Notes input', () => {
+    const parentHearingTask = generateAmaTask({
+      uniqueId: '3',
+      type: 'HearingTask',
+      status: 'on_hold',
+      unscheduledHearingNotes: {
+        notes: 'Preloaded notes'
+      }
+    })
+
+    const scheduleVeteran = mount(
+      <ScheduleVeteranForm
+        goBack={cancelSpy}
+        submit={submitSpy}
+        onChange={changeSpy}
+        appeal={amaAppeal}
+        hearing={defaultHearing}
+        hearingTask={parentHearingTask}
+      />,
+      {
+        wrappingComponent: queueWrapper,
+      }
+    );
+
+    expect(scheduleVeteran.find(UnscheduledNotes)).toHaveLength(1);
+    expect(scheduleVeteran).toMatchSnapshot();
+  })
 });

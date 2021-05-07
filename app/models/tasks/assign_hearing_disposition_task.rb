@@ -179,14 +179,21 @@ class AssignHearingDispositionTask < Task
     end
   end
 
-  def reschedule(hearing_day_id:, scheduled_time_string:, hearing_location: nil, virtual_hearing_attributes: nil)
+  def reschedule(
+    hearing_day_id:,
+    scheduled_time_string:,
+    hearing_location: nil,
+    virtual_hearing_attributes: nil,
+    notes: nil
+  )
     multi_transaction do
       new_hearing_task = hearing_task.cancel_and_recreate
 
-      new_hearing = HearingRepository.slot_new_hearing(hearing_day_id,
+      new_hearing = HearingRepository.slot_new_hearing(hearing_day_id: hearing_day_id,
                                                        appeal: appeal,
                                                        hearing_location_attrs: hearing_location&.to_hash,
-                                                       scheduled_time_string: scheduled_time_string)
+                                                       scheduled_time_string: scheduled_time_string,
+                                                       notes: notes)
       if virtual_hearing_attributes.present?
         @alerts = VirtualHearings::ConvertToVirtualHearingService
           .convert_hearing_to_virtual(new_hearing, virtual_hearing_attributes)
@@ -242,7 +249,8 @@ class AssignHearingDispositionTask < Task
         hearing_day_id: new_hearing_attrs[:hearing_day_id],
         scheduled_time_string: new_hearing_attrs[:scheduled_time_string],
         hearing_location: new_hearing_attrs[:hearing_location],
-        virtual_hearing_attributes: new_hearing_attrs[:virtual_hearing_attributes]
+        virtual_hearing_attributes: new_hearing_attrs[:virtual_hearing_attributes],
+        notes: new_hearing_attrs[:notes]
       )
     when "schedule_later"
       schedule_later(

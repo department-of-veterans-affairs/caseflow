@@ -632,7 +632,7 @@ export const taskActionData = ({ task, match }) => {
 export const parentTasks = (childrenTasks, allTasks) => {
   const parentTaskIds = _.map(childrenTasks, 'parentId')
   const parentTasks = parentTaskIds.map((parentId) => {
-    return _.find(allTasks, ['taskId', parentId.toString()]);
+    return _.find(allTasks, ['taskId', parentId?.toString()]);
   })
 
   return parentTasks

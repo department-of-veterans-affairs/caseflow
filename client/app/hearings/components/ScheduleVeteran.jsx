@@ -16,7 +16,8 @@ import HEARING_DISPOSITION_TYPES from '../../../constants/HEARING_DISPOSITION_TY
 import { CENTRAL_OFFICE_HEARING_LABEL, VIDEO_HEARING_LABEL, VIRTUAL_HEARING_LABEL } from '../constants';
 import {
   appealWithDetailSelector,
-  openScheduleHearingTasksForAppeal
+  getAllTasksForAppeal,
+  allHearingTasksForAppeal
 } from '../../queue/selectors';
 import { showSuccessMessage, showErrorMessage, requestPatch } from '../../queue/uiReducer/uiActions';
 import { onReceiveAppealDetails } from '../../queue/QueueActions';
@@ -24,6 +25,7 @@ import { formatDateStr } from '../../util/DateUtil';
 import Alert from '../../components/Alert';
 import { setMargin, marginTop, regionalOfficeSection, saveButton, cancelButton } from './details/style';
 import { getAppellantTitle, processAlerts, parseVirtualHearingErrors } from '../utils';
+import { parentTasks } from '../../queue/utils';
 import {
   onChangeFormData,
   onReceiveAlerts,
@@ -44,10 +46,10 @@ export const ScheduleVeteran = ({
   openHearing,
   appeal,
   scheduledHearing,
+  scheduleHearingOrAssignDispositionTask,
   taskId,
-  fetchingHearings,
   userCanViewTimeSlots,
-  scheduledHearingsList,
+  allHearingTasks,
   ...props
 }) => {
   // Create and manage the loading state
@@ -106,8 +108,14 @@ export const ScheduleVeteran = ({
     appellantZip: appeal?.appellantAddress?.zip,
     appellantRelationship: appeal?.appellantRelationship,
     appellantIsNotVeteran: appeal?.appellantIsNotVeteran,
-    veteranFullName: appeal?.veteranFullName,
+    veteranFullName: appeal?.veteranFullName
   };
+
+  // Get parent hearing task of this task which could be
+  // Schedule Hearing Task or Assign Hearing Disposition Task
+  const parentHearingTask = parentTasks(
+    [scheduleHearingOrAssignDispositionTask], allHearingTasks
+  )[0];
 
   // Reset the component state
   const reset = () => {
@@ -144,6 +152,8 @@ export const ScheduleVeteran = ({
         taskId
       });
     }
+
+    props.onChangeFormData('assignHearing', { notes: parentHearingTask?.unscheduledHearingNotes?.notes });
 
     return reset;
   }, []);
@@ -191,7 +201,8 @@ export const ScheduleVeteran = ({
       scheduled_time_string: hearing.scheduledTimeString,
       hearing_day_id: hearing.hearingDay.hearingId,
       hearing_location: hearing.hearingLocation ? ApiUtil.convertToSnakeCase(hearing.hearingLocation) : null,
-      virtual_hearing_attributes: virtualHearing ? ApiUtil.convertToSnakeCase(virtualHearing) : null
+      virtual_hearing_attributes: virtualHearing ? ApiUtil.convertToSnakeCase(virtualHearing) : null,
+      notes: hearing.notes
     };
 
     // Determine whether to send the reschedule payload
@@ -268,6 +279,9 @@ export const ScheduleVeteran = ({
 
       window.analyticsEvent('Hearings', 'Schedule Veteran - Schedule');
 
+      if (hearing?.notes !== parentHearingTask?.unscheduledHearingNotes?.notes) {
+        window.analyticsEvent('Hearings', 'Add/edit notes', 'Schedule Veteran');
+      }
       // Find the most recently created AssignHearingDispositionTask. This task will have the ID of the
       // most recently created hearing.
       const mostRecentTask = maxBy(
@@ -375,8 +389,6 @@ export const ScheduleVeteran = ({
         )}
         {openHearing && !reschedule ? <Alert title="Open Hearing" type="error">{openHearingDayError}</Alert> : (
           <ScheduleVeteranForm
-            scheduledHearingsList={scheduledHearingsList}
-            fetchingHearings={fetchingHearings}
             userCanViewTimeSlots={userCanViewTimeSlots}
             initialHearingDate={selectedHearingDay?.hearingDate}
             initialRegionalOffice={initialRegionalOffice}
@@ -387,6 +399,7 @@ export const ScheduleVeteran = ({
             appellantTitle={appellantTitle}
             onChange={(key, value) => props.onChangeFormData('assignHearing', { [key]: value })}
             convertToVirtual={convertToVirtual}
+            hearingTask={parentHearingTask}
           />
         )}
 
@@ -453,9 +466,7 @@ ScheduleVeteran.propTypes = {
     hearingDate: PropTypes.string,
     regionalOffice: PropTypes.string,
   }),
-  scheduleHearingTask: PropTypes.shape({
-    taskId: PropTypes.string,
-  }),
+  scheduleHearingOrAssignDispositionTask: PropTypes.object,
   onReceiveAppealDetails: PropTypes.func,
   startPollingHearing: PropTypes.func,
   requestPatch: PropTypes.func,
@@ -466,27 +477,26 @@ ScheduleVeteran.propTypes = {
   error: PropTypes.object,
   scheduledHearing: PropTypes.object,
   userCanViewTimeSlots: PropTypes.bool,
-  scheduledHearingsList: PropTypes.array,
-  fetchingHearings: PropTypes.bool,
+  allHearingTasks: PropTypes.array
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  scheduledHearingsList: state.components.scheduledHearingsList,
-  fetchingHearings: state.components.fetchingHearings,
-  scheduledHearing: state.components.scheduledHearing,
-  scheduleHearingTask: openScheduleHearingTasksForAppeal(state, {
-    appealId: ownProps.appealId,
-  })[0],
-  openHearing: find(
-    appealWithDetailSelector(state, ownProps)?.hearings,
-    (hearing) => hearing.disposition === null
-  ),
-  assignHearingForm: state.components.forms.assignHearing,
-  appeal: appealWithDetailSelector(state, ownProps),
-  selectedRegionalOffice: state.components.selectedRegionalOffice,
-  hearingDay: state.ui.hearingDay,
-  error: state.ui.messages.error
-});
+const mapStateToProps = (state, ownProps) => {
+  const appeal = appealWithDetailSelector(state, ownProps);
+
+  return {
+    scheduledHearing: state.components.scheduledHearing,
+    scheduleHearingOrAssignDispositionTask: getAllTasksForAppeal(state, {
+      appealId: appeal?.externalId,
+    }).find((task) => task?.taskId === ownProps.taskId),
+    allHearingTasks: allHearingTasksForAppeal(state, { appealId: appeal?.externalId }),
+    openHearing: find(appeal?.hearings, (hearing) => hearing.disposition === null),
+    assignHearingForm: state.components.forms.assignHearing,
+    appeal,
+    selectedRegionalOffice: state.components.selectedRegionalOffice,
+    hearingDay: state.ui.hearingDay,
+    error: state.ui.messages.error
+  };
+};
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
