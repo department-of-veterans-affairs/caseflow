@@ -67,14 +67,14 @@ describe InitialTasksFactory, :postgres do
 
         context "on veteran date of death present" do
           context "on the evidence submission docket is created" do
-              let(:appeal) do
-                create(
-                  :appeal,
-                  docket_type: Constants.AMA_DOCKETS.evidence_submission,
-                  claimants: [create(:claimant, participant_id: participant_id_with_no_vso)],
-                  veteran: create(:veteran, date_of_death: 30.days.ago.to_date)
-                )
-              end
+            let(:appeal) do
+              create(
+                :appeal,
+                docket_type: Constants.AMA_DOCKETS.evidence_submission,
+                claimants: [create(:claimant, participant_id: participant_id_with_no_vso)],
+                veteran: create(:veteran, date_of_death: 30.days.ago.to_date)
+              )
+            end
 
             it "is ready for distribution" do
               InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
@@ -84,14 +84,14 @@ describe InitialTasksFactory, :postgres do
           end
 
           context "on hearing docket is created" do
-              let(:appeal) do
-                create(
-                  :appeal,
-                  docket_type: Constants.AMA_DOCKETS.hearing,
-                  claimants: [create(:claimant, participant_id: participant_id_with_no_vso)],
-                  veteran: create(:veteran, date_of_death: 30.days.ago.to_date)
-                )
-              end
+            let(:appeal) do
+              create(
+                :appeal,
+                docket_type: Constants.AMA_DOCKETS.hearing,
+                claimants: [create(:claimant, participant_id: participant_id_with_no_vso)],
+                veteran: create(:veteran, date_of_death: 30.days.ago.to_date)
+              )
+            end
 
             it "is ready for distribution" do
               InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
