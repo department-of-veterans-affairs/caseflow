@@ -269,7 +269,7 @@ class AppealsController < ApplicationController
 
   def update_ama_poa(poa)
     begin
-      message = poa.update_or_delete
+      message = poa.update_or_delete(appeal.claimant)
       {
         status: "success",
         message: message,
