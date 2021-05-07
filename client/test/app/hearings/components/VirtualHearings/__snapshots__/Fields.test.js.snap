@@ -10070,7 +10070,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                       >
                                         <Input
                                           aria-autocomplete="list"
-                                          aria-controls="appellant-tz-listbox"
                                           aria-label="appellant-tz"
                                           aria-labelledby="appellant-tz-label"
                                           autoCapitalize="none"
@@ -10964,7 +10963,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             >
                                               <AutosizeInput
                                                 aria-autocomplete="list"
-                                                aria-controls="appellant-tz-listbox"
                                                 aria-label="appellant-tz"
                                                 aria-labelledby="appellant-tz-label"
                                                 autoCapitalize="none"
@@ -11006,7 +11004,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                 >
                                                   <input
                                                     aria-autocomplete="list"
-                                                    aria-controls="appellant-tz-listbox"
                                                     aria-label="appellant-tz"
                                                     aria-labelledby="appellant-tz-label"
                                                     autoCapitalize="none"
@@ -26249,7 +26246,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                       >
                                         <Input
                                           aria-autocomplete="list"
-                                          aria-controls="representative-tz-listbox"
                                           aria-label="representative-tz"
                                           aria-labelledby="representative-tz-label"
                                           autoCapitalize="none"
@@ -27143,7 +27139,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             >
                                               <AutosizeInput
                                                 aria-autocomplete="list"
-                                                aria-controls="representative-tz-listbox"
                                                 aria-label="representative-tz"
                                                 aria-labelledby="representative-tz-label"
                                                 autoCapitalize="none"
@@ -27185,7 +27180,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                 >
                                                   <input
                                                     aria-autocomplete="list"
-                                                    aria-controls="representative-tz-listbox"
                                                     aria-label="representative-tz"
                                                     aria-labelledby="representative-tz-label"
                                                     autoCapitalize="none"
@@ -42447,7 +42441,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                       >
                                         <Input
                                           aria-autocomplete="list"
-                                          aria-controls="appellant-tz-listbox"
                                           aria-label="appellant-tz"
                                           aria-labelledby="appellant-tz-label"
                                           autoCapitalize="none"
@@ -43341,7 +43334,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             >
                                               <AutosizeInput
                                                 aria-autocomplete="list"
-                                                aria-controls="appellant-tz-listbox"
                                                 aria-label="appellant-tz"
                                                 aria-labelledby="appellant-tz-label"
                                                 autoCapitalize="none"
@@ -43383,7 +43375,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                 >
                                                   <input
                                                     aria-autocomplete="list"
-                                                    aria-controls="appellant-tz-listbox"
                                                     aria-label="appellant-tz"
                                                     aria-labelledby="appellant-tz-label"
                                                     autoCapitalize="none"
@@ -58626,7 +58617,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                       >
                                         <Input
                                           aria-autocomplete="list"
-                                          aria-controls="representative-tz-listbox"
                                           aria-label="representative-tz"
                                           aria-labelledby="representative-tz-label"
                                           autoCapitalize="none"
@@ -59520,7 +59510,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             >
                                               <AutosizeInput
                                                 aria-autocomplete="list"
-                                                aria-controls="representative-tz-listbox"
                                                 aria-label="representative-tz"
                                                 aria-labelledby="representative-tz-label"
                                                 autoCapitalize="none"
@@ -59562,7 +59551,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                 >
                                                   <input
                                                     aria-autocomplete="list"
-                                                    aria-controls="representative-tz-listbox"
                                                     aria-label="representative-tz"
                                                     aria-labelledby="representative-tz-label"
                                                     autoCapitalize="none"

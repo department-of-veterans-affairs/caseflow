@@ -2280,7 +2280,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                               >
                                                 <Input
                                                   aria-autocomplete="list"
-                                                  aria-controls="judge-dropdown-listbox"
                                                   aria-label="judge-dropdown"
                                                   aria-labelledby="judge-dropdown-label"
                                                   autoCapitalize="none"
@@ -2494,7 +2493,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                     >
                                                       <AutosizeInput
                                                         aria-autocomplete="list"
-                                                        aria-controls="judge-dropdown-listbox"
                                                         aria-label="judge-dropdown"
                                                         aria-labelledby="judge-dropdown-label"
                                                         autoCapitalize="none"
@@ -2536,7 +2534,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                         >
                                                           <input
                                                             aria-autocomplete="list"
-                                                            aria-controls="judge-dropdown-listbox"
                                                             aria-label="judge-dropdown"
                                                             aria-labelledby="judge-dropdown-label"
                                                             autoCapitalize="none"

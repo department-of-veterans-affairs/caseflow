@@ -65,7 +65,6 @@ exports[`AddAdminTaskForm renders correctly 1`] = `
                   >
                     <input
                       aria-autocomplete="list"
-                      aria-controls="new-tasks-0-type-listbox"
                       aria-label="new-tasks-0-type"
                       aria-labelledby="new-tasks-0-type-label"
                       autocapitalize="none"

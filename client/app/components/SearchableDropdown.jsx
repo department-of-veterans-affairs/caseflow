@@ -48,7 +48,6 @@ const Input = (props) => {
     ...props.innerProps,
     'aria-label': `${kebabCase(props.selectProps.name)}`,
     'aria-labelledby': `${kebabCase(props.selectProps.name)}-label`,
-    'aria-controls': `${kebabCase(props.selectProps.name)}-listbox`,
   };
 
   return <components.Input {...props} {...innerProps} />;
@@ -206,8 +205,6 @@ export class SearchableDropdown extends React.Component {
         {required && <span className="cf-required">Required</span>}
       </span>
     );
-
-    // aria-controls and aria-expanded are required states and properties when role is combobox
 
     return (
       <div className={errorMessage ? 'usa-input-error' : ''}>

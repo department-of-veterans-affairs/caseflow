@@ -25117,7 +25117,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                 >
                                   <Input
                                     aria-autocomplete="list"
-                                    aria-controls="timezone-listbox"
                                     aria-label="timezone"
                                     aria-labelledby="timezone-label"
                                     autoCapitalize="none"
@@ -26007,7 +26006,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       >
                                         <AutosizeInput
                                           aria-autocomplete="list"
-                                          aria-controls="timezone-listbox"
                                           aria-label="timezone"
                                           aria-labelledby="timezone-label"
                                           autoCapitalize="none"
@@ -26049,7 +26047,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                           >
                                             <input
                                               aria-autocomplete="list"
-                                              aria-controls="timezone-listbox"
                                               aria-label="timezone"
                                               aria-labelledby="timezone-label"
                                               autoCapitalize="none"
@@ -56130,7 +56127,6 @@ exports[`Timezone Respects required prop 1`] = `
                                 >
                                   <Input
                                     aria-autocomplete="list"
-                                    aria-controls="timezone-listbox"
                                     aria-label="timezone"
                                     aria-labelledby="timezone-label"
                                     autoCapitalize="none"
@@ -57020,7 +57016,6 @@ exports[`Timezone Respects required prop 1`] = `
                                       >
                                         <AutosizeInput
                                           aria-autocomplete="list"
-                                          aria-controls="timezone-listbox"
                                           aria-label="timezone"
                                           aria-labelledby="timezone-label"
                                           autoCapitalize="none"
@@ -57062,7 +57057,6 @@ exports[`Timezone Respects required prop 1`] = `
                                           >
                                             <input
                                               aria-autocomplete="list"
-                                              aria-controls="timezone-listbox"
                                               aria-label="timezone"
                                               aria-labelledby="timezone-label"
                                               autoCapitalize="none"

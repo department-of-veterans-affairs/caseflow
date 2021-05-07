@@ -2777,7 +2777,6 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                           >
                                             <Input
                                               aria-autocomplete="list"
-                                              aria-controls="optional-hearing-time-0-listbox"
                                               aria-label="optional-hearing-time-0"
                                               aria-labelledby="optional-hearing-time-0-label"
                                               autoCapitalize="none"
@@ -3043,7 +3042,6 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                                 >
                                                   <AutosizeInput
                                                     aria-autocomplete="list"
-                                                    aria-controls="optional-hearing-time-0-listbox"
                                                     aria-label="optional-hearing-time-0"
                                                     aria-labelledby="optional-hearing-time-0-label"
                                                     autoCapitalize="none"
@@ -3085,7 +3083,6 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                                     >
                                                       <input
                                                         aria-autocomplete="list"
-                                                        aria-controls="optional-hearing-time-0-listbox"
                                                         aria-label="optional-hearing-time-0"
                                                         aria-labelledby="optional-hearing-time-0-label"
                                                         autoCapitalize="none"
@@ -7583,7 +7580,6 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                           >
                                             <Input
                                               aria-autocomplete="list"
-                                              aria-controls="optional-hearing-time-0-listbox"
                                               aria-label="optional-hearing-time-0"
                                               aria-labelledby="optional-hearing-time-0-label"
                                               autoCapitalize="none"
@@ -7849,7 +7845,6 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                                 >
                                                   <AutosizeInput
                                                     aria-autocomplete="list"
-                                                    aria-controls="optional-hearing-time-0-listbox"
                                                     aria-label="optional-hearing-time-0"
                                                     aria-labelledby="optional-hearing-time-0-label"
                                                     autoCapitalize="none"
@@ -7891,7 +7886,6 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                                     >
                                                       <input
                                                         aria-autocomplete="list"
-                                                        aria-controls="optional-hearing-time-0-listbox"
                                                         aria-label="optional-hearing-time-0"
                                                         aria-labelledby="optional-hearing-time-0-label"
                                                         autoCapitalize="none"
@@ -19488,7 +19482,6 @@ SAN FRANCISCO, CA 94103
                                               >
                                                 <Input
                                                   aria-autocomplete="list"
-                                                  aria-controls="appellant-tz-listbox"
                                                   aria-label="appellant-tz"
                                                   aria-labelledby="appellant-tz-label"
                                                   autoCapitalize="none"
@@ -20382,7 +20375,6 @@ SAN FRANCISCO, CA 94103
                                                     >
                                                       <AutosizeInput
                                                         aria-autocomplete="list"
-                                                        aria-controls="appellant-tz-listbox"
                                                         aria-label="appellant-tz"
                                                         aria-labelledby="appellant-tz-label"
                                                         autoCapitalize="none"
@@ -20424,7 +20416,6 @@ SAN FRANCISCO, CA 94103
                                                         >
                                                           <input
                                                             aria-autocomplete="list"
-                                                            aria-controls="appellant-tz-listbox"
                                                             aria-label="appellant-tz"
                                                             aria-labelledby="appellant-tz-label"
                                                             autoCapitalize="none"
@@ -35856,7 +35847,6 @@ SAN FRANCISCO, CA 94103
                                               >
                                                 <Input
                                                   aria-autocomplete="list"
-                                                  aria-controls="representative-tz-listbox"
                                                   aria-label="representative-tz"
                                                   aria-labelledby="representative-tz-label"
                                                   autoCapitalize="none"
@@ -36750,7 +36740,6 @@ SAN FRANCISCO, CA 94103
                                                     >
                                                       <AutosizeInput
                                                         aria-autocomplete="list"
-                                                        aria-controls="representative-tz-listbox"
                                                         aria-label="representative-tz"
                                                         aria-labelledby="representative-tz-label"
                                                         autoCapitalize="none"
@@ -36792,7 +36781,6 @@ SAN FRANCISCO, CA 94103
                                                         >
                                                           <input
                                                             aria-autocomplete="list"
-                                                            aria-controls="representative-tz-listbox"
                                                             aria-label="representative-tz"
                                                             aria-labelledby="representative-tz-label"
                                                             autoCapitalize="none"
@@ -42840,7 +42828,6 @@ SAN FRANCISCO, CA 94103
                                               >
                                                 <Input
                                                   aria-autocomplete="list"
-                                                  aria-controls="judge-dropdown-listbox"
                                                   aria-label="judge-dropdown"
                                                   aria-labelledby="judge-dropdown-label"
                                                   autoCapitalize="none"
@@ -42968,7 +42955,6 @@ SAN FRANCISCO, CA 94103
                                                     >
                                                       <AutosizeInput
                                                         aria-autocomplete="list"
-                                                        aria-controls="judge-dropdown-listbox"
                                                         aria-label="judge-dropdown"
                                                         aria-labelledby="judge-dropdown-label"
                                                         autoCapitalize="none"
@@ -43010,7 +42996,6 @@ SAN FRANCISCO, CA 94103
                                                         >
                                                           <input
                                                             aria-autocomplete="list"
-                                                            aria-controls="judge-dropdown-listbox"
                                                             aria-label="judge-dropdown"
                                                             aria-labelledby="judge-dropdown-label"
                                                             autoCapitalize="none"

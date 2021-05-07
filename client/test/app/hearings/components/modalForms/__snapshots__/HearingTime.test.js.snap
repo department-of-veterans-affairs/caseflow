@@ -2632,7 +2632,6 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                 >
                                   <Input
                                     aria-autocomplete="list"
-                                    aria-controls="optional-hearing-time-0-listbox"
                                     aria-label="optional-hearing-time-0"
                                     aria-labelledby="optional-hearing-time-0-label"
                                     autoCapitalize="none"
@@ -2901,7 +2900,6 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                       >
                                         <AutosizeInput
                                           aria-autocomplete="list"
-                                          aria-controls="optional-hearing-time-0-listbox"
                                           aria-label="optional-hearing-time-0"
                                           aria-labelledby="optional-hearing-time-0-label"
                                           autoCapitalize="none"
@@ -2943,7 +2941,6 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                           >
                                             <input
                                               aria-autocomplete="list"
-                                              aria-controls="optional-hearing-time-0-listbox"
                                               aria-label="optional-hearing-time-0"
                                               aria-labelledby="optional-hearing-time-0-label"
                                               autoCapitalize="none"
@@ -7059,7 +7056,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                 >
                                   <Input
                                     aria-autocomplete="list"
-                                    aria-controls="optional-hearing-time-0-listbox"
                                     aria-label="optional-hearing-time-0"
                                     aria-labelledby="optional-hearing-time-0-label"
                                     autoCapitalize="none"
@@ -7328,7 +7324,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       >
                                         <AutosizeInput
                                           aria-autocomplete="list"
-                                          aria-controls="optional-hearing-time-0-listbox"
                                           aria-label="optional-hearing-time-0"
                                           aria-labelledby="optional-hearing-time-0-label"
                                           autoCapitalize="none"
@@ -7370,7 +7365,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                           >
                                             <input
                                               aria-autocomplete="list"
-                                              aria-controls="optional-hearing-time-0-listbox"
                                               aria-label="optional-hearing-time-0"
                                               aria-labelledby="optional-hearing-time-0-label"
                                               autoCapitalize="none"
@@ -11326,7 +11320,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                 >
                                   <Input
                                     aria-autocomplete="list"
-                                    aria-controls="optional-hearing-time-0-listbox"
                                     aria-label="optional-hearing-time-0"
                                     aria-labelledby="optional-hearing-time-0-label"
                                     autoCapitalize="none"
@@ -11592,7 +11585,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       >
                                         <AutosizeInput
                                           aria-autocomplete="list"
-                                          aria-controls="optional-hearing-time-0-listbox"
                                           aria-label="optional-hearing-time-0"
                                           aria-labelledby="optional-hearing-time-0-label"
                                           autoCapitalize="none"
@@ -11634,7 +11626,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                           >
                                             <input
                                               aria-autocomplete="list"
-                                              aria-controls="optional-hearing-time-0-listbox"
                                               aria-label="optional-hearing-time-0"
                                               aria-labelledby="optional-hearing-time-0-label"
                                               autoCapitalize="none"
@@ -15581,7 +15572,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                 >
                                   <Input
                                     aria-autocomplete="list"
-                                    aria-controls="optional-hearing-time-0-listbox"
                                     aria-label="optional-hearing-time-0"
                                     aria-labelledby="optional-hearing-time-0-label"
                                     autoCapitalize="none"
@@ -15847,7 +15837,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       >
                                         <AutosizeInput
                                           aria-autocomplete="list"
-                                          aria-controls="optional-hearing-time-0-listbox"
                                           aria-label="optional-hearing-time-0"
                                           aria-labelledby="optional-hearing-time-0-label"
                                           autoCapitalize="none"
@@ -15889,7 +15878,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                           >
                                             <input
                                               aria-autocomplete="list"
-                                              aria-controls="optional-hearing-time-0-listbox"
                                               aria-label="optional-hearing-time-0"
                                               aria-labelledby="optional-hearing-time-0-label"
                                               autoCapitalize="none"

@@ -129,7 +129,6 @@ exports[`EditNodDateModal renders correctly 1`] = `
                               >
                                 <input
                                   aria-autocomplete="list"
-                                  aria-controls="reason-listbox"
                                   aria-label="reason"
                                   aria-labelledby="reason-label"
                                   autocapitalize="none"

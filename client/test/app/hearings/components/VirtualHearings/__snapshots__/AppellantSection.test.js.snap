@@ -10916,7 +10916,6 @@ SAN FRANCISCO, CA 94103
                                         >
                                           <Input
                                             aria-autocomplete="list"
-                                            aria-controls="appellant-tz-listbox"
                                             aria-label="appellant-tz"
                                             aria-labelledby="appellant-tz-label"
                                             autoCapitalize="none"
@@ -11810,7 +11809,6 @@ SAN FRANCISCO, CA 94103
                                               >
                                                 <AutosizeInput
                                                   aria-autocomplete="list"
-                                                  aria-controls="appellant-tz-listbox"
                                                   aria-label="appellant-tz"
                                                   aria-labelledby="appellant-tz-label"
                                                   autoCapitalize="none"
@@ -11852,7 +11850,6 @@ SAN FRANCISCO, CA 94103
                                                   >
                                                     <input
                                                       aria-autocomplete="list"
-                                                      aria-controls="appellant-tz-listbox"
                                                       aria-label="appellant-tz"
                                                       aria-labelledby="appellant-tz-label"
                                                       autoCapitalize="none"

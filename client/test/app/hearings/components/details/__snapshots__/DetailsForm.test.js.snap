@@ -917,7 +917,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                             >
                                               <Input
                                                 aria-autocomplete="list"
-                                                aria-controls="judge-dropdown-listbox"
                                                 aria-label="judge-dropdown"
                                                 aria-labelledby="judge-dropdown-label"
                                                 autoCapitalize="none"
@@ -1045,7 +1044,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                   >
                                                     <AutosizeInput
                                                       aria-autocomplete="list"
-                                                      aria-controls="judge-dropdown-listbox"
                                                       aria-label="judge-dropdown"
                                                       aria-labelledby="judge-dropdown-label"
                                                       autoCapitalize="none"
@@ -1087,7 +1085,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                       >
                                                         <input
                                                           aria-autocomplete="list"
-                                                          aria-controls="judge-dropdown-listbox"
                                                           aria-label="judge-dropdown"
                                                           aria-labelledby="judge-dropdown-label"
                                                           autoCapitalize="none"
@@ -2418,7 +2415,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                             >
                                               <Input
                                                 aria-autocomplete="list"
-                                                aria-controls="hearing-coordinator-dropdown-listbox"
                                                 aria-label="hearing-coordinator-dropdown"
                                                 aria-labelledby="hearing-coordinator-dropdown-label"
                                                 autoCapitalize="none"
@@ -2546,7 +2542,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                   >
                                                     <AutosizeInput
                                                       aria-autocomplete="list"
-                                                      aria-controls="hearing-coordinator-dropdown-listbox"
                                                       aria-label="hearing-coordinator-dropdown"
                                                       aria-labelledby="hearing-coordinator-dropdown-label"
                                                       autoCapitalize="none"
@@ -2588,7 +2583,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                       >
                                                         <input
                                                           aria-autocomplete="list"
-                                                          aria-controls="hearing-coordinator-dropdown-listbox"
                                                           aria-label="hearing-coordinator-dropdown"
                                                           aria-labelledby="hearing-coordinator-dropdown-label"
                                                           autoCapitalize="none"
@@ -5326,7 +5320,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                           >
                                             <Input
                                               aria-autocomplete="list"
-                                              aria-controls="hearing-room-dropdown-listbox"
                                               aria-label="hearing-room-dropdown"
                                               aria-labelledby="hearing-room-dropdown-label"
                                               autoCapitalize="none"
@@ -5571,7 +5564,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                 >
                                                   <AutosizeInput
                                                     aria-autocomplete="list"
-                                                    aria-controls="hearing-room-dropdown-listbox"
                                                     aria-label="hearing-room-dropdown"
                                                     aria-labelledby="hearing-room-dropdown-label"
                                                     autoCapitalize="none"
@@ -5613,7 +5605,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                     >
                                                       <input
                                                         aria-autocomplete="list"
-                                                        aria-controls="hearing-room-dropdown-listbox"
                                                         aria-label="hearing-room-dropdown"
                                                         aria-labelledby="hearing-room-dropdown-label"
                                                         autoCapitalize="none"
@@ -8142,7 +8133,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                             >
                                               <Input
                                                 aria-autocomplete="list"
-                                                aria-controls="transcriber-listbox"
                                                 aria-label="transcriber"
                                                 aria-labelledby="transcriber-label"
                                                 autoCapitalize="none"
@@ -8284,7 +8274,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                   >
                                                     <AutosizeInput
                                                       aria-autocomplete="list"
-                                                      aria-controls="transcriber-listbox"
                                                       aria-label="transcriber"
                                                       aria-labelledby="transcriber-label"
                                                       autoCapitalize="none"
@@ -8326,7 +8315,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                       >
                                                         <input
                                                           aria-autocomplete="list"
-                                                          aria-controls="transcriber-listbox"
                                                           aria-label="transcriber"
                                                           aria-labelledby="transcriber-label"
                                                           autoCapitalize="none"
@@ -10160,7 +10148,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                             >
                                               <Input
                                                 aria-autocomplete="list"
-                                                aria-controls="problem-type-listbox"
                                                 aria-label="problem-type"
                                                 aria-labelledby="problem-type-label"
                                                 autoCapitalize="none"
@@ -10306,7 +10293,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                   >
                                                     <AutosizeInput
                                                       aria-autocomplete="list"
-                                                      aria-controls="problem-type-listbox"
                                                       aria-label="problem-type"
                                                       aria-labelledby="problem-type-label"
                                                       autoCapitalize="none"
@@ -10348,7 +10334,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                       >
                                                         <input
                                                           aria-autocomplete="list"
-                                                          aria-controls="problem-type-listbox"
                                                           aria-label="problem-type"
                                                           aria-labelledby="problem-type-label"
                                                           autoCapitalize="none"
@@ -12303,7 +12288,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                             >
                                               <Input
                                                 aria-autocomplete="list"
-                                                aria-controls="judge-dropdown-listbox"
                                                 aria-label="judge-dropdown"
                                                 aria-labelledby="judge-dropdown-label"
                                                 autoCapitalize="none"
@@ -12431,7 +12415,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   >
                                                     <AutosizeInput
                                                       aria-autocomplete="list"
-                                                      aria-controls="judge-dropdown-listbox"
                                                       aria-label="judge-dropdown"
                                                       aria-labelledby="judge-dropdown-label"
                                                       autoCapitalize="none"
@@ -12473,7 +12456,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                       >
                                                         <input
                                                           aria-autocomplete="list"
-                                                          aria-controls="judge-dropdown-listbox"
                                                           aria-label="judge-dropdown"
                                                           aria-labelledby="judge-dropdown-label"
                                                           autoCapitalize="none"
@@ -13804,7 +13786,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                             >
                                               <Input
                                                 aria-autocomplete="list"
-                                                aria-controls="hearing-coordinator-dropdown-listbox"
                                                 aria-label="hearing-coordinator-dropdown"
                                                 aria-labelledby="hearing-coordinator-dropdown-label"
                                                 autoCapitalize="none"
@@ -13932,7 +13913,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   >
                                                     <AutosizeInput
                                                       aria-autocomplete="list"
-                                                      aria-controls="hearing-coordinator-dropdown-listbox"
                                                       aria-label="hearing-coordinator-dropdown"
                                                       aria-labelledby="hearing-coordinator-dropdown-label"
                                                       autoCapitalize="none"
@@ -13974,7 +13954,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                       >
                                                         <input
                                                           aria-autocomplete="list"
-                                                          aria-controls="hearing-coordinator-dropdown-listbox"
                                                           aria-label="hearing-coordinator-dropdown"
                                                           aria-labelledby="hearing-coordinator-dropdown-label"
                                                           autoCapitalize="none"
@@ -16712,7 +16691,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                           >
                                             <Input
                                               aria-autocomplete="list"
-                                              aria-controls="hearing-room-dropdown-listbox"
                                               aria-label="hearing-room-dropdown"
                                               aria-labelledby="hearing-room-dropdown-label"
                                               autoCapitalize="none"
@@ -16957,7 +16935,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                 >
                                                   <AutosizeInput
                                                     aria-autocomplete="list"
-                                                    aria-controls="hearing-room-dropdown-listbox"
                                                     aria-label="hearing-room-dropdown"
                                                     aria-labelledby="hearing-room-dropdown-label"
                                                     autoCapitalize="none"
@@ -16999,7 +16976,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                     >
                                                       <input
                                                         aria-autocomplete="list"
-                                                        aria-controls="hearing-room-dropdown-listbox"
                                                         aria-label="hearing-room-dropdown"
                                                         aria-labelledby="hearing-room-dropdown-label"
                                                         autoCapitalize="none"
@@ -19549,7 +19525,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                             >
                                               <Input
                                                 aria-autocomplete="list"
-                                                aria-controls="transcriber-listbox"
                                                 aria-label="transcriber"
                                                 aria-labelledby="transcriber-label"
                                                 autoCapitalize="none"
@@ -19691,7 +19666,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   >
                                                     <AutosizeInput
                                                       aria-autocomplete="list"
-                                                      aria-controls="transcriber-listbox"
                                                       aria-label="transcriber"
                                                       aria-labelledby="transcriber-label"
                                                       autoCapitalize="none"
@@ -19733,7 +19707,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                       >
                                                         <input
                                                           aria-autocomplete="list"
-                                                          aria-controls="transcriber-listbox"
                                                           aria-label="transcriber"
                                                           aria-labelledby="transcriber-label"
                                                           autoCapitalize="none"
@@ -21567,7 +21540,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                             >
                                               <Input
                                                 aria-autocomplete="list"
-                                                aria-controls="problem-type-listbox"
                                                 aria-label="problem-type"
                                                 aria-labelledby="problem-type-label"
                                                 autoCapitalize="none"
@@ -21713,7 +21685,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   >
                                                     <AutosizeInput
                                                       aria-autocomplete="list"
-                                                      aria-controls="problem-type-listbox"
                                                       aria-label="problem-type"
                                                       aria-labelledby="problem-type-label"
                                                       autoCapitalize="none"
@@ -21755,7 +21726,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                       >
                                                         <input
                                                           aria-autocomplete="list"
-                                                          aria-controls="problem-type-listbox"
                                                           aria-label="problem-type"
                                                           aria-labelledby="problem-type-label"
                                                           autoCapitalize="none"
@@ -23720,7 +23690,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             >
                                               <Input
                                                 aria-autocomplete="list"
-                                                aria-controls="judge-dropdown-listbox"
                                                 aria-label="judge-dropdown"
                                                 aria-labelledby="judge-dropdown-label"
                                                 autoCapitalize="none"
@@ -23848,7 +23817,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   >
                                                     <AutosizeInput
                                                       aria-autocomplete="list"
-                                                      aria-controls="judge-dropdown-listbox"
                                                       aria-label="judge-dropdown"
                                                       aria-labelledby="judge-dropdown-label"
                                                       autoCapitalize="none"
@@ -23890,7 +23858,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                       >
                                                         <input
                                                           aria-autocomplete="list"
-                                                          aria-controls="judge-dropdown-listbox"
                                                           aria-label="judge-dropdown"
                                                           aria-labelledby="judge-dropdown-label"
                                                           autoCapitalize="none"
@@ -25221,7 +25188,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             >
                                               <Input
                                                 aria-autocomplete="list"
-                                                aria-controls="hearing-coordinator-dropdown-listbox"
                                                 aria-label="hearing-coordinator-dropdown"
                                                 aria-labelledby="hearing-coordinator-dropdown-label"
                                                 autoCapitalize="none"
@@ -25349,7 +25315,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   >
                                                     <AutosizeInput
                                                       aria-autocomplete="list"
-                                                      aria-controls="hearing-coordinator-dropdown-listbox"
                                                       aria-label="hearing-coordinator-dropdown"
                                                       aria-labelledby="hearing-coordinator-dropdown-label"
                                                       autoCapitalize="none"
@@ -25391,7 +25356,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                       >
                                                         <input
                                                           aria-autocomplete="list"
-                                                          aria-controls="hearing-coordinator-dropdown-listbox"
                                                           aria-label="hearing-coordinator-dropdown"
                                                           aria-labelledby="hearing-coordinator-dropdown-label"
                                                           autoCapitalize="none"
@@ -28129,7 +28093,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                           >
                                             <Input
                                               aria-autocomplete="list"
-                                              aria-controls="hearing-room-dropdown-listbox"
                                               aria-label="hearing-room-dropdown"
                                               aria-labelledby="hearing-room-dropdown-label"
                                               autoCapitalize="none"
@@ -28374,7 +28337,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                 >
                                                   <AutosizeInput
                                                     aria-autocomplete="list"
-                                                    aria-controls="hearing-room-dropdown-listbox"
                                                     aria-label="hearing-room-dropdown"
                                                     aria-labelledby="hearing-room-dropdown-label"
                                                     autoCapitalize="none"
@@ -28416,7 +28378,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                     >
                                                       <input
                                                         aria-autocomplete="list"
-                                                        aria-controls="hearing-room-dropdown-listbox"
                                                         aria-label="hearing-room-dropdown"
                                                         aria-labelledby="hearing-room-dropdown-label"
                                                         autoCapitalize="none"
@@ -30530,7 +30491,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                           >
                                             <Input
                                               aria-autocomplete="list"
-                                              aria-controls="hearing-type-listbox"
                                               aria-label="hearing-type"
                                               aria-labelledby="hearing-type-label"
                                               autoCapitalize="none"
@@ -30663,7 +30623,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                 >
                                                   <AutosizeInput
                                                     aria-autocomplete="list"
-                                                    aria-controls="hearing-type-listbox"
                                                     aria-label="hearing-type"
                                                     aria-labelledby="hearing-type-label"
                                                     autoCapitalize="none"
@@ -30705,7 +30664,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                     >
                                                       <input
                                                         aria-autocomplete="list"
-                                                        aria-controls="hearing-type-listbox"
                                                         aria-label="hearing-type"
                                                         aria-labelledby="hearing-type-label"
                                                         autoCapitalize="none"
@@ -32579,7 +32537,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             >
                                               <Input
                                                 aria-autocomplete="list"
-                                                aria-controls="transcriber-listbox"
                                                 aria-label="transcriber"
                                                 aria-labelledby="transcriber-label"
                                                 autoCapitalize="none"
@@ -32721,7 +32678,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   >
                                                     <AutosizeInput
                                                       aria-autocomplete="list"
-                                                      aria-controls="transcriber-listbox"
                                                       aria-label="transcriber"
                                                       aria-labelledby="transcriber-label"
                                                       autoCapitalize="none"
@@ -32763,7 +32719,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                       >
                                                         <input
                                                           aria-autocomplete="list"
-                                                          aria-controls="transcriber-listbox"
                                                           aria-label="transcriber"
                                                           aria-labelledby="transcriber-label"
                                                           autoCapitalize="none"
@@ -34597,7 +34552,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             >
                                               <Input
                                                 aria-autocomplete="list"
-                                                aria-controls="problem-type-listbox"
                                                 aria-label="problem-type"
                                                 aria-labelledby="problem-type-label"
                                                 autoCapitalize="none"
@@ -34743,7 +34697,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   >
                                                     <AutosizeInput
                                                       aria-autocomplete="list"
-                                                      aria-controls="problem-type-listbox"
                                                       aria-label="problem-type"
                                                       aria-labelledby="problem-type-label"
                                                       autoCapitalize="none"
@@ -34785,7 +34738,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                       >
                                                         <input
                                                           aria-autocomplete="list"
-                                                          aria-controls="problem-type-listbox"
                                                           aria-label="problem-type"
                                                           aria-labelledby="problem-type-label"
                                                           autoCapitalize="none"
@@ -36751,7 +36703,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             >
                                               <Input
                                                 aria-autocomplete="list"
-                                                aria-controls="judge-dropdown-listbox"
                                                 aria-label="judge-dropdown"
                                                 aria-labelledby="judge-dropdown-label"
                                                 autoCapitalize="none"
@@ -36879,7 +36830,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   >
                                                     <AutosizeInput
                                                       aria-autocomplete="list"
-                                                      aria-controls="judge-dropdown-listbox"
                                                       aria-label="judge-dropdown"
                                                       aria-labelledby="judge-dropdown-label"
                                                       autoCapitalize="none"
@@ -36921,7 +36871,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                       >
                                                         <input
                                                           aria-autocomplete="list"
-                                                          aria-controls="judge-dropdown-listbox"
                                                           aria-label="judge-dropdown"
                                                           aria-labelledby="judge-dropdown-label"
                                                           autoCapitalize="none"
@@ -38252,7 +38201,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             >
                                               <Input
                                                 aria-autocomplete="list"
-                                                aria-controls="hearing-coordinator-dropdown-listbox"
                                                 aria-label="hearing-coordinator-dropdown"
                                                 aria-labelledby="hearing-coordinator-dropdown-label"
                                                 autoCapitalize="none"
@@ -38380,7 +38328,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   >
                                                     <AutosizeInput
                                                       aria-autocomplete="list"
-                                                      aria-controls="hearing-coordinator-dropdown-listbox"
                                                       aria-label="hearing-coordinator-dropdown"
                                                       aria-labelledby="hearing-coordinator-dropdown-label"
                                                       autoCapitalize="none"
@@ -38422,7 +38369,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                       >
                                                         <input
                                                           aria-autocomplete="list"
-                                                          aria-controls="hearing-coordinator-dropdown-listbox"
                                                           aria-label="hearing-coordinator-dropdown"
                                                           aria-labelledby="hearing-coordinator-dropdown-label"
                                                           autoCapitalize="none"
@@ -41160,7 +41106,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                           >
                                             <Input
                                               aria-autocomplete="list"
-                                              aria-controls="hearing-room-dropdown-listbox"
                                               aria-label="hearing-room-dropdown"
                                               aria-labelledby="hearing-room-dropdown-label"
                                               autoCapitalize="none"
@@ -41405,7 +41350,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                 >
                                                   <AutosizeInput
                                                     aria-autocomplete="list"
-                                                    aria-controls="hearing-room-dropdown-listbox"
                                                     aria-label="hearing-room-dropdown"
                                                     aria-labelledby="hearing-room-dropdown-label"
                                                     autoCapitalize="none"
@@ -41447,7 +41391,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                     >
                                                       <input
                                                         aria-autocomplete="list"
-                                                        aria-controls="hearing-room-dropdown-listbox"
                                                         aria-label="hearing-room-dropdown"
                                                         aria-labelledby="hearing-room-dropdown-label"
                                                         autoCapitalize="none"
@@ -43561,7 +43504,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                           >
                                             <Input
                                               aria-autocomplete="list"
-                                              aria-controls="hearing-type-listbox"
                                               aria-label="hearing-type"
                                               aria-labelledby="hearing-type-label"
                                               autoCapitalize="none"
@@ -43694,7 +43636,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                 >
                                                   <AutosizeInput
                                                     aria-autocomplete="list"
-                                                    aria-controls="hearing-type-listbox"
                                                     aria-label="hearing-type"
                                                     aria-labelledby="hearing-type-label"
                                                     autoCapitalize="none"
@@ -43736,7 +43677,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                     >
                                                       <input
                                                         aria-autocomplete="list"
-                                                        aria-controls="hearing-type-listbox"
                                                         aria-label="hearing-type"
                                                         aria-labelledby="hearing-type-label"
                                                         autoCapitalize="none"
@@ -45610,7 +45550,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             >
                                               <Input
                                                 aria-autocomplete="list"
-                                                aria-controls="transcriber-listbox"
                                                 aria-label="transcriber"
                                                 aria-labelledby="transcriber-label"
                                                 autoCapitalize="none"
@@ -45752,7 +45691,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   >
                                                     <AutosizeInput
                                                       aria-autocomplete="list"
-                                                      aria-controls="transcriber-listbox"
                                                       aria-label="transcriber"
                                                       aria-labelledby="transcriber-label"
                                                       autoCapitalize="none"
@@ -45794,7 +45732,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                       >
                                                         <input
                                                           aria-autocomplete="list"
-                                                          aria-controls="transcriber-listbox"
                                                           aria-label="transcriber"
                                                           aria-labelledby="transcriber-label"
                                                           autoCapitalize="none"
@@ -47628,7 +47565,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             >
                                               <Input
                                                 aria-autocomplete="list"
-                                                aria-controls="problem-type-listbox"
                                                 aria-label="problem-type"
                                                 aria-labelledby="problem-type-label"
                                                 autoCapitalize="none"
@@ -47774,7 +47710,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   >
                                                     <AutosizeInput
                                                       aria-autocomplete="list"
-                                                      aria-controls="problem-type-listbox"
                                                       aria-label="problem-type"
                                                       aria-labelledby="problem-type-label"
                                                       autoCapitalize="none"
@@ -47816,7 +47751,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                       >
                                                         <input
                                                           aria-autocomplete="list"
-                                                          aria-controls="problem-type-listbox"
                                                           aria-label="problem-type"
                                                           aria-labelledby="problem-type-label"
                                                           autoCapitalize="none"
@@ -49782,7 +49716,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                             >
                                               <Input
                                                 aria-autocomplete="list"
-                                                aria-controls="judge-dropdown-listbox"
                                                 aria-label="judge-dropdown"
                                                 aria-labelledby="judge-dropdown-label"
                                                 autoCapitalize="none"
@@ -49910,7 +49843,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   >
                                                     <AutosizeInput
                                                       aria-autocomplete="list"
-                                                      aria-controls="judge-dropdown-listbox"
                                                       aria-label="judge-dropdown"
                                                       aria-labelledby="judge-dropdown-label"
                                                       autoCapitalize="none"
@@ -49952,7 +49884,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                       >
                                                         <input
                                                           aria-autocomplete="list"
-                                                          aria-controls="judge-dropdown-listbox"
                                                           aria-label="judge-dropdown"
                                                           aria-labelledby="judge-dropdown-label"
                                                           autoCapitalize="none"
@@ -51283,7 +51214,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                             >
                                               <Input
                                                 aria-autocomplete="list"
-                                                aria-controls="hearing-coordinator-dropdown-listbox"
                                                 aria-label="hearing-coordinator-dropdown"
                                                 aria-labelledby="hearing-coordinator-dropdown-label"
                                                 autoCapitalize="none"
@@ -51411,7 +51341,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   >
                                                     <AutosizeInput
                                                       aria-autocomplete="list"
-                                                      aria-controls="hearing-coordinator-dropdown-listbox"
                                                       aria-label="hearing-coordinator-dropdown"
                                                       aria-labelledby="hearing-coordinator-dropdown-label"
                                                       autoCapitalize="none"
@@ -51453,7 +51382,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                       >
                                                         <input
                                                           aria-autocomplete="list"
-                                                          aria-controls="hearing-coordinator-dropdown-listbox"
                                                           aria-label="hearing-coordinator-dropdown"
                                                           aria-labelledby="hearing-coordinator-dropdown-label"
                                                           autoCapitalize="none"
@@ -54191,7 +54119,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                           >
                                             <Input
                                               aria-autocomplete="list"
-                                              aria-controls="hearing-room-dropdown-listbox"
                                               aria-label="hearing-room-dropdown"
                                               aria-labelledby="hearing-room-dropdown-label"
                                               autoCapitalize="none"
@@ -54436,7 +54363,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                 >
                                                   <AutosizeInput
                                                     aria-autocomplete="list"
-                                                    aria-controls="hearing-room-dropdown-listbox"
                                                     aria-label="hearing-room-dropdown"
                                                     aria-labelledby="hearing-room-dropdown-label"
                                                     autoCapitalize="none"
@@ -54478,7 +54404,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                     >
                                                       <input
                                                         aria-autocomplete="list"
-                                                        aria-controls="hearing-room-dropdown-listbox"
                                                         aria-label="hearing-room-dropdown"
                                                         aria-labelledby="hearing-room-dropdown-label"
                                                         autoCapitalize="none"
@@ -56592,7 +56517,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                           >
                                             <Input
                                               aria-autocomplete="list"
-                                              aria-controls="hearing-type-listbox"
                                               aria-label="hearing-type"
                                               aria-labelledby="hearing-type-label"
                                               autoCapitalize="none"
@@ -56725,7 +56649,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                 >
                                                   <AutosizeInput
                                                     aria-autocomplete="list"
-                                                    aria-controls="hearing-type-listbox"
                                                     aria-label="hearing-type"
                                                     aria-labelledby="hearing-type-label"
                                                     autoCapitalize="none"
@@ -56767,7 +56690,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                     >
                                                       <input
                                                         aria-autocomplete="list"
-                                                        aria-controls="hearing-type-listbox"
                                                         aria-label="hearing-type"
                                                         aria-labelledby="hearing-type-label"
                                                         autoCapitalize="none"

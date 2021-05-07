@@ -106,7 +106,6 @@ exports[`EditClaimLabelModal renders correctly 1`] = `
                           >
                             <input
                               aria-autocomplete="list"
-                              aria-controls="select-claim-label-listbox"
                               aria-label="select-claim-label"
                               aria-labelledby="select-claim-label-label"
                               autocapitalize="none"

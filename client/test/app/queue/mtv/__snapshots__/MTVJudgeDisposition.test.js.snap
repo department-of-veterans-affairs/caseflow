@@ -1092,7 +1092,6 @@ exports[`MTVJudgeDisposition with granted disposition selected renders correctly
                     >
                       <input
                         aria-autocomplete="list"
-                        aria-controls="attorney-listbox"
                         aria-label="attorney"
                         aria-labelledby="attorney-label"
                         autocapitalize="none"
@@ -1543,7 +1542,6 @@ exports[`MTVJudgeDisposition with partially_granted disposition selected renders
                     >
                       <input
                         aria-autocomplete="list"
-                        aria-controls="attorney-listbox"
                         aria-label="attorney"
                         aria-labelledby="attorney-label"
                         autocapitalize="none"

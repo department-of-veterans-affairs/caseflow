@@ -214,7 +214,6 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
                       >
                         <input
                           aria-autocomplete="list"
-                          aria-controls="attorney-listbox"
                           aria-label="attorney"
                           aria-labelledby="attorney-label"
                           autocapitalize="none"

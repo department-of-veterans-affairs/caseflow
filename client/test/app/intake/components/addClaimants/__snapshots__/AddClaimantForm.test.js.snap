@@ -54,7 +54,6 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
                   >
                     <input
                       aria-autocomplete="list"
-                      aria-controls="relationship-listbox"
                       aria-label="relationship"
                       aria-labelledby="relationship-label"
                       autocapitalize="none"
@@ -391,7 +390,6 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
                     >
                       <input
                         aria-autocomplete="list"
-                        aria-controls="state-listbox"
                         aria-label="state"
                         aria-labelledby="state-label"
                         autocapitalize="none"
@@ -672,7 +670,6 @@ exports[`AddClaimantForm renders default state correctly 1`] = `
                   >
                     <input
                       aria-autocomplete="list"
-                      aria-controls="relationship-listbox"
                       aria-label="relationship"
                       aria-labelledby="relationship-label"
                       autocapitalize="none"

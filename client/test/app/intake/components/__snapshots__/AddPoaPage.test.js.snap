@@ -121,7 +121,6 @@ exports[`AddPoaPage renders default state correctly 1`] = `
                         >
                           <input
                             aria-autocomplete="list"
-                            aria-controls="listed-attorney-listbox"
                             aria-label="listed-attorney"
                             aria-labelledby="listed-attorney-label"
                             autocapitalize="none"

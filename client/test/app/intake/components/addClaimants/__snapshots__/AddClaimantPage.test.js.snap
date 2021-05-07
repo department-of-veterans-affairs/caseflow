@@ -115,7 +115,6 @@ exports[`AddClaimantPage renders default state correctly 1`] = `
                       >
                         <input
                           aria-autocomplete="list"
-                          aria-controls="relationship-listbox"
                           aria-label="relationship"
                           aria-labelledby="relationship-label"
                           autocapitalize="none"

@@ -116,7 +116,6 @@ exports[`AddClaimantModal renders correctly 1`] = `
                           >
                             <input
                               aria-autocomplete="list"
-                              aria-controls="relationship-listbox"
                               aria-label="relationship"
                               aria-labelledby="relationship-label"
                               autocapitalize="none"
@@ -214,7 +213,6 @@ exports[`AddClaimantModal renders correctly 1`] = `
                           >
                             <input
                               aria-autocomplete="list"
-                              aria-controls="claimant-listbox"
                               aria-label="claimant"
                               aria-labelledby="claimant-label"
                               autocapitalize="none"
