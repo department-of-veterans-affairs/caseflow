@@ -20,7 +20,7 @@ class LegacyIssueOptin < CaseflowRecord
     def revert_opted_in_remand_issues(vacols_id)
       # put all remand issues with "O" back to "3" before closing the appeal
       opt_ins_for_related_remand_issues(vacols_id).each do |remand_issue_opt_in|
-        remand_issue_opt_in.vacols_issue&.rollback_opt_in!(remand_issue_opt_in)
+        remand_issue_opt_in.rollback_issue_disposition
       end
     end
 
@@ -72,8 +72,20 @@ class LegacyIssueOptin < CaseflowRecord
   end
 
   def rollback_issue_disposition
-    vacols_issue&.rollback_opt_in!(self)
-    update!(rollback_processed_at: Time.zone.now)
+    return unless vacols_issue&.disposition_id == VACOLS_DISPOSITION_CODE
+
+    transaction do
+      Issue.update_in_vacols!(
+        vacols_id: vacols_id,
+        vacols_sequence_id: vacols_sequence_id,
+        issue_attrs: {
+          disposition: original_disposition_code,
+          disposition_date: original_disposition_date
+        }
+      )
+
+      update!(rollback_processed_at: Time.zone.now)
+    end
   end
 
   def opt_in_pending?
