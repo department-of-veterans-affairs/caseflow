@@ -1529,7 +1529,6 @@ RSpec.feature "Case details", :all_dbs do
 
         it "creates an Edit NOD Date entry and a success alert displays after a successful change" do
           visit("/queue/appeals/#{appeal.uuid}")
-          binding.pry
           find("button", text: COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY).click
           fill_in COPY::EDIT_NOD_DATE_LABEL, with: Time.zone.today.mdY
 
