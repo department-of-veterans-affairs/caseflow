@@ -1529,6 +1529,7 @@ RSpec.feature "Case details", :all_dbs do
 
         it "creates an Edit NOD Date entry and a success alert displays after a successful change" do
           visit("/queue/appeals/#{appeal.uuid}")
+
           find("button", text: COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY).click
           fill_in COPY::EDIT_NOD_DATE_LABEL, with: Time.zone.today.mdY
 
@@ -1805,7 +1806,7 @@ RSpec.feature "Case details", :all_dbs do
         it "the 'Add Substitute' button is not shown" do
           visit "/queue/appeals/#{appeal.external_id}"
           # This find forces a wait for the page to render. Without it, this test will always pass,
-          # whether the content is present or not
+          # whether the content is present or not!
           find("div", id: "caseTitleDetailsSubheader")
           expect(page).to have_no_content(COPY::SUBSTITUTE_APPELLANT_BUTTON)
         end
