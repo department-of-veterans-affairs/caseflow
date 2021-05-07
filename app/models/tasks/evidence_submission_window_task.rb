@@ -70,7 +70,7 @@ class EvidenceSubmissionWindowTask < Task
         "an unexpected state and may indicate that something is wrong."
       Raven.capture_message(msg)
     end
-# binding.pry
+
     from_date ||= created_at || Time.zone.now
 
     from_date

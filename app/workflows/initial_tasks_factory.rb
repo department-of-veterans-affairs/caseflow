@@ -36,10 +36,7 @@ class InitialTasksFactory
     distribution_task # ensure distribution_task exists
 
     if @appeal.appellant_substitution?
-      # copy task tree from source appeal
-      source_appeal = @appeal.appellant_substitution.source_appeal
-      copy_tasks
-      # To-do create tasks based on appellant_substitution form
+      create_selected_tasks
     elsif @appeal.cavc?
       create_cavc_subtasks
     elsif @appeal.evidence_submission_docket?
@@ -47,7 +44,7 @@ class InitialTasksFactory
     elsif @appeal.hearing_docket?
       ScheduleHearingTask.create!(appeal: @appeal, parent: distribution_task)
     elsif @appeal.direct_review_docket?
-      vso_tasks = createIhpTask
+      vso_tasks = create_ihp_task
       # If the appeal is direct docket and there are no ihp tasks,
       # then it is initially ready for distribution.
       distribution_task.ready_for_distribution! if vso_tasks.empty?
@@ -62,57 +59,56 @@ class InitialTasksFactory
                            DistributionTask.create!(appeal: @appeal, parent: @root_task)
   end
 
-  def createIhpTask
-    # An InformalHearingPresentationTask is only created if 
+  def create_ihp_task
+    # An InformalHearingPresentationTask is only created if
     IhpTasksFactory.new(distribution_task).create_ihp_tasks!
   end
 
-  def copy_tasks
+  def create_selected_tasks
     # Given a selection of task_ids, select it and all its tree ancestors
-    # TODO for rspec: pull a real tree from prod that has a deep task tree and varied task types
     source_appeal = @appeal.appellant_substitution.source_appeal
     task_ids = @appeal.appellant_substitution.selected_task_ids
-
     # Order the tasks so they are created in the same order
-    tasks = Task.where(id: task_ids).order(:id)
+    source_tasks = Task.where(id: task_ids).order(:id)
 
-    fail "Could not find all the tasks" if (task_ids - tasks.pluck(:id)).any?
+    fail "Could not find all the tasks in the source appeal" if (task_ids - source_tasks.pluck(:id)).any?
 
-    fail "Expecting only tasks assigned to organizations" if tasks.map(&:assigned_to_type).include?("User")
+    fail "Expecting only tasks assigned to organizations" if source_tasks.map(&:assigned_to_type).include?("User")
 
-    # TODO: ask if we want to shown a SubstitutionTask in the timeline, like DocketSwitch*Task
-    
-    evidence_submission_hold_end_date = Time.now + 20.days # @appeal.appellant_substitution.task_params
-    new_tasks = tasks.map { |task|
-      # TODO: set the ESW end_date
-      if task.type == "EvidenceSubmissionWindowTask" && evidence_submission_hold_end_date
-        EvidenceSubmissionWindowTask.create!(appeal: @appeal, parent: distribution_task, end_date: evidence_submission_hold_end_date)
-      elsif task.type == "InformalHearingPresentationTask"
-        vso_tasks = createIhpTask
+    new_tasks = source_tasks.map do |source_task|
+      create_params = @appeal.appellant_substitution.task_params[source_task.id.to_s]
+      if source_task.type == "EvidenceSubmissionWindowTask"
+        evidence_submission_hold_end_date = create_params["hold_end_date"]
+        EvidenceSubmissionWindowTask.create!(appeal: @appeal,
+                                             parent: distribution_task,
+                                             end_date: evidence_submission_hold_end_date)
+      elsif source_task.type == "InformalHearingPresentationTask"
+        vso_tasks = create_ihp_task
         if @appeal.power_of_attorney.poa_participant_id != @appeal.appellant_substitution.poa_participant_id
           # If this happens, then the claimant's power_of_attorney is different than what is in BGS
           # and BGS probably needs to be updated.
           # TODO: warn_unexpected_state
           ihp_task = @appeal.tasks.open.find_by(type: :InformalHearingPresentationTask)
-          # TO FIX: CAUTION: this is inefficient
+          # TODO FIX: inefficient
           target_org = Representative.find_by(participant_id: @appeal.appellant_substitution.poa_participant_id)
           ihp_task&.update(assigned_to: target_org)
         end
         warn_unexpected_state if vso_tasks.blank?
         # binding.pry if vso_tasks.any?
+        vso_tasks
       else
-        task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: ["status"])
+        source_task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: ["status"])
       end
-    }
-    # TODO: create TrackVeteranTask
+    end.flatten
 
     source_appeal.treee
     @appeal.reload.treee
     # binding.pry
+    new_tasks
   end
 
   def warn_unexpected_state
-    # TODO: warn "Did not create user-selected InformalHearingPresentationTask b/c POA is not a Representative" 
+    # TODO: warn "Did not create user-selected InformalHearingPresentationTask b/c POA is not a Representative"
     # TODO: use Raven to send sentry alert to #echo channel
     Rails.logger.warn("Did not create user-selected InformalHearingPresentationTask b/c POA is not a Representative: #{@appeal.appellant_substitution.poa_participant_id}")
   end

@@ -9,9 +9,6 @@ describe AppellantSubstitution do
     let(:substitution_date) { 5.days.ago.to_date }
     let(:substitute) { create(:claimant) }
     let(:substitutes_poa) { BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(substitute&.participant_id) }
-    # TODO: create Representative with substitutes_poa?
-    # For a.power_of_attorney(BgsPowerOfAttorney).representative_type == [Agent, Attorney], there is no Organization/Representative record
-    #   -- related: LegacyAppealRepresentative.representative_is_agent?
     let(:poa_participant_id) { substitutes_poa.poa_participant_id }
     let(:selected_task_ids) { [] }
     let(:task_params) { {} }
@@ -25,7 +22,7 @@ describe AppellantSubstitution do
         substitute_participant_id: substitute&.participant_id,
         poa_participant_id: poa_participant_id,
         selected_task_ids: selected_task_ids,
-        task_params: task_params # TODO: evidence_submission_hold_end_date: Time.now + 20.days
+        task_params: task_params
       }
     end
 
@@ -46,8 +43,18 @@ describe AppellantSubstitution do
     end
 
     context "when source appeal has ScheduleHearingTask and EvidenceSubmissionWindowTask" do
-      let(:selected_task_ids) { source_appeal.tasks.where(assigned_to_type: "Organization").of_type([:ScheduleHearingTask,
-        :EvidenceSubmissionWindowTask, :InformalHearingPresentationTask]).pluck(:id) }
+      let(:selected_task_ids) do
+        source_appeal.tasks.assigned_to_any_org.of_type([:ScheduleHearingTask,
+                                                         :EvidenceSubmissionWindowTask, :InformalHearingPresentationTask]).pluck(:id)
+      end
+      let(:esw_task) { source_appeal.tasks.assigned_to_any_org.find_by(type: :EvidenceSubmissionWindowTask) }
+      let(:task_params) do
+        {
+          esw_task.id => { hold_end_date: evidence_submission_hold_end_date.strftime("%F") }
+        }
+      end
+      let(:evidence_submission_hold_end_date) { Time.zone.now + 20.days }
+
       shared_examples "new appeal has user-selected tasks" do
         it "copies only ScheduleHearingTask and EvidenceSubmissionWindowTask to new appeal" do
           expect(source_appeal.tasks.of_type(:ScheduleHearingTask).count).to eq 1
@@ -63,8 +70,8 @@ describe AppellantSubstitution do
         end
       end
 
-      let!(:source_appeal) {
-        create(:appeal, :with_schedule_hearing_tasks, :dispatched) { |appeal|
+      let!(:source_appeal) do
+        create(:appeal, :with_schedule_hearing_tasks, :dispatched) do |appeal|
           distribution_task = appeal.tasks.find_by(type: :DistributionTask)
 
           vso_participant_id = "55555"
@@ -74,8 +81,8 @@ describe AppellantSubstitution do
 
           # Cancel any open tasks
           appeal.tasks.open.map(&:cancelled!)
-        }
-      }
+        end
+      end
 
       include_examples "new appeal has user-selected tasks"
 
@@ -108,6 +115,8 @@ describe AppellantSubstitution do
           # binding.pry
         end
       end
+
+      # TODO for rspec: pull a real tree from prod that has a deep task tree and varied task types
     end
 
     context "when source appeal is AOD" do
