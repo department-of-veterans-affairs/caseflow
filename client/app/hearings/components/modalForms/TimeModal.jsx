@@ -148,7 +148,7 @@ const InfoAlert = ({ timeString }) => {
   });
 
   return (
-    <div classNames="info-alert" {...alertContainerStyles}>
+    <div className="info-alert" {...alertContainerStyles}>
       <div {...greyRectangleStyles} />
       <div {...textDivStyles}>{`The hearing will start at ${timeString} Eastern Time`}</div>
     </div>
@@ -232,7 +232,7 @@ const TimeSelect = ({ roTimezone, onSelect, error, clearError }) => {
   const options = generateOrderedTimeOptions(roTimezone);
 
   return (
-    <div classNames="time-select" {...containerStyles}>
+    <div className="time-select" {...containerStyles}>
       <div {...selectContainerStyles}>
         <Select
           // Make this a controlled select
