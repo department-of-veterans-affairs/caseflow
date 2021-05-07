@@ -77,6 +77,9 @@ const matchesHour = (candidate, input, exact = false) => {
 
   return exact ? candidateHourString === input : candidateHourString.startsWith(input);
 };
+const removeOneLeadingZero = (string) => {
+  return string[0] === '0' ? string.slice(1) : string;
+};
 // Checks if the input matches any part of a candidate.value which is a moment object
 const matchesAny = (candidate, input) => {
   if (input.includes(':')) {
@@ -87,12 +90,14 @@ const matchesAny = (candidate, input) => {
     return matchesHour(candidate, hour, true) && matchesAny(candidate, minutesAndAmPm);
   }
   if (!input.includes(':')) {
-  // Produce a time like '400pm' or '800am' for string searching
+    // Produce a time like '400pm' or '800am' for string searching
     const candidateNoColon = candidate.value.format('hhmmA');
     // Remove spaces, force upper case so AM/PM searching works
-    const inputNoColonOrSpaces = input.replace(' ', '').toUpperCase();
+    const noColonOrSpaces = input.replace(' ', '').toUpperCase();
+    // Remove a leading zero if there is one
+    const noLeadingZero = removeOneLeadingZero(noColonOrSpaces);
 
-    return candidateNoColon.includes(inputNoColonOrSpaces);
+    return candidateNoColon.includes(noLeadingZero);
   }
 };
 // Filter the options list to display only options that match
