@@ -13,8 +13,8 @@ describe AppellantSubstitution do
     # For a.power_of_attorney(BgsPowerOfAttorney).representative_type == [Agent, Attorney], there is no Organization/Representative record
     #   -- related: LegacyAppealRepresentative.representative_is_agent?
     let(:poa_participant_id) { substitutes_poa.poa_participant_id }
-    let(:selected_task_ids) { nil }
-    let(:task_params) { "" }
+    let(:selected_task_ids) { [] }
+    let(:task_params) { {} }
 
     let(:params) do
       {
