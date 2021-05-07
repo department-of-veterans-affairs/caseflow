@@ -75,7 +75,7 @@ class InitialTasksFactory
 
     fail "Expecting only tasks assigned to organizations" if source_tasks.map(&:assigned_to_type).include?("User")
 
-    new_tasks = source_tasks.map do |source_task|
+    source_tasks.map do |source_task|
       create_params = @appeal.appellant_substitution.task_params[source_task.id.to_s]
       if source_task.type == "EvidenceSubmissionWindowTask"
         evidence_submission_hold_end_date = create_params["hold_end_date"]
@@ -85,11 +85,12 @@ class InitialTasksFactory
       elsif source_task.type == "InformalHearingPresentationTask"
         vso_tasks = create_ihp_task
         if @appeal.power_of_attorney.poa_participant_id != @appeal.appellant_substitution.poa_participant_id
+          fail "Unhandled scenario"
+
+          # Possible placeholder for unrecognized appellants.
           # If this happens, then the claimant's power_of_attorney is different than what is in BGS
           # and BGS probably needs to be updated.
-          # TODO: warn_unexpected_state
           ihp_task = @appeal.tasks.open.find_by(type: :InformalHearingPresentationTask)
-          # TODO FIX: inefficient
           target_org = Representative.find_by(participant_id: @appeal.appellant_substitution.poa_participant_id)
           ihp_task&.update(assigned_to: target_org)
         end
@@ -100,15 +101,9 @@ class InitialTasksFactory
         source_task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: ["status"])
       end
     end.flatten
-
-    source_appeal.treee
-    @appeal.reload.treee
-    # binding.pry
-    new_tasks
   end
 
   def warn_unexpected_state
-    # TODO: warn "Did not create user-selected InformalHearingPresentationTask b/c POA is not a Representative"
     # TODO: use Raven to send sentry alert to #echo channel
     Rails.logger.warn("Did not create user-selected InformalHearingPresentationTask b/c POA is not a Representative: #{@appeal.appellant_substitution.poa_participant_id}")
   end

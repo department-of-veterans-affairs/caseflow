@@ -12,8 +12,8 @@ class EvidenceSubmissionWindowTask < Task
   before_validation :set_assignee
 
   def initialize(kw_args)
-    @end_date = kw_args[:end_date]
-    super(kw_args.except(:end_date))
+    @end_date = kw_args&.fetch(:end_date, nil)
+    super(kw_args&.except(:end_date))
   end
 
   # also called when EvidenceSubmissionWindowTask is manually closed by the user

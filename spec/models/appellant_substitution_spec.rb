@@ -43,10 +43,8 @@ describe AppellantSubstitution do
     end
 
     context "when source appeal has ScheduleHearingTask and EvidenceSubmissionWindowTask" do
-      let(:selected_task_ids) do
-        source_appeal.tasks.assigned_to_any_org.of_type([:ScheduleHearingTask,
-                                                         :EvidenceSubmissionWindowTask, :InformalHearingPresentationTask]).pluck(:id)
-      end
+      let(:selected_task_types) { [:ScheduleHearingTask, :EvidenceSubmissionWindowTask, :InformalHearingPresentationTask] }
+      let(:selected_task_ids) { source_appeal.tasks.assigned_to_any_org.of_type(selected_task_types).pluck(:id) }
       let(:esw_task) { source_appeal.tasks.assigned_to_any_org.find_by(type: :EvidenceSubmissionWindowTask) }
       let(:task_params) do
         {
@@ -66,7 +64,8 @@ describe AppellantSubstitution do
           esw_task = target_appeal.tasks.open.find_by(type: :EvidenceSubmissionWindowTask)
           expect(esw_task.status).to eq "assigned"
           task_timer = TaskTimer.where(task: esw_task).order(:id).last
-          expect(task_timer.last_submitted_at).to eq esw_task.timer_ends_at
+          expect(task_timer.last_submitted_at).to eq evidence_submission_hold_end_date
+          expect(esw_task.timer_ends_at).to eq evidence_submission_hold_end_date
         end
       end
 
@@ -111,12 +110,11 @@ describe AppellantSubstitution do
           ihp_task = target_appeal.tasks.open.find_by(type: :InformalHearingPresentationTask)
           expect(ihp_task.status).to eq "assigned"
           expect(ihp_task.assigned_to.participant_id).to eq poa_participant_id
-
           # binding.pry
         end
       end
 
-      # TODO for rspec: pull a real tree from prod that has a deep task tree and varied task types
+      # TODO: for rspec: pull a real tree from prod that has a deep task tree and varied task types
     end
 
     context "when source appeal is AOD" do
