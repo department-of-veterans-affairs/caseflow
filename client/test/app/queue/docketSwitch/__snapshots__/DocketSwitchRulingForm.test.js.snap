@@ -173,11 +173,14 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
           class=""
         >
           <div
+            aria-expanded="false"
             class="cf-form-dropdown dropdown-attorney"
+            role="combobox"
           >
             <label
               class="question-label"
               for="attorney"
+              id="attorney-label"
             >
               <strong>
                 <span>
@@ -212,13 +215,12 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
                         <input
                           aria-autocomplete="list"
                           aria-controls="attorney-listbox"
-                          aria-expanded="false"
-                          aria-labelledby="attorney"
+                          aria-label="attorney"
+                          aria-labelledby="attorney-label"
                           autocapitalize="none"
                           autocomplete="off"
                           autocorrect="off"
                           id="attorney"
-                          role="combobox"
                           spellcheck="false"
                           style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                           tabindex="0"

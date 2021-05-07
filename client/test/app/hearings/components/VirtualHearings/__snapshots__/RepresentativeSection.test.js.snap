@@ -960,12 +960,15 @@ SAN FRANCISCO, CA 94103
               className=""
             >
               <div
+                aria-expanded={false}
                 className="cf-form-dropdown dropdown-representativeTz"
                 data-css-1gh7024=""
+                role="combobox"
               >
                 <label
                   className="question-label"
                   htmlFor="representativeTz"
+                  id="representative-tz-label"
                 >
                   <strong>
                     <span>
@@ -982,13 +985,13 @@ SAN FRANCISCO, CA 94103
                   className="cf-select"
                 >
                   <StateManager
-                    aria-labelledby="representativeTz"
                     cache={false}
                     classNamePrefix="cf-select"
                     components={
                       Object {
                         "Input": [Function],
                         "MenuList": [Function],
+                        "Option": [Function],
                       }
                     }
                     defaultInputValue=""
@@ -1002,6 +1005,8 @@ SAN FRANCISCO, CA 94103
                     noOptionsMessage={[Function]}
                     onBlurResetsInput={false}
                     onChange={[Function]}
+                    onMenuClose={[Function]}
+                    onMenuOpen={[Function]}
                     options={
                       Array [
                         Object {
@@ -1786,7 +1791,6 @@ SAN FRANCISCO, CA 94103
                     }
                   >
                     <Select
-                      aria-labelledby="representativeTz"
                       backspaceRemovesValue={true}
                       blurInputOnSelect={true}
                       cache={false}
@@ -1798,6 +1802,7 @@ SAN FRANCISCO, CA 94103
                         Object {
                           "Input": [Function],
                           "MenuList": [Function],
+                          "Option": [Function],
                         }
                       }
                       controlShouldRenderValue={true}
@@ -3405,7 +3410,6 @@ SAN FRANCISCO, CA 94103
                         selectOption={[Function]}
                         selectProps={
                           Object {
-                            "aria-labelledby": "representativeTz",
                             "backspaceRemovesValue": true,
                             "blurInputOnSelect": true,
                             "cache": false,
@@ -3416,6 +3420,7 @@ SAN FRANCISCO, CA 94103
                             "components": Object {
                               "Input": [Function],
                               "MenuList": [Function],
+                              "Option": [Function],
                             },
                             "controlShouldRenderValue": true,
                             "defaultOptions": undefined,
@@ -5073,7 +5078,6 @@ SAN FRANCISCO, CA 94103
                               selectOption={[Function]}
                               selectProps={
                                 Object {
-                                  "aria-labelledby": "representativeTz",
                                   "backspaceRemovesValue": true,
                                   "blurInputOnSelect": true,
                                   "cache": false,
@@ -5084,6 +5088,7 @@ SAN FRANCISCO, CA 94103
                                   "components": Object {
                                     "Input": [Function],
                                     "MenuList": [Function],
+                                    "Option": [Function],
                                   },
                                   "controlShouldRenderValue": true,
                                   "defaultOptions": undefined,
@@ -6749,7 +6754,6 @@ SAN FRANCISCO, CA 94103
                                     selectOption={[Function]}
                                     selectProps={
                                       Object {
-                                        "aria-labelledby": "representativeTz",
                                         "backspaceRemovesValue": true,
                                         "blurInputOnSelect": true,
                                         "cache": false,
@@ -6760,6 +6764,7 @@ SAN FRANCISCO, CA 94103
                                         "components": Object {
                                           "Input": [Function],
                                           "MenuList": [Function],
+                                          "Option": [Function],
                                         },
                                         "controlShouldRenderValue": true,
                                         "defaultOptions": undefined,
@@ -8417,7 +8422,6 @@ SAN FRANCISCO, CA 94103
                                           selectOption={[Function]}
                                           selectProps={
                                             Object {
-                                              "aria-labelledby": "representativeTz",
                                               "backspaceRemovesValue": true,
                                               "blurInputOnSelect": true,
                                               "cache": false,
@@ -8428,6 +8432,7 @@ SAN FRANCISCO, CA 94103
                                               "components": Object {
                                                 "Input": [Function],
                                                 "MenuList": [Function],
+                                                "Option": [Function],
                                               },
                                               "controlShouldRenderValue": true,
                                               "defaultOptions": undefined,
@@ -9307,7 +9312,6 @@ SAN FRANCISCO, CA 94103
                                         </SingleValue>
                                         <Input
                                           aria-autocomplete="list"
-                                          aria-labelledby="representativeTz"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
@@ -9322,7 +9326,6 @@ SAN FRANCISCO, CA 94103
                                           onFocus={[Function]}
                                           selectProps={
                                             Object {
-                                              "aria-labelledby": "representativeTz",
                                               "backspaceRemovesValue": true,
                                               "blurInputOnSelect": true,
                                               "cache": false,
@@ -9333,6 +9336,7 @@ SAN FRANCISCO, CA 94103
                                               "components": Object {
                                                 "Input": [Function],
                                                 "MenuList": [Function],
+                                                "Option": [Function],
                                               },
                                               "controlShouldRenderValue": true,
                                               "defaultOptions": undefined,
@@ -10187,9 +10191,9 @@ SAN FRANCISCO, CA 94103
                                         >
                                           <Input
                                             aria-autocomplete="list"
-                                            aria-controls="representativeTz-listbox"
-                                            aria-expanded={false}
-                                            aria-labelledby="representativeTz"
+                                            aria-controls="representative-tz-listbox"
+                                            aria-label="representative-tz"
+                                            aria-labelledby="representative-tz-label"
                                             autoCapitalize="none"
                                             autoComplete="off"
                                             autoCorrect="off"
@@ -10202,10 +10206,8 @@ SAN FRANCISCO, CA 94103
                                             onBlur={[Function]}
                                             onChange={[Function]}
                                             onFocus={[Function]}
-                                            role="combobox"
                                             selectProps={
                                               Object {
-                                                "aria-labelledby": "representativeTz",
                                                 "backspaceRemovesValue": true,
                                                 "blurInputOnSelect": true,
                                                 "cache": false,
@@ -10216,6 +10218,7 @@ SAN FRANCISCO, CA 94103
                                                 "components": Object {
                                                   "Input": [Function],
                                                   "MenuList": [Function],
+                                                  "Option": [Function],
                                                 },
                                                 "controlShouldRenderValue": true,
                                                 "defaultOptions": undefined,
@@ -11082,9 +11085,9 @@ SAN FRANCISCO, CA 94103
                                               >
                                                 <AutosizeInput
                                                   aria-autocomplete="list"
-                                                  aria-controls="representativeTz-listbox"
-                                                  aria-expanded={false}
-                                                  aria-labelledby="representativeTz"
+                                                  aria-controls="representative-tz-listbox"
+                                                  aria-label="representative-tz"
+                                                  aria-labelledby="representative-tz-label"
                                                   autoCapitalize="none"
                                                   autoComplete="off"
                                                   autoCorrect="off"
@@ -11109,7 +11112,6 @@ SAN FRANCISCO, CA 94103
                                                   onBlur={[Function]}
                                                   onChange={[Function]}
                                                   onFocus={[Function]}
-                                                  role="combobox"
                                                   spellCheck="false"
                                                   tabIndex="0"
                                                   type="text"
@@ -11125,9 +11127,9 @@ SAN FRANCISCO, CA 94103
                                                   >
                                                     <input
                                                       aria-autocomplete="list"
-                                                      aria-controls="representativeTz-listbox"
-                                                      aria-expanded={false}
-                                                      aria-labelledby="representativeTz"
+                                                      aria-controls="representative-tz-listbox"
+                                                      aria-label="representative-tz"
+                                                      aria-labelledby="representative-tz-label"
                                                       autoCapitalize="none"
                                                       autoComplete="off"
                                                       autoCorrect="off"
@@ -11136,7 +11138,6 @@ SAN FRANCISCO, CA 94103
                                                       onBlur={[Function]}
                                                       onChange={[Function]}
                                                       onFocus={[Function]}
-                                                      role="combobox"
                                                       spellCheck="false"
                                                       style={
                                                         Object {
@@ -11958,7 +11959,6 @@ SAN FRANCISCO, CA 94103
                                     selectOption={[Function]}
                                     selectProps={
                                       Object {
-                                        "aria-labelledby": "representativeTz",
                                         "backspaceRemovesValue": true,
                                         "blurInputOnSelect": true,
                                         "cache": false,
@@ -11969,6 +11969,7 @@ SAN FRANCISCO, CA 94103
                                         "components": Object {
                                           "Input": [Function],
                                           "MenuList": [Function],
+                                          "Option": [Function],
                                         },
                                         "controlShouldRenderValue": true,
                                         "defaultOptions": undefined,
@@ -13616,7 +13617,6 @@ SAN FRANCISCO, CA 94103
                                           selectOption={[Function]}
                                           selectProps={
                                             Object {
-                                              "aria-labelledby": "representativeTz",
                                               "backspaceRemovesValue": true,
                                               "blurInputOnSelect": true,
                                               "cache": false,
@@ -13627,6 +13627,7 @@ SAN FRANCISCO, CA 94103
                                               "components": Object {
                                                 "Input": [Function],
                                                 "MenuList": [Function],
+                                                "Option": [Function],
                                               },
                                               "controlShouldRenderValue": true,
                                               "defaultOptions": undefined,
@@ -15285,7 +15286,6 @@ SAN FRANCISCO, CA 94103
                                           selectOption={[Function]}
                                           selectProps={
                                             Object {
-                                              "aria-labelledby": "representativeTz",
                                               "backspaceRemovesValue": true,
                                               "blurInputOnSelect": true,
                                               "cache": false,
@@ -15296,6 +15296,7 @@ SAN FRANCISCO, CA 94103
                                               "components": Object {
                                                 "Input": [Function],
                                                 "MenuList": [Function],
+                                                "Option": [Function],
                                               },
                                               "controlShouldRenderValue": true,
                                               "defaultOptions": undefined,

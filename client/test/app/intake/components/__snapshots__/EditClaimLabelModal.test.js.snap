@@ -65,11 +65,14 @@ exports[`EditClaimLabelModal renders correctly 1`] = `
               class=""
             >
               <div
+                aria-expanded="false"
                 class="cf-form-dropdown dropdown-select-claim-label"
+                role="combobox"
               >
                 <label
                   class="question-label"
                   for="select-claim-label"
+                  id="select-claim-label-label"
                 >
                   <strong>
                     <span>
@@ -104,13 +107,12 @@ exports[`EditClaimLabelModal renders correctly 1`] = `
                             <input
                               aria-autocomplete="list"
                               aria-controls="select-claim-label-listbox"
-                              aria-expanded="false"
-                              aria-labelledby="select-claim-label"
+                              aria-label="select-claim-label"
+                              aria-labelledby="select-claim-label-label"
                               autocapitalize="none"
                               autocomplete="off"
                               autocorrect="off"
                               id="select-claim-label"
-                              role="combobox"
                               spellcheck="false"
                               style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                               tabindex="0"

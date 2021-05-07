@@ -459,11 +459,14 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                 className=""
               >
                 <div
+                  aria-expanded={false}
                   className="cf-form-dropdown dropdown-optionalHearingTime0"
+                  role="combobox"
                 >
                   <label
                     className="question-label usa-sr-only"
                     htmlFor="optionalHearingTime0"
+                    id="optional-hearing-time-0-label"
                   >
                     <strong>
                       <span>
@@ -475,13 +478,13 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                     className="cf-select"
                   >
                     <StateManager
-                      aria-labelledby="optionalHearingTime0"
                       cache={false}
                       classNamePrefix="cf-select"
                       components={
                         Object {
                           "Input": [Function],
                           "MenuList": [Function],
+                          "Option": [Function],
                         }
                       }
                       defaultInputValue=""
@@ -494,6 +497,8 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                       noOptionsMessage={[Function]}
                       onBlurResetsInput={false}
                       onChange={[Function]}
+                      onMenuClose={[Function]}
+                      onMenuOpen={[Function]}
                       options={
                         Array [
                           Object {
@@ -647,7 +652,6 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                       }
                     >
                       <Select
-                        aria-labelledby="optionalHearingTime0"
                         backspaceRemovesValue={true}
                         blurInputOnSelect={true}
                         cache={false}
@@ -659,6 +663,7 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                           Object {
                             "Input": [Function],
                             "MenuList": [Function],
+                            "Option": [Function],
                           }
                         }
                         controlShouldRenderValue={true}
@@ -1012,7 +1017,6 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                           selectOption={[Function]}
                           selectProps={
                             Object {
-                              "aria-labelledby": "optionalHearingTime0",
                               "backspaceRemovesValue": true,
                               "blurInputOnSelect": true,
                               "cache": false,
@@ -1023,6 +1027,7 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                               "components": Object {
                                 "Input": [Function],
                                 "MenuList": [Function],
+                                "Option": [Function],
                               },
                               "controlShouldRenderValue": true,
                               "defaultOptions": undefined,
@@ -1428,7 +1433,6 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                 selectOption={[Function]}
                                 selectProps={
                                   Object {
-                                    "aria-labelledby": "optionalHearingTime0",
                                     "backspaceRemovesValue": true,
                                     "blurInputOnSelect": true,
                                     "cache": false,
@@ -1439,6 +1443,7 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                     "components": Object {
                                       "Input": [Function],
                                       "MenuList": [Function],
+                                      "Option": [Function],
                                     },
                                     "controlShouldRenderValue": true,
                                     "defaultOptions": undefined,
@@ -1852,7 +1857,6 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                       selectOption={[Function]}
                                       selectProps={
                                         Object {
-                                          "aria-labelledby": "optionalHearingTime0",
                                           "backspaceRemovesValue": true,
                                           "blurInputOnSelect": true,
                                           "cache": false,
@@ -1863,6 +1867,7 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                           "components": Object {
                                             "Input": [Function],
                                             "MenuList": [Function],
+                                            "Option": [Function],
                                           },
                                           "controlShouldRenderValue": true,
                                           "defaultOptions": undefined,
@@ -2263,7 +2268,6 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                             selectOption={[Function]}
                                             selectProps={
                                               Object {
-                                                "aria-labelledby": "optionalHearingTime0",
                                                 "backspaceRemovesValue": true,
                                                 "blurInputOnSelect": true,
                                                 "cache": false,
@@ -2274,6 +2278,7 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                                 "components": Object {
                                                   "Input": [Function],
                                                   "MenuList": [Function],
+                                                  "Option": [Function],
                                                 },
                                                 "controlShouldRenderValue": true,
                                                 "defaultOptions": undefined,
@@ -2521,7 +2526,6 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                           </Placeholder>
                                           <Input
                                             aria-autocomplete="list"
-                                            aria-labelledby="optionalHearingTime0"
                                             autoCapitalize="none"
                                             autoComplete="off"
                                             autoCorrect="off"
@@ -2536,7 +2540,6 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                             onFocus={[Function]}
                                             selectProps={
                                               Object {
-                                                "aria-labelledby": "optionalHearingTime0",
                                                 "backspaceRemovesValue": true,
                                                 "blurInputOnSelect": true,
                                                 "cache": false,
@@ -2547,6 +2550,7 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                                 "components": Object {
                                                   "Input": [Function],
                                                   "MenuList": [Function],
+                                                  "Option": [Function],
                                                 },
                                                 "controlShouldRenderValue": true,
                                                 "defaultOptions": undefined,
@@ -2773,9 +2777,9 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                           >
                                             <Input
                                               aria-autocomplete="list"
-                                              aria-controls="optionalHearingTime0-listbox"
-                                              aria-expanded={false}
-                                              aria-labelledby="optionalHearingTime0"
+                                              aria-controls="optional-hearing-time-0-listbox"
+                                              aria-label="optional-hearing-time-0"
+                                              aria-labelledby="optional-hearing-time-0-label"
                                               autoCapitalize="none"
                                               autoComplete="off"
                                               autoCorrect="off"
@@ -2788,10 +2792,8 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
                                               selectProps={
                                                 Object {
-                                                  "aria-labelledby": "optionalHearingTime0",
                                                   "backspaceRemovesValue": true,
                                                   "blurInputOnSelect": true,
                                                   "cache": false,
@@ -2802,6 +2804,7 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                                   "components": Object {
                                                     "Input": [Function],
                                                     "MenuList": [Function],
+                                                    "Option": [Function],
                                                   },
                                                   "controlShouldRenderValue": true,
                                                   "defaultOptions": undefined,
@@ -3040,9 +3043,9 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                                 >
                                                   <AutosizeInput
                                                     aria-autocomplete="list"
-                                                    aria-controls="optionalHearingTime0-listbox"
-                                                    aria-expanded={false}
-                                                    aria-labelledby="optionalHearingTime0"
+                                                    aria-controls="optional-hearing-time-0-listbox"
+                                                    aria-label="optional-hearing-time-0"
+                                                    aria-labelledby="optional-hearing-time-0-label"
                                                     autoCapitalize="none"
                                                     autoComplete="off"
                                                     autoCorrect="off"
@@ -3067,7 +3070,6 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                                     onBlur={[Function]}
                                                     onChange={[Function]}
                                                     onFocus={[Function]}
-                                                    role="combobox"
                                                     spellCheck="false"
                                                     tabIndex="0"
                                                     type="text"
@@ -3083,9 +3085,9 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                                     >
                                                       <input
                                                         aria-autocomplete="list"
-                                                        aria-controls="optionalHearingTime0-listbox"
-                                                        aria-expanded={false}
-                                                        aria-labelledby="optionalHearingTime0"
+                                                        aria-controls="optional-hearing-time-0-listbox"
+                                                        aria-label="optional-hearing-time-0"
+                                                        aria-labelledby="optional-hearing-time-0-label"
                                                         autoCapitalize="none"
                                                         autoComplete="off"
                                                         autoCorrect="off"
@@ -3094,7 +3096,6 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                                         onBlur={[Function]}
                                                         onChange={[Function]}
                                                         onFocus={[Function]}
-                                                        role="combobox"
                                                         spellCheck="false"
                                                         style={
                                                           Object {
@@ -3292,7 +3293,6 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                       selectOption={[Function]}
                                       selectProps={
                                         Object {
-                                          "aria-labelledby": "optionalHearingTime0",
                                           "backspaceRemovesValue": true,
                                           "blurInputOnSelect": true,
                                           "cache": false,
@@ -3303,6 +3303,7 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                           "components": Object {
                                             "Input": [Function],
                                             "MenuList": [Function],
+                                            "Option": [Function],
                                           },
                                           "controlShouldRenderValue": true,
                                           "defaultOptions": undefined,
@@ -3698,7 +3699,6 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                             selectOption={[Function]}
                                             selectProps={
                                               Object {
-                                                "aria-labelledby": "optionalHearingTime0",
                                                 "backspaceRemovesValue": true,
                                                 "blurInputOnSelect": true,
                                                 "cache": false,
@@ -3709,6 +3709,7 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                                 "components": Object {
                                                   "Input": [Function],
                                                   "MenuList": [Function],
+                                                  "Option": [Function],
                                                 },
                                                 "controlShouldRenderValue": true,
                                                 "defaultOptions": undefined,
@@ -4115,7 +4116,6 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                             selectOption={[Function]}
                                             selectProps={
                                               Object {
-                                                "aria-labelledby": "optionalHearingTime0",
                                                 "backspaceRemovesValue": true,
                                                 "blurInputOnSelect": true,
                                                 "cache": false,
@@ -4126,6 +4126,7 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                                 "components": Object {
                                                   "Input": [Function],
                                                   "MenuList": [Function],
+                                                  "Option": [Function],
                                                 },
                                                 "controlShouldRenderValue": true,
                                                 "defaultOptions": undefined,
@@ -5264,11 +5265,14 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                 className=""
               >
                 <div
+                  aria-expanded={false}
                   className="cf-form-dropdown dropdown-optionalHearingTime0"
+                  role="combobox"
                 >
                   <label
                     className="question-label"
                     htmlFor="optionalHearingTime0"
+                    id="optional-hearing-time-0-label"
                   >
                     <strong>
                       <span>
@@ -5280,13 +5284,13 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                     className="cf-select"
                   >
                     <StateManager
-                      aria-labelledby="optionalHearingTime0"
                       cache={false}
                       classNamePrefix="cf-select"
                       components={
                         Object {
                           "Input": [Function],
                           "MenuList": [Function],
+                          "Option": [Function],
                         }
                       }
                       defaultInputValue=""
@@ -5299,6 +5303,8 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                       noOptionsMessage={[Function]}
                       onBlurResetsInput={false}
                       onChange={[Function]}
+                      onMenuClose={[Function]}
+                      onMenuOpen={[Function]}
                       options={
                         Array [
                           Object {
@@ -5452,7 +5458,6 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                       }
                     >
                       <Select
-                        aria-labelledby="optionalHearingTime0"
                         backspaceRemovesValue={true}
                         blurInputOnSelect={true}
                         cache={false}
@@ -5464,6 +5469,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                           Object {
                             "Input": [Function],
                             "MenuList": [Function],
+                            "Option": [Function],
                           }
                         }
                         controlShouldRenderValue={true}
@@ -5817,7 +5823,6 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                           selectOption={[Function]}
                           selectProps={
                             Object {
-                              "aria-labelledby": "optionalHearingTime0",
                               "backspaceRemovesValue": true,
                               "blurInputOnSelect": true,
                               "cache": false,
@@ -5828,6 +5833,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                               "components": Object {
                                 "Input": [Function],
                                 "MenuList": [Function],
+                                "Option": [Function],
                               },
                               "controlShouldRenderValue": true,
                               "defaultOptions": undefined,
@@ -6233,7 +6239,6 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                 selectOption={[Function]}
                                 selectProps={
                                   Object {
-                                    "aria-labelledby": "optionalHearingTime0",
                                     "backspaceRemovesValue": true,
                                     "blurInputOnSelect": true,
                                     "cache": false,
@@ -6244,6 +6249,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                     "components": Object {
                                       "Input": [Function],
                                       "MenuList": [Function],
+                                      "Option": [Function],
                                     },
                                     "controlShouldRenderValue": true,
                                     "defaultOptions": undefined,
@@ -6657,7 +6663,6 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                       selectOption={[Function]}
                                       selectProps={
                                         Object {
-                                          "aria-labelledby": "optionalHearingTime0",
                                           "backspaceRemovesValue": true,
                                           "blurInputOnSelect": true,
                                           "cache": false,
@@ -6668,6 +6673,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                           "components": Object {
                                             "Input": [Function],
                                             "MenuList": [Function],
+                                            "Option": [Function],
                                           },
                                           "controlShouldRenderValue": true,
                                           "defaultOptions": undefined,
@@ -7068,7 +7074,6 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                             selectOption={[Function]}
                                             selectProps={
                                               Object {
-                                                "aria-labelledby": "optionalHearingTime0",
                                                 "backspaceRemovesValue": true,
                                                 "blurInputOnSelect": true,
                                                 "cache": false,
@@ -7079,6 +7084,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                                 "components": Object {
                                                   "Input": [Function],
                                                   "MenuList": [Function],
+                                                  "Option": [Function],
                                                 },
                                                 "controlShouldRenderValue": true,
                                                 "defaultOptions": undefined,
@@ -7326,7 +7332,6 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                           </Placeholder>
                                           <Input
                                             aria-autocomplete="list"
-                                            aria-labelledby="optionalHearingTime0"
                                             autoCapitalize="none"
                                             autoComplete="off"
                                             autoCorrect="off"
@@ -7341,7 +7346,6 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                             onFocus={[Function]}
                                             selectProps={
                                               Object {
-                                                "aria-labelledby": "optionalHearingTime0",
                                                 "backspaceRemovesValue": true,
                                                 "blurInputOnSelect": true,
                                                 "cache": false,
@@ -7352,6 +7356,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                                 "components": Object {
                                                   "Input": [Function],
                                                   "MenuList": [Function],
+                                                  "Option": [Function],
                                                 },
                                                 "controlShouldRenderValue": true,
                                                 "defaultOptions": undefined,
@@ -7578,9 +7583,9 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                           >
                                             <Input
                                               aria-autocomplete="list"
-                                              aria-controls="optionalHearingTime0-listbox"
-                                              aria-expanded={false}
-                                              aria-labelledby="optionalHearingTime0"
+                                              aria-controls="optional-hearing-time-0-listbox"
+                                              aria-label="optional-hearing-time-0"
+                                              aria-labelledby="optional-hearing-time-0-label"
                                               autoCapitalize="none"
                                               autoComplete="off"
                                               autoCorrect="off"
@@ -7593,10 +7598,8 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
                                               selectProps={
                                                 Object {
-                                                  "aria-labelledby": "optionalHearingTime0",
                                                   "backspaceRemovesValue": true,
                                                   "blurInputOnSelect": true,
                                                   "cache": false,
@@ -7607,6 +7610,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                                   "components": Object {
                                                     "Input": [Function],
                                                     "MenuList": [Function],
+                                                    "Option": [Function],
                                                   },
                                                   "controlShouldRenderValue": true,
                                                   "defaultOptions": undefined,
@@ -7845,9 +7849,9 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                                 >
                                                   <AutosizeInput
                                                     aria-autocomplete="list"
-                                                    aria-controls="optionalHearingTime0-listbox"
-                                                    aria-expanded={false}
-                                                    aria-labelledby="optionalHearingTime0"
+                                                    aria-controls="optional-hearing-time-0-listbox"
+                                                    aria-label="optional-hearing-time-0"
+                                                    aria-labelledby="optional-hearing-time-0-label"
                                                     autoCapitalize="none"
                                                     autoComplete="off"
                                                     autoCorrect="off"
@@ -7872,7 +7876,6 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                                     onBlur={[Function]}
                                                     onChange={[Function]}
                                                     onFocus={[Function]}
-                                                    role="combobox"
                                                     spellCheck="false"
                                                     tabIndex="0"
                                                     type="text"
@@ -7888,9 +7891,9 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                                     >
                                                       <input
                                                         aria-autocomplete="list"
-                                                        aria-controls="optionalHearingTime0-listbox"
-                                                        aria-expanded={false}
-                                                        aria-labelledby="optionalHearingTime0"
+                                                        aria-controls="optional-hearing-time-0-listbox"
+                                                        aria-label="optional-hearing-time-0"
+                                                        aria-labelledby="optional-hearing-time-0-label"
                                                         autoCapitalize="none"
                                                         autoComplete="off"
                                                         autoCorrect="off"
@@ -7899,7 +7902,6 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                                         onBlur={[Function]}
                                                         onChange={[Function]}
                                                         onFocus={[Function]}
-                                                        role="combobox"
                                                         spellCheck="false"
                                                         style={
                                                           Object {
@@ -8097,7 +8099,6 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                       selectOption={[Function]}
                                       selectProps={
                                         Object {
-                                          "aria-labelledby": "optionalHearingTime0",
                                           "backspaceRemovesValue": true,
                                           "blurInputOnSelect": true,
                                           "cache": false,
@@ -8108,6 +8109,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                           "components": Object {
                                             "Input": [Function],
                                             "MenuList": [Function],
+                                            "Option": [Function],
                                           },
                                           "controlShouldRenderValue": true,
                                           "defaultOptions": undefined,
@@ -8503,7 +8505,6 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                             selectOption={[Function]}
                                             selectProps={
                                               Object {
-                                                "aria-labelledby": "optionalHearingTime0",
                                                 "backspaceRemovesValue": true,
                                                 "blurInputOnSelect": true,
                                                 "cache": false,
@@ -8514,6 +8515,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                                 "components": Object {
                                                   "Input": [Function],
                                                   "MenuList": [Function],
+                                                  "Option": [Function],
                                                 },
                                                 "controlShouldRenderValue": true,
                                                 "defaultOptions": undefined,
@@ -8920,7 +8922,6 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                             selectOption={[Function]}
                                             selectProps={
                                               Object {
-                                                "aria-labelledby": "optionalHearingTime0",
                                                 "backspaceRemovesValue": true,
                                                 "blurInputOnSelect": true,
                                                 "cache": false,
@@ -8931,6 +8932,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                                 "components": Object {
                                                   "Input": [Function],
                                                   "MenuList": [Function],
+                                                  "Option": [Function],
                                                 },
                                                 "controlShouldRenderValue": true,
                                                 "defaultOptions": undefined,
@@ -10255,12 +10257,15 @@ SAN FRANCISCO, CA 94103
                     className=""
                   >
                     <div
+                      aria-expanded={false}
                       className="cf-form-dropdown dropdown-appellantTz"
                       data-css-1gh7024=""
+                      role="combobox"
                     >
                       <label
                         className="question-label"
                         htmlFor="appellantTz"
+                        id="appellant-tz-label"
                       >
                         <strong>
                           <span>
@@ -10277,13 +10282,13 @@ SAN FRANCISCO, CA 94103
                         className="cf-select"
                       >
                         <StateManager
-                          aria-labelledby="appellantTz"
                           cache={false}
                           classNamePrefix="cf-select"
                           components={
                             Object {
                               "Input": [Function],
                               "MenuList": [Function],
+                              "Option": [Function],
                             }
                           }
                           defaultInputValue=""
@@ -10297,6 +10302,8 @@ SAN FRANCISCO, CA 94103
                           noOptionsMessage={[Function]}
                           onBlurResetsInput={false}
                           onChange={[Function]}
+                          onMenuClose={[Function]}
+                          onMenuOpen={[Function]}
                           options={
                             Array [
                               Object {
@@ -11081,7 +11088,6 @@ SAN FRANCISCO, CA 94103
                           }
                         >
                           <Select
-                            aria-labelledby="appellantTz"
                             backspaceRemovesValue={true}
                             blurInputOnSelect={true}
                             cache={false}
@@ -11093,6 +11099,7 @@ SAN FRANCISCO, CA 94103
                               Object {
                                 "Input": [Function],
                                 "MenuList": [Function],
+                                "Option": [Function],
                               }
                             }
                             controlShouldRenderValue={true}
@@ -12700,7 +12707,6 @@ SAN FRANCISCO, CA 94103
                               selectOption={[Function]}
                               selectProps={
                                 Object {
-                                  "aria-labelledby": "appellantTz",
                                   "backspaceRemovesValue": true,
                                   "blurInputOnSelect": true,
                                   "cache": false,
@@ -12711,6 +12717,7 @@ SAN FRANCISCO, CA 94103
                                   "components": Object {
                                     "Input": [Function],
                                     "MenuList": [Function],
+                                    "Option": [Function],
                                   },
                                   "controlShouldRenderValue": true,
                                   "defaultOptions": undefined,
@@ -14368,7 +14375,6 @@ SAN FRANCISCO, CA 94103
                                     selectOption={[Function]}
                                     selectProps={
                                       Object {
-                                        "aria-labelledby": "appellantTz",
                                         "backspaceRemovesValue": true,
                                         "blurInputOnSelect": true,
                                         "cache": false,
@@ -14379,6 +14385,7 @@ SAN FRANCISCO, CA 94103
                                         "components": Object {
                                           "Input": [Function],
                                           "MenuList": [Function],
+                                          "Option": [Function],
                                         },
                                         "controlShouldRenderValue": true,
                                         "defaultOptions": undefined,
@@ -16044,7 +16051,6 @@ SAN FRANCISCO, CA 94103
                                           selectOption={[Function]}
                                           selectProps={
                                             Object {
-                                              "aria-labelledby": "appellantTz",
                                               "backspaceRemovesValue": true,
                                               "blurInputOnSelect": true,
                                               "cache": false,
@@ -16055,6 +16061,7 @@ SAN FRANCISCO, CA 94103
                                               "components": Object {
                                                 "Input": [Function],
                                                 "MenuList": [Function],
+                                                "Option": [Function],
                                               },
                                               "controlShouldRenderValue": true,
                                               "defaultOptions": undefined,
@@ -17712,7 +17719,6 @@ SAN FRANCISCO, CA 94103
                                                 selectOption={[Function]}
                                                 selectProps={
                                                   Object {
-                                                    "aria-labelledby": "appellantTz",
                                                     "backspaceRemovesValue": true,
                                                     "blurInputOnSelect": true,
                                                     "cache": false,
@@ -17723,6 +17729,7 @@ SAN FRANCISCO, CA 94103
                                                     "components": Object {
                                                       "Input": [Function],
                                                       "MenuList": [Function],
+                                                      "Option": [Function],
                                                     },
                                                     "controlShouldRenderValue": true,
                                                     "defaultOptions": undefined,
@@ -18602,7 +18609,6 @@ SAN FRANCISCO, CA 94103
                                               </SingleValue>
                                               <Input
                                                 aria-autocomplete="list"
-                                                aria-labelledby="appellantTz"
                                                 autoCapitalize="none"
                                                 autoComplete="off"
                                                 autoCorrect="off"
@@ -18617,7 +18623,6 @@ SAN FRANCISCO, CA 94103
                                                 onFocus={[Function]}
                                                 selectProps={
                                                   Object {
-                                                    "aria-labelledby": "appellantTz",
                                                     "backspaceRemovesValue": true,
                                                     "blurInputOnSelect": true,
                                                     "cache": false,
@@ -18628,6 +18633,7 @@ SAN FRANCISCO, CA 94103
                                                     "components": Object {
                                                       "Input": [Function],
                                                       "MenuList": [Function],
+                                                      "Option": [Function],
                                                     },
                                                     "controlShouldRenderValue": true,
                                                     "defaultOptions": undefined,
@@ -19482,9 +19488,9 @@ SAN FRANCISCO, CA 94103
                                               >
                                                 <Input
                                                   aria-autocomplete="list"
-                                                  aria-controls="appellantTz-listbox"
-                                                  aria-expanded={false}
-                                                  aria-labelledby="appellantTz"
+                                                  aria-controls="appellant-tz-listbox"
+                                                  aria-label="appellant-tz"
+                                                  aria-labelledby="appellant-tz-label"
                                                   autoCapitalize="none"
                                                   autoComplete="off"
                                                   autoCorrect="off"
@@ -19497,10 +19503,8 @@ SAN FRANCISCO, CA 94103
                                                   onBlur={[Function]}
                                                   onChange={[Function]}
                                                   onFocus={[Function]}
-                                                  role="combobox"
                                                   selectProps={
                                                     Object {
-                                                      "aria-labelledby": "appellantTz",
                                                       "backspaceRemovesValue": true,
                                                       "blurInputOnSelect": true,
                                                       "cache": false,
@@ -19511,6 +19515,7 @@ SAN FRANCISCO, CA 94103
                                                       "components": Object {
                                                         "Input": [Function],
                                                         "MenuList": [Function],
+                                                        "Option": [Function],
                                                       },
                                                       "controlShouldRenderValue": true,
                                                       "defaultOptions": undefined,
@@ -20377,9 +20382,9 @@ SAN FRANCISCO, CA 94103
                                                     >
                                                       <AutosizeInput
                                                         aria-autocomplete="list"
-                                                        aria-controls="appellantTz-listbox"
-                                                        aria-expanded={false}
-                                                        aria-labelledby="appellantTz"
+                                                        aria-controls="appellant-tz-listbox"
+                                                        aria-label="appellant-tz"
+                                                        aria-labelledby="appellant-tz-label"
                                                         autoCapitalize="none"
                                                         autoComplete="off"
                                                         autoCorrect="off"
@@ -20404,7 +20409,6 @@ SAN FRANCISCO, CA 94103
                                                         onBlur={[Function]}
                                                         onChange={[Function]}
                                                         onFocus={[Function]}
-                                                        role="combobox"
                                                         spellCheck="false"
                                                         tabIndex="0"
                                                         type="text"
@@ -20420,9 +20424,9 @@ SAN FRANCISCO, CA 94103
                                                         >
                                                           <input
                                                             aria-autocomplete="list"
-                                                            aria-controls="appellantTz-listbox"
-                                                            aria-expanded={false}
-                                                            aria-labelledby="appellantTz"
+                                                            aria-controls="appellant-tz-listbox"
+                                                            aria-label="appellant-tz"
+                                                            aria-labelledby="appellant-tz-label"
                                                             autoCapitalize="none"
                                                             autoComplete="off"
                                                             autoCorrect="off"
@@ -20431,7 +20435,6 @@ SAN FRANCISCO, CA 94103
                                                             onBlur={[Function]}
                                                             onChange={[Function]}
                                                             onFocus={[Function]}
-                                                            role="combobox"
                                                             spellCheck="false"
                                                             style={
                                                               Object {
@@ -21253,7 +21256,6 @@ SAN FRANCISCO, CA 94103
                                           selectOption={[Function]}
                                           selectProps={
                                             Object {
-                                              "aria-labelledby": "appellantTz",
                                               "backspaceRemovesValue": true,
                                               "blurInputOnSelect": true,
                                               "cache": false,
@@ -21264,6 +21266,7 @@ SAN FRANCISCO, CA 94103
                                               "components": Object {
                                                 "Input": [Function],
                                                 "MenuList": [Function],
+                                                "Option": [Function],
                                               },
                                               "controlShouldRenderValue": true,
                                               "defaultOptions": undefined,
@@ -22911,7 +22914,6 @@ SAN FRANCISCO, CA 94103
                                                 selectOption={[Function]}
                                                 selectProps={
                                                   Object {
-                                                    "aria-labelledby": "appellantTz",
                                                     "backspaceRemovesValue": true,
                                                     "blurInputOnSelect": true,
                                                     "cache": false,
@@ -22922,6 +22924,7 @@ SAN FRANCISCO, CA 94103
                                                     "components": Object {
                                                       "Input": [Function],
                                                       "MenuList": [Function],
+                                                      "Option": [Function],
                                                     },
                                                     "controlShouldRenderValue": true,
                                                     "defaultOptions": undefined,
@@ -24580,7 +24583,6 @@ SAN FRANCISCO, CA 94103
                                                 selectOption={[Function]}
                                                 selectProps={
                                                   Object {
-                                                    "aria-labelledby": "appellantTz",
                                                     "backspaceRemovesValue": true,
                                                     "blurInputOnSelect": true,
                                                     "cache": false,
@@ -24591,6 +24593,7 @@ SAN FRANCISCO, CA 94103
                                                     "components": Object {
                                                       "Input": [Function],
                                                       "MenuList": [Function],
+                                                      "Option": [Function],
                                                     },
                                                     "controlShouldRenderValue": true,
                                                     "defaultOptions": undefined,
@@ -26622,12 +26625,15 @@ SAN FRANCISCO, CA 94103
                     className=""
                   >
                     <div
+                      aria-expanded={false}
                       className="cf-form-dropdown dropdown-representativeTz"
                       data-css-1gh7024=""
+                      role="combobox"
                     >
                       <label
                         className="question-label"
                         htmlFor="representativeTz"
+                        id="representative-tz-label"
                       >
                         <strong>
                           <span>
@@ -26644,13 +26650,13 @@ SAN FRANCISCO, CA 94103
                         className="cf-select"
                       >
                         <StateManager
-                          aria-labelledby="representativeTz"
                           cache={false}
                           classNamePrefix="cf-select"
                           components={
                             Object {
                               "Input": [Function],
                               "MenuList": [Function],
+                              "Option": [Function],
                             }
                           }
                           defaultInputValue=""
@@ -26664,6 +26670,8 @@ SAN FRANCISCO, CA 94103
                           noOptionsMessage={[Function]}
                           onBlurResetsInput={false}
                           onChange={[Function]}
+                          onMenuClose={[Function]}
+                          onMenuOpen={[Function]}
                           options={
                             Array [
                               Object {
@@ -27448,7 +27456,6 @@ SAN FRANCISCO, CA 94103
                           }
                         >
                           <Select
-                            aria-labelledby="representativeTz"
                             backspaceRemovesValue={true}
                             blurInputOnSelect={true}
                             cache={false}
@@ -27460,6 +27467,7 @@ SAN FRANCISCO, CA 94103
                               Object {
                                 "Input": [Function],
                                 "MenuList": [Function],
+                                "Option": [Function],
                               }
                             }
                             controlShouldRenderValue={true}
@@ -29067,7 +29075,6 @@ SAN FRANCISCO, CA 94103
                               selectOption={[Function]}
                               selectProps={
                                 Object {
-                                  "aria-labelledby": "representativeTz",
                                   "backspaceRemovesValue": true,
                                   "blurInputOnSelect": true,
                                   "cache": false,
@@ -29078,6 +29085,7 @@ SAN FRANCISCO, CA 94103
                                   "components": Object {
                                     "Input": [Function],
                                     "MenuList": [Function],
+                                    "Option": [Function],
                                   },
                                   "controlShouldRenderValue": true,
                                   "defaultOptions": undefined,
@@ -30735,7 +30743,6 @@ SAN FRANCISCO, CA 94103
                                     selectOption={[Function]}
                                     selectProps={
                                       Object {
-                                        "aria-labelledby": "representativeTz",
                                         "backspaceRemovesValue": true,
                                         "blurInputOnSelect": true,
                                         "cache": false,
@@ -30746,6 +30753,7 @@ SAN FRANCISCO, CA 94103
                                         "components": Object {
                                           "Input": [Function],
                                           "MenuList": [Function],
+                                          "Option": [Function],
                                         },
                                         "controlShouldRenderValue": true,
                                         "defaultOptions": undefined,
@@ -32411,7 +32419,6 @@ SAN FRANCISCO, CA 94103
                                           selectOption={[Function]}
                                           selectProps={
                                             Object {
-                                              "aria-labelledby": "representativeTz",
                                               "backspaceRemovesValue": true,
                                               "blurInputOnSelect": true,
                                               "cache": false,
@@ -32422,6 +32429,7 @@ SAN FRANCISCO, CA 94103
                                               "components": Object {
                                                 "Input": [Function],
                                                 "MenuList": [Function],
+                                                "Option": [Function],
                                               },
                                               "controlShouldRenderValue": true,
                                               "defaultOptions": undefined,
@@ -34079,7 +34087,6 @@ SAN FRANCISCO, CA 94103
                                                 selectOption={[Function]}
                                                 selectProps={
                                                   Object {
-                                                    "aria-labelledby": "representativeTz",
                                                     "backspaceRemovesValue": true,
                                                     "blurInputOnSelect": true,
                                                     "cache": false,
@@ -34090,6 +34097,7 @@ SAN FRANCISCO, CA 94103
                                                     "components": Object {
                                                       "Input": [Function],
                                                       "MenuList": [Function],
+                                                      "Option": [Function],
                                                     },
                                                     "controlShouldRenderValue": true,
                                                     "defaultOptions": undefined,
@@ -34969,7 +34977,6 @@ SAN FRANCISCO, CA 94103
                                               </SingleValue>
                                               <Input
                                                 aria-autocomplete="list"
-                                                aria-labelledby="representativeTz"
                                                 autoCapitalize="none"
                                                 autoComplete="off"
                                                 autoCorrect="off"
@@ -34984,7 +34991,6 @@ SAN FRANCISCO, CA 94103
                                                 onFocus={[Function]}
                                                 selectProps={
                                                   Object {
-                                                    "aria-labelledby": "representativeTz",
                                                     "backspaceRemovesValue": true,
                                                     "blurInputOnSelect": true,
                                                     "cache": false,
@@ -34995,6 +35001,7 @@ SAN FRANCISCO, CA 94103
                                                     "components": Object {
                                                       "Input": [Function],
                                                       "MenuList": [Function],
+                                                      "Option": [Function],
                                                     },
                                                     "controlShouldRenderValue": true,
                                                     "defaultOptions": undefined,
@@ -35849,9 +35856,9 @@ SAN FRANCISCO, CA 94103
                                               >
                                                 <Input
                                                   aria-autocomplete="list"
-                                                  aria-controls="representativeTz-listbox"
-                                                  aria-expanded={false}
-                                                  aria-labelledby="representativeTz"
+                                                  aria-controls="representative-tz-listbox"
+                                                  aria-label="representative-tz"
+                                                  aria-labelledby="representative-tz-label"
                                                   autoCapitalize="none"
                                                   autoComplete="off"
                                                   autoCorrect="off"
@@ -35864,10 +35871,8 @@ SAN FRANCISCO, CA 94103
                                                   onBlur={[Function]}
                                                   onChange={[Function]}
                                                   onFocus={[Function]}
-                                                  role="combobox"
                                                   selectProps={
                                                     Object {
-                                                      "aria-labelledby": "representativeTz",
                                                       "backspaceRemovesValue": true,
                                                       "blurInputOnSelect": true,
                                                       "cache": false,
@@ -35878,6 +35883,7 @@ SAN FRANCISCO, CA 94103
                                                       "components": Object {
                                                         "Input": [Function],
                                                         "MenuList": [Function],
+                                                        "Option": [Function],
                                                       },
                                                       "controlShouldRenderValue": true,
                                                       "defaultOptions": undefined,
@@ -36744,9 +36750,9 @@ SAN FRANCISCO, CA 94103
                                                     >
                                                       <AutosizeInput
                                                         aria-autocomplete="list"
-                                                        aria-controls="representativeTz-listbox"
-                                                        aria-expanded={false}
-                                                        aria-labelledby="representativeTz"
+                                                        aria-controls="representative-tz-listbox"
+                                                        aria-label="representative-tz"
+                                                        aria-labelledby="representative-tz-label"
                                                         autoCapitalize="none"
                                                         autoComplete="off"
                                                         autoCorrect="off"
@@ -36771,7 +36777,6 @@ SAN FRANCISCO, CA 94103
                                                         onBlur={[Function]}
                                                         onChange={[Function]}
                                                         onFocus={[Function]}
-                                                        role="combobox"
                                                         spellCheck="false"
                                                         tabIndex="0"
                                                         type="text"
@@ -36787,9 +36792,9 @@ SAN FRANCISCO, CA 94103
                                                         >
                                                           <input
                                                             aria-autocomplete="list"
-                                                            aria-controls="representativeTz-listbox"
-                                                            aria-expanded={false}
-                                                            aria-labelledby="representativeTz"
+                                                            aria-controls="representative-tz-listbox"
+                                                            aria-label="representative-tz"
+                                                            aria-labelledby="representative-tz-label"
                                                             autoCapitalize="none"
                                                             autoComplete="off"
                                                             autoCorrect="off"
@@ -36798,7 +36803,6 @@ SAN FRANCISCO, CA 94103
                                                             onBlur={[Function]}
                                                             onChange={[Function]}
                                                             onFocus={[Function]}
-                                                            role="combobox"
                                                             spellCheck="false"
                                                             style={
                                                               Object {
@@ -37620,7 +37624,6 @@ SAN FRANCISCO, CA 94103
                                           selectOption={[Function]}
                                           selectProps={
                                             Object {
-                                              "aria-labelledby": "representativeTz",
                                               "backspaceRemovesValue": true,
                                               "blurInputOnSelect": true,
                                               "cache": false,
@@ -37631,6 +37634,7 @@ SAN FRANCISCO, CA 94103
                                               "components": Object {
                                                 "Input": [Function],
                                                 "MenuList": [Function],
+                                                "Option": [Function],
                                               },
                                               "controlShouldRenderValue": true,
                                               "defaultOptions": undefined,
@@ -39278,7 +39282,6 @@ SAN FRANCISCO, CA 94103
                                                 selectOption={[Function]}
                                                 selectProps={
                                                   Object {
-                                                    "aria-labelledby": "representativeTz",
                                                     "backspaceRemovesValue": true,
                                                     "blurInputOnSelect": true,
                                                     "cache": false,
@@ -39289,6 +39292,7 @@ SAN FRANCISCO, CA 94103
                                                     "components": Object {
                                                       "Input": [Function],
                                                       "MenuList": [Function],
+                                                      "Option": [Function],
                                                     },
                                                     "controlShouldRenderValue": true,
                                                     "defaultOptions": undefined,
@@ -40947,7 +40951,6 @@ SAN FRANCISCO, CA 94103
                                                 selectOption={[Function]}
                                                 selectProps={
                                                   Object {
-                                                    "aria-labelledby": "representativeTz",
                                                     "backspaceRemovesValue": true,
                                                     "blurInputOnSelect": true,
                                                     "cache": false,
@@ -40958,6 +40961,7 @@ SAN FRANCISCO, CA 94103
                                                     "components": Object {
                                                       "Input": [Function],
                                                       "MenuList": [Function],
+                                                      "Option": [Function],
                                                     },
                                                     "controlShouldRenderValue": true,
                                                     "defaultOptions": undefined,
@@ -42051,11 +42055,14 @@ SAN FRANCISCO, CA 94103
                     className=""
                   >
                     <div
+                      aria-expanded={false}
                       className="cf-form-dropdown dropdown-judgeDropdown"
+                      role="combobox"
                     >
                       <label
                         className="question-label"
                         htmlFor="judgeDropdown"
+                        id="judge-dropdown-label"
                       >
                         <strong>
                           <span>
@@ -42067,13 +42074,13 @@ SAN FRANCISCO, CA 94103
                         className="cf-select"
                       >
                         <StateManager
-                          aria-labelledby="judgeDropdown"
                           cache={false}
                           classNamePrefix="cf-select"
                           components={
                             Object {
                               "Input": [Function],
                               "MenuList": [Function],
+                              "Option": [Function],
                             }
                           }
                           defaultInputValue=""
@@ -42086,6 +42093,8 @@ SAN FRANCISCO, CA 94103
                           noOptionsMessage={[Function]}
                           onBlurResetsInput={false}
                           onChange={[Function]}
+                          onMenuClose={[Function]}
+                          onMenuOpen={[Function]}
                           shouldKeyDownEventCreateNewOption={[Function]}
                           styles={
                             Object {
@@ -42100,7 +42109,6 @@ SAN FRANCISCO, CA 94103
                           }
                         >
                           <Select
-                            aria-labelledby="judgeDropdown"
                             backspaceRemovesValue={true}
                             blurInputOnSelect={true}
                             cache={false}
@@ -42112,6 +42120,7 @@ SAN FRANCISCO, CA 94103
                               Object {
                                 "Input": [Function],
                                 "MenuList": [Function],
+                                "Option": [Function],
                               }
                             }
                             controlShouldRenderValue={true}
@@ -42184,7 +42193,6 @@ SAN FRANCISCO, CA 94103
                               selectOption={[Function]}
                               selectProps={
                                 Object {
-                                  "aria-labelledby": "judgeDropdown",
                                   "backspaceRemovesValue": true,
                                   "blurInputOnSelect": true,
                                   "cache": false,
@@ -42195,6 +42203,7 @@ SAN FRANCISCO, CA 94103
                                   "components": Object {
                                     "Input": [Function],
                                     "MenuList": [Function],
+                                    "Option": [Function],
                                   },
                                   "controlShouldRenderValue": true,
                                   "defaultOptions": undefined,
@@ -42319,7 +42328,6 @@ SAN FRANCISCO, CA 94103
                                     selectOption={[Function]}
                                     selectProps={
                                       Object {
-                                        "aria-labelledby": "judgeDropdown",
                                         "backspaceRemovesValue": true,
                                         "blurInputOnSelect": true,
                                         "cache": false,
@@ -42330,6 +42338,7 @@ SAN FRANCISCO, CA 94103
                                         "components": Object {
                                           "Input": [Function],
                                           "MenuList": [Function],
+                                          "Option": [Function],
                                         },
                                         "controlShouldRenderValue": true,
                                         "defaultOptions": undefined,
@@ -42462,7 +42471,6 @@ SAN FRANCISCO, CA 94103
                                           selectOption={[Function]}
                                           selectProps={
                                             Object {
-                                              "aria-labelledby": "judgeDropdown",
                                               "backspaceRemovesValue": true,
                                               "blurInputOnSelect": true,
                                               "cache": false,
@@ -42473,6 +42481,7 @@ SAN FRANCISCO, CA 94103
                                               "components": Object {
                                                 "Input": [Function],
                                                 "MenuList": [Function],
+                                                "Option": [Function],
                                               },
                                               "controlShouldRenderValue": true,
                                               "defaultOptions": undefined,
@@ -42596,7 +42605,6 @@ SAN FRANCISCO, CA 94103
                                                 selectOption={[Function]}
                                                 selectProps={
                                                   Object {
-                                                    "aria-labelledby": "judgeDropdown",
                                                     "backspaceRemovesValue": true,
                                                     "blurInputOnSelect": true,
                                                     "cache": false,
@@ -42607,6 +42615,7 @@ SAN FRANCISCO, CA 94103
                                                     "components": Object {
                                                       "Input": [Function],
                                                       "MenuList": [Function],
+                                                      "Option": [Function],
                                                     },
                                                     "controlShouldRenderValue": true,
                                                     "defaultOptions": undefined,
@@ -42718,7 +42727,6 @@ SAN FRANCISCO, CA 94103
                                               </SingleValue>
                                               <Input
                                                 aria-autocomplete="list"
-                                                aria-labelledby="judgeDropdown"
                                                 autoCapitalize="none"
                                                 autoComplete="off"
                                                 autoCorrect="off"
@@ -42733,7 +42741,6 @@ SAN FRANCISCO, CA 94103
                                                 onFocus={[Function]}
                                                 selectProps={
                                                   Object {
-                                                    "aria-labelledby": "judgeDropdown",
                                                     "backspaceRemovesValue": true,
                                                     "blurInputOnSelect": true,
                                                     "cache": false,
@@ -42744,6 +42751,7 @@ SAN FRANCISCO, CA 94103
                                                     "components": Object {
                                                       "Input": [Function],
                                                       "MenuList": [Function],
+                                                      "Option": [Function],
                                                     },
                                                     "controlShouldRenderValue": true,
                                                     "defaultOptions": undefined,
@@ -42832,9 +42840,9 @@ SAN FRANCISCO, CA 94103
                                               >
                                                 <Input
                                                   aria-autocomplete="list"
-                                                  aria-controls="judgeDropdown-listbox"
-                                                  aria-expanded={false}
-                                                  aria-labelledby="judgeDropdown"
+                                                  aria-controls="judge-dropdown-listbox"
+                                                  aria-label="judge-dropdown"
+                                                  aria-labelledby="judge-dropdown-label"
                                                   autoCapitalize="none"
                                                   autoComplete="off"
                                                   autoCorrect="off"
@@ -42847,10 +42855,8 @@ SAN FRANCISCO, CA 94103
                                                   onBlur={[Function]}
                                                   onChange={[Function]}
                                                   onFocus={[Function]}
-                                                  role="combobox"
                                                   selectProps={
                                                     Object {
-                                                      "aria-labelledby": "judgeDropdown",
                                                       "backspaceRemovesValue": true,
                                                       "blurInputOnSelect": true,
                                                       "cache": false,
@@ -42861,6 +42867,7 @@ SAN FRANCISCO, CA 94103
                                                       "components": Object {
                                                         "Input": [Function],
                                                         "MenuList": [Function],
+                                                        "Option": [Function],
                                                       },
                                                       "controlShouldRenderValue": true,
                                                       "defaultOptions": undefined,
@@ -42961,9 +42968,9 @@ SAN FRANCISCO, CA 94103
                                                     >
                                                       <AutosizeInput
                                                         aria-autocomplete="list"
-                                                        aria-controls="judgeDropdown-listbox"
-                                                        aria-expanded={false}
-                                                        aria-labelledby="judgeDropdown"
+                                                        aria-controls="judge-dropdown-listbox"
+                                                        aria-label="judge-dropdown"
+                                                        aria-labelledby="judge-dropdown-label"
                                                         autoCapitalize="none"
                                                         autoComplete="off"
                                                         autoCorrect="off"
@@ -42988,7 +42995,6 @@ SAN FRANCISCO, CA 94103
                                                         onBlur={[Function]}
                                                         onChange={[Function]}
                                                         onFocus={[Function]}
-                                                        role="combobox"
                                                         spellCheck="false"
                                                         tabIndex="0"
                                                         type="text"
@@ -43004,9 +43010,9 @@ SAN FRANCISCO, CA 94103
                                                         >
                                                           <input
                                                             aria-autocomplete="list"
-                                                            aria-controls="judgeDropdown-listbox"
-                                                            aria-expanded={false}
-                                                            aria-labelledby="judgeDropdown"
+                                                            aria-controls="judge-dropdown-listbox"
+                                                            aria-label="judge-dropdown"
+                                                            aria-labelledby="judge-dropdown-label"
                                                             autoCapitalize="none"
                                                             autoComplete="off"
                                                             autoCorrect="off"
@@ -43015,7 +43021,6 @@ SAN FRANCISCO, CA 94103
                                                             onBlur={[Function]}
                                                             onChange={[Function]}
                                                             onFocus={[Function]}
-                                                            role="combobox"
                                                             spellCheck="false"
                                                             style={
                                                               Object {
@@ -43070,7 +43075,6 @@ SAN FRANCISCO, CA 94103
                                           selectOption={[Function]}
                                           selectProps={
                                             Object {
-                                              "aria-labelledby": "judgeDropdown",
                                               "backspaceRemovesValue": true,
                                               "blurInputOnSelect": true,
                                               "cache": false,
@@ -43081,6 +43085,7 @@ SAN FRANCISCO, CA 94103
                                               "components": Object {
                                                 "Input": [Function],
                                                 "MenuList": [Function],
+                                                "Option": [Function],
                                               },
                                               "controlShouldRenderValue": true,
                                               "defaultOptions": undefined,
@@ -43195,7 +43200,6 @@ SAN FRANCISCO, CA 94103
                                                 selectOption={[Function]}
                                                 selectProps={
                                                   Object {
-                                                    "aria-labelledby": "judgeDropdown",
                                                     "backspaceRemovesValue": true,
                                                     "blurInputOnSelect": true,
                                                     "cache": false,
@@ -43206,6 +43210,7 @@ SAN FRANCISCO, CA 94103
                                                     "components": Object {
                                                       "Input": [Function],
                                                       "MenuList": [Function],
+                                                      "Option": [Function],
                                                     },
                                                     "controlShouldRenderValue": true,
                                                     "defaultOptions": undefined,
@@ -43331,7 +43336,6 @@ SAN FRANCISCO, CA 94103
                                                 selectOption={[Function]}
                                                 selectProps={
                                                   Object {
-                                                    "aria-labelledby": "judgeDropdown",
                                                     "backspaceRemovesValue": true,
                                                     "blurInputOnSelect": true,
                                                     "cache": false,
@@ -43342,6 +43346,7 @@ SAN FRANCISCO, CA 94103
                                                     "components": Object {
                                                       "Input": [Function],
                                                       "MenuList": [Function],
+                                                      "Option": [Function],
                                                     },
                                                     "controlShouldRenderValue": true,
                                                     "defaultOptions": undefined,

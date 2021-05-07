@@ -280,11 +280,14 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
       className=""
     >
       <div
+        aria-expanded={false}
         className="cf-form-dropdown dropdown-optionalHearingTime0"
+        role="combobox"
       >
         <label
           className="question-label usa-sr-only"
           htmlFor="optionalHearingTime0"
+          id="optional-hearing-time-0-label"
         >
           <strong>
             <span>
@@ -296,13 +299,13 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
           className="cf-select"
         >
           <StateManager
-            aria-labelledby="optionalHearingTime0"
             cache={false}
             classNamePrefix="cf-select"
             components={
               Object {
                 "Input": [Function],
                 "MenuList": [Function],
+                "Option": [Function],
               }
             }
             defaultInputValue=""
@@ -315,6 +318,8 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
             noOptionsMessage={[Function]}
             onBlurResetsInput={false}
             onChange={[Function]}
+            onMenuClose={[Function]}
+            onMenuOpen={[Function]}
             options={
               Array [
                 Object {
@@ -474,7 +479,6 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
             }
           >
             <Select
-              aria-labelledby="optionalHearingTime0"
               backspaceRemovesValue={true}
               blurInputOnSelect={true}
               cache={false}
@@ -486,6 +490,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                 Object {
                   "Input": [Function],
                   "MenuList": [Function],
+                  "Option": [Function],
                 }
               }
               controlShouldRenderValue={true}
@@ -844,7 +849,6 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                 selectOption={[Function]}
                 selectProps={
                   Object {
-                    "aria-labelledby": "optionalHearingTime0",
                     "backspaceRemovesValue": true,
                     "blurInputOnSelect": true,
                     "cache": false,
@@ -855,6 +859,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                     "components": Object {
                       "Input": [Function],
                       "MenuList": [Function],
+                      "Option": [Function],
                     },
                     "controlShouldRenderValue": true,
                     "defaultOptions": undefined,
@@ -1263,7 +1268,6 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                       selectOption={[Function]}
                       selectProps={
                         Object {
-                          "aria-labelledby": "optionalHearingTime0",
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "cache": false,
@@ -1274,6 +1278,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                           "components": Object {
                             "Input": [Function],
                             "MenuList": [Function],
+                            "Option": [Function],
                           },
                           "controlShouldRenderValue": true,
                           "defaultOptions": undefined,
@@ -1690,7 +1695,6 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
-                                "aria-labelledby": "optionalHearingTime0",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -1701,6 +1705,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                 "components": Object {
                                   "Input": [Function],
                                   "MenuList": [Function],
+                                  "Option": [Function],
                                 },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
@@ -2108,7 +2113,6 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -2119,6 +2123,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -2373,7 +2378,6 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                 </SingleValue>
                                 <Input
                                   aria-autocomplete="list"
-                                  aria-labelledby="optionalHearingTime0"
                                   autoCapitalize="none"
                                   autoComplete="off"
                                   autoCorrect="off"
@@ -2388,7 +2392,6 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                   onFocus={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -2399,6 +2402,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -2628,9 +2632,9 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                 >
                                   <Input
                                     aria-autocomplete="list"
-                                    aria-controls="optionalHearingTime0-listbox"
-                                    aria-expanded={false}
-                                    aria-labelledby="optionalHearingTime0"
+                                    aria-controls="optional-hearing-time-0-listbox"
+                                    aria-label="optional-hearing-time-0"
+                                    aria-labelledby="optional-hearing-time-0-label"
                                     autoCapitalize="none"
                                     autoComplete="off"
                                     autoCorrect="off"
@@ -2643,10 +2647,8 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
-                                    role="combobox"
                                     selectProps={
                                       Object {
-                                        "aria-labelledby": "optionalHearingTime0",
                                         "backspaceRemovesValue": true,
                                         "blurInputOnSelect": true,
                                         "cache": false,
@@ -2657,6 +2659,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                         "components": Object {
                                           "Input": [Function],
                                           "MenuList": [Function],
+                                          "Option": [Function],
                                         },
                                         "controlShouldRenderValue": true,
                                         "defaultOptions": undefined,
@@ -2898,9 +2901,9 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                       >
                                         <AutosizeInput
                                           aria-autocomplete="list"
-                                          aria-controls="optionalHearingTime0-listbox"
-                                          aria-expanded={false}
-                                          aria-labelledby="optionalHearingTime0"
+                                          aria-controls="optional-hearing-time-0-listbox"
+                                          aria-label="optional-hearing-time-0"
+                                          aria-labelledby="optional-hearing-time-0-label"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
@@ -2925,7 +2928,6 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
-                                          role="combobox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -2941,9 +2943,9 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                           >
                                             <input
                                               aria-autocomplete="list"
-                                              aria-controls="optionalHearingTime0-listbox"
-                                              aria-expanded={false}
-                                              aria-labelledby="optionalHearingTime0"
+                                              aria-controls="optional-hearing-time-0-listbox"
+                                              aria-label="optional-hearing-time-0"
+                                              aria-labelledby="optional-hearing-time-0-label"
                                               autoCapitalize="none"
                                               autoComplete="off"
                                               autoCorrect="off"
@@ -2952,7 +2954,6 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
                                               spellCheck="false"
                                               style={
                                                 Object {
@@ -3150,7 +3151,6 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
-                                "aria-labelledby": "optionalHearingTime0",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -3161,6 +3161,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                 "components": Object {
                                   "Input": [Function],
                                   "MenuList": [Function],
+                                  "Option": [Function],
                                 },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
@@ -3559,7 +3560,6 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -3570,6 +3570,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -3979,7 +3980,6 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -3990,6 +3990,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -4706,11 +4707,14 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
       className=""
     >
       <div
+        aria-expanded={false}
         className="cf-form-dropdown dropdown-optionalHearingTime0"
+        role="combobox"
       >
         <label
           className="question-label usa-sr-only"
           htmlFor="optionalHearingTime0"
+          id="optional-hearing-time-0-label"
         >
           <strong>
             <span>
@@ -4722,13 +4726,13 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
           className="cf-select"
         >
           <StateManager
-            aria-labelledby="optionalHearingTime0"
             cache={false}
             classNamePrefix="cf-select"
             components={
               Object {
                 "Input": [Function],
                 "MenuList": [Function],
+                "Option": [Function],
               }
             }
             defaultInputValue=""
@@ -4741,6 +4745,8 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
             noOptionsMessage={[Function]}
             onBlurResetsInput={false}
             onChange={[Function]}
+            onMenuClose={[Function]}
+            onMenuOpen={[Function]}
             options={
               Array [
                 Object {
@@ -4900,7 +4906,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
             }
           >
             <Select
-              aria-labelledby="optionalHearingTime0"
               backspaceRemovesValue={true}
               blurInputOnSelect={true}
               cache={false}
@@ -4912,6 +4917,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                 Object {
                   "Input": [Function],
                   "MenuList": [Function],
+                  "Option": [Function],
                 }
               }
               controlShouldRenderValue={true}
@@ -5270,7 +5276,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                 selectOption={[Function]}
                 selectProps={
                   Object {
-                    "aria-labelledby": "optionalHearingTime0",
                     "backspaceRemovesValue": true,
                     "blurInputOnSelect": true,
                     "cache": false,
@@ -5281,6 +5286,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                     "components": Object {
                       "Input": [Function],
                       "MenuList": [Function],
+                      "Option": [Function],
                     },
                     "controlShouldRenderValue": true,
                     "defaultOptions": undefined,
@@ -5689,7 +5695,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                       selectOption={[Function]}
                       selectProps={
                         Object {
-                          "aria-labelledby": "optionalHearingTime0",
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "cache": false,
@@ -5700,6 +5705,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                           "components": Object {
                             "Input": [Function],
                             "MenuList": [Function],
+                            "Option": [Function],
                           },
                           "controlShouldRenderValue": true,
                           "defaultOptions": undefined,
@@ -6116,7 +6122,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
-                                "aria-labelledby": "optionalHearingTime0",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -6127,6 +6132,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                 "components": Object {
                                   "Input": [Function],
                                   "MenuList": [Function],
+                                  "Option": [Function],
                                 },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
@@ -6534,7 +6540,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -6545,6 +6550,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -6799,7 +6805,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                 </SingleValue>
                                 <Input
                                   aria-autocomplete="list"
-                                  aria-labelledby="optionalHearingTime0"
                                   autoCapitalize="none"
                                   autoComplete="off"
                                   autoCorrect="off"
@@ -6814,7 +6819,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                   onFocus={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -6825,6 +6829,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -7054,9 +7059,9 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                 >
                                   <Input
                                     aria-autocomplete="list"
-                                    aria-controls="optionalHearingTime0-listbox"
-                                    aria-expanded={false}
-                                    aria-labelledby="optionalHearingTime0"
+                                    aria-controls="optional-hearing-time-0-listbox"
+                                    aria-label="optional-hearing-time-0"
+                                    aria-labelledby="optional-hearing-time-0-label"
                                     autoCapitalize="none"
                                     autoComplete="off"
                                     autoCorrect="off"
@@ -7069,10 +7074,8 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
-                                    role="combobox"
                                     selectProps={
                                       Object {
-                                        "aria-labelledby": "optionalHearingTime0",
                                         "backspaceRemovesValue": true,
                                         "blurInputOnSelect": true,
                                         "cache": false,
@@ -7083,6 +7086,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                         "components": Object {
                                           "Input": [Function],
                                           "MenuList": [Function],
+                                          "Option": [Function],
                                         },
                                         "controlShouldRenderValue": true,
                                         "defaultOptions": undefined,
@@ -7324,9 +7328,9 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       >
                                         <AutosizeInput
                                           aria-autocomplete="list"
-                                          aria-controls="optionalHearingTime0-listbox"
-                                          aria-expanded={false}
-                                          aria-labelledby="optionalHearingTime0"
+                                          aria-controls="optional-hearing-time-0-listbox"
+                                          aria-label="optional-hearing-time-0"
+                                          aria-labelledby="optional-hearing-time-0-label"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
@@ -7351,7 +7355,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
-                                          role="combobox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -7367,9 +7370,9 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                           >
                                             <input
                                               aria-autocomplete="list"
-                                              aria-controls="optionalHearingTime0-listbox"
-                                              aria-expanded={false}
-                                              aria-labelledby="optionalHearingTime0"
+                                              aria-controls="optional-hearing-time-0-listbox"
+                                              aria-label="optional-hearing-time-0"
+                                              aria-labelledby="optional-hearing-time-0-label"
                                               autoCapitalize="none"
                                               autoComplete="off"
                                               autoCorrect="off"
@@ -7378,7 +7381,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
                                               spellCheck="false"
                                               style={
                                                 Object {
@@ -7576,7 +7578,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
-                                "aria-labelledby": "optionalHearingTime0",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -7587,6 +7588,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                 "components": Object {
                                   "Input": [Function],
                                   "MenuList": [Function],
+                                  "Option": [Function],
                                 },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
@@ -7985,7 +7987,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -7996,6 +7997,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -8405,7 +8407,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -8416,6 +8417,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -9006,11 +9008,14 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
       className=""
     >
       <div
+        aria-expanded={false}
         className="cf-form-dropdown dropdown-optionalHearingTime0"
+        role="combobox"
       >
         <label
           className="question-label usa-sr-only"
           htmlFor="optionalHearingTime0"
+          id="optional-hearing-time-0-label"
         >
           <strong>
             <span>
@@ -9022,13 +9027,13 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
           className="cf-select"
         >
           <StateManager
-            aria-labelledby="optionalHearingTime0"
             cache={false}
             classNamePrefix="cf-select"
             components={
               Object {
                 "Input": [Function],
                 "MenuList": [Function],
+                "Option": [Function],
               }
             }
             defaultInputValue=""
@@ -9041,6 +9046,8 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
             noOptionsMessage={[Function]}
             onBlurResetsInput={false}
             onChange={[Function]}
+            onMenuClose={[Function]}
+            onMenuOpen={[Function]}
             options={
               Array [
                 Object {
@@ -9194,7 +9201,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
             }
           >
             <Select
-              aria-labelledby="optionalHearingTime0"
               backspaceRemovesValue={true}
               blurInputOnSelect={true}
               cache={false}
@@ -9206,6 +9212,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                 Object {
                   "Input": [Function],
                   "MenuList": [Function],
+                  "Option": [Function],
                 }
               }
               controlShouldRenderValue={true}
@@ -9559,7 +9566,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                 selectOption={[Function]}
                 selectProps={
                   Object {
-                    "aria-labelledby": "optionalHearingTime0",
                     "backspaceRemovesValue": true,
                     "blurInputOnSelect": true,
                     "cache": false,
@@ -9570,6 +9576,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                     "components": Object {
                       "Input": [Function],
                       "MenuList": [Function],
+                      "Option": [Function],
                     },
                     "controlShouldRenderValue": true,
                     "defaultOptions": undefined,
@@ -9975,7 +9982,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                       selectOption={[Function]}
                       selectProps={
                         Object {
-                          "aria-labelledby": "optionalHearingTime0",
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "cache": false,
@@ -9986,6 +9992,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                           "components": Object {
                             "Input": [Function],
                             "MenuList": [Function],
+                            "Option": [Function],
                           },
                           "controlShouldRenderValue": true,
                           "defaultOptions": undefined,
@@ -10399,7 +10406,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
-                                "aria-labelledby": "optionalHearingTime0",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -10410,6 +10416,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                 "components": Object {
                                   "Input": [Function],
                                   "MenuList": [Function],
+                                  "Option": [Function],
                                 },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
@@ -10810,7 +10817,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -10821,6 +10827,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -11068,7 +11075,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                 </Placeholder>
                                 <Input
                                   aria-autocomplete="list"
-                                  aria-labelledby="optionalHearingTime0"
                                   autoCapitalize="none"
                                   autoComplete="off"
                                   autoCorrect="off"
@@ -11083,7 +11089,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                   onFocus={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -11094,6 +11099,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -11320,9 +11326,9 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                 >
                                   <Input
                                     aria-autocomplete="list"
-                                    aria-controls="optionalHearingTime0-listbox"
-                                    aria-expanded={false}
-                                    aria-labelledby="optionalHearingTime0"
+                                    aria-controls="optional-hearing-time-0-listbox"
+                                    aria-label="optional-hearing-time-0"
+                                    aria-labelledby="optional-hearing-time-0-label"
                                     autoCapitalize="none"
                                     autoComplete="off"
                                     autoCorrect="off"
@@ -11335,10 +11341,8 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
-                                    role="combobox"
                                     selectProps={
                                       Object {
-                                        "aria-labelledby": "optionalHearingTime0",
                                         "backspaceRemovesValue": true,
                                         "blurInputOnSelect": true,
                                         "cache": false,
@@ -11349,6 +11353,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                         "components": Object {
                                           "Input": [Function],
                                           "MenuList": [Function],
+                                          "Option": [Function],
                                         },
                                         "controlShouldRenderValue": true,
                                         "defaultOptions": undefined,
@@ -11587,9 +11592,9 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       >
                                         <AutosizeInput
                                           aria-autocomplete="list"
-                                          aria-controls="optionalHearingTime0-listbox"
-                                          aria-expanded={false}
-                                          aria-labelledby="optionalHearingTime0"
+                                          aria-controls="optional-hearing-time-0-listbox"
+                                          aria-label="optional-hearing-time-0"
+                                          aria-labelledby="optional-hearing-time-0-label"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
@@ -11614,7 +11619,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
-                                          role="combobox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -11630,9 +11634,9 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                           >
                                             <input
                                               aria-autocomplete="list"
-                                              aria-controls="optionalHearingTime0-listbox"
-                                              aria-expanded={false}
-                                              aria-labelledby="optionalHearingTime0"
+                                              aria-controls="optional-hearing-time-0-listbox"
+                                              aria-label="optional-hearing-time-0"
+                                              aria-labelledby="optional-hearing-time-0-label"
                                               autoCapitalize="none"
                                               autoComplete="off"
                                               autoCorrect="off"
@@ -11641,7 +11645,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
                                               spellCheck="false"
                                               style={
                                                 Object {
@@ -11839,7 +11842,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
-                                "aria-labelledby": "optionalHearingTime0",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -11850,6 +11852,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                 "components": Object {
                                   "Input": [Function],
                                   "MenuList": [Function],
+                                  "Option": [Function],
                                 },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
@@ -12245,7 +12248,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -12256,6 +12258,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -12662,7 +12665,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -12673,6 +12675,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -13260,11 +13263,14 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
       className=""
     >
       <div
+        aria-expanded={false}
         className="cf-form-dropdown dropdown-optionalHearingTime0"
+        role="combobox"
       >
         <label
           className="question-label usa-sr-only"
           htmlFor="optionalHearingTime0"
+          id="optional-hearing-time-0-label"
         >
           <strong>
             <span>
@@ -13276,13 +13282,13 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
           className="cf-select"
         >
           <StateManager
-            aria-labelledby="optionalHearingTime0"
             cache={false}
             classNamePrefix="cf-select"
             components={
               Object {
                 "Input": [Function],
                 "MenuList": [Function],
+                "Option": [Function],
               }
             }
             defaultInputValue=""
@@ -13295,6 +13301,8 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
             noOptionsMessage={[Function]}
             onBlurResetsInput={false}
             onChange={[Function]}
+            onMenuClose={[Function]}
+            onMenuOpen={[Function]}
             options={
               Array [
                 Object {
@@ -13448,7 +13456,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
             }
           >
             <Select
-              aria-labelledby="optionalHearingTime0"
               backspaceRemovesValue={true}
               blurInputOnSelect={true}
               cache={false}
@@ -13460,6 +13467,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                 Object {
                   "Input": [Function],
                   "MenuList": [Function],
+                  "Option": [Function],
                 }
               }
               controlShouldRenderValue={true}
@@ -13813,7 +13821,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                 selectOption={[Function]}
                 selectProps={
                   Object {
-                    "aria-labelledby": "optionalHearingTime0",
                     "backspaceRemovesValue": true,
                     "blurInputOnSelect": true,
                     "cache": false,
@@ -13824,6 +13831,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                     "components": Object {
                       "Input": [Function],
                       "MenuList": [Function],
+                      "Option": [Function],
                     },
                     "controlShouldRenderValue": true,
                     "defaultOptions": undefined,
@@ -14229,7 +14237,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                       selectOption={[Function]}
                       selectProps={
                         Object {
-                          "aria-labelledby": "optionalHearingTime0",
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "cache": false,
@@ -14240,6 +14247,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                           "components": Object {
                             "Input": [Function],
                             "MenuList": [Function],
+                            "Option": [Function],
                           },
                           "controlShouldRenderValue": true,
                           "defaultOptions": undefined,
@@ -14653,7 +14661,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
-                                "aria-labelledby": "optionalHearingTime0",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -14664,6 +14671,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                 "components": Object {
                                   "Input": [Function],
                                   "MenuList": [Function],
+                                  "Option": [Function],
                                 },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
@@ -15064,7 +15072,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -15075,6 +15082,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -15322,7 +15330,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                 </Placeholder>
                                 <Input
                                   aria-autocomplete="list"
-                                  aria-labelledby="optionalHearingTime0"
                                   autoCapitalize="none"
                                   autoComplete="off"
                                   autoCorrect="off"
@@ -15337,7 +15344,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                   onFocus={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -15348,6 +15354,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -15574,9 +15581,9 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                 >
                                   <Input
                                     aria-autocomplete="list"
-                                    aria-controls="optionalHearingTime0-listbox"
-                                    aria-expanded={false}
-                                    aria-labelledby="optionalHearingTime0"
+                                    aria-controls="optional-hearing-time-0-listbox"
+                                    aria-label="optional-hearing-time-0"
+                                    aria-labelledby="optional-hearing-time-0-label"
                                     autoCapitalize="none"
                                     autoComplete="off"
                                     autoCorrect="off"
@@ -15589,10 +15596,8 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
-                                    role="combobox"
                                     selectProps={
                                       Object {
-                                        "aria-labelledby": "optionalHearingTime0",
                                         "backspaceRemovesValue": true,
                                         "blurInputOnSelect": true,
                                         "cache": false,
@@ -15603,6 +15608,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                         "components": Object {
                                           "Input": [Function],
                                           "MenuList": [Function],
+                                          "Option": [Function],
                                         },
                                         "controlShouldRenderValue": true,
                                         "defaultOptions": undefined,
@@ -15841,9 +15847,9 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       >
                                         <AutosizeInput
                                           aria-autocomplete="list"
-                                          aria-controls="optionalHearingTime0-listbox"
-                                          aria-expanded={false}
-                                          aria-labelledby="optionalHearingTime0"
+                                          aria-controls="optional-hearing-time-0-listbox"
+                                          aria-label="optional-hearing-time-0"
+                                          aria-labelledby="optional-hearing-time-0-label"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
@@ -15868,7 +15874,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
-                                          role="combobox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -15884,9 +15889,9 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                           >
                                             <input
                                               aria-autocomplete="list"
-                                              aria-controls="optionalHearingTime0-listbox"
-                                              aria-expanded={false}
-                                              aria-labelledby="optionalHearingTime0"
+                                              aria-controls="optional-hearing-time-0-listbox"
+                                              aria-label="optional-hearing-time-0"
+                                              aria-labelledby="optional-hearing-time-0-label"
                                               autoCapitalize="none"
                                               autoComplete="off"
                                               autoCorrect="off"
@@ -15895,7 +15900,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
                                               spellCheck="false"
                                               style={
                                                 Object {
@@ -16093,7 +16097,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
-                                "aria-labelledby": "optionalHearingTime0",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -16104,6 +16107,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                 "components": Object {
                                   "Input": [Function],
                                   "MenuList": [Function],
+                                  "Option": [Function],
                                 },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
@@ -16499,7 +16503,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -16510,6 +16513,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -16916,7 +16920,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -16927,6 +16930,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,

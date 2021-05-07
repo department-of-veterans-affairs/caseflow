@@ -532,11 +532,14 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                     className=""
                   >
                     <div
+                      aria-expanded={false}
                       className="cf-form-dropdown dropdown-judge-dropdown"
+                      role="combobox"
                     >
                       <label
                         className="question-label"
                         htmlFor="judge-dropdown"
+                        id="judge-dropdown-label"
                       >
                         <strong>
                           <span>
@@ -548,13 +551,13 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                         className="cf-select"
                       >
                         <StateManager
-                          aria-labelledby="judge-dropdown"
                           cache={false}
                           classNamePrefix="cf-select"
                           components={
                             Object {
                               "Input": [Function],
                               "MenuList": [Function],
+                              "Option": [Function],
                             }
                           }
                           defaultInputValue=""
@@ -567,6 +570,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                           noOptionsMessage={[Function]}
                           onBlurResetsInput={false}
                           onChange={[Function]}
+                          onMenuClose={[Function]}
+                          onMenuOpen={[Function]}
                           options={
                             Array [
                               Object {
@@ -669,7 +674,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                           value={null}
                         >
                           <Select
-                            aria-labelledby="judge-dropdown"
                             backspaceRemovesValue={true}
                             blurInputOnSelect={true}
                             cache={false}
@@ -681,6 +685,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                               Object {
                                 "Input": [Function],
                                 "MenuList": [Function],
+                                "Option": [Function],
                               }
                             }
                             controlShouldRenderValue={true}
@@ -931,7 +936,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                               selectOption={[Function]}
                               selectProps={
                                 Object {
-                                  "aria-labelledby": "judge-dropdown",
                                   "backspaceRemovesValue": true,
                                   "blurInputOnSelect": true,
                                   "cache": false,
@@ -942,6 +946,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                   "components": Object {
                                     "Input": [Function],
                                     "MenuList": [Function],
+                                    "Option": [Function],
                                   },
                                   "controlShouldRenderValue": true,
                                   "defaultOptions": undefined,
@@ -1243,7 +1248,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                     selectOption={[Function]}
                                     selectProps={
                                       Object {
-                                        "aria-labelledby": "judge-dropdown",
                                         "backspaceRemovesValue": true,
                                         "blurInputOnSelect": true,
                                         "cache": false,
@@ -1254,6 +1258,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                         "components": Object {
                                           "Input": [Function],
                                           "MenuList": [Function],
+                                          "Option": [Function],
                                         },
                                         "controlShouldRenderValue": true,
                                         "defaultOptions": undefined,
@@ -1563,7 +1568,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                           selectOption={[Function]}
                                           selectProps={
                                             Object {
-                                              "aria-labelledby": "judge-dropdown",
                                               "backspaceRemovesValue": true,
                                               "blurInputOnSelect": true,
                                               "cache": false,
@@ -1574,6 +1578,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                               "components": Object {
                                                 "Input": [Function],
                                                 "MenuList": [Function],
+                                                "Option": [Function],
                                               },
                                               "controlShouldRenderValue": true,
                                               "defaultOptions": undefined,
@@ -1870,7 +1875,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                 selectOption={[Function]}
                                                 selectProps={
                                                   Object {
-                                                    "aria-labelledby": "judge-dropdown",
                                                     "backspaceRemovesValue": true,
                                                     "blurInputOnSelect": true,
                                                     "cache": false,
@@ -1881,6 +1885,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                     "components": Object {
                                                       "Input": [Function],
                                                       "MenuList": [Function],
+                                                      "Option": [Function],
                                                     },
                                                     "controlShouldRenderValue": true,
                                                     "defaultOptions": undefined,
@@ -2076,7 +2081,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                               </Placeholder>
                                               <Input
                                                 aria-autocomplete="list"
-                                                aria-labelledby="judge-dropdown"
                                                 autoCapitalize="none"
                                                 autoComplete="off"
                                                 autoCorrect="off"
@@ -2091,7 +2095,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                 onFocus={[Function]}
                                                 selectProps={
                                                   Object {
-                                                    "aria-labelledby": "judge-dropdown",
                                                     "backspaceRemovesValue": true,
                                                     "blurInputOnSelect": true,
                                                     "cache": false,
@@ -2102,6 +2105,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                     "components": Object {
                                                       "Input": [Function],
                                                       "MenuList": [Function],
+                                                      "Option": [Function],
                                                     },
                                                     "controlShouldRenderValue": true,
                                                     "defaultOptions": undefined,
@@ -2277,8 +2281,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                 <Input
                                                   aria-autocomplete="list"
                                                   aria-controls="judge-dropdown-listbox"
-                                                  aria-expanded={false}
-                                                  aria-labelledby="judge-dropdown"
+                                                  aria-label="judge-dropdown"
+                                                  aria-labelledby="judge-dropdown-label"
                                                   autoCapitalize="none"
                                                   autoComplete="off"
                                                   autoCorrect="off"
@@ -2291,10 +2295,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                   onBlur={[Function]}
                                                   onChange={[Function]}
                                                   onFocus={[Function]}
-                                                  role="combobox"
                                                   selectProps={
                                                     Object {
-                                                      "aria-labelledby": "judge-dropdown",
                                                       "backspaceRemovesValue": true,
                                                       "blurInputOnSelect": true,
                                                       "cache": false,
@@ -2305,6 +2307,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                       "components": Object {
                                                         "Input": [Function],
                                                         "MenuList": [Function],
+                                                        "Option": [Function],
                                                       },
                                                       "controlShouldRenderValue": true,
                                                       "defaultOptions": undefined,
@@ -2492,8 +2495,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                       <AutosizeInput
                                                         aria-autocomplete="list"
                                                         aria-controls="judge-dropdown-listbox"
-                                                        aria-expanded={false}
-                                                        aria-labelledby="judge-dropdown"
+                                                        aria-label="judge-dropdown"
+                                                        aria-labelledby="judge-dropdown-label"
                                                         autoCapitalize="none"
                                                         autoComplete="off"
                                                         autoCorrect="off"
@@ -2518,7 +2521,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                         onBlur={[Function]}
                                                         onChange={[Function]}
                                                         onFocus={[Function]}
-                                                        role="combobox"
                                                         spellCheck="false"
                                                         tabIndex="0"
                                                         type="text"
@@ -2535,8 +2537,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                           <input
                                                             aria-autocomplete="list"
                                                             aria-controls="judge-dropdown-listbox"
-                                                            aria-expanded={false}
-                                                            aria-labelledby="judge-dropdown"
+                                                            aria-label="judge-dropdown"
+                                                            aria-labelledby="judge-dropdown-label"
                                                             autoCapitalize="none"
                                                             autoComplete="off"
                                                             autoCorrect="off"
@@ -2545,7 +2547,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                             onBlur={[Function]}
                                                             onChange={[Function]}
                                                             onFocus={[Function]}
-                                                            role="combobox"
                                                             spellCheck="false"
                                                             style={
                                                               Object {
@@ -2691,7 +2692,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                           selectOption={[Function]}
                                           selectProps={
                                             Object {
-                                              "aria-labelledby": "judge-dropdown",
                                               "backspaceRemovesValue": true,
                                               "blurInputOnSelect": true,
                                               "cache": false,
@@ -2702,6 +2702,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                               "components": Object {
                                                 "Input": [Function],
                                                 "MenuList": [Function],
+                                                "Option": [Function],
                                               },
                                               "controlShouldRenderValue": true,
                                               "defaultOptions": undefined,
@@ -2993,7 +2994,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                 selectOption={[Function]}
                                                 selectProps={
                                                   Object {
-                                                    "aria-labelledby": "judge-dropdown",
                                                     "backspaceRemovesValue": true,
                                                     "blurInputOnSelect": true,
                                                     "cache": false,
@@ -3004,6 +3004,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                     "components": Object {
                                                       "Input": [Function],
                                                       "MenuList": [Function],
+                                                      "Option": [Function],
                                                     },
                                                     "controlShouldRenderValue": true,
                                                     "defaultOptions": undefined,
@@ -3306,7 +3307,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                 selectOption={[Function]}
                                                 selectProps={
                                                   Object {
-                                                    "aria-labelledby": "judge-dropdown",
                                                     "backspaceRemovesValue": true,
                                                     "blurInputOnSelect": true,
                                                     "cache": false,
@@ -3317,6 +3317,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                     "components": Object {
                                                       "Input": [Function],
                                                       "MenuList": [Function],
+                                                      "Option": [Function],
                                                     },
                                                     "controlShouldRenderValue": true,
                                                     "defaultOptions": undefined,

@@ -84,11 +84,14 @@ exports[`EditCavcRemandForm adding new all feature toggles enabled renders corre
         class=""
       >
         <div
+          aria-expanded="false"
           class="cf-form-dropdown dropdown-judge"
+          role="combobox"
         >
           <label
             class="question-label"
             for="judge"
+            id="judge-label"
           >
             <strong>
               <span>
@@ -123,13 +126,12 @@ exports[`EditCavcRemandForm adding new all feature toggles enabled renders corre
                       <input
                         aria-autocomplete="list"
                         aria-controls="judge-listbox"
-                        aria-expanded="false"
-                        aria-labelledby="judge"
+                        aria-label="judge"
+                        aria-labelledby="judge-label"
                         autocapitalize="none"
                         autocomplete="off"
                         autocorrect="off"
                         id="judge"
-                        role="combobox"
                         spellcheck="false"
                         style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                         tabindex="0"
@@ -482,11 +484,14 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
         class=""
       >
         <div
+          aria-expanded="false"
           class="cf-form-dropdown dropdown-judge"
+          role="combobox"
         >
           <label
             class="question-label"
             for="judge"
+            id="judge-label"
           >
             <strong>
               <span>
@@ -520,6 +525,9 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
                     >
                       <input
                         aria-autocomplete="list"
+                        aria-controls="judge-listbox"
+                        aria-label="judge"
+                        aria-labelledby="judge-label"
                         autocapitalize="none"
                         autocomplete="off"
                         autocorrect="off"
@@ -561,6 +569,11 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
                   </div>
                 </div>
               </div>
+              <input
+                name="judge"
+                type="hidden"
+                value="Panel"
+              />
             </div>
           </div>
         </div>
@@ -951,11 +964,14 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
         class=""
       >
         <div
+          aria-expanded="false"
           class="cf-form-dropdown dropdown-judge"
+          role="combobox"
         >
           <label
             class="question-label"
             for="judge"
+            id="judge-label"
           >
             <strong>
               <span>
@@ -989,6 +1005,9 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
                     >
                       <input
                         aria-autocomplete="list"
+                        aria-controls="judge-listbox"
+                        aria-label="judge"
+                        aria-labelledby="judge-label"
                         autocapitalize="none"
                         autocomplete="off"
                         autocorrect="off"
@@ -1030,6 +1049,11 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
                   </div>
                 </div>
               </div>
+              <input
+                name="judge"
+                type="hidden"
+                value="Panel"
+              />
             </div>
           </div>
         </div>
@@ -1420,11 +1444,14 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
         class=""
       >
         <div
+          aria-expanded="false"
           class="cf-form-dropdown dropdown-judge"
+          role="combobox"
         >
           <label
             class="question-label"
             for="judge"
+            id="judge-label"
           >
             <strong>
               <span>
@@ -1458,6 +1485,9 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
                     >
                       <input
                         aria-autocomplete="list"
+                        aria-controls="judge-listbox"
+                        aria-label="judge"
+                        aria-labelledby="judge-label"
                         autocapitalize="none"
                         autocomplete="off"
                         autocorrect="off"
@@ -1499,6 +1529,11 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
                   </div>
                 </div>
               </div>
+              <input
+                name="judge"
+                type="hidden"
+                value="Panel"
+              />
             </div>
           </div>
         </div>
@@ -1904,11 +1939,14 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
         class=""
       >
         <div
+          aria-expanded="false"
           class="cf-form-dropdown dropdown-judge"
+          role="combobox"
         >
           <label
             class="question-label"
             for="judge"
+            id="judge-label"
           >
             <strong>
               <span>
@@ -1942,6 +1980,9 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
                     >
                       <input
                         aria-autocomplete="list"
+                        aria-controls="judge-listbox"
+                        aria-label="judge"
+                        aria-labelledby="judge-label"
                         autocapitalize="none"
                         autocomplete="off"
                         autocorrect="off"
@@ -1983,6 +2024,11 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
                   </div>
                 </div>
               </div>
+              <input
+                name="judge"
+                type="hidden"
+                value="Panel"
+              />
             </div>
           </div>
         </div>
@@ -2343,11 +2389,14 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
         class=""
       >
         <div
+          aria-expanded="false"
           class="cf-form-dropdown dropdown-judge"
+          role="combobox"
         >
           <label
             class="question-label"
             for="judge"
+            id="judge-label"
           >
             <strong>
               <span>
@@ -2381,6 +2430,9 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
                     >
                       <input
                         aria-autocomplete="list"
+                        aria-controls="judge-listbox"
+                        aria-label="judge"
+                        aria-labelledby="judge-label"
                         autocapitalize="none"
                         autocomplete="off"
                         autocorrect="off"
@@ -2422,6 +2474,11 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
                   </div>
                 </div>
               </div>
+              <input
+                name="judge"
+                type="hidden"
+                value="Panel"
+              />
             </div>
           </div>
         </div>
@@ -2796,11 +2853,14 @@ exports[`EditCavcRemandForm editing existing all feature toggles enabled renders
         class=""
       >
         <div
+          aria-expanded="false"
           class="cf-form-dropdown dropdown-judge"
+          role="combobox"
         >
           <label
             class="question-label"
             for="judge"
+            id="judge-label"
           >
             <strong>
               <span>
@@ -2835,13 +2895,12 @@ exports[`EditCavcRemandForm editing existing all feature toggles enabled renders
                       <input
                         aria-autocomplete="list"
                         aria-controls="judge-listbox"
-                        aria-expanded="false"
-                        aria-labelledby="judge"
+                        aria-label="judge"
+                        aria-labelledby="judge-label"
                         autocapitalize="none"
                         autocomplete="off"
                         autocorrect="off"
                         id="judge"
-                        role="combobox"
                         spellcheck="false"
                         style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                         tabindex="0"

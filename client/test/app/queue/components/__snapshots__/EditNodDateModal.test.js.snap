@@ -88,11 +88,14 @@ exports[`EditNodDateModal renders correctly 1`] = `
                   class=""
                 >
                   <div
+                    aria-expanded="false"
                     class="cf-form-dropdown dropdown-reason"
+                    role="combobox"
                   >
                     <label
                       class="question-label"
                       for="reason"
+                      id="reason-label"
                     >
                       <strong>
                         <span>
@@ -127,13 +130,12 @@ exports[`EditNodDateModal renders correctly 1`] = `
                                 <input
                                   aria-autocomplete="list"
                                   aria-controls="reason-listbox"
-                                  aria-expanded="false"
-                                  aria-labelledby="reason"
+                                  aria-label="reason"
+                                  aria-labelledby="reason-label"
                                   autocapitalize="none"
                                   autocomplete="off"
                                   autocorrect="off"
                                   id="reason"
-                                  role="combobox"
                                   spellcheck="false"
                                   style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                                   tabindex="0"

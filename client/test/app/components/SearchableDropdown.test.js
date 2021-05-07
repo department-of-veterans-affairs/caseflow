@@ -40,7 +40,7 @@ describe('SearchableDropdown', () => {
     expect(results1).toHaveNoViolations();
 
     // Try with menu open
-    await selectEvent.openMenu(screen.getByLabelText('menuTest'));
+    await selectEvent.openMenu(screen.getByLabelText('menu-test-label'));
 
     const results2 = await axe(container);
 
@@ -109,7 +109,7 @@ describe('SearchableDropdown', () => {
     );
 
     // Try to open menu
-    await selectEvent.openMenu(screen.getByLabelText('menuTest'));
+    await selectEvent.openMenu(screen.getByLabelText('menu-test-label'));
 
     // Menu options should not be visible
     options.forEach((opt) => {
@@ -190,7 +190,7 @@ describe('creatable', () => {
       />
     );
 
-    await selectEvent.create(screen.getByLabelText('menuTest'), 'foo', {
+    await selectEvent.create(screen.getByLabelText('menu-test-label'), 'foo', {
       createOptionText: /^Create a tag for/,
     });
 
@@ -269,7 +269,7 @@ describe('async', () => {
       data[0].label.slice(0, data[0].label.length - 2)
     );
 
-    await selectEvent.select(screen.getByLabelText('menuTest'), data[0].label);
+    await selectEvent.select(screen.getByLabelText('menu-test-label'), data[0].label);
 
     expect(mockOnChange).toHaveBeenLastCalledWith(data[0], null);
   });

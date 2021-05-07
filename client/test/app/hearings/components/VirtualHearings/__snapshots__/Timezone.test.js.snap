@@ -15932,12 +15932,15 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
       className=""
     >
       <div
+        aria-expanded={false}
         className="cf-form-dropdown dropdown-Timezone"
         data-css-1gh7024=""
+        role="combobox"
       >
         <label
           className="question-label"
           htmlFor="Timezone"
+          id="timezone-label"
         >
           <strong>
             <span>
@@ -15949,13 +15952,13 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
           className="cf-select"
         >
           <StateManager
-            aria-labelledby="Timezone"
             cache={false}
             classNamePrefix="cf-select"
             components={
               Object {
                 "Input": [Function],
                 "MenuList": [Function],
+                "Option": [Function],
               }
             }
             defaultInputValue=""
@@ -15969,6 +15972,8 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
             noOptionsMessage={[Function]}
             onBlurResetsInput={false}
             onChange={[Function]}
+            onMenuClose={[Function]}
+            onMenuOpen={[Function]}
             options={
               Array [
                 Object {
@@ -16747,7 +16752,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
             value={null}
           >
             <Select
-              aria-labelledby="Timezone"
               backspaceRemovesValue={true}
               blurInputOnSelect={true}
               cache={false}
@@ -16759,6 +16763,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 Object {
                   "Input": [Function],
                   "MenuList": [Function],
+                  "Option": [Function],
                 }
               }
               controlShouldRenderValue={true}
@@ -18360,7 +18365,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 selectOption={[Function]}
                 selectProps={
                   Object {
-                    "aria-labelledby": "Timezone",
                     "backspaceRemovesValue": true,
                     "blurInputOnSelect": true,
                     "cache": false,
@@ -18371,6 +18375,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                     "components": Object {
                       "Input": [Function],
                       "MenuList": [Function],
+                      "Option": [Function],
                     },
                     "controlShouldRenderValue": true,
                     "defaultOptions": undefined,
@@ -20024,7 +20029,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                       selectOption={[Function]}
                       selectProps={
                         Object {
-                          "aria-labelledby": "Timezone",
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "cache": false,
@@ -20035,6 +20039,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                           "components": Object {
                             "Input": [Function],
                             "MenuList": [Function],
+                            "Option": [Function],
                           },
                           "controlShouldRenderValue": true,
                           "defaultOptions": undefined,
@@ -21696,7 +21701,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
-                                "aria-labelledby": "Timezone",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -21707,6 +21711,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                 "components": Object {
                                   "Input": [Function],
                                   "MenuList": [Function],
+                                  "Option": [Function],
                                 },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
@@ -23355,7 +23360,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "Timezone",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -23366,6 +23370,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -24237,7 +24242,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                 </Placeholder>
                                 <Input
                                   aria-autocomplete="list"
-                                  aria-labelledby="Timezone"
                                   autoCapitalize="none"
                                   autoComplete="off"
                                   autoCorrect="off"
@@ -24252,7 +24256,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                   onFocus={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "Timezone",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -24263,6 +24266,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -25113,9 +25117,9 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                 >
                                   <Input
                                     aria-autocomplete="list"
-                                    aria-controls="Timezone-listbox"
-                                    aria-expanded={false}
-                                    aria-labelledby="Timezone"
+                                    aria-controls="timezone-listbox"
+                                    aria-label="timezone"
+                                    aria-labelledby="timezone-label"
                                     autoCapitalize="none"
                                     autoComplete="off"
                                     autoCorrect="off"
@@ -25128,10 +25132,8 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
-                                    role="combobox"
                                     selectProps={
                                       Object {
-                                        "aria-labelledby": "Timezone",
                                         "backspaceRemovesValue": true,
                                         "blurInputOnSelect": true,
                                         "cache": false,
@@ -25142,6 +25144,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                         "components": Object {
                                           "Input": [Function],
                                           "MenuList": [Function],
+                                          "Option": [Function],
                                         },
                                         "controlShouldRenderValue": true,
                                         "defaultOptions": undefined,
@@ -26004,9 +26007,9 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       >
                                         <AutosizeInput
                                           aria-autocomplete="list"
-                                          aria-controls="Timezone-listbox"
-                                          aria-expanded={false}
-                                          aria-labelledby="Timezone"
+                                          aria-controls="timezone-listbox"
+                                          aria-label="timezone"
+                                          aria-labelledby="timezone-label"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
@@ -26031,7 +26034,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
-                                          role="combobox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -26047,9 +26049,9 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                           >
                                             <input
                                               aria-autocomplete="list"
-                                              aria-controls="Timezone-listbox"
-                                              aria-expanded={false}
-                                              aria-labelledby="Timezone"
+                                              aria-controls="timezone-listbox"
+                                              aria-label="timezone"
+                                              aria-labelledby="timezone-label"
                                               autoCapitalize="none"
                                               autoComplete="off"
                                               autoCorrect="off"
@@ -26058,7 +26060,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
                                               spellCheck="false"
                                               style={
                                                 Object {
@@ -26880,7 +26881,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
-                                "aria-labelledby": "Timezone",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -26891,6 +26891,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                 "components": Object {
                                   "Input": [Function],
                                   "MenuList": [Function],
+                                  "Option": [Function],
                                 },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
@@ -28534,7 +28535,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "Timezone",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -28545,6 +28545,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -30199,7 +30200,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "Timezone",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -30210,6 +30210,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -31946,12 +31947,15 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
       className=""
     >
       <div
+        aria-expanded={false}
         className="cf-form-dropdown dropdown-Timezone"
         data-css-1gh7024=""
+        role="combobox"
       >
         <label
           className="question-label"
           htmlFor="Timezone"
+          id="timezone-label"
         >
           <strong>
             <span>
@@ -31963,13 +31967,13 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
           className="cf-select"
         >
           <StateManager
-            aria-labelledby="Timezone"
             cache={false}
             classNamePrefix="cf-select"
             components={
               Object {
                 "Input": [Function],
                 "MenuList": [Function],
+                "Option": [Function],
               }
             }
             defaultInputValue=""
@@ -31983,6 +31987,8 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
             noOptionsMessage={[Function]}
             onBlurResetsInput={false}
             onChange={[Function]}
+            onMenuClose={[Function]}
+            onMenuOpen={[Function]}
             options={
               Array [
                 Object {
@@ -32761,7 +32767,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
             value={null}
           >
             <Select
-              aria-labelledby="Timezone"
               backspaceRemovesValue={true}
               blurInputOnSelect={true}
               cache={false}
@@ -32773,6 +32778,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                 Object {
                   "Input": [Function],
                   "MenuList": [Function],
+                  "Option": [Function],
                 }
               }
               controlShouldRenderValue={true}
@@ -34374,7 +34380,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                 selectOption={[Function]}
                 selectProps={
                   Object {
-                    "aria-labelledby": "Timezone",
                     "backspaceRemovesValue": true,
                     "blurInputOnSelect": true,
                     "cache": false,
@@ -34385,6 +34390,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                     "components": Object {
                       "Input": [Function],
                       "MenuList": [Function],
+                      "Option": [Function],
                     },
                     "controlShouldRenderValue": true,
                     "defaultOptions": undefined,
@@ -36038,7 +36044,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                       selectOption={[Function]}
                       selectProps={
                         Object {
-                          "aria-labelledby": "Timezone",
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "cache": false,
@@ -36049,6 +36054,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                           "components": Object {
                             "Input": [Function],
                             "MenuList": [Function],
+                            "Option": [Function],
                           },
                           "controlShouldRenderValue": true,
                           "defaultOptions": undefined,
@@ -37710,7 +37716,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
-                                "aria-labelledby": "Timezone",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -37721,6 +37726,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                 "components": Object {
                                   "Input": [Function],
                                   "MenuList": [Function],
+                                  "Option": [Function],
                                 },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
@@ -39369,7 +39375,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "Timezone",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -39380,6 +39385,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -40251,7 +40257,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                 </Placeholder>
                                 <DummyInput
                                   aria-autocomplete="list"
-                                  aria-labelledby="Timezone"
                                   disabled={true}
                                   id="Timezone"
                                   innerRef={[Function]}
@@ -40266,7 +40271,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                     __EMOTION_LABEL_PLEASE_DO_NOT_USE__="DummyInput"
                                     __EMOTION_TYPE_PLEASE_DO_NOT_USE__="input"
                                     aria-autocomplete="list"
-                                    aria-labelledby="Timezone"
                                     css={
                                       Object {
                                         "map": "/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkR1bW15SW5wdXQuanMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBbUJNIiwiZmlsZSI6IkR1bW15SW5wdXQuanMiLCJzb3VyY2VzQ29udGVudCI6WyIvLyBAZmxvd1xuLyoqIEBqc3gganN4ICovXG5pbXBvcnQgeyBqc3ggfSBmcm9tICdAZW1vdGlvbi9jb3JlJztcblxuZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24gRHVtbXlJbnB1dCh7XG4gIGluOiBpblByb3AsXG4gIG91dCxcbiAgb25FeGl0ZWQsXG4gIGFwcGVhcixcbiAgZW50ZXIsXG4gIGV4aXQsXG4gIGlubmVyUmVmLFxuICBlbW90aW9uLFxuICAuLi5wcm9wc1xufTogYW55KSB7XG4gIHJldHVybiAoXG4gICAgPGlucHV0XG4gICAgICByZWY9e2lubmVyUmVmfVxuICAgICAgey4uLnByb3BzfVxuICAgICAgY3NzPXt7XG4gICAgICAgIGxhYmVsOiAnZHVtbXlJbnB1dCcsXG4gICAgICAgIC8vIGdldCByaWQgb2YgYW55IGRlZmF1bHQgc3R5bGVzXG4gICAgICAgIGJhY2tncm91bmQ6IDAsXG4gICAgICAgIGJvcmRlcjogMCxcbiAgICAgICAgZm9udFNpemU6ICdpbmhlcml0JyxcbiAgICAgICAgb3V0bGluZTogMCxcbiAgICAgICAgcGFkZGluZzogMCxcbiAgICAgICAgLy8gaW1wb3J0YW50ISB3aXRob3V0IGB3aWR0aGAgYnJvd3NlcnMgd29uJ3QgYWxsb3cgZm9jdXNcbiAgICAgICAgd2lkdGg6IDEsXG5cbiAgICAgICAgLy8gcmVtb3ZlIGN1cnNvciBvbiBkZXNrdG9wXG4gICAgICAgIGNvbG9yOiAndHJhbnNwYXJlbnQnLFxuXG4gICAgICAgIC8vIHJlbW92ZSBjdXJzb3Igb24gbW9iaWxlIHdoaWxzdCBtYWludGFpbmluZyBcInNjcm9sbCBpbnRvIHZpZXdcIiBiZWhhdmlvdXJcbiAgICAgICAgbGVmdDogLTEwMCxcbiAgICAgICAgb3BhY2l0eTogMCxcbiAgICAgICAgcG9zaXRpb246ICdyZWxhdGl2ZScsXG4gICAgICAgIHRyYW5zZm9ybTogJ3NjYWxlKDApJyxcbiAgICAgIH19XG4gICAgLz5cbiAgKTtcbn1cbiJdfQ== */",
@@ -40287,7 +40291,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                   >
                                     <input
                                       aria-autocomplete="list"
-                                      aria-labelledby="Timezone"
                                       className="css-62g3xt-dummyInput"
                                       disabled={true}
                                       id="Timezone"
@@ -41083,7 +41086,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
-                                "aria-labelledby": "Timezone",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -41094,6 +41096,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                 "components": Object {
                                   "Input": [Function],
                                   "MenuList": [Function],
+                                  "Option": [Function],
                                 },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
@@ -42737,7 +42740,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "Timezone",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -42748,6 +42750,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -44402,7 +44405,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "Timezone",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -44413,6 +44415,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -46937,12 +46940,15 @@ exports[`Timezone Respects required prop 1`] = `
       className=""
     >
       <div
+        aria-expanded={false}
         className="cf-form-dropdown dropdown-Timezone"
         data-css-1gh7024=""
+        role="combobox"
       >
         <label
           className="question-label"
           htmlFor="Timezone"
+          id="timezone-label"
         >
           <strong>
             <span>
@@ -46959,13 +46965,13 @@ exports[`Timezone Respects required prop 1`] = `
           className="cf-select"
         >
           <StateManager
-            aria-labelledby="Timezone"
             cache={false}
             classNamePrefix="cf-select"
             components={
               Object {
                 "Input": [Function],
                 "MenuList": [Function],
+                "Option": [Function],
               }
             }
             defaultInputValue=""
@@ -46979,6 +46985,8 @@ exports[`Timezone Respects required prop 1`] = `
             noOptionsMessage={[Function]}
             onBlurResetsInput={false}
             onChange={[Function]}
+            onMenuClose={[Function]}
+            onMenuOpen={[Function]}
             options={
               Array [
                 Object {
@@ -47757,7 +47765,6 @@ exports[`Timezone Respects required prop 1`] = `
             value={null}
           >
             <Select
-              aria-labelledby="Timezone"
               backspaceRemovesValue={true}
               blurInputOnSelect={true}
               cache={false}
@@ -47769,6 +47776,7 @@ exports[`Timezone Respects required prop 1`] = `
                 Object {
                   "Input": [Function],
                   "MenuList": [Function],
+                  "Option": [Function],
                 }
               }
               controlShouldRenderValue={true}
@@ -49370,7 +49378,6 @@ exports[`Timezone Respects required prop 1`] = `
                 selectOption={[Function]}
                 selectProps={
                   Object {
-                    "aria-labelledby": "Timezone",
                     "backspaceRemovesValue": true,
                     "blurInputOnSelect": true,
                     "cache": false,
@@ -49381,6 +49388,7 @@ exports[`Timezone Respects required prop 1`] = `
                     "components": Object {
                       "Input": [Function],
                       "MenuList": [Function],
+                      "Option": [Function],
                     },
                     "controlShouldRenderValue": true,
                     "defaultOptions": undefined,
@@ -51034,7 +51042,6 @@ exports[`Timezone Respects required prop 1`] = `
                       selectOption={[Function]}
                       selectProps={
                         Object {
-                          "aria-labelledby": "Timezone",
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "cache": false,
@@ -51045,6 +51052,7 @@ exports[`Timezone Respects required prop 1`] = `
                           "components": Object {
                             "Input": [Function],
                             "MenuList": [Function],
+                            "Option": [Function],
                           },
                           "controlShouldRenderValue": true,
                           "defaultOptions": undefined,
@@ -52706,7 +52714,6 @@ exports[`Timezone Respects required prop 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
-                                "aria-labelledby": "Timezone",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -52717,6 +52724,7 @@ exports[`Timezone Respects required prop 1`] = `
                                 "components": Object {
                                   "Input": [Function],
                                   "MenuList": [Function],
+                                  "Option": [Function],
                                 },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
@@ -54365,7 +54373,6 @@ exports[`Timezone Respects required prop 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "Timezone",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -54376,6 +54383,7 @@ exports[`Timezone Respects required prop 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -55247,7 +55255,6 @@ exports[`Timezone Respects required prop 1`] = `
                                 </Placeholder>
                                 <Input
                                   aria-autocomplete="list"
-                                  aria-labelledby="Timezone"
                                   autoCapitalize="none"
                                   autoComplete="off"
                                   autoCorrect="off"
@@ -55262,7 +55269,6 @@ exports[`Timezone Respects required prop 1`] = `
                                   onFocus={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "Timezone",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -55273,6 +55279,7 @@ exports[`Timezone Respects required prop 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -56123,9 +56130,9 @@ exports[`Timezone Respects required prop 1`] = `
                                 >
                                   <Input
                                     aria-autocomplete="list"
-                                    aria-controls="Timezone-listbox"
-                                    aria-expanded={false}
-                                    aria-labelledby="Timezone"
+                                    aria-controls="timezone-listbox"
+                                    aria-label="timezone"
+                                    aria-labelledby="timezone-label"
                                     autoCapitalize="none"
                                     autoComplete="off"
                                     autoCorrect="off"
@@ -56138,10 +56145,8 @@ exports[`Timezone Respects required prop 1`] = `
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
-                                    role="combobox"
                                     selectProps={
                                       Object {
-                                        "aria-labelledby": "Timezone",
                                         "backspaceRemovesValue": true,
                                         "blurInputOnSelect": true,
                                         "cache": false,
@@ -56152,6 +56157,7 @@ exports[`Timezone Respects required prop 1`] = `
                                         "components": Object {
                                           "Input": [Function],
                                           "MenuList": [Function],
+                                          "Option": [Function],
                                         },
                                         "controlShouldRenderValue": true,
                                         "defaultOptions": undefined,
@@ -57014,9 +57020,9 @@ exports[`Timezone Respects required prop 1`] = `
                                       >
                                         <AutosizeInput
                                           aria-autocomplete="list"
-                                          aria-controls="Timezone-listbox"
-                                          aria-expanded={false}
-                                          aria-labelledby="Timezone"
+                                          aria-controls="timezone-listbox"
+                                          aria-label="timezone"
+                                          aria-labelledby="timezone-label"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
@@ -57041,7 +57047,6 @@ exports[`Timezone Respects required prop 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
-                                          role="combobox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -57057,9 +57062,9 @@ exports[`Timezone Respects required prop 1`] = `
                                           >
                                             <input
                                               aria-autocomplete="list"
-                                              aria-controls="Timezone-listbox"
-                                              aria-expanded={false}
-                                              aria-labelledby="Timezone"
+                                              aria-controls="timezone-listbox"
+                                              aria-label="timezone"
+                                              aria-labelledby="timezone-label"
                                               autoCapitalize="none"
                                               autoComplete="off"
                                               autoCorrect="off"
@@ -57068,7 +57073,6 @@ exports[`Timezone Respects required prop 1`] = `
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
                                               spellCheck="false"
                                               style={
                                                 Object {
@@ -57890,7 +57894,6 @@ exports[`Timezone Respects required prop 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
-                                "aria-labelledby": "Timezone",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -57901,6 +57904,7 @@ exports[`Timezone Respects required prop 1`] = `
                                 "components": Object {
                                   "Input": [Function],
                                   "MenuList": [Function],
+                                  "Option": [Function],
                                 },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
@@ -59544,7 +59548,6 @@ exports[`Timezone Respects required prop 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "Timezone",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -59555,6 +59558,7 @@ exports[`Timezone Respects required prop 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -61209,7 +61213,6 @@ exports[`Timezone Respects required prop 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "Timezone",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -61220,6 +61223,7 @@ exports[`Timezone Respects required prop 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,

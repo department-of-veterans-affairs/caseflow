@@ -839,12 +839,15 @@ exports[`Fields Display timezone and divider for Central 1`] = `
             className=""
           >
             <div
+              aria-expanded={false}
               className="cf-form-dropdown dropdown-appellantTz"
               data-css-1gh7024=""
+              role="combobox"
             >
               <label
                 className="question-label"
                 htmlFor="appellantTz"
+                id="appellant-tz-label"
               >
                 <strong>
                   <span>
@@ -861,13 +864,13 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                 className="cf-select"
               >
                 <StateManager
-                  aria-labelledby="appellantTz"
                   cache={false}
                   classNamePrefix="cf-select"
                   components={
                     Object {
                       "Input": [Function],
                       "MenuList": [Function],
+                      "Option": [Function],
                     }
                   }
                   defaultInputValue=""
@@ -881,6 +884,8 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                   noOptionsMessage={[Function]}
                   onBlurResetsInput={false}
                   onChange={[Function]}
+                  onMenuClose={[Function]}
+                  onMenuOpen={[Function]}
                   options={
                     Array [
                       Object {
@@ -1665,7 +1670,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                   }
                 >
                   <Select
-                    aria-labelledby="appellantTz"
                     backspaceRemovesValue={true}
                     blurInputOnSelect={true}
                     cache={false}
@@ -1677,6 +1681,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                       Object {
                         "Input": [Function],
                         "MenuList": [Function],
+                        "Option": [Function],
                       }
                     }
                     controlShouldRenderValue={true}
@@ -3284,7 +3289,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                       selectOption={[Function]}
                       selectProps={
                         Object {
-                          "aria-labelledby": "appellantTz",
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "cache": false,
@@ -3295,6 +3299,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                           "components": Object {
                             "Input": [Function],
                             "MenuList": [Function],
+                            "Option": [Function],
                           },
                           "controlShouldRenderValue": true,
                           "defaultOptions": undefined,
@@ -4952,7 +4957,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
-                                "aria-labelledby": "appellantTz",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -4963,6 +4967,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                 "components": Object {
                                   "Input": [Function],
                                   "MenuList": [Function],
+                                  "Option": [Function],
                                 },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
@@ -6628,7 +6633,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "appellantTz",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -6639,6 +6643,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -8296,7 +8301,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                         selectOption={[Function]}
                                         selectProps={
                                           Object {
-                                            "aria-labelledby": "appellantTz",
                                             "backspaceRemovesValue": true,
                                             "blurInputOnSelect": true,
                                             "cache": false,
@@ -8307,6 +8311,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             "components": Object {
                                               "Input": [Function],
                                               "MenuList": [Function],
+                                              "Option": [Function],
                                             },
                                             "controlShouldRenderValue": true,
                                             "defaultOptions": undefined,
@@ -9186,7 +9191,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                       </SingleValue>
                                       <Input
                                         aria-autocomplete="list"
-                                        aria-labelledby="appellantTz"
                                         autoCapitalize="none"
                                         autoComplete="off"
                                         autoCorrect="off"
@@ -9201,7 +9205,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                         onFocus={[Function]}
                                         selectProps={
                                           Object {
-                                            "aria-labelledby": "appellantTz",
                                             "backspaceRemovesValue": true,
                                             "blurInputOnSelect": true,
                                             "cache": false,
@@ -9212,6 +9215,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             "components": Object {
                                               "Input": [Function],
                                               "MenuList": [Function],
+                                              "Option": [Function],
                                             },
                                             "controlShouldRenderValue": true,
                                             "defaultOptions": undefined,
@@ -10066,9 +10070,9 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                       >
                                         <Input
                                           aria-autocomplete="list"
-                                          aria-controls="appellantTz-listbox"
-                                          aria-expanded={false}
-                                          aria-labelledby="appellantTz"
+                                          aria-controls="appellant-tz-listbox"
+                                          aria-label="appellant-tz"
+                                          aria-labelledby="appellant-tz-label"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
@@ -10081,10 +10085,8 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
-                                          role="combobox"
                                           selectProps={
                                             Object {
-                                              "aria-labelledby": "appellantTz",
                                               "backspaceRemovesValue": true,
                                               "blurInputOnSelect": true,
                                               "cache": false,
@@ -10095,6 +10097,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                               "components": Object {
                                                 "Input": [Function],
                                                 "MenuList": [Function],
+                                                "Option": [Function],
                                               },
                                               "controlShouldRenderValue": true,
                                               "defaultOptions": undefined,
@@ -10961,9 +10964,9 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             >
                                               <AutosizeInput
                                                 aria-autocomplete="list"
-                                                aria-controls="appellantTz-listbox"
-                                                aria-expanded={false}
-                                                aria-labelledby="appellantTz"
+                                                aria-controls="appellant-tz-listbox"
+                                                aria-label="appellant-tz"
+                                                aria-labelledby="appellant-tz-label"
                                                 autoCapitalize="none"
                                                 autoComplete="off"
                                                 autoCorrect="off"
@@ -10988,7 +10991,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
-                                                role="combobox"
                                                 spellCheck="false"
                                                 tabIndex="0"
                                                 type="text"
@@ -11004,9 +11006,9 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                 >
                                                   <input
                                                     aria-autocomplete="list"
-                                                    aria-controls="appellantTz-listbox"
-                                                    aria-expanded={false}
-                                                    aria-labelledby="appellantTz"
+                                                    aria-controls="appellant-tz-listbox"
+                                                    aria-label="appellant-tz"
+                                                    aria-labelledby="appellant-tz-label"
                                                     autoCapitalize="none"
                                                     autoComplete="off"
                                                     autoCorrect="off"
@@ -11015,7 +11017,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                     onBlur={[Function]}
                                                     onChange={[Function]}
                                                     onFocus={[Function]}
-                                                    role="combobox"
                                                     spellCheck="false"
                                                     style={
                                                       Object {
@@ -11837,7 +11838,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "appellantTz",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -11848,6 +11848,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -13495,7 +13496,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                         selectOption={[Function]}
                                         selectProps={
                                           Object {
-                                            "aria-labelledby": "appellantTz",
                                             "backspaceRemovesValue": true,
                                             "blurInputOnSelect": true,
                                             "cache": false,
@@ -13506,6 +13506,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             "components": Object {
                                               "Input": [Function],
                                               "MenuList": [Function],
+                                              "Option": [Function],
                                             },
                                             "controlShouldRenderValue": true,
                                             "defaultOptions": undefined,
@@ -15164,7 +15165,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                         selectOption={[Function]}
                                         selectProps={
                                           Object {
-                                            "aria-labelledby": "appellantTz",
                                             "backspaceRemovesValue": true,
                                             "blurInputOnSelect": true,
                                             "cache": false,
@@ -15175,6 +15175,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             "components": Object {
                                               "Input": [Function],
                                               "MenuList": [Function],
+                                              "Option": [Function],
                                             },
                                             "controlShouldRenderValue": true,
                                             "defaultOptions": undefined,
@@ -17017,12 +17018,15 @@ exports[`Fields Display timezone and divider for Central 1`] = `
             className=""
           >
             <div
+              aria-expanded={false}
               className="cf-form-dropdown dropdown-representativeTz"
               data-css-1gh7024=""
+              role="combobox"
             >
               <label
                 className="question-label"
                 htmlFor="representativeTz"
+                id="representative-tz-label"
               >
                 <strong>
                   <span>
@@ -17039,13 +17043,13 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                 className="cf-select"
               >
                 <StateManager
-                  aria-labelledby="representativeTz"
                   cache={false}
                   classNamePrefix="cf-select"
                   components={
                     Object {
                       "Input": [Function],
                       "MenuList": [Function],
+                      "Option": [Function],
                     }
                   }
                   defaultInputValue=""
@@ -17059,6 +17063,8 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                   noOptionsMessage={[Function]}
                   onBlurResetsInput={false}
                   onChange={[Function]}
+                  onMenuClose={[Function]}
+                  onMenuOpen={[Function]}
                   options={
                     Array [
                       Object {
@@ -17843,7 +17849,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                   }
                 >
                   <Select
-                    aria-labelledby="representativeTz"
                     backspaceRemovesValue={true}
                     blurInputOnSelect={true}
                     cache={false}
@@ -17855,6 +17860,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                       Object {
                         "Input": [Function],
                         "MenuList": [Function],
+                        "Option": [Function],
                       }
                     }
                     controlShouldRenderValue={true}
@@ -19462,7 +19468,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                       selectOption={[Function]}
                       selectProps={
                         Object {
-                          "aria-labelledby": "representativeTz",
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "cache": false,
@@ -19473,6 +19478,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                           "components": Object {
                             "Input": [Function],
                             "MenuList": [Function],
+                            "Option": [Function],
                           },
                           "controlShouldRenderValue": true,
                           "defaultOptions": undefined,
@@ -21130,7 +21136,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
-                                "aria-labelledby": "representativeTz",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -21141,6 +21146,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                 "components": Object {
                                   "Input": [Function],
                                   "MenuList": [Function],
+                                  "Option": [Function],
                                 },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
@@ -22806,7 +22812,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "representativeTz",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -22817,6 +22822,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -24474,7 +24480,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                         selectOption={[Function]}
                                         selectProps={
                                           Object {
-                                            "aria-labelledby": "representativeTz",
                                             "backspaceRemovesValue": true,
                                             "blurInputOnSelect": true,
                                             "cache": false,
@@ -24485,6 +24490,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             "components": Object {
                                               "Input": [Function],
                                               "MenuList": [Function],
+                                              "Option": [Function],
                                             },
                                             "controlShouldRenderValue": true,
                                             "defaultOptions": undefined,
@@ -25364,7 +25370,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                       </SingleValue>
                                       <Input
                                         aria-autocomplete="list"
-                                        aria-labelledby="representativeTz"
                                         autoCapitalize="none"
                                         autoComplete="off"
                                         autoCorrect="off"
@@ -25379,7 +25384,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                         onFocus={[Function]}
                                         selectProps={
                                           Object {
-                                            "aria-labelledby": "representativeTz",
                                             "backspaceRemovesValue": true,
                                             "blurInputOnSelect": true,
                                             "cache": false,
@@ -25390,6 +25394,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             "components": Object {
                                               "Input": [Function],
                                               "MenuList": [Function],
+                                              "Option": [Function],
                                             },
                                             "controlShouldRenderValue": true,
                                             "defaultOptions": undefined,
@@ -26244,9 +26249,9 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                       >
                                         <Input
                                           aria-autocomplete="list"
-                                          aria-controls="representativeTz-listbox"
-                                          aria-expanded={false}
-                                          aria-labelledby="representativeTz"
+                                          aria-controls="representative-tz-listbox"
+                                          aria-label="representative-tz"
+                                          aria-labelledby="representative-tz-label"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
@@ -26259,10 +26264,8 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
-                                          role="combobox"
                                           selectProps={
                                             Object {
-                                              "aria-labelledby": "representativeTz",
                                               "backspaceRemovesValue": true,
                                               "blurInputOnSelect": true,
                                               "cache": false,
@@ -26273,6 +26276,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                               "components": Object {
                                                 "Input": [Function],
                                                 "MenuList": [Function],
+                                                "Option": [Function],
                                               },
                                               "controlShouldRenderValue": true,
                                               "defaultOptions": undefined,
@@ -27139,9 +27143,9 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             >
                                               <AutosizeInput
                                                 aria-autocomplete="list"
-                                                aria-controls="representativeTz-listbox"
-                                                aria-expanded={false}
-                                                aria-labelledby="representativeTz"
+                                                aria-controls="representative-tz-listbox"
+                                                aria-label="representative-tz"
+                                                aria-labelledby="representative-tz-label"
                                                 autoCapitalize="none"
                                                 autoComplete="off"
                                                 autoCorrect="off"
@@ -27166,7 +27170,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
-                                                role="combobox"
                                                 spellCheck="false"
                                                 tabIndex="0"
                                                 type="text"
@@ -27182,9 +27185,9 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                 >
                                                   <input
                                                     aria-autocomplete="list"
-                                                    aria-controls="representativeTz-listbox"
-                                                    aria-expanded={false}
-                                                    aria-labelledby="representativeTz"
+                                                    aria-controls="representative-tz-listbox"
+                                                    aria-label="representative-tz"
+                                                    aria-labelledby="representative-tz-label"
                                                     autoCapitalize="none"
                                                     autoComplete="off"
                                                     autoCorrect="off"
@@ -27193,7 +27196,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                     onBlur={[Function]}
                                                     onChange={[Function]}
                                                     onFocus={[Function]}
-                                                    role="combobox"
                                                     spellCheck="false"
                                                     style={
                                                       Object {
@@ -28015,7 +28017,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "representativeTz",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -28026,6 +28027,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -29673,7 +29675,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                         selectOption={[Function]}
                                         selectProps={
                                           Object {
-                                            "aria-labelledby": "representativeTz",
                                             "backspaceRemovesValue": true,
                                             "blurInputOnSelect": true,
                                             "cache": false,
@@ -29684,6 +29685,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             "components": Object {
                                               "Input": [Function],
                                               "MenuList": [Function],
+                                              "Option": [Function],
                                             },
                                             "controlShouldRenderValue": true,
                                             "defaultOptions": undefined,
@@ -31342,7 +31344,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                         selectOption={[Function]}
                                         selectProps={
                                           Object {
-                                            "aria-labelledby": "representativeTz",
                                             "backspaceRemovesValue": true,
                                             "blurInputOnSelect": true,
                                             "cache": false,
@@ -31353,6 +31354,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             "components": Object {
                                               "Input": [Function],
                                               "MenuList": [Function],
+                                              "Option": [Function],
                                             },
                                             "controlShouldRenderValue": true,
                                             "defaultOptions": undefined,
@@ -33214,12 +33216,15 @@ exports[`Fields Display timezone and divider for Video 1`] = `
             className=""
           >
             <div
+              aria-expanded={false}
               className="cf-form-dropdown dropdown-appellantTz"
               data-css-1gh7024=""
+              role="combobox"
             >
               <label
                 className="question-label"
                 htmlFor="appellantTz"
+                id="appellant-tz-label"
               >
                 <strong>
                   <span>
@@ -33236,13 +33241,13 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                 className="cf-select"
               >
                 <StateManager
-                  aria-labelledby="appellantTz"
                   cache={false}
                   classNamePrefix="cf-select"
                   components={
                     Object {
                       "Input": [Function],
                       "MenuList": [Function],
+                      "Option": [Function],
                     }
                   }
                   defaultInputValue=""
@@ -33256,6 +33261,8 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                   noOptionsMessage={[Function]}
                   onBlurResetsInput={false}
                   onChange={[Function]}
+                  onMenuClose={[Function]}
+                  onMenuOpen={[Function]}
                   options={
                     Array [
                       Object {
@@ -34040,7 +34047,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                   }
                 >
                   <Select
-                    aria-labelledby="appellantTz"
                     backspaceRemovesValue={true}
                     blurInputOnSelect={true}
                     cache={false}
@@ -34052,6 +34058,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                       Object {
                         "Input": [Function],
                         "MenuList": [Function],
+                        "Option": [Function],
                       }
                     }
                     controlShouldRenderValue={true}
@@ -35659,7 +35666,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                       selectOption={[Function]}
                       selectProps={
                         Object {
-                          "aria-labelledby": "appellantTz",
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "cache": false,
@@ -35670,6 +35676,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                           "components": Object {
                             "Input": [Function],
                             "MenuList": [Function],
+                            "Option": [Function],
                           },
                           "controlShouldRenderValue": true,
                           "defaultOptions": undefined,
@@ -37327,7 +37334,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
-                                "aria-labelledby": "appellantTz",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -37338,6 +37344,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                 "components": Object {
                                   "Input": [Function],
                                   "MenuList": [Function],
+                                  "Option": [Function],
                                 },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
@@ -39003,7 +39010,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "appellantTz",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -39014,6 +39020,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -40671,7 +40678,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                         selectOption={[Function]}
                                         selectProps={
                                           Object {
-                                            "aria-labelledby": "appellantTz",
                                             "backspaceRemovesValue": true,
                                             "blurInputOnSelect": true,
                                             "cache": false,
@@ -40682,6 +40688,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             "components": Object {
                                               "Input": [Function],
                                               "MenuList": [Function],
+                                              "Option": [Function],
                                             },
                                             "controlShouldRenderValue": true,
                                             "defaultOptions": undefined,
@@ -41561,7 +41568,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                       </SingleValue>
                                       <Input
                                         aria-autocomplete="list"
-                                        aria-labelledby="appellantTz"
                                         autoCapitalize="none"
                                         autoComplete="off"
                                         autoCorrect="off"
@@ -41576,7 +41582,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                         onFocus={[Function]}
                                         selectProps={
                                           Object {
-                                            "aria-labelledby": "appellantTz",
                                             "backspaceRemovesValue": true,
                                             "blurInputOnSelect": true,
                                             "cache": false,
@@ -41587,6 +41592,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             "components": Object {
                                               "Input": [Function],
                                               "MenuList": [Function],
+                                              "Option": [Function],
                                             },
                                             "controlShouldRenderValue": true,
                                             "defaultOptions": undefined,
@@ -42441,9 +42447,9 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                       >
                                         <Input
                                           aria-autocomplete="list"
-                                          aria-controls="appellantTz-listbox"
-                                          aria-expanded={false}
-                                          aria-labelledby="appellantTz"
+                                          aria-controls="appellant-tz-listbox"
+                                          aria-label="appellant-tz"
+                                          aria-labelledby="appellant-tz-label"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
@@ -42456,10 +42462,8 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
-                                          role="combobox"
                                           selectProps={
                                             Object {
-                                              "aria-labelledby": "appellantTz",
                                               "backspaceRemovesValue": true,
                                               "blurInputOnSelect": true,
                                               "cache": false,
@@ -42470,6 +42474,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                               "components": Object {
                                                 "Input": [Function],
                                                 "MenuList": [Function],
+                                                "Option": [Function],
                                               },
                                               "controlShouldRenderValue": true,
                                               "defaultOptions": undefined,
@@ -43336,9 +43341,9 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             >
                                               <AutosizeInput
                                                 aria-autocomplete="list"
-                                                aria-controls="appellantTz-listbox"
-                                                aria-expanded={false}
-                                                aria-labelledby="appellantTz"
+                                                aria-controls="appellant-tz-listbox"
+                                                aria-label="appellant-tz"
+                                                aria-labelledby="appellant-tz-label"
                                                 autoCapitalize="none"
                                                 autoComplete="off"
                                                 autoCorrect="off"
@@ -43363,7 +43368,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
-                                                role="combobox"
                                                 spellCheck="false"
                                                 tabIndex="0"
                                                 type="text"
@@ -43379,9 +43383,9 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                 >
                                                   <input
                                                     aria-autocomplete="list"
-                                                    aria-controls="appellantTz-listbox"
-                                                    aria-expanded={false}
-                                                    aria-labelledby="appellantTz"
+                                                    aria-controls="appellant-tz-listbox"
+                                                    aria-label="appellant-tz"
+                                                    aria-labelledby="appellant-tz-label"
                                                     autoCapitalize="none"
                                                     autoComplete="off"
                                                     autoCorrect="off"
@@ -43390,7 +43394,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                     onBlur={[Function]}
                                                     onChange={[Function]}
                                                     onFocus={[Function]}
-                                                    role="combobox"
                                                     spellCheck="false"
                                                     style={
                                                       Object {
@@ -44212,7 +44215,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "appellantTz",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -44223,6 +44225,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -45870,7 +45873,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                         selectOption={[Function]}
                                         selectProps={
                                           Object {
-                                            "aria-labelledby": "appellantTz",
                                             "backspaceRemovesValue": true,
                                             "blurInputOnSelect": true,
                                             "cache": false,
@@ -45881,6 +45883,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             "components": Object {
                                               "Input": [Function],
                                               "MenuList": [Function],
+                                              "Option": [Function],
                                             },
                                             "controlShouldRenderValue": true,
                                             "defaultOptions": undefined,
@@ -47539,7 +47542,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                         selectOption={[Function]}
                                         selectProps={
                                           Object {
-                                            "aria-labelledby": "appellantTz",
                                             "backspaceRemovesValue": true,
                                             "blurInputOnSelect": true,
                                             "cache": false,
@@ -47550,6 +47552,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             "components": Object {
                                               "Input": [Function],
                                               "MenuList": [Function],
+                                              "Option": [Function],
                                             },
                                             "controlShouldRenderValue": true,
                                             "defaultOptions": undefined,
@@ -49392,12 +49395,15 @@ exports[`Fields Display timezone and divider for Video 1`] = `
             className=""
           >
             <div
+              aria-expanded={false}
               className="cf-form-dropdown dropdown-representativeTz"
               data-css-1gh7024=""
+              role="combobox"
             >
               <label
                 className="question-label"
                 htmlFor="representativeTz"
+                id="representative-tz-label"
               >
                 <strong>
                   <span>
@@ -49414,13 +49420,13 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                 className="cf-select"
               >
                 <StateManager
-                  aria-labelledby="representativeTz"
                   cache={false}
                   classNamePrefix="cf-select"
                   components={
                     Object {
                       "Input": [Function],
                       "MenuList": [Function],
+                      "Option": [Function],
                     }
                   }
                   defaultInputValue=""
@@ -49434,6 +49440,8 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                   noOptionsMessage={[Function]}
                   onBlurResetsInput={false}
                   onChange={[Function]}
+                  onMenuClose={[Function]}
+                  onMenuOpen={[Function]}
                   options={
                     Array [
                       Object {
@@ -50218,7 +50226,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                   }
                 >
                   <Select
-                    aria-labelledby="representativeTz"
                     backspaceRemovesValue={true}
                     blurInputOnSelect={true}
                     cache={false}
@@ -50230,6 +50237,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                       Object {
                         "Input": [Function],
                         "MenuList": [Function],
+                        "Option": [Function],
                       }
                     }
                     controlShouldRenderValue={true}
@@ -51837,7 +51845,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                       selectOption={[Function]}
                       selectProps={
                         Object {
-                          "aria-labelledby": "representativeTz",
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "cache": false,
@@ -51848,6 +51855,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                           "components": Object {
                             "Input": [Function],
                             "MenuList": [Function],
+                            "Option": [Function],
                           },
                           "controlShouldRenderValue": true,
                           "defaultOptions": undefined,
@@ -53505,7 +53513,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
-                                "aria-labelledby": "representativeTz",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -53516,6 +53523,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                 "components": Object {
                                   "Input": [Function],
                                   "MenuList": [Function],
+                                  "Option": [Function],
                                 },
                                 "controlShouldRenderValue": true,
                                 "defaultOptions": undefined,
@@ -55181,7 +55189,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "representativeTz",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -55192,6 +55199,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -56849,7 +56857,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                         selectOption={[Function]}
                                         selectProps={
                                           Object {
-                                            "aria-labelledby": "representativeTz",
                                             "backspaceRemovesValue": true,
                                             "blurInputOnSelect": true,
                                             "cache": false,
@@ -56860,6 +56867,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             "components": Object {
                                               "Input": [Function],
                                               "MenuList": [Function],
+                                              "Option": [Function],
                                             },
                                             "controlShouldRenderValue": true,
                                             "defaultOptions": undefined,
@@ -57739,7 +57747,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                       </SingleValue>
                                       <Input
                                         aria-autocomplete="list"
-                                        aria-labelledby="representativeTz"
                                         autoCapitalize="none"
                                         autoComplete="off"
                                         autoCorrect="off"
@@ -57754,7 +57761,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                         onFocus={[Function]}
                                         selectProps={
                                           Object {
-                                            "aria-labelledby": "representativeTz",
                                             "backspaceRemovesValue": true,
                                             "blurInputOnSelect": true,
                                             "cache": false,
@@ -57765,6 +57771,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             "components": Object {
                                               "Input": [Function],
                                               "MenuList": [Function],
+                                              "Option": [Function],
                                             },
                                             "controlShouldRenderValue": true,
                                             "defaultOptions": undefined,
@@ -58619,9 +58626,9 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                       >
                                         <Input
                                           aria-autocomplete="list"
-                                          aria-controls="representativeTz-listbox"
-                                          aria-expanded={false}
-                                          aria-labelledby="representativeTz"
+                                          aria-controls="representative-tz-listbox"
+                                          aria-label="representative-tz"
+                                          aria-labelledby="representative-tz-label"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
@@ -58634,10 +58641,8 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
-                                          role="combobox"
                                           selectProps={
                                             Object {
-                                              "aria-labelledby": "representativeTz",
                                               "backspaceRemovesValue": true,
                                               "blurInputOnSelect": true,
                                               "cache": false,
@@ -58648,6 +58653,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                               "components": Object {
                                                 "Input": [Function],
                                                 "MenuList": [Function],
+                                                "Option": [Function],
                                               },
                                               "controlShouldRenderValue": true,
                                               "defaultOptions": undefined,
@@ -59514,9 +59520,9 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             >
                                               <AutosizeInput
                                                 aria-autocomplete="list"
-                                                aria-controls="representativeTz-listbox"
-                                                aria-expanded={false}
-                                                aria-labelledby="representativeTz"
+                                                aria-controls="representative-tz-listbox"
+                                                aria-label="representative-tz"
+                                                aria-labelledby="representative-tz-label"
                                                 autoCapitalize="none"
                                                 autoComplete="off"
                                                 autoCorrect="off"
@@ -59541,7 +59547,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
-                                                role="combobox"
                                                 spellCheck="false"
                                                 tabIndex="0"
                                                 type="text"
@@ -59557,9 +59562,9 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                 >
                                                   <input
                                                     aria-autocomplete="list"
-                                                    aria-controls="representativeTz-listbox"
-                                                    aria-expanded={false}
-                                                    aria-labelledby="representativeTz"
+                                                    aria-controls="representative-tz-listbox"
+                                                    aria-label="representative-tz"
+                                                    aria-labelledby="representative-tz-label"
                                                     autoCapitalize="none"
                                                     autoComplete="off"
                                                     autoCorrect="off"
@@ -59568,7 +59573,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                     onBlur={[Function]}
                                                     onChange={[Function]}
                                                     onFocus={[Function]}
-                                                    role="combobox"
                                                     spellCheck="false"
                                                     style={
                                                       Object {
@@ -60390,7 +60394,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-labelledby": "representativeTz",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -60401,6 +60404,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                       "components": Object {
                                         "Input": [Function],
                                         "MenuList": [Function],
+                                        "Option": [Function],
                                       },
                                       "controlShouldRenderValue": true,
                                       "defaultOptions": undefined,
@@ -62048,7 +62052,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                         selectOption={[Function]}
                                         selectProps={
                                           Object {
-                                            "aria-labelledby": "representativeTz",
                                             "backspaceRemovesValue": true,
                                             "blurInputOnSelect": true,
                                             "cache": false,
@@ -62059,6 +62062,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             "components": Object {
                                               "Input": [Function],
                                               "MenuList": [Function],
+                                              "Option": [Function],
                                             },
                                             "controlShouldRenderValue": true,
                                             "defaultOptions": undefined,
@@ -63717,7 +63721,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                         selectOption={[Function]}
                                         selectProps={
                                           Object {
-                                            "aria-labelledby": "representativeTz",
                                             "backspaceRemovesValue": true,
                                             "blurInputOnSelect": true,
                                             "cache": false,
@@ -63728,6 +63731,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             "components": Object {
                                               "Input": [Function],
                                               "MenuList": [Function],
+                                              "Option": [Function],
                                             },
                                             "controlShouldRenderValue": true,
                                             "defaultOptions": undefined,

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Select, { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
 import CreatableSelect from 'react-select/creatable';
-import _, { isPlainObject, isNull } from 'lodash';
+import _, { isPlainObject, isNull, kebabCase } from 'lodash';
 import classNames from 'classnames';
 import { css } from 'glamor';
 
@@ -20,24 +20,35 @@ const customStyles = {
 const MenuList = (props) => {
   const innerProps = {
     ...props.innerProps,
-    id: `${props.selectProps.name}-listbox`,
+    'aria-label': `${kebabCase(props.selectProps.name)}-listbox`,
+    id: `${kebabCase(props.selectProps.name)}-listbox`,
     role: 'listbox',
-    'aria-expanded': true
   };
 
-  return <components.MenuList {...props} innerProps={innerProps} />;
+  return <components.MenuList {...props} innerProps={innerProps}>
+    <div {...innerProps}>
+      {props.children}
+    </div>
+  </components.MenuList>;
+};
+
+const Option = (props) => {
+  const innerProps = {
+    ...props.innerProps,
+    'aria-label': `${kebabCase(props.selectProps.name)}-option`,
+    'aria-disabled': props.selectProps.isDisabled,
+    role: 'option',
+  };
+
+  return <components.Option {...props} innerProps={innerProps} />;
 };
 
 const Input = (props) => {
-
-  /* Combobox role is for assistive technology,
-    aria-controls and aria-expanded are required states and properties when role is combobox
-  */
   const innerProps = {
     ...props.innerProps,
-    role: 'combobox',
-    'aria-expanded': props.selectProps.menuIsOpen,
-    'aria-controls': `${props.selectProps.name}-listbox`,
+    'aria-label': `${kebabCase(props.selectProps.name)}`,
+    'aria-labelledby': `${kebabCase(props.selectProps.name)}-label`,
+    'aria-controls': `${kebabCase(props.selectProps.name)}-listbox`,
   };
 
   return <components.Input {...props} {...innerProps} />;
@@ -49,6 +60,7 @@ export class SearchableDropdown extends React.Component {
 
     this.state = {
       value: props.value,
+      isExpanded: false
     };
   }
 
@@ -195,10 +207,12 @@ export class SearchableDropdown extends React.Component {
       </span>
     );
 
+    // aria-controls and aria-expanded are required states and properties when role is combobox
+
     return (
       <div className={errorMessage ? 'usa-input-error' : ''}>
-        <div className={dropdownClasses} {...dropdownStyling}>
-          <label className={labelClasses} htmlFor={name}>
+        <div role="combobox" className={dropdownClasses} {...dropdownStyling} aria-expanded={this.state.isExpanded}>
+          <label className={labelClasses} htmlFor={name} id={`${kebabCase(name)}-label`}>
             {strongLabel ? <strong>{labelContents}</strong> : labelContents}
           </label>
           {errorMessage && (
@@ -206,8 +220,7 @@ export class SearchableDropdown extends React.Component {
           )}
           <div className="cf-select">
             <SelectComponent
-              components={{ MenuList, Input }}
-              aria-labelledby={name}
+              components={{ Input, MenuList, Option }}
               name={name}
               classNamePrefix="cf-select"
               inputId={name}
@@ -230,6 +243,8 @@ export class SearchableDropdown extends React.Component {
               isSearchable={!readOnly}
               cache={false}
               onBlurResetsInput={false}
+              onMenuOpen={() => this.setState({ isExpanded: true })}
+              onMenuClose={() => this.setState({ isExpanded: false })}
               ref={inputRef}
               shouldKeyDownEventCreateNewOption={
                 this.shouldKeyDownEventCreateNewOption
@@ -266,7 +281,10 @@ MenuList.propTypes = {
   setValue: PropTypes.func,
   children: PropTypes.node,
   theme: PropTypes.object,
-  innerRef: PropTypes.func,
+  innerRef: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.elementType })
+  ]),
   focusedOption: PropTypes.object,
   innerProps: PropTypes.object
 };
@@ -285,11 +303,43 @@ Input.propTypes = {
   selectProps: PropTypes.any,
   setValue: PropTypes.func,
   theme: PropTypes.object,
-  innerRef: PropTypes.func,
+  innerRef: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.elementType })
+  ]),
   isHidden: PropTypes.bool,
   isDisabled: PropTypes.bool,
   form: PropTypes.string,
   innerProps: PropTypes.object
+};
+
+Option.propTypes = {
+  clearValue: PropTypes.func,
+  className: PropTypes.string,
+  cx: PropTypes.func,
+  getStyles: PropTypes.func,
+  getValue: PropTypes.func,
+  hasValue: PropTypes.bool,
+  isMulti: PropTypes.bool,
+  isRtl: PropTypes.bool,
+  options: PropTypes.arrayOf(PropTypes.object),
+  selectOption: PropTypes.func,
+  selectProps: PropTypes.any,
+  setValue: PropTypes.func,
+  theme: PropTypes.object,
+  innerRef: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.elementType })
+  ]),
+  isHidden: PropTypes.bool,
+  isDisabled: PropTypes.bool,
+  isFocused: PropTypes.bool,
+  isSelected: PropTypes.bool,
+  children: PropTypes.node,
+  innerProps: PropTypes.object,
+  label: PropTypes.string,
+  type: PropTypes.string,
+  data: PropTypes.any
 };
 
 SearchableDropdown.propTypes = {

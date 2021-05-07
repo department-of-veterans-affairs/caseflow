@@ -80,11 +80,14 @@ exports[`AddPoaPage renders default state correctly 1`] = `
             class=""
           >
             <div
+              aria-expanded="false"
               class="cf-form-dropdown dropdown-listedAttorney"
+              role="combobox"
             >
               <label
                 class="question-label"
                 for="listedAttorney"
+                id="listed-attorney-label"
               >
                 <strong>
                   <span>
@@ -118,14 +121,13 @@ exports[`AddPoaPage renders default state correctly 1`] = `
                         >
                           <input
                             aria-autocomplete="list"
-                            aria-controls="listedAttorney-listbox"
-                            aria-expanded="false"
-                            aria-labelledby="listedAttorney"
+                            aria-controls="listed-attorney-listbox"
+                            aria-label="listed-attorney"
+                            aria-labelledby="listed-attorney-label"
                             autocapitalize="none"
                             autocomplete="off"
                             autocorrect="off"
                             id="listedAttorney"
-                            role="combobox"
                             spellcheck="false"
                             style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                             tabindex="0"
