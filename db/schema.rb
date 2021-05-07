@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_06_161524) do
+ActiveRecord::Schema.define(version: 2021_05_07_152437) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -126,13 +126,16 @@ ActiveRecord::Schema.define(version: 2021_05_06_161524) do
   end
 
   create_table "appellant_substitutions", comment: "Store appellant substitution form data", force: :cascade do |t|
+    t.string "claimant_type", null: false, comment: "Claimant type of substitute; needed to create Claimant record"
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.bigint "created_by_id", null: false, comment: "User that created this record"
     t.string "poa_participant_id", null: false, comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id"
+    t.string "selected_tasks_ids", default: [], null: false, comment: "User-selected task ids from source appeal", array: true
     t.bigint "source_appeal_id", null: false, comment: "The relevant source appeal for this substitution"
     t.string "substitute_participant_id", null: false, comment: "Participant ID of substitute appellant"
     t.date "substitution_date", null: false, comment: "Date of substitution"
     t.bigint "target_appeal_id", null: false, comment: "The new appeal resulting from this substitution"
+    t.jsonb "task_params", default: "{}", null: false, comment: "JSON hash to hold parameters for new tasks, such as an EvidenceSubmissionWindowTask's end-hold date, with keys from selected_tasks_ids"
     t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.index ["source_appeal_id"], name: "index_appellant_substitutions_on_source_appeal_id"
     t.index ["target_appeal_id"], name: "index_appellant_substitutions_on_target_appeal_id"
