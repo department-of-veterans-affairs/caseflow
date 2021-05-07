@@ -230,15 +230,9 @@ class HearingSchedule::ValidateRoSpreadsheet
 
   def filter_incorrectly_formatted_start_times
     @allocation_spreadsheet_data.select do |row|
-      begin
-        next if row["allocated_days_without_room"] == 0 && row["first_slot_time"] == 0
+      next if row["allocated_days_without_room"] == 0 && row["first_slot_time"] == 0
 
-        Time.zone.parse(row["first_slot_time"])
-        next
-      rescue StandardError => error
-        Rails.logger.error(error)
-        row
-      end
+      row["first_slot_time"].match(/\A(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]\z/).blank?
     end.pluck("ro_code").uniq
   end
 
