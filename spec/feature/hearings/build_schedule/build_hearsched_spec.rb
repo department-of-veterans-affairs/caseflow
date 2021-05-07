@@ -50,10 +50,10 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
       co_hearing_days = HearingDay.where(request_type: "C")
       expect(co_hearing_days.count). to eq(22)
 
-      # Retrieve all the virtual hearing dys
+      # Retrieve all the virtual hearing days
       virtual_hearing_days = HearingDay.where(request_type: "R")
 
-      # Compare the National Virtual hearing days
+      # Retrieve the hearing days with no room and no regional office to get all NVHQ hearing days
       national_virtual_hearing_days = virtual_hearing_days.select { |hearing_day| hearing_day.regional_office.nil? }
       expect(national_virtual_hearing_days.count). to eq(25)
 
@@ -82,10 +82,10 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
       co_hearing_days = HearingDay.where(request_type: "C")
       expect(co_hearing_days.count). to eq(13)
 
-      # Retrieve all the virtual hearing dys
+      # Retrieve all the virtual hearing days
       virtual_hearing_days = HearingDay.where(request_type: "R")
 
-      # Compare the National Virtual hearing days
+      # Retrieve the hearing days with no room and no regional office to get all NVHQ hearing days
       national_virtual_hearing_days = virtual_hearing_days.select { |hearing_day| hearing_day.regional_office.nil? }
       expect(national_virtual_hearing_days.count). to eq(120)
 
@@ -93,7 +93,7 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
       allocation_count = Allocation.all.map(&:allocated_days_without_room).inject(:+).ceil
       expect(allocation_count).to eq(2101)
 
-      # Compare the roomless hearing days
+      # Validate that all days with no rooms have been created
       expect(virtual_hearing_days.count).to eq(allocation_count)
 
       # Confirm that no rooms were assigned

@@ -180,6 +180,9 @@ describe HearingSchedule::ValidateRoSpreadsheet do
 
     it "returns MissingTimeSlotDetails" do
       expect(subject).to include HearingSchedule::ValidateRoSpreadsheet::MissingTimeSlotDetails
+
+      expect(subject.first.message).to include("RO01")
+      expect(subject.first.message).to include("RO50")
     end
   end
 
@@ -194,6 +197,10 @@ describe HearingSchedule::ValidateRoSpreadsheet do
 
     it "returns InvalidNumberOfSlots" do
       expect(subject).to include HearingSchedule::ValidateRoSpreadsheet::InvalidNumberOfSlots
+
+      expect(subject.first.message).to include("RO01")
+      expect(subject.first.message).to include("RO02")
+      expect(subject.first.message).to include("RO49")
     end
   end
 
@@ -208,6 +215,10 @@ describe HearingSchedule::ValidateRoSpreadsheet do
 
     it "returns SlotDurationExceedsMax" do
       expect(subject).to include HearingSchedule::ValidateRoSpreadsheet::SlotDurationExceedsMax
+
+      expect(subject.first.message).to include("RO01")
+      expect(subject.first.message).to include("RO02")
+      expect(subject.first.message).to include("RO59")
     end
   end
 
@@ -222,6 +233,10 @@ describe HearingSchedule::ValidateRoSpreadsheet do
 
     it "returns StartTimeNotValidTime" do
       expect(subject).to include HearingSchedule::ValidateRoSpreadsheet::StartTimeNotValidTime
+
+      expect(subject.first.message).to include("RO01")
+      expect(subject.first.message).to include("RO02")
+      expect(subject.first.message).to include("RO39")
     end
   end
 
