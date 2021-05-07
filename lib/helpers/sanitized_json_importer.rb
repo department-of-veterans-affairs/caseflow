@@ -148,6 +148,8 @@ class SanitizedJsonImporter
     offset_id_table_fields[klass.table_name]&.each do |field_name|
       if obj_hash[field_name].is_a?(Array)
         obj_hash[field_name] = obj_hash[field_name].map { |id| id + @id_offset }
+      elsif obj_hash[field_name].is_a?(String)
+        obj_hash[field_name] = (obj_hash[field_name].to_i + @id_offset).to_s
       elsif obj_hash[field_name]
         obj_hash[field_name] += @id_offset
       end

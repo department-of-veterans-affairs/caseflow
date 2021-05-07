@@ -13,9 +13,12 @@ allocations,,,,,,,,
 allocations,allocated_days,float ∗,x,,,,,
 allocations,allocated_days_without_room,float,,,,,,Number of Hearing Days Allocated with no Rooms
 allocations,created_at,datetime ∗,x,,,,,
+allocations,first_slot_time,string (5),,,,,,The first time slot available for this allocation; interpreted as the local time at Central office or the RO
 allocations,id,integer (8) PK,x,x,,,,
+allocations,number_of_slots,integer,,,,,,The number of time slots possible for this allocation
 allocations,regional_office,string ∗,x,,,,,
 allocations,schedule_period_id,integer (8) ∗ FK,x,,x,,x,
+allocations,slot_length_minutes,integer,,,,,,The length in minutes of each time slot for this allocation
 allocations,updated_at,datetime ∗,x,,,,x,
 annotations,,,,,,,,
 annotations,comment,string ∗,x,,,,,
@@ -379,7 +382,7 @@ docket_switches,granted_request_issue_ids,integer,,,,,,"When a docket switch is 
 docket_switches,id,integer (8) PK,x,x,,,,
 docket_switches,new_docket_stream_id,integer (8) FK,,,x,,x,References the new appeal stream with the updated docket; initially null until created by workflow
 docket_switches,old_docket_stream_id,integer (8) ∗ FK,x,,x,,x,References the original appeal stream with old docket
-docket_switches,receipt_date,datetime ∗,x,,,,,
+docket_switches,receipt_date,datetime ∗,x,,,,,Date the board receives the NOD with request for docket switch; entered by user performing docket switch
 docket_switches,task_id,integer (8) ∗ FK,x,,x,,x,The task that triggered the switch
 docket_switches,updated_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
 docket_tracers,,,,,,,,

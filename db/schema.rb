@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_04_160426) do
+ActiveRecord::Schema.define(version: 2021_05_06_161524) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,11 +35,11 @@ ActiveRecord::Schema.define(version: 2021_05_04_160426) do
     t.float "allocated_days", null: false
     t.float "allocated_days_without_room", comment: "Number of Hearing Days Allocated with no Rooms"
     t.datetime "created_at", null: false
-    t.string "first_slot_time", limit: 5, comment: "The first time slot available; interpreted as the local time at Central office or the RO"
-    t.integer "number_of_slots", comment: "The number of time slots possible for this day"
+    t.string "first_slot_time", limit: 5, comment: "The first time slot available for this allocation; interpreted as the local time at Central office or the RO"
+    t.integer "number_of_slots", comment: "The number of time slots possible for this allocation"
     t.string "regional_office", null: false
     t.bigint "schedule_period_id", null: false
-    t.integer "slot_length_minutes", comment: "The length in minutes of each time slot for this day"
+    t.integer "slot_length_minutes", comment: "The length in minutes of each time slot for this allocation"
     t.datetime "updated_at", null: false
     t.index ["schedule_period_id"], name: "index_allocations_on_schedule_period_id"
     t.index ["updated_at"], name: "index_allocations_on_updated_at"
@@ -510,7 +510,7 @@ ActiveRecord::Schema.define(version: 2021_05_04_160426) do
     t.integer "granted_request_issue_ids", comment: "When a docket switch is partially granted, this includes an array of the appeal's request issue IDs that were selected for the new docket. For full grant, this includes all prior request issue IDs.", array: true
     t.bigint "new_docket_stream_id", comment: "References the new appeal stream with the updated docket; initially null until created by workflow"
     t.bigint "old_docket_stream_id", null: false, comment: "References the original appeal stream with old docket"
-    t.datetime "receipt_date", null: false
+    t.datetime "receipt_date", null: false, comment: "Date the board receives the NOD with request for docket switch; entered by user performing docket switch"
     t.bigint "task_id", null: false, comment: "The task that triggered the switch"
     t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.index ["created_at"], name: "index_docket_switches_on_created_at"

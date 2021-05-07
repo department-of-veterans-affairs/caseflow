@@ -26,6 +26,7 @@ gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
 gem "icalendar"
 gem "kaminari"
+gem "logstasher"
 gem "moment_timezone-rails"
 # Rails 6 has native support for multiple dbs, so prefer that over multiverse after upgrade.
 # https://github.com/ankane/multiverse#upgrading-to-rails-6
@@ -53,7 +54,7 @@ gem "pg", platforms: :ruby
 # We are not yet at version 4.x because we have not tested.
 gem "puma", "~> 3.12.6"
 gem "rack", "~> 2.2.3"
-gem "rails", "5.2.4.5"
+gem "rails", "5.2.4.6"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
