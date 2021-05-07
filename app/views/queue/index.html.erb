@@ -19,6 +19,7 @@
     userCanViewOvertimeStatus: current_user.can_view_overtime_status?,
     userCanViewEditNodDate: current_user.can_view_edit_nod_date?,
     canEditCavcRemands: current_user.can_edit_cavc_remands?,
+    userIsCobAdmin: ClerkOfTheBoard.singleton.admins.include?(current_user),
     featureToggles: {
       enable_hearing_time_slots: FeatureToggle.enabled?(:enable_hearing_time_slots, user: current_user),
       schedule_veteran_virtual_hearing: FeatureToggle.enabled?(:schedule_veteran_virtual_hearing, user: current_user),
@@ -31,7 +32,6 @@
       editNodDate: FeatureToggle.enabled?(:edit_nod_date, user: current_user),
       fnod_badge: FeatureToggle.enabled?(:fnod_badge, user: current_user),
       fnod_banner: FeatureToggle.enabled?(:fnod_banner, user: current_user),
-      poa_sync_date: FeatureToggle.enabled?(:poa_sync_date, user: current_user),
       view_nod_date_updates: FeatureToggle.enabled?(:view_nod_date_updates, user: current_user),
       poa_refresh: FeatureToggle.enabled?(:poa_refresh, user: current_user),
       recognized_granted_substitution_after_dd: FeatureToggle.enabled?(:recognized_granted_substitution_after_dd, user: current_user)

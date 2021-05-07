@@ -378,6 +378,29 @@ RSpec.feature "Case details", :all_dbs do
           expect(page).to have_content(COPY::CASE_DETAILS_UNRECOGNIZED_POA)
         end
       end
+
+      context "when an unrecognized appellant does have a POA" do
+        before do
+          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(true)
+        end
+
+        let!(:claimant) do
+          create(
+            :claimant,
+            unrecognized_appellant: ua,
+            decision_review: appeal,
+            type: "OtherClaimant"
+          )
+        end
+
+        let(:ua) { create(:unrecognized_appellant) }
+
+        scenario "details view contains POA information" do
+          visit "/queue/appeals/#{appeal.uuid}"
+          expect(page).to have_content("Appellant's Power of Attorney")
+          expect(page).to have_content(appeal.representative_name)
+        end
+      end
     end
 
     context "when attorney has a case assigned in VACOLS without a DECASS record" do
@@ -407,8 +430,8 @@ RSpec.feature "Case details", :all_dbs do
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
       let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
 
-      before { FeatureToggle.disable!(:poa_sync_date) }
-      after { FeatureToggle.enable!(:poa_sync_date) }
+      before { FeatureToggle.disable!(:poa_refresh) }
+      after { FeatureToggle.enable!(:poa_refresh) }
 
       scenario "text isn't on the page" do
         visit "/queue/appeals/#{appeal.vacols_id}"
@@ -427,8 +450,8 @@ RSpec.feature "Case details", :all_dbs do
         )
       end
 
-      before { FeatureToggle.enable!(:poa_sync_date) }
-      after { FeatureToggle.disable!(:poa_sync_date) }
+      before { FeatureToggle.enable!(:poa_refresh) }
+      after { FeatureToggle.disable!(:poa_refresh) }
 
       scenario "text is on the page" do
         visit "/queue/appeals/#{appeal.uuid}"
@@ -440,8 +463,8 @@ RSpec.feature "Case details", :all_dbs do
       let!(:user) { User.authenticate!(roles: ["System Admin"]) }
       let(:appeal) { create(:appeal, veteran: create(:veteran)) }
 
-      before { FeatureToggle.enable!(:poa_sync_date) }
-      after { FeatureToggle.disable!(:poa_sync_date) }
+      before { FeatureToggle.enable!(:poa_refresh) }
+      after { FeatureToggle.disable!(:poa_refresh) }
 
       scenario "text is not on the page" do
         visit "/queue/appeals/#{appeal.uuid}"
@@ -456,11 +479,9 @@ RSpec.feature "Case details", :all_dbs do
 
       before do
         FeatureToggle.disable!(:poa_refresh)
-        FeatureToggle.disable!(:poa_sync_date)
       end
       after do
         FeatureToggle.enable!(:poa_refresh)
-        FeatureToggle.enable!(:poa_sync_date)
       end
 
       scenario "button isn't on the page" do
@@ -482,11 +503,9 @@ RSpec.feature "Case details", :all_dbs do
 
       before do
         FeatureToggle.enable!(:poa_refresh)
-        FeatureToggle.enable!(:poa_sync_date)
       end
       after do
         FeatureToggle.disable!(:poa_refresh)
-        FeatureToggle.disable!(:poa_sync_date)
       end
 
       scenario "button is on the page and is in cooldown" do
@@ -532,11 +551,9 @@ RSpec.feature "Case details", :all_dbs do
 
       before do
         FeatureToggle.enable!(:poa_refresh)
-        FeatureToggle.enable!(:poa_sync_date)
       end
       after do
         FeatureToggle.disable!(:poa_refresh)
-        FeatureToggle.disable!(:poa_sync_date)
       end
 
       scenario "attempts to refresh with no BGS data" do
@@ -1785,6 +1802,91 @@ RSpec.feature "Case details", :all_dbs do
         expect(unaffected_issues_list[0]).to have_content(
           "#{issue_two_desc}\n(Decision Date: #{issue_two.decision_date.to_date.mdY})"
         )
+      end
+    end
+
+    describe "substitute appellant" do
+      before { FeatureToggle.enable!(:recognized_granted_substitution_after_dd) }
+      after { FeatureToggle.disable!(:recognized_granted_substitution_after_dd) }
+
+      let(:docket_type) { "evidence_submission" }
+      let(:case_type) { "original" }
+      let(:disposition) { "allowed" }
+      let(:appeal) do
+        create(:appeal, :dispatched_with_decision_issue,
+               docket_type: docket_type,
+               stream_type: case_type,
+               disposition: disposition)
+      end
+
+      let(:cob_user) { create(:user, css_id: "COB_USER", station_id: "101") }
+      before do
+        ClerkOfTheBoard.singleton.add_user(cob_user)
+        User.authenticate!(user: cob_user)
+      end
+
+      shared_examples "the button is not shown" do
+        it "the 'Add Substitute' button is not shown" do
+          visit "/queue/appeals/#{appeal.external_id}"
+          # This find forces a wait for the page to render. Without it, this test will always pass,
+          # whether the content is present or not!
+          find("div", id: "caseTitleDetailsSubheader")
+          expect(page).to have_no_content(COPY::SUBSTITUTE_APPELLANT_BUTTON)
+        end
+      end
+
+      shared_examples "the button is shown" do
+        it "the 'Add Substitute' button is shown" do
+          visit "/queue/appeals/#{appeal.external_id}"
+          find("div", id: "caseTitleDetailsSubheader")
+          expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_BUTTON)
+        end
+      end
+
+      context "when the feature flag is disabled" do
+        FeatureToggle.disable!(:recognized_granted_substitution_after_dd)
+        it_behaves_like "the button is not shown"
+        FeatureToggle.enable!(:recognized_granted_substitution_after_dd)
+      end
+
+      context "When the case type is not 'original'" do
+        let(:case_type) { "de_novo" }
+
+        it_behaves_like "the button is not shown"
+      end
+
+      context "when the docket type is 'hearing'" do
+        let(:docket_type) { "hearing" }
+
+        context "when the user is an admin" do
+          before { OrganizationsUser.make_user_admin(cob_user, ClerkOfTheBoard.singleton) }
+          after { OrganizationsUser.remove_admin_rights_from_user(cob_user, ClerkOfTheBoard.singleton) }
+
+          it_behaves_like "the button is not shown"
+        end
+
+        context "when the user is not an admin" do
+          it_behaves_like "the button is not shown"
+        end
+      end
+
+      context "when the disposition is 'Dismissed, Death'" do
+        let(:disposition) { "dismissed_death" }
+
+        it_behaves_like "the button is shown"
+      end
+
+      context "when the disposition is something else" do
+        context "when the user is an admin" do
+          before { OrganizationsUser.make_user_admin(cob_user, ClerkOfTheBoard.singleton) }
+          after { OrganizationsUser.remove_admin_rights_from_user(cob_user, ClerkOfTheBoard.singleton) }
+
+          it_behaves_like "the button is shown"
+        end
+
+        context "when the user is not an admin" do
+          it_behaves_like "the button is not shown"
+        end
       end
     end
   end
