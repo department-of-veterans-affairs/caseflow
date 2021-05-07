@@ -644,7 +644,7 @@ export const setTimeSlots = ({
   const defaultNumberOfSlots = 8;
   const defaultBeginsAt = ro === 'C' ? '09:00' : '08:30';
   const momentDefaultBeginsAt = moment.tz(`${defaultBeginsAt} ${hearingDayDate}`, 'HH:mm YYYY-MM-DD', 'America/New_York');
-  const momentBeginsAt = moment(beginsAt);
+  const momentBeginsAt = moment(beginsAt).tz('America/New_York');
   const defaultSlotLengthMinutes = 60;
 
   const availableSlots = calculateAvailableTimeslots({
