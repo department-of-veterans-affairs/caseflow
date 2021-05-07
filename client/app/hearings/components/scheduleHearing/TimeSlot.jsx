@@ -110,7 +110,7 @@ export const TimeSlot = ({
             }}
             ro={{
               city: regionalOfficeDetails(ro) ? regionalOfficeDetails(ro).city : '',
-              roTimezone
+              timezone: roTimezone
             }}
           />}
         </React.Fragment>
