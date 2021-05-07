@@ -16,7 +16,6 @@ class AppellantSubstitution < CaseflowRecord
             :task_params,
             presence: true, allow_blank: true
 
-
   before_create :establish_appeal_stream
   after_create :initialize_tasks
 

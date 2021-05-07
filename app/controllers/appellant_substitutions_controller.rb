@@ -12,9 +12,13 @@ class AppellantSubstitutionsController < ApplicationController
     :claimant_type,
     :substitute_participant_id,
     :poa_participant_id,
-    :selected_task_ids,
-    :task_params,
     :created_by_id
+  ].freeze
+
+  PERMITTED_PARAMS = REQUIRED_PARAMS + [
+    # blank or empty values for these params will fail the required validation, so put them here instead
+    :selected_task_ids,
+    :task_params
   ].freeze
 
   def create
@@ -39,6 +43,6 @@ class AppellantSubstitutionsController < ApplicationController
   def create_params
     params.merge!(created_by_id: current_user.id, source_appeal_id: source_appeal.id)
     params.require(REQUIRED_PARAMS)
-    params.permit(REQUIRED_PARAMS)
+    params.permit(PERMITTED_PARAMS)
   end
 end
