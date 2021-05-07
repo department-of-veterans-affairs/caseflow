@@ -19,9 +19,7 @@ class LegacyIssueOptin < CaseflowRecord
 
     def revert_opted_in_remand_issues(vacols_id)
       # put all remand issues with "O" back to "3" before closing the appeal
-      opt_ins_for_related_remand_issues(vacols_id).each do |remand_issue_opt_in|
-        remand_issue_opt_in.rollback_issue_disposition
-      end
+      opt_ins_for_related_remand_issues(vacols_id).each(&:rollback_issue_disposition)
     end
 
     def close_legacy_appeal_in_vacols(legacy_appeal)
@@ -52,12 +50,10 @@ class LegacyIssueOptin < CaseflowRecord
   end
 
   def opt_in!
-    Issue.close_in_vacols!(
-      vacols_id: vacols_id,
-      vacols_sequence_id: vacols_sequence_id,
-      disposition_code: VACOLS_DISPOSITION_CODE
-    )
-    update!(optin_processed_at: Time.zone.now)
+    transaction do
+      opt_in_vacols_issue!
+      update!(optin_processed_at: Time.zone.now)
+    end
   end
 
   def flag_for_rollback!
@@ -106,18 +102,23 @@ class LegacyIssueOptin < CaseflowRecord
     AppealRepository.issues(vacols_id).find { |issue| issue.vacols_sequence_id == vacols_sequence_id }
   end
 
+  def opt_in_vacols_issue!
+    Issue.update_in_vacols!(
+      vacols_id: vacols_id,
+      vacols_sequence_id: vacols_sequence_id,
+      issue_attrs: {
+        disposition: VACOLS_DISPOSITION_CODE,
+        disposition_date: Time.zone.today
+      }
+    )
+  end
+
   private
 
   def revert_open_remand_issues
     # Before a remand is closed, it's "O" dispositions are changed to a "3", so when it's re-opened
     # the "3"s should be reverted back to "O"s
-    self.class.opt_ins_for_related_remand_issues(vacols_id).each do |remand_issue|
-      Issue.close_in_vacols!(
-        vacols_id: vacols_id,
-        vacols_sequence_id: remand_issue.vacols_sequence_id,
-        disposition_code: VACOLS_DISPOSITION_CODE
-      )
-    end
+    self.class.opt_ins_for_related_remand_issues(vacols_id).each(&:opt_in_vacols_issue!)
   end
 
   def legacy_appeal_needs_to_be_reopened?
