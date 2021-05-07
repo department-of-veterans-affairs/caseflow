@@ -11,9 +11,9 @@ class EvidenceSubmissionWindowTask < Task
 
   before_validation :set_assignee
 
-  def initialize(kw_args)
-    @end_date = kw_args&.fetch(:end_date, nil)
-    super(kw_args&.except(:end_date))
+  def initialize(*args, end_date: nil, **kw_args)
+    @end_date = end_date
+    super(*args, **kw_args)
   end
 
   # also called when EvidenceSubmissionWindowTask is manually closed by the user
@@ -29,7 +29,7 @@ class EvidenceSubmissionWindowTask < Task
 
     # Check for last existing associated TaskTimer
     task_timer = TaskTimer.where(task: self).order(:id).last
-    return task_timer.last_submitted_at if task_timer
+    return task_timer.submitted_at if task_timer
 
     # from_date should be appeal receipt date if the appeal is in the ESW docket
     from_date = appeal.receipt_date if appeal.evidence_submission_docket?

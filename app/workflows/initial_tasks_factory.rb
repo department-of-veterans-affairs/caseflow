@@ -78,7 +78,7 @@ class InitialTasksFactory
     source_tasks.map do |source_task|
       create_params = @appeal.appellant_substitution.task_params[source_task.id.to_s]
       if source_task.type == "EvidenceSubmissionWindowTask"
-        evidence_submission_hold_end_date = create_params["hold_end_date"]
+        evidence_submission_hold_end_date = Time.find_zone("UTC").parse(create_params["hold_end_date"])
         EvidenceSubmissionWindowTask.create!(appeal: @appeal,
                                              parent: distribution_task,
                                              end_date: evidence_submission_hold_end_date)

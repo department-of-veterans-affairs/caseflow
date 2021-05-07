@@ -51,7 +51,7 @@ describe AppellantSubstitution do
           esw_task.id => { hold_end_date: evidence_submission_hold_end_date.strftime("%F") }
         }
       end
-      let(:evidence_submission_hold_end_date) { Time.zone.now + 20.days }
+      let(:evidence_submission_hold_end_date) { Date.today + 20.days }
 
       shared_examples "new appeal has user-selected tasks" do
         it "copies only ScheduleHearingTask and EvidenceSubmissionWindowTask to new appeal" do
@@ -64,8 +64,8 @@ describe AppellantSubstitution do
           esw_task = target_appeal.tasks.open.find_by(type: :EvidenceSubmissionWindowTask)
           expect(esw_task.status).to eq "assigned"
           task_timer = TaskTimer.where(task: esw_task).order(:id).last
-          expect(task_timer.last_submitted_at).to eq evidence_submission_hold_end_date
-          expect(esw_task.timer_ends_at).to eq evidence_submission_hold_end_date
+          expect(task_timer.submitted_at.utc.to_date).to eq evidence_submission_hold_end_date
+          expect(esw_task.timer_ends_at.utc.to_date).to eq evidence_submission_hold_end_date
         end
       end
 
