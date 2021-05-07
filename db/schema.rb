@@ -35,11 +35,11 @@ ActiveRecord::Schema.define(version: 2021_05_04_160426) do
     t.float "allocated_days", null: false
     t.float "allocated_days_without_room", comment: "Number of Hearing Days Allocated with no Rooms"
     t.datetime "created_at", null: false
-    t.string "first_slot_time", limit: 5, comment: "The first time slot available; interpreted as the local time at Central office or the RO"
-    t.integer "number_of_slots", comment: "The number of time slots possible for this day"
+    t.string "first_slot_time", limit: 5, comment: "The first time slot available for this allocation; interpreted as the local time at Central office or the RO"
+    t.integer "number_of_slots", comment: "The number of time slots possible for this allocation"
     t.string "regional_office", null: false
     t.bigint "schedule_period_id", null: false
-    t.integer "slot_length_minutes", comment: "The length in minutes of each time slot for this day"
+    t.integer "slot_length_minutes", comment: "The length in minutes of each time slot for this allocation"
     t.datetime "updated_at", null: false
     t.index ["schedule_period_id"], name: "index_allocations_on_schedule_period_id"
     t.index ["updated_at"], name: "index_allocations_on_updated_at"
