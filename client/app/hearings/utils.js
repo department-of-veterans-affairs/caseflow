@@ -605,9 +605,11 @@ const displaySelectedTimeAsSlot = ({ selectedTimeString, slotsAndHearings, heari
   };
 
   // Figure out where to insert that timeslot object in existing slots/hearings array
-  const insertIndex = slotsAndHearings.findIndex((item) => {
+  const foundIndex = slotsAndHearings.findIndex((item) => {
     return item.time.isAfter(selectedTime);
   });
+  // foundIndex is -1 when the slot should be last in the array
+  const insertIndex = foundIndex === -1 ? slotsAndHearings.length : foundIndex;
 
   // Insert the timeslot object and return the new array
   slotsAndHearings.splice(insertIndex, 0, selectedTimeSlot);
