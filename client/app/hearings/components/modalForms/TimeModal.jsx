@@ -317,7 +317,7 @@ export const TimeModal = ({ onCancel, onConfirm, ro }) => {
         <TimeSelect
           roTimezone={ro.timezone}
           onSelect={setSelectedOption}
-          error={error}P
+          error={error}
           clearError={() => setError('')}
         />
 
