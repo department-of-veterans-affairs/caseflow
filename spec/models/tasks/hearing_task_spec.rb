@@ -187,7 +187,7 @@ describe HearingTask, :postgres do
       end
 
       context "for legacy appeal", :aggregate_failures do
-        let(:appeal) { create(:legacy_appeal)}
+        let(:appeal) { create(:legacy_appeal) }
 
         it "updates value correctly" do
           expect(subject.count).to eq(1)
@@ -207,11 +207,11 @@ describe HearingTask, :postgres do
 
     context "with no paper trail versions but a value for instructions" do
       it "returns correct value" do
-        expect(subject).to eq({
+        expect(subject).to eq(
           notes: instructions.first,
           updated_at: nil,
           updated_by_css_id: nil
-        })
+        )
       end
     end
 
@@ -221,11 +221,11 @@ describe HearingTask, :postgres do
       end
 
       it "returns correct value" do
-        expect(subject).to eq({
+        expect(subject).to eq(
           notes: "New notes",
           updated_at: hearing_task.reload.versions.first.created_at,
           updated_by_css_id: nil
-        })
+        )
       end
     end
 
@@ -233,11 +233,11 @@ describe HearingTask, :postgres do
       let(:instructions) { nil }
 
       it "returns correct value" do
-        expect(subject).to eq({
+        expect(subject).to eq(
           notes: nil,
           updated_at: nil,
           updated_by_css_id: nil
-        })
+        )
       end
     end
   end
