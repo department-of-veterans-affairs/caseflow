@@ -130,12 +130,12 @@ ActiveRecord::Schema.define(version: 2021_05_07_152437) do
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.bigint "created_by_id", null: false, comment: "User that created this record"
     t.string "poa_participant_id", null: false, comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id"
-    t.string "selected_tasks_ids", default: [], null: false, comment: "User-selected task ids from source appeal", array: true
+    t.bigint "selected_task_ids", default: [], null: false, comment: "User-selected task ids from source appeal", array: true
     t.bigint "source_appeal_id", null: false, comment: "The relevant source appeal for this substitution"
     t.string "substitute_participant_id", null: false, comment: "Participant ID of substitute appellant"
     t.date "substitution_date", null: false, comment: "Date of substitution"
     t.bigint "target_appeal_id", null: false, comment: "The new appeal resulting from this substitution"
-    t.jsonb "task_params", default: "{}", null: false, comment: "JSON hash to hold parameters for new tasks, such as an EvidenceSubmissionWindowTask's end-hold date, with keys from selected_tasks_ids"
+    t.jsonb "task_params", default: "{}", null: false, comment: "JSON hash to hold parameters for new tasks, such as an EvidenceSubmissionWindowTask's end-hold date, with keys from selected_task_ids"
     t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.index ["source_appeal_id"], name: "index_appellant_substitutions_on_source_appeal_id"
     t.index ["target_appeal_id"], name: "index_appellant_substitutions_on_target_appeal_id"

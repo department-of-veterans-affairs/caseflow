@@ -12,6 +12,8 @@ class AppellantSubstitutionsController < ApplicationController
     :claimant_type,
     :substitute_participant_id,
     :poa_participant_id,
+    :selected_task_ids,
+    :task_params,
     :created_by_id
   ].freeze
 
