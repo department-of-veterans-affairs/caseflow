@@ -35,7 +35,7 @@ class HearingDay < CaseflowRecord
   class HearingDayHasChildrenRecords < StandardError; end
 
   # Create a RegEx for the valid hearing time strings
-  HEARING_TIME_STRING_PATTERN = /\A(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]\z/
+  HEARING_TIME_STRING_PATTERN = /\A(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]\z/.freeze
 
   REQUEST_TYPES = Constants::HEARING_REQUEST_TYPES.with_indifferent_access.freeze
 
