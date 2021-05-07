@@ -13,6 +13,16 @@ export default {
     update: { table: { disable: true } },
     fetchScheduledHearings: { table: { disable: true } },
     onChange: { action: 'onChange' },
+    hearingTime: {
+      control: {
+        type: 'select',
+        options: HEARING_TIME_OPTIONS.map((opt) => opt.value),
+      },
+    },
+    roTimezone: { control: { type: 'select', options: roTimezones() } },
+    docketName: { control: { type: 'select', options: ['', 'legacy', 'hearings'] } },
+    issueCount: { control: { type: 'number' } },
+    poaName: { control: { type: 'select', options: ['', 'American Legion'] } }
   }
 };
 
@@ -41,17 +51,7 @@ const Template = (args) => {
   );
 };
 
-export const Basic = Template.bind({});
-Basic.args = { hearingTime: HEARING_TIME_OPTIONS[0].value, ro: 'RO44', roTimezone: 'America/Los_Angeles' };
-Basic.argTypes = {
-  hearingTime: {
-    control: {
-      type: 'select',
-      options: HEARING_TIME_OPTIONS.map((opt) => opt.value),
-    },
-  },
-  roTimezone: { control: { type: 'select', options: roTimezones() } },
-  docketName: { control: { type: 'select', options: ['', 'legacy', 'hearings'] } },
-  issueCount: { control: { type: 'number' } },
-  poaName: { control: { type: 'select', options: ['', 'American Legion'] } },
-};
+export const BasicInLA = Template.bind({});
+BasicInLA.args = { hearingTime: HEARING_TIME_OPTIONS[0].value, ro: 'RO44', roTimezone: 'America/Los_Angeles' };
+export const BasicInDenver = Template.bind({});
+BasicInDenver.args = { hearingTime: HEARING_TIME_OPTIONS[0].value, ro: 'RO39', roTimezone: 'America/Denver' };

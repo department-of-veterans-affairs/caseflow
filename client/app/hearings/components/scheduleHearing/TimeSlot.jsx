@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment-timezone';
 
 // Local Dependencies
-import { setTimeSlots } from '../../utils';
+import { setTimeSlots, regionalOfficeDetails } from '../../utils';
 import { TimeSlotButton } from './TimeSlotButton';
 import Button from '../../../components/Button';
 import SmallLoader from '../../../components/SmallLoader';
@@ -109,8 +109,8 @@ export const TimeSlot = ({
               toggleTimeModal();
             }}
             ro={{
-              city: 'Los Angeles, CA',
-              timezone: 'America/Los_Angeles'
+              city: regionalOfficeDetails(ro) ? regionalOfficeDetails(ro).city : '',
+              roTimezone
             }}
           />}
         </React.Fragment>

@@ -13,8 +13,8 @@ export default {
   },
   args: {
     ro: {
-      city: 'Los Angeles, CA',
-      timezone: 'America/Los_Angeles'
+      city: 'Denver',
+      timezone: 'America/Denver'
     }
   },
   argTypes: {
