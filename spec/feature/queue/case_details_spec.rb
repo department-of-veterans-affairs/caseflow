@@ -398,7 +398,6 @@ RSpec.feature "Case details", :all_dbs do
 
         scenario "details view contains POA information" do
           visit "/queue/appeals/#{appeal.uuid}"
-          binding.pry
           expect(page).to have_content("Appellant's Power of Attorney")
           expect(page).to have_content(appeal.representative_name)
         end
