@@ -3,6 +3,14 @@ import { MemoryRouter } from 'react-router';
 
 import { SubstituteAppellantReview } from './SubstituteAppellantReview';
 import { queueWrapper as Wrapper } from '../../../../test/data/stores/queueStore';
+import { sampleEvidenceSubmissionTasks } from 'test/data/queue/substituteAppellant/tasks';
+import { formatTaskData } from 'app/queue/substituteAppellant/tasks/utils';
+
+const allEvidenceSubmissionWindowTasks = sampleEvidenceSubmissionTasks();
+
+const filteredEvidenceSubmissionTasks = formatTaskData(
+  allEvidenceSubmissionWindowTasks
+);
 
 export default {
   title: 'Queue/Substitute Appellant/SubstituteAppellantReview',
@@ -19,6 +27,7 @@ export default {
     existingValues: { substitutionDate: '2021-02-15',
       participantId: 'CLAIMANT_WITH_PVA_AS_VSO',
     },
+    selectedTasks: filteredEvidenceSubmissionTasks.slice(0, 3),
   },
   argTypes: {
     onBack: { action: 'back' },
@@ -41,8 +50,9 @@ const storeArgs = {
         displayText: 'Cathy Smith, Child',
       },
     ],
-  }
+  },
 };
+
 const Template = (args) => (
   <Wrapper {...storeArgs}>
     <SubstituteAppellantReview {...args} />

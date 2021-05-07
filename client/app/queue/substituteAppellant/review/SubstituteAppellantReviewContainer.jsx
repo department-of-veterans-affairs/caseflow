@@ -6,6 +6,8 @@ import { showSuccessMessage, showErrorMessage } from 'app/queue/uiReducer/uiActi
 import { SubstituteAppellantReview } from './SubstituteAppellantReview';
 
 import { cancel, stepBack, completeSubstituteAppellant } from '../substituteAppellant.slice';
+import { getAllTasksForAppeal } from 'app/queue/selectors';
+
 
 import COPY from 'app/../COPY';
 
@@ -17,6 +19,19 @@ export const SubstituteAppellantReviewContainer = () => {
   const { formData: existingValues } = useSelector(
     (state) => state.substituteAppellant
   );
+
+  const allTasks = useSelector((state) =>
+    getAllTasksForAppeal(state, { appealId })
+  );
+
+  const findSelectedTasks = (appealTasks, selectedTaskIds) => {
+    if (selectedTaskIds === null) {
+      return [];
+    }
+
+    return appealTasks.filter((task) => selectedTaskIds.indexOf(task.taskId) !== -1);
+  };
+  const selectedTasks = findSelectedTasks(allTasks, existingValues.taskIds);
 
   const handleBack = () => {
     dispatch(stepBack());
@@ -64,6 +79,7 @@ export const SubstituteAppellantReviewContainer = () => {
 
   return (
     <SubstituteAppellantReview
+      selectedTasks={selectedTasks}
       existingValues={existingValues}
       onBack={handleBack}
       onCancel={handleCancel}

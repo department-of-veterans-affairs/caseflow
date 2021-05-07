@@ -43,6 +43,7 @@ const initialState = {
   formData: {
     substitutionDate: null,
     participantId: null,
+    taskIds: null,
   },
 
   /**

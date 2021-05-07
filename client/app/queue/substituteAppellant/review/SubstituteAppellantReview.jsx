@@ -26,7 +26,8 @@ const styles = {
   }),
 };
 
-export const SubstituteAppellantReview = ({ existingValues, onBack, onCancel, onSubmit }) => {
+export const SubstituteAppellantReview = ({ selectedTasks, existingValues, onBack, onCancel, onSubmit }) => {
+
 
   const substitutionDate = format(parseISO(existingValues.substitutionDate), 'MM/dd/yyyy');
   const { relationships } = useSelector((state) => state.substituteAppellant);
@@ -72,25 +73,39 @@ export const SubstituteAppellantReview = ({ existingValues, onBack, onCancel, on
         </section>
         <section>
           <h1>Reactivated tasks</h1>
-          <table className={`usa-table-borderless ${styles.mainTable}`}>
+          {selectedTasks.length > 0 && <table className={`usa-table-borderless ${styles.mainTable}`}>
             <tbody>
-              <tr>
-                <td>
-                  FILLER
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  FILLER
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  FILLER
-                </td>
-              </tr>
+              { selectedTasks.map((task) => {
+                return <div className="task-detail" key={`${task.taskId}`}>
+                  <tr>
+                    <td>
+                      Distribution
+                    </td>
+                    <td>
+                      { task.label }
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      Evidence Submission Window
+                    </td>
+                    <td>
+                      End date: FILLER
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      Translation
+                    </td>
+                    <td>
+                      FILLER
+                    </td>
+                  </tr>
+                </div>;
+              }
+              )}
             </tbody>
-          </table>
+          </table>}
         </section>
       </AppSegment>
       <div className="controls cf-app-segment">
@@ -105,9 +120,14 @@ export const SubstituteAppellantReview = ({ existingValues, onBack, onCancel, on
   );
 };
 SubstituteAppellantReview.propTypes = {
+  selectedTasks: PropTypes.arrayOf(PropTypes.shape({
+    taskId: PropTypes.string,
+    label: PropTypes.string,
+  })),
   existingValues: PropTypes.shape({
     substitutionDate: PropTypes.string,
     participantId: PropTypes.string,
+    taskIds: PropTypes.array,
   }),
   onBack: PropTypes.func,
   onCancel: PropTypes.func,
