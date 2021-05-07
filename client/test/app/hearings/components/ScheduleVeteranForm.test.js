@@ -208,4 +208,24 @@ describe('ScheduleVeteranForm', () => {
     ).toEqual({ label: VIRTUAL_HEARING_LABEL, value: true });
     expect(scheduleVeteran).toMatchSnapshot();
   });
+
+  test.only('RO dropdown includes Virtual Hearings as option is type is selected as Virtual', () => {
+    const scheduleVeteran = mount(
+      <ScheduleVeteranForm
+        goBack={cancelSpy}
+        submit={submitSpy}
+        onChange={changeSpy}
+        appeal={amaAppeal}
+        hearing={defaultHearing}
+        virtual={true}
+      />,
+      {
+        wrappingComponent: queueWrapper,
+      }
+    );
+    expect(scheduleVeteran.find(RegionalOfficeDropdown)).toHaveLength(1);
+    expect(scheduleVeteran.find(RegionalOfficeDropdown)
+      .prop('excludeVirtualHearingsOption')).toEqual(false);
+    expect(scheduleVeteran).toMatchSnapshot();
+  })
 });
