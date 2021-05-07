@@ -8,7 +8,13 @@ describe AppellantSubstitution do
     let(:source_appeal) { create(:appeal) }
     let(:substitution_date) { 5.days.ago.to_date }
     let(:substitute) { create(:claimant) }
-    let(:poa_participant_id) { "13579" }
+    let(:substitutes_poa) { BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(substitute&.participant_id) }
+    # TODO: create Representative with substitutes_poa?
+    # For a.power_of_attorney(BgsPowerOfAttorney).representative_type == [Agent, Attorney], there is no Organization/Representative record
+    #   -- related: LegacyAppealRepresentative.representative_is_agent?
+    let(:poa_participant_id) { substitutes_poa.poa_participant_id }
+    let(:selected_task_ids) { nil }
+    let(:task_params) { "" }
 
     let(:params) do
       {
@@ -18,9 +24,8 @@ describe AppellantSubstitution do
         claimant_type: substitute&.type,
         substitute_participant_id: substitute&.participant_id,
         poa_participant_id: poa_participant_id,
-        selected_task_ids: [],
-        task_params: {}
-        # evidence_submission_hold_end_date: Time.now + 20.days
+        selected_task_ids: selected_task_ids,
+        task_params: task_params # TODO: evidence_submission_hold_end_date: Time.now + 20.days
       }
     end
 
@@ -41,40 +46,65 @@ describe AppellantSubstitution do
     end
 
     context "when source appeal has ScheduleHearingTask and EvidenceSubmissionWindowTask" do
-      context "??" do
-        let(:source_appeal) {
-          create(:appeal, :with_schedule_hearing_tasks, :dispatched) { |appeal|
-            distribution_task = appeal.tasks.of_type(:DistributionTask).first
-
-            vso_participant_id = "12345"
-            org = create(:vso, participant_id: vso_participant_id)
-            org_task = create(:informal_hearing_presentation_task, assigned_to: org, parent: distribution_task)
-            create(:informal_hearing_presentation_task, parent: org_task)
-
-            # Cancel any open tasks
-            appeal.tasks.open.map(&:cancelled!)
-          }
-        }
-        let!(:new_poa) { create(:vso, participant_id: poa_participant_id) }
-        it "creates new appeal with AOD due to age" do
+      let(:selected_task_ids) { source_appeal.tasks.where(assigned_to_type: "Organization").of_type([:ScheduleHearingTask,
+        :EvidenceSubmissionWindowTask, :InformalHearingPresentationTask]).pluck(:id) }
+      shared_examples "new appeal has user-selected tasks" do
+        it "copies only ScheduleHearingTask and EvidenceSubmissionWindowTask to new appeal" do
           expect(source_appeal.tasks.of_type(:ScheduleHearingTask).count).to eq 1
           expect(source_appeal.tasks.of_type(:EvidenceSubmissionWindowTask).count).to eq 1
-          expect(source_appeal.tasks.of_type(:InformalHearingPresentationTask).count).to eq 2
-          source_ihp_task = source_appeal.tasks.of_type(:InformalHearingPresentationTask).assigned_to_any_org.first
-          expect(source_ihp_task.assigned_to.participant_id).not_to eq new_poa.participant_id
 
-          appellant_substitution = subject
-          target_appeal = appellant_substitution.target_appeal
-          expect(target_appeal.tasks.of_type(:ScheduleHearingTask).first.status).to eq "assigned"
+          target_appeal = subject.target_appeal
+          expect(target_appeal.tasks.open.find_by(type: :ScheduleHearingTask).status).to eq "assigned"
 
-          esw_task = target_appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first
+          esw_task = target_appeal.tasks.open.find_by(type: :EvidenceSubmissionWindowTask)
           expect(esw_task.status).to eq "assigned"
           task_timer = TaskTimer.where(task: esw_task).order(:id).last
           expect(task_timer.last_submitted_at).to eq esw_task.timer_ends_at
+        end
+      end
 
-          ihp_task = target_appeal.tasks.of_type(:InformalHearingPresentationTask).first
+      let!(:source_appeal) {
+        create(:appeal, :with_schedule_hearing_tasks, :dispatched) { |appeal|
+          distribution_task = appeal.tasks.find_by(type: :DistributionTask)
+
+          vso_participant_id = "55555"
+          org = create(:vso, participant_id: vso_participant_id)
+          org_task = create(:informal_hearing_presentation_task, assigned_to: org, parent: distribution_task)
+          create(:informal_hearing_presentation_task, parent: org_task)
+
+          # Cancel any open tasks
+          appeal.tasks.open.map(&:cancelled!)
+        }
+      }
+
+      include_examples "new appeal has user-selected tasks"
+
+      it "doesn't create TrackVeteranTask or IHPTask" do
+        target_appeal = subject.target_appeal
+        expect(target_appeal.tasks.open.of_type(:TrackVeteranTask).count).to eq 0
+        expect(target_appeal.tasks.open.of_type(:InformalHearingPresentationTask).count).to eq 0
+      end
+
+      context "when substitute's POA is a Representative (i.e., VSO or PrivateBar)" do
+        let!(:vso) { create(:vso, participant_id: poa_participant_id) }
+
+        include_examples "new appeal has user-selected tasks"
+
+        it "creates TrackVeteranTask and IHPTask assigned to POA" do
+          expect(source_appeal.tasks.of_type(:InformalHearingPresentationTask).count).to eq 2
+          source_ihp_task = source_appeal.tasks.assigned_to_any_org.find_by(type: :InformalHearingPresentationTask)
+          expect(source_ihp_task.assigned_to.participant_id).not_to eq poa_participant_id
+
+          target_appeal = subject.target_appeal
+
+          track_vet_task = target_appeal.tasks.open.find_by(type: :TrackVeteranTask)
+          expect(track_vet_task.status).to eq "in_progress"
+          expect(track_vet_task.assigned_to.participant_id).to eq poa_participant_id
+
+          ihp_task = target_appeal.tasks.open.find_by(type: :InformalHearingPresentationTask)
           expect(ihp_task.status).to eq "assigned"
-          expect(ihp_task.assigned_to.participant_id).to eq new_poa.participant_id
+          expect(ihp_task.assigned_to.participant_id).to eq poa_participant_id
+
           # binding.pry
         end
       end
@@ -201,6 +231,7 @@ describe AppellantSubstitution do
 
       context "for substitute" do
         let(:substitute) { nil }
+        let(:poa_participant_id) { "11111" }
         it "raises an error" do
           expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
         end
