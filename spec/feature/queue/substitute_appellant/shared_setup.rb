@@ -42,6 +42,7 @@ RSpec.shared_examples("fill substitution form") do
       # Navigate to substitution page
       page.find("button", text: "+ Add Substitute").click
 
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}/substitute_appellant/basics")
       expect(page).to have_content "Select substitute appellant"
       expect(page).to have_css(".cf-progress-bar-activated", text: "Select substitute appellant")
 
@@ -66,9 +67,13 @@ RSpec.shared_examples("fill substitution form") do
     # end
 
     step "create tasks form" do
+      #binding.pry
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}/substitute_appellant/tasks")
 
-      expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_SELECT_APPELLANT_TITLE
+      dispatch_task = BvaDispatchTask.find_by(appeal_id: appeal.id)
+      expect(dispatch_task.closed_at).to_not be_nil
+
+      #expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_CREATE_TASKS_TITLE
       expect(page).to have_css(".cf-progress-bar-activated", text: "Select substitute appellant")
       # expect(page).to have_css(".cf-progress-bar-activated", text: "Select POA")
       expect(page).to have_css(".cf-progress-bar-activated", text: "Create task")
