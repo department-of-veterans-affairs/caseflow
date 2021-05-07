@@ -10,9 +10,9 @@ import Modal from '../../../components/Modal';
 import { css } from 'glamor';
 import { COLORS } from 'app/constants/AppConstants';
 
-//
-// TIME LIST GENERATION START
-//
+/*
+* TIME LIST GENERATION START
+*/
 // Get an array with every fifteen minute increment in a day
 // [00:00, 00:15, ... , 23:45]
 const generateTimes = (roTimezone, intervalMinutes = 15) => {
@@ -63,13 +63,14 @@ const generateOrderedTimeOptions = (roTimezone, beginsAt = moment.tz('08:30', 'H
 
   return options;
 };
-//
-// TIME LIST GENERATION END
-//
 
-//
-// CUSTOM LIST FILTERING START
-//
+/*
+* TIME LIST GENERATION END
+*/
+
+/*
+* CUSTOM LIST FILTERING START
+*/
 // Checks if the input matches the hour of a candidate.value which is a moment object
 const matchesHour = (candidate, input, exact = false) => {
   const candidateHourString = candidate.value.format('h');
@@ -110,10 +111,10 @@ const filterOptions = (candidate, input) => {
     return matchesAny(candidate, input);
   }
 };
-//
-// CUSTOM LIST FILTERING END
-//
 
+/*
+* CUSTOM LIST FILTERING END
+*/
 // Given a long timezone like "America/Los_Angeles" return the
 // short version like "PDT" or "PST" (depending on date)
 const getTimezoneAbbreviation = (timezone) => {
