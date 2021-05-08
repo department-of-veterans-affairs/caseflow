@@ -17,7 +17,7 @@ const customStyles = {
   }),
 };
 
-const MenuList = (props) => {
+const CustomMenuList = (props) => {
   const innerProps = {
     ...props.innerProps,
     'aria-label': `${kebabCase(props.selectProps.name)}-listbox`,
@@ -25,14 +25,10 @@ const MenuList = (props) => {
     role: 'listbox',
   };
 
-  return <components.MenuList {...props} innerProps={innerProps}>
-    <div {...innerProps}>
-      {props.children}
-    </div>
-  </components.MenuList>;
+  return <components.MenuList {...props} innerProps={innerProps} />;
 };
 
-const Option = (props) => {
+const CustomOption = (props) => {
   const innerProps = {
     ...props.innerProps,
     'aria-label': `${kebabCase(props.selectProps.name)}-option`,
@@ -43,7 +39,7 @@ const Option = (props) => {
   return <components.Option {...props} innerProps={innerProps} />;
 };
 
-const Input = (props) => {
+const CustomInput = (props) => {
   const innerProps = {
     ...props.innerProps,
     'aria-label': `${kebabCase(props.selectProps.name)}`,
@@ -217,7 +213,7 @@ export class SearchableDropdown extends React.Component {
           )}
           <div className="cf-select">
             <SelectComponent
-              components={{ Input, MenuList, Option }}
+              components={{ Input: CustomInput, MenuList: CustomMenuList, Option: CustomOption }}
               name={name}
               classNamePrefix="cf-select"
               inputId={name}
@@ -263,7 +259,7 @@ const SelectOpts = PropTypes.arrayOf(
   })
 );
 
-MenuList.propTypes = {
+CustomMenuList.propTypes = {
   clearValue: PropTypes.func,
   className: PropTypes.string,
   cx: PropTypes.func,
@@ -286,7 +282,7 @@ MenuList.propTypes = {
   innerProps: PropTypes.object
 };
 
-Input.propTypes = {
+CustomInput.propTypes = {
   clearValue: PropTypes.func,
   className: PropTypes.string,
   cx: PropTypes.func,
@@ -310,7 +306,7 @@ Input.propTypes = {
   innerProps: PropTypes.object
 };
 
-Option.propTypes = {
+CustomOption.propTypes = {
   clearValue: PropTypes.func,
   className: PropTypes.string,
   cx: PropTypes.func,

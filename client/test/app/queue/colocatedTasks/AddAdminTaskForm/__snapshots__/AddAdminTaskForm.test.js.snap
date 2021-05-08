@@ -32,18 +32,18 @@ exports[`AddAdminTaskForm renders correctly 1`] = `
               aria-live="polite"
               class="css-1laao21-a11yText"
             >
-              <p
+              <span
                 id="aria-selection-event"
               >
                  
                 
-              </p>
-              <p
+              </span>
+              <span
                 id="aria-context"
               >
                  
                   0 results available. Select is focused ,type to refine list, press Down to open the menu, 
-              </p>
+              </span>
             </span>
             <div
               class="cf-select__control cf-select__control--is-focused css-1pahdxg-control"
