@@ -340,10 +340,15 @@ class LegacyAppeal < CaseflowRecord
            :representative_is_organization?,
            :representative_is_vso?,
            :representative_is_colocated_vso?,
+           :fetch_bgs_record,
            to: :legacy_appeal_representative
 
   def representative_email_address
     power_of_attorney.bgs_representative_email_address
+  end
+
+  def representative_id
+    power_of_attorney.vacols_id
   end
 
   def poa_last_synced_at

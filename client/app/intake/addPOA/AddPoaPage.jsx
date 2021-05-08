@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { FormProvider, Controller } from 'react-hook-form';
 import { Redirect } from 'react-router-dom';
 import { useAddPoaForm } from './utils';
-import { ADD_CLAIMANT_POA_PAGE_DESCRIPTION } from 'app/../COPY';
+import { ADD_CLAIMANT_POA_PAGE_DESCRIPTION, ERROR_EMAIL_INVALID_FORMAT } from 'app/../COPY';
 import { IntakeLayout } from '../components/IntakeLayout';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import { AddClaimantButtons } from '../addClaimant/AddClaimantButtons';
@@ -67,9 +67,14 @@ export const AddPoaPage = () => {
     control,
     register,
     watch,
-    formState: { isValid },
+    formState: { isValid, errors },
     handleSubmit
   } = methods;
+
+  /* eslint-disable no-unused-vars */
+  // This code will likely be needed in submission (see handleConfirm)
+  // Remove eslint-disable once used
+  const emailValidationError = errors.emailAddress && ERROR_EMAIL_INVALID_FORMAT;
 
   const { formType, id: intakeId } = useSelector((state) => state.intake);
 
@@ -246,6 +251,7 @@ export const AddPoaPage = () => {
               <AddressForm {...methods} />
               <FieldDiv>
                 <TextField
+                  validationError={emailValidationError}
                   name="emailAddress"
                   label="Representative email"
                   inputRef={register}
