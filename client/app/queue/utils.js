@@ -389,6 +389,7 @@ export const prepareAppealForStore = (appeals) => {
       attorneyCaseRewriteDetails: appeal.attributes.attorney_case_rewrite_details,
       docketSwitch: appeal.attributes.docket_switch,
       switchedDockets: appeal.attributes.switched_dockets,
+      appellantSubstitution: appeal.attributes.appellant_substitution,
       remandSourceAppealId: appeal.attributes.remand_source_appeal_id,
       remandJudgeName: appeal.attributes.remand_judge_name
     };
@@ -700,14 +701,14 @@ export const labelForLocation = (appeal, userId) => {
  * @returns {string} -- The value of the current location either as a string or JSX
  */
 export const statusLabel = (appeal) => {
-  switch(appeal.status) {
-    case 'cancelled':
-      return <span {...css({ color: COLORS.RED })}>{capitalize(appeal.status)}</span>;
-      break;
-    case 'docket_switched':
-      return COPY.CASE_LIST_TABLE_DOCKET_SWITCH_LABEL;
-      break;
-    default:
-      return appeal.status ? StringUtil.snakeCaseToCapitalized(appeal.status) : '';
-  };
+  switch (appeal.status) {
+  case 'cancelled':
+    return <span {...css({ color: COLORS.RED })}>{capitalize(appeal.status)}</span>;
+    break;
+  case 'docket_switched':
+    return COPY.CASE_LIST_TABLE_DOCKET_SWITCH_LABEL;
+    break;
+  default:
+    return appeal.status ? StringUtil.snakeCaseToCapitalized(appeal.status) : '';
+  }
 };
