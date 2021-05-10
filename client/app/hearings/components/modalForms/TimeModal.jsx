@@ -291,7 +291,7 @@ export const TimeModal = ({ onCancel, onConfirm, ro }) => {
 
   return (
     <Modal
-      title="Create a custom time slot"
+      title="Create a custom time"
       buttons={[
         {
           classNames: ['cf-modal-link', 'cf-btn-link'],
@@ -300,7 +300,7 @@ export const TimeModal = ({ onCancel, onConfirm, ro }) => {
         },
         {
           classNames: ['usa-button', 'usa-button-primary'],
-          name: 'Create time slot',
+          name: 'Choose time',
           onClick: handleConfirm
         },
       ]}
@@ -312,7 +312,7 @@ export const TimeModal = ({ onCancel, onConfirm, ro }) => {
         <div {...css({ fontWeight: 'bold' })}>
           Choose a hearing start time for <span {...css({ whiteSpace: 'nowrap' })}>{ro.city}</span>
         </div>
-        <div>Enter time as hh:mm AM/PM, for example "1:00 PM"</div>
+        <div>Enter time as h:mm AM/PM, for example "1:00 PM"</div>
 
         {error && <div {...css({ color: 'red', paddingTop: '16px' })}>{error}</div>}
 
