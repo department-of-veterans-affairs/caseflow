@@ -35,5 +35,5 @@ class HearingForHearingDaySerializer
     hearing.appeal.type
   end
 
-  attribute :poa_name, &:representative
+  attribute :poa_name
 end
