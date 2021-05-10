@@ -145,7 +145,7 @@ class BgsPowerOfAttorney < CaseflowRecord
   end
 
   def update_ihp_task
-    appeal = Appeal.find_by(poa_participant_id: self.poa_participant_id)
+    appeal = Appeal.find_by(poa_participant_id: poa_participant_id)
     InformalHearingPresentationTask.update_to_new_poa(appeal)
   end
 
