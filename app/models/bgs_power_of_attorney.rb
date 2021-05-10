@@ -25,7 +25,7 @@ class BgsPowerOfAttorney < CaseflowRecord
             :representative_type, presence: true
 
   before_save :update_cached_attributes!
-  after_save :update_ihp_task
+  after_save :update_ihp_task #TODO only update after an actual new POA change
 
   class << self
     # Neither file_number nor claimant_participant_id is unique by itself,
