@@ -168,8 +168,6 @@ describe AppellantSubstitution do
             Organization.create!(id: 212, name: "Some inactive org", url: "some_org", status: "inactive")
             "appeal-90772.json"
           end
-          # Delete extraneous IHPTask
-          # before { Task.find(2001135318).destroy }
 
           include_examples "new appeal has user-selected TrackVeteranTask and IHPTask tasks"
           include_examples "new appeal does not have post-distribution tasks"
@@ -180,12 +178,11 @@ describe AppellantSubstitution do
           include_examples "new appeal has user-selected EvidenceSubmissionWindowTask task"
           include_examples "new appeal does not have post-distribution tasks"
         end
-        context "Hearing appeal with ESWTask, ScheduleHearingTask, HearingAdminActionVerifyAddressTask, AssignHearingDispositionTask, TranscriptionTask, EvidenceSubmissionWindowTask" do
+        context "Hearing appeal with ESWTask, ScheduleHearingTask, HearingAdmin*Task, AssignHearingDispositionTask" do
           let(:json_filename) { "appeal-21430.json" }
           # There are multiple ESWTask and ScheduleHearingTask tasks, so just pick some
           let(:selected_task_ids) { [2_001_404_437, 2_001_413_151] }
           let(:source_esw_task) { Task.find(2_001_413_151) }
-          # before { Task.find(2001265825).destroy }
 
           include_examples "new appeal has user-selected EvidenceSubmissionWindowTask task"
           include_examples "new appeal does not have post-distribution tasks"
