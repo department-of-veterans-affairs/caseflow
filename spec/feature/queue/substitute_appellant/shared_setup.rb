@@ -35,7 +35,7 @@ RSpec.shared_context "with existing relationships" do
 end
 
 RSpec.shared_examples("fill substitution form") do
-  it "allows user to designate a subsitute appellant" do
+  it "allows user to designate a substitute appellant" do
     step "user sets basic info for substitution" do
       visit "/queue/appeals/#{appeal.uuid}"
 
@@ -73,6 +73,11 @@ RSpec.shared_examples("fill substitution form") do
       # expect(page).to have_css(".cf-progress-bar-activated", text: "Select POA")
       expect(page).to have_css(".cf-progress-bar-activated", text: "Create task")
 
+      expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_KEY_DETAILS_TITLE)
+      expect(page).to have_content("Notice of disagreement received")
+      expect(page).to have_content("Veteran date of death")
+      expect(page).to have_content("Substitution granted by the RO")
+
       page.find("button", text: "Continue").click
     end
 
@@ -96,10 +101,12 @@ RSpec.shared_examples("fill substitution form") do
 
       # New appeal should have the same docket
       expect(page).to have_content appeal.stream_docket_number
-
-      # Substitue claimant is shown
+      # Substitute claimant is shown
       expect(page).to have_content new_appeal.claimant.person.name
       expect(page).to have_content(/Relation to Veteran: (Child|Spouse)/)
+      expect(page).to have_content(new_appeal.claimant.representative_name)
+      expect(page).to have_content COPY::CASE_DETAILS_POA_SUBSTITUTE
+      expect(page).to have_content COPY::CASE_DETAILS_POA_EXPLAINER
     end
   end
 end

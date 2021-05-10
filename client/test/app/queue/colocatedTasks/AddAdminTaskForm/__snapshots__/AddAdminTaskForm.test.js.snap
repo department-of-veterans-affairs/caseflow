@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`DocketSwitchAddAdminTaskForm renders correctly 1`] = `
+exports[`AddAdminTaskForm renders correctly 1`] = `
 <div>
   <div
     class="css-78wbnw"

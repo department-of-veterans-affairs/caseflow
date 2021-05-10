@@ -101,6 +101,10 @@ FactoryBot.define do
       end
     end
 
+    transient do
+      disposition { "allowed" }
+    end
+
     trait :type_cavc_remand do
       stream_type { Constants.AMA_STREAM_TYPES.court_remand }
       transient do
@@ -300,7 +304,7 @@ FactoryBot.define do
                                 parent: root_task,
                                 assigned_at: evaluator.active_task_assigned_at,
                                 assigned_to: evaluator.associated_judge)
-        appeal.tasks.where(type: DistributionTask.name).update(status: :completed)
+        appeal.tasks.of_type(:DistributionTask).update(status: :completed)
       end
     end
 
@@ -310,7 +314,7 @@ FactoryBot.define do
     trait :at_attorney_drafting do
       assigned_to_judge
       after(:create) do |appeal, evaluator|
-        judge_assign_task = appeal.tasks.where(type: JudgeAssignTask.name).first
+        judge_assign_task = appeal.tasks.of_type(:JudgeAssignTask).first
         AttorneyTaskCreator.new(
           judge_assign_task,
           appeal: judge_assign_task.appeal,
@@ -327,7 +331,7 @@ FactoryBot.define do
       at_attorney_drafting
       after(:create) do |appeal, _evaluator|
         # MISSING: AttorneyCaseReview
-        appeal.tasks.where(type: AttorneyTask.name).first.completed!
+        appeal.tasks.of_type(:AttorneyTask).first.completed!
       end
     end
 
@@ -342,7 +346,7 @@ FactoryBot.define do
         BvaDispatch.singleton.add_user(create(:user)) if BvaDispatch.singleton.users.empty?
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
         BvaDispatchTask.create_from_root_task(root_task)
-        appeal.tasks.where(type: JudgeDecisionReviewTask.name).first.completed!
+        appeal.tasks.of_type(:JudgeDecisionReviewTask).first.completed!
       end
     end
 
@@ -357,7 +361,7 @@ FactoryBot.define do
                appeal: appeal,
                citation_number: "A882#{(appeal.id % 100_000).to_s.rjust(5, '0')}")
         dispatch = AmaAppealDispatch.new(appeal: appeal, params: { bar: "foo" }, user: User.first)
-        appeal.tasks.where(type: BvaDispatchTask.name, assigned_to_type: "User").first.completed!
+        appeal.tasks.of_type(:BvaDispatchTask).assigned_to_any_user.first.completed!
         appeal.root_task.completed!
         dispatch.send(:close_request_issues_as_decided!)
         dispatch.send(:store_poa_participant_id)
@@ -403,6 +407,29 @@ FactoryBot.define do
           contested_issue_description: description,
           notes: notes
         )
+      end
+    end
+
+    trait :dispatched_with_decision_issue do
+      dispatched
+
+      description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
+      notes = "Pain disorder with 100\% evaluation per examination"
+      after(:create) do |appeal, evaluator|
+        request_issue = create(:request_issue,
+                               :rating,
+                               :with_rating_decision_issue,
+                               decision_review: appeal,
+                               veteran_participant_id: appeal.veteran.participant_id,
+                               contested_issue_description: description,
+                               notes: notes)
+        decision_issue = create(:decision_issue,
+                                :rating,
+                                decision_review: appeal,
+                                disposition: evaluator.disposition,
+                                description: "Issue description",
+                                decision_text: "Decision text")
+        request_issue.decision_issues << decision_issue
       end
     end
   end

@@ -4,7 +4,8 @@ require_relative "./shared_setup.rb"
 
 RSpec.feature "granting substitute appellant for appeals", :all_dbs do
   describe "with a dismissed appeal" do
-    let(:appeal) { create(:appeal, :dispatched) }
+    let(:veteran) { create(:veteran, date_of_death: 10.days.ago) }
+    let(:appeal) { create(:appeal, :dispatched_with_decision_issue, disposition: "dismissed_death", veteran: veteran) }
     let(:substitution_date) { Time.zone.today - 5.days }
     let(:user) { create(:user) }
 
