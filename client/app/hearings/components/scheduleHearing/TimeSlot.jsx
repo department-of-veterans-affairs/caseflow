@@ -21,6 +21,7 @@ export const TimeSlot = ({
 }) => {
   // Create local state to hold the selected time before saving
   const [selected, setSelected] = useState('');
+  const [isCustomTime, setIsCustomTime] = useState(false);
 
   // Manage the modal for time entry
   const [timeModal, setTimeModal] = useState(false);
@@ -44,8 +45,9 @@ export const TimeSlot = ({
   });
 
   // Setup the click handler for each time slot
-  const handleChange = (time) => {
+  const handleChange = (time, custom = false) => {
     setSelected(time);
+    setIsCustomTime(custom);
     onChange('scheduledTimeString', time.tz(roTimezone).format('HH:mm'));
   };
 
@@ -54,6 +56,9 @@ export const TimeSlot = ({
 
   // Determine the column length to evenly distribute the time slots
   const columnLength = Math.ceil(slots.length / 2);
+
+  // Custom button shows different text depending on if a custom time is in use
+  const customButtonText = isCustomTime ? 'Change your custom time' : 'Choose a custom time';
 
   return (
     <React.Fragment>
@@ -69,7 +74,7 @@ export const TimeSlot = ({
               linkStyling
               onClick={() => toggleTimeModal()}
               classNames={['time-slot-button-toggle']}
-            >Choose a custom time</Button>
+            >{customButtonText}</Button>
           </div>
           <div className="time-slot-button-container">
             <div className="time-slot-container" >
@@ -98,7 +103,7 @@ export const TimeSlot = ({
           {timeModal && <TimeModal
             onCancel={toggleTimeModal}
             onConfirm={(time) => {
-              handleChange(time);
+              handleChange(time, true);
               toggleTimeModal();
             }}
             ro={{
