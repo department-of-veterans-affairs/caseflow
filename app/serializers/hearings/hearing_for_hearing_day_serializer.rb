@@ -34,8 +34,6 @@ class HearingForHearingDaySerializer
   attribute :case_type do |hearing|
     if hearing.is_a?(Hearing)
       hearing.appeal.type
-    else
-      nil
     end
   end
 
