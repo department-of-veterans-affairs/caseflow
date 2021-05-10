@@ -31,14 +31,14 @@ ActiveRecord::Schema.define(version: 2021_05_06_161524) do
     t.index ["user_id"], name: "index_advance_on_docket_motions_on_user_id"
   end
 
-  create_table "allocations", force: :cascade do |t|
-    t.float "allocated_days", null: false
+  create_table "allocations", comment: "Hearing Day Requests for each Regional Office used for calculation and confirmation of the Build Hearings Schedule Algorithm", force: :cascade do |t|
+    t.float "allocated_days", null: false, comment: "Number of Video or Central Hearing Days Requested by the Regional Office"
     t.float "allocated_days_without_room", comment: "Number of Hearing Days Allocated with no Rooms"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.string "first_slot_time", limit: 5, comment: "The first time slot available for this allocation; interpreted as the local time at Central office or the RO"
     t.integer "number_of_slots", comment: "The number of time slots possible for this allocation"
-    t.string "regional_office", null: false
-    t.bigint "schedule_period_id", null: false
+    t.string "regional_office", null: false, comment: "Key of the Regional Office Requesting Hearing Days"
+    t.bigint "schedule_period_id", null: false, comment: "Hearings Schedule Period to which this request belongs"
     t.integer "slot_length_minutes", comment: "The length in minutes of each time slot for this allocation"
     t.datetime "updated_at", null: false
     t.index ["schedule_period_id"], name: "index_allocations_on_schedule_period_id"
