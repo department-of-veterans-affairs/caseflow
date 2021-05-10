@@ -67,4 +67,14 @@ module HearingConcern
       &.find_by(type: [AssignHearingDispositionTask.name, ChangeHearingDispositionTask.name])
       &.id
   end
+
+  def poa_name
+    poa = BgsPowerOfAttorney.find_by(file_number: appeal&.veteran_file_number)
+
+    if poa.blank? && is_a?(Hearing)
+      poa = BgsPowerOfAttorney.find_by(claimant_participant_id: appeal.claimant&.participant_id)
+    end
+
+    poa&.representative_name
+  end
 end
