@@ -40,7 +40,7 @@ ActiveRecord::Schema.define(version: 2021_05_06_161524) do
     t.string "regional_office", null: false, comment: "Key of the Regional Office Requesting Hearing Days"
     t.bigint "schedule_period_id", null: false, comment: "Hearings Schedule Period to which this request belongs"
     t.integer "slot_length_minutes", comment: "The length in minutes of each time slot for this allocation"
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.index ["schedule_period_id"], name: "index_allocations_on_schedule_period_id"
     t.index ["updated_at"], name: "index_allocations_on_updated_at"
   end

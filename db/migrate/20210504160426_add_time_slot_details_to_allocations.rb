@@ -7,7 +7,7 @@ class AddTimeSlotDetailsToAllocations < Caseflow::Migration
     change_table_comment :allocations, "Hearing Day Requests for each Regional Office used for calculation and confirmation of the Build Hearings Schedule Algorithm"
     change_column_comment :allocations, :schedule_period_id, "Hearings Schedule Period to which this request belongs"
     change_column_comment :allocations, :created_at, "Standard created_at/updated_at timestamps"
-    change_column_comment :allocations, :created_at, "Standard created_at/updated_at timestamps"
+    change_column_comment :allocations, :updated_at, "Standard created_at/updated_at timestamps"
     change_column_comment :allocations, :regional_office, "Key of the Regional Office Requesting Hearing Days"
     change_column_comment :allocations, :allocated_days, "Number of Video or Central Hearing Days Requested by the Regional Office"
   end

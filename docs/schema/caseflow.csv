@@ -19,7 +19,7 @@ allocations,number_of_slots,integer,,,,,,The number of time slots possible for t
 allocations,regional_office,string ∗,x,,,,,Key of the Regional Office Requesting Hearing Days
 allocations,schedule_period_id,integer (8) ∗ FK,x,,x,,x,Hearings Schedule Period to which this request belongs
 allocations,slot_length_minutes,integer,,,,,,The length in minutes of each time slot for this allocation
-allocations,updated_at,datetime ∗,x,,,,x,
+allocations,updated_at,datetime ∗,x,,,,x,Standard created_at/updated_at timestamps
 annotations,,,,,,,,
 annotations,comment,string ∗,x,,,,,
 annotations,created_at,datetime,,,,,,
