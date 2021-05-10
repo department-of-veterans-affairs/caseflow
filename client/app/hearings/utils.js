@@ -585,18 +585,17 @@ const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings
  * @param {array} slotsAndHearings   -- The ro id, can be RXX, C, or V
  */
 const displaySelectedTimeAsSlot = ({ selected, slotsAndHearings }) => {
-  return slotsAndHearings;
   if (!selected) {
     return slotsAndHearings;
   }
+
   // If a slot for this time already exists, it will be selected, don't add anything
   if (slotsAndHearings.find((item) => item.time.isSame(selected))) {
     return slotsAndHearings;
   }
+  const timeString = selected?.tz('America/New_York')?.format('HH:mm');
+
   // Create a timeslot object (same as in combineSlotsAndHearings)
-
-  const timeString = selected?.tz('America/New_York').format('HH:mm');
-
   const selectedTimeSlot = {
     slotId: 'selected-time',
     key: `selected-time-${timeString}`,

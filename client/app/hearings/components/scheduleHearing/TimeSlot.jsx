@@ -45,8 +45,8 @@ export const TimeSlot = ({
 
   // Setup the click handler for each time slot
   const handleChange = (time) => {
-    setSelected(time.tz('America/New_York').format('HH:mm'));
-    // onChange('scheduledTimeString', time.tz(roTimezone).format('HH:mm'));
+    setSelected(time);
+    onChange('scheduledTimeString', time.tz(roTimezone).format('HH:mm'));
   };
 
   // Create a hearing Time ID to associate the label with the appropriate form element
@@ -78,7 +78,7 @@ export const TimeSlot = ({
                   {...slot}
                   key={slot.key}
                   roTimezone={roTimezone}
-                  selected={selected === slot.hearingTime}
+                  selected={slot.time.isSame(selected)}
                   onClick={() => handleChange(slot.time)}
                 />
               ))}
@@ -89,7 +89,7 @@ export const TimeSlot = ({
                   {...slot}
                   key={slot.key}
                   roTimezone={roTimezone}
-                  selected={selected === slot.hearingTime}
+                  selected={slot.time.isSame(selected)}
                   onClick={() => handleChange(slot.time)}
                 />
               ))}
