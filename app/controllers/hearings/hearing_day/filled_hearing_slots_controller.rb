@@ -2,6 +2,7 @@
 
 class Hearings::HearingDay::FilledHearingSlotsController < ApplicationController
   include HearingsConcerns::VerifyAccess
+  include HearingConcern
 
   before_action :verify_edit_hearing_schedule_access
 
