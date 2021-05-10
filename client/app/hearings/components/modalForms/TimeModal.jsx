@@ -282,13 +282,10 @@ export const TimeModal = ({ onCancel, onConfirm, ro }) => {
       setError('Please enter a hearing start time.');
     }
     if (selectedOption) {
-      // Take the moment value and convert it into the format TimeSlot expects
-      // - Eastern timezone
-      // - 13:15 (24hr clock)
       const formattedValue = selectedOption.value.tz('America/New_York').format('HH:mm');
 
       window.analyticsEvent('Hearings', 'Schedule Veteran – Choose a custom time', formattedValue);
-      onConfirm(formattedValue);
+      onConfirm(selectedOption.value);
     }
   };
 

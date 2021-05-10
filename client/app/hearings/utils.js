@@ -526,11 +526,9 @@ const calculateAvailableTimeslots = ({ numberOfSlots, beginsAt, roTimezone, sche
     const hearingWithinHourOfSlot = hearingTimes.some((scheduledHearingTime) =>
       (Math.abs(possibleTime.diff(scheduledHearingTime, 'minutes')) < slotLengthMinutes)
     );
-    // Make sure that times don't go past midnight into the next day
-    const slotNotOnCorrectDate = !possibleTime.isSame(beginsAt, 'date');
 
     // Combine all the conditions that make a slot unavailable
-    const slotIsUnavailable = hearingWithinHourOfSlot || slotNotOnCorrectDate;
+    const slotIsUnavailable = hearingWithinHourOfSlot;
 
     // Return null if there is a filled time slot, otherwise return the hearingTime
     return slotIsUnavailable ? null : {
@@ -586,36 +584,36 @@ const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings
  * @param {array} selectedTimeString -- List of hearings scheduled for a specific date
  * @param {array} slotsAndHearings   -- The ro id, can be RXX, C, or V
  */
-const displaySelectedTimeAsSlot = ({ selectedTimeString, slotsAndHearings, hearingDayDate }) => {
-  if (!selectedTimeString) {
+const displaySelectedTimeAsSlot = ({ selected, slotsAndHearings }) => {
+  return slotsAndHearings;
+  if (!selected) {
     return slotsAndHearings;
   }
   // If a slot for this time already exists, it will be selected, don't add anything
-  if (slotsAndHearings.find((item) => item.hearingTime === selectedTimeString)) {
+  if (slotsAndHearings.find((item) => item.time.isSame(selected))) {
     return slotsAndHearings;
   }
   // Create a timeslot object (same as in combineSlotsAndHearings)
 
-  const selectedTime = moment.tz(`${selectedTimeString} ${hearingDayDate}`, 'HH:mm YYYY-MM-DD', 'America/New_York');
+  const timeString = selected?.tz('America/New_York').format('HH:mm');
+
   const selectedTimeSlot = {
     slotId: 'selected-time',
-    key: `selected-time-${selectedTimeString}`,
+    key: `selected-time-${timeString}`,
     full: false,
-    hearingTime: selectedTimeString,
-    time: selectedTime,
+    hearingTime: timeString,
+    time: selected,
   };
 
   // Figure out where to insert that timeslot object in existing slots/hearings array
   const foundIndex = slotsAndHearings.findIndex((item) => {
-    return item.time.isAfter(selectedTime);
+    return item.time.isAfter(selected);
   });
   // foundIndex is -1 when the slot should be last in the array
   const insertIndex = foundIndex === -1 ? slotsAndHearings.length : foundIndex;
 
   // Insert the timeslot object and return the new array
   slotsAndHearings.splice(insertIndex, 0, selectedTimeSlot);
-
-  console.log('slotsAndHearings', slotsAndHearings.map((item) => ({ ...item, time: item.time.format('LLL z') })));
 
   return slotsAndHearings;
 };
@@ -640,7 +638,7 @@ export const setTimeSlots = ({
   beginsAt,
   numberOfSlots,
   slotLengthMinutes,
-  selectedTimeString,
+  selected,
   hearingDayDate
 }) => {
   // Safe assign the hearings array in case there are no scheduled hearings
@@ -666,7 +664,7 @@ export const setTimeSlots = ({
     scheduledHearings
   });
 
-  return displaySelectedTimeAsSlot({ selectedTimeString, slotsAndHearings, hearingDayDate });
+  return displaySelectedTimeAsSlot({ selected, slotsAndHearings });
 
 };
 

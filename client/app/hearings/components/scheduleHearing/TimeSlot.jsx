@@ -39,21 +39,14 @@ export const TimeSlot = ({
     beginsAt,
     numberOfSlots,
     slotLengthMinutes,
-    selectedTimeString:
     selected,
     hearingDayDate
   });
 
   // Setup the click handler for each time slot
   const handleChange = (time) => {
-    // Set the selected time slot
-    setSelected(time);
-
-    // Convert to ro timezone, then set the hearing time in reducer
-    const timeInRoZone = moment.tz(time, 'HH:mm', 'America/New_York').tz(roTimezone).
-      format('HH:mm');
-
-    onChange('scheduledTimeString', timeInRoZone);
+    setSelected(time.tz('America/New_York').format('HH:mm'));
+    // onChange('scheduledTimeString', time.tz(roTimezone).format('HH:mm'));
   };
 
   // Create a hearing Time ID to associate the label with the appropriate form element
@@ -86,7 +79,7 @@ export const TimeSlot = ({
                   key={slot.key}
                   roTimezone={roTimezone}
                   selected={selected === slot.hearingTime}
-                  onClick={() => handleChange(slot.hearingTime)}
+                  onClick={() => handleChange(slot.time)}
                 />
               ))}
             </div>
@@ -97,7 +90,7 @@ export const TimeSlot = ({
                   key={slot.key}
                   roTimezone={roTimezone}
                   selected={selected === slot.hearingTime}
-                  onClick={() => handleChange(slot.hearingTime)}
+                  onClick={() => handleChange(slot.time)}
                 />
               ))}
             </div>
