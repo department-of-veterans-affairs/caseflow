@@ -142,16 +142,6 @@ describe('TimeSlot', () => {
           });
         });
 
-        it('doesnt show slots after midnight', () => {
-          const beginsAt = moment('2021-04-21T23:45:00-04:00').tz('America/New_York');
-          const numberOfSlots = 8;
-          const slotLengthMinutes = 60;
-          const { timeSlots } = setup({ roTimezone: ro.timezone, beginsAt, numberOfSlots, slotLengthMinutes });
-
-          // Should only produce the one slot at beginsAt
-          expect(timeSlots.length).toEqual(1);
-        });
-
         it('creates one slot', () => {
           const { timeSlots } = setup({ roTimezone: ro.timezone, numberOfSlots: 1 });
 
