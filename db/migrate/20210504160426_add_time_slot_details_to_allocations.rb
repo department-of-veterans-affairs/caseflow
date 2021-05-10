@@ -10,5 +10,7 @@ class AddTimeSlotDetailsToAllocations < Caseflow::Migration
     change_column_comment :allocations, :updated_at, "Standard created_at/updated_at timestamps"
     change_column_comment :allocations, :regional_office, "Key of the Regional Office Requesting Hearing Days"
     change_column_comment :allocations, :allocated_days, "Number of Video or Central Hearing Days Requested by the Regional Office"
+
+    add_foreign_key :allocations, :schedule_periods, column: "schedule_period_id", validate: false
   end
 end

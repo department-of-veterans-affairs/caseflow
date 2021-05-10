@@ -1637,6 +1637,7 @@ ActiveRecord::Schema.define(version: 2021_05_06_161524) do
   end
 
   add_foreign_key "advance_on_docket_motions", "users"
+  add_foreign_key "allocations", "schedule_periods"
   add_foreign_key "annotations", "users"
   add_foreign_key "api_views", "api_keys"
   add_foreign_key "appeal_views", "users"
