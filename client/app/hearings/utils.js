@@ -576,7 +576,8 @@ const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings
 
   const slotsAndHearings = slots.concat(formattedHearings);
 
-  return _.sortBy(slotsAndHearings, 'hearingTime');
+  // Sort by unix time
+  return _.sortBy(slotsAndHearings, [(item) => item.time.format('x')]);
 
 };
 
@@ -613,6 +614,8 @@ const displaySelectedTimeAsSlot = ({ selectedTimeString, slotsAndHearings, heari
 
   // Insert the timeslot object and return the new array
   slotsAndHearings.splice(insertIndex, 0, selectedTimeSlot);
+
+  console.log('slotsAndHearings', slotsAndHearings.map((item) => ({ ...item, time: item.time.format('LLL z') })));
 
   return slotsAndHearings;
 };
