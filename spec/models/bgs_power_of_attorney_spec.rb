@@ -5,31 +5,61 @@ describe BgsPowerOfAttorney do
   let(:file_number) { "66660000" }
 
   describe "record expirations" do
+    before { FeatureToggle.enable!(:poa_refresh) }
+    after { FeatureToggle.disable!(:poa_refresh) }
+
     context "by_claimant_participant_id" do
       let!(:poa) { create(:bgs_power_of_attorney, claimant_participant_id: claimant_participant_id) }
 
-      it "record is not expired" do
+      it "record is expired NEW" do
+        BgsPowerOfAttorney.set_callback(:save, :before, :update_cached_attributes!)
+        BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
         poa.last_synced_at = 1.day.ago
+        poa.save!
+        BgsPowerOfAttorney.set_callback(:save, :before, :update_cached_attributes!)
+
         expect(poa.expired?).to eq(true)
+        new_poa = BgsPowerOfAttorney.find_or_fetch_by(participant_id: poa.claimant_participant_id)
+        expect(poa.last_synced_at).to_not eq(new_poa.last_synced_at)
       end
 
-      it "record is expired" do
+      it "record is not expired" do
+        BgsPowerOfAttorney.set_callback(:save, :before, :update_cached_attributes!)
+        BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
         poa.last_synced_at = Time.zone.now
+        poa.save!
+        BgsPowerOfAttorney.set_callback(:save, :before, :update_cached_attributes!)
+
         expect(poa.expired?).to eq(false)
+        new_poa = BgsPowerOfAttorney.find_or_fetch_by(participant_id: poa.claimant_participant_id)
+        expect(poa.last_synced_at).to eq(new_poa.last_synced_at)
       end
     end
 
     context "by_file_number" do
       let!(:poa) { create(:bgs_power_of_attorney, file_number: file_number) }
 
-      it "record is not expired" do
+      it "record is expired" do
+        BgsPowerOfAttorney.set_callback(:save, :before, :update_cached_attributes!)
+        BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
         poa.last_synced_at = 1.day.ago
+        poa.save!
+        BgsPowerOfAttorney.set_callback(:save, :before, :update_cached_attributes!)
+
         expect(poa.expired?).to eq(true)
+        new_poa = BgsPowerOfAttorney.find_or_fetch_by(veteran_file_number: poa.file_number)
       end
 
-      it "record is expired" do
+      it "record is not expired" do
+        BgsPowerOfAttorney.set_callback(:save, :before, :update_cached_attributes!)
+        BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
         poa.last_synced_at = Time.zone.now
+        poa.save!
+        BgsPowerOfAttorney.set_callback(:save, :before, :update_cached_attributes!)
+
         expect(poa.expired?).to eq(false)
+        new_poa = BgsPowerOfAttorney.find_or_fetch_by(veteran_file_number: poa.file_number)
+        expect(poa.last_synced_at).to eq(new_poa.last_synced_at)
       end
     end
   end
