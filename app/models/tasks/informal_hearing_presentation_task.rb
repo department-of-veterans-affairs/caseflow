@@ -81,5 +81,4 @@ class InformalHearingPresentationTask < Task
     # # and set the parent task's status to on_hold
     # parent.on_hold!
   end
-
 end
