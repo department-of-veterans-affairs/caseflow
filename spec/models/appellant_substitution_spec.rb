@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require "helpers/sanitized_json_configuration.rb"
+require "helpers/sanitized_json_importer.rb"
+
 describe AppellantSubstitution do
   describe ".create!" do
     subject { described_class.create!(params) }
@@ -10,7 +13,8 @@ describe AppellantSubstitution do
     let(:substitute) { create(:claimant) }
     let(:substitutes_poa) { BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(substitute&.participant_id) }
     let(:poa_participant_id) { substitutes_poa.poa_participant_id }
-    let(:selected_task_ids) { [] }
+    let(:selected_task_types) { [] }
+    let(:selected_task_ids) { source_appeal.tasks.assigned_to_any_org.of_type(selected_task_types).pluck(:id) }
     let(:task_params) { {} }
 
     let(:params) do
@@ -39,35 +43,81 @@ describe AppellantSubstitution do
       expect(subject.substitute_person).not_to eq subject.source_appeal.claimant.person
 
       expect(subject.target_appeal.veteran_is_not_claimant).to eq true
-      expect(subject.target_appeal.tasks.open.map(&:type)).to include "DistributionTask"
+      # No other task types are created
+      expect(subject.target_appeal.tasks.map(&:type)).to match_array %w[RootTask DistributionTask]
     end
 
     context "when source appeal has ScheduleHearingTask and EvidenceSubmissionWindowTask" do
       let(:selected_task_types) do
         [:ScheduleHearingTask, :EvidenceSubmissionWindowTask, :InformalHearingPresentationTask]
       end
-      let(:selected_task_ids) { source_appeal.tasks.assigned_to_any_org.of_type(selected_task_types).pluck(:id) }
-      let(:esw_task) { source_appeal.tasks.assigned_to_any_org.find_by(type: :EvidenceSubmissionWindowTask) }
-      let(:task_params) do
-        {
-          esw_task.id => { hold_end_date: evidence_submission_hold_end_date.strftime("%F") }
-        }
+      let(:source_esw_task) do
+        source_appeal.tasks.completed.assigned_to_any_org.find_by(type: :EvidenceSubmissionWindowTask)
       end
-      let(:evidence_submission_hold_end_date) { Time.zone.today + 20.days }
+      let(:task_params) do
+        user_task_params = {}
 
-      shared_examples "new appeal has user-selected tasks" do
-        it "copies only ScheduleHearingTask and EvidenceSubmissionWindowTask to new appeal" do
-          expect(source_appeal.tasks.of_type(:ScheduleHearingTask).count).to eq 1
-          expect(source_appeal.tasks.of_type(:EvidenceSubmissionWindowTask).count).to eq 1
+        if source_esw_task
+          user_task_params[source_esw_task.id] = { hold_end_date: evidence_submission_hold_end_date.strftime("%F") }
+        end
+
+        user_task_params
+      end
+      let(:evidence_submission_hold_end_date) { Time.zone.today + rand(1..200).days }
+
+      shared_examples "new appeal has user-selected ScheduleHearingTask task" do
+        it "copies ScheduleHearingTask to nw appeal" do
+          expect(source_appeal.tasks.of_type(:ScheduleHearingTask).count).to be > 0
 
           target_appeal = subject.target_appeal
-          expect(target_appeal.tasks.open.find_by(type: :ScheduleHearingTask).status).to eq "assigned"
+
+          sched_hearing_task = target_appeal.tasks.open.find_by(type: :ScheduleHearingTask)
+          expect(sched_hearing_task.status).to eq "assigned"
+        end
+      end
+
+      shared_examples "new appeal has user-selected EvidenceSubmissionWindowTask task" do
+        it "copies EvidenceSubmissionWindowTask to new appeal" do
+          expect(source_appeal.tasks.of_type(:EvidenceSubmissionWindowTask).count).to be > 0
+
+          target_appeal = subject.target_appeal
 
           esw_task = target_appeal.tasks.open.find_by(type: :EvidenceSubmissionWindowTask)
           expect(esw_task.status).to eq "assigned"
+
+          # check hold end date for EvidenceSubmissionWindowTask is what was specified in task_params
           task_timer = TaskTimer.where(task: esw_task).order(:id).last
           expect(task_timer.submitted_at.utc.to_date).to eq evidence_submission_hold_end_date
           expect(esw_task.timer_ends_at.utc.to_date).to eq evidence_submission_hold_end_date
+        end
+      end
+
+      shared_examples "new appeal has user-selected TrackVeteranTask and IHPTask tasks" do
+        it "creates TrackVeteranTask and IHPTask assigned to POA" do
+          expect(source_appeal.tasks.of_type(:InformalHearingPresentationTask).count).to be > 0
+          source_ihp_task = source_appeal.tasks.assigned_to_any_org.find_by(type: :InformalHearingPresentationTask)
+          expect(source_ihp_task.assigned_to.participant_id).not_to eq poa_participant_id
+
+          target_appeal = subject.target_appeal
+
+          track_vet_task = target_appeal.tasks.open.find_by(type: :TrackVeteranTask)
+          expect(track_vet_task.status).to eq "in_progress"
+          expect(track_vet_task.assigned_to.participant_id).to eq poa_participant_id
+
+          ihp_task = target_appeal.tasks.open.find_by(type: :InformalHearingPresentationTask)
+          expect(ihp_task.status).to eq "assigned"
+          expect(ihp_task.assigned_to.participant_id).to eq poa_participant_id
+        end
+      end
+
+      shared_examples "new appeal does not have post-distribution tasks" do
+        let(:expected_task_types) do
+          %w[RootTask DistributionTask TrackVeteranTask InformalHearingPresentationTask
+             EvidenceSubmissionWindowTask ScheduleHearingTask]
+        end
+        it "doesn't create tasks typically created after DistributionTask is completed" do
+          target_appeal = subject.target_appeal
+          expect(target_appeal.tasks.map(&:type).uniq - expected_task_types).to be_empty
         end
       end
 
@@ -85,7 +135,9 @@ describe AppellantSubstitution do
         end
       end
 
-      include_examples "new appeal has user-selected tasks"
+      include_examples "new appeal has user-selected ScheduleHearingTask task"
+      include_examples "new appeal has user-selected EvidenceSubmissionWindowTask task"
+      include_examples "new appeal does not have post-distribution tasks"
 
       it "doesn't create TrackVeteranTask or IHPTask" do
         target_appeal = subject.target_appeal
@@ -94,29 +146,51 @@ describe AppellantSubstitution do
       end
 
       context "when substitute's POA is a Representative (i.e., VSO or PrivateBar)" do
-        let!(:vso) { create(:vso, participant_id: poa_participant_id) }
+        before { create(:vso, participant_id: poa_participant_id) }
 
-        include_examples "new appeal has user-selected tasks"
-
-        it "creates TrackVeteranTask and IHPTask assigned to POA" do
-          expect(source_appeal.tasks.of_type(:InformalHearingPresentationTask).count).to eq 2
-          source_ihp_task = source_appeal.tasks.assigned_to_any_org.find_by(type: :InformalHearingPresentationTask)
-          expect(source_ihp_task.assigned_to.participant_id).not_to eq poa_participant_id
-
-          target_appeal = subject.target_appeal
-
-          track_vet_task = target_appeal.tasks.open.find_by(type: :TrackVeteranTask)
-          expect(track_vet_task.status).to eq "in_progress"
-          expect(track_vet_task.assigned_to.participant_id).to eq poa_participant_id
-
-          ihp_task = target_appeal.tasks.open.find_by(type: :InformalHearingPresentationTask)
-          expect(ihp_task.status).to eq "assigned"
-          expect(ihp_task.assigned_to.participant_id).to eq poa_participant_id
-          # binding.pry
-        end
+        include_examples "new appeal has user-selected ScheduleHearingTask task"
+        include_examples "new appeal has user-selected EvidenceSubmissionWindowTask task"
+        include_examples "new appeal has user-selected TrackVeteranTask and IHPTask tasks"
+        include_examples "new appeal does not have post-distribution tasks"
       end
 
-      # TODO: for rspec: pull a real tree from prod that has a deep task tree and varied task types
+      context "when given real task trees" do
+        let(:source_appeal) do
+          sji = SanitizedJsonImporter.from_file("spec/records/#{json_filename}", verbosity: 0)
+          sji.import
+          sji.imported_records[Appeal.table_name].first
+        end
+        before { create(:vso, participant_id: poa_participant_id) }
+
+        context "Direct Review appeal with IHPTask, QualityReviewTask, IhpColocatedTask, TimedHoldTask" do
+          let(:json_filename) do
+            # Create an org needed to import the particular appeal
+            Organization.create!(id: 212, name: "Some inactive org", url: "some_org", status: "inactive")
+            "appeal-90772.json"
+          end
+          # Delete extraneous IHPTask
+          # before { Task.find(2001135318).destroy }
+
+          include_examples "new appeal has user-selected TrackVeteranTask and IHPTask tasks"
+          include_examples "new appeal does not have post-distribution tasks"
+        end
+        context "Evidence Submission appeal with ESWTask, TranslationTask, SpecialCaseMovementTask, a MailTask" do
+          let(:json_filename) { "appeal-140375.json" }
+
+          include_examples "new appeal has user-selected EvidenceSubmissionWindowTask task"
+          include_examples "new appeal does not have post-distribution tasks"
+        end
+        context "Hearing appeal with ESWTask, ScheduleHearingTask, HearingAdminActionVerifyAddressTask, AssignHearingDispositionTask, TranscriptionTask, EvidenceSubmissionWindowTask" do
+          let(:json_filename) { "appeal-21430.json" }
+          # There are multiple ESWTask and ScheduleHearingTask tasks, so just pick some
+          let(:selected_task_ids) { [2_001_404_437, 2_001_413_151] }
+          let(:source_esw_task) { Task.find(2_001_413_151) }
+          # before { Task.find(2001265825).destroy }
+
+          include_examples "new appeal has user-selected EvidenceSubmissionWindowTask task"
+          include_examples "new appeal does not have post-distribution tasks"
+        end
+      end
     end
 
     context "when source appeal is AOD" do
@@ -226,6 +300,7 @@ describe AppellantSubstitution do
 
       context "for source_appeal" do
         let(:source_appeal) { nil }
+        let(:selected_task_ids) { [] }
         it "raises an error" do
           expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
         end

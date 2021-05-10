@@ -120,14 +120,15 @@ class SanitizedJsonConfiguration
           users.uniq.compact.sort_by(&:id)
         end
       },
+      OrganizationsUser => {
+        retrieval: ->(records) { OrganizationsUser.where(user: records[User]) }
+      },
       Organization => {
         track_imported_ids: true,
         retrieval: lambda do |records|
-          records[Task].assigned_to_org.map(&:assigned_to) + records[User].map(&:organizations).flatten.uniq
+          Organization.unscoped.where(id: records[OrganizationsUser].map(&:organization_id)) +
+            records[Task].assigned_to_org.map(&:assigned_to)
         end
-      },
-      OrganizationsUser => {
-        retrieval: ->(records) { OrganizationsUser.where(user: records[User]) }
       },
       Person => {
         track_imported_ids: true,

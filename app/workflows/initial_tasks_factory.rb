@@ -88,13 +88,15 @@ class InitialTasksFactory
   end
 
   def create_task_from(source_task, create_params)
-    if source_task.type == "EvidenceSubmissionWindowTask"
+    case source_task.type
+    when "EvidenceSubmissionWindowTask"
       evidence_submission_hold_end_date = Time.find_zone("UTC").parse(create_params["hold_end_date"])
       EvidenceSubmissionWindowTask.create!(appeal: @appeal,
                                            parent: distribution_task,
                                            end_date: evidence_submission_hold_end_date)
-    elsif source_task.type == "InformalHearingPresentationTask"
+    when "InformalHearingPresentationTask"
       vso_tasks = create_ihp_task
+      warn_poa_not_a_representative if vso_tasks.blank?
       if @appeal.power_of_attorney.poa_participant_id != @appeal.appellant_substitution.poa_participant_id
         # To-do: Refine or replace this code block for unrecognized appellants.
         # If this happens, then the claimant's power_of_attorney is different than what is in BGS
@@ -104,17 +106,16 @@ class InitialTasksFactory
         ihp_task&.update(assigned_to: target_org)
         # To-do: close the other vso_tasks
       end
-      warn_unexpected_state if vso_tasks.blank?
       vso_tasks
     else
       source_task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: ["status"])
     end
   end
 
-  def warn_unexpected_state
-    # TODO: use Raven to send sentry alert to #echo channel
-    Rails.logger.warn("Did not create user-selected InformalHearingPresentationTask b/c " \
-      "POA is not a Representative: #{@appeal.appellant_substitution.poa_participant_id}")
+  def warn_poa_not_a_representative
+    msg = "Did not create user-selected InformalHearingPresentationTask because " \
+      "POA is not a Representative: poa_participant_id = #{@appeal.appellant_substitution.poa_participant_id}"
+    Raven.capture_message(msg)
   end
 
   # For AMA appeals. Create appropriate subtasks based on the CAVC Remand subtype
