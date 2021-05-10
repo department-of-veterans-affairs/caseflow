@@ -76,20 +76,40 @@ describe InformalHearingPresentationTask, :postgres do
 
   describe ".when poa is updated" do
     context "change IHP task from old POA to new POA" do
-      let(:appeal) { create(:appeal, veteran: create(:veteran)) }
-      let(:vso) { create(:vso) }
-      let(:claimant_participant_id) { "1129318238" }
-      let!(:poa) { create(:bgs_power_of_attorney, claimant_participant_id: claimant_participant_id) }
-      let(:new_ihp_org_task) do
-        create(
-          :informal_hearing_presentation_task,
-          appeal: appeal,
-          assigned_to: vso
-        )
-      end
-      before do
-        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids)
-          .with([claimant_participant_id]).and_return(Fakes::BGSServicePOA.default_vsos_mapped.last)
+      let(:old_poa) { create(:vso, name: "Old POA") }
+      let(:appeal) { 
+        create(:appeal, veteran: create(:veteran)) do |appeal|
+          create(
+            :informal_hearing_presentation_task,
+            appeal: appeal,
+            assigned_to: old_poa
+          )
+        end
+      }
+      # let(:old_claimant_participant_id) { "1111111" }
+      # let!(:old_poa) { create(:bgs_power_of_attorney, claimant_participant_id: old_claimant_participant_id) }
+
+      # let(:claimant_participant_id) { "1129318238" }
+
+      # before do
+      #   allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids)
+      #     .with([claimant_participant_id]).and_return(Fakes::BGSServicePOA.default_vsos_mapped.last)
+      # end
+
+      # let(:new_claimant_participant_id) { "1111111" }
+
+      # Associate appeal's claimant's POA with a new poa_participant_id
+      let(:new_poa_participant_id) { "2222222" }
+      let!(:new_poa) { create(:vso, name: "New POA", participant_id: new_poa_participant_id) }
+      let!(:bgs_poa_for_claimant) { create(:bgs_power_of_attorney, 
+                      claimant_participant_id: appeal.claimant.participant_id,
+                      poa_participant_id: new_poa_participant_id) 
+                  }
+
+      it "creates new IhpTask assigned to the new POA" do
+        # binding.pry
+        # poa.save_with_updated_bgs_record!
+        InformalHearingPresentationTask.update_to_new_poa(appeal)
       end
 
       it "forces update from BGS" do
