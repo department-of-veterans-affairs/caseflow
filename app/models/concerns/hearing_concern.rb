@@ -68,12 +68,12 @@ module HearingConcern
       &.id
   end
 
-  def poa_name(hearing)
-    poa = if hearing.is_a?(Hearing)
-            BgsPowerOfAttorney.find_by(file_number: hearing.appeal&.veteran_file_number) ||
-            BgsPowerOfAttorney.find_by(claimant_participant_id: hearing.appeal.claimant&.participant_id)
-          elsif hearing.is_a?(LegacyHearing)
-            BgsPowerOfAttorney.find_by(file_number: hearing.appeal&.veteran_file_number)
+  def poa_name
+    poa = if is_a?(Hearing)
+            BgsPowerOfAttorney.find_by(file_number: appeal&.veteran_file_number) ||
+              BgsPowerOfAttorney.find_by(claimant_participant_id: appeal.claimant&.participant_id)
+          elsif is_a?(LegacyHearing)
+            BgsPowerOfAttorney.find_by(file_number: appeal&.veteran_file_number)
           end
 
     poa&.representative_name

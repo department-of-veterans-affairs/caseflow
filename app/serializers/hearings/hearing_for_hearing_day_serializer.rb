@@ -12,7 +12,6 @@
 
 class HearingForHearingDaySerializer
   include FastJsonapi::ObjectSerializer
-  include HearingConcern
 
   attribute :aod, &:aod?
   attribute :appeal_id
@@ -36,7 +35,5 @@ class HearingForHearingDaySerializer
     hearing.appeal.type
   end
 
-  attribute :poa_name, do |hearing|
-    poa_name(hearing)
-  end
+  attribute :poa_name
 end

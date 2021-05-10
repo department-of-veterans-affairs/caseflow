@@ -2,7 +2,6 @@
 
 class Hearings::HearingDay::FilledHearingSlotsController < ApplicationController
   include HearingsConcerns::VerifyAccess
-  include HearingConcern
 
   before_action :verify_edit_hearing_schedule_access
 
@@ -26,7 +25,7 @@ class Hearings::HearingDay::FilledHearingSlotsController < ApplicationController
         issue_count: hearing.current_issue_count,
         docket_number: hearing.docket_number,
         docket_name: hearing.docket_name,
-        poa_name: poa_name(hearing)
+        poa_name: hearing.poa_name
       }
     end
   end
