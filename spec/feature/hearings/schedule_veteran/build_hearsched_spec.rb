@@ -249,7 +249,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         find(".time-slot-button-toggle", text: "Choose a custom time").click
         # Type in the time, add am, press enter with \n
         time_select_input = find(".time-select").find("input")
-        time_select_input.send_keys "#{time}AM", :enter
+        time_select_input.send_keys "#{time}AM", :enter, :tab
         click_button("Create time slot")
 
       else
