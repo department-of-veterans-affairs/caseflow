@@ -257,7 +257,7 @@ const TimeSelect = ({ roTimezone, onSelect, error, clearError, hearingDayDate })
           // Hide some elements of react-select, deal with error state, adjust height of component
           styles={customSelectStyles}
           // Set the maximum height
-          maxMenuHeight={150}
+          maxMenuHeight={175}
         />
       </div>
       <div {...timezoneAbbreviationContainer}>
@@ -310,7 +310,6 @@ export const TimeModal = ({ onCancel, onConfirm, ro, title, hearingDayDate }) =>
       ]}
       closeHandler={onCancel}
       id="custom-time-modal"
-      customStyles={css({ overflow: 'hidden' })}
     >
       <div {...css({ height: '200px' })}>
         <div {...css({ fontWeight: 'bold' })}>
