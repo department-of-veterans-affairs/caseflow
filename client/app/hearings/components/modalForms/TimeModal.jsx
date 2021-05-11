@@ -232,8 +232,6 @@ const TimeSelect = ({ roTimezone, onSelect, error, clearError, hearingDayDate })
 
   const options = generateOrderedTimeOptions(roTimezone, hearingDayDate);
 
-  console.log(options.map((option) => option.value.format('LLL z')));
-
   return (
     <div className="time-select" {...containerStyles}>
       <div {...selectContainerStyles}>
@@ -258,6 +256,8 @@ const TimeSelect = ({ roTimezone, onSelect, error, clearError, hearingDayDate })
           placeholder=""
           // Hide some elements of react-select, deal with error state, adjust height of component
           styles={customSelectStyles}
+          // Set the maximum height
+          maxMenuHeight={150}
         />
       </div>
       <div {...timezoneAbbreviationContainer}>
