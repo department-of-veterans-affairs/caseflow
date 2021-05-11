@@ -236,6 +236,8 @@ const TimeSelect = ({ roTimezone, onSelect, error, clearError, hearingDayDate })
     <div className="time-select" {...containerStyles}>
       <div {...selectContainerStyles}>
         <Select
+          // Accessibility
+          aria-label="time select"
           // Make this a controlled select
           onChange={onSelect}
           // Backspace will clear a selected option, also show an 'x' to clear
