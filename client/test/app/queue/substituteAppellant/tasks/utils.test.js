@@ -70,12 +70,14 @@ describe('utility functions for task manipulation', () => {
   });
 
   describe('formatTaskData', () => {
-    const tasks = sampleEvidenceSubmissionTasks();
+    describe('Evidence Submission sample', () => {
+      const tasks = sampleEvidenceSubmissionTasks();
 
-    it('formats sample data for EvidenceSubmissionTasks', () => {
-      const result = formatTaskData(tasks);
+      it('formats sample data for EvidenceSubmissionTasks', () => {
+        const result = formatTaskData(tasks);
 
-      expect(result).toMatchSnapshot();
+        expect(result).toMatchSnapshot();
+      });
     });
   });
 });
