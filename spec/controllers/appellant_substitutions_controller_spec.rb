@@ -38,7 +38,9 @@ RSpec.describe AppellantSubstitutionsController, type: :controller do
         substitution_date: substitution_date,
         claimant_type: DependentClaimant.name,
         substitute_participant_id: substitute_participant_id,
-        poa_participant_id: poa_participant_id
+        poa_participant_id: poa_participant_id,
+        selected_task_ids: [],
+        task_params: {}
       }
     end
 

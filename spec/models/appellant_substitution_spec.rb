@@ -17,7 +17,9 @@ describe AppellantSubstitution do
         substitution_date: substitution_date,
         claimant_type: substitute&.type,
         substitute_participant_id: substitute&.participant_id,
-        poa_participant_id: poa_participant_id
+        poa_participant_id: poa_participant_id,
+        selected_task_ids: [],
+        task_params: {}
       }
     end
 
@@ -73,6 +75,9 @@ describe AppellantSubstitution do
           expect(AdvanceOnDocketMotion.for_appeal_and_person(target_appeal, target_appeal_aod_person).count).to eq 1
           expect(AdvanceOnDocketMotion.granted_for_person?(target_appeal.claimant.person, target_appeal)).to be true
           expect(target_appeal.aod?).to be true
+
+          # InitialTasksFactory should not have auto-created EvidenceSubmissionWindowTask
+          expect(EvidenceSubmissionWindowTask.where(appeal: target_appeal).count).to eq 0
         end
       end
       context "source appeal has CAVC status" do
@@ -86,6 +91,9 @@ describe AppellantSubstitution do
 
           target_appeal = appellant_substitution.target_appeal
           expect(target_appeal.cavc?).to be true
+
+          # InitialTasksFactory should not have auto-created SendCavcRemandProcessedLetterTask
+          expect(SendCavcRemandProcessedLetterTask.where(appeal: target_appeal).count).to eq 0
         end
       end
       context "source appeal has AOD and CAVC status" do
@@ -101,6 +109,10 @@ describe AppellantSubstitution do
           target_appeal = appellant_substitution.target_appeal
           expect(target_appeal.cavc?).to be true
           expect(target_appeal.aod?).to be true
+
+          # InitialTasksFactory should not have auto-created typical initial tasks
+          expect(EvidenceSubmissionWindowTask.where(appeal: target_appeal).count).to eq 0
+          expect(SendCavcRemandProcessedLetterTask.where(appeal: target_appeal).count).to eq 0
         end
       end
 

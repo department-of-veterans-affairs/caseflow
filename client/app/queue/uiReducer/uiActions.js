@@ -27,6 +27,13 @@ export const setCanEditNodDate = (canEditNodDate) => ({
   }
 });
 
+export const setUserIsCobAdmin = (userIsCobAdmin) => ({
+  type: ACTIONS.SET_USER_IS_COB_ADMIN,
+  payload: {
+    userIsCobAdmin
+  }
+});
+
 export const setCanViewOvertimeStatus = (canViewOvertimeStatus) => ({
   type: ACTIONS.SET_CAN_VIEW_OVERTIME_STATUS,
   payload: {
@@ -53,6 +60,15 @@ export const showSuccessMessage = (message) => ({
   type: ACTIONS.SHOW_SUCCESS_MESSAGE,
   payload: {
     message
+  }
+});
+
+export const setPoaRefreshAlert = (alertType, message, powerOfAttorney) => ({
+  type: ACTIONS.SET_POA_REFRESH_ALERT,
+  payload: {
+    alertType,
+    message,
+    powerOfAttorney
   }
 });
 

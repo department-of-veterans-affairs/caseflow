@@ -523,7 +523,10 @@ class HearingSchedule::GenerateHearingDaysSchedule
         allocated_days: allocation.allocated_days,
         allocated_days_without_room: allocation.allocated_days_without_room,
         available_days: @available_days,
-        num_of_rooms: RegionalOffice.new(ro_key).rooms
+        num_of_rooms: RegionalOffice.new(ro_key).rooms,
+        number_of_slots: allocation.number_of_slots,
+        slot_length_minutes: allocation.slot_length_minutes,
+        first_slot_time: allocation.first_slot_time
       )
       acc
     end

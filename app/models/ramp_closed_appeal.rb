@@ -18,10 +18,13 @@ class RampClosedAppeal < CaseflowRecord
   def close!
     if partial?
       partial_closure_issue_sequence_ids.each do |vacols_sequence_id|
-        Issue.close_in_vacols!(
+        Issue.update_in_vacols!(
           vacols_id: vacols_id,
           vacols_sequence_id: vacols_sequence_id,
-          disposition_code: "P"
+          issue_attrs: {
+            disposition: "P",
+            disposition_date: Time.zone.today
+          }
         )
       end
     else
