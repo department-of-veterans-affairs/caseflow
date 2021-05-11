@@ -68,7 +68,6 @@ RSpec.shared_examples("fill substitution form") do
     # end
 
     step "create tasks form" do
-
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}/substitute_appellant/tasks")
 
       # progress bar section"
@@ -87,7 +86,7 @@ RSpec.shared_examples("fill substitution form") do
       # tasks table"
       distribution_task = DistributionTask.find_by(appeal_id: appeal.id)
       expect(distribution_task.closed_at).to_not be_nil
-      
+
       evidence_submission_task = EvidenceSubmissionWindowTask.find_by(appeal_id: appeal.id)
       evidence_task_id = evidence_submission_task.id
       expect(evidence_submission_task.closed_at).to_not be_nil
@@ -104,7 +103,7 @@ RSpec.shared_examples("fill substitution form") do
       expect(page).to have_css(".usa-table-borderless.css-nil tbody tr td", text: "Distribution Task")
 
       # example appeal has an evidence submission task
-      expect(page).to have_css(".usa-table-borderless.css-nil tbody tr td", text: "Evidence Submission Window Task") 
+      expect(page).to have_css(".usa-table-borderless.css-nil tbody tr td", text: "Evidence Submission Window Task")
 
       find("div", class: "checkbox-wrapper-taskIds[#{evidence_task_id}]").click
 

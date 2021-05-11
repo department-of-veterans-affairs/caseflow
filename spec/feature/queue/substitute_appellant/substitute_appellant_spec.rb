@@ -7,10 +7,10 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
     let(:veteran) { create(:veteran, date_of_death: Time.zone.today - 10.days) }
     let(:appeal) do
       create(:appeal, :dispatched_with_decision_issue,
-      docket_type: "evidence_submission",
-      stream_type: "original",
-      disposition: "dismissed_death",
-      veteran: veteran)
+             docket_type: "evidence_submission",
+             stream_type: "original",
+             disposition: "dismissed_death",
+             veteran: veteran)
     end
     let(:substitution_date) { Time.zone.today - 5.days }
     let(:user) { create(:user) }
