@@ -134,7 +134,8 @@ const taskAttributesFromRawTask = (task) => {
       requestedAt: task.attributes.latest_informal_hearing_presentation_task?.requested_at,
       receivedAt: task.attributes.latest_informal_hearing_presentation_task?.received_at
     },
-    canMoveOnDocketSwitch: task.attributes.can_move_on_docket_switch
+    canMoveOnDocketSwitch: task.attributes.can_move_on_docket_switch,
+    timerEndsAt: task.timer_ends_at
   };
 };
 
