@@ -174,9 +174,9 @@ export const getAmaTasks = (taskArray) => {
   return tasks;
 };
 
-export const sampleDirectReviewTasks = () => {
-  const taskTypes = [RootTask, DistributionTask];
-};
+// export const sampleDirectReviewTasks = () => {
+//   const taskTypes = [RootTask, DistributionTask];
+// };
 
 export const sampleEvidenceSubmissionTasks = () => {
   const taskTypes = [

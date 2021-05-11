@@ -1028,7 +1028,7 @@ Array [
 ]
 `;
 
-exports[`utility functions for task manipulation formatTaskData formats sample data for EvidenceSubmissionTasks 1`] = `
+exports[`utility functions for task manipulation formatTaskData Evidence Submission sample formats sample data for EvidenceSubmissionTasks 1`] = `
 Array [
   Object {
     "addedByCssId": null,
