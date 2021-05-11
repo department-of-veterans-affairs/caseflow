@@ -250,7 +250,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         # Type in the time, add am, press enter with \n
         time_select_input = find(".time-select").find("input")
         time_select_input.send_keys "#{time}AM", :enter, :tab
-        click_button("Create time slot")
+        click_button("Choose time")
 
       else
         time_string = if is_eastern_only || !direct_enabled
