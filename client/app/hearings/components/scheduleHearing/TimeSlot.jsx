@@ -1,7 +1,6 @@
 // External Dependencies
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment-timezone';
 
 // Local Dependencies
 import { setTimeSlots, regionalOfficeDetails } from '../../utils';

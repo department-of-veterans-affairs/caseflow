@@ -339,5 +339,6 @@ TimeModal.propTypes = {
     city: PropTypes.string,
     timezone: PropTypes.string,
   }),
+  title: PropTypes.string,
 };
 
