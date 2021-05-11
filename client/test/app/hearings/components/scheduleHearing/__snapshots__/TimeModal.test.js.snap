@@ -63,12 +63,13 @@ exports[`renders correctly 1`] = `
                 <span
                   data-css-xm5bud=""
                 >
-                  Denver
+                  Los Angeles
                 </span>
               </div>
               <div>
                 Enter time as h:mm AM/PM, for example "1:00 PM"
               </div>
+              
               <div
                 class="time-select"
                 data-css-1nsikqq=""
@@ -144,7 +145,7 @@ exports[`renders correctly 1`] = `
                 <div
                   data-css-ny4tl0=""
                 >
-                  MDT
+                  PDT
                 </div>
               </div>
             </div>
