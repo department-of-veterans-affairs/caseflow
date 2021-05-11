@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`timelineEventsFromAppeal returns all event items for substitutionDate 1`] = `
+Array [
+  Object {
+    "createdAt": 2021-05-01T04:00:00.000Z,
+    "type": "decisionDate",
+  },
+  Object {
+    "createdAt": 2021-05-10T04:00:00.000Z,
+    "type": "substitutionDate",
+  },
+]
+`;
+
+exports[`timelineEventsFromAppeal returns event item for decisionDate 1`] = `
+Array [
+  Object {
+    "createdAt": 2021-05-01T04:00:00.000Z,
+    "type": "decisionDate",
+  },
+]
+`;
