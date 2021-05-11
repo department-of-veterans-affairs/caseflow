@@ -158,4 +158,10 @@ class WorkQueue::TaskSerializer
   attribute :can_move_on_docket_switch do |object|
     object.try(:can_move_on_docket_switch?)
   end
+
+  attribute :timer_ends_at do |object|
+    if object.type == "EvidenceSubmissionWindowTask"
+      object.timer_ends_at
+    end
+  end
 end
