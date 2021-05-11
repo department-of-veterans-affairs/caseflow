@@ -280,9 +280,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
       className=""
     >
       <div
-        aria-expanded={false}
         className="cf-form-dropdown dropdown-optionalHearingTime0"
-        role="combobox"
       >
         <label
           className="question-label usa-sr-only"
@@ -296,7 +294,9 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
           </strong>
         </label>
         <div
+          aria-expanded={false}
           className="cf-select"
+          role="combobox"
         >
           <StateManager
             cache={false}
@@ -4705,9 +4705,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
       className=""
     >
       <div
-        aria-expanded={false}
         className="cf-form-dropdown dropdown-optionalHearingTime0"
-        role="combobox"
       >
         <label
           className="question-label usa-sr-only"
@@ -4721,7 +4719,9 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
           </strong>
         </label>
         <div
+          aria-expanded={false}
           className="cf-select"
+          role="combobox"
         >
           <StateManager
             cache={false}
@@ -9004,9 +9004,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
       className=""
     >
       <div
-        aria-expanded={false}
         className="cf-form-dropdown dropdown-optionalHearingTime0"
-        role="combobox"
       >
         <label
           className="question-label usa-sr-only"
@@ -9020,7 +9018,9 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
           </strong>
         </label>
         <div
+          aria-expanded={false}
           className="cf-select"
+          role="combobox"
         >
           <StateManager
             cache={false}
@@ -13257,9 +13257,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
       className=""
     >
       <div
-        aria-expanded={false}
         className="cf-form-dropdown dropdown-optionalHearingTime0"
-        role="combobox"
       >
         <label
           className="question-label usa-sr-only"
@@ -13273,7 +13271,9 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
           </strong>
         </label>
         <div
+          aria-expanded={false}
           className="cf-select"
+          role="combobox"
         >
           <StateManager
             cache={false}

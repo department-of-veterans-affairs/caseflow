@@ -9,9 +9,7 @@ exports[`AddAdminTaskForm renders correctly 1`] = `
       class=""
     >
       <div
-        aria-expanded="false"
         class="cf-form-dropdown dropdown-newTasks[0].type"
-        role="combobox"
       >
         <label
           class="question-label"
@@ -23,7 +21,9 @@ exports[`AddAdminTaskForm renders correctly 1`] = `
           </span>
         </label>
         <div
+          aria-expanded="false"
           class="cf-select"
+          role="combobox"
         >
           <div
             class=" css-2b097c-container"

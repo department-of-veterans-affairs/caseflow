@@ -816,10 +816,8 @@ exports[`Timezone Can set timezone 1`] = `
       className=""
     >
       <div
-        aria-expanded={false}
         className="cf-form-dropdown dropdown-tz"
         data-css-1gh7024=""
-        role="combobox"
       >
         <label
           className="question-label"
@@ -833,7 +831,9 @@ exports[`Timezone Can set timezone 1`] = `
           </strong>
         </label>
         <div
+          aria-expanded={false}
           className="cf-select"
+          role="combobox"
         >
           <StateManager
             cache={false}
@@ -16884,10 +16884,8 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
       className=""
     >
       <div
-        aria-expanded={false}
         className="cf-form-dropdown dropdown-Timezone"
         data-css-1gh7024=""
-        role="combobox"
       >
         <label
           className="question-label"
@@ -16901,7 +16899,9 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
           </strong>
         </label>
         <div
+          aria-expanded={false}
           className="cf-select"
+          role="combobox"
         >
           <StateManager
             cache={false}
@@ -32897,10 +32897,8 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
       className=""
     >
       <div
-        aria-expanded={false}
         className="cf-form-dropdown dropdown-Timezone"
         data-css-1gh7024=""
-        role="combobox"
       >
         <label
           className="question-label"
@@ -32914,7 +32912,9 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
           </strong>
         </label>
         <div
+          aria-expanded={false}
           className="cf-select"
+          role="combobox"
         >
           <StateManager
             cache={false}
@@ -47891,10 +47891,8 @@ exports[`Timezone Respects required prop 1`] = `
       className=""
     >
       <div
-        aria-expanded={false}
         className="cf-form-dropdown dropdown-Timezone"
         data-css-1gh7024=""
-        role="combobox"
       >
         <label
           className="question-label"
@@ -47913,7 +47911,9 @@ exports[`Timezone Respects required prop 1`] = `
           </strong>
         </label>
         <div
+          aria-expanded={false}
           className="cf-select"
+          role="combobox"
         >
           <StateManager
             cache={false}

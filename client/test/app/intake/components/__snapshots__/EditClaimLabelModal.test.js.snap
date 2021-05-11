@@ -65,9 +65,7 @@ exports[`EditClaimLabelModal renders correctly 1`] = `
               class=""
             >
               <div
-                aria-expanded="false"
                 class="cf-form-dropdown dropdown-select-claim-label"
-                role="combobox"
               >
                 <label
                   class="question-label"
@@ -81,7 +79,9 @@ exports[`EditClaimLabelModal renders correctly 1`] = `
                   </strong>
                 </label>
                 <div
+                  aria-expanded="false"
                   class="cf-select"
+                  role="combobox"
                 >
                   <div
                     class=" css-2b097c-container"

@@ -532,9 +532,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                     className=""
                   >
                     <div
-                      aria-expanded={false}
                       className="cf-form-dropdown dropdown-judge-dropdown"
-                      role="combobox"
                     >
                       <label
                         className="question-label"
@@ -548,7 +546,9 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                         </strong>
                       </label>
                       <div
+                        aria-expanded={false}
                         className="cf-select"
+                        role="combobox"
                       >
                         <StateManager
                           cache={false}

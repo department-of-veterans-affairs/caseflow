@@ -459,9 +459,7 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                 className=""
               >
                 <div
-                  aria-expanded={false}
                   className="cf-form-dropdown dropdown-optionalHearingTime0"
-                  role="combobox"
                 >
                   <label
                     className="question-label usa-sr-only"
@@ -475,7 +473,9 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                     </strong>
                   </label>
                   <div
+                    aria-expanded={false}
                     className="cf-select"
+                    role="combobox"
                   >
                     <StateManager
                       cache={false}
@@ -5263,9 +5263,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                 className=""
               >
                 <div
-                  aria-expanded={false}
                   className="cf-form-dropdown dropdown-optionalHearingTime0"
-                  role="combobox"
                 >
                   <label
                     className="question-label"
@@ -5279,7 +5277,9 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                     </strong>
                   </label>
                   <div
+                    aria-expanded={false}
                     className="cf-select"
+                    role="combobox"
                   >
                     <StateManager
                       cache={false}
@@ -10253,10 +10253,8 @@ SAN FRANCISCO, CA 94103
                     className=""
                   >
                     <div
-                      aria-expanded={false}
                       className="cf-form-dropdown dropdown-appellantTz"
                       data-css-1gh7024=""
-                      role="combobox"
                     >
                       <label
                         className="question-label"
@@ -10275,7 +10273,9 @@ SAN FRANCISCO, CA 94103
                         </strong>
                       </label>
                       <div
+                        aria-expanded={false}
                         className="cf-select"
+                        role="combobox"
                       >
                         <StateManager
                           cache={false}
@@ -26619,10 +26619,8 @@ SAN FRANCISCO, CA 94103
                     className=""
                   >
                     <div
-                      aria-expanded={false}
                       className="cf-form-dropdown dropdown-representativeTz"
                       data-css-1gh7024=""
-                      role="combobox"
                     >
                       <label
                         className="question-label"
@@ -26641,7 +26639,9 @@ SAN FRANCISCO, CA 94103
                         </strong>
                       </label>
                       <div
+                        aria-expanded={false}
                         className="cf-select"
+                        role="combobox"
                       >
                         <StateManager
                           cache={false}
@@ -42047,9 +42047,7 @@ SAN FRANCISCO, CA 94103
                     className=""
                   >
                     <div
-                      aria-expanded={false}
                       className="cf-form-dropdown dropdown-judgeDropdown"
-                      role="combobox"
                     >
                       <label
                         className="question-label"
@@ -42063,7 +42061,9 @@ SAN FRANCISCO, CA 94103
                         </strong>
                       </label>
                       <div
+                        aria-expanded={false}
                         className="cf-select"
+                        role="combobox"
                       >
                         <StateManager
                           cache={false}

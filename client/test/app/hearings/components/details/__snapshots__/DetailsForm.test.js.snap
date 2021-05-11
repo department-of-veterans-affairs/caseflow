@@ -132,9 +132,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                   className=""
                 >
                   <div
-                    aria-expanded={false}
                     className="cf-form-dropdown dropdown-judgeDropdown"
-                    role="combobox"
                   >
                     <label
                       className="question-label"
@@ -148,7 +146,9 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       </strong>
                     </label>
                     <div
+                      aria-expanded={false}
                       className="cf-select"
+                      role="combobox"
                     >
                       <StateManager
                         cache={false}
@@ -1630,9 +1630,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                   className=""
                 >
                   <div
-                    aria-expanded={false}
                     className="cf-form-dropdown dropdown-hearingCoordinatorDropdown"
-                    role="combobox"
                   >
                     <label
                       className="question-label"
@@ -1646,7 +1644,9 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       </strong>
                     </label>
                     <div
+                      aria-expanded={false}
                       className="cf-select"
+                      role="combobox"
                     >
                       <StateManager
                         cache={false}
@@ -3235,9 +3235,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                 className=""
               >
                 <div
-                  aria-expanded={false}
                   className="cf-form-dropdown dropdown-hearingRoomDropdown"
-                  role="combobox"
                 >
                   <label
                     className="question-label"
@@ -3251,7 +3249,9 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                     </strong>
                   </label>
                   <div
+                    aria-expanded={false}
                     className="cf-select"
+                    role="combobox"
                   >
                     <StateManager
                       cache={false}
@@ -7183,9 +7183,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                   className=""
                 >
                   <div
-                    aria-expanded={false}
                     className="cf-form-dropdown dropdown-transcriber"
-                    role="combobox"
                   >
                     <label
                       className="question-label"
@@ -7199,7 +7197,9 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       </strong>
                     </label>
                     <div
+                      aria-expanded={false}
                       className="cf-select"
+                      role="combobox"
                     >
                       <StateManager
                         cache={false}
@@ -9155,9 +9155,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                   className=""
                 >
                   <div
-                    aria-expanded={false}
                     className="cf-form-dropdown dropdown-problemType"
-                    role="combobox"
                   >
                     <label
                       className="question-label"
@@ -9171,7 +9169,9 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       </strong>
                     </label>
                     <div
+                      aria-expanded={false}
                       className="cf-select"
+                      role="combobox"
                     >
                       <StateManager
                         cache={false}
@@ -11508,9 +11508,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                   className=""
                 >
                   <div
-                    aria-expanded={false}
                     className="cf-form-dropdown dropdown-judgeDropdown"
-                    role="combobox"
                   >
                     <label
                       className="question-label"
@@ -11524,7 +11522,9 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       </strong>
                     </label>
                     <div
+                      aria-expanded={false}
                       className="cf-select"
+                      role="combobox"
                     >
                       <StateManager
                         cache={false}
@@ -13006,9 +13006,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                   className=""
                 >
                   <div
-                    aria-expanded={false}
                     className="cf-form-dropdown dropdown-hearingCoordinatorDropdown"
-                    role="combobox"
                   >
                     <label
                       className="question-label"
@@ -13022,7 +13020,9 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       </strong>
                     </label>
                     <div
+                      aria-expanded={false}
                       className="cf-select"
+                      role="combobox"
                     >
                       <StateManager
                         cache={false}
@@ -14611,9 +14611,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                 className=""
               >
                 <div
-                  aria-expanded={false}
                   className="cf-form-dropdown dropdown-hearingRoomDropdown"
-                  role="combobox"
                 >
                   <label
                     className="question-label"
@@ -14627,7 +14625,9 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                     </strong>
                   </label>
                   <div
+                    aria-expanded={false}
                     className="cf-select"
+                    role="combobox"
                   >
                     <StateManager
                       cache={false}
@@ -18580,9 +18580,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                   className=""
                 >
                   <div
-                    aria-expanded={false}
                     className="cf-form-dropdown dropdown-transcriber"
-                    role="combobox"
                   >
                     <label
                       className="question-label"
@@ -18596,7 +18594,9 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       </strong>
                     </label>
                     <div
+                      aria-expanded={false}
                       className="cf-select"
+                      role="combobox"
                     >
                       <StateManager
                         cache={false}
@@ -20552,9 +20552,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                   className=""
                 >
                   <div
-                    aria-expanded={false}
                     className="cf-form-dropdown dropdown-problemType"
-                    role="combobox"
                   >
                     <label
                       className="question-label"
@@ -20568,7 +20566,9 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       </strong>
                     </label>
                     <div
+                      aria-expanded={false}
                       className="cf-select"
+                      role="combobox"
                     >
                       <StateManager
                         cache={false}
@@ -22915,9 +22915,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                   className=""
                 >
                   <div
-                    aria-expanded={false}
                     className="cf-form-dropdown dropdown-judgeDropdown"
-                    role="combobox"
                   >
                     <label
                       className="question-label"
@@ -22931,7 +22929,9 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       </strong>
                     </label>
                     <div
+                      aria-expanded={false}
                       className="cf-select"
+                      role="combobox"
                     >
                       <StateManager
                         cache={false}
@@ -24413,9 +24413,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                   className=""
                 >
                   <div
-                    aria-expanded={false}
                     className="cf-form-dropdown dropdown-hearingCoordinatorDropdown"
-                    role="combobox"
                   >
                     <label
                       className="question-label"
@@ -24429,7 +24427,9 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       </strong>
                     </label>
                     <div
+                      aria-expanded={false}
                       className="cf-select"
+                      role="combobox"
                     >
                       <StateManager
                         cache={false}
@@ -26018,9 +26018,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                 className=""
               >
                 <div
-                  aria-expanded={false}
                   className="cf-form-dropdown dropdown-hearingRoomDropdown"
-                  role="combobox"
                 >
                   <label
                     className="question-label"
@@ -26034,7 +26032,9 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                     </strong>
                   </label>
                   <div
+                    aria-expanded={false}
                     className="cf-select"
+                    role="combobox"
                   >
                     <StateManager
                       cache={false}
@@ -29649,10 +29649,8 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                 className=""
               >
                 <div
-                  aria-expanded={false}
                   className="cf-form-dropdown dropdown-hearingType"
                   data-css-vzv9iy=""
-                  role="combobox"
                 >
                   <label
                     className="question-label"
@@ -29666,7 +29664,9 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                     </strong>
                   </label>
                   <div
+                    aria-expanded={false}
                     className="cf-select"
+                    role="combobox"
                   >
                     <StateManager
                       cache={false}
@@ -31598,9 +31598,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                   className=""
                 >
                   <div
-                    aria-expanded={false}
                     className="cf-form-dropdown dropdown-transcriber"
-                    role="combobox"
                   >
                     <label
                       className="question-label"
@@ -31614,7 +31612,9 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       </strong>
                     </label>
                     <div
+                      aria-expanded={false}
                       className="cf-select"
+                      role="combobox"
                     >
                       <StateManager
                         cache={false}
@@ -33570,9 +33570,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                   className=""
                 >
                   <div
-                    aria-expanded={false}
                     className="cf-form-dropdown dropdown-problemType"
-                    role="combobox"
                   >
                     <label
                       className="question-label"
@@ -33586,7 +33584,9 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       </strong>
                     </label>
                     <div
+                      aria-expanded={false}
                       className="cf-select"
+                      role="combobox"
                     >
                       <StateManager
                         cache={false}
@@ -35934,9 +35934,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                   className=""
                 >
                   <div
-                    aria-expanded={false}
                     className="cf-form-dropdown dropdown-judgeDropdown"
-                    role="combobox"
                   >
                     <label
                       className="question-label"
@@ -35950,7 +35948,9 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       </strong>
                     </label>
                     <div
+                      aria-expanded={false}
                       className="cf-select"
+                      role="combobox"
                     >
                       <StateManager
                         cache={false}
@@ -37432,9 +37432,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                   className=""
                 >
                   <div
-                    aria-expanded={false}
                     className="cf-form-dropdown dropdown-hearingCoordinatorDropdown"
-                    role="combobox"
                   >
                     <label
                       className="question-label"
@@ -37448,7 +37446,9 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       </strong>
                     </label>
                     <div
+                      aria-expanded={false}
                       className="cf-select"
+                      role="combobox"
                     >
                       <StateManager
                         cache={false}
@@ -39037,9 +39037,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                 className=""
               >
                 <div
-                  aria-expanded={false}
                   className="cf-form-dropdown dropdown-hearingRoomDropdown"
-                  role="combobox"
                 >
                   <label
                     className="question-label"
@@ -39053,7 +39051,9 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                     </strong>
                   </label>
                   <div
+                    aria-expanded={false}
                     className="cf-select"
+                    role="combobox"
                   >
                     <StateManager
                       cache={false}
@@ -42668,10 +42668,8 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                 className=""
               >
                 <div
-                  aria-expanded={false}
                   className="cf-form-dropdown dropdown-hearingType"
                   data-css-vzv9iy=""
-                  role="combobox"
                 >
                   <label
                     className="question-label"
@@ -42685,7 +42683,9 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                     </strong>
                   </label>
                   <div
+                    aria-expanded={false}
                     className="cf-select"
+                    role="combobox"
                   >
                     <StateManager
                       cache={false}
@@ -44617,9 +44617,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                   className=""
                 >
                   <div
-                    aria-expanded={false}
                     className="cf-form-dropdown dropdown-transcriber"
-                    role="combobox"
                   >
                     <label
                       className="question-label"
@@ -44633,7 +44631,9 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       </strong>
                     </label>
                     <div
+                      aria-expanded={false}
                       className="cf-select"
+                      role="combobox"
                     >
                       <StateManager
                         cache={false}
@@ -46589,9 +46589,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                   className=""
                 >
                   <div
-                    aria-expanded={false}
                     className="cf-form-dropdown dropdown-problemType"
-                    role="combobox"
                   >
                     <label
                       className="question-label"
@@ -46605,7 +46603,9 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       </strong>
                     </label>
                     <div
+                      aria-expanded={false}
                       className="cf-select"
+                      role="combobox"
                     >
                       <StateManager
                         cache={false}
@@ -48953,9 +48953,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                   className=""
                 >
                   <div
-                    aria-expanded={false}
                     className="cf-form-dropdown dropdown-judgeDropdown"
-                    role="combobox"
                   >
                     <label
                       className="question-label"
@@ -48969,7 +48967,9 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                       </strong>
                     </label>
                     <div
+                      aria-expanded={false}
                       className="cf-select"
+                      role="combobox"
                     >
                       <StateManager
                         cache={false}
@@ -50451,9 +50451,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                   className=""
                 >
                   <div
-                    aria-expanded={false}
                     className="cf-form-dropdown dropdown-hearingCoordinatorDropdown"
-                    role="combobox"
                   >
                     <label
                       className="question-label"
@@ -50467,7 +50465,9 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                       </strong>
                     </label>
                     <div
+                      aria-expanded={false}
                       className="cf-select"
+                      role="combobox"
                     >
                       <StateManager
                         cache={false}
@@ -52056,9 +52056,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                 className=""
               >
                 <div
-                  aria-expanded={false}
                   className="cf-form-dropdown dropdown-hearingRoomDropdown"
-                  role="combobox"
                 >
                   <label
                     className="question-label"
@@ -52072,7 +52070,9 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                     </strong>
                   </label>
                   <div
+                    aria-expanded={false}
                     className="cf-select"
+                    role="combobox"
                   >
                     <StateManager
                       cache={false}
@@ -55687,10 +55687,8 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                 className=""
               >
                 <div
-                  aria-expanded={false}
                   className="cf-form-dropdown dropdown-hearingType"
                   data-css-vzv9iy=""
-                  role="combobox"
                 >
                   <label
                     className="question-label"
@@ -55704,7 +55702,9 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                     </strong>
                   </label>
                   <div
+                    aria-expanded={false}
                     className="cf-select"
+                    role="combobox"
                   >
                     <StateManager
                       cache={false}

@@ -1845,10 +1845,8 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                     className=""
                   >
                     <div
-                      aria-expanded={false}
                       className="cf-form-dropdown dropdown-appellantTz"
                       data-css-1gh7024=""
-                      role="combobox"
                     >
                       <label
                         className="question-label"
@@ -1867,7 +1865,9 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                         </strong>
                       </label>
                       <div
+                        aria-expanded={false}
                         className="cf-select"
+                        role="combobox"
                       >
                         <StateManager
                           cache={false}
@@ -18026,10 +18026,8 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                     className=""
                   >
                     <div
-                      aria-expanded={false}
                       className="cf-form-dropdown dropdown-representativeTz"
                       data-css-1gh7024=""
-                      role="combobox"
                     >
                       <label
                         className="question-label"
@@ -18048,7 +18046,9 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                         </strong>
                       </label>
                       <div
+                        aria-expanded={false}
                         className="cf-select"
+                        role="combobox"
                       >
                         <StateManager
                           cache={false}

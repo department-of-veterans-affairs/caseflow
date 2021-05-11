@@ -204,14 +204,14 @@ export class SearchableDropdown extends React.Component {
 
     return (
       <div className={errorMessage ? 'usa-input-error' : ''}>
-        <div role="combobox" className={dropdownClasses} {...dropdownStyling} aria-expanded={this.state.isExpanded}>
+        <div className={dropdownClasses} {...dropdownStyling}>
           <label className={labelClasses} htmlFor={name} id={`${kebabCase(name)}-label`}>
             {strongLabel ? <strong>{labelContents}</strong> : labelContents}
           </label>
           {errorMessage && (
             <span className="usa-input-error-message">{errorMessage}</span>
           )}
-          <div className="cf-select">
+          <div className="cf-select" role="combobox" aria-expanded={this.state.isExpanded}>
             <SelectComponent
               components={{ Input: CustomInput, MenuList: CustomMenuList, Option: CustomOption }}
               name={name}

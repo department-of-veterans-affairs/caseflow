@@ -156,9 +156,7 @@ exports[`DocketSwitchEditTasksForm default values populates with default values 
             class=""
           >
             <div
-              aria-expanded="false"
               class="cf-form-dropdown dropdown-newTasks[0].type"
-              role="combobox"
             >
               <label
                 class="question-label"
@@ -170,7 +168,9 @@ exports[`DocketSwitchEditTasksForm default values populates with default values 
                 </span>
               </label>
               <div
+                aria-expanded="false"
                 class="cf-select"
+                role="combobox"
               >
                 <div
                   class=" css-2b097c-container"

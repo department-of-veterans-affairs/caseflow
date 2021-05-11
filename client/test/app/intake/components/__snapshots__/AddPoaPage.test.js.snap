@@ -80,9 +80,7 @@ exports[`AddPoaPage renders default state correctly 1`] = `
             class=""
           >
             <div
-              aria-expanded="false"
               class="cf-form-dropdown dropdown-listedAttorney"
-              role="combobox"
             >
               <label
                 class="question-label"
@@ -96,7 +94,9 @@ exports[`AddPoaPage renders default state correctly 1`] = `
                 </strong>
               </label>
               <div
+                aria-expanded="false"
                 class="cf-select"
+                role="combobox"
               >
                 <div
                   class=" css-2b097c-container"

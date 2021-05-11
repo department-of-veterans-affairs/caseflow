@@ -64,9 +64,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
       className=""
     >
       <div
-        aria-expanded={false}
         className="cf-form-dropdown dropdown-hearingType"
-        role="combobox"
       >
         <label
           className="question-label"
@@ -80,7 +78,9 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
           </strong>
         </label>
         <div
+          aria-expanded={false}
           className="cf-select"
+          role="combobox"
         >
           <StateManager
             cache={false}
@@ -1713,9 +1713,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
       className=""
     >
       <div
-        aria-expanded={false}
         className="cf-form-dropdown dropdown-hearingType"
-        role="combobox"
       >
         <label
           className="question-label"
@@ -1729,7 +1727,9 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
           </strong>
         </label>
         <div
+          aria-expanded={false}
           className="cf-select"
+          role="combobox"
         >
           <StateManager
             cache={false}
@@ -3395,9 +3395,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
       className=""
     >
       <div
-        aria-expanded={false}
         className="cf-form-dropdown dropdown-hearingType"
-        role="combobox"
       >
         <label
           className="question-label"
@@ -3411,7 +3409,9 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
           </strong>
         </label>
         <div
+          aria-expanded={false}
           className="cf-select"
+          role="combobox"
         >
           <StateManager
             cache={false}
@@ -5092,9 +5092,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
       className=""
     >
       <div
-        aria-expanded={false}
         className="cf-form-dropdown dropdown-hearingType"
-        role="combobox"
       >
         <label
           className="question-label"
@@ -5108,7 +5106,9 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
           </strong>
         </label>
         <div
+          aria-expanded={false}
           className="cf-select"
+          role="combobox"
         >
           <StateManager
             cache={false}
