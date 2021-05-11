@@ -110,6 +110,7 @@ export const TimeSlot = ({
               timezone: roTimezone
             }}
             title={customText}
+            hearingDayDate={hearingDayDate}
           />}
         </React.Fragment>
       )}

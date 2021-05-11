@@ -15,11 +15,11 @@ import { COLORS } from 'app/constants/AppConstants';
 */
 // Get an array with every fifteen minute increment in a day
 // [00:00, 00:15, ... , 23:45]
-const generateTimes = (roTimezone, intervalMinutes = 15) => {
+const generateTimes = (roTimezone, date, intervalMinutes = 15) => {
   // Start at midnight '00:00' is the first minute of a day
-  const currentTime = moment.tz('00:00', 'HH:mm', roTimezone);
+  const currentTime = moment.tz(`${date} 00:00`, 'YYYY-MM-DD HH:mm', roTimezone);
   // End at 23:59, the last minute of a day
-  const elevenFiftyNine = moment.tz('23:59', 'HH:mm', roTimezone);
+  const elevenFiftyNine = moment.tz(`${date} 23:59`, 'YYYY-MM-DD HH:mm', roTimezone);
 
   const times = [];
 
@@ -56,8 +56,9 @@ const formatTimesToOptionObjects = (times) => {
 // Generate a time for every 15m increment in a day.
 // Then move every time before beginsAt to the end of
 // the array to beginsAt appears first.
-const generateOrderedTimeOptions = (roTimezone, beginsAt = moment.tz('08:30', 'HH:mm', roTimezone)) => {
-  const times = generateTimes(roTimezone);
+const generateOrderedTimeOptions = (roTimezone, hearingDayDate) => {
+  const beginsAt = moment.tz(`${hearingDayDate} 08:30`, 'YYYY-MM-DD HH:mm', roTimezone);
+  const times = generateTimes(roTimezone, hearingDayDate);
   const reorderedTimes = moveTimesToEndOfArray(beginsAt, times);
   const options = formatTimesToOptionObjects(reorderedTimes);
 
@@ -159,7 +160,7 @@ InfoAlert.propTypes = {
   timeString: PropTypes.string
 };
 
-const TimeSelect = ({ roTimezone, onSelect, error, clearError }) => {
+const TimeSelect = ({ roTimezone, onSelect, error, clearError, hearingDayDate }) => {
 
   const customSelectStyles = {
     // Hide the dropdown arrow on the right side
@@ -229,7 +230,9 @@ const TimeSelect = ({ roTimezone, onSelect, error, clearError }) => {
     }
   };
 
-  const options = generateOrderedTimeOptions(roTimezone);
+  const options = generateOrderedTimeOptions(roTimezone, hearingDayDate);
+
+  console.log(options.map((option) => option.value.format('LLL z')));
 
   return (
     <div className="time-select" {...containerStyles}>
@@ -268,10 +271,11 @@ TimeSelect.propTypes = {
   roTimezone: PropTypes.string,
   onSelect: PropTypes.func,
   error: PropTypes.bool,
-  clearError: PropTypes.func
+  clearError: PropTypes.func,
+  hearingDayDate: PropTypes.string
 };
 
-export const TimeModal = ({ onCancel, onConfirm, ro, title }) => {
+export const TimeModal = ({ onCancel, onConfirm, ro, title, hearingDayDate }) => {
   // Error message state
   const [error, setError] = useState();
   // Control the TimeSelect component
@@ -321,6 +325,7 @@ export const TimeModal = ({ onCancel, onConfirm, ro, title }) => {
           onSelect={setSelectedOption}
           error={error}
           clearError={() => setError('')}
+          hearingDayDate={hearingDayDate}
         />
 
         {ro.timezone !== 'America/New_York' && selectedOption &&
@@ -340,5 +345,6 @@ TimeModal.propTypes = {
     timezone: PropTypes.string,
   }),
   title: PropTypes.string,
+  hearingDayDate: PropTypes.string
 };
 
