@@ -15,7 +15,8 @@ export default {
     ro: {
       city: 'Denver',
       timezone: 'America/Denver'
-    }
+    },
+    title: 'Choose a custom time'
   },
   argTypes: {
     onConfirm: { action: 'confirmed' },
@@ -24,9 +25,7 @@ export default {
 };
 
 const Template = (args) => {
-  return (
-    <TimeModal {...args} />
-  );
+  return <TimeModal {...args} />;
 };
 
 export const Basic = Template.bind({});

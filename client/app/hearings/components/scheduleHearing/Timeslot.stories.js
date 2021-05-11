@@ -51,7 +51,7 @@ const Template = (args) => {
   );
 };
 
-export const BasicInLA = Template.bind({});
-BasicInLA.args = { hearingTime: HEARING_TIME_OPTIONS[0].value, ro: 'RO44', roTimezone: 'America/Los_Angeles' };
-export const BasicInDenver = Template.bind({});
-BasicInDenver.args = { hearingTime: HEARING_TIME_OPTIONS[0].value, ro: 'RO39', roTimezone: 'America/Denver' };
+export const Basic = Template.bind({});
+Basic.args = { hearingTime: HEARING_TIME_OPTIONS[0].value, ro: 'RO44', roTimezone: 'America/Los_Angeles' };
+export const Denver = Template.bind({});
+Denver.args = { hearingTime: HEARING_TIME_OPTIONS[0].value, ro: 'RO39', roTimezone: 'America/Denver' };
