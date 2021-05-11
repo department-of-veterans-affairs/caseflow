@@ -6,8 +6,7 @@ import { showSuccessMessage, showErrorMessage } from 'app/queue/uiReducer/uiActi
 import { SubstituteAppellantReview } from './SubstituteAppellantReview';
 
 import { cancel, stepBack, completeSubstituteAppellant } from '../substituteAppellant.slice';
-import { getAllTasksForAppeal } from 'app/queue/selectors';
-
+import { getAllTasksForAppeal, appealWithDetailSelector } from 'app/queue/selectors';
 
 import COPY from 'app/../COPY';
 
@@ -28,10 +27,28 @@ export const SubstituteAppellantReviewContainer = () => {
     if (selectedTaskIds === null) {
       return [];
     }
-
     return appealTasks.filter((task) => selectedTaskIds.indexOf(task.taskId) !== -1);
   };
   const selectedTasks = findSelectedTasks(allTasks, existingValues.taskIds);
+
+  const appeal = useSelector((state) =>
+    appealWithDetailSelector(state, { appealId })
+  );
+
+  const calculateEvidenceSubmissionEndDate = (selectedTasks) => {
+
+    const evidenceSubmissionTask = selectedTasks.find((task) => task.type === 'EvidenceSubmissionWindowTask');
+
+    if (!evidenceSubmissionTask) {
+      return null;
+    }
+
+    const dateOfDeath = appeal.veteranDateOfDeath;
+
+    return null;
+  };
+
+  const evidenceSubmissionEndDate = calculateEvidenceSubmissionEndDate(selectedTasks);
 
   const handleBack = () => {
     dispatch(stepBack());
@@ -81,6 +98,8 @@ export const SubstituteAppellantReviewContainer = () => {
     <SubstituteAppellantReview
       selectedTasks={selectedTasks}
       existingValues={existingValues}
+      evidenceSubmissionEndDate={evidenceSubmissionEndDate}
+      appeal={appeal}
       onBack={handleBack}
       onCancel={handleCancel}
       onSubmit={handleSubmit}

@@ -26,8 +26,7 @@ const styles = {
   }),
 };
 
-export const SubstituteAppellantReview = ({ selectedTasks, existingValues, onBack, onCancel, onSubmit }) => {
-
+export const SubstituteAppellantReview = ({ selectedTasks, existingValues, evidenceSubmissionEndDate, onBack, onCancel, onSubmit }) => {
 
   const substitutionDate = format(parseISO(existingValues.substitutionDate), 'MM/dd/yyyy');
   const { relationships } = useSelector((state) => state.substituteAppellant);
@@ -79,27 +78,12 @@ export const SubstituteAppellantReview = ({ selectedTasks, existingValues, onBac
                 return <div className="task-detail" key={`${task.taskId}`}>
                   <tr>
                     <td>
-                      Distribution
+                      { task.label.split(' ').slice(0, -1).
+                        join(' ') }
                     </td>
-                    <td>
-                      { task.label }
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      Evidence Submission Window
-                    </td>
-                    <td>
-                      End date: FILLER
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      Translation
-                    </td>
-                    <td>
-                      FILLER
-                    </td>
+                    { task.type === 'EvidenceSubmissionWindowTask' && <td>
+                      End date: { evidenceSubmissionEndDate }
+                    </td> }
                   </tr>
                 </div>;
               }
@@ -121,7 +105,7 @@ export const SubstituteAppellantReview = ({ selectedTasks, existingValues, onBac
 };
 SubstituteAppellantReview.propTypes = {
   selectedTasks: PropTypes.arrayOf(PropTypes.shape({
-    taskId: PropTypes.string,
+    taskId: PropTypes.number,
     label: PropTypes.string,
   })),
   existingValues: PropTypes.shape({
@@ -129,6 +113,7 @@ SubstituteAppellantReview.propTypes = {
     participantId: PropTypes.string,
     taskIds: PropTypes.array,
   }),
+  evidenceSubmissionEndDate: PropTypes.instanceOf(Date),
   onBack: PropTypes.func,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
