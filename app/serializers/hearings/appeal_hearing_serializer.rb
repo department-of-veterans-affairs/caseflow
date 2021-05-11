@@ -17,4 +17,5 @@ class AppealHearingSerializer
   attribute :viewed_by_judge do |hearing|
     !hearing.hearing_views.empty?
   end
+  attribute :created_at
 end

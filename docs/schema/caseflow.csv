@@ -9,14 +9,17 @@ advance_on_docket_motions,person_id,integer (8) FK,,,x,,x,Appellant ID
 advance_on_docket_motions,reason,string,,,,,,VLJ's rationale for their decision on motion to AOD.
 advance_on_docket_motions,updated_at,datetime ∗,x,,,,x,
 advance_on_docket_motions,user_id,integer (8) FK,,,x,,x,
-allocations,,,,,,,,
-allocations,allocated_days,float ∗,x,,,,,
+allocations,,,,,,,,Hearing Day Requests for each Regional Office used for calculation and confirmation of the Build Hearings Schedule Algorithm
+allocations,allocated_days,float ∗,x,,,,,Number of Video or Central Hearing Days Requested by the Regional Office
 allocations,allocated_days_without_room,float,,,,,,Number of Hearing Days Allocated with no Rooms
-allocations,created_at,datetime ∗,x,,,,,
+allocations,created_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
+allocations,first_slot_time,string (5),,,,,,The first time slot available for this allocation; interpreted as the local time at Central office or the RO
 allocations,id,integer (8) PK,x,x,,,,
-allocations,regional_office,string ∗,x,,,,,
-allocations,schedule_period_id,integer (8) ∗ FK,x,,x,,x,
-allocations,updated_at,datetime ∗,x,,,,x,
+allocations,number_of_slots,integer,,,,,,The number of time slots possible for this allocation
+allocations,regional_office,string ∗,x,,,,,Key of the Regional Office Requesting Hearing Days
+allocations,schedule_period_id,integer (8) ∗ FK,x,,x,,x,Hearings Schedule Period to which this request belongs
+allocations,slot_length_minutes,integer,,,,,,The length in minutes of each time slot for this allocation
+allocations,updated_at,datetime ∗,x,,,,x,Standard created_at/updated_at timestamps
 annotations,,,,,,,,
 annotations,comment,string ∗,x,,,,,
 annotations,created_at,datetime,,,,,,
@@ -87,14 +90,17 @@ appeal_views,last_viewed_at,datetime,,,,,,
 appeal_views,updated_at,datetime ∗,x,,,,,
 appeal_views,user_id,integer ∗ FK,x,,x,,x,
 appellant_substitutions,,,,,,,,Store appellant substitution form data
+appellant_substitutions,claimant_type,string ∗,x,,,,,Claimant type of substitute; needed to create Claimant record
 appellant_substitutions,created_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
 appellant_substitutions,created_by_id,integer (8) ∗ FK,x,,x,,,User that created this record
 appellant_substitutions,id,integer (8) PK,x,x,,,,
 appellant_substitutions,poa_participant_id,string ∗,x,,,,,"Identifier of the appellant's POA, if they have a CorpDB participant_id"
+appellant_substitutions,selected_task_ids,integer (8) ∗,x,,,,,User-selected task ids from source appeal
 appellant_substitutions,source_appeal_id,integer (8) ∗ FK,x,,x,,x,The relevant source appeal for this substitution
 appellant_substitutions,substitute_participant_id,string ∗,x,,,,,Participant ID of substitute appellant
 appellant_substitutions,substitution_date,date ∗,x,,,,,Date of substitution
 appellant_substitutions,target_appeal_id,integer (8) ∗ FK,x,,x,,x,The new appeal resulting from this substitution
+appellant_substitutions,task_params,jsonb ∗,x,,,,,"JSON hash to hold parameters for new tasks, such as an EvidenceSubmissionWindowTask's end-hold date, with keys from selected_task_ids"
 appellant_substitutions,updated_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
 attorney_case_reviews,,,,,,,,
 attorney_case_reviews,attorney_id,integer FK,,,x,,,

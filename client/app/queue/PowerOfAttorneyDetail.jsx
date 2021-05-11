@@ -120,6 +120,8 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
     });
   }
 
+  const showPoaDetails = poa.representative_type && poa.representative_name;
+
   return (
     <React.Fragment>
       <div>
@@ -127,9 +129,11 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
           <em>{ COPY.CASE_DETAILS_UNRECOGNIZED_POA }</em> :
           <PoaRefresh powerOfAttorney={poa} appealId={appealId} {...detailListStyling} />}
         </p>
-        <ul {...detailListStyling}>
-          <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
-        </ul>
+        { showPoaDetails && (
+          <ul {...detailListStyling}>
+            <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
+          </ul>
+        )}
         <p><em>{ COPY.CASE_DETAILS_POA_EXPLAINER }</em></p>
         { poaAlert.message && poaAlert.alertType && (
           <div>

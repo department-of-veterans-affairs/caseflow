@@ -10,7 +10,7 @@ import _ from 'lodash';
 import { CENTRAL_OFFICE_HEARING_LABEL, VIDEO_HEARING_LABEL } from '../../hearings/constants';
 import {
   appealWithDetailSelector,
-  scheduleHearingTasksForAppeal
+  openScheduleHearingTasksForAppeal
 } from '../selectors';
 import { formatDateStr } from '../../util/DateUtil';
 import { fullWidth } from '../constants';
@@ -267,7 +267,7 @@ AssignHearingModal.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  scheduleHearingTask: scheduleHearingTasksForAppeal(state, { appealId: ownProps.appealId })[0],
+  scheduleHearingTask: openScheduleHearingTasksForAppeal(state, { appealId: ownProps.appealId })[0],
   openHearing: _.find(
     appealWithDetailSelector(state, ownProps).hearings,
     (hearing) => hearing.disposition === null
