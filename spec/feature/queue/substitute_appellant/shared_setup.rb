@@ -31,6 +31,7 @@ RSpec.shared_context "with existing relationships" do
 
   before do
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(relationships)
+    EvidenceSubmissionWindowTask.find_or_create_by(appeal: appeal).update!(status: "completed")
   end
 end
 
@@ -67,24 +68,46 @@ RSpec.shared_examples("fill substitution form") do
     # end
 
     step "create tasks form" do
-      #binding.pry
+
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}/substitute_appellant/tasks")
 
-      dispatch_task = BvaDispatchTask.find_by(appeal_id: appeal.id)
-      expect(dispatch_task.closed_at).to_not be_nil
-
-      #expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_CREATE_TASKS_TITLE
+      # progress bar section"
+      expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_CREATE_TASKS_TITLE
       expect(page).to have_css(".cf-progress-bar-activated", text: "Select substitute appellant")
       # expect(page).to have_css(".cf-progress-bar-activated", text: "Select POA")
       expect(page).to have_css(".cf-progress-bar-activated", text: "Create task")
       expect(page).to have_css(".cf-progress-bar-not-activated", text: "Review")
 
+      # key details section
       expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_KEY_DETAILS_TITLE)
       expect(page).to have_content("Notice of disagreement received")
       expect(page).to have_content("Veteran date of death")
       expect(page).to have_content("Substitution granted by the RO")
 
-      binding.pry
+      # tasks table"
+      distribution_task = DistributionTask.find_by(appeal_id: appeal.id)
+      expect(distribution_task.closed_at).to_not be_nil
+      
+      evidence_submission_task = EvidenceSubmissionWindowTask.find_by(appeal_id: appeal.id)
+      evidence_task_id = evidence_submission_task.id
+      expect(evidence_submission_task.closed_at).to_not be_nil
+
+      expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_TASK_SELECTION_TITLE)
+      expect(page).to have_text("Listed below are all the tasks from the original appeal")
+      expect(page).to have_css(".usa-table-borderless.css-nil")
+      expect(page).to have_css(".usa-table-borderless.css-nil thead tr th", text: "Select")
+      expect(page).to have_css(".usa-table-borderless.css-nil thead tr th", text: "Task")
+      expect(page).to have_css(".usa-table-borderless.css-nil thead tr th", text: "Status")
+      expect(page).to have_css(".usa-table-borderless.css-nil thead tr th", text: "Date")
+
+      # there should always be a distrubution task
+      expect(page).to have_css(".usa-table-borderless.css-nil tbody tr td", text: "Distribution Task")
+
+      # example appeal has an evidence submission task
+      expect(page).to have_css(".usa-table-borderless.css-nil tbody tr td", text: "Evidence Submission Window Task") 
+
+      find("div", class: "checkbox-wrapper-taskIds[#{evidence_task_id}]").click
+
       page.find("button", text: "Continue").click
     end
 
