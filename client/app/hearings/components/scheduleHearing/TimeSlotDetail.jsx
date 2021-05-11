@@ -42,8 +42,12 @@ export const TimeSlotDetail = ({
       )}
       {showType && (
         <div className="time-slot-details">
-          {renderAppealType({ caseType, isAdvancedOnDocket: aod })}{' '}
-          <Dot spacing={itemSpacing} />{' '}
+          {caseType && (
+            <React.Fragment>
+              {renderAppealType({ caseType, isAdvancedOnDocket: aod })}{' '}
+              <Dot spacing={itemSpacing} />{' '}
+            </React.Fragment>
+          )}
           <HearingRequestType hearingRequestType={readableRequestType} isFormerTravel={isFormerTravel} />{' '}
           <Dot spacing={itemSpacing} />{' '}
           <LinkToAppeal
