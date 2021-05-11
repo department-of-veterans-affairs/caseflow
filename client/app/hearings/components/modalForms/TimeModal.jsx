@@ -271,7 +271,7 @@ TimeSelect.propTypes = {
   clearError: PropTypes.func
 };
 
-export const TimeModal = ({ onCancel, onConfirm, ro }) => {
+export const TimeModal = ({ onCancel, onConfirm, ro, title }) => {
   // Error message state
   const [error, setError] = useState();
   // Control the TimeSelect component
@@ -291,7 +291,7 @@ export const TimeModal = ({ onCancel, onConfirm, ro }) => {
 
   return (
     <Modal
-      title="Create a custom time"
+      title={title}
       buttons={[
         {
           classNames: ['cf-modal-link', 'cf-btn-link'],

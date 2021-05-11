@@ -58,7 +58,7 @@ export const TimeSlot = ({
   const columnLength = Math.ceil(slots.length / 2);
 
   // Custom button shows different text depending on if a custom time is in use
-  const customButtonText = isCustomTime ? 'Change your custom time' : 'Choose a custom time';
+  const customText = isCustomTime ? 'Change your custom time' : 'Choose a custom time';
 
   return (
     <React.Fragment>
@@ -74,7 +74,7 @@ export const TimeSlot = ({
               linkStyling
               onClick={() => toggleTimeModal()}
               classNames={['time-slot-button-toggle']}
-            >{customButtonText}</Button>
+            >{customText}</Button>
           </div>
           <div className="time-slot-button-container">
             <div className="time-slot-container" >
@@ -110,6 +110,7 @@ export const TimeSlot = ({
               city: regionalOfficeDetails(ro) ? regionalOfficeDetails(ro).city : '',
               timezone: roTimezone
             }}
+            title={customText}
           />}
         </React.Fragment>
       )}
