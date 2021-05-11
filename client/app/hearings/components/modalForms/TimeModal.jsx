@@ -272,14 +272,14 @@ const TimeSelect = ({ roTimezone, onSelect, error, clearError, hearingDayDate })
 TimeSelect.propTypes = {
   roTimezone: PropTypes.string,
   onSelect: PropTypes.func,
-  error: PropTypes.bool,
+  error: PropTypes.string,
   clearError: PropTypes.func,
   hearingDayDate: PropTypes.string
 };
 
 export const TimeModal = ({ onCancel, onConfirm, ro, title, hearingDayDate }) => {
   // Error message state
-  const [error, setError] = useState();
+  const [error, setError] = useState('');
   // Control the TimeSelect component
   const [selectedOption, setSelectedOption] = useState();
   // Check if we have a value, if yes setError, if not, format and submit.
