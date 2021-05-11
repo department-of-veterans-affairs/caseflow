@@ -52,6 +52,16 @@ const Template = (args) => {
 };
 
 export const Basic = Template.bind({});
-Basic.args = { hearingTime: HEARING_TIME_OPTIONS[0].value, ro: 'RO44', roTimezone: 'America/Los_Angeles' };
+Basic.args = {
+  hearingTime: HEARING_TIME_OPTIONS[0].value,
+  ro: 'RO44',
+  roTimezone: 'America/Los_Angeles',
+  hearing: { hearingDay: { scheduledFor: '05-09-2021' } }
+};
 export const Denver = Template.bind({});
-Denver.args = { hearingTime: HEARING_TIME_OPTIONS[0].value, ro: 'RO39', roTimezone: 'America/Denver' };
+Denver.args = {
+  hearingTime: HEARING_TIME_OPTIONS[0].value,
+  ro: 'RO39',
+  roTimezone: 'America/Denver',
+  hearing: { hearingDay: { scheduledFor: '05-09-2021' } }
+};

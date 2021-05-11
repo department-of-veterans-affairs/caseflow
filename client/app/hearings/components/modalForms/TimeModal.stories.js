@@ -16,7 +16,8 @@ export default {
       city: 'Denver',
       timezone: 'America/Denver'
     },
-    title: 'Choose a custom time'
+    title: 'Choose a custom time',
+    hearingDayDate: '05-09-2021'
   },
   argTypes: {
     onConfirm: { action: 'confirmed' },
