@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { showSuccessMessage, showErrorMessage } from 'app/queue/uiReducer/uiActions';
 import { SubstituteAppellantReview } from './SubstituteAppellantReview';
+import { calculateEvidenceSubmissionEndDate } from '../tasks/utils';
 
 import { cancel, stepBack, completeSubstituteAppellant } from '../substituteAppellant.slice';
 import { getAllTasksForAppeal, appealWithDetailSelector } from 'app/queue/selectors';
@@ -35,21 +36,7 @@ export const SubstituteAppellantReviewContainer = () => {
     appealWithDetailSelector(state, { appealId })
   );
 
-  const calculateEvidenceSubmissionEndDate = (selectedTasks) => {
-
-    const evidenceSubmissionTask = selectedTasks.find((task) => task.type === 'EvidenceSubmissionWindowTask');
-
-    if (!evidenceSubmissionTask) {
-      return null;
-    }
-
-    const timerEndsAt= evidenceSubmissionTask.timerEndsAt;
-    const dateOfDeath = appeal.veteranDateOfDeath;
-
-    return null;
-  };
-
-  const evidenceSubmissionEndDate = calculateEvidenceSubmissionEndDate(selectedTasks);
+  const evidenceSubmissionEndDate = calculateEvidenceSubmissionEndDate({substitutionDate: existingValues.substitutionDate, veteranDateOfDeath: appeal.veteranDateOfDeath, selectedTasks });
 
   const handleBack = () => {
     dispatch(stepBack());
@@ -70,6 +57,7 @@ export const SubstituteAppellantReviewContainer = () => {
       substitution_date: existingValues.substitutionDate,
       claimant_type: existingValues.claimantType,
       substitute_participant_id: existingValues.participantId,
+      evidence_submission_date: evidenceSubmissionEndDate,
       // To-do: populate with appropriate user input
       poa_participant_id: '123456789'
     };

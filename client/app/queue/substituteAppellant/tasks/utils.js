@@ -1,4 +1,7 @@
 // Generic function to determine if a task is a descendent of another task
+
+import parseISO from "date-fns/parseISO";
+
 // allItems is object keyed to taskId
 export const isDescendant = (allItems = {}, target, current, { id = 'id' } = {}) => {
   if (!current.parentId) {
@@ -99,4 +102,21 @@ export const formatTaskData = (taskData) => {
     disabled: shouldDisable(taskInfo, taskData),
     selected: shouldAutoSelect(taskInfo),
   }));
+};
+
+export const calculateEvidenceSubmissionEndDate = ({ substitutionDate: substitutionDateStr, veteranDateOfDeath: veteranDateOfDeathStr, selectedTasks }) => {
+  const substitutionDate = new Date(substitutionDateStr);
+  const veteranDateOfDeath = new Date(veteranDateOfDeathStr);
+  const evidenceSubmissionTask = selectedTasks.find((task) => task.type === 'EvidenceSubmissionWindowTask');
+
+  if (!evidenceSubmissionTask?.timerEndsAt) {
+    return null;
+  }
+  const timerEndsAt = evidenceSubmissionTask.timerEndsAt;
+  const timerEndsAtDate = parseISO(timerEndsAt);
+
+  const remainingTime = timerEndsAtDate.getTime() - veteranDateOfDeath.getTime();
+  const newEndTime = substitutionDate.getTime() + remainingTime;
+
+  return new Date(newEndTime);
 };
