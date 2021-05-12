@@ -768,5 +768,114 @@ export const selectHearingDayEvent = (cb) => (hearingDay) => {
   cb(hearingDay);
 };
 
+// Get an array with every fifteen minute increment in a day
+// [00:00, 00:15, ... , 23:45]
+const generateTimes = (roTimezone, date, intervalMinutes = 15) => {
+  // Start at midnight '00:00' is the first minute of a day
+  const currentTime = moment.tz(`${date} 00:00`, 'YYYY-MM-DD HH:mm', roTimezone);
+  // End at 23:59, the last minute of a day
+  const elevenFiftyNine = moment.tz(`${date} 23:59`, 'YYYY-MM-DD HH:mm', roTimezone);
+
+  const times = [];
+
+  // Go through the day in fifteen minute increments and store each increment
+  while (currentTime.isBefore(elevenFiftyNine)) {
+    // Moment has mutable objects so clone() is necessary
+    times.push(currentTime.clone());
+    currentTime.add(intervalMinutes, 'minute');
+  }
+
+  return times;
+};
+
+// Move the part of the arrawy after newFirstValue to the end of the array
+const moveTimesToEndOfArray = (newFirstValue, times) => {
+  // Find the index of newFirstValue
+  const firstValueIndex = times.findIndex((time) => time.isSame(newFirstValue));
+
+  // Remove all values before newFirstValue from the front of the array
+  const beforeFirstValue = times.slice(0, firstValueIndex);
+  const afterFirstValue = times.slice(firstValueIndex);
+
+  // Add the values back onto the end of the array
+  return afterFirstValue.concat(beforeFirstValue);
+};
+// Convert each time in the array into the expected 'option' format for react-select
+const formatTimesToOptionObjects = (times) => {
+  return times.map((time) => {
+    return {
+      label: time.format('h:mm A'),
+      value: time
+    };
+  });
+};
+
+// Generate a time for every 15m increment in a day.
+// Then move every time before beginsAt to the end of
+// the array to beginsAt appears first.
+export const generateOrderedTimeOptions = (roTimezone, hearingDayDate) => {
+  const beginsAt = moment.tz(`${hearingDayDate} 08:30`, 'YYYY-MM-DD HH:mm', roTimezone);
+  const times = generateTimes(roTimezone, hearingDayDate);
+  const reorderedTimes = moveTimesToEndOfArray(beginsAt, times);
+  const options = formatTimesToOptionObjects(reorderedTimes);
+
+  return options;
+};
+
+// Checks if the input matches the hour of a candidate.value which is a moment object
+const matchesHour = (candidate, input, exact = false) => {
+  const candidateHourString = candidate.value.format('h');
+
+  return exact ? candidateHourString === input : candidateHourString.startsWith(input);
+};
+const removeOneLeadingZero = (string) => {
+  return string[0] === '0' ? string.slice(1) : string;
+};
+// Checks if the input matches any part of a candidate.value which is a moment object
+const matchesAny = (candidate, input) => {
+  if (input.includes(':')) {
+    // Split into hours and minutes
+    const [hour, minutesAndAmPm] = input.split(':');
+
+    // Check that the hour matches exactly and the minutes+ampm are present
+    return matchesHour(candidate, hour, true) && matchesAny(candidate, minutesAndAmPm);
+  }
+  if (!input.includes(':')) {
+    // Produce a time like '400pm' or '800am' for string searching
+    const candidateNoColon = candidate.value.format('hhmmA');
+    // Remove spaces, force upper case so AM/PM searching works
+    const noColonOrSpaces = input.replace(' ', '').toUpperCase();
+    // Remove a leading zero if there is one
+    const noLeadingZero = removeOneLeadingZero(noColonOrSpaces);
+
+    return candidateNoColon.includes(noLeadingZero);
+  }
+};
+
+// Filter the options list to display only options that match
+// what's been typed into the input
+export const filterOptions = (candidate, input) => {
+  // If only one character in the input assume it represents an hour
+  if (input.length === 1) {
+    return matchesHour(candidate, input);
+  }
+  // If one character and ':' in the input assume it represents an hour
+  if (input.length === 2 && input.endsWith(':')) {
+    return matchesHour(candidate, input[0], true);
+  }
+  // For everything else, send to matchesAny, which also handles ':'
+  if (input.length >= 2) {
+    return matchesAny(candidate, input);
+  }
+};
+
+// Given a long timezone like "America/Los_Angeles" return the
+// short version like "PDT" or "PST" (depending on date)
+export const getTimezoneAbbreviation = (timezone) => {
+  // Create a moment object so we can extract the timezone
+  // abbreviation like 'PDT'
+  return moment.tz('00:00', 'HH:mm', timezone).format('z');
+};
+
 /* eslint-enable camelcase */
 
