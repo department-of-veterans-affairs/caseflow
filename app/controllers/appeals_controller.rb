@@ -269,7 +269,12 @@ class AppealsController < ApplicationController
 
   def update_ama_poa(poa)
     begin
-      message = poa.update_or_delete(appeal.claimant)
+      claimant = if appeal.claimant.is_a?(Hash)
+                   BgsPowerOfAttorney.find_or_fetch_by(participant_id: claimant.dig(:representative, :participant_id))
+                 else
+                   appeal.claimant
+                 end
+      message = poa.update_or_delete(claimant)
       {
         status: "success",
         message: message,
