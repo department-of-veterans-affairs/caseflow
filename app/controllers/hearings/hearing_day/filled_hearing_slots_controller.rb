@@ -13,16 +13,6 @@ class Hearings::HearingDay::FilledHearingSlotsController < ApplicationController
 
   private
 
-  def poa_name(hearing)
-    poa = if hearing.is_a?(Hearing)
-            BgsPowerOfAttorney.find_by(claimant_participant_id: hearing.appeal.claimant.participant_id)
-          elsif hearing.is_a?(LegacyHearing)
-            BgsPowerOfAttorney.find_by(file_number: hearing.appeal.veteran_file_number)
-          end
-
-    poa&.representative_name
-  end
-
   def filled_hearing_slots(hearing_day)
     return if hearing_day.nil?
 
@@ -35,7 +25,7 @@ class Hearings::HearingDay::FilledHearingSlotsController < ApplicationController
         issue_count: hearing.current_issue_count,
         docket_number: hearing.docket_number,
         docket_name: hearing.docket_name,
-        poa_name: poa_name(hearing)
+        poa_name: hearing.poa_name
       }
     end
   end
