@@ -696,6 +696,13 @@ export const timelineEventsFromAppeal = ({ appeal }) => {
     });
   }
 
+  if (appeal.nodDateUpdates) {
+    timelineEvents.push(...(appeal.nodDateUpdates.map((item) => ({
+      ...item,
+      type: 'nodDateUpdate'
+    }))));
+  }
+
   return timelineEvents;
 };
 

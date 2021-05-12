@@ -6,7 +6,7 @@ import Button from '../../components/Button';
 import COPY from '../../../COPY';
 import { GrayDot, GreenCheckmark, CancelIcon } from '../../components/RenderFunctions';
 import { COLORS } from '../../constants/AppConstants';
-import { taskIsOnHold, sortCaseTimelineEvents } from '../utils';
+import { taskIsOnHold, sortCaseTimelineEvents, timelineEventsFromAppeal } from '../utils';
 import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
 import ActionsDropdown from '../components/ActionsDropdown';
 import OnHoldLabel from '../components/OnHoldLabel';
@@ -15,6 +15,7 @@ import DecisionDateTimeLine from '../components/DecisionDateTimeLine';
 import ReactMarkdown from 'react-markdown';
 import { EditNodDateModalContainer } from './EditNodDateModal';
 import { NodDateUpdateTimeline } from './NodDateUpdateTimeline';
+import { SubstituteAppellantTimelineEvent } from '../substituteAppellant/timelineEvent/SubstituteAppellantTimelineEvent'; // eslint-disable-line max-len
 
 export const grayLineStyling = css({
   width: '5px',
@@ -336,26 +337,29 @@ class TaskRows extends React.PureComponent {
       taskList,
       timeline
     } = this.props;
-    const nodDateUpdates = appeal.nodDateUpdates;
-
-    const sortedTimelineEvents = sortCaseTimelineEvents(taskList, nodDateUpdates);
+    const eventsFromAppeal = timelineEventsFromAppeal({ appeal });
+    const sortedTimelineEvents = sortCaseTimelineEvents(taskList, eventsFromAppeal);
 
     return <React.Fragment key={appeal.externalId}>
 
       { sortedTimelineEvents.map((timelineEvent, index) => {
 
-        if (timelineEvent.isDecisionDate) {
+        if (timelineEvent?.type === 'decisionDate') {
           return <DecisionDateTimeLine
             appeal = {appeal}
             timeline = {timeline}
             taskList = {taskList} />;
         }
 
-        if (timelineEvent.changeReason) {
+        if (timelineEvent?.type === 'nodDateUpdate') {
           return <NodDateUpdateTimeline
             nodDateUpdate = {timelineEvent}
             timeline = {timeline}
           />;
+        }
+
+        if (timelineEvent?.type === 'substitutionDate') {
+          return <SubstituteAppellantTimelineEvent timelineEvent={timelineEvent} />;
         }
 
         const templateConfig = {
