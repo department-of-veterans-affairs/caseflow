@@ -29,6 +29,7 @@ export const SubstituteAppellantReviewContainer = () => {
     if (selectedTaskIds === null) {
       return [];
     }
+
     return appealTasks.filter((task) => selectedTaskIds.indexOf(task.taskId) !== -1);
   };
   const selectedTasks = findSelectedTasks(allTasks, existingValues.taskIds);

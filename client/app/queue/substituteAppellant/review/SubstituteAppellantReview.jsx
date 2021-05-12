@@ -9,21 +9,13 @@ import {
 } from 'app/../COPY';
 import CheckoutButtons from 'app/queue/docketSwitch/grant/CheckoutButtons';
 import { pageHeader } from '../styles';
-import { css } from 'glamor';
 import { format, parseISO } from 'date-fns';
+import { css } from 'glamor';
 
-const styles = {
-  mainTable: css({
-    '&': {
-      margin: 0,
-      '& tr:last-of-type td': {
-        borderBottom: 'none',
-      },
-    },
-  }),
-};
+const tableStyles = css({});
 
-export const SubstituteAppellantReview = ({ selectedTasks, existingValues, evidenceSubmissionEndDate, onBack, onCancel, onSubmit }) => {
+export const SubstituteAppellantReview = ({ selectedTasks, existingValues,
+  evidenceSubmissionEndDate, onBack, onCancel, onSubmit }) => {
 
   const substitutionDate = format(parseISO(existingValues.substitutionDate), 'MM/dd/yyyy');
   const { relationships } = useSelector((state) => state.substituteAppellant);
@@ -38,7 +30,7 @@ export const SubstituteAppellantReview = ({ selectedTasks, existingValues, evide
         </section>
         <section>
           <h1>About the appellant</h1>
-          <table className={`usa-table-borderless ${styles.mainTable}`}>
+          <table className={`usa-table-borderless ${tableStyles}`}>
             <tbody>
               <tr>
                 <td>
@@ -69,7 +61,7 @@ export const SubstituteAppellantReview = ({ selectedTasks, existingValues, evide
         </section>
         <section>
           <h1>Reactivated tasks</h1>
-          {selectedTasks.length > 0 && <table className={`usa-table-borderless ${styles.mainTable}`}>
+          {selectedTasks.length > 0 && <table className={`usa-table-borderless ${tableStyles}`}>
             <tbody>
               { selectedTasks.map((task) => {
                 return <tr className="task-detail" key={`${task.taskId}`}>
