@@ -151,9 +151,6 @@ class HearingSchedule::GenerateHearingDaysSchedule
     # Add up all the hearing days we need to distribute
     days_to_allocate = @ros.values.pluck(:allocated_days_without_room).sum.to_i
 
-    # Determine how many hearings to schedule per date
-    hearing_days_per_date = days_to_allocate / @available_days.count
-
     # Determine how far apart to space hearing days once we have assigned an even number to each date
     offset = days_to_allocate % @available_days.count
 
@@ -164,13 +161,13 @@ class HearingSchedule::GenerateHearingDaysSchedule
     ro_list = sort_ro_list(@ros.each { |k, v| v[:ro_key] = k }.values)
 
     # Distribute all of the hearing days to each RO in the list
-    allocate_hearing_days(days_to_allocate, hearing_days_per_date, ro_list, available_days, offset)
+    allocate_hearing_days(days_to_allocate, ro_list, available_days, offset)
 
     # Return the list of ROs containing the hearing days per date
     @ros
   end
 
-  def allocate_hearing_days(days_to_allocate, _hearing_days_per_date, ro_list, available_days, offset)
+  def allocate_hearing_days(days_to_allocate, ro_list, available_days, offset)
     days_to_allocate.times do |index|
       # Find the next RO and hearing day using the offset once all hearing days have the same number scheduled
       available_ro_and_day = get_ro_for_hearing_day(available_days, ro_list, index, offset)
@@ -187,7 +184,6 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
       # Increase the lookup table value for this date
       available_days[hearing_day] += 1
-      pp "#{ro[:ro_key]} (#{hearing_day} - #{index}): #{check_even_distribution(ro)}"
 
       # Move the selected RO to last and remove if it has no more requests
       ro_list = sort_ro_list(ro_list, ro)
