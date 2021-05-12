@@ -32,8 +32,10 @@ class HearingForHearingDaySerializer
   attribute :veteran_last_name
 
   attribute :case_type do |hearing|
-    hearing.appeal.type
+    if hearing.is_a?(Hearing)
+      hearing.appeal.type
+    end
   end
 
-  attribute :poa_name, &:representative
+  attribute :poa_name
 end
