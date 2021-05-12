@@ -164,4 +164,8 @@ class WorkQueue::TaskSerializer
       object.timer_ends_at
     end
   end
+
+  attribute :unscheduled_hearing_notes do |object|
+    object.try(:unscheduled_hearing_notes)
+  end
 end

@@ -378,6 +378,29 @@ RSpec.feature "Case details", :all_dbs do
           expect(page).to have_content(COPY::CASE_DETAILS_UNRECOGNIZED_POA)
         end
       end
+
+      context "when an unrecognized appellant does have a POA" do
+        before do
+          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(true)
+        end
+
+        let!(:claimant) do
+          create(
+            :claimant,
+            unrecognized_appellant: ua,
+            decision_review: appeal,
+            type: "OtherClaimant"
+          )
+        end
+
+        let(:ua) { create(:unrecognized_appellant) }
+
+        scenario "details view contains POA information" do
+          visit "/queue/appeals/#{appeal.uuid}"
+          expect(page).to have_content("Appellant's Power of Attorney")
+          expect(page).to have_content(appeal.representative_name)
+        end
+      end
     end
 
     context "when attorney has a case assigned in VACOLS without a DECASS record" do
@@ -1781,6 +1804,91 @@ RSpec.feature "Case details", :all_dbs do
         )
       end
     end
+
+    describe "substitute appellant" do
+      before { FeatureToggle.enable!(:recognized_granted_substitution_after_dd) }
+      after { FeatureToggle.disable!(:recognized_granted_substitution_after_dd) }
+
+      let(:docket_type) { "evidence_submission" }
+      let(:case_type) { "original" }
+      let(:disposition) { "allowed" }
+      let(:appeal) do
+        create(:appeal, :dispatched_with_decision_issue,
+               docket_type: docket_type,
+               stream_type: case_type,
+               disposition: disposition)
+      end
+
+      let(:cob_user) { create(:user, css_id: "COB_USER", station_id: "101") }
+      before do
+        ClerkOfTheBoard.singleton.add_user(cob_user)
+        User.authenticate!(user: cob_user)
+      end
+
+      shared_examples "the button is not shown" do
+        it "the 'Add Substitute' button is not shown" do
+          visit "/queue/appeals/#{appeal.external_id}"
+          # This find forces a wait for the page to render. Without it, this test will always pass,
+          # whether the content is present or not!
+          find("div", id: "caseTitleDetailsSubheader")
+          expect(page).to have_no_content(COPY::SUBSTITUTE_APPELLANT_BUTTON)
+        end
+      end
+
+      shared_examples "the button is shown" do
+        it "the 'Add Substitute' button is shown" do
+          visit "/queue/appeals/#{appeal.external_id}"
+          find("div", id: "caseTitleDetailsSubheader")
+          expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_BUTTON)
+        end
+      end
+
+      context "when the feature flag is disabled" do
+        FeatureToggle.disable!(:recognized_granted_substitution_after_dd)
+        it_behaves_like "the button is not shown"
+        FeatureToggle.enable!(:recognized_granted_substitution_after_dd)
+      end
+
+      context "When the case type is not 'original'" do
+        let(:case_type) { "de_novo" }
+
+        it_behaves_like "the button is not shown"
+      end
+
+      context "when the docket type is 'hearing'" do
+        let(:docket_type) { "hearing" }
+
+        context "when the user is an admin" do
+          before { OrganizationsUser.make_user_admin(cob_user, ClerkOfTheBoard.singleton) }
+          after { OrganizationsUser.remove_admin_rights_from_user(cob_user, ClerkOfTheBoard.singleton) }
+
+          it_behaves_like "the button is not shown"
+        end
+
+        context "when the user is not an admin" do
+          it_behaves_like "the button is not shown"
+        end
+      end
+
+      context "when the disposition is 'Dismissed, Death'" do
+        let(:disposition) { "dismissed_death" }
+
+        it_behaves_like "the button is shown"
+      end
+
+      context "when the disposition is something else" do
+        context "when the user is an admin" do
+          before { OrganizationsUser.make_user_admin(cob_user, ClerkOfTheBoard.singleton) }
+          after { OrganizationsUser.remove_admin_rights_from_user(cob_user, ClerkOfTheBoard.singleton) }
+
+          it_behaves_like "the button is shown"
+        end
+
+        context "when the user is not an admin" do
+          it_behaves_like "the button is not shown"
+        end
+      end
+    end
   end
 
   describe "task snapshot" do
@@ -1968,6 +2076,68 @@ RSpec.feature "Case details", :all_dbs do
 
         include_examples "show hearing request type"
       end
+    end
+  end
+
+  describe "Unscheduled hearing notes" do
+    let!(:current_user) do
+      user = create(:user, css_id: "BVASYELLOW", roles: ["Build HearSched"])
+      User.authenticate!(user: user)
+    end
+    let(:fill_in_notes) { "Fill in notes" }
+
+    before do
+      HearingsManagement.singleton.add_user(current_user)
+    end
+
+    shared_examples "edit unscheduled notes" do
+      it "edits unscheduled successully" do
+        id = appeal.external_id
+
+        visit("/queue/appeals/#{id}")
+
+        within("div#hearing-details") do
+          expect(page).to have_content(COPY::UNSCHEDULED_HEARING_TITLE)
+          expect(page).to have_content("Type: #{appeal.readable_current_hearing_request_type}")
+          click_button("Edit", exact: true)
+          fill_in "Notes", with: fill_in_notes
+          click_button("Save", exact: true)
+          expect(page).to have_content(fill_in_notes)
+          expect(page).to have_content("Last updated by BVASYELLOW on #{Time.zone.now.strftime('%m/%d/%Y')}")
+        end
+
+        expect(page).to have_content(
+          COPY::SAVE_UNSCHEDULED_NOTES_SUCCESS_MESSAGE % veteran_name
+        )
+      end
+    end
+
+    context "ama appeal" do
+      let!(:appeal) do
+        create(:appeal, :hearing_docket, closest_regional_office: "C")
+      end
+      let(:veteran_name) { appeal.veteran.name }
+      let!(:schedule_hearing_task) do
+        create(:schedule_hearing_task, appeal: appeal, assigned_to: current_user)
+      end
+
+      include_examples "edit unscheduled notes"
+    end
+
+    context "legacy appeal" do
+      let!(:appeal) do
+        create(
+          :legacy_appeal,
+          vacols_case: create(
+            :case,
+            :travel_board_hearing
+          )
+        )
+      end
+      let(:veteran_name) { appeal.veteran_full_name }
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal) }
+
+      include_examples "edit unscheduled notes"
     end
   end
 end

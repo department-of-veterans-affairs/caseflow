@@ -19,6 +19,7 @@
     userCanViewOvertimeStatus: current_user.can_view_overtime_status?,
     userCanViewEditNodDate: current_user.can_view_edit_nod_date?,
     canEditCavcRemands: current_user.can_edit_cavc_remands?,
+    userIsCobAdmin: ClerkOfTheBoard.singleton.admins.include?(current_user),
     featureToggles: {
       enable_hearing_time_slots: FeatureToggle.enabled?(:enable_hearing_time_slots, user: current_user),
       schedule_veteran_virtual_hearing: FeatureToggle.enabled?(:schedule_veteran_virtual_hearing, user: current_user),
