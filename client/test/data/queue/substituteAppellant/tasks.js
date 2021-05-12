@@ -6,9 +6,9 @@ const getAmaTaskTemplate = ({ id }) => ({
   addedByCssId: null,
   appealId: 1,
   externalAppealId: 'b83e027f-33f2-485b-9846-3f7e12f869d7',
-  assignedOn: '2021-04-19T10:33:06.750-04:00',
+  assignedOn: '2021-04-29T10:33:06.750-04:00',
   closestRegionalOffice: null,
-  createdAt: '2021-04-19T10:33:06.750-04:00',
+  createdAt: '2021-04-29T10:33:06.750-04:00',
   closedAt: '2021-04-29T10:33:08.151-04:00',
   startedAt: null,
   assigneeName: "Board of Veterans' Appeals",
@@ -188,14 +188,12 @@ export const sampleEvidenceSubmissionTasks = () => {
     {
       type: 'EvidenceSubmissionWindowTask',
       label: 'Evidence Submission Window Task',
-      createdAt: '2021-04-21T10:33:06.750-04:00',
       parentId: 2,
     },
     {
       type: 'JudgeAssignTask',
       label: 'Assign',
       parentId: 1,
-      createdAt: '2021-04-20T10:33:06.750-04:00',
       closedAt: '2021-04-28T10:33:08.151-04:00',
     },
     {
@@ -212,7 +210,6 @@ export const sampleEvidenceSubmissionTasks = () => {
       type: 'BvaDispatchTask',
       label: 'Board Dispatch',
       parentId: 1,
-      createdAt: '2021-04-22T10:33:06.750-04:00',
       assignedTo: {
         name: 'Board Dispatch',
         isOrganization: true,
@@ -222,7 +219,6 @@ export const sampleEvidenceSubmissionTasks = () => {
       type: 'BvaDispatchTask',
       label: 'Board Dispatch',
       parentId: 7,
-      createdAt: '2021-04-23T10:33:06.750-04:00',
       assignedTo: {
         isOrganization: false,
       },

@@ -76,6 +76,7 @@ describe('utility functions for task manipulation', () => {
       it('formats sample data for EvidenceSubmissionTasks', () => {
         const result = formatTaskData(tasks);
 
+        // eslint-disable-next-line
         expect(result).toMatchSnapshot();
       });
     });
