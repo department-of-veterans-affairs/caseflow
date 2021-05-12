@@ -51,7 +51,7 @@ export const ScheduleVeteranForm = ({
     isEmpty(appeal?.availableHearingLocations);
 
   const unscheduledNotes = hearing?.notes;
-  const hearingDayIsVirtual = () => hearing?.hearingDay?.requestType === 'V';
+  const hearingDayIsVirtual = () => hearing?.hearingDay?.requestType === 'R';
 
   const getOriginalRequestType = () => {
     if (
