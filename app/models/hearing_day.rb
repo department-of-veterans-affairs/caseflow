@@ -34,11 +34,14 @@ class HearingDay < CaseflowRecord
 
   class HearingDayHasChildrenRecords < StandardError; end
 
+  # Create a RegEx for the valid hearing time strings
+  HEARING_TIME_STRING_PATTERN = /\A(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]\z/.freeze
+
   REQUEST_TYPES = Constants::HEARING_REQUEST_TYPES.with_indifferent_access.freeze
 
   SLOTS_BY_REQUEST_TYPE = {
     REQUEST_TYPES[:central] => 10,
-    REQUEST_TYPES[:virtual] => 8 # TBD. Dummy value for testing until we know more.
+    REQUEST_TYPES[:virtual] => 12 # TBD. Dummy value for testing until we know more.
   }.freeze
 
   SLOTS_BY_TIMEZONE = {
@@ -64,7 +67,7 @@ class HearingDay < CaseflowRecord
   # Validates if the judge id maps to an actual record.
   validates :judge, presence: true, if: -> { judge_id.present? }
 
-  validates :regional_office, absence: true, if: :central_office_or_virtual?
+  validates :regional_office, absence: true, if: :central_office?
   validates :regional_office,
             inclusion: {
               in: RegionalOffice.all.map(&:key),
@@ -78,7 +81,7 @@ class HearingDay < CaseflowRecord
               message: "is invalid"
             }
   validates :first_slot_time,
-            format: { with: /\A(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]\z/, message: "doesn't match hh:mm time format" },
+            format: { with: HEARING_TIME_STRING_PATTERN, message: "doesn't match hh:mm time format" },
             allow_nil: true
 
   def central_office?
