@@ -44,7 +44,7 @@ class TranscriptionTask < Task
       verify_user_can_update!(current_user)
 
       if params[:status] == Constants.TASK_STATUSES.cancelled
-        recreate_hearing
+        create_new_hearing_task_tree
       else
         super(params, current_user)
       end
@@ -55,7 +55,7 @@ class TranscriptionTask < Task
 
   private
 
-  def recreate_hearing
+  def create_new_hearing_task_tree
     hearing_task_ancestor = ancestor_task_of_type(HearingTask)
     open_hearing_task_count = appeal.tasks.open.count { |task| task.type == HearingTask.name }
 
