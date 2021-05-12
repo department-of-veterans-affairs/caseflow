@@ -63,7 +63,7 @@ const PowerOfAttorneyDetailWrapper = (WrappedComponent) => {
       return null;
     }
 
-    return <WrappedComponent powerOfAttorney={powerOfAttorney} appealId={appealId} poaAlert={poaAlert} /> 
+    return <WrappedComponent powerOfAttorney={powerOfAttorney} appealId={appealId} poaAlert={poaAlert} />;
   };
 
   wrappedComponent.propTypes = {
@@ -94,7 +94,6 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
 
   if (poaAlert.powerOfAttorney) {
     poa = poaAlert.powerOfAttorney;
-    console.log(poa["poa_last_synced_at"]);
   }
   const details = [
     {

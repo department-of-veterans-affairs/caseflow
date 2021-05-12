@@ -38,7 +38,7 @@ export const PoaRefresh = ({ powerOfAttorney, appealId }) => {
       <em>To retrieve the latest POA information, please click the "Refresh POA" button.</em>
       <div {...gutterStyling}></div>
       <div {...boldText}{...syncStyling}>
-        {poaSyncInfo['poaSyncDate'] && 
+        {poaSyncInfo.poaSyncDate &&
           <em>{lastSyncedCopy}</em>
         }
         <PoaRefreshButton appealId={appealId} poaId={powerOfAttorney.representative_id} />
