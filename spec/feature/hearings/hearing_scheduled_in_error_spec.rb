@@ -13,6 +13,8 @@ RSpec.feature "Remove hearing scheduled in error" do
   let(:regional_office) { "RO39" } # Denver
   let(:hearing_notes) { "Test Notes" }
   let(:fill_in_notes) { "New notes" }
+  let(:unscheduled_notes) { "Unscheduled notes" }
+  let(:fill_in_unscheduled_notes) { "Fill in unscheduled notes" }
 
   shared_context "hearing day" do
     let!(:video_hearing_day) do
@@ -27,7 +29,9 @@ RSpec.feature "Remove hearing scheduled in error" do
 
   shared_context "hearing subtree" do
     let!(:root_task) { create(:root_task, appeal: appeal) }
-    let!(:hearing_task) { create(:hearing_task, parent: root_task) }
+    let!(:hearing_task) do
+      create(:hearing_task, parent: root_task, instructions: [unscheduled_notes])
+    end
     let!(:hearing_task_association) do
       create(
         :hearing_task_association,
@@ -150,6 +154,9 @@ RSpec.feature "Remove hearing scheduled in error" do
       ".cf-form-radio-option",
       text: "8:30 AM Mountain Time (US & Canada) / 10:30 AM Eastern Time (US & Canada)"
     ).click
+    # Fill in Unscheduled Notes
+    expect(page).to have_content(unscheduled_notes)
+    fill_in "Notes", with: fill_in_unscheduled_notes
   end
 
   shared_context "Reschedule Immediately" do
@@ -163,6 +170,10 @@ RSpec.feature "Remove hearing scheduled in error" do
       expect(hearing.reload.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
       expect(hearing.reload.notes).to eq(fill_in_notes)
       expect(hearing_class.count).to eq 2
+
+      # Ensure new hearing has the unscheduled notes
+      expect(hearing_class.where(hearing_day_id: video_hearing_day.id).last.notes)
+        .to eq(fill_in_unscheduled_notes)
     end
 
     context "Reschedule to a Virtual hearing" do
@@ -204,6 +215,9 @@ RSpec.feature "Remove hearing scheduled in error" do
         # Test the hearing was updated correctly
         expect(hearing.reload.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
         expect(hearing.reload.notes).to eq fill_in_notes
+
+        # Ensure new hearing has the unscheduled notes
+        expect(new_hearing.notes).to eq(fill_in_unscheduled_notes)
       end
 
       scenario "Reschedule to a Virtual hearing with error" do

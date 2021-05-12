@@ -145,6 +145,11 @@ const taskAttributesFromRawTask = (task) => {
         task.attributes.latest_informal_hearing_presentation_task?.received_at,
     },
     canMoveOnDocketSwitch: task.attributes.can_move_on_docket_switch,
+    unscheduledHearingNotes: {
+      updatedAt: task.attributes.unscheduled_hearing_notes?.updated_at,
+      updatedByCssId: task.attributes.unscheduled_hearing_notes?.updated_by_css_id,
+      notes: task.attributes.unscheduled_hearing_notes?.notes
+    }
   };
 };
 
@@ -304,6 +309,7 @@ export const prepareAppealHearingsForStore = (appeal) =>
     disposition: hearing.disposition,
     isVirtual: hearing.is_virtual,
     notes: hearing.notes,
+    createdAt: hearing.created_at
   }));
 
 const prepareAppealAvailableHearingLocationsForStore = (appeal) =>
@@ -669,6 +675,15 @@ export const taskActionData = ({ task, match }) => {
   }
 
   return null;
+};
+
+export const parentTasks = (childrenTasks, allTasks) => {
+  const parentTaskIds = _.map(childrenTasks, 'parentId');
+  const parentTasks = parentTaskIds.map((parentId) => {
+    return _.find(allTasks, ['taskId', parentId?.toString()]);
+  });
+
+  return parentTasks;
 };
 
 export const nullToFalse = (key, obj) => {

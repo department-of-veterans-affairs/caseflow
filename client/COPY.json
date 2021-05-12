@@ -99,7 +99,7 @@
   "CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY": "View VLJ Hearing Worksheet",
   "CASE_DETAILS_HEARING_DETAILS_LINK_COPY": "View Hearing Details",
   "CASE_DETAILS_HEARING_WORKSHEET_LINK_TOOLTIP": "This link opens a PDF copy of the Hearing Worksheet",
-  "CASE_DETAILS_HEARING_LIST_LABEL": "Hearings (Oldest to Newest)",
+  "CASE_DETAILS_HEARING_LIST_LABEL": "Scheduled Hearings (Newest to Oldest)",
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL": "This Post Remand data has hearing data associated with a previous original appeal.",
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL_LINK": "View all cases",
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL_POST_LINK": " to see other cases associated with this Veteran.",
@@ -1077,5 +1077,10 @@
 
   "PRIORITY_PUSH_WARNING_MESSAGE": "Some cases are ready to distribute but could not be. This could be due to the tied judge being an acting judge or an attorney (`!user.judge_in_vacols?`). These will be handled manually by the board. The tied judge could also have priority distribution turned off and should not be pushed cases (`JudgeTeam.for_judge(user).accepts_priority_pushed_cases?`). There could also be a duplicate distributed case blocking distribution (`DistributedCase.find_by(case_id: case_id`) or our validations for redistributing legacy appeals failed (https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/services/redistributed_case.rb#L26)",
 
-  "INVALID_IHP_DRAFT_PATH": "Path to IHP is invalid. This path should be of the format '\\\\vacoappbva3.dva.va.gov\\DMDI$\\VBMS Paperless IHPs\\VSO\\902\\VetName 12345.pdf' for legacy appeals and '\\\\vacoappbva3.dva.va.gov\\DMDI$\\VBMS Paperless IHPs\\VSO\\AMA IHPs\\VetName 12345.pdf' for AMA appeals. Hold SHIFT and right click the file to copy the path to the drafted IHP."
+  "INVALID_IHP_DRAFT_PATH": "Path to IHP is invalid. This path should be of the format '\\\\vacoappbva3.dva.va.gov\\DMDI$\\VBMS Paperless IHPs\\VSO\\902\\VetName 12345.pdf' for legacy appeals and '\\\\vacoappbva3.dva.va.gov\\DMDI$\\VBMS Paperless IHPs\\VSO\\AMA IHPs\\VetName 12345.pdf' for AMA appeals. Hold SHIFT and right click the file to copy the path to the drafted IHP.",
+
+  "UNSCHEDULED_HEARING_TITLE": "Unscheduled hearing",
+  "SAVE_UNSCHEDULED_NOTES_SUCCESS_MESSAGE": "You updated the notes for %s’s hearing",
+  "SAVE_UNSCHEDULED_NOTES_ERROR_TITLE": "The hearing notes failed to save.",
+  "SAVE_UNSCHEDULED_NOTES_ERROR_DETAIL": "Refresh the page and try again. If the problem persists, please contact the Caseflow team via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket via YourIT."
 }
