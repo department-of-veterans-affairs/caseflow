@@ -9,6 +9,7 @@ import format from 'date-fns/format';
 import { parseISO } from 'date-fns';
 
 const tableStyles = css({});
+const centerCheckboxPadding = css({ paddingTop: 'inherit' });
 
 export const TaskSelectionTable = ({ tasks }) => {
   const { control, getValues, watch } = useFormContext();
@@ -58,7 +59,7 @@ export const TaskSelectionTable = ({ tasks }) => {
             formattedTasks.map((task) =>
               task.hidden ? null : (
                 <tr key={task.taskId}>
-                  <td>
+                  <td {...centerCheckboxPadding}>
                     <Checkbox
                       onChange={() => onChange(handleCheck(task.taskId))}
                       defaultValue={selectedTaskIds?.includes(task.taskId)}
