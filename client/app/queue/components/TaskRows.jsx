@@ -314,42 +314,59 @@ class TaskRows extends React.PureComponent {
     this.toggleEditNodDateModal();
   }
 
+  // Certain events are only relevant to full timeline view
+  timelineOnly = (eventType) => ['decisionDate', 'substitutionDate', 'nodDateUpdate'].includes(eventType);
+
+  timelineComponent = ({ timelineEvent, appeal, timeline, taskList, index }) => {
+    if (timelineEvent?.type === 'decisionDate') {
+      return <DecisionDateTimeLine
+        key={`timeline-decisionDate-${index}`}
+        appeal = {appeal}
+        timeline = {timeline}
+        taskList = {taskList} />;
+    }
+
+    if (timelineEvent?.type === 'nodDateUpdate') {
+      return <NodDateUpdateTimeline
+        key={`timeline-nodDateUpdate-${index}`}
+        nodDateUpdate = {timelineEvent}
+        timeline = {timeline}
+      />;
+    }
+
+    if (timelineEvent?.type === 'substitutionDate') {
+      return (
+        <SubstituteAppellantTimelineEvent
+          timelineEvent={timelineEvent}
+          key={`timeline-substitutionDate-${index}`}
+        />
+      );
+    }
+
+    return null;
+  }
+
   render = () => {
     const {
       appeal,
       taskList,
       timeline
     } = this.props;
-    const eventsFromAppeal = timelineEventsFromAppeal({ appeal });
+    // Non-tasks are only relevant for the main Case Timeline
+    const eventsFromAppeal = timeline ? timelineEventsFromAppeal({ appeal }) : [];
     const sortedTimelineEvents = sortCaseTimelineEvents(taskList, eventsFromAppeal);
 
     return <React.Fragment key={appeal.externalId}>
 
       { sortedTimelineEvents.map((timelineEvent, index) => {
-
-        if (timelineEvent?.type === 'decisionDate') {
-          return <DecisionDateTimeLine
-            key={`timeline-decisionDate-${index}`}
-            appeal = {appeal}
-            timeline = {timeline}
-            taskList = {taskList} />;
-        }
-
-        if (timelineEvent?.type === 'nodDateUpdate') {
-          return <NodDateUpdateTimeline
-            key={`timeline-nodDateUpdate-${index}`}
-            nodDateUpdate = {timelineEvent}
-            timeline = {timeline}
-          />;
-        }
-
-        if (timelineEvent?.type === 'substitutionDate') {
-          return (
-            <SubstituteAppellantTimelineEvent
-              timelineEvent={timelineEvent}
-              key={`timeline-substitutionDate-${index}`}
-            />
-          );
+        if (timeline && this.timelineOnly(timelineEvent.type)) {
+          return this.timelineComponent({
+            timelineEvent,
+            appeal,
+            timeline,
+            taskList,
+            index,
+          });
         }
 
         const templateConfig = {
