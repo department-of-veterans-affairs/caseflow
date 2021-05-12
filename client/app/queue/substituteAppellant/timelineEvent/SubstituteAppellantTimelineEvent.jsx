@@ -8,10 +8,10 @@ import format from 'date-fns/format';
 import { CASE_TIMELINE_APPELLANT_SUBSTITUTION } from 'app/../COPY';
 
 export const SubstituteAppellantTimelineEvent = ({ timelineEvent }) => {
-  if (!timelineEvent.substitutionDate) {
+  if (!timelineEvent.createdAt) {
     return null;
   }
-  const substitutionDate = new Date(timelineEvent.substitutionDate);
+  const substitutionDate = new Date(timelineEvent.createdAt);
   const formattedSubstutionDate = format(substitutionDate, 'MM/dd/yyyy');
 
   return (
@@ -31,7 +31,7 @@ export const SubstituteAppellantTimelineEvent = ({ timelineEvent }) => {
 };
 SubstituteAppellantTimelineEvent.propTypes = {
   timelineEvent: PropTypes.shape({
-    substitutionDate: PropTypes.oneOfType([
+    createdAt: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.instanceOf(Date),
     ]),

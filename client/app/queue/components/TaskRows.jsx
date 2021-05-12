@@ -81,14 +81,6 @@ class TaskRows extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    const mappedDecisionDateObj = this.mapDecisionDateToSortableObject(this.props.appeal);
-
-    if (this.props.appeal.decisionDate) {
-      this.props.taskList.push(mappedDecisionDateObj);
-    } else {
-      this.props.taskList.unshift(mappedDecisionDateObj);
-    }
-
     this.state = {
       taskInstructionsIsVisible: { },
       showEditNodDateModal: false,
@@ -252,15 +244,6 @@ class TaskRows extends React.PureComponent {
 
   showActionsSection = (task) => (task && !this.props.hideDropdown);
 
-  mapDecisionDateToSortableObject = (appeal) => {
-    // if there's no decision date, then this object should be at the top
-    // of the case timeline, thus the negative infinity default
-    return {
-      isDecisionDate: true,
-      createdAt: appeal.decisionDate || Number.NEGATIVE_INFINITY
-    };
-  }
-
   hearingRequestTypeConvertedAtListItem = (task) => {
     return task.convertedOn ? <div><dt>{COPY.TASK_SNAPSHOT_HEARING_REQUEST_CONVERTED_ON_LABEL}</dt>
       <dd>{moment(task.convertedOn).format('MM/DD/YYYY')}</dd></div> : null;
@@ -346,6 +329,7 @@ class TaskRows extends React.PureComponent {
 
         if (timelineEvent?.type === 'decisionDate') {
           return <DecisionDateTimeLine
+            key={`timeline-decisionDate-${index}`}
             appeal = {appeal}
             timeline = {timeline}
             taskList = {taskList} />;
@@ -353,13 +337,19 @@ class TaskRows extends React.PureComponent {
 
         if (timelineEvent?.type === 'nodDateUpdate') {
           return <NodDateUpdateTimeline
+            key={`timeline-nodDateUpdate-${index}`}
             nodDateUpdate = {timelineEvent}
             timeline = {timeline}
           />;
         }
 
         if (timelineEvent?.type === 'substitutionDate') {
-          return <SubstituteAppellantTimelineEvent timelineEvent={timelineEvent} />;
+          return (
+            <SubstituteAppellantTimelineEvent
+              timelineEvent={timelineEvent}
+              key={`timeline-substitutionDate-${index}`}
+            />
+          );
         }
 
         const templateConfig = {
