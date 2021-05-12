@@ -10,6 +10,7 @@ import { cancel, stepBack, completeSubstituteAppellant } from '../substituteAppe
 import { getAllTasksForAppeal, appealWithDetailSelector } from 'app/queue/selectors';
 
 import COPY from 'app/../COPY';
+import { format } from 'date-fns';
 
 export const SubstituteAppellantReviewContainer = () => {
   const { appealId } = useParams();
@@ -36,7 +37,14 @@ export const SubstituteAppellantReviewContainer = () => {
     appealWithDetailSelector(state, { appealId })
   );
 
-  const evidenceSubmissionEndDate = calculateEvidenceSubmissionEndDate({substitutionDate: existingValues.substitutionDate, veteranDateOfDeath: appeal.veteranDateOfDeath, selectedTasks });
+  const evidenceSubmissionEndDate = calculateEvidenceSubmissionEndDate(
+    { substitutionDate: existingValues.substitutionDate,
+      veteranDateOfDeath: appeal.veteranDateOfDeath,
+      selectedTasks });
+
+  const formatSubmissionEndDateToBackend = (endDate) => {
+    return evidenceSubmissionEndDate ? format(endDate, 'yyyy-MM-dd') : null;
+  };
 
   const handleBack = () => {
     dispatch(stepBack());
@@ -57,7 +65,7 @@ export const SubstituteAppellantReviewContainer = () => {
       substitution_date: existingValues.substitutionDate,
       claimant_type: existingValues.claimantType,
       substitute_participant_id: existingValues.participantId,
-      evidence_submission_date: evidenceSubmissionEndDate,
+      evidence_submission_date: formatSubmissionEndDateToBackend(evidenceSubmissionEndDate),
       // To-do: populate with appropriate user input
       poa_participant_id: '123456789'
     };

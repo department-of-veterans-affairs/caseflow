@@ -28,7 +28,7 @@ export default {
       participantId: 'CLAIMANT_WITH_PVA_AS_VSO',
     },
     selectedTasks: filteredEvidenceSubmissionTasks.slice(0, 3),
-    evidenceSubmissionEndDate: '12/12/2021',
+    evidenceSubmissionEndDate: new Date('12/12/2021'),
   },
   argTypes: {
     onBack: { action: 'back' },

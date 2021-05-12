@@ -16,9 +16,6 @@ const styles = {
   mainTable: css({
     '&': {
       margin: 0,
-      '& tr:first-of-type td': {
-        borderTop: 'border: 1px solid #D6D7D9',
-      },
       '& tr:last-of-type td': {
         borderBottom: 'none',
       },
@@ -75,17 +72,15 @@ export const SubstituteAppellantReview = ({ selectedTasks, existingValues, evide
           {selectedTasks.length > 0 && <table className={`usa-table-borderless ${styles.mainTable}`}>
             <tbody>
               { selectedTasks.map((task) => {
-                return <div className="task-detail" key={`${task.taskId}`}>
-                  <tr>
-                    <td>
-                      { task.label.split(' ').slice(0, -1).
-                        join(' ') }
-                    </td>
-                    { task.type === 'EvidenceSubmissionWindowTask' && <td>
-                      End date: { evidenceSubmissionEndDate }
-                    </td> }
-                  </tr>
-                </div>;
+                return <tr className="task-detail" key={`${task.taskId}`}>
+                  <td>
+                    { task.label.split(' ').slice(0, -1).
+                      join(' ') }
+                  </td>
+                  { task.type === 'EvidenceSubmissionWindowTask' && <td>
+                    End date: { format(evidenceSubmissionEndDate, 'MM/dd/yyyy') }
+                  </td> }
+                </tr>;
               }
               )}
             </tbody>
