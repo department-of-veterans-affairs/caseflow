@@ -29,11 +29,6 @@ describe('SubstituteAppellantReview', () => {
   const storeArgs = {
     substituteAppellant: {
       relationships: [
-        { value: 'CLAIMANT_WITH_PVA_AS_VSO',
-          fullName: 'Bob Vance',
-          relationshipType: 'Spouse',
-          displayText: 'Bob Vance, Spouse',
-        },
         { value: '"1129318238"',
           fullName: 'Cathy Smith',
           relationshipType: 'Child',

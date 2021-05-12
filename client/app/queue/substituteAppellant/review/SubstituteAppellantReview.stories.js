@@ -45,11 +45,6 @@ const storeArgs = {
         relationshipType: 'Spouse',
         displayText: 'Bob Vance, Spouse',
       },
-      { value: '"1129318238"',
-        fullName: 'Cathy Smith',
-        relationshipType: 'Child',
-        displayText: 'Cathy Smith, Child',
-      },
     ],
   },
 };
