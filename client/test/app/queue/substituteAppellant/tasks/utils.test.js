@@ -68,17 +68,4 @@ describe('utility functions for task manipulation', () => {
       expect(filtered).toMatchSnapshot();
     });
   });
-
-  describe('formatTaskData', () => {
-    describe('Evidence Submission sample', () => {
-      const tasks = sampleEvidenceSubmissionTasks();
-
-      it('formats sample data for EvidenceSubmissionTasks', () => {
-        const result = formatTaskData(tasks);
-
-        // eslint-disable-next-line
-        expect(result).toMatchSnapshot();
-      });
-    });
-  });
 });
