@@ -19,7 +19,6 @@ class Fakes::BGSService
   attr_accessor :client
 
   DEFAULT_VSO_POA_FILE_NUMBER = 216_979_849
-  UPDATED_POA_FILE_NUMBER = ""
   VSO_PARTICIPANT_ID = "4623321"
   DEFAULT_PARTICIPANT_ID = "781162"
 
@@ -340,7 +339,6 @@ class Fakes::BGSService
 
     record = (self.class.power_of_attorney_records || {})[file_number]
     record ||= default_vso_power_of_attorney_record if file_number == DEFAULT_VSO_POA_FILE_NUMBER
-    record ||= updated_power_of_attorney_record if file_number == UPDATED_POA_FILE_NUMBER
     record ||= default_power_of_attorney_record
 
     get_claimant_poa_from_bgs_poa(record)
@@ -684,20 +682,6 @@ class Fakes::BGSService
           ptcpnt_id: "600153863"
         },
       ptcpnt_id: "600085544"
-    }
-  end
-
-  def updated_power_of_attorney_record
-    {
-      file_number: "123456789",
-      power_of_attorney:
-        {
-          legacy_poa_cd: "3QQ",
-          nm: FakeConstants.BGS_SERVICE.UPDATED_POA_NAME,
-          org_type_nm: "POA Attorney",
-          ptcpnt_id: "112233445"
-        },
-      ptcpnt_id: "987654321"
     }
   end
 

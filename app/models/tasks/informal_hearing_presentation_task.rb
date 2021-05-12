@@ -67,18 +67,11 @@ class InformalHearingPresentationTask < Task
   end
 
   def self.update_to_new_poa(appeal)
-    # parent = appeal.tasks.open.where(type: :InformalHearingPresentationTask).first.parent
     begin
       TrackVeteranTask.sync_tracking_tasks(appeal)
     rescue StandardError => error
       Raven.capture_exception(error)
       nil
     end
-    # If the parent task of the IHP task is not the same, you'll have to set the correct parent task
-    # if parent != parent
-    # newIHP=appeal.tasks.open.where(type: :InformalHearingPresentationTask).first
-    # newIHP.update(parent: parent)
-    # # and set the parent task's status to on_hold
-    # parent.on_hold!
   end
 end
