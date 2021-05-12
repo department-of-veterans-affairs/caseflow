@@ -57,7 +57,7 @@ class TranscriptionTask < Task
 
   def recreate_hearing
     hearing_task_ancestor = ancestor_task_of_type(HearingTask)
-    open_hearing_task_count = appeal.tasks.open.count { |t| t.type == HearingTask.name }
+    open_hearing_task_count = appeal.tasks.open.count { |task| task.type == HearingTask.name }
 
     # don't allow multiple open hearing tasks
     if hearing_task_ancestor.nil? && open_hearing_task_count > 0
