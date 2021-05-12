@@ -1,0 +1,224 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CaseHearingDetail renders correctly 1`] = `
+<div>
+  <div
+    id="hearing-details"
+  >
+    <div
+      data-css-aga5w7=""
+      data-css-lvj3zo=""
+    >
+      <span
+        data-css-l6c9n4=""
+      >
+        Unscheduled hearing
+        
+        :
+      </span>
+      <ul
+        class="cf-bare-list"
+        data-css-vguy8r=""
+      >
+        <li
+          data-css-1yjr6ry=""
+        >
+          <span
+            data-css-l6c9n4=""
+          >
+            Type
+            :
+          </span>
+           
+          Video
+        </li>
+        <li
+          data-css-1yjr6ry=""
+        >
+          <span
+            data-css-l6c9n4=""
+          >
+            Notes
+            :
+          </span>
+           
+          <span>
+            <button
+              class="cf-submit cf-btn-link usa-button"
+              data-css-1a24qct=""
+              type="button"
+            >
+              <span
+                data-css-1qcxu9b=""
+              >
+                <svg
+                  height="25px"
+                  version="1.1"
+                  viewBox="0 0 25 25"
+                  width="25px"
+                >
+                  <g
+                    fill="none"
+                    fill-rule="evenodd"
+                    stroke="none"
+                    stroke-width="1"
+                  >
+                    <g
+                      fill="#0071BC"
+                      fill-rule="nonzero"
+                      transform="translate(-729.000000, -307.000000)"
+                    >
+                      <g
+                        transform="translate(6.000000, 253.000000)"
+                      >
+                        <g
+                          transform="translate(0.000000, 29.000000)"
+                        >
+                          <path
+                            d="M738.522827,27 L736.791876,28.7078716 L740.228508,32.0986824 L741.959459,30.3908108 L738.522827,27 Z M736.216998,29.2750845 L728.503527,36.8857095 L731.940159,40.2765203 L739.653631,32.6658953 L736.216998,29.2750845 Z M727.979188,37.5027872 L727,41.76 L731.314743,40.7938682 L727.979188,37.5027872 Z"
+                            id="Shape"
+                          />
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+              </span>
+              <span
+                data-css-1kz462l=""
+              >
+                Edit
+              </span>
+            </button>
+          </span>
+          <br />
+        </li>
+      </ul>
+    </div>
+    <ul
+      class="cf-bare-list"
+      data-css-aga5w7=""
+    >
+      <li
+        data-css-dxjmvv=""
+      >
+        
+         
+        <div
+          data-css-ix5cpv=""
+        >
+          <span
+            data-css-l6c9n4=""
+          >
+            Hearing
+            
+            :
+          </span>
+          <ul
+            class="cf-bare-list"
+            data-css-vguy8r=""
+          >
+            <li
+              data-css-1yjr6ry=""
+            >
+              <span
+                data-css-l6c9n4=""
+              >
+                Type
+                :
+              </span>
+               
+              Central
+            </li>
+            <li
+              data-css-1yjr6ry=""
+            >
+              <span
+                data-css-l6c9n4=""
+              >
+                Disposition
+                :
+              </span>
+               
+              None
+            </li>
+            <li
+              data-css-1yjr6ry=""
+            >
+              
+               
+              <span
+                aria-describedby="hearing-worksheet-tip"
+                currentitem="false"
+                data-event="focus mouseenter"
+                data-event-off="keydown mouseleave"
+                data-for="hearing-worksheet-tip"
+                data-tip="true"
+                role="tooltip"
+                tabindex="0"
+              >
+                <a
+                  href="/hearings/worksheet/print?keep_open=true&hearing_ids=29e88a5d-8f00-47ea-b178-95a01d912b96"
+                  target="_blank"
+                >
+                  View VLJ Hearing Worksheet
+                </a>
+              </span>
+              <span
+                data-css-wlp5bi=""
+              >
+                <div
+                  class="__react_component_tooltip place-top type-dark "
+                  data-id="tooltip"
+                  id="hearing-worksheet-tip"
+                >
+                  This link opens a PDF copy of the Hearing Worksheet
+                </div>
+              </span>
+            </li>
+            <li
+              data-css-1yjr6ry=""
+            >
+              <span
+                data-css-l6c9n4=""
+              >
+                Date
+                :
+              </span>
+               
+              <span
+                data-css-qela1j=""
+              >
+                8/7/20
+              </span>
+            </li>
+            <li
+              data-css-1yjr6ry=""
+            >
+              <span
+                data-css-l6c9n4=""
+              >
+                Judge
+                :
+              </span>
+               
+              
+            </li>
+            <li
+              data-css-1yjr6ry=""
+            >
+              
+               
+              <a
+                href="/hearings/29e88a5d-8f00-47ea-b178-95a01d912b96/details"
+              >
+                View Hearing Details
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+`;
