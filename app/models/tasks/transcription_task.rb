@@ -56,16 +56,23 @@ class TranscriptionTask < Task
   private
 
   def recreate_hearing
+    hearing_task_ancestor = ancestor_task_of_type(HearingTask)
+    open_hearing_task_count = appeal.tasks.open.count { |t| t.type == HearingTask.name }
+
+    # don't allow multiple open hearing tasks
+    if hearing_task_ancestor.nil? && open_hearing_task_count > 0
+      fail HearingTask::ExistingOpenHearingTaskOnAppeal, message: COPY::OPEN_HEARING_TASK_EXISTS_ON_APPEAL_MESSAGE
+    end
+
     # create a new hearing task tree
-    hearing_task = ancestor_task_of_type(HearingTask)
-    new_hearing_task_parent = hearing_task&.parent || appeal.root_task
+    new_hearing_task_parent = hearing_task_ancestor&.parent || appeal.root_task
     # ScheduleHearingTask will create its own HearingTask parent in before_create hook
     ScheduleHearingTask.create!(appeal: appeal, parent: new_hearing_task_parent)
 
     # cancel the old hearing task, or myself if there isn't one
-    if hearing_task.present?
+    if hearing_task_ancestor.present?
       # close the parent HearingTask and sibling tasks including myself
-      hearing_task&.cancel_task_and_child_subtasks
+      hearing_task_ancestor&.cancel_task_and_child_subtasks
     else
       cancelled!
     end

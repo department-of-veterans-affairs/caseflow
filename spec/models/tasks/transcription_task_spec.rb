@@ -118,6 +118,27 @@ describe TranscriptionTask, :postgres do
           new_schedule_hearing_task = new_hearing_task.children.open.detect { |t| t.type == ScheduleHearingTask.name }
           expect(new_schedule_hearing_task.present?).to eq(true)
         end
+
+        context "there's another open hearing task on the appeal" do
+          let(:hearing_task) { create(:hearing_task, parent: root_task) }
+          let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: hearing_task) }
+
+          it "raises an error and doesn't create a new hearing task" do
+            # transcription task is created in MissingHearingTranscriptsColocatedTask after_create callback
+            transcription_task = parent_colocated_task.children.detect { |t| t.type == TranscriptionTask.name }
+            expect do
+              transcription_task.update_from_params(update_params, transcription_user)
+            end.to raise_error(HearingTask::ExistingOpenHearingTaskOnAppeal)
+
+            expect(parent_colocated_task.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
+            expect(transcription_task.reload.status).to eq(Constants.TASK_STATUSES.assigned)
+
+            # no new hearing task was created
+            hearing_tasks = appeal.tasks.open.select { |t| t.type == HearingTask.name }
+            expect(hearing_tasks.length).to eq 1
+            expect(hearing_tasks.first).to eq hearing_task
+          end
+        end
       end
     end
 
