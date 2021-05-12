@@ -135,7 +135,7 @@ const taskAttributesFromRawTask = (task) => {
       receivedAt: task.attributes.latest_informal_hearing_presentation_task?.received_at
     },
     canMoveOnDocketSwitch: task.attributes.can_move_on_docket_switch,
-    timerEndsAt: task.timer_ends_at
+    timerEndsAt: task.attributes.timer_ends_at
   };
 };
 

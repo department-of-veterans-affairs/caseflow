@@ -43,6 +43,7 @@ export const SubstituteAppellantReviewContainer = () => {
       return null;
     }
 
+    const timerEndsAt= evidenceSubmissionTask.timerEndsAt;
     const dateOfDeath = appeal.veteranDateOfDeath;
 
     return null;
