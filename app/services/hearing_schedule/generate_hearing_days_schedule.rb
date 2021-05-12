@@ -170,14 +170,10 @@ class HearingSchedule::GenerateHearingDaysSchedule
     @ros
   end
 
-  def allocate_hearing_days(days_to_allocate, hearing_days_per_date, ro_list, available_days, offset)
+  def allocate_hearing_days(days_to_allocate, _hearing_days_per_date, ro_list, available_days, offset)
     days_to_allocate.times do |index|
       # Find the next RO and hearing day using the offset once all hearing days have the same number scheduled
-      available_ro_and_day = if available_days.count { |_k, v| v == hearing_days_per_date } == available_days.count
-                               get_ro_for_hearing_day(ro_list, index, offset)
-                             else
-                               get_ro_for_hearing_day(ro_list, index, 0)
-                             end
+      available_ro_and_day = get_ro_for_hearing_day(available_days, ro_list, index, offset)
 
       # Extract the hearing day and RO
       hearing_day = available_ro_and_day.first
@@ -191,69 +187,63 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
       # Increase the lookup table value for this date
       available_days[hearing_day] += 1
-
       pp "#{ro[:ro_key]} (#{hearing_day} - #{index}): #{check_even_distribution(ro)}"
 
       # Move the selected RO to last and remove if it has no more requests
-      ro_list = sort_ro_list(ro_list, true)
+      ro_list = sort_ro_list(ro_list, ro)
     end
   end
 
-  def sort_ro_list(ro_list, shuffle = false)
+  def sort_ro_list(ro_list, ro_info = false)
     # Remove any ROs that don't have any allocated hearing days without rooms left
     ros_with_request = ro_list.reject { |ro| ro[:allocated_days_without_room].to_i == 0 }
 
     # If we are shuffling the list, move the first element to the last
-    if shuffle
-      ros_with_request.rotate(1)
+    if ro_info && ros_with_request.include?(ro_info)
+      ros_with_request.push(ros_with_request.delete_at(ros_with_request.index(ro_info)))
     else
       # Sort the list so the RO with the fewest requests is first
       ros_with_request.sort_by { |ro| ro[:allocated_days_without_room] }
     end
   end
 
-  def get_ro_for_hearing_day(ro_list, index, offset)
-    hearing_day_index = index + offset
+  def get_ro_for_hearing_day(available_days, ro_list, index, offset)
+    hearing_day_index = index
 
     # If the index is out of bounds circle the array back to index 0 to get the next index
     if hearing_day_index >= @available_days.count
-      hearing_day_index -= ((hearing_day_index / @available_days.count) * @available_days.count)
+      hearing_day_index -= ((hearing_day_index / available_days.count) * available_days.count)
     end
 
     # Check if there is an available Regional office for this day
-    ro = get_next_available_ro(ro_list, @available_days[hearing_day_index])
+    ro = get_next_available_ro(ro_list, available_days.keys[hearing_day_index])
 
+    # Apply the index offset when we have evenly distributed all Regional Offices
     if ro.nil?
-      get_ro_for_hearing_day(ro_list, index + 1, offset)
+      get_ro_for_hearing_day(available_days, ro_list, index + 1 + offset, offset)
     else
-      [@available_days[hearing_day_index], ro]
+      [available_days.keys[hearing_day_index], ro]
     end
   end
 
   def get_next_available_ro(ro_list, hearing_day)
-    ro_list.each_with_index do |ro, index|
-      # Calculate the last index
-      last_index = ro_list.count - 1
+    ros_for_hearing_day = ro_list.select { |ro| ro[:available_days].include?(hearing_day) }
+    ros_without_allocation = ros_for_hearing_day.reject { |ro| allocated_for_hearing_day?(ro, hearing_day) }
 
-      # Determine how many days have been schedule for this RO on this date
-      days_per_date = ro[:allocated_dates].values.count { |key| key == hearing_day }
-
-      # Break out of the loop if we have exhausted the list and found no ROs available for this day
-      return nil if index == last_index && !ro[:available_days].include?(hearing_day)
-
-      # Skip ROs that are not available for this date
-      next if !ro[:available_days].include?(hearing_day)
-
-      # Skip if this RO has already been scheduled for this date
-      next if index != last_index && days_per_date >= @number_to_allocate
-
-      # Break out of the loop as soon as we find an available RO
-      return ro
+    if ros_without_allocation.first.nil?
+      ros_for_hearing_day.find { |ro| allocated_for_hearing_day?(ro, hearing_day) }
+    else
+      ros_without_allocation.first
     end
   end
 
-  def check_even_distribution(ro)
-    ro[:allocated_dates].values.inject(&:merge).values.map(&:count).uniq
+  def check_even_distribution(ro_info)
+    ro_info[:allocated_dates].values.inject(&:merge).values.map(&:count).uniq
+  end
+
+  def allocated_for_hearing_day?(ro_info, hearing_day)
+    allocations = ro_info[:allocated_dates].values.inject(&:merge)[hearing_day].select { |room| room[:room_num].nil? }
+    allocations.count > @number_to_allocate
   end
 
   # Sort ROs in descending order of the highest ratio of allocated days to rooms and available days
