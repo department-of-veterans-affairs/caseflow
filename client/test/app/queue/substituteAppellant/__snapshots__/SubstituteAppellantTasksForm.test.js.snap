@@ -100,7 +100,9 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
           </thead>
           <tbody>
             <tr>
-              <td>
+              <td
+                data-css-1an8iyq=""
+              >
                 <div
                   class="checkbox-wrapper-taskIds[1] cf-form-checkboxes"
                 >
@@ -137,7 +139,9 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
               </td>
             </tr>
             <tr>
-              <td>
+              <td
+                data-css-1an8iyq=""
+              >
                 <div
                   class="checkbox-wrapper-taskIds[2] cf-form-checkboxes"
                 >
@@ -174,7 +178,9 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
               </td>
             </tr>
             <tr>
-              <td>
+              <td
+                data-css-1an8iyq=""
+              >
                 <div
                   class="checkbox-wrapper-taskIds[3] cf-form-checkboxes"
                 >
@@ -211,7 +217,9 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
               </td>
             </tr>
             <tr>
-              <td>
+              <td
+                data-css-1an8iyq=""
+              >
                 <div
                   class="checkbox-wrapper-taskIds[4] cf-form-checkboxes"
                 >
@@ -248,7 +256,9 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
               </td>
             </tr>
             <tr>
-              <td>
+              <td
+                data-css-1an8iyq=""
+              >
                 <div
                   class="checkbox-wrapper-taskIds[5] cf-form-checkboxes"
                 >
@@ -285,7 +295,9 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
               </td>
             </tr>
             <tr>
-              <td>
+              <td
+                data-css-1an8iyq=""
+              >
                 <div
                   class="checkbox-wrapper-taskIds[6] cf-form-checkboxes"
                 >
@@ -322,7 +334,9 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
               </td>
             </tr>
             <tr>
-              <td>
+              <td
+                data-css-1an8iyq=""
+              >
                 <div
                   class="checkbox-wrapper-taskIds[7] cf-form-checkboxes"
                 >
@@ -359,7 +373,9 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
               </td>
             </tr>
             <tr>
-              <td>
+              <td
+                data-css-1an8iyq=""
+              >
                 <div
                   class="checkbox-wrapper-taskIds[8] cf-form-checkboxes"
                 >
@@ -528,7 +544,9 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
           </thead>
           <tbody>
             <tr>
-              <td>
+              <td
+                data-css-1an8iyq=""
+              >
                 <div
                   class="checkbox-wrapper-taskIds[1] cf-form-checkboxes"
                 >
@@ -565,7 +583,9 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
               </td>
             </tr>
             <tr>
-              <td>
+              <td
+                data-css-1an8iyq=""
+              >
                 <div
                   class="checkbox-wrapper-taskIds[2] cf-form-checkboxes"
                 >
@@ -603,7 +623,9 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
               </td>
             </tr>
             <tr>
-              <td>
+              <td
+                data-css-1an8iyq=""
+              >
                 <div
                   class="checkbox-wrapper-taskIds[3] cf-form-checkboxes"
                 >
@@ -641,7 +663,9 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
               </td>
             </tr>
             <tr>
-              <td>
+              <td
+                data-css-1an8iyq=""
+              >
                 <div
                   class="checkbox-wrapper-taskIds[4] cf-form-checkboxes"
                 >
@@ -678,7 +702,9 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
               </td>
             </tr>
             <tr>
-              <td>
+              <td
+                data-css-1an8iyq=""
+              >
                 <div
                   class="checkbox-wrapper-taskIds[5] cf-form-checkboxes"
                 >
@@ -715,7 +741,9 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
               </td>
             </tr>
             <tr>
-              <td>
+              <td
+                data-css-1an8iyq=""
+              >
                 <div
                   class="checkbox-wrapper-taskIds[6] cf-form-checkboxes"
                 >
@@ -752,7 +780,9 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
               </td>
             </tr>
             <tr>
-              <td>
+              <td
+                data-css-1an8iyq=""
+              >
                 <div
                   class="checkbox-wrapper-taskIds[7] cf-form-checkboxes"
                 >
@@ -789,7 +819,9 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
               </td>
             </tr>
             <tr>
-              <td>
+              <td
+                data-css-1an8iyq=""
+              >
                 <div
                   class="checkbox-wrapper-taskIds[8] cf-form-checkboxes"
                 >
