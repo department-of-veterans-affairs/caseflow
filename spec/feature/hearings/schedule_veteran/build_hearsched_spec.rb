@@ -256,10 +256,6 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       find(".time-slot-button", text: time).click
     end
 
-    def slots_select_custom_hearing_time(time)
-      find(".time-slot-button-toggle", text: "Choose a custom time").click
-    end
-
     shared_examples "scheduling a central hearing" do
       include_context "central_hearing"
       include_context "hearing subtree"
