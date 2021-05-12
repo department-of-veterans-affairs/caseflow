@@ -76,41 +76,46 @@ describe InformalHearingPresentationTask, :postgres do
 
   describe ".when poa is updated" do
     let(:old_poa) { create(:vso, name: "Old POA") }
-    let(:appeal) {
-        create(:appeal, veteran: create(:veteran)) do |appeal|
-          create(
-            :informal_hearing_presentation_task,
-            appeal: appeal,
-            assigned_to: old_poa
-          )
-        end
-      }
+    let(:appeal) do
+      create(:appeal, veteran: create(:veteran)) do |appeal|
+        create(
+          :informal_hearing_presentation_task,
+          appeal: appeal,
+          assigned_to: old_poa
+        )
+      end
+    end
     context "update_to_new_poa will" do
       let(:new_poa_participant_id) { "2222222" }
       let!(:new_poa) { create(:vso, name: "New POA", participant_id: new_poa_participant_id) }
-      let!(:bgs_poa_for_claimant) { create(:bgs_power_of_attorney,
-                      claimant_participant_id: appeal.claimant.participant_id,
-                      poa_participant_id: new_poa_participant_id)
-                  }
+      let!(:bgs_poa_for_claimant) do
+        create(:bgs_power_of_attorney,
+               claimant_participant_id: appeal.claimant.participant_id,
+               poa_participant_id: new_poa_participant_id)
+      end
 
       it "cancel old IhpTask and create a new IhpTask assigned to the new POA" do
         InformalHearingPresentationTask.update_to_new_poa(appeal)
-        expect(InformalHearingPresentationTask.find_by(appeal_id: appeal.id, assigned_to_id: old_poa.id).status).to eq("cancelled")
-        expect(InformalHearingPresentationTask.find_by(appeal_id: appeal.id, assigned_to_id: new_poa.id).status).to eq("assigned")
+        expect(InformalHearingPresentationTask.find_by(appeal_id: appeal.id,
+                                                       assigned_to_id: old_poa.id).status).to eq("cancelled")
+        expect(InformalHearingPresentationTask.find_by(appeal_id: appeal.id,
+                                                       assigned_to_id: new_poa.id).status).to eq("assigned")
         expect(InformalHearingPresentationTask.where(appeal_id: appeal.id).count).to eq 2
       end
     end
 
     context "update_to_new_poa will only" do
       let(:new_poa_participant_id) { "3333333" }
-        let!(:new_poa) { create(:bgs_attorney, name: "Bruce Wayne", participant_id: new_poa_participant_id) }
-        let!(:bgs_poa_for_claimant) { create(:bgs_power_of_attorney,
-                        claimant_participant_id: appeal.claimant.participant_id,
-                        poa_participant_id: new_poa_participant_id)
-                    }
+      let!(:new_poa) { create(:bgs_attorney, name: "Bruce Wayne", participant_id: new_poa_participant_id) }
+      let!(:bgs_poa_for_claimant) do
+        create(:bgs_power_of_attorney,
+               claimant_participant_id: appeal.claimant.participant_id,
+               poa_participant_id: new_poa_participant_id)
+      end
       it "cancel old IhpTask if new POA cannot have an IhpTask" do
         InformalHearingPresentationTask.update_to_new_poa(appeal)
-        expect(InformalHearingPresentationTask.find_by(appeal_id: appeal.id, assigned_to_id: old_poa.id).status).to eq("cancelled")
+        expect(InformalHearingPresentationTask.find_by(appeal_id: appeal.id,
+                                                       assigned_to_id: old_poa.id).status).to eq("cancelled")
         expect(InformalHearingPresentationTask.where(appeal_id: appeal.id).count).to eq 1
       end
     end
