@@ -232,13 +232,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
     # Method to choose either the hearing time slot buttons or hearing time radio buttons
     def select_hearing_time(time)
-      #virtual_hearing_type_selected = page.has_content?("Virtual")
-      #if FeatureToggle.enabled?(:enable_hearing_time_slots) && virtual_hearing_type_selected
-      #  eastern_time = convert_local_time_to_eastern_timezone(time)
-      #  find(".time-slot-button", text: eastern_time).click
-      #else
-        find(".cf-form-radio-option", text: time).click
-      #end
+      find(".cf-form-radio-option", text: time).click
     end
 
     def zone_is_eastern(regional_office)
@@ -247,13 +241,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
     # Method to choose the custom hearing time dropdown
     def select_custom_hearing_time(time, is_eastern_only = true)
-      #slots_enabled = FeatureToggle.enabled?(:enable_hearing_time_slots)
       direct_enabled = FeatureToggle.enabled?(:schedule_veteran_virtual_hearing)
-      #virtual_hearing_type_selected = page.has_content?("Virtual")
-
-      #if slots_enabled && virtual_hearing_type_selected
-      #  find(".time-slot-button-toggle", text: "Choose a custom time").click
-      #end
 
       time_string = if is_eastern_only || !direct_enabled
                       time
@@ -262,6 +250,14 @@ RSpec.feature "Schedule Veteran For A Hearing" do
                     end
 
       click_dropdown(text: time_string, name: "optionalHearingTime0")
+    end
+
+    def slots_select_hearing_time(time)
+      find(".time-slot-button", text: time).click
+    end
+
+    def slots_select_custom_hearing_time(time)
+      find(".time-slot-button-toggle", text: "Choose a custom time").click
     end
 
     shared_examples "scheduling a central hearing" do
@@ -680,13 +676,18 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       end
     end
 
-    shared_examples "scheduling a virtual hearing" do |ro_key, time|
+    shared_examples "scheduling a virtual hearing" do |ro_key, time, slots = false|
       scenario "can successfully schedule virtual hearing" do
         navigate_to_schedule_veteran
         expect(page).to have_content("Schedule Veteran for a Hearing")
         click_dropdown(name: "hearingType", text: "Virtual")
         click_dropdown(name: "hearingDate", index: 1)
-        select_custom_hearing_time(time, ro_key == "C")
+
+        # Only one of these three gets called, they each represent a different
+        # way to select a hearing time
+        select_custom_hearing_time(time, ro_key == "C") unless slots
+        slots_select_hearing_time(time) if slots == "slot"
+        slots_select_custom_hearing_time(time) if slots == "custom"
 
         # Fill in appellant details
         click_dropdown(name: "appellantTz", index: 1)
@@ -896,7 +897,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
       before { cache_appeals }
 
-      it_behaves_like "scheduling a virtual hearing", "RO39", "10:30"
+      # Use the timeslot button
+      it_behaves_like "scheduling a virtual hearing", "RO39", "10:30 AM EDT", "slot"
     end
 
     context "with enable_time_slots feature disabled" do
@@ -964,23 +966,23 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       # TimeSlots will only ever show for a virtual hearing day
       # so these tests should run the same regardless of
       # :enable_hearing_time_slots
-      #it_behaves_like "scheduling a central hearing"
+      it_behaves_like "scheduling a central hearing"
 
-      #it_behaves_like "scheduling a video hearing"
+      it_behaves_like "scheduling a video hearing"
 
-      #it_behaves_like "scheduling an AMA hearing"
+      it_behaves_like "scheduling an AMA hearing"
 
-      #it_behaves_like "scheduling a Legacy hearing"
+      it_behaves_like "scheduling a Legacy hearing"
 
-      #it_behaves_like "an appeal with a full hearing day"
+      it_behaves_like "an appeal with a full hearing day"
 
-      #it_behaves_like "an appeal where there is an open hearing"
+      it_behaves_like "an appeal where there is an open hearing"
 
-      #it_behaves_like "change from Central hearing"
+      it_behaves_like "change from Central hearing"
 
-      #it_behaves_like "change from Video hearing"
+      it_behaves_like "change from Video hearing"
 
-      #it_behaves_like "withdraw a hearing"
+      it_behaves_like "withdraw a hearing"
     end
   end
 
