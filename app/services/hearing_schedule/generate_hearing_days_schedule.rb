@@ -158,7 +158,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     available_days = @available_days.product([0]).to_h
 
     # Apply the initial sort to the RO list
-    ro_list = sort_ro_list(@ros.each { |k, v| v[:ro_key] = k }.values)
+    ro_list = sort_ro_list(@ros.each { |key, value| value[:ro_key] = key }.values)
 
     # Distribute all of the hearing days to each RO in the list
     allocate_hearing_days(days_to_allocate, ro_list, available_days, offset)
@@ -231,10 +231,6 @@ class HearingSchedule::GenerateHearingDaysSchedule
     else
       ros_without_allocation.first
     end
-  end
-
-  def check_even_distribution(ro_info)
-    ro_info[:allocated_dates].values.inject(&:merge).values.map(&:count).uniq
   end
 
   def allocated_for_hearing_day?(ro_info, hearing_day)
