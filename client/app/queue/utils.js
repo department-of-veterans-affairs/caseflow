@@ -696,6 +696,7 @@ export const timelineEventsFromAppeal = ({ appeal }) => {
     });
   }
 
+  // Add any edits of NOD date
   if (appeal.nodDateUpdates) {
     timelineEvents.push(...(appeal.nodDateUpdates.map((item) => ({
       ...item,
