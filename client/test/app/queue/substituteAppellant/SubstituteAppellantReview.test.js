@@ -4,8 +4,9 @@ import React from 'react';
 import { SubstituteAppellantReview } from 'app/queue/substituteAppellant/review/SubstituteAppellantReview';
 import { queueWrapper as Wrapper } from '../../../../test/data/stores/queueStore';
 import { MemoryRouter } from 'react-router';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { sampleEvidenceSubmissionTasks } from 'test/data/queue/substituteAppellant/tasks';
+import userEvent from '@testing-library/user-event';
 
 describe('SubstituteAppellantReview', () => {
   const onBack = jest.fn();
@@ -53,6 +54,20 @@ describe('SubstituteAppellantReview', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  it('renders correctly', () => {
+    const { container } = setup();
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('fires onCancel', async () => {
+    setup();
+    expect(onCancel).not.toHaveBeenCalled();
+
+    await userEvent.click(screen.getByRole('button', { name: /cancel/i }));
+    expect(onCancel).toHaveBeenCalled();
   });
 
   it('passes a11y testing', async () => {
