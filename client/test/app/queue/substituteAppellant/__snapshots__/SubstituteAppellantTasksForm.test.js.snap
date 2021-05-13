@@ -73,7 +73,7 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
         </h2>
         <div>
           <p>
-            Listed below are all the tasks from the original appeal. The distribution task will always be selected by default to ensure the appeal is routed apprioriately.
+            Listed below are all the tasks from the original appeal. The distribution task will always be selected by default to ensure the appeal is routed appropriately.
           </p>
           <p>
             Determine and select tasks that need to be reactivated. Unselecting a task will undo this.
@@ -517,7 +517,7 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
         </h2>
         <div>
           <p>
-            Listed below are all the tasks from the original appeal. The distribution task will always be selected by default to ensure the appeal is routed apprioriately.
+            Listed below are all the tasks from the original appeal. The distribution task will always be selected by default to ensure the appeal is routed appropriately.
           </p>
           <p>
             Determine and select tasks that need to be reactivated. Unselecting a task will undo this.
