@@ -15,7 +15,7 @@ describe('utility functions for task manipulation', () => {
     });
 
     it('returns false for others', () => {
-      const task = { type: 'SomeOtherTask' };
+      const task = { type: 'EvidenceSubmissionWindowTask' };
 
       expect(shouldAutoSelect(task)).toBe(false);
     });
@@ -29,7 +29,7 @@ describe('utility functions for task manipulation', () => {
     });
 
     it('returns false for others', () => {
-      const task = { type: 'SomeOtherTask' };
+      const task = { type: 'EvidenceSubmissionWindowTask' };
 
       expect(shouldDisable(task)).toBe(false);
     });
@@ -48,7 +48,7 @@ describe('utility functions for task manipulation', () => {
       expect(filtered).toMatchSnapshot();
     });
 
-    it('prefers org tasks', () => {
+    it('returns only org tasks', () => {
       const filtered = filterTasks(tasks);
       const bvaDispatchTask = filtered.find(
         (task) => task.type === 'BvaDispatchTask'

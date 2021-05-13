@@ -10,7 +10,6 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
              :with_post_intake_tasks,
              :dispatched_with_decision_issue,
              docket_type: docket_type,
-             stream_type: "original",
              disposition: "dismissed_death",
              veteran: veteran)
     end

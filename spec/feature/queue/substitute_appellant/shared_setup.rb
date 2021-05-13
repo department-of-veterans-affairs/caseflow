@@ -85,7 +85,7 @@ RSpec.shared_examples("fill substitution form") do
       expect(page).to have_content("Veteran date of death")
       expect(page).to have_content("Substitution granted by the RO")
 
-      # tasks table
+      # tasks selection
       distribution_task = DistributionTask.find_by(appeal_id: appeal.id)
       expect(distribution_task.closed_at).to_not be_nil
 

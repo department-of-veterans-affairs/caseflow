@@ -60,7 +60,7 @@ export const shouldHide = (taskInfo) => {
 };
 
 export const shouldAutoSelect = (taskInfo) => {
-  return taskInfo.type === 'DistributionTask';
+  return ['DistributionTask'].includes(taskInfo.type);
 };
 
 // Takes an array of tasks and filters it down to a list of most recent of each type
