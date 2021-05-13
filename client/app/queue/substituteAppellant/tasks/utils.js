@@ -11,7 +11,7 @@ export const isDescendant = (allItems = {}, target, current, { id = 'taskId' } =
 
   const parent = allItems[current.parentId];
 
-  return isDescendant(allItems, target, parent);
+  return isDescendant(allItems, target, parent, { id });
 };
 
 // The following can be used to programmatically determine if a given task
