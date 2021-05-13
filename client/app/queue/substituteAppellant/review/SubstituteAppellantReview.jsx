@@ -12,7 +12,25 @@ import { pageHeader } from '../styles';
 import { format, parseISO } from 'date-fns';
 import { css } from 'glamor';
 
-const tableStyles = css({});
+const styles = {
+  mainTable: css({
+    '& .bolded-header': {
+      fontWeight: 'bold',
+    },
+    '& tr > td': {
+      width: '50%',
+    },
+    '&': {
+      margin: 0,
+    },
+    '& tr:first-of-type td': {
+      borderTop: '1px solid #D6D7D9',
+    },
+    '& tr:last-of-type td': {
+      borderBottom: 'none',
+    },
+  }),
+};
 
 export const SubstituteAppellantReview = ({ selectedTasks, existingValues,
   evidenceSubmissionEndDate, onBack, onCancel, onSubmit }) => {
@@ -29,11 +47,11 @@ export const SubstituteAppellantReview = ({ selectedTasks, existingValues,
           <div>{SUBSTITUTE_APPELLANT_REVIEW_SUBHEAD}</div>
         </section>
         <section>
-          <h1>About the appellant</h1>
-          <table className={`usa-table-borderless ${tableStyles}`}>
+          <h2 className="bolded-header">About the appellant</h2>
+          <table className={`usa-table-borderless ${styles.mainTable}`}>
             <tbody>
               <tr>
-                <td>
+                <td className="bolded-header">
                   Substitution granted by the RO
                 </td>
                 <td>
@@ -41,7 +59,7 @@ export const SubstituteAppellantReview = ({ selectedTasks, existingValues,
                 </td>
               </tr>
               <tr>
-                <td>
+                <td className="bolded-header">
                   Name
                 </td>
                 <td>
@@ -49,7 +67,7 @@ export const SubstituteAppellantReview = ({ selectedTasks, existingValues,
                 </td>
               </tr>
               <tr>
-                <td>
+                <td className="bolded-header">
                   Relation to Veteran
                 </td>
                 <td>
@@ -60,8 +78,8 @@ export const SubstituteAppellantReview = ({ selectedTasks, existingValues,
           </table>
         </section>
         <section>
-          <h1>Reactivated tasks</h1>
-          {selectedTasks.length > 0 && <table className={`usa-table-borderless ${tableStyles}`}>
+          <h2>Reactivated tasks</h2>
+          {selectedTasks.length > 0 && <table className={`usa-table-borderless ${styles.mainTable}`}>
             <tbody>
               { selectedTasks.map((task) => {
                 return <tr className="task-detail" key={`${task.taskId}`}>
@@ -69,9 +87,11 @@ export const SubstituteAppellantReview = ({ selectedTasks, existingValues,
                     { task.label.split(' ').slice(0, -1).
                       join(' ') }
                   </td>
-                  { task.type === 'EvidenceSubmissionWindowTask' && <td>
-                    End date: { format(evidenceSubmissionEndDate, 'MM/dd/yyyy') }
-                  </td> }
+                  <td>
+                    { task.type === 'EvidenceSubmissionWindowTask' &&
+                      <span className="bolded-header">End date: </span> }
+                    {task.type === 'EvidenceSubmissionWindowTask' && format(evidenceSubmissionEndDate, 'MM/dd/yyyy') }
+                  </td>
                 </tr>;
               }
               )}
