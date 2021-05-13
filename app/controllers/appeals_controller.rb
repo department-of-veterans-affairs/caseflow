@@ -269,7 +269,7 @@ class AppealsController < ApplicationController
 
   def update_ama_poa(poa)
     begin
-      message, result = bgs_poa.update_or_delete(appeal.claimant)
+      message, result = poa.update_or_delete(appeal.claimant)
       {
         status: "success",
         message: message,
@@ -290,7 +290,7 @@ class AppealsController < ApplicationController
       appeal.power_of_attorney.clear_bgs_power_of_attorney!
       {
         status: "success",
-        message: messsage,
+        message: message,
         power_of_attorney: (result == "updated") ? power_of_attorney_data : {}
       }
     rescue ActiveRecord::RecordNotUnique

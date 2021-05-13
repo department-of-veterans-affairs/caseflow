@@ -155,10 +155,10 @@ class BgsPowerOfAttorney < CaseflowRecord
         claimant.power_of_attorney.destroy!
       end
       destroy!
-      return "Successfully refreshed. No power of attorney information was found at this time.", "deleted"
+      ["Successfully refreshed. No power of attorney information was found at this time.", "deleted"]
     else
       save_with_updated_bgs_record!
-      return "POA Updated Successfully", "updated"
+      ["POA Updated Successfully", "updated"]
     end
   end
 
