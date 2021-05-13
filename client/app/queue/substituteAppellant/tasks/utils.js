@@ -1,6 +1,6 @@
 // Generic function to determine if a task (`current`) is a descendent of another task (`target`)
-// allItems is object keyed to taskId
-export const isDescendant = (allItems = {}, target, current, { id = 'id' } = {}) => {
+// allItems is object keyed to a specified id
+export const isDescendant = (allItems = {}, target, current, { id = 'taskId' } = {}) => {
   if (!current.parentId) {
     return false;
   }
