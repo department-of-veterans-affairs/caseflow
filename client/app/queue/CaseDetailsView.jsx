@@ -221,10 +221,13 @@ export const CaseDetailsView = (props) => {
             <CaseHearingsDetail title="Hearings" appeal={appeal} />
           )}
           <VeteranDetail title="About the Veteran" appealId={appealId} />
-          {!_.isNull(appeal.appellantFullName) &&
-            appeal.appellantIsNotVeteran && (
-            <AppellantDetail title="About the Appellant" appeal={appeal} />
-          )}
+          {(
+            <AppellantDetail
+              title="About the Appellant"
+              appeal={appeal}
+              substitutionDate={appeal.appellantSubstitution.substitution_date}
+            />
+          ) && appeal.appellantIsNotVeteran && !_.isNull(appeal.appellantFullName)}
 
           {!_.isNull(appeal.cavcRemand) && appeal.cavcRemand && (
             <CavcDetail
@@ -266,12 +269,14 @@ CaseDetailsView.propTypes = {
   scheduledHearingId: PropTypes.string,
   pollHearing: PropTypes.bool,
   stopPollingHearing: PropTypes.func,
+  substituteAppellant: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({
   scheduledHearingId: state.components.scheduledHearing.externalId,
   pollHearing: state.components.scheduledHearing.polling,
   featureToggles: state.ui.featureToggles,
+  substituteAppellant: state.substituteAppellant,
 });
 
 const mapDispatchToProps = (dispatch) =>

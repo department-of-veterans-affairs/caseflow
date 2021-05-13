@@ -4,12 +4,13 @@ import React from 'react';
 import { detailListStyling, getDetailField } from './Detail';
 import Address from './components/Address';
 import BareList from '../components/BareList';
+import {DateString} from "app/util/DateUtil";
 
 /**
  * A component to display various details about the appeal's appellant including name, address and their relation to the
  * veteran
  */
-export const AppellantDetail = ({ appeal }) => {
+export const AppellantDetail = ({ appeal, substitutionDate }) => {
   const {
     appellantAddress,
     appellantFullName,
@@ -35,6 +36,13 @@ export const AppellantDetail = ({ appeal }) => {
     });
   }
 
+  if (substitutionDate) {
+    details.push({
+      label: 'Substitution granted by the RO',
+      value: <DateString date={substitutionDate} inputFormat="YYYY-MM-DD" dateFormat="M/D/YYYY" />
+    });
+  }
+
   return (
     <ul {...detailListStyling}>
       <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
@@ -52,7 +60,9 @@ AppellantDetail.propTypes = {
     appellantAddress: PropTypes.object,
     appellantFullName: PropTypes.string,
     appellantRelationship: PropTypes.string
-  }).isRequired
+  }).isRequired,
+
+  substitutionDate: PropTypes.string.isRequired,
 };
 
 export default AppellantDetail;
