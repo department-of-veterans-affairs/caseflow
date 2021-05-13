@@ -112,6 +112,7 @@ RSpec.shared_examples("fill substitution form") do
 
       # Substitution is shown on timeline
       expect(page).to have_content COPY::CASE_TIMELINE_APPELLANT_SUBSTITUTION
+      expect(page).to have_content COPY::CASE_TIMELINE_APPELLANT_SUBSTITUTION_PROCESSED
     end
   end
 end
