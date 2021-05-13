@@ -449,6 +449,7 @@
   "HEARING_TASK_ASSOCIATION_NOT_UNIQUE_MESSAGE": "that is not closed already exists for %s %s",
   "HEARING_TASK_ASSOCIATION_MISSING_MESASAGE": "Hearing task (%s) is missing an associated hearing. This means that either the hearing was deleted in VACOLS or the hearing association has been deleted.",
   "HEARING_TASK_DEFAULT_INSTRUCTIONS": "This task will be auto-completed when all hearing-related tasks have been completed.",
+  "OPEN_HEARING_TASK_EXISTS_ON_APPEAL_MESSAGE": "There's already an open hearing task on this appeal.",
 
   "CAVC_TASK_LABEL": "All CAVC-related tasks",
   "CAVC_TASK_DEFAULT_INSTRUCTIONS": "This task will be auto-completed when all CAVC-related tasks have been closed.",
