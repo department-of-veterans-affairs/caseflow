@@ -11,6 +11,8 @@ class HearingTask < Task
   delegate :hearing, to: :hearing_task_association, allow_nil: true
   before_validation :set_assignee
 
+  class ExistingOpenHearingTaskOnAppeal < StandardError; end
+
   def self.label
     "All hearing-related tasks"
   end
