@@ -170,9 +170,10 @@ class TaskRows extends React.PureComponent {
 
   cancelReasonListItem = (task) => {
     const reason = task.cancelReason;
+    const reasonLabel = COPY.TASK_SNAPSHOT_CANCEL_REASONS[reason];
 
-    return reason ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_CANCEL_REASON_LABEL}</dt>
-      <dd>{COPY.TASK_SNAPSHOT_CANCEL_REASONS[reason]}</dd></div> : null;
+    return reasonLabel ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_CANCEL_REASON_LABEL}</dt>
+      <dd>{reasonLabel}</dd></div> : null;
   }
 
   hearingRequestTypeConvertedBy = (task) => {
