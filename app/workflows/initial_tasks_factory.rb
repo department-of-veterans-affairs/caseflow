@@ -89,6 +89,8 @@ class InitialTasksFactory
 
   def create_task_from(source_task, create_params)
     case source_task.type
+    when "DistributionTask"
+      distribution_task
     when "EvidenceSubmissionWindowTask"
       evidence_submission_hold_end_date = Time.find_zone("UTC").parse(create_params["hold_end_date"])
       EvidenceSubmissionWindowTask.create!(appeal: @appeal,
