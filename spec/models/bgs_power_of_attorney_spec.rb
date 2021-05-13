@@ -32,7 +32,7 @@ describe BgsPowerOfAttorney do
 
         expect(poa.expired?).to eq(false)
         new_poa = BgsPowerOfAttorney.find_or_fetch_by(participant_id: poa.claimant_participant_id)
-        expect(poa.last_synced_at).to eq(new_poa.last_synced_at)
+        expect(poa.last_synced_at.to_i).to eq(new_poa.last_synced_at.to_i)
       end
     end
 
@@ -60,7 +60,7 @@ describe BgsPowerOfAttorney do
 
         expect(poa.expired?).to eq(false)
         new_poa = BgsPowerOfAttorney.find_or_fetch_by(veteran_file_number: poa.file_number)
-        expect(poa.last_synced_at).to eq(new_poa.last_synced_at)
+        expect(poa.last_synced_at.to_i).to eq(new_poa.last_synced_at.to_i)
       end
     end
   end
