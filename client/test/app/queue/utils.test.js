@@ -1,5 +1,8 @@
 import { parseISO, sub } from 'date-fns';
-import { timelineEventsFromAppeal, sortCaseTimelineEvents } from 'app/queue/utils';
+import {
+  timelineEventsFromAppeal,
+  sortCaseTimelineEvents,
+} from 'app/queue/utils';
 
 describe('timelineEventsFromAppeal', () => {
   const decisionDate = parseISO('2021-05-01');
@@ -38,11 +41,8 @@ describe('timelineEventsFromAppeal', () => {
 
 describe('sortCaseTimelineEvents', () => {
   const decisionDate = parseISO('2021-05-01');
-  const substitutionDate = parseISO('2021-05-10');
-  const appealEvents = [
-    { type: 'decisionDate', createdAt: decisionDate },
-    { type: 'substitutionDate', createdAt: substitutionDate },
-  ];
+  const substitutionDate = parseISO('2021-04-01');
+  const appealEvents = [{ type: 'decisionDate', createdAt: decisionDate }];
 
   const tasks = [
     { type: 'RootTask', createdAt: sub(decisionDate, { days: 10 }) },
@@ -52,11 +52,47 @@ describe('sortCaseTimelineEvents', () => {
     { type: 'AttorneyTask', createdAt: sub(decisionDate, { days: 6 }) },
   ];
 
-  it('properly sorts timeline events', () => {
-    const res = sortCaseTimelineEvents(tasks, appealEvents);
+  describe('with basic post-distribution tasks', () => {
+    it('properly sorts timeline events', () => {
+      const res = sortCaseTimelineEvents(tasks, appealEvents);
 
-    expect(res.length).toBe(tasks.length + appealEvents.length);
+      expect(res.length).toBe(tasks.length + appealEvents.length);
+      expect(res[0].type).toBe('decisionDate');
+      expect(res).toMatchSnapshot();
+    });
+  });
 
-    //   expect(res).toMatchSnapshot();
+  describe('with NOD date updates', () => {
+    const appealEventsWithNodUpdate = [
+      ...appealEvents,
+      { type: 'nodDateUpdate', createdAt: sub(decisionDate, { days: 9 }) },
+    ];
+
+    it('sorts the substitution date item into proper place', () => {
+      const res = sortCaseTimelineEvents(tasks, appealEventsWithNodUpdate);
+
+      expect(res.length).toBe(tasks.length + appealEventsWithNodUpdate.length);
+      expect(res[0].type).toBe('decisionDate');
+      expect(res[4].type).toBe('nodDateUpdate');
+      expect(res).toMatchSnapshot();
+    });
+  });
+
+  describe('with substitution date', () => {
+    const appealEventsWithSubstitution = [
+      ...appealEvents,
+      { type: 'substitutionDate', createdAt: substitutionDate },
+    ];
+
+    it('sorts the substitution date item into proper place', () => {
+      const res = sortCaseTimelineEvents(tasks, appealEventsWithSubstitution);
+
+      expect(res.length).toBe(
+        tasks.length + appealEventsWithSubstitution.length
+      );
+      expect(res[0].type).toBe('decisionDate');
+      expect(res[res.length - 1].type).toBe('substitutionDate');
+      expect(res).toMatchSnapshot();
+    });
   });
 });
