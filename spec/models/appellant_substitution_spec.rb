@@ -140,7 +140,11 @@ describe AppellantSubstitution do
       include_examples "new appeal does not have post-distribution tasks"
 
       it "doesn't create TrackVeteranTask or IHPTask" do
+        # Since a Representative with poa_participant_id doesn't exist, a warning is sent
+        expect_any_instance_of(InitialTasksFactory).to receive(:warn_poa_not_a_representative).and_call_original
+
         target_appeal = subject.target_appeal
+        # Since a Representative with poa_participant_id doesn't exist, these tasks are not created
         expect(target_appeal.tasks.open.of_type(:TrackVeteranTask).count).to eq 0
         expect(target_appeal.tasks.open.of_type(:InformalHearingPresentationTask).count).to eq 0
       end
