@@ -2,6 +2,7 @@
 import React from 'react';
 import _, { capitalize, escapeRegExp } from 'lodash';
 import moment from 'moment';
+import { compareDesc, isValid } from 'date-fns';
 import StringUtil from '../util/StringUtil';
 import {
   redText,
@@ -726,17 +727,22 @@ export const sortCaseTimelineEvents = (...eventArrays) => {
   // Combine disparate sets of timeline events into a single array
   const timelineEvents = [].concat(...eventArrays);
 
-  // Undefined items (such as is possible with decisionDate) will sort to the end of the array
-  // So here we sort in chronological order and later reverse so undefined signifies future
+  // We want items with undefined dates (such as pending decision date) to sort to the beginning
   const sortedTimelineEvents = timelineEvents.sort((prev, next) => {
-    return (
-      new Date(prev.closedAt || prev.createdAt || prev.updatedAt).getTime() -
-        new Date(next.closedAt || next.createdAt || next.updatedAt).getTime()
-    );
+    const d1 = new Date(prev.closedAt || prev.createdAt || prev.updatedAt);
+    const d2 = new Date(next.closedAt || next.createdAt || next.updatedAt);
+
+    // In cases of Number.NEGATIVE_INFINITY, we have invalid date and we sort ahead
+    if (!isValid(d1)) {
+      return -1;
+    }
+
+    return compareDesc(d1, d2);
   });
 
   // Reverse the array for the order we actually want
-  return sortedTimelineEvents.reverse();
+  // return sortedTimelineEvents.reverse();
+  return sortedTimelineEvents;
 };
 
 export const regionalOfficeCity = (objWithLocation, defaultToUnknown) => {

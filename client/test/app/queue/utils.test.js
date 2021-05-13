@@ -40,13 +40,19 @@ describe('timelineEventsFromAppeal', () => {
 });
 
 describe('sortCaseTimelineEvents', () => {
-  const decisionDate = parseISO('2021-05-01');
-  const substitutionDate = parseISO('2021-04-01');
+  const decisionDate = parseISO('2021-05-01 12:00');
+  const substitutionDate = sub(decisionDate, { days: 20 });
   const appealEvents = [{ type: 'decisionDate', createdAt: decisionDate }];
 
   const tasks = [
-    { type: 'RootTask', createdAt: sub(decisionDate, { days: 10 }) },
-    { type: 'DistributionTask', createdAt: sub(decisionDate, { days: 10 }) },
+    {
+      type: 'RootTask',
+      createdAt: sub(decisionDate, { days: 10, seconds: 10 }),
+    },
+    {
+      type: 'DistributionTask',
+      createdAt: sub(decisionDate, { days: 10, seconds: 5 }),
+    },
     { type: 'JudgeAssignTask', createdAt: sub(decisionDate, { days: 8 }) },
     { type: 'JudgeDecisionTask', createdAt: sub(decisionDate, { days: 7 }) },
     { type: 'AttorneyTask', createdAt: sub(decisionDate, { days: 6 }) },
@@ -93,6 +99,36 @@ describe('sortCaseTimelineEvents', () => {
       expect(res[0].type).toBe('decisionDate');
       expect(res[res.length - 1].type).toBe('substitutionDate');
       expect(res).toMatchSnapshot();
+    });
+  });
+
+  describe('without decision date', () => {
+    const appealEventsWithoutDecision = [
+      { type: 'decisionDate', createdAt: Number.NEGATIVE_INFINITY },
+    ];
+
+    it('sorts the unset decision date at the top to show pending', () => {
+      const res = sortCaseTimelineEvents(tasks, appealEventsWithoutDecision);
+
+      expect(res[0].type).toBe('decisionDate');
+      expect(res).toMatchSnapshot();
+    });
+
+    describe('with substitution date', () => {
+      it('sorts the substitution date item into proper place', () => {
+        const appealEventsWithSubstitution = [
+          ...appealEventsWithoutDecision,
+          { type: 'substitutionDate', createdAt: substitutionDate },
+        ];
+        const res = sortCaseTimelineEvents(tasks, appealEventsWithSubstitution);
+
+        expect(res.length).toBe(
+          tasks.length + appealEventsWithSubstitution.length
+        );
+        expect(res[0].type).toBe('decisionDate');
+        expect(res[res.length - 1].type).toBe('substitutionDate');
+        expect(res).toMatchSnapshot();
+      });
     });
   });
 });
