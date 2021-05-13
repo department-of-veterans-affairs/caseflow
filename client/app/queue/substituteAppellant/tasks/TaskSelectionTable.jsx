@@ -38,7 +38,7 @@ export const TaskSelectionTable = ({ tasks }) => {
 
   // Error handling that should never be needed with real production data
   if (!formattedTasks.length) {
-    return <p>There are no tasks available to reopen</p>;
+    return <p>There is no task available to reopen</p>;
   }
 
   return (

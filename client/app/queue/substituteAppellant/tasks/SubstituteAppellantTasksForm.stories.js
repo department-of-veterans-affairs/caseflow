@@ -5,11 +5,11 @@ import uuid from 'uuid';
 
 import { SubstituteAppellantTasksForm } from './SubstituteAppellantTasksForm';
 import { sampleEvidenceSubmissionTasks } from 'test/data/queue/substituteAppellant/tasks';
-import { formatTaskData } from 'app/queue/substituteAppellant/tasks/utils';
+import { prepTaskDataForUi } from 'app/queue/substituteAppellant/tasks/utils';
 
 const allEvidenceSubmissionWindowTasks = sampleEvidenceSubmissionTasks();
 
-const filteredEvidenceSubmissionTasks = formatTaskData(
+const filteredEvidenceSubmissionTasks = prepTaskDataForUi(
   allEvidenceSubmissionWindowTasks
 );
 

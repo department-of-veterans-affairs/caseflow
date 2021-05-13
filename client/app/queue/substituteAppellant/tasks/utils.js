@@ -100,7 +100,7 @@ export const sortTasks = (taskData) => {
 };
 
 // This returns array of tasks with relevant booleans for hidden/disabled
-export const formatTaskData = (taskData) => {
+export const prepTaskDataForUi = (taskData) => {
   const uniqTasks = filterTasks(taskData);
 
   const sortedTasks = sortTasks(uniqTasks);

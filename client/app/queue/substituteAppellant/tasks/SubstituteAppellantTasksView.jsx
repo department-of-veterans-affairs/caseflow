@@ -15,7 +15,7 @@ import {
   stepBack,
   updateData,
 } from '../substituteAppellant.slice';
-import { formatTaskData } from './utils';
+import { prepTaskDataForUi } from './utils';
 
 export const SubstituteAppellantTasksView = () => {
   const { appealId } = useParams();
@@ -30,7 +30,7 @@ export const SubstituteAppellantTasksView = () => {
   );
 
   const filteredTasks = useMemo(() => {
-    return formatTaskData(allTasks);
+    return prepTaskDataForUi(allTasks);
   }, [allTasks]);
 
   const { formData: existingValues } = useSelector(

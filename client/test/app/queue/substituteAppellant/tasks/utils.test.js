@@ -1,7 +1,6 @@
 import { uniq } from 'lodash';
 import {
   filterTasks,
-  formatTaskData,
   shouldAutoSelect,
   shouldDisable,
 } from 'app/queue/substituteAppellant/tasks/utils';
