@@ -474,6 +474,7 @@ exports[`TextareaField Respects characterLimitTopRight prop on the textarea fiel
       style={
         Object {
           "float": "right",
+          "lineHeight": "inherit",
           "marginBottom": 0,
         }
       }
