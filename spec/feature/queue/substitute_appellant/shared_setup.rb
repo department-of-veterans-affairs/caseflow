@@ -84,12 +84,18 @@ RSpec.shared_examples("fill substitution form") do
     step "review/confirm page" do
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}/substitute_appellant/review")
 
-      expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_REVIEW_TITLE
       expect(page).to have_css(".cf-progress-bar-activated", text: "Select substitute appellant")
       # expect(page).to have_css(".cf-progress-bar-activated", text: "Select POA")
       expect(page).to have_css(".cf-progress-bar-activated", text: "Create task")
       expect(page).to have_css(".cf-progress-bar-activated", text: "Review")
 
+      expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_REVIEW_TITLE
+      expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_REVIEW_SUBHEAD
+      expect(page).to have_content("Substitution granted by the RO")
+      expect(page).to have_content("Name")
+      expect(page).to have_content("Relation to Veteran")
+
+      expect(page).to have_content("Reactivated tasks")
       page.find("button", text: "Confirm").click
     end
 
