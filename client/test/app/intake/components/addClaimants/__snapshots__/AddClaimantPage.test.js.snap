@@ -5,6 +5,7 @@ exports[`AddClaimantPage renders default state correctly 1`] = `
   <div
     class="cf-app-segment"
     role="progressbar"
+    tabindex="-1"
   >
     <div
       class="cf-progress-bar"
