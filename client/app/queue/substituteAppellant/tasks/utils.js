@@ -49,11 +49,7 @@ export const isDescendantOfDistributionTask = (taskId, taskList) => {
 // The following governs what should always be programmatically disabled from selection
 export const alwaysDisabled = ['DistributionTask'];
 export const shouldDisable = (taskInfo) => {
-  if (alwaysDisabled.includes(taskInfo.type)) {
-    return true;
-  }
-
-  return false;
+  return alwaysDisabled.includes(taskInfo.type);
 };
 
 // The following governs which tasks should not actually appear in list of available tasks
