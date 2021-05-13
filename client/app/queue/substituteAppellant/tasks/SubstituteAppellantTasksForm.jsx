@@ -18,7 +18,7 @@ import { pageHeader, sectionStyle } from '../styles';
 import { TaskSelectionTable } from './TaskSelectionTable';
 
 const schema = yup.object().shape({
-  taskIds: yup.array(yup.string()),
+  taskIds: yup.array(yup.number()),
 });
 
 export const SubstituteAppellantTasksForm = ({
@@ -39,7 +39,7 @@ export const SubstituteAppellantTasksForm = ({
       ...existingValues,
       taskIds:
         // eslint-disable-next-line max-len
-        existingValues?.taskIds?.length ? existingValues?.taskIds : (tasks?.filter((task) => task.selected)).map((task) => task.taskId),
+        existingValues?.taskIds?.length ? existingValues?.taskIds : (tasks?.filter((task) => task.selected)).map((task) => parseInt(task.taskId, 10)),
     },
   });
 

@@ -31,7 +31,9 @@ RSpec.shared_context "with existing relationships" do
 
   before do
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(relationships)
-    EvidenceSubmissionWindowTask.find_or_create_by(appeal: appeal).update!(status: "completed")
+    if docket_type.eql?("evidence_submission")
+      EvidenceSubmissionWindowTask.find_or_create_by(appeal: appeal).update!(status: "completed")
+    end
   end
 end
 
@@ -83,13 +85,15 @@ RSpec.shared_examples("fill substitution form") do
       expect(page).to have_content("Veteran date of death")
       expect(page).to have_content("Substitution granted by the RO")
 
-      # tasks table"
+      # tasks table
       distribution_task = DistributionTask.find_by(appeal_id: appeal.id)
       expect(distribution_task.closed_at).to_not be_nil
 
-      evidence_submission_task = EvidenceSubmissionWindowTask.find_by(appeal_id: appeal.id)
-      evidence_task_id = evidence_submission_task.id
-      expect(evidence_submission_task.closed_at).to_not be_nil
+      if docket_type.eql?("evidence_submission")
+        evidence_submission_task = EvidenceSubmissionWindowTask.find_by(appeal_id: appeal.id)
+        evidence_task_id = evidence_submission_task.id
+        expect(evidence_submission_task.closed_at).to_not be_nil
+      end
 
       expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_TASK_SELECTION_TITLE)
       expect(page).to have_text("Listed below are all the tasks from the original appeal")
@@ -103,9 +107,10 @@ RSpec.shared_examples("fill substitution form") do
       expect(page).to have_css(".usa-table-borderless.css-nil tbody tr td", text: "Distribution Task")
 
       # example appeal has an evidence submission task
-      expect(page).to have_css(".usa-table-borderless.css-nil tbody tr td", text: "Evidence Submission Window Task")
-
-      find("div", class: "checkbox-wrapper-taskIds[#{evidence_task_id}]").click
+      if docket_type.eql?("evidence_submission")
+        expect(page).to have_css(".usa-table-borderless.css-nil tbody tr td", text: "Evidence Submission Window Task")
+        find("div", class: "checkbox-wrapper-taskIds[#{evidence_task_id}]").click
+      end
 
       page.find("button", text: "Continue").click
     end

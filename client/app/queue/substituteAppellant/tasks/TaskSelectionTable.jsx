@@ -17,19 +17,23 @@ export const TaskSelectionTable = ({ tasks }) => {
   const formattedTasks = useMemo(() => {
     return tasks.map((task) => ({
       ...task,
+      taskId: parseInt(task.taskId, 10),
       status: capitalize(task.status),
       closedAt: format(parseISO(task.closedAt), 'MM/dd/yyyy'),
     }));
   }, [tasks]);
 
   // Code from https://github.com/react-hook-form/react-hook-form/issues/1517#issuecomment-662386647
-  const handleCheck = (checkedId) => {
+  const handleCheck = (changedId) => {
     const { taskIds: ids } = getValues();
 
-    const newIds = ids?.includes(checkedId) ?
-      ids?.filter((id) => id !== checkedId) :
-      [...(ids ?? []), checkedId];
+    // if changedId is already in array of selected Ids, filter it out;
+    // otherwise, return array with it included
+    const newIds = ids?.includes(changedId) ?
+      ids?.filter((id) => id !== changedId) :
+      [...(ids ?? []), changedId];
 
+    // this will get set as new value for taskIds by react hook form
     return newIds;
   };
 

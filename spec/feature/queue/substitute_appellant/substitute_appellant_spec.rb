@@ -6,8 +6,10 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
   describe "with a dismissed appeal" do
     let(:veteran) { create(:veteran, date_of_death: Time.zone.today - 10.days) }
     let(:appeal) do
-      create(:appeal, :dispatched_with_decision_issue,
-             docket_type: "evidence_submission",
+      create(:appeal,
+             :with_post_intake_tasks,
+             :dispatched_with_decision_issue,
+             docket_type: docket_type,
              stream_type: "original",
              disposition: "dismissed_death",
              veteran: veteran)
@@ -20,7 +22,17 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
       include_context "with feature toggle"
       include_context "with existing relationships"
 
-      it_should_behave_like "fill substitution form"
+      context "with evidence submission docket" do
+        let(:docket_type) { "evidence_submission" }
+
+        it_should_behave_like "fill substitution form"
+      end
+
+      context "with direct review docket" do
+        let(:docket_type) { "direct_review" }
+
+        it_should_behave_like "fill substitution form"
+      end
     end
   end
 end
