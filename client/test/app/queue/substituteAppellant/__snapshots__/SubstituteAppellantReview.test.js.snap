@@ -17,15 +17,17 @@ exports[`SubstituteAppellantReview renders correctly 1`] = `
       </div>
     </section>
     <section>
-      <h1>
+      <h2>
         About the appellant
-      </h1>
+      </h2>
       <table
-        class="usa-table-borderless"
+        class="usa-table-borderless css-1ykx5tw"
       >
         <tbody>
           <tr>
-            <td>
+            <td
+              class="bolded-header"
+            >
               Substitution granted by the RO
             </td>
             <td>
@@ -33,13 +35,17 @@ exports[`SubstituteAppellantReview renders correctly 1`] = `
             </td>
           </tr>
           <tr>
-            <td>
+            <td
+              class="bolded-header"
+            >
               Name
             </td>
             <td />
           </tr>
           <tr>
-            <td>
+            <td
+              class="bolded-header"
+            >
               Relation to Veteran
             </td>
             <td />
@@ -48,11 +54,11 @@ exports[`SubstituteAppellantReview renders correctly 1`] = `
       </table>
     </section>
     <section>
-      <h1>
+      <h2>
         Reactivated tasks
-      </h1>
+      </h2>
       <table
-        class="usa-table-borderless"
+        class="usa-table-borderless css-1ykx5tw"
       >
         <tbody>
           <tr
@@ -61,6 +67,7 @@ exports[`SubstituteAppellantReview renders correctly 1`] = `
             <td>
               Root
             </td>
+            <td />
           </tr>
           <tr
             class="task-detail"
@@ -68,6 +75,7 @@ exports[`SubstituteAppellantReview renders correctly 1`] = `
             <td>
               Distribution
             </td>
+            <td />
           </tr>
           <tr
             class="task-detail"
@@ -76,7 +84,11 @@ exports[`SubstituteAppellantReview renders correctly 1`] = `
               Evidence Submission Window
             </td>
             <td>
-              End date: 
+              <span
+                class="bolded-header"
+              >
+                End date: 
+              </span>
               05/29/2021
             </td>
           </tr>
@@ -84,10 +96,12 @@ exports[`SubstituteAppellantReview renders correctly 1`] = `
             class="task-detail"
           >
             <td />
+            <td />
           </tr>
           <tr
             class="task-detail"
           >
+            <td />
             <td />
           </tr>
           <tr
@@ -96,6 +110,7 @@ exports[`SubstituteAppellantReview renders correctly 1`] = `
             <td>
               Draft
             </td>
+            <td />
           </tr>
           <tr
             class="task-detail"
@@ -103,6 +118,7 @@ exports[`SubstituteAppellantReview renders correctly 1`] = `
             <td>
               Board
             </td>
+            <td />
           </tr>
           <tr
             class="task-detail"
@@ -110,6 +126,7 @@ exports[`SubstituteAppellantReview renders correctly 1`] = `
             <td>
               Board
             </td>
+            <td />
           </tr>
         </tbody>
       </table>
