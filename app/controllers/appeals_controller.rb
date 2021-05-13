@@ -269,11 +269,11 @@ class AppealsController < ApplicationController
 
   def update_ama_poa(poa)
     begin
-      message = poa.update_or_delete
+      update_or_delete = poa.update_or_delete
       {
         status: "success",
-        message: message,
-        power_of_attorney: power_of_attorney_data
+        message: update_or_delete[:message],
+        power_of_attorney: update_or_delete[:result] == "updated" ? power_of_attorney_data : {}
       }
     rescue ActiveRecord::RecordNotUnique
       {
@@ -286,12 +286,12 @@ class AppealsController < ApplicationController
   def update_legacy_poa(poa)
     begin
       bgs_poa = BgsPowerOfAttorney.find_or_create_by_file_number(poa.file_number)
-      message = bgs_poa.update_or_delete(appeal.claimant)
+      update_or_delete = bgs_poa.update_or_delete(appeal.claimant)
       appeal.power_of_attorney.clear_bgs_power_of_attorney!
       {
         status: "success",
-        message: message,
-        power_of_attorney: power_of_attorney_data
+        message: update_or_delete[:message],
+        power_of_attorney: update_or_delete[:result] == "updated" ? power_of_attorney_data : {}
       }
     rescue ActiveRecord::RecordNotUnique
       {

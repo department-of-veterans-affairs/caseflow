@@ -149,17 +149,18 @@ class BgsPowerOfAttorney < CaseflowRecord
     bgs_record.keys.any?
   end
 
-  def update_or_delete(claimant = nil)
+  def update_or_delete(claimant)
     if bgs_record == :not_found
-      if claimant && !claimant.is_a?(Hash) && claimant.should_delete_power_of_attorney?
-        claimant_poa.destroy
-      else
-        destroy
+      if !claimant.is_a?(Hash) && claimant.power_of_attorney.bgs_record == :not_found
+        claimant.power_of_attorney.destroy!
       end
-      "Successfully refreshed. No power of attorney information was found at this time."
+      destroy!
+      { result: "deleted",
+        message: "Successfully refreshed. No power of attorney information was found at this time." }
     else
       save_with_updated_bgs_record!
-      "POA Updated Successfully"
+      { result: "updated",
+        message: "POA Updated Successfully" }
     end
   end
 
