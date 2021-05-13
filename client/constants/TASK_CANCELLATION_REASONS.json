@@ -1,6 +1,3 @@
 {
-  "POA_CHANGE": {
-    "value": "poa_change",
-    "label": "POA Update"
-  }
+  "POA_CHANGE": "poa_update"
 }

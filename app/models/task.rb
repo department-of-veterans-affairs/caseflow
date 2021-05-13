@@ -52,7 +52,7 @@ class Task < CaseflowRecord
   }
 
   enum cancellation_reason: {
-    Constants.TASK_CANCELLATION_REASONS.POA_CHANGE.value.to_sym => Constants.TASK_CANCELLATION_REASONS.POA_CHANGE.value
+    Constants.TASK_CANCELLATION_REASONS.poa_change.to_sym => Constants.TASK_CANCELLATION_REASONS.poa_change
   }
 
   # This suppresses a warning about the :open scope overwriting the Kernel#open method
