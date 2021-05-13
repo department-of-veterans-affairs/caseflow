@@ -69,11 +69,11 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
         class="css-1rhlyut"
       >
         <h2>
-          Tasks selected for new appeal
+          Tasks selection for new appeal
         </h2>
         <div>
           <p>
-            Listed below are all the tasks from the original appeal. The distribution task will always be selected by default and cannot be unselected to ensure the appeal is routed apprioriately.
+            Listed below are all the tasks from the original appeal. The distribution task will always be selected by default to ensure the appeal is routed apprioriately.
           </p>
           <p>
             Determine and select tasks that need to be reactivated. Unselecting a task will undo this.
@@ -513,11 +513,11 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
         class="css-1rhlyut"
       >
         <h2>
-          Tasks selected for new appeal
+          Tasks selection for new appeal
         </h2>
         <div>
           <p>
-            Listed below are all the tasks from the original appeal. The distribution task will always be selected by default and cannot be unselected to ensure the appeal is routed apprioriately.
+            Listed below are all the tasks from the original appeal. The distribution task will always be selected by default to ensure the appeal is routed apprioriately.
           </p>
           <p>
             Determine and select tasks that need to be reactivated. Unselecting a task will undo this.
