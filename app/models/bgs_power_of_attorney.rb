@@ -33,7 +33,7 @@ class BgsPowerOfAttorney < CaseflowRecord
     # data integrity to them.
     def find_or_create_by_file_number(file_number)
       poa = find_or_create_by!(file_number: file_number)
-      if FeatureToggle.enabled?(:poa_refresh)
+      if FeatureToggle.enabled?(:poa_auto_refresh)
         poa.save_with_updated_bgs_record! if poa&.expired?
       end
       poa
@@ -47,7 +47,7 @@ class BgsPowerOfAttorney < CaseflowRecord
 
     def find_or_create_by_claimant_participant_id(claimant_participant_id)
       poa = find_or_create_by!(claimant_participant_id: claimant_participant_id)
-      if FeatureToggle.enabled?(:poa_refresh)
+      if FeatureToggle.enabled?(:poa_auto_refresh)
         poa.save_with_updated_bgs_record! if poa&.expired?
       end
       poa
