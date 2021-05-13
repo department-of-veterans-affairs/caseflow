@@ -707,7 +707,7 @@ export const timelineEventsFromAppeal = ({ appeal }) => {
   if (appeal.appellantSubstitution) {
     timelineEvents.push({
       type: 'substitutionDate',
-      createdAt: appeal.appellantSubstitution.substitution_date || Number.NEGATIVE_INFINITY,
+      createdAt: appeal.appellantSubstitution.substitution_date,
     });
   }
 
@@ -726,14 +726,17 @@ export const sortCaseTimelineEvents = (...eventArrays) => {
   // Combine disparate sets of timeline events into a single array
   const timelineEvents = [].concat(...eventArrays);
 
+  // Undefined items (such as is possible with decisionDate) will sort to the end of the array
+  // So here we sort in chronological order and later reverse so undefined signifies future
   const sortedTimelineEvents = timelineEvents.sort((prev, next) => {
     return (
-      new Date(next.closedAt || next.createdAt || next.updatedAt).getTime() -
-      new Date(prev.closedAt || prev.createdAt || prev.updatedAt).getTime()
+      new Date(prev.closedAt || prev.createdAt || prev.updatedAt).getTime() -
+        new Date(next.closedAt || next.createdAt || next.updatedAt).getTime()
     );
   });
 
-  return sortedTimelineEvents;
+  // Reverse the array for the order we actually want
+  return sortedTimelineEvents.reverse();
 };
 
 export const regionalOfficeCity = (objWithLocation, defaultToUnknown) => {
