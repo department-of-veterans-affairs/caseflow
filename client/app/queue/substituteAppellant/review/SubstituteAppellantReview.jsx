@@ -28,6 +28,7 @@ const styles = {
     },
     '& tr:last-of-type td': {
       borderBottom: 'none',
+      paddingBottom: '20px',
     },
   }),
 };
@@ -47,7 +48,7 @@ export const SubstituteAppellantReview = ({ selectedTasks, existingValues,
           <div>{SUBSTITUTE_APPELLANT_REVIEW_SUBHEAD}</div>
         </section>
         <section>
-          <h2 className="bolded-header">About the appellant</h2>
+          <h2>About the appellant</h2>
           <table className={`usa-table-borderless ${styles.mainTable}`}>
             <tbody>
               <tr>
