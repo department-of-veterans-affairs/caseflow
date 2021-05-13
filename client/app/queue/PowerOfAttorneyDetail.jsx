@@ -117,10 +117,8 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
   }
 
   const showPoaDetails = poa.representative_type && poa.representative_name;
-  console.log(showPoaDetails);
-  console.log(poaAlert)
-  console.log((showPoaDetails == true || poaAlert.powerOfAttorney))
-  const bototmMessage = (showPoaDetails == true || poaAlert.powerOfAttorney) ? COPY.CASE_DETAILS_POA_EXPLAINER : COPY.CASE_DETAILS_NO_POA
+  const bototmMessage = (showPoaDetails || poaAlert.powerOfAttorney) ? COPY.CASE_DETAILS_POA_EXPLAINER :
+    COPY.CASE_DETAILS_NO_POA;
 
   return (
     <React.Fragment>
