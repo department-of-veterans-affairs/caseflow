@@ -1,34 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`sortCaseTimelineEvents properly sorts timeline events 1`] = `
-Array [
-  Object {
-    "createdAt": 2021-05-01T04:00:00.000Z,
-    "type": "decisionDate",
-  },
-  Object {
-    "createdAt": 2021-04-25T04:00:00.000Z,
-    "type": "AttorneyTask",
-  },
-  Object {
-    "createdAt": 2021-04-24T04:00:00.000Z,
-    "type": "JudgeDecisionTask",
-  },
-  Object {
-    "createdAt": 2021-04-23T04:00:00.000Z,
-    "type": "JudgeAssignTask",
-  },
-  Object {
-    "createdAt": 2021-04-21T04:00:00.000Z,
-    "type": "DistributionTask",
-  },
-  Object {
-    "createdAt": 2021-04-21T04:00:00.000Z,
-    "type": "RootTask",
-  },
-]
-`;
-
 exports[`sortCaseTimelineEvents with NOD date updates sorts the substitution date item into proper place 1`] = `
 Array [
   Object {
