@@ -710,6 +710,14 @@ export const timelineEventsFromAppeal = ({ appeal }) => {
       type: 'substitutionDate',
       createdAt: appeal.appellantSubstitution.substitution_date,
     });
+
+    timelineEvents.push({
+      type: 'substitutionProcessed',
+      createdAt: appeal.appellantSubstitution.created_at,
+      createdBy: appeal.appellantSubstitution.created_by,
+      originalAppellantFullName: appeal.appellantSubstitution.original_appellant_full_name,
+      substituteFullName: appeal.appellantSubstitution.substitute_full_name
+    });
   }
 
   // Add any edits of NOD date
