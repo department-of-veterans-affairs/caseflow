@@ -32,12 +32,14 @@ export const initialState = {
   veteranCaseListIsVisible: false,
   canEditAod: false,
   canEditNodDate: false,
+  userIsCobAdmin: false,
   canEditCavcRemands: false,
   hearingDay: {
     hearingDate: null,
     regionalOffice: null
   },
-  targetUser : {}
+  targetUser : {},
+  poaAlert: {}
 };
 
 const setMessageState = (state, message, msgType) => update(state, {
@@ -69,6 +71,14 @@ const hideModal = (state, modalType) => setModalState(state, false, modalType);
 
 const workQueueUiReducer = (state = initialState, action = {}) => {
   switch (action.type) {
+  case ACTIONS.SET_POA_REFRESH_ALERT:
+    return update(state, {
+      poaAlert: {
+        alertType: { $set: action.payload.alertType },
+        message: { $set: action.payload.message },
+        powerOfAttorney: { $set: action.payload.powerOfAttorney }
+      }
+    });
   case ACTIONS.SET_SELECTING_JUDGE:
     return update(state, {
       selectingJudge: { $set: action.payload.selectingJudge }
@@ -80,6 +90,10 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
   case ACTIONS.SET_CAN_EDIT_NOD_DATE:
     return update(state, {
       canEditNodDate: { $set: action.payload.canEditNodDate }
+    });
+  case ACTIONS.SET_USER_IS_COB_ADMIN:
+    return update(state, {
+      userIsCobAdmin: { $set: action.payload.userIsCobAdmin }
     });
   case ACTIONS.SET_CAN_EDIT_CAVC_REMANDS:
     return update(state, {
