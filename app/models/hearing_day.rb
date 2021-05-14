@@ -39,26 +39,7 @@ class HearingDay < CaseflowRecord
 
   REQUEST_TYPES = Constants::HEARING_REQUEST_TYPES.with_indifferent_access.freeze
 
-  SLOTS_BY_REQUEST_TYPE = {
-    REQUEST_TYPES[:central] => 10,
-    REQUEST_TYPES[:virtual] => 12 # TBD. Dummy value for testing until we know more.
-  }.freeze
-
-  SLOTS_BY_TIMEZONE = {
-    "America/New_York" => 12,
-    "America/Chicago" => 12,
-    "America/Indiana/Indianapolis" => 12,
-    "America/Kentucky/Louisville" => 12,
-    "America/Denver" => 12,
-    "America/Phoenix" => 12,
-    "America/Los_Angeles" => 12,
-    "America/Boise" => 12,
-    "America/Puerto_Rico" => 12,
-    "Asia/Manila" => 12,
-    "Pacific/Honolulu" => 12,
-    "America/Anchorage" => 12
-  }.freeze
-
+  DEFAULT_SLOT_COUNT = 8
   DEFAULT_SLOT_LENGTH = 60 # in minutes
 
   before_create :assign_created_by_user
@@ -156,14 +137,10 @@ class HearingDay < CaseflowRecord
   end
 
   def total_slots
-    # 04-19-2021 number_of_slots database column added
+    # Check if we have a stored value
     return number_of_slots unless number_of_slots.nil?
 
-    # If central or virtual return number based on request type
-    return SLOTS_BY_REQUEST_TYPE[request_type] if central_office_or_virtual?
-
-    # Return 12, all timezones are set to 12
-    SLOTS_BY_TIMEZONE[RegionalOffice.find!(regional_office).timezone]
+    DEFAULT_SLOT_COUNT
   end
 
   def slot_length_minutes

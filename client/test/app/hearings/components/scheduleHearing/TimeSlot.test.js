@@ -253,9 +253,9 @@ describe('TimeSlot', () => {
         });
 
         it('slots have correct time values to submit to backend', () => {
-          const { utils } = setup({ roTimezone: ro.timezone });
+          const { timeSlots, utils } = setup({ roTimezone: ro.timezone });
 
-          const roTime = '11:30';
+          const roTime = timeSlots[0].hearingTime;
 
           clickTimeslot(roTime, ro.timezone);
           const easternTime = moment.tz(roTime, 'HH:mm', 'America/New_York').tz(ro.timezone).
