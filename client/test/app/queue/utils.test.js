@@ -5,8 +5,8 @@ import {
 } from 'app/queue/utils';
 
 describe('timelineEventsFromAppeal', () => {
-  const decisionDate = parseISO('2021-05-01');
-  const substitutionDate = parseISO('2021-05-10');
+  const decisionDate = parseISO('2021-05-01 12:00');
+  const substitutionDate = parseISO('2021-05-10 12:00');
 
   it('returns event item for decisionDate', () => {
     const appeal = { decisionDate, substitutionDate: null };
@@ -124,7 +124,8 @@ describe('sortCaseTimelineEvents', () => {
     it('sorts the unset decision date at the top to show pending', () => {
       const res = sortCaseTimelineEvents(tasks, appealEventsWithoutDecision);
 
-      expect(res[0].type).toBe('decisionDate');
+      console.log(res); // eslint-disable-line
+      expect(res[0].type).toEqual('decisionDate');
       expect(res).toMatchSnapshot();
     });
 
@@ -136,10 +137,11 @@ describe('sortCaseTimelineEvents', () => {
         ];
         const res = sortCaseTimelineEvents(tasks, appealEventsWithSubstitution);
 
+        console.log(res); // eslint-disable-line
         expect(res.length).toBe(
           tasks.length + appealEventsWithSubstitution.length
         );
-        expect(res[0].type).toBe('decisionDate');
+        expect(res[0].type).toEqual('decisionDate');
         expect(res[res.length - 1].type).toBe('substitutionDate');
         expect(res).toMatchSnapshot();
       });
