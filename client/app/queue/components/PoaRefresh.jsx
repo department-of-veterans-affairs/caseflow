@@ -35,7 +35,7 @@ export const PoaRefresh = ({ powerOfAttorney, appealId }) => {
   return <React.Fragment>
     {viewPoaRefresh &&
     <div {...textStyling}>
-      <em>To retrieve the latest POA information, please click the "Refresh POA" button.</em>
+      <em>{ COPY.CASE_DETAILS_POA_REFRESH_BUTTON_EXPLANATION }</em>
       <div {...gutterStyling}></div>
       <div {...boldText}{...syncStyling}>
         {poaSyncInfo.poaSyncDate &&

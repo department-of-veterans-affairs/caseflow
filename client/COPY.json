@@ -114,6 +114,7 @@
   "CASE_DETAILS_POA_LAST_SYNC_DATE_COPY": "POA last refreshed on %(poaSyncDate)s",
   "CASE_DETAILS_POA_EXPLAINER": "Power of Attorney (POA) data comes from VBMS. To update the POA information stored in VBMS, please send a task to the VLJ support management branch.",
   "CASE_DETAILS_POA_SUBSTITUTE": "Appellant's Power of Attorney",
+  "CASE_DETAILS_POA_REFRESH_BUTTON_EXPLANATION": "To retrieve the latest POA information, please click the \"Refresh POA\" button.",
   "CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY": "Edit NOD Date",
   "CASE_DETAILS_FNOD_BANNER_TITLE": "Veteran Date of Death Reported",
   "FNOD_SOURCE": "VBMS",
