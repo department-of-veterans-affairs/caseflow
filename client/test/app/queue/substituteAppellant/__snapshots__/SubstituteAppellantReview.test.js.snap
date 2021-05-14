@@ -16,12 +16,14 @@ exports[`SubstituteAppellantReview renders correctly 1`] = `
         Review the details below to make sure the information is correct before submitting. If you need to make changes, please go back to the associated section.
       </div>
     </section>
-    <section>
+    <section
+      class="css-1urdhzr"
+    >
       <h2>
         About the appellant
       </h2>
       <table
-        class="usa-table-borderless css-1ykx5tw"
+        class="usa-table-borderless css-x3zbi1"
       >
         <tbody>
           <tr>
@@ -53,12 +55,14 @@ exports[`SubstituteAppellantReview renders correctly 1`] = `
         </tbody>
       </table>
     </section>
-    <section>
+    <section
+      class="css-1urdhzr"
+    >
       <h2>
         Reactivated tasks
       </h2>
       <table
-        class="usa-table-borderless css-1ykx5tw"
+        class="usa-table-borderless css-x3zbi1"
       >
         <tbody>
           <tr
