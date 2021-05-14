@@ -7,6 +7,31 @@ import {
 import { sampleTasksForEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
 
 describe('utility functions for task manipulation', () => {
+  const nonDistributionTask = ['JudgeAssignTask',
+    'JudgeDecisionReviewTask',
+    'AttorneyTask',
+    'BvaDispatchTask',
+    'CavcCorrespondenceMailTask',
+    'ClearAndUnmistakeableErrorMailTask',
+    'AddressChangeMailTask',
+    'CongressionalInterestMailTask',
+    'ControlledCorrespondenceMailTask',
+    'DeathCertificateMailTask',
+    'EvidenceOrArgumentMailTask',
+    'ExtensionRequestMailTask',
+    'FoiaRequestMailTask',
+    'HearingRelatedMailTask',
+    'ReconsiderationMotionMailTask',
+    'AodMotionMailTask',
+    'VacateMotionMailTask',
+    'OtherMotionMailTask',
+    'PowerOfAttorneyRelatedMailTask',
+    'PrivacyActRequestMailTask',
+    'PrivacyComplaintMailTask',
+    'ReturnedUndeliverableCorrespondenceMailTask',
+    'StatusInquiryMailTask',
+    'AppealWithdrawalMailTask'];
+
   describe('shouldAutoSelect', () => {
     it('returns true for DistributionTask', () => {
       const task = { type: 'DistributionTask' };
@@ -15,9 +40,12 @@ describe('utility functions for task manipulation', () => {
     });
 
     it('returns false for others', () => {
-      const task = { type: 'EvidenceSubmissionWindowTask' };
 
-      expect(shouldAutoSelect(task)).toBe(false);
+      nonDistributionTask.forEach((task) => {
+        const nonDt = { type: task };
+
+        expect(shouldAutoSelect(nonDt)).toBe(false);
+      });
     });
   });
 
@@ -29,9 +57,12 @@ describe('utility functions for task manipulation', () => {
     });
 
     it('returns false for others', () => {
-      const task = { type: 'EvidenceSubmissionWindowTask' };
 
-      expect(shouldDisable(task)).toBe(false);
+      nonDistributionTask.forEach((task) => {
+        const nonDt = { type: task };
+
+        expect(shouldDisable(nonDt)).toBe(false);
+      });
     });
   });
 
