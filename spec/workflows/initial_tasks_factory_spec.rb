@@ -66,6 +66,9 @@ describe InitialTasksFactory, :postgres do
         end
 
         context "on veteran date of death present" do
+          before { FeatureToggle.enable!(:death_dismissal_streamlining) }
+          after { FeatureToggle.disable!(:death_dismissal_streamlining) }
+
           context "on the evidence submission docket is created" do
             let(:appeal) do
               create(
