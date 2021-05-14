@@ -50,6 +50,8 @@ export const ScheduleVeteran = ({
   taskId,
   userCanViewTimeSlots,
   allHearingTasks,
+  fetchingHearings,
+  scheduledHearingsList,
   ...props
 }) => {
   // Create and manage the loading state
@@ -389,6 +391,8 @@ export const ScheduleVeteran = ({
         )}
         {openHearing && !reschedule ? <Alert title="Open Hearing" type="error">{openHearingDayError}</Alert> : (
           <ScheduleVeteranForm
+            scheduledHearingsList={scheduledHearingsList}
+            fetchingHearings={fetchingHearings}
             userCanViewTimeSlots={userCanViewTimeSlots}
             initialHearingDate={selectedHearingDay?.hearingDate}
             initialRegionalOffice={initialRegionalOffice}
@@ -431,6 +435,8 @@ export const ScheduleVeteran = ({
 };
 
 ScheduleVeteran.propTypes = {
+  scheduledHearingsList: PropTypes.array,
+  fetchingHearings: PropTypes.bool,
   setScheduledHearing: PropTypes.func,
   taskId: PropTypes.string,
   action: PropTypes.string,
@@ -484,6 +490,8 @@ const mapStateToProps = (state, ownProps) => {
   const appeal = appealWithDetailSelector(state, ownProps);
 
   return {
+    scheduledHearingsList: state.components.scheduledHearingsList,
+    fetchingHearings: state.components.fetchingHearings,
     scheduledHearing: state.components.scheduledHearing,
     scheduleHearingOrAssignDispositionTask: getAllTasksForAppeal(state, {
       appealId: appeal?.externalId,
