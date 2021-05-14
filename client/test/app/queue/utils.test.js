@@ -124,6 +124,7 @@ describe('sortCaseTimelineEvents', () => {
     it('sorts the unset decision date at the top to show pending', () => {
       const res = sortCaseTimelineEvents(tasks, appealEventsWithoutDecision);
 
+      console.log(res); // eslint-disable-line
       expect(res[0].type).toBe('decisionDate');
       expect(res).toMatchSnapshot();
     });
@@ -139,6 +140,7 @@ describe('sortCaseTimelineEvents', () => {
         expect(res.length).toBe(
           tasks.length + appealEventsWithSubstitution.length
         );
+        console.log(res); // eslint-disable-line
         expect(res[0].type).toBe('decisionDate');
         expect(res[res.length - 1].type).toBe('substitutionDate');
         expect(res).toMatchSnapshot();
