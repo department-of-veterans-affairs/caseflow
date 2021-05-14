@@ -98,7 +98,7 @@ Array [
 exports[`sortCaseTimelineEvents without decision date sorts the unset decision date at the top to show pending 1`] = `
 Array [
   Object {
-    "createdAt": -Infinity,
+    "createdAt": null,
     "type": "decisionDate",
   },
   Object {
@@ -127,7 +127,7 @@ Array [
 exports[`sortCaseTimelineEvents without decision date with substitution date sorts the substitution date item into proper place 1`] = `
 Array [
   Object {
-    "createdAt": -Infinity,
+    "createdAt": null,
     "type": "decisionDate",
   },
   Object {

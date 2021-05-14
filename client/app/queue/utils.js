@@ -701,7 +701,7 @@ export const timelineEventsFromAppeal = ({ appeal }) => {
   // Always want the decision date
   timelineEvents.push({
     type: 'decisionDate',
-    createdAt: appeal.decisionDate || Number.NEGATIVE_INFINITY,
+    createdAt: appeal.decisionDate || null,
   });
 
   // Possibly add appellant substitution
@@ -737,15 +737,15 @@ export const sortCaseTimelineEvents = (...eventArrays) => {
 
   // We want items with undefined dates (such as pending decision date) to sort to the beginning
   const sortedTimelineEvents = timelineEvents.sort((prev, next) => {
-    const d1 = new Date(prev.closedAt || prev.createdAt || prev.updatedAt);
-    const d2 = new Date(next.closedAt || next.createdAt || next.updatedAt);
+    const d1 = prev.closedAt || prev.createdAt || prev.updatedAt;
+    const d2 = next.closedAt || next.createdAt || next.updatedAt;
 
-    // In cases of Number.NEGATIVE_INFINITY, we have invalid date and we sort ahead
-    if (!isValid(d1)) {
+    // In cases of null/undefined dates, we sort to the front
+    if (!d1) {
       return -1;
     }
 
-    return compareDesc(d1, d2);
+    return compareDesc(new Date(d1), new Date(d2));
   });
 
   // Reverse the array for the order we actually want
