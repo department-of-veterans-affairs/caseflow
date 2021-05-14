@@ -11,8 +11,8 @@ export default class ProgressBar extends React.Component {
     );
 
     return (
-      <div role="progressbar" tabIndex="-1" className="cf-app-segment">
-        <div className="cf-progress-bar">
+      <div className="cf-app-segment">
+        <div className="cf-progress-bar" role="progressbar" tabIndex="0">
           {sections.map((section, i) => {
             if (i <= currentSectionIndex) {
               section.activated = true;
@@ -25,6 +25,7 @@ export default class ProgressBar extends React.Component {
                 activated={section.activated}
                 key={i}
                 title={section.title}
+                aria-current="step"
               />
             );
           })}
