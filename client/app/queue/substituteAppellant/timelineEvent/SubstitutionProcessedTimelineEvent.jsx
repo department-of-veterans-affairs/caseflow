@@ -25,7 +25,6 @@ const timelineInfoStyling = css({
 });
 
 export const SubstitutionProcessedTimelineEvent = ({ timelineEvent }) => {
-  console.log('SubstitutionProcessedTimelineEvent', timelineEvent);
   if (!timelineEvent.createdAt) {
     return null;
   }
@@ -45,15 +44,15 @@ export const SubstitutionProcessedTimelineEvent = ({ timelineEvent }) => {
         {CASE_TIMELINE_APPELLANT_SUBSTITUTION_PROCESSED}
         <div {...timelineInfoStyling}>
           <div>
-            <span>Processed By:</span>
+            <span>Completed by:</span>
             {timelineEvent.createdBy}
           </div>
           <div>
-            <span>Old Appellant:</span>
+            <span>Original appellant (veteran):</span>
             {timelineEvent.originalAppellantFullName}
           </div>
           <div>
-            <span>New Appellant:</span>
+            <span>Current appellant (substitution):</span>
             {timelineEvent.substituteFullName}
           </div>
         </div>
