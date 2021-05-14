@@ -601,7 +601,7 @@ export const setTimeSlots = ({
 
   const defaultNumberOfSlots = 8;
   const defaultBeginsAt = ro === 'C' ? '09:00' : '08:30';
-  const momentDefaultBeginsAt = moment.tz(defaultBeginsAt, 'HH:mm', 'America/New_York');
+  const momentDefaultBeginsAt = moment.tz(defaultBeginsAt, 'HH:mm', roTimezone).tz('America/New_York');
   const momentBeginsAt = moment(beginsAt);
 
   const defaultSlotLengthMinutes = 60;
