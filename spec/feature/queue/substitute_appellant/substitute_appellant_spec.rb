@@ -4,15 +4,16 @@ require_relative "./shared_setup.rb"
 
 RSpec.feature "granting substitute appellant for appeals", :all_dbs do
   describe "with a dismissed appeal" do
-    let(:veteran) { create(:veteran, date_of_death: Time.zone.today - 10.days) }
+    let(:veteran) { create(:veteran, date_of_death: 30.days.ago) }
     let(:appeal) do
       create(:appeal,
              :dispatched_with_decision_issue,
              docket_type: docket_type,
              disposition: "dismissed_death",
+             receipt_date: veteran.date_of_death + 5.days,
              veteran: veteran)
     end
-    let(:substitution_date) { Time.zone.today - 5.days }
+    let(:substitution_date) { appeal.receipt_date + 10.days }
     let(:user) { create(:user) }
 
     context "as COTB user" do
