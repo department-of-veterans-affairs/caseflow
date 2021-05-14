@@ -774,6 +774,8 @@
   "SUBSTITUTE_APPELLANT_SELECT_POA_TITLE": "Select POA",
   "SUBSTITUTE_APPELLANT_CREATE_TASKS_TITLE": "Create tasks",
   "SUBSTITUTE_APPELLANT_KEY_DETAILS_TITLE": "Procedural details",
+  "SUBSTITUTE_APPELLANT_TASK_SELECTION_TITLE": "Tasks selection for new appeal",
+  "SUBSTITUTE_APPELLANT_TASK_SELECTION_DESCRIPTION": "Listed below are all the tasks from the original appeal. The distribution task will always be selected by default to ensure the appeal is routed appropriately.\n\nDetermine and select tasks that need to be reactivated. Unselecting a task will undo this.",
   "SUBSTITUTE_APPELLANT_REVIEW_TITLE": "Review and confirm",
   "SUBSTITUTE_APPELLANT_REVIEW_SUBHEAD": "Review the details below to make sure the information is correct before submitting. If you need to make changes, please go back to the associated section.",
   "SUBSTITUTE_APPELLANT_SUCCESS_TITLE": "You have successfully added a substitute appellant",
