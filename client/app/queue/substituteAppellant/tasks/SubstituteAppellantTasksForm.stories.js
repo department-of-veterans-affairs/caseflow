@@ -4,10 +4,10 @@ import { MemoryRouter } from 'react-router';
 import uuid from 'uuid';
 
 import { SubstituteAppellantTasksForm } from './SubstituteAppellantTasksForm';
-import { sampleEvidenceSubmissionTasks } from 'test/data/queue/substituteAppellant/tasks';
+import { sampleTasksForEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
 import { prepTaskDataForUi } from 'app/queue/substituteAppellant/tasks/utils';
 
-const allEvidenceSubmissionWindowTasks = sampleEvidenceSubmissionTasks();
+const allEvidenceSubmissionWindowTasks = sampleTasksForEvidenceSubmissionDocket();
 
 const filteredEvidenceSubmissionTasks = prepTaskDataForUi(
   allEvidenceSubmissionWindowTasks

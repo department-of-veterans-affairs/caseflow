@@ -176,7 +176,7 @@ export const getAmaTasks = (taskArray) => {
   return tasks;
 };
 
-export const sampleEvidenceSubmissionTasks = () => {
+export const sampleTasksForEvidenceSubmissionDocket = () => {
   const taskTypes = [
     RootTask,
     {

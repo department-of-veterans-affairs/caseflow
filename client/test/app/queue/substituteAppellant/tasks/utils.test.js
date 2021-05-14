@@ -4,7 +4,7 @@ import {
   shouldAutoSelect,
   shouldDisable,
 } from 'app/queue/substituteAppellant/tasks/utils';
-import { sampleEvidenceSubmissionTasks } from 'test/data/queue/substituteAppellant/tasks';
+import { sampleTasksForEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
 
 describe('utility functions for task manipulation', () => {
   describe('shouldAutoSelect', () => {
@@ -36,7 +36,7 @@ describe('utility functions for task manipulation', () => {
   });
 
   describe('filterTasks', () => {
-    const tasks = sampleEvidenceSubmissionTasks();
+    const tasks = sampleTasksForEvidenceSubmissionDocket();
 
     it('filters tasks', () => {
       const filtered = filterTasks(tasks);

@@ -6,7 +6,7 @@ import { parseISO } from 'date-fns';
 import { MemoryRouter } from 'react-router';
 
 import { SubstituteAppellantTasksForm } from 'app/queue/substituteAppellant/tasks/SubstituteAppellantTasksForm';
-import { sampleEvidenceSubmissionTasks } from 'test/data/queue/substituteAppellant/tasks';
+import { sampleTasksForEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
 
 describe('SubstituteAppellantTasksForm', () => {
   const onSubmit = jest.fn();
@@ -31,7 +31,7 @@ describe('SubstituteAppellantTasksForm', () => {
     nodDate: parseISO('2021-04-01'),
     dateOfDeath: parseISO('2021-04-15'),
     substitutionDate: parseISO('2021-04-20'),
-    tasks: sampleEvidenceSubmissionTasks(),
+    tasks: sampleTasksForEvidenceSubmissionDocket(),
     onCancel,
     onSubmit,
   };
