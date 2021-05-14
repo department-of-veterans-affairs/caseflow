@@ -5,14 +5,14 @@ import { SubstituteAppellantReview } from 'app/queue/substituteAppellant/review/
 import { queueWrapper as Wrapper } from '../../../../test/data/stores/queueStore';
 import { MemoryRouter } from 'react-router';
 import { render, screen } from '@testing-library/react';
-import { sampleEvidenceSubmissionTasks } from 'test/data/queue/substituteAppellant/tasks';
+import { sampleTasksForEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
 import userEvent from '@testing-library/user-event';
 
 describe('SubstituteAppellantReview', () => {
   const onBack = jest.fn();
   const onCancel = jest.fn();
   const onSubmit = jest.fn();
-  const sampleTasks = sampleEvidenceSubmissionTasks();
+  const sampleTasks = sampleTasksForEvidenceSubmissionDocket();
   const selectedTaskIds = sampleTasks.slice(2).map((task) => task.taskId);
 
   const defaults = {
