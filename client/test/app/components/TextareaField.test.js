@@ -134,7 +134,9 @@ describe('TextareaField', () => {
       />
     );
     expect(textField.find('i')).toHaveLength(1);
-    expect(textField.find('p').first().props().style).toEqual({ float: 'right', marginBottom: 0 });
+    expect(textField.find('p').first().props().style).toEqual(
+      { float: 'right', marginBottom: 0, lineHeight: 'inherit' }
+    );
     expect(textField).toMatchSnapshot();
   })
 });

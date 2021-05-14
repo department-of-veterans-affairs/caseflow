@@ -2093,4 +2093,66 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
   end
+
+  describe "Unscheduled hearing notes" do
+    let!(:current_user) do
+      user = create(:user, css_id: "BVASYELLOW", roles: ["Build HearSched"])
+      User.authenticate!(user: user)
+    end
+    let(:fill_in_notes) { "Fill in notes" }
+
+    before do
+      HearingsManagement.singleton.add_user(current_user)
+    end
+
+    shared_examples "edit unscheduled notes" do
+      it "edits unscheduled successully" do
+        id = appeal.external_id
+
+        visit("/queue/appeals/#{id}")
+
+        within("div#hearing-details") do
+          expect(page).to have_content(COPY::UNSCHEDULED_HEARING_TITLE)
+          expect(page).to have_content("Type: #{appeal.readable_current_hearing_request_type}")
+          click_button("Edit", exact: true)
+          fill_in "Notes", with: fill_in_notes
+          click_button("Save", exact: true)
+          expect(page).to have_content(fill_in_notes)
+          expect(page).to have_content("Last updated by BVASYELLOW on #{Time.zone.now.strftime('%m/%d/%Y')}")
+        end
+
+        expect(page).to have_content(
+          COPY::SAVE_UNSCHEDULED_NOTES_SUCCESS_MESSAGE % veteran_name
+        )
+      end
+    end
+
+    context "ama appeal" do
+      let!(:appeal) do
+        create(:appeal, :hearing_docket, closest_regional_office: "C")
+      end
+      let(:veteran_name) { appeal.veteran.name }
+      let!(:schedule_hearing_task) do
+        create(:schedule_hearing_task, appeal: appeal, assigned_to: current_user)
+      end
+
+      include_examples "edit unscheduled notes"
+    end
+
+    context "legacy appeal" do
+      let!(:appeal) do
+        create(
+          :legacy_appeal,
+          vacols_case: create(
+            :case,
+            :travel_board_hearing
+          )
+        )
+      end
+      let(:veteran_name) { appeal.veteran_full_name }
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal) }
+
+      include_examples "edit unscheduled notes"
+    end
+  end
 end
