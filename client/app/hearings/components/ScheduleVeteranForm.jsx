@@ -51,7 +51,7 @@ export const ScheduleVeteranForm = ({
     isEmpty(appeal?.availableHearingLocations);
 
   const unscheduledNotes = hearing?.notes;
-  const hearingDayIsVirtual = () => hearing?.hearingDay?.requestType === 'R';
+  const hearingDayIsVirtual = hearing?.hearingDay?.requestType === 'R';
 
   const getOriginalRequestType = () => {
     if (
@@ -164,7 +164,7 @@ export const ScheduleVeteranForm = ({
               />
               {hearing.hearingDay?.hearingId && (
                 <React.Fragment>
-                  {hearingDayIsVirtual() && userCanViewTimeSlots ? (
+                  {hearingDayIsVirtual && userCanViewTimeSlots ? (
                     <TimeSlot
                       {...props}
                       ro={ro}
