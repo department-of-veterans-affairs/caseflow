@@ -21,11 +21,18 @@ describe('timelineEventsFromAppeal', () => {
   it('returns all event items for substitutionDate', () => {
     const appeal = {
       decisionDate,
-      appellantSubstitution: { substitution_date: substitutionDate },
+      appellantSubstitution: {
+        substitution_date: substitutionDate,
+        created_at: parseISO('2021-05-12'),
+        created_by: 'Clark Bard',
+        original_appellant_full_name: 'Jane Doe',
+        substitute_full_name: 'Testy McTesterson',
+      },
     };
     const res = timelineEventsFromAppeal({ appeal });
 
-    expect(res.length).toBe(2);
+    console.log(res);
+    expect(res.length).toBe(3);
     expect(res).toContainEqual({
       type: 'decisionDate',
       createdAt: decisionDate,
@@ -33,6 +40,14 @@ describe('timelineEventsFromAppeal', () => {
     expect(res).toContainEqual({
       type: 'substitutionDate',
       createdAt: substitutionDate,
+    });
+    expect(res).toContainEqual({
+      type: 'substitutionProcessed',
+      createdAt: appeal.appellantSubstitution.created_at,
+      createdBy: appeal.appellantSubstitution.created_by,
+      originalAppellantFullName:
+        appeal.appellantSubstitution.original_appellant_full_name,
+      substituteFullName: appeal.appellantSubstitution.substitute_full_name,
     });
 
     expect(res).toMatchSnapshot();

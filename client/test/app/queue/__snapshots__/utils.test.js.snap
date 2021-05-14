@@ -167,6 +167,13 @@ Array [
     "createdAt": 2021-05-10T04:00:00.000Z,
     "type": "substitutionDate",
   },
+  Object {
+    "createdAt": 2021-05-12T04:00:00.000Z,
+    "createdBy": "Clark Bard",
+    "originalAppellantFullName": "Jane Doe",
+    "substituteFullName": "Testy McTesterson",
+    "type": "substitutionProcessed",
+  },
 ]
 `;
 
