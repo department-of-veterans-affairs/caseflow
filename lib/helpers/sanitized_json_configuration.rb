@@ -49,12 +49,12 @@ class SanitizedJsonConfiguration
       TaskTimer => {
         retrieval: ->(records) { TaskTimer.where(task_id: records[Task].map(&:id)).order(:id) }
       },
-      AttorneyCaseReview => {
-        retrieval: ->(records) { AttorneyCaseReview.where(task_id: records[Task].map(&:id)).order(:id) }
-      },
       JudgeCaseReview => {
         sanitize_fields: %w[comment],
         retrieval: ->(records) { JudgeCaseReview.where(task_id: records[Task].map(&:id)).order(:id) }
+      },
+      AttorneyCaseReview => {
+        retrieval: ->(records) { AttorneyCaseReview.where(task_id: records[Task].map(&:id)).order(:id) }
       },
       RequestIssue => {
         sanitize_fields: ["notes", "contested_issue_description", /_(notes|text|description)/],
@@ -122,8 +122,8 @@ class SanitizedJsonConfiguration
         retrieval: lambda do |records|
           # eager load task associations
           org_tasks = Task.where(id: records[Task].map(&:id)).includes(:assigned_by, :assigned_to).assigned_to_any_org
-          org_ids = records[OrganizationsUser].map(&:organization_id) + 
-            org_tasks.map(&:assigned_to_id) + org_tasks.map(&:assigned_by_id)
+          org_ids = records[OrganizationsUser].map(&:organization_id) +
+                    org_tasks.map(&:assigned_to_id) + org_tasks.map(&:assigned_by_id)
           # Use Organization.unscoped to include inactive organizations when exporting
           Organization.unscoped.where(id: org_ids).order(:id)
         end
@@ -213,7 +213,7 @@ class SanitizedJsonConfiguration
       Appeal => initial_appeals
     }
 
-    # This is just a reminder for how we can handle legacy appeals, i.e. by using :legacy_retrieval. 
+    # This is just a reminder for how we can handle legacy appeals, i.e. by using :legacy_retrieval.
     # Currently no :legacy_retrieval lambdas have been defined.
     retrieval_key = initial_appeals.first.is_a?(LegacyAppeal) ? :legacy_retrieval : :retrieval
     # incrementally update export_records as subsequent calls may rely on prior updates to export_records
