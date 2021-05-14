@@ -251,7 +251,6 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       virtual_hearing_type_selected = page.has_content?("Virtual")
 
       if slots_enabled && virtual_hearing_type_selected
-        # this needs to change to select the time passed in via the new dropdown
         find(".time-slot-button-toggle", text: "Choose a custom time").click
         # Type in the time, add am, press enter with \n
         time_select_input = find(".time-select").find("input")
