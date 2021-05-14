@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_26_181017) do
+ActiveRecord::Schema.define(version: 2021_05_07_152437) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,13 +31,16 @@ ActiveRecord::Schema.define(version: 2021_04_26_181017) do
     t.index ["user_id"], name: "index_advance_on_docket_motions_on_user_id"
   end
 
-  create_table "allocations", force: :cascade do |t|
-    t.float "allocated_days", null: false
+  create_table "allocations", comment: "Hearing Day Requests for each Regional Office used for calculation and confirmation of the Build Hearings Schedule Algorithm", force: :cascade do |t|
+    t.float "allocated_days", null: false, comment: "Number of Video or Central Hearing Days Requested by the Regional Office"
     t.float "allocated_days_without_room", comment: "Number of Hearing Days Allocated with no Rooms"
-    t.datetime "created_at", null: false
-    t.string "regional_office", null: false
-    t.bigint "schedule_period_id", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.string "first_slot_time", limit: 5, comment: "The first time slot available for this allocation; interpreted as the local time at Central office or the RO"
+    t.integer "number_of_slots", comment: "The number of time slots possible for this allocation"
+    t.string "regional_office", null: false, comment: "Key of the Regional Office Requesting Hearing Days"
+    t.bigint "schedule_period_id", null: false, comment: "Hearings Schedule Period to which this request belongs"
+    t.integer "slot_length_minutes", comment: "The length in minutes of each time slot for this allocation"
+    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.index ["schedule_period_id"], name: "index_allocations_on_schedule_period_id"
     t.index ["updated_at"], name: "index_allocations_on_updated_at"
   end
@@ -126,13 +129,16 @@ ActiveRecord::Schema.define(version: 2021_04_26_181017) do
   end
 
   create_table "appellant_substitutions", comment: "Store appellant substitution form data", force: :cascade do |t|
+    t.string "claimant_type", null: false, comment: "Claimant type of substitute; needed to create Claimant record"
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.bigint "created_by_id", null: false, comment: "User that created this record"
     t.string "poa_participant_id", null: false, comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id"
+    t.bigint "selected_task_ids", default: [], null: false, comment: "User-selected task ids from source appeal", array: true
     t.bigint "source_appeal_id", null: false, comment: "The relevant source appeal for this substitution"
     t.string "substitute_participant_id", null: false, comment: "Participant ID of substitute appellant"
     t.date "substitution_date", null: false, comment: "Date of substitution"
     t.bigint "target_appeal_id", null: false, comment: "The new appeal resulting from this substitution"
+    t.jsonb "task_params", default: "{}", null: false, comment: "JSON hash to hold parameters for new tasks, such as an EvidenceSubmissionWindowTask's end-hold date, with keys from selected_task_ids"
     t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.index ["source_appeal_id"], name: "index_appellant_substitutions_on_source_appeal_id"
     t.index ["target_appeal_id"], name: "index_appellant_substitutions_on_target_appeal_id"
@@ -507,7 +513,7 @@ ActiveRecord::Schema.define(version: 2021_04_26_181017) do
     t.integer "granted_request_issue_ids", comment: "When a docket switch is partially granted, this includes an array of the appeal's request issue IDs that were selected for the new docket. For full grant, this includes all prior request issue IDs.", array: true
     t.bigint "new_docket_stream_id", comment: "References the new appeal stream with the updated docket; initially null until created by workflow"
     t.bigint "old_docket_stream_id", null: false, comment: "References the original appeal stream with old docket"
-    t.datetime "receipt_date", null: false
+    t.datetime "receipt_date", null: false, comment: "Date the board receives the NOD with request for docket switch; entered by user performing docket switch"
     t.bigint "task_id", null: false, comment: "The task that triggered the switch"
     t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.index ["created_at"], name: "index_docket_switches_on_created_at"
@@ -1634,6 +1640,7 @@ ActiveRecord::Schema.define(version: 2021_04_26_181017) do
   end
 
   add_foreign_key "advance_on_docket_motions", "users"
+  add_foreign_key "allocations", "schedule_periods"
   add_foreign_key "annotations", "users"
   add_foreign_key "api_views", "api_keys"
   add_foreign_key "appeal_views", "users"

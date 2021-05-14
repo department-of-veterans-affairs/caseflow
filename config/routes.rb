@@ -125,6 +125,7 @@ Rails.application.routes.draw do
       get :document_count
       get :veteran
       get :power_of_attorney
+      patch :update_power_of_attorney
       get 'hearings', to: "appeals#most_recent_hearing"
       resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
       resources :special_issues, only: [:create, :index]

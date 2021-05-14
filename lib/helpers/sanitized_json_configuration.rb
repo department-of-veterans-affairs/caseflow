@@ -262,7 +262,7 @@ class SanitizedJsonConfiguration
   # Start with important types that other records will reassociate with
   def first_types_to_import
     # HearingDay is needed by Hearing
-    @first_types_to_import ||= [Appeal, Organization, User, HearingDay]
+    @first_types_to_import ||= [Appeal, Organization, User, HearingDay, Task]
   end
 
   # During record creation, types where validation and callbacks should be avoided

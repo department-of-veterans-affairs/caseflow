@@ -63,6 +63,7 @@ feature "Non-veteran claimants", :postgres do
       expect(page).to have_content("Claimant's address")
       expect(page).to have_content(attorney.name)
       expect(page).to have_content(attorney.address_line_1.titleize)
+
       expect(page).to have_button("Continue to next step", disabled: false)
 
       # Verify that this can be removed
@@ -167,6 +168,7 @@ feature "Non-veteran claimants", :postgres do
       click_button "Continue to next step"
       expect(page).to have_current_path("/intake/add_power_of_attorney")
       expect(page).to have_content("Add Claimant's POA")
+      expect(page).to have_button("Continue to next step", disabled: true)
 
       # add poa
       add_existing_poa(attorney)
@@ -176,7 +178,7 @@ feature "Non-veteran claimants", :postgres do
       expect(page).to_not have_content(attorney.name)
       expect(page).to_not have_content("Representative's address")
       expect(page).to have_content("Type to search...")
-
+      expect(page).to have_button("Continue to next step", disabled: true)
       # Fill in Name not listed
       safe_click ".dropdown-listedAttorney"
       fill_in("Representative's name", with: "Name not listed")

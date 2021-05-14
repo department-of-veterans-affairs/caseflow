@@ -30,6 +30,7 @@ module TaskTreeRenderModule
     ConsoleTreeRenderer::ConsoleRenderer.new.tap do |ttr|
       ttr.config.value_funcs_hash.merge!(PRESET_VALUE_FUNCS)
       ttr.config.default_atts = [:id, :status, :ASGN_BY, :ASGN_TO, :updated_at]
+      ttr.config.value_funcs_hash.merge!(PRESET_VALUE_FUNCS)
       ttr.config.heading_label_template = lambda { |appeal|
         docket = appeal.docket_name.first.titleize
         docket_number = if appeal.is_a?(LegacyAppeal)
@@ -82,7 +83,7 @@ module TaskTreeRenderModule
   # called by rows and used by config.value_funcs_hash
   def row_objects(_config)
     rows = is_a?(Task) ? appeal.tasks : tasks
-    # eager load
+    # eager load for later calls to assigned_by, assigned_to, and cancelled_by
     rows.includes(:assigned_by, :assigned_to, :cancelled_by)
   end
 
