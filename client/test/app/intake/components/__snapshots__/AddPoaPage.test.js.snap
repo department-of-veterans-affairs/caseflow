@@ -7,56 +7,27 @@ exports[`AddPoaPage renders default state correctly 1`] = `
   >
     <div
       class="cf-progress-bar"
-      role="progressbar"
-      tabindex="0"
+      role="list"
     >
-      <div
-        class="cf-progress-bar-section"
-      >
+      <div>
         <div
-          class="cf-progress-bar-activated"
+          aria-current="step"
+          class="cf-progress-bar-section"
+          role="listitem"
         >
-          <b>
-            1. Select Form
-          </b>
+          <div
+            class="cf-progress-bar-activated"
+          >
+            <b>
+              1. Select Form
+            </b>
+          </div>
         </div>
       </div>
-      <div
-        class="cf-progress-bar-section"
-      >
-        <div
-          class="cf-progress-bar-not-activated"
-        >
-          2. Search
-        </div>
-      </div>
-      <div
-        class="cf-progress-bar-section"
-      >
-        <div
-          class="cf-progress-bar-not-activated"
-        >
-          3. Review
-        </div>
-      </div>
-      <div
-        class="cf-progress-bar-section"
-      >
-        <div
-          class="cf-progress-bar-not-activated"
-        >
-          4. Add Issues
-        </div>
-      </div>
-      <div
-        class="cf-progress-bar-section"
-      >
-        <div
-          class="cf-progress-bar-not-activated"
-        >
-          5. Confirmation
-        </div>
-      </div>
+      <div />
+      <div />
+      <div />
+      <div />
     </div>
   </div>
   <section
