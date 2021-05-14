@@ -40,7 +40,7 @@ class InitialTasksFactory
       create_selected_tasks
     elsif @appeal.cavc?
       create_cavc_subtasks
-    elsif @appeal.veteran.date_of_death.present?
+    elsif @appeal.veteran.date_of_death.present? && FeatureToggle.enabled?(:death_dismissal_streamlining)
       distribution_task.ready_for_distribution!
     else
       case @appeal.docket_type
