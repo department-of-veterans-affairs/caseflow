@@ -221,13 +221,13 @@ export const CaseDetailsView = (props) => {
             <CaseHearingsDetail title="Hearings" appeal={appeal} />
           )}
           <VeteranDetail title="About the Veteran" appealId={appealId} />
-          {(
+          {appeal.appellantIsNotVeteran && !_.isNull(appeal.appellantFullName) && (
             <AppellantDetail
               title="About the Appellant"
               appeal={appeal}
-              substitutionDate={appeal.appellantSubstitution.substitution_date}
+              substitutionDate={appeal.appellantSubstitution?.substitution_date}
             />
-          ) && appeal.appellantIsNotVeteran && !_.isNull(appeal.appellantFullName)}
+          ) }
 
           {!_.isNull(appeal.cavcRemand) && appeal.cavcRemand && (
             <CavcDetail

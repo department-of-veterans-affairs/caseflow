@@ -62,7 +62,7 @@ AppellantDetail.propTypes = {
     appellantRelationship: PropTypes.string
   }).isRequired,
 
-  substitutionDate: PropTypes.string.isRequired,
+  substitutionDate: PropTypes.string,
 };
 
 export default AppellantDetail;
