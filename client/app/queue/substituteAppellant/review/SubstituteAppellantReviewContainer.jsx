@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useHistory, useParams } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -37,6 +37,11 @@ export const SubstituteAppellantReviewContainer = () => {
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
+
+  const { relationships } = useSelector((state) => state.substituteAppellant);
+  const relationship = useMemo(() => {
+    return relationships.find((rel) => String(rel.value) === String(existingValues.participantId));
+  }, [relationships, existingValues?.participantId]);
 
   const evidenceSubmissionEndDate = calculateEvidenceSubmissionEndDate(
     { substitutionDate: existingValues.substitutionDate,
@@ -98,6 +103,7 @@ export const SubstituteAppellantReviewContainer = () => {
       existingValues={existingValues}
       evidenceSubmissionEndDate={evidenceSubmissionEndDate}
       appeal={appeal}
+      relationship={relationship}
       onBack={handleBack}
       onCancel={handleCancel}
       onSubmit={handleSubmit}

@@ -1,5 +1,4 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
@@ -33,12 +32,19 @@ const styles = {
   }),
 };
 
-export const SubstituteAppellantReview = ({ selectedTasks, existingValues,
-  evidenceSubmissionEndDate, onBack, onCancel, onSubmit }) => {
-
-  const substitutionDate = format(parseISO(existingValues.substitutionDate), 'MM/dd/yyyy');
-  const { relationships } = useSelector((state) => state.substituteAppellant);
-  const relationship = relationships.find((rel) => rel.value === existingValues.participantId);
+export const SubstituteAppellantReview = ({
+  selectedTasks,
+  existingValues,
+  evidenceSubmissionEndDate,
+  relationship,
+  onBack,
+  onCancel,
+  onSubmit,
+}) => {
+  const substitutionDate = format(
+    parseISO(existingValues.substitutionDate),
+    'MM/dd/yyyy'
+  );
 
   return (
     <>
@@ -55,49 +61,46 @@ export const SubstituteAppellantReview = ({ selectedTasks, existingValues,
                 <td className="bolded-header">
                   Substitution granted by the RO
                 </td>
-                <td>
-                  { existingValues.substitutionDate && substitutionDate }
-                </td>
+                <td>{existingValues.substitutionDate && substitutionDate}</td>
               </tr>
               <tr>
-                <td className="bolded-header">
-                  Name
-                </td>
-                <td>
-                  { relationship && relationship.fullName }
-                </td>
+                <td className="bolded-header">Name</td>
+                <td>{relationship && relationship.fullName}</td>
               </tr>
               <tr>
-                <td className="bolded-header">
-                  Relation to Veteran
-                </td>
-                <td>
-                  { relationship && relationship.relationshipType }
-                </td>
+                <td className="bolded-header">Relation to Veteran</td>
+                <td>{relationship && relationship.relationshipType}</td>
               </tr>
             </tbody>
           </table>
         </section>
         <section>
           <h2>Reactivated tasks</h2>
-          {selectedTasks.length > 0 && <table className={`usa-table-borderless ${styles.mainTable}`}>
-            <tbody>
-              { selectedTasks.map((task) => {
-                return <tr className="task-detail" key={`${task.taskId}`}>
-                  <td>
-                    { task.label.split(' ').slice(0, -1).
-                      join(' ') }
-                  </td>
-                  <td>
-                    { task.type === 'EvidenceSubmissionWindowTask' &&
-                      <span className="bolded-header">End date: </span> }
-                    {task.type === 'EvidenceSubmissionWindowTask' && format(evidenceSubmissionEndDate, 'MM/dd/yyyy') }
-                  </td>
-                </tr>;
-              }
-              )}
-            </tbody>
-          </table>}
+          {selectedTasks.length > 0 && (
+            <table className={`usa-table-borderless ${styles.mainTable}`}>
+              <tbody>
+                {selectedTasks.map((task) => {
+                  return (
+                    <tr className="task-detail" key={`${task.taskId}`}>
+                      <td>
+                        {task.label.
+                          split(' ').
+                          slice(0, -1).
+                          join(' ')}
+                      </td>
+                      <td>
+                        {task.type === 'EvidenceSubmissionWindowTask' && (
+                          <span className="bolded-header">End date: </span>
+                        )}
+                        {task.type === 'EvidenceSubmissionWindowTask' &&
+                          format(evidenceSubmissionEndDate, 'MM/dd/yyyy')}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
         </section>
       </AppSegment>
       <div className="controls cf-app-segment">
@@ -112,16 +115,22 @@ export const SubstituteAppellantReview = ({ selectedTasks, existingValues,
   );
 };
 SubstituteAppellantReview.propTypes = {
-  selectedTasks: PropTypes.arrayOf(PropTypes.shape({
-    taskId: PropTypes.number,
-    label: PropTypes.string,
-  })),
+  selectedTasks: PropTypes.arrayOf(
+    PropTypes.shape({
+      taskId: PropTypes.number,
+      label: PropTypes.string,
+    })
+  ),
   existingValues: PropTypes.shape({
     substitutionDate: PropTypes.string,
     participantId: PropTypes.string,
     taskIds: PropTypes.array,
   }),
   evidenceSubmissionEndDate: PropTypes.instanceOf(Date),
+  relationship: PropTypes.shape({
+    fullName: PropTypes.string,
+    relationshipType: PropTypes.string,
+  }),
   onBack: PropTypes.func,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
