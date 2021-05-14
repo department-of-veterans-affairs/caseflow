@@ -26,10 +26,12 @@ const styles = {
       borderTop: '1px solid #D6D7D9',
     },
     '& tr:last-of-type td': {
-      borderBottom: 'none',
       paddingBottom: '20px',
     },
   }),
+  tableSection: css({
+    marginBottom: '40px'
+  })
 };
 
 export const SubstituteAppellantReview = ({
@@ -53,7 +55,7 @@ export const SubstituteAppellantReview = ({
           <h1>{SUBSTITUTE_APPELLANT_REVIEW_TITLE}</h1>
           <div>{SUBSTITUTE_APPELLANT_REVIEW_SUBHEAD}</div>
         </section>
-        <section>
+        <section className={styles.tableSection}>
           <h2>About the appellant</h2>
           <table className={`usa-table-borderless ${styles.mainTable}`}>
             <tbody>
@@ -74,7 +76,7 @@ export const SubstituteAppellantReview = ({
             </tbody>
           </table>
         </section>
-        <section>
+        <section className={styles.tableSection}>
           <h2>Reactivated tasks</h2>
           {selectedTasks.length > 0 && (
             <table className={`usa-table-borderless ${styles.mainTable}`}>
