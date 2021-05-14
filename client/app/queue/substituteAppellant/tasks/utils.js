@@ -1,10 +1,14 @@
-// Generic function to determine if a task is a descendent of another task
+import parseISO from 'date-fns/parseISO';
 
-import parseISO from "date-fns/parseISO";
-
-// allItems is object keyed to taskId
-export const isDescendant = (allItems = {}, target, current, { id = 'id' } = {}) => {
-  if (!current.parentId) {
+// Generic function to determine if a task (`current`) is a descendent of another task (`target`)
+// allItems is object keyed to a specified id
+export const isDescendant = (
+  allItems = {},
+  target,
+  current,
+  { id = 'taskId' } = {}
+) => {
+  if (!current?.parentId) {
     return false;
   }
 
@@ -14,7 +18,7 @@ export const isDescendant = (allItems = {}, target, current, { id = 'id' } = {})
 
   const parent = allItems[current.parentId];
 
-  return isDescendant(allItems, target, parent);
+  return isDescendant(allItems, target, parent, { id });
 };
 
 // The following can be used to programmatically determine if a given task
@@ -52,11 +56,7 @@ export const isDescendantOfDistributionTask = (taskId, taskList) => {
 // The following governs what should always be programmatically disabled from selection
 export const alwaysDisabled = ['DistributionTask'];
 export const shouldDisable = (taskInfo) => {
-  if (alwaysDisabled.includes(taskInfo.type)) {
-    return true;
-  }
-
-  return false;
+  return alwaysDisabled.includes(taskInfo.type);
 };
 
 // The following governs which tasks should not actually appear in list of available tasks
@@ -67,24 +67,30 @@ export const shouldHide = (taskInfo) => {
 };
 
 export const shouldAutoSelect = (taskInfo) => {
-  return taskInfo.type === 'DistributionTask';
+  return ['DistributionTask'].includes(taskInfo.type);
 };
 
 // Takes an array of tasks and filters it down to a list of most recent of each type
-export const filterDuplicateTasks = (taskData = []) => {
+export const filterTasks = (taskData = []) => {
   const uniqueTasksByType = {};
 
   for (const task of taskData) {
+    // we only want organization tasks
+    if (!task.assignedTo?.isOrganization) {
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+
+    // we only want completed and cancelled tasks
+    if (!task.closedAt) {
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+
     const newer = uniqueTasksByType[task.type]?.closedAt > task.closedAt;
-    const isChild = task.parentId === uniqueTasksByType[task.type]?.taskId;
 
     // If unrepresented or is newer, add to object
     if (!newer) {
-      uniqueTasksByType[task.type] = task;
-    }
-
-    // Prefer leaf nodes (likely user vs org)
-    if (isChild) {
       uniqueTasksByType[task.type] = task;
     }
   }
@@ -92,11 +98,19 @@ export const filterDuplicateTasks = (taskData = []) => {
   return Object.values(uniqueTasksByType);
 };
 
-// This returns array of tasks with relevant booleans for hidden/disabled
-export const formatTaskData = (taskData) => {
-  const uniqTasks = filterDuplicateTasks(taskData);
+export const sortTasks = (taskData) => {
+  return taskData.sort((task1, task2) =>
+    task1.closedAt > task2.closedAt ? -1 : 1
+  );
+};
 
-  return uniqTasks.map((taskInfo) => ({
+// This returns array of tasks with relevant booleans for hidden/disabled
+export const prepTaskDataForUi = (taskData) => {
+  const uniqTasks = filterTasks(taskData);
+
+  const sortedTasks = sortTasks(uniqTasks);
+
+  return sortedTasks.map((taskInfo) => ({
     ...taskInfo,
     hidden: shouldHide(taskInfo),
     disabled: shouldDisable(taskInfo, taskData),
@@ -104,10 +118,16 @@ export const formatTaskData = (taskData) => {
   }));
 };
 
-export const calculateEvidenceSubmissionEndDate = ({ substitutionDate: substitutionDateStr, veteranDateOfDeath: veteranDateOfDeathStr, selectedTasks }) => {
+export const calculateEvidenceSubmissionEndDate = ({
+  substitutionDate: substitutionDateStr,
+  veteranDateOfDeath: veteranDateOfDeathStr,
+  selectedTasks,
+}) => {
   const substitutionDate = new Date(substitutionDateStr);
   const veteranDateOfDeath = new Date(veteranDateOfDeathStr);
-  const evidenceSubmissionTask = selectedTasks.find((task) => task.type === 'EvidenceSubmissionWindowTask');
+  const evidenceSubmissionTask = selectedTasks.find(
+    (task) => task.type === 'EvidenceSubmissionWindowTask'
+  );
 
   if (!evidenceSubmissionTask?.timerEndsAt) {
     return null;
@@ -115,7 +135,8 @@ export const calculateEvidenceSubmissionEndDate = ({ substitutionDate: substitut
   const timerEndsAt = evidenceSubmissionTask.timerEndsAt;
   const timerEndsAtDate = parseISO(timerEndsAt);
 
-  const remainingTime = timerEndsAtDate.getTime() - veteranDateOfDeath.getTime();
+  const remainingTime =
+    timerEndsAtDate.getTime() - veteranDateOfDeath.getTime();
   const newEndTime = substitutionDate.getTime() + remainingTime;
 
   return new Date(newEndTime);

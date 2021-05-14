@@ -162,6 +162,8 @@ const DistributionTask = {
   label: 'Distribution Task',
 };
 
+// the array index (idx) is zero-based
+// for the id below, we just incremented by one so that we had more realistic (non-zero) IDs
 export const getAmaTasks = (taskArray) => {
   const tasks = taskArray.map((attributes, idx) =>
     amaTaskWith({
@@ -174,11 +176,7 @@ export const getAmaTasks = (taskArray) => {
   return tasks;
 };
 
-export const sampleDirectReviewTasks = () => {
-  const taskTypes = [RootTask, DistributionTask];
-};
-
-export const sampleEvidenceSubmissionTasks = () => {
+export const sampleTasksForEvidenceSubmissionDocket = () => {
   const taskTypes = [
     RootTask,
     {

@@ -25,7 +25,7 @@ export const refreshAppellantPoa = createAsyncThunk(
     try {
       const res = await ApiUtil.put(`/claimants/${participantId}/poa`);
 
-      return res?.body?.poa
+      return res?.body?.poa;
     } catch (error) {
       console.error('Error fetching appellant poa', error);
       throw error;
@@ -33,17 +33,16 @@ export const refreshAppellantPoa = createAsyncThunk(
   }
 );
 
-
 const initialState = {
   step: 0,
 
   /**
-   * This will hold substitution date, participantId, etc
+   * This will hold substitution date, participantId, taskIds, etc
    */
   formData: {
     substitutionDate: null,
     participantId: null,
-    taskIds: null,
+    taskIds: [],
   },
 
   /**
