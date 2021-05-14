@@ -97,7 +97,8 @@ class SanitizedJsonConfiguration
         track_imported_ids: true,
         sanitize_fields: %w[css_id email full_name],
         retrieval: lambda do |records|
-          tasks = records[Task]
+          # eager load task associations
+          tasks = Task.where(id: records[Task].map(&:id)).includes(:assigned_by, :assigned_to, :cancelled_by)
           cavc_remands = records[CavcRemand]
           hearings = records[Hearing]
 
@@ -119,8 +120,10 @@ class SanitizedJsonConfiguration
       Organization => {
         track_imported_ids: true,
         retrieval: lambda do |records|
+          # eager load task associations
+          org_tasks = Task.where(id: records[Task].map(&:id)).includes(:assigned_by, :assigned_to).assigned_to_any_org
           org_ids = records[OrganizationsUser].map(&:organization_id) + 
-            records[Task].assigned_to_org.map(&:assigned_to_id)
+            org_tasks.map(&:assigned_to_id) + org_tasks.map(&:assigned_by_id)
           # Use Organization.unscoped to include inactive organizations when exporting
           Organization.unscoped.where(id: org_ids).order(:id)
         end
@@ -214,7 +217,7 @@ class SanitizedJsonConfiguration
     # Currently no :legacy_retrieval lambdas have been defined.
     retrieval_key = initial_appeals.first.is_a?(LegacyAppeal) ? :legacy_retrieval : :retrieval
     # incrementally update export_records as subsequent calls may rely on prior updates to export_records
-    extract_configuration(:retrieval_key, configuration).map do |klass, retrieval_lambda|
+    extract_configuration(retrieval_key, configuration).map do |klass, retrieval_lambda|
       export_records[klass] = retrieval_lambda.call(export_records)
     end
 
