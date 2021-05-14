@@ -23,10 +23,14 @@ export const TimeSelect = ({ roTimezone, onSelect, error, clearError, hearingDay
       minHeight: '44px',
     }),
     // Fix selected text positioning problem caused by adjusting height
-    singleValue: () => ({
-      padding: '0',
-      margin: '0'
-    }),
+    // Without this, the text positioning is strange if input is something
+    // long like "12:30pm" (or for testing 12::::30:::::PM)
+    singleValue: (styles) => {
+      return {
+        ...styles,
+        transform: 'translateY(-2px)'
+      };
+    },
     // Change the highlight colors in the dropdown to gray
     option: (styles, { isFocused }) => ({
       ...styles,
