@@ -31,7 +31,6 @@ describe('timelineEventsFromAppeal', () => {
     };
     const res = timelineEventsFromAppeal({ appeal });
 
-    console.log(res);
     expect(res.length).toBe(3);
     expect(res).toContainEqual({
       type: 'decisionDate',
