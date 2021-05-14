@@ -7,7 +7,7 @@ import {
 import { sampleTasksForEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
 
 describe('utility functions for task manipulation', () => {
-  const nonDistributionTask = ['JudgeAssignTask',
+  const nonDistributionTaskTypes = ['JudgeAssignTask',
     'JudgeDecisionReviewTask',
     'AttorneyTask',
     'BvaDispatchTask',
@@ -41,8 +41,8 @@ describe('utility functions for task manipulation', () => {
 
     it('returns false for others', () => {
 
-      nonDistributionTask.forEach((task) => {
-        const nonDt = { type: task };
+      nonDistributionTaskTypes.forEach((taskType) => {
+        const nonDt = { type: taskType };
 
         expect(shouldAutoSelect(nonDt)).toBe(false);
       });
@@ -58,8 +58,8 @@ describe('utility functions for task manipulation', () => {
 
     it('returns false for others', () => {
 
-      nonDistributionTask.forEach((task) => {
-        const nonDt = { type: task };
+      nonDistributionTaskTypes.forEach((taskType) => {
+        const nonDt = { type: taskType };
 
         expect(shouldDisable(nonDt)).toBe(false);
       });
