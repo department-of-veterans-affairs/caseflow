@@ -8,7 +8,7 @@ class WorkQueue::AppellantSubstitutionSerializer
   attribute :substitute_participant_id
   attribute :poa_participant_id
   attribute :target_appeal_id
-  
+
   attribute :created_at
   attribute :created_by do |object|
     object.created_by&.full_name
