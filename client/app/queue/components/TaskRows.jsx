@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { css } from 'glamor';
 import React from 'react';
 import moment from 'moment';
@@ -547,3 +548,4 @@ TaskRows.propTypes = {
 };
 
 export default TaskRows;
+/* eslint-enable max-lines */
