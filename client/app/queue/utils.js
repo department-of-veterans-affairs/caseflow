@@ -743,6 +743,8 @@ export const sortCaseTimelineEvents = (...eventArrays) => {
     // In cases of null/undefined dates, we sort to the front
     if (!d1) {
       return -1;
+    } else if (!d2) {
+      return 1;
     }
 
     return compareDesc(new Date(d1), new Date(d2));
