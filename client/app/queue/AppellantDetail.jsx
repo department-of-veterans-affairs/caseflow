@@ -4,7 +4,7 @@ import React from 'react';
 import { detailListStyling, getDetailField } from './Detail';
 import Address from './components/Address';
 import BareList from '../components/BareList';
-import {DateString} from "app/util/DateUtil";
+import { DateString } from 'app/util/DateUtil';
 
 /**
  * A component to display various details about the appeal's appellant including name, address and their relation to the
@@ -53,7 +53,7 @@ export const AppellantDetail = ({ appeal, substitutionDate }) => {
 AppellantDetail.propTypes = {
 
   /**
-   * Appeal object that contains information abbout the appellant including name, address, and their relation to the
+   * Appeal object that contains information about the appellant including name, address, and their relation to the
    * veteran
    */
   appeal: PropTypes.shape({
