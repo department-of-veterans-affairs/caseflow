@@ -585,6 +585,8 @@
   "CASE_TIMELINE_APPEAL_WITHDRAWN": "Appeal withdrawn",
   "CASE_TIMELINE_ATTORNEY_REWRITE_TASK": "Decision revised by attorney",
   "CASE_TIMELINE_ATTORNEY_QUALITY_REVIEW_TASK": "Attorney quality reviewed",
+  "CASE_TIMELINE_APPELLANT_SUBSTITUTION": "Substitution granted by the RO",
+  "CASE_TIMELINE_APPELLANT_SUBSTITUTION_PROCESSED": "Substitution completed",
 
   "DECISION_ISSUE_MODAL_TITLE": "Describe what the Veteran is appealing and what you decided.",
   "DECISION_ISSUE_MODAL_SUB_TITLE": "You can also add additional decisions to better address the Veteran's concerns or situation.",

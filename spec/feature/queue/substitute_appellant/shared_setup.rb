@@ -128,7 +128,9 @@ RSpec.shared_examples("fill substitution form") do
     end
 
     step "view new appeal in Case Details page" do
+      # Waiting for success message ensures time to process the substitution
       expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_SUCCESS_TITLE
+
       appellant_substitution = AppellantSubstitution.find_by(source_appeal_id: appeal.id)
       new_appeal = appellant_substitution.target_appeal
       expect(page).to have_current_path("/queue/appeals/#{new_appeal.uuid}")
@@ -141,6 +143,10 @@ RSpec.shared_examples("fill substitution form") do
       expect(page).to have_content(new_appeal.claimant.representative_name)
       expect(page).to have_content COPY::CASE_DETAILS_POA_SUBSTITUTE
       expect(page).to have_content COPY::CASE_DETAILS_POA_EXPLAINER
+
+      # Substitution is shown on timeline
+      expect(page).to have_content COPY::CASE_TIMELINE_APPELLANT_SUBSTITUTION
+      expect(page).to have_content COPY::CASE_TIMELINE_APPELLANT_SUBSTITUTION_PROCESSED
     end
   end
 end
