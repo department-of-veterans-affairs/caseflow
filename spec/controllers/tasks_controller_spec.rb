@@ -1089,6 +1089,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
         colocated_task = response_body["tasks"].find { |task| task["attributes"]["type"] == "IhpColocatedTask" }
         expect(colocated_task).to_not be_nil
+        expect(colocated_task["attributes"]["timer_ends_at"]).to be_nil
         expect(colocated_task["attributes"]["assigned_to"]["css_id"]).to eq colocated_user.css_id
         expect(colocated_task["attributes"]["appeal_id"]).to eq appeal.id
         expect(colocated_task["attributes"]["status"]).to eq Task.statuses[:in_progress]
