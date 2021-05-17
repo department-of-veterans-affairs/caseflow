@@ -274,7 +274,7 @@ class AppealsController < ApplicationController
                  else
                    appeal.claimant
                  end
-      message, result = poa.update_or_delete(appeal.claimant)
+      message, result = poa.update_or_delete(claimant)
       {
         status: "success",
         message: message,
