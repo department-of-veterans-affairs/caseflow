@@ -64,21 +64,22 @@ export const SubstituteAppellantReviewContainer = () => {
     history.push(`/queue/appeals/${appealId}`);
   };
 
-  const handleSubmit = async () => {
-    // Here we'll dispatch completeSubstituteAppellant action to submit data from Redux to the API
+  const buildTaskCreationParameters = () => {
+    const taskParams = {};
+
     const evidenceSubmissionTask = selectedTasks.find(
       (task) => task.type === 'EvidenceSubmissionWindowTask'
     );
-    const taskParams = {
-      [evidenceSubmissionTask.uniqueId]: {
+
+    if (evidenceSubmissionTask) {
+      taskParams[evidenceSubmissionTask.uniqueId] = {
         hold_end_date: formatSubmissionEndDateToBackend(evidenceSubmissionEndDate)
-      }
-    };
+      };
+    }
+  }
 
-    taskParams[evidenceSubmissionTask.uniqueId] = {
-      hold_end_date: formatSubmissionEndDateToBackend(evidenceSubmissionEndDate)
-    };
-
+  const handleSubmit = async () => {
+    // Here we'll dispatch completeSubstituteAppellant action to submit data from Redux to the API
     const payload = {
       source_appeal_id: appealId,
       substitution_date: existingValues.substitutionDate,
@@ -86,7 +87,7 @@ export const SubstituteAppellantReviewContainer = () => {
       substitute_participant_id: existingValues.participantId,
       poa_participant_id: poa.poa_participant_id,
       selected_task_ids: existingValues.taskIds,
-      task_params: taskParams
+      task_params: buildTaskCreationParameters()
     };
 
     try {
