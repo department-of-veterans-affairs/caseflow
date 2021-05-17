@@ -433,6 +433,7 @@ Array [
     "status": "completed",
     "taskId": 3,
     "timelineTitle": "RootTask completed",
+    "timerEndsAt": "2021-05-30T10:33:08.151-04:00",
     "type": "EvidenceSubmissionWindowTask",
     "uniqueId": "3",
     "workProduct": null,

@@ -268,8 +268,8 @@ describe HearingDay, :all_dbs do
       context "a central day" do
         let(:regional_office_key) { nil }
         let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
-        it "has 8 slots" do
-          expect(subject).to be(8)
+        it "has 10 slots" do
+          expect(subject).to be(10)
         end
       end
 
@@ -277,8 +277,8 @@ describe HearingDay, :all_dbs do
         context "a video day at RO (#{ro})" do
           let(:regional_office_key) { ro }
           let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
-          it "has 8 slots" do
-            expect(subject).to be(8)
+          it "has 12 slots" do
+            expect(subject).to be(12)
           end
         end
       end
