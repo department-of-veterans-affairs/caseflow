@@ -58,7 +58,7 @@ describe AppellantSubstitution do
         user_task_params = {}
 
         if source_esw_task
-          user_task_params[source_esw_task.id] = { hold_end_date: evidence_submission_hold_end_date.strftime("%F") }
+          user_task_params[source_esw_task.id] = { hold_end_date: evidence_submission_hold_end_date&.strftime("%F") }
         end
 
         user_task_params
@@ -89,6 +89,13 @@ describe AppellantSubstitution do
           task_timer = TaskTimer.where(task: esw_task).order(:id).last
           expect(task_timer.submitted_at.utc.to_date).to eq evidence_submission_hold_end_date
           expect(esw_task.timer_ends_at.utc.to_date).to eq evidence_submission_hold_end_date
+        end
+
+        context "when ESWTask's task_param hold_end_date is not provided" do
+          let(:evidence_submission_hold_end_date) { nil }
+          it "fails" do
+            expect { subject }.to raise_error(/Expecting hold_end_date creation parameter.*/)
+          end
         end
       end
 

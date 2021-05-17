@@ -55,7 +55,6 @@ class InitialTasksFactory
         distribution_task.ready_for_distribution! if vso_tasks.empty?
       else
         # Should never happen since all known docket types are checked above but let's fail just in case
-        fail "Unhandled appeal docket type"
       end
     end
   end
@@ -106,12 +105,11 @@ class InitialTasksFactory
   end
 
   def evidence_submission_window_task(source_task, creation_params)
-    evidence_submission_hold_end_date = Time.find_zone("UTC").parse(creation_params["hold_end_date"])
-
-    unless evidence_submission_hold_end_date
+    unless creation_params["hold_end_date"]
       fail "Expecting hold_end_date creation parameter for EvidenceSubmissionWindowTask from #{source_task.id}"
     end
 
+    evidence_submission_hold_end_date = Time.find_zone("UTC").parse(creation_params["hold_end_date"])
     EvidenceSubmissionWindowTask.create!(appeal: @appeal,
                                          parent: distribution_task,
                                          end_date: evidence_submission_hold_end_date)
@@ -128,9 +126,9 @@ class InitialTasksFactory
     # To-do: Refine or replace this code block for unrecognized appellants.
     # If this happens, then the claimant's power_of_attorney is different than what is in BGS
     # and BGS probably needs to be updated.
-    ihp_task = @appeal.tasks.open.find_by(type: :InformalHearingPresentationTask)
-    target_org = Representative.find_by(participant_id: @appeal.appellant_substitution.poa_participant_id)
-    ihp_task&.update(assigned_to: target_org)
+    # ihp_task = @appeal.tasks.open.find_by(type: :InformalHearingPresentationTask)
+    # target_org = Representative.find_by(participant_id: @appeal.appellant_substitution.poa_participant_id)
+    # ihp_task&.update(assigned_to: target_org)
     # To-do: close the other vso_tasks
   end
 
