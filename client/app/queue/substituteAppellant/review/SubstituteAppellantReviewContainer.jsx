@@ -66,14 +66,28 @@ export const SubstituteAppellantReviewContainer = () => {
 
   const handleSubmit = async () => {
     // Here we'll dispatch completeSubstituteAppellant action to submit data from Redux to the API
+    const evidenceSubmissionTask = selectedTasks.find(
+      (task) => task.type === 'EvidenceSubmissionWindowTask'
+    );
+    const taskParams = {
+      [evidenceSubmissionTask.uniqueId]: {
+        hold_end_date: formatSubmissionEndDateToBackend(evidenceSubmissionEndDate)
+      }
+    };
+
+    taskParams[evidenceSubmissionTask.uniqueId] = {
+      hold_end_date: formatSubmissionEndDateToBackend(evidenceSubmissionEndDate)
+    };
+
     const payload = {
       source_appeal_id: appealId,
       substitution_date: existingValues.substitutionDate,
       claimant_type: existingValues.claimantType,
       substitute_participant_id: existingValues.participantId,
-      evidence_submission_date: formatSubmissionEndDateToBackend(evidenceSubmissionEndDate),
+      poa_participant_id: existingValues.participantId, // TODO: POA's
+      selected_task_ids: existingValues.taskIds.map((taskIdStr) => parseInt(taskIdStr, 10)),
       // To-do: populate with appropriate user input
-      poa_participant_id: '123456789'
+      task_params: taskParams
     };
 
     try {
@@ -91,7 +105,8 @@ export const SubstituteAppellantReviewContainer = () => {
       dispatch(
         showErrorMessage({
           title: 'Error when substituting appellant',
-          detail: JSON.parse(error.message).errors[0].detail,
+          detail: error.message, //JSON.parse(error.message).errors[0].detail
+          // To-do: show error banner
         })
       );
     }

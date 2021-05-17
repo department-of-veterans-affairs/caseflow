@@ -82,17 +82,17 @@ class InitialTasksFactory
     fail "Expecting only tasks assigned to organizations" if source_tasks.map(&:assigned_to_type).include?("User")
 
     source_tasks.map do |source_task|
-      create_params = @appeal.appellant_substitution.task_params[source_task.id.to_s]
-      create_task_from(source_task, create_params)
+      creation_params = @appeal.appellant_substitution.task_params[source_task.id.to_s]
+      create_task_from(source_task, creation_params)
     end.flatten
   end
 
-  def create_task_from(source_task, create_params)
+  def create_task_from(source_task, creation_params)
     case source_task.type
     when "DistributionTask"
       distribution_task
     when "EvidenceSubmissionWindowTask"
-      evidence_submission_hold_end_date = Time.find_zone("UTC").parse(create_params["hold_end_date"])
+      evidence_submission_hold_end_date = Time.find_zone("UTC").parse(creation_params["hold_end_date"])
       EvidenceSubmissionWindowTask.create!(appeal: @appeal,
                                            parent: distribution_task,
                                            end_date: evidence_submission_hold_end_date)
