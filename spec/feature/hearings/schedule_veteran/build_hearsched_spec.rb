@@ -253,14 +253,15 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
 
     def slots_select_hearing_time(time)
-      find(".time-slot-button", text: time).click
+      find(".time-slot-button", text: "#{time} EDT").click
     end
 
     def slots_select_custom_hearing_time(time)
       find(".time-slot-button-toggle", text: "Choose a custom time").click
-      # Type in the time, add am, press enter with \n
+      # Type in the time, add am, press enter with \n, then tab away
+      # to allow the select to update
       time_select_input = find(".time-select").find("input")
-      time_select_input.send_keys "#{time}AM", :enter, :tab
+      time_select_input.send_keys time, :enter, :tab
       click_button("Choose time")
     end
 
@@ -902,7 +903,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       before { cache_appeals }
 
       # Use the timeslot button
-      it_behaves_like "scheduling a virtual hearing", "RO39", "10:30 AM EDT", "slot"
+      it_behaves_like "scheduling a virtual hearing", "RO39", "10:30 AM", "slot"
     end
 
     shared_examples "scheduling a hearing on a virtual hearing day using a custom time" do
@@ -912,7 +913,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       before { cache_appeals }
 
       # Use the timeslot custom time modal
-      it_behaves_like "scheduling a virtual hearing", "RO39", "10:45 AM EDT", "slot"
+      it_behaves_like "scheduling a virtual hearing", "RO39", "10:45 AM", "custom"
     end
 
     context "with enable_time_slots feature disabled" do
@@ -975,7 +976,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
       # These are the only feature tests that create 'R' virtual
       # hearing days and should show timeslots
-      #it_behaves_like "scheduling a hearing on a virtual hearing day using a slot button"
+      it_behaves_like "scheduling a hearing on a virtual hearing day using a slot button"
       it_behaves_like "scheduling a hearing on a virtual hearing day using a custom time"
 
       # TimeSlots will only ever show for a virtual hearing day
