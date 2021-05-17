@@ -32,7 +32,7 @@ class InitialTasksFactory
     end
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def create_subtasks!
     distribution_task # ensure distribution_task exists
 
@@ -59,7 +59,7 @@ class InitialTasksFactory
       end
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def distribution_task
     @distribution_task ||= @appeal.tasks.open.find_by(type: :DistributionTask) ||
@@ -92,37 +92,46 @@ class InitialTasksFactory
     when "DistributionTask"
       distribution_task
     when "EvidenceSubmissionWindowTask"
-      evidence_submission_hold_end_date = Time.find_zone("UTC").parse(creation_params["hold_end_date"])
-
-      unless evidence_submission_hold_end_date
-        fail "Expecting hold_end_date creation parameter for EvidenceSubmissionWindowTask from #{source_task.id}"
-      end
-
-      EvidenceSubmissionWindowTask.create!(appeal: @appeal,
-                                           parent: distribution_task,
-                                           end_date: evidence_submission_hold_end_date)
+      evidence_submission_window_task(source_task, creation_params)
     when "InformalHearingPresentationTask"
-      vso_tasks = create_ihp_task
-      warn_poa_not_a_representative if vso_tasks.blank?
-      if @appeal.power_of_attorney.poa_participant_id != @appeal.appellant_substitution.poa_participant_id
-        # To-do: Refine or replace this code block for unrecognized appellants.
-        # If this happens, then the claimant's power_of_attorney is different than what is in BGS
-        # and BGS probably needs to be updated.
-        ihp_task = @appeal.tasks.open.find_by(type: :InformalHearingPresentationTask)
-        target_org = Representative.find_by(participant_id: @appeal.appellant_substitution.poa_participant_id)
-        ihp_task&.update(assigned_to: target_org)
-        # To-do: close the other vso_tasks
+      create_ihp_task.tap do |vso_tasks|
+        warn_poa_not_a_representative if vso_tasks.blank?
+        if @appeal.power_of_attorney.poa_participant_id != @appeal.appellant_substitution.poa_participant_id
+          handle_different_poa
+        end
       end
-      vso_tasks
     else
       source_task.copy_with_ancestors_to_stream(@appeal, extra_excluded_attributes: ["status"])
     end
   end
 
+  def evidence_submission_window_task(source_task, creation_params)
+    evidence_submission_hold_end_date = Time.find_zone("UTC").parse(creation_params["hold_end_date"])
+
+    unless evidence_submission_hold_end_date
+      fail "Expecting hold_end_date creation parameter for EvidenceSubmissionWindowTask from #{source_task.id}"
+    end
+
+    EvidenceSubmissionWindowTask.create!(appeal: @appeal,
+                                         parent: distribution_task,
+                                         end_date: evidence_submission_hold_end_date)
+  end
+
   def warn_poa_not_a_representative
-    msg = "Did not create user-selected InformalHearingPresentationTask because " \
+    msg = "For Appeal #{@appeal.id}, did not create user-selected InformalHearingPresentationTask because " \
       "POA is not a Representative: poa_participant_id = #{@appeal.appellant_substitution.poa_participant_id}"
+    # Change this to a Rails.logger.warning(msg) if Sentry becomes too noisy
     Raven.capture_message(msg)
+  end
+
+  def handle_different_poa
+    # To-do: Refine or replace this code block for unrecognized appellants.
+    # If this happens, then the claimant's power_of_attorney is different than what is in BGS
+    # and BGS probably needs to be updated.
+    ihp_task = @appeal.tasks.open.find_by(type: :InformalHearingPresentationTask)
+    target_org = Representative.find_by(participant_id: @appeal.appellant_substitution.poa_participant_id)
+    ihp_task&.update(assigned_to: target_org)
+    # To-do: close the other vso_tasks
   end
 
   # For AMA appeals. Create appropriate subtasks based on the CAVC Remand subtype
