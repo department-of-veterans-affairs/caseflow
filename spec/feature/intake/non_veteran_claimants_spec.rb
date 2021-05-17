@@ -375,7 +375,7 @@ feature "Non-veteran claimants", :postgres do
 
     context "when the veteran has no dependent relations" do
       it "allows selecting claimant not listed" do
-        allow(veteran).to receive(:relationships).and_return([])
+        allow_any_instance_of(Veteran).to receive(:relationships).and_return([])
         start_appeal(veteran)
         visit "/intake"
 
