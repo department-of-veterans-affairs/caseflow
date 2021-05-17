@@ -104,7 +104,7 @@ export const SubstituteAppellantReviewContainer = () => {
       );
       history.push(`/queue/appeals/${res.payload.targetAppeal.uuid}`);
     } catch (error) {
-      console.error("Error during substitute appellant appeal creation", error);
+      console.error('Error during substitute appellant appeal creation', error);
       dispatch(
         showErrorMessage({
           title: 'Error when substituting appellant',
