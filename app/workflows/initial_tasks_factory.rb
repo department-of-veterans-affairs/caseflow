@@ -53,8 +53,6 @@ class InitialTasksFactory
         # If the appeal is direct docket and there are no ihp tasks,
         # then it is initially ready for distribution.
         distribution_task.ready_for_distribution! if vso_tasks.empty?
-      else
-        # Should never happen since all known docket types are checked above but let's fail just in case
       end
     end
   end
