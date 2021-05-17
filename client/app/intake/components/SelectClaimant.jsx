@@ -303,8 +303,11 @@ export const SelectClaimant = (props) => {
       />
 
       {showDeceasedVeteranAlert && deceasedVeteranAlert()}
-      {showClaimants && (hasRelationships || newClaimant) && claimantOptions()}
-      {showClaimants && !hasRelationships && !newClaimant && noClaimantsCopy()}
+      {showClaimants && (
+        (nonVeteranClaimants || hasRelationships || newClaimant)
+          ? claimantOptions()
+          : noClaimantsCopy()
+      )}
 
       {enableAddClaimantModal && !newClaimant && (
         <>
