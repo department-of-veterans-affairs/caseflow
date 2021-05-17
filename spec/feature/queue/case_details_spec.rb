@@ -454,6 +454,7 @@ RSpec.feature "Case details", :all_dbs do
       after { FeatureToggle.disable!(:poa_refresh) }
 
       scenario "text is on the page" do
+        poa.save!
         visit "/queue/appeals/#{appeal.uuid}"
         expect(page).to have_content("POA last refreshed on")
       end
@@ -568,6 +569,7 @@ RSpec.feature "Case details", :all_dbs do
         allow_any_instance_of(BgsPowerOfAttorney).to receive(:bgs_record).and_return(:not_found)
         click_on "Refresh POA"
         expect(page).to have_content("Successfully refreshed. No power of attorney information was found at this time.")
+        expect(page).to have_no_content("POA last refreshed on")
       end
     end
 

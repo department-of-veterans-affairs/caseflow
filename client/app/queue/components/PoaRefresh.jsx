@@ -35,9 +35,12 @@ export const PoaRefresh = ({ powerOfAttorney, appealId }) => {
   return <React.Fragment>
     {viewPoaRefresh &&
     <div {...textStyling}>
-      <em>Power of Attorney (POA) data comes from VBMS. To refresh POA, please click the "Refresh POA" button.</em>
+      <em>{ COPY.CASE_DETAILS_POA_REFRESH_BUTTON_EXPLANATION }</em>
       <div {...gutterStyling}></div>
-      <div {...boldText}{...syncStyling}><em>{lastSyncedCopy}</em>
+      <div {...boldText}{...syncStyling}>
+        {poaSyncInfo.poaSyncDate &&
+          <em>{lastSyncedCopy}</em>
+        }
         <PoaRefreshButton appealId={appealId} poaId={powerOfAttorney.representative_id} />
       </div>
     </div>
