@@ -187,6 +187,7 @@ export const sampleTasksForEvidenceSubmissionDocket = () => {
       type: 'EvidenceSubmissionWindowTask',
       label: 'Evidence Submission Window Task',
       parentId: 2,
+      timerEndsAt: '2021-05-30T10:33:08.151-04:00',
     },
     {
       type: 'JudgeAssignTask',
@@ -225,4 +226,3 @@ export const sampleTasksForEvidenceSubmissionDocket = () => {
 
   return getAmaTasks(taskTypes);
 };
-

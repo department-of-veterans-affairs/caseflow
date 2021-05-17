@@ -1,6 +1,13 @@
+import parseISO from 'date-fns/parseISO';
+
 // Generic function to determine if a task (`current`) is a descendent of another task (`target`)
 // allItems is object keyed to a specified id
-export const isDescendant = (allItems = {}, target, current, { id = 'taskId' } = {}) => {
+export const isDescendant = (
+  allItems = {},
+  target,
+  current,
+  { id = 'taskId' } = {}
+) => {
   if (!current?.parentId) {
     return false;
   }
@@ -92,7 +99,9 @@ export const filterTasks = (taskData = []) => {
 };
 
 export const sortTasks = (taskData) => {
-  return taskData.sort((task1, task2) => task1.closedAt > task2.closedAt ? -1 : 1);
+  return taskData.sort((task1, task2) =>
+    task1.closedAt > task2.closedAt ? -1 : 1
+  );
 };
 
 // This returns array of tasks with relevant booleans for hidden/disabled
@@ -107,4 +116,28 @@ export const prepTaskDataForUi = (taskData) => {
     disabled: shouldDisable(taskInfo, taskData),
     selected: shouldAutoSelect(taskInfo),
   }));
+};
+
+export const calculateEvidenceSubmissionEndDate = ({
+  substitutionDate: substitutionDateStr,
+  veteranDateOfDeath: veteranDateOfDeathStr,
+  selectedTasks,
+}) => {
+  const substitutionDate = new Date(substitutionDateStr);
+  const veteranDateOfDeath = new Date(veteranDateOfDeathStr);
+  const evidenceSubmissionTask = selectedTasks.find(
+    (task) => task.type === 'EvidenceSubmissionWindowTask'
+  );
+
+  if (!evidenceSubmissionTask?.timerEndsAt) {
+    return null;
+  }
+  const timerEndsAt = evidenceSubmissionTask.timerEndsAt;
+  const timerEndsAtDate = parseISO(timerEndsAt);
+
+  const remainingTime =
+    timerEndsAtDate.getTime() - veteranDateOfDeath.getTime();
+  const newEndTime = substitutionDate.getTime() + remainingTime;
+
+  return new Date(newEndTime);
 };
