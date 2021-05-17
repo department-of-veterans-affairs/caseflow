@@ -11,15 +11,13 @@ export default class ProgressBarSection extends React.Component {
       title
     } = this.props;
 
-    return <div>
-      { activated && <div className="cf-progress-bar-section" aria-current="step" role="listitem">
-        { activated && <div className="cf-progress-bar-activated">
-          <b>{title}</b>
-        </div>}
-        { !activated && <div className="cf-progress-bar-not-activated">
-          {title}
-        </div>}
-      </div> }
+    return <div className="cf-progress-bar-section" aria-current="step" role="listitem">
+      { activated && <div className="cf-progress-bar-activated">
+        <b>{title}</b>
+      </div>}
+      { !activated && <div className="cf-progress-bar-not-activated">
+        {title}
+      </div>}
     </div>;
   }
 }
