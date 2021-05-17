@@ -93,15 +93,16 @@ export const SelectClaimant = (props) => {
   const [showClaimantModal, setShowClaimantModal] = useState(false);
   const [newClaimant, setNewClaimant] = useState(null);
   const openAddClaimantModal = () => setShowClaimantModal(true);
+  const isAppeal = (formType === 'appeal');
 
   const enableAddClaimantModal = useMemo(
-    () => formType === 'appeal' && attorneyFees && veteranIsNotClaimant && !nonVeteranClaimants,
-    [formType, veteranIsNotClaimant, attorneyFees, nonVeteranClaimants]
+    () => isAppeal && attorneyFees && veteranIsNotClaimant && !nonVeteranClaimants,
+    [isAppeal, veteranIsNotClaimant, attorneyFees, nonVeteranClaimants]
   );
 
   const enableAddClaimant = useMemo(
-    () => formType === 'appeal' && nonVeteranClaimants && veteranIsNotClaimant,
-    [formType, veteranIsNotClaimant, nonVeteranClaimants]
+    () => isAppeal && nonVeteranClaimants && veteranIsNotClaimant,
+    [isAppeal, veteranIsNotClaimant, nonVeteranClaimants]
   );
 
   const radioOpts = useMemo(() => {
@@ -119,7 +120,7 @@ export const SelectClaimant = (props) => {
   );
   const shouldShowPayeeCode = useMemo(() => {
     return (
-      formType !== 'appeal' &&
+      !isAppeal &&
       (benefitType === 'compensation' ||
         benefitType === 'pension' ||
         allowFiduciary)
@@ -206,7 +207,7 @@ export const SelectClaimant = (props) => {
 
         <br />
         <br />
-        {enableAddClaimantModal && formType === 'appeal' && !(claimant || claimantNotes) ?
+        {enableAddClaimantModal && !(claimant || claimantNotes) ?
           ADD_CLAIMANT_TEXT :
           ''}
       </p>
@@ -222,7 +223,7 @@ export const SelectClaimant = (props) => {
         {CLAIMANT_NOT_FOUND_END}
         <br />
         <br />
-        {enableAddClaimantModal && formType === 'appeal' ? ADD_CLAIMANT_TEXT : ''}
+        {enableAddClaimantModal ? ADD_CLAIMANT_TEXT : ''}
       </p>
     );
   };
@@ -275,7 +276,7 @@ export const SelectClaimant = (props) => {
   };
 
   let veteranClaimantOptions = BOOLEAN_RADIO_OPTIONS;
-  const allowDeceasedAppellants = deceasedAppellants && formType === 'appeal';
+  const allowDeceasedAppellants = deceasedAppellants && isAppeal;
   const showDeceasedVeteranAlert = isVeteranDeceased && veteranIsNotClaimant === false && allowDeceasedAppellants;
 
   if (isVeteranDeceased && !allowDeceasedAppellants) {
@@ -304,7 +305,7 @@ export const SelectClaimant = (props) => {
 
       {showDeceasedVeteranAlert && deceasedVeteranAlert()}
       {showClaimants && (
-        (nonVeteranClaimants || hasRelationships || newClaimant) ?
+        (enableAddClaimant || hasRelationships || newClaimant) ?
           claimantOptions() :
           noClaimantsCopy()
       )}
