@@ -9,25 +9,63 @@ exports[`AddClaimantPage renders default state correctly 1`] = `
       class="cf-progress-bar"
       role="list"
     >
-      <div>
+      <div
+        aria-current="step"
+        class="cf-progress-bar-section"
+        role="listitem"
+      >
         <div
-          aria-current="step"
-          class="cf-progress-bar-section"
-          role="listitem"
+          class="cf-progress-bar-activated"
         >
-          <div
-            class="cf-progress-bar-activated"
-          >
-            <b>
-              1. Select Form
-            </b>
-          </div>
+          <b>
+            1. Select Form
+          </b>
         </div>
       </div>
-      <div />
-      <div />
-      <div />
-      <div />
+      <div
+        aria-current="step"
+        class="cf-progress-bar-section"
+        role="listitem"
+      >
+        <div
+          class="cf-progress-bar-not-activated"
+        >
+          2. Search
+        </div>
+      </div>
+      <div
+        aria-current="step"
+        class="cf-progress-bar-section"
+        role="listitem"
+      >
+        <div
+          class="cf-progress-bar-not-activated"
+        >
+          3. Review
+        </div>
+      </div>
+      <div
+        aria-current="step"
+        class="cf-progress-bar-section"
+        role="listitem"
+      >
+        <div
+          class="cf-progress-bar-not-activated"
+        >
+          4. Add Issues
+        </div>
+      </div>
+      <div
+        aria-current="step"
+        class="cf-progress-bar-section"
+        role="listitem"
+      >
+        <div
+          class="cf-progress-bar-not-activated"
+        >
+          5. Confirmation
+        </div>
+      </div>
     </div>
   </div>
   <section
