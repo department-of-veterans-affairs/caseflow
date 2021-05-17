@@ -17,7 +17,7 @@ export const SubstituteAppellantReviewContainer = () => {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const { formData: existingValues } = useSelector(
+  const { formData: existingValues, poa } = useSelector(
     (state) => state.substituteAppellant
   );
 
@@ -84,9 +84,8 @@ export const SubstituteAppellantReviewContainer = () => {
       substitution_date: existingValues.substitutionDate,
       claimant_type: existingValues.claimantType,
       substitute_participant_id: existingValues.participantId,
-      poa_participant_id: existingValues.participantId, // TODO: POA's
-      selected_task_ids: existingValues.taskIds.map((taskIdStr) => parseInt(taskIdStr, 10)),
-      // To-do: populate with appropriate user input
+      poa_participant_id: poa.poa_participant_id,
+      selected_task_ids: existingValues.taskIds, //.map((taskIdStr) => parseInt(taskIdStr, 10)),
       task_params: taskParams
     };
 

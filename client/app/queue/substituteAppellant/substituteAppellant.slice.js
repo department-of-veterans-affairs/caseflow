@@ -51,6 +51,9 @@ const initialState = {
    */
   relationships: null,
   loadingRelationships: false,
+
+  // Substitute's POA
+  poa: null
 };
 
 const substituteAppellantSlice = createSlice({
@@ -85,6 +88,9 @@ const substituteAppellantSlice = createSlice({
       state.relationships = null;
       state.loadingRelationships = false;
     },
+    [refreshAppellantPoa.fulfilled]: (state, action) => {
+      state.poa = action.payload
+    }
   },
 });
 
