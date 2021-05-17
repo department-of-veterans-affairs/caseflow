@@ -85,7 +85,7 @@ export const SubstituteAppellantReviewContainer = () => {
       claimant_type: existingValues.claimantType,
       substitute_participant_id: existingValues.participantId,
       poa_participant_id: poa.poa_participant_id,
-      selected_task_ids: existingValues.taskIds, //.map((taskIdStr) => parseInt(taskIdStr, 10)),
+      selected_task_ids: existingValues.taskIds,
       task_params: taskParams
     };
 
@@ -104,7 +104,7 @@ export const SubstituteAppellantReviewContainer = () => {
       dispatch(
         showErrorMessage({
           title: 'Error when substituting appellant',
-          detail: error.message, //JSON.parse(error.message).errors[0].detail
+          detail: JSON.parse(error.message).errors[0].detail
           // To-do: show error banner
         })
       );

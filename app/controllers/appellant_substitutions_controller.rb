@@ -43,6 +43,6 @@ class AppellantSubstitutionsController < ApplicationController
   def create_params
     params.merge!(created_by_id: current_user.id, source_appeal_id: source_appeal.id)
     params.require(REQUIRED_PARAMS)
-    params.permit(REQUIRED_PARAMS, *PERMITTED_PARAMS)
+    params.permit(REQUIRED_PARAMS, PERMITTED_PARAMS)
   end
 end
