@@ -76,7 +76,7 @@ export const SubstituteAppellantReviewContainer = () => {
         hold_end_date: formatSubmissionEndDateToBackend(evidenceSubmissionEndDate)
       };
     }
-  }
+  };
 
   const handleSubmit = async () => {
     // Here we'll dispatch completeSubstituteAppellant action to submit data from Redux to the API
@@ -106,7 +106,7 @@ export const SubstituteAppellantReviewContainer = () => {
         showErrorMessage({
           title: 'Error when substituting appellant',
           detail: JSON.parse(error.message).errors[0].detail
-          // To-do: show error banner
+          // To-do: show error banner on this page to allow user to adjust or copy their input?
         })
       );
     }

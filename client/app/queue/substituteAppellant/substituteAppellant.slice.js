@@ -89,7 +89,11 @@ const substituteAppellantSlice = createSlice({
       state.loadingRelationships = false;
     },
     [refreshAppellantPoa.fulfilled]: (state, action) => {
-      state.poa = action.payload
+      state.poa = action.payload;
+    },
+    [refreshAppellantPoa.rejected]: (state, action) => {
+      state.poa = null;
+      console.error('To-do: let user know there was a problem', action);
     }
   },
 });

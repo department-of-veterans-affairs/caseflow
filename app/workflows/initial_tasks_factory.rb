@@ -93,6 +93,11 @@ class InitialTasksFactory
       distribution_task
     when "EvidenceSubmissionWindowTask"
       evidence_submission_hold_end_date = Time.find_zone("UTC").parse(creation_params["hold_end_date"])
+
+      unless evidence_submission_hold_end_date
+        fail "Expecting hold_end_date creation parameter for EvidenceSubmissionWindowTask from #{source_task.id}"
+      end
+
       EvidenceSubmissionWindowTask.create!(appeal: @appeal,
                                            parent: distribution_task,
                                            end_date: evidence_submission_hold_end_date)
