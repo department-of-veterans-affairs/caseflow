@@ -64,7 +64,7 @@ class InitialTasksFactory
   end
 
   def create_ihp_task
-    # An InformalHearingPresentationTask is only created if
+    # An InformalHearingPresentationTask is only created for `appeal.representatives` who `should_write_ihp?``
     IhpTasksFactory.new(distribution_task).create_ihp_tasks!
   end
 
