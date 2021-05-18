@@ -67,6 +67,8 @@ export const formatRelationships = (relationships) => {
 
     return {
       value: relationship.participant_id,
+      fullName: `${first} ${last}`,
+      relationshipType: type,
       displayText: `${first} ${last}, ${type}`,
       defaultPayeeCode: relationship.default_payee_code
     };
