@@ -316,12 +316,17 @@ class HearingSchedule::GenerateHearingDaysSchedule
       #   "RO01": {[1, 2021]=> {Tue, 05 Jan 2021=>[], Fri, 29 Jan 2021=>[],...}},
       #    ...
       # }
-      @ros[ro_key][:allocated_dates] = monthly_available_dates.map do |k, dates|
-        [k, dates.sort_by { |date| @availability_coocurrence[date] }.reduce({}) do |acc, date|
-          acc[date] = []
-          acc
-        end]
+      @ros[ro_key][:allocated_dates] = monthly_available_dates.map do |month, available_dates|
+        [month, dates_sorted_and_formatted(available_dates)]
       end.to_h
+    end
+  end
+
+  def dates_sorted_and_formatted(dates)
+    sorted_dates = dates.sort_by { |date| @availability_coocurrence[date] }
+    sorted_dates.reduce({}) do |formatted_dates, date|
+      formatted_dates[date] = []
+      formatted_dates
     end
   end
 
