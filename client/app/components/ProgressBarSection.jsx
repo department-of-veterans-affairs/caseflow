@@ -11,7 +11,7 @@ export default class ProgressBarSection extends React.Component {
       title
     } = this.props;
 
-    return <div className="cf-progress-bar-section" aria-current="step" role="listitem">
+    return <div className="cf-progress-bar-section" aria-current={activated ? 'step' : 'false'} role="listitem">
       { activated && <div className="cf-progress-bar-activated">
         <b>{title}</b>
       </div>}
