@@ -240,7 +240,7 @@ export const CaseDetailsView = (props) => {
             <AppellantDetail
               title="About the Appellant"
               appeal={appeal}
-              substitutionDate={appeal.appellantSubstitution?.substitution_date}
+              substitutionDate={appeal.appellantSubstitution && appeal.appellantSubstitution.substitution_date}
             />
           ) }
 
