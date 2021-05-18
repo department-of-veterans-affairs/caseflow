@@ -85,6 +85,7 @@ describe InformalHearingPresentationTask, :postgres do
         )
       end
     end
+
     context "update_to_new_poa will" do
       let(:new_poa_participant_id) { "2222222" }
       let!(:new_poa) { create(:vso, name: "New POA", participant_id: new_poa_participant_id) }
