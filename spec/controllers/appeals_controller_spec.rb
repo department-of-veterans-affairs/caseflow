@@ -603,7 +603,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
     end
   end
 
-  describe "Get appeal Power of Attorney" do
+  describe "Get legacy appeal Power of Attorney" do
     let!(:user) { User.authenticate!(roles: ["System Admin"]) }
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
     let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
@@ -634,7 +634,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
     end
   end
 
-  describe "Remove not_found claimant poa" do
+  describe "Get AMA appeal Power of Attorney" do
     let!(:user) { User.authenticate!(roles: ["System Admin"]) }
     let!(:appeal) do
         create(
@@ -651,8 +651,6 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         appeal: appeal
       )
     end
-    let(:claimant) { create(:claimant, decision_review: appeal) }
-
 
     context "get the appeals POA information" do
       subject do
@@ -665,7 +663,8 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         assert_response(:success)
         expect(JSON.parse(subject.body)["power_of_attorney"]["representative_type"]).to eq "Attorney"
         expect(JSON.parse(subject.body)["power_of_attorney"]["representative_name"]).to eq "Clarence Darrow"
-        expect(JSON.parse(subject.body)["power_of_attorney"]["representative_email_address"]).to eq "tom.brady@caseflow.gov"
+        expected_email = 'tom.brady@caseflow.gov'
+        expect(JSON.parse(subject.body)["power_of_attorney"]["representative_email_address"]).to eq expected_email
         expect(JSON.parse(subject.body)["power_of_attorney"]["representative_tz"]).to eq "America/Los_Angeles"
         expect(JSON.parse(subject.body)["power_of_attorney"]["representative_id"]).to eq appeal.power_of_attorney.id
       end
