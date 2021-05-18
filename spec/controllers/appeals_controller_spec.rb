@@ -608,7 +608,6 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
     let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
     let(:get_params) { { appeal_id: appeal.vacols_id } }
-    let(:patch_params) { { appeal_id: appeal.id, poaId: appeal.power_of_attorney.vacols_id } }
     let!(:poa) do
       create(
         :bgs_power_of_attorney,
@@ -631,6 +630,44 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         expect(JSON.parse(subject.body)["representative_email_address"]).to eq "clarence.darrow@caseflow.gov"
         expect(JSON.parse(subject.body)["representative_tz"]).to eq "America/Los_Angeles"
         expect(JSON.parse(subject.body)["representative_id"]).to eq appeal.power_of_attorney.bgs_id
+      end
+    end
+  end
+
+  describe "Remove not_found claimant poa" do
+    let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+    let!(:appeal) do
+        create(
+          :appeal,
+          veteran_file_number: "500000102",
+          receipt_date: 6.months.ago.to_date.mdY
+        )
+      end
+    let(:patch_params) { { appeal_id: appeal.uuid, poaId: appeal.power_of_attorney.id } }
+    let!(:poa) do
+      create(
+        :bgs_power_of_attorney,
+        :with_name_cached,
+        appeal: appeal
+      )
+    end
+    let(:claimant) { create(:claimant, decision_review: appeal) }
+
+
+    context "get the appeals POA information" do
+      subject do
+        patch :update_power_of_attorney, params: patch_params
+      end
+
+      it "returns a successful response" do
+        subject
+
+        assert_response(:success)
+        expect(JSON.parse(subject.body)["power_of_attorney"]["representative_type"]).to eq "Attorney"
+        expect(JSON.parse(subject.body)["power_of_attorney"]["representative_name"]).to eq "Clarence Darrow"
+        expect(JSON.parse(subject.body)["power_of_attorney"]["representative_email_address"]).to eq "tom.brady@caseflow.gov"
+        expect(JSON.parse(subject.body)["power_of_attorney"]["representative_tz"]).to eq "America/Los_Angeles"
+        expect(JSON.parse(subject.body)["power_of_attorney"]["representative_id"]).to eq appeal.power_of_attorney.id
       end
     end
   end
