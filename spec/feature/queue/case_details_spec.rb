@@ -549,7 +549,6 @@ RSpec.feature "Case details", :all_dbs do
           appeal: appeal
         )
       end
-      let(:claimant) { create(:claimant, decision_review: appeal) }
 
       before do
         FeatureToggle.enable!(:poa_refresh)
@@ -563,7 +562,6 @@ RSpec.feature "Case details", :all_dbs do
         BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
         poa.last_synced_at = Time.zone.now - 5.years
         poa.save!
-        claimantPoa = BgsPowerOfAttorney.find_or_fetch_by(participant_id: appeal.claimant.dig(:representative, :participant_id))
 
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
@@ -572,9 +570,6 @@ RSpec.feature "Case details", :all_dbs do
         click_on "Refresh POA"
         expect(page).to have_content("Successfully refreshed. No power of attorney information was found at this time.")
         expect(page).to have_no_content("POA last refreshed on")
-
-        newPoa = BgsPowerOfAttorney.find_or_create_by_file_number(poa.file_number)
-        newClaimantPoa = BgsPowerOfAttorney.find_or_fetch_by(participant_id: appeal.claimant.dig(:representative, :participant_id))
       end
     end
 
