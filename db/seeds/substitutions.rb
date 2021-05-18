@@ -10,23 +10,25 @@ module Seeds
 
     private
 
-    def create_appeal_with_death_dismissal(docket_type = "direct_review")
-      attorney = User.find_by_css_id("BVASCASPER1")
-      judge = User.find_by_css_id("BVAAABSHIRE")
-
-      # Create soon-to-be deceased veteran
-      # date_of_death needs to be nil to create full task tree
-      veteran = create(
+    # We will create the vet w/o date of death and update later due to task tree considerations
+    def deceased_vet
+      @deceased_vet ||= FactoryBot.create(
         :veteran,
-        file_number: 54_545_454,
+        file_number: 54_545_459,
         first_name: "Jane",
         last_name: "Deceased"
       )
+    end
 
-      # Need to set date_of_death after creating appeal or various tasks won't get created
-      date_of_death = 30.days.ago
+    def date_of_death
+      30.days.ago
+    end
 
-      create(
+    def create_appeal_with_death_dismissal(veteran: deceased_vet, docket_type: "direct_review")
+      attorney = User.find_by_css_id("BVASCASPER1")
+      judge = User.find_by_css_id("BVAAABSHIRE")
+
+      FactoryBot.create(
         :appeal,
         :dispatched_with_decision_issue,
         disposition: "dismissed_death",
@@ -38,15 +40,22 @@ module Seeds
         associated_judge: judge,
         associated_attorney: attorney
       )
+    end
 
-      # Reset date of death
-      veteran.update!(date_of_death: date_of_death)
+    def create_deceased_vet_and_dismissed_appeals
+      ActiveRecord::Base.transaction do
+        # Create appeals for each docket type
+        %w[direct_review evidence_submission hearings].each do |docket_type|
+          create_appeal_with_death_dismissal(veteran: deceased_vet, docket_type: docket_type)
+        end
+
+        # Need to set date_of_death after creating appeal or various tasks won't get created
+        deceased_vet.update!(date_of_death: date_of_death)
+      end
     end
 
     def setup_substitution_seeds
-      %w[direct_review evidence_submission hearings].each do |docket_type|
-        create_appeal_with_death_dismissal(docket_type)
-      end
+      create_deceased_vet_and_dismissed_appeals
     end
   end
 end
