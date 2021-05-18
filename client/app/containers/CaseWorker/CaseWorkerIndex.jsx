@@ -9,6 +9,7 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import ApiUtil from '../../util/ApiUtil';
 import BaseForm from '../BaseForm';
 import Table from '../../components/Table';
+import Link from '../../components/Link';
 import Button from '../../components/Button';
 import HeaderMessage from './HeaderMessage';
 import { formatDate } from '../../util/DateUtil';
@@ -114,6 +115,7 @@ export default class CaseWorkerIndex extends BaseForm {
                     'cf-button-aligned-with-textfield-right']}
                   disabled={!availableTasks || !tasksRemaining}
                   loading={this.state.loading}
+                  role="link"
                 />
               </div>
             </div>
