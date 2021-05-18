@@ -81,12 +81,12 @@ class HearingSchedule::GenerateHearingDaysSchedule
     #    Wed, 06 Jan 2021=>47,
     #    ...
     #  }
-    @availability_coocurrence = @ros.inject({}) do |h, (_k, v)|
-      v[:available_days].each do |date|
-        h[date] ||= 0
-        h[date] += 1
+    @availability_coocurrence = @ros.inject({}) do |availability, (_ro_key, ro_details)|
+      ro_details[:available_days].each do |date|
+        availability[date] ||= 0
+        availability[date] += 1
       end
-      h
+      availability
     end
     @ros = group_monthly_available_dates
   end
@@ -260,8 +260,8 @@ class HearingSchedule::GenerateHearingDaysSchedule
   # Sort ROs in descending order of the highest ratio of allocated days to rooms and available days
   # (i.e. the most "booked" ROs)
   def sort_ros_by_rooms_and_allocated_days
-    @ros.sort_by do |_k, v|
-      v[:allocated_days].to_f / v[:num_of_rooms] / v[:available_days].count
+    @ros.sort_by do |_ro_key, ro_details|
+      ro_details[:allocated_days].to_f / ro_details[:num_of_rooms] / ro_details[:available_days].count
     end.reverse.to_h
   end
 
@@ -337,10 +337,9 @@ class HearingSchedule::GenerateHearingDaysSchedule
   end
 
   def assign_hearing_days(ro_key)
-    # date_index and i are always the same...
-    # i is only used as a counter
+    # date_index and counter are always the same...
     # date_index is passed to allocate_hearing_days_to_individual_ro
-    i = 0
+    counter = 0
     date_index = 0
 
     # {[4, 2018]=>20, [9, 2018]=>20..}
@@ -353,8 +352,8 @@ class HearingSchedule::GenerateHearingDaysSchedule
     # Allocate max number of days for the 3rd of each month...
     # ...until we go through all days in a month (31) or exhaust total allocations
     # results are stored in @ros[ro_key][:allocated_dates]
-    while i < 31 && monthly_allocations.values.inject(:+) != 0
-      i += 1
+    while counter < 31 && monthly_allocations.values.inject(:+) != 0
+      counter += 1
       allocate_hearing_days_to_individual_ro(
         ro_key,
         monthly_allocations,
@@ -404,16 +403,16 @@ class HearingSchedule::GenerateHearingDaysSchedule
   end
 
   def add_allocated_days_and_format(ro_key)
-    @ros[ro_key][:allocated_dates] = @ros[ro_key][:allocated_dates].reduce({}) do |acc, (k, v)|
-      acc[k] = v.to_a.sort.to_h
-      acc
+    @ros[ro_key][:allocated_dates] = @ros[ro_key][:allocated_dates].reduce({}) do |formatted_days, (month, days)|
+      formatted_days[month] = days.to_a.sort.to_h
+      formatted_days
     end
   end
 
   # groups dates of each month from an array of dates
   # {[1, 2018] => [Tue, 02 Jan 2018, Thu, 04 Jan 2018], [2, 2018] => [Thu, 01 Feb 2018] }
   def group_dates_by_month(dates)
-    dates.group_by { |d| [d.month, d.year] }
+    dates.group_by { |date| [date.month, date.year] }
   end
 
   # allocated hearing days for each RO
@@ -463,8 +462,8 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   def remove_available_day_from_ros(date)
     if @date_allocated[date] >= MAX_NUMBER_OF_DAYS_PER_DATE
-      @ros.each do |k, v|
-        @ros[k][:available_days] -= [date] if !v[:assigned]
+      @ros.each do |ro_key, ro_details|
+        @ros[ro_key][:available_days] -= [date] if !ro_details[:assigned]
       end
     end
   end
@@ -474,8 +473,8 @@ class HearingSchedule::GenerateHearingDaysSchedule
   end
 
   def any_other_days_a_better_fit?(monthly_grouped_days, num_of_rooms)
-    monthly_grouped_days.any? do |_k, v|
-      (v.length + num_of_rooms) <= MAX_NUMBER_OF_DAYS_PER_DATE
+    monthly_grouped_days.any? do |_day, allocations|
+      (allocations.length + num_of_rooms) <= MAX_NUMBER_OF_DAYS_PER_DATE
     end
   end
 
