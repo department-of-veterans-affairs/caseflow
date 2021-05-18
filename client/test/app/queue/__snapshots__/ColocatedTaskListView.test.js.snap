@@ -528,7 +528,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       data-for="tooltip-5"
                       data-tip="true"
                       role="tooltip"
-                      tabindex="0"
+                      tabindex="-1"
                     >
                       <span
                         aria-label=""
@@ -687,7 +687,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       data-for="badge-200603-71"
                       data-tip="true"
                       role="tooltip"
-                      tabindex="0"
+                      tabindex="-1"
                     >
                       <span
                         aria-label="Direct Review"
@@ -810,7 +810,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       data-for="badge-200603-72"
                       data-tip="true"
                       role="tooltip"
-                      tabindex="0"
+                      tabindex="-1"
                     >
                       <span
                         aria-label="Direct Review"
@@ -1449,7 +1449,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       data-for="tooltip-5"
                       data-tip="true"
                       role="tooltip"
-                      tabindex="0"
+                      tabindex="-1"
                     >
                       <span
                         aria-label=""
@@ -1608,7 +1608,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       data-for="badge-200603-73"
                       data-tip="true"
                       role="tooltip"
-                      tabindex="0"
+                      tabindex="-1"
                     >
                       <span
                         aria-label="Direct Review"
@@ -1733,7 +1733,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       data-for="badge-200603-74"
                       data-tip="true"
                       role="tooltip"
-                      tabindex="0"
+                      tabindex="-1"
                     >
                       <span
                         aria-label="Direct Review"

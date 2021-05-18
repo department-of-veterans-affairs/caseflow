@@ -67,7 +67,7 @@ Object {
                 data-for="badge-200805-541"
                 data-tip="true"
                 role="tooltip"
-                tabindex="0"
+                tabindex="-1"
               >
                 <span
                   aria-label="Hearing Request"
@@ -167,7 +167,7 @@ Object {
               data-for="badge-200805-541"
               data-tip="true"
               role="tooltip"
-              tabindex="0"
+              tabindex="-1"
             >
               <span
                 aria-label="Hearing Request"
@@ -315,7 +315,7 @@ Object {
                 data-for="badge-200805-541"
                 data-tip="true"
                 role="tooltip"
-                tabindex="0"
+                tabindex="-1"
               >
                 <span
                   aria-label="Hearing Request"
@@ -416,7 +416,7 @@ Object {
               data-for="badge-200805-541"
               data-tip="true"
               role="tooltip"
-              tabindex="0"
+              tabindex="-1"
             >
               <span
                 aria-label="Hearing Request"
@@ -574,7 +574,7 @@ Object {
                 data-for="badge-200805-541"
                 data-tip="true"
                 role="tooltip"
-                tabindex="0"
+                tabindex="-1"
               >
                 <span
                   aria-label="Hearing Request"
@@ -665,7 +665,7 @@ Object {
               data-for="badge-200805-541"
               data-tip="true"
               role="tooltip"
-              tabindex="0"
+              tabindex="-1"
             >
               <span
                 aria-label="Hearing Request"
@@ -829,7 +829,7 @@ Object {
                 data-for="badge-200805-541"
                 data-tip="true"
                 role="tooltip"
-                tabindex="0"
+                tabindex="-1"
               >
                 <span
                   aria-label="Hearing Request"
@@ -936,7 +936,7 @@ Object {
               data-for="badge-200805-541"
               data-tip="true"
               role="tooltip"
-              tabindex="0"
+              tabindex="-1"
             >
               <span
                 aria-label="Hearing Request"
@@ -1084,7 +1084,7 @@ Object {
                 data-for="badge-200805-541"
                 data-tip="true"
                 role="tooltip"
-                tabindex="0"
+                tabindex="-1"
               >
                 <span
                   aria-label="Hearing Request"
@@ -1175,7 +1175,7 @@ Object {
               data-for="badge-200805-541"
               data-tip="true"
               role="tooltip"
-              tabindex="0"
+              tabindex="-1"
             >
               <span
                 aria-label="Hearing Request"
@@ -1323,7 +1323,7 @@ Object {
                 data-for="badge-200805-541"
                 data-tip="true"
                 role="tooltip"
-                tabindex="0"
+                tabindex="-1"
               >
                 <span
                   aria-label="Hearing Request"
@@ -1414,7 +1414,7 @@ Object {
               data-for="badge-200805-541"
               data-tip="true"
               role="tooltip"
-              tabindex="0"
+              tabindex="-1"
             >
               <span
                 aria-label="Hearing Request"

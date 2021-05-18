@@ -940,13 +940,13 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                         data-for="tooltip-Copy Guest Link"
                         data-tip={true}
                         role="tooltip"
-                        tabIndex={0}
+                        tabIndex={-1}
                       >
                         <CopyToClipboard
                           text="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
                         >
                           <button
-                            aria-label="Copy  Copy Guest Link"
+                            aria-label="Click to copy  Copy Guest Link"
                             className="cf-apppeal-id"
                             data-css-cjlnsd=""
                             onClick={[Function]}

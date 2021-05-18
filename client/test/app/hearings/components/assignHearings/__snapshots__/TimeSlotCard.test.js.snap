@@ -58,7 +58,7 @@ Object {
               data-for="badge-200624-614"
               data-tip="true"
               role="tooltip"
-              tabindex="0"
+              tabindex="-1"
             >
               <span
                 aria-label="Hearing Request"
@@ -177,7 +177,7 @@ Object {
             data-for="badge-200624-614"
             data-tip="true"
             role="tooltip"
-            tabindex="0"
+            tabindex="-1"
           >
             <span
               aria-label="Hearing Request"

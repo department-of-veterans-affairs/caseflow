@@ -28,7 +28,7 @@ exports[`HearingDayInfoButton renders correctly 1`] = `
               data-for="hearing-day-undefined"
               data-tip="true"
               role="tooltip"
-              tabindex="0"
+              tabindex="-1"
             >
               Video · VLJ Jerengal, Jonas
             </span>

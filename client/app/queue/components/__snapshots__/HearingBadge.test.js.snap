@@ -16,7 +16,7 @@ Object {
           data-for="badge-undefined"
           data-tip="true"
           role="tooltip"
-          tabindex="0"
+          tabindex="-1"
         >
           <span
             data-css-1ffdp9a=""
@@ -82,7 +82,7 @@ Object {
         data-for="badge-undefined"
         data-tip="true"
         role="tooltip"
-        tabindex="0"
+        tabindex="-1"
       >
         <span
           data-css-1ffdp9a=""

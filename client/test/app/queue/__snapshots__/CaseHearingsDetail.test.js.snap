@@ -155,7 +155,7 @@ exports[`CaseHearingDetail renders correctly 1`] = `
                 data-for="hearing-worksheet-tip"
                 data-tip="true"
                 role="tooltip"
-                tabindex="0"
+                tabindex="-1"
               >
                 <a
                   href="/hearings/worksheet/print?keep_open=true&hearing_ids=29e88a5d-8f00-47ea-b178-95a01d912b96"

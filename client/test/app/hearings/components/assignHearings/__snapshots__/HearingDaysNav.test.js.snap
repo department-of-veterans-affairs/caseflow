@@ -46,7 +46,7 @@ Object {
                           data-for="hearing-day-0"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -111,7 +111,7 @@ Object {
                           data-for="hearing-day-1"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -176,7 +176,7 @@ Object {
                           data-for="hearing-day-2"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -241,7 +241,7 @@ Object {
                           data-for="hearing-day-3"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -306,7 +306,7 @@ Object {
                           data-for="hearing-day-4"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -390,7 +390,7 @@ Object {
                           data-for="hearing-day-0"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -455,7 +455,7 @@ Object {
                           data-for="hearing-day-1"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -520,7 +520,7 @@ Object {
                           data-for="hearing-day-2"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -585,7 +585,7 @@ Object {
                           data-for="hearing-day-3"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -650,7 +650,7 @@ Object {
                           data-for="hearing-day-4"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -735,7 +735,7 @@ Object {
                         data-for="hearing-day-0"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -800,7 +800,7 @@ Object {
                         data-for="hearing-day-1"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -865,7 +865,7 @@ Object {
                         data-for="hearing-day-2"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -930,7 +930,7 @@ Object {
                         data-for="hearing-day-3"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -995,7 +995,7 @@ Object {
                         data-for="hearing-day-4"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -1137,7 +1137,7 @@ Object {
                           data-for="hearing-day-0"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -1202,7 +1202,7 @@ Object {
                           data-for="hearing-day-1"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -1267,7 +1267,7 @@ Object {
                           data-for="hearing-day-2"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -1332,7 +1332,7 @@ Object {
                           data-for="hearing-day-3"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -1397,7 +1397,7 @@ Object {
                           data-for="hearing-day-4"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -1481,7 +1481,7 @@ Object {
                           data-for="hearing-day-0"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -1546,7 +1546,7 @@ Object {
                           data-for="hearing-day-1"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -1611,7 +1611,7 @@ Object {
                           data-for="hearing-day-2"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -1676,7 +1676,7 @@ Object {
                           data-for="hearing-day-3"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -1741,7 +1741,7 @@ Object {
                           data-for="hearing-day-4"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -1826,7 +1826,7 @@ Object {
                         data-for="hearing-day-0"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -1891,7 +1891,7 @@ Object {
                         data-for="hearing-day-1"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -1956,7 +1956,7 @@ Object {
                         data-for="hearing-day-2"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -2021,7 +2021,7 @@ Object {
                         data-for="hearing-day-3"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -2086,7 +2086,7 @@ Object {
                         data-for="hearing-day-4"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -2228,7 +2228,7 @@ Object {
                           data-for="hearing-day-0"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -2293,7 +2293,7 @@ Object {
                           data-for="hearing-day-1"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -2358,7 +2358,7 @@ Object {
                           data-for="hearing-day-2"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -2423,7 +2423,7 @@ Object {
                           data-for="hearing-day-3"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -2488,7 +2488,7 @@ Object {
                           data-for="hearing-day-4"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -2573,7 +2573,7 @@ Object {
                         data-for="hearing-day-0"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -2638,7 +2638,7 @@ Object {
                         data-for="hearing-day-1"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -2703,7 +2703,7 @@ Object {
                         data-for="hearing-day-2"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -2768,7 +2768,7 @@ Object {
                         data-for="hearing-day-3"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -2833,7 +2833,7 @@ Object {
                         data-for="hearing-day-4"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -2975,7 +2975,7 @@ Object {
                           data-for="hearing-day-0"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -3040,7 +3040,7 @@ Object {
                           data-for="hearing-day-1"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -3105,7 +3105,7 @@ Object {
                           data-for="hearing-day-2"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -3170,7 +3170,7 @@ Object {
                           data-for="hearing-day-3"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -3235,7 +3235,7 @@ Object {
                           data-for="hearing-day-4"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -3300,7 +3300,7 @@ Object {
                           data-for="hearing-day-5"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -3365,7 +3365,7 @@ Object {
                           data-for="hearing-day-6"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -3430,7 +3430,7 @@ Object {
                           data-for="hearing-day-7"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -3495,7 +3495,7 @@ Object {
                           data-for="hearing-day-8"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -3560,7 +3560,7 @@ Object {
                           data-for="hearing-day-9"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -3625,7 +3625,7 @@ Object {
                           data-for="hearing-day-10"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -3690,7 +3690,7 @@ Object {
                           data-for="hearing-day-11"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -3755,7 +3755,7 @@ Object {
                           data-for="hearing-day-12"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -3820,7 +3820,7 @@ Object {
                           data-for="hearing-day-13"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -3885,7 +3885,7 @@ Object {
                           data-for="hearing-day-14"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -3950,7 +3950,7 @@ Object {
                           data-for="hearing-day-15"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -4015,7 +4015,7 @@ Object {
                           data-for="hearing-day-16"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -4080,7 +4080,7 @@ Object {
                           data-for="hearing-day-17"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -4145,7 +4145,7 @@ Object {
                           data-for="hearing-day-18"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -4210,7 +4210,7 @@ Object {
                           data-for="hearing-day-19"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -4275,7 +4275,7 @@ Object {
                           data-for="hearing-day-20"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -4340,7 +4340,7 @@ Object {
                           data-for="hearing-day-21"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -4405,7 +4405,7 @@ Object {
                           data-for="hearing-day-22"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -4470,7 +4470,7 @@ Object {
                           data-for="hearing-day-23"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -4535,7 +4535,7 @@ Object {
                           data-for="hearing-day-24"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -4600,7 +4600,7 @@ Object {
                           data-for="hearing-day-25"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -4668,7 +4668,7 @@ Object {
                           data-for="hearing-day-26"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -4733,7 +4733,7 @@ Object {
                           data-for="hearing-day-27"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -4798,7 +4798,7 @@ Object {
                           data-for="hearing-day-28"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -4863,7 +4863,7 @@ Object {
                           data-for="hearing-day-29"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -4928,7 +4928,7 @@ Object {
                           data-for="hearing-day-30"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -5013,7 +5013,7 @@ Object {
                         data-for="hearing-day-0"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -5078,7 +5078,7 @@ Object {
                         data-for="hearing-day-1"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -5143,7 +5143,7 @@ Object {
                         data-for="hearing-day-2"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -5208,7 +5208,7 @@ Object {
                         data-for="hearing-day-3"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -5273,7 +5273,7 @@ Object {
                         data-for="hearing-day-4"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -5338,7 +5338,7 @@ Object {
                         data-for="hearing-day-5"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -5403,7 +5403,7 @@ Object {
                         data-for="hearing-day-6"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -5468,7 +5468,7 @@ Object {
                         data-for="hearing-day-7"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -5533,7 +5533,7 @@ Object {
                         data-for="hearing-day-8"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -5598,7 +5598,7 @@ Object {
                         data-for="hearing-day-9"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -5663,7 +5663,7 @@ Object {
                         data-for="hearing-day-10"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -5728,7 +5728,7 @@ Object {
                         data-for="hearing-day-11"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -5793,7 +5793,7 @@ Object {
                         data-for="hearing-day-12"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -5858,7 +5858,7 @@ Object {
                         data-for="hearing-day-13"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -5923,7 +5923,7 @@ Object {
                         data-for="hearing-day-14"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -5988,7 +5988,7 @@ Object {
                         data-for="hearing-day-15"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -6053,7 +6053,7 @@ Object {
                         data-for="hearing-day-16"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -6118,7 +6118,7 @@ Object {
                         data-for="hearing-day-17"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -6183,7 +6183,7 @@ Object {
                         data-for="hearing-day-18"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -6248,7 +6248,7 @@ Object {
                         data-for="hearing-day-19"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -6313,7 +6313,7 @@ Object {
                         data-for="hearing-day-20"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -6378,7 +6378,7 @@ Object {
                         data-for="hearing-day-21"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -6443,7 +6443,7 @@ Object {
                         data-for="hearing-day-22"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -6508,7 +6508,7 @@ Object {
                         data-for="hearing-day-23"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -6573,7 +6573,7 @@ Object {
                         data-for="hearing-day-24"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -6638,7 +6638,7 @@ Object {
                         data-for="hearing-day-25"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -6706,7 +6706,7 @@ Object {
                         data-for="hearing-day-26"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -6771,7 +6771,7 @@ Object {
                         data-for="hearing-day-27"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -6836,7 +6836,7 @@ Object {
                         data-for="hearing-day-28"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -6901,7 +6901,7 @@ Object {
                         data-for="hearing-day-29"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -6966,7 +6966,7 @@ Object {
                         data-for="hearing-day-30"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -7108,7 +7108,7 @@ Object {
                           data-for="hearing-day-0"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -7173,7 +7173,7 @@ Object {
                           data-for="hearing-day-1"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -7238,7 +7238,7 @@ Object {
                           data-for="hearing-day-2"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -7303,7 +7303,7 @@ Object {
                           data-for="hearing-day-3"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -7368,7 +7368,7 @@ Object {
                           data-for="hearing-day-4"
                           data-tip="true"
                           role="tooltip"
-                          tabindex="0"
+                          tabindex="-1"
                         >
                           Video · 1
                         </span>
@@ -7453,7 +7453,7 @@ Object {
                         data-for="hearing-day-0"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -7518,7 +7518,7 @@ Object {
                         data-for="hearing-day-1"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -7583,7 +7583,7 @@ Object {
                         data-for="hearing-day-2"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -7648,7 +7648,7 @@ Object {
                         data-for="hearing-day-3"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>
@@ -7713,7 +7713,7 @@ Object {
                         data-for="hearing-day-4"
                         data-tip="true"
                         role="tooltip"
-                        tabindex="0"
+                        tabindex="-1"
                       >
                         Video · 1
                       </span>

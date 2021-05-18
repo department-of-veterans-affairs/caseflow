@@ -220,13 +220,13 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                 data-for="tooltip-Copy VLJ Link"
                 data-tip={true}
                 role="tooltip"
-                tabIndex={0}
+                tabIndex={-1}
               >
                 <CopyToClipboard
                   text="Copy VLJ Link"
                 >
                   <button
-                    aria-label="Copy  Copy VLJ Link"
+                    aria-label="Click to copy  Copy VLJ Link"
                     className="cf-apppeal-id"
                     data-css-cjlnsd=""
                     onClick={[Function]}
@@ -467,13 +467,13 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                 data-for="tooltip-Copy Guest Link"
                 data-tip={true}
                 role="tooltip"
-                tabIndex={0}
+                tabIndex={-1}
               >
                 <CopyToClipboard
                   text="Copy Guest Link"
                 >
                   <button
-                    aria-label="Copy  Copy Guest Link"
+                    aria-label="Click to copy  Copy Guest Link"
                     className="cf-apppeal-id"
                     data-css-cjlnsd=""
                     onClick={[Function]}
@@ -1449,13 +1449,13 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                 data-for="tooltip-Copy Guest Link"
                 data-tip={true}
                 role="tooltip"
-                tabIndex={0}
+                tabIndex={-1}
               >
                 <CopyToClipboard
                   text="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
                 >
                   <button
-                    aria-label="Copy  Copy Guest Link"
+                    aria-label="Click to copy  Copy Guest Link"
                     className="cf-apppeal-id"
                     data-css-cjlnsd=""
                     onClick={[Function]}
