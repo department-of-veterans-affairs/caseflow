@@ -27,7 +27,7 @@ const Tooltip = (props) => {
 
   return <React.Fragment>
     <span data-tip data-for={id} role="tooltip" data-event="focus mouseenter"
-      data-event-off="keydown mouseleave" tabIndex={0} aria-describedby={id}>{props.children}</span>
+      data-event-off="keydown mouseleave" tabIndex={-1} aria-describedby={id}>{props.children}</span>
     <span {...tooltipStyling} >
       <ReactTooltip effect="solid" id={id} offset={offset} place={position} multiline>{text}</ReactTooltip>
     </span>
