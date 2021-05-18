@@ -164,7 +164,8 @@ export const openHearingAppeal = {
       type: 'Central',
       externalId: '29e88a5d-8f00-47ea-b178-95a01d912b96',
       disposition: null,
-      isVirtual: false
+      isVirtual: false,
+      createdAt: '2020-04-07T03:30:00.000-04:00'
     }
   ],
 };
@@ -216,5 +217,15 @@ export const scheduleHearingDetails = {
       facility_type: 'va_health_facility'
     }
   }
+};
+
+export const amaAppealHearingData = {
+  heldBy: 'Stacy Yellow',
+  viewedByJudge: false,
+  date: '2020-08-07T03:30:00.000-04:00',
+  createdAt: '2020-04-07T03:30:00.000-04:00',
+  type: 'Central',
+  externalId: '29e88a5d-8f00-47ea-b178-95a01d912b96',
+  disposition: null,
+  isVirtual: false
 }
-;

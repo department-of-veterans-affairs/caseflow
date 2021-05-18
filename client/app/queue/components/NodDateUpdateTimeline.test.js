@@ -25,7 +25,7 @@ describe('NodDateUpdateTimeline', () => {
   const setupNodDateUpdateTimeline = (timeline) => {
     return shallow(
       <NodDateUpdateTimeline
-        nodDateUpdate={nodDateUpdate}
+        timelineEvent={nodDateUpdate}
         timeline={timeline}
       />
     );

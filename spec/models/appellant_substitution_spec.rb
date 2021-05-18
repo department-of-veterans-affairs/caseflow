@@ -17,7 +17,9 @@ describe AppellantSubstitution do
         substitution_date: substitution_date,
         claimant_type: substitute&.type,
         substitute_participant_id: substitute&.participant_id,
-        poa_participant_id: poa_participant_id
+        poa_participant_id: poa_participant_id,
+        selected_task_ids: [],
+        task_params: {}
       }
     end
 

@@ -10,17 +10,16 @@ class LegacyIssueOptin < CaseflowRecord
   delegate :vacols_id, :vacols_id=, :vacols_sequence_id, :vacols_sequence_id=, to: :request_issue
 
   class << self
-    def related_remand_issues(vacols_id)
+    def opt_ins_for_related_remand_issues(vacols_id)
       joins(:request_issue)
         .where("request_issues.vacols_id = ?", vacols_id)
         .where(original_disposition_code: REMAND_DISPOSITION_CODES)
+        .where.not(optin_processed_at: nil)
     end
 
     def revert_opted_in_remand_issues(vacols_id)
       # put all remand issues with "O" back to "3" before closing the appeal
-      related_remand_issues(vacols_id).each do |remand_issue|
-        Issue.rollback_opt_in!(remand_issue)
-      end
+      opt_ins_for_related_remand_issues(vacols_id).each(&:rollback_issue_disposition)
     end
 
     def close_legacy_appeal_in_vacols(legacy_appeal)
@@ -51,12 +50,17 @@ class LegacyIssueOptin < CaseflowRecord
   end
 
   def opt_in!
-    Issue.close_in_vacols!(
-      vacols_id: vacols_id,
-      vacols_sequence_id: vacols_sequence_id,
-      disposition_code: VACOLS_DISPOSITION_CODE
-    )
-    update!(optin_processed_at: Time.zone.now)
+    transaction do
+      Issue.update_in_vacols!(
+        vacols_id: vacols_id,
+        vacols_sequence_id: vacols_sequence_id,
+        issue_attrs: {
+          disposition: VACOLS_DISPOSITION_CODE,
+          disposition_date: Time.zone.today
+        }
+      )
+      update!(optin_processed_at: Time.zone.now)
+    end
   end
 
   def flag_for_rollback!
@@ -71,8 +75,20 @@ class LegacyIssueOptin < CaseflowRecord
   end
 
   def rollback_issue_disposition
-    Issue.rollback_opt_in!(self)
-    update!(rollback_processed_at: Time.zone.now)
+    return unless vacols_issue&.disposition_id == VACOLS_DISPOSITION_CODE
+
+    transaction do
+      Issue.update_in_vacols!(
+        vacols_id: vacols_id,
+        vacols_sequence_id: vacols_sequence_id,
+        issue_attrs: {
+          disposition: original_disposition_code,
+          disposition_date: original_disposition_date
+        }
+      )
+
+      update!(rollback_processed_at: Time.zone.now)
+    end
   end
 
   def opt_in_pending?
@@ -87,18 +103,18 @@ class LegacyIssueOptin < CaseflowRecord
     LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
   end
 
+  def vacols_issue
+    return unless vacols_id && vacols_sequence_id
+
+    AppealRepository.issues(vacols_id).find { |issue| issue.vacols_sequence_id == vacols_sequence_id }
+  end
+
   private
 
   def revert_open_remand_issues
     # Before a remand is closed, it's "O" dispositions are changed to a "3", so when it's re-opened
     # the "3"s should be reverted back to "O"s
-    self.class.related_remand_issues(vacols_id).each do |remand_issue|
-      Issue.close_in_vacols!(
-        vacols_id: vacols_id,
-        vacols_sequence_id: remand_issue.vacols_sequence_id,
-        disposition_code: VACOLS_DISPOSITION_CODE
-      )
-    end
+    self.class.opt_ins_for_related_remand_issues(vacols_id).each(&:opt_in!)
   end
 
   def legacy_appeal_needs_to_be_reopened?

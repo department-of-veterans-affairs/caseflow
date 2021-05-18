@@ -57,7 +57,7 @@ export const TextareaField = (props) => {
   );
 
   const characterLimitContent = (
-    <p style={characterLimitTopRight ? { float: 'right', marginBottom: 0 } : {}}>
+    <p style={characterLimitTopRight ? { float: 'right', marginBottom: 0, lineHeight: 'inherit' } : {}}>
       <i>
         {characterLimitCount} {pluralize('character', characterLimitCount)}{' '}
         left

@@ -99,7 +99,7 @@
   "CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY": "View VLJ Hearing Worksheet",
   "CASE_DETAILS_HEARING_DETAILS_LINK_COPY": "View Hearing Details",
   "CASE_DETAILS_HEARING_WORKSHEET_LINK_TOOLTIP": "This link opens a PDF copy of the Hearing Worksheet",
-  "CASE_DETAILS_HEARING_LIST_LABEL": "Hearings (Oldest to Newest)",
+  "CASE_DETAILS_HEARING_LIST_LABEL": "Scheduled Hearings (Newest to Oldest)",
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL": "This Post Remand data has hearing data associated with a previous original appeal.",
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL_LINK": "View all cases",
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL_POST_LINK": " to see other cases associated with this Veteran.",
@@ -449,6 +449,7 @@
   "HEARING_TASK_ASSOCIATION_NOT_UNIQUE_MESSAGE": "that is not closed already exists for %s %s",
   "HEARING_TASK_ASSOCIATION_MISSING_MESASAGE": "Hearing task (%s) is missing an associated hearing. This means that either the hearing was deleted in VACOLS or the hearing association has been deleted.",
   "HEARING_TASK_DEFAULT_INSTRUCTIONS": "This task will be auto-completed when all hearing-related tasks have been completed.",
+  "OPEN_HEARING_TASK_EXISTS_ON_APPEAL_MESSAGE": "There's already an open hearing task on this appeal.",
 
   "CAVC_TASK_LABEL": "All CAVC-related tasks",
   "CAVC_TASK_DEFAULT_INSTRUCTIONS": "This task will be auto-completed when all CAVC-related tasks have been closed.",
@@ -584,6 +585,8 @@
   "CASE_TIMELINE_APPEAL_WITHDRAWN": "Appeal withdrawn",
   "CASE_TIMELINE_ATTORNEY_REWRITE_TASK": "Decision revised by attorney",
   "CASE_TIMELINE_ATTORNEY_QUALITY_REVIEW_TASK": "Attorney quality reviewed",
+  "CASE_TIMELINE_APPELLANT_SUBSTITUTION": "Substitution granted by the RO",
+  "CASE_TIMELINE_APPELLANT_SUBSTITUTION_PROCESSED": "Substitution completed",
 
   "DECISION_ISSUE_MODAL_TITLE": "Describe what the Veteran is appealing and what you decided.",
   "DECISION_ISSUE_MODAL_SUB_TITLE": "You can also add additional decisions to better address the Veteran's concerns or situation.",
@@ -772,6 +775,8 @@
   "SUBSTITUTE_APPELLANT_SELECT_POA_TITLE": "Select POA",
   "SUBSTITUTE_APPELLANT_CREATE_TASKS_TITLE": "Create tasks",
   "SUBSTITUTE_APPELLANT_KEY_DETAILS_TITLE": "Procedural details",
+  "SUBSTITUTE_APPELLANT_TASK_SELECTION_TITLE": "Tasks selection for new appeal",
+  "SUBSTITUTE_APPELLANT_TASK_SELECTION_DESCRIPTION": "Listed below are all the tasks from the original appeal. The distribution task will always be selected by default to ensure the appeal is routed appropriately.\n\nDetermine and select tasks that need to be reactivated. Unselecting a task will undo this.",
   "SUBSTITUTE_APPELLANT_REVIEW_TITLE": "Review and confirm",
   "SUBSTITUTE_APPELLANT_REVIEW_SUBHEAD": "Review the details below to make sure the information is correct before submitting. If you need to make changes, please go back to the associated section.",
   "SUBSTITUTE_APPELLANT_SUCCESS_TITLE": "You have successfully added a substitute appellant",
@@ -1076,5 +1081,10 @@
 
   "PRIORITY_PUSH_WARNING_MESSAGE": "Some cases are ready to distribute but could not be. This could be due to the tied judge being an acting judge or an attorney (`!user.judge_in_vacols?`). These will be handled manually by the board. The tied judge could also have priority distribution turned off and should not be pushed cases (`JudgeTeam.for_judge(user).accepts_priority_pushed_cases?`). There could also be a duplicate distributed case blocking distribution (`DistributedCase.find_by(case_id: case_id`) or our validations for redistributing legacy appeals failed (https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/services/redistributed_case.rb#L26)",
 
-  "INVALID_IHP_DRAFT_PATH": "Path to IHP is invalid. This path should be of the format '\\\\vacoappbva3.dva.va.gov\\DMDI$\\VBMS Paperless IHPs\\VSO\\902\\VetName 12345.pdf' for legacy appeals and '\\\\vacoappbva3.dva.va.gov\\DMDI$\\VBMS Paperless IHPs\\VSO\\AMA IHPs\\VetName 12345.pdf' for AMA appeals. Hold SHIFT and right click the file to copy the path to the drafted IHP."
+  "INVALID_IHP_DRAFT_PATH": "Path to IHP is invalid. This path should be of the format '\\\\vacoappbva3.dva.va.gov\\DMDI$\\VBMS Paperless IHPs\\VSO\\902\\VetName 12345.pdf' for legacy appeals and '\\\\vacoappbva3.dva.va.gov\\DMDI$\\VBMS Paperless IHPs\\VSO\\AMA IHPs\\VetName 12345.pdf' for AMA appeals. Hold SHIFT and right click the file to copy the path to the drafted IHP.",
+
+  "UNSCHEDULED_HEARING_TITLE": "Unscheduled hearing",
+  "SAVE_UNSCHEDULED_NOTES_SUCCESS_MESSAGE": "You updated the notes for %s’s hearing",
+  "SAVE_UNSCHEDULED_NOTES_ERROR_TITLE": "The hearing notes failed to save.",
+  "SAVE_UNSCHEDULED_NOTES_ERROR_DETAIL": "Refresh the page and try again. If the problem persists, please contact the Caseflow team via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket via YourIT."
 }

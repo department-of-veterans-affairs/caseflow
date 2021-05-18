@@ -18,7 +18,7 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
         </div>
       </section>
       <section
-        class="css-1rhlyut"
+        class="css-11tuiib"
       >
         <h2>
           Procedural details
@@ -65,6 +65,355 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
           </a>
         </div>
       </section>
+      <div
+        class="css-11tuiib"
+      >
+        <h2>
+          Tasks selection for new appeal
+        </h2>
+        <div>
+          <p>
+            Listed below are all the tasks from the original appeal. The distribution task will always be selected by default to ensure the appeal is routed appropriately.
+          </p>
+          <p>
+            Determine and select tasks that need to be reactivated. Unselecting a task will undo this.
+          </p>
+        </div>
+        <table
+          class="usa-table-borderless css-nil"
+        >
+          <thead>
+            <tr>
+              <th>
+                Select
+              </th>
+              <th>
+                Task
+              </th>
+              <th>
+                Status
+              </th>
+              <th>
+                Date
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                data-css-1an8iyq=""
+              >
+                <div
+                  class="checkbox-wrapper-taskIds[1] cf-form-checkboxes"
+                >
+                  <div
+                    class="cf-form-checkbox"
+                  >
+                    <input
+                      aria-label="taskIds[1]"
+                      id="taskIds[1]"
+                      name="taskIds[1]"
+                      type="checkbox"
+                    />
+                    <label
+                      for="taskIds[1]"
+                    >
+                      <span
+                        class="usa-sr-only"
+                      >
+                        taskIds[1]
+                      </span>
+                       
+                    </label>
+                  </div>
+                </div>
+              </td>
+              <td>
+                Root Task
+              </td>
+              <td>
+                Completed
+              </td>
+              <td>
+                04/29/2021
+              </td>
+            </tr>
+            <tr>
+              <td
+                data-css-1an8iyq=""
+              >
+                <div
+                  class="checkbox-wrapper-taskIds[2] cf-form-checkboxes"
+                >
+                  <div
+                    class="cf-form-checkbox"
+                  >
+                    <input
+                      aria-label="taskIds[2]"
+                      id="taskIds[2]"
+                      name="taskIds[2]"
+                      type="checkbox"
+                    />
+                    <label
+                      for="taskIds[2]"
+                    >
+                      <span
+                        class="usa-sr-only"
+                      >
+                        taskIds[2]
+                      </span>
+                       
+                    </label>
+                  </div>
+                </div>
+              </td>
+              <td>
+                Distribution Task
+              </td>
+              <td>
+                Completed
+              </td>
+              <td>
+                04/29/2021
+              </td>
+            </tr>
+            <tr>
+              <td
+                data-css-1an8iyq=""
+              >
+                <div
+                  class="checkbox-wrapper-taskIds[3] cf-form-checkboxes"
+                >
+                  <div
+                    class="cf-form-checkbox"
+                  >
+                    <input
+                      aria-label="taskIds[3]"
+                      id="taskIds[3]"
+                      name="taskIds[3]"
+                      type="checkbox"
+                    />
+                    <label
+                      for="taskIds[3]"
+                    >
+                      <span
+                        class="usa-sr-only"
+                      >
+                        taskIds[3]
+                      </span>
+                       
+                    </label>
+                  </div>
+                </div>
+              </td>
+              <td>
+                Evidence Submission Window Task
+              </td>
+              <td>
+                Completed
+              </td>
+              <td>
+                04/29/2021
+              </td>
+            </tr>
+            <tr>
+              <td
+                data-css-1an8iyq=""
+              >
+                <div
+                  class="checkbox-wrapper-taskIds[4] cf-form-checkboxes"
+                >
+                  <div
+                    class="cf-form-checkbox"
+                  >
+                    <input
+                      aria-label="taskIds[4]"
+                      id="taskIds[4]"
+                      name="taskIds[4]"
+                      type="checkbox"
+                    />
+                    <label
+                      for="taskIds[4]"
+                    >
+                      <span
+                        class="usa-sr-only"
+                      >
+                        taskIds[4]
+                      </span>
+                       
+                    </label>
+                  </div>
+                </div>
+              </td>
+              <td>
+                Assign
+              </td>
+              <td>
+                Completed
+              </td>
+              <td>
+                04/28/2021
+              </td>
+            </tr>
+            <tr>
+              <td
+                data-css-1an8iyq=""
+              >
+                <div
+                  class="checkbox-wrapper-taskIds[5] cf-form-checkboxes"
+                >
+                  <div
+                    class="cf-form-checkbox"
+                  >
+                    <input
+                      aria-label="taskIds[5]"
+                      id="taskIds[5]"
+                      name="taskIds[5]"
+                      type="checkbox"
+                    />
+                    <label
+                      for="taskIds[5]"
+                    >
+                      <span
+                        class="usa-sr-only"
+                      >
+                        taskIds[5]
+                      </span>
+                       
+                    </label>
+                  </div>
+                </div>
+              </td>
+              <td>
+                Review
+              </td>
+              <td>
+                Completed
+              </td>
+              <td>
+                04/29/2021
+              </td>
+            </tr>
+            <tr>
+              <td
+                data-css-1an8iyq=""
+              >
+                <div
+                  class="checkbox-wrapper-taskIds[6] cf-form-checkboxes"
+                >
+                  <div
+                    class="cf-form-checkbox"
+                  >
+                    <input
+                      aria-label="taskIds[6]"
+                      id="taskIds[6]"
+                      name="taskIds[6]"
+                      type="checkbox"
+                    />
+                    <label
+                      for="taskIds[6]"
+                    >
+                      <span
+                        class="usa-sr-only"
+                      >
+                        taskIds[6]
+                      </span>
+                       
+                    </label>
+                  </div>
+                </div>
+              </td>
+              <td>
+                Draft decision
+              </td>
+              <td>
+                Completed
+              </td>
+              <td>
+                04/29/2021
+              </td>
+            </tr>
+            <tr>
+              <td
+                data-css-1an8iyq=""
+              >
+                <div
+                  class="checkbox-wrapper-taskIds[7] cf-form-checkboxes"
+                >
+                  <div
+                    class="cf-form-checkbox"
+                  >
+                    <input
+                      aria-label="taskIds[7]"
+                      id="taskIds[7]"
+                      name="taskIds[7]"
+                      type="checkbox"
+                    />
+                    <label
+                      for="taskIds[7]"
+                    >
+                      <span
+                        class="usa-sr-only"
+                      >
+                        taskIds[7]
+                      </span>
+                       
+                    </label>
+                  </div>
+                </div>
+              </td>
+              <td>
+                Board Dispatch
+              </td>
+              <td>
+                Completed
+              </td>
+              <td>
+                04/29/2021
+              </td>
+            </tr>
+            <tr>
+              <td
+                data-css-1an8iyq=""
+              >
+                <div
+                  class="checkbox-wrapper-taskIds[8] cf-form-checkboxes"
+                >
+                  <div
+                    class="cf-form-checkbox"
+                  >
+                    <input
+                      aria-label="taskIds[8]"
+                      id="taskIds[8]"
+                      name="taskIds[8]"
+                      type="checkbox"
+                    />
+                    <label
+                      for="taskIds[8]"
+                    >
+                      <span
+                        class="usa-sr-only"
+                      >
+                        taskIds[8]
+                      </span>
+                       
+                    </label>
+                  </div>
+                </div>
+              </td>
+              <td>
+                Board Dispatch
+              </td>
+              <td>
+                Completed
+              </td>
+              <td>
+                04/29/2021
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
     <div
       class="controls cf-app-segment"
@@ -113,7 +462,7 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
         </div>
       </section>
       <section
-        class="css-1rhlyut"
+        class="css-11tuiib"
       >
         <h2>
           Procedural details
@@ -160,6 +509,357 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
           </a>
         </div>
       </section>
+      <div
+        class="css-11tuiib"
+      >
+        <h2>
+          Tasks selection for new appeal
+        </h2>
+        <div>
+          <p>
+            Listed below are all the tasks from the original appeal. The distribution task will always be selected by default to ensure the appeal is routed appropriately.
+          </p>
+          <p>
+            Determine and select tasks that need to be reactivated. Unselecting a task will undo this.
+          </p>
+        </div>
+        <table
+          class="usa-table-borderless css-nil"
+        >
+          <thead>
+            <tr>
+              <th>
+                Select
+              </th>
+              <th>
+                Task
+              </th>
+              <th>
+                Status
+              </th>
+              <th>
+                Date
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                data-css-1an8iyq=""
+              >
+                <div
+                  class="checkbox-wrapper-taskIds[1] cf-form-checkboxes"
+                >
+                  <div
+                    class="cf-form-checkbox"
+                  >
+                    <input
+                      aria-label="taskIds[1]"
+                      id="taskIds[1]"
+                      name="taskIds[1]"
+                      type="checkbox"
+                    />
+                    <label
+                      for="taskIds[1]"
+                    >
+                      <span
+                        class="usa-sr-only"
+                      >
+                        taskIds[1]
+                      </span>
+                       
+                    </label>
+                  </div>
+                </div>
+              </td>
+              <td>
+                Root Task
+              </td>
+              <td>
+                Completed
+              </td>
+              <td>
+                04/29/2021
+              </td>
+            </tr>
+            <tr>
+              <td
+                data-css-1an8iyq=""
+              >
+                <div
+                  class="checkbox-wrapper-taskIds[2] cf-form-checkboxes"
+                >
+                  <div
+                    class="cf-form-checkbox"
+                  >
+                    <input
+                      aria-label="taskIds[2]"
+                      checked=""
+                      id="taskIds[2]"
+                      name="taskIds[2]"
+                      type="checkbox"
+                    />
+                    <label
+                      for="taskIds[2]"
+                    >
+                      <span
+                        class="usa-sr-only"
+                      >
+                        taskIds[2]
+                      </span>
+                       
+                    </label>
+                  </div>
+                </div>
+              </td>
+              <td>
+                Distribution Task
+              </td>
+              <td>
+                Completed
+              </td>
+              <td>
+                04/29/2021
+              </td>
+            </tr>
+            <tr>
+              <td
+                data-css-1an8iyq=""
+              >
+                <div
+                  class="checkbox-wrapper-taskIds[3] cf-form-checkboxes"
+                >
+                  <div
+                    class="cf-form-checkbox"
+                  >
+                    <input
+                      aria-label="taskIds[3]"
+                      checked=""
+                      id="taskIds[3]"
+                      name="taskIds[3]"
+                      type="checkbox"
+                    />
+                    <label
+                      for="taskIds[3]"
+                    >
+                      <span
+                        class="usa-sr-only"
+                      >
+                        taskIds[3]
+                      </span>
+                       
+                    </label>
+                  </div>
+                </div>
+              </td>
+              <td>
+                Evidence Submission Window Task
+              </td>
+              <td>
+                Completed
+              </td>
+              <td>
+                04/29/2021
+              </td>
+            </tr>
+            <tr>
+              <td
+                data-css-1an8iyq=""
+              >
+                <div
+                  class="checkbox-wrapper-taskIds[4] cf-form-checkboxes"
+                >
+                  <div
+                    class="cf-form-checkbox"
+                  >
+                    <input
+                      aria-label="taskIds[4]"
+                      id="taskIds[4]"
+                      name="taskIds[4]"
+                      type="checkbox"
+                    />
+                    <label
+                      for="taskIds[4]"
+                    >
+                      <span
+                        class="usa-sr-only"
+                      >
+                        taskIds[4]
+                      </span>
+                       
+                    </label>
+                  </div>
+                </div>
+              </td>
+              <td>
+                Assign
+              </td>
+              <td>
+                Completed
+              </td>
+              <td>
+                04/28/2021
+              </td>
+            </tr>
+            <tr>
+              <td
+                data-css-1an8iyq=""
+              >
+                <div
+                  class="checkbox-wrapper-taskIds[5] cf-form-checkboxes"
+                >
+                  <div
+                    class="cf-form-checkbox"
+                  >
+                    <input
+                      aria-label="taskIds[5]"
+                      id="taskIds[5]"
+                      name="taskIds[5]"
+                      type="checkbox"
+                    />
+                    <label
+                      for="taskIds[5]"
+                    >
+                      <span
+                        class="usa-sr-only"
+                      >
+                        taskIds[5]
+                      </span>
+                       
+                    </label>
+                  </div>
+                </div>
+              </td>
+              <td>
+                Review
+              </td>
+              <td>
+                Completed
+              </td>
+              <td>
+                04/29/2021
+              </td>
+            </tr>
+            <tr>
+              <td
+                data-css-1an8iyq=""
+              >
+                <div
+                  class="checkbox-wrapper-taskIds[6] cf-form-checkboxes"
+                >
+                  <div
+                    class="cf-form-checkbox"
+                  >
+                    <input
+                      aria-label="taskIds[6]"
+                      id="taskIds[6]"
+                      name="taskIds[6]"
+                      type="checkbox"
+                    />
+                    <label
+                      for="taskIds[6]"
+                    >
+                      <span
+                        class="usa-sr-only"
+                      >
+                        taskIds[6]
+                      </span>
+                       
+                    </label>
+                  </div>
+                </div>
+              </td>
+              <td>
+                Draft decision
+              </td>
+              <td>
+                Completed
+              </td>
+              <td>
+                04/29/2021
+              </td>
+            </tr>
+            <tr>
+              <td
+                data-css-1an8iyq=""
+              >
+                <div
+                  class="checkbox-wrapper-taskIds[7] cf-form-checkboxes"
+                >
+                  <div
+                    class="cf-form-checkbox"
+                  >
+                    <input
+                      aria-label="taskIds[7]"
+                      id="taskIds[7]"
+                      name="taskIds[7]"
+                      type="checkbox"
+                    />
+                    <label
+                      for="taskIds[7]"
+                    >
+                      <span
+                        class="usa-sr-only"
+                      >
+                        taskIds[7]
+                      </span>
+                       
+                    </label>
+                  </div>
+                </div>
+              </td>
+              <td>
+                Board Dispatch
+              </td>
+              <td>
+                Completed
+              </td>
+              <td>
+                04/29/2021
+              </td>
+            </tr>
+            <tr>
+              <td
+                data-css-1an8iyq=""
+              >
+                <div
+                  class="checkbox-wrapper-taskIds[8] cf-form-checkboxes"
+                >
+                  <div
+                    class="cf-form-checkbox"
+                  >
+                    <input
+                      aria-label="taskIds[8]"
+                      id="taskIds[8]"
+                      name="taskIds[8]"
+                      type="checkbox"
+                    />
+                    <label
+                      for="taskIds[8]"
+                    >
+                      <span
+                        class="usa-sr-only"
+                      >
+                        taskIds[8]
+                      </span>
+                       
+                    </label>
+                  </div>
+                </div>
+              </td>
+              <td>
+                Board Dispatch
+              </td>
+              <td>
+                Completed
+              </td>
+              <td>
+                04/29/2021
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
     <div
       class="controls cf-app-segment"
