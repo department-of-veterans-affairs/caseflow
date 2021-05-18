@@ -16,7 +16,7 @@ module Seeds
 
       # Create soon-to-be deceased veteran
       # date_of_death needs to be nil to create full task tree
-      veteran = FactoryBot.create(
+      veteran = create(
         :veteran,
         file_number: 54_545_454,
         first_name: "Jane",
@@ -26,7 +26,7 @@ module Seeds
       # Need to set date_of_death after creating appeal or various tasks won't get created
       date_of_death = 30.days.ago
 
-      appeal = FactoryBot.create(
+      create(
         :appeal,
         :dispatched_with_decision_issue,
         disposition: "dismissed_death",
@@ -44,7 +44,7 @@ module Seeds
     end
 
     def setup_substitution_seeds
-      %w[direct_review, evidence_submission, hearings].each do |docket_type|
+      %w[direct_review evidence_submission hearings].each do |docket_type|
         create_appeal_with_death_dismissal(docket_type)
       end
     end
