@@ -164,5 +164,6 @@ Button.propTypes = {
    */
   styling: PropTypes.object,
   title: PropTypes.string,
-  type: PropTypes.oneOf(['button', 'submit', 'reset'])
+  type: PropTypes.oneOf(['button', 'submit', 'reset']),
+  role: PropTypes.string
 };

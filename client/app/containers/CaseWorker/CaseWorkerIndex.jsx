@@ -9,7 +9,6 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import ApiUtil from '../../util/ApiUtil';
 import BaseForm from '../BaseForm';
 import Table from '../../components/Table';
-import Link from '../../components/Link';
 import Button from '../../components/Button';
 import HeaderMessage from './HeaderMessage';
 import { formatDate } from '../../util/DateUtil';
