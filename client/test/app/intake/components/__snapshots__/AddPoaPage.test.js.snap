@@ -23,7 +23,7 @@ exports[`AddPoaPage renders default state correctly 1`] = `
         </div>
       </div>
       <div
-        aria-current="step"
+        aria-current="false"
         class="cf-progress-bar-section"
         role="listitem"
       >
@@ -34,7 +34,7 @@ exports[`AddPoaPage renders default state correctly 1`] = `
         </div>
       </div>
       <div
-        aria-current="step"
+        aria-current="false"
         class="cf-progress-bar-section"
         role="listitem"
       >
@@ -45,7 +45,7 @@ exports[`AddPoaPage renders default state correctly 1`] = `
         </div>
       </div>
       <div
-        aria-current="step"
+        aria-current="false"
         class="cf-progress-bar-section"
         role="listitem"
       >
@@ -56,7 +56,7 @@ exports[`AddPoaPage renders default state correctly 1`] = `
         </div>
       </div>
       <div
-        aria-current="step"
+        aria-current="false"
         class="cf-progress-bar-section"
         role="listitem"
       >
