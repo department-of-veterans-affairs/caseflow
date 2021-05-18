@@ -11,8 +11,14 @@ describe AppellantSubstitution do
     let(:source_appeal) { create(:appeal) }
     let(:substitution_date) { 5.days.ago.to_date }
     let(:substitute) { create(:claimant) }
+
     let(:substitutes_poa) { BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(substitute&.participant_id) }
     let(:poa_participant_id) { substitutes_poa.poa_participant_id }
+    before do
+      # Needed to enable InformalHearingPresentationTask to be created for target_appeal.representatives
+      allow_any_instance_of(Representative).to receive(:should_write_ihp?) { true }
+    end
+
     let(:selected_task_types) { [] }
     let(:selected_task_ids) { source_appeal.tasks.assigned_to_any_org.of_type(selected_task_types).pluck(:id) }
     let(:task_params) { {} }
@@ -52,7 +58,7 @@ describe AppellantSubstitution do
         [:ScheduleHearingTask, :EvidenceSubmissionWindowTask, :InformalHearingPresentationTask]
       end
       let(:source_esw_task) do
-        source_appeal.tasks.completed.assigned_to_any_org.find_by(type: :EvidenceSubmissionWindowTask)
+        source_appeal.tasks.assigned_to_any_org.find_by(type: :EvidenceSubmissionWindowTask)
       end
       let(:task_params) do
         user_task_params = {}
@@ -129,8 +135,10 @@ describe AppellantSubstitution do
       end
 
       let!(:source_appeal) do
-        create(:appeal, :with_schedule_hearing_tasks, :dispatched) do |appeal|
+        create(:appeal, :hearing_docket, :with_schedule_hearing_tasks, :dispatched) do |appeal|
           distribution_task = appeal.tasks.find_by(type: :DistributionTask)
+
+          EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: distribution_task)
 
           vso_participant_id = "55555"
           org = create(:vso, participant_id: vso_participant_id)
