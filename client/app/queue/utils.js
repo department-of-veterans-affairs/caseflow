@@ -146,6 +146,7 @@ const taskAttributesFromRawTask = (task) => {
         task.attributes.latest_informal_hearing_presentation_task?.received_at,
     },
     canMoveOnDocketSwitch: task.attributes.can_move_on_docket_switch,
+    timerEndsAt: task.attributes.timer_ends_at,
     unscheduledHearingNotes: {
       updatedAt: task.attributes.unscheduled_hearing_notes?.updated_at,
       updatedByCssId: task.attributes.unscheduled_hearing_notes?.updated_by_css_id,
