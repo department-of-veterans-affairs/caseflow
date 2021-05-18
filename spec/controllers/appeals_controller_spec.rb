@@ -637,12 +637,12 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
   describe "Get AMA appeal Power of Attorney" do
     let!(:user) { User.authenticate!(roles: ["System Admin"]) }
     let!(:appeal) do
-        create(
-          :appeal,
-          veteran_file_number: "500000102",
-          receipt_date: 6.months.ago.to_date.mdY
-        )
-      end
+      create(
+        :appeal,
+        veteran_file_number: "500000102",
+        receipt_date: 6.months.ago.to_date.mdY
+      )
+    end
     let(:patch_params) { { appeal_id: appeal.uuid, poaId: appeal.power_of_attorney.id } }
     let!(:poa) do
       create(
@@ -663,7 +663,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         assert_response(:success)
         expect(JSON.parse(subject.body)["power_of_attorney"]["representative_type"]).to eq "Attorney"
         expect(JSON.parse(subject.body)["power_of_attorney"]["representative_name"]).to eq "Clarence Darrow"
-        expected_email = 'tom.brady@caseflow.gov'
+        expected_email = "tom.brady@caseflow.gov"
         expect(JSON.parse(subject.body)["power_of_attorney"]["representative_email_address"]).to eq expected_email
         expect(JSON.parse(subject.body)["power_of_attorney"]["representative_tz"]).to eq "America/Los_Angeles"
         expect(JSON.parse(subject.body)["power_of_attorney"]["representative_id"]).to eq appeal.power_of_attorney.id

@@ -26,7 +26,7 @@ export const gutterStyling = css({
 
 export const PoaRefresh = ({ powerOfAttorney, appealId }) => {
   const poaSyncInfo = {
-    poaSyncDate: formatDateStr(powerOfAttorney.poa_last_synced_at)
+    poaSyncDate: formatDateStr(powerOfAttorney.poa_last_synced_at) || formatDateStr(new Date())
   };
 
   const lastSyncedCopy = sprintf(COPY.CASE_DETAILS_POA_LAST_SYNC_DATE_COPY, poaSyncInfo);
