@@ -20,14 +20,11 @@ module Seeds
         :veteran,
         file_number: 54_545_454,
         first_name: "Jane",
-        last_name: "Deceased",
+        last_name: "Deceased"
       )
 
       # Need to set date_of_death after creating appeal or various tasks won't get created
       date_of_death = 30.days.ago
-
-      notes = "Pain disorder with 100\% evaluation per examination"
-      notes += ". Created with the dispatched factory trait"
 
       appeal = FactoryBot.create(
         :appeal,
@@ -47,7 +44,7 @@ module Seeds
     end
 
     def setup_substitution_seeds
-      ["direct_review", "evidence_submission", "hearings"].each do |docket_type|
+      %w[direct_review, evidence_submission, hearings].each do |docket_type|
         create_appeal_with_death_dismissal(docket_type)
       end
     end
