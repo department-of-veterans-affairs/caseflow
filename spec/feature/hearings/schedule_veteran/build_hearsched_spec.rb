@@ -67,11 +67,12 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       end
     end
 
-    shared_context "video_hearing" do
+    shared_context "video_hearing" do |virtual_day = false|
+      request_type = virtual_day ? HearingDay::REQUEST_TYPES[:virtual] : HearingDay::REQUEST_TYPES[:video]
       let!(:hearing_day) do
         create(
           :hearing_day,
-          request_type: HearingDay::REQUEST_TYPES[:video],
+          request_type: request_type,
           scheduled_for: Time.zone.today + 60.days,
           regional_office: "RO39"
         )
@@ -231,13 +232,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
     # Method to choose either the hearing time slot buttons or hearing time radio buttons
     def select_hearing_time(time)
-      virtual_hearing_type_selected = page.has_content?("Virtual")
-      if FeatureToggle.enabled?(:enable_hearing_time_slots) && virtual_hearing_type_selected
-        eastern_time = convert_local_time_to_eastern_timezone(time)
-        find(".time-slot-button", text: eastern_time).click
-      else
-        find(".cf-form-radio-option", text: time).click
-      end
+      find(".cf-form-radio-option", text: time).click
     end
 
     def zone_is_eastern(regional_office)
@@ -246,26 +241,28 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
     # Method to choose the custom hearing time dropdown
     def select_custom_hearing_time(time, is_eastern_only = true)
-      slots_enabled = FeatureToggle.enabled?(:enable_hearing_time_slots)
       direct_enabled = FeatureToggle.enabled?(:schedule_veteran_virtual_hearing)
-      virtual_hearing_type_selected = page.has_content?("Virtual")
 
-      if slots_enabled && virtual_hearing_type_selected
-        find(".time-slot-button-toggle", text: "Choose a custom time").click
-        # Type in the time, add am, press enter with \n
-        time_select_input = find(".time-select").find("input")
-        time_select_input.send_keys "#{time}AM", :enter, :tab
-        click_button("Choose time")
+      time_string = if is_eastern_only || !direct_enabled
+                      time
+                    else
+                      "#{time} AM E"
+                    end
 
-      else
-        time_string = if is_eastern_only || !direct_enabled
-                        time
-                      else
-                        "#{time} AM E"
-                      end
+      click_dropdown(text: time_string, name: "optionalHearingTime0")
+    end
 
-        click_dropdown(text: time_string, name: "optionalHearingTime0")
-      end
+    def slots_select_hearing_time(time)
+      find(".time-slot-button", text: "#{time} EDT").click
+    end
+
+    def slots_select_custom_hearing_time(time)
+      find(".time-slot-button-toggle", text: "Choose a custom time").click
+      # Type in the time, add am, press enter with \n, then tab away
+      # to allow the select to update
+      time_select_input = find(".time-select").find("input")
+      time_select_input.send_keys time, :enter, :tab
+      click_button("Choose time")
     end
 
     shared_examples "scheduling a central hearing" do
@@ -684,13 +681,18 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       end
     end
 
-    shared_examples "scheduling a virtual hearing" do |ro_key, time|
+    shared_examples "scheduling a virtual hearing" do |ro_key, time, slots = false|
       scenario "can successfully schedule virtual hearing" do
         navigate_to_schedule_veteran
         expect(page).to have_content("Schedule Veteran for a Hearing")
         click_dropdown(name: "hearingType", text: "Virtual")
         click_dropdown(name: "hearingDate", index: 1)
-        select_custom_hearing_time(time, ro_key == "C")
+
+        # Only one of these three gets called, they each represent a different
+        # way to select a hearing time
+        select_custom_hearing_time(time, ro_key == "C") unless slots
+        slots_select_hearing_time(time) if slots == "slot"
+        slots_select_custom_hearing_time(time) if slots == "custom"
 
         # Fill in appellant details
         click_dropdown(name: "appellantTz", index: 1)
@@ -894,6 +896,26 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       end
     end
 
+    shared_examples "scheduling a hearing on a virtual hearing day using a slot button" do
+      include_context "video_hearing", true
+      include_context "hearing subtree"
+
+      before { cache_appeals }
+
+      # Use the timeslot button
+      it_behaves_like "scheduling a virtual hearing", "RO39", "10:30 AM", "slot"
+    end
+
+    shared_examples "scheduling a hearing on a virtual hearing day using a custom time" do
+      include_context "video_hearing", true
+      include_context "hearing subtree"
+
+      before { cache_appeals }
+
+      # Use the timeslot custom time modal
+      it_behaves_like "scheduling a virtual hearing", "RO39", "10:45 AM", "custom"
+    end
+
     context "with enable_time_slots feature disabled" do
       # Ensure the feature flag is enabled before testing
       before do
@@ -952,6 +974,14 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         FeatureToggle.enable!(:enable_hearing_time_slots)
       end
 
+      # These are the only feature tests that create 'R' virtual
+      # hearing days and should show timeslots
+      it_behaves_like "scheduling a hearing on a virtual hearing day using a slot button"
+      it_behaves_like "scheduling a hearing on a virtual hearing day using a custom time"
+
+      # TimeSlots will only ever show for a virtual hearing day
+      # so these tests should run the same regardless of
+      # :enable_hearing_time_slots
       it_behaves_like "scheduling a central hearing"
 
       it_behaves_like "scheduling a video hearing"

@@ -4,13 +4,15 @@ exports[`AddClaimantPage renders default state correctly 1`] = `
 <div>
   <div
     class="cf-app-segment"
-    role="progressbar"
   >
     <div
       class="cf-progress-bar"
+      role="list"
     >
       <div
+        aria-current="step"
         class="cf-progress-bar-section"
+        role="listitem"
       >
         <div
           class="cf-progress-bar-activated"
@@ -21,7 +23,9 @@ exports[`AddClaimantPage renders default state correctly 1`] = `
         </div>
       </div>
       <div
+        aria-current="false"
         class="cf-progress-bar-section"
+        role="listitem"
       >
         <div
           class="cf-progress-bar-not-activated"
@@ -30,7 +34,9 @@ exports[`AddClaimantPage renders default state correctly 1`] = `
         </div>
       </div>
       <div
+        aria-current="false"
         class="cf-progress-bar-section"
+        role="listitem"
       >
         <div
           class="cf-progress-bar-not-activated"
@@ -39,7 +45,9 @@ exports[`AddClaimantPage renders default state correctly 1`] = `
         </div>
       </div>
       <div
+        aria-current="false"
         class="cf-progress-bar-section"
+        role="listitem"
       >
         <div
           class="cf-progress-bar-not-activated"
@@ -48,7 +56,9 @@ exports[`AddClaimantPage renders default state correctly 1`] = `
         </div>
       </div>
       <div
+        aria-current="false"
         class="cf-progress-bar-section"
+        role="listitem"
       >
         <div
           class="cf-progress-bar-not-activated"

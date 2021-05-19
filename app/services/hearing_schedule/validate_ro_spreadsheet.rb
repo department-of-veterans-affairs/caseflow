@@ -205,7 +205,7 @@ class HearingSchedule::ValidateRoSpreadsheet
   def filter_invalid_number_of_slots
     @allocation_spreadsheet_data.select do |row|
       begin
-        row["number_of_slots"] > HearingDay::DEFAULT_SLOT_COUNT ||
+        row["number_of_slots"] > HearingDay::SLOTS_BY_REQUEST_TYPE["R"] ||
           row["number_of_slots"] < 0 ||
           (row["allocated_days_without_room"] > 0 && row["number_of_slots"] == 0)
       rescue StandardError => error
