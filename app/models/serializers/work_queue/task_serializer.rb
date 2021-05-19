@@ -159,6 +159,12 @@ class WorkQueue::TaskSerializer
     object.try(:can_move_on_docket_switch?)
   end
 
+  attribute :timer_ends_at do |object|
+    if object.type == "EvidenceSubmissionWindowTask"
+      object.timer_ends_at
+    end
+  end
+
   attribute :unscheduled_hearing_notes do |object|
     object.try(:unscheduled_hearing_notes)
   end
