@@ -261,7 +261,7 @@ describe HearingDay, :all_dbs do
         let(:request_type) { HearingDay::REQUEST_TYPES[:virtual] }
         let(:regional_office_key) { nil }
         it "has 8 slots" do
-          expect(subject).to be(12)
+          expect(subject).to be(8)
         end
       end
 
