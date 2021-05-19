@@ -1,4 +1,5 @@
 $cf-hearing-day-label-color: #323a45;
+$form-spacing: 15px;
 
 .worksheet-header {
   .cf-push-right {
@@ -497,5 +498,36 @@ $cf-hearing-day-label-color: #323a45;
 
   h2 {
     margin-bottom: 10px;
+  }
+}
+
+// Add Hearing Day Styles
+.hearing-day-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+
+  h1 {
+    margin-bottom: $form-spacing;
+  }
+
+  div.cf-form-textinput {
+    margin: $form-spacing 0;
+  }
+
+  input.cf-form-textinput {
+    margin-bottom: 0;
+  }
+
+  .cf-form-dropdown {
+    margin: $form-spacing 0;
+  }
+
+  .cf-form-checkboxes {
+    margin: $form-spacing 0;
+  }
+
+  .cf-form-textarea {
+    margin: $form-spacing 0;
   }
 }

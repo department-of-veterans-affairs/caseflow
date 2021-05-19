@@ -6,6 +6,7 @@ import CreatableSelect from 'react-select/creatable';
 import _, { isPlainObject, isNull } from 'lodash';
 import classNames from 'classnames';
 import { css } from 'glamor';
+import { FormLabel } from './FormLabel';
 
 const TAG_ALREADY_EXISTS_MSG = 'Tag already exists';
 const NO_RESULTS_TEXT = 'Not an option';
@@ -114,7 +115,17 @@ export class SearchableDropdown extends React.Component {
       creatableOptions,
       searchable,
       styling,
+      optional,
     } = this.props;
+
+    const labelContents = (
+      <FormLabel
+        label={label}
+        name={label || name}
+        required={required}
+        optional={optional}
+      />
+    );
 
     const dropdownStyling = css(styling, {
       '& .cf-select__menu': this.props.dropdownStyling,
@@ -161,13 +172,6 @@ export class SearchableDropdown extends React.Component {
     // message. We can get around this by unsetting `noResultsText`.
     const handleNoOptions = () =>
       noResultsText ?? (creatable ? null : NO_RESULTS_TEXT);
-
-    const labelContents = (
-      <span>
-        {label || name}
-        {required && <span className="cf-required">Required</span>}
-      </span>
-    );
 
     return (
       <div className={errorMessage ? 'usa-input-error' : ''}>
@@ -272,6 +276,7 @@ SearchableDropdown.propTypes = {
   placeholder: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   readOnly: PropTypes.bool,
   required: PropTypes.bool,
+  optional: PropTypes.bool,
   searchable: PropTypes.bool,
   selfManageValueState: PropTypes.bool,
   styling: PropTypes.object,
