@@ -232,11 +232,10 @@ describe BgsPowerOfAttorney do
   end
 
   describe "#save_with_updated_bgs_record!" do
-  subject { described_class }
-    xcontext "single POA record for PID" do
-      let!(:poa) { create(:bgs_power_of_attorney, claimant_participant_id: claimant_participant_id) }
-
-      let(:claimant_participant_id) { "CLAIMANT_WITH_PVA_AS_VSO" }
+  let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+  let!(:poa) { create(:bgs_power_of_attorney, claimant_participant_id: claimant_participant_id) }
+  let(:claimant_participant_id) { "CLAIMANT_WITH_PVA_AS_VSO" }
+    context "single POA record for PID" do
 
       before do
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids)
@@ -254,9 +253,6 @@ describe BgsPowerOfAttorney do
     end
 
     context "when poa_auto_ihp_update feature toggle is disabled" do
-      let!(:user) { User.authenticate!(roles: ["System Admin"]) }
-      let!(:poa) { create(:bgs_power_of_attorney, claimant_participant_id: claimant_participant_id) }
-      let(:claimant_participant_id) { "CLAIMANT_WITH_PVA_AS_VSO" }
 
       before do
         FeatureToggle.disable!(:poa_auto_ihp_update)
@@ -269,24 +265,34 @@ describe BgsPowerOfAttorney do
 
       it "IhpTaks update method isn't called" do
         poa.save_with_updated_bgs_record!
-        expect(InformalHearingPresentationTask).not_to have_received(:update_to_new_poa)
+        # expect(InformalHearingPresentationTask.new).to_not have_received(:update_to_new_poa)
+        expect(poa.send(:update_ihp_enabled?)).to eq(false)
       end
     end
 
-    xcontext "when poa_auto_ihp_update feature toggle is enabled" do
-      let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+    context "when poa_auto_ihp_update feature toggle is enabled" do
 
-      before { FeatureToggle.enable!(:poa_auto_ihp_update) }
+      before do
+        FeatureToggle.enable!(:poa_auto_ihp_update)
+        allow_any_instance_of(BgsPowerOfAttorney).to receive(:update_ihp_task)
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids)
+          .with([claimant_participant_id]).and_return(Fakes::BGSServicePOA.default_vsos_mapped.last)
+      end
       after { FeatureToggle.disable!(:poa_auto_ihp_update) }
 
       it "IhpTaks update method is called" do
-        # poa.save_with_updated_bgs_record!
-        # expect(InformalHearingPresentationTask).to have_received(:update_to_new_poa)
+        before_poa_pid = poa.poa_participant_id
+        expect(before_poa_pid).to_not be_nil
+
+        poa.save_with_updated_bgs_record!
+
+        expect(poa.poa_participant_id).to_not eq before_poa_pid
+        expect(poa.send(:update_ihp_enabled?)).to eq(true)
       end
     end
 
 
-    xcontext "2 records exist with same PID but different FNs" do
+    context "2 records exist with same PID but different FNs" do
       before do
         allow(bgs).to receive(:fetch_poa_by_file_number)
           .with(poa_2_fn).and_return(poa_2_bgs_response)
