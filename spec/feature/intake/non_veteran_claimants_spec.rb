@@ -372,6 +372,28 @@ feature "Non-veteran claimants", :postgres do
       # Re-routes back to Review page
       expect(page).to have_current_path("/intake/review_request")
     end
+
+    context "when the veteran has no dependent relations" do
+      it "allows selecting claimant not listed" do
+        allow_any_instance_of(Veteran).to receive(:relationships).and_return([])
+        start_appeal(veteran)
+        visit "/intake"
+
+        expect(page).to have_current_path("/intake/review_request")
+
+        within_fieldset("Is the claimant someone other than the Veteran?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+
+        expect(page).to have_selector("label[for=claimant-options_claimant_not_listed]")
+
+        within_fieldset(COPY::SELECT_CLAIMANT_LABEL) do
+          find("label", text: "Claimant not listed", match: :prefer_exact).click
+        end
+
+        expect(page).to have_button("Continue to next step", disabled: false)
+      end
+    end
   end
 
   def add_existing_attorney(attorney)
