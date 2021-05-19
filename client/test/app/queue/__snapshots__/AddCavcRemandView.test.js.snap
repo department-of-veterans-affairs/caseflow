@@ -546,9 +546,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                         </strong>
                       </label>
                       <div
-                        aria-expanded={false}
                         className="cf-select"
-                        role="combobox"
                       >
                         <StateManager
                           cache={false}
@@ -2280,8 +2278,10 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                               >
                                                 <Input
                                                   aria-autocomplete="list"
-                                                  aria-label="judge-dropdown"
+                                                  aria-expanded={false}
+                                                  aria-haspopup={true}
                                                   aria-labelledby="judge-dropdown-label"
+                                                  aria-owns="judge-dropdown-listbox"
                                                   autoCapitalize="none"
                                                   autoComplete="off"
                                                   autoCorrect="off"
@@ -2294,6 +2294,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                   onBlur={[Function]}
                                                   onChange={[Function]}
                                                   onFocus={[Function]}
+                                                  role="combobox"
                                                   selectProps={
                                                     Object {
                                                       "backspaceRemovesValue": true,
@@ -2493,8 +2494,10 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                     >
                                                       <AutosizeInput
                                                         aria-autocomplete="list"
-                                                        aria-label="judge-dropdown"
+                                                        aria-expanded={false}
+                                                        aria-haspopup={true}
                                                         aria-labelledby="judge-dropdown-label"
+                                                        aria-owns="judge-dropdown-listbox"
                                                         autoCapitalize="none"
                                                         autoComplete="off"
                                                         autoCorrect="off"
@@ -2519,6 +2522,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                         onBlur={[Function]}
                                                         onChange={[Function]}
                                                         onFocus={[Function]}
+                                                        role="combobox"
                                                         spellCheck="false"
                                                         tabIndex="0"
                                                         type="text"
@@ -2534,8 +2538,10 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                         >
                                                           <input
                                                             aria-autocomplete="list"
-                                                            aria-label="judge-dropdown"
+                                                            aria-expanded={false}
+                                                            aria-haspopup={true}
                                                             aria-labelledby="judge-dropdown-label"
+                                                            aria-owns="judge-dropdown-listbox"
                                                             autoCapitalize="none"
                                                             autoComplete="off"
                                                             autoCorrect="off"
@@ -2544,6 +2550,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                             onBlur={[Function]}
                                                             onChange={[Function]}
                                                             onFocus={[Function]}
+                                                            role="combobox"
                                                             spellCheck="false"
                                                             style={
                                                               Object {

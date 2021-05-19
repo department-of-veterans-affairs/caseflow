@@ -965,7 +965,7 @@ SAN FRANCISCO, CA 94103
               >
                 <label
                   className="question-label"
-                  htmlFor="representativeTz"
+                  htmlFor="representative-tz"
                   id="representative-tz-label"
                 >
                   <strong>
@@ -980,9 +980,7 @@ SAN FRANCISCO, CA 94103
                   </strong>
                 </label>
                 <div
-                  aria-expanded={false}
                   className="cf-select"
-                  role="combobox"
                 >
                   <StateManager
                     cache={false}
@@ -997,7 +995,7 @@ SAN FRANCISCO, CA 94103
                     defaultInputValue=""
                     defaultMenuIsOpen={false}
                     defaultValue={null}
-                    inputId="representativeTz"
+                    inputId="representative-tz"
                     isDisabled={false}
                     isLoading={false}
                     isSearchable={true}
@@ -1811,7 +1809,7 @@ SAN FRANCISCO, CA 94103
                       formatGroupLabel={[Function]}
                       getOptionLabel={[Function]}
                       getOptionValue={[Function]}
-                      inputId="representativeTz"
+                      inputId="representative-tz"
                       inputValue=""
                       isDisabled={false}
                       isLoading={false}
@@ -3429,7 +3427,7 @@ SAN FRANCISCO, CA 94103
                             "formatGroupLabel": [Function],
                             "getOptionLabel": [Function],
                             "getOptionValue": [Function],
-                            "inputId": "representativeTz",
+                            "inputId": "representative-tz",
                             "inputValue": "",
                             "isClearable": undefined,
                             "isDisabled": false,
@@ -5097,7 +5095,7 @@ SAN FRANCISCO, CA 94103
                                   "formatGroupLabel": [Function],
                                   "getOptionLabel": [Function],
                                   "getOptionValue": [Function],
-                                  "inputId": "representativeTz",
+                                  "inputId": "representative-tz",
                                   "inputValue": "",
                                   "isClearable": undefined,
                                   "isDisabled": false,
@@ -6773,7 +6771,7 @@ SAN FRANCISCO, CA 94103
                                         "formatGroupLabel": [Function],
                                         "getOptionLabel": [Function],
                                         "getOptionValue": [Function],
-                                        "inputId": "representativeTz",
+                                        "inputId": "representative-tz",
                                         "inputValue": "",
                                         "isClearable": undefined,
                                         "isDisabled": false,
@@ -8441,7 +8439,7 @@ SAN FRANCISCO, CA 94103
                                               "formatGroupLabel": [Function],
                                               "getOptionLabel": [Function],
                                               "getOptionValue": [Function],
-                                              "inputId": "representativeTz",
+                                              "inputId": "representative-tz",
                                               "inputValue": "",
                                               "isClearable": undefined,
                                               "isDisabled": false,
@@ -9317,7 +9315,7 @@ SAN FRANCISCO, CA 94103
                                           autoCorrect="off"
                                           cx={[Function]}
                                           getStyles={[Function]}
-                                          id="representativeTz"
+                                          id="representative-tz"
                                           innerRef={[Function]}
                                           isDisabled={false}
                                           isHidden={false}
@@ -9345,7 +9343,7 @@ SAN FRANCISCO, CA 94103
                                               "formatGroupLabel": [Function],
                                               "getOptionLabel": [Function],
                                               "getOptionValue": [Function],
-                                              "inputId": "representativeTz",
+                                              "inputId": "representative-tz",
                                               "inputValue": "",
                                               "isClearable": undefined,
                                               "isDisabled": false,
@@ -10191,20 +10189,23 @@ SAN FRANCISCO, CA 94103
                                         >
                                           <Input
                                             aria-autocomplete="list"
-                                            aria-label="representative-tz"
+                                            aria-expanded={false}
+                                            aria-haspopup={true}
                                             aria-labelledby="representative-tz-label"
+                                            aria-owns="representative-tz-listbox"
                                             autoCapitalize="none"
                                             autoComplete="off"
                                             autoCorrect="off"
                                             cx={[Function]}
                                             getStyles={[Function]}
-                                            id="representativeTz"
+                                            id="representative-tz"
                                             innerRef={[Function]}
                                             isDisabled={false}
                                             isHidden={false}
                                             onBlur={[Function]}
                                             onChange={[Function]}
                                             onFocus={[Function]}
+                                            role="combobox"
                                             selectProps={
                                               Object {
                                                 "backspaceRemovesValue": true,
@@ -10226,7 +10227,7 @@ SAN FRANCISCO, CA 94103
                                                 "formatGroupLabel": [Function],
                                                 "getOptionLabel": [Function],
                                                 "getOptionValue": [Function],
-                                                "inputId": "representativeTz",
+                                                "inputId": "representative-tz",
                                                 "inputValue": "",
                                                 "isClearable": undefined,
                                                 "isDisabled": false,
@@ -11084,14 +11085,16 @@ SAN FRANCISCO, CA 94103
                                               >
                                                 <AutosizeInput
                                                   aria-autocomplete="list"
-                                                  aria-label="representative-tz"
+                                                  aria-expanded={false}
+                                                  aria-haspopup={true}
                                                   aria-labelledby="representative-tz-label"
+                                                  aria-owns="representative-tz-listbox"
                                                   autoCapitalize="none"
                                                   autoComplete="off"
                                                   autoCorrect="off"
                                                   className="cf-select__input"
                                                   disabled={false}
-                                                  id="representativeTz"
+                                                  id="representative-tz"
                                                   injectStyles={true}
                                                   inputRef={[Function]}
                                                   inputStyle={
@@ -11110,6 +11113,7 @@ SAN FRANCISCO, CA 94103
                                                   onBlur={[Function]}
                                                   onChange={[Function]}
                                                   onFocus={[Function]}
+                                                  role="combobox"
                                                   spellCheck="false"
                                                   tabIndex="0"
                                                   type="text"
@@ -11125,16 +11129,19 @@ SAN FRANCISCO, CA 94103
                                                   >
                                                     <input
                                                       aria-autocomplete="list"
-                                                      aria-label="representative-tz"
+                                                      aria-expanded={false}
+                                                      aria-haspopup={true}
                                                       aria-labelledby="representative-tz-label"
+                                                      aria-owns="representative-tz-listbox"
                                                       autoCapitalize="none"
                                                       autoComplete="off"
                                                       autoCorrect="off"
                                                       disabled={false}
-                                                      id="representativeTz"
+                                                      id="representative-tz"
                                                       onBlur={[Function]}
                                                       onChange={[Function]}
                                                       onFocus={[Function]}
+                                                      role="combobox"
                                                       spellCheck="false"
                                                       style={
                                                         Object {
@@ -11975,7 +11982,7 @@ SAN FRANCISCO, CA 94103
                                         "formatGroupLabel": [Function],
                                         "getOptionLabel": [Function],
                                         "getOptionValue": [Function],
-                                        "inputId": "representativeTz",
+                                        "inputId": "representative-tz",
                                         "inputValue": "",
                                         "isClearable": undefined,
                                         "isDisabled": false,
@@ -13633,7 +13640,7 @@ SAN FRANCISCO, CA 94103
                                               "formatGroupLabel": [Function],
                                               "getOptionLabel": [Function],
                                               "getOptionValue": [Function],
-                                              "inputId": "representativeTz",
+                                              "inputId": "representative-tz",
                                               "inputValue": "",
                                               "isClearable": undefined,
                                               "isDisabled": false,
@@ -15302,7 +15309,7 @@ SAN FRANCISCO, CA 94103
                                               "formatGroupLabel": [Function],
                                               "getOptionLabel": [Function],
                                               "getOptionValue": [Function],
-                                              "inputId": "representativeTz",
+                                              "inputId": "representative-tz",
                                               "inputValue": "",
                                               "isClearable": undefined,
                                               "isDisabled": false,

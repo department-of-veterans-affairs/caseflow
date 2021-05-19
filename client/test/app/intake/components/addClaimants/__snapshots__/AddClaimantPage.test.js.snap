@@ -98,9 +98,7 @@ exports[`AddClaimantPage renders default state correctly 1`] = `
               </strong>
             </label>
             <div
-              aria-expanded="false"
               class="cf-select"
-              role="combobox"
             >
               <div
                 class=" css-2b097c-container"
@@ -125,12 +123,15 @@ exports[`AddClaimantPage renders default state correctly 1`] = `
                       >
                         <input
                           aria-autocomplete="list"
-                          aria-label="relationship"
+                          aria-expanded="false"
+                          aria-haspopup="true"
                           aria-labelledby="relationship-label"
+                          aria-owns="relationship-listbox"
                           autocapitalize="none"
                           autocomplete="off"
                           autocorrect="off"
                           id="relationship"
+                          role="combobox"
                           spellcheck="false"
                           style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                           tabindex="0"

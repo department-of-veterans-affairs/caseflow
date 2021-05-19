@@ -20,9 +20,9 @@ const customStyles = {
 const CustomMenuList = (props) => {
   const innerProps = {
     ...props.innerProps,
-    'aria-label': `${kebabCase(props.selectProps.name)}-listbox`,
     id: `${kebabCase(props.selectProps.name)}-listbox`,
     role: 'listbox',
+    'aria-label': `${kebabCase(props.selectProps.name)}-listbox`,
   };
 
   return <components.MenuList {...props} innerProps={innerProps} />;
@@ -31,9 +31,8 @@ const CustomMenuList = (props) => {
 const CustomOption = (props) => {
   const innerProps = {
     ...props.innerProps,
-    'aria-label': `${kebabCase(props.selectProps.name)}-option`,
-    'aria-disabled': props.selectProps.isDisabled,
     role: 'option',
+    'aria-disabled': props.selectProps.isDisabled,
   };
 
   return <components.Option {...props} innerProps={innerProps} />;
@@ -42,8 +41,11 @@ const CustomOption = (props) => {
 const CustomInput = (props) => {
   const innerProps = {
     ...props.innerProps,
-    'aria-label': `${kebabCase(props.selectProps.name)}`,
+    role: 'combobox',
     'aria-labelledby': `${kebabCase(props.selectProps.name)}-label`,
+    'aria-owns': `${kebabCase(props.selectProps.name)}-listbox`,
+    'aria-expanded': props.selectProps.menuIsOpen,
+    'aria-haspopup': true,
   };
 
   return <components.Input {...props} {...innerProps} />;
@@ -205,18 +207,18 @@ export class SearchableDropdown extends React.Component {
     return (
       <div className={errorMessage ? 'usa-input-error' : ''}>
         <div className={dropdownClasses} {...dropdownStyling}>
-          <label className={labelClasses} htmlFor={name} id={`${kebabCase(name)}-label`}>
+          <label className={labelClasses} htmlFor={`${kebabCase(name)}`} id={`${kebabCase(name)}-label`}>
             {strongLabel ? <strong>{labelContents}</strong> : labelContents}
           </label>
           {errorMessage && (
             <span className="usa-input-error-message">{errorMessage}</span>
           )}
-          <div className="cf-select" role="combobox" aria-expanded={this.state.isExpanded}>
+          <div className="cf-select">
             <SelectComponent
               components={{ Input: CustomInput, MenuList: CustomMenuList, Option: CustomOption }}
               name={name}
               classNamePrefix="cf-select"
-              inputId={name}
+              inputId={`${kebabCase(name)}`}
               options={options}
               defaultOptions={defaultOptions}
               defaultValue={defaultValue}

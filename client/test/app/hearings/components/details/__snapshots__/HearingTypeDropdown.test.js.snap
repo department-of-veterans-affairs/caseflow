@@ -68,7 +68,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
       >
         <label
           className="question-label"
-          htmlFor="hearingType"
+          htmlFor="hearing-type"
           id="hearing-type-label"
         >
           <strong>
@@ -78,9 +78,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
           </strong>
         </label>
         <div
-          aria-expanded={false}
           className="cf-select"
-          role="combobox"
         >
           <StateManager
             cache={false}
@@ -95,7 +93,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
             defaultInputValue=""
             defaultMenuIsOpen={false}
             defaultValue={null}
-            inputId="hearingType"
+            inputId="hearing-type"
             isLoading={false}
             isSearchable={true}
             name="hearingType"
@@ -146,7 +144,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
               formatGroupLabel={[Function]}
               getOptionLabel={[Function]}
               getOptionValue={[Function]}
-              inputId="hearingType"
+              inputId="hearing-type"
               inputValue=""
               isDisabled={false}
               isLoading={false}
@@ -243,7 +241,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                     "formatGroupLabel": [Function],
                     "getOptionLabel": [Function],
                     "getOptionValue": [Function],
-                    "inputId": "hearingType",
+                    "inputId": "hearing-type",
                     "inputValue": "",
                     "isClearable": undefined,
                     "isDisabled": false,
@@ -390,7 +388,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                           "formatGroupLabel": [Function],
                           "getOptionLabel": [Function],
                           "getOptionValue": [Function],
-                          "inputId": "hearingType",
+                          "inputId": "hearing-type",
                           "inputValue": "",
                           "isClearable": undefined,
                           "isDisabled": false,
@@ -545,7 +543,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "hearingType",
+                                "inputId": "hearing-type",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": false,
@@ -691,7 +689,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "hearingType",
+                                      "inputId": "hearing-type",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -806,7 +804,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                   autoCorrect="off"
                                   cx={[Function]}
                                   getStyles={[Function]}
-                                  id="hearingType"
+                                  id="hearing-type"
                                   innerRef={[Function]}
                                   isDisabled={false}
                                   isHidden={true}
@@ -834,7 +832,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "hearingType",
+                                      "inputId": "hearing-type",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -919,20 +917,23 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                 >
                                   <Input
                                     aria-autocomplete="list"
-                                    aria-label="hearing-type"
+                                    aria-expanded={false}
+                                    aria-haspopup={true}
                                     aria-labelledby="hearing-type-label"
+                                    aria-owns="hearing-type-listbox"
                                     autoCapitalize="none"
                                     autoComplete="off"
                                     autoCorrect="off"
                                     cx={[Function]}
                                     getStyles={[Function]}
-                                    id="hearingType"
+                                    id="hearing-type"
                                     innerRef={[Function]}
                                     isDisabled={false}
                                     isHidden={true}
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
+                                    role="combobox"
                                     selectProps={
                                       Object {
                                         "backspaceRemovesValue": true,
@@ -954,7 +955,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                         "formatGroupLabel": [Function],
                                         "getOptionLabel": [Function],
                                         "getOptionValue": [Function],
-                                        "inputId": "hearingType",
+                                        "inputId": "hearing-type",
                                         "inputValue": "",
                                         "isClearable": undefined,
                                         "isDisabled": false,
@@ -1051,14 +1052,16 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                       >
                                         <AutosizeInput
                                           aria-autocomplete="list"
-                                          aria-label="hearing-type"
+                                          aria-expanded={false}
+                                          aria-haspopup={true}
                                           aria-labelledby="hearing-type-label"
+                                          aria-owns="hearing-type-listbox"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
                                           className="cf-select__input"
                                           disabled={false}
-                                          id="hearingType"
+                                          id="hearing-type"
                                           injectStyles={true}
                                           inputRef={[Function]}
                                           inputStyle={
@@ -1077,6 +1080,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
+                                          role="combobox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -1092,16 +1096,19 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                           >
                                             <input
                                               aria-autocomplete="list"
-                                              aria-label="hearing-type"
+                                              aria-expanded={false}
+                                              aria-haspopup={true}
                                               aria-labelledby="hearing-type-label"
+                                              aria-owns="hearing-type-listbox"
                                               autoCapitalize="none"
                                               autoComplete="off"
                                               autoCorrect="off"
                                               disabled={false}
-                                              id="hearingType"
+                                              id="hearing-type"
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
+                                              role="combobox"
                                               spellCheck="false"
                                               style={
                                                 Object {
@@ -1182,7 +1189,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "hearingType",
+                                "inputId": "hearing-type",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": false,
@@ -1319,7 +1326,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "hearingType",
+                                      "inputId": "hearing-type",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -1467,7 +1474,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "hearingType",
+                                      "inputId": "hearing-type",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -1717,7 +1724,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
       >
         <label
           className="question-label"
-          htmlFor="hearingType"
+          htmlFor="hearing-type"
           id="hearing-type-label"
         >
           <strong>
@@ -1727,9 +1734,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
           </strong>
         </label>
         <div
-          aria-expanded={false}
           className="cf-select"
-          role="combobox"
         >
           <StateManager
             cache={false}
@@ -1744,7 +1749,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
             defaultInputValue=""
             defaultMenuIsOpen={false}
             defaultValue={null}
-            inputId="hearingType"
+            inputId="hearing-type"
             isLoading={false}
             isSearchable={true}
             name="hearingType"
@@ -1795,7 +1800,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
               formatGroupLabel={[Function]}
               getOptionLabel={[Function]}
               getOptionValue={[Function]}
-              inputId="hearingType"
+              inputId="hearing-type"
               inputValue=""
               isDisabled={false}
               isLoading={false}
@@ -1892,7 +1897,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                     "formatGroupLabel": [Function],
                     "getOptionLabel": [Function],
                     "getOptionValue": [Function],
-                    "inputId": "hearingType",
+                    "inputId": "hearing-type",
                     "inputValue": "",
                     "isClearable": undefined,
                     "isDisabled": false,
@@ -2039,7 +2044,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                           "formatGroupLabel": [Function],
                           "getOptionLabel": [Function],
                           "getOptionValue": [Function],
-                          "inputId": "hearingType",
+                          "inputId": "hearing-type",
                           "inputValue": "",
                           "isClearable": undefined,
                           "isDisabled": false,
@@ -2194,7 +2199,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "hearingType",
+                                "inputId": "hearing-type",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": false,
@@ -2340,7 +2345,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "hearingType",
+                                      "inputId": "hearing-type",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -2455,7 +2460,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                   autoCorrect="off"
                                   cx={[Function]}
                                   getStyles={[Function]}
-                                  id="hearingType"
+                                  id="hearing-type"
                                   innerRef={[Function]}
                                   isDisabled={false}
                                   isHidden={true}
@@ -2483,7 +2488,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "hearingType",
+                                      "inputId": "hearing-type",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -2568,20 +2573,23 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                 >
                                   <Input
                                     aria-autocomplete="list"
-                                    aria-label="hearing-type"
+                                    aria-expanded={false}
+                                    aria-haspopup={true}
                                     aria-labelledby="hearing-type-label"
+                                    aria-owns="hearing-type-listbox"
                                     autoCapitalize="none"
                                     autoComplete="off"
                                     autoCorrect="off"
                                     cx={[Function]}
                                     getStyles={[Function]}
-                                    id="hearingType"
+                                    id="hearing-type"
                                     innerRef={[Function]}
                                     isDisabled={false}
                                     isHidden={true}
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
+                                    role="combobox"
                                     selectProps={
                                       Object {
                                         "backspaceRemovesValue": true,
@@ -2603,7 +2611,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                         "formatGroupLabel": [Function],
                                         "getOptionLabel": [Function],
                                         "getOptionValue": [Function],
-                                        "inputId": "hearingType",
+                                        "inputId": "hearing-type",
                                         "inputValue": "",
                                         "isClearable": undefined,
                                         "isDisabled": false,
@@ -2700,14 +2708,16 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                       >
                                         <AutosizeInput
                                           aria-autocomplete="list"
-                                          aria-label="hearing-type"
+                                          aria-expanded={false}
+                                          aria-haspopup={true}
                                           aria-labelledby="hearing-type-label"
+                                          aria-owns="hearing-type-listbox"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
                                           className="cf-select__input"
                                           disabled={false}
-                                          id="hearingType"
+                                          id="hearing-type"
                                           injectStyles={true}
                                           inputRef={[Function]}
                                           inputStyle={
@@ -2726,6 +2736,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
+                                          role="combobox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -2741,16 +2752,19 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                           >
                                             <input
                                               aria-autocomplete="list"
-                                              aria-label="hearing-type"
+                                              aria-expanded={false}
+                                              aria-haspopup={true}
                                               aria-labelledby="hearing-type-label"
+                                              aria-owns="hearing-type-listbox"
                                               autoCapitalize="none"
                                               autoComplete="off"
                                               autoCorrect="off"
                                               disabled={false}
-                                              id="hearingType"
+                                              id="hearing-type"
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
+                                              role="combobox"
                                               spellCheck="false"
                                               style={
                                                 Object {
@@ -2831,7 +2845,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "hearingType",
+                                "inputId": "hearing-type",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": false,
@@ -2968,7 +2982,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "hearingType",
+                                      "inputId": "hearing-type",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -3116,7 +3130,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "hearingType",
+                                      "inputId": "hearing-type",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -3399,7 +3413,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
       >
         <label
           className="question-label"
-          htmlFor="hearingType"
+          htmlFor="hearing-type"
           id="hearing-type-label"
         >
           <strong>
@@ -3409,9 +3423,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
           </strong>
         </label>
         <div
-          aria-expanded={false}
           className="cf-select"
-          role="combobox"
         >
           <StateManager
             cache={false}
@@ -3426,7 +3438,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
             defaultInputValue=""
             defaultMenuIsOpen={false}
             defaultValue={null}
-            inputId="hearingType"
+            inputId="hearing-type"
             isLoading={false}
             isSearchable={true}
             name="hearingType"
@@ -3477,7 +3489,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
               formatGroupLabel={[Function]}
               getOptionLabel={[Function]}
               getOptionValue={[Function]}
-              inputId="hearingType"
+              inputId="hearing-type"
               inputValue=""
               isDisabled={false}
               isLoading={false}
@@ -3574,7 +3586,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                     "formatGroupLabel": [Function],
                     "getOptionLabel": [Function],
                     "getOptionValue": [Function],
-                    "inputId": "hearingType",
+                    "inputId": "hearing-type",
                     "inputValue": "",
                     "isClearable": undefined,
                     "isDisabled": false,
@@ -3721,7 +3733,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                           "formatGroupLabel": [Function],
                           "getOptionLabel": [Function],
                           "getOptionValue": [Function],
-                          "inputId": "hearingType",
+                          "inputId": "hearing-type",
                           "inputValue": "",
                           "isClearable": undefined,
                           "isDisabled": false,
@@ -3876,7 +3888,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "hearingType",
+                                "inputId": "hearing-type",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": false,
@@ -4022,7 +4034,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "hearingType",
+                                      "inputId": "hearing-type",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -4137,7 +4149,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                   autoCorrect="off"
                                   cx={[Function]}
                                   getStyles={[Function]}
-                                  id="hearingType"
+                                  id="hearing-type"
                                   innerRef={[Function]}
                                   isDisabled={false}
                                   isHidden={true}
@@ -4165,7 +4177,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "hearingType",
+                                      "inputId": "hearing-type",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -4250,20 +4262,23 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                 >
                                   <Input
                                     aria-autocomplete="list"
-                                    aria-label="hearing-type"
+                                    aria-expanded={false}
+                                    aria-haspopup={true}
                                     aria-labelledby="hearing-type-label"
+                                    aria-owns="hearing-type-listbox"
                                     autoCapitalize="none"
                                     autoComplete="off"
                                     autoCorrect="off"
                                     cx={[Function]}
                                     getStyles={[Function]}
-                                    id="hearingType"
+                                    id="hearing-type"
                                     innerRef={[Function]}
                                     isDisabled={false}
                                     isHidden={true}
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
+                                    role="combobox"
                                     selectProps={
                                       Object {
                                         "backspaceRemovesValue": true,
@@ -4285,7 +4300,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                         "formatGroupLabel": [Function],
                                         "getOptionLabel": [Function],
                                         "getOptionValue": [Function],
-                                        "inputId": "hearingType",
+                                        "inputId": "hearing-type",
                                         "inputValue": "",
                                         "isClearable": undefined,
                                         "isDisabled": false,
@@ -4382,14 +4397,16 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                       >
                                         <AutosizeInput
                                           aria-autocomplete="list"
-                                          aria-label="hearing-type"
+                                          aria-expanded={false}
+                                          aria-haspopup={true}
                                           aria-labelledby="hearing-type-label"
+                                          aria-owns="hearing-type-listbox"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
                                           className="cf-select__input"
                                           disabled={false}
-                                          id="hearingType"
+                                          id="hearing-type"
                                           injectStyles={true}
                                           inputRef={[Function]}
                                           inputStyle={
@@ -4408,6 +4425,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
+                                          role="combobox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -4423,16 +4441,19 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                           >
                                             <input
                                               aria-autocomplete="list"
-                                              aria-label="hearing-type"
+                                              aria-expanded={false}
+                                              aria-haspopup={true}
                                               aria-labelledby="hearing-type-label"
+                                              aria-owns="hearing-type-listbox"
                                               autoCapitalize="none"
                                               autoComplete="off"
                                               autoCorrect="off"
                                               disabled={false}
-                                              id="hearingType"
+                                              id="hearing-type"
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
+                                              role="combobox"
                                               spellCheck="false"
                                               style={
                                                 Object {
@@ -4513,7 +4534,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "hearingType",
+                                "inputId": "hearing-type",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": false,
@@ -4650,7 +4671,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "hearingType",
+                                      "inputId": "hearing-type",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -4798,7 +4819,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "hearingType",
+                                      "inputId": "hearing-type",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -5096,7 +5117,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
       >
         <label
           className="question-label"
-          htmlFor="hearingType"
+          htmlFor="hearing-type"
           id="hearing-type-label"
         >
           <strong>
@@ -5106,9 +5127,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
           </strong>
         </label>
         <div
-          aria-expanded={false}
           className="cf-select"
-          role="combobox"
         >
           <StateManager
             cache={false}
@@ -5123,7 +5142,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
             defaultInputValue=""
             defaultMenuIsOpen={false}
             defaultValue={null}
-            inputId="hearingType"
+            inputId="hearing-type"
             isLoading={false}
             isSearchable={true}
             name="hearingType"
@@ -5174,7 +5193,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
               formatGroupLabel={[Function]}
               getOptionLabel={[Function]}
               getOptionValue={[Function]}
-              inputId="hearingType"
+              inputId="hearing-type"
               inputValue=""
               isDisabled={false}
               isLoading={false}
@@ -5271,7 +5290,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                     "formatGroupLabel": [Function],
                     "getOptionLabel": [Function],
                     "getOptionValue": [Function],
-                    "inputId": "hearingType",
+                    "inputId": "hearing-type",
                     "inputValue": "",
                     "isClearable": undefined,
                     "isDisabled": false,
@@ -5418,7 +5437,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                           "formatGroupLabel": [Function],
                           "getOptionLabel": [Function],
                           "getOptionValue": [Function],
-                          "inputId": "hearingType",
+                          "inputId": "hearing-type",
                           "inputValue": "",
                           "isClearable": undefined,
                           "isDisabled": false,
@@ -5573,7 +5592,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "hearingType",
+                                "inputId": "hearing-type",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": false,
@@ -5719,7 +5738,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "hearingType",
+                                      "inputId": "hearing-type",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -5834,7 +5853,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                   autoCorrect="off"
                                   cx={[Function]}
                                   getStyles={[Function]}
-                                  id="hearingType"
+                                  id="hearing-type"
                                   innerRef={[Function]}
                                   isDisabled={false}
                                   isHidden={true}
@@ -5862,7 +5881,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "hearingType",
+                                      "inputId": "hearing-type",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -5947,20 +5966,23 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                 >
                                   <Input
                                     aria-autocomplete="list"
-                                    aria-label="hearing-type"
+                                    aria-expanded={false}
+                                    aria-haspopup={true}
                                     aria-labelledby="hearing-type-label"
+                                    aria-owns="hearing-type-listbox"
                                     autoCapitalize="none"
                                     autoComplete="off"
                                     autoCorrect="off"
                                     cx={[Function]}
                                     getStyles={[Function]}
-                                    id="hearingType"
+                                    id="hearing-type"
                                     innerRef={[Function]}
                                     isDisabled={false}
                                     isHidden={true}
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
+                                    role="combobox"
                                     selectProps={
                                       Object {
                                         "backspaceRemovesValue": true,
@@ -5982,7 +6004,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                         "formatGroupLabel": [Function],
                                         "getOptionLabel": [Function],
                                         "getOptionValue": [Function],
-                                        "inputId": "hearingType",
+                                        "inputId": "hearing-type",
                                         "inputValue": "",
                                         "isClearable": undefined,
                                         "isDisabled": false,
@@ -6079,14 +6101,16 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                       >
                                         <AutosizeInput
                                           aria-autocomplete="list"
-                                          aria-label="hearing-type"
+                                          aria-expanded={false}
+                                          aria-haspopup={true}
                                           aria-labelledby="hearing-type-label"
+                                          aria-owns="hearing-type-listbox"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
                                           className="cf-select__input"
                                           disabled={false}
-                                          id="hearingType"
+                                          id="hearing-type"
                                           injectStyles={true}
                                           inputRef={[Function]}
                                           inputStyle={
@@ -6105,6 +6129,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
+                                          role="combobox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -6120,16 +6145,19 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                           >
                                             <input
                                               aria-autocomplete="list"
-                                              aria-label="hearing-type"
+                                              aria-expanded={false}
+                                              aria-haspopup={true}
                                               aria-labelledby="hearing-type-label"
+                                              aria-owns="hearing-type-listbox"
                                               autoCapitalize="none"
                                               autoComplete="off"
                                               autoCorrect="off"
                                               disabled={false}
-                                              id="hearingType"
+                                              id="hearing-type"
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
+                                              role="combobox"
                                               spellCheck="false"
                                               style={
                                                 Object {
@@ -6210,7 +6238,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "hearingType",
+                                "inputId": "hearing-type",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": false,
@@ -6347,7 +6375,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "hearingType",
+                                      "inputId": "hearing-type",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -6495,7 +6523,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "hearingType",
+                                      "inputId": "hearing-type",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,

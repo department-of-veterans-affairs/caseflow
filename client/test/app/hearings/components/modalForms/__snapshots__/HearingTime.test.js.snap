@@ -284,7 +284,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
       >
         <label
           className="question-label usa-sr-only"
-          htmlFor="optionalHearingTime0"
+          htmlFor="optional-hearing-time-0"
           id="optional-hearing-time-0-label"
         >
           <strong>
@@ -294,9 +294,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
           </strong>
         </label>
         <div
-          aria-expanded={false}
           className="cf-select"
-          role="combobox"
         >
           <StateManager
             cache={false}
@@ -311,7 +309,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
             defaultInputValue=""
             defaultMenuIsOpen={false}
             defaultValue={null}
-            inputId="optionalHearingTime0"
+            inputId="optional-hearing-time-0"
             isLoading={false}
             isSearchable={true}
             name="optionalHearingTime0"
@@ -499,7 +497,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
               formatGroupLabel={[Function]}
               getOptionLabel={[Function]}
               getOptionValue={[Function]}
-              inputId="optionalHearingTime0"
+              inputId="optional-hearing-time-0"
               inputValue=""
               isDisabled={false}
               isLoading={false}
@@ -868,7 +866,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                     "formatGroupLabel": [Function],
                     "getOptionLabel": [Function],
                     "getOptionValue": [Function],
-                    "inputId": "optionalHearingTime0",
+                    "inputId": "optional-hearing-time-0",
                     "inputValue": "",
                     "isClearable": undefined,
                     "isDisabled": false,
@@ -1287,7 +1285,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                           "formatGroupLabel": [Function],
                           "getOptionLabel": [Function],
                           "getOptionValue": [Function],
-                          "inputId": "optionalHearingTime0",
+                          "inputId": "optional-hearing-time-0",
                           "inputValue": "",
                           "isClearable": undefined,
                           "isDisabled": false,
@@ -1714,7 +1712,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "optionalHearingTime0",
+                                "inputId": "optional-hearing-time-0",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": false,
@@ -2132,7 +2130,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "optionalHearingTime0",
+                                      "inputId": "optional-hearing-time-0",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -2383,7 +2381,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                   autoCorrect="off"
                                   cx={[Function]}
                                   getStyles={[Function]}
-                                  id="optionalHearingTime0"
+                                  id="optional-hearing-time-0"
                                   innerRef={[Function]}
                                   isDisabled={false}
                                   isHidden={false}
@@ -2411,7 +2409,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "optionalHearingTime0",
+                                      "inputId": "optional-hearing-time-0",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -2632,20 +2630,23 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                 >
                                   <Input
                                     aria-autocomplete="list"
-                                    aria-label="optional-hearing-time-0"
+                                    aria-expanded={false}
+                                    aria-haspopup={true}
                                     aria-labelledby="optional-hearing-time-0-label"
+                                    aria-owns="optional-hearing-time-0-listbox"
                                     autoCapitalize="none"
                                     autoComplete="off"
                                     autoCorrect="off"
                                     cx={[Function]}
                                     getStyles={[Function]}
-                                    id="optionalHearingTime0"
+                                    id="optional-hearing-time-0"
                                     innerRef={[Function]}
                                     isDisabled={false}
                                     isHidden={false}
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
+                                    role="combobox"
                                     selectProps={
                                       Object {
                                         "backspaceRemovesValue": true,
@@ -2667,7 +2668,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                         "formatGroupLabel": [Function],
                                         "getOptionLabel": [Function],
                                         "getOptionValue": [Function],
-                                        "inputId": "optionalHearingTime0",
+                                        "inputId": "optional-hearing-time-0",
                                         "inputValue": "",
                                         "isClearable": undefined,
                                         "isDisabled": false,
@@ -2900,14 +2901,16 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                       >
                                         <AutosizeInput
                                           aria-autocomplete="list"
-                                          aria-label="optional-hearing-time-0"
+                                          aria-expanded={false}
+                                          aria-haspopup={true}
                                           aria-labelledby="optional-hearing-time-0-label"
+                                          aria-owns="optional-hearing-time-0-listbox"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
                                           className="cf-select__input"
                                           disabled={false}
-                                          id="optionalHearingTime0"
+                                          id="optional-hearing-time-0"
                                           injectStyles={true}
                                           inputRef={[Function]}
                                           inputStyle={
@@ -2926,6 +2929,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
+                                          role="combobox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -2941,16 +2945,19 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                           >
                                             <input
                                               aria-autocomplete="list"
-                                              aria-label="optional-hearing-time-0"
+                                              aria-expanded={false}
+                                              aria-haspopup={true}
                                               aria-labelledby="optional-hearing-time-0-label"
+                                              aria-owns="optional-hearing-time-0-listbox"
                                               autoCapitalize="none"
                                               autoComplete="off"
                                               autoCorrect="off"
                                               disabled={false}
-                                              id="optionalHearingTime0"
+                                              id="optional-hearing-time-0"
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
+                                              role="combobox"
                                               spellCheck="false"
                                               style={
                                                 Object {
@@ -3167,7 +3174,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "optionalHearingTime0",
+                                "inputId": "optional-hearing-time-0",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": false,
@@ -3576,7 +3583,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "optionalHearingTime0",
+                                      "inputId": "optional-hearing-time-0",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -3996,7 +4003,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "optionalHearingTime0",
+                                      "inputId": "optional-hearing-time-0",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -4709,7 +4716,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
       >
         <label
           className="question-label usa-sr-only"
-          htmlFor="optionalHearingTime0"
+          htmlFor="optional-hearing-time-0"
           id="optional-hearing-time-0-label"
         >
           <strong>
@@ -4719,9 +4726,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
           </strong>
         </label>
         <div
-          aria-expanded={false}
           className="cf-select"
-          role="combobox"
         >
           <StateManager
             cache={false}
@@ -4736,7 +4741,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
             defaultInputValue=""
             defaultMenuIsOpen={false}
             defaultValue={null}
-            inputId="optionalHearingTime0"
+            inputId="optional-hearing-time-0"
             isLoading={false}
             isSearchable={true}
             name="optionalHearingTime0"
@@ -4924,7 +4929,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
               formatGroupLabel={[Function]}
               getOptionLabel={[Function]}
               getOptionValue={[Function]}
-              inputId="optionalHearingTime0"
+              inputId="optional-hearing-time-0"
               inputValue=""
               isDisabled={false}
               isLoading={false}
@@ -5293,7 +5298,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                     "formatGroupLabel": [Function],
                     "getOptionLabel": [Function],
                     "getOptionValue": [Function],
-                    "inputId": "optionalHearingTime0",
+                    "inputId": "optional-hearing-time-0",
                     "inputValue": "",
                     "isClearable": undefined,
                     "isDisabled": false,
@@ -5712,7 +5717,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                           "formatGroupLabel": [Function],
                           "getOptionLabel": [Function],
                           "getOptionValue": [Function],
-                          "inputId": "optionalHearingTime0",
+                          "inputId": "optional-hearing-time-0",
                           "inputValue": "",
                           "isClearable": undefined,
                           "isDisabled": false,
@@ -6139,7 +6144,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "optionalHearingTime0",
+                                "inputId": "optional-hearing-time-0",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": false,
@@ -6557,7 +6562,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "optionalHearingTime0",
+                                      "inputId": "optional-hearing-time-0",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -6808,7 +6813,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                   autoCorrect="off"
                                   cx={[Function]}
                                   getStyles={[Function]}
-                                  id="optionalHearingTime0"
+                                  id="optional-hearing-time-0"
                                   innerRef={[Function]}
                                   isDisabled={false}
                                   isHidden={false}
@@ -6836,7 +6841,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "optionalHearingTime0",
+                                      "inputId": "optional-hearing-time-0",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -7057,20 +7062,23 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                 >
                                   <Input
                                     aria-autocomplete="list"
-                                    aria-label="optional-hearing-time-0"
+                                    aria-expanded={false}
+                                    aria-haspopup={true}
                                     aria-labelledby="optional-hearing-time-0-label"
+                                    aria-owns="optional-hearing-time-0-listbox"
                                     autoCapitalize="none"
                                     autoComplete="off"
                                     autoCorrect="off"
                                     cx={[Function]}
                                     getStyles={[Function]}
-                                    id="optionalHearingTime0"
+                                    id="optional-hearing-time-0"
                                     innerRef={[Function]}
                                     isDisabled={false}
                                     isHidden={false}
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
+                                    role="combobox"
                                     selectProps={
                                       Object {
                                         "backspaceRemovesValue": true,
@@ -7092,7 +7100,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                         "formatGroupLabel": [Function],
                                         "getOptionLabel": [Function],
                                         "getOptionValue": [Function],
-                                        "inputId": "optionalHearingTime0",
+                                        "inputId": "optional-hearing-time-0",
                                         "inputValue": "",
                                         "isClearable": undefined,
                                         "isDisabled": false,
@@ -7325,14 +7333,16 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       >
                                         <AutosizeInput
                                           aria-autocomplete="list"
-                                          aria-label="optional-hearing-time-0"
+                                          aria-expanded={false}
+                                          aria-haspopup={true}
                                           aria-labelledby="optional-hearing-time-0-label"
+                                          aria-owns="optional-hearing-time-0-listbox"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
                                           className="cf-select__input"
                                           disabled={false}
-                                          id="optionalHearingTime0"
+                                          id="optional-hearing-time-0"
                                           injectStyles={true}
                                           inputRef={[Function]}
                                           inputStyle={
@@ -7351,6 +7361,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
+                                          role="combobox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -7366,16 +7377,19 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                           >
                                             <input
                                               aria-autocomplete="list"
-                                              aria-label="optional-hearing-time-0"
+                                              aria-expanded={false}
+                                              aria-haspopup={true}
                                               aria-labelledby="optional-hearing-time-0-label"
+                                              aria-owns="optional-hearing-time-0-listbox"
                                               autoCapitalize="none"
                                               autoComplete="off"
                                               autoCorrect="off"
                                               disabled={false}
-                                              id="optionalHearingTime0"
+                                              id="optional-hearing-time-0"
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
+                                              role="combobox"
                                               spellCheck="false"
                                               style={
                                                 Object {
@@ -7592,7 +7606,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "optionalHearingTime0",
+                                "inputId": "optional-hearing-time-0",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": false,
@@ -8001,7 +8015,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "optionalHearingTime0",
+                                      "inputId": "optional-hearing-time-0",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -8421,7 +8435,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "optionalHearingTime0",
+                                      "inputId": "optional-hearing-time-0",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -9008,7 +9022,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
       >
         <label
           className="question-label usa-sr-only"
-          htmlFor="optionalHearingTime0"
+          htmlFor="optional-hearing-time-0"
           id="optional-hearing-time-0-label"
         >
           <strong>
@@ -9018,9 +9032,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
           </strong>
         </label>
         <div
-          aria-expanded={false}
           className="cf-select"
-          role="combobox"
         >
           <StateManager
             cache={false}
@@ -9035,7 +9047,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
             defaultInputValue=""
             defaultMenuIsOpen={false}
             defaultValue={null}
-            inputId="optionalHearingTime0"
+            inputId="optional-hearing-time-0"
             isLoading={false}
             isSearchable={true}
             name="optionalHearingTime0"
@@ -9217,7 +9229,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
               formatGroupLabel={[Function]}
               getOptionLabel={[Function]}
               getOptionValue={[Function]}
-              inputId="optionalHearingTime0"
+              inputId="optional-hearing-time-0"
               inputValue=""
               isDisabled={false}
               isLoading={false}
@@ -9581,7 +9593,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                     "formatGroupLabel": [Function],
                     "getOptionLabel": [Function],
                     "getOptionValue": [Function],
-                    "inputId": "optionalHearingTime0",
+                    "inputId": "optional-hearing-time-0",
                     "inputValue": "",
                     "isClearable": undefined,
                     "isDisabled": false,
@@ -9997,7 +10009,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                           "formatGroupLabel": [Function],
                           "getOptionLabel": [Function],
                           "getOptionValue": [Function],
-                          "inputId": "optionalHearingTime0",
+                          "inputId": "optional-hearing-time-0",
                           "inputValue": "",
                           "isClearable": undefined,
                           "isDisabled": false,
@@ -10421,7 +10433,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "optionalHearingTime0",
+                                "inputId": "optional-hearing-time-0",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": false,
@@ -10832,7 +10844,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "optionalHearingTime0",
+                                      "inputId": "optional-hearing-time-0",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -11076,7 +11088,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                   autoCorrect="off"
                                   cx={[Function]}
                                   getStyles={[Function]}
-                                  id="optionalHearingTime0"
+                                  id="optional-hearing-time-0"
                                   innerRef={[Function]}
                                   isDisabled={false}
                                   isHidden={false}
@@ -11104,7 +11116,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "optionalHearingTime0",
+                                      "inputId": "optional-hearing-time-0",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -11322,20 +11334,23 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                 >
                                   <Input
                                     aria-autocomplete="list"
-                                    aria-label="optional-hearing-time-0"
+                                    aria-expanded={false}
+                                    aria-haspopup={true}
                                     aria-labelledby="optional-hearing-time-0-label"
+                                    aria-owns="optional-hearing-time-0-listbox"
                                     autoCapitalize="none"
                                     autoComplete="off"
                                     autoCorrect="off"
                                     cx={[Function]}
                                     getStyles={[Function]}
-                                    id="optionalHearingTime0"
+                                    id="optional-hearing-time-0"
                                     innerRef={[Function]}
                                     isDisabled={false}
                                     isHidden={false}
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
+                                    role="combobox"
                                     selectProps={
                                       Object {
                                         "backspaceRemovesValue": true,
@@ -11357,7 +11372,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                         "formatGroupLabel": [Function],
                                         "getOptionLabel": [Function],
                                         "getOptionValue": [Function],
-                                        "inputId": "optionalHearingTime0",
+                                        "inputId": "optional-hearing-time-0",
                                         "inputValue": "",
                                         "isClearable": undefined,
                                         "isDisabled": false,
@@ -11587,14 +11602,16 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       >
                                         <AutosizeInput
                                           aria-autocomplete="list"
-                                          aria-label="optional-hearing-time-0"
+                                          aria-expanded={false}
+                                          aria-haspopup={true}
                                           aria-labelledby="optional-hearing-time-0-label"
+                                          aria-owns="optional-hearing-time-0-listbox"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
                                           className="cf-select__input"
                                           disabled={false}
-                                          id="optionalHearingTime0"
+                                          id="optional-hearing-time-0"
                                           injectStyles={true}
                                           inputRef={[Function]}
                                           inputStyle={
@@ -11613,6 +11630,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
+                                          role="combobox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -11628,16 +11646,19 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                           >
                                             <input
                                               aria-autocomplete="list"
-                                              aria-label="optional-hearing-time-0"
+                                              aria-expanded={false}
+                                              aria-haspopup={true}
                                               aria-labelledby="optional-hearing-time-0-label"
+                                              aria-owns="optional-hearing-time-0-listbox"
                                               autoCapitalize="none"
                                               autoComplete="off"
                                               autoCorrect="off"
                                               disabled={false}
-                                              id="optionalHearingTime0"
+                                              id="optional-hearing-time-0"
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
+                                              role="combobox"
                                               spellCheck="false"
                                               style={
                                                 Object {
@@ -11854,7 +11875,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "optionalHearingTime0",
+                                "inputId": "optional-hearing-time-0",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": false,
@@ -12260,7 +12281,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "optionalHearingTime0",
+                                      "inputId": "optional-hearing-time-0",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -12677,7 +12698,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "optionalHearingTime0",
+                                      "inputId": "optional-hearing-time-0",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -13261,7 +13282,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
       >
         <label
           className="question-label usa-sr-only"
-          htmlFor="optionalHearingTime0"
+          htmlFor="optional-hearing-time-0"
           id="optional-hearing-time-0-label"
         >
           <strong>
@@ -13271,9 +13292,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
           </strong>
         </label>
         <div
-          aria-expanded={false}
           className="cf-select"
-          role="combobox"
         >
           <StateManager
             cache={false}
@@ -13288,7 +13307,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
             defaultInputValue=""
             defaultMenuIsOpen={false}
             defaultValue={null}
-            inputId="optionalHearingTime0"
+            inputId="optional-hearing-time-0"
             isLoading={false}
             isSearchable={true}
             name="optionalHearingTime0"
@@ -13470,7 +13489,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
               formatGroupLabel={[Function]}
               getOptionLabel={[Function]}
               getOptionValue={[Function]}
-              inputId="optionalHearingTime0"
+              inputId="optional-hearing-time-0"
               inputValue=""
               isDisabled={false}
               isLoading={false}
@@ -13834,7 +13853,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                     "formatGroupLabel": [Function],
                     "getOptionLabel": [Function],
                     "getOptionValue": [Function],
-                    "inputId": "optionalHearingTime0",
+                    "inputId": "optional-hearing-time-0",
                     "inputValue": "",
                     "isClearable": undefined,
                     "isDisabled": false,
@@ -14250,7 +14269,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                           "formatGroupLabel": [Function],
                           "getOptionLabel": [Function],
                           "getOptionValue": [Function],
-                          "inputId": "optionalHearingTime0",
+                          "inputId": "optional-hearing-time-0",
                           "inputValue": "",
                           "isClearable": undefined,
                           "isDisabled": false,
@@ -14674,7 +14693,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "optionalHearingTime0",
+                                "inputId": "optional-hearing-time-0",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": false,
@@ -15085,7 +15104,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "optionalHearingTime0",
+                                      "inputId": "optional-hearing-time-0",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -15329,7 +15348,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                   autoCorrect="off"
                                   cx={[Function]}
                                   getStyles={[Function]}
-                                  id="optionalHearingTime0"
+                                  id="optional-hearing-time-0"
                                   innerRef={[Function]}
                                   isDisabled={false}
                                   isHidden={false}
@@ -15357,7 +15376,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "optionalHearingTime0",
+                                      "inputId": "optional-hearing-time-0",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -15575,20 +15594,23 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                 >
                                   <Input
                                     aria-autocomplete="list"
-                                    aria-label="optional-hearing-time-0"
+                                    aria-expanded={false}
+                                    aria-haspopup={true}
                                     aria-labelledby="optional-hearing-time-0-label"
+                                    aria-owns="optional-hearing-time-0-listbox"
                                     autoCapitalize="none"
                                     autoComplete="off"
                                     autoCorrect="off"
                                     cx={[Function]}
                                     getStyles={[Function]}
-                                    id="optionalHearingTime0"
+                                    id="optional-hearing-time-0"
                                     innerRef={[Function]}
                                     isDisabled={false}
                                     isHidden={false}
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
+                                    role="combobox"
                                     selectProps={
                                       Object {
                                         "backspaceRemovesValue": true,
@@ -15610,7 +15632,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                         "formatGroupLabel": [Function],
                                         "getOptionLabel": [Function],
                                         "getOptionValue": [Function],
-                                        "inputId": "optionalHearingTime0",
+                                        "inputId": "optional-hearing-time-0",
                                         "inputValue": "",
                                         "isClearable": undefined,
                                         "isDisabled": false,
@@ -15840,14 +15862,16 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       >
                                         <AutosizeInput
                                           aria-autocomplete="list"
-                                          aria-label="optional-hearing-time-0"
+                                          aria-expanded={false}
+                                          aria-haspopup={true}
                                           aria-labelledby="optional-hearing-time-0-label"
+                                          aria-owns="optional-hearing-time-0-listbox"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
                                           className="cf-select__input"
                                           disabled={false}
-                                          id="optionalHearingTime0"
+                                          id="optional-hearing-time-0"
                                           injectStyles={true}
                                           inputRef={[Function]}
                                           inputStyle={
@@ -15866,6 +15890,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
+                                          role="combobox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -15881,16 +15906,19 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                           >
                                             <input
                                               aria-autocomplete="list"
-                                              aria-label="optional-hearing-time-0"
+                                              aria-expanded={false}
+                                              aria-haspopup={true}
                                               aria-labelledby="optional-hearing-time-0-label"
+                                              aria-owns="optional-hearing-time-0-listbox"
                                               autoCapitalize="none"
                                               autoComplete="off"
                                               autoCorrect="off"
                                               disabled={false}
-                                              id="optionalHearingTime0"
+                                              id="optional-hearing-time-0"
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
+                                              role="combobox"
                                               spellCheck="false"
                                               style={
                                                 Object {
@@ -16107,7 +16135,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "optionalHearingTime0",
+                                "inputId": "optional-hearing-time-0",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": false,
@@ -16513,7 +16541,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "optionalHearingTime0",
+                                      "inputId": "optional-hearing-time-0",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -16930,7 +16958,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "optionalHearingTime0",
+                                      "inputId": "optional-hearing-time-0",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,

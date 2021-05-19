@@ -831,9 +831,7 @@ exports[`Timezone Can set timezone 1`] = `
           </strong>
         </label>
         <div
-          aria-expanded={false}
           className="cf-select"
-          role="combobox"
         >
           <StateManager
             cache={false}
@@ -10042,8 +10040,10 @@ exports[`Timezone Can set timezone 1`] = `
                                 >
                                   <Input
                                     aria-autocomplete="list"
-                                    aria-label="tz"
+                                    aria-expanded={false}
+                                    aria-haspopup={true}
                                     aria-labelledby="tz-label"
+                                    aria-owns="tz-listbox"
                                     autoCapitalize="none"
                                     autoComplete="off"
                                     autoCorrect="off"
@@ -10056,6 +10056,7 @@ exports[`Timezone Can set timezone 1`] = `
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
+                                    role="combobox"
                                     selectProps={
                                       Object {
                                         "backspaceRemovesValue": true,
@@ -10935,8 +10936,10 @@ exports[`Timezone Can set timezone 1`] = `
                                       >
                                         <AutosizeInput
                                           aria-autocomplete="list"
-                                          aria-label="tz"
+                                          aria-expanded={false}
+                                          aria-haspopup={true}
                                           aria-labelledby="tz-label"
+                                          aria-owns="tz-listbox"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
@@ -10961,6 +10964,7 @@ exports[`Timezone Can set timezone 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
+                                          role="combobox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -10976,8 +10980,10 @@ exports[`Timezone Can set timezone 1`] = `
                                           >
                                             <input
                                               aria-autocomplete="list"
-                                              aria-label="tz"
+                                              aria-expanded={false}
+                                              aria-haspopup={true}
                                               aria-labelledby="tz-label"
+                                              aria-owns="tz-listbox"
                                               autoCapitalize="none"
                                               autoComplete="off"
                                               autoCorrect="off"
@@ -10986,6 +10992,7 @@ exports[`Timezone Can set timezone 1`] = `
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
+                                              role="combobox"
                                               spellCheck="false"
                                               style={
                                                 Object {
@@ -16889,7 +16896,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
       >
         <label
           className="question-label"
-          htmlFor="Timezone"
+          htmlFor="timezone"
           id="timezone-label"
         >
           <strong>
@@ -16899,9 +16906,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
           </strong>
         </label>
         <div
-          aria-expanded={false}
           className="cf-select"
-          role="combobox"
         >
           <StateManager
             cache={false}
@@ -16916,7 +16921,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
             defaultInputValue=""
             defaultMenuIsOpen={false}
             defaultValue={null}
-            inputId="Timezone"
+            inputId="timezone"
             isDisabled={false}
             isLoading={false}
             isSearchable={true}
@@ -17724,7 +17729,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
               formatGroupLabel={[Function]}
               getOptionLabel={[Function]}
               getOptionValue={[Function]}
-              inputId="Timezone"
+              inputId="timezone"
               inputValue=""
               isDisabled={false}
               isLoading={false}
@@ -19336,7 +19341,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                     "formatGroupLabel": [Function],
                     "getOptionLabel": [Function],
                     "getOptionValue": [Function],
-                    "inputId": "Timezone",
+                    "inputId": "timezone",
                     "inputValue": "",
                     "isClearable": undefined,
                     "isDisabled": false,
@@ -21000,7 +21005,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                           "formatGroupLabel": [Function],
                           "getOptionLabel": [Function],
                           "getOptionValue": [Function],
-                          "inputId": "Timezone",
+                          "inputId": "timezone",
                           "inputValue": "",
                           "isClearable": undefined,
                           "isDisabled": false,
@@ -22672,7 +22677,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "Timezone",
+                                "inputId": "timezone",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": false,
@@ -24331,7 +24336,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "Timezone",
+                                      "inputId": "timezone",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -25199,7 +25204,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                   autoCorrect="off"
                                   cx={[Function]}
                                   getStyles={[Function]}
-                                  id="Timezone"
+                                  id="timezone"
                                   innerRef={[Function]}
                                   isDisabled={false}
                                   isHidden={false}
@@ -25227,7 +25232,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "Timezone",
+                                      "inputId": "timezone",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -26069,20 +26074,23 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                 >
                                   <Input
                                     aria-autocomplete="list"
-                                    aria-label="timezone"
+                                    aria-expanded={false}
+                                    aria-haspopup={true}
                                     aria-labelledby="timezone-label"
+                                    aria-owns="timezone-listbox"
                                     autoCapitalize="none"
                                     autoComplete="off"
                                     autoCorrect="off"
                                     cx={[Function]}
                                     getStyles={[Function]}
-                                    id="Timezone"
+                                    id="timezone"
                                     innerRef={[Function]}
                                     isDisabled={false}
                                     isHidden={false}
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
+                                    role="combobox"
                                     selectProps={
                                       Object {
                                         "backspaceRemovesValue": true,
@@ -26104,7 +26112,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                         "formatGroupLabel": [Function],
                                         "getOptionLabel": [Function],
                                         "getOptionValue": [Function],
-                                        "inputId": "Timezone",
+                                        "inputId": "timezone",
                                         "inputValue": "",
                                         "isClearable": undefined,
                                         "isDisabled": false,
@@ -26958,14 +26966,16 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       >
                                         <AutosizeInput
                                           aria-autocomplete="list"
-                                          aria-label="timezone"
+                                          aria-expanded={false}
+                                          aria-haspopup={true}
                                           aria-labelledby="timezone-label"
+                                          aria-owns="timezone-listbox"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
                                           className="cf-select__input"
                                           disabled={false}
-                                          id="Timezone"
+                                          id="timezone"
                                           injectStyles={true}
                                           inputRef={[Function]}
                                           inputStyle={
@@ -26984,6 +26994,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
+                                          role="combobox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -26999,16 +27010,19 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                           >
                                             <input
                                               aria-autocomplete="list"
-                                              aria-label="timezone"
+                                              aria-expanded={false}
+                                              aria-haspopup={true}
                                               aria-labelledby="timezone-label"
+                                              aria-owns="timezone-listbox"
                                               autoCapitalize="none"
                                               autoComplete="off"
                                               autoCorrect="off"
                                               disabled={false}
-                                              id="Timezone"
+                                              id="timezone"
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
+                                              role="combobox"
                                               spellCheck="false"
                                               style={
                                                 Object {
@@ -27849,7 +27863,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "Timezone",
+                                "inputId": "timezone",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": false,
@@ -29503,7 +29517,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "Timezone",
+                                      "inputId": "timezone",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -31168,7 +31182,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "Timezone",
+                                      "inputId": "timezone",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -32902,7 +32916,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
       >
         <label
           className="question-label"
-          htmlFor="Timezone"
+          htmlFor="timezone"
           id="timezone-label"
         >
           <strong>
@@ -32912,9 +32926,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
           </strong>
         </label>
         <div
-          aria-expanded={false}
           className="cf-select"
-          role="combobox"
         >
           <StateManager
             cache={false}
@@ -32929,7 +32941,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
             defaultInputValue=""
             defaultMenuIsOpen={false}
             defaultValue={null}
-            inputId="Timezone"
+            inputId="timezone"
             isDisabled={true}
             isLoading={false}
             isSearchable={false}
@@ -33737,7 +33749,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
               formatGroupLabel={[Function]}
               getOptionLabel={[Function]}
               getOptionValue={[Function]}
-              inputId="Timezone"
+              inputId="timezone"
               inputValue=""
               isDisabled={true}
               isLoading={false}
@@ -35349,7 +35361,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                     "formatGroupLabel": [Function],
                     "getOptionLabel": [Function],
                     "getOptionValue": [Function],
-                    "inputId": "Timezone",
+                    "inputId": "timezone",
                     "inputValue": "",
                     "isClearable": undefined,
                     "isDisabled": true,
@@ -37013,7 +37025,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                           "formatGroupLabel": [Function],
                           "getOptionLabel": [Function],
                           "getOptionValue": [Function],
-                          "inputId": "Timezone",
+                          "inputId": "timezone",
                           "inputValue": "",
                           "isClearable": undefined,
                           "isDisabled": true,
@@ -38685,7 +38697,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "Timezone",
+                                "inputId": "timezone",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": true,
@@ -40344,7 +40356,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "Timezone",
+                                      "inputId": "timezone",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": true,
@@ -41208,7 +41220,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                 <DummyInput
                                   aria-autocomplete="list"
                                   disabled={true}
-                                  id="Timezone"
+                                  id="timezone"
                                   innerRef={[Function]}
                                   onBlur={[Function]}
                                   onChange={[Function]}
@@ -41231,7 +41243,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                       }
                                     }
                                     disabled={true}
-                                    id="Timezone"
+                                    id="timezone"
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
@@ -41243,7 +41255,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                       aria-autocomplete="list"
                                       className="css-62g3xt-dummyInput"
                                       disabled={true}
-                                      id="Timezone"
+                                      id="timezone"
                                       onBlur={[Function]}
                                       onChange={[Function]}
                                       onFocus={[Function]}
@@ -42055,7 +42067,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "Timezone",
+                                "inputId": "timezone",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": true,
@@ -43709,7 +43721,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "Timezone",
+                                      "inputId": "timezone",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": true,
@@ -45374,7 +45386,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "Timezone",
+                                      "inputId": "timezone",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": true,
@@ -47896,7 +47908,7 @@ exports[`Timezone Respects required prop 1`] = `
       >
         <label
           className="question-label"
-          htmlFor="Timezone"
+          htmlFor="timezone"
           id="timezone-label"
         >
           <strong>
@@ -47911,9 +47923,7 @@ exports[`Timezone Respects required prop 1`] = `
           </strong>
         </label>
         <div
-          aria-expanded={false}
           className="cf-select"
-          role="combobox"
         >
           <StateManager
             cache={false}
@@ -47928,7 +47938,7 @@ exports[`Timezone Respects required prop 1`] = `
             defaultInputValue=""
             defaultMenuIsOpen={false}
             defaultValue={null}
-            inputId="Timezone"
+            inputId="timezone"
             isDisabled={false}
             isLoading={false}
             isSearchable={true}
@@ -48736,7 +48746,7 @@ exports[`Timezone Respects required prop 1`] = `
               formatGroupLabel={[Function]}
               getOptionLabel={[Function]}
               getOptionValue={[Function]}
-              inputId="Timezone"
+              inputId="timezone"
               inputValue=""
               isDisabled={false}
               isLoading={false}
@@ -50348,7 +50358,7 @@ exports[`Timezone Respects required prop 1`] = `
                     "formatGroupLabel": [Function],
                     "getOptionLabel": [Function],
                     "getOptionValue": [Function],
-                    "inputId": "Timezone",
+                    "inputId": "timezone",
                     "inputValue": "",
                     "isClearable": undefined,
                     "isDisabled": false,
@@ -52012,7 +52022,7 @@ exports[`Timezone Respects required prop 1`] = `
                           "formatGroupLabel": [Function],
                           "getOptionLabel": [Function],
                           "getOptionValue": [Function],
-                          "inputId": "Timezone",
+                          "inputId": "timezone",
                           "inputValue": "",
                           "isClearable": undefined,
                           "isDisabled": false,
@@ -53684,7 +53694,7 @@ exports[`Timezone Respects required prop 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "Timezone",
+                                "inputId": "timezone",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": false,
@@ -55343,7 +55353,7 @@ exports[`Timezone Respects required prop 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "Timezone",
+                                      "inputId": "timezone",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -56211,7 +56221,7 @@ exports[`Timezone Respects required prop 1`] = `
                                   autoCorrect="off"
                                   cx={[Function]}
                                   getStyles={[Function]}
-                                  id="Timezone"
+                                  id="timezone"
                                   innerRef={[Function]}
                                   isDisabled={false}
                                   isHidden={false}
@@ -56239,7 +56249,7 @@ exports[`Timezone Respects required prop 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "Timezone",
+                                      "inputId": "timezone",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -57081,20 +57091,23 @@ exports[`Timezone Respects required prop 1`] = `
                                 >
                                   <Input
                                     aria-autocomplete="list"
-                                    aria-label="timezone"
+                                    aria-expanded={false}
+                                    aria-haspopup={true}
                                     aria-labelledby="timezone-label"
+                                    aria-owns="timezone-listbox"
                                     autoCapitalize="none"
                                     autoComplete="off"
                                     autoCorrect="off"
                                     cx={[Function]}
                                     getStyles={[Function]}
-                                    id="Timezone"
+                                    id="timezone"
                                     innerRef={[Function]}
                                     isDisabled={false}
                                     isHidden={false}
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
+                                    role="combobox"
                                     selectProps={
                                       Object {
                                         "backspaceRemovesValue": true,
@@ -57116,7 +57129,7 @@ exports[`Timezone Respects required prop 1`] = `
                                         "formatGroupLabel": [Function],
                                         "getOptionLabel": [Function],
                                         "getOptionValue": [Function],
-                                        "inputId": "Timezone",
+                                        "inputId": "timezone",
                                         "inputValue": "",
                                         "isClearable": undefined,
                                         "isDisabled": false,
@@ -57970,14 +57983,16 @@ exports[`Timezone Respects required prop 1`] = `
                                       >
                                         <AutosizeInput
                                           aria-autocomplete="list"
-                                          aria-label="timezone"
+                                          aria-expanded={false}
+                                          aria-haspopup={true}
                                           aria-labelledby="timezone-label"
+                                          aria-owns="timezone-listbox"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
                                           className="cf-select__input"
                                           disabled={false}
-                                          id="Timezone"
+                                          id="timezone"
                                           injectStyles={true}
                                           inputRef={[Function]}
                                           inputStyle={
@@ -57996,6 +58011,7 @@ exports[`Timezone Respects required prop 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
+                                          role="combobox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -58011,16 +58027,19 @@ exports[`Timezone Respects required prop 1`] = `
                                           >
                                             <input
                                               aria-autocomplete="list"
-                                              aria-label="timezone"
+                                              aria-expanded={false}
+                                              aria-haspopup={true}
                                               aria-labelledby="timezone-label"
+                                              aria-owns="timezone-listbox"
                                               autoCapitalize="none"
                                               autoComplete="off"
                                               autoCorrect="off"
                                               disabled={false}
-                                              id="Timezone"
+                                              id="timezone"
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
+                                              role="combobox"
                                               spellCheck="false"
                                               style={
                                                 Object {
@@ -58861,7 +58880,7 @@ exports[`Timezone Respects required prop 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "Timezone",
+                                "inputId": "timezone",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": false,
@@ -60515,7 +60534,7 @@ exports[`Timezone Respects required prop 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "Timezone",
+                                      "inputId": "timezone",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -62180,7 +62199,7 @@ exports[`Timezone Respects required prop 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "Timezone",
+                                      "inputId": "timezone",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,

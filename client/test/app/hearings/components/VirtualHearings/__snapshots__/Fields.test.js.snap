@@ -844,7 +844,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
             >
               <label
                 className="question-label"
-                htmlFor="appellantTz"
+                htmlFor="appellant-tz"
                 id="appellant-tz-label"
               >
                 <strong>
@@ -859,9 +859,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                 </strong>
               </label>
               <div
-                aria-expanded={false}
                 className="cf-select"
-                role="combobox"
               >
                 <StateManager
                   cache={false}
@@ -876,7 +874,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                   defaultInputValue=""
                   defaultMenuIsOpen={false}
                   defaultValue={null}
-                  inputId="appellantTz"
+                  inputId="appellant-tz"
                   isDisabled={false}
                   isLoading={false}
                   isSearchable={true}
@@ -1690,7 +1688,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                     formatGroupLabel={[Function]}
                     getOptionLabel={[Function]}
                     getOptionValue={[Function]}
-                    inputId="appellantTz"
+                    inputId="appellant-tz"
                     inputValue=""
                     isDisabled={false}
                     isLoading={false}
@@ -3308,7 +3306,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                           "formatGroupLabel": [Function],
                           "getOptionLabel": [Function],
                           "getOptionValue": [Function],
-                          "inputId": "appellantTz",
+                          "inputId": "appellant-tz",
                           "inputValue": "",
                           "isClearable": undefined,
                           "isDisabled": false,
@@ -4976,7 +4974,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "appellantTz",
+                                "inputId": "appellant-tz",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": false,
@@ -6652,7 +6650,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "appellantTz",
+                                      "inputId": "appellant-tz",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -8320,7 +8318,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             "formatGroupLabel": [Function],
                                             "getOptionLabel": [Function],
                                             "getOptionValue": [Function],
-                                            "inputId": "appellantTz",
+                                            "inputId": "appellant-tz",
                                             "inputValue": "",
                                             "isClearable": undefined,
                                             "isDisabled": false,
@@ -9196,7 +9194,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                         autoCorrect="off"
                                         cx={[Function]}
                                         getStyles={[Function]}
-                                        id="appellantTz"
+                                        id="appellant-tz"
                                         innerRef={[Function]}
                                         isDisabled={false}
                                         isHidden={false}
@@ -9224,7 +9222,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             "formatGroupLabel": [Function],
                                             "getOptionLabel": [Function],
                                             "getOptionValue": [Function],
-                                            "inputId": "appellantTz",
+                                            "inputId": "appellant-tz",
                                             "inputValue": "",
                                             "isClearable": undefined,
                                             "isDisabled": false,
@@ -10070,20 +10068,23 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                       >
                                         <Input
                                           aria-autocomplete="list"
-                                          aria-label="appellant-tz"
+                                          aria-expanded={false}
+                                          aria-haspopup={true}
                                           aria-labelledby="appellant-tz-label"
+                                          aria-owns="appellant-tz-listbox"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
                                           cx={[Function]}
                                           getStyles={[Function]}
-                                          id="appellantTz"
+                                          id="appellant-tz"
                                           innerRef={[Function]}
                                           isDisabled={false}
                                           isHidden={false}
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
+                                          role="combobox"
                                           selectProps={
                                             Object {
                                               "backspaceRemovesValue": true,
@@ -10105,7 +10106,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                               "formatGroupLabel": [Function],
                                               "getOptionLabel": [Function],
                                               "getOptionValue": [Function],
-                                              "inputId": "appellantTz",
+                                              "inputId": "appellant-tz",
                                               "inputValue": "",
                                               "isClearable": undefined,
                                               "isDisabled": false,
@@ -10963,14 +10964,16 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             >
                                               <AutosizeInput
                                                 aria-autocomplete="list"
-                                                aria-label="appellant-tz"
+                                                aria-expanded={false}
+                                                aria-haspopup={true}
                                                 aria-labelledby="appellant-tz-label"
+                                                aria-owns="appellant-tz-listbox"
                                                 autoCapitalize="none"
                                                 autoComplete="off"
                                                 autoCorrect="off"
                                                 className="cf-select__input"
                                                 disabled={false}
-                                                id="appellantTz"
+                                                id="appellant-tz"
                                                 injectStyles={true}
                                                 inputRef={[Function]}
                                                 inputStyle={
@@ -10989,6 +10992,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
+                                                role="combobox"
                                                 spellCheck="false"
                                                 tabIndex="0"
                                                 type="text"
@@ -11004,16 +11008,19 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                 >
                                                   <input
                                                     aria-autocomplete="list"
-                                                    aria-label="appellant-tz"
+                                                    aria-expanded={false}
+                                                    aria-haspopup={true}
                                                     aria-labelledby="appellant-tz-label"
+                                                    aria-owns="appellant-tz-listbox"
                                                     autoCapitalize="none"
                                                     autoComplete="off"
                                                     autoCorrect="off"
                                                     disabled={false}
-                                                    id="appellantTz"
+                                                    id="appellant-tz"
                                                     onBlur={[Function]}
                                                     onChange={[Function]}
                                                     onFocus={[Function]}
+                                                    role="combobox"
                                                     spellCheck="false"
                                                     style={
                                                       Object {
@@ -11854,7 +11861,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "appellantTz",
+                                      "inputId": "appellant-tz",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -13512,7 +13519,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             "formatGroupLabel": [Function],
                                             "getOptionLabel": [Function],
                                             "getOptionValue": [Function],
-                                            "inputId": "appellantTz",
+                                            "inputId": "appellant-tz",
                                             "inputValue": "",
                                             "isClearable": undefined,
                                             "isDisabled": false,
@@ -15181,7 +15188,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             "formatGroupLabel": [Function],
                                             "getOptionLabel": [Function],
                                             "getOptionValue": [Function],
-                                            "inputId": "appellantTz",
+                                            "inputId": "appellant-tz",
                                             "inputValue": "",
                                             "isClearable": undefined,
                                             "isDisabled": false,
@@ -17021,7 +17028,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
             >
               <label
                 className="question-label"
-                htmlFor="representativeTz"
+                htmlFor="representative-tz"
                 id="representative-tz-label"
               >
                 <strong>
@@ -17036,9 +17043,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                 </strong>
               </label>
               <div
-                aria-expanded={false}
                 className="cf-select"
-                role="combobox"
               >
                 <StateManager
                   cache={false}
@@ -17053,7 +17058,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                   defaultInputValue=""
                   defaultMenuIsOpen={false}
                   defaultValue={null}
-                  inputId="representativeTz"
+                  inputId="representative-tz"
                   isDisabled={false}
                   isLoading={false}
                   isSearchable={true}
@@ -17867,7 +17872,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                     formatGroupLabel={[Function]}
                     getOptionLabel={[Function]}
                     getOptionValue={[Function]}
-                    inputId="representativeTz"
+                    inputId="representative-tz"
                     inputValue=""
                     isDisabled={false}
                     isLoading={false}
@@ -19485,7 +19490,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                           "formatGroupLabel": [Function],
                           "getOptionLabel": [Function],
                           "getOptionValue": [Function],
-                          "inputId": "representativeTz",
+                          "inputId": "representative-tz",
                           "inputValue": "",
                           "isClearable": undefined,
                           "isDisabled": false,
@@ -21153,7 +21158,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "representativeTz",
+                                "inputId": "representative-tz",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": false,
@@ -22829,7 +22834,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "representativeTz",
+                                      "inputId": "representative-tz",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -24497,7 +24502,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             "formatGroupLabel": [Function],
                                             "getOptionLabel": [Function],
                                             "getOptionValue": [Function],
-                                            "inputId": "representativeTz",
+                                            "inputId": "representative-tz",
                                             "inputValue": "",
                                             "isClearable": undefined,
                                             "isDisabled": false,
@@ -25373,7 +25378,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                         autoCorrect="off"
                                         cx={[Function]}
                                         getStyles={[Function]}
-                                        id="representativeTz"
+                                        id="representative-tz"
                                         innerRef={[Function]}
                                         isDisabled={false}
                                         isHidden={false}
@@ -25401,7 +25406,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             "formatGroupLabel": [Function],
                                             "getOptionLabel": [Function],
                                             "getOptionValue": [Function],
-                                            "inputId": "representativeTz",
+                                            "inputId": "representative-tz",
                                             "inputValue": "",
                                             "isClearable": undefined,
                                             "isDisabled": false,
@@ -26247,20 +26252,23 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                       >
                                         <Input
                                           aria-autocomplete="list"
-                                          aria-label="representative-tz"
+                                          aria-expanded={false}
+                                          aria-haspopup={true}
                                           aria-labelledby="representative-tz-label"
+                                          aria-owns="representative-tz-listbox"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
                                           cx={[Function]}
                                           getStyles={[Function]}
-                                          id="representativeTz"
+                                          id="representative-tz"
                                           innerRef={[Function]}
                                           isDisabled={false}
                                           isHidden={false}
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
+                                          role="combobox"
                                           selectProps={
                                             Object {
                                               "backspaceRemovesValue": true,
@@ -26282,7 +26290,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                               "formatGroupLabel": [Function],
                                               "getOptionLabel": [Function],
                                               "getOptionValue": [Function],
-                                              "inputId": "representativeTz",
+                                              "inputId": "representative-tz",
                                               "inputValue": "",
                                               "isClearable": undefined,
                                               "isDisabled": false,
@@ -27140,14 +27148,16 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             >
                                               <AutosizeInput
                                                 aria-autocomplete="list"
-                                                aria-label="representative-tz"
+                                                aria-expanded={false}
+                                                aria-haspopup={true}
                                                 aria-labelledby="representative-tz-label"
+                                                aria-owns="representative-tz-listbox"
                                                 autoCapitalize="none"
                                                 autoComplete="off"
                                                 autoCorrect="off"
                                                 className="cf-select__input"
                                                 disabled={false}
-                                                id="representativeTz"
+                                                id="representative-tz"
                                                 injectStyles={true}
                                                 inputRef={[Function]}
                                                 inputStyle={
@@ -27166,6 +27176,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
+                                                role="combobox"
                                                 spellCheck="false"
                                                 tabIndex="0"
                                                 type="text"
@@ -27181,16 +27192,19 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                                 >
                                                   <input
                                                     aria-autocomplete="list"
-                                                    aria-label="representative-tz"
+                                                    aria-expanded={false}
+                                                    aria-haspopup={true}
                                                     aria-labelledby="representative-tz-label"
+                                                    aria-owns="representative-tz-listbox"
                                                     autoCapitalize="none"
                                                     autoComplete="off"
                                                     autoCorrect="off"
                                                     disabled={false}
-                                                    id="representativeTz"
+                                                    id="representative-tz"
                                                     onBlur={[Function]}
                                                     onChange={[Function]}
                                                     onFocus={[Function]}
+                                                    role="combobox"
                                                     spellCheck="false"
                                                     style={
                                                       Object {
@@ -28031,7 +28045,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "representativeTz",
+                                      "inputId": "representative-tz",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -29689,7 +29703,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             "formatGroupLabel": [Function],
                                             "getOptionLabel": [Function],
                                             "getOptionValue": [Function],
-                                            "inputId": "representativeTz",
+                                            "inputId": "representative-tz",
                                             "inputValue": "",
                                             "isClearable": undefined,
                                             "isDisabled": false,
@@ -31358,7 +31372,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                                             "formatGroupLabel": [Function],
                                             "getOptionLabel": [Function],
                                             "getOptionValue": [Function],
-                                            "inputId": "representativeTz",
+                                            "inputId": "representative-tz",
                                             "inputValue": "",
                                             "isClearable": undefined,
                                             "isDisabled": false,
@@ -33217,7 +33231,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
             >
               <label
                 className="question-label"
-                htmlFor="appellantTz"
+                htmlFor="appellant-tz"
                 id="appellant-tz-label"
               >
                 <strong>
@@ -33232,9 +33246,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                 </strong>
               </label>
               <div
-                aria-expanded={false}
                 className="cf-select"
-                role="combobox"
               >
                 <StateManager
                   cache={false}
@@ -33249,7 +33261,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                   defaultInputValue=""
                   defaultMenuIsOpen={false}
                   defaultValue={null}
-                  inputId="appellantTz"
+                  inputId="appellant-tz"
                   isDisabled={false}
                   isLoading={false}
                   isSearchable={true}
@@ -34063,7 +34075,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                     formatGroupLabel={[Function]}
                     getOptionLabel={[Function]}
                     getOptionValue={[Function]}
-                    inputId="appellantTz"
+                    inputId="appellant-tz"
                     inputValue=""
                     isDisabled={false}
                     isLoading={false}
@@ -35681,7 +35693,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                           "formatGroupLabel": [Function],
                           "getOptionLabel": [Function],
                           "getOptionValue": [Function],
-                          "inputId": "appellantTz",
+                          "inputId": "appellant-tz",
                           "inputValue": "",
                           "isClearable": undefined,
                           "isDisabled": false,
@@ -37349,7 +37361,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "appellantTz",
+                                "inputId": "appellant-tz",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": false,
@@ -39025,7 +39037,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "appellantTz",
+                                      "inputId": "appellant-tz",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -40693,7 +40705,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             "formatGroupLabel": [Function],
                                             "getOptionLabel": [Function],
                                             "getOptionValue": [Function],
-                                            "inputId": "appellantTz",
+                                            "inputId": "appellant-tz",
                                             "inputValue": "",
                                             "isClearable": undefined,
                                             "isDisabled": false,
@@ -41569,7 +41581,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                         autoCorrect="off"
                                         cx={[Function]}
                                         getStyles={[Function]}
-                                        id="appellantTz"
+                                        id="appellant-tz"
                                         innerRef={[Function]}
                                         isDisabled={false}
                                         isHidden={false}
@@ -41597,7 +41609,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             "formatGroupLabel": [Function],
                                             "getOptionLabel": [Function],
                                             "getOptionValue": [Function],
-                                            "inputId": "appellantTz",
+                                            "inputId": "appellant-tz",
                                             "inputValue": "",
                                             "isClearable": undefined,
                                             "isDisabled": false,
@@ -42443,20 +42455,23 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                       >
                                         <Input
                                           aria-autocomplete="list"
-                                          aria-label="appellant-tz"
+                                          aria-expanded={false}
+                                          aria-haspopup={true}
                                           aria-labelledby="appellant-tz-label"
+                                          aria-owns="appellant-tz-listbox"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
                                           cx={[Function]}
                                           getStyles={[Function]}
-                                          id="appellantTz"
+                                          id="appellant-tz"
                                           innerRef={[Function]}
                                           isDisabled={false}
                                           isHidden={false}
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
+                                          role="combobox"
                                           selectProps={
                                             Object {
                                               "backspaceRemovesValue": true,
@@ -42478,7 +42493,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                               "formatGroupLabel": [Function],
                                               "getOptionLabel": [Function],
                                               "getOptionValue": [Function],
-                                              "inputId": "appellantTz",
+                                              "inputId": "appellant-tz",
                                               "inputValue": "",
                                               "isClearable": undefined,
                                               "isDisabled": false,
@@ -43336,14 +43351,16 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             >
                                               <AutosizeInput
                                                 aria-autocomplete="list"
-                                                aria-label="appellant-tz"
+                                                aria-expanded={false}
+                                                aria-haspopup={true}
                                                 aria-labelledby="appellant-tz-label"
+                                                aria-owns="appellant-tz-listbox"
                                                 autoCapitalize="none"
                                                 autoComplete="off"
                                                 autoCorrect="off"
                                                 className="cf-select__input"
                                                 disabled={false}
-                                                id="appellantTz"
+                                                id="appellant-tz"
                                                 injectStyles={true}
                                                 inputRef={[Function]}
                                                 inputStyle={
@@ -43362,6 +43379,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
+                                                role="combobox"
                                                 spellCheck="false"
                                                 tabIndex="0"
                                                 type="text"
@@ -43377,16 +43395,19 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                 >
                                                   <input
                                                     aria-autocomplete="list"
-                                                    aria-label="appellant-tz"
+                                                    aria-expanded={false}
+                                                    aria-haspopup={true}
                                                     aria-labelledby="appellant-tz-label"
+                                                    aria-owns="appellant-tz-listbox"
                                                     autoCapitalize="none"
                                                     autoComplete="off"
                                                     autoCorrect="off"
                                                     disabled={false}
-                                                    id="appellantTz"
+                                                    id="appellant-tz"
                                                     onBlur={[Function]}
                                                     onChange={[Function]}
                                                     onFocus={[Function]}
+                                                    role="combobox"
                                                     spellCheck="false"
                                                     style={
                                                       Object {
@@ -44227,7 +44248,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "appellantTz",
+                                      "inputId": "appellant-tz",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -45885,7 +45906,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             "formatGroupLabel": [Function],
                                             "getOptionLabel": [Function],
                                             "getOptionValue": [Function],
-                                            "inputId": "appellantTz",
+                                            "inputId": "appellant-tz",
                                             "inputValue": "",
                                             "isClearable": undefined,
                                             "isDisabled": false,
@@ -47554,7 +47575,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             "formatGroupLabel": [Function],
                                             "getOptionLabel": [Function],
                                             "getOptionValue": [Function],
-                                            "inputId": "appellantTz",
+                                            "inputId": "appellant-tz",
                                             "inputValue": "",
                                             "isClearable": undefined,
                                             "isDisabled": false,
@@ -49394,7 +49415,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
             >
               <label
                 className="question-label"
-                htmlFor="representativeTz"
+                htmlFor="representative-tz"
                 id="representative-tz-label"
               >
                 <strong>
@@ -49409,9 +49430,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                 </strong>
               </label>
               <div
-                aria-expanded={false}
                 className="cf-select"
-                role="combobox"
               >
                 <StateManager
                   cache={false}
@@ -49426,7 +49445,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                   defaultInputValue=""
                   defaultMenuIsOpen={false}
                   defaultValue={null}
-                  inputId="representativeTz"
+                  inputId="representative-tz"
                   isDisabled={false}
                   isLoading={false}
                   isSearchable={true}
@@ -50240,7 +50259,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                     formatGroupLabel={[Function]}
                     getOptionLabel={[Function]}
                     getOptionValue={[Function]}
-                    inputId="representativeTz"
+                    inputId="representative-tz"
                     inputValue=""
                     isDisabled={false}
                     isLoading={false}
@@ -51858,7 +51877,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                           "formatGroupLabel": [Function],
                           "getOptionLabel": [Function],
                           "getOptionValue": [Function],
-                          "inputId": "representativeTz",
+                          "inputId": "representative-tz",
                           "inputValue": "",
                           "isClearable": undefined,
                           "isDisabled": false,
@@ -53526,7 +53545,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                 "formatGroupLabel": [Function],
                                 "getOptionLabel": [Function],
                                 "getOptionValue": [Function],
-                                "inputId": "representativeTz",
+                                "inputId": "representative-tz",
                                 "inputValue": "",
                                 "isClearable": undefined,
                                 "isDisabled": false,
@@ -55202,7 +55221,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "representativeTz",
+                                      "inputId": "representative-tz",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -56870,7 +56889,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             "formatGroupLabel": [Function],
                                             "getOptionLabel": [Function],
                                             "getOptionValue": [Function],
-                                            "inputId": "representativeTz",
+                                            "inputId": "representative-tz",
                                             "inputValue": "",
                                             "isClearable": undefined,
                                             "isDisabled": false,
@@ -57746,7 +57765,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                         autoCorrect="off"
                                         cx={[Function]}
                                         getStyles={[Function]}
-                                        id="representativeTz"
+                                        id="representative-tz"
                                         innerRef={[Function]}
                                         isDisabled={false}
                                         isHidden={false}
@@ -57774,7 +57793,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             "formatGroupLabel": [Function],
                                             "getOptionLabel": [Function],
                                             "getOptionValue": [Function],
-                                            "inputId": "representativeTz",
+                                            "inputId": "representative-tz",
                                             "inputValue": "",
                                             "isClearable": undefined,
                                             "isDisabled": false,
@@ -58620,20 +58639,23 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                       >
                                         <Input
                                           aria-autocomplete="list"
-                                          aria-label="representative-tz"
+                                          aria-expanded={false}
+                                          aria-haspopup={true}
                                           aria-labelledby="representative-tz-label"
+                                          aria-owns="representative-tz-listbox"
                                           autoCapitalize="none"
                                           autoComplete="off"
                                           autoCorrect="off"
                                           cx={[Function]}
                                           getStyles={[Function]}
-                                          id="representativeTz"
+                                          id="representative-tz"
                                           innerRef={[Function]}
                                           isDisabled={false}
                                           isHidden={false}
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
+                                          role="combobox"
                                           selectProps={
                                             Object {
                                               "backspaceRemovesValue": true,
@@ -58655,7 +58677,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                               "formatGroupLabel": [Function],
                                               "getOptionLabel": [Function],
                                               "getOptionValue": [Function],
-                                              "inputId": "representativeTz",
+                                              "inputId": "representative-tz",
                                               "inputValue": "",
                                               "isClearable": undefined,
                                               "isDisabled": false,
@@ -59513,14 +59535,16 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             >
                                               <AutosizeInput
                                                 aria-autocomplete="list"
-                                                aria-label="representative-tz"
+                                                aria-expanded={false}
+                                                aria-haspopup={true}
                                                 aria-labelledby="representative-tz-label"
+                                                aria-owns="representative-tz-listbox"
                                                 autoCapitalize="none"
                                                 autoComplete="off"
                                                 autoCorrect="off"
                                                 className="cf-select__input"
                                                 disabled={false}
-                                                id="representativeTz"
+                                                id="representative-tz"
                                                 injectStyles={true}
                                                 inputRef={[Function]}
                                                 inputStyle={
@@ -59539,6 +59563,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
+                                                role="combobox"
                                                 spellCheck="false"
                                                 tabIndex="0"
                                                 type="text"
@@ -59554,16 +59579,19 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                                 >
                                                   <input
                                                     aria-autocomplete="list"
-                                                    aria-label="representative-tz"
+                                                    aria-expanded={false}
+                                                    aria-haspopup={true}
                                                     aria-labelledby="representative-tz-label"
+                                                    aria-owns="representative-tz-listbox"
                                                     autoCapitalize="none"
                                                     autoComplete="off"
                                                     autoCorrect="off"
                                                     disabled={false}
-                                                    id="representativeTz"
+                                                    id="representative-tz"
                                                     onBlur={[Function]}
                                                     onChange={[Function]}
                                                     onFocus={[Function]}
+                                                    role="combobox"
                                                     spellCheck="false"
                                                     style={
                                                       Object {
@@ -60404,7 +60432,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                       "formatGroupLabel": [Function],
                                       "getOptionLabel": [Function],
                                       "getOptionValue": [Function],
-                                      "inputId": "representativeTz",
+                                      "inputId": "representative-tz",
                                       "inputValue": "",
                                       "isClearable": undefined,
                                       "isDisabled": false,
@@ -62062,7 +62090,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             "formatGroupLabel": [Function],
                                             "getOptionLabel": [Function],
                                             "getOptionValue": [Function],
-                                            "inputId": "representativeTz",
+                                            "inputId": "representative-tz",
                                             "inputValue": "",
                                             "isClearable": undefined,
                                             "isDisabled": false,
@@ -63731,7 +63759,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                                             "formatGroupLabel": [Function],
                                             "getOptionLabel": [Function],
                                             "getOptionValue": [Function],
-                                            "inputId": "representativeTz",
+                                            "inputId": "representative-tz",
                                             "inputValue": "",
                                             "isClearable": undefined,
                                             "isDisabled": false,

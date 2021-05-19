@@ -13,7 +13,7 @@ exports[`AddAdminTaskForm renders correctly 1`] = `
       >
         <label
           class="question-label"
-          for="newTasks[0].type"
+          for="new-tasks-0-type"
           id="new-tasks-0-type-label"
         >
           <span>
@@ -21,9 +21,7 @@ exports[`AddAdminTaskForm renders correctly 1`] = `
           </span>
         </label>
         <div
-          aria-expanded="false"
           class="cf-select"
-          role="combobox"
         >
           <div
             class=" css-2b097c-container"
@@ -65,12 +63,15 @@ exports[`AddAdminTaskForm renders correctly 1`] = `
                   >
                     <input
                       aria-autocomplete="list"
-                      aria-label="new-tasks-0-type"
+                      aria-expanded="false"
+                      aria-haspopup="true"
                       aria-labelledby="new-tasks-0-type-label"
+                      aria-owns="new-tasks-0-type-listbox"
                       autocapitalize="none"
                       autocomplete="off"
                       autocorrect="off"
-                      id="newTasks[0].type"
+                      id="new-tasks-0-type"
+                      role="combobox"
                       spellcheck="false"
                       style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                       tabindex="0"
