@@ -12,7 +12,7 @@ module Seeds
 
     # We will create the vet w/o date of death and update later due to task tree considerations
     def deceased_vet
-      @deceased_vet ||= FactoryBot.create(
+      @deceased_vet ||= create(
         :veteran,
         file_number: 54_545_459,
         first_name: "Jane",
@@ -28,7 +28,7 @@ module Seeds
       attorney = User.find_by_css_id("BVASCASPER1")
       judge = User.find_by_css_id("BVAAABSHIRE")
 
-      FactoryBot.create(
+      create(
         :appeal,
         :dispatched_with_decision_issue,
         disposition: "dismissed_death",
