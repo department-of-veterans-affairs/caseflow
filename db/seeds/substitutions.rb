@@ -14,7 +14,7 @@ module Seeds
     def deceased_vet
       @deceased_vet ||= create(
         :veteran,
-        file_number: 54_545_459,
+        file_number: 54_545_454,
         first_name: "Jane",
         last_name: "Deceased"
       )
