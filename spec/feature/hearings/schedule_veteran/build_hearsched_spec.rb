@@ -13,6 +13,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
     let(:fill_in_veteran_email) { "vet@testingEmail.com" }
     let(:fill_in_representative_email) { "email@testingEmail.com" }
+    let(:unscheduled_notes) { "Unscheduled notes" }
+    let(:fill_in_unscheduled_notes) { "Fill in unscheduled notes" }
 
     before do
       HearingsManagement.singleton.add_user(current_user)
@@ -21,7 +23,17 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       HearingAdmin.singleton.add_user(other_user)
     end
 
-    shared_context "central_hearings" do
+    shared_context "hearing subtree" do
+      let!(:root_task) { create(:root_task, appeal: appeal) }
+      let!(:hearing_task) do
+        create(:hearing_task, parent: root_task, instructions: [unscheduled_notes])
+      end
+      let!(:schedule_hearing_task) do
+        create(:schedule_hearing_task, appeal: appeal, parent: hearing_task)
+      end
+    end
+
+    shared_context "central_hearing" do
       let!(:hearing_day) { create(:hearing_day, scheduled_for: Time.zone.today + 30.days) }
       let!(:vacols_case) do
         create(
@@ -30,17 +42,16 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           bfcurloc: "CASEFLOW"
         )
       end
-      let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case, closest_regional_office: "C") }
-      let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: legacy_appeal) }
+      let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case, closest_regional_office: "C") }
 
       let!(:veteran) { create(:veteran, file_number: "123454787") }
       let!(:hearing_location_dropdown_label) { "Hearing Location" }
       let(:appellant_appeal_link_text) do
-        "#{legacy_appeal.appellant[:first_name]} #{legacy_appeal.appellant[:last_name]} | #{veteran.file_number}"
+        "#{appeal.appellant[:first_name]} #{appeal.appellant[:last_name]} | #{veteran.file_number}"
       end
 
       let!(:expected_alert) do
-        COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % legacy_appeal.veteran.name
+        COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % appeal.veteran.name
       end
 
       def navigate_to_schedule_veteran
@@ -56,11 +67,12 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       end
     end
 
-    shared_context "video_hearing" do
+    shared_context "video_hearing" do |virtual_day = false|
+      request_type = virtual_day ? HearingDay::REQUEST_TYPES[:virtual] : HearingDay::REQUEST_TYPES[:video]
       let!(:hearing_day) do
         create(
           :hearing_day,
-          request_type: HearingDay::REQUEST_TYPES[:video],
+          request_type: request_type,
           scheduled_for: Time.zone.today + 60.days,
           regional_office: "RO39"
         )
@@ -76,16 +88,11 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           bfregoff: "RO39"
         )
       end
-      let!(:legacy_appeal) do
+      let!(:appeal) do
         create(
           :legacy_appeal,
           vacols_case: vacols_case,
           closest_regional_office: "RO39"
-        )
-      end
-      let!(:schedule_hearing_task) do
-        create(
-          :schedule_hearing_task, appeal: legacy_appeal
         )
       end
       let!(:veteran) { create(:veteran, file_number: "123456789") }
@@ -93,7 +100,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       let(:room_label) { HearingRooms.find!(hearing_day.room)&.label }
 
       let!(:expected_alert) do
-        COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % legacy_appeal.veteran.name
+        COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % appeal.veteran.name
       end
 
       def navigate_to_schedule_veteran
@@ -225,13 +232,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
     # Method to choose either the hearing time slot buttons or hearing time radio buttons
     def select_hearing_time(time)
-      virtual_hearing_type_selected = page.has_content?("Virtual")
-      if FeatureToggle.enabled?(:enable_hearing_time_slots) && virtual_hearing_type_selected
-        eastern_time = convert_local_time_to_eastern_timezone(time)
-        find(".time-slot-button", text: eastern_time).click
-      else
-        find(".cf-form-radio-option", text: time).click
-      end
+      find(".cf-form-radio-option", text: time).click
     end
 
     def zone_is_eastern(regional_office)
@@ -240,13 +241,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
     # Method to choose the custom hearing time dropdown
     def select_custom_hearing_time(time, is_eastern_only = true)
-      slots_enabled = FeatureToggle.enabled?(:enable_hearing_time_slots)
       direct_enabled = FeatureToggle.enabled?(:schedule_veteran_virtual_hearing)
-      virtual_hearing_type_selected = page.has_content?("Virtual")
-
-      if slots_enabled && virtual_hearing_type_selected
-        find(".time-slot-button-toggle", text: "Choose a custom time").click
-      end
 
       time_string = if is_eastern_only || !direct_enabled
                       time
@@ -257,8 +252,22 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_dropdown(text: time_string, name: "optionalHearingTime0")
     end
 
+    def slots_select_hearing_time(time)
+      find(".time-slot-button", text: "#{time} EDT").click
+    end
+
+    def slots_select_custom_hearing_time(time)
+      find(".time-slot-button-toggle", text: "Choose a custom time").click
+      # Type in the time, add am, press enter with \n, then tab away
+      # to allow the select to update
+      time_select_input = find(".time-select").find("input")
+      time_select_input.send_keys time, :enter, :tab
+      click_button("Choose time")
+    end
+
     shared_examples "scheduling a central hearing" do
-      include_context "central_hearings"
+      include_context "central_hearing"
+      include_context "hearing subtree"
 
       before { cache_appeals }
 
@@ -278,6 +287,13 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         expect(page).to have_content(hearing_location_dropdown_label)
         click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
         select_hearing_time("9:00")
+
+        if FeatureToggle.enabled?(:schedule_veteran_virtual_hearing)
+          # Fill in Unscheduled Notes
+          expect(page).to have_content(unscheduled_notes)
+          fill_in "Notes", with: fill_in_unscheduled_notes
+        end
+
         click_button("Schedule", exact: true)
         click_on "Back to Schedule Veterans"
         expect(page).to have_content("Schedule Veterans")
@@ -287,11 +303,18 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         expect(page.has_no_content?("123454787S")).to eq(true)
         expect(page).to have_content("There are no schedulable veterans")
         expect(VACOLS::CaseHearing.first.folder_nr).to eq vacols_case.bfkey
+
+        if FeatureToggle.enabled?(:schedule_veteran_virtual_hearing)
+          # Ensure new hearing has the unscheduled notes
+          expect(VACOLS::CaseHearing.first.notes1).to eq fill_in_unscheduled_notes
+          expect(LegacyHearing.last.notes).to eq(fill_in_unscheduled_notes)
+        end
       end
     end
 
     shared_examples "scheduling a video hearing" do
       include_context "video_hearing"
+      include_context "hearing subtree"
 
       scenario "Schedule Veteran for video" do
         cache_appeals
@@ -304,6 +327,13 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           text: "#{hearing_day.scheduled_for.to_formatted_s(:short_date)} (0/#{hearing_day.total_slots}) #{room_label}",
           name: "hearingDate"
         )
+
+        if FeatureToggle.enabled?(:schedule_veteran_virtual_hearing)
+          # Fill in Unscheduled Notes
+          expect(page).to have_content(unscheduled_notes)
+          fill_in "Notes", with: fill_in_unscheduled_notes
+        end
+
         click_button("Schedule", exact: true)
         click_on "Back to Schedule Veterans"
         expect(page).to have_content("Schedule Veterans")
@@ -313,6 +343,12 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         expect(page.has_no_content?("123456789S")).to eq(true)
         expect(page).to have_content("There are no schedulable veterans")
         expect(VACOLS::CaseHearing.first.folder_nr).to eq vacols_case.bfkey
+
+        if FeatureToggle.enabled?(:schedule_veteran_virtual_hearing)
+          # Ensure new hearing has the unscheduled notes
+          expect(VACOLS::CaseHearing.first.notes1).to eq fill_in_unscheduled_notes
+          expect(LegacyHearing.last.notes).to eq(fill_in_unscheduled_notes)
+        end
       end
 
       context "but facilities api throws an error" do
@@ -326,7 +362,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         end
 
         scenario "Schedule Veteran for video error" do
-          visit "queue/appeals/#{legacy_appeal.vacols_id}"
+          visit "queue/appeals/#{appeal.vacols_id}"
           click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
           expect(page).to have_css(
             ".usa-alert-error",
@@ -645,13 +681,18 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       end
     end
 
-    shared_examples "scheduling a virtual hearing" do |ro_key, time|
+    shared_examples "scheduling a virtual hearing" do |ro_key, time, slots = false|
       scenario "can successfully schedule virtual hearing" do
         navigate_to_schedule_veteran
         expect(page).to have_content("Schedule Veteran for a Hearing")
         click_dropdown(name: "hearingType", text: "Virtual")
         click_dropdown(name: "hearingDate", index: 1)
-        select_custom_hearing_time(time, ro_key == "C")
+
+        # Only one of these three gets called, they each represent a different
+        # way to select a hearing time
+        select_custom_hearing_time(time, ro_key == "C") unless slots
+        slots_select_hearing_time(time) if slots == "slot"
+        slots_select_custom_hearing_time(time) if slots == "custom"
 
         # Fill in appellant details
         click_dropdown(name: "appellantTz", index: 1)
@@ -660,6 +701,10 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         # Fill in POA/Representative details
         click_dropdown(name: "representativeTz", index: 1)
         fill_in "POA/Representative Email", with: fill_in_representative_email
+
+        # Fill in Unscheduled Notes
+        expect(page).to have_content(unscheduled_notes)
+        fill_in "Notes", with: fill_in_unscheduled_notes
 
         click_button("Schedule")
 
@@ -684,11 +729,15 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         expect(events.sent_to_appellant.count).to eq 1
         expect(events.where(email_address: fill_in_representative_email).count).to eq 1
         expect(events.where(recipient_role: "representative").count).to eq 1
+
+        # Ensure new hearing has the unscheduled notes
+        expect(new_hearing.notes).to eq(fill_in_unscheduled_notes)
       end
     end
 
     shared_examples "change from Central hearing" do
-      include_context "central_hearings"
+      include_context "central_hearing"
+      include_context "hearing subtree"
 
       before { cache_appeals }
 
@@ -697,6 +746,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
     shared_examples "change from Video hearing" do
       include_context "video_hearing"
+      include_context "hearing subtree"
 
       before { cache_appeals }
 
@@ -846,6 +896,26 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       end
     end
 
+    shared_examples "scheduling a hearing on a virtual hearing day using a slot button" do
+      include_context "video_hearing", true
+      include_context "hearing subtree"
+
+      before { cache_appeals }
+
+      # Use the timeslot button
+      it_behaves_like "scheduling a virtual hearing", "RO39", "10:30 AM", "slot"
+    end
+
+    shared_examples "scheduling a hearing on a virtual hearing day using a custom time" do
+      include_context "video_hearing", true
+      include_context "hearing subtree"
+
+      before { cache_appeals }
+
+      # Use the timeslot custom time modal
+      it_behaves_like "scheduling a virtual hearing", "RO39", "10:45 AM", "custom"
+    end
+
     context "with enable_time_slots feature disabled" do
       # Ensure the feature flag is enabled before testing
       before do
@@ -904,6 +974,14 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         FeatureToggle.enable!(:enable_hearing_time_slots)
       end
 
+      # These are the only feature tests that create 'R' virtual
+      # hearing days and should show timeslots
+      it_behaves_like "scheduling a hearing on a virtual hearing day using a slot button"
+      it_behaves_like "scheduling a hearing on a virtual hearing day using a custom time"
+
+      # TimeSlots will only ever show for a virtual hearing day
+      # so these tests should run the same regardless of
+      # :enable_hearing_time_slots
       it_behaves_like "scheduling a central hearing"
 
       it_behaves_like "scheduling a video hearing"

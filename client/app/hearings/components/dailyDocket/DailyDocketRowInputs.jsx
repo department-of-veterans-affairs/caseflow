@@ -250,7 +250,7 @@ export const NotesField = ({ hearing, update, readOnly }) => {
       strongLabel
       disabled={disabled}
       onChange={(notes) => update({ notes })}
-      textAreaStyling={css({ height: '50px' })}
+      textAreaStyling={css({ height: '100px' })}
       value={hearing.notes || ''}
     />
   );
