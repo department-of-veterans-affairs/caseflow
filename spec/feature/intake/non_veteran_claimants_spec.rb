@@ -68,7 +68,7 @@ feature "Non-veteran claimants", :postgres do
 
       # Verify that this can be removed
       find(".cf-select__clear-indicator").click
-      expect(page).to_not have_content(attorney.name)
+      expect(page).to_not have_selector("option", text: attorney.name)
       expect(page).to_not have_content("Claimant's address")
       expect(page).to have_button("Continue to next step", disabled: true)
       expect(page).to have_content("Type to search...")
@@ -175,7 +175,7 @@ feature "Non-veteran claimants", :postgres do
       expect(page).to have_content("Representative's address")
       find(".cf-select__clear-indicator").click
 
-      expect(page).to_not have_content(attorney.name)
+      expect(page).to_not have_selector("option", text: attorney.name)
       expect(page).to_not have_content("Representative's address")
       expect(page).to have_content("Type to search...")
       expect(page).to have_button("Continue to next step", disabled: true)
