@@ -84,7 +84,7 @@ class RoSchedulePeriod < SchedulePeriod
     co_hearing_days = generate_hearings_days.generate_co_hearing_days_schedule
 
     # Combine the available hearing days
-    hearing_days =  co_hearing_days + non_co_hearing_days
+    hearing_days = co_hearing_days + non_co_hearing_days
     hearing_days.sort_by { |day| day[:scheduled_for] }
   end
 end
