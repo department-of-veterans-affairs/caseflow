@@ -1697,7 +1697,6 @@ ActiveRecord::Schema.define(version: 2021_05_19_184436) do
   add_foreign_key "request_issues_updates", "users"
   add_foreign_key "schedule_periods", "users"
   add_foreign_key "sent_hearing_email_events", "users", column: "sent_by_id"
-  add_foreign_key "special_issue_lists", "appeals"
   add_foreign_key "task_timers", "tasks"
   add_foreign_key "tasks", "tasks", column: "parent_id"
   add_foreign_key "tasks", "users", column: "assigned_by_id"
