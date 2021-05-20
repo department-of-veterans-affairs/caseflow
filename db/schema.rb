@@ -1670,6 +1670,7 @@ ActiveRecord::Schema.define(version: 2021_05_19_184436) do
   add_foreign_key "hearing_days", "users", column: "updated_by_id"
   add_foreign_key "hearing_task_associations", "tasks", column: "hearing_task_id"
   add_foreign_key "hearing_views", "users"
+  add_foreign_key "hearings", "appeals"
   add_foreign_key "hearings", "users", column: "created_by_id"
   add_foreign_key "hearings", "users", column: "judge_id"
   add_foreign_key "hearings", "users", column: "updated_by_id"
