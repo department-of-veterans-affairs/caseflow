@@ -102,6 +102,7 @@ describe InformalHearingPresentationTask, :postgres do
         expect(InformalHearingPresentationTask.find_by(appeal_id: appeal.id,
                                                        assigned_to_id: new_poa.id).status).to eq("assigned")
         expect(InformalHearingPresentationTask.where(appeal_id: appeal.id).count).to eq 2
+        expect(Raven).to receive(:capture_exception).exactly(0).times
       end
     end
 
@@ -118,6 +119,7 @@ describe InformalHearingPresentationTask, :postgres do
         expect(InformalHearingPresentationTask.find_by(appeal_id: appeal.id,
                                                        assigned_to_id: old_poa.id).status).to eq("cancelled")
         expect(InformalHearingPresentationTask.where(appeal_id: appeal.id).count).to eq 1
+        expect(Raven).to receive(:capture_exception).exactly(0).times
       end
     end
   end
