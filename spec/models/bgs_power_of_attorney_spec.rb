@@ -232,11 +232,19 @@ describe BgsPowerOfAttorney do
   end
 
   describe "#save_with_updated_bgs_record!" do
-  let!(:user) { User.authenticate!(roles: ["System Admin"]) }
-  let!(:poa) { create(:bgs_power_of_attorney, claimant_participant_id: claimant_participant_id) }
-  let(:claimant_participant_id) { "CLAIMANT_WITH_PVA_AS_VSO" }
+    let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+    let!(:poa) { create(:bgs_power_of_attorney, claimant_participant_id: claimant_participant_id) }
+    let(:claimant_participant_id) { "CLAIMANT_WITH_PVA_AS_VSO" }
+    let(:appeal) do
+      create(:appeal, veteran: create(:veteran, file_number: poa.file_number)) do |appeal|
+        create(
+          :informal_hearing_presentation_task,
+          appeal: appeal,
+          assigned_to: poa
+        )
+      end
+    end
     context "single POA record for PID" do
-
       before do
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids)
           .with([claimant_participant_id]).and_return(Fakes::BGSServicePOA.default_vsos_mapped.last)
@@ -253,10 +261,9 @@ describe BgsPowerOfAttorney do
     end
 
     context "when poa_auto_ihp_update feature toggle is disabled" do
-
       before do
         FeatureToggle.disable!(:poa_auto_ihp_update)
-        allow_any_instance_of(BgsPowerOfAttorney).to receive(:update_ihp_task)
+        allow_any_instance_of(described_class).to receive(:update_ihp_task)
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids)
           .with([claimant_participant_id]).and_return(Fakes::BGSServicePOA.default_vsos_mapped.last)
       end
@@ -265,16 +272,15 @@ describe BgsPowerOfAttorney do
 
       it "IhpTaks update method isn't called" do
         poa.save_with_updated_bgs_record!
-        # expect(InformalHearingPresentationTask.new).to_not have_received(:update_to_new_poa)
+        expect_any_instance_of(described_class).to_not receive(:update_ihp_task)
         expect(poa.send(:update_ihp_enabled?)).to eq(false)
       end
     end
 
     context "when poa_auto_ihp_update feature toggle is enabled" do
-
       before do
         FeatureToggle.enable!(:poa_auto_ihp_update)
-        allow_any_instance_of(BgsPowerOfAttorney).to receive(:update_ihp_task)
+        allow_any_instance_of(described_class).to receive(:update_ihp_task)
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids)
           .with([claimant_participant_id]).and_return(Fakes::BGSServicePOA.default_vsos_mapped.last)
       end
@@ -288,9 +294,9 @@ describe BgsPowerOfAttorney do
 
         expect(poa.poa_participant_id).to_not eq before_poa_pid
         expect(poa.send(:update_ihp_enabled?)).to eq(true)
+        expect(poa).to have_received(:update_ihp_task)
       end
     end
-
 
     context "2 records exist with same PID but different FNs" do
       before do
