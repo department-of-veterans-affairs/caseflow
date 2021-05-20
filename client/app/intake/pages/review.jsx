@@ -4,6 +4,10 @@ import { Redirect } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+
 
 import { PAGE_PATHS, FORM_TYPES, REQUEST_STATE, VBMS_BENEFIT_TYPES } from '../constants';
 import RampElectionPage from './rampElection/review';
@@ -17,10 +21,14 @@ import CancelButton from '../components/CancelButton';
 import { submitReview as submitRampElection } from '../actions/rampElection';
 import { submitReview as submitDecisionReview } from '../actions/decisionReview';
 import { submitReview as submitRampRefiling } from '../actions/rampRefiling';
+import { setReceiptDateError } from '../actions/intake';
 import { toggleIneligibleError } from '../util';
 
 import SwitchOnForm from '../components/SwitchOnForm';
 
+const schema = yup.object().shape({
+  receiptDate: yup.date().required().min(new Date('02/19/2019'), 'Receipt Date cannot be prior to 02/19/2019.')
+});
 class Review extends React.PureComponent {
   render = () =>
     <SwitchOnForm
@@ -55,20 +63,34 @@ class ReviewNextButton extends React.PureComponent {
   }
 
   handleClick = (selectedForm, intakeData) => {
-    // If adding new claimant, we won't submit to backend yet
-    if (intakeData?.claimant === 'claimant_not_listed') {
-      return this.props.history.push('/add_claimant');
-    }
+    console.log(this.props)
+    
 
-    this.submitReview(selectedForm, intakeData).then(
-      () => selectedForm.category === 'decisionReview' ?
-        this.props.history.push('/add_issues') :
-        this.props.history.push('/finish')
-      , (error) => {
-        // This is expected behavior on bad data, so prevent
-        // sentry from alerting an unhandled error
-        return error;
+    schema
+      .validate(intakeData)
+      .then((valid) => {
+        this.props.setReceiptDateError(null)
+        console.log(valid)
+        // If adding new claimant, we won't submit to backend yet
+        if (intakeData?.claimant === 'claimant_not_listed') {
+          return this.props.history.push('/add_claimant');
+        }
+        this.submitReview(selectedForm, intakeData).then(
+          () => selectedForm.category === 'decisionReview' ?
+            this.props.history.push('/add_issues') :
+            this.props.history.push('/finish')
+          , (error) => {
+            // This is expected behavior on bad data, so prevent
+            // sentry from alerting an unhandled error
+            return error;
+          });
+      })
+      .catch((error) => {
+        this.props.setReceiptDateError(error.errors[0])
+        console.log(error)
       });
+
+    
   }
 
   render = () => {
@@ -99,9 +121,7 @@ class ReviewNextButton extends React.PureComponent {
 
     return <Button
       name="submit-review"
-      onClick={() => {
-        this.handleClick(selectedForm, intakeData);
-      }}
+      onClick={() => this.handleClick(selectedForm, intakeData)}
       loading={intakeData ? intakeData.requestStatus.submitReview === REQUEST_STATE.IN_PROGRESS : true}
       disabled={disableSubmit}
     >
@@ -126,7 +146,8 @@ const ReviewNextButtonConnected = connect(
   (dispatch) => bindActionCreators({
     submitRampElection,
     submitRampRefiling,
-    submitDecisionReview
+    submitDecisionReview,
+    setReceiptDateError
   }, dispatch)
 )(ReviewNextButton);
 
@@ -146,7 +167,8 @@ ReviewNextButton.propTypes = {
   intakeId: PropTypes.number,
   submitRampElection: PropTypes.func,
   submitDecisionReview: PropTypes.func,
-  submitRampRefiling: PropTypes.func
+  submitRampRefiling: PropTypes.func,
+  setReceiptDateError: PropTypes.func
 };
 
 Review.propTypes = {
