@@ -1056,6 +1056,7 @@ exports[`MTVJudgeDisposition with granted disposition selected renders correctly
           <label
             class="question-label"
             for="attorney"
+            id="attorney-label"
           >
             <strong>
               <span>
@@ -1089,10 +1090,15 @@ exports[`MTVJudgeDisposition with granted disposition selected renders correctly
                     >
                       <input
                         aria-autocomplete="list"
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                        aria-labelledby="attorney-label"
+                        aria-owns="attorney-listbox"
                         autocapitalize="none"
                         autocomplete="off"
                         autocorrect="off"
                         id="attorney"
+                        role="combobox"
                         spellcheck="false"
                         style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                         tabindex="0"
@@ -1130,6 +1136,11 @@ exports[`MTVJudgeDisposition with granted disposition selected renders correctly
                   </div>
                 </div>
               </div>
+              <input
+                name="attorney"
+                type="hidden"
+                value=""
+              />
             </div>
           </div>
         </div>
@@ -1496,6 +1507,7 @@ exports[`MTVJudgeDisposition with partially_granted disposition selected renders
           <label
             class="question-label"
             for="attorney"
+            id="attorney-label"
           >
             <strong>
               <span>
@@ -1529,10 +1541,15 @@ exports[`MTVJudgeDisposition with partially_granted disposition selected renders
                     >
                       <input
                         aria-autocomplete="list"
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                        aria-labelledby="attorney-label"
+                        aria-owns="attorney-listbox"
                         autocapitalize="none"
                         autocomplete="off"
                         autocorrect="off"
                         id="attorney"
+                        role="combobox"
                         spellcheck="false"
                         style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                         tabindex="0"
@@ -1570,6 +1587,11 @@ exports[`MTVJudgeDisposition with partially_granted disposition selected renders
                   </div>
                 </div>
               </div>
+              <input
+                name="attorney"
+                type="hidden"
+                value=""
+              />
             </div>
           </div>
         </div>
