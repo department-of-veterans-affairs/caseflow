@@ -26,6 +26,10 @@ a:visited {
   color: $color-primary; // Override USWDS
 }
 
+*:focus, a:focus {
+  outline: 2px dotted $color-gray-medium; // Override the light gray dotted outline default
+}
+
 abbr {
   border: 0;
   text-decoration: none;
