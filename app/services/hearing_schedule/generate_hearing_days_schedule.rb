@@ -525,7 +525,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
       ro_key = (allocation.regional_office == "NVHQ") ? HearingDay::REQUEST_TYPES[:virtual] : allocation.regional_office
 
       acc[allocation.regional_office] = ro_cities[ro_key].merge(
-        ro_key: ro_key,
+        ro_key: allocation.regional_office,
         allocated_days: allocation.allocated_days,
         allocated_days_without_room: allocation.allocated_days_without_room,
         available_days: @available_days,
