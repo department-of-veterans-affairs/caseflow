@@ -26,7 +26,8 @@ a:visited {
   color: $color-primary; // Override USWDS
 }
 
-*:focus, a:focus {
+*:focus, 
+a:focus {
   outline: 2px dotted $color-gray-medium; // Override the light gray dotted outline default
 }
 
