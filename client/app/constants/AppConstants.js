@@ -21,7 +21,8 @@ export const COLORS = {
   BASE: '#212121',
   RED: '#E31C3D',
   RED_DARK: '#cd2026',
-  BLUE_DARKEST: '#122E51'
+  BLUE_DARKEST: '#122E51',
+  FOCUS_OUTLINE: '#6392ff'
 };
 
 export const LOGO_COLORS = {
