@@ -141,7 +141,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     available_days = @available_days.product([0]).to_h
 
     # Apply the initial sort to the RO list
-    ro_list = sort_ro_list(@ros.each { |key, value| value[:ro_key] = key }.values)
+    ro_list = sort_ro_list(@ros.values)
 
     # Distribute all of the hearing days to each RO in the list
     allocate_hearing_days(days_to_allocate, ro_list, available_days)
