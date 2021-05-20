@@ -48,6 +48,6 @@ describe('AddAdminTaskForm', () => {
   it('focuses the first element when mounted', async () => {
     setup();
 
-    expect(screen.getByRole('textbox', { name: /select the type of task/i })).toHaveFocus();
+    expect(screen.getByRole('combobox', { name: /select the type of task/i })).toHaveFocus();
   });
 });

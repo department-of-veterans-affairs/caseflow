@@ -39,7 +39,7 @@ RSpec.shared_examples "Address Verify Task Frontend Workflow" do
         end
 
         it "has Regional Office dropdown and notes field" do
-          expect(page).to have_field("regionalOffice")
+          expect(page).to have_field("regional-office")
           expect(page).to have_field("notes")
         end
 
