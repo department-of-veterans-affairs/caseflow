@@ -195,7 +195,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     ros_with_request = ro_list.reject { |ro| ro[:allocated_days_without_room].to_i == 0 }
 
     # If we are shuffling the list, move the first element to the last
-    if ro_info != {} && ros_with_request.include?(ro_info)
+    if ro_info.any? && ros_with_request.pluck(:ro_key).include?(ro_info[:ro_key])
       ros_with_request.push(ros_with_request.delete_at(ros_with_request.index(ro_info)))
     else
       # Sort the list so the RO with the fewest requests is first
