@@ -1874,8 +1874,15 @@ RSpec.feature "Case details", :all_dbs do
         context "when the disposition is 'Dismissed, Death'" do
           let(:disposition) { "dismissed_death" }
 
-          it_behaves_like "the button is shown"
+        it_behaves_like "the button is shown"
+
+        context "but the claimant is not a veteran" do
+          before {
+            appeal.update(veteran_is_not_claimant: true)
+          }
+          it_behaves_like "the button is not shown"
         end
+      end
 
         context "when the disposition is something else" do
           context "when the user is an admin" do
