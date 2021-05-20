@@ -71,11 +71,14 @@ class PowerOfAttorney
   private
 
   def bgs_power_of_attorney
-    @bgs_power_of_attorney ||= fetch_bgs_power_of_attorney || BgsPowerOfAttorney.new(claimant_participant_id: claimant_participant_id) || BgsPowerOfAttorney.new(file_number: file_number)
+    @bgs_power_of_attorney ||= fetch_bgs_power_of_attorney || BgsPowerOfAttorney.new(file_number: file_number)
   end
 
   def fetch_bgs_power_of_attorney
-    fetch_bgs_power_of_attorney_by_claimant_participant_id || fetch_bgs_power_of_attorney_by_file_number
+    if LegacyAppeal.veteran_is_not_claimant
+      fetch_bgs_power_of_attorney_by_claimant_participant_id
+    else fetch_bgs_power_of_attorney_by_file_number
+    end
   rescue BgsPowerOfAttorney::BgsPOANotFound
     nil
   end
