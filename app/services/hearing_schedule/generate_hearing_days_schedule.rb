@@ -70,25 +70,11 @@ class HearingSchedule::GenerateHearingDaysSchedule
   # }
   #
   def assign_and_filter_ro_days(schedule_period)
-    @ros = assign_ro_hearing_day_allocations(RegionalOffice.ros_with_hearings, schedule_period.allocations)
+    assign_ro_hearing_day_allocations(RegionalOffice.ros_with_hearings, schedule_period.allocations)
     filter_non_available_ro_days # modifies @ros in-place
-    @ros = filter_travel_board_hearing_days(schedule_period.start_date, schedule_period.end_date)
-
-    # counts number of ROs available on each day and put them in hash
-    # Example:
-    #  {
-    #    Tue, 05 Jan 2021=>45,
-    #    Wed, 06 Jan 2021=>47,
-    #    ...
-    #  }
-    @availability_coocurrence = @ros.inject({}) do |availability, (_ro_key, ro_details)|
-      ro_details[:available_days].each do |date|
-        availability[date] ||= 0
-        availability[date] += 1
-      end
-      availability
-    end
-    @ros = group_monthly_available_dates
+    filter_travel_board_hearing_days(schedule_period.start_date, schedule_period.end_date)
+    group_availability_coocurrence
+    group_monthly_available_dates
   end
 
   # Total available days; filtering weekends, holidays and board non-available days
@@ -151,9 +137,6 @@ class HearingSchedule::GenerateHearingDaysSchedule
     # Add up all the hearing days we need to distribute
     days_to_allocate = @ros.values.pluck(:allocated_days_without_room).sum.to_i
 
-    # Determine how far apart to space hearing days once we have assigned an even number to each date
-    offset = 1
-
     # Create a lookup table of available days to track the number of allocations per date
     available_days = @available_days.product([0]).to_h
 
@@ -161,16 +144,16 @@ class HearingSchedule::GenerateHearingDaysSchedule
     ro_list = sort_ro_list(@ros.each { |key, value| value[:ro_key] = key }.values)
 
     # Distribute all of the hearing days to each RO in the list
-    allocate_hearing_days(days_to_allocate, ro_list, available_days, offset)
+    allocate_hearing_days(days_to_allocate, ro_list, available_days)
 
     # Return the list of ROs containing the hearing days per date
     @ros
   end
 
-  def allocate_hearing_days(days_to_allocate, ro_list, available_days, offset)
+  def allocate_hearing_days(days_to_allocate, ro_list, available_days)
     days_to_allocate.times do |index|
-      # Find the next RO and hearing day using the offset once all hearing days have the same number scheduled
-      available_ro_and_day = get_ro_for_hearing_day(available_days, ro_list, index, offset)
+      # Find the next RO and hearing day
+      available_ro_and_day = get_ro_for_hearing_day(available_days, ro_list, index)
 
       # Extract the hearing day and RO
       hearing_day = available_ro_and_day.first
@@ -203,7 +186,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     end
   end
 
-  def get_ro_for_hearing_day(available_days, ro_list, index, offset)
+  def get_ro_for_hearing_day(available_days, ro_list, index)
     hearing_day_index = index
 
     # If the index is out of bounds circle the array back to index 0 to get the next index
@@ -217,9 +200,9 @@ class HearingSchedule::GenerateHearingDaysSchedule
     # Check if there is an available Regional office for this day
     ro = get_next_available_ro(ro_list, hearing_day)
 
-    # Apply the index offset when we have evenly distributed all Regional Offices
+    # Move to the next hearing day of no ROs are available
     if ro.nil?
-      get_ro_for_hearing_day(available_days, ro_list, index + 1 + offset, offset)
+      get_ro_for_hearing_day(available_days, ro_list, index + 1)
     else
       [hearing_day, ro]
     end
@@ -301,6 +284,23 @@ class HearingSchedule::GenerateHearingDaysSchedule
     # Allocate hearing days to ROs by month
     @ros.each_key do |ro_key|
       allocate_all_ro_monthly_hearing_days(ro_key)
+    end
+  end
+
+  def group_availability_coocurrence
+    # counts number of ROs available on each day and put them in hash
+    # Example:
+    #  {
+    #    Tue, 05 Jan 2021=>45,
+    #    Wed, 06 Jan 2021=>47,
+    #    ...
+    #  }
+    @availability_coocurrence = @ros.inject({}) do |availability, (_ro_key, ro_details)|
+      ro_details[:available_days].each do |date|
+        availability[date] ||= 0
+        availability[date] += 1
+      end
+      availability
     end
   end
 
@@ -521,10 +521,11 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   # Initialize allocated_days, available_days, and num_of_rooms for each RO
   def assign_ro_hearing_day_allocations(ro_cities, ro_allocations)
-    ro_allocations.reduce({}) do |acc, allocation|
+    @ros = ro_allocations.reduce({}) do |acc, allocation|
       ro_key = (allocation.regional_office == "NVHQ") ? HearingDay::REQUEST_TYPES[:virtual] : allocation.regional_office
 
       acc[allocation.regional_office] = ro_cities[ro_key].merge(
+        ro_key: ro_key,
         allocated_days: allocation.allocated_days,
         allocated_days_without_room: allocation.allocated_days_without_room,
         available_days: @available_days,
