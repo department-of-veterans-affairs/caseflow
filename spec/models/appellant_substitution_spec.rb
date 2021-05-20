@@ -31,7 +31,7 @@ describe AppellantSubstitution do
       expect(subject.target_appeal.appellant_substitution?).to eq true
       expect(subject.target_appeal.stream_type).to eq subject.source_appeal.stream_type
       expect(subject.target_appeal.docket_number).to eq subject.source_appeal.docket_number
-      expect(subject.substitute_claimant).to eq subject.target_appeal.claimant
+      expect(subject.target_appeal.claimant.participant_id).to eq subject.substitute_participant_id
       expect(subject.substitute_person).to eq subject.target_appeal.claimant.person
       expect(subject.substitute_person).not_to eq subject.source_appeal.claimant.person
 
