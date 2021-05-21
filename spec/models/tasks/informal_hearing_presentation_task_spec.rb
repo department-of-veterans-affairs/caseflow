@@ -173,4 +173,20 @@ describe InformalHearingPresentationTask, :postgres do
       end
     end
   end
+
+  describe "#label" do
+    let(:appeal) { create(:appeal) }
+    let(:task) do
+      InformalHearingPresentationTask.find(create(:informal_hearing_presentation_task, assigned_to: user).id)
+    end
+
+    before do
+      InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+    end
+
+    subject { task.label }
+    it "returns expected copy" do
+      expect(subject).to eq(COPY::IHP_TASK_LABEL)
+    end
+  end
 end
