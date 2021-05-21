@@ -26,14 +26,23 @@ import DATES from '../../../constants/DATES';
 import SwitchOnForm from '../components/SwitchOnForm';
 
 const schema = yup.object().shape({
-  receiptDate: yup.mixed().when('$selectedForm', {
-    is: REVIEW_OPTIONS.APPEAL.key,
-    then: yup.date().typeError('Receipt Date is required.').
-      min(
-        moment.utc(DATES.AMA_ACTIVATION),
+  receiptDate: yup.mixed().
+    when(['$selectedForm', '$useAmaActivationDate'], {
+      is: (selectedForm, useAmaActivationDate) => selectedForm === REVIEW_OPTIONS.APPEAL.key && useAmaActivationDate,
+      then: yup.date().typeError('Receipt Date is required.').
+        min(
+          moment.utc(DATES.AMA_ACTIVATION),
         `Receipt Date cannot be prior to ${moment.utc(DATES.AMA_ACTIVATION).format('L')}`
-      )
-  })
+        )
+    }).
+    when(['$selectedForm', '$useAmaActivationDate'], {
+      is: (selectedForm, useAmaActivationDate) => selectedForm === REVIEW_OPTIONS.APPEAL.key && !useAmaActivationDate,
+      then: yup.date().typeError('Receipt Date is required.').
+        min(
+          moment.utc(DATES.AMA_ACTIVATION_TEST),
+        `Receipt Date cannot be prior to ${moment.utc(DATES.AMA_ACTIVATION_TEST).format('L')}`
+        )
+    })
 });
 
 class Review extends React.PureComponent {
@@ -71,7 +80,10 @@ class ReviewNextButton extends React.PureComponent {
 
   handleClick = (selectedForm, intakeData) => {
     schema.
-      validate(intakeData, { context: { selectedForm: selectedForm.key } }).
+      validate(intakeData, { context: {
+        selectedForm: selectedForm.key,
+        useAmaActivationDate: this.props.featureToggles.useAmaActivationDate
+      } }).
       then(() => {
         this.props.setReceiptDateError(null);
         // If adding new claimant, we won't submit to backend yet
