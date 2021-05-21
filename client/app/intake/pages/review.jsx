@@ -4,10 +4,8 @@ import { Redirect } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-
+import moment from 'moment';
 
 import { PAGE_PATHS, FORM_TYPES, REQUEST_STATE, VBMS_BENEFIT_TYPES } from '../constants';
 import RampElectionPage from './rampElection/review';
@@ -23,12 +21,15 @@ import { submitReview as submitDecisionReview } from '../actions/decisionReview'
 import { submitReview as submitRampRefiling } from '../actions/rampRefiling';
 import { setReceiptDateError } from '../actions/intake';
 import { toggleIneligibleError } from '../util';
+import DATES from '../../../constants/DATES';
 
 import SwitchOnForm from '../components/SwitchOnForm';
 
 const schema = yup.object().shape({
-  receiptDate: yup.date().required().min(new Date('02/19/2019'), 'Receipt Date cannot be prior to 02/19/2019.')
+  receiptDate: yup.date().required().
+    min(new Date(DATES.AMA_ACTIVATION), `Receipt Date cannot be prior to ${moment(DATES.AMA_ACTIVATION).format('LL')}`)
 });
+
 class Review extends React.PureComponent {
   render = () =>
     <SwitchOnForm
@@ -63,10 +64,10 @@ class ReviewNextButton extends React.PureComponent {
   }
 
   handleClick = (selectedForm, intakeData) => {
-    schema
-      .validate(intakeData)
-      .then(() => {
-        this.props.setReceiptDateError(null)
+    schema.
+      validate(intakeData).
+      then(() => {
+        this.props.setReceiptDateError(null);
         // If adding new claimant, we won't submit to backend yet
         if (intakeData?.claimant === 'claimant_not_listed') {
           return this.props.history.push('/add_claimant');
@@ -79,11 +80,10 @@ class ReviewNextButton extends React.PureComponent {
             // This is expected behavior on bad data, so prevent
             // sentry from alerting an unhandled error
             return error;
-        });
-      })
-      .catch((error) => {
-        this.props.setReceiptDateError(error.errors[0])
-        console.log(error)
+          });
+      }).
+      catch((error) => {
+        this.props.setReceiptDateError(error.errors[0]);
       });
   }
 
@@ -173,4 +173,4 @@ ReviewButtons.propTypes = {
   history: PropTypes.object
 };
 
-export {schema as TestableSchema}
+export { schema as TestableSchema };
