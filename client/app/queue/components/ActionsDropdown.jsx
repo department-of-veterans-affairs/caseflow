@@ -49,7 +49,7 @@ class ActionsDropdown extends React.PureComponent {
     }
 
     return <SearchableDropdown
-      name={`start-checkout-flow-${this.props.appealId}-${this.props.task.uniqueId}`}
+      name={`task-actions-dropdown-${this.props.task.uniqueId}`}
       placeholder={COPY.TASK_ACTION_DROPDOWN_BOX_LABEL}
       options={this.props.task.availableActions}
       onChange={this.changeRoute}
