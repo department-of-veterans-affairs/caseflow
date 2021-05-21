@@ -63,14 +63,10 @@ class ReviewNextButton extends React.PureComponent {
   }
 
   handleClick = (selectedForm, intakeData) => {
-    console.log(this.props)
-    
-
     schema
       .validate(intakeData)
-      .then((valid) => {
+      .then(() => {
         this.props.setReceiptDateError(null)
-        console.log(valid)
         // If adding new claimant, we won't submit to backend yet
         if (intakeData?.claimant === 'claimant_not_listed') {
           return this.props.history.push('/add_claimant');
@@ -83,14 +79,12 @@ class ReviewNextButton extends React.PureComponent {
             // This is expected behavior on bad data, so prevent
             // sentry from alerting an unhandled error
             return error;
-          });
+        });
       })
       .catch((error) => {
         this.props.setReceiptDateError(error.errors[0])
         console.log(error)
       });
-
-    
   }
 
   render = () => {
@@ -178,3 +172,5 @@ Review.propTypes = {
 ReviewButtons.propTypes = {
   history: PropTypes.object
 };
+
+export {schema as TestableSchema}
