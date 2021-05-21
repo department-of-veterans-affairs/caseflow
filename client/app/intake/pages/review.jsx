@@ -30,8 +30,8 @@ const schema = yup.object().shape({
     is: REVIEW_OPTIONS.APPEAL.key,
     then: yup.date().typeError('Receipt Date is required.').
       min(
-        new Date(DATES.AMA_ACTIVATION),
-        `Receipt Date cannot be prior to ${moment(DATES.AMA_ACTIVATION).format('LL')}`
+        moment.utc(DATES.AMA_ACTIVATION),
+        `Receipt Date cannot be prior to ${moment.utc(DATES.AMA_ACTIVATION).format('L')}`
       )
   })
 });
