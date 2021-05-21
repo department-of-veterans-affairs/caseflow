@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import * as yup from 'yup';
 import moment from 'moment';
 
-import { PAGE_PATHS, FORM_TYPES, REQUEST_STATE, VBMS_BENEFIT_TYPES } from '../constants';
+import { PAGE_PATHS, FORM_TYPES, REQUEST_STATE, VBMS_BENEFIT_TYPES, REVIEW_OPTIONS } from '../constants';
 import RampElectionPage from './rampElection/review';
 import RampRefilingPage from './rampRefiling/review';
 import SupplementalClaimPage from './supplementalClaim/review';
@@ -26,8 +26,14 @@ import DATES from '../../../constants/DATES';
 import SwitchOnForm from '../components/SwitchOnForm';
 
 const schema = yup.object().shape({
-  receiptDate: yup.date().required().
-    min(new Date(DATES.AMA_ACTIVATION), `Receipt Date cannot be prior to ${moment(DATES.AMA_ACTIVATION).format('LL')}`)
+  receiptDate: yup.mixed().when('$selectedForm', {
+    is: REVIEW_OPTIONS.APPEAL.key,
+    then: yup.date().typeError('Receipt Date is required.').
+      min(
+        new Date(DATES.AMA_ACTIVATION),
+        `Receipt Date cannot be prior to ${moment(DATES.AMA_ACTIVATION).format('LL')}`
+      )
+  })
 });
 
 class Review extends React.PureComponent {
@@ -65,7 +71,7 @@ class ReviewNextButton extends React.PureComponent {
 
   handleClick = (selectedForm, intakeData) => {
     schema.
-      validate(intakeData).
+      validate(intakeData, { context: { selectedForm: selectedForm.key } }).
       then(() => {
         this.props.setReceiptDateError(null);
         // If adding new claimant, we won't submit to backend yet
