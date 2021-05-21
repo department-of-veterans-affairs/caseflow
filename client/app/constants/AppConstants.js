@@ -22,7 +22,7 @@ export const COLORS = {
   RED: '#E31C3D',
   RED_DARK: '#cd2026',
   BLUE_DARKEST: '#122E51',
-  FOCUS_OUTLINE: '#6392ff'
+  FOCUS_OUTLINE: '#2491ff'
 };
 
 export const LOGO_COLORS = {
