@@ -31,5 +31,25 @@ describe ETL::HearingSyncer, :etl, :all_dbs do
         expect(etl_regional_hearing.hearing_location_zip_code).to be_nil
       end
     end
+
+    context "orphaned Hearing" do
+      let!(:orphaned_hearing) { create(:hearing) }
+      let(:etl_build_table) { ETL::BuildTable.where(table_name: "hearings").last }
+
+      before do
+        orphaned_hearing.appeal.delete # not destroy, to avoid callbacks
+      end
+
+      it "skips orphans" do
+        subject
+
+        expect(Hearing.count).to eq(3)
+        expect(ETL::Hearing.count).to eq(2)
+        expect(etl_build_table).to be_complete
+        expect(etl_build_table.rows_rejected).to eq(1)
+        expect(etl_build_table.rows_inserted).to eq(2)
+        expect(etl_build_table.rows_updated).to eq(0)
+      end
+    end
   end
 end
