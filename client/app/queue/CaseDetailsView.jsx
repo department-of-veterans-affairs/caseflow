@@ -147,6 +147,7 @@ export const CaseDetailsView = (props) => {
 
   const supportSubstituteAppellant =
     currentUserOnClerkOfTheBoard &&
+    !appeal.appellantIsNotVeteran &&
     props.featureToggles.recognized_granted_substitution_after_dd &&
     appeal.caseType === 'Original' &&
     // Substitute appellants for hearings will be supported later, but aren't yet:
