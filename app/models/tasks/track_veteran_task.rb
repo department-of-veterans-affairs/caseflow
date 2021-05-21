@@ -71,15 +71,19 @@ class TrackVeteranTask < Task
     # Close all TrackVeteranTasks and InformalHearingPresentationTasks for now-former VSO representatives.
     outdated_representatives = cached_representatives - fresh_representatives
     tasks_to_sync.select { |t| outdated_representatives.include?(t.assigned_to) }.each do |task|
-      task.update!(status: Constants.TASK_STATUSES.cancelled)
-      task.children.open.each { |child_task| child_task.update!(status: Constants.TASK_STATUSES.cancelled) }
+      task.update!(status: Constants.TASK_STATUSES.cancelled,
+                   cancellation_reason: Constants.TASK_CANCELLATION_REASONS.poa_change)
+      task.children.open.each do |child_task|
+        child_task.update!(status: Constants.TASK_STATUSES.cancelled,
+                           cancellation_reason: Constants.TASK_CANCELLATION_REASONS.poa_change)
+      end
       closed_task_count += 1
     end
 
     [new_task_count, closed_task_count]
   end
-  # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
   private
 
