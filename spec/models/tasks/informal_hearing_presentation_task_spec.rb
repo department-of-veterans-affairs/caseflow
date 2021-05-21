@@ -122,6 +122,18 @@ describe InformalHearingPresentationTask, :postgres do
         expect(Raven).to receive(:capture_exception).exactly(0).times
       end
     end
+
+    context "update_to_new_poa will fail" do
+      before do
+        allow(Raven).to receive(:capture_exception)
+        allow(TrackVeteranTask).to receive(:sync_tracking_tasks).and_raise("error")
+      end
+
+      it "reports error to raven" do
+        InformalHearingPresentationTask.update_to_new_poa(appeal)
+        expect(Raven).to have_received(:capture_exception)
+      end
+    end
   end
 
   describe "when an IHP task is cancelled" do
