@@ -107,6 +107,12 @@ export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), acti
         $set: action.payload.receiptDate
       }
     });
+  case ACTIONS.SET_RECEIPT_DATE_ERROR:
+    return update(state, {
+      receiptDateError: {
+        $set: action.payload.receiptDateError
+      }
+    });
   case ACTIONS.SET_APPEAL_DOCKET:
     return update(state, {
       appealDocket: {

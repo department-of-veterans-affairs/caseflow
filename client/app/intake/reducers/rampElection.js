@@ -102,6 +102,12 @@ export const rampElectionReducer = (state = mapDataToInitialRampElection(), acti
         $set: action.payload.receiptDate
       }
     });
+  case ACTIONS.SET_RECEIPT_DATE_ERROR:
+    return update(state, {
+      receiptDateError: {
+        $set: action.payload.receiptDateError
+      }
+    });
   case ACTIONS.SUBMIT_REVIEW_START:
     return update(state, {
       requestStatus: {

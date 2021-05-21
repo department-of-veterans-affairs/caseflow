@@ -120,6 +120,12 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         $set: action.payload.receiptDate
       }
     });
+  case ACTIONS.SET_RECEIPT_DATE_ERROR:
+    return update(state, {
+      receiptDateError: {
+        $set: action.payload.receiptDateError
+      }
+    });
   case ACTIONS.SET_BENEFIT_TYPE:
     return update(state, {
       benefitType: {
