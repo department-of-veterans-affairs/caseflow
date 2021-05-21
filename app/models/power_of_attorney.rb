@@ -75,10 +75,7 @@ class PowerOfAttorney
   end
 
   def fetch_bgs_power_of_attorney
-    if LegacyAppeal.veteran_is_not_claimant
-      fetch_bgs_power_of_attorney_by_claimant_participant_id
-    else fetch_bgs_power_of_attorney_by_file_number
-    end
+    fetch_bgs_power_of_attorney_by_claimant_participant_id || fetch_bgs_power_of_attorney_by_file_number
   rescue BgsPowerOfAttorney::BgsPOANotFound
     nil
   end
