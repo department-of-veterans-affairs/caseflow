@@ -65,4 +65,13 @@ class InformalHearingPresentationTask < Task
       super(params, user)
     end
   end
+
+  def self.update_to_new_poa(appeal)
+    begin
+      TrackVeteranTask.sync_tracking_tasks(appeal)
+    rescue StandardError => error
+      Raven.capture_exception(error)
+      nil
+    end
+  end
 end
