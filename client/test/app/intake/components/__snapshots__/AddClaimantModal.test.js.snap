@@ -80,6 +80,7 @@ exports[`AddClaimantModal renders correctly 1`] = `
                 <label
                   class="question-label"
                   for="relationship"
+                  id="relationship-label"
                 >
                   <strong>
                     <span>
@@ -113,10 +114,15 @@ exports[`AddClaimantModal renders correctly 1`] = `
                           >
                             <input
                               aria-autocomplete="list"
+                              aria-expanded="false"
+                              aria-haspopup="true"
+                              aria-labelledby="relationship-label"
+                              aria-owns="relationship-listbox"
                               autocapitalize="none"
                               autocomplete="off"
                               autocorrect="off"
                               id="relationship"
+                              role="combobox"
                               spellcheck="false"
                               style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                               tabindex="0"
@@ -154,6 +160,11 @@ exports[`AddClaimantModal renders correctly 1`] = `
                         </div>
                       </div>
                     </div>
+                    <input
+                      name="relationship"
+                      type="hidden"
+                      value="attorney"
+                    />
                   </div>
                 </div>
               </div>
@@ -167,6 +178,7 @@ exports[`AddClaimantModal renders correctly 1`] = `
                 <label
                   class="question-label"
                   for="claimant"
+                  id="claimant-label"
                 >
                   <strong>
                     <span>
@@ -200,10 +212,15 @@ exports[`AddClaimantModal renders correctly 1`] = `
                           >
                             <input
                               aria-autocomplete="list"
+                              aria-expanded="false"
+                              aria-haspopup="true"
+                              aria-labelledby="claimant-label"
+                              aria-owns="claimant-listbox"
                               autocapitalize="none"
                               autocomplete="off"
                               autocorrect="off"
                               id="claimant"
+                              role="combobox"
                               spellcheck="false"
                               style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                               tabindex="0"
@@ -255,6 +272,11 @@ exports[`AddClaimantModal renders correctly 1`] = `
                         </div>
                       </div>
                     </div>
+                    <input
+                      name="claimant"
+                      type="hidden"
+                      value=""
+                    />
                   </div>
                 </div>
               </div>
