@@ -160,7 +160,8 @@ exports[`DocketSwitchEditTasksForm default values populates with default values 
             >
               <label
                 class="question-label"
-                for="newTasks[0].type"
+                for="new-tasks-0-type"
+                id="new-tasks-0-type-label"
               >
                 <span>
                   Select the type of task you'd like to open:
@@ -176,18 +177,18 @@ exports[`DocketSwitchEditTasksForm default values populates with default values 
                     aria-live="polite"
                     class="css-1laao21-a11yText"
                   >
-                    <p
+                    <span
                       id="aria-selection-event"
                     >
                        
                       
-                    </p>
-                    <p
+                    </span>
+                    <span
                       id="aria-context"
                     >
                        
                         0 results available. Select is focused ,type to refine list, press Down to open the menu, 
-                    </p>
+                    </span>
                   </span>
                   <div
                     class="cf-select__control cf-select__control--is-focused css-1pahdxg-control"
@@ -209,10 +210,15 @@ exports[`DocketSwitchEditTasksForm default values populates with default values 
                         >
                           <input
                             aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="new-tasks-0-type-label"
+                            aria-owns="new-tasks-0-type-listbox"
                             autocapitalize="none"
                             autocomplete="off"
                             autocorrect="off"
-                            id="newTasks[0].type"
+                            id="new-tasks-0-type"
+                            role="combobox"
                             spellcheck="false"
                             style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                             tabindex="0"
@@ -250,6 +256,11 @@ exports[`DocketSwitchEditTasksForm default values populates with default values 
                       </div>
                     </div>
                   </div>
+                  <input
+                    name="newTasks[0].type"
+                    type="hidden"
+                    value="aoj"
+                  />
                 </div>
               </div>
             </div>

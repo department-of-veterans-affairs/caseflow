@@ -25,6 +25,7 @@ class BgsPowerOfAttorney < CaseflowRecord
             :representative_type, presence: true
 
   before_save :update_cached_attributes!
+  after_save :update_ihp_task, if: :update_ihp_enabled?
 
   class << self
     # Neither file_number nor claimant_participant_id is unique by itself,
@@ -151,6 +152,13 @@ class BgsPowerOfAttorney < CaseflowRecord
     save!
   end
 
+  def update_ihp_task
+    appeals = Appeal.where(veteran_file_number: file_number, poa_participant_id: poa_participant_id)
+    appeals.each do |appeal|
+      InformalHearingPresentationTask.update_to_new_poa(appeal)
+    end
+  end
+
   def found?
     return false if not_found?
 
@@ -231,5 +239,10 @@ class BgsPowerOfAttorney < CaseflowRecord
     return nil if !participant_id
 
     BgsAddressService.new(participant_id: poa_participant_id).address
+  end
+
+  def update_ihp_enabled?
+    FeatureToggle.enabled?(:poa_auto_ihp_update, user: RequestStore.store[:current_user]) &&
+      saved_change_to_poa_participant_id?
   end
 end
