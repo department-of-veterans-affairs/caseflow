@@ -90,7 +90,7 @@ describe('EditCavcRemandForm', () => {
         expect(screen.getByText(COPY.ADD_CAVC_PAGE_TITLE)).toBeInTheDocument();
       });
 
-      it('passes a11y testing', async () => {
+      it.only('passes a11y testing', async () => {
         const { container } = setup();
 
         const results = await axe(container);

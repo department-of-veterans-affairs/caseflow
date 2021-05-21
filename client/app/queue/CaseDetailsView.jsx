@@ -147,6 +147,7 @@ export const CaseDetailsView = (props) => {
 
   const supportSubstituteAppellant =
     currentUserOnClerkOfTheBoard &&
+    !appeal.appellantIsNotVeteran &&
     props.featureToggles.recognized_granted_substitution_after_dd &&
     appeal.caseType === 'Original' &&
     // Substitute appellants for hearings will be supported later, but aren't yet:
@@ -236,10 +237,13 @@ export const CaseDetailsView = (props) => {
             <CaseHearingsDetail title="Hearings" appeal={appeal} hearingTasks={parentHearingTasks} />
           )}
           <VeteranDetail title="About the Veteran" appealId={appealId} />
-          {!_.isNull(appeal.appellantFullName) &&
-            appeal.appellantIsNotVeteran && (
-            <AppellantDetail title="About the Appellant" appeal={appeal} />
-          )}
+          {appeal.appellantIsNotVeteran && !_.isNull(appeal.appellantFullName) && (
+            <AppellantDetail
+              title="About the Appellant"
+              appeal={appeal}
+              substitutionDate={appeal.appellantSubstitution && appeal.appellantSubstitution.substitution_date}
+            />
+          ) }
 
           {!_.isNull(appeal.cavcRemand) && appeal.cavcRemand && (
             <CavcDetail
@@ -281,12 +285,14 @@ CaseDetailsView.propTypes = {
   scheduledHearingId: PropTypes.string,
   pollHearing: PropTypes.bool,
   stopPollingHearing: PropTypes.func,
+  substituteAppellant: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({
   scheduledHearingId: state.components.scheduledHearing.externalId,
   pollHearing: state.components.scheduledHearing.polling,
   featureToggles: state.ui.featureToggles,
+  substituteAppellant: state.substituteAppellant,
 });
 
 const mapDispatchToProps = (dispatch) =>
