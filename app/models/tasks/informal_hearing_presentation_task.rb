@@ -36,8 +36,8 @@ class InformalHearingPresentationTask < Task
 
   def available_actions(user)
     return USER_ACTIONS if assigned_to == user
-    
-    return ADMIN_ACTIONS if task_is_assigned_to_user_within_organization?(user) && 
+
+    return ADMIN_ACTIONS if task_is_assigned_to_user_within_organization?(user) &&
                             parent.assigned_to.user_is_admin?(user)
 
     return ORG_ACTIONS if task_is_assigned_to_users_organization?(user)
