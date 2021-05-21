@@ -122,6 +122,18 @@ describe InformalHearingPresentationTask, :postgres do
         expect(Raven).to receive(:capture_exception).exactly(0).times
       end
     end
+
+    context "update_to_new_poa will fail" do
+      before do
+        allow(Raven).to receive(:capture_exception)
+        allow(TrackVeteranTask).to receive(:sync_tracking_tasks).and_raise("error")
+      end
+
+      it "reports error to raven" do
+        InformalHearingPresentationTask.update_to_new_poa(appeal)
+        expect(Raven).to have_received(:capture_exception)
+      end
+    end
   end
 
   describe "when an IHP task is cancelled" do
@@ -171,6 +183,22 @@ describe InformalHearingPresentationTask, :postgres do
         expect(task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(IhpDraft.where(appeal: appeal, organization: organization).count).to eq 1
       end
+    end
+  end
+
+  describe "#label" do
+    let(:appeal) { create(:appeal) }
+    let(:task) do
+      InformalHearingPresentationTask.find(create(:informal_hearing_presentation_task, assigned_to: user).id)
+    end
+
+    before do
+      InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+    end
+
+    subject { task.label }
+    it "returns expected copy" do
+      expect(subject).to eq(COPY::IHP_TASK_LABEL)
     end
   end
 end
