@@ -4,11 +4,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment-timezone';
 
 // Local Dependencies
-import {
-  setTimeSlots,
-  getHourOffsetFromEST,
-  TIMEZONES_WITH_LUNCHBREAK
-} from '../../utils';
+import { setTimeSlots, TIMEZONES_WITH_LUNCHBREAK } from '../../utils';
 import { TimeSlotButton } from './TimeSlotButton';
 import Button from '../../../components/Button';
 import SmallLoader from '../../../components/SmallLoader';
@@ -33,17 +29,8 @@ export const TimeSlot = ({
   const beginsAt = hearing?.hearingDay?.beginsAt;
   const numberOfSlots = hearing?.hearingDay?.totalSlots;
   const slotLengthMinutes = hearing?.hearingDay?.slotLengthMinutes;
-
-  // Get a lunch break time that will be 12:30 when converted to EST
-  // America/New_York => '12:30' but America/Chicago => '13:30'
-  const lunchBreak = TIMEZONES_WITH_LUNCHBREAK.includes(roTimezone) ?
-    {
-      time: moment.tz('2020-01-01 12:30', 'America/New_York').
-        add(getHourOffsetFromEST(roTimezone), 'hour').
-        format('HH:mm'),
-      lengthInMinutes: 30
-    } :
-    {};
+  // If there is a lunchbreak it's hardcoded to 12:30pm roTimezone and 60 minutes long
+  const lunchBreak = TIMEZONES_WITH_LUNCHBREAK.includes(roTimezone);
 
   const slots = setTimeSlots({
     scheduledHearingsList,

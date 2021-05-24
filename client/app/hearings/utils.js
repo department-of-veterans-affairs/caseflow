@@ -130,14 +130,7 @@ export const VIRTUAL_HEARING_GUEST = 'guest';
 export const TIMEZONES_WITH_LUNCHBREAK = [
   'America/New_York', 'America/Chicago', 'America/Indiana/Indianapolis',
   'America/Kentucky/Louisville', 'America/Puerto_Rico'
-]
-
-/**
- * Get hour offset from EST - 0 if timezone is in eastern, 1 for central, 3 for pacific etc
- * @param {string} timezone like 'America/New_York'
- */
-export const getHourOffsetFromEST = (timezone) =>
-  Math.abs((moment().tz("America/New_York").zone() - moment().tz(timezone).zone()) / 60)
+];
 
 /**
  * Method to override falsy values for comparison
@@ -538,13 +531,16 @@ const calculateAvailableTimeslots = ({
     const possibleTime = beginsAt.clone().add(index * slotLengthMinutes, 'minutes');
 
     // If it's after the lunch break, move it forward by the length of the break
-    if (lunchBreak?.time) {
-      // / Get the lunchbreak moment on the correct date
-      const [breakHour, breakMinute] = lunchBreak.time.split(':');
-      const lunchBreakMoment = beginsAt.clone().set({ hour: breakHour, minute: breakMinute });
+    if (lunchBreak) {
+      // Set the constants for lunch breaks
+      const LUNCH_TIME = { hour: '12', minute: '30', lengthInMinutes: '30' };
+
+      // Get the lunchbreak moment on the correct date
+      const lunchBreakMoment = beginsAt.clone().tz(roTimezone).
+        set({ hour: LUNCH_TIME.hour, minute: LUNCH_TIME.hour });
 
       if (possibleTime.isSameOrAfter(lunchBreakMoment)) {
-        possibleTime.add(lunchBreak.lengthInMinutes, 'minutes');
+        possibleTime.add(LUNCH_TIME.lengthInMinutes, 'minutes');
       }
     }
 
@@ -625,7 +621,7 @@ export const setTimeSlots = ({
   beginsAt,
   numberOfSlots,
   slotLengthMinutes,
-  lunchBreak = {}
+  lunchBreak = false
 }) => {
   // Safe assign the hearings array in case there are no scheduled hearings
   const scheduledHearings = scheduledHearingsList || [];
