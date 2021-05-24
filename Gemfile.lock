@@ -410,7 +410,7 @@ GEM
     newrelic_rpm (6.5.0.357)
     nio4r (2.5.7)
     no_proxy_fix (0.1.2)
-    nokogiri (1.11.3)
+    nokogiri (1.11.4)
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
     nori (2.6.0)
