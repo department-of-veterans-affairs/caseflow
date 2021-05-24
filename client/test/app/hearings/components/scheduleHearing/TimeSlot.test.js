@@ -30,7 +30,7 @@ const defaultProps = {
   scheduledHearingsList: emptyHearings,
   numberOfSlots: '8',
   slotLengthMinutes: '60',
-  lunchBreak: {},
+  lunchBreak: false,
   fetchScheduledHearings: jest.fn(),
   onChange: mockOnChange
 };
@@ -179,17 +179,21 @@ describe('TimeSlot', () => {
 
         it('moves following slots when there is a lunch break', () => {
           const beginsAt = moment('2021-04-21T08:30:00-04:00').tz('America/New_York');
-          const lunchBreak = { time: '12:30', lengthInMinutes: 45 };
-          const { timeSlots } = setup({ lunchBreak, beginsAt });
+          // This test only works for continental US, that's okay because lunch breaks only apply to eastern
+          // and central timezone ROS right now
+          const lunchBreak = ro.ro !== 'RO58';
+          const { timeSlots } = setup({ lunchBreak, beginsAt, roTimezone: ro.timezone });
 
           expect(timeSlots[0].time.isSame(beginsAt)).toEqual(true);
 
-          const [breakHour, breakMinute] = lunchBreak.time.split(':');
-          const lunchBreakMoment = beginsAt.clone().set({ hour: breakHour, minute: breakMinute });
+          const [breakHour, breakMinute] = ['12', '30'];
+          const lunchBreakMoment = beginsAt.clone().tz(ro.timezone).
+            set({ hour: breakHour, minute: breakMinute });
           const firstSlotAfterLunchBreak = timeSlots.find((item) => item.time.isSameOrAfter(lunchBreakMoment));
 
-          expect(firstSlotAfterLunchBreak.time.isSame(lunchBreakMoment.add(lunchBreak.lengthInMinutes, 'minutes'))).
-            toEqual(true);
+          if (lunchBreak) {
+            expect(firstSlotAfterLunchBreak.time.isSame(lunchBreakMoment.add(30, 'minutes'))).toEqual(true);
+          }
         });
 
         it('hearings display correct times and hide slots appropriately', () => {
