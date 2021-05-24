@@ -40,9 +40,9 @@ class HearingDay < CaseflowRecord
   REQUEST_TYPES = Constants::HEARING_REQUEST_TYPES.with_indifferent_access.freeze
 
   SLOTS_BY_REQUEST_TYPE = {
-    REQUEST_TYPES[:virtual] => 8,
-    REQUEST_TYPES[:central] => 10,
-    REQUEST_TYPES[:video] => 12
+    REQUEST_TYPES[:virtual] => { default: 8, maximum: 12 },
+    REQUEST_TYPES[:central] => { default: 10, maximum: 10 },
+    REQUEST_TYPES[:video] => { default: 12, maximum: 12 }
   }.freeze
 
   DEFAULT_SLOT_LENGTH = 60 # in minutes
@@ -145,7 +145,7 @@ class HearingDay < CaseflowRecord
     # Check if we have a stored value
     return number_of_slots unless number_of_slots.nil?
 
-    SLOTS_BY_REQUEST_TYPE[request_type]
+    SLOTS_BY_REQUEST_TYPE[request_type][:default]
   end
 
   def slot_length_minutes
