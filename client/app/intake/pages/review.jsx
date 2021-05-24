@@ -42,7 +42,9 @@ export default connect(
 class ReviewNextButton extends React.PureComponent {
   submitReview = (selectedForm, intakeData) => {
     if (selectedForm.category === 'decisionReview') {
-      return this.props.submitDecisionReview(this.props.intakeId, intakeData, selectedForm.formName);
+      return this.props.submitDecisionReview(
+        this.props.intakeId, intakeData, selectedForm.formName, this.props.featureToggles
+      );
     }
 
     if (selectedForm.key === 'ramp_election') {

@@ -49,6 +49,7 @@ export const getReceiptDateError = (responseErrorCodes, state) => (
     in_future: 'Receipt date cannot be in the future.',
     before_ramp: 'Receipt Date cannot be earlier than RAMP start date, 11/01/2017.',
     before_ama: `Receipt Date cannot be prior to ${formatDateStr(DATES.AMA_ACTIVATION)}.`,
+    before_ama_test: `Receipt Date cannot be prior to ${formatDateStr(DATES.AMA_ACTIVATION_TEST)}.`,
     before_ramp_receipt_date: 'Receipt date cannot be earlier than the original ' +
       `RAMP election receipt date of ${state.electionReceiptDate}`
   }[_.get(responseErrorCodes.receipt_date, 0)]
@@ -96,7 +97,8 @@ export const formatSearchableDropdownOptions = (options) => {
 // Performs frontend validation on payloads intended for the /review endpoint.
 // For simple validation (i.e. presence of fields), this saves an XHR roundtrip,
 // and decouples error-reporting in the UI from backend ActiveModel logic.
-export const validateReviewData = (intakeData, intakeType) => {
+export const validateReviewData = (intakeData, intakeType, featureToggles) => {
+  console.log(intakeType)
   const fields = REVIEW_DATA_FIELDS[intakeType];
   let errorCodes = {};
   for (const fieldName in fields) {
@@ -108,11 +110,18 @@ export const validateReviewData = (intakeData, intakeType) => {
   if (intakeData.receiptDate && intakeData.receiptDate > (new Date).toISOString()) {
     errorCodes.receipt_date = ['in_future'];
   }
+  if (intakeType === REVIEW_OPTIONS.APPEAL.key) validateReceiptDate(errorCodes, intakeData, featureToggles)
   if (['dependent', 'attorney'].includes(intakeData.claimantType) && !intakeData.claimant) {
     errorCodes.claimant = ['blank'];
   }
   return (Object.keys(errorCodes).length ? errorCodes : null);
 };
+
+const validateReceiptDate = (errorCodes, intakeData, featureToggles) => {
+  if (intakeData.receiptDate && intakeData.receiptDate < (new Date(featureToggles.useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST)).toISOString()) {
+    errorCodes.receipt_date = [featureToggles.useAmaActivationDate ? 'before_ama' : 'before_ama_test']
+  }
+}
 
 
   // Converts all object and nested keys to snake case

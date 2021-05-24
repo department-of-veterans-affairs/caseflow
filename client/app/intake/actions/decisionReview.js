@@ -6,13 +6,13 @@ import { formatIssues } from '../util/issues';
 
 const analytics = true;
 
-export const submitReview = (intakeId, intakeData, intakeType) => (dispatch) => {
+export const submitReview = (intakeId, intakeData, intakeType, featureToggles) => (dispatch) => {
   dispatch({
     type: ACTIONS.SUBMIT_REVIEW_START,
     meta: { analytics }
   });
 
-  const validationErrors = validateReviewData(intakeData, intakeType);
+  const validationErrors = validateReviewData(intakeData, intakeType, featureToggles);
 
   if (validationErrors) {
     dispatch({
