@@ -12,14 +12,15 @@ class AppellantSubstitution < CaseflowRecord
             :substitute_participant_id,
             :poa_participant_id,
             presence: true
+  validates :selected_task_ids,
+            :task_params,
+            presence: true, allow_blank: true
 
   before_create :establish_appeal_stream
   after_create :initialize_tasks
 
-  attr_accessor :claimant_type
-
   def substitute_claimant
-    Claimant.find_by(participant_id: substitute_participant_id)
+    target_appeal.claimant
   end
 
   def substitute_person
