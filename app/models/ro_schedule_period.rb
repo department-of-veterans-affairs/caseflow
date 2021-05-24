@@ -75,16 +75,16 @@ class RoSchedulePeriod < SchedulePeriod
     generate_hearings_days = HearingSchedule::GenerateHearingDaysSchedule.new(self)
 
     # Distribute the requested days adding the room constraint per RO
-    hearing_days_with_room = format_ro_hearing_data(generate_hearings_days.allocate_hearing_days_to_ros(true))
+    generate_hearings_days.allocate_hearing_days_to_ros
 
     # Distribute the requested days without the room constraint per RO
-    hearing_days_without_room = format_ro_hearing_data(generate_hearings_days.allocate_hearing_days_to_ros(false))
+    non_co_hearing_days = format_ro_hearing_data(generate_hearings_days.allocate_no_room_hearing_days_to_ros)
 
     # Distribute the available Central Office hearing days
     co_hearing_days = generate_hearings_days.generate_co_hearing_days_schedule
 
     # Combine the available hearing days
-    hearing_days = hearing_days_with_room + co_hearing_days + hearing_days_without_room
+    hearing_days = co_hearing_days + non_co_hearing_days
     hearing_days.sort_by { |day| day[:scheduled_for] }
   end
 end
