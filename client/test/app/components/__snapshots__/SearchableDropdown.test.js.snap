@@ -10,7 +10,8 @@ exports[`SearchableDropdown renders correctly 1`] = `
     >
       <label
         class="question-label"
-        for="menuTest"
+        for="menu-test"
+        id="menu-test-label"
       >
         <span>
           menuTest
@@ -42,10 +43,15 @@ exports[`SearchableDropdown renders correctly 1`] = `
                 >
                   <input
                     aria-autocomplete="list"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                    aria-labelledby="menu-test-label"
+                    aria-owns="menu-test-listbox"
                     autocapitalize="none"
                     autocomplete="off"
                     autocorrect="off"
-                    id="menuTest"
+                    id="menu-test"
+                    role="combobox"
                     spellcheck="false"
                     style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                     tabindex="0"
@@ -83,6 +89,11 @@ exports[`SearchableDropdown renders correctly 1`] = `
               </div>
             </div>
           </div>
+          <input
+            name="menuTest"
+            type="hidden"
+            value=""
+          />
         </div>
       </div>
     </div>

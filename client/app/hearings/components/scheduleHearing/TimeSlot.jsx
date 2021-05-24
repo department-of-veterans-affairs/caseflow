@@ -1,15 +1,14 @@
 // External Dependencies
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment-timezone';
 
 // Local Dependencies
-import { setTimeSlots, TIMEZONES_WITH_LUNCHBREAK } from '../../utils';
+import { setTimeSlots, TIMEZONES_WITH_LUNCHBREAK, regionalOfficeDetails } from '../../utils';
 import { TimeSlotButton } from './TimeSlotButton';
 import Button from '../../../components/Button';
 import SmallLoader from '../../../components/SmallLoader';
-import { TimePicker } from '../TimePicker';
 import { LOGO_COLORS } from '../../../constants/AppConstants';
+import { TimeModal } from '../modalForms/TimeModal';
 
 export const TimeSlot = ({
   scheduledHearingsList,
@@ -21,17 +20,21 @@ export const TimeSlot = ({
 }) => {
   // Create local state to hold the selected time before saving
   const [selected, setSelected] = useState('');
+  const [isCustomTime, setIsCustomTime] = useState(false);
 
-  // Create a local state to switch between the dropdown for custom times
-  const [custom, setCustom] = useState(false);
+  // Manage the modal for time entry
+  const [timeModal, setTimeModal] = useState(false);
+  const toggleTimeModal = () => setTimeModal((val) => !val);
 
-  // Filter the available time slots to fill in the hearings
+  // Extract the necessary values for timeslot calculation from state
   const beginsAt = hearing?.hearingDay?.beginsAt;
   const numberOfSlots = hearing?.hearingDay?.totalSlots;
   const slotLengthMinutes = hearing?.hearingDay?.slotLengthMinutes;
   // If there is a lunchbreak it's hardcoded to 12:30pm roTimezone and 60 minutes long
   const lunchBreak = TIMEZONES_WITH_LUNCHBREAK.includes(roTimezone);
+  const hearingDayDate = hearing?.hearingDay?.scheduledFor;
 
+  // Get the timeslots
   const slots = setTimeSlots({
     scheduledHearingsList,
     ro,
@@ -39,19 +42,16 @@ export const TimeSlot = ({
     beginsAt,
     numberOfSlots,
     slotLengthMinutes,
-    lunchBreak
+    lunchBreak,
+    selected,
+    hearingDayDate
   });
 
   // Setup the click handler for each time slot
-  const handleChange = (time) => {
-    // Set the selected time slot
+  const handleChange = (time, custom = false) => {
     setSelected(time);
-
-    // Convert to ro timezone, then set the hearing time in reducer
-    const timeInRoZone = moment.tz(time, 'HH:mm', 'America/New_York').tz(roTimezone).
-      format('HH:mm');
-
-    onChange('scheduledTimeString', timeInRoZone);
+    setIsCustomTime(custom);
+    onChange('scheduledTimeString', time.tz(roTimezone).format('HH:mm'));
   };
 
   // Create a hearing Time ID to associate the label with the appropriate form element
@@ -59,6 +59,9 @@ export const TimeSlot = ({
 
   // Determine the column length to evenly distribute the time slots
   const columnLength = Math.ceil(slots.length / 2);
+
+  // Custom button shows different text depending on if a custom time is in use
+  const customText = isCustomTime ? 'Change your custom time' : 'Choose a custom time';
 
   return (
     <React.Fragment>
@@ -72,45 +75,47 @@ export const TimeSlot = ({
           <div>
             <Button
               linkStyling
-              onClick={() => setCustom(!custom)}
+              onClick={() => toggleTimeModal()}
               classNames={['time-slot-button-toggle']}
-            >
-                 Choose a {custom ? 'time slot' : 'custom time'}
-            </Button>
+            >{customText}</Button>
           </div>
-          {custom ? (
-            <TimePicker
-              id={hearingTimeId}
-              roTimezone={roTimezone}
-              onChange={handleChange}
-              value={hearing?.scheduledTimeString}
-            />
-          ) : (
-            <div className="time-slot-button-container">
-              <div className="time-slot-container" >
-                {slots.slice(0, columnLength).map((slot) => (
-                  <TimeSlotButton
-                    {...slot}
-                    key={slot.key}
-                    roTimezone={roTimezone}
-                    selected={selected === slot.hearingTime}
-                    onClick={() => handleChange(slot.hearingTime)}
-                  />
-                ))}
-              </div>
-              <div className="time-slot-container">
-                {slots.slice(columnLength, slots.length).map((slot) => (
-                  <TimeSlotButton
-                    {...slot}
-                    key={slot.key}
-                    roTimezone={roTimezone}
-                    selected={selected === slot.hearingTime}
-                    onClick={() => handleChange(slot.hearingTime)}
-                  />
-                ))}
-              </div>
+          <div className="time-slot-button-container">
+            <div className="time-slot-container" >
+              {slots.slice(0, columnLength).map((slot) => (
+                <TimeSlotButton
+                  {...slot}
+                  key={slot.key}
+                  roTimezone={roTimezone}
+                  selected={slot.time.isSame(selected)}
+                  onClick={() => handleChange(slot.time)}
+                />
+              ))}
             </div>
-          )}
+            <div className="time-slot-container">
+              {slots.slice(columnLength, slots.length).map((slot) => (
+                <TimeSlotButton
+                  {...slot}
+                  key={slot.key}
+                  roTimezone={roTimezone}
+                  selected={slot.time.isSame(selected)}
+                  onClick={() => handleChange(slot.time)}
+                />
+              ))}
+            </div>
+          </div>
+          {timeModal && <TimeModal
+            onCancel={toggleTimeModal}
+            onConfirm={(time) => {
+              handleChange(time, true);
+              toggleTimeModal();
+            }}
+            ro={{
+              city: regionalOfficeDetails(ro) ? regionalOfficeDetails(ro).city : '',
+              timezone: roTimezone
+            }}
+            title={customText}
+            hearingDayDate={hearingDayDate}
+          />}
         </React.Fragment>
       )}
     </React.Fragment>

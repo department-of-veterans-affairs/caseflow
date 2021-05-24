@@ -34,20 +34,6 @@ class SanitizedJsonConfiguration
         sanitize_fields: %w[veteran_file_number],
         retrieval: ->(records) { records[Appeal].map(&:intake).compact.sort_by(&:id) }
       },
-      JudgeCaseReview => {
-        sanitize_fields: %w[comment],
-        retrieval: lambda do |records|
-          judge_task_ids = Task.where(type: JudgeTask.descendants.map(&:name), appeal: records[Appeal]).ids
-          JudgeCaseReview.where(task_id: judge_task_ids).order(:id)
-        end
-      },
-      AttorneyCaseReview => {
-        sanitize_fields: %w[comment],
-        retrieval: lambda do |records|
-          atty_task_ids = Task.where(type: AttorneyTask.descendants.map(&:name), appeal: records[Appeal]).ids
-          AttorneyCaseReview.where(task_id: atty_task_ids).order(:id)
-        end
-      },
       DecisionDocument => {
         # citation_number must be unique and doesn't reference anything else in Caseflow,
         # so transform the number so we can import into the same DB as the original record
@@ -63,6 +49,20 @@ class SanitizedJsonConfiguration
       },
       TaskTimer => {
         retrieval: ->(records) { TaskTimer.where(task_id: records[Task].map(&:id)).order(:id) }
+      },
+      JudgeCaseReview => {
+        sanitize_fields: %w[comment],
+        retrieval: lambda do |records|
+          judge_task_ids = Task.where(type: JudgeTask.descendants.map(&:name), appeal: records[Appeal]).ids
+          JudgeCaseReview.where(task_id: judge_task_ids).order(:id)
+        end
+      },
+      AttorneyCaseReview => {
+        sanitize_fields: %w[comment],
+        retrieval: lambda do |records|
+          atty_task_ids = Task.where(type: AttorneyTask.descendants.map(&:name), appeal: records[Appeal]).ids
+          AttorneyCaseReview.where(task_id: atty_task_ids).order(:id)
+        end
       },
       RequestIssue => {
         sanitize_fields: ["notes", "contested_issue_description", /_(notes|text|description)/],
@@ -276,7 +276,7 @@ class SanitizedJsonConfiguration
   # Start with important types that other records will reassociate with
   def first_types_to_import
     # HearingDay is needed by Hearing
-    @first_types_to_import ||= [Appeal, Organization, User, HearingDay]
+    @first_types_to_import ||= [Appeal, Organization, User, HearingDay, Task]
   end
 
   # During record creation, types where validation and callbacks should be avoided

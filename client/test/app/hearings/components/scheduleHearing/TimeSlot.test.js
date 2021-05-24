@@ -50,56 +50,8 @@ const setup = (props = {}) => {
   return { container, utils, timeSlots, dropdownItems };
 };
 
-const toggleToCustomLink = (utils) => utils.queryByText('Choose a custom time');
-const toggleToSlotsLink = (utils) => utils.queryByText('Choose a time slot');
-
-const toggleTo = ({ toSlots, utils }) => {
-  const toggleLink = toSlots ? toggleToSlotsLink(utils) : toggleToCustomLink(utils);
-
-  if (toggleLink) {
-    fireEvent.click(toggleLink);
-  }
-};
-
-const toggleToSlots = (utils) => toggleTo({ toSlots: true, utils });
-const toggleToCustom = (utils) => toggleTo({ toSlots: false, utils });
-
-const toggleBackAndForth = (utils) => {
-  if (toggleToCustomLink(utils)) {
-    toggleToCustom(utils);
-    toggleToSlots(utils);
-  }
-  if (toggleToSlots(utils)) {
-    toggleToSlots(utils);
-    toggleToCustom(utils);
-  }
-};
-
 const clickTimeslot = (time, timezone) => {
   fireEvent.click(screen.getByText(formatTimeSlotLabel(time, timezone)));
-};
-
-const firstDropdownItemCorrect = (ro, item) => {
-  const eightFifteenRoTimeMoment = moment.tz('08:15', 'HH:mm', ro.timezone);
-  const easternTimeString = eightFifteenRoTimeMoment.tz('America/New_York').format('h:mm');
-  const roTimeString = eightFifteenRoTimeMoment.tz(ro.timezone).format('h:mm');
-
-  expect(item.label).toContain(easternTimeString);
-  expect(item.label).toContain(roTimeString);
-};
-const lastDropdownItemCorrect = (ro, item) => {
-  const fourFortyFiveRoTimeMoment = moment.tz('16:45', 'HH:mm', ro.timezone);
-  const easternTimeString = fourFortyFiveRoTimeMoment.tz('America/New_York').format('h:mm');
-  const roTimeString = fourFortyFiveRoTimeMoment.tz(ro.timezone).format('h:mm');
-
-  expect(item.label).toContain(easternTimeString);
-  expect(item.label).toContain(roTimeString);
-};
-
-const firstLastAndCountOfDropdownItemsCorrect = (ro, dropdownItems) => {
-  firstDropdownItemCorrect(ro, dropdownItems[0]);
-  lastDropdownItemCorrect(ro, dropdownItems[dropdownItems.length - 1]);
-  expect(dropdownItems.length).toEqual(35);
 };
 
 describe('TimeSlot', () => {
@@ -121,26 +73,6 @@ describe('TimeSlot', () => {
     it('should have 1 container for each time slot column and 1 button to change to custom time', () => {
       const { utils, timeSlots } = setup();
 
-      expect(utils.getAllByRole('button')).toHaveLength(timeSlots.length + 1);
-      expect(document.getElementsByClassName('time-slot-button-toggle')).toHaveLength(1);
-      expect(document.getElementsByClassName('time-slot-container')).toHaveLength(2);
-    });
-
-    it('changes between custom and pre-defined times when button link clicked', () => {
-      const { utils, timeSlots } = setup();
-
-      // Click the toggle
-      fireEvent.click(screen.getByText('Choose a custom time'));
-
-      // Check that the correct elements are displayed
-      expect(utils.getAllByRole('button')).toHaveLength(1);
-      expect(document.getElementsByClassName('time-slot-button-toggle')).toHaveLength(1);
-      expect(document.getElementsByClassName('time-slot-container')).toHaveLength(0);
-
-      // Click the toggle
-      fireEvent.click(screen.getByText('Choose a time slot'));
-
-      // Check that the correct types of elements are displayed
       expect(utils.getAllByRole('button')).toHaveLength(timeSlots.length + 1);
       expect(document.getElementsByClassName('time-slot-button-toggle')).toHaveLength(1);
       expect(document.getElementsByClassName('time-slot-container')).toHaveLength(2);
@@ -211,16 +143,6 @@ describe('TimeSlot', () => {
           });
         });
 
-        it('doesnt show slots after midnight', () => {
-          const beginsAt = moment('2021-04-21T23:45:00-04:00').tz('America/New_York');
-          const numberOfSlots = 8;
-          const slotLengthMinutes = 60;
-          const { timeSlots } = setup({ roTimezone: ro.timezone, beginsAt, numberOfSlots, slotLengthMinutes });
-
-          // Should only produce the one slot at beginsAt
-          expect(timeSlots.length).toEqual(1);
-        });
-
         it('creates one slot', () => {
           const { timeSlots } = setup({ roTimezone: ro.timezone, numberOfSlots: 1 });
 
@@ -241,22 +163,10 @@ describe('TimeSlot', () => {
           expect(lastSlotTime.isSame(expectedLastSlotTime)).toBe(true);
         });
 
-        it('has correct custom dropdown options', () => {
-          const { dropdownItems, utils } = setup({ roTimezone: ro.timezone });
-
-          toggleToCustom(utils);
-          // Check that the dropdown times are correct
-          expect(dropdownItems.length > 0).toEqual(true);
-          firstLastAndCountOfDropdownItemsCorrect(ro, dropdownItems);
-          // Toggle back and forth, check that they're still correct
-          toggleBackAndForth(utils);
-          firstLastAndCountOfDropdownItemsCorrect(ro, dropdownItems);
-        });
-
         it('slots have correct time values to submit to backend', () => {
-          const { utils } = setup({ roTimezone: ro.timezone });
+          const { timeSlots, utils } = setup({ roTimezone: ro.timezone });
 
-          const roTime = '11:30';
+          const roTime = timeSlots[0].hearingTime;
 
           clickTimeslot(roTime, ro.timezone);
           const easternTime = moment.tz(roTime, 'HH:mm', 'America/New_York').tz(ro.timezone).
@@ -264,9 +174,6 @@ describe('TimeSlot', () => {
 
           // Expect that we called onChange with 12:30pm ro timezone
           expect(mockOnChange).toHaveBeenLastCalledWith('scheduledTimeString', easternTime);
-
-          // Switch to dropdown
-          toggleToCustom(utils);
 
         });
 
