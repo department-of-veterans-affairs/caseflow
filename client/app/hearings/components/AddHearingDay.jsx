@@ -1,11 +1,11 @@
 import { bindActionCreators } from 'redux';
-import { css } from 'glamor';
 import { debounce, pickBy, isEmpty, filter } from 'lodash';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
-import connect from 'react-redux/es/connect/connect';
+import { connect } from 'react-redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import { HearingTime } from './modalForms/HearingTime';
 
 import {
   RegionalOfficeDropdown,
@@ -44,13 +44,18 @@ import { TimeSlotCount } from '../../components/DataDropdowns/TimeSlotCount';
 import { TimeSlotLength } from '../../components/DataDropdowns/TimeSlotLength';
 import HEARING_REQUEST_TYPES from '../../../constants/HEARING_REQUEST_TYPES';
 import { REQUEST_TYPE_OPTIONS } from '../constants';
+import { TimeSlot } from './scheduleHearing/TimeSlot';
 
 export const AddHearingDay = ({
   history,
   requestType, selectedHearingDay, vlj, coordinator, notes, roomRequired, selectedRegionalOffice,
-  hearingSchedule, closeModal, cancelModal, user, ...props
+  hearingSchedule, user, ...props
 }) => {
-  const [selectedRequestType, setSelectedRequestType] = useState(null);
+  const [hearingStartTime, setHearingStartTime] = useState('09:30');
+  const [slotLength, setSlotLength] = useState(60);
+  const [slotCount, setSlotCount] = useState(8);
+
+  const [selectedRequestType, setSelectedRequestType] = useState(requestType?.value || null);
   const [serverError, setServerError] = useState(false);
   const [noRoomsAvailableError, setNoRoomsAvailableError] = useState(false);
   const [errorMessages, setErrorMessages] = useState({});
@@ -61,16 +66,32 @@ export const AddHearingDay = ({
 
   const dateError = errorMessages?.noDate || errorMessages?.invalidDate;
 
+  const handleStartTimeChange = (value) => {
+    setHearingStartTime(value);
+  };
+
+  const handleSlotLengthChange = (value) => {
+    setSlotLength(Number(value));
+  };
+
+  const handleSlotCountChange = (value) => {
+    setSlotCount(Number(value));
+  };
+
   const submitHearingDay = () => {
     const data = {
       request_type: requestType.value,
       scheduled_for: selectedHearingDay,
+      number_of_slots: slotCount,
+      first_slot_time: hearingStartTime,
+      slot_length_minutes: slotLength,
       judge_id: vlj.value,
       bva_poc: coordinator.value,
       notes,
       assign_room: selectedVirtual ? false : roomRequired,
-      ...(selectedRegionalOffice?.key !== '' && requestType?.value !== 'C' &&
-        { regional_office: selectedRegionalOffice?.key })
+      ...(selectedRegionalOffice?.key !== '' && requestType?.value !== 'C' && {
+        regional_office: selectedRegionalOffice?.key
+      })
     };
 
     ApiUtil.post('/hearings/hearing_day.json', { data }).
@@ -83,8 +104,7 @@ export const AddHearingDay = ({
         newHearings[hearingsLength] = resp?.hearing;
 
         props.onReceiveHearingSchedule(newHearings);
-        closeModal();
-
+        history.push('/schedule');
       }, (error) => {
         if (error?.response?.body && error.response.body.errors &&
         error.response.body.errors[0].status === 400) {
@@ -125,8 +145,6 @@ export const AddHearingDay = ({
 
     submitHearingDay();
   };
-
-  const onClickCancel = () => cancelModal();
 
   const resetErrorState = debounce(() => {
     setErrorMessages({});
@@ -226,8 +244,7 @@ export const AddHearingDay = ({
               excludeVirtualHearingsOption={!selectedVirtual}
               errorMessage={errorMessages?.ro ? getErrorMessage(true) : null}
               onChange={onRoChange}
-              readOnly={Boolean(selectedVirtual)}
-              value={selectedVirtual ? 'R' : selectedRegionalOffice?.key}
+              value={selectedRegionalOffice?.key}
             />
           )}
           {selectedRequestType !== null && (
@@ -256,15 +273,42 @@ export const AddHearingDay = ({
             textAreaStyling={notesFieldStyling}
             value={notes}
           />
-          {selectedRequestType !== null && (
+          {selectedVirtual && !isEmpty(selectedRegionalOffice) && selectedHearingDay !== '' && (
             <React.Fragment>
               <div className="cf-help-divider usa-width-one-whole" />
               <TimeSlotCount
-                value={8}
+                onChange={(value) => handleSlotCountChange(value)}
+                value={slotCount}
               />
               <TimeSlotLength
-                value={60}
+                onChange={(value) => handleSlotLengthChange(value)}
+                value={slotLength}
               />
+              <HearingTime
+                disableRadioOptions
+                regionalOffice={selectedRegionalOffice?.key}
+                errorMessage={errorMessages?.scheduledTimeString}
+                vertical
+                label="Start Time of Slots"
+                enableZone
+                localZone="America/New_York"
+                onChange={handleStartTimeChange}
+                value={hearingStartTime}
+              />
+              <div className="time-slot-preview-container">
+                <TimeSlot
+                  {...props}
+                  disableToggle
+                  preview
+                  slotStartTime={hearingStartTime}
+                  slotLength={slotLength}
+                  slotCount={slotCount}
+                  hearingDate={selectedHearingDay}
+                  label="Preview Time Slots"
+                  ro={selectedRegionalOffice.key}
+                  roTimezone={selectedRegionalOffice?.timezone}
+                />
+              </div>
 
             </React.Fragment>
           )}
@@ -296,7 +340,6 @@ export const AddHearingDay = ({
 };
 
 AddHearingDay.propTypes = {
-  cancelModal: PropTypes.func,
   history: PropTypes.object,
   coordinator: PropTypes.shape({
     value: PropTypes.string

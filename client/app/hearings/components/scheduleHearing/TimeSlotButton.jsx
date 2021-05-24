@@ -68,4 +68,5 @@ TimeSlotButton.propTypes = {
   hearingTime: PropTypes.string,
   roTimezone: PropTypes.string,
   selected: PropTypes.bool,
+  preview: PropTypes.bool,
 };

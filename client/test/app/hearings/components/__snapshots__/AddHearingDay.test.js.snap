@@ -1,0 +1,3556 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AddHearingDay Can Cancel the form 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <section
+        class="cf-app-segment cf-app-segment--alt"
+        role="main"
+      >
+        <div
+          class="hearing-day-container"
+          data-css-63oe3q=""
+        >
+          <h1>
+            Add a Hearing Day
+          </h1>
+          <div
+            class="cf-form-textinput   "
+          >
+            <label
+              for="hearingDate"
+            >
+              <span>
+                <b>
+                  Docket Date
+                </b>
+              </span>
+            </label>
+            <input
+              class="cf-form-textinput"
+              id="hearingDate"
+              max="9999-12-31"
+              name="hearingDate"
+              placeholder="mm/dd/yyyy"
+              type="date"
+              value=""
+            />
+          </div>
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-requestType"
+            >
+              <label
+                class="question-label"
+                for="requestType"
+              >
+                <strong>
+                  <span>
+                    Docket Type
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__placeholder css-1wa3eu0-placeholder"
+                      >
+                        Select...
+                      </div>
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="requestType"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="checkbox-wrapper-roomRequired cf-form-checkboxes"
+          >
+            <div
+              class="cf-form-checkbox"
+            >
+              <input
+                aria-label="roomRequired"
+                id="roomRequired"
+                name="roomRequired"
+                type="checkbox"
+              />
+              <label
+                for="roomRequired"
+              >
+                <span
+                  class=""
+                >
+                  Assign a Board Hearing Room
+                </span>
+                 
+              </label>
+            </div>
+          </div>
+          <div
+            class="cf-form-textarea"
+          >
+            <label
+              class="question-label"
+              for="Notes"
+            >
+              <strong>
+                <span>
+                  Notes
+                  <span
+                    class="cf-optional"
+                  >
+                    Optional
+                  </span>
+                </span>
+              </strong>
+            </label>
+            <textarea
+              data-css-rclhw3=""
+              id="Notes"
+              name="Notes"
+            />
+          </div>
+        </div>
+      </section>
+      <span>
+        <button
+          class="cf-submit cf-btn-link usa-button"
+          data-css-14x0t8z=""
+          id="button-Cancel"
+          type="button"
+        >
+          Cancel
+        </button>
+      </span>
+      <span
+        data-css-jf1dde=""
+      >
+        <span>
+          <button
+            class="cf-submit usa-button"
+            id="button-Add-Hearing-Day"
+            type="button"
+          >
+            Add Hearing Day
+          </button>
+        </span>
+      </span>
+    </div>
+  </body>,
+  "container": <div>
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <div
+        class="hearing-day-container"
+        data-css-63oe3q=""
+      >
+        <h1>
+          Add a Hearing Day
+        </h1>
+        <div
+          class="cf-form-textinput   "
+        >
+          <label
+            for="hearingDate"
+          >
+            <span>
+              <b>
+                Docket Date
+              </b>
+            </span>
+          </label>
+          <input
+            class="cf-form-textinput"
+            id="hearingDate"
+            max="9999-12-31"
+            name="hearingDate"
+            placeholder="mm/dd/yyyy"
+            type="date"
+            value=""
+          />
+        </div>
+        <div
+          class=""
+        >
+          <div
+            class="cf-form-dropdown dropdown-requestType"
+          >
+            <label
+              class="question-label"
+              for="requestType"
+            >
+              <strong>
+                <span>
+                  Docket Type
+                </span>
+              </strong>
+            </label>
+            <div
+              class="cf-select"
+            >
+              <div
+                class=" css-2b097c-container"
+              >
+                <div
+                  class="cf-select__control css-yk16xz-control"
+                >
+                  <div
+                    class="cf-select__value-container css-g1d714-ValueContainer"
+                  >
+                    <div
+                      class="cf-select__placeholder css-1wa3eu0-placeholder"
+                    >
+                      Select...
+                    </div>
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="requestType"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-6q0nyr-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="checkbox-wrapper-roomRequired cf-form-checkboxes"
+        >
+          <div
+            class="cf-form-checkbox"
+          >
+            <input
+              aria-label="roomRequired"
+              id="roomRequired"
+              name="roomRequired"
+              type="checkbox"
+            />
+            <label
+              for="roomRequired"
+            >
+              <span
+                class=""
+              >
+                Assign a Board Hearing Room
+              </span>
+               
+            </label>
+          </div>
+        </div>
+        <div
+          class="cf-form-textarea"
+        >
+          <label
+            class="question-label"
+            for="Notes"
+          >
+            <strong>
+              <span>
+                Notes
+                <span
+                  class="cf-optional"
+                >
+                  Optional
+                </span>
+              </span>
+            </strong>
+          </label>
+          <textarea
+            data-css-rclhw3=""
+            id="Notes"
+            name="Notes"
+          />
+        </div>
+      </div>
+    </section>
+    <span>
+      <button
+        class="cf-submit cf-btn-link usa-button"
+        data-css-14x0t8z=""
+        id="button-Cancel"
+        type="button"
+      >
+        Cancel
+      </button>
+    </span>
+    <span
+      data-css-jf1dde=""
+    >
+      <span>
+        <button
+          class="cf-submit usa-button"
+          id="button-Add-Hearing-Day"
+          type="button"
+        >
+          Add Hearing Day
+        </button>
+      </span>
+    </span>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`AddHearingDay Displays Hearing Day fields when docket type set 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <section
+        class="cf-app-segment cf-app-segment--alt"
+        role="main"
+      >
+        <div
+          class="hearing-day-container"
+          data-css-63oe3q=""
+        >
+          <h1>
+            Add a Hearing Day
+          </h1>
+          <div
+            class="cf-form-textinput   "
+          >
+            <label
+              for="hearingDate"
+            >
+              <span>
+                <b>
+                  Docket Date
+                </b>
+              </span>
+            </label>
+            <input
+              class="cf-form-textinput"
+              id="hearingDate"
+              max="9999-12-31"
+              name="hearingDate"
+              placeholder="mm/dd/yyyy"
+              type="date"
+              value=""
+            />
+          </div>
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-requestType"
+            >
+              <label
+                class="question-label"
+                for="requestType"
+              >
+                <strong>
+                  <span>
+                    Docket Type
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <span
+                    aria-live="polite"
+                    class="css-1laao21-a11yText"
+                  >
+                    <p
+                      id="aria-selection-event"
+                    >
+                       
+                      
+                    </p>
+                    <p
+                      id="aria-context"
+                    >
+                       
+                       option Video focused, 1 of 2. 1 result available for search term Video. Use Up and Down to choose options, press Enter to select the currently focused option, press Escape to exit the menu, press Tab to select the option and exit the menu.
+                    </p>
+                  </span>
+                  <div
+                    class="cf-select__control cf-select__control--is-focused cf-select__control--menu-is-open css-1pahdxg-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="requestType"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value="Video"
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          >
+                            Video
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-1gtu0rj-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__menu css-26l3qy-menu"
+                  >
+                    <div
+                      class="cf-select__menu-list css-4ljt47-MenuList"
+                    >
+                      <div
+                        class="cf-select__option cf-select__option--is-focused cf-select__option--is-selected css-9gakcf-option"
+                        id="react-select-4-option-0"
+                        tabindex="-1"
+                      >
+                        Video
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="checkbox-wrapper-roomRequired cf-form-checkboxes"
+          >
+            <div
+              class="cf-form-checkbox"
+            >
+              <input
+                aria-label="roomRequired"
+                id="roomRequired"
+                name="roomRequired"
+                type="checkbox"
+              />
+              <label
+                for="roomRequired"
+              >
+                <span
+                  class=""
+                >
+                  Assign a Board Hearing Room
+                </span>
+                 
+              </label>
+            </div>
+          </div>
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-regionalOffice"
+            >
+              <label
+                class="question-label"
+                for="regionalOffice"
+              >
+                <strong>
+                  <span>
+                    Regional Office (RO)
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      >
+                        New York City regional office
+                      </div>
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="regionalOffice"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-vlj"
+            >
+              <label
+                class="question-label"
+                for="vlj"
+              >
+                <strong>
+                  <span>
+                    VLJ
+                    <span
+                      class="cf-optional"
+                    >
+                      Optional
+                    </span>
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      />
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="vlj"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-coordinator"
+            >
+              <label
+                class="question-label"
+                for="coordinator"
+              >
+                <strong>
+                  <span>
+                    Hearing Coordinator
+                    <span
+                      class="cf-optional"
+                    >
+                      Optional
+                    </span>
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      />
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="coordinator"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="cf-form-textarea"
+          >
+            <label
+              class="question-label"
+              for="Notes"
+            >
+              <strong>
+                <span>
+                  Notes
+                  <span
+                    class="cf-optional"
+                  >
+                    Optional
+                  </span>
+                </span>
+              </strong>
+            </label>
+            <textarea
+              data-css-rclhw3=""
+              id="Notes"
+              name="Notes"
+            />
+          </div>
+        </div>
+      </section>
+      <span>
+        <button
+          class="cf-submit cf-btn-link usa-button"
+          data-css-14x0t8z=""
+          id="button-Cancel"
+          type="button"
+        >
+          Cancel
+        </button>
+      </span>
+      <span
+        data-css-jf1dde=""
+      >
+        <span>
+          <button
+            class="cf-submit usa-button"
+            id="button-Add-Hearing-Day"
+            type="button"
+          >
+            Add Hearing Day
+          </button>
+        </span>
+      </span>
+    </div>
+  </body>,
+  "container": <div>
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <div
+        class="hearing-day-container"
+        data-css-63oe3q=""
+      >
+        <h1>
+          Add a Hearing Day
+        </h1>
+        <div
+          class="cf-form-textinput   "
+        >
+          <label
+            for="hearingDate"
+          >
+            <span>
+              <b>
+                Docket Date
+              </b>
+            </span>
+          </label>
+          <input
+            class="cf-form-textinput"
+            id="hearingDate"
+            max="9999-12-31"
+            name="hearingDate"
+            placeholder="mm/dd/yyyy"
+            type="date"
+            value=""
+          />
+        </div>
+        <div
+          class=""
+        >
+          <div
+            class="cf-form-dropdown dropdown-requestType"
+          >
+            <label
+              class="question-label"
+              for="requestType"
+            >
+              <strong>
+                <span>
+                  Docket Type
+                </span>
+              </strong>
+            </label>
+            <div
+              class="cf-select"
+            >
+              <div
+                class=" css-2b097c-container"
+              >
+                <span
+                  aria-live="polite"
+                  class="css-1laao21-a11yText"
+                >
+                  <p
+                    id="aria-selection-event"
+                  >
+                     
+                    
+                  </p>
+                  <p
+                    id="aria-context"
+                  >
+                     
+                     option Video focused, 1 of 2. 1 result available for search term Video. Use Up and Down to choose options, press Enter to select the currently focused option, press Escape to exit the menu, press Tab to select the option and exit the menu.
+                  </p>
+                </span>
+                <div
+                  class="cf-select__control cf-select__control--is-focused cf-select__control--menu-is-open css-1pahdxg-control"
+                >
+                  <div
+                    class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                  >
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="requestType"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value="Video"
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        >
+                          Video
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-1gtu0rj-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-6q0nyr-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="cf-select__menu css-26l3qy-menu"
+                >
+                  <div
+                    class="cf-select__menu-list css-4ljt47-MenuList"
+                  >
+                    <div
+                      class="cf-select__option cf-select__option--is-focused cf-select__option--is-selected css-9gakcf-option"
+                      id="react-select-4-option-0"
+                      tabindex="-1"
+                    >
+                      Video
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="checkbox-wrapper-roomRequired cf-form-checkboxes"
+        >
+          <div
+            class="cf-form-checkbox"
+          >
+            <input
+              aria-label="roomRequired"
+              id="roomRequired"
+              name="roomRequired"
+              type="checkbox"
+            />
+            <label
+              for="roomRequired"
+            >
+              <span
+                class=""
+              >
+                Assign a Board Hearing Room
+              </span>
+               
+            </label>
+          </div>
+        </div>
+        <div
+          class=""
+        >
+          <div
+            class="cf-form-dropdown dropdown-regionalOffice"
+          >
+            <label
+              class="question-label"
+              for="regionalOffice"
+            >
+              <strong>
+                <span>
+                  Regional Office (RO)
+                </span>
+              </strong>
+            </label>
+            <div
+              class="cf-select"
+            >
+              <div
+                class=" css-2b097c-container"
+              >
+                <div
+                  class="cf-select__control css-yk16xz-control"
+                >
+                  <div
+                    class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                  >
+                    <div
+                      class="cf-select__single-value css-1uccc91-singleValue"
+                    >
+                      New York City regional office
+                    </div>
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="regionalOffice"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-6q0nyr-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class=""
+        >
+          <div
+            class="cf-form-dropdown dropdown-vlj"
+          >
+            <label
+              class="question-label"
+              for="vlj"
+            >
+              <strong>
+                <span>
+                  VLJ
+                  <span
+                    class="cf-optional"
+                  >
+                    Optional
+                  </span>
+                </span>
+              </strong>
+            </label>
+            <div
+              class="cf-select"
+            >
+              <div
+                class=" css-2b097c-container"
+              >
+                <div
+                  class="cf-select__control css-yk16xz-control"
+                >
+                  <div
+                    class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                  >
+                    <div
+                      class="cf-select__single-value css-1uccc91-singleValue"
+                    />
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="vlj"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-6q0nyr-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class=""
+        >
+          <div
+            class="cf-form-dropdown dropdown-coordinator"
+          >
+            <label
+              class="question-label"
+              for="coordinator"
+            >
+              <strong>
+                <span>
+                  Hearing Coordinator
+                  <span
+                    class="cf-optional"
+                  >
+                    Optional
+                  </span>
+                </span>
+              </strong>
+            </label>
+            <div
+              class="cf-select"
+            >
+              <div
+                class=" css-2b097c-container"
+              >
+                <div
+                  class="cf-select__control css-yk16xz-control"
+                >
+                  <div
+                    class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                  >
+                    <div
+                      class="cf-select__single-value css-1uccc91-singleValue"
+                    />
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="coordinator"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-6q0nyr-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="cf-form-textarea"
+        >
+          <label
+            class="question-label"
+            for="Notes"
+          >
+            <strong>
+              <span>
+                Notes
+                <span
+                  class="cf-optional"
+                >
+                  Optional
+                </span>
+              </span>
+            </strong>
+          </label>
+          <textarea
+            data-css-rclhw3=""
+            id="Notes"
+            name="Notes"
+          />
+        </div>
+      </div>
+    </section>
+    <span>
+      <button
+        class="cf-submit cf-btn-link usa-button"
+        data-css-14x0t8z=""
+        id="button-Cancel"
+        type="button"
+      >
+        Cancel
+      </button>
+    </span>
+    <span
+      data-css-jf1dde=""
+    >
+      <span>
+        <button
+          class="cf-submit usa-button"
+          id="button-Add-Hearing-Day"
+          type="button"
+        >
+          Add Hearing Day
+        </button>
+      </span>
+    </span>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`AddHearingDay Displays Time Slot controls when docket type is Virtual 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <section
+        class="cf-app-segment cf-app-segment--alt"
+        role="main"
+      >
+        <div
+          class="hearing-day-container"
+          data-css-63oe3q=""
+        >
+          <h1>
+            Add a Hearing Day
+          </h1>
+          <div
+            class="cf-form-textinput   "
+          >
+            <label
+              for="hearingDate"
+            >
+              <span>
+                <b>
+                  Docket Date
+                </b>
+              </span>
+            </label>
+            <input
+              class="cf-form-textinput"
+              id="hearingDate"
+              max="9999-12-31"
+              name="hearingDate"
+              placeholder="mm/dd/yyyy"
+              type="date"
+              value=""
+            />
+          </div>
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-requestType"
+            >
+              <label
+                class="question-label"
+                for="requestType"
+              >
+                <strong>
+                  <span>
+                    Docket Type
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <span
+                    aria-live="polite"
+                    class="css-1laao21-a11yText"
+                  >
+                    <p
+                      id="aria-selection-event"
+                    >
+                       
+                      
+                    </p>
+                    <p
+                      id="aria-context"
+                    >
+                       
+                        0 results available for search term Virtual. Use Up and Down to choose options, press Enter to select the currently focused option, press Escape to exit the menu, press Tab to select the option and exit the menu.
+                    </p>
+                  </span>
+                  <div
+                    class="cf-select__control cf-select__control--is-focused cf-select__control--menu-is-open css-1pahdxg-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="requestType"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value="Virtual"
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          >
+                            Virtual
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-1gtu0rj-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__menu css-26l3qy-menu"
+                  >
+                    <div
+                      class="cf-select__menu-list css-4ljt47-MenuList"
+                    >
+                      <div
+                        class="cf-select__menu-notice cf-select__menu-notice--no-options css-gg45go-NoOptionsMessage"
+                      >
+                        Not an option
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="checkbox-wrapper-roomRequired cf-form-checkboxes"
+          >
+            <div
+              class="cf-form-checkbox"
+            >
+              <input
+                aria-label="roomRequired"
+                disabled=""
+                id="roomRequired"
+                name="roomRequired"
+                type="checkbox"
+              />
+              <label
+                for="roomRequired"
+              >
+                <span
+                  class=""
+                >
+                  Assign a Board Hearing Room
+                </span>
+                 
+              </label>
+            </div>
+          </div>
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-regionalOffice"
+            >
+              <label
+                class="question-label"
+                for="regionalOffice"
+              >
+                <strong>
+                  <span>
+                    Regional Office (RO)
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      >
+                        New York City regional office
+                      </div>
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="regionalOffice"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-vlj"
+            >
+              <label
+                class="question-label"
+                for="vlj"
+              >
+                <strong>
+                  <span>
+                    VLJ
+                    <span
+                      class="cf-optional"
+                    >
+                      Optional
+                    </span>
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      />
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="vlj"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-coordinator"
+            >
+              <label
+                class="question-label"
+                for="coordinator"
+              >
+                <strong>
+                  <span>
+                    Hearing Coordinator
+                    <span
+                      class="cf-optional"
+                    >
+                      Optional
+                    </span>
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      />
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="coordinator"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="cf-form-textarea"
+          >
+            <label
+              class="question-label"
+              for="Notes"
+            >
+              <strong>
+                <span>
+                  Notes
+                  <span
+                    class="cf-optional"
+                  >
+                    Optional
+                  </span>
+                </span>
+              </strong>
+            </label>
+            <textarea
+              data-css-rclhw3=""
+              id="Notes"
+              name="Notes"
+            />
+          </div>
+          <div
+            class="cf-help-divider usa-width-one-whole"
+          />
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-numberOfSlots"
+            >
+              <label
+                class="question-label"
+                for="numberOfSlots"
+              >
+                <strong>
+                  <span>
+                    Number of Time Slots
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      >
+                        8
+                      </div>
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="numberOfSlots"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-slotLengthMinutes"
+            >
+              <label
+                class="question-label"
+                for="slotLengthMinutes"
+              >
+                <strong>
+                  <span>
+                    Length of Time Slots
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      >
+                        60 minutes
+                      </div>
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="slotLengthMinutes"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class=""
+          >
+            <div
+              class="cf-form-dropdown dropdown-optionalHearingTime0"
+            >
+              <label
+                class="question-label"
+                for="optionalHearingTime0"
+              >
+                <strong>
+                  <span>
+                    Start Time of Slots
+                  </span>
+                </strong>
+              </label>
+              <div
+                class="cf-select"
+              >
+                <div
+                  class=" css-2b097c-container"
+                >
+                  <div
+                    class="cf-select__control css-yk16xz-control"
+                  >
+                    <div
+                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                    >
+                      <div
+                        class="cf-select__single-value css-1uccc91-singleValue"
+                      >
+                        9:30 AM Eastern Time (US & Canada)
+                      </div>
+                      <div
+                        class="css-81nyic-Input"
+                      >
+                        <div
+                          class="cf-select__input"
+                          style="display: inline-block;"
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            id="optionalHearingTime0"
+                            spellcheck="false"
+                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-6q0nyr-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="time-slot-preview-container"
+          >
+            <label
+              class="time-slot-label"
+              for="hearing-time-undefined"
+            >
+              Preview Time Slots
+            </label>
+            <div
+              class="time-slot-button-container"
+            >
+              <div
+                class="time-slot-container"
+              >
+                <span>
+                  <button
+                    class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
+                    disabled=""
+                    type="button"
+                  >
+                    <div>
+                      <div
+                        style="flex: 1;"
+                      >
+                        9:30 AM EDT
+                      </div>
+                      <div />
+                    </div>
+                  </button>
+                </span>
+                <span>
+                  <button
+                    class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
+                    disabled=""
+                    type="button"
+                  >
+                    <div>
+                      <div
+                        style="flex: 1;"
+                      >
+                        10:30 AM EDT
+                      </div>
+                      <div />
+                    </div>
+                  </button>
+                </span>
+                <span>
+                  <button
+                    class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
+                    disabled=""
+                    type="button"
+                  >
+                    <div>
+                      <div
+                        style="flex: 1;"
+                      >
+                        11:30 AM EDT
+                      </div>
+                      <div />
+                    </div>
+                  </button>
+                </span>
+                <span>
+                  <button
+                    class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
+                    disabled=""
+                    type="button"
+                  >
+                    <div>
+                      <div
+                        style="flex: 1;"
+                      >
+                        12:30 PM EDT
+                      </div>
+                      <div />
+                    </div>
+                  </button>
+                </span>
+              </div>
+              <div
+                class="time-slot-container"
+              >
+                <span>
+                  <button
+                    class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
+                    disabled=""
+                    type="button"
+                  >
+                    <div>
+                      <div
+                        style="flex: 1;"
+                      >
+                        1:30 PM EDT
+                      </div>
+                      <div />
+                    </div>
+                  </button>
+                </span>
+                <span>
+                  <button
+                    class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
+                    disabled=""
+                    type="button"
+                  >
+                    <div>
+                      <div
+                        style="flex: 1;"
+                      >
+                        2:30 PM EDT
+                      </div>
+                      <div />
+                    </div>
+                  </button>
+                </span>
+                <span>
+                  <button
+                    class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
+                    disabled=""
+                    type="button"
+                  >
+                    <div>
+                      <div
+                        style="flex: 1;"
+                      >
+                        3:30 PM EDT
+                      </div>
+                      <div />
+                    </div>
+                  </button>
+                </span>
+                <span>
+                  <button
+                    class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
+                    disabled=""
+                    type="button"
+                  >
+                    <div>
+                      <div
+                        style="flex: 1;"
+                      >
+                        4:30 PM EDT
+                      </div>
+                      <div />
+                    </div>
+                  </button>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <span>
+        <button
+          class="cf-submit cf-btn-link usa-button"
+          data-css-14x0t8z=""
+          id="button-Cancel"
+          type="button"
+        >
+          Cancel
+        </button>
+      </span>
+      <span
+        data-css-jf1dde=""
+      >
+        <span>
+          <button
+            class="cf-submit usa-button"
+            id="button-Add-Hearing-Day"
+            type="button"
+          >
+            Add Hearing Day
+          </button>
+        </span>
+      </span>
+    </div>
+  </body>,
+  "container": <div>
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <div
+        class="hearing-day-container"
+        data-css-63oe3q=""
+      >
+        <h1>
+          Add a Hearing Day
+        </h1>
+        <div
+          class="cf-form-textinput   "
+        >
+          <label
+            for="hearingDate"
+          >
+            <span>
+              <b>
+                Docket Date
+              </b>
+            </span>
+          </label>
+          <input
+            class="cf-form-textinput"
+            id="hearingDate"
+            max="9999-12-31"
+            name="hearingDate"
+            placeholder="mm/dd/yyyy"
+            type="date"
+            value=""
+          />
+        </div>
+        <div
+          class=""
+        >
+          <div
+            class="cf-form-dropdown dropdown-requestType"
+          >
+            <label
+              class="question-label"
+              for="requestType"
+            >
+              <strong>
+                <span>
+                  Docket Type
+                </span>
+              </strong>
+            </label>
+            <div
+              class="cf-select"
+            >
+              <div
+                class=" css-2b097c-container"
+              >
+                <span
+                  aria-live="polite"
+                  class="css-1laao21-a11yText"
+                >
+                  <p
+                    id="aria-selection-event"
+                  >
+                     
+                    
+                  </p>
+                  <p
+                    id="aria-context"
+                  >
+                     
+                      0 results available for search term Virtual. Use Up and Down to choose options, press Enter to select the currently focused option, press Escape to exit the menu, press Tab to select the option and exit the menu.
+                  </p>
+                </span>
+                <div
+                  class="cf-select__control cf-select__control--is-focused cf-select__control--menu-is-open css-1pahdxg-control"
+                >
+                  <div
+                    class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                  >
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="requestType"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value="Virtual"
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        >
+                          Virtual
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-1gtu0rj-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-6q0nyr-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="cf-select__menu css-26l3qy-menu"
+                >
+                  <div
+                    class="cf-select__menu-list css-4ljt47-MenuList"
+                  >
+                    <div
+                      class="cf-select__menu-notice cf-select__menu-notice--no-options css-gg45go-NoOptionsMessage"
+                    >
+                      Not an option
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="checkbox-wrapper-roomRequired cf-form-checkboxes"
+        >
+          <div
+            class="cf-form-checkbox"
+          >
+            <input
+              aria-label="roomRequired"
+              disabled=""
+              id="roomRequired"
+              name="roomRequired"
+              type="checkbox"
+            />
+            <label
+              for="roomRequired"
+            >
+              <span
+                class=""
+              >
+                Assign a Board Hearing Room
+              </span>
+               
+            </label>
+          </div>
+        </div>
+        <div
+          class=""
+        >
+          <div
+            class="cf-form-dropdown dropdown-regionalOffice"
+          >
+            <label
+              class="question-label"
+              for="regionalOffice"
+            >
+              <strong>
+                <span>
+                  Regional Office (RO)
+                </span>
+              </strong>
+            </label>
+            <div
+              class="cf-select"
+            >
+              <div
+                class=" css-2b097c-container"
+              >
+                <div
+                  class="cf-select__control css-yk16xz-control"
+                >
+                  <div
+                    class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                  >
+                    <div
+                      class="cf-select__single-value css-1uccc91-singleValue"
+                    >
+                      New York City regional office
+                    </div>
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="regionalOffice"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-6q0nyr-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class=""
+        >
+          <div
+            class="cf-form-dropdown dropdown-vlj"
+          >
+            <label
+              class="question-label"
+              for="vlj"
+            >
+              <strong>
+                <span>
+                  VLJ
+                  <span
+                    class="cf-optional"
+                  >
+                    Optional
+                  </span>
+                </span>
+              </strong>
+            </label>
+            <div
+              class="cf-select"
+            >
+              <div
+                class=" css-2b097c-container"
+              >
+                <div
+                  class="cf-select__control css-yk16xz-control"
+                >
+                  <div
+                    class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                  >
+                    <div
+                      class="cf-select__single-value css-1uccc91-singleValue"
+                    />
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="vlj"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-6q0nyr-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class=""
+        >
+          <div
+            class="cf-form-dropdown dropdown-coordinator"
+          >
+            <label
+              class="question-label"
+              for="coordinator"
+            >
+              <strong>
+                <span>
+                  Hearing Coordinator
+                  <span
+                    class="cf-optional"
+                  >
+                    Optional
+                  </span>
+                </span>
+              </strong>
+            </label>
+            <div
+              class="cf-select"
+            >
+              <div
+                class=" css-2b097c-container"
+              >
+                <div
+                  class="cf-select__control css-yk16xz-control"
+                >
+                  <div
+                    class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                  >
+                    <div
+                      class="cf-select__single-value css-1uccc91-singleValue"
+                    />
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="coordinator"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-6q0nyr-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="cf-form-textarea"
+        >
+          <label
+            class="question-label"
+            for="Notes"
+          >
+            <strong>
+              <span>
+                Notes
+                <span
+                  class="cf-optional"
+                >
+                  Optional
+                </span>
+              </span>
+            </strong>
+          </label>
+          <textarea
+            data-css-rclhw3=""
+            id="Notes"
+            name="Notes"
+          />
+        </div>
+        <div
+          class="cf-help-divider usa-width-one-whole"
+        />
+        <div
+          class=""
+        >
+          <div
+            class="cf-form-dropdown dropdown-numberOfSlots"
+          >
+            <label
+              class="question-label"
+              for="numberOfSlots"
+            >
+              <strong>
+                <span>
+                  Number of Time Slots
+                </span>
+              </strong>
+            </label>
+            <div
+              class="cf-select"
+            >
+              <div
+                class=" css-2b097c-container"
+              >
+                <div
+                  class="cf-select__control css-yk16xz-control"
+                >
+                  <div
+                    class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                  >
+                    <div
+                      class="cf-select__single-value css-1uccc91-singleValue"
+                    >
+                      8
+                    </div>
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="numberOfSlots"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-6q0nyr-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class=""
+        >
+          <div
+            class="cf-form-dropdown dropdown-slotLengthMinutes"
+          >
+            <label
+              class="question-label"
+              for="slotLengthMinutes"
+            >
+              <strong>
+                <span>
+                  Length of Time Slots
+                </span>
+              </strong>
+            </label>
+            <div
+              class="cf-select"
+            >
+              <div
+                class=" css-2b097c-container"
+              >
+                <div
+                  class="cf-select__control css-yk16xz-control"
+                >
+                  <div
+                    class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                  >
+                    <div
+                      class="cf-select__single-value css-1uccc91-singleValue"
+                    >
+                      60 minutes
+                    </div>
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="slotLengthMinutes"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-6q0nyr-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class=""
+        >
+          <div
+            class="cf-form-dropdown dropdown-optionalHearingTime0"
+          >
+            <label
+              class="question-label"
+              for="optionalHearingTime0"
+            >
+              <strong>
+                <span>
+                  Start Time of Slots
+                </span>
+              </strong>
+            </label>
+            <div
+              class="cf-select"
+            >
+              <div
+                class=" css-2b097c-container"
+              >
+                <div
+                  class="cf-select__control css-yk16xz-control"
+                >
+                  <div
+                    class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                  >
+                    <div
+                      class="cf-select__single-value css-1uccc91-singleValue"
+                    >
+                      9:30 AM Eastern Time (US & Canada)
+                    </div>
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="optionalHearingTime0"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-6q0nyr-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="time-slot-preview-container"
+        >
+          <label
+            class="time-slot-label"
+            for="hearing-time-undefined"
+          >
+            Preview Time Slots
+          </label>
+          <div
+            class="time-slot-button-container"
+          >
+            <div
+              class="time-slot-container"
+            >
+              <span>
+                <button
+                  class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
+                  disabled=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      style="flex: 1;"
+                    >
+                      9:30 AM EDT
+                    </div>
+                    <div />
+                  </div>
+                </button>
+              </span>
+              <span>
+                <button
+                  class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
+                  disabled=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      style="flex: 1;"
+                    >
+                      10:30 AM EDT
+                    </div>
+                    <div />
+                  </div>
+                </button>
+              </span>
+              <span>
+                <button
+                  class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
+                  disabled=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      style="flex: 1;"
+                    >
+                      11:30 AM EDT
+                    </div>
+                    <div />
+                  </div>
+                </button>
+              </span>
+              <span>
+                <button
+                  class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
+                  disabled=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      style="flex: 1;"
+                    >
+                      12:30 PM EDT
+                    </div>
+                    <div />
+                  </div>
+                </button>
+              </span>
+            </div>
+            <div
+              class="time-slot-container"
+            >
+              <span>
+                <button
+                  class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
+                  disabled=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      style="flex: 1;"
+                    >
+                      1:30 PM EDT
+                    </div>
+                    <div />
+                  </div>
+                </button>
+              </span>
+              <span>
+                <button
+                  class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
+                  disabled=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      style="flex: 1;"
+                    >
+                      2:30 PM EDT
+                    </div>
+                    <div />
+                  </div>
+                </button>
+              </span>
+              <span>
+                <button
+                  class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
+                  disabled=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      style="flex: 1;"
+                    >
+                      3:30 PM EDT
+                    </div>
+                    <div />
+                  </div>
+                </button>
+              </span>
+              <span>
+                <button
+                  class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
+                  disabled=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      style="flex: 1;"
+                    >
+                      4:30 PM EDT
+                    </div>
+                    <div />
+                  </div>
+                </button>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <span>
+      <button
+        class="cf-submit cf-btn-link usa-button"
+        data-css-14x0t8z=""
+        id="button-Cancel"
+        type="button"
+      >
+        Cancel
+      </button>
+    </span>
+    <span
+      data-css-jf1dde=""
+    >
+      <span>
+        <button
+          class="cf-submit usa-button"
+          id="button-Add-Hearing-Day"
+          type="button"
+        >
+          Add Hearing Day
+        </button>
+      </span>
+    </span>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`AddHearingDay Matches snapshot with default props 1`] = `
+<div>
+  <section
+    class="cf-app-segment cf-app-segment--alt"
+    role="main"
+  >
+    <div
+      class="hearing-day-container"
+      data-css-63oe3q=""
+    >
+      <h1>
+        Add a Hearing Day
+      </h1>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="hearingDate"
+        >
+          <span>
+            <b>
+              Docket Date
+            </b>
+          </span>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="hearingDate"
+          max="9999-12-31"
+          name="hearingDate"
+          placeholder="mm/dd/yyyy"
+          type="date"
+          value=""
+        />
+      </div>
+      <div
+        class=""
+      >
+        <div
+          class="cf-form-dropdown dropdown-requestType"
+        >
+          <label
+            class="question-label"
+            for="requestType"
+          >
+            <strong>
+              <span>
+                Docket Type
+              </span>
+            </strong>
+          </label>
+          <div
+            class="cf-select"
+          >
+            <div
+              class=" css-2b097c-container"
+            >
+              <div
+                class="cf-select__control css-yk16xz-control"
+              >
+                <div
+                  class="cf-select__value-container css-g1d714-ValueContainer"
+                >
+                  <div
+                    class="cf-select__placeholder css-1wa3eu0-placeholder"
+                  >
+                    Select...
+                  </div>
+                  <div
+                    class="css-81nyic-Input"
+                  >
+                    <div
+                      class="cf-select__input"
+                      style="display: inline-block;"
+                    >
+                      <input
+                        aria-autocomplete="list"
+                        autocapitalize="none"
+                        autocomplete="off"
+                        autocorrect="off"
+                        id="requestType"
+                        spellcheck="false"
+                        style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                        tabindex="0"
+                        type="text"
+                        value=""
+                      />
+                      <div
+                        style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                >
+                  <span
+                    class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                  />
+                  <div
+                    aria-hidden="true"
+                    class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="css-6q0nyr-Svg"
+                      focusable="false"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      width="20"
+                    >
+                      <path
+                        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="checkbox-wrapper-roomRequired cf-form-checkboxes"
+      >
+        <div
+          class="cf-form-checkbox"
+        >
+          <input
+            aria-label="roomRequired"
+            id="roomRequired"
+            name="roomRequired"
+            type="checkbox"
+          />
+          <label
+            for="roomRequired"
+          >
+            <span
+              class=""
+            >
+              Assign a Board Hearing Room
+            </span>
+             
+          </label>
+        </div>
+      </div>
+      <div
+        class="cf-form-textarea"
+      >
+        <label
+          class="question-label"
+          for="Notes"
+        >
+          <strong>
+            <span>
+              Notes
+              <span
+                class="cf-optional"
+              >
+                Optional
+              </span>
+            </span>
+          </strong>
+        </label>
+        <textarea
+          data-css-rclhw3=""
+          id="Notes"
+          name="Notes"
+        />
+      </div>
+    </div>
+  </section>
+  <span>
+    <button
+      class="cf-submit cf-btn-link usa-button"
+      data-css-14x0t8z=""
+      id="button-Cancel"
+      type="button"
+    >
+      Cancel
+    </button>
+  </span>
+  <span
+    data-css-jf1dde=""
+  >
+    <span>
+      <button
+        class="cf-submit usa-button"
+        id="button-Add-Hearing-Day"
+        type="button"
+      >
+        Add Hearing Day
+      </button>
+    </span>
+  </span>
+</div>
+`;
