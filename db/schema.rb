@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_20_212147) do
+ActiveRecord::Schema.define(version: 2021_05_21_184436) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1653,6 +1653,7 @@ ActiveRecord::Schema.define(version: 2021_05_20_212147) do
   add_foreign_key "cavc_remands", "users", column: "updated_by_id"
   add_foreign_key "certifications", "users"
   add_foreign_key "claims_folder_searches", "users"
+  add_foreign_key "dispatch_tasks", "legacy_appeals", column: "appeal_id"
   add_foreign_key "dispatch_tasks", "users"
   add_foreign_key "distributed_cases", "distributions"
   add_foreign_key "distributed_cases", "tasks"
@@ -1671,6 +1672,7 @@ ActiveRecord::Schema.define(version: 2021_05_20_212147) do
   add_foreign_key "hearing_issue_notes", "request_issues"
   add_foreign_key "hearing_task_associations", "tasks", column: "hearing_task_id"
   add_foreign_key "hearing_views", "users"
+  add_foreign_key "hearings", "appeals"
   add_foreign_key "hearings", "hearing_days"
   add_foreign_key "hearings", "users", column: "created_by_id"
   add_foreign_key "hearings", "users", column: "judge_id"
@@ -1682,6 +1684,7 @@ ActiveRecord::Schema.define(version: 2021_05_20_212147) do
   add_foreign_key "judge_case_reviews", "users", column: "judge_id"
   add_foreign_key "legacy_appeals", "appeal_series"
   add_foreign_key "legacy_hearings", "hearing_days"
+  add_foreign_key "legacy_hearings", "legacy_appeals", column: "appeal_id"
   add_foreign_key "legacy_hearings", "users"
   add_foreign_key "legacy_hearings", "users", column: "created_by_id"
   add_foreign_key "legacy_hearings", "users", column: "updated_by_id"
