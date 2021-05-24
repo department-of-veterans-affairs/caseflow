@@ -19,7 +19,7 @@ import { submitReview } from '../actions/decisionReview';
 import { FORM_TYPES, PAGE_PATHS, INTAKE_STATES } from '../constants';
 import { getIntakeStatus } from '../selectors';
 
-export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
+export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureToggles }) => {
   const dispatch = useDispatch();
   const { goBack, push } = useHistory();
 
@@ -67,7 +67,7 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
     } else {
       intakeData.unlistedClaimant = claimant;
     }
-    dispatch(submitReview(intakeId, intakeData, selectedForm.formName));
+    dispatch(submitReview(intakeId, intakeData, selectedForm.formName, featureToggles));
     dispatch(clearClaimant());
     push('/add_issues');
   };
@@ -131,4 +131,5 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
 };
 AddClaimantPage.propTypes = {
   onAttorneySearch: PropTypes.func,
+  featureToggles: PropTypes.object
 };

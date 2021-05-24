@@ -101,7 +101,7 @@ export const IntakeFrame = (props) => {
             path={PAGE_PATHS.ADD_CLAIMANT}
             title="Add Claimant | Caseflow Intake"
           >
-            <AddClaimantPage />
+            <AddClaimantPage featureToggles={props.featureToggles} />
           </PageRoute>
 
           <PageRoute
