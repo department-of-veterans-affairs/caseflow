@@ -32,12 +32,6 @@ gem "moment_timezone-rails"
 # https://github.com/ankane/multiverse#upgrading-to-rails-6
 gem "multiverse"
 gem "newrelic_rpm"
-# nokogiri versions before 1.10.4 are vulnerable to CVE-2019-5477.
-# https://github.com/sparklemotion/nokogiri/issues/1915
-# nokogiri 1.10.4 is vulnerable to CVE-2019-13117, CVE-2019-13118, CVE-2019-18197.
-# https://github.com/sparklemotion/nokogiri/issues/1943
-# Nokogiri <= 1.10.10 vulnerable to CVE-2020-26247
-# https://github.com/sparklemotion/nokogiri/security/advisories/GHSA-vr8q-g5c7-m54m
 gem "nokogiri", ">= 1.11.0.rc4"
 gem "paper_trail", "~> 10"
 # Used to speed up reporting
