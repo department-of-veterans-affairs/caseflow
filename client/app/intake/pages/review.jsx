@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import * as yup from 'yup';
-import moment from 'moment';
+import { format } from 'date-fns';
 
 import { PAGE_PATHS, FORM_TYPES, REQUEST_STATE, VBMS_BENEFIT_TYPES, REVIEW_OPTIONS } from '../constants';
 import RampElectionPage from './rampElection/review';
@@ -31,16 +31,16 @@ const schema = yup.object().shape({
       is: (selectedForm, useAmaActivationDate) => selectedForm === REVIEW_OPTIONS.APPEAL.key && useAmaActivationDate,
       then: yup.date().typeError('Receipt Date is required.').
         min(
-          moment.utc(DATES.AMA_ACTIVATION),
-        `Receipt Date cannot be prior to ${moment.utc(DATES.AMA_ACTIVATION).format('L')}`
+          new Date(DATES.AMA_ACTIVATION),
+        `Receipt Date cannot be prior to ${format(new Date(DATES.AMA_ACTIVATION), 'MM/dd/yyyy')}`
         )
     }).
     when(['$selectedForm', '$useAmaActivationDate'], {
       is: (selectedForm, useAmaActivationDate) => selectedForm === REVIEW_OPTIONS.APPEAL.key && !useAmaActivationDate,
       then: yup.date().typeError('Receipt Date is required.').
         min(
-          moment.utc(DATES.AMA_ACTIVATION_TEST),
-        `Receipt Date cannot be prior to ${moment.utc(DATES.AMA_ACTIVATION_TEST).format('L')}`
+          new Date(DATES.AMA_ACTIVATION_TEST),
+        `Receipt Date cannot be prior to ${format(new Date(DATES.AMA_ACTIVATION_TEST), 'MM/dd/yyyy')}`
         )
     })
 });
