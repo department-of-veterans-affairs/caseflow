@@ -127,6 +127,18 @@ export const getAppellantTitle = (appellantIsNotVeteran) =>
 export const VIRTUAL_HEARING_HOST = 'host';
 export const VIRTUAL_HEARING_GUEST = 'guest';
 
+export const TIMEZONES_WITH_LUNCHBREAK = [
+  'America/New_York', 'America/Chicago', 'America/Indiana/Indianapolis',
+  'America/Kentucky/Louisville', 'America/Puerto_Rico'
+]
+
+/**
+ * Get hour offset from EST - 0 if timezone is in eastern, 1 for central, 3 for pacific etc
+ * @param {string} timezone like 'America/New_York'
+ */
+export const getHourOffsetFromEST = (timezone) =>
+  Math.abs((moment().tz("America/New_York").zone() - moment().tz(timezone).zone()) / 60)
+
 /**
  * Method to override falsy values for comparison
  * @param {*} init -- Initial value to compare against
@@ -516,7 +528,7 @@ const calculateAvailableTimeslots = ({
     const [hearingHour, hearingMinute] = hearing.hearingTime.split(':');
     const hearingTimeMoment = beginsAt.clone().set({ hour: hearingHour, minute: hearingMinute });
 
-    // Change which zone the time is in but don't conver, "08:15 EDT" -> "08:15 PDT"
+    // Change which zone the time is in but don't convert, "08:15 EDT" -> "08:15 PDT"
     return hearingTimeMoment.tz(roTimezone, true);
   });
 
