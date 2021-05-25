@@ -52,7 +52,7 @@ export const AddHearingDay = ({
   requestType, selectedHearingDay, vlj, coordinator, notes, roomRequired, selectedRegionalOffice,
   hearingSchedule, user, ...props
 }) => {
-  const [hearingStartTime, setHearingStartTime] = useState('09:30');
+  const [hearingStartTime, setHearingStartTime] = useState('08:30');
   const [slotLength, setSlotLength] = useState(60);
   const [slotCount, setSlotCount] = useState(8);
 
