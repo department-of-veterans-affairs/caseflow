@@ -154,14 +154,21 @@ describe('TimeSlot', () => {
           });
 
           it(`correctly parses hearings and slots onto the date in beginsAt (${beginsAtString})`, () => {
-            const beginsAt = moment(beginsAtString).tz('America/New_York');
-            const hearingDayDate = beginsAt.tz(ro.timezone).format('YYYY-MM-DD');
+            const hearingDate = '2021-04-21';
+            const numberOfSlots = 8;
+            const slotLengthMinutes = 60;
             const { timeSlots } = setup({
+              hearingDate,
+              hearingDayDate: hearingDate,
               roTimezone: ro.timezone,
-              beginsAt,
-              hearingDayDate,
-              scheduledHearingsList: oneHearing
+              beginsAt: beginsAtString,
+              slotStartTime: beginsAtString,
+              slotCount: numberOfSlots,
+              numberOfSlots,
+              slotLength: slotLengthMinutes,
+              slotLengthMinutes,
             });
+            const beginsAt = moment.tz(`${beginsAtString} ${hearingDate}`, 'HH:mm YYYY-MM-DD', 'America/New_York');
 
             const slotsAndHearingsOnBeginsAtDate = timeSlots.every((slotOrHearing) =>
               slotOrHearing.time.isSame(beginsAt, 'day'));

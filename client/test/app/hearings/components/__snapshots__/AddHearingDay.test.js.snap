@@ -46,7 +46,8 @@ Object {
             >
               <label
                 class="question-label"
-                for="requestType"
+                for="request-type"
+                id="request-type-label"
               >
                 <strong>
                   <span>
@@ -80,10 +81,15 @@ Object {
                         >
                           <input
                             aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="request-type-label"
+                            aria-owns="request-type-listbox"
                             autocapitalize="none"
                             autocomplete="off"
                             autocorrect="off"
-                            id="requestType"
+                            id="request-type"
+                            role="combobox"
                             spellcheck="false"
                             style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                             tabindex="0"
@@ -121,6 +127,11 @@ Object {
                       </div>
                     </div>
                   </div>
+                  <input
+                    name="requestType"
+                    type="hidden"
+                    value=""
+                  />
                 </div>
               </div>
             </div>
@@ -242,7 +253,8 @@ Object {
           >
             <label
               class="question-label"
-              for="requestType"
+              for="request-type"
+              id="request-type-label"
             >
               <strong>
                 <span>
@@ -276,10 +288,15 @@ Object {
                       >
                         <input
                           aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="request-type-label"
+                          aria-owns="request-type-listbox"
                           autocapitalize="none"
                           autocomplete="off"
                           autocorrect="off"
-                          id="requestType"
+                          id="request-type"
+                          role="combobox"
                           spellcheck="false"
                           style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                           tabindex="0"
@@ -317,6 +334,11 @@ Object {
                     </div>
                   </div>
                 </div>
+                <input
+                  name="requestType"
+                  type="hidden"
+                  value=""
+                />
               </div>
             </div>
           </div>
@@ -495,7 +517,8 @@ Object {
             >
               <label
                 class="question-label"
-                for="requestType"
+                for="request-type"
+                id="request-type-label"
               >
                 <strong>
                   <span>
@@ -541,10 +564,15 @@ Object {
                         >
                           <input
                             aria-autocomplete="list"
+                            aria-expanded="true"
+                            aria-haspopup="true"
+                            aria-labelledby="request-type-label"
+                            aria-owns="request-type-listbox"
                             autocapitalize="none"
                             autocomplete="off"
                             autocorrect="off"
-                            id="requestType"
+                            id="request-type"
+                            role="combobox"
                             spellcheck="false"
                             style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                             tabindex="0"
@@ -591,14 +619,21 @@ Object {
                       class="cf-select__menu-list css-4ljt47-MenuList"
                     >
                       <div
+                        aria-disabled="false"
                         class="cf-select__option cf-select__option--is-focused cf-select__option--is-selected css-9gakcf-option"
                         id="react-select-4-option-0"
+                        role="option"
                         tabindex="-1"
                       >
                         Video
                       </div>
                     </div>
                   </div>
+                  <input
+                    name="requestType"
+                    type="hidden"
+                    value="V"
+                  />
                 </div>
               </div>
             </div>
@@ -635,7 +670,8 @@ Object {
             >
               <label
                 class="question-label"
-                for="regionalOffice"
+                for="regional-office"
+                id="regional-office-label"
               >
                 <strong>
                   <span>
@@ -669,10 +705,15 @@ Object {
                         >
                           <input
                             aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="regional-office-label"
+                            aria-owns="regional-office-listbox"
                             autocapitalize="none"
                             autocomplete="off"
                             autocorrect="off"
-                            id="regionalOffice"
+                            id="regional-office"
+                            role="combobox"
                             spellcheck="false"
                             style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                             tabindex="0"
@@ -710,6 +751,11 @@ Object {
                       </div>
                     </div>
                   </div>
+                  <input
+                    name="regionalOffice"
+                    type="hidden"
+                    value="[object Object]"
+                  />
                 </div>
               </div>
             </div>
@@ -723,6 +769,7 @@ Object {
               <label
                 class="question-label"
                 for="vlj"
+                id="vlj-label"
               >
                 <strong>
                   <span>
@@ -759,10 +806,15 @@ Object {
                         >
                           <input
                             aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="vlj-label"
+                            aria-owns="vlj-listbox"
                             autocapitalize="none"
                             autocomplete="off"
                             autocorrect="off"
                             id="vlj"
+                            role="combobox"
                             spellcheck="false"
                             style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                             tabindex="0"
@@ -800,6 +852,11 @@ Object {
                       </div>
                     </div>
                   </div>
+                  <input
+                    name="vlj"
+                    type="hidden"
+                    value=""
+                  />
                 </div>
               </div>
             </div>
@@ -813,6 +870,7 @@ Object {
               <label
                 class="question-label"
                 for="coordinator"
+                id="coordinator-label"
               >
                 <strong>
                   <span>
@@ -849,10 +907,15 @@ Object {
                         >
                           <input
                             aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="coordinator-label"
+                            aria-owns="coordinator-listbox"
                             autocapitalize="none"
                             autocomplete="off"
                             autocorrect="off"
                             id="coordinator"
+                            role="combobox"
                             spellcheck="false"
                             style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                             tabindex="0"
@@ -890,6 +953,11 @@ Object {
                       </div>
                     </div>
                   </div>
+                  <input
+                    name="coordinator"
+                    type="hidden"
+                    value=""
+                  />
                 </div>
               </div>
             </div>
@@ -987,7 +1055,8 @@ Object {
           >
             <label
               class="question-label"
-              for="requestType"
+              for="request-type"
+              id="request-type-label"
             >
               <strong>
                 <span>
@@ -1033,10 +1102,15 @@ Object {
                       >
                         <input
                           aria-autocomplete="list"
+                          aria-expanded="true"
+                          aria-haspopup="true"
+                          aria-labelledby="request-type-label"
+                          aria-owns="request-type-listbox"
                           autocapitalize="none"
                           autocomplete="off"
                           autocorrect="off"
-                          id="requestType"
+                          id="request-type"
+                          role="combobox"
                           spellcheck="false"
                           style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                           tabindex="0"
@@ -1083,14 +1157,21 @@ Object {
                     class="cf-select__menu-list css-4ljt47-MenuList"
                   >
                     <div
+                      aria-disabled="false"
                       class="cf-select__option cf-select__option--is-focused cf-select__option--is-selected css-9gakcf-option"
                       id="react-select-4-option-0"
+                      role="option"
                       tabindex="-1"
                     >
                       Video
                     </div>
                   </div>
                 </div>
+                <input
+                  name="requestType"
+                  type="hidden"
+                  value="V"
+                />
               </div>
             </div>
           </div>
@@ -1127,7 +1208,8 @@ Object {
           >
             <label
               class="question-label"
-              for="regionalOffice"
+              for="regional-office"
+              id="regional-office-label"
             >
               <strong>
                 <span>
@@ -1161,10 +1243,15 @@ Object {
                       >
                         <input
                           aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="regional-office-label"
+                          aria-owns="regional-office-listbox"
                           autocapitalize="none"
                           autocomplete="off"
                           autocorrect="off"
-                          id="regionalOffice"
+                          id="regional-office"
+                          role="combobox"
                           spellcheck="false"
                           style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                           tabindex="0"
@@ -1202,6 +1289,11 @@ Object {
                     </div>
                   </div>
                 </div>
+                <input
+                  name="regionalOffice"
+                  type="hidden"
+                  value="[object Object]"
+                />
               </div>
             </div>
           </div>
@@ -1215,6 +1307,7 @@ Object {
             <label
               class="question-label"
               for="vlj"
+              id="vlj-label"
             >
               <strong>
                 <span>
@@ -1251,10 +1344,15 @@ Object {
                       >
                         <input
                           aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="vlj-label"
+                          aria-owns="vlj-listbox"
                           autocapitalize="none"
                           autocomplete="off"
                           autocorrect="off"
                           id="vlj"
+                          role="combobox"
                           spellcheck="false"
                           style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                           tabindex="0"
@@ -1292,6 +1390,11 @@ Object {
                     </div>
                   </div>
                 </div>
+                <input
+                  name="vlj"
+                  type="hidden"
+                  value=""
+                />
               </div>
             </div>
           </div>
@@ -1305,6 +1408,7 @@ Object {
             <label
               class="question-label"
               for="coordinator"
+              id="coordinator-label"
             >
               <strong>
                 <span>
@@ -1341,10 +1445,15 @@ Object {
                       >
                         <input
                           aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="coordinator-label"
+                          aria-owns="coordinator-listbox"
                           autocapitalize="none"
                           autocomplete="off"
                           autocorrect="off"
                           id="coordinator"
+                          role="combobox"
                           spellcheck="false"
                           style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                           tabindex="0"
@@ -1382,6 +1491,11 @@ Object {
                     </div>
                   </div>
                 </div>
+                <input
+                  name="coordinator"
+                  type="hidden"
+                  value=""
+                />
               </div>
             </div>
           </div>
@@ -1536,7 +1650,8 @@ Object {
             >
               <label
                 class="question-label"
-                for="requestType"
+                for="request-type"
+                id="request-type-label"
               >
                 <strong>
                   <span>
@@ -1582,10 +1697,15 @@ Object {
                         >
                           <input
                             aria-autocomplete="list"
+                            aria-expanded="true"
+                            aria-haspopup="true"
+                            aria-labelledby="request-type-label"
+                            aria-owns="request-type-listbox"
                             autocapitalize="none"
                             autocomplete="off"
                             autocorrect="off"
-                            id="requestType"
+                            id="request-type"
+                            role="combobox"
                             spellcheck="false"
                             style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                             tabindex="0"
@@ -1638,6 +1758,11 @@ Object {
                       </div>
                     </div>
                   </div>
+                  <input
+                    name="requestType"
+                    type="hidden"
+                    value="R"
+                  />
                 </div>
               </div>
             </div>
@@ -1675,7 +1800,8 @@ Object {
             >
               <label
                 class="question-label"
-                for="regionalOffice"
+                for="regional-office"
+                id="regional-office-label"
               >
                 <strong>
                   <span>
@@ -1709,10 +1835,15 @@ Object {
                         >
                           <input
                             aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="regional-office-label"
+                            aria-owns="regional-office-listbox"
                             autocapitalize="none"
                             autocomplete="off"
                             autocorrect="off"
-                            id="regionalOffice"
+                            id="regional-office"
+                            role="combobox"
                             spellcheck="false"
                             style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                             tabindex="0"
@@ -1750,6 +1881,11 @@ Object {
                       </div>
                     </div>
                   </div>
+                  <input
+                    name="regionalOffice"
+                    type="hidden"
+                    value="[object Object]"
+                  />
                 </div>
               </div>
             </div>
@@ -1763,6 +1899,7 @@ Object {
               <label
                 class="question-label"
                 for="vlj"
+                id="vlj-label"
               >
                 <strong>
                   <span>
@@ -1799,10 +1936,15 @@ Object {
                         >
                           <input
                             aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="vlj-label"
+                            aria-owns="vlj-listbox"
                             autocapitalize="none"
                             autocomplete="off"
                             autocorrect="off"
                             id="vlj"
+                            role="combobox"
                             spellcheck="false"
                             style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                             tabindex="0"
@@ -1840,6 +1982,11 @@ Object {
                       </div>
                     </div>
                   </div>
+                  <input
+                    name="vlj"
+                    type="hidden"
+                    value=""
+                  />
                 </div>
               </div>
             </div>
@@ -1853,6 +2000,7 @@ Object {
               <label
                 class="question-label"
                 for="coordinator"
+                id="coordinator-label"
               >
                 <strong>
                   <span>
@@ -1889,10 +2037,15 @@ Object {
                         >
                           <input
                             aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="coordinator-label"
+                            aria-owns="coordinator-listbox"
                             autocapitalize="none"
                             autocomplete="off"
                             autocorrect="off"
                             id="coordinator"
+                            role="combobox"
                             spellcheck="false"
                             style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                             tabindex="0"
@@ -1930,6 +2083,11 @@ Object {
                       </div>
                     </div>
                   </div>
+                  <input
+                    name="coordinator"
+                    type="hidden"
+                    value=""
+                  />
                 </div>
               </div>
             </div>
@@ -1969,7 +2127,8 @@ Object {
             >
               <label
                 class="question-label"
-                for="numberOfSlots"
+                for="number-of-slots"
+                id="number-of-slots-label"
               >
                 <strong>
                   <span>
@@ -2003,10 +2162,15 @@ Object {
                         >
                           <input
                             aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="number-of-slots-label"
+                            aria-owns="number-of-slots-listbox"
                             autocapitalize="none"
                             autocomplete="off"
                             autocorrect="off"
-                            id="numberOfSlots"
+                            id="number-of-slots"
+                            role="combobox"
                             spellcheck="false"
                             style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                             tabindex="0"
@@ -2044,6 +2208,11 @@ Object {
                       </div>
                     </div>
                   </div>
+                  <input
+                    name="numberOfSlots"
+                    type="hidden"
+                    value="8"
+                  />
                 </div>
               </div>
             </div>
@@ -2056,7 +2225,8 @@ Object {
             >
               <label
                 class="question-label"
-                for="slotLengthMinutes"
+                for="slot-length-minutes"
+                id="slot-length-minutes-label"
               >
                 <strong>
                   <span>
@@ -2090,10 +2260,15 @@ Object {
                         >
                           <input
                             aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="slot-length-minutes-label"
+                            aria-owns="slot-length-minutes-listbox"
                             autocapitalize="none"
                             autocomplete="off"
                             autocorrect="off"
-                            id="slotLengthMinutes"
+                            id="slot-length-minutes"
+                            role="combobox"
                             spellcheck="false"
                             style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                             tabindex="0"
@@ -2131,6 +2306,11 @@ Object {
                       </div>
                     </div>
                   </div>
+                  <input
+                    name="slotLengthMinutes"
+                    type="hidden"
+                    value="60"
+                  />
                 </div>
               </div>
             </div>
@@ -2143,7 +2323,8 @@ Object {
             >
               <label
                 class="question-label"
-                for="optionalHearingTime0"
+                for="optional-hearing-time-0"
+                id="optional-hearing-time-0-label"
               >
                 <strong>
                   <span>
@@ -2177,10 +2358,15 @@ Object {
                         >
                           <input
                             aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-labelledby="optional-hearing-time-0-label"
+                            aria-owns="optional-hearing-time-0-listbox"
                             autocapitalize="none"
                             autocomplete="off"
                             autocorrect="off"
-                            id="optionalHearingTime0"
+                            id="optional-hearing-time-0"
+                            role="combobox"
                             spellcheck="false"
                             style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                             tabindex="0"
@@ -2218,6 +2404,11 @@ Object {
                       </div>
                     </div>
                   </div>
+                  <input
+                    name="optionalHearingTime0"
+                    type="hidden"
+                    value="08:30"
+                  />
                 </div>
               </div>
             </div>
@@ -2441,7 +2632,8 @@ Object {
           >
             <label
               class="question-label"
-              for="requestType"
+              for="request-type"
+              id="request-type-label"
             >
               <strong>
                 <span>
@@ -2487,10 +2679,15 @@ Object {
                       >
                         <input
                           aria-autocomplete="list"
+                          aria-expanded="true"
+                          aria-haspopup="true"
+                          aria-labelledby="request-type-label"
+                          aria-owns="request-type-listbox"
                           autocapitalize="none"
                           autocomplete="off"
                           autocorrect="off"
-                          id="requestType"
+                          id="request-type"
+                          role="combobox"
                           spellcheck="false"
                           style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                           tabindex="0"
@@ -2543,6 +2740,11 @@ Object {
                     </div>
                   </div>
                 </div>
+                <input
+                  name="requestType"
+                  type="hidden"
+                  value="R"
+                />
               </div>
             </div>
           </div>
@@ -2580,7 +2782,8 @@ Object {
           >
             <label
               class="question-label"
-              for="regionalOffice"
+              for="regional-office"
+              id="regional-office-label"
             >
               <strong>
                 <span>
@@ -2614,10 +2817,15 @@ Object {
                       >
                         <input
                           aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="regional-office-label"
+                          aria-owns="regional-office-listbox"
                           autocapitalize="none"
                           autocomplete="off"
                           autocorrect="off"
-                          id="regionalOffice"
+                          id="regional-office"
+                          role="combobox"
                           spellcheck="false"
                           style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                           tabindex="0"
@@ -2655,6 +2863,11 @@ Object {
                     </div>
                   </div>
                 </div>
+                <input
+                  name="regionalOffice"
+                  type="hidden"
+                  value="[object Object]"
+                />
               </div>
             </div>
           </div>
@@ -2668,6 +2881,7 @@ Object {
             <label
               class="question-label"
               for="vlj"
+              id="vlj-label"
             >
               <strong>
                 <span>
@@ -2704,10 +2918,15 @@ Object {
                       >
                         <input
                           aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="vlj-label"
+                          aria-owns="vlj-listbox"
                           autocapitalize="none"
                           autocomplete="off"
                           autocorrect="off"
                           id="vlj"
+                          role="combobox"
                           spellcheck="false"
                           style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                           tabindex="0"
@@ -2745,6 +2964,11 @@ Object {
                     </div>
                   </div>
                 </div>
+                <input
+                  name="vlj"
+                  type="hidden"
+                  value=""
+                />
               </div>
             </div>
           </div>
@@ -2758,6 +2982,7 @@ Object {
             <label
               class="question-label"
               for="coordinator"
+              id="coordinator-label"
             >
               <strong>
                 <span>
@@ -2794,10 +3019,15 @@ Object {
                       >
                         <input
                           aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="coordinator-label"
+                          aria-owns="coordinator-listbox"
                           autocapitalize="none"
                           autocomplete="off"
                           autocorrect="off"
                           id="coordinator"
+                          role="combobox"
                           spellcheck="false"
                           style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                           tabindex="0"
@@ -2835,6 +3065,11 @@ Object {
                     </div>
                   </div>
                 </div>
+                <input
+                  name="coordinator"
+                  type="hidden"
+                  value=""
+                />
               </div>
             </div>
           </div>
@@ -2874,7 +3109,8 @@ Object {
           >
             <label
               class="question-label"
-              for="numberOfSlots"
+              for="number-of-slots"
+              id="number-of-slots-label"
             >
               <strong>
                 <span>
@@ -2908,10 +3144,15 @@ Object {
                       >
                         <input
                           aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="number-of-slots-label"
+                          aria-owns="number-of-slots-listbox"
                           autocapitalize="none"
                           autocomplete="off"
                           autocorrect="off"
-                          id="numberOfSlots"
+                          id="number-of-slots"
+                          role="combobox"
                           spellcheck="false"
                           style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                           tabindex="0"
@@ -2949,6 +3190,11 @@ Object {
                     </div>
                   </div>
                 </div>
+                <input
+                  name="numberOfSlots"
+                  type="hidden"
+                  value="8"
+                />
               </div>
             </div>
           </div>
@@ -2961,7 +3207,8 @@ Object {
           >
             <label
               class="question-label"
-              for="slotLengthMinutes"
+              for="slot-length-minutes"
+              id="slot-length-minutes-label"
             >
               <strong>
                 <span>
@@ -2995,10 +3242,15 @@ Object {
                       >
                         <input
                           aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="slot-length-minutes-label"
+                          aria-owns="slot-length-minutes-listbox"
                           autocapitalize="none"
                           autocomplete="off"
                           autocorrect="off"
-                          id="slotLengthMinutes"
+                          id="slot-length-minutes"
+                          role="combobox"
                           spellcheck="false"
                           style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                           tabindex="0"
@@ -3036,6 +3288,11 @@ Object {
                     </div>
                   </div>
                 </div>
+                <input
+                  name="slotLengthMinutes"
+                  type="hidden"
+                  value="60"
+                />
               </div>
             </div>
           </div>
@@ -3048,7 +3305,8 @@ Object {
           >
             <label
               class="question-label"
-              for="optionalHearingTime0"
+              for="optional-hearing-time-0"
+              id="optional-hearing-time-0-label"
             >
               <strong>
                 <span>
@@ -3082,10 +3340,15 @@ Object {
                       >
                         <input
                           aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="optional-hearing-time-0-label"
+                          aria-owns="optional-hearing-time-0-listbox"
                           autocapitalize="none"
                           autocomplete="off"
                           autocorrect="off"
-                          id="optionalHearingTime0"
+                          id="optional-hearing-time-0"
+                          role="combobox"
                           spellcheck="false"
                           style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                           tabindex="0"
@@ -3123,6 +3386,11 @@ Object {
                     </div>
                   </div>
                 </div>
+                <input
+                  name="optionalHearingTime0"
+                  type="hidden"
+                  value="08:30"
+                />
               </div>
             </div>
           </div>
@@ -3400,7 +3668,8 @@ exports[`AddHearingDay Matches snapshot with default props 1`] = `
         >
           <label
             class="question-label"
-            for="requestType"
+            for="request-type"
+            id="request-type-label"
           >
             <strong>
               <span>
@@ -3434,10 +3703,15 @@ exports[`AddHearingDay Matches snapshot with default props 1`] = `
                     >
                       <input
                         aria-autocomplete="list"
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                        aria-labelledby="request-type-label"
+                        aria-owns="request-type-listbox"
                         autocapitalize="none"
                         autocomplete="off"
                         autocorrect="off"
-                        id="requestType"
+                        id="request-type"
+                        role="combobox"
                         spellcheck="false"
                         style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                         tabindex="0"
@@ -3475,6 +3749,11 @@ exports[`AddHearingDay Matches snapshot with default props 1`] = `
                   </div>
                 </div>
               </div>
+              <input
+                name="requestType"
+                type="hidden"
+                value=""
+              />
             </div>
           </div>
         </div>
