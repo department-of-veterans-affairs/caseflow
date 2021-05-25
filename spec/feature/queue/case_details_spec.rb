@@ -1464,8 +1464,6 @@ RSpec.feature "Case details", :all_dbs do
                claimant_participant_id: appeal.claimant.participant_id,
                poa_participant_id: new_poa_participant_id)
       end
-      before { FeatureToggle.enable!(:poa_auto_ihp_update) }
-      after { FeatureToggle.disable!(:poa_auto_ihp_update) }
       it "should show the cancelled task in case timeline with the appropriate reason" do
         InformalHearingPresentationTask.update_to_new_poa(appeal)
         visit("/queue/appeals/#{appeal.uuid}")
