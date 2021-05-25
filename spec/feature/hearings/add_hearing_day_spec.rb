@@ -73,6 +73,7 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
       expect(page).to have_content("Add a Hearing Day")
       fill_in "hearingDate", with: "08142019"
       click_dropdown(index: "C", text: "Central")
+      find(".cf-form-checkbox").find("label[for=roomRequired]").click
       find("button", text: "Add Hearing Day").click
       expect(page).to have_content(COPY::ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_TITLE % "08/14/2019")
       expect(page).to have_content(COPY::ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_DETAIL)
