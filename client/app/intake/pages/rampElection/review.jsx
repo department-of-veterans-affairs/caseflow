@@ -3,13 +3,22 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import RadioField from '../../../components/RadioField';
 import DateSelector from '../../../components/DateSelector';
+import * as yup from 'yup';
+import { format, add } from 'date-fns';
 import { Redirect } from 'react-router-dom';
 import _ from 'lodash';
 import { setReceiptDate, setOptionSelected } from '../../actions/intake';
-import { PAGE_PATHS, INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES, REVIEW_OPTIONS, CLAIMANT_ERRORS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 import PropTypes from 'prop-types';
+
+const reviewRampElectionSchema = yup.object().shape({
+  'opt-in-election': yup.string().required(CLAIMANT_ERRORS.blank),
+  'receipt-date': yup.date().typeError('Please enter a valid receipt date.')
+    .max(format(add(new Date(), { hours: 1 }), 'MM/dd/yyyy'), 'Receipt date cannot be in the future.')
+    .required('Please enter a valid receipt date.'),
+});
 
 class Review extends React.PureComponent {
   render() {
@@ -47,9 +56,10 @@ class Review extends React.PureComponent {
         label="What is the Receipt Date of this form?"
         value={receiptDate}
         onChange={this.props.setReceiptDate}
-        errorMessage={receiptDateError}
+        errorMessage={this.props.errors['receipt-date'] && this.props.errors['receipt-date'].message}
         type="date"
         strongLabel
+        inputRef={this.props.register}
       />
 
       <RadioField
@@ -58,8 +68,9 @@ class Review extends React.PureComponent {
         strongLabel
         options={radioOptions}
         onChange={this.props.setOptionSelected}
-        errorMessage={optionSelectedError}
+        errorMessage={this.props.errors['opt-in-election'] && this.props.errors['opt-in-election'].message}
         value={optionSelected}
+        inputRef={this.props.register}
       />
     </div>;
   }
@@ -92,3 +103,5 @@ export default connect(
     setReceiptDate
   }, dispatch)
 )(Review);
+
+export {reviewRampElectionSchema}

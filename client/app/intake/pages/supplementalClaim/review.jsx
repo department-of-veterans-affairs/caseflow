@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as yup from 'yup';
+import { format, add } from 'date-fns';
 import DateSelector from '../../../components/DateSelector';
 import { Redirect } from 'react-router-dom';
 import BenefitType from '../../components/BenefitType';
@@ -22,7 +23,9 @@ import PropTypes from 'prop-types';
 
 const reviewSupplementalClaimSchema = yup.object().shape({
   'benefit-type-options': yup.string().required(CLAIMANT_ERRORS.blank),
-  'receipt-date': yup.date().required(),
+  'receipt-date': yup.date().typeError('Please enter a valid receipt date.')
+    .max(format(add(new Date(), { hours: 1 }), 'MM/dd/yyyy'), 'Receipt date cannot be in the future.')
+    .required('Please enter a valid receipt date.'),
   'different-claimant-option': yup.string().required(CLAIMANT_ERRORS.blank),
   'legacy-opt-in': yup.string().required(CLAIMANT_ERRORS.blank),
   'claimant-options': yup.string().notRequired().when('different-claimant-option', {

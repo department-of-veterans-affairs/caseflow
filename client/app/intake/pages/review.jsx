@@ -12,8 +12,8 @@ import { format } from 'date-fns';
 import { css } from 'glamor';
 
 import { PAGE_PATHS, FORM_TYPES, REQUEST_STATE, VBMS_BENEFIT_TYPES, REVIEW_OPTIONS } from '../constants';
-import RampElectionPage from './rampElection/review';
-import RampRefilingPage from './rampRefiling/review';
+import RampElectionPage, { reviewRampElectionSchema } from './rampElection/review';
+import RampRefilingPage, { reviewRampRefilingSchema } from './rampRefiling/review';
 import SupplementalClaimPage, { reviewSupplementalClaimSchema } from './supplementalClaim/review';
 import HigherLevelReviewPage, {reviewHigherLevelReviewSchema} from './higherLevelReview/review';
 import AppealReviewPage, {reviewAppealSchema} from './appeal/review';
@@ -37,6 +37,8 @@ const schemaMappings = {
   appeal: reviewAppealSchema,
   higher_level_review: reviewHigherLevelReviewSchema,
   supplemental_claim: reviewSupplementalClaimSchema,
+  ramp_election: reviewRampElectionSchema,
+  ramp_refiling: reviewRampRefilingSchema
 }
 
 const schema = yup.object().shape({
@@ -66,13 +68,19 @@ const schema = yup.object().shape({
     })
 });
 
-const Review = ({featureToggles, submitDecisionReview, submitRampElection, submitRampRefiling, intakeForms, formType, intakeId}) => {
+const Review = ({
+  featureToggles, 
+  submitDecisionReview, 
+  submitRampElection, 
+  submitRampRefiling, 
+  intakeForms, 
+  formType, 
+  intakeId
+}) => {
   console.log(formType)
   const { register, errors, handleSubmit } = useForm(
     {
       resolver: yupResolver(schemaMappings[formType]),
-      mode: 'onSubmit',
-      reValidateMode: 'onBlur',
       context: { selectedForm: formType, useAmaActivationDate: featureToggles.useAmaActivationDate}
     }
   );

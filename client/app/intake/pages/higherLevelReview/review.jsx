@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
 import * as yup from 'yup';
+import { format, add } from 'date-fns';
 import RadioField from '../../../components/RadioField';
 import DateSelector from '../../../components/DateSelector';
 import BenefitType from '../../components/BenefitType';
@@ -25,7 +26,9 @@ import PropTypes from 'prop-types';
 
 const reviewHigherLevelReviewSchema = yup.object().shape({
   'benefit-type-options': yup.string().required(CLAIMANT_ERRORS.blank),
-  'receipt-date': yup.date().required(),
+  'receipt-date': yup.date().typeError('Please enter a valid receipt date.')
+    .max(format(add(new Date(), { hours: 1 }), 'MM/dd/yyyy'), 'Receipt date cannot be in the future.')
+    .required('Please enter a valid receipt date.'),  
   'informal-conference': yup.string().required(CLAIMANT_ERRORS.blank),
   'same-office': yup.string().required(CLAIMANT_ERRORS.blank),
   'different-claimant-option': yup.string().required(CLAIMANT_ERRORS.blank),

@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as yup from 'yup';
-import { format } from 'date-fns';
+import { format, add } from 'date-fns';
 import RadioField from '../../../components/RadioField';
 import DateSelector from '../../../components/DateSelector';
 import { Redirect } from 'react-router-dom';
@@ -16,14 +16,14 @@ import {
   setLegacyOptInApproved
 } from '../../actions/decisionReview';
 import { setReceiptDate } from '../../actions/intake';
-import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, REVIEW_OPTIONS} from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, REVIEW_OPTIONS, CLAIMANT_ERRORS} from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 import DATES from '../../../../constants/DATES';
 import PropTypes from 'prop-types';
 
 const reviewAppealSchema = yup.object().shape({
-  'receipt-date': yup.mixed().
+  'receipt-date': yup.date().
     when(['$useAmaActivationDate'], {
       is: true,
       then: yup.date().typeError('Receipt Date is required.').
@@ -36,13 +36,15 @@ const reviewAppealSchema = yup.object().shape({
           new Date(DATES.AMA_ACTIVATION_TEST),
         `Receipt Date cannot be prior to ${format(new Date(DATES.AMA_ACTIVATION_TEST), 'MM/dd/yyyy')}`
         )
-    }),
-    'docket-type': yup.string().required(),
-    'legacy-opt-in': yup.string().required(),
-    'different-claimant-option': yup.string().required(),
+    }).typeError('Please enter a valid receipt date.')
+      .max(format(add(new Date(), { hours: 1 }), 'MM/dd/yyyy'), 'Receipt date cannot be in the future.')
+      .required('Please enter a valid receipt date.'),
+    'docket-type': yup.string().required(CLAIMANT_ERRORS.blank),
+    'legacy-opt-in': yup.string().required(CLAIMANT_ERRORS.blank),
+    'different-claimant-option': yup.string().required(CLAIMANT_ERRORS.blank),
     'claimant-options': yup.string().notRequired().when('different-claimant-option', {
       is: "true",
-      then: yup.string().required()
+      then: yup.string().required(CLAIMANT_ERRORS.blank)
     })
 });
 
