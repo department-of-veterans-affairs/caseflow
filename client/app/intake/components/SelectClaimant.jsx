@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
+import * as yup from 'yup';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import {
@@ -358,4 +359,13 @@ SelectClaimant.propTypes = {
   errors: PropTypes.array
 };
 
+const selectClaimantValidations = () => ({
+  'claimant-options': yup.string().notRequired().
+    when('different-claimant-option', {
+      is: 'true',
+      then: yup.string().required(CLAIMANT_ERRORS.blank)
+    }),
+})
+
+export {selectClaimantValidations}
 export default SelectClaimant;

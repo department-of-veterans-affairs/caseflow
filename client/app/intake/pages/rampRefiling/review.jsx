@@ -2,9 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as yup from 'yup';
-import { format, add } from 'date-fns';
 import RadioField from '../../../components/RadioField';
-import DateSelector from '../../../components/DateSelector';
 import Button from '../../../components/Button';
 import Alert from '../../../components/Alert';
 import { Redirect } from 'react-router-dom';
@@ -17,17 +15,16 @@ import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 import COPY from '../../../../COPY';
 import PropTypes from 'prop-types';
+import ReceiptDateInput from '../receiptDateInput';
 
 const reviewRampRefilingSchema = yup.object().shape({
   'opt-in-election': yup.string().required(CLAIMANT_ERRORS.blank),
-  'receipt-date': yup.date().typeError('Please enter a valid receipt date.').
-    max(format(add(new Date(), { hours: 1 }), 'MM/dd/yyyy'), 'Receipt date cannot be in the future.').
-    required('Please enter a valid receipt date.'),
   'appeal-docket': yup.string().notRequired().
     when('opt-in-election', {
       is: REVIEW_OPTIONS.APPEAL.key,
       then: yup.string().required(CLAIMANT_ERRORS.blank)
-    })
+    }),
+  ...receiptDateInputValidation()
 });
 
 class Review extends React.PureComponent {
@@ -97,15 +94,12 @@ class Review extends React.PureComponent {
 
       { reviewIntakeError && <ErrorAlert /> }
 
-      <DateSelector
-        name="receipt-date"
-        label="What is the Receipt Date of this form?"
-        value={receiptDate}
-        onChange={this.props.setReceiptDate}
-        errorMessage={receiptDateError || errors?.['receipt-date']?.message}
-        strongLabel
-        type="date"
-        inputRef={this.props.register}
+      <ReceiptDateInput
+        receiptDate={receiptDate}
+        setReceiptDate={this.props.setReceiptDate}
+        receiptDateError={receiptDateError}
+        errors={errors}
+        register={this.props.register}
       />
 
       <RadioField

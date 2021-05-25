@@ -2,9 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import RadioField from '../../../components/RadioField';
-import DateSelector from '../../../components/DateSelector';
 import * as yup from 'yup';
-import { format, add } from 'date-fns';
 import { Redirect } from 'react-router-dom';
 import _ from 'lodash';
 import { setReceiptDate, setOptionSelected } from '../../actions/intake';
@@ -12,12 +10,11 @@ import { PAGE_PATHS, INTAKE_STATES, REVIEW_OPTIONS, CLAIMANT_ERRORS } from '../.
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 import PropTypes from 'prop-types';
+import ReceiptDateInput from '../receiptDateInput';
 
 const reviewRampElectionSchema = yup.object().shape({
   'opt-in-election': yup.string().required(CLAIMANT_ERRORS.blank),
-  'receipt-date': yup.date().typeError('Please enter a valid receipt date.').
-    max(format(add(new Date(), { hours: 1 }), 'MM/dd/yyyy'), 'Receipt date cannot be in the future.').
-    required('Please enter a valid receipt date.'),
+  ...receiptDateInputValidation()
 });
 
 class Review extends React.PureComponent {
@@ -52,15 +49,12 @@ class Review extends React.PureComponent {
 
       { reviewIntakeError && <ErrorAlert /> }
 
-      <DateSelector
-        name="receipt-date"
-        label="What is the Receipt Date of this form?"
-        value={receiptDate}
-        onChange={this.props.setReceiptDate}
-        errorMessage={receiptDateError || errors?.['receipt-date']?.message}
-        type="date"
-        strongLabel
-        inputRef={this.props.register}
+      <ReceiptDateInput
+        receiptDate={receiptDate}
+        setReceiptDate={this.props.setReceiptDate}
+        receiptDateError={receiptDateError}
+        errors={errors}
+        register={this.props.register}
       />
 
       <RadioField

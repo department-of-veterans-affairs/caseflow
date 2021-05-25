@@ -2,11 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as yup from 'yup';
-import { format, add } from 'date-fns';
 import RadioField from '../../../components/RadioField';
-import DateSelector from '../../../components/DateSelector';
 import { Redirect } from 'react-router-dom';
-import SelectClaimant from '../../components/SelectClaimant';
+import SelectClaimant, { selectClaimantValidations } from '../../components/SelectClaimant';
 import LegacyOptInApproved from '../../components/LegacyOptInApproved';
 import { setDocketType } from '../../actions/appeal';
 import {
@@ -19,35 +17,15 @@ import { setReceiptDate } from '../../actions/intake';
 import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, CLAIMANT_ERRORS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
-import DATES from '../../../../constants/DATES';
 import PropTypes from 'prop-types';
+import ReceiptDateInput, { receiptDateInputValidation } from '../receiptDateInput';
 
 const reviewAppealSchema = yup.object().shape({
-  'receipt-date': yup.date().
-    when(['$useAmaActivationDate'], {
-      is: true,
-      then: yup.date().typeError('Receipt Date is required.').
-        min(
-          new Date(DATES.AMA_ACTIVATION),
-        `Receipt Date cannot be prior to ${format(new Date(DATES.AMA_ACTIVATION), 'MM/dd/yyyy')}`
-        ),
-      otherwise: yup.date().typeError('Receipt Date is required.').
-        min(
-          new Date(DATES.AMA_ACTIVATION_TEST),
-        `Receipt Date cannot be prior to ${format(new Date(DATES.AMA_ACTIVATION_TEST), 'MM/dd/yyyy')}`
-        )
-    }).
-    typeError('Please enter a valid receipt date.').
-    max(format(add(new Date(), { hours: 1 }), 'MM/dd/yyyy'), 'Receipt date cannot be in the future.').
-    required('Please enter a valid receipt date.'),
   'docket-type': yup.string().required(CLAIMANT_ERRORS.blank),
   'legacy-opt-in': yup.string().required(CLAIMANT_ERRORS.blank),
   'different-claimant-option': yup.string().required(CLAIMANT_ERRORS.blank),
-  'claimant-options': yup.string().notRequired().
-    when('different-claimant-option', {
-      is: 'true',
-      then: yup.string().required(CLAIMANT_ERRORS.blank)
-    })
+  ...selectClaimantValidations(),
+  ...receiptDateInputValidation(true)
 });
 
 class Review extends React.PureComponent {
@@ -87,15 +65,12 @@ class Review extends React.PureComponent {
 
       { reviewIntakeError && <ErrorAlert {...reviewIntakeError} /> }
 
-      <DateSelector
-        name="receipt-date"
-        label="What is the Receipt Date of this form?"
-        value={receiptDate}
-        onChange={this.props.setReceiptDate}
-        errorMessage={receiptDateError || errors?.['receipt-date']?.message}
-        type="date"
-        strongLabel
-        inputRef={this.props.register}
+      <ReceiptDateInput
+        receiptDate={receiptDate}
+        setReceiptDate={this.props.setReceiptDate}
+        receiptDateError={receiptDateError}
+        errors={errors}
+        register={this.props.register}
       />
 
       <RadioField

@@ -7,7 +7,7 @@ import DateSelector from '../../../components/DateSelector';
 import { Redirect } from 'react-router-dom';
 import BenefitType from '../../components/BenefitType';
 import LegacyOptInApproved from '../../components/LegacyOptInApproved';
-import SelectClaimant from '../../components/SelectClaimant';
+import SelectClaimant, { selectClaimantValidations } from '../../components/SelectClaimant';
 import {
   setBenefitType,
   setVeteranIsNotClaimant,
@@ -20,19 +20,14 @@ import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, VBMS_BENEFIT_TYPES, CLAIMANT_ERR
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 import PropTypes from 'prop-types';
+import ReceiptDateInput from '../receiptDateInput';
 
 const reviewSupplementalClaimSchema = yup.object().shape({
   'benefit-type-options': yup.string().required(CLAIMANT_ERRORS.blank),
-  'receipt-date': yup.date().typeError('Please enter a valid receipt date.').
-    max(format(add(new Date(), { hours: 1 }), 'MM/dd/yyyy'), 'Receipt date cannot be in the future.').
-    required('Please enter a valid receipt date.'),
   'different-claimant-option': yup.string().required(CLAIMANT_ERRORS.blank),
   'legacy-opt-in': yup.string().required(CLAIMANT_ERRORS.blank),
-  'claimant-options': yup.string().notRequired().
-    when('different-claimant-option', {
-      is: 'true',
-      then: yup.string().required(CLAIMANT_ERRORS.blank)
-    })
+  ...selectClaimantValidations(),
+  ...receiptDateInputValidation()
 });
 
 class Review extends React.PureComponent {
@@ -80,15 +75,12 @@ class Review extends React.PureComponent {
         register={this.props.register}
       />
 
-      <DateSelector
-        name="receipt-date"
-        label="What is the Receipt Date of this form?"
-        value={receiptDate}
-        onChange={this.props.setReceiptDate}
-        errorMessage={receiptDateError || errors?.['receipt-date']?.message}
-        type="date"
-        strongLabel
-        inputRef={this.props.register}
+      <ReceiptDateInput
+        receiptDate={receiptDate}
+        setReceiptDate={this.props.setReceiptDate}
+        receiptDateError={receiptDateError}
+        errors={errors}
+        register={this.props.register}
       />
 
       <SelectClaimantConnected
