@@ -25,6 +25,7 @@ class BgsPowerOfAttorney < CaseflowRecord
             :representative_type, presence: true
 
   before_save :update_cached_attributes!
+  after_save :update_ihp_task, if: :update_ihp_enabled?
 
   class << self
     # Neither file_number nor claimant_participant_id is unique by itself,
@@ -143,23 +144,31 @@ class BgsPowerOfAttorney < CaseflowRecord
     save!
   end
 
+  def update_ihp_task
+    appeals = Appeal.where(veteran_file_number: file_number, poa_participant_id: poa_participant_id)
+    appeals.each do |appeal|
+      InformalHearingPresentationTask.update_to_new_poa(appeal)
+    end
+  end
+
   def found?
     return false if not_found?
 
     bgs_record.keys.any?
   end
 
-  def update_or_delete(claimant = nil)
+  def update_or_delete(claimant)
+    # If the BGS Power of Attorney record is not found, destroy it.
     if bgs_record == :not_found
-      if claimant && !claimant.is_a?(Hash) && claimant.should_delete_power_of_attorney?
-        claimant_poa.destroy
-      else
-        destroy
+      destroy!
+      # If the claimaint's power of attorney record is also not found, destroy it.
+      if !claimant.is_a?(Hash) && claimant.power_of_attorney&.bgs_record == :not_found
+        claimant.power_of_attorney.destroy!
       end
-      "Successfully refreshed. No power of attorney information was found at this time."
+      ["Successfully refreshed. No power of attorney information was found at this time.", "deleted"]
     else
       save_with_updated_bgs_record!
-      "POA Updated Successfully"
+      ["POA Updated Successfully", "updated"]
     end
   end
 
@@ -219,5 +228,10 @@ class BgsPowerOfAttorney < CaseflowRecord
     return nil if !participant_id
 
     BgsAddressService.new(participant_id: poa_participant_id).address
+  end
+
+  def update_ihp_enabled?
+    FeatureToggle.enabled?(:poa_auto_ihp_update, user: RequestStore.store[:current_user]) &&
+      saved_change_to_poa_participant_id?
   end
 end

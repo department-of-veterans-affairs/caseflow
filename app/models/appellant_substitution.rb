@@ -20,7 +20,7 @@ class AppellantSubstitution < CaseflowRecord
   after_create :initialize_tasks
 
   def substitute_claimant
-    Claimant.find_by(participant_id: substitute_participant_id)
+    target_appeal.claimant
   end
 
   def substitute_person
