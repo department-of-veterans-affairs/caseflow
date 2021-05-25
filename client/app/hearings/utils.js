@@ -547,7 +547,7 @@ const calculateAvailableTimeslots = ({ numberOfSlots, beginsAt, roTimezone, sche
  * @param {string} availableSlots    -- Array of unfilled slots
  * @param {string} scheduledHearings -- Array of hearings
  **/
-const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings }) => {
+const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings, hearingDayDate }) => {
   const slots = availableSlots.map((slot) => ({
     ...slot,
     key: `${slot?.slotId}-${slot?.time_string}`,
@@ -557,7 +557,7 @@ const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings
   }));
 
   const formattedHearings = scheduledHearings.map((hearing) => {
-    const time = moment.tz(hearing?.hearingTime, 'HH:mm', roTimezone).clone().
+    const time = moment.tz(`${hearing?.hearingTime} ${hearingDayDate}`, 'HH:mm YYYY-MM-DD', roTimezone).clone().
       tz('America/New_York');
 
     return {
@@ -661,7 +661,8 @@ export const setTimeSlots = ({
   const slotsAndHearings = combineSlotsAndHearings({
     roTimezone,
     availableSlots,
-    scheduledHearings
+    scheduledHearings,
+    hearingDayDate
   });
 
   return displaySelectedTimeAsSlot({ selected, slotsAndHearings });
