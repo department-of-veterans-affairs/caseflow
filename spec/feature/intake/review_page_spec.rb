@@ -33,7 +33,7 @@ feature "Intake Review Page", :postgres do
   describe "Validating receipt date not blank or before AMA when claimant not listed" do
     before do
       FeatureToggle.enable!(:use_ama_activation_date)
-      FeatureToggle.enable!(:non_veteran_claimants) 
+      FeatureToggle.enable!(:non_veteran_claimants)
     end
     after do
       FeatureToggle.disable!(:use_ama_activation_date)
