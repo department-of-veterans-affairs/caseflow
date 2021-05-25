@@ -71,9 +71,14 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
           htmlFor="hearingType"
         >
           <strong>
-            <span>
-              Hearing Type
-            </span>
+            <FormLabel
+              label="Hearing Type"
+              name="Hearing Type"
+            >
+              <span>
+                Hearing Type
+              </span>
+            </FormLabel>
           </strong>
         </label>
         <div
@@ -1529,9 +1534,14 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
           htmlFor="hearingType"
         >
           <strong>
-            <span>
-              Hearing Type
-            </span>
+            <FormLabel
+              label="Hearing Type"
+              name="Hearing Type"
+            >
+              <span>
+                Hearing Type
+              </span>
+            </FormLabel>
           </strong>
         </label>
         <div
@@ -3020,9 +3030,14 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
           htmlFor="hearingType"
         >
           <strong>
-            <span>
-              Hearing Type
-            </span>
+            <FormLabel
+              label="Hearing Type"
+              name="Hearing Type"
+            >
+              <span>
+                Hearing Type
+              </span>
+            </FormLabel>
           </strong>
         </label>
         <div
@@ -4526,9 +4541,14 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
           htmlFor="hearingType"
         >
           <strong>
-            <span>
-              Hearing Type
-            </span>
+            <FormLabel
+              label="Hearing Type"
+              name="Hearing Type"
+            >
+              <span>
+                Hearing Type
+              </span>
+            </FormLabel>
           </strong>
         </label>
         <div

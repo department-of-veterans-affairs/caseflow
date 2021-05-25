@@ -824,9 +824,13 @@ exports[`Timezone Can set timezone 1`] = `
           htmlFor="tz"
         >
           <strong>
-            <span>
-              tz
-            </span>
+            <FormLabel
+              name="tz"
+            >
+              <span>
+                tz
+              </span>
+            </FormLabel>
           </strong>
         </label>
         <div
@@ -15940,9 +15944,13 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
           htmlFor="Timezone"
         >
           <strong>
-            <span>
-              Timezone
-            </span>
+            <FormLabel
+              name="Timezone"
+            >
+              <span>
+                Timezone
+              </span>
+            </FormLabel>
           </strong>
         </label>
         <div
@@ -31005,9 +31013,14 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
           htmlFor="Timezone"
         >
           <strong>
-            <span>
-              Timezone
-            </span>
+            <FormLabel
+              name="Timezone"
+              required={false}
+            >
+              <span>
+                Timezone
+              </span>
+            </FormLabel>
           </strong>
         </label>
         <div
@@ -45943,14 +45956,19 @@ exports[`Timezone Respects required prop 1`] = `
           htmlFor="Timezone"
         >
           <strong>
-            <span>
-              Timezone
-              <span
-                className="cf-required"
-              >
-                Required
+            <FormLabel
+              name="Timezone"
+              required={true}
+            >
+              <span>
+                Timezone
+                <span
+                  className="cf-required"
+                >
+                  Required
+                </span>
               </span>
-            </span>
+            </FormLabel>
           </strong>
         </label>
         <div

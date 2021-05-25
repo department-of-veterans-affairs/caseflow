@@ -2166,7 +2166,7 @@ Object {
                       <div
                         class="cf-select__single-value css-1uccc91-singleValue"
                       >
-                        9:30 AM Eastern Time (US & Canada)
+                        8:30 AM Eastern Time (US & Canada)
                       </div>
                       <div
                         class="css-81nyic-Input"
@@ -2247,6 +2247,22 @@ Object {
                       <div
                         style="flex: 1;"
                       >
+                        8:30 AM EDT
+                      </div>
+                      <div />
+                    </div>
+                  </button>
+                </span>
+                <span>
+                  <button
+                    class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
+                    disabled=""
+                    type="button"
+                  >
+                    <div>
+                      <div
+                        style="flex: 1;"
+                      >
                         9:30 AM EDT
                       </div>
                       <div />
@@ -2285,6 +2301,10 @@ Object {
                     </div>
                   </button>
                 </span>
+              </div>
+              <div
+                class="time-slot-container"
+              >
                 <span>
                   <button
                     class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
@@ -2301,10 +2321,6 @@ Object {
                     </div>
                   </button>
                 </span>
-              </div>
-              <div
-                class="time-slot-container"
-              >
                 <span>
                   <button
                     class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
@@ -2348,22 +2364,6 @@ Object {
                         style="flex: 1;"
                       >
                         3:30 PM EDT
-                      </div>
-                      <div />
-                    </div>
-                  </button>
-                </span>
-                <span>
-                  <button
-                    class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
-                    disabled=""
-                    type="button"
-                  >
-                    <div>
-                      <div
-                        style="flex: 1;"
-                      >
-                        4:30 PM EDT
                       </div>
                       <div />
                     </div>
@@ -3071,7 +3071,7 @@ Object {
                     <div
                       class="cf-select__single-value css-1uccc91-singleValue"
                     >
-                      9:30 AM Eastern Time (US & Canada)
+                      8:30 AM Eastern Time (US & Canada)
                     </div>
                     <div
                       class="css-81nyic-Input"
@@ -3152,6 +3152,22 @@ Object {
                     <div
                       style="flex: 1;"
                     >
+                      8:30 AM EDT
+                    </div>
+                    <div />
+                  </div>
+                </button>
+              </span>
+              <span>
+                <button
+                  class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
+                  disabled=""
+                  type="button"
+                >
+                  <div>
+                    <div
+                      style="flex: 1;"
+                    >
                       9:30 AM EDT
                     </div>
                     <div />
@@ -3190,6 +3206,10 @@ Object {
                   </div>
                 </button>
               </span>
+            </div>
+            <div
+              class="time-slot-container"
+            >
               <span>
                 <button
                   class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
@@ -3206,10 +3226,6 @@ Object {
                   </div>
                 </button>
               </span>
-            </div>
-            <div
-              class="time-slot-container"
-            >
               <span>
                 <button
                   class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
@@ -3253,22 +3269,6 @@ Object {
                       style="flex: 1;"
                     >
                       3:30 PM EDT
-                    </div>
-                    <div />
-                  </div>
-                </button>
-              </span>
-              <span>
-                <button
-                  class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
-                  disabled=""
-                  type="button"
-                >
-                  <div>
-                    <div
-                      style="flex: 1;"
-                    >
-                      4:30 PM EDT
                     </div>
                     <div />
                   </div>

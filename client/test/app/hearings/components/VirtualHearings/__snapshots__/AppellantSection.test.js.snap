@@ -1693,14 +1693,20 @@ SAN FRANCISCO, CA 94103
                   htmlFor="appellantTz"
                 >
                   <strong>
-                    <span>
-                      Veteran Timezone
-                      <span
-                        className="cf-required"
-                      >
-                        Required
+                    <FormLabel
+                      label="Veteran Timezone"
+                      name="Veteran Timezone"
+                      required={true}
+                    >
+                      <span>
+                        Veteran Timezone
+                        <span
+                          className="cf-required"
+                        >
+                          Required
+                        </span>
                       </span>
-                    </span>
+                    </FormLabel>
                   </strong>
                 </label>
                 <div

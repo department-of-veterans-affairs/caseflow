@@ -539,9 +539,14 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                         htmlFor="judge-dropdown"
                       >
                         <strong>
-                          <span>
-                            What is the CAVC judge's name?
-                          </span>
+                          <FormLabel
+                            label="What is the CAVC judge's name?"
+                            name="What is the CAVC judge's name?"
+                          >
+                            <span>
+                              What is the CAVC judge's name?
+                            </span>
+                          </FormLabel>
                         </strong>
                       </label>
                       <div

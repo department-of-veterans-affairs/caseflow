@@ -4,6 +4,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
 <HearingTime
   componentIndex={0}
   enableZone={true}
+  label="Hearing Time"
   value="08:15"
 >
   <span
@@ -15,7 +16,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
           "usa-fieldset-inputs",
         ]
       }
-      label="Time"
+      label="Hearing Time"
       name="hearingTime0"
       onChange={[Function]}
       options={
@@ -49,7 +50,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
         >
           <strong>
             <span>
-              Time
+              Hearing Time
                
             </span>
           </strong>
@@ -287,9 +288,14 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
           htmlFor="optionalHearingTime0"
         >
           <strong>
-            <span>
-              Hearing Time
-            </span>
+            <FormLabel
+              label="Hearing Time"
+              name="Hearing Time"
+            >
+              <span>
+                Hearing Time
+              </span>
+            </FormLabel>
           </strong>
         </label>
         <div
@@ -3978,6 +3984,7 @@ exports[`HearingTime Matches snapshot when other time is not selected 1`] = `
 <HearingTime
   componentIndex={0}
   enableZone={false}
+  label="Hearing Time"
   value="12:30"
 >
   <span
@@ -3989,7 +3996,7 @@ exports[`HearingTime Matches snapshot when other time is not selected 1`] = `
           "usa-fieldset-inputs",
         ]
       }
-      label="Time"
+      label="Hearing Time"
       name="hearingTime0"
       onChange={[Function]}
       options={
@@ -4023,7 +4030,7 @@ exports[`HearingTime Matches snapshot when other time is not selected 1`] = `
         >
           <strong>
             <span>
-              Time
+              Hearing Time
                
             </span>
           </strong>
@@ -4102,6 +4109,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
 <HearingTime
   componentIndex={0}
   enableZone={false}
+  label="Hearing Time"
   value="13:45"
 >
   <span
@@ -4113,7 +4121,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
           "usa-fieldset-inputs",
         ]
       }
-      label="Time"
+      label="Hearing Time"
       name="hearingTime0"
       onChange={[Function]}
       options={
@@ -4147,7 +4155,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
         >
           <strong>
             <span>
-              Time
+              Hearing Time
                
             </span>
           </strong>
@@ -4385,9 +4393,14 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
           htmlFor="optionalHearingTime0"
         >
           <strong>
-            <span>
-              Hearing Time
-            </span>
+            <FormLabel
+              label="Hearing Time"
+              name="Hearing Time"
+            >
+              <span>
+                Hearing Time
+              </span>
+            </FormLabel>
           </strong>
         </label>
         <div
@@ -8076,6 +8089,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
 <HearingTime
   componentIndex={0}
   enableZone={false}
+  label="Hearing Time"
 >
   <span
     data-css-1042gbc=""
@@ -8086,7 +8100,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
           "usa-fieldset-inputs",
         ]
       }
-      label="Time"
+      label="Hearing Time"
       name="hearingTime0"
       onChange={[Function]}
       options={
@@ -8120,7 +8134,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
         >
           <strong>
             <span>
-              Time
+              Hearing Time
                
             </span>
           </strong>
@@ -8357,9 +8371,14 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
           htmlFor="optionalHearingTime0"
         >
           <strong>
-            <span>
-              Hearing Time
-            </span>
+            <FormLabel
+              label="Hearing Time"
+              name="Hearing Time"
+            >
+              <span>
+                Hearing Time
+              </span>
+            </FormLabel>
           </strong>
         </label>
         <div
@@ -12005,6 +12024,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
 <HearingTime
   componentIndex={0}
   enableZone={false}
+  label="Hearing Time"
 >
   <span
     data-css-1042gbc=""
@@ -12015,7 +12035,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
           "usa-fieldset-inputs",
         ]
       }
-      label="Time"
+      label="Hearing Time"
       name="hearingTime0"
       onChange={[Function]}
       options={
@@ -12049,7 +12069,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
         >
           <strong>
             <span>
-              Time
+              Hearing Time
                
             </span>
           </strong>
@@ -12286,9 +12306,14 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
           htmlFor="optionalHearingTime0"
         >
           <strong>
-            <span>
-              Hearing Time
-            </span>
+            <FormLabel
+              label="Hearing Time"
+              name="Hearing Time"
+            >
+              <span>
+                Hearing Time
+              </span>
+            </FormLabel>
           </strong>
         </label>
         <div
