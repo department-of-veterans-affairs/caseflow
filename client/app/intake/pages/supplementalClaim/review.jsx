@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import * as yup from 'yup';
 import DateSelector from '../../../components/DateSelector';
 import { Redirect } from 'react-router-dom';
 import BenefitType from '../../components/BenefitType';
@@ -14,10 +15,21 @@ import {
   setLegacyOptInApproved
 } from '../../actions/decisionReview';
 import { setReceiptDate } from '../../actions/intake';
-import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, VBMS_BENEFIT_TYPES } from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, VBMS_BENEFIT_TYPES, CLAIMANT_ERRORS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 import PropTypes from 'prop-types';
+
+const reviewSupplementalClaimSchema = yup.object().shape({
+  'benefit-type-options': yup.string().required(CLAIMANT_ERRORS.blank),
+  'receipt-date': yup.date().required(),
+  'different-claimant-option': yup.string().required(CLAIMANT_ERRORS.blank),
+  'legacy-opt-in': yup.string().required(CLAIMANT_ERRORS.blank),
+  'claimant-options': yup.string().notRequired().when('different-claimant-option', {
+    is: "true",
+    then: yup.string().required(CLAIMANT_ERRORS.blank)
+  })
+});
 
 class Review extends React.PureComponent {
   render() {
@@ -59,7 +71,8 @@ class Review extends React.PureComponent {
       <BenefitType
         value={benefitType}
         onChange={this.props.setBenefitType}
-        errorMessage={benefitTypeError}
+        errorMessage={this.props.errors['benefit-type-options'] && this.props.errors['benefit-type-options'].message}
+        register={this.props.register}
       />
 
       <DateSelector
@@ -67,17 +80,22 @@ class Review extends React.PureComponent {
         label="What is the Receipt Date of this form?"
         value={receiptDate}
         onChange={this.props.setReceiptDate}
-        errorMessage={receiptDateError}
+        errorMessage={this.props.errors['receipt-date'] && this.props.errors['receipt-date'].message}
         type="date"
         strongLabel
+        inputRef={this.props.register}
       />
 
-      <SelectClaimantConnected />
+      <SelectClaimantConnected 
+        register={this.props.register} 
+        errors={this.props.errors} 
+      />
 
       <LegacyOptInApproved
-        value={legacyOptInApproved === null ? null : legacyOptInApproved}
+        value={legacyOptInApproved}
         onChange={this.props.setLegacyOptInApproved}
-        errorMessage={legacyOptInApprovedError}
+        errorMessage={this.props.errors['legacy-opt-in'] && this.props.errors['legacy-opt-in'].message}
+        register={this.props.register}
       />
     </div>;
   }
@@ -149,3 +167,5 @@ export default connect(
     setLegacyOptInApproved
   }, dispatch)
 )(Review);
+
+export {reviewSupplementalClaimSchema}

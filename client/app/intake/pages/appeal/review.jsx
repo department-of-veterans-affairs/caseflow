@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import * as yup from 'yup';
+import { format } from 'date-fns';
 import RadioField from '../../../components/RadioField';
 import DateSelector from '../../../components/DateSelector';
 import { Redirect } from 'react-router-dom';
@@ -14,10 +16,35 @@ import {
   setLegacyOptInApproved
 } from '../../actions/decisionReview';
 import { setReceiptDate } from '../../actions/intake';
-import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES } from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, REVIEW_OPTIONS} from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
+import DATES from '../../../../constants/DATES';
 import PropTypes from 'prop-types';
+
+const reviewAppealSchema = yup.object().shape({
+  'receipt-date': yup.mixed().
+    when(['$useAmaActivationDate'], {
+      is: true,
+      then: yup.date().typeError('Receipt Date is required.').
+        min(
+          new Date(DATES.AMA_ACTIVATION),
+        `Receipt Date cannot be prior to ${format(new Date(DATES.AMA_ACTIVATION), 'MM/dd/yyyy')}`
+        ),
+      otherwise: yup.date().typeError('Receipt Date is required.').
+        min(
+          new Date(DATES.AMA_ACTIVATION_TEST),
+        `Receipt Date cannot be prior to ${format(new Date(DATES.AMA_ACTIVATION_TEST), 'MM/dd/yyyy')}`
+        )
+    }),
+    'docket-type': yup.string().required(),
+    'legacy-opt-in': yup.string().required(),
+    'different-claimant-option': yup.string().required(),
+    'claimant-options': yup.string().notRequired().when('different-claimant-option', {
+      is: "true",
+      then: yup.string().required()
+    })
+});
 
 class Review extends React.PureComponent {
   render() {
@@ -146,3 +173,5 @@ export default connect(
     setLegacyOptInApproved
   }, dispatch)
 )(Review);
+
+export {reviewAppealSchema}

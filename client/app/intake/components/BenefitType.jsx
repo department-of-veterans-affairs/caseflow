@@ -22,6 +22,7 @@ export default class BenefitType extends React.PureComponent {
         onChange={onChange}
         value={value}
         errorMessage={errorMessage}
+        inputRef={this.props.register}
       />
     </div>;
   }

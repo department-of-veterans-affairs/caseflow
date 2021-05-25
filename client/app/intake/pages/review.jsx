@@ -1,11 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
+import { useHistory } from 'react-router';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import * as yup from 'yup';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { format } from 'date-fns';
 import { css } from 'glamor';
@@ -13,9 +14,9 @@ import { css } from 'glamor';
 import { PAGE_PATHS, FORM_TYPES, REQUEST_STATE, VBMS_BENEFIT_TYPES, REVIEW_OPTIONS } from '../constants';
 import RampElectionPage from './rampElection/review';
 import RampRefilingPage from './rampRefiling/review';
-import SupplementalClaimPage from './supplementalClaim/review';
-import HigherLevelReviewPage from './higherLevelReview/review';
-import AppealReviewPage from './appeal/review';
+import SupplementalClaimPage, { reviewSupplementalClaimSchema } from './supplementalClaim/review';
+import HigherLevelReviewPage, {reviewHigherLevelReviewSchema} from './higherLevelReview/review';
+import AppealReviewPage, {reviewAppealSchema} from './appeal/review';
 
 import Button from '../../components/Button';
 import CancelButton from '../components/CancelButton';
@@ -32,10 +33,16 @@ const textAlignRightStyling = css({
   textAlign: 'right',
 });
 
+const schemaMappings = {
+  appeal: reviewAppealSchema,
+  higher_level_review: reviewHigherLevelReviewSchema,
+  supplemental_claim: reviewSupplementalClaimSchema,
+}
+
 const schema = yup.object().shape({
   'receipt-date': yup.mixed().
     when(['$selectedForm', '$useAmaActivationDate'], {
-      is: (selectedForm, useAmaActivationDate) => selectedForm === REVIEW_OPTIONS.APPEAL.key && useAmaActivationDate,
+      is: (selectedForm, useAmaActivationDate) => console.log(selectedForm) || selectedForm === REVIEW_OPTIONS.APPEAL.key && useAmaActivationDate,
       then: yup.date().typeError('Receipt Date is required.').
         min(
           new Date(DATES.AMA_ACTIVATION),
@@ -59,18 +66,21 @@ const schema = yup.object().shape({
     })
 });
 
-const Review = ({featureToggles, history, submitDecisionReview, submitRampElection, submitRampRefiling, intakeForms, formType, intakeId}) => {
-  const { register, errors, control, handleSubmit, formState } = useForm(
+const Review = ({featureToggles, submitDecisionReview, submitRampElection, submitRampRefiling, intakeForms, formType, intakeId}) => {
+  console.log(formType)
+  const { register, errors, handleSubmit } = useForm(
     {
-      resolver: yupResolver(schema),
-      mode: 'onSubmit'
+      resolver: yupResolver(schemaMappings[formType]),
+      mode: 'onSubmit',
+      reValidateMode: 'onBlur',
+      context: { selectedForm: formType, useAmaActivationDate: featureToggles.useAmaActivationDate}
     }
   );
 
+  const { push } = useHistory();
   const selectedForm = _.find(FORM_TYPES, { key: formType });
   const intakeData = selectedForm ? intakeForms[selectedForm.key] : null;
-  console.log(errors)
-  console.log(formState)
+
   const submitReview = (selectedForm, intakeData) => {
     if (selectedForm.category === 'decisionReview') {
       return submitDecisionReview(intakeId, intakeData, selectedForm.formName);
@@ -85,16 +95,14 @@ const Review = ({featureToggles, history, submitDecisionReview, submitRampElecti
     }
   }
 
-  const handleClick = (d) => {
-    console.log(selectedForm)
-    console.log(d)
+  const handleClick = () => {
     if (intakeData?.claimant === 'claimant_not_listed') {
-      return history.push('/add_claimant');
+      return push('/add_claimant');
     }
     submitReview(selectedForm, intakeData).then(
       () => selectedForm.category === 'decisionReview' ?
-        history.push('/add_issues') :
-        history.push('/finish')
+        push('/add_issues') :
+        push('/finish')
       , (error) => {
         // This is expected behavior on bad data, so prevent
         // sentry from alerting an unhandled error
@@ -104,14 +112,14 @@ const Review = ({featureToggles, history, submitDecisionReview, submitRampElecti
 
   return(
     <form
-      onSubmit={handleSubmit((d) => handleClick(d))}
+      onSubmit={handleSubmit(handleClick)}
     >
       <SwitchOnForm
         formComponentMapping={{
-          ramp_election: <RampElectionPage />,
-          ramp_refiling: <RampRefilingPage />,
-          supplemental_claim: <SupplementalClaimPage featureToggles={featureToggles} />,
-          higher_level_review: <HigherLevelReviewPage featureToggles={featureToggles} />,
+          ramp_election: <RampElectionPage errors={errors} register={register} />,
+          ramp_refiling: <RampRefilingPage errors={errors} register={register} />,
+          supplemental_claim: <SupplementalClaimPage featureToggles={featureToggles} errors={errors} register={register} />,
+          higher_level_review: <HigherLevelReviewPage featureToggles={featureToggles} errors={errors} register={register} />,
           appeal: <AppealReviewPage featureToggles={featureToggles} errors={errors} register={register} />
         }}
         componentForNoFormSelected={<Redirect to={PAGE_PATHS.BEGIN} />}
@@ -175,7 +183,6 @@ class ReviewNextButton extends React.PureComponent {
     return <Button
       type="submit"
       name="submit-review"
-      // onClick={() => handleSubmit(this.handleClick(selectedForm, intakeData))}
       loading={intakeData ? intakeData.requestStatus.submitReview === REQUEST_STATE.IN_PROGRESS : true}
       disabled={disableSubmit}
     >
