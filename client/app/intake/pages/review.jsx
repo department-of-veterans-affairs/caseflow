@@ -5,7 +5,6 @@ import { useHistory } from 'react-router';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-<<<<<<< HEAD
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { css } from 'glamor';
@@ -16,17 +15,6 @@ import RampRefilingPage, { reviewRampRefilingSchema } from './rampRefiling/revie
 import SupplementalClaimPage, { reviewSupplementalClaimSchema } from './supplementalClaim/review';
 import HigherLevelReviewPage, { reviewHigherLevelReviewSchema } from './higherLevelReview/review';
 import AppealReviewPage, { reviewAppealSchema } from './appeal/review';
-=======
-import * as yup from 'yup';
-import { format } from 'date-fns';
-
-import { PAGE_PATHS, FORM_TYPES, REQUEST_STATE, VBMS_BENEFIT_TYPES, REVIEW_OPTIONS } from '../constants';
-import RampElectionPage from './rampElection/review';
-import RampRefilingPage from './rampRefiling/review';
-import SupplementalClaimPage from './supplementalClaim/review';
-import HigherLevelReviewPage from './higherLevelReview/review';
-import AppealReviewPage from './appeal/review';
->>>>>>> master
 
 import Button from '../../components/Button';
 import CancelButton from '../components/CancelButton';
@@ -35,7 +23,6 @@ import { submitReview as submitDecisionReview } from '../actions/decisionReview'
 import { submitReview as submitRampRefiling } from '../actions/rampRefiling';
 import { setReceiptDateError } from '../actions/intake';
 import { toggleIneligibleError } from '../util';
-import DATES from '../../../constants/DATES';
 
 import SwitchOnForm from '../components/SwitchOnForm';
 
@@ -51,39 +38,31 @@ const schemaMappings = {
   ramp_refiling: reviewRampRefilingSchema
 };
 
-const Review = ({
-  featureToggles,
-  intakeForms,
-  formType,
-  intakeId,
-  submitDecisionReview,
-  submitRampRefiling,
-  submitRampElection
-}) => {
+const Review = (props) => {
   const formProps = useForm(
     {
-      resolver: yupResolver(schemaMappings[formType]),
-      context: { selectedForm: formType, useAmaActivationDate: featureToggles.useAmaActivationDate },
+      resolver: yupResolver(schemaMappings[props.formType]),
+      context: { selectedForm: props.formType, useAmaActivationDate: props.featureToggles.useAmaActivationDate },
       mode: 'onSubmit',
       reValidateMode: 'onSubmit'
     }
   );
 
   const { push } = useHistory();
-  const selectedForm = _.find(FORM_TYPES, { key: formType });
-  const intakeData = selectedForm ? intakeForms[selectedForm.key] : null;
+  const selectedForm = _.find(FORM_TYPES, { key: props.formType });
+  const intakeData = selectedForm ? props.intakeForms[selectedForm.key] : null;
 
   const submitReview = () => {
     if (selectedForm.category === 'decisionReview') {
-      return submitDecisionReview(intakeId, intakeData, selectedForm.formName);
+      return props.submitDecisionReview(props.intakeId, intakeData, selectedForm.formName);
     }
 
     if (selectedForm.key === 'ramp_election') {
-      return submitRampElection(intakeId, intakeData);
+      return props.submitRampElection(props.intakeId, intakeData);
     }
 
     if (selectedForm.key === 'ramp_refiling') {
-      return submitRampRefiling(intakeId, intakeData);
+      return props.submitRampRefiling(props.intakeId, intakeData);
     }
   };
 
@@ -110,9 +89,9 @@ const Review = ({
         formComponentMapping={{
           ramp_election: <RampElectionPage {...formProps} />,
           ramp_refiling: <RampRefilingPage {...formProps} />,
-          supplemental_claim: <SupplementalClaimPage featureToggles={featureToggles} {...formProps} />,
-          higher_level_review: <HigherLevelReviewPage featureToggles={featureToggles} {...formProps} />,
-          appeal: <AppealReviewPage featureToggles={featureToggles} {...formProps} />
+          supplemental_claim: <SupplementalClaimPage featureToggles={props.featureToggles} {...formProps} />,
+          higher_level_review: <HigherLevelReviewPage featureToggles={props.featureToggles} {...formProps} />,
+          appeal: <AppealReviewPage featureToggles={props.featureToggles} {...formProps} />
         }}
         componentForNoFormSelected={<Redirect to={PAGE_PATHS.BEGIN} />}
       />
@@ -229,5 +208,3 @@ Review.propTypes = {
 ReviewButtons.propTypes = {
   history: PropTypes.object
 };
-
-export { schema as TestableSchema };
