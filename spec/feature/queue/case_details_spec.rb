@@ -430,8 +430,8 @@ RSpec.feature "Case details", :all_dbs do
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
       let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
 
-      before { FeatureToggle.disable!(:poa_refresh) }
-      after { FeatureToggle.enable!(:poa_refresh) }
+      before { FeatureToggle.disable!(:poa_button_refresh) }
+      after { FeatureToggle.enable!(:poa_button_refresh) }
 
       scenario "text isn't on the page" do
         visit "/queue/appeals/#{appeal.vacols_id}"
@@ -450,8 +450,8 @@ RSpec.feature "Case details", :all_dbs do
         )
       end
 
-      before { FeatureToggle.enable!(:poa_refresh) }
-      after { FeatureToggle.disable!(:poa_refresh) }
+      before { FeatureToggle.enable!(:poa_button_refresh) }
+      after { FeatureToggle.disable!(:poa_button_refresh) }
 
       scenario "text is on the page" do
         visit "/queue/appeals/#{appeal.uuid}"
@@ -463,8 +463,8 @@ RSpec.feature "Case details", :all_dbs do
       let!(:user) { User.authenticate!(roles: ["System Admin"]) }
       let(:appeal) { create(:appeal, veteran: create(:veteran)) }
 
-      before { FeatureToggle.enable!(:poa_refresh) }
-      after { FeatureToggle.disable!(:poa_refresh) }
+      before { FeatureToggle.enable!(:poa_button_refresh) }
+      after { FeatureToggle.disable!(:poa_button_refresh) }
 
       scenario "text is not on the page" do
         visit "/queue/appeals/#{appeal.uuid}"
@@ -478,10 +478,10 @@ RSpec.feature "Case details", :all_dbs do
       let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
 
       before do
-        FeatureToggle.disable!(:poa_refresh)
+        FeatureToggle.disable!(:poa_button_refresh)
       end
       after do
-        FeatureToggle.enable!(:poa_refresh)
+        FeatureToggle.enable!(:poa_button_refresh)
       end
 
       scenario "button isn't on the page" do
@@ -502,10 +502,10 @@ RSpec.feature "Case details", :all_dbs do
       end
 
       before do
-        FeatureToggle.enable!(:poa_refresh)
+        FeatureToggle.enable!(:poa_button_refresh)
       end
       after do
-        FeatureToggle.disable!(:poa_refresh)
+        FeatureToggle.disable!(:poa_button_refresh)
       end
 
       scenario "button is on the page and is in cooldown" do
@@ -550,10 +550,10 @@ RSpec.feature "Case details", :all_dbs do
       end
 
       before do
-        FeatureToggle.enable!(:poa_refresh)
+        FeatureToggle.enable!(:poa_button_refresh)
       end
       after do
-        FeatureToggle.disable!(:poa_refresh)
+        FeatureToggle.disable!(:poa_button_refresh)
       end
 
       scenario "attempts to refresh with no BGS data" do
@@ -1443,6 +1443,32 @@ RSpec.feature "Case details", :all_dbs do
           expect(page).to have_content(COPY::TASK_SNAPSHOT_TASK_WITHDRAWAL_DATE_LABEL.upcase)
           expect(page).to have_content("Appeal withdrawn")
         end
+      end
+    end
+
+    context "when POA changes and IHP task is cancelled" do
+      let(:old_poa) { create(:vso, name: "Old POA") }
+      let(:appeal) do
+        create(:appeal, veteran: create(:veteran)) do |appeal|
+          create(
+            :informal_hearing_presentation_task,
+            appeal: appeal,
+            assigned_to: old_poa
+          )
+        end
+      end
+      let(:new_poa_participant_id) { "2222222" }
+      let!(:new_poa) { create(:vso, name: "New POA", participant_id: new_poa_participant_id) }
+      let!(:bgs_poa_for_claimant) do
+        create(:bgs_power_of_attorney,
+               claimant_participant_id: appeal.claimant.participant_id,
+               poa_participant_id: new_poa_participant_id)
+      end
+      it "should show the cancelled task in case timeline with the appropriate reason" do
+        InformalHearingPresentationTask.update_to_new_poa(appeal)
+        visit("/queue/appeals/#{appeal.uuid}")
+        expect(page).to have_css("table#case-timeline-table tbody tr", count: 3)
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_CANCEL_REASONS["poa_change"])
       end
     end
 

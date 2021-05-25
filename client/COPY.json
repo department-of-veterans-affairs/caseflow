@@ -66,6 +66,7 @@
   "TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL": "Assigned to",
   "TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL": "Assigned by",
   "TASK_SNAPSHOT_TASK_CANCELER_LABEL": "Cancelled by",
+  "TASK_SNAPSHOT_TASK_CANCEL_REASON_LABEL": "Cancellation Reason",
   "TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL": "Assigned on",
   "TASK_SNAPSHOT_TASK_COMPLETED_DATE_LABEL": "Completed on",
   "TASK_SNAPSHOT_TASK_CANCELLED_DATE_LABEL": "Cancelled on",
@@ -95,6 +96,10 @@
   "TASK_SNAPSHOT_NO_ACTIVE_LABEL": "There are currently no active tasks",
   "TASK_SNAPSHOT_ACTIVE_TASKS_LABEL": "Currently active tasks",
   "TASK_SNAPSHOT_ADD_NEW_TASK_LABEL": "+ Add a new task",
+
+  "TASK_SNAPSHOT_CANCEL_REASONS": {
+    "poa_change": "POA Change"
+  },
 
   "CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY": "View VLJ Hearing Worksheet",
   "CASE_DETAILS_HEARING_DETAILS_LINK_COPY": "View Hearing Details",
