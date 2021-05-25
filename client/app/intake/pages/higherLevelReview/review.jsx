@@ -39,8 +39,6 @@ class Review extends React.PureComponent {
     const {
       higherLevelReviewStatus,
       veteranName,
-      receiptDate,
-      receiptDateError,
       benefitType,
       benefitTypeError,
       informalConference,
@@ -79,11 +77,7 @@ class Review extends React.PureComponent {
       />
 
       <ReceiptDateInput
-        receiptDate={receiptDate}
-        setReceiptDate={this.props.setReceiptDate}
-        receiptDateError={receiptDateError}
-        errors={errors}
-        register={this.props.register}
+        {...this.props}
       />
 
       <RadioField

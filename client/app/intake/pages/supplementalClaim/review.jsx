@@ -33,8 +33,6 @@ class Review extends React.PureComponent {
     const {
       supplementalClaimStatus,
       veteranName,
-      receiptDate,
-      receiptDateError,
       benefitType,
       benefitTypeError,
       legacyOptInApproved,
@@ -74,11 +72,7 @@ class Review extends React.PureComponent {
       />
 
       <ReceiptDateInput
-        receiptDate={receiptDate}
-        setReceiptDate={this.props.setReceiptDate}
-        receiptDateError={receiptDateError}
-        errors={errors}
-        register={this.props.register}
+        {...this.props}
       />
 
       <SelectClaimantConnected

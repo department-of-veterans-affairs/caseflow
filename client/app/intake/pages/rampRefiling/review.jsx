@@ -38,8 +38,6 @@ class Review extends React.PureComponent {
       optionSelected,
       optionSelectedError,
       hasInvalidOption,
-      receiptDate,
-      receiptDateError,
       appealDocket,
       appealDocketError,
       submitInvalidOptionError,
@@ -95,11 +93,7 @@ class Review extends React.PureComponent {
       { reviewIntakeError && <ErrorAlert /> }
 
       <ReceiptDateInput
-        receiptDate={receiptDate}
-        setReceiptDate={this.props.setReceiptDate}
-        receiptDateError={receiptDateError}
-        errors={errors}
-        register={this.props.register}
+        {...this.props}
       />
 
       <RadioField
