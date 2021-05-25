@@ -2,8 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as yup from 'yup';
-import { format, add } from 'date-fns';
-import DateSelector from '../../../components/DateSelector';
 import { Redirect } from 'react-router-dom';
 import BenefitType from '../../components/BenefitType';
 import LegacyOptInApproved from '../../components/LegacyOptInApproved';
@@ -20,7 +18,7 @@ import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, VBMS_BENEFIT_TYPES, CLAIMANT_ERR
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 import PropTypes from 'prop-types';
-import ReceiptDateInput from '../receiptDateInput';
+import ReceiptDateInput, { receiptDateInputValidation } from '../receiptDateInput';
 
 const reviewSupplementalClaimSchema = yup.object().shape({
   'benefit-type-options': yup.string().required(CLAIMANT_ERRORS.blank),

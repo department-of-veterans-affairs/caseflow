@@ -15,7 +15,7 @@ import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 import COPY from '../../../../COPY';
 import PropTypes from 'prop-types';
-import ReceiptDateInput from '../receiptDateInput';
+import ReceiptDateInput, { receiptDateInputValidation } from '../receiptDateInput';
 
 const reviewRampRefilingSchema = yup.object().shape({
   'opt-in-election': yup.string().required(CLAIMANT_ERRORS.blank),

@@ -10,7 +10,7 @@ import { PAGE_PATHS, INTAKE_STATES, REVIEW_OPTIONS, CLAIMANT_ERRORS } from '../.
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 import PropTypes from 'prop-types';
-import ReceiptDateInput from '../receiptDateInput';
+import ReceiptDateInput, { receiptDateInputValidation } from '../receiptDateInput';
 
 const reviewRampElectionSchema = yup.object().shape({
   'opt-in-election': yup.string().required(CLAIMANT_ERRORS.blank),
