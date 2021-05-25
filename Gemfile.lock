@@ -724,7 +724,7 @@ DEPENDENCIES
   pg
   pry
   pry-byebug
-  puma
+  puma (~> 5)
   rack (~> 2.2.3)
   rails (= 5.2.4.6)
   rails-erd
