@@ -30,6 +30,27 @@ feature "Intake Review Page", :postgres do
     end
   end
 
+  describe "Validating receipt date not blank or before AMA when claimant not listed" do
+    before { FeatureToggle.enable!(:use_ama_activation_date) }
+    before { FeatureToggle.enable!(:non_veteran_claimants) }
+    it "shows correct error with blank or pre-AMA dates" do
+      start_appeal(veteran, receipt_date: nil)
+      visit "/intake"
+      expect(page).to have_current_path("/intake/review_request")
+      click_intake_continue
+
+      fill_in "What is the Receipt Date of this form?", with: "01/01/2019"
+      within_fieldset("Is the claimant someone other than the Veteran?") do
+        find("label", text: "Yes", match: :prefer_exact).click
+      end
+      find("label", text: "Claimant not listed", match: :prefer_exact).click
+      click_intake_continue
+
+      expect(page).to have_current_path("/intake/review_request")
+      expect(page).to have_content("Receipt Date cannot be prior to 02/19/2019")
+    end
+  end
+
   context "when the Veteran is not valid" do
     let!(:veteran) do
       Generators::Veteran.build(

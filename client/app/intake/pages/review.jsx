@@ -32,7 +32,7 @@ const schema = yup.object().shape({
       then: yup.date().typeError('Receipt Date is required.').
         min(
           new Date(DATES.AMA_ACTIVATION),
-        `Receipt Date cannot be prior to ${format(new Date(DATES.AMA_ACTIVATION), 'MM/dd/yyyy')}`
+        `Receipt Date cannot be prior to ${format(new Date(DATES.AMA_ACTIVATION), 'MM/dd/yyyy')}.`
         )
     }).
     when(['$selectedForm', '$useAmaActivationDate'], {
@@ -40,7 +40,7 @@ const schema = yup.object().shape({
       then: yup.date().typeError('Receipt Date is required.').
         min(
           new Date(DATES.AMA_ACTIVATION_TEST),
-        `Receipt Date cannot be prior to ${format(new Date(DATES.AMA_ACTIVATION_TEST), 'MM/dd/yyyy')}`
+        `Receipt Date cannot be prior to ${format(new Date(DATES.AMA_ACTIVATION_TEST), 'MM/dd/yyyy')}.`
         )
     })
 });
