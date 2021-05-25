@@ -84,8 +84,6 @@ export const shouldAutoSelect = (taskInfo) => {
 // Takes an array of tasks and filters it down to a list of most recent of each type
 export const filterTasks = (taskData = []) => {
   const uniqueTasksByType = {};
-  // const orgTasksByType = {};
-  // const userTasksByType = {};
 
   for (const task of taskData) {
     // we only want organization tasks
