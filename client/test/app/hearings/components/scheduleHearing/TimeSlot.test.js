@@ -27,6 +27,7 @@ const defaultProps = {
   // Denver
   ro: defaultRoCode,
   roTimezone: REGIONAL_OFFICE_INFORMATION[defaultRoCode].timezone,
+  hearingDayDate: moment.tz().format('YYYY-MM-DD'),
   scheduledHearingsList: emptyHearings,
   numberOfSlots: 8,
   slotLengthMinutes: 60,
@@ -150,6 +151,22 @@ describe('TimeSlot', () => {
 
             expect((lastSlotTime).isSame(expectedLastSlotTime)).toEqual(true);
 
+          });
+
+          it(`correctly parses hearings and slots onto the date in beginsAt (${beginsAtString})`, () => {
+            const beginsAt = moment(beginsAtString).tz('America/New_York');
+            const hearingDayDate = beginsAt.tz(ro.timezone).format('YYYY-MM-DD');
+            const { timeSlots } = setup({
+              roTimezone: ro.timezone,
+              beginsAt,
+              hearingDayDate,
+              scheduledHearingsList: oneHearing
+            });
+
+            const slotsAndHearingsOnBeginsAtDate = timeSlots.every((slotOrHearing) =>
+              slotOrHearing.time.isSame(beginsAt, 'day'));
+
+            expect(slotsAndHearingsOnBeginsAtDate).toBe(true);
           });
         });
 

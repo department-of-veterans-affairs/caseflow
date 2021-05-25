@@ -1,9 +1,9 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import Select from 'react-select';
+import Select, { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
 import CreatableSelect from 'react-select/creatable';
-import _, { isPlainObject, isNull } from 'lodash';
+import _, { isPlainObject, isNull, kebabCase } from 'lodash';
 import classNames from 'classnames';
 import { css } from 'glamor';
 import { FormLabel } from './FormLabel';
@@ -18,12 +18,47 @@ const customStyles = {
   }),
 };
 
+const CustomMenuList = (props) => {
+  const innerProps = {
+    ...props.innerProps,
+    id: `${kebabCase(props.selectProps.name)}-listbox`,
+    role: 'listbox',
+    'aria-label': `${kebabCase(props.selectProps.name)}-listbox`,
+  };
+
+  return <components.MenuList {...props} innerProps={innerProps} />;
+};
+
+const CustomOption = (props) => {
+  const innerProps = {
+    ...props.innerProps,
+    role: 'option',
+    'aria-disabled': props.selectProps.isDisabled,
+  };
+
+  return <components.Option {...props} innerProps={innerProps} />;
+};
+
+const CustomInput = (props) => {
+  const innerProps = {
+    ...props.innerProps,
+    role: 'combobox',
+    'aria-labelledby': `${kebabCase(props.selectProps.name)}-label`,
+    'aria-owns': `${kebabCase(props.selectProps.name)}-listbox`,
+    'aria-expanded': props.selectProps.menuIsOpen,
+    'aria-haspopup': true,
+  };
+
+  return <components.Input {...props} {...innerProps} />;
+};
+
 export class SearchableDropdown extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
       value: props.value,
+      isExpanded: false
     };
   }
 
@@ -176,7 +211,7 @@ export class SearchableDropdown extends React.Component {
     return (
       <div className={errorMessage ? 'usa-input-error' : ''}>
         <div className={dropdownClasses} {...dropdownStyling}>
-          <label className={labelClasses} htmlFor={name}>
+          <label className={labelClasses} htmlFor={`${kebabCase(name)}`} id={`${kebabCase(name)}-label`}>
             {strongLabel ? <strong>{labelContents}</strong> : labelContents}
           </label>
           {errorMessage && (
@@ -184,8 +219,10 @@ export class SearchableDropdown extends React.Component {
           )}
           <div className="cf-select">
             <SelectComponent
+              components={{ Input: CustomInput, MenuList: CustomMenuList, Option: CustomOption }}
+              name={name}
               classNamePrefix="cf-select"
-              inputId={name}
+              inputId={`${kebabCase(name)}`}
               options={options}
               defaultOptions={defaultOptions}
               defaultValue={defaultValue}
@@ -205,6 +242,8 @@ export class SearchableDropdown extends React.Component {
               isSearchable={!readOnly}
               cache={false}
               onBlurResetsInput={false}
+              onMenuOpen={() => this.setState({ isExpanded: true })}
+              onMenuClose={() => this.setState({ isExpanded: false })}
               ref={inputRef}
               shouldKeyDownEventCreateNewOption={
                 this.shouldKeyDownEventCreateNewOption
@@ -225,6 +264,82 @@ const SelectOpts = PropTypes.arrayOf(
     label: PropTypes.string,
   })
 );
+
+CustomMenuList.propTypes = {
+  clearValue: PropTypes.func,
+  className: PropTypes.string,
+  cx: PropTypes.func,
+  getStyles: PropTypes.func,
+  getValue: PropTypes.func,
+  hasValue: PropTypes.bool,
+  isMulti: PropTypes.bool,
+  isRtl: PropTypes.bool,
+  options: PropTypes.arrayOf(PropTypes.object),
+  selectOption: PropTypes.func,
+  selectProps: PropTypes.any,
+  setValue: PropTypes.func,
+  children: PropTypes.node,
+  theme: PropTypes.object,
+  innerRef: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.elementType })
+  ]),
+  focusedOption: PropTypes.object,
+  innerProps: PropTypes.object
+};
+
+CustomInput.propTypes = {
+  clearValue: PropTypes.func,
+  className: PropTypes.string,
+  cx: PropTypes.func,
+  getStyles: PropTypes.func,
+  getValue: PropTypes.func,
+  hasValue: PropTypes.bool,
+  isMulti: PropTypes.bool,
+  isRtl: PropTypes.bool,
+  options: PropTypes.arrayOf(PropTypes.object),
+  selectOption: PropTypes.func,
+  selectProps: PropTypes.any,
+  setValue: PropTypes.func,
+  theme: PropTypes.object,
+  innerRef: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.elementType })
+  ]),
+  isHidden: PropTypes.bool,
+  isDisabled: PropTypes.bool,
+  form: PropTypes.string,
+  innerProps: PropTypes.object
+};
+
+CustomOption.propTypes = {
+  clearValue: PropTypes.func,
+  className: PropTypes.string,
+  cx: PropTypes.func,
+  getStyles: PropTypes.func,
+  getValue: PropTypes.func,
+  hasValue: PropTypes.bool,
+  isMulti: PropTypes.bool,
+  isRtl: PropTypes.bool,
+  options: PropTypes.arrayOf(PropTypes.object),
+  selectOption: PropTypes.func,
+  selectProps: PropTypes.any,
+  setValue: PropTypes.func,
+  theme: PropTypes.object,
+  innerRef: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.elementType })
+  ]),
+  isHidden: PropTypes.bool,
+  isDisabled: PropTypes.bool,
+  isFocused: PropTypes.bool,
+  isSelected: PropTypes.bool,
+  children: PropTypes.node,
+  innerProps: PropTypes.object,
+  label: PropTypes.string,
+  type: PropTypes.string,
+  data: PropTypes.any
+};
 
 SearchableDropdown.propTypes = {
   async: PropTypes.func,
