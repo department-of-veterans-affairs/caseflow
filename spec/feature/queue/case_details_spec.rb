@@ -430,8 +430,8 @@ RSpec.feature "Case details", :all_dbs do
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
       let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
 
-      before { FeatureToggle.disable!(:poa_refresh) }
-      after { FeatureToggle.enable!(:poa_refresh) }
+      before { FeatureToggle.disable!(:poa_button_refresh) }
+      after { FeatureToggle.enable!(:poa_button_refresh) }
 
       scenario "text isn't on the page" do
         visit "/queue/appeals/#{appeal.vacols_id}"
@@ -450,8 +450,8 @@ RSpec.feature "Case details", :all_dbs do
         )
       end
 
-      before { FeatureToggle.enable!(:poa_refresh) }
-      after { FeatureToggle.disable!(:poa_refresh) }
+      before { FeatureToggle.enable!(:poa_button_refresh) }
+      after { FeatureToggle.disable!(:poa_button_refresh) }
 
       scenario "text is on the page" do
         visit "/queue/appeals/#{appeal.uuid}"
@@ -463,8 +463,8 @@ RSpec.feature "Case details", :all_dbs do
       let!(:user) { User.authenticate!(roles: ["System Admin"]) }
       let(:appeal) { create(:appeal, veteran: create(:veteran)) }
 
-      before { FeatureToggle.enable!(:poa_refresh) }
-      after { FeatureToggle.disable!(:poa_refresh) }
+      before { FeatureToggle.enable!(:poa_button_refresh) }
+      after { FeatureToggle.disable!(:poa_button_refresh) }
 
       scenario "text is not on the page" do
         visit "/queue/appeals/#{appeal.uuid}"
@@ -478,10 +478,10 @@ RSpec.feature "Case details", :all_dbs do
       let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
 
       before do
-        FeatureToggle.disable!(:poa_refresh)
+        FeatureToggle.disable!(:poa_button_refresh)
       end
       after do
-        FeatureToggle.enable!(:poa_refresh)
+        FeatureToggle.enable!(:poa_button_refresh)
       end
 
       scenario "button isn't on the page" do
@@ -502,10 +502,10 @@ RSpec.feature "Case details", :all_dbs do
       end
 
       before do
-        FeatureToggle.enable!(:poa_refresh)
+        FeatureToggle.enable!(:poa_button_refresh)
       end
       after do
-        FeatureToggle.disable!(:poa_refresh)
+        FeatureToggle.disable!(:poa_button_refresh)
       end
 
       scenario "button is on the page and is in cooldown" do
@@ -550,10 +550,10 @@ RSpec.feature "Case details", :all_dbs do
       end
 
       before do
-        FeatureToggle.enable!(:poa_refresh)
+        FeatureToggle.enable!(:poa_button_refresh)
       end
       after do
-        FeatureToggle.disable!(:poa_refresh)
+        FeatureToggle.disable!(:poa_button_refresh)
       end
 
       scenario "attempts to refresh with no BGS data" do
@@ -1875,6 +1875,11 @@ RSpec.feature "Case details", :all_dbs do
           let(:disposition) { "dismissed_death" }
 
           it_behaves_like "the button is shown"
+
+          context "but if the claimant is not a veteran" do
+            before { appeal.update(veteran_is_not_claimant: true) }
+            it_behaves_like "the button is not shown"
+          end
         end
 
         context "when the disposition is something else" do
