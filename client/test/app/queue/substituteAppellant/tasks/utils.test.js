@@ -8,7 +8,7 @@ import {
   shouldAutoSelect,
   shouldDisable,
   shouldHide,
-  shouldShowBasedOnOtherTasks
+  shouldShowBasedOnOtherTasks,
 } from 'app/queue/substituteAppellant/tasks/utils';
 
 import { sampleTasksForEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
@@ -160,8 +160,6 @@ describe('prepTaskDataForUi', () => {
 
     it('returns correct result', () => {
       const res = prepTaskDataForUi(tasks);
-
-      expect(res).toMatchSnapshot();
 
       const distributionTask = res.find(
         (item) => item.type === 'DistributionTask'
