@@ -25,7 +25,7 @@ const Template = ({ PoaRefreshButtonFeature, ...componentArgs }) => {
   const storeArgs = {
     ui: {
       featureToggles: {
-        poa_refresh: PoaRefreshButtonFeature
+        poa_button_refresh: PoaRefreshButtonFeature
       }
     }
   };
