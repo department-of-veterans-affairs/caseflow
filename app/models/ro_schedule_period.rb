@@ -47,18 +47,28 @@ class RoSchedulePeriod < SchedulePeriod
 
   private
 
-  # Validate fields for each video hearing day
+  # Disabling rubocop because this method is 21/20 lines long as a result of a bug fix
+  # rubocop:disable Metrics/MethodLength
+
+  # Validate fields for each video or virtual hearing day
   def format_ro_hearing_data(ro_allocations)
     ro_allocations.reduce([]) do |acc, (ro_key, ro_info)|
       ro_info[:allocated_dates].each_value do |dates|
         dates.each do |date, rooms|
           rooms.each do |room|
+            # Determine if this is a virtual or video hearing day
+            request_type = (ro_key == "NVHQ" || room[:room_num].nil?) ? :virtual : :video
+            # Number of slots depends on the request type
+            video_default_slot_count = HearingDay::SLOTS_BY_REQUEST_TYPE[HearingDay::REQUEST_TYPES[:video]][:default]
+            number_of_slots = (request_type == :virtual) ? ro_info[:number_of_slots] : video_default_slot_count
+
+            # Validate
             acc << HearingDayMapper.hearing_day_field_validations(
-              request_type: (ro_key == "NVHQ" || room[:room_num].nil?) ? :virtual : :video,
+              request_type: request_type,
               scheduled_for: Date.new(date.year, date.month, date.day),
               room: room[:room_num],
               regional_office: (ro_key == "NVHQ") ? nil : ro_key,
-              number_of_slots: ro_info[:number_of_slots],
+              number_of_slots: number_of_slots,
               slot_length_minutes: ro_info[:slot_length_minutes],
               first_slot_time: ro_info[:first_slot_time]
             )
@@ -68,6 +78,7 @@ class RoSchedulePeriod < SchedulePeriod
       acc
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   # Generate hearing days for ROs and CO based on non-availibility days and allocated days
   def generate_ro_hearing_schedule
