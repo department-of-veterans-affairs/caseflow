@@ -33,6 +33,8 @@ feature "Intake Review Page", :postgres do
   describe "Validating receipt date not blank or before AMA when claimant not listed" do
     before { FeatureToggle.enable!(:use_ama_activation_date) }
     before { FeatureToggle.enable!(:non_veteran_claimants) }
+    after { FeatureToggle.disable!(:use_ama_activation_date) }
+    after { FeatureToggle.disable!(:non_veteran_claimants) }
     it "shows correct error with blank or pre-AMA dates" do
       start_appeal(veteran, receipt_date: nil)
       visit "/intake"
