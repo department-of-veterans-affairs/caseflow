@@ -36,7 +36,6 @@ import QueueCaseSearchBar from '../../queue/SearchBar';
 import AddHearingDay from '../components/AddHearingDay';
 import { onRegionalOfficeChange } from '../../components/common/actions';
 import moment from 'moment';
-import UserAlerts from '../../components/UserAlerts';
 
 import { LIST_SCHEDULE_VIEWS } from '../constants';
 

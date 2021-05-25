@@ -28,8 +28,8 @@ const defaultProps = {
   ro: defaultRoCode,
   roTimezone: REGIONAL_OFFICE_INFORMATION[defaultRoCode].timezone,
   scheduledHearingsList: emptyHearings,
-  numberOfSlots: '8',
-  slotLengthMinutes: '60',
+  numberOfSlots: 8,
+  slotLengthMinutes: 60,
   fetchScheduledHearings: jest.fn(),
   onChange: mockOnChange
 };
@@ -115,18 +115,29 @@ describe('TimeSlot', () => {
         [
         // I really want to put the comment inline, disable eslint locally to allow
         /* eslint-disable line-comment-position */
-          '2021-04-21T08:30:00-04:00', // 8:30 eastern
-          '2021-04-21T12:30:00-07:00', // 9:30 eastern
-          '2021-04-21T11:30:00-05:00', // 10:30 eastern
-          '2021-04-21T14:30:00-06:00', // 12:30 eastern
-          '2021-04-21T15:30:00-05:00', // 14:30 eastern, last slot
+          '08:30', // 8:30 eastern
+          '9:30', // 9:30 eastern
+          '10:30', // 10:30 eastern
+          '12:30', // 12:30 eastern
+          '14:30', // 14:30 eastern, last slot
         /* eslint-enable line-comment-position */
         ].forEach((beginsAtString) => {
           it(`shows all slots after beginsAt (${beginsAtString})`, () => {
-            const beginsAt = moment(beginsAtString).tz('America/New_York');
+            const hearingDate = '2021-04-21';
             const numberOfSlots = 8;
             const slotLengthMinutes = 60;
-            const { timeSlots } = setup({ roTimezone: ro.timezone, beginsAt, numberOfSlots, slotLengthMinutes });
+            const { timeSlots } = setup({
+              hearingDate,
+              hearingDayDate: hearingDate,
+              roTimezone: ro.timezone,
+              beginsAt: beginsAtString,
+              slotStartTime: beginsAtString,
+              slotCount: numberOfSlots,
+              numberOfSlots,
+              slotLength: slotLengthMinutes,
+              slotLengthMinutes,
+            });
+            const beginsAt = moment.tz(`${beginsAtString} ${hearingDate}`, 'HH:mm YYYY-MM-DD', 'America/New_York');
 
             // Got the correct number of timeslots
             expect(timeSlots.length).toEqual(numberOfSlots);
@@ -149,10 +160,22 @@ describe('TimeSlot', () => {
         });
 
         it('creates three 45 minute slots', () => {
+          const hearingDate = '2021-04-21';
           const numberOfSlots = 3;
           const slotLengthMinutes = 45;
-          const beginsAt = moment('2021-04-21T08:30:00-04:00').tz('America/New_York');
-          const { timeSlots } = setup({ roTimezone: ro.timezone, beginsAt, numberOfSlots, slotLengthMinutes });
+          const beginsAtString = '08:30';
+          const { timeSlots } = setup({
+            hearingDate,
+            hearingDayDate: hearingDate,
+            roTimezone: ro.timezone,
+            beginsAt: beginsAtString,
+            slotStartTime: beginsAtString,
+            slotCount: numberOfSlots,
+            numberOfSlots,
+            slotLength: slotLengthMinutes,
+            slotLengthMinutes,
+          });
+          const beginsAt = moment.tz(`${beginsAtString} ${hearingDate}`, 'HH:mm YYYY-MM-DD', 'America/New_York');
 
           expect(timeSlots.length).toEqual(3);
           // Last slot time is correct
