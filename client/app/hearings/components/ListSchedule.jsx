@@ -12,7 +12,7 @@ import { formatHearingType } from '../utils';
 import {
   toggleTypeFilterVisibility, toggleLocationFilterVisibility,
   toggleVljFilterVisibility, onReceiveHearingSchedule,
-  onViewStartDateChange, onViewEndDateChange
+  onViewStartDateChange, onViewEndDateChange, onResetDeleteSuccessful
 } from '../actions/hearingScheduleActions';
 import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
@@ -93,6 +93,7 @@ const SwitchViewDropdown = ({ onSwitchView }) => {
 SwitchViewDropdown.propTypes = { onSwitchView: PropTypes.func };
 
 class ListTable extends React.Component {
+
   render() {
     const failStatusMessageChildren = <div>
       It looks like Caseflow was unable to load the hearing schedule.<br />
@@ -146,6 +147,10 @@ class ListSchedule extends React.Component {
       dateRangeKey: `${props.startDate}->${props.endDate}`
     };
   }
+
+  componentWillUnmount = () => {
+    this.props.onResetDeleteSuccessful();
+  };
 
   // forces remount of LoadingDataDisplay
   setDateRangeKey = () => {
@@ -298,6 +303,7 @@ ListSchedule.propTypes = {
     updatedOn: PropTypes.string,
     updatedBy: PropTypes.string
   }),
+  onResetDeleteSuccessful: PropTypes.func,
   onApply: PropTypes.func,
   onViewStartDateChange: PropTypes.func,
   onViewEndDateChange: PropTypes.func,
@@ -318,6 +324,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
+  onResetDeleteSuccessful,
   toggleTypeFilterVisibility,
   toggleLocationFilterVisibility,
   toggleVljFilterVisibility,

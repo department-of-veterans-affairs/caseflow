@@ -36,6 +36,7 @@ import QueueCaseSearchBar from '../../queue/SearchBar';
 import AddHearingDay from '../components/AddHearingDay';
 import { onRegionalOfficeChange } from '../../components/common/actions';
 import moment from 'moment';
+import UserAlerts from '../../components/UserAlerts';
 
 import { LIST_SCHEDULE_VIEWS } from '../constants';
 
@@ -65,11 +66,6 @@ export class ListScheduleContainer extends React.Component {
 
   componentDidMount = () => {
     this.props.onSelectedHearingDayChange('');
-    this.setState({ showModalAlert: false });
-  };
-
-  componentWillUnmount = () => {
-    this.props.onResetDeleteSuccessful();
   };
 
   componentDidUpdate = (prevProps) => {
@@ -150,7 +146,7 @@ export class ListScheduleContainer extends React.Component {
       return `The Hearing day you created for ${formatDateStr(this.props.selectedHearingDay)} is a Saturday or Sunday.`;
     }
 
-    return `You have successfully added Hearing Day ${formatDateStr(this.props.selectedHearingDay)}`;
+    return `You have successfully added Hearing Day ${formatDateStr(this.props.successfulHearingDayCreate)}`;
 
   };
 
@@ -197,17 +193,14 @@ export class ListScheduleContainer extends React.Component {
     return (
       <React.Fragment>
         {!addHearingDay && <QueueCaseSearchBar />}
-        {(this.state.showModalAlert || this.props.successfulHearingDayDelete) &&
+        {(this.props.successfulHearingDayCreate || this.props.successfulHearingDayDelete) &&
           <Alert type={this.getAlertType()} title={this.getAlertTitle()} scrollOnAlert={false}>
             {this.getAlertMessage()}
           </Alert>
         }
         { this.props.invalidDates && <Alert type="error" title="Please enter valid dates." /> }
         {addHearingDay ? (
-          <AddHearingDay
-            closeModal={this.closeModal}
-            cancelModal={this.cancelModal}
-            user={user} />
+          <AddHearingDay cancelModal={this.cancelModal} user={user} />
         ) : (
           <AppSegment filledBackground>
             <h1 className="cf-push-left">
@@ -251,6 +244,7 @@ const mapStateToProps = (state) => ({
   notes: state.hearingSchedule.notes,
   roomRequired: state.hearingSchedule.roomRequired,
   successfulHearingDayDelete: state.hearingSchedule.successfulHearingDayDelete,
+  successfulHearingDayCreate: state.hearingSchedule.successfulHearingDayCreate,
   invalidDates: state.hearingSchedule.invalidDates
 });
 
@@ -290,6 +284,7 @@ ListScheduleContainer.propTypes = {
   setNotes: PropTypes.func,
   startDate: PropTypes.string,
   successfulHearingDayDelete: PropTypes.string,
+  successfulHearingDayCreate: PropTypes.string,
   user: PropTypes.object,
   history: PropTypes.object,
   location: PropTypes.object,

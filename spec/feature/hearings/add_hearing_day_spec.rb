@@ -12,25 +12,24 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
       visit "hearings/schedule"
       expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
       find("button", text: "Add Hearing Date").click
-      expect(page).to have_content("Add Hearing Day")
-      expect(page).to have_content("Select Hearing Date")
-      expect(page).to have_content("Select Hearing Type")
-      expect(page.has_no_content?("Select Regional Office (RO)")).to eq(true)
-      expect(page.has_no_content?("Select VLJ (Optional)")).to eq(true)
-      expect(page.has_no_content?("Select Hearing Coordinator (Optional)")).to eq(true)
-      expect(page).to have_content("Notes (Optional)")
-      expect(page).to have_content("Assign Board Hearing Room")
+      expect(page).to have_content("Add a Hearing Day")
+      expect(page).to have_content("Docket Date")
+      expect(page).to have_content("Docket Type")
+      expect(page).to have_content("Assign a Board Hearing Room")
+      expect(page.has_no_content?("Regional Office (RO)")).to eq(true)
+      expect(page.has_no_content?("VLJ")).to eq(true)
+      expect(page.has_no_content?("Hearing Coordinator")).to eq(true)
+      expect(page).to have_content("Notes")
     end
 
     scenario "Open modal but do not fill form, expect error" do
       visit "hearings/schedule"
       expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
       find("button", text: "Add Hearing Date").click
-      expect(page).to have_content("Add Hearing Day")
-      find("button", text: "Confirm").click
+      expect(page).to have_content("Add a Hearing Day")
+      find("button", text: "Add Hearing Day").click
       expect(page).to have_content("Cannot create a New Hearing Day")
       expect(page).to have_content("Please make sure you have entered a Hearing Date")
-      expect(page).to have_content("Please make sure you have entered a Hearing Type")
     end
   end
 
@@ -39,25 +38,25 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
       visit "hearings/schedule"
       expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
       find("button", text: "Add Hearing Date").click
-      expect(page).to have_content("Add Hearing Day")
+      expect(page).to have_content("Add a Hearing Day")
       click_dropdown(index: "C", text: "Central")
-      expect(page).to have_content("Select VLJ (Optional)", wait: 30)
-      expect(page.has_no_content?("Select Regional Office (RO)")).to eq(true)
-      expect(page).to have_content("Select Hearing Coordinator (Optional)")
+      expect(page).to have_content("VLJ", wait: 30)
+      expect(page.has_no_content?("Regional Office (RO)")).to eq(true)
+      expect(page).to have_content("Hearing Coordinator")
     end
 
     scenario "Fill out all fields and confirm to save" do
       visit "hearings/schedule"
       expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
       find("button", text: "Add Hearing Date").click
-      expect(page).to have_content("Add Hearing Day")
+      expect(page).to have_content("Add a Hearing Day")
       fill_in "hearingDate", with: "01152019"
       click_dropdown(index: "C", text: "Central")
-      expect(page).to have_content("Select VLJ (Optional)", wait: 30)
+      expect(page).to have_content("VLJ", wait: 30)
       fill_in "vlj", with: "Sallie L Anderson"
       fill_in "coordinator", with: "Casimir R Funk"
-      fill_in "Notes (Optional)", with: "Test notes."
-      find("button", text: "Confirm").click
+      fill_in "Notes", with: "Test notes."
+      find("button", text: "Add Hearing Day").click
       expect(page).to have_content("You have successfully added Hearing Day 01/15/2019", wait: 30)
     end
   end
@@ -71,10 +70,10 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
       visit "hearings/schedule"
       expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
       find("button", text: "Add Hearing Date").click
-      expect(page).to have_content("Add Hearing Day")
+      expect(page).to have_content("Add a Hearing Day")
       fill_in "hearingDate", with: "08142019"
       click_dropdown(index: "C", text: "Central")
-      find("button", text: "Confirm").click
+      find("button", text: "Add Hearing Day").click
       expect(page).to have_content(COPY::ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_TITLE % "08/14/2019")
       expect(page).to have_content(COPY::ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_DETAIL)
     end
@@ -85,28 +84,28 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
       visit "hearings/schedule"
       expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
       find("button", text: "Add Hearing Date").click
-      expect(page).to have_content("Add Hearing Day")
+      expect(page).to have_content("Add a Hearing Day")
       click_dropdown(index: "V", text: "Video")
-      expect(page).to have_content("Select Regional Office (RO)", wait: 30)
-      expect(page).to have_content("Select VLJ (Optional)")
-      expect(page).to have_content("Select Hearing Coordinator (Optional)")
+      expect(page).to have_content("Regional Office (RO)", wait: 30)
+      expect(page).to have_content("VLJ")
+      expect(page).to have_content("Hearing Coordinator")
     end
 
     scenario "Fill out all fields and confirm to save" do
       visit "hearings/schedule"
       expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
       find("button", text: "Add Hearing Date").click
-      expect(page).to have_content("Add Hearing Day")
+      expect(page).to have_content("Add a Hearing Day")
       fill_in "hearingDate", with: "04152019"
       click_dropdown(index: "V", text: "Video")
-      expect(page).to have_content("Select Regional Office (RO)", wait: 30)
+      expect(page).to have_content("Regional Office (RO)", wait: 30)
       dropdowns = page.all(".cf-select__control")
       dropdowns[1].click
       dropdowns[1].sibling(".cf-select__menu").find("div .cf-select__option", text: "Atlanta, GA").click
       fill_in "vlj", with: "Sallie L Anderson"
       fill_in "coordinator", with: "Casimir R Funk"
-      fill_in "Notes (Optional)", with: "Test notes."
-      find("button", text: "Confirm").click
+      fill_in "Notes", with: "Test notes."
+      find("button", text: "Add Hearing Day").click
       expect(page).to have_content("You have successfully added Hearing Day 04/15/2019", wait: 30)
     end
 
@@ -114,14 +113,14 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
       visit "hearings/schedule"
       expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
       find("button", text: "Add Hearing Date").click
-      expect(page).to have_content("Add Hearing Day")
+      expect(page).to have_content("Add a Hearing Day")
       fill_in "hearingDate", with: "04152019"
       click_dropdown(index: "V", text: "Video")
-      expect(page).to have_content("Select Regional Office (RO)", wait: 30)
+      expect(page).to have_content("Regional Office (RO)", wait: 30)
       fill_in "vlj", with: "Sallie L Anderson"
       fill_in "coordinator", with: "Casimir R Funk"
-      fill_in "Notes (Optional)", with: "Test notes."
-      find("button", text: "Confirm").click
+      fill_in "Notes", with: "Test notes."
+      find("button", text: "Add Hearing Day").click
       expect(page).to have_content("Hearing type is a Video hearing")
       expect(page).to have_content("Please make sure you select a Regional Office")
     end
@@ -165,28 +164,29 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
         visit "hearings/schedule"
         expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
         find("button", text: "Add Hearing Date").click
-        expect(page).to have_content("Add Hearing Day")
+        expect(page).to have_content("Add a Hearing Day")
         click_dropdown(index: "R", text: "Virtual")
-        expect(page).to have_content("Select Regional Office (RO)", wait: 30)
-        expect(find(".dropdown-regionalOffice")).to have_css(".cf-select__control--is-disabled")
-        expect(find(".dropdown-regionalOffice")).to have_text("Virtual Hearings")
-        expect(page).to have_content("Select VLJ (Optional)")
-        expect(page).to have_content("Select Hearing Coordinator (Optional)")
-        expect(page).to have_field("Assign Board Hearing Room", disabled: true, visible: false)
-        expect(find_field("Assign Board Hearing Room", disabled: true, visible: false)).not_to be_checked
+        expect(page).to have_content("Regional Office (RO)", wait: 30)
+        dropdowns = page.all(".cf-select__control")
+        dropdowns[1].click
+        dropdowns[1].sibling(".cf-select__menu").find("div .cf-select__option", text: "Atlanta, GA").click
+        expect(page).to have_content("VLJ")
+        expect(page).to have_content("Hearing Coordinator")
+        expect(page).to have_field("Assign a Board Hearing Room", disabled: true, visible: false)
+        expect(find_field("Assign a Board Hearing Room", disabled: true, visible: false)).not_to be_checked
       end
 
       step "Leave Hearing Date without a selection, expect error" do
         fill_in "vlj", with: "Sallie L Anderson"
         fill_in "coordinator", with: "Casimir R Funk"
-        fill_in "Notes (Optional)", with: "Test notes."
-        find("button", text: "Confirm").click
+        fill_in "Notes", with: "Test notes."
+        find("button", text: "Add Hearing Day").click
         expect(page).to have_content("Please make sure you have entered a Hearing Date")
       end
 
       step "Fill out all fields and confirm to save" do
         fill_in "hearingDate", with: "01012021"
-        find("button", text: "Confirm").click
+        find("button", text: "Add Hearing Day").click
         expect(page).to have_content("You have successfully added Hearing Day 01/01/2021", wait: 30)
       end
     end

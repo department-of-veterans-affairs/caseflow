@@ -23,7 +23,8 @@ import {
 import {
   selectVlj,
   selectHearingCoordinator,
-  setNotes
+  setNotes,
+  onSuccessfulHearingDayCreate,
 } from '../actions/dailyDocketActions';
 import Alert from '../../components/Alert';
 import ApiUtil from '../../util/ApiUtil';
@@ -104,8 +105,12 @@ export const AddHearingDay = ({
         newHearings[hearingsLength] = resp?.hearing;
 
         props.onReceiveHearingSchedule(newHearings);
+        props.onSuccessfulHearingDayCreate(selectedHearingDay);
         history.push('/schedule');
       }, (error) => {
+        // Reset the loading state on error
+        setLoading(false);
+
         if (error?.response?.body && error.response.body.errors &&
         error.response.body.errors[0].status === 400) {
           setNoRoomsAvailableError(error.response.body.errors[0]);
@@ -138,6 +143,7 @@ export const AddHearingDay = ({
     };
 
     if (!isEmpty(errorMsgs)) {
+      setLoading(false);
       setErrorMessages(errorMsgs);
 
       return;
@@ -340,6 +346,7 @@ export const AddHearingDay = ({
 };
 
 AddHearingDay.propTypes = {
+  onSuccessfulHearingDayCreate: PropTypes.func,
   history: PropTypes.object,
   coordinator: PropTypes.shape({
     value: PropTypes.string
@@ -384,6 +391,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
+  onSuccessfulHearingDayCreate,
   onSelectedHearingDayChange,
   onRegionalOfficeChange,
   selectRequestType,
