@@ -72,8 +72,10 @@ export const SelectClaimant = (props) => {
     benefitType,
     isVeteranDeceased,
     veteranIsNotClaimant,
+    veteranIsNotClaimantError,
     setVeteranIsNotClaimant,
     claimant,
+    claimantError,
     setClaimant,
     relationships,
     payeeCode,
@@ -237,7 +239,7 @@ export const SelectClaimant = (props) => {
           options={radioOpts}
           onChange={handleSelectNonVeteran}
           value={claimant ?? ''}
-          errorMessage={props.errors['claimant-options'] && props.errors['claimant-options'].message}
+          errorMessage={claimantError || props.errors?.['claimant-options']?.message}
           inputRef={props.register}
         />
 
@@ -294,7 +296,7 @@ export const SelectClaimant = (props) => {
         vertical
         options={veteranClaimantOptions}
         onChange={handleVeteranIsNotClaimantChange}
-        errorMessage={props.errors['different-claimant-option'] && props.errors['different-claimant-option'].message}
+        errorMessage={veteranIsNotClaimantError || props.errors?.['different-claimant-option']?.message}
         value={
           veteranIsNotClaimant === null ?
             null :
