@@ -26,18 +26,21 @@ export const gutterStyling = css({
 
 export const PoaRefresh = ({ powerOfAttorney, appealId }) => {
   const poaSyncInfo = {
-    poaSyncDate: formatDateStr(powerOfAttorney.poa_last_synced_at)
+    poaSyncDate: formatDateStr(powerOfAttorney.poa_last_synced_at) || formatDateStr(new Date())
   };
 
   const lastSyncedCopy = sprintf(COPY.CASE_DETAILS_POA_LAST_SYNC_DATE_COPY, poaSyncInfo);
-  const viewPoaRefresh = useSelector((state) => state.ui.featureToggles.poa_refresh);
+  const viewPoaRefresh = useSelector((state) => state.ui.featureToggles.poa_button_refresh);
 
   return <React.Fragment>
     {viewPoaRefresh &&
     <div {...textStyling}>
-      <em>Power of Attorney (POA) data comes from VBMS. To refresh POA, please click the "Refresh POA" button.</em>
+      <em>{ COPY.CASE_DETAILS_POA_REFRESH_BUTTON_EXPLANATION }</em>
       <div {...gutterStyling}></div>
-      <div {...boldText}{...syncStyling}><em>{lastSyncedCopy}</em>
+      <div {...boldText}{...syncStyling}>
+        {poaSyncInfo.poaSyncDate &&
+          <em>{lastSyncedCopy}</em>
+        }
         <PoaRefreshButton appealId={appealId} poaId={powerOfAttorney.representative_id} />
       </div>
     </div>
