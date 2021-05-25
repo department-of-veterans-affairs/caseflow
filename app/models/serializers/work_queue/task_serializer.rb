@@ -13,6 +13,7 @@ class WorkQueue::TaskSerializer
   attribute :started_at
   attribute :created_at
   attribute :closed_at
+  attribute :cancellation_reason
   attribute :instructions do |object|
     object.instructions.presence || object.default_instructions.presence || []
   end

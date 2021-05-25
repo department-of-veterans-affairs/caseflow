@@ -1,5 +1,4 @@
 import {reviewAppealSchema} from 'app/intake/pages/appeal/review';
-import { REVIEW_OPTIONS } from 'app/intake/constants';
 
 const assertValidSchema = async (schema, testSchema, useAmaActivationDate, isValid) => {
   await schema

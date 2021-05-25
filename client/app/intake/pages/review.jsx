@@ -5,6 +5,7 @@ import { useHistory } from 'react-router';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
+<<<<<<< HEAD
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { css } from 'glamor';
@@ -15,13 +16,26 @@ import RampRefilingPage, { reviewRampRefilingSchema } from './rampRefiling/revie
 import SupplementalClaimPage, { reviewSupplementalClaimSchema } from './supplementalClaim/review';
 import HigherLevelReviewPage, { reviewHigherLevelReviewSchema } from './higherLevelReview/review';
 import AppealReviewPage, { reviewAppealSchema } from './appeal/review';
+=======
+import * as yup from 'yup';
+import { format } from 'date-fns';
+
+import { PAGE_PATHS, FORM_TYPES, REQUEST_STATE, VBMS_BENEFIT_TYPES, REVIEW_OPTIONS } from '../constants';
+import RampElectionPage from './rampElection/review';
+import RampRefilingPage from './rampRefiling/review';
+import SupplementalClaimPage from './supplementalClaim/review';
+import HigherLevelReviewPage from './higherLevelReview/review';
+import AppealReviewPage from './appeal/review';
+>>>>>>> master
 
 import Button from '../../components/Button';
 import CancelButton from '../components/CancelButton';
 import { submitReview as submitRampElection } from '../actions/rampElection';
 import { submitReview as submitDecisionReview } from '../actions/decisionReview';
 import { submitReview as submitRampRefiling } from '../actions/rampRefiling';
+import { setReceiptDateError } from '../actions/intake';
 import { toggleIneligibleError } from '../util';
+import DATES from '../../../constants/DATES';
 
 import SwitchOnForm from '../components/SwitchOnForm';
 
@@ -126,7 +140,8 @@ export default connect(
   (dispatch) => bindActionCreators({
     submitRampElection,
     submitRampRefiling,
-    submitDecisionReview
+    submitDecisionReview,
+    setReceiptDateError
   }, dispatch)
 )(Review);
 
@@ -214,3 +229,5 @@ Review.propTypes = {
 ReviewButtons.propTypes = {
   history: PropTypes.object
 };
+
+export { schema as TestableSchema };

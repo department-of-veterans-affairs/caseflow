@@ -74,6 +74,68 @@ describe InformalHearingPresentationTask, :postgres do
     end
   end
 
+  describe ".when poa is updated" do
+    let(:old_poa) { create(:vso, name: "Old POA") }
+    let(:appeal) do
+      create(:appeal, veteran: create(:veteran)) do |appeal|
+        create(
+          :informal_hearing_presentation_task,
+          appeal: appeal,
+          assigned_to: old_poa
+        )
+      end
+    end
+
+    context "update_to_new_poa will" do
+      let(:new_poa_participant_id) { "2222222" }
+      let!(:new_poa) { create(:vso, name: "New POA", participant_id: new_poa_participant_id) }
+      let!(:bgs_poa_for_claimant) do
+        create(:bgs_power_of_attorney,
+               claimant_participant_id: appeal.claimant.participant_id,
+               poa_participant_id: new_poa_participant_id)
+      end
+
+      it "cancel old IhpTask and create a new IhpTask assigned to the new POA" do
+        InformalHearingPresentationTask.update_to_new_poa(appeal)
+        expect(InformalHearingPresentationTask.find_by(appeal_id: appeal.id,
+                                                       assigned_to_id: old_poa.id).status).to eq("cancelled")
+        expect(InformalHearingPresentationTask.find_by(appeal_id: appeal.id,
+                                                       assigned_to_id: new_poa.id).status).to eq("assigned")
+        expect(InformalHearingPresentationTask.where(appeal_id: appeal.id).count).to eq 2
+        expect(Raven).to receive(:capture_exception).exactly(0).times
+      end
+    end
+
+    context "update_to_new_poa will only" do
+      let(:new_poa_participant_id) { "3333333" }
+      let!(:new_poa) { create(:bgs_attorney, name: "Bruce Wayne", participant_id: new_poa_participant_id) }
+      let!(:bgs_poa_for_claimant) do
+        create(:bgs_power_of_attorney,
+               claimant_participant_id: appeal.claimant.participant_id,
+               poa_participant_id: new_poa_participant_id)
+      end
+      it "cancel old IhpTask if new POA cannot have an IhpTask" do
+        InformalHearingPresentationTask.update_to_new_poa(appeal)
+        expect(InformalHearingPresentationTask.find_by(appeal_id: appeal.id,
+                                                       assigned_to_id: old_poa.id).status).to eq("cancelled")
+        expect(InformalHearingPresentationTask.where(appeal_id: appeal.id).count).to eq 1
+        expect(Raven).to receive(:capture_exception).exactly(0).times
+      end
+    end
+
+    context "update_to_new_poa will fail" do
+      before do
+        allow(Raven).to receive(:capture_exception)
+        allow(TrackVeteranTask).to receive(:sync_tracking_tasks).and_raise("error")
+      end
+
+      it "reports error to raven" do
+        InformalHearingPresentationTask.update_to_new_poa(appeal)
+        expect(Raven).to have_received(:capture_exception)
+      end
+    end
+  end
+
   describe "when an IHP task is cancelled" do
     let(:appeal) { create(:appeal) }
     let(:task) do
@@ -121,6 +183,22 @@ describe InformalHearingPresentationTask, :postgres do
         expect(task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(IhpDraft.where(appeal: appeal, organization: organization).count).to eq 1
       end
+    end
+  end
+
+  describe "#label" do
+    let(:appeal) { create(:appeal) }
+    let(:task) do
+      InformalHearingPresentationTask.find(create(:informal_hearing_presentation_task, assigned_to: user).id)
+    end
+
+    before do
+      InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+    end
+
+    subject { task.label }
+    it "returns expected copy" do
+      expect(subject).to eq(COPY::IHP_TASK_LABEL)
     end
   end
 end
