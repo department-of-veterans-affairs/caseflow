@@ -5,7 +5,10 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import * as yup from 'yup';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { format } from 'date-fns';
+import { css } from 'glamor';
 
 import { PAGE_PATHS, FORM_TYPES, REQUEST_STATE, VBMS_BENEFIT_TYPES, REVIEW_OPTIONS } from '../constants';
 import RampElectionPage from './rampElection/review';
@@ -25,8 +28,12 @@ import DATES from '../../../constants/DATES';
 
 import SwitchOnForm from '../components/SwitchOnForm';
 
+const textAlignRightStyling = css({
+  textAlign: 'right',
+});
+
 const schema = yup.object().shape({
-  receiptDate: yup.mixed().
+  'receipt-date': yup.mixed().
     when(['$selectedForm', '$useAmaActivationDate'], {
       is: (selectedForm, useAmaActivationDate) => selectedForm === REVIEW_OPTIONS.APPEAL.key && useAmaActivationDate,
       then: yup.date().typeError('Receipt Date is required.').
@@ -42,73 +49,107 @@ const schema = yup.object().shape({
           new Date(DATES.AMA_ACTIVATION_TEST),
         `Receipt Date cannot be prior to ${format(new Date(DATES.AMA_ACTIVATION_TEST), 'MM/dd/yyyy')}`
         )
+    }),
+    'docket-type': yup.string().required(),
+    'legacy-opt-in': yup.string().required(),
+    'different-claimant-option': yup.string().required(),
+    'claimant-options': yup.string().notRequired().when('different-claimant-option', {
+      is: "true",
+      then: yup.string().required()
     })
 });
 
-class Review extends React.PureComponent {
-  render = () =>
-    <SwitchOnForm
-      formComponentMapping={{
-        ramp_election: <RampElectionPage />,
-        ramp_refiling: <RampRefilingPage />,
-        supplemental_claim: <SupplementalClaimPage featureToggles={this.props.featureToggles} />,
-        higher_level_review: <HigherLevelReviewPage featureToggles={this.props.featureToggles} />,
-        appeal: <AppealReviewPage featureToggles={this.props.featureToggles} />
-      }}
-      componentForNoFormSelected={<Redirect to={PAGE_PATHS.BEGIN} />}
-    />;
-}
+const Review = ({featureToggles, history, submitDecisionReview, submitRampElection, submitRampRefiling, intakeForms, formType, intakeId}) => {
+  const { register, errors, control, handleSubmit, formState } = useForm(
+    {
+      resolver: yupResolver(schema),
+      mode: 'onSubmit'
+    }
+  );
 
-export default connect(
-  ({ intake }) => ({ formType: intake.formType })
-)(Review);
-
-class ReviewNextButton extends React.PureComponent {
-  submitReview = (selectedForm, intakeData) => {
+  const selectedForm = _.find(FORM_TYPES, { key: formType });
+  const intakeData = selectedForm ? intakeForms[selectedForm.key] : null;
+  console.log(errors)
+  console.log(formState)
+  const submitReview = (selectedForm, intakeData) => {
     if (selectedForm.category === 'decisionReview') {
-      return this.props.submitDecisionReview(this.props.intakeId, intakeData, selectedForm.formName);
+      return submitDecisionReview(intakeId, intakeData, selectedForm.formName);
     }
 
     if (selectedForm.key === 'ramp_election') {
-      return this.props.submitRampElection(this.props.intakeId, intakeData);
+      return submitRampElection(intakeId, intakeData);
     }
 
     if (selectedForm.key === 'ramp_refiling') {
-      return this.props.submitRampRefiling(this.props.intakeId, intakeData);
+      return submitRampRefiling(intakeId, intakeData);
     }
   }
 
-  handleClick = (selectedForm, intakeData) => {
-    schema.
-      validate(intakeData, { context: {
-        selectedForm: selectedForm.key,
-        useAmaActivationDate: this.props.featureToggles.useAmaActivationDate
-      } }).
-      then(() => {
-        this.props.setReceiptDateError(null);
-        // If adding new claimant, we won't submit to backend yet
-        if (intakeData?.claimant === 'claimant_not_listed') {
-          return this.props.history.push('/add_claimant');
-        }
-        this.submitReview(selectedForm, intakeData).then(
-          () => selectedForm.category === 'decisionReview' ?
-            this.props.history.push('/add_issues') :
-            this.props.history.push('/finish')
-          , (error) => {
-            // This is expected behavior on bad data, so prevent
-            // sentry from alerting an unhandled error
-            return error;
-          });
-      }).
-      catch((error) => {
-        this.props.setReceiptDateError(error.errors[0]);
+  const handleClick = (d) => {
+    console.log(selectedForm)
+    console.log(d)
+    if (intakeData?.claimant === 'claimant_not_listed') {
+      return history.push('/add_claimant');
+    }
+    submitReview(selectedForm, intakeData).then(
+      () => selectedForm.category === 'decisionReview' ?
+        history.push('/add_issues') :
+        history.push('/finish')
+      , (error) => {
+        // This is expected behavior on bad data, so prevent
+        // sentry from alerting an unhandled error
+        return error;
       });
   }
 
+  return(
+    <form
+      onSubmit={handleSubmit((d) => handleClick(d))}
+    >
+      <SwitchOnForm
+        formComponentMapping={{
+          ramp_election: <RampElectionPage />,
+          ramp_refiling: <RampRefilingPage />,
+          supplemental_claim: <SupplementalClaimPage featureToggles={featureToggles} />,
+          higher_level_review: <HigherLevelReviewPage featureToggles={featureToggles} />,
+          appeal: <AppealReviewPage featureToggles={featureToggles} errors={errors} register={register} />
+        }}
+        componentForNoFormSelected={<Redirect to={PAGE_PATHS.BEGIN} />}
+      />
+      <nav role="navigation" className={`cf-app-segment ${textAlignRightStyling}`}>
+        <ReviewButtons />
+      </nav>
+    </form>
+    
+  )
+}
+
+export default connect(
+  (state) => ({
+    intakeForms: {
+      higher_level_review: state.higherLevelReview,
+      supplemental_claim: state.supplementalClaim,
+      appeal: state.appeal,
+      ramp_refiling: state.rampRefiling,
+      ramp_election: state.rampElection
+    },
+    intakeId: state.intake.id,
+    formType: state.intake.formType,
+    featureToggles: state.featureToggles
+  }),
+  (dispatch) => bindActionCreators({
+    submitRampElection,
+    submitRampRefiling,
+    submitDecisionReview
+  }, dispatch)
+)(Review);
+
+class ReviewNextButton extends React.PureComponent {
   render = () => {
     const {
       intakeForms,
-      formType
+      formType,
+      handleSubmit
     } = this.props;
 
     // selected form might be null or empty if the review has been canceled
@@ -132,8 +173,9 @@ class ReviewNextButton extends React.PureComponent {
     const disableSubmit = rampRefilingIneligibleOption() || needsClaimant || invalidVet;
 
     return <Button
+      type="submit"
       name="submit-review"
-      onClick={() => this.handleClick(selectedForm, intakeData)}
+      // onClick={() => handleSubmit(this.handleClick(selectedForm, intakeData))}
       loading={intakeData ? intakeData.requestStatus.submitReview === REQUEST_STATE.IN_PROGRESS : true}
       disabled={disableSubmit}
     >
@@ -167,7 +209,7 @@ export class ReviewButtons extends React.PureComponent {
   render = () =>
     <div>
       <CancelButton />
-      <ReviewNextButtonConnected history={this.props.history} />
+      <ReviewNextButtonConnected history={this.props.history} {...this.props} />
     </div>
 }
 

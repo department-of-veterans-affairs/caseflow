@@ -31,6 +31,7 @@ export default class LegacyOptInApproved extends React.PureComponent {
         }}
         errorMessage={errorMessage}
         value={value === null ? null : value?.toString()}
+        inputRef={this.props.register}
       />
     </div>;
   }

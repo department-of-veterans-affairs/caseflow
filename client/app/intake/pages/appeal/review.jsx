@@ -60,9 +60,10 @@ class Review extends React.PureComponent {
         label="What is the Receipt Date of this form?"
         value={receiptDate}
         onChange={this.props.setReceiptDate}
-        errorMessage={receiptDateError}
+        errorMessage={this.props.errors['receipt-date'] && this.props.errors['receipt-date'].message}
         type="date"
         strongLabel
+        inputRef={this.props.register}
       />
 
       <RadioField
@@ -72,16 +73,21 @@ class Review extends React.PureComponent {
         vertical
         options={docketTypeRadioOptions}
         onChange={this.props.setDocketType}
-        errorMessage={docketTypeError}
+        errorMessage={this.props.errors['docket-type'] && this.props.errors['docket-type'].message}
         value={docketType}
+        inputRef={this.props.register}
       />
 
-      <SelectClaimantConnected />
+      <SelectClaimantConnected 
+        register={this.props.register} 
+        errors={this.props.errors}
+      />
 
       <LegacyOptInApproved
         value={legacyOptInApproved}
         onChange={this.props.setLegacyOptInApproved}
-        errorMessage={legacyOptInApprovedError}
+        errorMessage={this.props.errors['legacy-opt-in'] && this.props.errors['legacy-opt-in'].message}
+        register={this.props.register}
       />
     </div>;
   }

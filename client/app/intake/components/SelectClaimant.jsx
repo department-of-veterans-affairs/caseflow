@@ -229,6 +229,7 @@ export const SelectClaimant = (props) => {
   };
 
   const claimantOptions = () => {
+    console.log(props.register)
     return (
       <div>
         <RadioField
@@ -239,7 +240,8 @@ export const SelectClaimant = (props) => {
           options={radioOpts}
           onChange={handleSelectNonVeteran}
           value={claimant ?? ''}
-          errorMessage={claimantError}
+          errorMessage={props.errors['claimant-options'] && props.errors['claimant-options'].message}
+          inputRef={props.register}
         />
 
         {shouldShowPayeeCode && (
@@ -295,12 +297,13 @@ export const SelectClaimant = (props) => {
         vertical
         options={veteranClaimantOptions}
         onChange={handleVeteranIsNotClaimantChange}
-        errorMessage={veteranIsNotClaimantError}
+        errorMessage={props.errors['different-claimant-option'] && props.errors['different-claimant-option'].message}
         value={
           veteranIsNotClaimant === null ?
             null :
             veteranIsNotClaimant?.toString()
         }
+        inputRef={props.register}
       />
 
       {showDeceasedVeteranAlert && deceasedVeteranAlert()}

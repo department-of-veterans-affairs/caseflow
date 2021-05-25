@@ -91,7 +91,7 @@ export const IntakeFrame = (props) => {
             path={PAGE_PATHS.REVIEW}
             title="Review Request | Caseflow Intake"
           >
-            <IntakeLayout buttons={<ReviewButtons history={history} />}>
+            <IntakeLayout>
               <ReviewPage featureToggles={props.featureToggles} />
             </IntakeLayout>
           </PageRoute>
