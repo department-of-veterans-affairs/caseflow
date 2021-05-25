@@ -41,8 +41,11 @@ const Review = ({
   featureToggles,
   intakeForms,
   formType,
-  intakeId
-}, ...props) => {
+  intakeId,
+  submitDecisionReview,
+  submitRampRefiling,
+  submitRampElection
+}) => {
   const formProps = useForm(
     {
       resolver: yupResolver(schemaMappings[formType]),
@@ -58,15 +61,15 @@ const Review = ({
 
   const submitReview = () => {
     if (selectedForm.category === 'decisionReview') {
-      return props.submitDecisionReview(intakeId, intakeData, selectedForm.formName);
+      return submitDecisionReview(intakeId, intakeData, selectedForm.formName);
     }
 
     if (selectedForm.key === 'ramp_election') {
-      return props.submitRampElection(intakeId, intakeData);
+      return submitRampElection(intakeId, intakeData);
     }
 
     if (selectedForm.key === 'ramp_refiling') {
-      return props.submitRampRefiling(intakeId, intakeData);
+      return submitRampRefiling(intakeId, intakeData);
     }
   };
 
