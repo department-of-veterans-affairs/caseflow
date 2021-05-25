@@ -232,6 +232,7 @@ export class EstablishClaimDecision extends React.Component {
               name={this.state.endProductButtonText}
               onClick={handleSubmit}
               loading={loading}
+              role="link"
             />
           </div>
         </div>
