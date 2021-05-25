@@ -23,15 +23,16 @@ import PropTypes from 'prop-types';
 
 const reviewSupplementalClaimSchema = yup.object().shape({
   'benefit-type-options': yup.string().required(CLAIMANT_ERRORS.blank),
-  'receipt-date': yup.date().typeError('Please enter a valid receipt date.')
-    .max(format(add(new Date(), { hours: 1 }), 'MM/dd/yyyy'), 'Receipt date cannot be in the future.')
-    .required('Please enter a valid receipt date.'),
+  'receipt-date': yup.date().typeError('Please enter a valid receipt date.').
+    max(format(add(new Date(), { hours: 1 }), 'MM/dd/yyyy'), 'Receipt date cannot be in the future.').
+    required('Please enter a valid receipt date.'),
   'different-claimant-option': yup.string().required(CLAIMANT_ERRORS.blank),
   'legacy-opt-in': yup.string().required(CLAIMANT_ERRORS.blank),
-  'claimant-options': yup.string().notRequired().when('different-claimant-option', {
-    is: "true",
-    then: yup.string().required(CLAIMANT_ERRORS.blank)
-  })
+  'claimant-options': yup.string().notRequired().
+    when('different-claimant-option', {
+      is: 'true',
+      then: yup.string().required(CLAIMANT_ERRORS.blank)
+    })
 });
 
 class Review extends React.PureComponent {
@@ -47,7 +48,8 @@ class Review extends React.PureComponent {
       legacyOptInApprovedError,
       reviewIntakeError,
       veteranValid,
-      veteranInvalidFields
+      veteranInvalidFields,
+      errors
     } = this.props;
 
     switch (supplementalClaimStatus) {
@@ -74,7 +76,7 @@ class Review extends React.PureComponent {
       <BenefitType
         value={benefitType}
         onChange={this.props.setBenefitType}
-        errorMessage={this.props.errors['benefit-type-options'] && this.props.errors['benefit-type-options'].message}
+        errorMessage={benefitTypeError || errors?.['benefit-type-options']?.message}
         register={this.props.register}
       />
 
@@ -83,21 +85,21 @@ class Review extends React.PureComponent {
         label="What is the Receipt Date of this form?"
         value={receiptDate}
         onChange={this.props.setReceiptDate}
-        errorMessage={this.props.errors['receipt-date'] && this.props.errors['receipt-date'].message}
+        errorMessage={receiptDateError || errors?.['receipt-date']?.message}
         type="date"
         strongLabel
         inputRef={this.props.register}
       />
 
-      <SelectClaimantConnected 
-        register={this.props.register} 
-        errors={this.props.errors} 
+      <SelectClaimantConnected
+        register={this.props.register}
+        errors={this.props.errors}
       />
 
       <LegacyOptInApproved
         value={legacyOptInApproved}
         onChange={this.props.setLegacyOptInApproved}
-        errorMessage={this.props.errors['legacy-opt-in'] && this.props.errors['legacy-opt-in'].message}
+        errorMessage={legacyOptInApprovedError || errors?.['legacy-opt-in']?.message}
         register={this.props.register}
       />
     </div>;
@@ -125,7 +127,9 @@ Review.propTypes = {
   setSameOffice: PropTypes.func,
   setLegacyOptInApproved: PropTypes.func,
   supplementalClaimStatus: PropTypes.string,
-  errorUUID: PropTypes.string
+  errorUUID: PropTypes.string,
+  register: PropTypes.func,
+  errors: PropTypes.array
 };
 
 const SelectClaimantConnected = connect(
@@ -171,4 +175,4 @@ export default connect(
   }, dispatch)
 )(Review);
 
-export {reviewSupplementalClaimSchema}
+export { reviewSupplementalClaimSchema };

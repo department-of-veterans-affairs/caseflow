@@ -72,10 +72,8 @@ export const SelectClaimant = (props) => {
     benefitType,
     isVeteranDeceased,
     veteranIsNotClaimant,
-    veteranIsNotClaimantError,
     setVeteranIsNotClaimant,
     claimant,
-    claimantError,
     setClaimant,
     relationships,
     payeeCode,
@@ -229,7 +227,6 @@ export const SelectClaimant = (props) => {
   };
 
   const claimantOptions = () => {
-    console.log(props.register)
     return (
       <div>
         <RadioField
@@ -355,6 +352,8 @@ SelectClaimant.propTypes = {
   payeeCodeError: PropTypes.string,
   setPayeeCode: PropTypes.func,
   claimantNotes: PropTypes.string,
+  register: PropTypes.func,
+  errors: PropTypes.array
 };
 
 export default SelectClaimant;

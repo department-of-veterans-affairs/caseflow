@@ -16,7 +16,7 @@ import {
   setLegacyOptInApproved
 } from '../../actions/decisionReview';
 import { setReceiptDate } from '../../actions/intake';
-import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, REVIEW_OPTIONS, CLAIMANT_ERRORS} from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, CLAIMANT_ERRORS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 import DATES from '../../../../constants/DATES';
@@ -36,14 +36,16 @@ const reviewAppealSchema = yup.object().shape({
           new Date(DATES.AMA_ACTIVATION_TEST),
         `Receipt Date cannot be prior to ${format(new Date(DATES.AMA_ACTIVATION_TEST), 'MM/dd/yyyy')}`
         )
-    }).typeError('Please enter a valid receipt date.')
-      .max(format(add(new Date(), { hours: 1 }), 'MM/dd/yyyy'), 'Receipt date cannot be in the future.')
-      .required('Please enter a valid receipt date.'),
-    'docket-type': yup.string().required(CLAIMANT_ERRORS.blank),
-    'legacy-opt-in': yup.string().required(CLAIMANT_ERRORS.blank),
-    'different-claimant-option': yup.string().required(CLAIMANT_ERRORS.blank),
-    'claimant-options': yup.string().notRequired().when('different-claimant-option', {
-      is: "true",
+    }).
+    typeError('Please enter a valid receipt date.').
+    max(format(add(new Date(), { hours: 1 }), 'MM/dd/yyyy'), 'Receipt date cannot be in the future.').
+    required('Please enter a valid receipt date.'),
+  'docket-type': yup.string().required(CLAIMANT_ERRORS.blank),
+  'legacy-opt-in': yup.string().required(CLAIMANT_ERRORS.blank),
+  'different-claimant-option': yup.string().required(CLAIMANT_ERRORS.blank),
+  'claimant-options': yup.string().notRequired().
+    when('different-claimant-option', {
+      is: 'true',
       then: yup.string().required(CLAIMANT_ERRORS.blank)
     })
 });
@@ -59,7 +61,8 @@ class Review extends React.PureComponent {
       docketTypeError,
       legacyOptInApproved,
       legacyOptInApprovedError,
-      reviewIntakeError
+      reviewIntakeError,
+      errors
     } = this.props;
 
     switch (appealStatus) {
@@ -89,7 +92,7 @@ class Review extends React.PureComponent {
         label="What is the Receipt Date of this form?"
         value={receiptDate}
         onChange={this.props.setReceiptDate}
-        errorMessage={this.props.errors['receipt-date'] && this.props.errors['receipt-date'].message}
+        errorMessage={receiptDateError || errors?.['receipt-date']?.message}
         type="date"
         strongLabel
         inputRef={this.props.register}
@@ -102,20 +105,20 @@ class Review extends React.PureComponent {
         vertical
         options={docketTypeRadioOptions}
         onChange={this.props.setDocketType}
-        errorMessage={this.props.errors['docket-type'] && this.props.errors['docket-type'].message}
+        errorMessage={docketTypeError || errors?.['docket-type']?.message}
         value={docketType}
         inputRef={this.props.register}
       />
 
-      <SelectClaimantConnected 
-        register={this.props.register} 
+      <SelectClaimantConnected
+        register={this.props.register}
         errors={this.props.errors}
       />
 
       <LegacyOptInApproved
         value={legacyOptInApproved}
         onChange={this.props.setLegacyOptInApproved}
-        errorMessage={this.props.errors['legacy-opt-in'] && this.props.errors['legacy-opt-in'].message}
+        errorMessage={legacyOptInApprovedError || errors?.['legacy-opt-in']?.message}
         register={this.props.register}
       />
     </div>;
@@ -134,7 +137,9 @@ Review.propTypes = {
   setDocketType: PropTypes.func,
   setReceiptDate: PropTypes.func,
   setLegacyOptInApproved: PropTypes.func,
-  appealStatus: PropTypes.string
+  appealStatus: PropTypes.string,
+  register: PropTypes.func,
+  errors: PropTypes.array
 };
 
 const SelectClaimantConnected = connect(
@@ -176,4 +181,4 @@ export default connect(
   }, dispatch)
 )(Review);
 
-export {reviewAppealSchema}
+export { reviewAppealSchema };

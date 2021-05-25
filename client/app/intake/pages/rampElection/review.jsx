@@ -15,9 +15,9 @@ import PropTypes from 'prop-types';
 
 const reviewRampElectionSchema = yup.object().shape({
   'opt-in-election': yup.string().required(CLAIMANT_ERRORS.blank),
-  'receipt-date': yup.date().typeError('Please enter a valid receipt date.')
-    .max(format(add(new Date(), { hours: 1 }), 'MM/dd/yyyy'), 'Receipt date cannot be in the future.')
-    .required('Please enter a valid receipt date.'),
+  'receipt-date': yup.date().typeError('Please enter a valid receipt date.').
+    max(format(add(new Date(), { hours: 1 }), 'MM/dd/yyyy'), 'Receipt date cannot be in the future.').
+    required('Please enter a valid receipt date.'),
 });
 
 class Review extends React.PureComponent {
@@ -29,7 +29,8 @@ class Review extends React.PureComponent {
       optionSelectedError,
       receiptDate,
       receiptDateError,
-      reviewIntakeError
+      reviewIntakeError,
+      errors
     } = this.props;
 
     switch (rampElectionStatus) {
@@ -56,7 +57,7 @@ class Review extends React.PureComponent {
         label="What is the Receipt Date of this form?"
         value={receiptDate}
         onChange={this.props.setReceiptDate}
-        errorMessage={this.props.errors['receipt-date'] && this.props.errors['receipt-date'].message}
+        errorMessage={receiptDateError || errors?.['receipt-date']?.message}
         type="date"
         strongLabel
         inputRef={this.props.register}
@@ -68,7 +69,7 @@ class Review extends React.PureComponent {
         strongLabel
         options={radioOptions}
         onChange={this.props.setOptionSelected}
-        errorMessage={this.props.errors['opt-in-election'] && this.props.errors['opt-in-election'].message}
+        errorMessage={optionSelectedError || errors?.['opt-in-election']?.message}
         value={optionSelected}
         inputRef={this.props.register}
       />
@@ -85,7 +86,9 @@ Review.propTypes = {
   setReceiptDate: PropTypes.func,
   setOptionSelected: PropTypes.func,
   rampElectionStatus: PropTypes.string,
-  reviewIntakeError: PropTypes.string
+  reviewIntakeError: PropTypes.string,
+  register: PropTypes.func,
+  errors: PropTypes.array
 };
 
 export default connect(
@@ -104,4 +107,4 @@ export default connect(
   }, dispatch)
 )(Review);
 
-export {reviewRampElectionSchema}
+export { reviewRampElectionSchema };
