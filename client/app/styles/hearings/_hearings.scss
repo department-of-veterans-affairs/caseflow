@@ -512,10 +512,12 @@ $form-width: 575px;
     margin-bottom: $form-spacing;
   }
 
+  // eslint-disable-next-line
   div.cf-form-textinput {
     margin: $form-spacing 0;
   }
 
+  // eslint-disable-next-line
   input.cf-form-textinput {
     margin-bottom: 0;
     max-width: $form-width;
@@ -553,6 +555,7 @@ $form-width: 575px;
 
   .time-slot-container {
     margin-right: $form-spacing;
+
     > span {
       margin: 0;
       margin-top: $form-spacing;
