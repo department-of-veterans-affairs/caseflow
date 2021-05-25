@@ -1454,6 +1454,32 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
 
+    context "when POA changes and IHP task is cancelled" do
+      let(:old_poa) { create(:vso, name: "Old POA") }
+      let(:appeal) do
+        create(:appeal, veteran: create(:veteran)) do |appeal|
+          create(
+            :informal_hearing_presentation_task,
+            appeal: appeal,
+            assigned_to: old_poa
+          )
+        end
+      end
+      let(:new_poa_participant_id) { "2222222" }
+      let!(:new_poa) { create(:vso, name: "New POA", participant_id: new_poa_participant_id) }
+      let!(:bgs_poa_for_claimant) do
+        create(:bgs_power_of_attorney,
+               claimant_participant_id: appeal.claimant.participant_id,
+               poa_participant_id: new_poa_participant_id)
+      end
+      it "should show the cancelled task in case timeline with the appropriate reason" do
+        InformalHearingPresentationTask.update_to_new_poa(appeal)
+        visit("/queue/appeals/#{appeal.uuid}")
+        expect(page).to have_css("table#case-timeline-table tbody tr", count: 3)
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_CANCEL_REASONS["poa_change"])
+      end
+    end
+
     context "when an AMA appeal has been dispatched from the Board" do
       let(:appeal) { create(:appeal) }
       let(:root_task) { create(:root_task, appeal: appeal) }
