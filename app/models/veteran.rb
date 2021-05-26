@@ -324,6 +324,7 @@ class Veteran < CaseflowRecord
   end
 
   def update_cached_attributes!
+    return false unless accessible? && bgs_record.is_a?(Hash)
     CACHED_BGS_ATTRIBUTES.each do |local_attr, bgs_attr|
       fetched_attr = bgs_record[bgs_attr]
       if bgs_attr == :date_of_death && fetched_attr.present?
