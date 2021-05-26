@@ -147,31 +147,97 @@ exports[`CaseHearingDetail renders correctly 1`] = `
             >
               
                
-              <span
-                aria-describedby="hearing-worksheet-tip"
-                currentitem="false"
-                data-event="focus mouseenter"
-                data-event-off="keydown mouseleave"
-                data-for="hearing-worksheet-tip"
-                data-tip="true"
-                role="tooltip"
-                tabindex="0"
+              <a
+                href="/hearings/worksheet/print?keep_open=true&hearing_ids=29e88a5d-8f00-47ea-b178-95a01d912b96"
+                target="_blank"
               >
-                <a
-                  href="/hearings/worksheet/print?keep_open=true&hearing_ids=29e88a5d-8f00-47ea-b178-95a01d912b96"
-                  target="_blank"
-                >
-                  View VLJ Hearing Worksheet
-                </a>
-              </span>
+                View VLJ Hearing Worksheet
+              </a>
               <span
                 data-css-wlp5bi=""
               >
                 <div
-                  class="__react_component_tooltip place-top type-dark "
+                  class="__react_component_tooltip t7f131889-313a-4dca-b194-ccb707305d18 place-top type-dark"
                   data-id="tooltip"
                   id="hearing-worksheet-tip"
                 >
+                  <style>
+                    
+  	.t7f131889-313a-4dca-b194-ccb707305d18 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t7f131889-313a-4dca-b194-ccb707305d18.place-top {
+        margin-top: -10px;
+    }
+    .t7f131889-313a-4dca-b194-ccb707305d18.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t7f131889-313a-4dca-b194-ccb707305d18.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t7f131889-313a-4dca-b194-ccb707305d18.place-bottom {
+        margin-top: 10px;
+    }
+    .t7f131889-313a-4dca-b194-ccb707305d18.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t7f131889-313a-4dca-b194-ccb707305d18.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t7f131889-313a-4dca-b194-ccb707305d18.place-left {
+        margin-left: -10px;
+    }
+    .t7f131889-313a-4dca-b194-ccb707305d18.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t7f131889-313a-4dca-b194-ccb707305d18.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t7f131889-313a-4dca-b194-ccb707305d18.place-right {
+        margin-left: 10px;
+    }
+    .t7f131889-313a-4dca-b194-ccb707305d18.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t7f131889-313a-4dca-b194-ccb707305d18.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                  </style>
                   This link opens a PDF copy of the Hearing Worksheet
                 </div>
               </span>

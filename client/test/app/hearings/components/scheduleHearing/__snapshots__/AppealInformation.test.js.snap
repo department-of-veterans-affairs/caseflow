@@ -61,29 +61,103 @@ Object {
             <span>
               <span
                 aria-describedby="badge-200805-541"
+                aria-label="Hearing Request"
                 currentitem="false"
+                data-css-2moai0=""
                 data-event="focus mouseenter"
-                data-event-off="keydown mouseleave"
+                data-event-off="mouseleave keydown"
                 data-for="badge-200805-541"
                 data-tip="true"
                 role="tooltip"
                 tabindex="0"
               >
-                <span
-                  aria-label="Hearing Request"
-                  data-css-2moai0=""
-                >
-                  H
-                </span>
+                H
               </span>
               <span
                 data-css-lflsmu=""
               >
                 <div
-                  class="__react_component_tooltip place-bottom type-dark "
+                  class="__react_component_tooltip t2fe32aaa-572f-41b8-adc5-5c6c5b907118 place-bottom type-dark"
                   data-id="tooltip"
                   id="badge-200805-541"
                 >
+                  <style>
+                    
+  	.t2fe32aaa-572f-41b8-adc5-5c6c5b907118 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t2fe32aaa-572f-41b8-adc5-5c6c5b907118.place-top {
+        margin-top: -10px;
+    }
+    .t2fe32aaa-572f-41b8-adc5-5c6c5b907118.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t2fe32aaa-572f-41b8-adc5-5c6c5b907118.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t2fe32aaa-572f-41b8-adc5-5c6c5b907118.place-bottom {
+        margin-top: 10px;
+    }
+    .t2fe32aaa-572f-41b8-adc5-5c6c5b907118.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t2fe32aaa-572f-41b8-adc5-5c6c5b907118.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t2fe32aaa-572f-41b8-adc5-5c6c5b907118.place-left {
+        margin-left: -10px;
+    }
+    .t2fe32aaa-572f-41b8-adc5-5c6c5b907118.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t2fe32aaa-572f-41b8-adc5-5c6c5b907118.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t2fe32aaa-572f-41b8-adc5-5c6c5b907118.place-right {
+        margin-left: 10px;
+    }
+    .t2fe32aaa-572f-41b8-adc5-5c6c5b907118.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t2fe32aaa-572f-41b8-adc5-5c6c5b907118.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                  </style>
                   Hearing Request
                 </div>
               </span>
@@ -161,29 +235,103 @@ Object {
           <span>
             <span
               aria-describedby="badge-200805-541"
+              aria-label="Hearing Request"
               currentitem="false"
+              data-css-2moai0=""
               data-event="focus mouseenter"
-              data-event-off="keydown mouseleave"
+              data-event-off="mouseleave keydown"
               data-for="badge-200805-541"
               data-tip="true"
               role="tooltip"
               tabindex="0"
             >
-              <span
-                aria-label="Hearing Request"
-                data-css-2moai0=""
-              >
-                H
-              </span>
+              H
             </span>
             <span
               data-css-lflsmu=""
             >
               <div
-                class="__react_component_tooltip place-bottom type-dark "
+                class="__react_component_tooltip t2fe32aaa-572f-41b8-adc5-5c6c5b907118 place-bottom type-dark"
                 data-id="tooltip"
                 id="badge-200805-541"
               >
+                <style>
+                  
+  	.t2fe32aaa-572f-41b8-adc5-5c6c5b907118 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t2fe32aaa-572f-41b8-adc5-5c6c5b907118.place-top {
+        margin-top: -10px;
+    }
+    .t2fe32aaa-572f-41b8-adc5-5c6c5b907118.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t2fe32aaa-572f-41b8-adc5-5c6c5b907118.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t2fe32aaa-572f-41b8-adc5-5c6c5b907118.place-bottom {
+        margin-top: 10px;
+    }
+    .t2fe32aaa-572f-41b8-adc5-5c6c5b907118.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t2fe32aaa-572f-41b8-adc5-5c6c5b907118.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t2fe32aaa-572f-41b8-adc5-5c6c5b907118.place-left {
+        margin-left: -10px;
+    }
+    .t2fe32aaa-572f-41b8-adc5-5c6c5b907118.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t2fe32aaa-572f-41b8-adc5-5c6c5b907118.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t2fe32aaa-572f-41b8-adc5-5c6c5b907118.place-right {
+        margin-left: 10px;
+    }
+    .t2fe32aaa-572f-41b8-adc5-5c6c5b907118.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t2fe32aaa-572f-41b8-adc5-5c6c5b907118.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                </style>
                 Hearing Request
               </div>
             </span>
@@ -309,29 +457,103 @@ Object {
             <span>
               <span
                 aria-describedby="badge-200805-541"
+                aria-label="Hearing Request"
                 currentitem="false"
+                data-css-2moai0=""
                 data-event="focus mouseenter"
-                data-event-off="keydown mouseleave"
+                data-event-off="mouseleave keydown"
                 data-for="badge-200805-541"
                 data-tip="true"
                 role="tooltip"
                 tabindex="0"
               >
-                <span
-                  aria-label="Hearing Request"
-                  data-css-2moai0=""
-                >
-                  H
-                </span>
+                H
               </span>
               <span
                 data-css-lflsmu=""
               >
                 <div
-                  class="__react_component_tooltip place-bottom type-dark "
+                  class="__react_component_tooltip t4f256444-db3b-4a74-95c3-ff1b91628fa8 place-bottom type-dark"
                   data-id="tooltip"
                   id="badge-200805-541"
                 >
+                  <style>
+                    
+  	.t4f256444-db3b-4a74-95c3-ff1b91628fa8 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t4f256444-db3b-4a74-95c3-ff1b91628fa8.place-top {
+        margin-top: -10px;
+    }
+    .t4f256444-db3b-4a74-95c3-ff1b91628fa8.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t4f256444-db3b-4a74-95c3-ff1b91628fa8.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t4f256444-db3b-4a74-95c3-ff1b91628fa8.place-bottom {
+        margin-top: 10px;
+    }
+    .t4f256444-db3b-4a74-95c3-ff1b91628fa8.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t4f256444-db3b-4a74-95c3-ff1b91628fa8.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t4f256444-db3b-4a74-95c3-ff1b91628fa8.place-left {
+        margin-left: -10px;
+    }
+    .t4f256444-db3b-4a74-95c3-ff1b91628fa8.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t4f256444-db3b-4a74-95c3-ff1b91628fa8.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t4f256444-db3b-4a74-95c3-ff1b91628fa8.place-right {
+        margin-left: 10px;
+    }
+    .t4f256444-db3b-4a74-95c3-ff1b91628fa8.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t4f256444-db3b-4a74-95c3-ff1b91628fa8.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                  </style>
                   Hearing Request
                 </div>
               </span>
@@ -410,29 +632,103 @@ Object {
           <span>
             <span
               aria-describedby="badge-200805-541"
+              aria-label="Hearing Request"
               currentitem="false"
+              data-css-2moai0=""
               data-event="focus mouseenter"
-              data-event-off="keydown mouseleave"
+              data-event-off="mouseleave keydown"
               data-for="badge-200805-541"
               data-tip="true"
               role="tooltip"
               tabindex="0"
             >
-              <span
-                aria-label="Hearing Request"
-                data-css-2moai0=""
-              >
-                H
-              </span>
+              H
             </span>
             <span
               data-css-lflsmu=""
             >
               <div
-                class="__react_component_tooltip place-bottom type-dark "
+                class="__react_component_tooltip t4f256444-db3b-4a74-95c3-ff1b91628fa8 place-bottom type-dark"
                 data-id="tooltip"
                 id="badge-200805-541"
               >
+                <style>
+                  
+  	.t4f256444-db3b-4a74-95c3-ff1b91628fa8 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t4f256444-db3b-4a74-95c3-ff1b91628fa8.place-top {
+        margin-top: -10px;
+    }
+    .t4f256444-db3b-4a74-95c3-ff1b91628fa8.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t4f256444-db3b-4a74-95c3-ff1b91628fa8.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t4f256444-db3b-4a74-95c3-ff1b91628fa8.place-bottom {
+        margin-top: 10px;
+    }
+    .t4f256444-db3b-4a74-95c3-ff1b91628fa8.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t4f256444-db3b-4a74-95c3-ff1b91628fa8.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t4f256444-db3b-4a74-95c3-ff1b91628fa8.place-left {
+        margin-left: -10px;
+    }
+    .t4f256444-db3b-4a74-95c3-ff1b91628fa8.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t4f256444-db3b-4a74-95c3-ff1b91628fa8.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t4f256444-db3b-4a74-95c3-ff1b91628fa8.place-right {
+        margin-left: 10px;
+    }
+    .t4f256444-db3b-4a74-95c3-ff1b91628fa8.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t4f256444-db3b-4a74-95c3-ff1b91628fa8.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                </style>
                 Hearing Request
               </div>
             </span>
@@ -568,29 +864,103 @@ Object {
             <span>
               <span
                 aria-describedby="badge-200805-541"
+                aria-label="Hearing Request"
                 currentitem="false"
+                data-css-2moai0=""
                 data-event="focus mouseenter"
-                data-event-off="keydown mouseleave"
+                data-event-off="mouseleave keydown"
                 data-for="badge-200805-541"
                 data-tip="true"
                 role="tooltip"
                 tabindex="0"
               >
-                <span
-                  aria-label="Hearing Request"
-                  data-css-2moai0=""
-                >
-                  H
-                </span>
+                H
               </span>
               <span
                 data-css-lflsmu=""
               >
                 <div
-                  class="__react_component_tooltip place-bottom type-dark "
+                  class="__react_component_tooltip t9bc118f7-36fc-416d-9acc-505646bc8046 place-bottom type-dark"
                   data-id="tooltip"
                   id="badge-200805-541"
                 >
+                  <style>
+                    
+  	.t9bc118f7-36fc-416d-9acc-505646bc8046 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t9bc118f7-36fc-416d-9acc-505646bc8046.place-top {
+        margin-top: -10px;
+    }
+    .t9bc118f7-36fc-416d-9acc-505646bc8046.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t9bc118f7-36fc-416d-9acc-505646bc8046.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t9bc118f7-36fc-416d-9acc-505646bc8046.place-bottom {
+        margin-top: 10px;
+    }
+    .t9bc118f7-36fc-416d-9acc-505646bc8046.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t9bc118f7-36fc-416d-9acc-505646bc8046.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t9bc118f7-36fc-416d-9acc-505646bc8046.place-left {
+        margin-left: -10px;
+    }
+    .t9bc118f7-36fc-416d-9acc-505646bc8046.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t9bc118f7-36fc-416d-9acc-505646bc8046.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t9bc118f7-36fc-416d-9acc-505646bc8046.place-right {
+        margin-left: 10px;
+    }
+    .t9bc118f7-36fc-416d-9acc-505646bc8046.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t9bc118f7-36fc-416d-9acc-505646bc8046.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                  </style>
                   Hearing Request
                 </div>
               </span>
@@ -659,29 +1029,103 @@ Object {
           <span>
             <span
               aria-describedby="badge-200805-541"
+              aria-label="Hearing Request"
               currentitem="false"
+              data-css-2moai0=""
               data-event="focus mouseenter"
-              data-event-off="keydown mouseleave"
+              data-event-off="mouseleave keydown"
               data-for="badge-200805-541"
               data-tip="true"
               role="tooltip"
               tabindex="0"
             >
-              <span
-                aria-label="Hearing Request"
-                data-css-2moai0=""
-              >
-                H
-              </span>
+              H
             </span>
             <span
               data-css-lflsmu=""
             >
               <div
-                class="__react_component_tooltip place-bottom type-dark "
+                class="__react_component_tooltip t9bc118f7-36fc-416d-9acc-505646bc8046 place-bottom type-dark"
                 data-id="tooltip"
                 id="badge-200805-541"
               >
+                <style>
+                  
+  	.t9bc118f7-36fc-416d-9acc-505646bc8046 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t9bc118f7-36fc-416d-9acc-505646bc8046.place-top {
+        margin-top: -10px;
+    }
+    .t9bc118f7-36fc-416d-9acc-505646bc8046.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t9bc118f7-36fc-416d-9acc-505646bc8046.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t9bc118f7-36fc-416d-9acc-505646bc8046.place-bottom {
+        margin-top: 10px;
+    }
+    .t9bc118f7-36fc-416d-9acc-505646bc8046.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t9bc118f7-36fc-416d-9acc-505646bc8046.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t9bc118f7-36fc-416d-9acc-505646bc8046.place-left {
+        margin-left: -10px;
+    }
+    .t9bc118f7-36fc-416d-9acc-505646bc8046.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t9bc118f7-36fc-416d-9acc-505646bc8046.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t9bc118f7-36fc-416d-9acc-505646bc8046.place-right {
+        margin-left: 10px;
+    }
+    .t9bc118f7-36fc-416d-9acc-505646bc8046.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t9bc118f7-36fc-416d-9acc-505646bc8046.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                </style>
                 Hearing Request
               </div>
             </span>
@@ -823,29 +1267,103 @@ Object {
             <span>
               <span
                 aria-describedby="badge-200805-541"
+                aria-label="Hearing Request"
                 currentitem="false"
+                data-css-2moai0=""
                 data-event="focus mouseenter"
-                data-event-off="keydown mouseleave"
+                data-event-off="mouseleave keydown"
                 data-for="badge-200805-541"
                 data-tip="true"
                 role="tooltip"
                 tabindex="0"
               >
-                <span
-                  aria-label="Hearing Request"
-                  data-css-2moai0=""
-                >
-                  H
-                </span>
+                H
               </span>
               <span
                 data-css-lflsmu=""
               >
                 <div
-                  class="__react_component_tooltip place-bottom type-dark "
+                  class="__react_component_tooltip tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7 place-bottom type-dark"
                   data-id="tooltip"
                   id="badge-200805-541"
                 >
+                  <style>
+                    
+  	.tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7.place-top {
+        margin-top: -10px;
+    }
+    .tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7.place-bottom {
+        margin-top: 10px;
+    }
+    .tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7.place-left {
+        margin-left: -10px;
+    }
+    .tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7.place-right {
+        margin-left: 10px;
+    }
+    .tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                  </style>
                   Hearing Request
                 </div>
               </span>
@@ -930,29 +1448,103 @@ Object {
           <span>
             <span
               aria-describedby="badge-200805-541"
+              aria-label="Hearing Request"
               currentitem="false"
+              data-css-2moai0=""
               data-event="focus mouseenter"
-              data-event-off="keydown mouseleave"
+              data-event-off="mouseleave keydown"
               data-for="badge-200805-541"
               data-tip="true"
               role="tooltip"
               tabindex="0"
             >
-              <span
-                aria-label="Hearing Request"
-                data-css-2moai0=""
-              >
-                H
-              </span>
+              H
             </span>
             <span
               data-css-lflsmu=""
             >
               <div
-                class="__react_component_tooltip place-bottom type-dark "
+                class="__react_component_tooltip tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7 place-bottom type-dark"
                 data-id="tooltip"
                 id="badge-200805-541"
               >
+                <style>
+                  
+  	.tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7.place-top {
+        margin-top: -10px;
+    }
+    .tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7.place-bottom {
+        margin-top: 10px;
+    }
+    .tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7.place-left {
+        margin-left: -10px;
+    }
+    .tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7.place-right {
+        margin-left: 10px;
+    }
+    .tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .tbcee0991-3aab-4f67-ac6b-17e03e8b9bc7.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                </style>
                 Hearing Request
               </div>
             </span>
@@ -1078,29 +1670,103 @@ Object {
             <span>
               <span
                 aria-describedby="badge-200805-541"
+                aria-label="Hearing Request"
                 currentitem="false"
+                data-css-2moai0=""
                 data-event="focus mouseenter"
-                data-event-off="keydown mouseleave"
+                data-event-off="mouseleave keydown"
                 data-for="badge-200805-541"
                 data-tip="true"
                 role="tooltip"
                 tabindex="0"
               >
-                <span
-                  aria-label="Hearing Request"
-                  data-css-2moai0=""
-                >
-                  H
-                </span>
+                H
               </span>
               <span
                 data-css-lflsmu=""
               >
                 <div
-                  class="__react_component_tooltip place-bottom type-dark "
+                  class="__react_component_tooltip tdd7848c3-4086-4cf2-80b9-8837a8e16dcc place-bottom type-dark"
                   data-id="tooltip"
                   id="badge-200805-541"
                 >
+                  <style>
+                    
+  	.tdd7848c3-4086-4cf2-80b9-8837a8e16dcc {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.tdd7848c3-4086-4cf2-80b9-8837a8e16dcc.place-top {
+        margin-top: -10px;
+    }
+    .tdd7848c3-4086-4cf2-80b9-8837a8e16dcc.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .tdd7848c3-4086-4cf2-80b9-8837a8e16dcc.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .tdd7848c3-4086-4cf2-80b9-8837a8e16dcc.place-bottom {
+        margin-top: 10px;
+    }
+    .tdd7848c3-4086-4cf2-80b9-8837a8e16dcc.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .tdd7848c3-4086-4cf2-80b9-8837a8e16dcc.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .tdd7848c3-4086-4cf2-80b9-8837a8e16dcc.place-left {
+        margin-left: -10px;
+    }
+    .tdd7848c3-4086-4cf2-80b9-8837a8e16dcc.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .tdd7848c3-4086-4cf2-80b9-8837a8e16dcc.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .tdd7848c3-4086-4cf2-80b9-8837a8e16dcc.place-right {
+        margin-left: 10px;
+    }
+    .tdd7848c3-4086-4cf2-80b9-8837a8e16dcc.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .tdd7848c3-4086-4cf2-80b9-8837a8e16dcc.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                  </style>
                   Hearing Request
                 </div>
               </span>
@@ -1169,29 +1835,103 @@ Object {
           <span>
             <span
               aria-describedby="badge-200805-541"
+              aria-label="Hearing Request"
               currentitem="false"
+              data-css-2moai0=""
               data-event="focus mouseenter"
-              data-event-off="keydown mouseleave"
+              data-event-off="mouseleave keydown"
               data-for="badge-200805-541"
               data-tip="true"
               role="tooltip"
               tabindex="0"
             >
-              <span
-                aria-label="Hearing Request"
-                data-css-2moai0=""
-              >
-                H
-              </span>
+              H
             </span>
             <span
               data-css-lflsmu=""
             >
               <div
-                class="__react_component_tooltip place-bottom type-dark "
+                class="__react_component_tooltip tdd7848c3-4086-4cf2-80b9-8837a8e16dcc place-bottom type-dark"
                 data-id="tooltip"
                 id="badge-200805-541"
               >
+                <style>
+                  
+  	.tdd7848c3-4086-4cf2-80b9-8837a8e16dcc {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.tdd7848c3-4086-4cf2-80b9-8837a8e16dcc.place-top {
+        margin-top: -10px;
+    }
+    .tdd7848c3-4086-4cf2-80b9-8837a8e16dcc.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .tdd7848c3-4086-4cf2-80b9-8837a8e16dcc.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .tdd7848c3-4086-4cf2-80b9-8837a8e16dcc.place-bottom {
+        margin-top: 10px;
+    }
+    .tdd7848c3-4086-4cf2-80b9-8837a8e16dcc.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .tdd7848c3-4086-4cf2-80b9-8837a8e16dcc.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .tdd7848c3-4086-4cf2-80b9-8837a8e16dcc.place-left {
+        margin-left: -10px;
+    }
+    .tdd7848c3-4086-4cf2-80b9-8837a8e16dcc.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .tdd7848c3-4086-4cf2-80b9-8837a8e16dcc.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .tdd7848c3-4086-4cf2-80b9-8837a8e16dcc.place-right {
+        margin-left: 10px;
+    }
+    .tdd7848c3-4086-4cf2-80b9-8837a8e16dcc.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .tdd7848c3-4086-4cf2-80b9-8837a8e16dcc.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                </style>
                 Hearing Request
               </div>
             </span>
@@ -1317,29 +2057,103 @@ Object {
             <span>
               <span
                 aria-describedby="badge-200805-541"
+                aria-label="Hearing Request"
                 currentitem="false"
+                data-css-2moai0=""
                 data-event="focus mouseenter"
-                data-event-off="keydown mouseleave"
+                data-event-off="mouseleave keydown"
                 data-for="badge-200805-541"
                 data-tip="true"
                 role="tooltip"
                 tabindex="0"
               >
-                <span
-                  aria-label="Hearing Request"
-                  data-css-2moai0=""
-                >
-                  H
-                </span>
+                H
               </span>
               <span
                 data-css-lflsmu=""
               >
                 <div
-                  class="__react_component_tooltip place-bottom type-dark "
+                  class="__react_component_tooltip t6e864bfa-9b22-4d20-a927-6f400280f86b place-bottom type-dark"
                   data-id="tooltip"
                   id="badge-200805-541"
                 >
+                  <style>
+                    
+  	.t6e864bfa-9b22-4d20-a927-6f400280f86b {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t6e864bfa-9b22-4d20-a927-6f400280f86b.place-top {
+        margin-top: -10px;
+    }
+    .t6e864bfa-9b22-4d20-a927-6f400280f86b.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t6e864bfa-9b22-4d20-a927-6f400280f86b.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t6e864bfa-9b22-4d20-a927-6f400280f86b.place-bottom {
+        margin-top: 10px;
+    }
+    .t6e864bfa-9b22-4d20-a927-6f400280f86b.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t6e864bfa-9b22-4d20-a927-6f400280f86b.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t6e864bfa-9b22-4d20-a927-6f400280f86b.place-left {
+        margin-left: -10px;
+    }
+    .t6e864bfa-9b22-4d20-a927-6f400280f86b.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t6e864bfa-9b22-4d20-a927-6f400280f86b.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t6e864bfa-9b22-4d20-a927-6f400280f86b.place-right {
+        margin-left: 10px;
+    }
+    .t6e864bfa-9b22-4d20-a927-6f400280f86b.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t6e864bfa-9b22-4d20-a927-6f400280f86b.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                  </style>
                   Hearing Request
                 </div>
               </span>
@@ -1408,29 +2222,103 @@ Object {
           <span>
             <span
               aria-describedby="badge-200805-541"
+              aria-label="Hearing Request"
               currentitem="false"
+              data-css-2moai0=""
               data-event="focus mouseenter"
-              data-event-off="keydown mouseleave"
+              data-event-off="mouseleave keydown"
               data-for="badge-200805-541"
               data-tip="true"
               role="tooltip"
               tabindex="0"
             >
-              <span
-                aria-label="Hearing Request"
-                data-css-2moai0=""
-              >
-                H
-              </span>
+              H
             </span>
             <span
               data-css-lflsmu=""
             >
               <div
-                class="__react_component_tooltip place-bottom type-dark "
+                class="__react_component_tooltip t6e864bfa-9b22-4d20-a927-6f400280f86b place-bottom type-dark"
                 data-id="tooltip"
                 id="badge-200805-541"
               >
+                <style>
+                  
+  	.t6e864bfa-9b22-4d20-a927-6f400280f86b {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t6e864bfa-9b22-4d20-a927-6f400280f86b.place-top {
+        margin-top: -10px;
+    }
+    .t6e864bfa-9b22-4d20-a927-6f400280f86b.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t6e864bfa-9b22-4d20-a927-6f400280f86b.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t6e864bfa-9b22-4d20-a927-6f400280f86b.place-bottom {
+        margin-top: 10px;
+    }
+    .t6e864bfa-9b22-4d20-a927-6f400280f86b.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t6e864bfa-9b22-4d20-a927-6f400280f86b.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t6e864bfa-9b22-4d20-a927-6f400280f86b.place-left {
+        margin-left: -10px;
+    }
+    .t6e864bfa-9b22-4d20-a927-6f400280f86b.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t6e864bfa-9b22-4d20-a927-6f400280f86b.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t6e864bfa-9b22-4d20-a927-6f400280f86b.place-right {
+        margin-left: 10px;
+    }
+    .t6e864bfa-9b22-4d20-a927-6f400280f86b.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t6e864bfa-9b22-4d20-a927-6f400280f86b.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+                </style>
                 Hearing Request
               </div>
             </span>

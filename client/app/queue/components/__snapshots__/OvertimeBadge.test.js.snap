@@ -8,27 +8,101 @@ exports[`OvertimeBadge renders correctly 1`] = `
     <span
       aria-describedby="badge-undefined"
       currentitem="false"
+      data-css-13kydni=""
       data-event="focus mouseenter"
-      data-event-off="keydown mouseleave"
+      data-event-off="mouseleave keydown"
       data-for="badge-undefined"
       data-tip="true"
       role="tooltip"
       tabindex="0"
     >
-      <span
-        data-css-13kydni=""
-      >
-        OT
-      </span>
+      OT
     </span>
     <span
       data-css-1urwbxe=""
     >
       <div
-        class="__react_component_tooltip place-bottom type-dark "
+        class="__react_component_tooltip tb6a38d99-f087-47f4-9217-a42be3f9a56b place-bottom type-dark"
         data-id="tooltip"
         id="badge-undefined"
       >
+        <style>
+          
+  	.tb6a38d99-f087-47f4-9217-a42be3f9a56b {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.tb6a38d99-f087-47f4-9217-a42be3f9a56b.place-top {
+        margin-top: -10px;
+    }
+    .tb6a38d99-f087-47f4-9217-a42be3f9a56b.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .tb6a38d99-f087-47f4-9217-a42be3f9a56b.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .tb6a38d99-f087-47f4-9217-a42be3f9a56b.place-bottom {
+        margin-top: 10px;
+    }
+    .tb6a38d99-f087-47f4-9217-a42be3f9a56b.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .tb6a38d99-f087-47f4-9217-a42be3f9a56b.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .tb6a38d99-f087-47f4-9217-a42be3f9a56b.place-left {
+        margin-left: -10px;
+    }
+    .tb6a38d99-f087-47f4-9217-a42be3f9a56b.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .tb6a38d99-f087-47f4-9217-a42be3f9a56b.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .tb6a38d99-f087-47f4-9217-a42be3f9a56b.place-right {
+        margin-left: 10px;
+    }
+    .tb6a38d99-f087-47f4-9217-a42be3f9a56b.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .tb6a38d99-f087-47f4-9217-a42be3f9a56b.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+        </style>
         <div>
           This case has been approved to be worked in overtime hours
         </div>
