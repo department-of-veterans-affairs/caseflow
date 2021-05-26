@@ -454,6 +454,7 @@ RSpec.feature "Case details", :all_dbs do
       after { FeatureToggle.disable!(:poa_button_refresh) }
 
       scenario "text is on the page" do
+        poa.save!
         visit "/queue/appeals/#{appeal.uuid}"
         expect(page).to have_content("POA last refreshed on")
       end
@@ -528,24 +529,23 @@ RSpec.feature "Case details", :all_dbs do
     end
 
     context "POA refresh when BGS returns nil" do
-      let!(:user) { User.authenticate!(roles: ["System Admin"]) }
-      let!(:appeal) do
-        create(
-          :legacy_appeal,
-          :with_veteran,
-          vacols_case: create(
-            :case,
-            :assigned,
-            user: attorney_user,
-            correspondent: create(:correspondent, sgender: "F", sdob: "1966-05-23")
-          )
-        )
+      let(:veteran) { create(:veteran) }
+      let(:claimant_participant_id) { "2019111203" }
+      let(:claimant) { create(:claimant, participant_id: claimant_participant_id) }
+      let(:appeal) do
+        create(:appeal, claimants: [claimant], veteran_file_number: veteran.file_number)
       end
       let!(:poa) do
         create(
           :bgs_power_of_attorney,
           :with_name_cached,
           appeal: appeal
+        )
+      end
+      let!(:claimant_poa) do
+        create(
+          :bgs_power_of_attorney,
+          claimant_participant_id: claimant_participant_id
         )
       end
 
@@ -561,13 +561,21 @@ RSpec.feature "Case details", :all_dbs do
         BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
         poa.last_synced_at = Time.zone.now - 5.years
         poa.save!
+        claimant_poa.last_synced_at = Time.zone.now - 5.years
+        claimant_poa.save!
 
-        visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        expect(appeal.claimant.power_of_attorney).to_not eq(nil)
+        expect(appeal.power_of_attorney).to_not eq(nil)
+
+        visit "/queue/appeals/#{appeal.uuid}"
         expect(page).to have_content("Refresh POA")
         allow_any_instance_of(BgsPowerOfAttorney).to receive(:bgs_record).and_return(:not_found)
         click_on "Refresh POA"
         expect(page).to have_content("Successfully refreshed. No power of attorney information was found at this time.")
+        expect(page).to have_content("POA last refreshed on")
+
+        expect(appeal.claimant.power_of_attorney).to eq(nil)
+        expect(appeal.power_of_attorney).to eq(nil)
       end
     end
 
@@ -1443,6 +1451,32 @@ RSpec.feature "Case details", :all_dbs do
           expect(page).to have_content(COPY::TASK_SNAPSHOT_TASK_WITHDRAWAL_DATE_LABEL.upcase)
           expect(page).to have_content("Appeal withdrawn")
         end
+      end
+    end
+
+    context "when POA changes and IHP task is cancelled" do
+      let(:old_poa) { create(:vso, name: "Old POA") }
+      let(:appeal) do
+        create(:appeal, veteran: create(:veteran)) do |appeal|
+          create(
+            :informal_hearing_presentation_task,
+            appeal: appeal,
+            assigned_to: old_poa
+          )
+        end
+      end
+      let(:new_poa_participant_id) { "2222222" }
+      let!(:new_poa) { create(:vso, name: "New POA", participant_id: new_poa_participant_id) }
+      let!(:bgs_poa_for_claimant) do
+        create(:bgs_power_of_attorney,
+               claimant_participant_id: appeal.claimant.participant_id,
+               poa_participant_id: new_poa_participant_id)
+      end
+      it "should show the cancelled task in case timeline with the appropriate reason" do
+        InformalHearingPresentationTask.update_to_new_poa(appeal)
+        visit("/queue/appeals/#{appeal.uuid}")
+        expect(page).to have_css("table#case-timeline-table tbody tr", count: 3)
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_CANCEL_REASONS["poa_change"])
       end
     end
 

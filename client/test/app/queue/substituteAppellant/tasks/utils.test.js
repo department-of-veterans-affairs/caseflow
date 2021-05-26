@@ -4,10 +4,13 @@ import { uniq } from 'lodash';
 import {
   calculateEvidenceSubmissionEndDate,
   filterTasks,
+  prepTaskDataForUi,
   shouldAutoSelect,
   shouldDisable,
   shouldHideBasedOnPoaType,
-  shouldHide } from 'app/queue/substituteAppellant/tasks/utils';
+  shouldHide,
+  shouldShowBasedOnOtherTasks,
+} from 'app/queue/substituteAppellant/tasks/utils';
 
 import { sampleTasksForEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
 
@@ -98,6 +101,22 @@ describe('utility functions for task manipulation', () => {
   });
 
   describe('shouldHide', () => {
+    describe('with hideFromCaseTimeline', () => {
+      const task = { hideFromCaseTimeline: true };
+
+      it('returns true', () => {
+        expect(shouldHide(task)).toBe(true);
+      });
+    });
+
+    describe('without hideFromCaseTimeline', () => {
+      const task = { hideFromCaseTimeline: false };
+
+      it('returns false', () => {
+        expect(shouldHide(task)).toBe(false);
+      });
+    });
+
     describe('tasks with a type in the automatedTasks array', () => {
       const taskInfo = { hideFromCaseTimeline: false, type: 'JudgeDecisionReviewTask' };
 
@@ -117,6 +136,32 @@ describe('utility functions for task manipulation', () => {
 
       it('should not hide these tasks', () => {
         expect(shouldHide(taskInfo, 'Attorney')).toBe(false);
+      });
+    });
+  });
+
+  describe('shouldShowBasedOnOtherTasks', () => {
+    describe('org task with hideFromCaseTimeline', () => {
+      const orgTask = { hideFromCaseTimeline: true };
+
+      describe('user task without hideFromCaseTimeline', () => {
+        const userTask = { hideFromCaseTimeline: false };
+
+        it('returns true for org task', () => {
+          const tasks = [orgTask, userTask];
+
+          expect(shouldShowBasedOnOtherTasks(orgTask, tasks)).toBe(true);
+        });
+      });
+
+      describe('user task with hideFromCaseTimeline', () => {
+        const userTask = { hideFromCaseTimeline: true };
+
+        it('returns false for org task', () => {
+          const tasks = [orgTask, userTask];
+
+          expect(shouldShowBasedOnOtherTasks(orgTask, tasks)).toBe(false);
+        });
       });
     });
   });
@@ -149,6 +194,62 @@ describe('utility functions for task manipulation', () => {
       expect(filtered.length).toBe(1);
       expect(filtered[0].closedAt).toBeTruthy();
       expect(filtered).toMatchSnapshot();
+    });
+  });
+});
+
+describe('prepTaskDataForUi', () => {
+  describe('with basic evidence submission tasks', () => {
+    const tasks = sampleTasksForEvidenceSubmissionDocket();
+
+    it('returns correct result', () => {
+      const res = prepTaskDataForUi(tasks);
+
+      const distributionTask = res.find(
+        (item) => item.type === 'DistributionTask'
+      );
+
+      expect(distributionTask).toEqual(
+        expect.objectContaining({
+          hidden: false,
+          selected: true,
+          disabled: true,
+        })
+      );
+    });
+
+    describe('with an org task that should be shown', () => {
+      const ihpOrgTask = {
+        type: 'InformalHearingPresentationTask',
+        closedAt: new Date('2021-05-31'),
+        assignedTo: { isOrganization: true },
+        hideFromCaseTimeline: true,
+      };
+      const ihpUserTask = {
+        type: 'InformalHearingPresentationTask',
+        closedAt: new Date('2021-05-31'),
+        assignedTo: { isOrganization: false },
+        hideFromCaseTimeline: false,
+      };
+      const ihpTasks = [ihpOrgTask, ihpUserTask];
+
+      const res = prepTaskDataForUi(ihpTasks);
+
+      const ihpTask = res.find(
+        (item) => item.type === 'InformalHearingPresentationTask'
+      );
+
+      it('returns org task but does not hide', () => {
+        expect(ihpTask).toEqual(
+          expect.objectContaining({
+            assignedTo: expect.objectContaining({
+              isOrganization: true,
+            }),
+            hideFromCaseTimeline: true,
+            hidden: false,
+          })
+        );
+      });
     });
   });
 });
