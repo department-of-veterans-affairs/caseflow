@@ -143,8 +143,8 @@ exports[`CaseWorkerIndex renders correctly 1`] = `
                       className="cf-push-left"
                       data-css-1vh8afw=""
                     >
-                      <h1
-                        data-css-cjhm9=""
+                      <p
+                        data-css-14vgq4z=""
                       >
                         <Link
                           aria-label="Caseflow"
@@ -221,18 +221,18 @@ exports[`CaseWorkerIndex renders correctly 1`] = `
                                 onClick={[Function]}
                                 type={null}
                               >
-                                <h2
+                                <span
                                   className="cf-application-title"
                                   data-css-1mdtwij=""
                                   id="page-title"
                                 >
                                   Dispatch
-                                </h2>
+                                </span>
                               </a>
                             </LinkAnchor>
                           </Link>
                         </Link>
-                      </h1>
+                      </p>
                       <Breadcrumbs
                         getBreadcrumbLabel={[Function]}
                         renderAllCrumbs={false}
@@ -516,34 +516,6 @@ exports[`CaseWorkerIndex renders correctly 1`] = `
           <div
             data-css-pw7rlt=""
           >
-            <div
-              className="cf-push-left"
-            >
-              <span>
-                Built
-              </span>
-               with 
-              <abbr
-                title="love"
-              >
-                ♡
-              </abbr>
-               by the 
-              <Link
-                href="https://www.usds.gov"
-                title="Digital Service at Department of Veterans Affairs"
-              >
-                <a
-                  href="https://www.usds.gov"
-                  type={null}
-                >
-                  Digital Service at 
-                  <abbr>
-                    VA
-                  </abbr>
-                </a>
-              </Link>
-            </div>
             <div
               className="cf-push-right"
             >
