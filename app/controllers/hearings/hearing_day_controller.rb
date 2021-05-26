@@ -141,9 +141,6 @@ class Hearings::HearingDayController < HearingsApplicationController
                   :room,
                   :bva_poc,
                   :notes,
-                  :number_of_slots,
-                  :first_slot_time,
-                  :slot_length_minutes,
                   :lock)
       .merge(updated_by: current_user)
   end

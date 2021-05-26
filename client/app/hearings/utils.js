@@ -648,12 +648,15 @@ export const setTimeSlots = ({
   const momentDefaultBeginsAt = moment.tz(`${defaultBeginsAt} ${hearingDayDate}`, 'HH:mm YYYY-MM-DD', 'America/New_York');
   const momentBeginsAt = moment.tz(`${beginsAt} ${hearingDayDate}`, 'HH:mm YYYY-MM-DD', 'America/New_York');
 
+  console.log(beginsAt);
+  console.log(momentBeginsAt);
+
   const defaultSlotLengthMinutes = 60;
 
   const availableSlots = calculateAvailableTimeslots({
     numberOfSlots: numberOfSlots || defaultNumberOfSlots,
     slotLengthMinutes: slotLengthMinutes || defaultSlotLengthMinutes,
-    beginsAt: beginsAt ? momentBeginsAt : momentDefaultBeginsAt,
+    beginsAt: beginsAt ? moment(beginsAt).tz('America/New_York') : momentDefaultBeginsAt,
     roTimezone,
     scheduledHearings
   });

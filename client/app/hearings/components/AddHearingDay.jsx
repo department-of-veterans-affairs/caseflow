@@ -315,7 +315,7 @@ export const AddHearingDay = ({
                   {...props}
                   disableToggle
                   preview
-                  slotStartTime={hearingStartTime}
+                  slotStartTime={`${selectedHearingDay}T${hearingStartTime}:00-04:00`}
                   slotLength={slotLength}
                   slotCount={slotCount}
                   hearingDate={selectedHearingDay}
