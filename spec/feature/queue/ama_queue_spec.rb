@@ -249,7 +249,7 @@ feature "AmaQueue", :all_dbs do
       scenario "assign case to self" do
         visit translation_organization.path
 
-        click_on "Pal Smith"
+        click_on "Pal"
 
         find(".cf-select__control", text: "Select an action").click
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
@@ -265,7 +265,7 @@ feature "AmaQueue", :all_dbs do
 
         visit "/organizations/#{translation_organization.url}"
         click_on "Assigned"
-        click_on "Pal Smith"
+        click_on "Pal"
 
         find(".cf-select__control", text: "Select an action").click
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h[:label]).click
@@ -282,7 +282,7 @@ feature "AmaQueue", :all_dbs do
 
         click_on "Caseflow"
 
-        click_on "Pal Smith"
+        click_on "Pal"
 
         within "#case-timeline-table" do
           click_button COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
