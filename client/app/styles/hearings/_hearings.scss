@@ -547,6 +547,10 @@ $form-width: 575px;
     .cf-select__control {
       max-width: $form-width;
     }
+
+    .cf-select__menu {
+      max-width: $form-width;
+    }
   }
 
   .question-label {

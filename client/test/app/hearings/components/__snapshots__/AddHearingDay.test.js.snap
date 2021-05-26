@@ -51,7 +51,7 @@ Object {
               >
                 <strong>
                   <span>
-                    Docket Type
+                    Type of Docket
                   </span>
                 </strong>
               </label>
@@ -154,7 +154,7 @@ Object {
                 <span
                   class=""
                 >
-                  Assign a Board Hearing Room
+                  Assign a Board hearing room
                 </span>
                  
               </label>
@@ -258,7 +258,7 @@ Object {
             >
               <strong>
                 <span>
-                  Docket Type
+                  Type of Docket
                 </span>
               </strong>
             </label>
@@ -361,7 +361,7 @@ Object {
               <span
                 class=""
               >
-                Assign a Board Hearing Room
+                Assign a Board hearing room
               </span>
                
             </label>
@@ -522,7 +522,7 @@ Object {
               >
                 <strong>
                   <span>
-                    Docket Type
+                    Type of Docket
                   </span>
                 </strong>
               </label>
@@ -656,7 +656,7 @@ Object {
                 <span
                   class=""
                 >
-                  Assign a Board Hearing Room
+                  Assign a Board hearing room
                 </span>
                  
               </label>
@@ -1060,7 +1060,7 @@ Object {
             >
               <strong>
                 <span>
-                  Docket Type
+                  Type of Docket
                 </span>
               </strong>
             </label>
@@ -1194,7 +1194,7 @@ Object {
               <span
                 class=""
               >
-                Assign a Board Hearing Room
+                Assign a Board hearing room
               </span>
                
             </label>
@@ -1655,7 +1655,7 @@ Object {
               >
                 <strong>
                   <span>
-                    Docket Type
+                    Type of Docket
                   </span>
                 </strong>
               </label>
@@ -1786,7 +1786,7 @@ Object {
                 <span
                   class=""
                 >
-                  Assign a Board Hearing Room
+                  Assign a Board hearing room
                 </span>
                  
               </label>
@@ -2116,453 +2116,6 @@ Object {
               name="Notes"
             />
           </div>
-          <div
-            class="cf-help-divider usa-width-one-whole"
-          />
-          <div
-            class=""
-          >
-            <div
-              class="cf-form-dropdown dropdown-numberOfSlots"
-            >
-              <label
-                class="question-label"
-                for="number-of-slots"
-                id="number-of-slots-label"
-              >
-                <strong>
-                  <span>
-                    Number of Time Slots
-                  </span>
-                </strong>
-              </label>
-              <div
-                class="cf-select"
-              >
-                <div
-                  class=" css-2b097c-container"
-                >
-                  <div
-                    class="cf-select__control css-yk16xz-control"
-                  >
-                    <div
-                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
-                    >
-                      <div
-                        class="cf-select__single-value css-1uccc91-singleValue"
-                      >
-                        8
-                      </div>
-                      <div
-                        class="css-81nyic-Input"
-                      >
-                        <div
-                          class="cf-select__input"
-                          style="display: inline-block;"
-                        >
-                          <input
-                            aria-autocomplete="list"
-                            aria-expanded="false"
-                            aria-haspopup="true"
-                            aria-labelledby="number-of-slots-label"
-                            aria-owns="number-of-slots-listbox"
-                            autocapitalize="none"
-                            autocomplete="off"
-                            autocorrect="off"
-                            id="number-of-slots"
-                            role="combobox"
-                            spellcheck="false"
-                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
-                            tabindex="0"
-                            type="text"
-                            value=""
-                          />
-                          <div
-                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
-                    >
-                      <span
-                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
-                      />
-                      <div
-                        aria-hidden="true"
-                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
-                      >
-                        <svg
-                          aria-hidden="true"
-                          class="css-6q0nyr-Svg"
-                          focusable="false"
-                          height="20"
-                          viewBox="0 0 20 20"
-                          width="20"
-                        >
-                          <path
-                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
-                  <input
-                    name="numberOfSlots"
-                    type="hidden"
-                    value="8"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class=""
-          >
-            <div
-              class="cf-form-dropdown dropdown-slotLengthMinutes"
-            >
-              <label
-                class="question-label"
-                for="slot-length-minutes"
-                id="slot-length-minutes-label"
-              >
-                <strong>
-                  <span>
-                    Length of Time Slots
-                  </span>
-                </strong>
-              </label>
-              <div
-                class="cf-select"
-              >
-                <div
-                  class=" css-2b097c-container"
-                >
-                  <div
-                    class="cf-select__control css-yk16xz-control"
-                  >
-                    <div
-                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
-                    >
-                      <div
-                        class="cf-select__single-value css-1uccc91-singleValue"
-                      >
-                        60 minutes
-                      </div>
-                      <div
-                        class="css-81nyic-Input"
-                      >
-                        <div
-                          class="cf-select__input"
-                          style="display: inline-block;"
-                        >
-                          <input
-                            aria-autocomplete="list"
-                            aria-expanded="false"
-                            aria-haspopup="true"
-                            aria-labelledby="slot-length-minutes-label"
-                            aria-owns="slot-length-minutes-listbox"
-                            autocapitalize="none"
-                            autocomplete="off"
-                            autocorrect="off"
-                            id="slot-length-minutes"
-                            role="combobox"
-                            spellcheck="false"
-                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
-                            tabindex="0"
-                            type="text"
-                            value=""
-                          />
-                          <div
-                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
-                    >
-                      <span
-                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
-                      />
-                      <div
-                        aria-hidden="true"
-                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
-                      >
-                        <svg
-                          aria-hidden="true"
-                          class="css-6q0nyr-Svg"
-                          focusable="false"
-                          height="20"
-                          viewBox="0 0 20 20"
-                          width="20"
-                        >
-                          <path
-                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
-                  <input
-                    name="slotLengthMinutes"
-                    type="hidden"
-                    value="60"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class=""
-          >
-            <div
-              class="cf-form-dropdown dropdown-optionalHearingTime0"
-            >
-              <label
-                class="question-label"
-                for="optional-hearing-time-0"
-                id="optional-hearing-time-0-label"
-              >
-                <strong>
-                  <span>
-                    Start Time of Slots
-                  </span>
-                </strong>
-              </label>
-              <div
-                class="cf-select"
-              >
-                <div
-                  class=" css-2b097c-container"
-                >
-                  <div
-                    class="cf-select__control css-yk16xz-control"
-                  >
-                    <div
-                      class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
-                    >
-                      <div
-                        class="cf-select__single-value css-1uccc91-singleValue"
-                      >
-                        8:30 AM Eastern Time (US & Canada)
-                      </div>
-                      <div
-                        class="css-81nyic-Input"
-                      >
-                        <div
-                          class="cf-select__input"
-                          style="display: inline-block;"
-                        >
-                          <input
-                            aria-autocomplete="list"
-                            aria-expanded="false"
-                            aria-haspopup="true"
-                            aria-labelledby="optional-hearing-time-0-label"
-                            aria-owns="optional-hearing-time-0-listbox"
-                            autocapitalize="none"
-                            autocomplete="off"
-                            autocorrect="off"
-                            id="optional-hearing-time-0"
-                            role="combobox"
-                            spellcheck="false"
-                            style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
-                            tabindex="0"
-                            type="text"
-                            value=""
-                          />
-                          <div
-                            style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
-                    >
-                      <span
-                        class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
-                      />
-                      <div
-                        aria-hidden="true"
-                        class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
-                      >
-                        <svg
-                          aria-hidden="true"
-                          class="css-6q0nyr-Svg"
-                          focusable="false"
-                          height="20"
-                          viewBox="0 0 20 20"
-                          width="20"
-                        >
-                          <path
-                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
-                  <input
-                    name="optionalHearingTime0"
-                    type="hidden"
-                    value="08:30"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class="time-slot-preview-container"
-          >
-            <label
-              class="time-slot-label"
-              for="hearing-time-undefined"
-            >
-              Preview Time Slots
-            </label>
-            <div
-              class="time-slot-button-container"
-            >
-              <div
-                class="time-slot-container"
-              >
-                <span>
-                  <button
-                    class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
-                    disabled=""
-                    type="button"
-                  >
-                    <div>
-                      <div
-                        style="flex: 1;"
-                      >
-                        8:30 AM EDT
-                      </div>
-                      <div />
-                    </div>
-                  </button>
-                </span>
-                <span>
-                  <button
-                    class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
-                    disabled=""
-                    type="button"
-                  >
-                    <div>
-                      <div
-                        style="flex: 1;"
-                      >
-                        9:30 AM EDT
-                      </div>
-                      <div />
-                    </div>
-                  </button>
-                </span>
-                <span>
-                  <button
-                    class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
-                    disabled=""
-                    type="button"
-                  >
-                    <div>
-                      <div
-                        style="flex: 1;"
-                      >
-                        10:30 AM EDT
-                      </div>
-                      <div />
-                    </div>
-                  </button>
-                </span>
-                <span>
-                  <button
-                    class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
-                    disabled=""
-                    type="button"
-                  >
-                    <div>
-                      <div
-                        style="flex: 1;"
-                      >
-                        11:30 AM EDT
-                      </div>
-                      <div />
-                    </div>
-                  </button>
-                </span>
-              </div>
-              <div
-                class="time-slot-container"
-              >
-                <span>
-                  <button
-                    class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
-                    disabled=""
-                    type="button"
-                  >
-                    <div>
-                      <div
-                        style="flex: 1;"
-                      >
-                        12:30 PM EDT
-                      </div>
-                      <div />
-                    </div>
-                  </button>
-                </span>
-                <span>
-                  <button
-                    class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
-                    disabled=""
-                    type="button"
-                  >
-                    <div>
-                      <div
-                        style="flex: 1;"
-                      >
-                        1:30 PM EDT
-                      </div>
-                      <div />
-                    </div>
-                  </button>
-                </span>
-                <span>
-                  <button
-                    class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
-                    disabled=""
-                    type="button"
-                  >
-                    <div>
-                      <div
-                        style="flex: 1;"
-                      >
-                        2:30 PM EDT
-                      </div>
-                      <div />
-                    </div>
-                  </button>
-                </span>
-                <span>
-                  <button
-                    class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
-                    disabled=""
-                    type="button"
-                  >
-                    <div>
-                      <div
-                        style="flex: 1;"
-                      >
-                        3:30 PM EDT
-                      </div>
-                      <div />
-                    </div>
-                  </button>
-                </span>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
       <span>
@@ -2637,7 +2190,7 @@ Object {
             >
               <strong>
                 <span>
-                  Docket Type
+                  Type of Docket
                 </span>
               </strong>
             </label>
@@ -2768,7 +2321,7 @@ Object {
               <span
                 class=""
               >
-                Assign a Board Hearing Room
+                Assign a Board hearing room
               </span>
                
             </label>
@@ -3098,453 +2651,6 @@ Object {
             name="Notes"
           />
         </div>
-        <div
-          class="cf-help-divider usa-width-one-whole"
-        />
-        <div
-          class=""
-        >
-          <div
-            class="cf-form-dropdown dropdown-numberOfSlots"
-          >
-            <label
-              class="question-label"
-              for="number-of-slots"
-              id="number-of-slots-label"
-            >
-              <strong>
-                <span>
-                  Number of Time Slots
-                </span>
-              </strong>
-            </label>
-            <div
-              class="cf-select"
-            >
-              <div
-                class=" css-2b097c-container"
-              >
-                <div
-                  class="cf-select__control css-yk16xz-control"
-                >
-                  <div
-                    class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
-                  >
-                    <div
-                      class="cf-select__single-value css-1uccc91-singleValue"
-                    >
-                      8
-                    </div>
-                    <div
-                      class="css-81nyic-Input"
-                    >
-                      <div
-                        class="cf-select__input"
-                        style="display: inline-block;"
-                      >
-                        <input
-                          aria-autocomplete="list"
-                          aria-expanded="false"
-                          aria-haspopup="true"
-                          aria-labelledby="number-of-slots-label"
-                          aria-owns="number-of-slots-listbox"
-                          autocapitalize="none"
-                          autocomplete="off"
-                          autocorrect="off"
-                          id="number-of-slots"
-                          role="combobox"
-                          spellcheck="false"
-                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
-                          tabindex="0"
-                          type="text"
-                          value=""
-                        />
-                        <div
-                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
-                  >
-                    <span
-                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
-                    />
-                    <div
-                      aria-hidden="true"
-                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
-                    >
-                      <svg
-                        aria-hidden="true"
-                        class="css-6q0nyr-Svg"
-                        focusable="false"
-                        height="20"
-                        viewBox="0 0 20 20"
-                        width="20"
-                      >
-                        <path
-                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-                <input
-                  name="numberOfSlots"
-                  type="hidden"
-                  value="8"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          class=""
-        >
-          <div
-            class="cf-form-dropdown dropdown-slotLengthMinutes"
-          >
-            <label
-              class="question-label"
-              for="slot-length-minutes"
-              id="slot-length-minutes-label"
-            >
-              <strong>
-                <span>
-                  Length of Time Slots
-                </span>
-              </strong>
-            </label>
-            <div
-              class="cf-select"
-            >
-              <div
-                class=" css-2b097c-container"
-              >
-                <div
-                  class="cf-select__control css-yk16xz-control"
-                >
-                  <div
-                    class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
-                  >
-                    <div
-                      class="cf-select__single-value css-1uccc91-singleValue"
-                    >
-                      60 minutes
-                    </div>
-                    <div
-                      class="css-81nyic-Input"
-                    >
-                      <div
-                        class="cf-select__input"
-                        style="display: inline-block;"
-                      >
-                        <input
-                          aria-autocomplete="list"
-                          aria-expanded="false"
-                          aria-haspopup="true"
-                          aria-labelledby="slot-length-minutes-label"
-                          aria-owns="slot-length-minutes-listbox"
-                          autocapitalize="none"
-                          autocomplete="off"
-                          autocorrect="off"
-                          id="slot-length-minutes"
-                          role="combobox"
-                          spellcheck="false"
-                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
-                          tabindex="0"
-                          type="text"
-                          value=""
-                        />
-                        <div
-                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
-                  >
-                    <span
-                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
-                    />
-                    <div
-                      aria-hidden="true"
-                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
-                    >
-                      <svg
-                        aria-hidden="true"
-                        class="css-6q0nyr-Svg"
-                        focusable="false"
-                        height="20"
-                        viewBox="0 0 20 20"
-                        width="20"
-                      >
-                        <path
-                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-                <input
-                  name="slotLengthMinutes"
-                  type="hidden"
-                  value="60"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          class=""
-        >
-          <div
-            class="cf-form-dropdown dropdown-optionalHearingTime0"
-          >
-            <label
-              class="question-label"
-              for="optional-hearing-time-0"
-              id="optional-hearing-time-0-label"
-            >
-              <strong>
-                <span>
-                  Start Time of Slots
-                </span>
-              </strong>
-            </label>
-            <div
-              class="cf-select"
-            >
-              <div
-                class=" css-2b097c-container"
-              >
-                <div
-                  class="cf-select__control css-yk16xz-control"
-                >
-                  <div
-                    class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
-                  >
-                    <div
-                      class="cf-select__single-value css-1uccc91-singleValue"
-                    >
-                      8:30 AM Eastern Time (US & Canada)
-                    </div>
-                    <div
-                      class="css-81nyic-Input"
-                    >
-                      <div
-                        class="cf-select__input"
-                        style="display: inline-block;"
-                      >
-                        <input
-                          aria-autocomplete="list"
-                          aria-expanded="false"
-                          aria-haspopup="true"
-                          aria-labelledby="optional-hearing-time-0-label"
-                          aria-owns="optional-hearing-time-0-listbox"
-                          autocapitalize="none"
-                          autocomplete="off"
-                          autocorrect="off"
-                          id="optional-hearing-time-0"
-                          role="combobox"
-                          spellcheck="false"
-                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
-                          tabindex="0"
-                          type="text"
-                          value=""
-                        />
-                        <div
-                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
-                  >
-                    <span
-                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
-                    />
-                    <div
-                      aria-hidden="true"
-                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
-                    >
-                      <svg
-                        aria-hidden="true"
-                        class="css-6q0nyr-Svg"
-                        focusable="false"
-                        height="20"
-                        viewBox="0 0 20 20"
-                        width="20"
-                      >
-                        <path
-                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-                <input
-                  name="optionalHearingTime0"
-                  type="hidden"
-                  value="08:30"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          class="time-slot-preview-container"
-        >
-          <label
-            class="time-slot-label"
-            for="hearing-time-undefined"
-          >
-            Preview Time Slots
-          </label>
-          <div
-            class="time-slot-button-container"
-          >
-            <div
-              class="time-slot-container"
-            >
-              <span>
-                <button
-                  class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
-                  disabled=""
-                  type="button"
-                >
-                  <div>
-                    <div
-                      style="flex: 1;"
-                    >
-                      8:30 AM EDT
-                    </div>
-                    <div />
-                  </div>
-                </button>
-              </span>
-              <span>
-                <button
-                  class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
-                  disabled=""
-                  type="button"
-                >
-                  <div>
-                    <div
-                      style="flex: 1;"
-                    >
-                      9:30 AM EDT
-                    </div>
-                    <div />
-                  </div>
-                </button>
-              </span>
-              <span>
-                <button
-                  class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
-                  disabled=""
-                  type="button"
-                >
-                  <div>
-                    <div
-                      style="flex: 1;"
-                    >
-                      10:30 AM EDT
-                    </div>
-                    <div />
-                  </div>
-                </button>
-              </span>
-              <span>
-                <button
-                  class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
-                  disabled=""
-                  type="button"
-                >
-                  <div>
-                    <div
-                      style="flex: 1;"
-                    >
-                      11:30 AM EDT
-                    </div>
-                    <div />
-                  </div>
-                </button>
-              </span>
-            </div>
-            <div
-              class="time-slot-container"
-            >
-              <span>
-                <button
-                  class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
-                  disabled=""
-                  type="button"
-                >
-                  <div>
-                    <div
-                      style="flex: 1;"
-                    >
-                      12:30 PM EDT
-                    </div>
-                    <div />
-                  </div>
-                </button>
-              </span>
-              <span>
-                <button
-                  class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
-                  disabled=""
-                  type="button"
-                >
-                  <div>
-                    <div
-                      style="flex: 1;"
-                    >
-                      1:30 PM EDT
-                    </div>
-                    <div />
-                  </div>
-                </button>
-              </span>
-              <span>
-                <button
-                  class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
-                  disabled=""
-                  type="button"
-                >
-                  <div>
-                    <div
-                      style="flex: 1;"
-                    >
-                      2:30 PM EDT
-                    </div>
-                    <div />
-                  </div>
-                </button>
-              </span>
-              <span>
-                <button
-                  class="time-slot-button time-slot-button-full usa-button-disabled usa-button"
-                  disabled=""
-                  type="button"
-                >
-                  <div>
-                    <div
-                      style="flex: 1;"
-                    >
-                      3:30 PM EDT
-                    </div>
-                    <div />
-                  </div>
-                </button>
-              </span>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
     <span>
@@ -3673,7 +2779,7 @@ exports[`AddHearingDay Matches snapshot with default props 1`] = `
           >
             <strong>
               <span>
-                Docket Type
+                Type of Docket
               </span>
             </strong>
           </label>
@@ -3776,7 +2882,7 @@ exports[`AddHearingDay Matches snapshot with default props 1`] = `
             <span
               class=""
             >
-              Assign a Board Hearing Room
+              Assign a Board hearing room
             </span>
              
           </label>

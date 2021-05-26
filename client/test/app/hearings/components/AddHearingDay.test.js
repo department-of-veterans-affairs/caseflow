@@ -57,7 +57,7 @@ describe('AddHearingDay', () => {
     );
 
     const docketDate = component.getByLabelText('Docket Date');
-    const docketType = screen.getByRole('combobox', { name: 'Docket Type' });
+    const docketType = screen.getByRole('combobox', { name: 'Type of Docket' });
     const roomRequired = screen.getByRole('checkbox', { name: 'roomRequired' });
     const notes = screen.getByRole('textbox', { name: 'Notes Optional' });
 
@@ -174,10 +174,10 @@ describe('AddHearingDay', () => {
     expect(addHearingDay.coordinatorDropdown.value).toBeUndefined();
 
     // Ensure the time slot components display for virtual
-    expect(addHearingDay.slotCount.value).toBeUndefined();
-    expect(addHearingDay.slotLength.value).toBeUndefined();
-    expect(addHearingDay.slotStartTime.value).toBeUndefined();
-    expect(addHearingDay.slotPreview).not.toBeNull();
+    expect(addHearingDay.slotCount).toBeNull();
+    expect(addHearingDay.slotLength).toBeNull();
+    expect(addHearingDay.slotStartTime).toBeNull();
+    expect(addHearingDay.slotPreview).toBeNull();
 
     // Container snapshot assertion
     expect(addHearingDay.component).toMatchSnapshot();

@@ -2,7 +2,7 @@ import { bindActionCreators } from 'redux';
 import { debounce, pickBy, isEmpty, filter } from 'lodash';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { HearingTime } from './modalForms/HearingTime';
@@ -52,9 +52,9 @@ export const AddHearingDay = ({
   requestType, selectedHearingDay, vlj, coordinator, notes, roomRequired, selectedRegionalOffice,
   hearingSchedule, user, ...props
 }) => {
-  const [hearingStartTime, setHearingStartTime] = useState('08:30');
-  const [slotLength, setSlotLength] = useState(60);
-  const [slotCount, setSlotCount] = useState(8);
+  const [hearingStartTime, setHearingStartTime] = useState(null);
+  const [slotLength, setSlotLength] = useState(null);
+  const [slotCount, setSlotCount] = useState(null);
 
   const [selectedRequestType, setSelectedRequestType] = useState(requestType?.value || null);
   const [serverError, setServerError] = useState(false);
@@ -66,6 +66,22 @@ export const AddHearingDay = ({
   const selectedVideo = selectedRequestType === HEARING_REQUEST_TYPES.video;
 
   const dateError = errorMessages?.noDate || errorMessages?.invalidDate;
+
+  // Determine whether to display the time slots
+  const showTimeSlots = selectedVirtual && !isEmpty(selectedRegionalOffice) && selectedHearingDay;
+
+  useEffect(() => {
+    // Initialize the Time slot variables based on the selected request type and valid form fields
+    if (showTimeSlots) {
+      setHearingStartTime('08:30');
+      setSlotLength(60);
+      setSlotCount(8);
+    } else {
+      setHearingStartTime(null);
+      setSlotLength(null);
+      setSlotCount(null);
+    }
+  }, [selectedRequestType, selectedRegionalOffice]);
 
   const handleStartTimeChange = (value) => {
     setHearingStartTime(value);
@@ -228,7 +244,7 @@ export const AddHearingDay = ({
           />
           <SearchableDropdown
             name="requestType"
-            label="Docket Type"
+            label="Type of Docket"
             strongLabel
             errorMessage={!dateError && errorMessages?.requestType ? getErrorMessage() : null}
             value={requestType}
@@ -237,7 +253,7 @@ export const AddHearingDay = ({
           />
           <Checkbox
             name="roomRequired"
-            label="Assign a Board Hearing Room"
+            label="Assign a Board hearing room"
             disabled={selectedVirtual}
             strongLabel
             value={selectedVirtual ? false : roomRequired}
@@ -279,21 +295,14 @@ export const AddHearingDay = ({
             textAreaStyling={notesFieldStyling}
             value={notes}
           />
-          {selectedVirtual && !isEmpty(selectedRegionalOffice) && selectedHearingDay !== '' && (
+          {showTimeSlots && (
             <React.Fragment>
               <div className="cf-help-divider usa-width-one-whole" />
-              <TimeSlotCount
-                onChange={(value) => handleSlotCountChange(value)}
-                value={slotCount}
-              />
-              <TimeSlotLength
-                onChange={(value) => handleSlotLengthChange(value)}
-                value={slotLength}
-              />
+              <TimeSlotCount onChange={(value) => handleSlotCountChange(value)} value={slotCount} />
+              <TimeSlotLength onChange={(value) => handleSlotLengthChange(value)} value={slotLength} />
               <HearingTime
                 disableRadioOptions
                 regionalOffice={selectedRegionalOffice?.key}
-                errorMessage={errorMessages?.scheduledTimeString}
                 vertical
                 label="Start Time of Slots"
                 enableZone
