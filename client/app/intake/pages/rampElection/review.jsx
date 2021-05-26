@@ -6,14 +6,13 @@ import * as yup from 'yup';
 import { Redirect } from 'react-router-dom';
 import _ from 'lodash';
 import { setReceiptDate, setOptionSelected } from '../../actions/intake';
-import { PAGE_PATHS, INTAKE_STATES, REVIEW_OPTIONS, CLAIMANT_ERRORS } from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 import PropTypes from 'prop-types';
 import ReceiptDateInput, { receiptDateInputValidation } from '../receiptDateInput';
 
 const reviewRampElectionSchema = yup.object().shape({
-  'opt-in-election': yup.string().required(CLAIMANT_ERRORS.blank),
   ...receiptDateInputValidation()
 });
 

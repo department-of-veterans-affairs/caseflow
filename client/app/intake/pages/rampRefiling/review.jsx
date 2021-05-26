@@ -7,7 +7,7 @@ import Button from '../../../components/Button';
 import Alert from '../../../components/Alert';
 import { Redirect } from 'react-router-dom';
 import _ from 'lodash';
-import { PAGE_PATHS, INTAKE_STATES, REVIEW_OPTIONS, REQUEST_STATE, CLAIMANT_ERRORS } from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES, REVIEW_OPTIONS, REQUEST_STATE } from '../../constants';
 import { setAppealDocket, confirmIneligibleForm } from '../../actions/rampRefiling';
 import { setReceiptDate, setOptionSelected } from '../../actions/intake';
 import { toggleIneligibleError } from '../../util';
@@ -18,12 +18,6 @@ import PropTypes from 'prop-types';
 import ReceiptDateInput, { receiptDateInputValidation } from '../receiptDateInput';
 
 const reviewRampRefilingSchema = yup.object().shape({
-  'opt-in-election': yup.string().required(CLAIMANT_ERRORS.blank),
-  'appeal-docket': yup.string().notRequired().
-    when('opt-in-election', {
-      is: REVIEW_OPTIONS.APPEAL.key,
-      then: yup.string().required(CLAIMANT_ERRORS.blank)
-    }),
   ...receiptDateInputValidation()
 });
 
