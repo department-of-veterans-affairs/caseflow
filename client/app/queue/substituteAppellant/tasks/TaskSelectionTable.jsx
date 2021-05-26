@@ -72,10 +72,7 @@ export const TaskSelectionTable = ({ tasks }) => {
                       hideLabel
                     />
                   </td>
-                  <td>{task.label.
-                    split(' ').
-                    slice(0, -1).
-                    join(' ')}</td>
+                  <td>{task.label.replace('Task', '')}</td>
                   <td>{task.status}</td>
                   <td>{task.closedAt}</td>
                 </tr>
