@@ -27,6 +27,7 @@ const defaultProps = {
   // Denver
   ro: defaultRoCode,
   roTimezone: REGIONAL_OFFICE_INFORMATION[defaultRoCode].timezone,
+  hearingDayDate: moment.tz().format('YYYY-MM-DD'),
   scheduledHearingsList: emptyHearings,
   numberOfSlots: 8,
   slotLengthMinutes: 60,
@@ -115,11 +116,11 @@ describe('TimeSlot', () => {
         [
         // I really want to put the comment inline, disable eslint locally to allow
         /* eslint-disable line-comment-position */
-          '2021-04-21T08:30:00-04:00', // 8:30 eastern
           '2021-04-21T12:30:00-07:00', // 9:30 eastern
           '2021-04-21T11:30:00-05:00', // 10:30 eastern
           '2021-04-21T14:30:00-06:00', // 12:30 eastern
           '2021-04-21T15:30:00-05:00', // 14:30 eastern, last slot
+          '2023-06-21T12:30:00-07:00', // 9:30 eastern on a future day
         /* eslint-enable line-comment-position */
         ].forEach((beginsAtString) => {
           it(`shows all slots after beginsAt (${beginsAtString})`, () => {
@@ -139,6 +140,22 @@ describe('TimeSlot', () => {
 
             expect((lastSlotTime).isSame(expectedLastSlotTime)).toEqual(true);
 
+          });
+
+          it(`correctly parses hearings and slots onto the date in beginsAt (${beginsAtString})`, () => {
+            const beginsAt = moment(beginsAtString).tz('America/New_York');
+            const hearingDayDate = beginsAt.tz(ro.timezone).format('YYYY-MM-DD');
+            const { timeSlots } = setup({
+              roTimezone: ro.timezone,
+              beginsAt,
+              hearingDayDate,
+              scheduledHearingsList: oneHearing
+            });
+
+            const slotsAndHearingsOnBeginsAtDate = timeSlots.every((slotOrHearing) =>
+              slotOrHearing.time.isSame(beginsAt, 'day'));
+
+            expect(slotsAndHearingsOnBeginsAtDate).toBe(true);
           });
         });
 
