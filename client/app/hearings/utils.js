@@ -646,17 +646,14 @@ export const setTimeSlots = ({
   const defaultNumberOfSlots = 8;
   const defaultBeginsAt = ro === 'C' ? '09:00' : '08:30';
   const momentDefaultBeginsAt = moment.tz(`${defaultBeginsAt} ${hearingDayDate}`, 'HH:mm YYYY-MM-DD', 'America/New_York');
-  const momentBeginsAt = moment.tz(`${beginsAt} ${hearingDayDate}`, 'HH:mm YYYY-MM-DD', 'America/New_York');
-
-  console.log(beginsAt);
-  console.log(momentBeginsAt);
+  const momentBeginsAt = moment(beginsAt).tz('America/New_York');
 
   const defaultSlotLengthMinutes = 60;
 
   const availableSlots = calculateAvailableTimeslots({
     numberOfSlots: numberOfSlots || defaultNumberOfSlots,
     slotLengthMinutes: slotLengthMinutes || defaultSlotLengthMinutes,
-    beginsAt: beginsAt ? moment(beginsAt).tz('America/New_York') : momentDefaultBeginsAt,
+    beginsAt: beginsAt ? momentBeginsAt : momentDefaultBeginsAt,
     roTimezone,
     scheduledHearings
   });
