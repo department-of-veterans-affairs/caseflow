@@ -328,7 +328,7 @@ export const AddHearingDay = ({
                   ro={selectedRegionalOffice.key}
                   roTimezone={selectedRegionalOffice?.timezone}
                 />
-              </div>
+              </div>}
 
             </React.Fragment>
           )}
