@@ -239,7 +239,7 @@ export const AddHearingDay = ({
           <h1>Add a Hearing Day</h1>
           {showAlert && <Alert type="error" title={alertTitle} scrollOnAlert={false}> {alertMessage} </Alert>}
           <DateSelector
-            className={['add-hearing-day']}
+            className={['hearing-day-date']}
             name="hearingDate"
             label={<b>Docket Date</b>}
             errorMessage={dateError ? getErrorMessage() : null}

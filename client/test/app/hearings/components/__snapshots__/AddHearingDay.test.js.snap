@@ -17,7 +17,7 @@ Object {
             Add a Hearing Day
           </h1>
           <div
-            class="cf-form-textinput   "
+            class="hearing-day-date   "
           >
             <label
               for="hearingDate"
@@ -29,7 +29,7 @@ Object {
               </span>
             </label>
             <input
-              class="cf-form-textinput"
+              class="hearing-day-date"
               id="hearingDate"
               max="9999-12-31"
               name="hearingDate"
@@ -224,7 +224,7 @@ Object {
           Add a Hearing Day
         </h1>
         <div
-          class="cf-form-textinput   "
+          class="hearing-day-date   "
         >
           <label
             for="hearingDate"
@@ -236,7 +236,7 @@ Object {
             </span>
           </label>
           <input
-            class="cf-form-textinput"
+            class="hearing-day-date"
             id="hearingDate"
             max="9999-12-31"
             name="hearingDate"
@@ -488,7 +488,7 @@ Object {
             Add a Hearing Day
           </h1>
           <div
-            class="cf-form-textinput   "
+            class="hearing-day-date   "
           >
             <label
               for="hearingDate"
@@ -500,7 +500,7 @@ Object {
               </span>
             </label>
             <input
-              class="cf-form-textinput"
+              class="hearing-day-date"
               id="hearingDate"
               max="9999-12-31"
               name="hearingDate"
@@ -1029,7 +1029,7 @@ Object {
           Add a Hearing Day
         </h1>
         <div
-          class="cf-form-textinput   "
+          class="hearing-day-date   "
         >
           <label
             for="hearingDate"
@@ -1041,7 +1041,7 @@ Object {
             </span>
           </label>
           <input
-            class="cf-form-textinput"
+            class="hearing-day-date"
             id="hearingDate"
             max="9999-12-31"
             name="hearingDate"
@@ -1627,7 +1627,7 @@ Object {
             Add a Hearing Day
           </h1>
           <div
-            class="cf-form-textinput   "
+            class="hearing-day-date   "
           >
             <label
               for="hearingDate"
@@ -1639,7 +1639,7 @@ Object {
               </span>
             </label>
             <input
-              class="cf-form-textinput"
+              class="hearing-day-date"
               id="hearingDate"
               max="9999-12-31"
               name="hearingDate"
@@ -2165,7 +2165,7 @@ Object {
           Add a Hearing Day
         </h1>
         <div
-          class="cf-form-textinput   "
+          class="hearing-day-date   "
         >
           <label
             for="hearingDate"
@@ -2177,7 +2177,7 @@ Object {
             </span>
           </label>
           <input
-            class="cf-form-textinput"
+            class="hearing-day-date"
             id="hearingDate"
             max="9999-12-31"
             name="hearingDate"
@@ -2757,7 +2757,7 @@ exports[`AddHearingDay Matches snapshot with default props 1`] = `
         Add a Hearing Day
       </h1>
       <div
-        class="cf-form-textinput   "
+        class="hearing-day-date   "
       >
         <label
           for="hearingDate"
@@ -2769,7 +2769,7 @@ exports[`AddHearingDay Matches snapshot with default props 1`] = `
           </span>
         </label>
         <input
-          class="cf-form-textinput"
+          class="hearing-day-date"
           id="hearingDate"
           max="9999-12-31"
           name="hearingDate"
