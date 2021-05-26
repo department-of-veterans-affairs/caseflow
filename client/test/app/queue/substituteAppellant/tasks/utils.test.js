@@ -124,14 +124,16 @@ describe('utility functions for task manipulation', () => {
     });
 
     describe('tasks with a type in the automatedTasks array', () => {
-      const userTaskInfo = { hideFromCaseTimeline: false, type: 'JudgeDecisionReviewTask', assignedTo: { isOrganization: false } };
+      const userTaskInfo = { taskId: 1, hideFromCaseTimeline: false, type: 'JudgeDecisionReviewTask', assignedTo: { isOrganization: false } };
       const allTasks = [userTaskInfo, otherOrgTask, otherUserTask];
+      const poaTypes = ['Attorney', 'Agent', null];
 
-      poaType = 'Attorney';
-
-      it('should hide these tasks', () => {
-        expect(shouldHide(userTaskInfo, poaType, allTasks)).toBe(true);
+      describe.each(poaTypes)(' poaType: %s', (type) => {
+        it('should hide these tasks', () => {
+          expect(shouldHide(userTaskInfo, type, allTasks)).toBe(true);
+        });
       });
+
     });
 
     describe('tasks where hideFromCaseTimeline is false and the type is not in the automatedTasks array', () => {
@@ -151,10 +153,10 @@ describe('utility functions for task manipulation', () => {
 
   describe('shouldShowBasedOnOtherTasks', () => {
     describe('org task with hideFromCaseTimeline', () => {
-      const orgTask = { hideFromCaseTimeline: true };
+      const orgTask = { taskId: 1, hideFromCaseTimeline: true };
 
       describe('user task without hideFromCaseTimeline', () => {
-        const userTask = { hideFromCaseTimeline: false };
+        const userTask = { taskId: 2, hideFromCaseTimeline: false };
 
         it('returns true for org task', () => {
           const tasks = [orgTask, userTask];
@@ -164,7 +166,7 @@ describe('utility functions for task manipulation', () => {
       });
 
       describe('user task with hideFromCaseTimeline', () => {
-        const userTask = { hideFromCaseTimeline: true };
+        const userTask = { taskId: 3, hideFromCaseTimeline: true };
 
         it('returns false for org task', () => {
           const tasks = [orgTask, userTask];
@@ -229,12 +231,14 @@ describe('prepTaskDataForUi', () => {
 
     describe('with an org task that should be shown', () => {
       const ihpOrgTask = {
+        taskId: 1,
         type: 'InformalHearingPresentationTask',
         closedAt: new Date('2021-05-31'),
         assignedTo: { isOrganization: true },
         hideFromCaseTimeline: true,
       };
       const ihpUserTask = {
+        taskId: 2,
         type: 'InformalHearingPresentationTask',
         closedAt: new Date('2021-05-31'),
         assignedTo: { isOrganization: false },

@@ -8,7 +8,7 @@ const automatedTasks = [
   'JudgeDecisionReviewTask',
   'AttorneyTask',
   'AttorneyRewriteTask',
-  'BVADispatchTask',
+  'BvaDispatchTask',
   'JudgeDispatchReturnTask',
   'AttorneyDispatchReturnTask'
 ];
@@ -82,7 +82,7 @@ export const shouldHideBasedOnPoaType = (taskInfo, poaType) => {
 export const shouldShowBasedOnOtherTasks = (taskInfo, allTasks) => {
   const taskType = taskInfo.type;
 
-  const visibleUserTask = allTasks.find((item) => item.type === taskType && !item.hideFromCaseTimeline);
+  const visibleUserTask = allTasks.find((item) => item.type === taskType && item.taskId !== taskInfo.taskId && !item.assignedTo?.isOrganization && !item.hideFromCaseTimeline);
 
   return Boolean(visibleUserTask);
 };
