@@ -115,7 +115,7 @@ class ListTable extends React.Component {
         {this.props.user.userCanBuildHearingSchedule && <div style={{ marginBottom: 25 }}>
           <Button linkStyling
             onClick={() => this.props.history.push('/schedule/add_hearing_day')}>
-            Add Hearing Date
+            Add Hearing Day
           </Button>
         </div>}
         <QueueTable
