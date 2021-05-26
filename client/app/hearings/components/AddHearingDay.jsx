@@ -315,7 +315,7 @@ export const AddHearingDay = ({
                 onChange={handleStartTimeChange}
                 value={hearingStartTime}
               />
-              <div className="time-slot-preview-container">
+              {hearingStartTime && <div className="time-slot-preview-container">
                 <TimeSlot
                   {...props}
                   disableToggle
@@ -328,7 +328,7 @@ export const AddHearingDay = ({
                   ro={selectedRegionalOffice.key}
                   roTimezone={selectedRegionalOffice?.timezone}
                 />
-              </div>
+              </div>}
 
             </React.Fragment>
           )}
