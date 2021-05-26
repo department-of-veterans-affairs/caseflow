@@ -30,7 +30,7 @@ export const TimeSlot = ({
   const beginsAt = hearing?.hearingDay?.beginsAt;
   const numberOfSlots = hearing?.hearingDay?.totalSlots;
   const slotLengthMinutes = hearing?.hearingDay?.slotLengthMinutes;
-  // If there is a lunchbreak it's hardcoded to 12:30pm roTimezone and 60 minutes long
+  // If there is a lunchbreak it's hardcoded to 12:30pm roTimezone and 30 minutes long
   const lunchBreak = TIMEZONES_WITH_LUNCHBREAK.includes(roTimezone);
   const hearingDayDate = hearing?.hearingDay?.scheduledFor;
 
