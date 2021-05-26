@@ -173,7 +173,7 @@ describe('AddHearingDay', () => {
     expect(addHearingDay.vljDropdown.value).toBeUndefined();
     expect(addHearingDay.coordinatorDropdown.value).toBeUndefined();
 
-    // Ensure the time slot components do not display for video
+    // Ensure the time slot components display for virtual
     expect(addHearingDay.slotCount.value).toBeUndefined();
     expect(addHearingDay.slotLength.value).toBeUndefined();
     expect(addHearingDay.slotStartTime.value).toBeUndefined();
