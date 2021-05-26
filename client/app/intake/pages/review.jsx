@@ -153,6 +153,7 @@ const ReviewNextButton = (props) => {
   const disableSubmit = rampRefilingIneligibleOption() || needsClaimant || invalidVet;
 
   return <Button
+    id="button-submit-review"
     type="submit"
     name="submit-review"
     loading={intakeDataState ? intakeDataState.requestStatus.submitReview === REQUEST_STATE.IN_PROGRESS : true}
