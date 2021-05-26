@@ -85,7 +85,7 @@ export const AddHearingDay = ({
       setSlotLength(null);
       setSlotCount(null);
     }
-  }, [selectedRequestType, selectedRegionalOffice]);
+  }, [selectedRequestType, selectedRegionalOffice, selectedHearingDay]);
 
   const handleStartTimeChange = (value) => {
     setHearingStartTime(value);
