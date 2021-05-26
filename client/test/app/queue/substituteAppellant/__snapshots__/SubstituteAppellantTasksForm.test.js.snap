@@ -129,7 +129,7 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
                 </div>
               </td>
               <td>
-                Root
+                Root 
               </td>
               <td>
                 Completed
@@ -168,7 +168,7 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
                 </div>
               </td>
               <td>
-                Distribution
+                Distribution 
               </td>
               <td>
                 Completed
@@ -207,7 +207,7 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
                 </div>
               </td>
               <td>
-                Evidence Submission Window
+                Evidence Submission Window 
               </td>
               <td>
                 Completed
@@ -245,7 +245,9 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
                   </div>
                 </div>
               </td>
-              <td />
+              <td>
+                Assign
+              </td>
               <td>
                 Completed
               </td>
@@ -282,7 +284,9 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
                   </div>
                 </div>
               </td>
-              <td />
+              <td>
+                Review
+              </td>
               <td>
                 Completed
               </td>
@@ -320,7 +324,7 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
                 </div>
               </td>
               <td>
-                Draft
+                Draft decision
               </td>
               <td>
                 Completed
@@ -359,7 +363,7 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
                 </div>
               </td>
               <td>
-                Board
+                Board Dispatch
               </td>
               <td>
                 Completed
@@ -398,7 +402,7 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
                 </div>
               </td>
               <td>
-                Board
+                Board Dispatch
               </td>
               <td>
                 Completed
@@ -569,7 +573,7 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
                 </div>
               </td>
               <td>
-                Root
+                Root 
               </td>
               <td>
                 Completed
@@ -609,7 +613,7 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
                 </div>
               </td>
               <td>
-                Distribution
+                Distribution 
               </td>
               <td>
                 Completed
@@ -649,7 +653,7 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
                 </div>
               </td>
               <td>
-                Evidence Submission Window
+                Evidence Submission Window 
               </td>
               <td>
                 Completed
@@ -687,7 +691,9 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
                   </div>
                 </div>
               </td>
-              <td />
+              <td>
+                Assign
+              </td>
               <td>
                 Completed
               </td>
@@ -724,7 +730,9 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
                   </div>
                 </div>
               </td>
-              <td />
+              <td>
+                Review
+              </td>
               <td>
                 Completed
               </td>
@@ -762,7 +770,7 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
                 </div>
               </td>
               <td>
-                Draft
+                Draft decision
               </td>
               <td>
                 Completed
@@ -801,7 +809,7 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
                 </div>
               </td>
               <td>
-                Board
+                Board Dispatch
               </td>
               <td>
                 Completed
@@ -840,7 +848,7 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
                 </div>
               </td>
               <td>
-                Board
+                Board Dispatch
               </td>
               <td>
                 Completed
