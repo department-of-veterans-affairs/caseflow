@@ -28,13 +28,13 @@ const Tooltip = (props) => {
 
   // These props are applied to the children in order to establish link to tooltip
   const tooltipProps = {
+    'aria-describedby': id,
     'data-tip': true,
     'data-for': id,
     'data-event': 'focus mouseenter',
     'data-event-off': 'mouseleave keydown',
     role: 'tooltip',
     tabIndex,
-    ariaDescribedby: id
   };
 
   return <React.Fragment>
