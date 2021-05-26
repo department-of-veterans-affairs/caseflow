@@ -10,7 +10,8 @@ const Tooltip = (props) => {
     text,
     id = 'tooltip-id',
     position = 'top',
-    offset = {}
+    offset = {},
+    tabIndex = 0
   } = props;
 
   const borderToColor = position.charAt(0).toUpperCase() + position.slice(1);
@@ -25,10 +26,20 @@ const Tooltip = (props) => {
     [`& #${id}:after`]: { [`border${borderToColor}Color`]: COLORS.GREY_DARK }
   });
 
+  // These props are applied to the children in order to establish link to tooltip
+  const tooltipProps = {
+    'data-tip': true,
+    'data-for': id,
+    'data-event': 'focus mouseenter',
+    'data-event-off': 'mouseleave keydown',
+    role: 'tooltip',
+    tabIndex,
+    ariaDescribedby: id
+  };
+
   return <React.Fragment>
-    <span data-tip data-for={id} role="tooltip" data-event="focus mouseenter"
-      data-event-off="keydown mouseleave" tabIndex={0} aria-describedby={id}>{props.children}</span>
-    <span {...tooltipStyling} >
+    {React.cloneElement(props.children, tooltipProps)}
+    <span {...tooltipStyling}>
       <ReactTooltip effect="solid" id={id} offset={offset} place={position} multiline>{text}</ReactTooltip>
     </span>
   </React.Fragment>;
@@ -39,7 +50,8 @@ Tooltip.propTypes = {
   id: PropTypes.string,
   position: PropTypes.string,
   offset: PropTypes.object,
-  children: PropTypes.object
+  children: PropTypes.object,
+  tabIndex: PropTypes.number
 };
 
 export default Tooltip;
