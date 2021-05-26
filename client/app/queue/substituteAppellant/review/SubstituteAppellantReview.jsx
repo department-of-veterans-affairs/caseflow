@@ -119,7 +119,7 @@ export const SubstituteAppellantReview = ({
 SubstituteAppellantReview.propTypes = {
   selectedTasks: PropTypes.arrayOf(
     PropTypes.shape({
-      taskId: PropTypes.number,
+      taskId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
       label: PropTypes.string,
     })
   ),
