@@ -536,18 +536,18 @@ Object {
                     aria-live="polite"
                     class="css-1laao21-a11yText"
                   >
-                    <p
+                    <span
                       id="aria-selection-event"
                     >
                        
                       
-                    </p>
-                    <p
+                    </span>
+                    <span
                       id="aria-context"
                     >
                        
                        option Video focused, 1 of 2. 1 result available for search term Video. Use Up and Down to choose options, press Enter to select the currently focused option, press Escape to exit the menu, press Tab to select the option and exit the menu.
-                    </p>
+                    </span>
                   </span>
                   <div
                     class="cf-select__control cf-select__control--is-focused cf-select__control--menu-is-open css-1pahdxg-control"
@@ -616,7 +616,10 @@ Object {
                     class="cf-select__menu css-26l3qy-menu"
                   >
                     <div
+                      aria-label="request-type-listbox"
                       class="cf-select__menu-list css-4ljt47-MenuList"
+                      id="request-type-listbox"
+                      role="listbox"
                     >
                       <div
                         aria-disabled="false"
@@ -1074,18 +1077,18 @@ Object {
                   aria-live="polite"
                   class="css-1laao21-a11yText"
                 >
-                  <p
+                  <span
                     id="aria-selection-event"
                   >
                      
                     
-                  </p>
-                  <p
+                  </span>
+                  <span
                     id="aria-context"
                   >
                      
                      option Video focused, 1 of 2. 1 result available for search term Video. Use Up and Down to choose options, press Enter to select the currently focused option, press Escape to exit the menu, press Tab to select the option and exit the menu.
-                  </p>
+                  </span>
                 </span>
                 <div
                   class="cf-select__control cf-select__control--is-focused cf-select__control--menu-is-open css-1pahdxg-control"
@@ -1154,7 +1157,10 @@ Object {
                   class="cf-select__menu css-26l3qy-menu"
                 >
                   <div
+                    aria-label="request-type-listbox"
                     class="cf-select__menu-list css-4ljt47-MenuList"
+                    id="request-type-listbox"
+                    role="listbox"
                   >
                     <div
                       aria-disabled="false"
@@ -1669,18 +1675,18 @@ Object {
                     aria-live="polite"
                     class="css-1laao21-a11yText"
                   >
-                    <p
+                    <span
                       id="aria-selection-event"
                     >
                        
                       
-                    </p>
-                    <p
+                    </span>
+                    <span
                       id="aria-context"
                     >
                        
                         0 results available for search term Virtual. Use Up and Down to choose options, press Enter to select the currently focused option, press Escape to exit the menu, press Tab to select the option and exit the menu.
-                    </p>
+                    </span>
                   </span>
                   <div
                     class="cf-select__control cf-select__control--is-focused cf-select__control--menu-is-open css-1pahdxg-control"
@@ -1749,7 +1755,10 @@ Object {
                     class="cf-select__menu css-26l3qy-menu"
                   >
                     <div
+                      aria-label="request-type-listbox"
                       class="cf-select__menu-list css-4ljt47-MenuList"
+                      id="request-type-listbox"
+                      role="listbox"
                     >
                       <div
                         class="cf-select__menu-notice cf-select__menu-notice--no-options css-gg45go-NoOptionsMessage"
@@ -2204,18 +2213,18 @@ Object {
                   aria-live="polite"
                   class="css-1laao21-a11yText"
                 >
-                  <p
+                  <span
                     id="aria-selection-event"
                   >
                      
                     
-                  </p>
-                  <p
+                  </span>
+                  <span
                     id="aria-context"
                   >
                      
                       0 results available for search term Virtual. Use Up and Down to choose options, press Enter to select the currently focused option, press Escape to exit the menu, press Tab to select the option and exit the menu.
-                  </p>
+                  </span>
                 </span>
                 <div
                   class="cf-select__control cf-select__control--is-focused cf-select__control--menu-is-open css-1pahdxg-control"
@@ -2284,7 +2293,10 @@ Object {
                   class="cf-select__menu css-26l3qy-menu"
                 >
                   <div
+                    aria-label="request-type-listbox"
                     class="cf-select__menu-list css-4ljt47-MenuList"
+                    id="request-type-listbox"
+                    role="listbox"
                   >
                     <div
                       class="cf-select__menu-notice cf-select__menu-notice--no-options css-gg45go-NoOptionsMessage"

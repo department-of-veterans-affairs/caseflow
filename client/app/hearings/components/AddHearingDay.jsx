@@ -6,6 +6,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { HearingTime } from './modalForms/HearingTime';
+import moment from 'moment-timezone';
 
 import {
   RegionalOfficeDropdown,
@@ -69,6 +70,9 @@ export const AddHearingDay = ({
 
   // Determine whether to display the time slots
   const showTimeSlots = selectedVirtual && !isEmpty(selectedRegionalOffice) && selectedHearingDay;
+
+  // Determine the Eastern Time Zone offset
+  const zoneOffset = moment(selectedHearingDay).isDST() ? '04:00' : '05:00';
 
   useEffect(() => {
     // Initialize the Time slot variables based on the selected request type and valid form fields
@@ -315,7 +319,7 @@ export const AddHearingDay = ({
                   {...props}
                   disableToggle
                   preview
-                  slotStartTime={`${selectedHearingDay}T${hearingStartTime}:00-04:00`}
+                  slotStartTime={`${selectedHearingDay}T${hearingStartTime}:00-${zoneOffset}`}
                   slotLength={slotLength}
                   slotCount={slotCount}
                   hearingDate={selectedHearingDay}
