@@ -512,16 +512,15 @@ $form-width: 575px;
     margin-bottom: $form-spacing;
   }
 
-  // eslint-disable-next-line
-  div.cf-form-textinput {
+  .add-hearing-day {
     margin: $form-spacing 0;
+
+    > input {
+      margin-bottom: 0;
+      max-width: $form-width;
+    }
   }
 
-  // eslint-disable-next-line
-  input.cf-form-textinput {
-    margin-bottom: 0;
-    max-width: $form-width;
-  }
 
   .cf-form-dropdown {
     margin: $form-spacing 0;
