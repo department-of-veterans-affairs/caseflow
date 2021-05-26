@@ -17,7 +17,7 @@ export const SubstituteAppellantReviewContainer = () => {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const { formData: existingValues } = useSelector(
+  const { formData: existingValues, poa } = useSelector(
     (state) => state.substituteAppellant
   );
 
@@ -64,6 +64,22 @@ export const SubstituteAppellantReviewContainer = () => {
     history.push(`/queue/appeals/${appealId}`);
   };
 
+  const buildTaskCreationParameters = () => {
+    const taskParams = {};
+
+    const evidenceSubmissionTask = selectedTasks.find(
+      (task) => task.type === 'EvidenceSubmissionWindowTask'
+    );
+
+    if (evidenceSubmissionTask) {
+      taskParams[evidenceSubmissionTask.uniqueId] = {
+        hold_end_date: formatSubmissionEndDateToBackend(evidenceSubmissionEndDate)
+      };
+    }
+
+    return taskParams;
+  };
+
   const handleSubmit = async () => {
     // Here we'll dispatch completeSubstituteAppellant action to submit data from Redux to the API
     const payload = {
@@ -71,9 +87,9 @@ export const SubstituteAppellantReviewContainer = () => {
       substitution_date: existingValues.substitutionDate,
       claimant_type: existingValues.claimantType,
       substitute_participant_id: existingValues.participantId,
-      evidence_submission_date: formatSubmissionEndDateToBackend(evidenceSubmissionEndDate),
-      // To-do: populate with appropriate user input
-      poa_participant_id: '123456789'
+      poa_participant_id: poa.poa_participant_id,
+      selected_task_ids: existingValues.taskIds,
+      task_params: buildTaskCreationParameters()
     };
 
     try {
@@ -88,10 +104,12 @@ export const SubstituteAppellantReviewContainer = () => {
       );
       history.push(`/queue/appeals/${res.payload.targetAppeal.uuid}`);
     } catch (error) {
+      console.error('Error during substitute appellant appeal creation', error);
       dispatch(
         showErrorMessage({
           title: 'Error when substituting appellant',
-          detail: JSON.parse(error.message).errors[0].detail,
+          detail: JSON.parse(error.message).errors[0].detail
+          // To-do: show error banner on this page to allow user to adjust or copy their input?
         })
       );
     }
