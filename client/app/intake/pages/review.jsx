@@ -4,8 +4,10 @@ import { Redirect } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
+import * as yup from 'yup';
+import { format } from 'date-fns';
 
-import { PAGE_PATHS, FORM_TYPES, REQUEST_STATE, VBMS_BENEFIT_TYPES } from '../constants';
+import { PAGE_PATHS, FORM_TYPES, REQUEST_STATE, VBMS_BENEFIT_TYPES, REVIEW_OPTIONS } from '../constants';
 import RampElectionPage from './rampElection/review';
 import RampRefilingPage from './rampRefiling/review';
 import SupplementalClaimPage from './supplementalClaim/review';
@@ -17,9 +19,31 @@ import CancelButton from '../components/CancelButton';
 import { submitReview as submitRampElection } from '../actions/rampElection';
 import { submitReview as submitDecisionReview } from '../actions/decisionReview';
 import { submitReview as submitRampRefiling } from '../actions/rampRefiling';
+import { setReceiptDateError } from '../actions/intake';
 import { toggleIneligibleError } from '../util';
+import DATES from '../../../constants/DATES';
 
 import SwitchOnForm from '../components/SwitchOnForm';
+
+const schema = yup.object().shape({
+  receiptDate: yup.mixed().
+    when(['$selectedForm', '$useAmaActivationDate'], {
+      is: (selectedForm, useAmaActivationDate) => selectedForm === REVIEW_OPTIONS.APPEAL.key && useAmaActivationDate,
+      then: yup.date().typeError('Receipt Date is required.').
+        min(
+          new Date(DATES.AMA_ACTIVATION),
+        `Receipt Date cannot be prior to ${format(new Date(DATES.AMA_ACTIVATION), 'MM/dd/yyyy')}.`
+        )
+    }).
+    when(['$selectedForm', '$useAmaActivationDate'], {
+      is: (selectedForm, useAmaActivationDate) => selectedForm === REVIEW_OPTIONS.APPEAL.key && !useAmaActivationDate,
+      then: yup.date().typeError('Receipt Date is required.').
+        min(
+          new Date(DATES.AMA_ACTIVATION_TEST),
+        `Receipt Date cannot be prior to ${format(new Date(DATES.AMA_ACTIVATION_TEST), 'MM/dd/yyyy')}.`
+        )
+    })
+});
 
 class Review extends React.PureComponent {
   render = () =>
@@ -55,19 +79,29 @@ class ReviewNextButton extends React.PureComponent {
   }
 
   handleClick = (selectedForm, intakeData) => {
-    // If adding new claimant, we won't submit to backend yet
-    if (intakeData?.claimant === 'claimant_not_listed') {
-      return this.props.history.push('/add_claimant');
-    }
-
-    this.submitReview(selectedForm, intakeData).then(
-      () => selectedForm.category === 'decisionReview' ?
-        this.props.history.push('/add_issues') :
-        this.props.history.push('/finish')
-      , (error) => {
-        // This is expected behavior on bad data, so prevent
-        // sentry from alerting an unhandled error
-        return error;
+    schema.
+      validate(intakeData, { context: {
+        selectedForm: selectedForm.key,
+        useAmaActivationDate: this.props.featureToggles.useAmaActivationDate
+      } }).
+      then(() => {
+        this.props.setReceiptDateError(null);
+        // If adding new claimant, we won't submit to backend yet
+        if (intakeData?.claimant === 'claimant_not_listed') {
+          return this.props.history.push('/add_claimant');
+        }
+        this.submitReview(selectedForm, intakeData).then(
+          () => selectedForm.category === 'decisionReview' ?
+            this.props.history.push('/add_issues') :
+            this.props.history.push('/finish')
+          , (error) => {
+            // This is expected behavior on bad data, so prevent
+            // sentry from alerting an unhandled error
+            return error;
+          });
+      }).
+      catch((error) => {
+        this.props.setReceiptDateError(error.errors[0]);
       });
   }
 
@@ -99,9 +133,7 @@ class ReviewNextButton extends React.PureComponent {
 
     return <Button
       name="submit-review"
-      onClick={() => {
-        this.handleClick(selectedForm, intakeData);
-      }}
+      onClick={() => this.handleClick(selectedForm, intakeData)}
       loading={intakeData ? intakeData.requestStatus.submitReview === REQUEST_STATE.IN_PROGRESS : true}
       disabled={disableSubmit}
     >
@@ -126,7 +158,8 @@ const ReviewNextButtonConnected = connect(
   (dispatch) => bindActionCreators({
     submitRampElection,
     submitRampRefiling,
-    submitDecisionReview
+    submitDecisionReview,
+    setReceiptDateError
   }, dispatch)
 )(ReviewNextButton);
 
@@ -146,7 +179,8 @@ ReviewNextButton.propTypes = {
   intakeId: PropTypes.number,
   submitRampElection: PropTypes.func,
   submitDecisionReview: PropTypes.func,
-  submitRampRefiling: PropTypes.func
+  submitRampRefiling: PropTypes.func,
+  setReceiptDateError: PropTypes.func
 };
 
 Review.propTypes = {
@@ -156,3 +190,5 @@ Review.propTypes = {
 ReviewButtons.propTypes = {
   history: PropTypes.object
 };
+
+export { schema as TestableSchema };

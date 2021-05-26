@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  render,
-  fireEvent,
-  screen,
-  wait,
-  waitFor,
-} from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import selectEvent from 'react-select-event';
 import faker from 'faker';
@@ -244,7 +238,7 @@ describe('async', () => {
     );
 
     await userEvent.click(screen.getByText('Select...'));
-    await userEvent.type(screen.getByRole('textbox'), data[0].label);
+    await userEvent.type(screen.getByRole('combobox'), data[0].label);
 
     expect(mockSearch).toHaveBeenLastCalledWith(
       data[0].label,
@@ -265,7 +259,7 @@ describe('async', () => {
 
     await userEvent.click(screen.getByText('Select...'));
     await userEvent.type(
-      screen.getByRole('textbox'),
+      screen.getByRole('combobox'),
       data[0].label.slice(0, data[0].label.length - 2)
     );
 
