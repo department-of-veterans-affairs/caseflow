@@ -14,8 +14,7 @@ exports[`TimeSlot has correct visual elements renders correctly 1`] = `
         class="time-slot-button-toggle cf-btn-link usa-button"
         type="button"
       >
-        Choose a 
-        custom time
+        Choose a custom time
       </button>
     </span>
   </div>

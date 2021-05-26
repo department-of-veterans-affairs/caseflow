@@ -2,7 +2,7 @@
 
 class AppealsController < ApplicationController
   before_action :react_routed
-  before_action :set_application, only: [:document_count, :power_of_attorney]
+  before_action :set_application, only: [:document_count, :power_of_attorney, :update_power_of_attorney]
   # Only whitelist endpoints VSOs should have access to.
   skip_before_action :deny_vso_access, only: [
     :index,
@@ -260,7 +260,7 @@ class AppealsController < ApplicationController
       representative_tz: appeal.representative_tz,
       poa_last_synced_at: appeal.poa_last_synced_at
     }
-    unless appeal.power_of_attorney.is_a?(UnrecognizedPowerOfAttorney)
+    unless appeal.claimant.is_a?(OtherClaimant)
       poa_data[:representative_id] = appeal.power_of_attorney&.id if appeal.is_a?(Appeal)
       poa_data[:representative_id] = appeal.power_of_attorney&.bgs_id if appeal.is_a?(LegacyAppeal)
     end
@@ -269,11 +269,16 @@ class AppealsController < ApplicationController
 
   def update_ama_poa(poa)
     begin
-      message = poa.update_or_delete
+      claimant = if appeal.claimant.is_a?(Hash)
+                   BgsPowerOfAttorney.find_or_fetch_by(participant_id: claimant.dig(:representative, :participant_id))
+                 else
+                   appeal.claimant
+                 end
+      message, result = poa.update_or_delete(claimant)
       {
         status: "success",
         message: message,
-        power_of_attorney: power_of_attorney_data
+        power_of_attorney: (result == "updated") ? power_of_attorney_data : {}
       }
     rescue ActiveRecord::RecordNotUnique
       {
@@ -286,12 +291,12 @@ class AppealsController < ApplicationController
   def update_legacy_poa(poa)
     begin
       bgs_poa = BgsPowerOfAttorney.find_or_create_by_file_number(poa.file_number)
-      message = bgs_poa.update_or_delete(appeal.claimant)
+      message, result = bgs_poa.update_or_delete(appeal.claimant)
       appeal.power_of_attorney.clear_bgs_power_of_attorney!
       {
         status: "success",
         message: message,
-        power_of_attorney: power_of_attorney_data
+        power_of_attorney: (result == "updated") ? power_of_attorney_data : {}
       }
     rescue ActiveRecord::RecordNotUnique
       {

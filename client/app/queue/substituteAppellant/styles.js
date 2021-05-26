@@ -10,7 +10,7 @@ export const pageHeader = css({
 });
 
 export const sectionStyle = css({
-  marginBottom: '24px',
+  marginBottom: '40px',
   '& h2': {
     marginBottom: '.8rem',
   },
