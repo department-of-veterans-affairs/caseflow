@@ -32,7 +32,7 @@ const nodDateUpdateTimelineInfoStyling = css({
 });
 
 export const NodDateUpdateTimeline = (props) => {
-  const { nodDateUpdate, timeline } = props;
+  const { timelineEvent: nodDateUpdate, timeline } = props;
   const changeReason = changeReasons.find((reason) => reason.value === nodDateUpdate.changeReason).label;
   const viewNodDateUpdates = useSelector((state) => state.ui.featureToggles.view_nod_date_updates);
 
@@ -64,7 +64,7 @@ export const NodDateUpdateTimeline = (props) => {
 };
 
 NodDateUpdateTimeline.propTypes = {
-  nodDateUpdate: PropTypes.shape({
+  timelineEvent: PropTypes.shape({
     changeReason: PropTypes.string.isRequired,
     updatedAt: PropTypes.string.isRequired,
     newDate: PropTypes.string.isRequired,

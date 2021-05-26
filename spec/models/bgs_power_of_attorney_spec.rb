@@ -4,6 +4,67 @@ describe BgsPowerOfAttorney do
   let(:claimant_participant_id) { "1129318238" }
   let(:file_number) { "66660000" }
 
+  describe "record expirations" do
+    before { FeatureToggle.enable!(:poa_auto_refresh) }
+    after { FeatureToggle.disable!(:poa_auto_refresh) }
+
+    context "by_claimant_participant_id" do
+      let!(:poa) { create(:bgs_power_of_attorney, claimant_participant_id: claimant_participant_id) }
+
+      it "record is expired NEW" do
+        BgsPowerOfAttorney.set_callback(:save, :before, :update_cached_attributes!)
+        BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
+        poa.last_synced_at = 1.day.ago
+        poa.save!
+        BgsPowerOfAttorney.set_callback(:save, :before, :update_cached_attributes!)
+
+        expect(poa.expired?).to eq(true)
+        new_poa = BgsPowerOfAttorney.find_or_fetch_by(participant_id: poa.claimant_participant_id)
+        expect(poa.last_synced_at.to_i).to_not eq(new_poa.last_synced_at.to_i)
+      end
+
+      it "record is not expired" do
+        BgsPowerOfAttorney.set_callback(:save, :before, :update_cached_attributes!)
+        BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
+        poa.last_synced_at = Time.zone.now
+        poa.save!
+        BgsPowerOfAttorney.set_callback(:save, :before, :update_cached_attributes!)
+
+        expect(poa.expired?).to eq(false)
+        new_poa = BgsPowerOfAttorney.find_or_fetch_by(participant_id: poa.claimant_participant_id)
+        expect(poa.last_synced_at.to_i).to eq(new_poa.last_synced_at.to_i)
+      end
+    end
+
+    context "by_file_number" do
+      let!(:poa) { create(:bgs_power_of_attorney, file_number: file_number) }
+
+      it "record is expired" do
+        BgsPowerOfAttorney.set_callback(:save, :before, :update_cached_attributes!)
+        BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
+        poa.last_synced_at = 1.day.ago
+        poa.save!
+        BgsPowerOfAttorney.set_callback(:save, :before, :update_cached_attributes!)
+
+        expect(poa.expired?).to eq(true)
+        new_poa = BgsPowerOfAttorney.find_or_fetch_by(veteran_file_number: poa.file_number)
+        expect(poa.last_synced_at.to_i).to_not eq(new_poa.last_synced_at.to_i)
+      end
+
+      it "record is not expired" do
+        BgsPowerOfAttorney.set_callback(:save, :before, :update_cached_attributes!)
+        BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
+        poa.last_synced_at = Time.zone.now
+        poa.save!
+        BgsPowerOfAttorney.set_callback(:save, :before, :update_cached_attributes!)
+
+        expect(poa.expired?).to eq(false)
+        new_poa = BgsPowerOfAttorney.find_or_fetch_by(veteran_file_number: poa.file_number)
+        expect(poa.last_synced_at.to_i).to eq(new_poa.last_synced_at.to_i)
+      end
+    end
+  end
+
   describe ".find_or_create_by_claimant_participant_id" do
     subject { described_class.find_or_create_by_claimant_participant_id(claimant_participant_id) }
 
@@ -232,11 +293,19 @@ describe BgsPowerOfAttorney do
   end
 
   describe "#save_with_updated_bgs_record!" do
+    let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+    let!(:poa) { create(:bgs_power_of_attorney, claimant_participant_id: claimant_participant_id) }
+    let(:claimant_participant_id) { "CLAIMANT_WITH_PVA_AS_VSO" }
+    let(:appeal) do
+      create(:appeal, veteran: create(:veteran, file_number: poa.file_number)) do |appeal|
+        create(
+          :informal_hearing_presentation_task,
+          appeal: appeal,
+          assigned_to: poa
+        )
+      end
+    end
     context "single POA record for PID" do
-      let!(:poa) { create(:bgs_power_of_attorney, claimant_participant_id: claimant_participant_id) }
-
-      let(:claimant_participant_id) { "CLAIMANT_WITH_PVA_AS_VSO" }
-
       before do
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids)
           .with([claimant_participant_id]).and_return(Fakes::BGSServicePOA.default_vsos_mapped.last)
@@ -249,6 +318,44 @@ describe BgsPowerOfAttorney do
         poa.save_with_updated_bgs_record!
 
         expect(poa.poa_participant_id).to_not eq before_poa_pid
+      end
+    end
+
+    context "when poa_auto_ihp_update feature toggle is disabled" do
+      before do
+        FeatureToggle.disable!(:poa_auto_ihp_update)
+        allow_any_instance_of(described_class).to receive(:update_ihp_task)
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids)
+          .with([claimant_participant_id]).and_return(Fakes::BGSServicePOA.default_vsos_mapped.last)
+      end
+
+      after { FeatureToggle.enable!(:poa_auto_ihp_update) }
+
+      it "IhpTaks update method isn't called" do
+        poa.save_with_updated_bgs_record!
+        expect_any_instance_of(described_class).to_not receive(:update_ihp_task)
+        expect(poa.send(:update_ihp_enabled?)).to eq(false)
+      end
+    end
+
+    context "when poa_auto_ihp_update feature toggle is enabled" do
+      before do
+        FeatureToggle.enable!(:poa_auto_ihp_update)
+        allow_any_instance_of(described_class).to receive(:update_ihp_task)
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids)
+          .with([claimant_participant_id]).and_return(Fakes::BGSServicePOA.default_vsos_mapped.last)
+      end
+      after { FeatureToggle.disable!(:poa_auto_ihp_update) }
+
+      it "IhpTaks update method is called" do
+        before_poa_pid = poa.poa_participant_id
+        expect(before_poa_pid).to_not be_nil
+
+        poa.save_with_updated_bgs_record!
+
+        expect(poa.poa_participant_id).to_not eq before_poa_pid
+        expect(poa.send(:update_ihp_enabled?)).to eq(true)
+        expect(poa).to have_received(:update_ihp_task)
       end
     end
 

@@ -526,11 +526,9 @@ const calculateAvailableTimeslots = ({ numberOfSlots, beginsAt, roTimezone, sche
     const hearingWithinHourOfSlot = hearingTimes.some((scheduledHearingTime) =>
       (Math.abs(possibleTime.diff(scheduledHearingTime, 'minutes')) < slotLengthMinutes)
     );
-    // Make sure that times don't go past midnight into the next day
-    const slotNotOnCorrectDate = !possibleTime.isSame(beginsAt, 'date');
 
     // Combine all the conditions that make a slot unavailable
-    const slotIsUnavailable = hearingWithinHourOfSlot || slotNotOnCorrectDate;
+    const slotIsUnavailable = hearingWithinHourOfSlot;
 
     // Return null if there is a filled time slot, otherwise return the hearingTime
     return slotIsUnavailable ? null : {
@@ -549,7 +547,7 @@ const calculateAvailableTimeslots = ({ numberOfSlots, beginsAt, roTimezone, sche
  * @param {string} availableSlots    -- Array of unfilled slots
  * @param {string} scheduledHearings -- Array of hearings
  **/
-const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings }) => {
+const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings, hearingDayDate }) => {
   const slots = availableSlots.map((slot) => ({
     ...slot,
     key: `${slot?.slotId}-${slot?.time_string}`,
@@ -558,21 +556,65 @@ const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings
     hearingTime: slot.time.format('HH:mm')
   }));
 
-  const formattedHearings = scheduledHearings.map((hearing) => ({
-    ...hearing,
-    key: hearing?.externalId,
-    full: true,
-    // The hearingTime is in roTimezone, but it looks like "09:30", this takes that "09:30"
-    // in roTimezone, and converts it to Eastern zone because slots are always in eastern.
-    hearingTime: moment.tz(hearing?.hearingTime, 'HH:mm', roTimezone).clone().
-      tz('America/New_York').
-      format('HH:mm')
-  }));
+  const formattedHearings = scheduledHearings.map((hearing) => {
+    const time = moment.tz(`${hearing?.hearingTime} ${hearingDayDate}`, 'HH:mm YYYY-MM-DD', roTimezone).clone().
+      tz('America/New_York');
+
+    return {
+      ...hearing,
+      key: hearing?.externalId,
+      full: true,
+      // Include this because slots have it and we use it for filtering
+      time,
+      // The hearingTime is in roTimezone, but it looks like "09:30", this takes that "09:30"
+      // in roTimezone, and converts it to Eastern zone because slots are always in eastern.
+      hearingTime: time.format('HH:mm')
+    };
+  });
 
   const slotsAndHearings = slots.concat(formattedHearings);
 
-  return _.sortBy(slotsAndHearings, 'hearingTime');
+  // Sort by unix time
+  return _.sortBy(slotsAndHearings, [(item) => item.time.format('x')]);
 
+};
+
+/**
+ * Method to set the available time slots based on the hearings scheduled
+ * @param {array} selectedTimeString -- List of hearings scheduled for a specific date
+ * @param {array} slotsAndHearings   -- The ro id, can be RXX, C, or V
+ */
+const displaySelectedTimeAsSlot = ({ selected, slotsAndHearings }) => {
+  if (!selected) {
+    return slotsAndHearings;
+  }
+
+  // If a slot for this time already exists, it will be selected, don't add anything
+  if (slotsAndHearings.find((item) => item.time.isSame(selected))) {
+    return slotsAndHearings;
+  }
+  const timeString = selected?.tz('America/New_York')?.format('HH:mm');
+
+  // Create a timeslot object (same as in combineSlotsAndHearings)
+  const selectedTimeSlot = {
+    slotId: 'selected-time',
+    key: `selected-time-${timeString}`,
+    full: false,
+    hearingTime: timeString,
+    time: selected,
+  };
+
+  // Figure out where to insert that timeslot object in existing slots/hearings array
+  const foundIndex = slotsAndHearings.findIndex((item) => {
+    return item.time.isAfter(selected);
+  });
+  // foundIndex is -1 when the slot should be last in the array
+  const insertIndex = foundIndex === -1 ? slotsAndHearings.length : foundIndex;
+
+  // Insert the timeslot object and return the new array
+  slotsAndHearings.splice(insertIndex, 0, selectedTimeSlot);
+
+  return slotsAndHearings;
 };
 
 /**
@@ -594,15 +636,17 @@ export const setTimeSlots = ({
   roTimezone = 'America/New_York',
   beginsAt,
   numberOfSlots,
-  slotLengthMinutes
+  slotLengthMinutes,
+  selected,
+  hearingDayDate
 }) => {
   // Safe assign the hearings array in case there are no scheduled hearings
   const scheduledHearings = scheduledHearingsList || [];
 
   const defaultNumberOfSlots = 8;
   const defaultBeginsAt = ro === 'C' ? '09:00' : '08:30';
-  const momentDefaultBeginsAt = moment.tz(defaultBeginsAt, 'HH:mm', 'America/New_York');
-  const momentBeginsAt = moment(beginsAt);
+  const momentDefaultBeginsAt = moment.tz(`${defaultBeginsAt} ${hearingDayDate}`, 'HH:mm YYYY-MM-DD', 'America/New_York');
+  const momentBeginsAt = moment(beginsAt).tz('America/New_York');
 
   const defaultSlotLengthMinutes = 60;
 
@@ -614,11 +658,14 @@ export const setTimeSlots = ({
     scheduledHearings
   });
 
-  return combineSlotsAndHearings({
+  const slotsAndHearings = combineSlotsAndHearings({
     roTimezone,
     availableSlots,
-    scheduledHearings
+    scheduledHearings,
+    hearingDayDate
   });
+
+  return displaySelectedTimeAsSlot({ selected, slotsAndHearings });
 
 };
 
@@ -721,6 +768,115 @@ export const selectHearingDayEvent = (cb) => (hearingDay) => {
 
   // Change the hearing day to the selected hearing day
   cb(hearingDay);
+};
+
+// Get an array with every fifteen minute increment in a day
+// [00:00, 00:15, ... , 23:45]
+const generateTimes = (roTimezone, date, intervalMinutes = 15) => {
+  // Start at midnight '00:00' is the first minute of a day
+  const currentTime = moment.tz(`${date} 00:00`, 'YYYY-MM-DD HH:mm', roTimezone);
+  // End at 23:59, the last minute of a day
+  const elevenFiftyNine = moment.tz(`${date} 23:59`, 'YYYY-MM-DD HH:mm', roTimezone);
+
+  const times = [];
+
+  // Go through the day in fifteen minute increments and store each increment
+  while (currentTime.isBefore(elevenFiftyNine)) {
+    // Moment has mutable objects so clone() is necessary
+    times.push(currentTime.clone());
+    currentTime.add(intervalMinutes, 'minute');
+  }
+
+  return times;
+};
+
+// Move the part of the arrawy after newFirstValue to the end of the array
+const moveTimesToEndOfArray = (newFirstValue, times) => {
+  // Find the index of newFirstValue
+  const firstValueIndex = times.findIndex((time) => time.isSame(newFirstValue));
+
+  // Remove all values before newFirstValue from the front of the array
+  const beforeFirstValue = times.slice(0, firstValueIndex);
+  const afterFirstValue = times.slice(firstValueIndex);
+
+  // Add the values back onto the end of the array
+  return afterFirstValue.concat(beforeFirstValue);
+};
+// Convert each time in the array into the expected 'option' format for react-select
+const formatTimesToOptionObjects = (times) => {
+  return times.map((time) => {
+    return {
+      label: time.format('h:mm A'),
+      value: time
+    };
+  });
+};
+
+// Generate a time for every 15m increment in a day.
+// Then move every time before beginsAt to the end of
+// the array to beginsAt appears first.
+export const generateOrderedTimeOptions = (roTimezone, hearingDayDate) => {
+  const beginsAt = moment.tz(`${hearingDayDate} 08:30`, 'YYYY-MM-DD HH:mm', roTimezone);
+  const times = generateTimes(roTimezone, hearingDayDate);
+  const reorderedTimes = moveTimesToEndOfArray(beginsAt, times);
+  const options = formatTimesToOptionObjects(reorderedTimes);
+
+  return options;
+};
+
+// Checks if the input matches the hour of a candidate.value which is a moment object
+const matchesHour = (candidate, input, exact = false) => {
+  const candidateHourString = candidate.value.format('h');
+
+  return exact ? candidateHourString === input : candidateHourString.startsWith(input);
+};
+const removeOneLeadingZero = (string) => {
+  return string[0] === '0' ? string.slice(1) : string;
+};
+// Checks if the input matches any part of a candidate.value which is a moment object
+const matchesAny = (candidate, input) => {
+  if (input.includes(':')) {
+    // Split into hours and minutes
+    const [hour, minutesAndAmPm] = input.split(':');
+
+    // Check that the hour matches exactly and the minutes+ampm are present
+    return matchesHour(candidate, hour, true) && matchesAny(candidate, minutesAndAmPm);
+  }
+  if (!input.includes(':')) {
+    // Produce a time like '400pm' or '800am' for string searching
+    const candidateNoColon = candidate.value.format('hhmmA');
+    // Remove spaces, force upper case so AM/PM searching works
+    const noColonOrSpaces = input.replace(' ', '').toUpperCase();
+    // Remove a leading zero if there is one
+    const noLeadingZero = removeOneLeadingZero(noColonOrSpaces);
+
+    return candidateNoColon.includes(noLeadingZero);
+  }
+};
+
+// Filter the options list to display only options that match
+// what's been typed into the input
+export const filterOptions = (candidate, input) => {
+  // If only one character in the input assume it represents an hour
+  if (input.length === 1) {
+    return matchesHour(candidate, input);
+  }
+  // If one character and ':' in the input assume it represents an hour
+  if (input.length === 2 && input.endsWith(':')) {
+    return matchesHour(candidate, input[0], true);
+  }
+  // For everything else, send to matchesAny, which also handles ':'
+  if (input.length >= 2) {
+    return matchesAny(candidate, input);
+  }
+};
+
+// Given a long timezone like "America/Los_Angeles" return the
+// short version like "PDT" or "PST" (depending on date)
+export const getTimezoneAbbreviation = (timezone) => {
+  // Create a moment object so we can extract the timezone
+  // abbreviation like 'PDT'
+  return moment.tz('00:00', 'HH:mm', timezone).format('z');
 };
 
 /* eslint-enable camelcase */
