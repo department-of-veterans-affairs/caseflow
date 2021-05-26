@@ -2485,7 +2485,7 @@ describe LegacyAppeal, :all_dbs do
             name: "Attorney B Lawyer",
             type: "Attorney",
             code: "T",
-            participant_id: "600153863",
+            participant_id: "1234567",
             address: {
               address_line_1: "111 Magnolia St.",
               address_line_2: "Suite 222",

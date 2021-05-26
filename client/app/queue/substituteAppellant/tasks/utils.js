@@ -66,6 +66,17 @@ export const shouldHide = (taskInfo) => {
   return taskInfo.hideFromCaseTimeline;
 };
 
+// We can have a case where a particular task's inclusion depends upon other tasks
+// This happens with org tasks that are normally hidden from case timeline
+// but corresponding user tasks would be shown
+export const shouldShowBasedOnOtherTasks = (taskInfo, allTasks) => {
+  const taskType = taskInfo.type;
+
+  const visibleUserTask = allTasks.find((item) => item.type === taskType && !item.hideFromCaseTimeline);
+
+  return Boolean(visibleUserTask);
+};
+
 export const shouldAutoSelect = (taskInfo) => {
   return ['DistributionTask'].includes(taskInfo.type);
 };
@@ -112,7 +123,7 @@ export const prepTaskDataForUi = (taskData) => {
 
   return sortedTasks.map((taskInfo) => ({
     ...taskInfo,
-    hidden: shouldHide(taskInfo),
+    hidden: shouldHide(taskInfo) && !shouldShowBasedOnOtherTasks(taskInfo, taskData),
     disabled: shouldDisable(taskInfo, taskData),
     selected: shouldAutoSelect(taskInfo),
   }));
