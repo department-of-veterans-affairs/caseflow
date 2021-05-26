@@ -107,7 +107,7 @@ DateSelector.propTypes = {
   ]),
 
   /**
-   * Text to display in a `label` element
+   * Text or element to display in a `label` element
    */
   label: PropTypes.oneOfType([PropTypes.string, PropTypes.bool, PropTypes.element]),
 
