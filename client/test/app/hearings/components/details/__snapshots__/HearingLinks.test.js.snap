@@ -270,7 +270,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                   wrapper="div"
                 >
                   <div
-                    className="__react_component_tooltip t832c9dbb-2a20-4297-822d-e741b5e12c01 place-bottom type-dark"
+                    className="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                     data-id="tooltip"
                     id="tooltip-Copy VLJ Link"
                   >
@@ -278,19 +278,19 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                       dangerouslySetInnerHTML={
                         Object {
                           "__html": "
-  	.t832c9dbb-2a20-4297-822d-e741b5e12c01 {
+  	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
 	    border: 1px solid transparent;
   	}
 
-  	.t832c9dbb-2a20-4297-822d-e741b5e12c01.place-top {
+  	.t00000000-0000-0000-0000-000000000000.place-top {
         margin-top: -10px;
     }
-    .t832c9dbb-2a20-4297-822d-e741b5e12c01.place-top::before {
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
         border-top: 8px solid transparent;
     }
-    .t832c9dbb-2a20-4297-822d-e741b5e12c01.place-top::after {
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         bottom: -6px;
@@ -301,13 +301,13 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
         border-top-width: 6px;
     }
 
-    .t832c9dbb-2a20-4297-822d-e741b5e12c01.place-bottom {
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
         margin-top: 10px;
     }
-    .t832c9dbb-2a20-4297-822d-e741b5e12c01.place-bottom::before {
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
         border-bottom: 8px solid transparent;
     }
-    .t832c9dbb-2a20-4297-822d-e741b5e12c01.place-bottom::after {
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         top: -6px;
@@ -318,13 +318,13 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
         border-bottom-width: 6px;
     }
 
-    .t832c9dbb-2a20-4297-822d-e741b5e12c01.place-left {
+    .t00000000-0000-0000-0000-000000000000.place-left {
         margin-left: -10px;
     }
-    .t832c9dbb-2a20-4297-822d-e741b5e12c01.place-left::before {
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
         border-left: 8px solid transparent;
     }
-    .t832c9dbb-2a20-4297-822d-e741b5e12c01.place-left::after {
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
         right: -6px;
@@ -335,13 +335,13 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
         border-left-width: 6px;
     }
 
-    .t832c9dbb-2a20-4297-822d-e741b5e12c01.place-right {
+    .t00000000-0000-0000-0000-000000000000.place-right {
         margin-left: 10px;
     }
-    .t832c9dbb-2a20-4297-822d-e741b5e12c01.place-right::before {
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
         border-right: 8px solid transparent;
     }
-    .t832c9dbb-2a20-4297-822d-e741b5e12c01.place-right::after {
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
         left: -6px;
@@ -602,7 +602,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                   wrapper="div"
                 >
                   <div
-                    className="__react_component_tooltip t4a61cf04-cd8e-49b9-b8db-6fe96efebc52 place-bottom type-dark"
+                    className="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                     data-id="tooltip"
                     id="tooltip-Copy Guest Link"
                   >
@@ -610,19 +610,19 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                       dangerouslySetInnerHTML={
                         Object {
                           "__html": "
-  	.t4a61cf04-cd8e-49b9-b8db-6fe96efebc52 {
+  	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
 	    border: 1px solid transparent;
   	}
 
-  	.t4a61cf04-cd8e-49b9-b8db-6fe96efebc52.place-top {
+  	.t00000000-0000-0000-0000-000000000000.place-top {
         margin-top: -10px;
     }
-    .t4a61cf04-cd8e-49b9-b8db-6fe96efebc52.place-top::before {
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
         border-top: 8px solid transparent;
     }
-    .t4a61cf04-cd8e-49b9-b8db-6fe96efebc52.place-top::after {
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         bottom: -6px;
@@ -633,13 +633,13 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
         border-top-width: 6px;
     }
 
-    .t4a61cf04-cd8e-49b9-b8db-6fe96efebc52.place-bottom {
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
         margin-top: 10px;
     }
-    .t4a61cf04-cd8e-49b9-b8db-6fe96efebc52.place-bottom::before {
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
         border-bottom: 8px solid transparent;
     }
-    .t4a61cf04-cd8e-49b9-b8db-6fe96efebc52.place-bottom::after {
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         top: -6px;
@@ -650,13 +650,13 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
         border-bottom-width: 6px;
     }
 
-    .t4a61cf04-cd8e-49b9-b8db-6fe96efebc52.place-left {
+    .t00000000-0000-0000-0000-000000000000.place-left {
         margin-left: -10px;
     }
-    .t4a61cf04-cd8e-49b9-b8db-6fe96efebc52.place-left::before {
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
         border-left: 8px solid transparent;
     }
-    .t4a61cf04-cd8e-49b9-b8db-6fe96efebc52.place-left::after {
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
         right: -6px;
@@ -667,13 +667,13 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
         border-left-width: 6px;
     }
 
-    .t4a61cf04-cd8e-49b9-b8db-6fe96efebc52.place-right {
+    .t00000000-0000-0000-0000-000000000000.place-right {
         margin-left: 10px;
     }
-    .t4a61cf04-cd8e-49b9-b8db-6fe96efebc52.place-right::before {
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
         border-right: 8px solid transparent;
     }
-    .t4a61cf04-cd8e-49b9-b8db-6fe96efebc52.place-right::after {
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
         left: -6px;
@@ -1669,7 +1669,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                   wrapper="div"
                 >
                   <div
-                    className="__react_component_tooltip ta4ef9292-f7fd-4e2a-8ebd-61a76f031ee3 place-bottom type-dark"
+                    className="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                     data-id="tooltip"
                     id="tooltip-Copy Guest Link"
                   >
@@ -1677,19 +1677,19 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                       dangerouslySetInnerHTML={
                         Object {
                           "__html": "
-  	.ta4ef9292-f7fd-4e2a-8ebd-61a76f031ee3 {
+  	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
 	    border: 1px solid transparent;
   	}
 
-  	.ta4ef9292-f7fd-4e2a-8ebd-61a76f031ee3.place-top {
+  	.t00000000-0000-0000-0000-000000000000.place-top {
         margin-top: -10px;
     }
-    .ta4ef9292-f7fd-4e2a-8ebd-61a76f031ee3.place-top::before {
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
         border-top: 8px solid transparent;
     }
-    .ta4ef9292-f7fd-4e2a-8ebd-61a76f031ee3.place-top::after {
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         bottom: -6px;
@@ -1700,13 +1700,13 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
         border-top-width: 6px;
     }
 
-    .ta4ef9292-f7fd-4e2a-8ebd-61a76f031ee3.place-bottom {
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
         margin-top: 10px;
     }
-    .ta4ef9292-f7fd-4e2a-8ebd-61a76f031ee3.place-bottom::before {
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
         border-bottom: 8px solid transparent;
     }
-    .ta4ef9292-f7fd-4e2a-8ebd-61a76f031ee3.place-bottom::after {
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         top: -6px;
@@ -1717,13 +1717,13 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
         border-bottom-width: 6px;
     }
 
-    .ta4ef9292-f7fd-4e2a-8ebd-61a76f031ee3.place-left {
+    .t00000000-0000-0000-0000-000000000000.place-left {
         margin-left: -10px;
     }
-    .ta4ef9292-f7fd-4e2a-8ebd-61a76f031ee3.place-left::before {
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
         border-left: 8px solid transparent;
     }
-    .ta4ef9292-f7fd-4e2a-8ebd-61a76f031ee3.place-left::after {
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
         right: -6px;
@@ -1734,13 +1734,13 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
         border-left-width: 6px;
     }
 
-    .ta4ef9292-f7fd-4e2a-8ebd-61a76f031ee3.place-right {
+    .t00000000-0000-0000-0000-000000000000.place-right {
         margin-left: 10px;
     }
-    .ta4ef9292-f7fd-4e2a-8ebd-61a76f031ee3.place-right::before {
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
         border-right: 8px solid transparent;
     }
-    .ta4ef9292-f7fd-4e2a-8ebd-61a76f031ee3.place-right::after {
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
         left: -6px;

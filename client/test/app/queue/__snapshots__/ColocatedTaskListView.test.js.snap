@@ -591,25 +591,25 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       data-css-fs14qy=""
                     >
                       <div
-                        class="__react_component_tooltip t09359e44-85ec-4a87-8e08-b8174deec651 place-top type-dark"
+                        class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-top type-dark"
                         data-id="tooltip"
                         id="tooltip-5"
                       >
                         <style>
                           
-  	.t09359e44-85ec-4a87-8e08-b8174deec651 {
+  	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
 	    border: 1px solid transparent;
   	}
 
-  	.t09359e44-85ec-4a87-8e08-b8174deec651.place-top {
+  	.t00000000-0000-0000-0000-000000000000.place-top {
         margin-top: -10px;
     }
-    .t09359e44-85ec-4a87-8e08-b8174deec651.place-top::before {
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
         border-top: 8px solid transparent;
     }
-    .t09359e44-85ec-4a87-8e08-b8174deec651.place-top::after {
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         bottom: -6px;
@@ -620,13 +620,13 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
         border-top-width: 6px;
     }
 
-    .t09359e44-85ec-4a87-8e08-b8174deec651.place-bottom {
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
         margin-top: 10px;
     }
-    .t09359e44-85ec-4a87-8e08-b8174deec651.place-bottom::before {
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
         border-bottom: 8px solid transparent;
     }
-    .t09359e44-85ec-4a87-8e08-b8174deec651.place-bottom::after {
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         top: -6px;
@@ -637,13 +637,13 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
         border-bottom-width: 6px;
     }
 
-    .t09359e44-85ec-4a87-8e08-b8174deec651.place-left {
+    .t00000000-0000-0000-0000-000000000000.place-left {
         margin-left: -10px;
     }
-    .t09359e44-85ec-4a87-8e08-b8174deec651.place-left::before {
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
         border-left: 8px solid transparent;
     }
-    .t09359e44-85ec-4a87-8e08-b8174deec651.place-left::after {
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
         right: -6px;
@@ -654,13 +654,13 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
         border-left-width: 6px;
     }
 
-    .t09359e44-85ec-4a87-8e08-b8174deec651.place-right {
+    .t00000000-0000-0000-0000-000000000000.place-right {
         margin-left: 10px;
     }
-    .t09359e44-85ec-4a87-8e08-b8174deec651.place-right::before {
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
         border-right: 8px solid transparent;
     }
-    .t09359e44-85ec-4a87-8e08-b8174deec651.place-right::after {
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
         left: -6px;
@@ -771,25 +771,25 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       data-css-19if8q3=""
                     >
                       <div
-                        class="__react_component_tooltip t99289f1a-2695-4d07-8863-91539d768df5 place-bottom type-dark"
+                        class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                         data-id="tooltip"
                         id="badge-200603-71"
                       >
                         <style>
                           
-  	.t99289f1a-2695-4d07-8863-91539d768df5 {
+  	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
 	    border: 1px solid transparent;
   	}
 
-  	.t99289f1a-2695-4d07-8863-91539d768df5.place-top {
+  	.t00000000-0000-0000-0000-000000000000.place-top {
         margin-top: -10px;
     }
-    .t99289f1a-2695-4d07-8863-91539d768df5.place-top::before {
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
         border-top: 8px solid transparent;
     }
-    .t99289f1a-2695-4d07-8863-91539d768df5.place-top::after {
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         bottom: -6px;
@@ -800,13 +800,13 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
         border-top-width: 6px;
     }
 
-    .t99289f1a-2695-4d07-8863-91539d768df5.place-bottom {
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
         margin-top: 10px;
     }
-    .t99289f1a-2695-4d07-8863-91539d768df5.place-bottom::before {
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
         border-bottom: 8px solid transparent;
     }
-    .t99289f1a-2695-4d07-8863-91539d768df5.place-bottom::after {
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         top: -6px;
@@ -817,13 +817,13 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
         border-bottom-width: 6px;
     }
 
-    .t99289f1a-2695-4d07-8863-91539d768df5.place-left {
+    .t00000000-0000-0000-0000-000000000000.place-left {
         margin-left: -10px;
     }
-    .t99289f1a-2695-4d07-8863-91539d768df5.place-left::before {
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
         border-left: 8px solid transparent;
     }
-    .t99289f1a-2695-4d07-8863-91539d768df5.place-left::after {
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
         right: -6px;
@@ -834,13 +834,13 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
         border-left-width: 6px;
     }
 
-    .t99289f1a-2695-4d07-8863-91539d768df5.place-right {
+    .t00000000-0000-0000-0000-000000000000.place-right {
         margin-left: 10px;
     }
-    .t99289f1a-2695-4d07-8863-91539d768df5.place-right::before {
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
         border-right: 8px solid transparent;
     }
-    .t99289f1a-2695-4d07-8863-91539d768df5.place-right::after {
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
         left: -6px;
@@ -864,13 +864,17 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     colspan="1"
                     role="cell"
                   >
-                    <span
-                      class=""
+                    <div
+                      class="css-w0yocm"
                     >
-                      1
-                       
-                      day
-                    </span>
+                      <span
+                        class=""
+                      >
+                        1
+                         
+                        day
+                      </span>
+                    </div>
                   </td>
                   <td
                     class=""
@@ -968,25 +972,25 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       data-css-hd31kg=""
                     >
                       <div
-                        class="__react_component_tooltip t0bd406aa-e06a-4c99-9ffd-681a5c6c9e6c place-bottom type-dark"
+                        class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                         data-id="tooltip"
                         id="badge-200603-72"
                       >
                         <style>
                           
-  	.t0bd406aa-e06a-4c99-9ffd-681a5c6c9e6c {
+  	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
 	    border: 1px solid transparent;
   	}
 
-  	.t0bd406aa-e06a-4c99-9ffd-681a5c6c9e6c.place-top {
+  	.t00000000-0000-0000-0000-000000000000.place-top {
         margin-top: -10px;
     }
-    .t0bd406aa-e06a-4c99-9ffd-681a5c6c9e6c.place-top::before {
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
         border-top: 8px solid transparent;
     }
-    .t0bd406aa-e06a-4c99-9ffd-681a5c6c9e6c.place-top::after {
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         bottom: -6px;
@@ -997,13 +1001,13 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
         border-top-width: 6px;
     }
 
-    .t0bd406aa-e06a-4c99-9ffd-681a5c6c9e6c.place-bottom {
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
         margin-top: 10px;
     }
-    .t0bd406aa-e06a-4c99-9ffd-681a5c6c9e6c.place-bottom::before {
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
         border-bottom: 8px solid transparent;
     }
-    .t0bd406aa-e06a-4c99-9ffd-681a5c6c9e6c.place-bottom::after {
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         top: -6px;
@@ -1014,13 +1018,13 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
         border-bottom-width: 6px;
     }
 
-    .t0bd406aa-e06a-4c99-9ffd-681a5c6c9e6c.place-left {
+    .t00000000-0000-0000-0000-000000000000.place-left {
         margin-left: -10px;
     }
-    .t0bd406aa-e06a-4c99-9ffd-681a5c6c9e6c.place-left::before {
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
         border-left: 8px solid transparent;
     }
-    .t0bd406aa-e06a-4c99-9ffd-681a5c6c9e6c.place-left::after {
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
         right: -6px;
@@ -1031,13 +1035,13 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
         border-left-width: 6px;
     }
 
-    .t0bd406aa-e06a-4c99-9ffd-681a5c6c9e6c.place-right {
+    .t00000000-0000-0000-0000-000000000000.place-right {
         margin-left: 10px;
     }
-    .t0bd406aa-e06a-4c99-9ffd-681a5c6c9e6c.place-right::before {
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
         border-right: 8px solid transparent;
     }
-    .t0bd406aa-e06a-4c99-9ffd-681a5c6c9e6c.place-right::after {
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
         left: -6px;
@@ -1061,20 +1065,24 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     colspan="1"
                     role="cell"
                   >
-                    <span
-                      class="cf-red-text"
-                    >
-                      31
-                       
-                      days
-                    </span>
                     <div
-                      class="cf-continuous-progress-bar"
+                      class="css-w0yocm"
                     >
+                      <span
+                        class="cf-red-text"
+                      >
+                        31
+                         
+                        days
+                      </span>
                       <div
-                        class="cf-continuous-progress-bar-warning"
-                        style="width: 100%;"
-                      />
+                        class="cf-continuous-progress-bar"
+                      >
+                        <div
+                          class="cf-continuous-progress-bar-warning"
+                          style="width: 100%;"
+                        />
+                      </div>
                     </div>
                   </td>
                   <td
@@ -1734,25 +1742,25 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       data-css-fs14qy=""
                     >
                       <div
-                        class="__react_component_tooltip t6f57b9d8-25a8-4c9e-98f4-5f01005bff28 place-top type-dark"
+                        class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-top type-dark"
                         data-id="tooltip"
                         id="tooltip-5"
                       >
                         <style>
                           
-  	.t6f57b9d8-25a8-4c9e-98f4-5f01005bff28 {
+  	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
 	    border: 1px solid transparent;
   	}
 
-  	.t6f57b9d8-25a8-4c9e-98f4-5f01005bff28.place-top {
+  	.t00000000-0000-0000-0000-000000000000.place-top {
         margin-top: -10px;
     }
-    .t6f57b9d8-25a8-4c9e-98f4-5f01005bff28.place-top::before {
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
         border-top: 8px solid transparent;
     }
-    .t6f57b9d8-25a8-4c9e-98f4-5f01005bff28.place-top::after {
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         bottom: -6px;
@@ -1763,13 +1771,13 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
         border-top-width: 6px;
     }
 
-    .t6f57b9d8-25a8-4c9e-98f4-5f01005bff28.place-bottom {
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
         margin-top: 10px;
     }
-    .t6f57b9d8-25a8-4c9e-98f4-5f01005bff28.place-bottom::before {
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
         border-bottom: 8px solid transparent;
     }
-    .t6f57b9d8-25a8-4c9e-98f4-5f01005bff28.place-bottom::after {
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         top: -6px;
@@ -1780,13 +1788,13 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
         border-bottom-width: 6px;
     }
 
-    .t6f57b9d8-25a8-4c9e-98f4-5f01005bff28.place-left {
+    .t00000000-0000-0000-0000-000000000000.place-left {
         margin-left: -10px;
     }
-    .t6f57b9d8-25a8-4c9e-98f4-5f01005bff28.place-left::before {
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
         border-left: 8px solid transparent;
     }
-    .t6f57b9d8-25a8-4c9e-98f4-5f01005bff28.place-left::after {
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
         right: -6px;
@@ -1797,13 +1805,13 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
         border-left-width: 6px;
     }
 
-    .t6f57b9d8-25a8-4c9e-98f4-5f01005bff28.place-right {
+    .t00000000-0000-0000-0000-000000000000.place-right {
         margin-left: 10px;
     }
-    .t6f57b9d8-25a8-4c9e-98f4-5f01005bff28.place-right::before {
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
         border-right: 8px solid transparent;
     }
-    .t6f57b9d8-25a8-4c9e-98f4-5f01005bff28.place-right::after {
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
         left: -6px;
@@ -1914,25 +1922,25 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       data-css-t9ad6e=""
                     >
                       <div
-                        class="__react_component_tooltip t1d7415e6-8b58-4cbb-abf2-2f77e5508efb place-bottom type-dark"
+                        class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                         data-id="tooltip"
                         id="badge-200603-73"
                       >
                         <style>
                           
-  	.t1d7415e6-8b58-4cbb-abf2-2f77e5508efb {
+  	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
 	    border: 1px solid transparent;
   	}
 
-  	.t1d7415e6-8b58-4cbb-abf2-2f77e5508efb.place-top {
+  	.t00000000-0000-0000-0000-000000000000.place-top {
         margin-top: -10px;
     }
-    .t1d7415e6-8b58-4cbb-abf2-2f77e5508efb.place-top::before {
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
         border-top: 8px solid transparent;
     }
-    .t1d7415e6-8b58-4cbb-abf2-2f77e5508efb.place-top::after {
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         bottom: -6px;
@@ -1943,13 +1951,13 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
         border-top-width: 6px;
     }
 
-    .t1d7415e6-8b58-4cbb-abf2-2f77e5508efb.place-bottom {
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
         margin-top: 10px;
     }
-    .t1d7415e6-8b58-4cbb-abf2-2f77e5508efb.place-bottom::before {
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
         border-bottom: 8px solid transparent;
     }
-    .t1d7415e6-8b58-4cbb-abf2-2f77e5508efb.place-bottom::after {
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         top: -6px;
@@ -1960,13 +1968,13 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
         border-bottom-width: 6px;
     }
 
-    .t1d7415e6-8b58-4cbb-abf2-2f77e5508efb.place-left {
+    .t00000000-0000-0000-0000-000000000000.place-left {
         margin-left: -10px;
     }
-    .t1d7415e6-8b58-4cbb-abf2-2f77e5508efb.place-left::before {
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
         border-left: 8px solid transparent;
     }
-    .t1d7415e6-8b58-4cbb-abf2-2f77e5508efb.place-left::after {
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
         right: -6px;
@@ -1977,13 +1985,13 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
         border-left-width: 6px;
     }
 
-    .t1d7415e6-8b58-4cbb-abf2-2f77e5508efb.place-right {
+    .t00000000-0000-0000-0000-000000000000.place-right {
         margin-left: 10px;
     }
-    .t1d7415e6-8b58-4cbb-abf2-2f77e5508efb.place-right::before {
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
         border-right: 8px solid transparent;
     }
-    .t1d7415e6-8b58-4cbb-abf2-2f77e5508efb.place-right::after {
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
         left: -6px;
@@ -2113,25 +2121,25 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       data-css-ns953s=""
                     >
                       <div
-                        class="__react_component_tooltip t51755c75-41d4-4127-8a42-1395a478bd55 place-bottom type-dark"
+                        class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                         data-id="tooltip"
                         id="badge-200603-74"
                       >
                         <style>
                           
-  	.t51755c75-41d4-4127-8a42-1395a478bd55 {
+  	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
 	    border: 1px solid transparent;
   	}
 
-  	.t51755c75-41d4-4127-8a42-1395a478bd55.place-top {
+  	.t00000000-0000-0000-0000-000000000000.place-top {
         margin-top: -10px;
     }
-    .t51755c75-41d4-4127-8a42-1395a478bd55.place-top::before {
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
         border-top: 8px solid transparent;
     }
-    .t51755c75-41d4-4127-8a42-1395a478bd55.place-top::after {
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         bottom: -6px;
@@ -2142,13 +2150,13 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
         border-top-width: 6px;
     }
 
-    .t51755c75-41d4-4127-8a42-1395a478bd55.place-bottom {
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
         margin-top: 10px;
     }
-    .t51755c75-41d4-4127-8a42-1395a478bd55.place-bottom::before {
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
         border-bottom: 8px solid transparent;
     }
-    .t51755c75-41d4-4127-8a42-1395a478bd55.place-bottom::after {
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         top: -6px;
@@ -2159,13 +2167,13 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
         border-bottom-width: 6px;
     }
 
-    .t51755c75-41d4-4127-8a42-1395a478bd55.place-left {
+    .t00000000-0000-0000-0000-000000000000.place-left {
         margin-left: -10px;
     }
-    .t51755c75-41d4-4127-8a42-1395a478bd55.place-left::before {
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
         border-left: 8px solid transparent;
     }
-    .t51755c75-41d4-4127-8a42-1395a478bd55.place-left::after {
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
         right: -6px;
@@ -2176,13 +2184,13 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
         border-left-width: 6px;
     }
 
-    .t51755c75-41d4-4127-8a42-1395a478bd55.place-right {
+    .t00000000-0000-0000-0000-000000000000.place-right {
         margin-left: 10px;
     }
-    .t51755c75-41d4-4127-8a42-1395a478bd55.place-right::before {
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
         border-right: 8px solid transparent;
     }
-    .t51755c75-41d4-4127-8a42-1395a478bd55.place-right::after {
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
         left: -6px;

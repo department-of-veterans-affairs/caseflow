@@ -25,25 +25,25 @@ Object {
           data-css-1urwbxe=""
         >
           <div
-            class="__react_component_tooltip t5353ac1c-622c-4608-ada6-8e13730b5d3a place-bottom type-dark"
+            class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
             data-id="tooltip"
             id="badge-undefined"
           >
             <style>
               
-  	.t5353ac1c-622c-4608-ada6-8e13730b5d3a {
+  	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
 	    border: 1px solid transparent;
   	}
 
-  	.t5353ac1c-622c-4608-ada6-8e13730b5d3a.place-top {
+  	.t00000000-0000-0000-0000-000000000000.place-top {
         margin-top: -10px;
     }
-    .t5353ac1c-622c-4608-ada6-8e13730b5d3a.place-top::before {
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
         border-top: 8px solid transparent;
     }
-    .t5353ac1c-622c-4608-ada6-8e13730b5d3a.place-top::after {
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         bottom: -6px;
@@ -54,13 +54,13 @@ Object {
         border-top-width: 6px;
     }
 
-    .t5353ac1c-622c-4608-ada6-8e13730b5d3a.place-bottom {
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
         margin-top: 10px;
     }
-    .t5353ac1c-622c-4608-ada6-8e13730b5d3a.place-bottom::before {
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
         border-bottom: 8px solid transparent;
     }
-    .t5353ac1c-622c-4608-ada6-8e13730b5d3a.place-bottom::after {
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         top: -6px;
@@ -71,13 +71,13 @@ Object {
         border-bottom-width: 6px;
     }
 
-    .t5353ac1c-622c-4608-ada6-8e13730b5d3a.place-left {
+    .t00000000-0000-0000-0000-000000000000.place-left {
         margin-left: -10px;
     }
-    .t5353ac1c-622c-4608-ada6-8e13730b5d3a.place-left::before {
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
         border-left: 8px solid transparent;
     }
-    .t5353ac1c-622c-4608-ada6-8e13730b5d3a.place-left::after {
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
         right: -6px;
@@ -88,13 +88,13 @@ Object {
         border-left-width: 6px;
     }
 
-    .t5353ac1c-622c-4608-ada6-8e13730b5d3a.place-right {
+    .t00000000-0000-0000-0000-000000000000.place-right {
         margin-left: 10px;
     }
-    .t5353ac1c-622c-4608-ada6-8e13730b5d3a.place-right::before {
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
         border-right: 8px solid transparent;
     }
-    .t5353ac1c-622c-4608-ada6-8e13730b5d3a.place-right::after {
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
         left: -6px;
@@ -165,25 +165,25 @@ Object {
         data-css-1urwbxe=""
       >
         <div
-          class="__react_component_tooltip t5353ac1c-622c-4608-ada6-8e13730b5d3a place-bottom type-dark"
+          class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
           data-id="tooltip"
           id="badge-undefined"
         >
           <style>
             
-  	.t5353ac1c-622c-4608-ada6-8e13730b5d3a {
+  	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
 	    border: 1px solid transparent;
   	}
 
-  	.t5353ac1c-622c-4608-ada6-8e13730b5d3a.place-top {
+  	.t00000000-0000-0000-0000-000000000000.place-top {
         margin-top: -10px;
     }
-    .t5353ac1c-622c-4608-ada6-8e13730b5d3a.place-top::before {
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
         border-top: 8px solid transparent;
     }
-    .t5353ac1c-622c-4608-ada6-8e13730b5d3a.place-top::after {
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         bottom: -6px;
@@ -194,13 +194,13 @@ Object {
         border-top-width: 6px;
     }
 
-    .t5353ac1c-622c-4608-ada6-8e13730b5d3a.place-bottom {
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
         margin-top: 10px;
     }
-    .t5353ac1c-622c-4608-ada6-8e13730b5d3a.place-bottom::before {
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
         border-bottom: 8px solid transparent;
     }
-    .t5353ac1c-622c-4608-ada6-8e13730b5d3a.place-bottom::after {
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         top: -6px;
@@ -211,13 +211,13 @@ Object {
         border-bottom-width: 6px;
     }
 
-    .t5353ac1c-622c-4608-ada6-8e13730b5d3a.place-left {
+    .t00000000-0000-0000-0000-000000000000.place-left {
         margin-left: -10px;
     }
-    .t5353ac1c-622c-4608-ada6-8e13730b5d3a.place-left::before {
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
         border-left: 8px solid transparent;
     }
-    .t5353ac1c-622c-4608-ada6-8e13730b5d3a.place-left::after {
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
         right: -6px;
@@ -228,13 +228,13 @@ Object {
         border-left-width: 6px;
     }
 
-    .t5353ac1c-622c-4608-ada6-8e13730b5d3a.place-right {
+    .t00000000-0000-0000-0000-000000000000.place-right {
         margin-left: 10px;
     }
-    .t5353ac1c-622c-4608-ada6-8e13730b5d3a.place-right::before {
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
         border-right: 8px solid transparent;
     }
-    .t5353ac1c-622c-4608-ada6-8e13730b5d3a.place-right::after {
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
         left: -6px;

@@ -22,25 +22,25 @@ exports[`OvertimeBadge renders correctly 1`] = `
       data-css-1urwbxe=""
     >
       <div
-        class="__react_component_tooltip tb6a38d99-f087-47f4-9217-a42be3f9a56b place-bottom type-dark"
+        class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
         data-id="tooltip"
         id="badge-undefined"
       >
         <style>
           
-  	.tb6a38d99-f087-47f4-9217-a42be3f9a56b {
+  	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
 	    border: 1px solid transparent;
   	}
 
-  	.tb6a38d99-f087-47f4-9217-a42be3f9a56b.place-top {
+  	.t00000000-0000-0000-0000-000000000000.place-top {
         margin-top: -10px;
     }
-    .tb6a38d99-f087-47f4-9217-a42be3f9a56b.place-top::before {
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
         border-top: 8px solid transparent;
     }
-    .tb6a38d99-f087-47f4-9217-a42be3f9a56b.place-top::after {
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         bottom: -6px;
@@ -51,13 +51,13 @@ exports[`OvertimeBadge renders correctly 1`] = `
         border-top-width: 6px;
     }
 
-    .tb6a38d99-f087-47f4-9217-a42be3f9a56b.place-bottom {
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
         margin-top: 10px;
     }
-    .tb6a38d99-f087-47f4-9217-a42be3f9a56b.place-bottom::before {
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
         border-bottom: 8px solid transparent;
     }
-    .tb6a38d99-f087-47f4-9217-a42be3f9a56b.place-bottom::after {
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
         top: -6px;
@@ -68,13 +68,13 @@ exports[`OvertimeBadge renders correctly 1`] = `
         border-bottom-width: 6px;
     }
 
-    .tb6a38d99-f087-47f4-9217-a42be3f9a56b.place-left {
+    .t00000000-0000-0000-0000-000000000000.place-left {
         margin-left: -10px;
     }
-    .tb6a38d99-f087-47f4-9217-a42be3f9a56b.place-left::before {
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
         border-left: 8px solid transparent;
     }
-    .tb6a38d99-f087-47f4-9217-a42be3f9a56b.place-left::after {
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
         right: -6px;
@@ -85,13 +85,13 @@ exports[`OvertimeBadge renders correctly 1`] = `
         border-left-width: 6px;
     }
 
-    .tb6a38d99-f087-47f4-9217-a42be3f9a56b.place-right {
+    .t00000000-0000-0000-0000-000000000000.place-right {
         margin-left: 10px;
     }
-    .tb6a38d99-f087-47f4-9217-a42be3f9a56b.place-right::before {
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
         border-right: 8px solid transparent;
     }
-    .tb6a38d99-f087-47f4-9217-a42be3f9a56b.place-right::after {
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
         left: -6px;
