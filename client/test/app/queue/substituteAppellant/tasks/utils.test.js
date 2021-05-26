@@ -147,6 +147,19 @@ describe('utility functions for task manipulation', () => {
           expect(shouldHide(userTaskInfo, poaType, allTasks)).toBe(false);
         });
       });
+    });
+
+    describe('Bva Dispatch task', () => {
+      const userTaskInfo = { taskId: 1, hideFromCaseTimeline: false, type: 'BvaDispatchTask', assignedTo: { isOrganization: false } };
+      const orgTaskInfo = { taskId: 2, hideFromCaseTimeline: true, type: 'BvaDispatchTask', assignedTo: { isOrganization: true } };
+      const allTasks = [orgTaskInfo, userTaskInfo, otherOrgTask, otherUserTask];
+
+      poaType = 'other poa type';
+
+      it('should hide both organization and user Bva Dispatch tasks', () => {
+        expect(shouldHide(userTaskInfo, poaType, allTasks)).toBe(true);
+        expect(shouldHide(orgTaskInfo, poaType, allTasks)).toBe(true);
+      });
 
     });
   });

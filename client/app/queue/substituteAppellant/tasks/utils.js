@@ -89,11 +89,11 @@ export const shouldShowBasedOnOtherTasks = (taskInfo, allTasks) => {
 
 // The following governs which tasks should not actually appear in list of available tasks
 export const shouldHide = (taskInfo, poaType, allTasks) => {
-  return (
-    (automatedTasks.includes(taskInfo.type) ||
-    taskInfo.hideFromCaseTimeline ||
-    shouldHideBasedOnPoaType(taskInfo, poaType)) &&
-    !shouldShowBasedOnOtherTasks(taskInfo, allTasks));
+  if (automatedTasks.includes(taskInfo.type)) {
+    return true;
+  }
+
+  return (taskInfo.hideFromCaseTimeline || shouldHideBasedOnPoaType(taskInfo, poaType)) && !shouldShowBasedOnOtherTasks(taskInfo, allTasks);
 };
 
 export const shouldAutoSelect = (taskInfo) => {
