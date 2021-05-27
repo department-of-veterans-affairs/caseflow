@@ -403,7 +403,6 @@ export const prepareAppealForStore = (appeals) => {
       appellantType: appeal.attributes.appellant_type,
       appellantTz: appeal.attributes.appellant_tz,
       appellantRelationship: appeal.attributes.appellant_relationship,
-      appellantSubstitution: appeal.attributes.appellant_substitution,
       assignedToLocation: appeal.attributes.assigned_to_location,
       veteranDateOfBirth: appeal.attributes.veteran_date_of_birth,
       veteranDateOfDeath: appeal.attributes.veteran_death_date,
