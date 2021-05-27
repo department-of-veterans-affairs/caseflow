@@ -340,7 +340,7 @@ export const timezones = (time, roTimezone) => {
   const ros = roTimezones();
 
   // Convert the time into a date object with the RO timezone
-  const dateTime = moment.tz(time, 'HH:mm', roTimezone)
+  const dateTime = moment.tz(time, 'HH:mm', roTimezone);
 
   // Map the available timeTIMEZONES to a select options object
   const unorderedOptions = Object.keys(TIMEZONES).map((zone) => {
@@ -881,4 +881,3 @@ export const getTimezoneAbbreviation = (timezone) => {
 };
 
 /* eslint-enable camelcase */
-
