@@ -329,17 +329,18 @@ export const roTimezones = () =>
 /**
  * Returns the available timezones options and the count of the available Regional Office timezones
  * @param {string} time -- String representation of the time to convert
+ * @param {string} roTimezone -- String representation of the timezone of the RO selected
  * @returns {Object} -- { options: Array, commonsCount: number }
  */
-export const timezones = (time) => {
+export const timezones = (time, roTimezone) => {
   // Initialize count of common timezones
   let commonsCount = 0;
 
   // Get the list of Regional Office Timezones
   const ros = roTimezones();
 
-  // Convert the time into a date object
-  const dateTime = moment(time, 'HH:mm').tz(COMMON_TIMEZONES[0]);
+  // Convert the time into a date object with the RO timezone
+  const dateTime = moment.tz(time, 'HH:mm', roTimezone);
 
   // Map the available timeTIMEZONES to a select options object
   const unorderedOptions = Object.keys(TIMEZONES).map((zone) => {
@@ -547,7 +548,7 @@ const calculateAvailableTimeslots = ({ numberOfSlots, beginsAt, roTimezone, sche
  * @param {string} availableSlots    -- Array of unfilled slots
  * @param {string} scheduledHearings -- Array of hearings
  **/
-const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings }) => {
+const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings, hearingDayDate }) => {
   const slots = availableSlots.map((slot) => ({
     ...slot,
     key: `${slot?.slotId}-${slot?.time_string}`,
@@ -557,7 +558,7 @@ const combineSlotsAndHearings = ({ roTimezone, availableSlots, scheduledHearings
   }));
 
   const formattedHearings = scheduledHearings.map((hearing) => {
-    const time = moment.tz(hearing?.hearingTime, 'HH:mm', roTimezone).clone().
+    const time = moment.tz(`${hearing?.hearingTime} ${hearingDayDate}`, 'HH:mm YYYY-MM-DD', roTimezone).clone().
       tz('America/New_York');
 
     return {
@@ -661,7 +662,8 @@ export const setTimeSlots = ({
   const slotsAndHearings = combineSlotsAndHearings({
     roTimezone,
     availableSlots,
-    scheduledHearings
+    scheduledHearings,
+    hearingDayDate
   });
 
   return displaySelectedTimeAsSlot({ selected, slotsAndHearings });
@@ -879,4 +881,3 @@ export const getTimezoneAbbreviation = (timezone) => {
 };
 
 /* eslint-enable camelcase */
-
