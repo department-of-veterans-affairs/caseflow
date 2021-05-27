@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require "helpers/sanitized_json_configuration.rb"
+require "helpers/sanitized_json_importer.rb"
+
 # Import from sanitized_json/ directory.
 # Based on the SanitizedJsonExporter:
 #  https://github.com/department-of-veterans-affairs/caseflow/wiki/Exporting-and-Importing-Appeals
