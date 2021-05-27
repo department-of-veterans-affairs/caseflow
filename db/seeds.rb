@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require "database_cleaner"
+require "helpers/sanitized_json_configuration.rb"
+require "helpers/sanitized_json_importer.rb"
 
 # because db/seeds is not in the autoload path, we must load them explicitly here
 Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
