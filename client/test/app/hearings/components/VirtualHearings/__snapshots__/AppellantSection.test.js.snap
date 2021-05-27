@@ -886,6 +886,7 @@ SAN FRANCISCO, CA 94103
           onChange={[Function]}
           readOnly={false}
           required={true}
+          roTimezone="America/New_York"
           time="06:00"
           value="America/Denver"
         >
