@@ -16,22 +16,29 @@ import COPY from '../../../COPY';
 import LoadingLabel from './LoadingLabel';
 import SearchableDropdown from '../SearchableDropdown';
 
-export const HearingDateLabel = ({ date, scheduled, vlj }) => {
+export const HearingDateLabel = ({ date, requestType, scheduled, detail }) => {
   return (
     <React.Fragment>
       <strong>{date}</strong>
       <Dot spacing={5} />{' '}
-      {scheduled}
+      {requestType}
       <Dot spacing={5} />{' '}
-      {vlj}
+      {scheduled}
+      {detail && (
+        <React.Fragment>
+          <Dot spacing={5} />{' '}
+          {detail}
+        </React.Fragment>
+      )}
     </React.Fragment>
   );
 };
 
 HearingDateLabel.propTypes = {
   scheduled: PropTypes.string.isRequired,
+  requestType: PropTypes.string,
   date: PropTypes.string,
-  vlj: PropTypes.string,
+  detail: PropTypes.string,
 };
 
 export const HearingDateDropdown = (props) => {
@@ -76,9 +83,10 @@ export const HearingDateDropdown = (props) => {
           map((hearingDate) => ({
             label: (
               <HearingDateLabel
+                requestType={hearingDate.requestType}
                 date={formatDateStr(hearingDate.scheduledFor, 'YYYY-MM-DD', 'ddd MMM D')}
                 scheduled={`${hearingDate.filledSlots} of ${ hearingDate.totalSlots } scheduled`}
-                vlj={hearingDate.vlj}
+                detail={hearingDate.vlj || hearingDate.roomLabel}
               />
             ),
             value: {
