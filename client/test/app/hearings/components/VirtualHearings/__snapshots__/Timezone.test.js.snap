@@ -47134,9 +47134,13 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
           id="timezone-label"
         >
           <strong>
-            <span>
-              Timezone
-            </span>
+            <FormLabel
+              name="Timezone"
+            >
+              <span>
+                Timezone
+              </span>
+            </FormLabel>
           </strong>
         </label>
         <div

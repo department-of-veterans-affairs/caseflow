@@ -253,7 +253,6 @@ exports[`CaseWorkerIndex renders correctly 1`] = `
                     >
                       <DropdownMenu
                         analyticsTitle="Dispatch Navbar"
-                        ariaLabel="Logged in as undefined"
                       >
                         <div
                           className="cf-dropdown"
@@ -262,13 +261,11 @@ exports[`CaseWorkerIndex renders correctly 1`] = `
                           <a
                             aria-expanded={false}
                             aria-haspopup="menu"
-                            aria-label="Logged in as undefined"
                             className="cf-dropdown-trigger"
                             data-css-1oange6=""
                             href="#undefined"
                             id="menu-trigger"
                             onClick={[Function]}
-                            role="button"
                           />
                         </div>
                       </DropdownMenu>
