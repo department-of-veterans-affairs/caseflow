@@ -9468,6 +9468,7 @@ SAN FRANCISCO, CA 94103
                 onChange={[Function]}
                 readOnly={false}
                 required={true}
+                roTimezone="America/New_York"
                 time="03:30"
                 value="America/Denver"
               >
@@ -25841,6 +25842,7 @@ SAN FRANCISCO, CA 94103
                 onChange={[Function]}
                 readOnly={false}
                 required={true}
+                roTimezone="America/New_York"
                 time="03:30"
                 value="America/Los_Angeles"
               >
