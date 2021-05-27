@@ -1,12 +1,12 @@
 {
   "metadata": {
-    "exported_at": "2021-05-26 19:44:04 UTC",
-    "purpose": "realistic data backport"
+    "exported_at": "2021-05-27 15:45:14 UTC",
+    "purpose": "CASEFLOW-1638 backport"
   },
   "appeals": [
     {
       "id": 112569,
-      "veteran_file_number": "000387143",
+      "veteran_file_number": "000129065",
       "receipt_date": "2020-06-25",
       "docket_type": "evidence_submission",
       "established_at": "2020-12-29 16:19:53 UTC",
@@ -35,14 +35,14 @@
   "veterans": [
     {
       "id": 883615,
-      "file_number": "000387143",
+      "file_number": "000129065",
       "participant_id": "51501412",
-      "first_name": "Dewayne",
-      "last_name": "Pagac",
+      "first_name": "Daryl",
+      "last_name": "Osinski",
       "middle_name": null,
       "name_suffix": null,
       "closest_regional_office": null,
-      "ssn": "000472791",
+      "ssn": "000123427",
       "created_at": "2020-10-13 18:13:27 UTC",
       "updated_at": "2021-05-25 20:44:07 UTC",
       "date_of_death": "2020-08-15",
@@ -56,7 +56,7 @@
       "detail_id": 112569,
       "detail_type": "Appeal",
       "user_id": 8363,
-      "veteran_file_number": "000387143",
+      "veteran_file_number": "000129065",
       "started_at": "2020-12-29 16:16:05 UTC",
       "completed_at": "2020-12-29 16:19:55 UTC",
       "completion_status": "success",
@@ -73,7 +73,7 @@
     {
       "id": 149684,
       "appeal_id": 112569,
-      "citation_number": "A00581071",
+      "citation_number": "A00491071",
       "decision_date": "2021-01-14",
       "redacted_document_location": "\\\\vacohsm01.dva.va.gov\\vaco_workgroups\\BVA\\archdata\\arch2101\\A21001071.txt",
       "created_at": "2021-01-14 18:48:46 UTC",
@@ -533,8 +533,8 @@
       "id": 1296,
       "station_id": "101",
       "css_id": "KILCOYNBVAM",
-      "full_name": "Rep. Taylor Heller",
-      "email": "tanner_feil@ernser.io",
+      "full_name": "Reid Kulas",
+      "email": "kecia_effertz@bergnaum-cole.name",
       "roles": [
         "Reader",
         "Hearing Prep"
@@ -542,8 +542,8 @@
       "selected_regional_office": null,
       "last_login_at": "2021-05-26 00:22:45 UTC",
       "created_at": "2019-02-19 00:00:00 UTC",
-      "updated_at": "2021-05-26 00:22:45 UTC",
-      "efolder_documents_fetched_at": "2021-05-23 22:40:36 UTC",
+      "updated_at": "2021-05-27 15:20:36 UTC",
+      "efolder_documents_fetched_at": "2021-05-27 15:20:36 UTC",
       "status": "active",
       "status_updated_at": null
     },
@@ -551,17 +551,17 @@
       "id": 1310,
       "station_id": "101",
       "css_id": "ADAMSONBVAA",
-      "full_name": "Reynaldo Mohr",
-      "email": "dalton@carroll.com",
+      "full_name": "Fumiko Osinski",
+      "email": "teodoro@cruickshank.co",
       "roles": [
         "Reader",
         "Hearing Prep"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-26 19:42:29 UTC",
+      "last_login_at": "2021-05-27 14:33:54 UTC",
       "created_at": "2019-02-19 00:00:00 UTC",
-      "updated_at": "2021-05-26 19:42:29 UTC",
-      "efolder_documents_fetched_at": "2021-05-23 15:20:37 UTC",
+      "updated_at": "2021-05-27 14:33:54 UTC",
+      "efolder_documents_fetched_at": "2021-05-27 06:40:37 UTC",
       "status": "active",
       "status_updated_at": null
     },
@@ -569,16 +569,17 @@
       "id": 1353,
       "station_id": "101",
       "css_id": "BRENNBVAD",
-      "full_name": "Rep. Lucia Lueilwitz",
-      "email": "darnell_zboncak@schmitt.org",
+      "full_name": "Milda Hoeger",
+      "email": "pierre@will-dickens.com",
       "roles": [
-        "Reader",
-        "Hearing Prep"
+        "User",
+        "Hearing Prep",
+        "Reader"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-26 19:29:04 UTC",
+      "last_login_at": "2021-05-26 20:40:46 UTC",
       "created_at": "2019-02-19 00:00:00 UTC",
-      "updated_at": "2021-05-26 19:29:04 UTC",
+      "updated_at": "2021-05-26 20:43:05 UTC",
       "efolder_documents_fetched_at": "2021-05-24 14:25:37 UTC",
       "status": "active",
       "status_updated_at": null
@@ -587,8 +588,8 @@
       "id": 1600,
       "station_id": "101",
       "css_id": "BRAYWVACO",
-      "full_name": "Aliza Lowe",
-      "email": "giuseppina@kertzmann-zemlak.org",
+      "full_name": "Natalie Kemmer",
+      "email": "sacha_pouros@robel.biz",
       "roles": [
         "Download eFolder",
         "Reader"
@@ -605,16 +606,16 @@
       "id": 1769,
       "station_id": "101",
       "css_id": "WILLIAMSBVAC",
-      "full_name": "Rich Konopelski",
-      "email": "valentine_larson@buckridge.org",
+      "full_name": "Noel Waters",
+      "email": "stephan.marquardt@green.com",
       "roles": [
         "Reader",
         "Mail Intake"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-26 10:41:28 UTC",
+      "last_login_at": "2021-05-27 10:19:08 UTC",
       "created_at": "2019-02-19 00:00:00 UTC",
-      "updated_at": "2021-05-26 10:41:28 UTC",
+      "updated_at": "2021-05-27 10:19:08 UTC",
       "efolder_documents_fetched_at": "2021-05-26 07:25:37 UTC",
       "status": "active",
       "status_updated_at": null
@@ -623,15 +624,15 @@
       "id": 2111,
       "station_id": "101",
       "css_id": "MUMFORDBVAP",
-      "full_name": "Brandon O'Reilly",
-      "email": "mitsuko@kunze.name",
+      "full_name": "Ghislaine Schmeler Jr.",
+      "email": "reginia@volkman.com",
       "roles": [
         "Reader"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-26 19:35:19 UTC",
+      "last_login_at": "2021-05-27 15:44:21 UTC",
       "created_at": "2019-02-19 00:00:00 UTC",
-      "updated_at": "2021-05-26 19:35:19 UTC",
+      "updated_at": "2021-05-27 15:44:21 UTC",
       "efolder_documents_fetched_at": "2021-05-24 03:50:37 UTC",
       "status": "active",
       "status_updated_at": null
@@ -640,17 +641,17 @@
       "id": 6169,
       "station_id": "101",
       "css_id": "BERGERVACO",
-      "full_name": "Monroe Funk",
-      "email": "kimbery@kub-prohaska.co",
+      "full_name": "Lucio Predovic",
+      "email": "stephani@wolff-bogisich.co",
       "roles": [
         "Reader",
         "Mail Intake",
         "Edit HearSched"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-26 19:36:35 UTC",
+      "last_login_at": "2021-05-27 15:34:56 UTC",
       "created_at": "2019-03-29 17:59:02 UTC",
-      "updated_at": "2021-05-26 19:36:35 UTC",
+      "updated_at": "2021-05-27 15:34:56 UTC",
       "efolder_documents_fetched_at": "2021-05-24 00:10:36 UTC",
       "status": "active",
       "status_updated_at": null
@@ -659,16 +660,16 @@
       "id": 8363,
       "station_id": "101",
       "css_id": "WOOLFQVACO",
-      "full_name": "Fr. Alice Green",
-      "email": "colton_zboncak@hudson.co",
+      "full_name": "Tawana Wilderman",
+      "email": "willy@christiansen.org",
       "roles": [
         "Reader",
         "Mail Intake"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-26 19:40:28 UTC",
+      "last_login_at": "2021-05-27 15:24:50 UTC",
       "created_at": "2019-05-06 11:07:02 UTC",
-      "updated_at": "2021-05-26 19:40:28 UTC",
+      "updated_at": "2021-05-27 15:24:50 UTC",
       "efolder_documents_fetched_at": "2021-05-23 23:25:36 UTC",
       "status": "active",
       "status_updated_at": null
@@ -677,151 +678,19 @@
       "id": 12305,
       "station_id": "101",
       "css_id": "MILLEK2VACO",
-      "full_name": "Corliss Dach",
-      "email": "kurtis@hegmann.co",
+      "full_name": "The Hon. Karry Klocko",
+      "email": "jae@price.net",
       "roles": [
         "Reader",
         "Mail Intake"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-26 18:34:33 UTC",
+      "last_login_at": "2021-05-27 15:16:03 UTC",
       "created_at": "2019-09-26 10:25:58 UTC",
-      "updated_at": "2021-05-26 19:15:36 UTC",
+      "updated_at": "2021-05-27 15:16:03 UTC",
       "efolder_documents_fetched_at": "2021-05-26 19:15:36 UTC",
       "status": "active",
       "status_updated_at": null
-    }
-  ],
-  "organizations": [
-    {
-      "id": 2,
-      "type": "Bva",
-      "name": "Board of Veterans' Appeals",
-      "role": null,
-      "url": "bva",
-      "participant_id": null,
-      "created_at": null,
-      "updated_at": null,
-      "status": "active",
-      "status_updated_at": null,
-      "accepts_priority_pushed_cases": null
-    },
-    {
-      "id": 18,
-      "type": "MailTeam",
-      "name": "Mail",
-      "role": null,
-      "url": "mail",
-      "participant_id": null,
-      "created_at": null,
-      "updated_at": null,
-      "status": "active",
-      "status_updated_at": null,
-      "accepts_priority_pushed_cases": null
-    },
-    {
-      "id": 19,
-      "type": "BvaDispatch",
-      "name": "Board Dispatch",
-      "role": null,
-      "url": "board-dispatch",
-      "participant_id": null,
-      "created_at": null,
-      "updated_at": null,
-      "status": "active",
-      "status_updated_at": null,
-      "accepts_priority_pushed_cases": null
-    },
-    {
-      "id": 23,
-      "type": "Colocated",
-      "name": "VLJ Support Staff",
-      "role": null,
-      "url": "vlj-support-staff",
-      "participant_id": null,
-      "created_at": null,
-      "updated_at": null,
-      "status": "active",
-      "status_updated_at": null,
-      "accepts_priority_pushed_cases": null
-    },
-    {
-      "id": 175,
-      "type": "JudgeTeam",
-      "name": "BVAMKILCOYN",
-      "role": null,
-      "url": "bvamkilcoyn",
-      "participant_id": null,
-      "created_at": null,
-      "updated_at": null,
-      "status": "active",
-      "status_updated_at": null,
-      "accepts_priority_pushed_cases": true
-    },
-    {
-      "id": 471,
-      "type": "DvcTeam",
-      "name": "BVAKOSBORNE",
-      "role": null,
-      "url": "bvakosborne-dvc-team",
-      "participant_id": null,
-      "created_at": "2020-09-08 14:01:49 UTC",
-      "updated_at": "2020-09-08 14:01:49 UTC",
-      "status": "active",
-      "status_updated_at": null,
-      "accepts_priority_pushed_cases": null
-    },
-    {
-      "id": 228,
-      "type": "JudgeTeam",
-      "name": "BVADBRENN",
-      "role": null,
-      "url": "bvadbrenn",
-      "participant_id": null,
-      "created_at": null,
-      "updated_at": null,
-      "status": "active",
-      "status_updated_at": null,
-      "accepts_priority_pushed_cases": true
-    },
-    {
-      "id": 229,
-      "type": "JudgeTeam",
-      "name": "VACOMCLEOK1",
-      "role": null,
-      "url": "vacomcleok1",
-      "participant_id": null,
-      "created_at": null,
-      "updated_at": "2020-09-14 16:55:21 UTC",
-      "status": "active",
-      "status_updated_at": null,
-      "accepts_priority_pushed_cases": false
-    },
-    {
-      "id": 330,
-      "type": "CaseReview",
-      "name": "Case Review",
-      "role": null,
-      "url": "case-review",
-      "participant_id": null,
-      "created_at": null,
-      "updated_at": "2020-04-10 14:48:18 UTC",
-      "status": "active",
-      "status_updated_at": null,
-      "accepts_priority_pushed_cases": null
-    },
-    {
-      "id": 461,
-      "type": "BvaIntake",
-      "name": "BVA Intake",
-      "role": null,
-      "url": "bva-intake",
-      "participant_id": null,
-      "created_at": "2020-04-10 16:59:42 UTC",
-      "updated_at": "2020-04-10 16:59:42 UTC",
-      "status": "active",
-      "status_updated_at": null,
-      "accepts_priority_pushed_cases": null
     }
   ],
   "organizations_users": [
@@ -962,19 +831,151 @@
       "updated_at": "2020-12-14 11:23:56 UTC"
     }
   ],
+  "organizations": [
+    {
+      "id": 2,
+      "type": "Bva",
+      "name": "Board of Veterans' Appeals",
+      "role": null,
+      "url": "bva",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null
+    },
+    {
+      "id": 18,
+      "type": "MailTeam",
+      "name": "Mail",
+      "role": null,
+      "url": "mail",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null
+    },
+    {
+      "id": 19,
+      "type": "BvaDispatch",
+      "name": "Board Dispatch",
+      "role": null,
+      "url": "board-dispatch",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null
+    },
+    {
+      "id": 23,
+      "type": "Colocated",
+      "name": "VLJ Support Staff",
+      "role": null,
+      "url": "vlj-support-staff",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null
+    },
+    {
+      "id": 175,
+      "type": "JudgeTeam",
+      "name": "BVAMKILCOYN",
+      "role": null,
+      "url": "bvamkilcoyn",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": true
+    },
+    {
+      "id": 228,
+      "type": "JudgeTeam",
+      "name": "BVADBRENN",
+      "role": null,
+      "url": "bvadbrenn",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": true
+    },
+    {
+      "id": 229,
+      "type": "JudgeTeam",
+      "name": "VACOMCLEOK1",
+      "role": null,
+      "url": "vacomcleok1",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": "2020-09-14 16:55:21 UTC",
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": false
+    },
+    {
+      "id": 330,
+      "type": "CaseReview",
+      "name": "Case Review",
+      "role": null,
+      "url": "case-review",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": "2020-04-10 14:48:18 UTC",
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null
+    },
+    {
+      "id": 461,
+      "type": "BvaIntake",
+      "name": "BVA Intake",
+      "role": null,
+      "url": "bva-intake",
+      "participant_id": null,
+      "created_at": "2020-04-10 16:59:42 UTC",
+      "updated_at": "2020-04-10 16:59:42 UTC",
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null
+    },
+    {
+      "id": 471,
+      "type": "DvcTeam",
+      "name": "BVAKOSBORNE",
+      "role": null,
+      "url": "bvakosborne-dvc-team",
+      "participant_id": null,
+      "created_at": "2020-09-08 14:01:49 UTC",
+      "updated_at": "2020-09-08 14:01:49 UTC",
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null
+    }
+  ],
   "people": [
     {
       "id": 643495,
       "participant_id": "51501412",
-      "date_of_birth": "1927-07-21",
+      "date_of_birth": "1927-02-01",
       "created_at": "2020-12-29 16:16:38 UTC",
       "updated_at": "2020-12-29 16:16:39 UTC",
-      "first_name": "Winnie",
-      "last_name": "Gerhold",
+      "first_name": "Mellisa",
+      "last_name": "Sauer",
       "middle_name": null,
       "name_suffix": null,
       "email_address": null,
-      "ssn": "000472791"
+      "ssn": "000123427"
     }
   ]
 }

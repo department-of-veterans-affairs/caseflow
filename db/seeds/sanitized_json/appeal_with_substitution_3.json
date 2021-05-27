@@ -1,12 +1,12 @@
 {
   "metadata": {
-    "exported_at": "2021-05-26 19:43:26 UTC",
-    "purpose": "realistic data backport"
+    "exported_at": "2021-05-27 15:45:14 UTC",
+    "purpose": "CASEFLOW-1638 backport"
   },
   "appeals": [
     {
       "id": 112617,
-      "veteran_file_number": "000155369",
+      "veteran_file_number": "000703563",
       "receipt_date": "2020-08-05",
       "docket_type": "direct_review",
       "established_at": "2020-12-29 17:38:53 UTC",
@@ -35,14 +35,14 @@
   "veterans": [
     {
       "id": 440476,
-      "file_number": "000155369",
+      "file_number": "000703563",
       "participant_id": "46778986",
-      "first_name": "Shakita",
-      "last_name": "Streich",
-      "middle_name": "Z",
+      "first_name": "Wilhemina",
+      "last_name": "Jenkins",
+      "middle_name": "V",
       "name_suffix": null,
       "closest_regional_office": null,
-      "ssn": "000376408",
+      "ssn": "000465654",
       "created_at": "2019-09-27 15:02:16 UTC",
       "updated_at": "2021-05-25 20:42:28 UTC",
       "date_of_death": "2020-10-20",
@@ -56,7 +56,7 @@
       "detail_id": 112617,
       "detail_type": "Appeal",
       "user_id": 8363,
-      "veteran_file_number": "000155369",
+      "veteran_file_number": "000703563",
       "started_at": "2020-12-29 17:37:53 UTC",
       "completed_at": "2020-12-29 17:38:56 UTC",
       "completion_status": "success",
@@ -73,7 +73,7 @@
     {
       "id": 149089,
       "appeal_id": 112617,
-      "citation_number": "A00240871",
+      "citation_number": "A00770871",
       "decision_date": "2021-01-13",
       "redacted_document_location": "\\\\vacohsm01.dva.va.gov\\vaco_workgroups\\BVA\\archdata\\arch2101\\A21000871.txt",
       "created_at": "2021-01-13 15:40:18 UTC",
@@ -456,8 +456,8 @@
       "id": 803,
       "station_id": "101",
       "css_id": "WALLACEBVAM",
-      "full_name": "Antonia Braun",
-      "email": "jonah@luettgen.co",
+      "full_name": "Trey Green",
+      "email": "hassan@west.info",
       "roles": [
         "Download eFolder",
         "Manage Claims Establishme",
@@ -465,9 +465,9 @@
         "Mail Intake"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-26 19:36:20 UTC",
+      "last_login_at": "2021-05-26 19:51:42 UTC",
       "created_at": "2019-02-19 00:00:00 UTC",
-      "updated_at": "2021-05-26 19:36:20 UTC",
+      "updated_at": "2021-05-26 19:51:42 UTC",
       "efolder_documents_fetched_at": "2021-05-25 11:30:37 UTC",
       "status": "active",
       "status_updated_at": null
@@ -476,16 +476,17 @@
       "id": 1353,
       "station_id": "101",
       "css_id": "BRENNBVAD",
-      "full_name": "Owen Dietrich",
-      "email": "daryl@pollich.com",
+      "full_name": "Burt DuBuque",
+      "email": "bryan_pollich@mertz-corwin.co",
       "roles": [
-        "Reader",
-        "Hearing Prep"
+        "User",
+        "Hearing Prep",
+        "Reader"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-26 19:29:04 UTC",
+      "last_login_at": "2021-05-26 20:40:46 UTC",
       "created_at": "2019-02-19 00:00:00 UTC",
-      "updated_at": "2021-05-26 19:29:04 UTC",
+      "updated_at": "2021-05-26 20:43:05 UTC",
       "efolder_documents_fetched_at": "2021-05-24 14:25:37 UTC",
       "status": "active",
       "status_updated_at": null
@@ -494,16 +495,16 @@
       "id": 8363,
       "station_id": "101",
       "css_id": "WOOLFQVACO",
-      "full_name": "Toby Nienow JD",
-      "email": "violette_rolfson@ankunding.info",
+      "full_name": "Manuel Muller Sr.",
+      "email": "titus@cole.name",
       "roles": [
         "Reader",
         "Mail Intake"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-26 19:40:28 UTC",
+      "last_login_at": "2021-05-27 15:24:50 UTC",
       "created_at": "2019-05-06 11:07:02 UTC",
-      "updated_at": "2021-05-26 19:40:28 UTC",
+      "updated_at": "2021-05-27 15:24:50 UTC",
       "efolder_documents_fetched_at": "2021-05-23 23:25:36 UTC",
       "status": "active",
       "status_updated_at": null
@@ -512,16 +513,16 @@
       "id": 16615,
       "station_id": "101",
       "css_id": "ADAMSD2VACO",
-      "full_name": "Liberty O'Keefe",
-      "email": "manual_steuber@pagac.com",
+      "full_name": "Ross Konopelski",
+      "email": "cristin.heathcote@kuhn.name",
       "roles": [
         "Reader",
         "Mail Intake"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-26 15:43:27 UTC",
+      "last_login_at": "2021-05-27 15:40:45 UTC",
       "created_at": "2020-07-23 19:25:59 UTC",
-      "updated_at": "2021-05-26 15:43:27 UTC",
+      "updated_at": "2021-05-27 15:40:45 UTC",
       "efolder_documents_fetched_at": "2021-05-24 01:20:36 UTC",
       "status": "active",
       "status_updated_at": null
@@ -530,19 +531,93 @@
       "id": 16654,
       "station_id": "101",
       "css_id": "LEONAJVACO",
-      "full_name": "Jeromy Bayer",
-      "email": "willodean.ullrich@ankunding.net",
+      "full_name": "Kasey Goodwin Jr.",
+      "email": "britteny@braun.info",
       "roles": [
         "Reader",
         "Mail Intake"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-26 19:38:39 UTC",
+      "last_login_at": "2021-05-27 15:37:18 UTC",
       "created_at": "2020-07-27 18:53:56 UTC",
-      "updated_at": "2021-05-26 19:38:39 UTC",
+      "updated_at": "2021-05-27 15:37:18 UTC",
       "efolder_documents_fetched_at": "2021-05-24 18:15:36 UTC",
       "status": "active",
       "status_updated_at": null
+    }
+  ],
+  "organizations_users": [
+    {
+      "id": 22,
+      "organization_id": 23,
+      "user_id": 803,
+      "admin": false,
+      "created_at": null,
+      "updated_at": "2020-12-21 17:05:21 UTC"
+    },
+    {
+      "id": 6818,
+      "organization_id": 18,
+      "user_id": 8363,
+      "admin": false,
+      "created_at": "2020-04-09 15:53:17 UTC",
+      "updated_at": "2020-04-09 15:53:17 UTC"
+    },
+    {
+      "id": 6784,
+      "organization_id": 330,
+      "user_id": 8363,
+      "admin": false,
+      "created_at": "2020-04-08 13:00:33 UTC",
+      "updated_at": "2020-04-08 13:00:33 UTC"
+    },
+    {
+      "id": 3438,
+      "organization_id": 229,
+      "user_id": 1353,
+      "admin": false,
+      "created_at": "2019-04-29 18:33:54 UTC",
+      "updated_at": "2019-04-29 18:33:54 UTC"
+    },
+    {
+      "id": 2377,
+      "organization_id": 228,
+      "user_id": 1353,
+      "admin": true,
+      "created_at": "2019-03-05 16:22:54 UTC",
+      "updated_at": "2019-03-05 16:22:54 UTC"
+    },
+    {
+      "id": 8419,
+      "organization_id": 471,
+      "user_id": 1353,
+      "admin": false,
+      "created_at": "2020-09-09 14:34:52 UTC",
+      "updated_at": "2020-09-09 14:34:52 UTC"
+    },
+    {
+      "id": 7125,
+      "organization_id": 461,
+      "user_id": 8363,
+      "admin": false,
+      "created_at": "2020-04-29 14:10:49 UTC",
+      "updated_at": "2020-04-29 14:10:49 UTC"
+    },
+    {
+      "id": 8082,
+      "organization_id": 19,
+      "user_id": 16615,
+      "admin": false,
+      "created_at": "2020-08-05 11:20:43 UTC",
+      "updated_at": "2020-08-05 11:20:43 UTC"
+    },
+    {
+      "id": 8187,
+      "organization_id": 228,
+      "user_id": 16654,
+      "admin": false,
+      "created_at": "2020-08-13 19:12:45 UTC",
+      "updated_at": "2020-08-13 19:12:45 UTC"
     }
   ],
   "organizations": [
@@ -625,19 +700,6 @@
       "accepts_priority_pushed_cases": false
     },
     {
-      "id": 471,
-      "type": "DvcTeam",
-      "name": "BVAKOSBORNE",
-      "role": null,
-      "url": "bvakosborne-dvc-team",
-      "participant_id": null,
-      "created_at": "2020-09-08 14:01:49 UTC",
-      "updated_at": "2020-09-08 14:01:49 UTC",
-      "status": "active",
-      "status_updated_at": null,
-      "accepts_priority_pushed_cases": null
-    },
-    {
       "id": 330,
       "type": "CaseReview",
       "name": "Case Review",
@@ -662,95 +724,34 @@
       "status": "active",
       "status_updated_at": null,
       "accepts_priority_pushed_cases": null
-    }
-  ],
-  "organizations_users": [
-    {
-      "id": 22,
-      "organization_id": 23,
-      "user_id": 803,
-      "admin": false,
-      "created_at": null,
-      "updated_at": "2020-12-21 17:05:21 UTC"
     },
     {
-      "id": 6818,
-      "organization_id": 18,
-      "user_id": 8363,
-      "admin": false,
-      "created_at": "2020-04-09 15:53:17 UTC",
-      "updated_at": "2020-04-09 15:53:17 UTC"
-    },
-    {
-      "id": 6784,
-      "organization_id": 330,
-      "user_id": 8363,
-      "admin": false,
-      "created_at": "2020-04-08 13:00:33 UTC",
-      "updated_at": "2020-04-08 13:00:33 UTC"
-    },
-    {
-      "id": 3438,
-      "organization_id": 229,
-      "user_id": 1353,
-      "admin": false,
-      "created_at": "2019-04-29 18:33:54 UTC",
-      "updated_at": "2019-04-29 18:33:54 UTC"
-    },
-    {
-      "id": 2377,
-      "organization_id": 228,
-      "user_id": 1353,
-      "admin": true,
-      "created_at": "2019-03-05 16:22:54 UTC",
-      "updated_at": "2019-03-05 16:22:54 UTC"
-    },
-    {
-      "id": 8419,
-      "organization_id": 471,
-      "user_id": 1353,
-      "admin": false,
-      "created_at": "2020-09-09 14:34:52 UTC",
-      "updated_at": "2020-09-09 14:34:52 UTC"
-    },
-    {
-      "id": 7125,
-      "organization_id": 461,
-      "user_id": 8363,
-      "admin": false,
-      "created_at": "2020-04-29 14:10:49 UTC",
-      "updated_at": "2020-04-29 14:10:49 UTC"
-    },
-    {
-      "id": 8082,
-      "organization_id": 19,
-      "user_id": 16615,
-      "admin": false,
-      "created_at": "2020-08-05 11:20:43 UTC",
-      "updated_at": "2020-08-05 11:20:43 UTC"
-    },
-    {
-      "id": 8187,
-      "organization_id": 228,
-      "user_id": 16654,
-      "admin": false,
-      "created_at": "2020-08-13 19:12:45 UTC",
-      "updated_at": "2020-08-13 19:12:45 UTC"
+      "id": 471,
+      "type": "DvcTeam",
+      "name": "BVAKOSBORNE",
+      "role": null,
+      "url": "bvakosborne-dvc-team",
+      "participant_id": null,
+      "created_at": "2020-09-08 14:01:49 UTC",
+      "updated_at": "2020-09-08 14:01:49 UTC",
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null
     }
   ],
   "people": [
     {
       "id": 156902,
       "participant_id": "46778986",
-      "date_of_birth": "1940-03-05",
+      "date_of_birth": "1939-12-01",
       "created_at": "2019-09-27 15:02:46 UTC",
       "updated_at": "2020-12-29 17:38:23 UTC",
-      "first_name": "Garth",
-      "last_name": "Larson",
-      "middle_name": "B",
+      "first_name": "Lonnie",
+      "last_name": "Reichert",
+      "middle_name": "J",
       "name_suffix": null,
       "email_address": null,
-      "ssn": "000376408"
+      "ssn": "000465654"
     }
   ]
 }
