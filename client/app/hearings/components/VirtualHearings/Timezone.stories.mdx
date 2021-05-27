@@ -9,6 +9,7 @@ import HEARING_TIME_OPTIONS from "../../../../constants/HEARING_TIME_OPTIONS";
 import { COMMON_TIMEZONES } from "../../../constants/AppConstants";
 
 export const defaultProps = {};
+const defaultRoTimezone = 'America/New_York'
 
 <Meta
   title="Hearings/Components/Virtual Hearings/Timezone"
@@ -29,6 +30,7 @@ export const defaultProps = {};
               HEARING_TIME_OPTIONS.map((opt) => opt.value),
               "08:30"
             )}
+            roTimezone={defaultRoTimezone}
             value={value}
             onChange={setValue}
           />
@@ -53,6 +55,7 @@ export const defaultProps = {};
               HEARING_TIME_OPTIONS.map((opt) => opt.value),
               "08:30"
             )}
+            roTimezone={defaultRoTimezone}
             value={value}
             onChange={setValue}
           />
@@ -77,6 +80,7 @@ export const defaultProps = {};
               HEARING_TIME_OPTIONS.map((opt) => opt.value),
               "08:30"
             )}
+            roTimezone={defaultRoTimezone}
             value={value}
             onChange={setValue}
           />
@@ -100,6 +104,7 @@ export const defaultProps = {};
               HEARING_TIME_OPTIONS.map((opt) => opt.value),
               "08:30"
             )}
+            roTimezone={defaultRoTimezone}
             value={value}
             onChange={setValue}
           />
