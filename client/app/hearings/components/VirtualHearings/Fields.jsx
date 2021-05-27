@@ -15,7 +15,8 @@ export const VirtualHearingFields = ({
   virtualHearing,
   readOnly,
   update,
-  time
+  time,
+  roTimezone
 }) => {
   return (
     <React.Fragment>
@@ -29,6 +30,7 @@ export const VirtualHearingFields = ({
             onChange={(appellantTz) => update('virtualHearing', { appellantTz })}
             readOnly={readOnly}
             time={time}
+            roTimezone={roTimezone}
             name="appellantTz"
             label={`${appellantTitle} Timezone`}
           />
@@ -57,6 +59,7 @@ export const VirtualHearingFields = ({
             onChange={(representativeTz) => update('virtualHearing', { representativeTz })}
             readOnly={readOnly || !virtualHearing?.representativeEmail}
             time={time}
+            roTimezone={roTimezone}
             name="representativeTz"
             label="POA/Representative Timezone"
           />
@@ -90,6 +93,7 @@ export const VirtualHearingFields = ({
 VirtualHearingFields.propTypes = {
   requestType: PropTypes.string.isRequired,
   time: PropTypes.string.isRequired,
+  roTimezone: PropTypes.string.isRequired,
   appellantTitle: PropTypes.string.isRequired,
   readOnly: PropTypes.bool,
   update: PropTypes.func,
