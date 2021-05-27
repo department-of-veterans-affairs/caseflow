@@ -126,8 +126,9 @@ class SanitizedJsonConfiguration
       Organization => {
         track_imported_ids: true,
         retrieval: lambda do |records|
-          Organization.unscoped.where(id: records[OrganizationsUser].map(&:organization_id)) +
-            records[Task].assigned_to_org.map(&:assigned_to)
+          orgs = Organization.unscoped.where(id: records[OrganizationsUser].map(&:organization_id)) +
+                 records[Task].assigned_to_org.map(&:assigned_to)
+          orgs.uniq.compact.sort_by(&:id)
         end
       },
       Person => {
