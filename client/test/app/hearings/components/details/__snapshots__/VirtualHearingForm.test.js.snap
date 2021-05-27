@@ -1009,6 +1009,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
           appellantTitle="Veteran"
           readOnly={false}
           requestType="Central"
+          roTimezone="America/New_York"
           time="03:30"
           update={[MockFunction]}
           virtualHearing={
@@ -1046,6 +1047,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                 onChange={[Function]}
                 readOnly={false}
                 required={true}
+                roTimezone="America/New_York"
                 time="03:30"
                 value="America/Denver"
               >
@@ -17234,6 +17236,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                 onChange={[Function]}
                 readOnly={false}
                 required={true}
+                roTimezone="America/New_York"
                 time="03:30"
                 value="America/Los_Angeles"
               >
