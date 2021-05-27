@@ -73,27 +73,24 @@ export const HearingDateDropdown = (props) => {
         // format data
         const jsonResponse = ApiUtil.convertToCamelCase(resp.body);
         const dateOptionsForRO = values(jsonResponse.hearingDays).
-          map((hearingDate) => {
-            console.log('===========', hearingDate.scheduledFor);
-
-            return {
-              label: (
-                <HearingDateLabel
-                  date={formatDateStr(hearingDate.scheduledFor, 'YYYY-MM-DD', 'ddd MMM D')}
-                  scheduled={`${hearingDate.filledSlots} of ${ hearingDate.totalSlots } scheduled`}
-                  vlj={hearingDate.vlj}
-                />
+          map((hearingDate) => ({
+            label: (
+              <HearingDateLabel
+                date={formatDateStr(hearingDate.scheduledFor, 'YYYY-MM-DD', 'ddd MMM D')}
+                scheduled={`${hearingDate.filledSlots} of ${ hearingDate.totalSlots } scheduled`}
+                vlj={hearingDate.vlj}
+              />
+            ),
+            value: {
+              ...hearingDate,
+              hearingDate: formatDateStr(
+                hearingDate.scheduledFor,
+                'YYYY-MM-DD',
+                'YYYY-MM-DD'
               ),
-              value: {
-                ...hearingDate,
-                hearingDate: formatDateStr(
-                  hearingDate.scheduledFor,
-                  'YYYY-MM-DD',
-                  'YYYY-MM-DD'
-                ),
-              },
-            };
-          });
+            },
+          })
+          );
 
         // sort dates in ascending order
         dateOptionsForRO?.sort((d1, d2) => new Date(d1.value.hearingDate) - new Date(d2.value.hearingDate));
