@@ -69,6 +69,7 @@ const PowerOfAttorneyDetailWrapper = (WrappedComponent) => {
   wrappedComponent.propTypes = {
     appealId: PropTypes.string,
     getAppealValue: PropTypes.func,
+    appellantType: PropTypes.string,
     poaAlert: PropTypes.shape({
       alertType: PropTypes.string,
       message: PropTypes.string,
@@ -89,7 +90,7 @@ export const PowerOfAttorneyNameUnconnected = ({ powerOfAttorney }) => (
 /**
  * Component that displays details about the power of attorney.
  */
-export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, poaAlert }) => {
+export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, poaAlert, appellantType }) => {
   let poa = powerOfAttorney;
 
   if (poaAlert.powerOfAttorney) {
@@ -123,10 +124,11 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
   return (
     <React.Fragment>
       <div>
-        <p>{ poa.representative_type === 'Unrecognized representative' ?
-          <em>{ COPY.CASE_DETAILS_UNRECOGNIZED_POA }</em> :
-          <PoaRefresh powerOfAttorney={poa} appealId={appealId} {...detailListStyling} />}
-        </p>
+        { appellantType !== 'OtherClaimant' && (
+          poa.representative_type === 'Unrecognized representative' ?
+            <em>{ COPY.CASE_DETAILS_UNRECOGNIZED_POA }</em> :
+            <PoaRefresh powerOfAttorney={poa} appealId={appealId} {...detailListStyling} />
+        )}
         { showPoaDetails && (
           <ul {...detailListStyling}>
             <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
@@ -156,7 +158,8 @@ PowerOfAttorneyNameUnconnected.propTypes = PowerOfAttorneyDetailUnconnected.prop
     alertType: PropTypes.string,
     powerOfAttorney: PropTypes.object
   }),
-  appealId: PropTypes.number
+  appealId: PropTypes.number,
+  appellantType: PropTypes.string
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators(

@@ -400,6 +400,7 @@ export const prepareAppealForStore = (appeals) => {
       appellantIsNotVeteran: appeal.attributes.appellant_is_not_veteran,
       appellantFullName: appeal.attributes.appellant_full_name,
       appellantAddress: appeal.attributes.appellant_address,
+      appellantType: appeal.attributes.appellant_type,
       appellantTz: appeal.attributes.appellant_tz,
       appellantRelationship: appeal.attributes.appellant_relationship,
       appellantSubstitution: appeal.attributes.appellant_substitution,
