@@ -205,9 +205,7 @@ describe('TimeSlot', () => {
             set({ hour: breakHour, minute: breakMinute });
           const firstSlotAfterLunchBreak = timeSlots.find((item) => item.time.isSameOrAfter(lunchBreakMoment));
 
-          if (lunchBreak) {
-            expect(firstSlotAfterLunchBreak.time.isSame(lunchBreakMoment.add(30, 'minutes'))).toEqual(true);
-          }
+          expect(firstSlotAfterLunchBreak.time.isSame(lunchBreakMoment.add(30, 'minutes'))).toEqual(lunchBreak);
         });
 
         it('hearings display correct times and hide slots appropriately', () => {
