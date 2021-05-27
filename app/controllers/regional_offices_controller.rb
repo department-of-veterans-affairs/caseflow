@@ -29,6 +29,7 @@ class RegionalOfficesController < ApplicationController
     def hearing_day_hash(regional_office, day, hearings)
       {
         hearing_id: day.id,
+        vlj: "VLJ #{day.judge&.full_name&.split(' ')&.last}",
         regional_office: regional_office,
         timezone: RegionalOffice::CITIES[regional_office][:timezone],
         scheduled_for: day.scheduled_for,
