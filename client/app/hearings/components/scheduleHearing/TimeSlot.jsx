@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 // Local Dependencies
-import { setTimeSlots, regionalOfficeDetails } from '../../utils';
+import { setTimeSlots, TIMEZONES_WITH_LUNCHBREAK, regionalOfficeDetails } from '../../utils';
 import { TimeSlotButton } from './TimeSlotButton';
 import Button from '../../../components/Button';
 import SmallLoader from '../../../components/SmallLoader';
@@ -37,6 +37,8 @@ export const TimeSlot = ({
   const beginsAt = hearing?.hearingDay?.beginsAt || slotStartTime;
   const numberOfSlots = hearing?.hearingDay?.totalSlots || slotCount;
   const slotLengthMinutes = hearing?.hearingDay?.slotLengthMinutes || slotLength;
+  // If there is a lunchbreak it's hardcoded to 12:30pm roTimezone and 30 minutes long
+  const lunchBreak = TIMEZONES_WITH_LUNCHBREAK.includes(roTimezone);
   const hearingDayDate = hearing?.hearingDay?.scheduledFor || hearingDate;
 
   // Get the timeslots
@@ -47,6 +49,7 @@ export const TimeSlot = ({
     beginsAt,
     numberOfSlots,
     slotLengthMinutes,
+    lunchBreak,
     selected,
     hearingDayDate
   });
