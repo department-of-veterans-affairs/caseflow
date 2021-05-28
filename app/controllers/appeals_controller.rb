@@ -71,7 +71,7 @@ class AppealsController < ApplicationController
       }
       return
     end
-    
+
     clear_poa_not_found_cache
     if appeal.is_a?(Appeal)
       poa = BgsPowerOfAttorney.find(params[:poaId])
