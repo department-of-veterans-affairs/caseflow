@@ -7,6 +7,7 @@ import {
   prepTaskDataForUi,
   shouldAutoSelect,
   shouldDisable,
+  shouldHideBasedOnPoaType,
   shouldHide,
   shouldShowBasedOnOtherTasks,
 } from 'app/queue/substituteAppellant/tasks/utils';
@@ -38,7 +39,7 @@ describe('utility functions for task manipulation', () => {
     'PrivacyComplaintMailTask',
     'ReturnedUndeliverableCorrespondenceMailTask',
     'StatusInquiryMailTask',
-    'AppealWithdrawalMailTask',
+    'AppealWithdrawalMailTask'
   ];
 
   describe('shouldAutoSelect', () => {
@@ -73,30 +74,102 @@ describe('utility functions for task manipulation', () => {
     });
   });
 
+  describe('shouldHideBasedOnPoaType', () => {
+    describe('task type is InformalHearingPresentationTask', () => {
+      const taskInfo = { type: 'InformalHearingPresentationTask' };
+
+      it('should hide if the poa is an attorney', () => {
+        expect(shouldHideBasedOnPoaType(taskInfo, 'Attorney')).toBe(true);
+      });
+
+      it('should hide if the poa is an agent', () => {
+        expect(shouldHideBasedOnPoaType(taskInfo, 'Agent')).toBe(true);
+      });
+
+      it('should not hide if the poa is not an agent/attorney', () => {
+        expect(shouldHideBasedOnPoaType(taskInfo, 'other poa type')).toBe(false);
+      });
+    });
+
+    describe('task type is not InformalHearingPresentationTask', () => {
+      const taskInfo = { type: 'JudgeAssignTask' };
+
+      it('should not hide', () => {
+        expect(shouldHideBasedOnPoaType(taskInfo, 'other POA type')).toBe(false);
+      });
+    });
+  });
+
   describe('shouldHide', () => {
+    let poaType = 'other poa type';
+    const otherOrgTask = { hideFromCaseTimeline: false, assignedTo: { isOrganization: true }, type: 'other task type' };
+    const otherUserTask = { hideFromCaseTimeline: false, assignedTo: { isOrganization: false }, type: 'other task type' };
+
     describe('with hideFromCaseTimeline', () => {
-      const task = { hideFromCaseTimeline: true };
+      const userTaskInfo = { hideFromCaseTimeline: true, assignedTo: { isOrganization: false } };
+      const allTasks = [userTaskInfo, otherOrgTask, otherUserTask];
 
       it('returns true', () => {
-        expect(shouldHide(task)).toBe(true);
+        expect(shouldHide(userTaskInfo, poaType, allTasks)).toBe(true);
       });
     });
 
     describe('without hideFromCaseTimeline', () => {
-      const task = { hideFromCaseTimeline: false };
+      const userTaskInfo = { hideFromCaseTimeline: false, assignedTo: { isOrganization: false } };
+      const allTasks = [userTaskInfo, otherOrgTask, otherUserTask];
 
       it('returns false', () => {
-        expect(shouldHide(task)).toBe(false);
+        expect(shouldHide(userTaskInfo, poaType, allTasks)).toBe(false);
       });
+    });
+
+    describe('tasks with a type in the automatedTasks array', () => {
+      const userTaskInfo = { taskId: 1, hideFromCaseTimeline: false, type: 'JudgeDecisionReviewTask', assignedTo: { isOrganization: false } };
+      const allTasks = [userTaskInfo, otherOrgTask, otherUserTask];
+      const poaTypes = ['Attorney', 'Agent', null];
+
+      describe.each(poaTypes)(' poaType: %s', (type) => {
+        it('should hide these tasks', () => {
+          expect(shouldHide(userTaskInfo, type, allTasks)).toBe(true);
+        });
+      });
+
+    });
+
+    describe('tasks where hideFromCaseTimeline is false and the type is not in the automatedTasks array', () => {
+      describe('the task type is only assigned to a user', () => {
+        const userTaskInfo = { hideFromCaseTimeline: false, type: 'RootTask', assignedTo: { isOrganization: false } };
+
+        poaType = 'Attorney';
+        const allTasks = [userTaskInfo, otherOrgTask, otherUserTask];
+
+        it('should not hide these tasks', () => {
+          expect(shouldHide(userTaskInfo, poaType, allTasks)).toBe(false);
+        });
+      });
+    });
+
+    describe('Bva Dispatch task', () => {
+      const userTaskInfo = { taskId: 1, hideFromCaseTimeline: false, type: 'BvaDispatchTask', assignedTo: { isOrganization: false } };
+      const orgTaskInfo = { taskId: 2, hideFromCaseTimeline: true, type: 'BvaDispatchTask', assignedTo: { isOrganization: true } };
+      const allTasks = [orgTaskInfo, userTaskInfo, otherOrgTask, otherUserTask];
+
+      poaType = 'other poa type';
+
+      it('should hide both organization and user Bva Dispatch tasks', () => {
+        expect(shouldHide(userTaskInfo, poaType, allTasks)).toBe(true);
+        expect(shouldHide(orgTaskInfo, poaType, allTasks)).toBe(true);
+      });
+
     });
   });
 
   describe('shouldShowBasedOnOtherTasks', () => {
     describe('org task with hideFromCaseTimeline', () => {
-      const orgTask = { hideFromCaseTimeline: true };
+      const orgTask = { taskId: 1, hideFromCaseTimeline: true };
 
       describe('user task without hideFromCaseTimeline', () => {
-        const userTask = { hideFromCaseTimeline: false };
+        const userTask = { taskId: 2, hideFromCaseTimeline: false };
 
         it('returns true for org task', () => {
           const tasks = [orgTask, userTask];
@@ -106,7 +179,7 @@ describe('utility functions for task manipulation', () => {
       });
 
       describe('user task with hideFromCaseTimeline', () => {
-        const userTask = { hideFromCaseTimeline: true };
+        const userTask = { taskId: 3, hideFromCaseTimeline: true };
 
         it('returns false for org task', () => {
           const tasks = [orgTask, userTask];
@@ -132,9 +205,7 @@ describe('utility functions for task manipulation', () => {
 
     it('returns only org tasks', () => {
       const filtered = filterTasks(tasks);
-      const bvaDispatchTask = filtered.find(
-        (task) => task.type === 'BvaDispatchTask'
-      );
+      const bvaDispatchTask = filtered.find((task) => task.type === 'BvaDispatchTask');
 
       expect(bvaDispatchTask?.assignedTo?.isOrganization).toBe(true);
     });
@@ -142,10 +213,7 @@ describe('utility functions for task manipulation', () => {
     it('only allows for completed or cancelled tasks', () => {
       // needs to be an organization or would be filtered
       const assignedTo = { isOrganization: true };
-      const filtered = filterTasks([
-        { closedAt: '2021-04-01', assignedTo },
-        { closedAt: null, assignedTo },
-      ]);
+      const filtered = filterTasks([{ closedAt: '2021-04-01', assignedTo }, { closedAt: null, assignedTo }]);
 
       expect(filtered.length).toBe(1);
       expect(filtered[0].closedAt).toBeTruthy();
@@ -176,12 +244,14 @@ describe('prepTaskDataForUi', () => {
 
     describe('with an org task that should be shown', () => {
       const ihpOrgTask = {
+        taskId: 1,
         type: 'InformalHearingPresentationTask',
         closedAt: new Date('2021-05-31'),
         assignedTo: { isOrganization: true },
         hideFromCaseTimeline: true,
       };
       const ihpUserTask = {
+        taskId: 2,
         type: 'InformalHearingPresentationTask',
         closedAt: new Date('2021-05-31'),
         assignedTo: { isOrganization: false },
@@ -217,7 +287,7 @@ describe('calculateEvidenceSubmissionEndDate', () => {
     const args = {
       substitutionDate: new Date('2021-03-25'),
       veteranDateOfDeath: new Date('2021-03-20'),
-      selectedTasks: tasks,
+      selectedTasks: tasks
     };
     const result = calculateEvidenceSubmissionEndDate(args);
 
