@@ -12,7 +12,7 @@ import { formatHearingType } from '../utils';
 import {
   toggleTypeFilterVisibility, toggleLocationFilterVisibility,
   toggleVljFilterVisibility, onReceiveHearingSchedule,
-  onViewStartDateChange, onViewEndDateChange
+  onViewStartDateChange, onViewEndDateChange, onResetDeleteSuccessful
 } from '../actions/hearingScheduleActions';
 import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
@@ -93,6 +93,7 @@ const SwitchViewDropdown = ({ onSwitchView }) => {
 SwitchViewDropdown.propTypes = { onSwitchView: PropTypes.func };
 
 class ListTable extends React.Component {
+
   render() {
     const failStatusMessageChildren = <div>
       It looks like Caseflow was unable to load the hearing schedule.<br />
@@ -113,8 +114,8 @@ class ListTable extends React.Component {
       >
         {this.props.user.userCanBuildHearingSchedule && <div style={{ marginBottom: 25 }}>
           <Button linkStyling
-            onClick={this.props.openModal}>
-            Add Hearing Date
+            onClick={() => this.props.history.push('/schedule/add_hearing_day')}>
+            Add Hearing Day
           </Button>
         </div>}
         <QueueTable
@@ -132,7 +133,7 @@ ListTable.propTypes = {
   hearingScheduleColumns: PropTypes.array,
   hearingScheduleRows: PropTypes.array,
   onApply: PropTypes.func,
-  openModal: PropTypes.func,
+  history: PropTypes.object,
   user: PropTypes.shape({
     userCanBuildHearingSchedule: PropTypes.bool
   })
@@ -146,6 +147,10 @@ class ListSchedule extends React.Component {
       dateRangeKey: `${props.startDate}->${props.endDate}`
     };
   }
+
+  componentWillUnmount = () => {
+    this.props.onResetDeleteSuccessful();
+  };
 
   // forces remount of LoadingDataDisplay
   setDateRangeKey = () => {
@@ -230,11 +235,11 @@ class ListSchedule extends React.Component {
 
   getListView = (hearingScheduleColumns, hearingScheduleRows) => {
 
-    const { user, view, onApply, openModal } = this.props;
+    const { user, view, onApply, history } = this.props;
 
     if (!user.userHasHearingPrepRole || view === LIST_SCHEDULE_VIEWS.DEFAULT_VIEW) {
       return <ListTable onApply={onApply}
-        openModal={openModal}
+        history={history}
         key={`hearings${this.state.dateRangeKey}`}
         user={user}
         hearingScheduleRows={hearingScheduleRows}
@@ -242,7 +247,7 @@ class ListSchedule extends React.Component {
     }
 
     return <ListTable onApply={() => onApply({ showAll: true })}
-      openModal={openModal}
+      history={history}
       key={`allHearings${this.state.dateRangeKey}`}
       user={user}
       hearingScheduleRows={hearingScheduleRows}
@@ -298,10 +303,11 @@ ListSchedule.propTypes = {
     updatedOn: PropTypes.string,
     updatedBy: PropTypes.string
   }),
+  onResetDeleteSuccessful: PropTypes.func,
   onApply: PropTypes.func,
   onViewStartDateChange: PropTypes.func,
   onViewEndDateChange: PropTypes.func,
-  openModal: PropTypes.func,
+  history: PropTypes.object,
   startDate: PropTypes.string,
   switchListView: PropTypes.func,
   user: PropTypes.object,
@@ -318,6 +324,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
+  onResetDeleteSuccessful,
   toggleTypeFilterVisibility,
   toggleLocationFilterVisibility,
   toggleVljFilterVisibility,

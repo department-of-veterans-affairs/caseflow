@@ -111,6 +111,13 @@ export const setNotes = (notes) => ({
   }
 });
 
+export const onSuccessfulHearingDayCreate = (date) => ({
+  type: ACTIONS.SUCCESSFUL_HEARING_DAY_CREATE,
+  payload: {
+    date
+  }
+});
+
 export const onSuccessfulHearingDayDelete = (date) => ({
   type: ACTIONS.SUCCESSFUL_HEARING_DAY_DELETE,
   payload: {

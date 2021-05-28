@@ -146,7 +146,7 @@ TextField.propTypes = {
   /**
    * Text to display in a `label` element
    */
-  label: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+  label: PropTypes.oneOfType([PropTypes.string, PropTypes.bool, PropTypes.element]),
 
   /**
    * Plain text to display in lieu of a `label`
