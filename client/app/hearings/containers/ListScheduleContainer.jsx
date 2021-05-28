@@ -33,7 +33,7 @@ import {
 import ApiUtil from '../../util/ApiUtil';
 import PropTypes from 'prop-types';
 import QueueCaseSearchBar from '../../queue/SearchBar';
-import HearingDayAddModal from '../components/HearingDayAddModal';
+import AddHearingDay from '../components/AddHearingDay';
 import { onRegionalOfficeChange } from '../../components/common/actions';
 import moment from 'moment';
 
@@ -65,11 +65,6 @@ export class ListScheduleContainer extends React.Component {
 
   componentDidMount = () => {
     this.props.onSelectedHearingDayChange('');
-    this.setState({ showModalAlert: false });
-  };
-
-  componentWillUnmount = () => {
-    this.props.onResetDeleteSuccessful();
   };
 
   componentDidUpdate = (prevProps) => {
@@ -150,7 +145,7 @@ export class ListScheduleContainer extends React.Component {
       return `The Hearing day you created for ${formatDateStr(this.props.selectedHearingDay)} is a Saturday or Sunday.`;
     }
 
-    return `You have successfully added Hearing Day ${formatDateStr(this.props.selectedHearingDay)}`;
+    return `You have successfully added Hearing Day ${formatDateStr(this.props.successfulHearingDayCreate)}`;
 
   };
 
@@ -191,46 +186,46 @@ export class ListScheduleContainer extends React.Component {
   render() {
     const user = this.props.user;
 
+    // Determine the path to render the correct component
+    const addHearingDay = (/add_hearing_day/).test(this.props.location.pathname);
+
     return (
       <React.Fragment>
-        <QueueCaseSearchBar />
-        {(this.state.showModalAlert || this.props.successfulHearingDayDelete) &&
+        {!addHearingDay && <QueueCaseSearchBar />}
+        {(this.props.successfulHearingDayCreate || this.props.successfulHearingDayDelete) &&
           <Alert type={this.getAlertType()} title={this.getAlertTitle()} scrollOnAlert={false}>
             {this.getAlertMessage()}
           </Alert>
         }
         { this.props.invalidDates && <Alert type="error" title="Please enter valid dates." /> }
-        <AppSegment filledBackground>
-          <h1 className="cf-push-left">
-            {this.getHeader()}
-          </h1>
-          <div className="cf-push-right">
-            {user.userCanAssignHearingSchedule &&
+        {addHearingDay ? (
+          <AddHearingDay cancelModal={this.cancelModal} user={user} />
+        ) : (
+          <AppSegment filledBackground>
+            <h1 className="cf-push-left">
+              {this.getHeader()}
+            </h1>
+            <div className="cf-push-right">
+              {user.userCanAssignHearingSchedule &&
             <span className="cf-push-left" {...actionButtonsStyling}>
               <Link button="primary" to="/schedule/assign">Schedule Veterans</Link>
             </span>
-            }
-            {user.userCanBuildHearingSchedule &&
+              }
+              {user.userCanBuildHearingSchedule &&
             <span className="cf-push-left">
               <Link button="secondary" to="/schedule/build">Build Schedule</Link>
             </span>
-            }
-          </div>
-          <div className="cf-help-divider" {...hearingSchedStyling} ></div>
-          <ListSchedule
-            hearingSchedule={this.props.hearingSchedule}
-            onApply={this.createHearingPromise}
-            openModal={this.openModal}
-            user={user}
-            view={this.state.view}
-            switchListView={this.switchListView} />
-          {this.state.modalOpen &&
-            <HearingDayAddModal
-              closeModal={this.closeModal}
-              cancelModal={this.cancelModal}
-              user={user} />
-          }
-        </AppSegment>
+              }
+            </div>
+            <div className="cf-help-divider" {...hearingSchedStyling} ></div>
+            <ListSchedule
+              hearingSchedule={this.props.hearingSchedule}
+              onApply={this.createHearingPromise}
+              user={user}
+              view={this.state.view}
+              switchListView={this.switchListView} />
+          </AppSegment>
+        )}
       </React.Fragment>
     );
   }
@@ -248,6 +243,7 @@ const mapStateToProps = (state) => ({
   notes: state.hearingSchedule.notes,
   roomRequired: state.hearingSchedule.roomRequired,
   successfulHearingDayDelete: state.hearingSchedule.successfulHearingDayDelete,
+  successfulHearingDayCreate: state.hearingSchedule.successfulHearingDayCreate,
   invalidDates: state.hearingSchedule.invalidDates
 });
 
@@ -287,7 +283,10 @@ ListScheduleContainer.propTypes = {
   setNotes: PropTypes.func,
   startDate: PropTypes.string,
   successfulHearingDayDelete: PropTypes.string,
-  user: PropTypes.object
+  successfulHearingDayCreate: PropTypes.string,
+  user: PropTypes.object,
+  history: PropTypes.object,
+  location: PropTypes.object,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ListScheduleContainer));

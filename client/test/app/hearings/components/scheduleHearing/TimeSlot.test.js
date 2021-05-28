@@ -29,8 +29,8 @@ const defaultProps = {
   roTimezone: REGIONAL_OFFICE_INFORMATION[defaultRoCode].timezone,
   hearingDayDate: moment.tz().format('YYYY-MM-DD'),
   scheduledHearingsList: emptyHearings,
-  numberOfSlots: '8',
-  slotLengthMinutes: '60',
+  numberOfSlots: 8,
+  slotLengthMinutes: 60,
   fetchScheduledHearings: jest.fn(),
   onChange: mockOnChange
 };

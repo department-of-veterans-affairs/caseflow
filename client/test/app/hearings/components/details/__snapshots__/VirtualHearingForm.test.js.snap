@@ -1856,14 +1856,20 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                         id="appellant-tz-label"
                       >
                         <strong>
-                          <span>
-                            Veteran Timezone
-                            <span
-                              className="cf-required"
-                            >
-                              Required
+                          <FormLabel
+                            label="Veteran Timezone"
+                            name="Veteran Timezone"
+                            required={true}
+                          >
+                            <span>
+                              Veteran Timezone
+                              <span
+                                className="cf-required"
+                              >
+                                Required
+                              </span>
                             </span>
-                          </span>
+                          </FormLabel>
                         </strong>
                       </label>
                       <div
@@ -18045,14 +18051,20 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                         id="representative-tz-label"
                       >
                         <strong>
-                          <span>
-                            POA/Representative Timezone
-                            <span
-                              className="cf-required"
-                            >
-                              Required
+                          <FormLabel
+                            label="POA/Representative Timezone"
+                            name="POA/Representative Timezone"
+                            required={true}
+                          >
+                            <span>
+                              POA/Representative Timezone
+                              <span
+                                className="cf-required"
+                              >
+                                Required
+                              </span>
                             </span>
-                          </span>
+                          </FormLabel>
                         </strong>
                       </label>
                       <div
