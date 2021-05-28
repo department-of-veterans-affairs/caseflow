@@ -36,12 +36,23 @@ const Tooltip = (props) => {
     tabIndex,
   };
 
-  return <React.Fragment>
-    {React.cloneElement(props.children, tooltipProps)}
-    <span {...tooltipStyling}>
-      <ReactTooltip effect="solid" id={id} offset={offset} place={position} multiline>{text}</ReactTooltip>
-    </span>
-  </React.Fragment>;
+  return (
+    <React.Fragment>
+      {React.cloneElement(props.children, tooltipProps)}
+      <span {...tooltipStyling}>
+        <ReactTooltip
+          effect="solid"
+          id={id}
+          offset={offset}
+          place={position}
+          multiline
+          role="tooltip"
+        >
+          {text}
+        </ReactTooltip>
+      </span>
+    </React.Fragment>
+  );
 };
 
 Tooltip.propTypes = {
