@@ -63,6 +63,26 @@ export const HearingDateDropdown = (props) => {
       get(xhrUrl, { timeout: { response: getMinutesToMilliseconds(5) } });
   };
 
+  // Map over the hearing dates to attach the formatted label to each option
+  const formatHearingDays = (hearingDays) => hearingDays.map((hearingDate) => ({
+    label: (
+      <HearingDateLabel
+        requestType={hearingDate.requestType}
+        date={formatDateStr(hearingDate.scheduledFor, 'YYYY-MM-DD', 'ddd MMM D')}
+        scheduled={`${hearingDate.filledSlots} of ${ hearingDate.totalSlots } scheduled`}
+        detail={hearingDate.vlj || hearingDate.roomLabel}
+      />
+    ),
+    value: {
+      ...hearingDate,
+      hearingDate: formatDateStr(
+        hearingDate.scheduledFor,
+        'YYYY-MM-DD',
+        'YYYY-MM-DD'
+      ),
+    },
+  }));
+
   // fetch hearing dates for RO and format
   const getHearingDates = () => {
     // ex `hearingDatesForRO17`
@@ -79,26 +99,7 @@ export const HearingDateDropdown = (props) => {
       then((resp) => {
         // format data
         const jsonResponse = ApiUtil.convertToCamelCase(resp.body);
-        const dateOptionsForRO = values(jsonResponse.hearingDays).
-          map((hearingDate) => ({
-            label: (
-              <HearingDateLabel
-                requestType={hearingDate.requestType}
-                date={formatDateStr(hearingDate.scheduledFor, 'YYYY-MM-DD', 'ddd MMM D')}
-                scheduled={`${hearingDate.filledSlots} of ${ hearingDate.totalSlots } scheduled`}
-                detail={hearingDate.vlj || hearingDate.roomLabel}
-              />
-            ),
-            value: {
-              ...hearingDate,
-              hearingDate: formatDateStr(
-                hearingDate.scheduledFor,
-                'YYYY-MM-DD',
-                'YYYY-MM-DD'
-              ),
-            },
-          })
-          );
+        const dateOptionsForRO = formatHearingDays(values(jsonResponse.hearingDays));
 
         // sort dates in ascending order
         dateOptionsForRO?.sort((d1, d2) => new Date(d1.value.hearingDate) - new Date(d2.value.hearingDate));

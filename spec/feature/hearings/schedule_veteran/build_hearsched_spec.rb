@@ -265,6 +265,25 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_button("Choose time")
     end
 
+    def format_hearing_day(hearing_day, detail_label = nil, total_slots = 0)
+      # Initializze the label with the formatted hearing day
+      label = hearing_day.scheduled_for.strftime("%a %b %-d").to_s
+
+      # Add the Formatted request type
+      label +=  "· #{Hearing::HEARING_TYPES[hearing_day.request_type.to_sym]}"
+
+      # Add the Count of scheduled
+      label +=  "· #{total_slots} of #{hearing_day.total_slots} scheduled"
+
+      # Add the details label
+      unless detail_label.nil?
+        label += "· #{detail_label}"
+      end
+
+      # Return the formatted label
+      label
+    end
+
     shared_examples "scheduling a central hearing" do
       include_context "central_hearing"
       include_context "hearing subtree"
@@ -324,7 +343,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         expect(page).not_to have_content("Could not find hearing locations for this veteran")
         expect(page).not_to have_content("There are no upcoming hearing dates for this regional office.")
         click_dropdown(
-          text: "#{hearing_day.scheduled_for.to_formatted_s(:short_date)} (0/#{hearing_day.total_slots}) #{room_label}",
+          text: format_hearing_day(hearing_day, room_label),
           name: "hearingDate"
         )
 
@@ -550,10 +569,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
             text: RegionalOffice.find!(regional_office).city,
             name: "regionalOffice"
           )
-          click_dropdown(
-            text: "#{hearing_day.scheduled_for.to_formatted_s(:short_date)} (0/#{hearing_day.total_slots})",
-            name: "hearingDate"
-          )
+          click_dropdown(text: format_hearing_day(hearing_day), name: "hearingDate")
+
           click_dropdown(
             text: "Holdrege, NE (VHA) 0 miles away",
             name: "appealHearingLocation"
@@ -577,7 +594,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
             name: "regionalOffice"
           )
           click_dropdown(
-            text: "#{hearing_day.scheduled_for.to_formatted_s(:short_date)} (0/#{hearing_day.total_slots})",
+            text: format_hearing_day(hearing_day),
             name: "hearingDate"
           )
           click_dropdown(
@@ -622,7 +639,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
             name: "regionalOffice"
           )
           click_dropdown(
-            text: "#{hearing_day.scheduled_for.to_formatted_s(:short_date)} (0/#{hearing_day.total_slots})",
+            text: format_hearing_day(hearing_day),
             name: "hearingDate"
           )
           click_dropdown(
@@ -648,7 +665,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         click_dropdown(text: "Schedule Veteran")
         click_dropdown(name: "regionalOffice", text: "St. Petersburg, FL")
         click_dropdown(
-          text: "#{hearing_day.scheduled_for.to_formatted_s(:short_date)} (#{total_slots}/#{total_slots})",
+          text: format_hearing_day(hearing_day, nil, total_slots),
           name: "hearingDate"
         )
 
@@ -760,11 +777,9 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
 
         room_label = HearingRooms.find!(hearing_day.room)&.label
-        date_label = hearing_day.scheduled_for.to_formatted_s(:short_date)
-        dropdown_label = "#{date_label} (0/#{hearing_day.total_slots}) #{room_label}"
 
         click_dropdown(
-          text: dropdown_label,
+          text: format_hearing_day(hearing_day, room_label),
           name: "hearingDate"
         )
         select_hearing_time("8:30")
