@@ -531,7 +531,7 @@ const calculateAvailableTimeslots = ({
     // Create the possible time by adding our offset * slotLengthMinutes to beginsAt
     const possibleTime = beginsAt.clone().add(index * slotLengthMinutes, 'minutes');
 
-    // If it's after the lunch break, move it forward by the length of the break
+    // If slot is after the lunch break, move it forward by the length of the break
     if (lunchBreak) {
       // Set the constants for lunch breaks
       const LUNCH_TIME = { hour: '12', minute: '30', lengthInMinutes: '30' };
