@@ -6,7 +6,7 @@ import moment from 'moment-timezone/moment-timezone';
 import { uniq } from 'lodash';
 // caseflow
 import { TimeSlot } from 'app/hearings/components/scheduleHearing/TimeSlot';
-import { formatTimeSlotLabel, hearingTimeOptsWithZone, setTimeSlots } from 'app/hearings/utils';
+import { formatTimeSlotLabel, hearingTimeOptsWithZone, setTimeSlots, TIMEZONES_WITH_LUNCHBREAK } from 'app/hearings/utils';
 // constants
 import REGIONAL_OFFICE_INFORMATION from '../../../../../constants/REGIONAL_OFFICE_INFORMATION';
 import HEARING_TIME_OPTIONS from '../../../../../constants/HEARING_TIME_OPTIONS';
@@ -191,6 +191,21 @@ describe('TimeSlot', () => {
           // Expect that we called onChange with 12:30pm ro timezone
           expect(mockOnChange).toHaveBeenLastCalledWith('scheduledTimeString', easternTime);
 
+        });
+
+        it('moves following slots when there is a lunch break', () => {
+          const beginsAt = moment('2021-04-21T08:30:00-04:00').tz('America/New_York');
+          const lunchBreak = TIMEZONES_WITH_LUNCHBREAK.includes(ro.timezone);
+          const { timeSlots } = setup({ lunchBreak, beginsAt, roTimezone: ro.timezone });
+
+          expect(timeSlots[0].time.isSame(beginsAt)).toEqual(true);
+
+          const [breakHour, breakMinute] = ['12', '30'];
+          const lunchBreakMoment = beginsAt.clone().tz(ro.timezone).
+            set({ hour: breakHour, minute: breakMinute });
+          const firstSlotAfterLunchBreak = timeSlots.find((item) => item.time.isSameOrAfter(lunchBreakMoment));
+
+          expect(firstSlotAfterLunchBreak.time.isSame(lunchBreakMoment.add(30, 'minutes'))).toEqual(lunchBreak);
         });
 
         it('hearings display correct times and hide slots appropriately', () => {
