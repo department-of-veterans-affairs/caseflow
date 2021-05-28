@@ -69,7 +69,11 @@ class AppealsController < ApplicationController
         message: message,
         power_of_attorney: power_of_attorney_data
       }
-    elsif appeal.is_a?(Appeal)
+      return
+    end
+    
+    clear_poa_not_found_cache
+    if appeal.is_a?(Appeal)
       poa = BgsPowerOfAttorney.find(params[:poaId])
       render json: update_ama_poa(poa)
     else
@@ -303,6 +307,15 @@ class AppealsController < ApplicationController
         status: "error",
         message: "Something went wrong"
       }
+    end
+  end
+
+  def clear_poa_not_found_cache
+    Rails.cache.delete("bgs-participant-poa-not-found-#{appeal.veteran.file_number}") if appeal.veteran&.file_number
+    if appeal.claimant&.participant_id
+      Rails.cache.delete("bgs-participant-poa-not-found-#{appeal.claimant&.participant_id}")
+    elsif claimant.is_a?(Hash)
+      Rails.cache.delete("bgs-participant-poa-not-found-#{appeal.claimant&.dig(:representative, :participant_id)}")
     end
   end
 
