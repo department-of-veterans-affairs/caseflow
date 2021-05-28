@@ -33,7 +33,6 @@ const Tooltip = (props) => {
     'data-for': id,
     'data-event': 'focus mouseenter',
     'data-event-off': 'mouseleave keydown',
-    role: 'tooltip',
     tabIndex,
   };
 
