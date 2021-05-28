@@ -58,7 +58,7 @@ class SelectForm extends React.PureComponent {
       }
 
       { !enableSearchableDropdown && <RadioField
-        name="form-select"
+        name="intake-form-select"
         label={COPY.INTAKE_FORM_SELECTION}
         vertical
         strongLabel
@@ -69,7 +69,7 @@ class SelectForm extends React.PureComponent {
       }
 
       { enableSearchableDropdown && <SearchableDropdown
-        name="form-select"
+        name="intake-form-select"
         label={COPY.INTAKE_FORM_SELECTION}
         placeholder="Enter or select form"
         options={radioOptions}

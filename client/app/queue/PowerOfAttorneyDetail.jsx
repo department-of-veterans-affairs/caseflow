@@ -63,11 +63,7 @@ const PowerOfAttorneyDetailWrapper = (WrappedComponent) => {
       return null;
     }
 
-    const hasPowerOfAttorneyDetails = powerOfAttorney.representative_type && powerOfAttorney.representative_name;
-
-    return hasPowerOfAttorneyDetails ?
-      <WrappedComponent powerOfAttorney={powerOfAttorney} appealId={appealId} poaAlert={poaAlert} /> :
-      <p><em>{COPY.CASE_DETAILS_NO_POA}</em></p>;
+    return <WrappedComponent powerOfAttorney={powerOfAttorney} appealId={appealId} poaAlert={poaAlert} />;
   };
 
   wrappedComponent.propTypes = {
@@ -120,6 +116,10 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
     });
   }
 
+  const showPoaDetails = poa.representative_type && poa.representative_name;
+  const bottomMessage = (showPoaDetails || poaAlert.powerOfAttorney) ? COPY.CASE_DETAILS_POA_EXPLAINER :
+    COPY.CASE_DETAILS_NO_POA;
+
   return (
     <React.Fragment>
       <div>
@@ -127,10 +127,12 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
           <em>{ COPY.CASE_DETAILS_UNRECOGNIZED_POA }</em> :
           <PoaRefresh powerOfAttorney={poa} appealId={appealId} {...detailListStyling} />}
         </p>
-        <ul {...detailListStyling}>
-          <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
-        </ul>
-        <p><em>{ COPY.CASE_DETAILS_POA_EXPLAINER }</em></p>
+        { showPoaDetails && (
+          <ul {...detailListStyling}>
+            <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
+          </ul>
+        )}
+        <p><em>{ bottomMessage }</em></p>
         { poaAlert.message && poaAlert.alertType && (
           <div>
             <Alert type={poaAlert.alertType} message={poaAlert.message} scrollOnAlert={false} />

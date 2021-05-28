@@ -104,6 +104,12 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         $set: action.payload.receiptDate
       }
     });
+  case ACTIONS.SET_RECEIPT_DATE_ERROR:
+    return update(state, {
+      receiptDateError: {
+        $set: action.payload.receiptDateError
+      }
+    });
   case ACTIONS.SET_VETERAN_IS_NOT_CLAIMANT:
     return update(state, {
       veteranIsNotClaimant: {

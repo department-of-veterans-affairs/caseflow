@@ -1,4 +1,3 @@
 CVES:
 # placeholder to make non-nil array
   CVE-no-such-number: 2020-01-01
-  CVE-2021-28965: 2021-05-03 # snoozing until we can upgrade ruby

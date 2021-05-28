@@ -1,4 +1,6 @@
 $cf-hearing-day-label-color: #323a45;
+$form-spacing: 15px;
+$form-width: 575px;
 
 .worksheet-header {
   .cf-push-right {
@@ -497,5 +499,77 @@ $cf-hearing-day-label-color: #323a45;
 
   h2 {
     margin-bottom: 10px;
+  }
+}
+
+// Add Hearing Day Styles
+.hearing-day-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+
+  h1 {
+    margin-bottom: $form-spacing;
+  }
+
+  .hearing-day-date {
+    margin: $form-spacing 0;
+
+    > input {
+      margin-bottom: 0;
+      max-width: $form-width;
+    }
+  }
+
+  .cf-form-dropdown {
+    margin: $form-spacing 0;
+  }
+
+  .cf-form-checkboxes {
+    margin: $form-spacing 0;
+  }
+
+  .cf-form-textarea {
+    margin: $form-spacing 0;
+    max-width: $form-width;
+  }
+
+  .time-slot-button.usa-button-disabled {
+    background-color: $caseflow-background;
+    border: 2px solid $color-gray-lighter;
+    color: $color-gray;
+    font-weight: 600;
+  }
+
+  .cf-select {
+    .cf-select__control {
+      max-width: $form-width;
+    }
+
+    .cf-select__menu {
+      max-width: $form-width;
+    }
+  }
+
+  .question-label {
+    max-width: $form-width;
+  }
+
+  .time-slot-container {
+    margin-right: $form-spacing;
+
+    > span {
+      margin: 0;
+      margin-top: $form-spacing;
+    }
+  }
+
+}
+
+.time-slot-preview-container {
+  margin: $form-spacing 0;
+
+  .time-slot-button {
+    width: 280px;
   }
 }

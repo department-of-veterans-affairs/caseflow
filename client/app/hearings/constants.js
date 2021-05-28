@@ -1,3 +1,5 @@
+import HEARING_REQUEST_TYPES from '../../constants/HEARING_REQUEST_TYPES';
+
 export const ACTIONS = {
   RECEIVE_PAST_UPLOADS: 'RECEIVE_PAST_UPLOADS',
   RECEIVE_SCHEDULE_PERIOD: 'RECEIVE_SCHEDULE_PERIOD',
@@ -49,6 +51,7 @@ export const ACTIONS = {
   ON_CLICK_REMOVE_HEARING_DAY: 'ON_CLICK_REMOVE_HEARING_DAY',
   CANCEL_REMOVE_HEARING_DAY: 'CANCEL_REMOVE_HEARING_DAY',
   SUCCESSFUL_HEARING_DAY_DELETE: 'SUCCESSFUL_HEARING_DAY_DELETE',
+  SUCCESSFUL_HEARING_DAY_CREATE: 'SUCCESSFUL_HEARING_DAY_CREATE',
   RESET_DELETE_SUCCESSFUL: 'RESET_DELETE_SUCCESSFUL',
   ASSIGN_HEARING_ROOM: 'ASSIGN_HEARING_ROOM',
   DISPLAY_LOCK_MODAL: 'DISPLAY_LOCK_MODAL',
@@ -109,7 +112,7 @@ export const DISPOSITION_OPTIONS = [{ value: 'held',
 { value: 'cancelled',
   label: 'Cancelled' },
 { value: 'postponed',
-  label: 'Postponed'},
+  label: 'Postponed' },
 { value: 'scheduled_in_error',
   label: 'Scheduled in Error' }];
 
@@ -128,4 +131,13 @@ export const HEARING_CONVERSION_TYPES = [
   'change_from_virtual',
   'change_email_or_timezone',
   'change_hearing_time'
+];
+
+export const REQUEST_TYPE_OPTIONS = [
+  { label: 'Video',
+    value: HEARING_REQUEST_TYPES.video },
+  { label: 'Central',
+    value: HEARING_REQUEST_TYPES.central },
+  { label: 'Virtual',
+    value: HEARING_REQUEST_TYPES.virtual }
 ];

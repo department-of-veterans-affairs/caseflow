@@ -194,7 +194,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
         HearingSchedule::GenerateHearingDaysSchedule.new(schedule_period)
       end
 
-      subject { generate_invalid_hearing_days_schedule.allocate_hearing_days_to_ros(true) }
+      subject { generate_invalid_hearing_days_schedule.allocate_hearing_days_to_ros }
 
       context "too many allocated days for an RO with multiple rooms", skip: "This test is failing intermittently" do
         let!(:ro_allocations) do
@@ -249,7 +249,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
     end
 
     context "with an associated room", skip: "Temporarily skipping to push a change to PROD #16010" do
-      subject { generate_hearing_days_schedule.allocate_hearing_days_to_ros(true) }
+      subject { generate_hearing_days_schedule.allocate_hearing_days_to_ros }
 
       context "allocated days to ros" do
         it "assigned as rooms" do
@@ -291,7 +291,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
     end
 
     context "without an associated room (currently used as Virtual)" do
-      subject { generate_hearing_days_schedule.allocate_hearing_days_to_ros(false) }
+      subject { generate_hearing_days_schedule.allocate_no_room_hearing_days_to_ros }
 
       context "allocated days to ros" do
         it "allocates hearing days based on allocated_days_without_room" do
