@@ -104,11 +104,11 @@ RSpec.shared_examples("fill substitution form") do
       expect(page).to have_css(".usa-table-borderless.css-nil thead tr th", text: "Date")
 
       # there should always be a distrubution task
-      expect(page).to have_css(".usa-table-borderless.css-nil tbody tr td", text: "Distribution Task")
+      expect(page).to have_css(".usa-table-borderless.css-nil tbody tr td", text: "Distribution")
 
       # example appeal has an evidence submission task
       if docket_type.eql?("evidence_submission")
-        expect(page).to have_css(".usa-table-borderless.css-nil tbody tr td", text: "Evidence Submission Window Task")
+        expect(page).to have_css(".usa-table-borderless.css-nil tbody tr td", text: "Evidence Submission Window")
         find("div", class: "checkbox-wrapper-taskIds[#{evidence_task_id}]").click
       end
 

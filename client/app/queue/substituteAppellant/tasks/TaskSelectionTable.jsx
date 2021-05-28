@@ -72,7 +72,7 @@ export const TaskSelectionTable = ({ tasks }) => {
                       hideLabel
                     />
                   </td>
-                  <td>{task.label}</td>
+                  <td>{task.label.replace('Task', '')}</td>
                   <td>{task.status}</td>
                   <td>{task.closedAt}</td>
                 </tr>
