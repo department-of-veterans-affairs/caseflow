@@ -27,7 +27,6 @@ exports[`HearingDayInfoButton renders correctly 1`] = `
               data-event-off="mouseleave keydown"
               data-for="hearing-day-undefined"
               data-tip="true"
-              role="tooltip"
               tabindex="-1"
             >
               Video · VLJ Jerengal, Jonas
@@ -39,6 +38,7 @@ exports[`HearingDayInfoButton renders correctly 1`] = `
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                 data-id="tooltip"
                 id="hearing-day-undefined"
+                role="tooltip"
               >
                 <style>
                   

@@ -16,7 +16,6 @@ Object {
           data-event-off="mouseleave keydown"
           data-for="badge-undefined"
           data-tip="true"
-          role="tooltip"
           tabindex="0"
         >
           H
@@ -28,6 +27,7 @@ Object {
             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
             data-id="tooltip"
             id="badge-undefined"
+            role="tooltip"
           >
             <style>
               
@@ -156,7 +156,6 @@ Object {
         data-event-off="mouseleave keydown"
         data-for="badge-undefined"
         data-tip="true"
-        role="tooltip"
         tabindex="0"
       >
         H
@@ -168,6 +167,7 @@ Object {
           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
           data-id="tooltip"
           id="badge-undefined"
+          role="tooltip"
         >
           <style>
             

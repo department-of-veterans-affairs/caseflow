@@ -529,7 +529,6 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       data-event-off="mouseleave keydown"
                       data-for="tooltip-5"
                       data-tip="true"
-                      role="tooltip"
                       tabindex="0"
                     >
                       <span>
@@ -594,6 +593,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-top type-dark"
                         data-id="tooltip"
                         id="tooltip-5"
+                        role="tooltip"
                       >
                         <style>
                           
@@ -762,7 +762,6 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       data-event-off="mouseleave keydown"
                       data-for="badge-200603-71"
                       data-tip="true"
-                      role="tooltip"
                       tabindex="0"
                     >
                       D
@@ -774,6 +773,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                         data-id="tooltip"
                         id="badge-200603-71"
+                        role="tooltip"
                       >
                         <style>
                           
@@ -963,7 +963,6 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       data-event-off="mouseleave keydown"
                       data-for="badge-200603-72"
                       data-tip="true"
-                      role="tooltip"
                       tabindex="0"
                     >
                       D
@@ -975,6 +974,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                         data-id="tooltip"
                         id="badge-200603-72"
+                        role="tooltip"
                       >
                         <style>
                           
@@ -1680,7 +1680,6 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       data-event-off="mouseleave keydown"
                       data-for="tooltip-5"
                       data-tip="true"
-                      role="tooltip"
                       tabindex="0"
                     >
                       <span>
@@ -1745,6 +1744,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-top type-dark"
                         data-id="tooltip"
                         id="tooltip-5"
+                        role="tooltip"
                       >
                         <style>
                           
@@ -1913,7 +1913,6 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       data-event-off="mouseleave keydown"
                       data-for="badge-200603-73"
                       data-tip="true"
-                      role="tooltip"
                       tabindex="0"
                     >
                       D
@@ -1925,6 +1924,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                         data-id="tooltip"
                         id="badge-200603-73"
+                        role="tooltip"
                       >
                         <style>
                           
@@ -2112,7 +2112,6 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       data-event-off="mouseleave keydown"
                       data-for="badge-200603-74"
                       data-tip="true"
-                      role="tooltip"
                       tabindex="0"
                     >
                       D
@@ -2124,6 +2123,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                         data-id="tooltip"
                         id="badge-200603-74"
+                        role="tooltip"
                       >
                         <style>
                           

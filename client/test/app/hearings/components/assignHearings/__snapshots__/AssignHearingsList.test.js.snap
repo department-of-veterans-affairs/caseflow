@@ -135,7 +135,6 @@ Object {
               data-event-off="mouseleave keydown"
               data-for="badge-200628-4"
               data-tip="true"
-              role="tooltip"
               tabindex="0"
             >
               H
@@ -147,6 +146,7 @@ Object {
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                 data-id="tooltip"
                 id="badge-200628-4"
+                role="tooltip"
               >
                 <style>
                   
@@ -325,7 +325,6 @@ Object {
               data-event-off="mouseleave keydown"
               data-for="badge-200624-613"
               data-tip="true"
-              role="tooltip"
               tabindex="0"
             >
               L
@@ -337,6 +336,7 @@ Object {
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                 data-id="tooltip"
                 id="badge-200624-613"
+                role="tooltip"
               >
                 <style>
                   
@@ -515,7 +515,6 @@ Object {
               data-event-off="mouseleave keydown"
               data-for="badge-200624-614"
               data-tip="true"
-              role="tooltip"
               tabindex="0"
             >
               H
@@ -527,6 +526,7 @@ Object {
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                 data-id="tooltip"
                 id="badge-200624-614"
+                role="tooltip"
               >
                 <style>
                   
@@ -711,7 +711,6 @@ Object {
             data-event-off="mouseleave keydown"
             data-for="badge-200628-4"
             data-tip="true"
-            role="tooltip"
             tabindex="0"
           >
             H
@@ -723,6 +722,7 @@ Object {
               class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
               data-id="tooltip"
               id="badge-200628-4"
+              role="tooltip"
             >
               <style>
                 
@@ -901,7 +901,6 @@ Object {
             data-event-off="mouseleave keydown"
             data-for="badge-200624-613"
             data-tip="true"
-            role="tooltip"
             tabindex="0"
           >
             L
@@ -913,6 +912,7 @@ Object {
               class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
               data-id="tooltip"
               id="badge-200624-613"
+              role="tooltip"
             >
               <style>
                 
@@ -1091,7 +1091,6 @@ Object {
             data-event-off="mouseleave keydown"
             data-for="badge-200624-614"
             data-tip="true"
-            role="tooltip"
             tabindex="0"
           >
             H
@@ -1103,6 +1102,7 @@ Object {
               class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
               data-id="tooltip"
               id="badge-200624-614"
+              role="tooltip"
             >
               <style>
                 

@@ -939,7 +939,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                         data-event-off="mouseleave keydown"
                         data-for="tooltip-Copy Guest Link"
                         data-tip={true}
-                        role="tooltip"
                         tabIndex={0}
                         text="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
                       >
@@ -953,7 +952,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                           data-for="tooltip-Copy Guest Link"
                           data-tip={true}
                           onClick={[Function]}
-                          role="tooltip"
                           tabIndex={0}
                           type="submit"
                         >
@@ -987,12 +985,14 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                           offset={Object {}}
                           place="bottom"
                           resizeHide={true}
+                          role="tooltip"
                           wrapper="div"
                         >
                           <div
                             className="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                             data-id="tooltip"
                             id="tooltip-Copy Guest Link"
+                            role="tooltip"
                           >
                             <style
                               dangerouslySetInnerHTML={

@@ -160,6 +160,7 @@ exports[`CaseHearingDetail renders correctly 1`] = `
                   class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-top type-dark"
                   data-id="tooltip"
                   id="hearing-worksheet-tip"
+                  role="tooltip"
                 >
                   <style>
                     
