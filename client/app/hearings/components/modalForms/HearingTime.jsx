@@ -90,7 +90,7 @@ export const HearingTime = ({
         <SearchableDropdown
           readOnly={readOnly}
           name={`optionalHearingTime${componentIndex}`}
-          label="Hearing Time"
+          label={label}
           strongLabel
           placeholder="Select a time"
           options={
@@ -108,6 +108,7 @@ export const HearingTime = ({
 };
 
 HearingTime.defaultProps = {
+  label: 'Hearing Time',
   componentIndex: 0,
   enableZone: false,
 };

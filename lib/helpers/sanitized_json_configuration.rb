@@ -19,9 +19,8 @@ class SanitizedJsonConfiguration
         track_imported_ids: true,
         sanitize_fields: %w[veteran_file_number],
         retrieval: lambda do |records|
-          initial_appeals = records[Appeal]
-          (initial_appeals +
-          initial_appeals.map { |appeal| self.class.appeals_associated_with(appeal) }.flatten.uniq.compact
+          (records[Appeal] +
+            records[Appeal].map { |appeal| self.class.appeals_associated_with(appeal) }.flatten.uniq.compact
           ).uniq.sort_by(&:id)
         end
       },
@@ -45,24 +44,17 @@ class SanitizedJsonConfiguration
       },
       Task => {
         sanitize_fields: %w[instructions],
-        retrieval: ->(records) { reorder_for_import(Task.where(appeal: records[Appeal])).extend(TaskAssignment) }
+        retrieval: ->(records) { reorder_for_import(Task.where(appeal: records[Appeal])) }
       },
       TaskTimer => {
         retrieval: ->(records) { TaskTimer.where(task_id: records[Task].map(&:id)).order(:id) }
       },
       JudgeCaseReview => {
         sanitize_fields: %w[comment],
-        retrieval: lambda do |records|
-          judge_task_ids = Task.where(type: JudgeTask.descendants.map(&:name), appeal: records[Appeal]).ids
-          JudgeCaseReview.where(task_id: judge_task_ids).order(:id)
-        end
+        retrieval: ->(records) { JudgeCaseReview.where(task_id: records[Task].map(&:id)).order(:id) }
       },
       AttorneyCaseReview => {
-        sanitize_fields: %w[comment],
-        retrieval: lambda do |records|
-          atty_task_ids = Task.where(type: AttorneyTask.descendants.map(&:name), appeal: records[Appeal]).ids
-          AttorneyCaseReview.where(task_id: atty_task_ids).order(:id)
-        end
+        retrieval: ->(records) { AttorneyCaseReview.where(task_id: records[Task].map(&:id)).order(:id) }
       },
       RequestIssue => {
         sanitize_fields: ["notes", "contested_issue_description", /_(notes|text|description)/],
@@ -83,8 +75,9 @@ class SanitizedJsonConfiguration
       Hearing => {
         sanitize_fields: %w[bva_poc military_service notes representative_name summary witness],
         retrieval: lambda do |records|
-          (records[Appeal].map(&:hearings) + records[Task].with_type("HearingTask").map(&:hearing))
-            .flatten.uniq.compact.sort_by(&:id)
+          (records[Appeal].map(&:hearings) +
+            Task.where(id: records[Task].map(&:id), type: :HearingTask).map(&:hearing)
+          ).flatten.uniq.compact.sort_by(&:id)
         end
       },
       HearingDay => {
@@ -104,12 +97,13 @@ class SanitizedJsonConfiguration
         track_imported_ids: true,
         sanitize_fields: %w[css_id email full_name],
         retrieval: lambda do |records|
-          tasks = records[Task]
+          # eager load task associations
+          tasks = Task.where(id: records[Task].map(&:id)).includes(:assigned_by, :assigned_to, :cancelled_by)
           cavc_remands = records[CavcRemand]
           hearings = records[Hearing]
 
           users = tasks.map(&:assigned_by).compact + tasks.map(&:cancelled_by).compact +
-                  tasks.assigned_to_user.map(&:assigned_to) +
+                  tasks.assigned_to_any_user.map(&:assigned_to) +
                   cavc_remands.map { |cavc_remand| [cavc_remand.created_by, cavc_remand.updated_by] }.flatten +
                   records[Appeal].map(&:intake).compact.map(&:user) +
                   records[AppealIntake].map { |intake| intake&.user } +
@@ -120,14 +114,19 @@ class SanitizedJsonConfiguration
           users.uniq.compact.sort_by(&:id)
         end
       },
+      OrganizationsUser => {
+        retrieval: ->(records) { OrganizationsUser.where(user: records[User]) }
+      },
       Organization => {
         track_imported_ids: true,
         retrieval: lambda do |records|
-          records[Task].assigned_to_org.map(&:assigned_to) + records[User].map(&:organizations).flatten.uniq
+          # eager load task associations
+          org_tasks = Task.where(id: records[Task].map(&:id)).includes(:assigned_by, :assigned_to).assigned_to_any_org
+          org_ids = records[OrganizationsUser].map(&:organization_id) +
+                    org_tasks.map(&:assigned_to_id) + org_tasks.map(&:assigned_by_id)
+          # Use Organization.unscoped to include inactive organizations when exporting
+          Organization.unscoped.where(id: org_ids).order(:id)
         end
-      },
-      OrganizationsUser => {
-        retrieval: ->(records) { OrganizationsUser.where(user: records[User]) }
       },
       Person => {
         track_imported_ids: true,
@@ -138,29 +137,15 @@ class SanitizedJsonConfiguration
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
-  module TaskAssignment
-    def assigned_to_user
-      select { |task| task.assigned_to_type == "User" }
-    end
-
-    def assigned_to_org
-      select { |task| task.assigned_to_type == "Organization" }
-    end
-
-    def with_type(task_type)
-      select { |task| task.type == task_type }
-    end
-  end
-
   private
 
   def reorder_for_import(tasks)
     tasks = tasks.sort_by(&:id)
-    reordered_tasks = tasks.select { |task| task["parent_id"].nil? }
+    reordered_tasks = tasks.select { |task| task.parent_id.nil? }
     tasks -= reordered_tasks
     while tasks.any?
       task_ids = reordered_tasks.pluck("id")
-      child_tasks = tasks.select { |task| task_ids.include?(task["parent_id"]) }
+      child_tasks = tasks.select { |task| task_ids.include?(task.parent_id) }
       fail "Tasks with unknown parent task still remain" if child_tasks.blank?
 
       reordered_tasks += child_tasks
@@ -228,8 +213,11 @@ class SanitizedJsonConfiguration
       Appeal => initial_appeals
     }
 
+    # This is just a reminder for how we can handle legacy appeals, i.e. by using :legacy_retrieval.
+    # Currently no :legacy_retrieval lambdas have been defined.
+    retrieval_key = initial_appeals.first.is_a?(LegacyAppeal) ? :legacy_retrieval : :retrieval
     # incrementally update export_records as subsequent calls may rely on prior updates to export_records
-    extract_configuration(:retrieval, configuration).map do |klass, retrieval_lambda|
+    extract_configuration(retrieval_key, configuration).map do |klass, retrieval_lambda|
       export_records[klass] = retrieval_lambda.call(export_records)
     end
 
@@ -237,8 +225,11 @@ class SanitizedJsonConfiguration
   end
 
   def self.appeals_associated_with(appeal)
-    appeal.cavc_remand&.source_appeal
     # To-do: include other source appeals, e.g., those with the same docket number
+    [
+      appeal.cavc_remand&.source_appeal,
+      appeal.appellant_substitution&.source_appeal
+    ].compact
   end
 
   def before_sanitize(record, obj_hash)
