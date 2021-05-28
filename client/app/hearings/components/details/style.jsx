@@ -197,3 +197,32 @@ export const setMargin = (margin) =>
   css({
     margin
   });
+
+export const notesFieldStyling = css({
+  height: '100px',
+  fontSize: '10pt'
+});
+
+export const spanStyling = css({
+  marginBotton: '5px'
+});
+
+export const roomRequiredStyling = css({
+  marginTop: '15px'
+});
+
+export const statusMsgTitleStyle = css({
+  fontSize: '18pt',
+  textAlign: 'left'
+});
+export const statusMsgDetailStyle = css({
+  fontSize: '12pt',
+  textAlign: 'left',
+  margin: 0,
+  color: '#e31c3d'
+});
+
+export const titleStyling = css({
+  marginBottom: 0,
+  padding: 0
+});
