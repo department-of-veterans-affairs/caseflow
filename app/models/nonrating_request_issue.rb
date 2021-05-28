@@ -4,4 +4,8 @@ class NonratingRequestIssue < RequestIssue
   def rating?
     false
   end
+
+  def nonrating?
+    true
+  end
 end

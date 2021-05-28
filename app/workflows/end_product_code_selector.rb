@@ -271,7 +271,7 @@ class EndProductCodeSelector
 
   attr_reader :request_issue
 
-  delegate :remanded?, :remand_type, :correction?, :correction_type, :rating?, :is_unidentified?,
+  delegate :remanded?, :remand_type, :correction?, :correction_type, :rating?, :nonrating?, :is_unidentified?,
            :decision_review, :decision_review_type, :benefit_type, to: :request_issue
 
   def call
@@ -287,7 +287,7 @@ class EndProductCodeSelector
   end
 
   def issue_type
-    (rating? || is_unidentified?) ? :rating : :nonrating
+    nonrating? ? :nonrating : :rating
   end
 
   def review_type
