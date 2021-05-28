@@ -85,10 +85,7 @@ export const SubstituteAppellantReview = ({
                   return (
                     <tr className="task-detail" key={`${task.taskId}`}>
                       <td>
-                        {task.label.
-                          split(' ').
-                          slice(0, -1).
-                          join(' ')}
+                        {task.label.replace('Task', '')}
                       </td>
                       <td>
                         {task.type === 'EvidenceSubmissionWindowTask' && (
@@ -119,7 +116,7 @@ export const SubstituteAppellantReview = ({
 SubstituteAppellantReview.propTypes = {
   selectedTasks: PropTypes.arrayOf(
     PropTypes.shape({
-      taskId: PropTypes.number,
+      taskId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
       label: PropTypes.string,
     })
   ),
