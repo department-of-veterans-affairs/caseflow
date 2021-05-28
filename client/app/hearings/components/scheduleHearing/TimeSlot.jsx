@@ -16,7 +16,14 @@ export const TimeSlot = ({
   onChange,
   hearing,
   fetchingHearings,
-  ro
+  ro,
+  disableToggle,
+  preview,
+  slotStartTime,
+  slotLength,
+  slotCount,
+  hearingDate,
+  label
 }) => {
   // Create local state to hold the selected time before saving
   const [selected, setSelected] = useState('');
@@ -27,10 +34,11 @@ export const TimeSlot = ({
   const toggleTimeModal = () => setTimeModal((val) => !val);
 
   // Extract the necessary values for timeslot calculation from state
-  const beginsAt = hearing?.hearingDay?.beginsAt;
-  const numberOfSlots = hearing?.hearingDay?.totalSlots;
-  const slotLengthMinutes = hearing?.hearingDay?.slotLengthMinutes;
-  const hearingDayDate = hearing?.hearingDay?.scheduledFor;
+  const beginsAt = hearing?.hearingDay?.beginsAt || slotStartTime;
+  const numberOfSlots = hearing?.hearingDay?.totalSlots || slotCount;
+  const slotLengthMinutes = hearing?.hearingDay?.slotLengthMinutes || slotLength;
+  const hearingDayDate = hearing?.hearingDay?.scheduledFor || hearingDate;
+
   // Get the timeslots
   const slots = setTimeSlots({
     scheduledHearingsList,
@@ -62,24 +70,25 @@ export const TimeSlot = ({
   return (
     <React.Fragment>
       <label className="time-slot-label" htmlFor={hearingTimeId}>
-         Hearing Time
+        {label}
       </label>
       {fetchingHearings ? (
         <SmallLoader spinnerColor={LOGO_COLORS.QUEUE.ACCENT} message="Loading Hearing Times" />
       ) : (
         <React.Fragment>
-          <div>
+          {!disableToggle && <div>
             <Button
               linkStyling
               onClick={() => toggleTimeModal()}
               classNames={['time-slot-button-toggle']}
             >{customText}</Button>
-          </div>
+          </div>}
           <div className="time-slot-button-container">
             <div className="time-slot-container" >
               {slots.slice(0, columnLength).map((slot) => (
                 <TimeSlotButton
                   {...slot}
+                  full={preview || slot?.full}
                   key={slot.key}
                   roTimezone={roTimezone}
                   selected={slot.time.isSame(selected)}
@@ -91,6 +100,7 @@ export const TimeSlot = ({
               {slots.slice(columnLength, slots.length).map((slot) => (
                 <TimeSlotButton
                   {...slot}
+                  full={preview || slot?.full}
                   key={slot.key}
                   roTimezone={roTimezone}
                   selected={slot.time.isSame(selected)}
@@ -119,10 +129,21 @@ export const TimeSlot = ({
 };
 
 TimeSlot.propTypes = {
+  label: PropTypes.string,
+  disableToggle: PropTypes.bool,
+  preview: PropTypes.bool,
   fetchingHearings: PropTypes.bool,
   hearing: PropTypes.object,
   onChange: PropTypes.func,
   scheduledHearingsList: PropTypes.array,
   roTimezone: PropTypes.string,
   ro: PropTypes.string,
+  slotStartTime: PropTypes.string,
+  slotLength: PropTypes.number,
+  slotCount: PropTypes.number,
+  hearingDate: PropTypes.string,
+};
+
+TimeSlot.defaultProps = {
+  label: 'Hearing Time'
 };

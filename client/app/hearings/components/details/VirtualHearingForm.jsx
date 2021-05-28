@@ -40,6 +40,7 @@ export const VirtualHearingForm = (
           update={update}
           virtualHearing={virtualHearing}
           time={hearing.scheduledTimeString}
+          roTimezone={hearing?.regionalOfficeTimezone}
           requestType={hearing.readableRequestType}
           initialRepresentativeTz={initialHearing?.virtualHearing?.representativeTz}
         />
