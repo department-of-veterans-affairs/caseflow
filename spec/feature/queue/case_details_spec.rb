@@ -551,6 +551,7 @@ RSpec.feature "Case details", :all_dbs do
 
       before do
         FeatureToggle.enable!(:poa_button_refresh)
+        Rails.cache.write("bgs-participant-poa-not-found-#{appeal.veteran.file_number}", true)
       end
       after do
         FeatureToggle.disable!(:poa_button_refresh)
@@ -566,6 +567,7 @@ RSpec.feature "Case details", :all_dbs do
 
         expect(appeal.claimant.power_of_attorney).to_not eq(nil)
         expect(appeal.power_of_attorney).to_not eq(nil)
+        expect(Rails.cache.read("bgs-participant-poa-not-found-#{appeal.veteran.file_number}")).to eq(true)
 
         visit "/queue/appeals/#{appeal.uuid}"
         expect(page).to have_content("Refresh POA")
@@ -576,6 +578,7 @@ RSpec.feature "Case details", :all_dbs do
 
         expect(appeal.claimant.power_of_attorney).to eq(nil)
         expect(appeal.power_of_attorney).to eq(nil)
+        expect(Rails.cache.read("bgs-participant-poa-not-found-#{appeal.veteran.file_number}")).to eq(nil)
       end
     end
 
