@@ -240,16 +240,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
 
     # Method to choose the custom hearing time dropdown
-    def select_custom_hearing_time(time, is_eastern_only = true)
-      direct_enabled = FeatureToggle.enabled?(:schedule_veteran_virtual_hearing)
-
-      time_string = if is_eastern_only || !direct_enabled
-                      time
-                    else
-                      "#{time} AM E"
-                    end
-
-      click_dropdown(text: time_string, name: "optionalHearingTime0")
+    def select_custom_hearing_time(time)
+      click_dropdown(text: /^(#{time} (A|a)(M|m)( E)?)/, name: "optionalHearingTime0")
     end
 
     def slots_select_hearing_time(time)
@@ -575,7 +567,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
             text: "Holdrege, NE (VHA) 0 miles away",
             name: "appealHearingLocation"
           )
-          select_custom_hearing_time("10:15", zone_is_eastern(regional_office))
+          select_custom_hearing_time("10:15")
           click_button("Schedule", exact: true)
 
           expect(page).to have_content(COPY::SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL)
@@ -601,7 +593,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
             text: "Holdrege, NE (VHA) 0 miles away",
             name: "appealHearingLocation"
           )
-          select_custom_hearing_time("10:15", zone_is_eastern(regional_office))
+          select_custom_hearing_time("10:15")
           click_button("Schedule", exact: true)
           click_on "Back to Schedule Veterans"
 
@@ -646,7 +638,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
             text: "Holdrege, NE (VHA) 0 miles away",
             name: "appealHearingLocation"
           )
-          select_custom_hearing_time("10:15", zone_is_eastern(regional_office))
+          select_custom_hearing_time("10:15")
           click_button("Schedule", exact: true)
 
           expect(page).to have_content(COPY::SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL)
@@ -676,7 +668,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           text: "Holdrege, NE (VHA) 0 miles away",
           name: "appealHearingLocation"
         )
-        select_custom_hearing_time("10:15", true)
+        select_custom_hearing_time("10:15")
         click_button("Schedule", exact: true)
 
         expect(page).to have_content(COPY::SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL)
@@ -707,7 +699,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
         # Only one of these three gets called, they each represent a different
         # way to select a hearing time
-        select_custom_hearing_time(time, ro_key == "C") unless slots
+        select_custom_hearing_time(time) unless slots
         slots_select_hearing_time(time) if slots == "slot"
         slots_select_custom_hearing_time(time) if slots == "custom"
 

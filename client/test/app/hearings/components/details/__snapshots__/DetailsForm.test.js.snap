@@ -140,9 +140,14 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       id="judge-dropdown-label"
                     >
                       <strong>
-                        <span>
-                          VLJ
-                        </span>
+                        <FormLabel
+                          label="VLJ"
+                          name="VLJ"
+                        >
+                          <span>
+                            VLJ
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <div
@@ -1645,9 +1650,14 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       id="hearing-coordinator-dropdown-label"
                     >
                       <strong>
-                        <span>
-                          Hearing Coordinator
-                        </span>
+                        <FormLabel
+                          label="Hearing Coordinator"
+                          name="Hearing Coordinator"
+                        >
+                          <span>
+                            Hearing Coordinator
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <div
@@ -3257,9 +3267,14 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                     id="hearing-room-dropdown-label"
                   >
                     <strong>
-                      <span>
-                        Hearing Room
-                      </span>
+                      <FormLabel
+                        label="Hearing Room"
+                        name="Hearing Room"
+                      >
+                        <span>
+                          Hearing Room
+                        </span>
+                      </FormLabel>
                     </strong>
                   </label>
                   <div
@@ -7212,9 +7227,14 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       id="transcriber-label"
                     >
                       <strong>
-                        <span>
-                          Transcriber
-                        </span>
+                        <FormLabel
+                          label="Transcriber"
+                          name="Transcriber"
+                        >
+                          <span>
+                            Transcriber
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <div
@@ -9191,9 +9211,14 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       id="problem-type-label"
                     >
                       <strong>
-                        <span>
-                          Transcription Problem Type
-                        </span>
+                        <FormLabel
+                          label="Transcription Problem Type"
+                          name="Transcription Problem Type"
+                        >
+                          <span>
+                            Transcription Problem Type
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <div
@@ -11551,9 +11576,14 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       id="judge-dropdown-label"
                     >
                       <strong>
-                        <span>
-                          VLJ
-                        </span>
+                        <FormLabel
+                          label="VLJ"
+                          name="VLJ"
+                        >
+                          <span>
+                            VLJ
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <div
@@ -13056,9 +13086,14 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       id="hearing-coordinator-dropdown-label"
                     >
                       <strong>
-                        <span>
-                          Hearing Coordinator
-                        </span>
+                        <FormLabel
+                          label="Hearing Coordinator"
+                          name="Hearing Coordinator"
+                        >
+                          <span>
+                            Hearing Coordinator
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <div
@@ -14668,9 +14703,14 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                     id="hearing-room-dropdown-label"
                   >
                     <strong>
-                      <span>
-                        Hearing Room
-                      </span>
+                      <FormLabel
+                        label="Hearing Room"
+                        name="Hearing Room"
+                      >
+                        <span>
+                          Hearing Room
+                        </span>
+                      </FormLabel>
                     </strong>
                   </label>
                   <div
@@ -18644,9 +18684,14 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       id="transcriber-label"
                     >
                       <strong>
-                        <span>
-                          Transcriber
-                        </span>
+                        <FormLabel
+                          label="Transcriber"
+                          name="Transcriber"
+                        >
+                          <span>
+                            Transcriber
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <div
@@ -20623,9 +20668,14 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       id="problem-type-label"
                     >
                       <strong>
-                        <span>
-                          Transcription Problem Type
-                        </span>
+                        <FormLabel
+                          label="Transcription Problem Type"
+                          name="Transcription Problem Type"
+                        >
+                          <span>
+                            Transcription Problem Type
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <div
@@ -22993,9 +23043,14 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       id="judge-dropdown-label"
                     >
                       <strong>
-                        <span>
-                          VLJ
-                        </span>
+                        <FormLabel
+                          label="VLJ"
+                          name="VLJ"
+                        >
+                          <span>
+                            VLJ
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <div
@@ -24498,9 +24553,14 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       id="hearing-coordinator-dropdown-label"
                     >
                       <strong>
-                        <span>
-                          Hearing Coordinator
-                        </span>
+                        <FormLabel
+                          label="Hearing Coordinator"
+                          name="Hearing Coordinator"
+                        >
+                          <span>
+                            Hearing Coordinator
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <div
@@ -26110,9 +26170,14 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                     id="hearing-room-dropdown-label"
                   >
                     <strong>
-                      <span>
-                        Hearing Room
-                      </span>
+                      <FormLabel
+                        label="Hearing Room"
+                        name="Hearing Room"
+                      >
+                        <span>
+                          Hearing Room
+                        </span>
+                      </FormLabel>
                     </strong>
                   </label>
                   <div
@@ -29749,9 +29814,14 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                     id="hearing-type-label"
                   >
                     <strong>
-                      <span>
-                        Hearing Type
-                      </span>
+                      <FormLabel
+                        label="Hearing Type"
+                        name="Hearing Type"
+                      >
+                        <span>
+                          Hearing Type
+                        </span>
+                      </FormLabel>
                     </strong>
                   </label>
                   <div
@@ -31704,9 +31774,14 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       id="transcriber-label"
                     >
                       <strong>
-                        <span>
-                          Transcriber
-                        </span>
+                        <FormLabel
+                          label="Transcriber"
+                          name="Transcriber"
+                        >
+                          <span>
+                            Transcriber
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <div
@@ -33683,9 +33758,14 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       id="problem-type-label"
                     >
                       <strong>
-                        <span>
-                          Transcription Problem Type
-                        </span>
+                        <FormLabel
+                          label="Transcription Problem Type"
+                          name="Transcription Problem Type"
+                        >
+                          <span>
+                            Transcription Problem Type
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <div
@@ -36054,9 +36134,14 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       id="judge-dropdown-label"
                     >
                       <strong>
-                        <span>
-                          VLJ
-                        </span>
+                        <FormLabel
+                          label="VLJ"
+                          name="VLJ"
+                        >
+                          <span>
+                            VLJ
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <div
@@ -37559,9 +37644,14 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       id="hearing-coordinator-dropdown-label"
                     >
                       <strong>
-                        <span>
-                          Hearing Coordinator
-                        </span>
+                        <FormLabel
+                          label="Hearing Coordinator"
+                          name="Hearing Coordinator"
+                        >
+                          <span>
+                            Hearing Coordinator
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <div
@@ -39171,9 +39261,14 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                     id="hearing-room-dropdown-label"
                   >
                     <strong>
-                      <span>
-                        Hearing Room
-                      </span>
+                      <FormLabel
+                        label="Hearing Room"
+                        name="Hearing Room"
+                      >
+                        <span>
+                          Hearing Room
+                        </span>
+                      </FormLabel>
                     </strong>
                   </label>
                   <div
@@ -42810,9 +42905,14 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                     id="hearing-type-label"
                   >
                     <strong>
-                      <span>
-                        Hearing Type
-                      </span>
+                      <FormLabel
+                        label="Hearing Type"
+                        name="Hearing Type"
+                      >
+                        <span>
+                          Hearing Type
+                        </span>
+                      </FormLabel>
                     </strong>
                   </label>
                   <div
@@ -44765,9 +44865,14 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       id="transcriber-label"
                     >
                       <strong>
-                        <span>
-                          Transcriber
-                        </span>
+                        <FormLabel
+                          label="Transcriber"
+                          name="Transcriber"
+                        >
+                          <span>
+                            Transcriber
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <div
@@ -46744,9 +46849,14 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       id="problem-type-label"
                     >
                       <strong>
-                        <span>
-                          Transcription Problem Type
-                        </span>
+                        <FormLabel
+                          label="Transcription Problem Type"
+                          name="Transcription Problem Type"
+                        >
+                          <span>
+                            Transcription Problem Type
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <div
@@ -49115,9 +49225,14 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                       id="judge-dropdown-label"
                     >
                       <strong>
-                        <span>
-                          VLJ
-                        </span>
+                        <FormLabel
+                          label="VLJ"
+                          name="VLJ"
+                        >
+                          <span>
+                            VLJ
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <div
@@ -50620,9 +50735,14 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                       id="hearing-coordinator-dropdown-label"
                     >
                       <strong>
-                        <span>
-                          Hearing Coordinator
-                        </span>
+                        <FormLabel
+                          label="Hearing Coordinator"
+                          name="Hearing Coordinator"
+                        >
+                          <span>
+                            Hearing Coordinator
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <div
@@ -52232,9 +52352,14 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                     id="hearing-room-dropdown-label"
                   >
                     <strong>
-                      <span>
-                        Hearing Room
-                      </span>
+                      <FormLabel
+                        label="Hearing Room"
+                        name="Hearing Room"
+                      >
+                        <span>
+                          Hearing Room
+                        </span>
+                      </FormLabel>
                     </strong>
                   </label>
                   <div
@@ -55871,9 +55996,14 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                     id="hearing-type-label"
                   >
                     <strong>
-                      <span>
-                        Hearing Type
-                      </span>
+                      <FormLabel
+                        label="Hearing Type"
+                        name="Hearing Type"
+                      >
+                        <span>
+                          Hearing Type
+                        </span>
+                      </FormLabel>
                     </strong>
                   </label>
                   <div
