@@ -826,9 +826,13 @@ exports[`Timezone Can set timezone 1`] = `
           id="tz-label"
         >
           <strong>
-            <span>
-              tz
-            </span>
+            <FormLabel
+              name="tz"
+            >
+              <span>
+                tz
+              </span>
+            </FormLabel>
           </strong>
         </label>
         <div
@@ -16902,9 +16906,13 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
           id="timezone-label"
         >
           <strong>
-            <span>
-              Timezone
-            </span>
+            <FormLabel
+              name="Timezone"
+            >
+              <span>
+                Timezone
+              </span>
+            </FormLabel>
           </strong>
         </label>
         <div
@@ -32923,9 +32931,14 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
           id="timezone-label"
         >
           <strong>
-            <span>
-              Timezone
-            </span>
+            <FormLabel
+              name="Timezone"
+              required={false}
+            >
+              <span>
+                Timezone
+              </span>
+            </FormLabel>
           </strong>
         </label>
         <div
@@ -47121,9 +47134,13 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
           id="timezone-label"
         >
           <strong>
-            <span>
-              Timezone
-            </span>
+            <FormLabel
+              name="Timezone"
+            >
+              <span>
+                Timezone
+              </span>
+            </FormLabel>
           </strong>
         </label>
         <div
@@ -63935,14 +63952,19 @@ exports[`Timezone Respects required prop 1`] = `
           id="timezone-label"
         >
           <strong>
-            <span>
-              Timezone
-              <span
-                className="cf-required"
-              >
-                Required
+            <FormLabel
+              name="Timezone"
+              required={true}
+            >
+              <span>
+                Timezone
+                <span
+                  className="cf-required"
+                >
+                  Required
+                </span>
               </span>
-            </span>
+            </FormLabel>
           </strong>
         </label>
         <div

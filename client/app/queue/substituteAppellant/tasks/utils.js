@@ -1,5 +1,18 @@
 import parseISO from 'date-fns/parseISO';
 
+const automatedTasks = [
+  'QualityReviewTask',
+  'JudgeQualityReviewTask',
+  'AttorneyQualityReviewTask',
+  'JudgeAssignTask',
+  'JudgeDecisionReviewTask',
+  'AttorneyTask',
+  'AttorneyRewriteTask',
+  'BvaDispatchTask',
+  'JudgeDispatchReturnTask',
+  'AttorneyDispatchReturnTask'
+];
+
 // Generic function to determine if a task (`current`) is a descendent of another task (`target`)
 // allItems is object keyed to a specified id
 export const isDescendant = (
@@ -59,11 +72,8 @@ export const shouldDisable = (taskInfo) => {
   return alwaysDisabled.includes(taskInfo.type);
 };
 
-// The following governs which tasks should not actually appear in list of available tasks
-export const shouldHide = (taskInfo) => {
-  // Currently honoring the same logic for hiding from Case Timeline
-  // Can be used in the future to add specific task types (taskInfo.type) and/or descendents as needed
-  return taskInfo.hideFromCaseTimeline;
+export const shouldHideBasedOnPoaType = (taskInfo, poaType) => {
+  return ['Attorney', 'Agent'].includes(poaType) && taskInfo.type === 'InformalHearingPresentationTask';
 };
 
 // We can have a case where a particular task's inclusion depends upon other tasks
@@ -72,9 +82,18 @@ export const shouldHide = (taskInfo) => {
 export const shouldShowBasedOnOtherTasks = (taskInfo, allTasks) => {
   const taskType = taskInfo.type;
 
-  const visibleUserTask = allTasks.find((item) => item.type === taskType && !item.hideFromCaseTimeline);
+  const visibleUserTask = allTasks.find((item) => item.type === taskType && item.taskId !== taskInfo.taskId && !item.assignedTo?.isOrganization && !item.hideFromCaseTimeline);
 
   return Boolean(visibleUserTask);
+};
+
+// The following governs which tasks should not actually appear in list of available tasks
+export const shouldHide = (taskInfo, poaType, allTasks) => {
+  if (automatedTasks.includes(taskInfo.type)) {
+    return true;
+  }
+
+  return (taskInfo.hideFromCaseTimeline || shouldHideBasedOnPoaType(taskInfo, poaType)) && !shouldShowBasedOnOtherTasks(taskInfo, allTasks);
 };
 
 export const shouldAutoSelect = (taskInfo) => {
@@ -116,14 +135,14 @@ export const sortTasks = (taskData) => {
 };
 
 // This returns array of tasks with relevant booleans for hidden/disabled
-export const prepTaskDataForUi = (taskData) => {
+export const prepTaskDataForUi = (taskData, poaType) => {
   const uniqTasks = filterTasks(taskData);
 
   const sortedTasks = sortTasks(uniqTasks);
 
   return sortedTasks.map((taskInfo) => ({
     ...taskInfo,
-    hidden: shouldHide(taskInfo) && !shouldShowBasedOnOtherTasks(taskInfo, taskData),
+    hidden: shouldHide(taskInfo, poaType, taskData),
     disabled: shouldDisable(taskInfo, taskData),
     selected: shouldAutoSelect(taskInfo),
   }));
