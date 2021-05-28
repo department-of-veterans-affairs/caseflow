@@ -3,7 +3,7 @@ name: Tech Spec template
 about: Template for a new tech spec
 title: "[SUBJECT] Tech Spec"
 labels: 'Type: Tech-Spec'
-assignees: ''
+assignees: '' 
 
 ---
 
