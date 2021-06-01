@@ -134,8 +134,6 @@ feature "Intake Add Issues Page", :all_dbs do
   end
 
   context "when edit contention text feature is enabled" do
-    before { FeatureToggle.enable!(:edit_contention_text) }
-
     it "Allows editing contention text on intake" do
       start_higher_level_review(veteran)
       visit "/intake"
