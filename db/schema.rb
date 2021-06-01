@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_25_143811) do
+ActiveRecord::Schema.define(version: 2021_06_01_143622) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1702,6 +1702,8 @@ ActiveRecord::Schema.define(version: 2021_05_25_143811) do
   add_foreign_key "ramp_election_rollbacks", "users"
   add_foreign_key "request_decision_issues", "decision_issues"
   add_foreign_key "request_decision_issues", "request_issues"
+  add_foreign_key "request_issues", "decision_issues", column: "contested_decision_issue_id"
+  add_foreign_key "request_issues", "end_product_establishments"
   add_foreign_key "request_issues", "request_issues", column: "corrected_by_request_issue_id"
   add_foreign_key "request_issues", "request_issues", column: "ineligible_due_to_id"
   add_foreign_key "request_issues_updates", "users"
