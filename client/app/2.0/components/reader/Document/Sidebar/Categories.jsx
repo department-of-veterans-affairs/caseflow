@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 // Local Dependencies
 import DocCategoryPicker from 'app/reader/DocCategoryPicker';
-import CannotSaveAlert from 'app/reader/CannotSaveAlert';
+import { CannotSaveAlert } from 'components/shared/CannotSaveAlert';
 
 /**
  * Sidebar Categories Component for Document screen

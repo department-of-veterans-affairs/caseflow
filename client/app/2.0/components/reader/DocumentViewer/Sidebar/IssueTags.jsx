@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // Local Dependencies
-import { CannotSaveAlert } from 'components/reader/DocumentViewer/CannotSaveAlert';
+import { CannotSaveAlert } from 'components/shared/CannotSaveAlert';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import { formatTagValue } from 'utils/reader';
 

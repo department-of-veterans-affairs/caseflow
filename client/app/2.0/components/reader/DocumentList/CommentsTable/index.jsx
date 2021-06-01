@@ -6,7 +6,7 @@ import { constant } from 'lodash';
 // Local Dependencies
 import Table from 'app/components/Table';
 import Comment from 'components/reader/DocumentList/CommentsTable/Comment';
-import { formatCommentRows } from 'utils/format';
+import { formatCommentRows } from 'utils/reader/format';
 
 /**
  * Comments Table Component
