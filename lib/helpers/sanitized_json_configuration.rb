@@ -121,9 +121,8 @@ class SanitizedJsonConfiguration
         track_imported_ids: true,
         retrieval: lambda do |records|
           # eager load task associations
-          org_tasks = Task.where(id: records[Task].map(&:id)).includes(:assigned_by, :assigned_to).assigned_to_any_org
-          org_ids = records[OrganizationsUser].map(&:organization_id) +
-                    org_tasks.map(&:assigned_to_id) + org_tasks.map(&:assigned_by_id)
+          org_tasks = Task.where(id: records[Task].map(&:id)).includes(:assigned_to).assigned_to_any_org
+          org_ids = records[OrganizationsUser].map(&:organization_id) + org_tasks.map(&:assigned_to_id)
           # Use Organization.unscoped to include inactive organizations when exporting
           Organization.unscoped.where(id: org_ids).order(:id)
         end
