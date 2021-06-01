@@ -6,7 +6,7 @@ import classNames from 'classnames';
 // Internal Dependencies
 import { Comments } from 'components/reader/DocumentViewer/Comments';
 import { pageNumber } from 'utils/reader';
-import { markStyles, pdfPageStyles } from 'styles/reader/Document/Pdf';
+import { markStyles, pdfPageStyles } from 'styles/reader/Document/PDF';
 import { commentIcon } from 'app/components/RenderFunctions';
 import { showPage } from 'store/reader/documentViewer';
 

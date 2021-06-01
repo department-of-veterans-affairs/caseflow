@@ -5,7 +5,7 @@ import { isEmpty } from 'lodash';
 
 // Internal Dependencies
 import { File } from 'components/reader/DocumentViewer/PDF/File';
-import { pdfStyles, fileContainerStyles } from 'styles/reader/Document/Pdf';
+import { pdfStyles, fileContainerStyles } from 'styles/reader/Document/PDF';
 import StatusMessage from 'app/components/StatusMessage';
 import { keyHandler, formatCommentQuery, focusComment } from 'utils/reader';
 
@@ -87,6 +87,7 @@ export const Pdf = ({ doc, clickPage, ...props }) => {
 Pdf.propTypes = {
   doc: PropTypes.object,
   currentDocument: PropTypes.object,
+  currentPageIndex: PropTypes.number,
   selectedComment: PropTypes.object,
   documentType: PropTypes.string,
   loadError: PropTypes.string,

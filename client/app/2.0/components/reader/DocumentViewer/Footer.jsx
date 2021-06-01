@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // Local Dependencies
-import { toolbarStyles } from 'styles/reader/Document/Pdf';
+import { toolbarStyles } from 'styles/reader/Document/PDF';
 import Button from 'app/components/Button';
 import TextField from 'app/components/TextField';
 import { FilterIcon, PageArrowLeft, PageArrowRight } from 'app/components/RenderFunctions';

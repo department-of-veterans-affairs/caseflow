@@ -6,7 +6,7 @@ import classNames from 'classnames';
 
 // Local Dependencies
 import { getPageCoordinatesOfMouseEvent } from 'utils/reader';
-import { pdfWrapper } from 'styles/reader/Document/Pdf';
+import { pdfWrapper } from 'styles/reader/Document/PDF';
 import { fetchDocuments, openDownloadLink } from 'utils/reader/document';
 import { documentScreen } from 'store/reader/selectors';
 import { DocumentHeader } from 'components/reader/DocumentViewer/Header';

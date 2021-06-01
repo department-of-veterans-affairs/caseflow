@@ -1,12 +1,10 @@
 // External Dependencies
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import querystring from 'querystring';
 
 // Internal Dependencies
 import { commentIcon } from 'app/components/RenderFunctions';
 import { commentStyles, selectionStyles } from 'styles/reader/Document/Comments';
-import { formatCommentQuery } from 'utils/reader';
 
 /**
  * Comments component for the Document Screen

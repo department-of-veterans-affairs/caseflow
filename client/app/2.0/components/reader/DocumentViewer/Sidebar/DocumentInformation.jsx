@@ -6,9 +6,7 @@ import { formatDateStr } from 'app/util/DateUtil';
 import IssueList from 'app/queue/components/IssueList';
 import EditableField from 'app/components/EditableField';
 import LoadingMessage from 'app/components/LoadingMessage';
-
-// TODO: Replace this with the actual components refactored in a later part of the stack
-import { getClaimTypeDetailInfo } from 'app/reader/utils';
+import { ClaimTypeDetail } from 'components/reader/DocumentList/ClaimsFolderDetails/ClaimTypeDetail';
 
 /**
  * Document Information Component for the Document Screen
@@ -51,7 +49,7 @@ export const DocumentInformation = ({
           <strong>Veteran ID:</strong> {appeal.vbms_id}
         </p>
         <div className="cf-pdf-meta-title">
-          <strong>Type:</strong> {appeal.type} {getClaimTypeDetailInfo(appeal)}
+          <strong>Type:</strong> {appeal.type} <ClaimTypeDetail claim={appeal} />
         </div>
         <p className="cf-pdf-meta-title">
           <strong>Docket Number:</strong> {appeal.docket_number}

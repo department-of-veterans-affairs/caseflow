@@ -5,12 +5,9 @@ import { useDispatch } from 'react-redux';
 
 // Local Dependencies
 import Table from 'app/components/Table';
-import {
-  setDocListScrollPosition,
-} from 'app/reader/DocumentList/DocumentListActions';
 import { SortArrowUp, SortArrowDown } from 'app/components/RenderFunctions';
 import { commentHeaders, documentHeaders } from 'components/reader/DocumentList/DocumentsTable/Columns';
-import { documentRows, focusElement } from 'utils/reader';
+import { documentRows } from 'utils/reader';
 import { selectCurrentPdfLocally } from 'app/reader/Documents/DocumentsActions';
 
 /**

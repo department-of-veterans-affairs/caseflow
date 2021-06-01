@@ -94,6 +94,7 @@ SidebarComments.propTypes = {
   currentDocument: PropTypes.object,
   comments: PropTypes.array,
   addComment: PropTypes.func,
+  setPageNumber: PropTypes.func,
   droppedComment: PropTypes.object,
   errors: PropTypes.object,
   saveComment: PropTypes.func,

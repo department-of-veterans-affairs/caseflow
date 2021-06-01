@@ -24,6 +24,7 @@ export const JumpToComment = ({ documentPathBase, currentDocument, comment, sele
 );
 
 JumpToComment.propTypes = {
+  selectComment: PropTypes.func,
   documentPathBase: PropTypes.string,
   currentDocument: PropTypes.object,
   comment: PropTypes.object,

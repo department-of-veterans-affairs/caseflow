@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // Local Dependencies
-import { toolbarStyles, pdfButtonStyle } from 'styles/reader/Document/Pdf';
+import { toolbarStyles, pdfButtonStyle } from 'styles/reader/Document/PDF';
 import Button from 'app/components/Button';
 import Link from 'app/components/Link';
 import {
