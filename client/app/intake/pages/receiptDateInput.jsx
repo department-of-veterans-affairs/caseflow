@@ -17,7 +17,7 @@ const ReceiptDateInput = ({
     label="What is the Receipt Date of this form?"
     value={receiptDate}
     onChange={setReceiptDate}
-    errorMessage={receiptDateError || errors?.['receipt-date']?.message}
+    errorMessage={errors?.['receipt-date']?.message || receiptDateError}
     type="date"
     strongLabel
     inputRef={register}

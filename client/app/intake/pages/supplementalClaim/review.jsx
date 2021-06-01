@@ -14,18 +14,18 @@ import {
   setLegacyOptInApproved
 } from '../../actions/decisionReview';
 import { setReceiptDate } from '../../actions/intake';
-import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, VBMS_BENEFIT_TYPES, CLAIMANT_ERRORS } from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, VBMS_BENEFIT_TYPES, GENERIC_FORM_ERRORS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 import PropTypes from 'prop-types';
 import ReceiptDateInput, { receiptDateInputValidation } from '../receiptDateInput';
 
 const reviewSupplementalClaimSchema = yup.object().shape({
-  'benefit-type-options': yup.string().required(CLAIMANT_ERRORS.blank),
-  'different-claimant-option': yup.string().required(CLAIMANT_ERRORS.blank),
-  'legacy-opt-in': yup.string().required(CLAIMANT_ERRORS.blank),
+  'benefit-type-options': yup.string().required(GENERIC_FORM_ERRORS.blank),
+  'different-claimant-option': yup.string().required(GENERIC_FORM_ERRORS.blank),
+  'legacy-opt-in': yup.string().required(GENERIC_FORM_ERRORS.blank),
   ...selectClaimantValidations(),
-  ...receiptDateInputValidation()
+  ...receiptDateInputValidation(true)
 });
 
 class Review extends React.PureComponent {

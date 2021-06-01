@@ -7,7 +7,7 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import {
   BOOLEAN_RADIO_OPTIONS,
   BOOLEAN_RADIO_OPTIONS_DISABLED_FALSE,
-  CLAIMANT_ERRORS,
+  GENERIC_FORM_ERRORS,
   DECEASED_PAYEE_CODES,
   LIVING_PAYEE_CODES,
 } from '../constants';
@@ -364,7 +364,7 @@ const selectClaimantValidations = () => ({
   'claimant-options': yup.string().notRequired().
     when('different-claimant-option', {
       is: 'true',
-      then: yup.string().required(CLAIMANT_ERRORS.blank)
+      then: yup.string().required(GENERIC_FORM_ERRORS.blank)
     }),
 });
 
