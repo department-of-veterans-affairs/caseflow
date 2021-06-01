@@ -28,7 +28,6 @@ module TaskTreeRenderModule
 
   def self.new_renderer
     ConsoleTreeRenderer::ConsoleRenderer.new.tap do |ttr|
-      ttr.config.value_funcs_hash.merge!(PRESET_VALUE_FUNCS)
       ttr.config.default_atts = [:id, :status, :ASGN_BY, :ASGN_TO, :updated_at]
       ttr.config.value_funcs_hash.merge!(PRESET_VALUE_FUNCS)
       ttr.config.heading_label_template = lambda { |appeal|
