@@ -5,7 +5,6 @@
 # The returned data is also used to display visualizations for the specified appeal.
 
 class ExplainController < ApplicationController
-
   def show
     return render_access_error unless current_user.admin?
 
