@@ -25,7 +25,7 @@ const reviewSupplementalClaimSchema = yup.object().shape({
   'different-claimant-option': yup.string().required(GENERIC_FORM_ERRORS.blank),
   'legacy-opt-in': yup.string().required(GENERIC_FORM_ERRORS.blank),
   ...selectClaimantValidations(),
-  ...receiptDateInputValidation()
+  ...receiptDateInputValidation(true)
 });
 
 class Review extends React.PureComponent {

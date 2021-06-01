@@ -35,12 +35,12 @@ const receiptDateInputValidation = (includeAmaValidation = false) => {
           then: yup.date().typeError(RECEIPT_DATE_ERRORS.invalid).
             min(
               new Date(DATES.AMA_ACTIVATION),
-          `Receipt Date cannot be prior to ${format(new Date(DATES.AMA_ACTIVATION), 'MM/dd/yyyy')}`
+          `Receipt Date cannot be prior to ${format(new Date(DATES.AMA_ACTIVATION), 'MM/dd/yyyy')}.`
             ),
           otherwise: yup.date().typeError(RECEIPT_DATE_ERRORS.invalid).
             min(
               new Date(DATES.AMA_ACTIVATION_TEST),
-          `Receipt Date cannot be prior to ${format(new Date(DATES.AMA_ACTIVATION_TEST), 'MM/dd/yyyy')}`
+          `Receipt Date cannot be prior to ${format(new Date(DATES.AMA_ACTIVATION_TEST), 'MM/dd/yyyy')}.`
             )
         }).
         typeError(RECEIPT_DATE_ERRORS.invalid).
