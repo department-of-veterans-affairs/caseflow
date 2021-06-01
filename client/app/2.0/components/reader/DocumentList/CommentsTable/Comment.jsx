@@ -1,7 +1,6 @@
 // External Dependencies
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import { noop } from 'lodash';
 
 // Local Dependencies
@@ -9,7 +8,8 @@ import Highlight from 'app/components/Highlight';
 import { commentsClass } from 'styles/reader/DocumentList/CommentsTable';
 import { useDispatch } from 'react-redux';
 import { ControlButtons } from 'components/reader/DocumentList/CommentsTable/ControlButtons';
-import { JumpButton } from './JumpButton';
+import { JumpButton } from 'components/reader/DocumentList/CommentsTable/JumpButton';
+import { DateLabel } from 'components/shared/DateLabel';
 
 /**
  * Comment Component
@@ -32,9 +32,7 @@ export const Comment = ({
 
   return horizontalLayout ? (
     <div className="horizontal-comment">
-      <div className="comment-relevant-date">
-        {date && <strong>{moment(date).format('MM/DD/YYYY')}</strong>}
-      </div>
+      <DateLabel date={date} />
       <div className="comment-page-number">
         {docType && <span> <Highlight>{docType}</Highlight> </span>}
         <h4>Page {page}</h4>

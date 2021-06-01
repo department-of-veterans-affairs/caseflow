@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import Button from 'app/components/Button';
 import { Highlight } from 'components/reader/DocumentList/Highlight';
 import { Link } from 'react-router-dom';
+import { DateLabel } from 'components/shared/DateLabel';
 
 /**
  * Jump to Comment Component
@@ -56,9 +57,7 @@ export const Comment = ({
 
   return horizontalLayout ? (
     <div className="horizontal-comment">
-      <div className="comment-relevant-date">
-        {date && <strong>{moment(date).format('MM/DD/YYYY')}</strong>}
-      </div>
+      <DateLabel date={date} />
       <div className="comment-page-number">
         {comment.docType && (
           <span>
