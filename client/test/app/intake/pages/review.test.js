@@ -1,4 +1,6 @@
 import {reviewAppealSchema} from 'app/intake/pages/appeal/review';
+import DATES from '../../../../constants/DATES'
+import {subDays, addDays} from 'date-fns';
 
 const assertValidSchema = async (schema, testSchema, useAmaActivationDate, isValid) => {
   await schema
@@ -6,11 +8,11 @@ const assertValidSchema = async (schema, testSchema, useAmaActivationDate, isVal
     .then((valid) => expect(valid).toBe(isValid))
 }
 
-const BEFORE_AMA_DATE = '02/18/2019'
-const AFTER_AMA_DATE = '02/20/2019'
+const BEFORE_AMA_DATE = subDays(new Date(DATES.AMA_ACTIVATION), 1)
+const AFTER_AMA_DATE = addDays(new Date(DATES.AMA_ACTIVATION), 1)
 
-const BEFORE_AMA_TEST_DATE = '10/31/2017'
-const AFTER_AMA_TEST_DATE = '11/02/2017'
+const BEFORE_AMA_TEST_DATE = subDays(new Date(DATES.AMA_ACTIVATION_TEST), 1)
+const AFTER_AMA_TEST_DATE = addDays(new Date(DATES.AMA_ACTIVATION_TEST), 1)
 
 const validReviewAppealData = {
   'receipt-date': AFTER_AMA_DATE,
