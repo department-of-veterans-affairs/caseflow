@@ -1381,7 +1381,6 @@ describe EndProductEstablishment, :postgres do
             end
 
             it do
-              binding.pry
               is_expected.to eq(
                 ep_code: "037 Higher-Level Review Rating",
                 ep_status: "Cleared"
