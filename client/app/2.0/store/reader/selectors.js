@@ -38,11 +38,9 @@ export const documentListScreen = (state) => {
   // Get the filtered documents and count
   const { documents, docsCount } = documentState(state);
 
-  const result = Object.values(state.reader.documentList.documents).
+  Object.values(state.reader.documentList.documents).
     reduce((list, doc) => [...list, ...doc.tags], []).
     filter((tags, index, list) => list.findIndex((tag) => tag.text === tags.text) === index);
-
-  console.log('TAGS: ', result);
 
   return {
     documents,
