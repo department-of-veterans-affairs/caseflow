@@ -364,9 +364,9 @@ class EndProductEstablishment < CaseflowRecord
   end
 
   def sync_status
-    if request_issues.all.any?(&:decision_sync_error)
+    if request_issues.any?(&:decision_sync_error)
       COPY::OTHER_REVIEWS_TABLE_SYNCING_DECISIONS_ERROR
-    elsif request_issues.all.any?(&:submitted_not_processed?) && !request_issues.all.any?(&:closed?)
+    elsif request_issues.any?(&:submitted_not_processed?) && request_issues.any?(&:open?)
       COPY::OTHER_REVIEWS_TABLE_SYNCING_DECISIONS
     end
   end

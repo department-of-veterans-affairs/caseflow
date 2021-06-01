@@ -1322,7 +1322,7 @@ describe EndProductEstablishment, :postgres do
         context "when there is a status" do
           let(:synced_status) { "CLR" }
 
-          let!(:pending_request_issue) do
+          let(:pending_request_issue) do
             create(
               :request_issue,
               decision_review: epe.source,
@@ -1342,10 +1342,10 @@ describe EndProductEstablishment, :postgres do
               )
             end
 
-            it {
+            it do
               is_expected.to eq(ep_code: "037 Higher-Level Review Rating",
                                 ep_status: "Cleared, Syncing decisions...")
-            }
+            end
 
             context "when there are pending request issues to sync with errors" do
               let!(:errored_request_issue) do
@@ -1368,25 +1368,26 @@ describe EndProductEstablishment, :postgres do
           end
 
           context "when there are closed request issues with no decision" do
-              let!(:closed_request_issue) do
-                create(
-                  :request_issue,
-                  decision_review: epe.source,
-                  end_product_establishment: epe,
-                  decision_sync_submitted_at: Time.zone.now,
-                  decision_sync_processed_at: nil,
-                  closed_status: "no_decision",
-                  closed_at: Time.zone.now
-                )
-              end
-
-              it do
-                is_expected.to eq(
-                  ep_code: "037 Higher-Level Review Rating",
-                  ep_status: "Cleared"
-                )
-              end
+            let!(:closed_request_issue) do
+              create(
+                :request_issue,
+                decision_review: epe.source,
+                end_product_establishment: epe,
+                decision_sync_submitted_at: Time.zone.now,
+                decision_sync_processed_at: nil,
+                closed_status: "no_decision",
+                closed_at: Time.zone.now
+              )
             end
+
+            it do
+              binding.pry
+              is_expected.to eq(
+                ep_code: "037 Higher-Level Review Rating",
+                ep_status: "Cleared"
+              )
+            end
+          end
         end
       end
 
