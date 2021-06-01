@@ -209,6 +209,11 @@ export const GENERIC_FORM_ERRORS = {
   blank: 'Please select an option.'
 }
 
+export const RECEIPT_DATE_ERRORS = {
+  invalid: 'Please enter a valid receipt date.',
+  in_future: 'Receipt date cannot be in the future.'
+}
+
 export const CLAIMANT_ERRORS = {
   blank: 'Please select an option.',
   claimant_address_required: "Please supply the claimant's address in VBMS.",

@@ -4,6 +4,7 @@ import * as yup from 'yup';
 import { format, add } from 'date-fns';
 import DateSelector from '../../components/DateSelector';
 import DATES from '../../../constants/DATES';
+import { RECEIPT_DATE_ERRORS } from '../constants';
 
 const ReceiptDateInput = ({
   receiptDate,
@@ -31,25 +32,25 @@ const receiptDateInputValidation = (includeAmaValidation = false) => {
       yup.date().
         when(['$useAmaActivationDate'], {
           is: true,
-          then: yup.date().typeError('Receipt Date is required.').
+          then: yup.date().typeError(RECEIPT_DATE_ERRORS.invalid).
             min(
               new Date(DATES.AMA_ACTIVATION),
           `Receipt Date cannot be prior to ${format(new Date(DATES.AMA_ACTIVATION), 'MM/dd/yyyy')}`
             ),
-          otherwise: yup.date().typeError('Receipt Date is required.').
+          otherwise: yup.date().typeError(RECEIPT_DATE_ERRORS.invalid).
             min(
               new Date(DATES.AMA_ACTIVATION_TEST),
           `Receipt Date cannot be prior to ${format(new Date(DATES.AMA_ACTIVATION_TEST), 'MM/dd/yyyy')}`
             )
         }).
-        typeError('Please enter a valid receipt date.').
-        max(format(add(new Date(), { hours: 1 }), 'MM/dd/yyyy'), 'Receipt date cannot be in the future.').
-        required('Please enter a valid receipt date.')
+        typeError(RECEIPT_DATE_ERRORS.invalid).
+        max(format(add(new Date(), { hours: 1 }), 'MM/dd/yyyy'), RECEIPT_DATE_ERRORS.in_future).
+        required(RECEIPT_DATE_ERRORS.invalid)
     } :
     {
-      'receipt-date': yup.date().typeError('Please enter a valid receipt date.').
-        max(format(add(new Date(), { hours: 1 }), 'MM/dd/yyyy'), 'Receipt date cannot be in the future.').
-        required('Please enter a valid receipt date.'),
+      'receipt-date': yup.date().typeError(RECEIPT_DATE_ERRORS.invalid).
+        max(format(add(new Date(), { hours: 1 }), 'MM/dd/yyyy'), RECEIPT_DATE_ERRORS.in_future).
+        required(RECEIPT_DATE_ERRORS.invalid),
     };
 };
 
