@@ -529,8 +529,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
 
         visit "hearings/" + hearing.external_id.to_s + "/details"
 
-        expect(page).to have_field("representativeTz")
-
+        expect(page).to have_field("representative-tz")
         events = SentHearingEmailEvent.where(hearing_id: hearing.id)
         expect(events.count).to eq 1
         expect(events.where(sent_by_id: current_user.id).count).to eq 1
@@ -564,7 +563,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
 
         visit "hearings/" + hearing.external_id.to_s + "/details"
 
-        expect(page).to have_field("appellantTz")
+        expect(page).to have_field("appellant-tz")
 
         events = SentHearingEmailEvent.where(hearing_id: hearing.id)
         expect(events.count).to eq 1
@@ -600,7 +599,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
 
         visit "hearings/" + hearing.external_id.to_s + "/details"
 
-        expect(page).to have_field("appellantTz")
+        expect(page).to have_field("appellant-tz")
 
         events = SentHearingEmailEvent.where(hearing_id: hearing.id)
         expect(events.count).to eq 2
@@ -638,7 +637,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
 
         visit "hearings/" + hearing.external_id.to_s + "/details"
 
-        expect(page).to have_field("appellantTz")
+        expect(page).to have_field("appellant-tz")
 
         events = SentHearingEmailEvent.where(hearing_id: hearing.id)
         expect(events.count).to eq 2

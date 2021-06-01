@@ -6,7 +6,7 @@ import moment from 'moment-timezone/moment-timezone';
 import { uniq } from 'lodash';
 // caseflow
 import { TimeSlot } from 'app/hearings/components/scheduleHearing/TimeSlot';
-import { formatTimeSlotLabel, hearingTimeOptsWithZone, setTimeSlots } from 'app/hearings/utils';
+import { formatTimeSlotLabel, hearingTimeOptsWithZone, setTimeSlots, TIMEZONES_WITH_LUNCHBREAK } from 'app/hearings/utils';
 // constants
 import REGIONAL_OFFICE_INFORMATION from '../../../../../constants/REGIONAL_OFFICE_INFORMATION';
 import HEARING_TIME_OPTIONS from '../../../../../constants/HEARING_TIME_OPTIONS';
@@ -27,9 +27,10 @@ const defaultProps = {
   // Denver
   ro: defaultRoCode,
   roTimezone: REGIONAL_OFFICE_INFORMATION[defaultRoCode].timezone,
+  hearingDayDate: moment.tz().format('YYYY-MM-DD'),
   scheduledHearingsList: emptyHearings,
-  numberOfSlots: '8',
-  slotLengthMinutes: '60',
+  numberOfSlots: 8,
+  slotLengthMinutes: 60,
   fetchScheduledHearings: jest.fn(),
   onChange: mockOnChange
 };
@@ -115,11 +116,11 @@ describe('TimeSlot', () => {
         [
         // I really want to put the comment inline, disable eslint locally to allow
         /* eslint-disable line-comment-position */
-          '2021-04-21T08:30:00-04:00', // 8:30 eastern
           '2021-04-21T12:30:00-07:00', // 9:30 eastern
           '2021-04-21T11:30:00-05:00', // 10:30 eastern
           '2021-04-21T14:30:00-06:00', // 12:30 eastern
           '2021-04-21T15:30:00-05:00', // 14:30 eastern, last slot
+          '2023-06-21T12:30:00-07:00', // 9:30 eastern on a future day
         /* eslint-enable line-comment-position */
         ].forEach((beginsAtString) => {
           it(`shows all slots after beginsAt (${beginsAtString})`, () => {
@@ -139,6 +140,22 @@ describe('TimeSlot', () => {
 
             expect((lastSlotTime).isSame(expectedLastSlotTime)).toEqual(true);
 
+          });
+
+          it(`correctly parses hearings and slots onto the date in beginsAt (${beginsAtString})`, () => {
+            const beginsAt = moment(beginsAtString).tz('America/New_York');
+            const hearingDayDate = beginsAt.tz(ro.timezone).format('YYYY-MM-DD');
+            const { timeSlots } = setup({
+              roTimezone: ro.timezone,
+              beginsAt,
+              hearingDayDate,
+              scheduledHearingsList: oneHearing
+            });
+
+            const slotsAndHearingsOnBeginsAtDate = timeSlots.every((slotOrHearing) =>
+              slotOrHearing.time.isSame(beginsAt, 'day'));
+
+            expect(slotsAndHearingsOnBeginsAtDate).toBe(true);
           });
         });
 
@@ -174,6 +191,21 @@ describe('TimeSlot', () => {
           // Expect that we called onChange with 12:30pm ro timezone
           expect(mockOnChange).toHaveBeenLastCalledWith('scheduledTimeString', easternTime);
 
+        });
+
+        it('moves following slots when there is a lunch break', () => {
+          const beginsAt = moment('2021-04-21T08:30:00-04:00').tz('America/New_York');
+          const lunchBreak = TIMEZONES_WITH_LUNCHBREAK.includes(ro.timezone);
+          const { timeSlots } = setup({ lunchBreak, beginsAt, roTimezone: ro.timezone });
+
+          expect(timeSlots[0].time.isSame(beginsAt)).toEqual(true);
+
+          const [breakHour, breakMinute] = ['12', '30'];
+          const lunchBreakMoment = beginsAt.clone().tz(ro.timezone).
+            set({ hour: breakHour, minute: breakMinute });
+          const firstSlotAfterLunchBreak = timeSlots.find((item) => item.time.isSameOrAfter(lunchBreakMoment));
+
+          expect(firstSlotAfterLunchBreak.time.isSame(lunchBreakMoment.add(30, 'minutes'))).toEqual(lunchBreak);
         });
 
         it('hearings display correct times and hide slots appropriately', () => {

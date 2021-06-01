@@ -114,6 +114,7 @@ export default class CaseWorkerIndex extends BaseForm {
                     'cf-button-aligned-with-textfield-right']}
                   disabled={!availableTasks || !tasksRemaining}
                   loading={this.state.loading}
+                  role="link"
                 />
               </div>
             </div>
