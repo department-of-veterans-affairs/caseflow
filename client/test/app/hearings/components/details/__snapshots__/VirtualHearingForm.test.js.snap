@@ -933,44 +933,46 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                       position="bottom"
                       text="Click to copy"
                     >
-                      <span
+                      <CopyToClipboard
                         aria-describedby="tooltip-Copy Guest Link"
                         data-event="focus mouseenter"
-                        data-event-off="keydown mouseleave"
+                        data-event-off="mouseleave keydown"
                         data-for="tooltip-Copy Guest Link"
                         data-tip={true}
-                        role="tooltip"
                         tabIndex={0}
+                        text="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
                       >
-                        <CopyToClipboard
-                          text="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
+                        <button
+                          aria-describedby="tooltip-Copy Guest Link"
+                          aria-label="Copy  Copy Guest Link"
+                          className="cf-apppeal-id"
+                          data-css-cjlnsd=""
+                          data-event="focus mouseenter"
+                          data-event-off="mouseleave keydown"
+                          data-for="tooltip-Copy Guest Link"
+                          data-tip={true}
+                          onClick={[Function]}
+                          tabIndex={0}
+                          type="submit"
                         >
-                          <button
-                            aria-label="Copy  Copy Guest Link"
-                            className="cf-apppeal-id"
-                            data-css-cjlnsd=""
-                            onClick={[Function]}
-                            type="submit"
-                          >
-                            Copy Guest Link
-                             
-                            <ClipboardIcon>
-                              <svg
-                                height="16"
-                                viewBox="0 0 21 21"
-                                width="16"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  d="M13.346 2.578h-2.664v-1.29C10.682.585 10.08 0 9.35 0H6.66c-.728 0-1.33.584-1.33 1.29v1.288H2.663v2.577h10.682V2.578zm-4.02 0H6.66v-1.29h2.665v1.29zm6.685 3.89V3.234a.665.665 0 0 0-.678-.656H14v1.29h.68v2.576H6.66v9.046H1.333V3.867h.68v-1.29H.678a.665.665 0 0 0-.68.657v12.913c0 .365.302.656.68.656h6.006v3.867h9.35l3.996-3.867V6.468h-4.02zm0 12.378v-2.043h2.112l-2.11 2.043zm2.665-3.356H14.68v3.867H7.992v-11.6h10.682v7.733z"
-                                  fill="#5B616B"
-                                  fillRule="evenodd"
-                                />
-                              </svg>
-                            </ClipboardIcon>
-                          </button>
-                        </CopyToClipboard>
-                      </span>
+                          Copy Guest Link
+                           
+                          <ClipboardIcon>
+                            <svg
+                              height="16"
+                              viewBox="0 0 21 21"
+                              width="16"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M13.346 2.578h-2.664v-1.29C10.682.585 10.08 0 9.35 0H6.66c-.728 0-1.33.584-1.33 1.29v1.288H2.663v2.577h10.682V2.578zm-4.02 0H6.66v-1.29h2.665v1.29zm6.685 3.89V3.234a.665.665 0 0 0-.678-.656H14v1.29h.68v2.576H6.66v9.046H1.333V3.867h.68v-1.29H.678a.665.665 0 0 0-.68.657v12.913c0 .365.302.656.68.656h6.006v3.867h9.35l3.996-3.867V6.468h-4.02zm0 12.378v-2.043h2.112l-2.11 2.043zm2.665-3.356H14.68v3.867H7.992v-11.6h10.682v7.733z"
+                                fill="#5B616B"
+                                fillRule="evenodd"
+                              />
+                            </svg>
+                          </ClipboardIcon>
+                        </button>
+                      </CopyToClipboard>
                       <span
                         data-css-4jj7wk=""
                       >
@@ -983,13 +985,96 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                           offset={Object {}}
                           place="bottom"
                           resizeHide={true}
+                          role="tooltip"
                           wrapper="div"
                         >
                           <div
-                            className="__react_component_tooltip place-bottom type-dark "
+                            className="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                             data-id="tooltip"
                             id="tooltip-Copy Guest Link"
+                            role="tooltip"
                           >
+                            <style
+                              dangerouslySetInnerHTML={
+                                Object {
+                                  "__html": "
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  ",
+                                }
+                              }
+                            />
                             Click to copy
                           </div>
                         </ReactTooltip>

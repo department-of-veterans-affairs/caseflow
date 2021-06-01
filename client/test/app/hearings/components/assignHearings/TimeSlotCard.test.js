@@ -2,7 +2,7 @@ import React from 'react';
 
 import { TimeSlotCard } from 'app/hearings/components/assignHearings/TimeSlotCard';
 import { render } from '@testing-library/react';
-import { getHearingDetails, getHearingType, defaultHearing, defaultHearingDay } from 'test/data';
+import { getHearingDetailsArray, getHearingType, defaultHearing, defaultHearingDay } from 'test/data';
 
 // St. Petersburg FL
 const regionalOffice = 'RO17';
@@ -19,7 +19,7 @@ describe('TimeSlotCard', () => {
     const headerLabel = `${veteranName} · Veteran ID: ${defaultHearing.veteranFileNumber}`;
 
     // Row 2 data
-    const secondRowLabel = getHearingDetails(defaultHearing, true);
+    const secondRowLabelArray = getHearingDetailsArray(defaultHearing, true);
 
     // Row 3 data
     const lastRowLabel = getHearingType(defaultHearing);
@@ -34,7 +34,9 @@ describe('TimeSlotCard', () => {
     expect(document.getElementsByClassName('time-slot-card-label')[1]).toHaveTextContent(headerLabel);
 
     // Row 2
-    expect(document.getElementsByClassName('time-slot-details')[0]).toHaveTextContent(secondRowLabel);
+    secondRowLabelArray.forEach((elem) => {
+      expect(document.getElementsByClassName('time-slot-details')[0]).toHaveTextContent(elem);
+    });
 
     // Row 3
     expect(document.getElementsByClassName('time-slot-details')[1]).toHaveTextContent(lastRowLabel);
