@@ -12,13 +12,13 @@ import { SidebarCategories } from 'components/reader/DocumentViewer/Sidebar/Cate
 import { SidebarComments } from 'components/reader/DocumentViewer/Sidebar/Comments';
 import { DocumentInformation } from 'components/reader/DocumentViewer/Sidebar/DocumentInformation';
 import { IssueTags } from 'components/reader/DocumentViewer/Sidebar/IssueTags';
-import { WindowSlider } from 'components/reader/DocumentViewer/Sidebar/WindowSlider';
+import { WindowSlider } from 'components/shared/WindowSlider';
 
 /**
  * Document Accordion Section component
  * @param {Object} props -- Contains details about the accordion sections
  */
-export const DocumentAccordion = ({
+export const SidebarAccordion = ({
   featureToggles,
   openSections,
   commentListRef,
@@ -53,7 +53,7 @@ export const DocumentAccordion = ({
   </div>
 );
 
-DocumentAccordion.propTypes = {
+SidebarAccordion.propTypes = {
   reload: PropTypes.func,
   didLoadAppealFail: PropTypes.bool,
   featureToggles: PropTypes.object,

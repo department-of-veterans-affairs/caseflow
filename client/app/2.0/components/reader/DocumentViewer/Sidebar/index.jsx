@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import Button from 'app/components/Button';
 import { sidebarWrapper } from 'styles/reader/Document/Sidebar';
 
-import { DocumentAccordion } from 'components/reader/DocumentViewer/Sidebar/Accordion';
+import { SidebarAccordion } from 'components/reader/DocumentViewer/Sidebar/Accordion';
 import { KeyboardInfo } from 'components/reader/DocumentViewer/Sidebar/KeyboardInfo';
 
 /**
@@ -28,7 +28,7 @@ export const DocumentSidebar = ({ hidePdfSidebar, togglePdfSidebar, modal, show,
         </h2>
       </Button>
     </div>
-    <DocumentAccordion {...props} />
+    <SidebarAccordion {...props} />
     <KeyboardInfo show={modal} {...props} />
   </div>
 );
