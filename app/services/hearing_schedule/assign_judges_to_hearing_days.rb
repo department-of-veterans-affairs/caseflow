@@ -16,7 +16,6 @@ class HearingSchedule::AssignJudgesToHearingDays
 
   TB_ADDITIONAL_NA_DAYS = 3
   CO_ROOM_NUM = "2"
-  DAYS_OF_SEPARATION = 3
 
   class HearingDaysNotAllocated < StandardError; end
   class NoJudgesProvided < StandardError; end
@@ -122,12 +121,7 @@ class HearingSchedule::AssignJudgesToHearingDays
 
   def judge_already_assigned_on_date?(judge_id, date)
     @assigned_hearing_days.any? do |day|
-      # IF judge is assigned to a hearing day AND
-      # the unassigned hearing day falls within 3 day before or after the assigned hearing day THEN
-      # don't assign this judge to this unassigned hearing day
-      # Note: i think this is meant to prevent assigning the same judge to more than half of the available
-      # hearing days for a week
-      day.judge_id.to_s == judge_id.to_s && (day.scheduled_for_as_date - date).abs <= DAYS_OF_SEPARATION
+      day.judge_id.to_s == judge_id.to_s && day.scheduled_for_as_date == date
     end
   end
 

@@ -5,7 +5,7 @@
 # case distribution
 
 class SpecialCaseMovementTask < Task
-  validates :parent, presence: true, parentTask: { task_type: DistributionTask }
+  validates :parent, presence: true, parentTask: { task_type: DistributionTask }, on: :create
   before_create :verify_user_organization,
                 :verify_appeal_distributable
   after_create :distribute_to_judge

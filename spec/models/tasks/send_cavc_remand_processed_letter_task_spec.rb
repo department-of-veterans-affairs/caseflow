@@ -82,20 +82,26 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
     let(:send_task) { create(:send_cavc_remand_processed_letter_task) }
     let(:child_task) { create(:send_cavc_remand_processed_letter_task, parent: send_task, assigned_to: org_nonadmin) }
 
-    context "task assigned to CavcLitigationSupport (aka org-task)" do
-      it "returns admin actions" do
+    context "task assigned to CavcLitigationSupport organization (aka org-task)" do
+      it "returns org actions for an administrator" do
         expect(send_task.assigned_to).to eq CavcLitigationSupport.singleton
-        expect(send_task.available_actions(org_admin)).to match_array SendCRPLetterTask::ADMIN_ACTIONS
+        expect(send_task.available_actions(org_admin)).to match_array SendCRPLetterTask::ORG_ACTIONS
         expect(send_task.available_actions(other_user)).to be_empty
+      end
+
+      it "returns org actions for a colleague" do
+        expect(send_task.assigned_to).to eq CavcLitigationSupport.singleton
+        expect(send_task.available_actions(org_nonadmin)).to match_array SendCRPLetterTask::ORG_ACTIONS
       end
     end
 
-    context "task assigned to CavcLitigationSupport non-admin (aka user-task)" do
+    context "task assigned to user on CavcLitigationSupport (aka user-task)" do
       let(:child_task) { create(:send_cavc_remand_processed_letter_task, parent: send_task, assigned_to: org_nonadmin) }
 
-      it "returns non-admin actions" do
+      it "returns user actions for all CAVC Lit Support team members" do
         expect(child_task.assigned_to).to eq org_nonadmin
         expect(child_task.available_actions(org_nonadmin)).to match_array SendCRPLetterTask::USER_ACTIONS
+        expect(child_task.available_actions(org_admin)).to match_array SendCRPLetterTask::USER_ACTIONS
         expect(child_task.available_actions(other_user)).to be_empty
       end
     end
@@ -108,8 +114,8 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
         expect { subject }.to_not raise_error
         expect(user_task.status).to eq Constants.TASK_STATUSES.completed
 
-        window_task = user_task.appeal.tasks.where(type: CavcRemandProcessedLetterResponseWindowTask.name).first
-        child_timed_hold_tasks = window_task.children.where(type: :TimedHoldTask)
+        window_task = user_task.appeal.tasks.of_type(:CavcRemandProcessedLetterResponseWindowTask).first
+        child_timed_hold_tasks = window_task.children.of_type(:TimedHoldTask)
         expect(child_timed_hold_tasks.first.timer_end_time.to_date).to eq(Time.zone.now.to_date + 90.days)
       end
 
@@ -125,7 +131,8 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
   end
 
   describe "#available_actions_unwrapper" do
-    let(:cavc_task) { create(:send_cavc_remand_processed_letter_task, assigned_to: create(:user)) }
+    let(:cavc_user) { create(:user) }
+    let(:cavc_task) { create(:send_cavc_remand_processed_letter_task, assigned_to: cavc_user) }
 
     subject { cavc_task.available_actions_unwrapper(cavc_task.assigned_to) }
 
@@ -134,6 +141,7 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
       completed_distribution_task = build(:task, appeal: cavc_task.appeal, type: DistributionTask.name)
       completed_distribution_task.save!(validate: false)
       completed_distribution_task.completed!
+      CavcLitigationSupport.singleton.add_user(cavc_user)
     end
 
     it "provides the correct parent id for blocking and non blocking admin actions" do
@@ -170,6 +178,48 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
         end
 
         expect(translation_action[:data][:parent_id]).to be nil
+      end
+    end
+  end
+
+  describe "child task closes" do
+    let(:send_task) { create(:send_cavc_remand_processed_letter_task) }
+    let!(:child_task) { create(:cavc_poa_clarification_task, parent: send_task, assigned_by: org_admin) }
+
+    let(:new_child_status) { :completed }
+    subject { child_task.update(status: new_child_status) }
+    let(:expected_parent_status) { :assigned }
+
+    shared_examples "update parent task's status" do
+      it "set correct parent task status" do
+        expect(send_task.status).to eq("on_hold")
+        expect(child_task.status).to eq("assigned")
+
+        subject
+        expect(child_task.status).to eq(new_child_status.to_s)
+        expect(send_task.status).to eq(expected_parent_status.to_s)
+      end
+    end
+
+    context "when completing non-SendCavcRemandProcessedLetterTask child task" do
+      include_examples "update parent task's status"
+    end
+    context "when cancelling non-SendCavcRemandProcessedLetterTask child task" do
+      let(:new_child_status) { :cancelled }
+      include_examples "update parent task's status"
+    end
+
+    context "when closing SendCavcRemandProcessedLetterTask child task" do
+      let(:child_task) { create(:send_cavc_remand_processed_letter_task, parent: send_task, assigned_by: org_admin) }
+
+      context "when completing SendCavcRemandProcessedLetterTask child task" do
+        let(:expected_parent_status) { :completed }
+        include_examples "update parent task's status"
+      end
+      context "when cancelling child task" do
+        let(:new_child_status) { :cancelled }
+        let(:expected_parent_status) { :cancelled }
+        include_examples "update parent task's status"
       end
     end
   end

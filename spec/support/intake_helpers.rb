@@ -3,12 +3,16 @@
 # rubocop:disable Metrics/ModuleLength
 module IntakeHelpers
   # rubocop: disable Metrics/ParameterLists
+  def blur_from(locator)
+    field = find_field(locator)
+    field.native.send_keys :tab
+  end
 
   def select_form(form_name)
     if FeatureToggle.enabled?(:ramp_intake)
       safe_click ".cf-select"
       fill_in "Which form are you processing?", with: form_name
-      find("#form-select").send_keys :enter
+      find("#intake-form-select").send_keys :enter
     else
       within_fieldset("Which form are you processing?") do
         find("label", text: form_name).click
@@ -603,7 +607,7 @@ module IntakeHelpers
   # rubocop:enable Metrics/AbcSize
 
   def check_row(label, text)
-    row = find("tr", text: label)
+    row = find("tr", text: label, match: :prefer_exact)
     expect(row).to have_text(text)
   end
 
@@ -819,12 +823,6 @@ module IntakeHelpers
         decision_review: decision_review
       )
     ).to_not be_nil
-  end
-
-  def check_deceased_veteran_claimant(intake)
-    intake.start!
-    visit "/intake"
-    expect(page).to have_css("input[disabled][id=different-claimant-option_false]", visible: false)
   end
 
   # rubocop:disable Metrics/AbcSize

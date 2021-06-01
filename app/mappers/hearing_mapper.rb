@@ -34,14 +34,16 @@ module HearingMapper
 
     def bfha_vacols_code(hearing_record)
       case hearing_record.hearing_disp
-      when "H" # Held
+      when VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:cancelled]
+        "5"
+      when VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:held]
         code_based_on_request_type(hearing_record.hearing_type.to_sym)
-      when "P" # Postponed
+      when VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:no_show]
+        "5"
+      when VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:postponed]
         nil
-      when "C" # Canceled
-        "5"
-      when "N" # No Show
-        "5"
+      when VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:scheduled_in_error]
+        nil
       end
     end
 
@@ -72,6 +74,13 @@ module HearingMapper
         .in_time_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE)
     end
 
+    def notes_to_vacols_format(value)
+      return if value.nil?
+      fail(InvalidNotesError) if !value.is_a?(String)
+
+      value[0, 1000]
+    end
+
     private
 
     def code_based_on_request_type(type)
@@ -86,13 +95,6 @@ module HearingMapper
       fail(InvalidRepresentativeNameError) if !value.is_a?(String)
 
       value[0, 25]
-    end
-
-    def notes_to_vacols_format(value)
-      return if value.nil?
-      fail(InvalidNotesError) if !value.is_a?(String)
-
-      value[0, 1000]
     end
 
     def validate_request_type(value, keys)

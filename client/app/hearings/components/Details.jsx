@@ -5,6 +5,7 @@ import { isUndefined, get } from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import React, { useState, useContext, useEffect } from 'react';
+import { sprintf } from 'sprintf-js';
 
 import { DetailsHeader } from './details/DetailsHeader';
 import { HearingConversion } from './HearingConversion';
@@ -69,7 +70,7 @@ const HearingDetails = (props) => {
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
 
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
-
+  const convertingToVirtual = converting === 'change_to_virtual';
   // Method to reset the state
   const resetState = (resetHearingObj) => {
     // Reset the state
@@ -97,7 +98,7 @@ const HearingDetails = (props) => {
 
   const closeVirtualHearingModal = () => setVirtualHearingModalOpen(false);
 
-  const getEditedEmails = () => {
+  const getEditedEmailsAndTz = () => {
     const changes = deepDiff(
       initialHearing.virtualHearing,
       hearing.virtualHearing || {}
@@ -111,20 +112,23 @@ const HearingDetails = (props) => {
     };
   };
 
-  const submit = async (editedEmails) => {
+  const submit = async (editedEmailsAndTz) => {
     try {
       // Determine the current state and whether to error
       const virtual = hearing.isVirtual || hearing.wasVirtual || converting;
       const noAppellantEmail = !hearing.virtualHearing?.appellantEmail;
-      const noRepTimezone = !hearing.virtualHearing?.representativeTz && hearing.virtualHearing?.representativeEmail;
-      const noAppellantTimezone = !hearing.virtualHearing?.appellantTz;
+      const noRepTimezone = convertingToVirtual ?
+        !hearing.virtualHearing?.representativeTz && hearing.virtualHearing?.representativeEmail :
+        editedEmailsAndTz?.representativeEmailEdited && !hearing.virtualHearing?.representativeTz;
+      const noAppellantTimezone = convertingToVirtual ? !hearing.virtualHearing?.appellantTz :
+        editedEmailsAndTz?.appellantEmailEdited && !hearing.virtualHearing?.appellantTz;
+
       const emailUpdated = (
-        editedEmails?.appellantEmailEdited ||
-        (editedEmails?.representativeEmailEdited && hearing.virtualHearing?.representativeEmail)
+        editedEmailsAndTz?.appellantEmailEdited ||
+        (editedEmailsAndTz?.representativeEmailEdited && hearing.virtualHearing?.representativeEmail)
       );
-      const timezoneUpdated = editedEmails?.representativeTzEdited || editedEmails?.appellantTzEdited;
-      const errors = noAppellantEmail ||
-                    ((noAppellantTimezone || noRepTimezone) && hearing.readableRequestType !== 'Video');
+      const timezoneUpdated = editedEmailsAndTz?.representativeTzEdited || editedEmailsAndTz?.appellantTzEdited;
+      const errors = noAppellantEmail || noAppellantTimezone || noRepTimezone;
 
       if (virtual && errors) {
         // Set the Virtual Hearing errors
@@ -214,9 +218,9 @@ const HearingDetails = (props) => {
     props
   });
 
-  const editedEmails = getEditedEmails();
-  const convertLabel = converting === 'change_to_virtual' ?
-    'Convert to Virtual Hearing' : `Convert to ${hearing.readableRequestType} Hearing`;
+  const editedEmailsAndTz = getEditedEmailsAndTz();
+  const convertLabel = convertingToVirtual ?
+    sprintf(COPY.CONVERT_HEARING_TITLE, 'Virtual') : sprintf(COPY.CONVERT_HEARING_TITLE, hearing.readableRequestType);
 
   return (
     <React.Fragment>
@@ -286,7 +290,7 @@ const HearingDetails = (props) => {
             disabled={!formsUpdated || disabled}
             loading={loading}
             className="usa-button"
-            onClick={async () => await submit(editedEmails)}
+            onClick={async () => await submit(editedEmailsAndTz)}
           >
             {converting ? convertLabel : 'Save'}
           </Button>
@@ -301,7 +305,7 @@ const HearingDetails = (props) => {
           closeModal={closeVirtualHearingModal}
           reset={() => resetState(initialHearing)}
           type={virtualHearingModalType}
-          {...editedEmails}
+          {...editedEmailsAndTz}
         />
       )}
     </React.Fragment>

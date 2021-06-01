@@ -30,28 +30,22 @@ class HearingDay < CaseflowRecord
 
   belongs_to :judge, class_name: "User"
   belongs_to :created_by, class_name: "User"
-  has_many :hearings
+  has_many :hearings, -> { not_scheduled_in_error }
 
   class HearingDayHasChildrenRecords < StandardError; end
 
+  # Create a RegEx for the valid hearing time strings
+  HEARING_TIME_STRING_PATTERN = /\A(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]\z/.freeze
+
   REQUEST_TYPES = Constants::HEARING_REQUEST_TYPES.with_indifferent_access.freeze
 
-  SLOTS_BY_REQUEST_TYPE = { REQUEST_TYPES[:central] => 10 }.freeze
-
-  SLOTS_BY_TIMEZONE = {
-    "America/New_York" => 12,
-    "America/Chicago" => 12,
-    "America/Indiana/Indianapolis" => 12,
-    "America/Kentucky/Louisville" => 12,
-    "America/Denver" => 12,
-    "America/Phoenix" => 12,
-    "America/Los_Angeles" => 12,
-    "America/Boise" => 12,
-    "America/Puerto_Rico" => 12,
-    "Asia/Manila" => 12,
-    "Pacific/Honolulu" => 12,
-    "America/Anchorage" => 12
+  SLOTS_BY_REQUEST_TYPE = {
+    REQUEST_TYPES[:virtual] => { default: 8, maximum: 12 },
+    REQUEST_TYPES[:central] => { default: 10, maximum: 10 },
+    REQUEST_TYPES[:video] => { default: 12, maximum: 12 }
   }.freeze
+
+  DEFAULT_SLOT_LENGTH = 60 # in minutes
 
   before_create :assign_created_by_user
   after_update :update_children_records
@@ -65,16 +59,27 @@ class HearingDay < CaseflowRecord
               in: RegionalOffice.all.map(&:key),
               message: "key (%<value>s) is invalid"
             },
-            unless: :central_office?
+            unless: :central_office_or_virtual?
 
   validates :request_type,
             inclusion: {
               in: REQUEST_TYPES.values,
               message: "is invalid"
             }
+  validates :first_slot_time,
+            format: { with: HEARING_TIME_STRING_PATTERN, message: "doesn't match hh:mm time format" },
+            allow_nil: true
 
   def central_office?
     request_type == REQUEST_TYPES[:central]
+  end
+
+  def virtual?
+    request_type == REQUEST_TYPES[:virtual]
+  end
+
+  def central_office_or_virtual?
+    central_office? || virtual?
   end
 
   def scheduled_for_as_date
@@ -92,7 +97,8 @@ class HearingDay < CaseflowRecord
   def open_hearings
     closed_hearing_dispositions = [
       Constants.HEARING_DISPOSITION_TYPES.postponed,
-      Constants.HEARING_DISPOSITION_TYPES.cancelled
+      Constants.HEARING_DISPOSITION_TYPES.cancelled,
+      Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
     ]
 
     (hearings + vacols_hearings).reject { |hearing| closed_hearing_dispositions.include?(hearing.disposition) }
@@ -136,11 +142,51 @@ class HearingDay < CaseflowRecord
   end
 
   def total_slots
-    if request_type == REQUEST_TYPES[:central]
-      return SLOTS_BY_REQUEST_TYPE[request_type]
+    # Check if we have a stored value
+    return number_of_slots unless number_of_slots.nil?
+
+    SLOTS_BY_REQUEST_TYPE[request_type][:default]
+  end
+
+  def slot_length_minutes
+    # 04-19-2021 slot_length_minutes database column added
+    return self[:slot_length_minutes] unless self[:slot_length_minutes].nil?
+
+    DEFAULT_SLOT_LENGTH
+  end
+
+  # In order to display timeslots for the various regional_office we need to know
+  # what time the first slot should be. This method returns that information as
+  # a string representing an iso8601 formatted datetime
+  #
+  # Examples:
+  # "2021-04-23T08:30:00-04:00"
+  # "2021-04-23T09:00:00-04:00"
+  # "2021-04-23T08:00:00-06:00"
+  #
+  # This may seem unnessecarily complex, when we could more simply send a time string like "08:30"
+  # Sending a string like "08:30" does not end up being simpler in practice. It moves the work
+  # of knowing/figuring out the timezone elsewhere (the front-end).
+  #
+  # The iso8601 strings come from a combination of these three pieces:
+  # - Time: first_slot_time, or a default string like "09:00"
+  #    - first_slot_time is ALWAYS in eastern time.
+  # - Timezone: regional office's timezone property like "America/Los_Angeles"
+  # - Date: from the scheduled_for column for this hearing_day
+  def begins_at
+    # If 'first_slot_time' column has a value, use that
+    unless first_slot_time.nil?
+      return combine_time_and_date(first_slot_time, "America/New_York", scheduled_for)
     end
 
-    SLOTS_BY_TIMEZONE[RegionalOffice.find!(regional_office).timezone]
+    # if no value in db and central, 09:00
+    return combine_time_and_date("09:00", "America/New_York", scheduled_for) if central_office?
+
+    # if no value in db and virtual, 08:30
+    return combine_time_and_date("08:30", "America/New_York", scheduled_for) if virtual?
+
+    # if no value in db and video (not central or virtual): first_slot_time is 08:30
+    combine_time_and_date("08:30", RegionalOffice.find!(regional_office).timezone, scheduled_for)
   end
 
   def judge_first_name
@@ -178,6 +224,24 @@ class HearingDay < CaseflowRecord
     end
 
     changed_hash
+  end
+
+  # Creates a datetime with timezone from these parts
+  # - Time, a string like "08:30"
+  # - Timezone, a string like "America/Los_Angeles"
+  # - Date, a ruby Date
+  # :reek:UtilityFunction
+  def combine_time_and_date(time, timezone, date)
+    # Parse the time string into a ruby Time instance with zone
+    time_with_zone = time.in_time_zone(timezone)
+    # Make a string like "2021-04-23 08:30:00"
+    time_and_date_string = "#{date.strftime('%F')} #{time_with_zone.strftime('%T')}"
+    # Parse the combined string into a ruby DateTime
+    combined_datetime = time_and_date_string.in_time_zone(timezone)
+    # Format the DateTime to iso8601 like "2021-04-23T08:30:00-06:00"
+    formatted_datetime_string = combined_datetime.iso8601
+
+    formatted_datetime_string
   end
 
   class << self

@@ -15,12 +15,10 @@ feature "Supplemental Claim Intake", :all_dbs do
 
   let(:veteran_file_number) { "123412345" }
 
-  let(:date_of_death) { nil }
   let(:veteran) do
     Generators::Veteran.build(file_number: veteran_file_number,
                               first_name: "Ed",
-                              last_name: "Merica",
-                              date_of_death: date_of_death)
+                              last_name: "Merica")
   end
 
   let(:veteran_no_ratings) do
@@ -56,17 +54,6 @@ feature "Supplemental Claim Intake", :all_dbs do
   let!(:untimely_ratings) { generate_untimely_rating(veteran, untimely_promulgation_date, untimely_profile_date) }
   let!(:future_rating) { generate_future_rating(veteran, future_rating_promulgation_date, future_rating_profile_date) }
   let!(:before_ama_rating) { generate_pre_ama_rating(veteran) }
-
-  context "veteran is deceased" do
-    let(:date_of_death) { Time.zone.today - 1.day }
-
-    scenario "veteran cannot be claimant" do
-      create(:supplemental_claim, veteran_file_number: veteran.file_number)
-      check_deceased_veteran_claimant(
-        SupplementalClaimIntake.new(veteran_file_number: veteran.file_number, user: current_user)
-      )
-    end
-  end
 
   it "Creates an end product" do
     # Testing two relationships, tests 1 relationship in HRL and nil in Appeal
@@ -466,7 +453,7 @@ feature "Supplemental Claim Intake", :all_dbs do
       expect(page).to have_content("Add / Remove Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
       check_row("Benefit type", "Compensation")
-      check_row("Claimant", "Ed Merica")
+      check_row("Claimant", "Ed Merica, Veteran")
       check_row("SOC/SSOC Opt-in", "No")
 
       # clicking the add issues button should bring up the modal

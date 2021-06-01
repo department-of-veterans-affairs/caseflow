@@ -36,14 +36,7 @@ class Hearings::ScheduleHearingTaskPager < TaskPager
 
   # Sorting by docket number within each category of appeal: AOD and normal.
   def sorted_tasks(tasks)
-    tasks.order(Arel.sql(<<-SQL))
-      (CASE
-        WHEN cached_appeal_attributes.case_type = 'Court Remand' THEN 1
-        ELSE 0
-      END) DESC,
-      cached_appeal_attributes.is_aod DESC,
-      cached_appeal_attributes.docket_number ASC
-    SQL
+    tasks.order(Task.order_by_cached_appeal_priority_clause)
   end
 
   def task_page_count

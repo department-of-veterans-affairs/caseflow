@@ -42,11 +42,7 @@ namespace :emails do
             mail_recipient: recipient,
             virtual_hearing: hearing.virtual_hearing
           )
-          email_body = if email.blank?
-                         email.html_part&.decoded
-                       else
-                         email.body
-                       end
+          email_body = email.html_part&.decoded || email.body
 
           next if email_body.blank?
 

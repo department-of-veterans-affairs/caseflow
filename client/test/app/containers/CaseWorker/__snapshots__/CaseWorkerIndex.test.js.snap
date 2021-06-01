@@ -1,0 +1,561 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CaseWorkerIndex renders correctly 1`] = `
+<CaseWorkerIndex
+  currentUserHistoricalTasks={Array []}
+>
+  <BrowserRouter>
+    <Router
+      history={
+        Object {
+          "action": "POP",
+          "block": [Function],
+          "createHref": [Function],
+          "go": [Function],
+          "goBack": [Function],
+          "goForward": [Function],
+          "length": 1,
+          "listen": [Function],
+          "location": Object {
+            "hash": "",
+            "pathname": "/",
+            "search": "",
+            "state": undefined,
+          },
+          "push": [Function],
+          "replace": [Function],
+        }
+      }
+    >
+      <withRouter(CaseflowNavigationBar)
+        appName="Dispatch"
+        defaultUrl="/dispatch/establish-claim/"
+        logoProps={
+          Object {
+            "accentColor": "#844e9f",
+            "overlapColor": "#7a4b91",
+          }
+        }
+      >
+        <CaseflowNavigationBar
+          appName="Dispatch"
+          defaultUrl="/dispatch/establish-claim/"
+          history={
+            Object {
+              "action": "POP",
+              "block": [Function],
+              "createHref": [Function],
+              "go": [Function],
+              "goBack": [Function],
+              "goForward": [Function],
+              "length": 1,
+              "listen": [Function],
+              "location": Object {
+                "hash": "",
+                "pathname": "/",
+                "search": "",
+                "state": undefined,
+              },
+              "push": [Function],
+              "replace": [Function],
+            }
+          }
+          location={
+            Object {
+              "hash": "",
+              "pathname": "/",
+              "search": "",
+              "state": undefined,
+            }
+          }
+          logoProps={
+            Object {
+              "accentColor": "#844e9f",
+              "overlapColor": "#7a4b91",
+            }
+          }
+          match={
+            Object {
+              "isExact": true,
+              "params": Object {},
+              "path": "/",
+              "url": "/",
+            }
+          }
+        >
+          <NavigationBar
+            appName="Dispatch"
+            defaultUrl="/dispatch/establish-claim/"
+            extraBanner={<PerformanceDegradationBanner />}
+            history={
+              Object {
+                "action": "POP",
+                "block": [Function],
+                "createHref": [Function],
+                "go": [Function],
+                "goBack": [Function],
+                "goForward": [Function],
+                "length": 1,
+                "listen": [Function],
+                "location": Object {
+                  "hash": "",
+                  "pathname": "/",
+                  "search": "",
+                  "state": undefined,
+                },
+                "push": [Function],
+                "replace": [Function],
+              }
+            }
+            key="false"
+            location={
+              Object {
+                "hash": "",
+                "pathname": "/",
+                "search": "",
+                "state": undefined,
+              }
+            }
+            logoProps={
+              Object {
+                "accentColor": "#844e9f",
+                "overlapColor": "#7a4b91",
+              }
+            }
+            match={
+              Object {
+                "isExact": true,
+                "params": Object {},
+                "path": "/",
+                "url": "/",
+              }
+            }
+          >
+            <div>
+              <header
+                data-css-uo1yys=""
+              >
+                <div>
+                  <div
+                    data-css-pw7rlt=""
+                  >
+                    <nav
+                      className="cf-push-left"
+                      data-css-1vh8afw=""
+                    >
+                      <p
+                        data-css-14vgq4z=""
+                      >
+                        <Link
+                          aria-label="Caseflow"
+                          id="cf-logo-link"
+                          title="Homepage"
+                          to="/dispatch/establish-claim/"
+                        >
+                          <Link
+                            to="/dispatch/establish-claim/"
+                            type={null}
+                          >
+                            <LinkAnchor
+                              href="/dispatch/establish-claim/"
+                              navigate={[Function]}
+                              type={null}
+                            >
+                              <a
+                                href="/dispatch/establish-claim/"
+                                onClick={[Function]}
+                                type={null}
+                              >
+                                <CaseflowLogo
+                                  accentColor="#844e9f"
+                                  backgroundColor="#D6D7D9"
+                                  overlapColor="#7a4b91"
+                                >
+                                  <svg
+                                    data-css-fu31os=""
+                                    height="500px"
+                                    version="1.1"
+                                    viewBox="0 0 500 500"
+                                    width="500px"
+                                  >
+                                    <g
+                                      fill="none"
+                                      fillRule="evenodd"
+                                      stroke="none"
+                                      strokeWidth="1"
+                                    >
+                                      <path
+                                        d="M389.959839,442.284569 C383.432096,442.271612 376.963574,441.048453 370.883534,438.677355 L257.429719,394.98998 C252.590851,393.086238 247.208346,393.086238 242.369478,394.98998 L129.016064,438.677355 C106.320107,447.603374 80.4584687,439.55605 66.8674699,419.338677 C57.0515074,405.211352 54.9782782,387.116356 61.3453815,371.142285 L105.120482,258.016032 C107.028046,253.186861 107.028046,247.815143 105.120482,242.985972 L61.3453815,129.95992 C54.9782782,113.985849 57.0515074,95.8908522 66.8674699,81.7635271 C80.4584687,61.5461545 106.320107,53.4988304 129.016064,62.4248497 L242.269076,106.112224 C247.107944,108.015966 252.490449,108.015966 257.329317,106.112224 L370.783133,62.4248497 C393.47909,53.4988304 419.340728,61.5461545 432.931727,81.7635271 C442.747689,95.8908522 444.820919,113.985849 438.453815,129.95992 L394.678715,243.086172 C392.77115,247.915343 392.77115,253.287062 394.678715,258.116232 L438.453815,371.342685 C444.820919,387.316757 442.747689,405.411753 432.931727,419.539078 C423.237855,433.723837 407.164043,442.231882 389.959839,442.284569 M249.899598,362.224449 C256.353168,362.233978 262.750462,363.422577 268.7751,365.731463 L382.228916,409.418838 C384.691595,410.389201 387.312266,410.898698 389.959839,410.921844 C396.866782,410.810028 403.280763,407.328714 407.128514,401.603206 C411.093101,395.97649 411.889064,388.713698 409.236948,382.364729 L365.461847,269.138277 C360.743378,257.021258 360.743378,243.579944 365.461847,231.462926 L409.236948,118.336673 C411.813252,111.977018 411.021397,104.751703 407.128514,99.0981964 C401.695283,90.9837231 391.338118,87.7327557 382.228916,91.2825651 L268.7751,134.96994 C256.614316,139.574339 243.184881,139.574339 231.024096,134.96994 L117.771084,91.2825651 C108.661882,87.7327557 98.3047167,90.9837231 92.8714859,99.0981964 C88.9068988,104.724913 88.1109359,111.987705 90.7630522,118.336673 L134.538153,231.362725 C139.256622,243.479744 139.256622,256.921058 134.538153,269.038076 L90.7630522,382.164329 C87.7347473,389.869273 89.5592305,398.632331 95.4124457,404.495531 C101.265661,410.358732 110.039485,412.212063 117.771084,409.218437 L231.124498,365.531062 C237.149529,363.373645 243.498568,362.255472 249.899598,362.224449"
+                                        fill="#D6D7D9"
+                                      />
+                                      <path
+                                        d="M209.226908,407.765531 L179.959839,419.048096 L202.108434,468.937876 C210.52076,487.825367 229.289165,499.997401 250,499.997401 C270.710835,499.997401 289.47924,487.825367 297.891566,468.937876 L319.97992,419.088176 L290.753012,407.815631 L269.176707,456.412826 C265.803034,463.96969 258.289598,468.837793 250,468.837793 C241.710402,468.837793 234.196966,463.96969 230.823293,456.412826 L209.226908,407.765531 M378.905622,303.837675 L345.180723,318.737475 C333.273614,324.007833 323.754837,333.507534 318.473896,345.390782 L303.504016,379.108216 L332.771084,390.380762 L347.188755,357.915832 C349.28122,353.172217 353.078185,349.382861 357.831325,347.294589 L390.150602,333.006012 L378.875502,303.837675 M121.074297,303.837675 L109.789157,332.995992 L142.168675,347.294589 C146.901437,349.412477 150.689105,353.192554 152.811245,357.915832 L167.138554,390.190381 L196.405622,378.907816 L181.526104,345.390782 C176.245163,333.507534 166.726386,324.007833 154.819277,318.737475 L121.074297,303.817635 M80.9136546,180.571142 L31.124498,202.60521 C12.1990801,211.000678 0.00260459933,229.731472 0.00260459933,250.400802 C0.00260459933,271.070132 12.1990801,289.800925 31.124498,298.196393 L81.0341365,320.240481 L92.3192771,291.082164 L43.7751004,269.639279 C36.2030617,266.272366 31.3251832,258.773988 31.3251832,250.501002 C31.3251832,242.228016 36.2030617,234.729638 43.7751004,231.362725 L92.3092369,209.91984 L80.9538153,180.591182 M418.885542,180.521042 L407.540161,209.849699 L456.2249,231.362725 C463.796938,234.729638 468.674817,242.228016 468.674817,250.501002 C468.674817,258.773988 463.796938,266.272366 456.2249,269.639279 L407.46988,291.192385 L418.74498,320.360721 L468.875502,298.196393 C487.80092,289.800925 499.997395,271.070132 499.997395,250.400802 C499.997395,229.731472 487.80092,211.000678 468.875502,202.60521 L418.885542,180.561122 M167.329317,110.420842 L152.911647,142.885772 C150.819182,147.629387 147.022217,151.418742 142.269076,153.507014 L109.919679,167.795591 L121.2751,197.124248 L154.919679,182.264529 C166.826788,176.994171 176.345565,167.49447 181.626506,155.611222 L196.686747,121.723447 L167.349398,110.400802 M332.670683,110.400802 L303.323293,121.703407 L318.383534,155.641283 C323.664475,167.52453 333.183252,177.024231 345.090361,182.294589 L378.75502,197.164329 L390.100402,167.835671 L357.730924,153.507014 C352.977783,151.418742 349.180818,147.629387 347.088353,142.885772 L332.650602,110.370741 M250,1.00200401 C229.237589,0.829550704 210.38235,13.058923 202.108434,32.0641283 L179.909639,82.0541082 L209.246988,93.3767535 L230.823293,44.7895792 C234.196966,37.2327148 241.710402,32.3646117 250,32.3646117 C258.289598,32.3646117 265.803034,37.2327148 269.176707,44.7895792 L290.692771,93.2665331 L320.040161,81.9639279 L297.891566,32.0641283 C289.61765,13.058923 270.762411,0.829550704 250,1.00200401"
+                                        fill="#844e9f"
+                                      />
+                                      <path
+                                        d="M303.504016,379.108216 L290.753012,407.815631 L320.02008,419.088176 L332.771084,390.370741 L303.504016,379.098196 M196.405622,378.907816 L167.138554,390.190381 L179.949799,419.048096 L209.216867,407.765531 L196.405622,378.907816 M407.459839,291.192385 L378.865462,303.837675 L390.140562,333.006012 L418.73494,320.360721 L407.459839,291.192385 M92.3092369,291.102204 L81.0240964,320.260521 L109.789157,332.975952 L121.074297,303.817635 L92.3192771,291.102204 M390.090361,167.805611 L378.74498,197.134269 L407.540161,209.849699 L418.885542,180.521042 L390.090361,167.805611 M109.909639,167.805611 L80.9538153,180.591182 L92.3192771,209.91984 L121.285141,197.124248 L109.929719,167.795591 M179.929719,82.0541082 L167.349398,110.400802 L196.686747,121.723447 L209.267068,93.3767535 L179.929719,82.0541082 M320.060241,81.9539078 L290.692771,93.2665331 L303.303213,121.673347 L332.650602,110.370741 L320.040161,81.9639279"
+                                        fill="#7a4b91"
+                                      />
+                                    </g>
+                                  </svg>
+                                </CaseflowLogo>
+                                Caseflow
+                              </a>
+                            </LinkAnchor>
+                          </Link>
+                        </Link>
+                        <Link
+                          to="/dispatch/establish-claim/"
+                        >
+                          <Link
+                            to="/dispatch/establish-claim/"
+                            type={null}
+                          >
+                            <LinkAnchor
+                              href="/dispatch/establish-claim/"
+                              navigate={[Function]}
+                              type={null}
+                            >
+                              <a
+                                href="/dispatch/establish-claim/"
+                                onClick={[Function]}
+                                type={null}
+                              >
+                                <span
+                                  className="cf-application-title"
+                                  data-css-1mdtwij=""
+                                  id="page-title"
+                                >
+                                  Dispatch
+                                </span>
+                              </a>
+                            </LinkAnchor>
+                          </Link>
+                        </Link>
+                      </p>
+                      <Breadcrumbs
+                        getBreadcrumbLabel={[Function]}
+                        renderAllCrumbs={false}
+                        shouldDrawCaretBeforeFirstCrumb={true}
+                        styling={
+                          Object {
+                            "data-css-1mdtwij": "",
+                          }
+                        }
+                      >
+                        <div
+                          data-css-1mdtwij=""
+                        />
+                      </Breadcrumbs>
+                    </nav>
+                    <span
+                      className="cf-push-right"
+                    >
+                      <DropdownMenu
+                        analyticsTitle="Dispatch Navbar"
+                        ariaLabel="Logged in as undefined"
+                      >
+                        <div
+                          className="cf-dropdown"
+                          role="dropdown-menu"
+                        >
+                          <a
+                            aria-expanded={false}
+                            aria-haspopup="menu"
+                            aria-label="Logged in as undefined"
+                            className="cf-dropdown-trigger"
+                            data-css-1oange6=""
+                            href="#undefined"
+                            id="menu-trigger"
+                            onClick={[Function]}
+                            role="button"
+                          />
+                        </div>
+                      </DropdownMenu>
+                    </span>
+                  </div>
+                </div>
+                <div
+                  data-css-1tukvsd=""
+                >
+                   
+                </div>
+              </header>
+            </div>
+          </NavigationBar>
+        </CaseflowNavigationBar>
+      </withRouter(CaseflowNavigationBar)>
+      <AppFrame>
+        <main
+          data-css-pw7rlt=""
+        >
+          <div
+            className="cf-app-segment cf-app-segment--alt"
+          >
+            <div
+              className="usa-width-one-whole"
+              data-css-1d6z6z3=""
+            >
+              <div
+                className="cf-left-side"
+              >
+                <h1>
+                  Your Work Assignments
+                </h1>
+                <HeaderMessage
+                  tasksRemaining={-1}
+                >
+                  <div>
+                    <h2>
+                      All claims in queue completed
+                    </h2>
+                    <p>
+                      There are no more claims to pick up. Please come back later.
+                    </p>
+                  </div>
+                </HeaderMessage>
+                <span
+                  className="cf-button-associated-text-right"
+                />
+                <Button
+                  app="dispatch"
+                  classNames={
+                    Array [
+                      "usa-button-primary",
+                      "cf-push-right",
+                      "cf-button-aligned-with-textfield-right",
+                    ]
+                  }
+                  disabled={true}
+                  linkStyling={false}
+                  loading={false}
+                  onClick={[Function]}
+                  role="link"
+                  type="button"
+                  willNeverBeLoading={false}
+                >
+                  <span>
+                    <button
+                      className="cf-push-right cf-button-aligned-with-textfield-right usa-button-disabled usa-button"
+                      disabled={true}
+                      onClick={[Function]}
+                      role="link"
+                      type="button"
+                    />
+                  </span>
+                </Button>
+              </div>
+            </div>
+            <h1>
+              Work History
+            </h1>
+            <Table
+              columns={
+                Array [
+                  Object {
+                    "header": "Veteran",
+                    "valueFunction": [Function],
+                  },
+                  Object {
+                    "header": "Decision Date",
+                    "valueFunction": [Function],
+                  },
+                  Object {
+                    "header": "Decision Type",
+                    "valueFunction": [Function],
+                  },
+                  Object {
+                    "header": "Action",
+                    "valueName": "completion_status_text",
+                  },
+                ]
+              }
+              id="work-history-table"
+              rowObjects={Array []}
+              summary="History of issues you've worked"
+            >
+              <table
+                className="usa-table-borderless "
+                id="work-history-table"
+                summary="History of issues you've worked"
+              >
+                <HeaderRow
+                  columns={
+                    Array [
+                      Object {
+                        "header": "Veteran",
+                        "valueFunction": [Function],
+                      },
+                      Object {
+                        "header": "Decision Date",
+                        "valueFunction": [Function],
+                      },
+                      Object {
+                        "header": "Decision Type",
+                        "valueFunction": [Function],
+                      },
+                      Object {
+                        "header": "Action",
+                        "valueName": "completion_status_text",
+                      },
+                    ]
+                  }
+                  headerClassName=""
+                  setSortOrder={[Function]}
+                  sortAscending={true}
+                  sortColIdx={null}
+                >
+                  <thead
+                    className=""
+                  >
+                    <tr>
+                      <th
+                        className=""
+                        key="0"
+                        scope="col"
+                      >
+                        <span>
+                          Veteran
+                        </span>
+                      </th>
+                      <th
+                        className=""
+                        key="1"
+                        scope="col"
+                      >
+                        <span>
+                          Decision Date
+                        </span>
+                      </th>
+                      <th
+                        className=""
+                        key="2"
+                        scope="col"
+                      >
+                        <span>
+                          Decision Type
+                        </span>
+                      </th>
+                      <th
+                        className=""
+                        key="3"
+                        scope="col"
+                      >
+                        <span>
+                          Action
+                        </span>
+                      </th>
+                    </tr>
+                  </thead>
+                </HeaderRow>
+                <BodyRows
+                  bodyClassName=""
+                  columns={
+                    Array [
+                      Object {
+                        "header": "Veteran",
+                        "valueFunction": [Function],
+                      },
+                      Object {
+                        "header": "Decision Date",
+                        "valueFunction": [Function],
+                      },
+                      Object {
+                        "header": "Decision Type",
+                        "valueFunction": [Function],
+                      },
+                      Object {
+                        "header": "Action",
+                        "valueName": "completion_status_text",
+                      },
+                    ]
+                  }
+                  getKeyForRow={[Function]}
+                  rowClassNames={[Function]}
+                  rowObjects={Array []}
+                  sortAscending={true}
+                  sortColIdx={null}
+                >
+                  <tbody
+                    className=""
+                  />
+                </BodyRows>
+                <FooterRow
+                  columns={
+                    Array [
+                      Object {
+                        "header": "Veteran",
+                        "valueFunction": [Function],
+                      },
+                      Object {
+                        "header": "Decision Date",
+                        "valueFunction": [Function],
+                      },
+                      Object {
+                        "header": "Decision Type",
+                        "valueFunction": [Function],
+                      },
+                      Object {
+                        "header": "Action",
+                        "valueName": "completion_status_text",
+                      },
+                    ]
+                  }
+                >
+                  <tfoot />
+                </FooterRow>
+              </table>
+            </Table>
+          </div>
+        </main>
+      </AppFrame>
+      <Footer
+        appName="Dispatch"
+      >
+        <footer
+          className="cf-app-footer"
+          data-css-f8irbh=""
+        >
+          <div
+            data-css-pw7rlt=""
+          >
+            <div
+              className="cf-push-right"
+            >
+              <Link
+                href="https://caseflow.statuspage.io"
+                target="_blank"
+              >
+                <a
+                  href="https://caseflow.statuspage.io"
+                  target="_blank"
+                  type={null}
+                >
+                  Track Caseflow Status
+                </a>
+              </Link>
+              <span
+                data-css-1bblw8p=""
+              >
+                |
+              </span>
+              <Link
+                onClick={[Function]}
+                target="_blank"
+              >
+                <a
+                  onClick={[Function]}
+                  target="_blank"
+                  type={null}
+                >
+                  Send feedback
+                </a>
+              </Link>
+            </div>
+          </div>
+        </footer>
+      </Footer>
+    </Router>
+  </BrowserRouter>
+</CaseWorkerIndex>
+`;

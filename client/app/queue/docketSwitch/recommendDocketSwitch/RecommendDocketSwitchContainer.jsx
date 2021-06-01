@@ -1,19 +1,20 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router';
-import { fetchJudges } from '../../QueueActions';
+import { fetchJudges } from 'app/queue/QueueActions';
 
-import { appealWithDetailSelector } from '../../selectors';
-import DISPOSITIONS from '../../../../constants/DOCKET_SWITCH';
-import { createDocketSwitchRulingTask } from './recommendDocketSwitchSlice';
+import { appealWithDetailSelector, rootTasksForAppeal } from '../../selectors';
+import DISPOSITIONS from 'constants/DOCKET_SWITCH_DISPOSITIONS';
+
 import { RecommendDocketSwitchForm } from './RecommendDocketSwitchForm';
 import {
   DOCKET_SWITCH_RECOMMENDATION_SUCCESS_TITLE,
   DOCKET_SWITCH_RECOMMENDATION_SUCCESS_MESSAGE,
-} from '../../../../COPY';
+} from 'app/../COPY';
 
 import { sprintf } from 'sprintf-js';
-import { showSuccessMessage } from '../../uiReducer/uiActions';
+import { showSuccessMessage } from 'app/queue/uiReducer/uiActions';
+import { completeTask, createDocketSwitchRulingTask } from '../docketSwitchSlice';
 
 // This takes form data and generates Markdown-formatted text to be saved as task instructions
 export const formatDocketSwitchRecommendation = ({
@@ -29,7 +30,9 @@ export const formatDocketSwitchRecommendation = ({
   parts.push(`**Summary:** ${summary}`);
   parts.push(`**Is this a timely request:** ${timelyCaps}`);
   parts.push(`**Recommendation:** ${DISPOSITIONS[disposition].displayText}`);
-  parts.push(`**Draft letter:** ${hyperlink}`);
+  if (hyperlink) {
+    parts.push(`**Draft letter:** [View link](${hyperlink})`);
+  }
 
   // Separate each chunk by two line breaks
   return parts.join('  \n  \n');
@@ -40,9 +43,8 @@ export const RecommendDocketSwitchContainer = () => {
   const { goBack, push } = useHistory();
   const dispatch = useDispatch();
 
-  const appeal = useSelector((state) =>
-    appealWithDetailSelector(state, { appealId })
-  );
+  const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
+  const rootTask = useSelector((state) => rootTasksForAppeal(state, { appealId }))[0];
 
   const judges = useSelector((state) => state.queue.judges);
   const judgeOptions = useMemo(
@@ -65,7 +67,7 @@ export const RecommendDocketSwitchContainer = () => {
 
     const instructions = formatDocketSwitchRecommendation({ ...formData });
     const newTask = {
-      parent_id: taskId,
+      parent_id: rootTask.taskId,
       type: 'DocketSwitchRulingTask',
       external_id: appeal.externalId,
       instructions,
@@ -84,6 +86,8 @@ export const RecommendDocketSwitchContainer = () => {
 
     try {
       await dispatch(createDocketSwitchRulingTask(data));
+
+      await dispatch(completeTask({ taskId }));
 
       dispatch(showSuccessMessage(successMessage));
       push('/queue');

@@ -145,7 +145,6 @@ module Seeds
       create_ama_tasks
       create_board_grant_tasks
       create_veteran_record_request_tasks
-      create_cavc_appeals
     end
 
     def create_ama_distribution_tasks
@@ -210,7 +209,7 @@ module Seeds
       )
 
       root_task = appeal.root_task
-      judge = User.find_by(css_id: "BVAAWAKEFIELD")
+      judge = User.find_by_css_id("BVAAWAKEFIELD")
       judge_task = create(
         :ama_judge_decision_review_task,
         assigned_to: judge,
@@ -218,7 +217,7 @@ module Seeds
         parent: root_task
       )
 
-      atty = User.find_by(css_id: "BVAABELANGER")
+      atty = User.find_by_css_id("BVAABELANGER")
       atty_task = create(
         :ama_attorney_task,
         :in_progress,
@@ -257,8 +256,8 @@ module Seeds
           last_name: Faker::Name.last_name
         )
 
-        attorney = User.find_by(css_id: "BVASCASPER1")
-        judge = User.find_by(css_id: "BVAAABSHIRE")
+        attorney = User.find_by_css_id("BVASCASPER1")
+        judge = User.find_by_css_id("BVAAABSHIRE")
 
         appeal = create(
           :appeal,
@@ -299,8 +298,8 @@ module Seeds
           last_name: Faker::Name.last_name
         )
 
-        attorney = User.find_by(css_id: "BVASCASPER1")
-        judge = User.find_by(css_id: "BVAAABSHIRE")
+        attorney = User.find_by_css_id("BVASCASPER1")
+        judge = User.find_by_css_id("BVAAABSHIRE")
 
         appeal = create(
           :appeal,
@@ -389,7 +388,10 @@ module Seeds
         30.times do
           appeal = create(
             :appeal,
+            :with_request_issues,
             :hearing_docket,
+            veteran_is_not_claimant: Faker::Boolean.boolean,
+            stream_type: Constants.AMA_STREAM_TYPES.original,
             claimants: [
               create(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO_#{rand(10**10)}")
             ],
@@ -558,8 +560,8 @@ module Seeds
     end
 
     def create_ama_tasks
-      attorney = User.find_by(css_id: "BVASCASPER1")
-      judge = User.find_by(css_id: "BVAAABSHIRE")
+      attorney = User.find_by_css_id("BVASCASPER1")
+      judge = User.find_by_css_id("BVAAABSHIRE")
 
       # At Judge Assignment
       # evidence submission docket
@@ -599,7 +601,7 @@ module Seeds
         create(
           :ama_judge_assign_task,
           :in_progress,
-          assigned_to: User.find_by(css_id: "BVAEBECKER"),
+          assigned_to: User.find_by_css_id("BVAEBECKER"),
           appeal: create(:appeal)
         )
       end
@@ -615,8 +617,8 @@ module Seeds
     end
 
     def create_tasks_at_acting_judge
-      attorney = User.find_by(css_id: "BVASCASPER1")
-      judge = User.find_by(css_id: "BVAAABSHIRE")
+      attorney = User.find_by_css_id("BVASCASPER1")
+      judge = User.find_by_css_id("BVAAABSHIRE")
 
       acting_judge = create(:user, css_id: "BVAACTING", station_id: 101, full_name: "Kris ActingVLJ_AVLJ Merle")
       create(:staff, :attorney_judge_role, user: acting_judge)
@@ -722,10 +724,6 @@ module Seeds
           :request_issue, 2, :rating, contested_issue_description: description, notes: notes
         )
       )
-    end
-
-    def create_cavc_appeals
-      9.times { create(:cavc_remand) }
     end
 
     # these really belong in Seeds::Intake but we put them here for now because they rely on Seeds::Facols

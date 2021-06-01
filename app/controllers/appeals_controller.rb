@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
 class AppealsController < ApplicationController
-  include ValidationConcern
-
   before_action :react_routed
-  before_action :set_application, only: [:document_count, :power_of_attorney]
+  before_action :set_application, only: [:document_count, :power_of_attorney, :update_power_of_attorney]
   # Only whitelist endpoints VSOs should have access to.
   skip_before_action :deny_vso_access, only: [
     :index,
@@ -60,12 +58,24 @@ class AppealsController < ApplicationController
   end
 
   def power_of_attorney
-    render json: {
-      representative_type: appeal.representative_type,
-      representative_name: appeal.representative_name,
-      representative_address: appeal.representative_address,
-      representative_email_address: appeal.representative_email_address
-    }
+    render json: power_of_attorney_data
+  end
+
+  def update_power_of_attorney
+    if cooldown_period_remaining > 0
+      message = "Information is current at this time. Please try again in #{cooldown_period_remaining} minutes"
+      render json: {
+        status: "info",
+        message: message,
+        power_of_attorney: power_of_attorney_data
+      }
+    elsif appeal.is_a?(Appeal)
+      poa = BgsPowerOfAttorney.find(params[:poaId])
+      render json: update_ama_poa(poa)
+    else
+      poa = appeal.power_of_attorney
+      render json: update_legacy_poa(poa)
+    end
   end
 
   def most_recent_hearing
@@ -85,7 +95,10 @@ class AppealsController < ApplicationController
   # the only data that is being pulled from BGS, the rest are from VACOLS for now
   def veteran
     render json: {
-      veteran: ::WorkQueue::VeteranSerializer.new(appeal).serializable_hash[:data][:attributes]
+      veteran: ::WorkQueue::VeteranSerializer.new(
+        appeal,
+        params: { relationships: params["relationships"] }
+      ).serializable_hash[:data][:attributes]
     }
   end
 
@@ -139,13 +152,6 @@ class AppealsController < ApplicationController
     end
   end
 
-  validates :update_nod_date, using: AppealsSchemas.update_nod_date
-  def update_nod_date
-    if params[:receipt_date]
-      appeal.update_receipt_date!(receipt_date: params[:receipt_date])
-    end
-  end
-
   private
 
   def user_represents_claimant_not_veteran
@@ -179,7 +185,7 @@ class AppealsController < ApplicationController
   def json_appeals(appeal)
     if appeal.is_a?(Appeal)
       WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
-    elsif appeal.is_a?(LegacyAppeal)
+    else
       WorkQueue::LegacyAppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
     end
   end
@@ -243,5 +249,69 @@ class AppealsController < ApplicationController
 
   def docket_number?(search)
     !search.nil? && search.match?(/\d{6}-{1}\d+$/)
+  end
+
+  def power_of_attorney_data
+    poa_data = {
+      representative_type: appeal.representative_type,
+      representative_name: appeal.representative_name,
+      representative_address: appeal.representative_address,
+      representative_email_address: appeal.representative_email_address,
+      representative_tz: appeal.representative_tz,
+      poa_last_synced_at: appeal.poa_last_synced_at
+    }
+    unless appeal.claimant.is_a?(OtherClaimant)
+      poa_data[:representative_id] = appeal.power_of_attorney&.id if appeal.is_a?(Appeal)
+      poa_data[:representative_id] = appeal.power_of_attorney&.bgs_id if appeal.is_a?(LegacyAppeal)
+    end
+    poa_data
+  end
+
+  def update_ama_poa(poa)
+    begin
+      claimant = if appeal.claimant.is_a?(Hash)
+                   BgsPowerOfAttorney.find_or_fetch_by(participant_id: claimant.dig(:representative, :participant_id))
+                 else
+                   appeal.claimant
+                 end
+      message, result = poa.update_or_delete(claimant)
+      {
+        status: "success",
+        message: message,
+        power_of_attorney: (result == "updated") ? power_of_attorney_data : {}
+      }
+    rescue ActiveRecord::RecordNotUnique
+      {
+        status: "error",
+        message: "Something went wrong"
+      }
+    end
+  end
+
+  def update_legacy_poa(poa)
+    begin
+      bgs_poa = BgsPowerOfAttorney.find_or_create_by_file_number(poa.file_number)
+      message, result = bgs_poa.update_or_delete(appeal.claimant)
+      appeal.power_of_attorney.clear_bgs_power_of_attorney!
+      {
+        status: "success",
+        message: message,
+        power_of_attorney: (result == "updated") ? power_of_attorney_data : {}
+      }
+    rescue ActiveRecord::RecordNotUnique
+      {
+        status: "error",
+        message: "Something went wrong"
+      }
+    end
+  end
+
+  def cooldown_period_remaining
+    next_update_allowed_at = appeal.poa_last_synced_at + 10.minutes if appeal.poa_last_synced_at.present?
+    if next_update_allowed_at && next_update_allowed_at > Time.zone.now
+      return ((next_update_allowed_at - Time.zone.now) / 60).ceil
+    end
+
+    0
   end
 end

@@ -73,22 +73,38 @@ describe DocketSwitchMailTask, :postgres do
     it "creates both org task and user task" do
       expect(DocketSwitchMailTask.all.size).to eq(0)
       subject
-      expect(DocketSwitchMailTask.where(assigned_to_type: "Organization")).to exist
-      expect(DocketSwitchMailTask.where(assigned_to_type: "User")).to exist
+      expect(DocketSwitchMailTask.assigned_to_any_org).to exist
+      expect(DocketSwitchMailTask.assigned_to_any_user).to exist
     end
   end
 
   describe ".allow_creation?" do
-    subject { DocketSwitchMailTask.allow_creation?(user) }
+    let(:appeal) { create(:appeal) }
+    subject { DocketSwitchMailTask.allow_creation?(user: user, appeal: appeal) }
 
     context "user is part of Clerk of the Board org" do
       it "allows task creation" do
         expect(subject).to eq(true)
       end
+
+      context "appeal has not been dispatched" do
+        it "allows task creation" do
+          expect(subject).to eq(true)
+        end
+      end
     end
 
     context "user is not part of Clerk of the Board org" do
       before { allow_any_instance_of(ClerkOfTheBoard).to receive(:user_has_access?).and_return(false) }
+
+      it "disallows task creation" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "appeal has been dispatched" do
+      let(:dispatched_appeal) { create(:appeal, :dispatched) }
+      subject { DocketSwitchMailTask.allow_creation?(user: user, appeal: dispatched_appeal) }
 
       it "disallows task creation" do
         expect(subject).to eq(false)

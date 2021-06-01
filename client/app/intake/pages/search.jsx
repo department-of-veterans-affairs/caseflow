@@ -54,7 +54,7 @@ const veteranNotFoundInstructions = <div>
 </div>;
 
 const incidentFlashTeamEmail = React.createElement(
-  'a', { href: 'mailto:IncidentTeam.VBASLC@va.gov ? Subject=Temporarily%20unlock%20incident%20flash' },
+  'a', { href: 'mailto:FRAUDINCIDENTTEAM.VBACO@va.gov ? Subject=Temporarily%20unlock%20incident%20flash' },
   'incident team'
 );
 

@@ -61,7 +61,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       end
 
       context "and user is a mail intake" do
-        let(:user) { User.find_by(css_id: "ID1234") }
+        let(:user) { User.find_by_css_id("ID1234") }
         before do
           User.authenticate!(roles: ["Mail Intake"], css_id: "ID1234")
           request.headers["TOKEN"] = token
@@ -77,7 +77,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       end
 
       context "and the user is intake" do
-        let(:user) { User.find_by(css_id: "ID1234") }
+        let(:user) { User.find_by_css_id("ID1234") }
         let(:appeal) { create(:appeal, number_of_claimants: 1) }
         let(:params) { { appeal_id: appeal.uuid } }
 
@@ -298,7 +298,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
               expect(response_body["attributes"]["veteran_first_name"]).to eq appeal.veteran_first_name
               expect(response_body["attributes"]["veteran_last_name"]).to eq appeal.veteran_last_name
-              expect(response_body["attributes"]["veteran_name_suffix"]).to eq "II"
+              expect(response_body["attributes"]["veteran_name_suffix"]).to eq appeal.veteran.name_suffix
               expect(response_body["attributes"]["file_number"]).to eq appeal.veteran_file_number
 
               expect(response_body["attributes"]["representative_address"]).to eq(nil)

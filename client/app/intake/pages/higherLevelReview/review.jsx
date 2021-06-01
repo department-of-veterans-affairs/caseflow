@@ -135,7 +135,7 @@ Review.propTypes = {
 };
 
 const SelectClaimantConnected = connect(
-  ({ higherLevelReview, intake }) => ({
+  ({ higherLevelReview, intake, featureToggles }) => ({
     isVeteranDeceased: intake.veteran.isDeceased,
     veteranIsNotClaimant: higherLevelReview.veteranIsNotClaimant,
     veteranIsNotClaimantError: higherLevelReview.veteranIsNotClaimantError,
@@ -145,7 +145,8 @@ const SelectClaimantConnected = connect(
     payeeCodeError: higherLevelReview.payeeCodeError,
     relationships: higherLevelReview.relationships,
     benefitType: higherLevelReview.benefitType,
-    formType: intake.formType
+    formType: intake.formType,
+    featureToggles
   }),
   (dispatch) => bindActionCreators({
     setVeteranIsNotClaimant,

@@ -26,12 +26,12 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   rescue StandardError => error
     log_error(@start_time, error)
-  else
-    log_warning unless warning_msgs.empty?
   end
 
   def cache_ama_appeals
-    appeals = Appeal.includes(:available_hearing_locations).where(id: open_appeals_from_tasks(Appeal.name))
+    appeals = Appeal.includes(:available_hearing_locations)
+      .where(id: open_appeals_from_tasks(Appeal.name))
+      .order(updated_at: :desc)
 
     cached_appeals = cached_appeal_service.cache_ama_appeals(appeals)
 
@@ -47,6 +47,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     # was previously causing this code to insert legacy appeal attributes that corresponded to NULL ID fields.
     legacy_appeals = LegacyAppeal.includes(:available_hearing_locations)
       .where(id: open_appeals_from_tasks(LegacyAppeal.name))
+      .order(updated_at: :desc)
     all_vacols_ids = legacy_appeals.pluck(:vacols_id).flatten
 
     cache_postgres_data_start = Time.zone.now
@@ -75,8 +76,6 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     end
   end
 
-  delegate :warning_msgs, to: :cached_appeal_service
-
   private
 
   def increment_vacols_update_count(count)
@@ -104,11 +103,6 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
   def cached_appeal_service
     @cached_appeal_service ||= CachedAppealService.new
-  end
-
-  def log_warning
-    slack_msg = warning_msgs.join("\n")
-    slack_service.send_notification(slack_msg, "[WARN] UpdateCachedAppealsAttributesJob: first 100 warnings")
   end
 
   def log_error(start_time, err)

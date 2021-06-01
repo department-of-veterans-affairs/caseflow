@@ -61,12 +61,6 @@ exports[`CancelTaskModal for cancel change hearing request type action 1`] = `
     taskId="2"
   >
     <CancelTaskModal
-      hearingDay={
-        Object {
-          "hearingDate": null,
-          "regionalOffice": null,
-        }
-      }
       highlightFormItems={false}
       history={
         Object {
@@ -270,8 +264,6 @@ exports[`CancelTaskModal for cancel change hearing request type action 1`] = `
           validateForm={[Function]}
         >
           <QueueFlowModal
-            button="Submit"
-            error={null}
             highlightInvalidFormItems={[Function]}
             history={
               Object {
@@ -321,184 +313,238 @@ exports[`CancelTaskModal for cancel change hearing request type action 1`] = `
             }
             pathAfterSubmit="/queue/appeals/1986897"
             resetSaveState={[Function]}
-            saveSuccessful={null}
             submit={[Function]}
-            submitDisabled={false}
-            success={null}
             title="Cancel convert hearing to virtual task"
             validateForm={[Function]}
           >
-            <Modal
-              buttons={
-                Array [
-                  Object {
-                    "classNames": Array [
-                      "usa-button",
-                      "cf-btn-link",
-                    ],
-                    "name": "Cancel",
-                    "onClick": [Function],
+            <FlowModal
+              button="Submit"
+              highlightInvalidFormItems={[Function]}
+              history={
+                Object {
+                  "action": "POP",
+                  "block": [Function],
+                  "canGo": [Function],
+                  "createHref": [Function],
+                  "entries": Array [
+                    Object {
+                      "hash": "",
+                      "pathname": "modal/cancel_task",
+                      "search": "",
+                      "state": undefined,
+                    },
+                  ],
+                  "go": [Function],
+                  "goBack": [Function],
+                  "goForward": [Function],
+                  "index": 0,
+                  "length": 1,
+                  "listen": [Function],
+                  "location": Object {
+                    "hash": "",
+                    "pathname": "modal/cancel_task",
+                    "search": "",
+                    "state": undefined,
                   },
-                  Object {
-                    "classNames": Array [
-                      "usa-button-secondary",
-                      "usa-button-hover",
-                      "usa-button-warning",
-                    ],
-                    "disabled": false,
-                    "loading": false,
-                    "name": "Submit",
-                    "onClick": [Function],
-                  },
-                ]
+                  "push": [Function],
+                  "replace": [Function],
+                }
               }
-              className=""
-              closeHandler={[Function]}
-              scrollLock={true}
+              location={
+                Object {
+                  "hash": "",
+                  "pathname": "modal/cancel_task",
+                  "search": "",
+                  "state": undefined,
+                }
+              }
+              match={
+                Object {
+                  "isExact": true,
+                  "params": Object {},
+                  "path": "modal/cancel_task",
+                  "url": "modal/cancel_task",
+                }
+              }
+              pathAfterSubmit="/queue/appeals/1986897"
+              resetSaveState={[Function]}
+              submit={[Function]}
+              submitDisabled={false}
               title="Cancel convert hearing to virtual task"
+              validateForm={[Function]}
             >
-              <section
-                aria-describedby="modal_id-desc"
-                aria-labelledby="modal_id-title"
-                aria-modal="true"
-                className="cf-modal active "
-                id="modal_id"
-                role="alertdialog"
+              <Modal
+                buttons={
+                  Array [
+                    Object {
+                      "classNames": Array [
+                        "usa-button",
+                        "cf-btn-link",
+                      ],
+                      "name": "Cancel",
+                      "onClick": [Function],
+                    },
+                    Object {
+                      "classNames": Array [
+                        "usa-button-secondary",
+                        "usa-button-hover",
+                        "usa-button-warning",
+                      ],
+                      "disabled": false,
+                      "loading": false,
+                      "name": "Submit",
+                      "onClick": [Function],
+                    },
+                  ]
+                }
+                className=""
+                closeHandler={[Function]}
+                scrollLock={true}
+                title="Cancel convert hearing to virtual task"
               >
-                <TouchProvider>
-                  <ScrollLock
-                    accountForScrollbars={true}
-                  >
-                    <Sheet
-                      styles="body {
+                <section
+                  aria-describedby="modal_id-desc"
+                  aria-labelledby="modal_id-title"
+                  aria-modal="true"
+                  className="cf-modal active "
+                  id="modal_id"
+                  role="dialog"
+                >
+                  <TouchProvider>
+                    <ScrollLock
+                      accountForScrollbars={true}
+                    >
+                      <Sheet
+                        styles="body {
       box-sizing: border-box !important;
       overflow: hidden !important;
       position: relative !important;
       
       padding-right: 1024px !important;
     }"
-                    />
-                  </ScrollLock>
-                </TouchProvider>
-                <div
-                  className="cf-modal-body"
-                  id=""
-                >
-                  <button
-                    className="cf-modal-close"
-                    id="Cancel-convert-hearing-to-virtual-task-button-id-close"
-                    onClick={[Function]}
-                    type="button"
-                  >
-                    <span
-                      className="usa-sr-only"
-                    >
-                      Close
-                    </span>
-                    <svg
-                      className="cf-icon-close"
-                      height="55"
-                      viewBox="0 0 55 55"
-                      width="55"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <title>
-                        close
-                      </title>
-                      <path
-                        d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
                       />
-                    </svg>
-                  </button>
+                    </ScrollLock>
+                  </TouchProvider>
                   <div
-                    style={
-                      Object {
-                        "display": "flex",
-                      }
-                    }
+                    className="cf-modal-body"
+                    id=""
                   >
-                    <div
-                      data-css-1gs0ko2=""
+                    <button
+                      className="cf-modal-close"
+                      id="Cancel-convert-hearing-to-virtual-task-button-id-close"
+                      onClick={[Function]}
+                      type="button"
                     >
-                      <h1
-                        id="modal_id-title"
+                      <span
+                        className="usa-sr-only"
                       >
-                        Cancel convert hearing to virtual task
-                      </h1>
+                        Close
+                      </span>
+                      <svg
+                        className="cf-icon-close"
+                        height="55"
+                        viewBox="0 0 55 55"
+                        width="55"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <title>
+                          close
+                        </title>
+                        <path
+                          d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
+                        />
+                      </svg>
+                    </button>
+                    <div
+                      style={
+                        Object {
+                          "display": "flex",
+                        }
+                      }
+                    >
                       <div
-                        data-css-o98ubo=""
-                      />
+                        data-css-1gs0ko2=""
+                      >
+                        <h1
+                          id="modal_id-title"
+                        >
+                          Cancel convert hearing to virtual task
+                        </h1>
+                        <div
+                          data-css-o98ubo=""
+                        />
+                      </div>
+                    </div>
+                    <div
+                      className="cf-modal-divider"
+                    />
+                    <div
+                      className="cf-modal-controls"
+                    >
+                      <Button
+                        classNames={
+                          Array [
+                            "usa-button",
+                            "cf-btn-link",
+                            "cf-push-left",
+                          ]
+                        }
+                        id="Cancel-convert-hearing-to-virtual-task-button-id-0"
+                        key="0"
+                        linkStyling={false}
+                        loading={false}
+                        name="Cancel"
+                        onClick={[Function]}
+                        type="button"
+                        willNeverBeLoading={false}
+                      >
+                        <span>
+                          <button
+                            className="usa-button cf-btn-link cf-push-left usa-button"
+                            id="Cancel-convert-hearing-to-virtual-task-button-id-0"
+                            onClick={[Function]}
+                            type="button"
+                          >
+                            Cancel
+                          </button>
+                        </span>
+                      </Button>
+                      <Button
+                        classNames={
+                          Array [
+                            "usa-button-secondary",
+                            "usa-button-hover",
+                            "usa-button-warning",
+                            "cf-push-right",
+                          ]
+                        }
+                        disabled={false}
+                        id="Cancel-convert-hearing-to-virtual-task-button-id-1"
+                        key="1"
+                        linkStyling={false}
+                        loading={false}
+                        name="Submit"
+                        onClick={[Function]}
+                        type="button"
+                        willNeverBeLoading={false}
+                      >
+                        <span>
+                          <button
+                            className="usa-button-secondary usa-button-hover usa-button-warning cf-push-right usa-button"
+                            disabled={false}
+                            id="Cancel-convert-hearing-to-virtual-task-button-id-1"
+                            onClick={[Function]}
+                            type="button"
+                          >
+                            Submit
+                          </button>
+                        </span>
+                      </Button>
                     </div>
                   </div>
-                  <div
-                    className="cf-modal-divider"
-                  />
-                  <div
-                    className="cf-modal-controls"
-                  >
-                    <Button
-                      classNames={
-                        Array [
-                          "usa-button",
-                          "cf-btn-link",
-                          "cf-push-left",
-                        ]
-                      }
-                      id="Cancel-convert-hearing-to-virtual-task-button-id-0"
-                      key="0"
-                      linkStyling={false}
-                      loading={false}
-                      name="Cancel"
-                      onClick={[Function]}
-                      type="button"
-                      willNeverBeLoading={false}
-                    >
-                      <span>
-                        <button
-                          className="usa-button cf-btn-link cf-push-left usa-button"
-                          id="Cancel-convert-hearing-to-virtual-task-button-id-0"
-                          onClick={[Function]}
-                          type="button"
-                        >
-                          Cancel
-                        </button>
-                      </span>
-                    </Button>
-                    <Button
-                      classNames={
-                        Array [
-                          "usa-button-secondary",
-                          "usa-button-hover",
-                          "usa-button-warning",
-                          "cf-push-right",
-                        ]
-                      }
-                      disabled={false}
-                      id="Cancel-convert-hearing-to-virtual-task-button-id-1"
-                      key="1"
-                      linkStyling={false}
-                      loading={false}
-                      name="Submit"
-                      onClick={[Function]}
-                      type="button"
-                      willNeverBeLoading={false}
-                    >
-                      <span>
-                        <button
-                          className="usa-button-secondary usa-button-hover usa-button-warning cf-push-right usa-button"
-                          disabled={false}
-                          id="Cancel-convert-hearing-to-virtual-task-button-id-1"
-                          onClick={[Function]}
-                          type="button"
-                        >
-                          Submit
-                        </button>
-                      </span>
-                    </Button>
-                  </div>
-                </div>
-              </section>
-            </Modal>
+                </section>
+              </Modal>
+            </FlowModal>
           </QueueFlowModal>
         </Connect(QueueFlowModal)>
       </withRouter(Connect(QueueFlowModal))>

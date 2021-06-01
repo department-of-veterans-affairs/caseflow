@@ -1,11 +1,12 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import Select from 'react-select';
+import Select, { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
 import CreatableSelect from 'react-select/creatable';
-import _, { isPlainObject, isNull } from 'lodash';
+import _, { isPlainObject, isNull, kebabCase } from 'lodash';
 import classNames from 'classnames';
 import { css } from 'glamor';
+import { FormLabel } from './FormLabel';
 
 const TAG_ALREADY_EXISTS_MSG = 'Tag already exists';
 const NO_RESULTS_TEXT = 'Not an option';
@@ -17,12 +18,47 @@ const customStyles = {
   }),
 };
 
+const CustomMenuList = (props) => {
+  const innerProps = {
+    ...props.innerProps,
+    id: `${kebabCase(props.selectProps.name)}-listbox`,
+    role: 'listbox',
+    'aria-label': `${kebabCase(props.selectProps.name)}-listbox`,
+  };
+
+  return <components.MenuList {...props} innerProps={innerProps} />;
+};
+
+const CustomOption = (props) => {
+  const innerProps = {
+    ...props.innerProps,
+    role: 'option',
+    'aria-disabled': props.selectProps.isDisabled,
+  };
+
+  return <components.Option {...props} innerProps={innerProps} />;
+};
+
+const CustomInput = (props) => {
+  const innerProps = {
+    ...props.innerProps,
+    role: 'combobox',
+    'aria-labelledby': `${kebabCase(props.selectProps.name)}-label`,
+    'aria-owns': `${kebabCase(props.selectProps.name)}-listbox`,
+    'aria-expanded': props.selectProps.menuIsOpen,
+    'aria-haspopup': true,
+  };
+
+  return <components.Input {...props} {...innerProps} />;
+};
+
 export class SearchableDropdown extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
       value: props.value,
+      isExpanded: false
     };
   }
 
@@ -34,6 +70,7 @@ export class SearchableDropdown extends React.Component {
   onChange = (value) => {
     let newValue = value;
     let deletedValue = null;
+    let { clearOnSelect, multi, onChange, selfManageValueState } = this.props;
 
     /*
      * this is a temp fix for react-select value backspace
@@ -42,15 +79,15 @@ export class SearchableDropdown extends React.Component {
      * using the backspace.
      * https://github.com/JedWatson/react-select/pull/773
      */
-    if (!this.props.multi && Array.isArray(value) && value.length <= 0) {
+    if (!multi && Array.isArray(value) && value.length <= 0) {
       newValue = null;
-    } else if (this.props.multi && value === null) {
+    } else if (multi && value === null) {
       // Fix for https://github.com/JedWatson/react-select/issues/3632
       newValue = [];
     }
     // don't set value in state if creatable is true
-    if (!this.props.selfManageValueState) {
-      this.setState({ value: this.props.clearOnSelect ? null : newValue });
+    if (!selfManageValueState) {
+      this.setState({ value: clearOnSelect ? null : newValue });
     }
 
     if (
@@ -62,8 +99,8 @@ export class SearchableDropdown extends React.Component {
     ) {
       deletedValue = _.differenceWith(this.state.value, newValue, _.isEqual);
     }
-    if (this.props.onChange) {
-      this.props.onChange(newValue, deletedValue);
+    if (onChange) {
+      onChange(newValue, deletedValue);
     }
   };
 
@@ -94,8 +131,10 @@ export class SearchableDropdown extends React.Component {
       async,
       options,
       defaultOptions,
+      defaultValue,
       filterOption,
       isClearable,
+      inputRef,
       loading,
       placeholder,
       errorMessage,
@@ -111,7 +150,17 @@ export class SearchableDropdown extends React.Component {
       creatableOptions,
       searchable,
       styling,
+      optional,
     } = this.props;
+
+    const labelContents = (
+      <FormLabel
+        label={label}
+        name={label || name}
+        required={required}
+        optional={optional}
+      />
+    );
 
     const dropdownStyling = css(styling, {
       '& .cf-select__menu': this.props.dropdownStyling,
@@ -159,28 +208,24 @@ export class SearchableDropdown extends React.Component {
     const handleNoOptions = () =>
       noResultsText ?? (creatable ? null : NO_RESULTS_TEXT);
 
-    const labelContents = (
-      <span>
-        {label || name}
-        {required && <span className="cf-required">Required</span>}
-      </span>
-    );
-
     return (
-      <div className={dropdownClasses} {...dropdownStyling}>
-        <label className={labelClasses} htmlFor={name}>
-          {strongLabel ? <strong>{labelContents}</strong> : labelContents}
-        </label>
-        <div className={errorMessage ? 'usa-input-error' : ''}>
+      <div className={errorMessage ? 'usa-input-error' : ''}>
+        <div className={dropdownClasses} {...dropdownStyling}>
+          <label className={labelClasses} htmlFor={`${kebabCase(name)}`} id={`${kebabCase(name)}-label`}>
+            {strongLabel ? <strong>{labelContents}</strong> : labelContents}
+          </label>
           {errorMessage && (
             <span className="usa-input-error-message">{errorMessage}</span>
           )}
           <div className="cf-select">
             <SelectComponent
+              components={{ Input: CustomInput, MenuList: CustomMenuList, Option: CustomOption }}
+              name={name}
               classNamePrefix="cf-select"
-              inputId={name}
+              inputId={`${kebabCase(name)}`}
               options={options}
               defaultOptions={defaultOptions}
+              defaultValue={defaultValue}
               filterOption={filterOption}
               loadOptions={async}
               isLoading={loading}
@@ -197,6 +242,9 @@ export class SearchableDropdown extends React.Component {
               isSearchable={!readOnly}
               cache={false}
               onBlurResetsInput={false}
+              onMenuOpen={() => this.setState({ isExpanded: true })}
+              onMenuClose={() => this.setState({ isExpanded: false })}
+              ref={inputRef}
               shouldKeyDownEventCreateNewOption={
                 this.shouldKeyDownEventCreateNewOption
               }
@@ -217,6 +265,82 @@ const SelectOpts = PropTypes.arrayOf(
   })
 );
 
+CustomMenuList.propTypes = {
+  clearValue: PropTypes.func,
+  className: PropTypes.string,
+  cx: PropTypes.func,
+  getStyles: PropTypes.func,
+  getValue: PropTypes.func,
+  hasValue: PropTypes.bool,
+  isMulti: PropTypes.bool,
+  isRtl: PropTypes.bool,
+  options: PropTypes.arrayOf(PropTypes.object),
+  selectOption: PropTypes.func,
+  selectProps: PropTypes.any,
+  setValue: PropTypes.func,
+  children: PropTypes.node,
+  theme: PropTypes.object,
+  innerRef: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.elementType })
+  ]),
+  focusedOption: PropTypes.object,
+  innerProps: PropTypes.object
+};
+
+CustomInput.propTypes = {
+  clearValue: PropTypes.func,
+  className: PropTypes.string,
+  cx: PropTypes.func,
+  getStyles: PropTypes.func,
+  getValue: PropTypes.func,
+  hasValue: PropTypes.bool,
+  isMulti: PropTypes.bool,
+  isRtl: PropTypes.bool,
+  options: PropTypes.arrayOf(PropTypes.object),
+  selectOption: PropTypes.func,
+  selectProps: PropTypes.any,
+  setValue: PropTypes.func,
+  theme: PropTypes.object,
+  innerRef: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.elementType })
+  ]),
+  isHidden: PropTypes.bool,
+  isDisabled: PropTypes.bool,
+  form: PropTypes.string,
+  innerProps: PropTypes.object
+};
+
+CustomOption.propTypes = {
+  clearValue: PropTypes.func,
+  className: PropTypes.string,
+  cx: PropTypes.func,
+  getStyles: PropTypes.func,
+  getValue: PropTypes.func,
+  hasValue: PropTypes.bool,
+  isMulti: PropTypes.bool,
+  isRtl: PropTypes.bool,
+  options: PropTypes.arrayOf(PropTypes.object),
+  selectOption: PropTypes.func,
+  selectProps: PropTypes.any,
+  setValue: PropTypes.func,
+  theme: PropTypes.object,
+  innerRef: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.elementType })
+  ]),
+  isHidden: PropTypes.bool,
+  isDisabled: PropTypes.bool,
+  isFocused: PropTypes.bool,
+  isSelected: PropTypes.bool,
+  children: PropTypes.node,
+  innerProps: PropTypes.object,
+  label: PropTypes.string,
+  type: PropTypes.string,
+  data: PropTypes.any
+};
+
 SearchableDropdown.propTypes = {
   async: PropTypes.func,
 
@@ -234,9 +358,23 @@ SearchableDropdown.propTypes = {
     formatCreateLabel: PropTypes.func,
   }),
   defaultOptions: PropTypes.oneOfType([SelectOpts, PropTypes.bool]),
+  defaultValue: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.arrayOf(PropTypes.object),
+  ]),
   dropdownStyling: PropTypes.object,
   errorMessage: PropTypes.string,
   filterOption: PropTypes.func,
+
+  /**
+   * Pass a ref to the underlying React Select element
+   */
+  inputRef: PropTypes.oneOfType([
+    // Either a function
+    PropTypes.func,
+    // Or the instance of a DOM native element (see the note about SSR)
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+  ]),
   label: PropTypes.string,
   strongLabel: PropTypes.bool,
   hideLabel: PropTypes.bool,
@@ -245,14 +383,15 @@ SearchableDropdown.propTypes = {
   name: PropTypes.string.isRequired,
 
   /**
- * react-select will by default set noResultsText to say "No options" unless the prop is explicitly defined
- */
+   * react-select will by default set noResultsText to say "No options" unless the prop is explicitly defined
+   */
   noResultsText: PropTypes.string,
   onChange: PropTypes.func,
   options: SelectOpts,
   placeholder: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   readOnly: PropTypes.bool,
   required: PropTypes.bool,
+  optional: PropTypes.bool,
   searchable: PropTypes.bool,
   selfManageValueState: PropTypes.bool,
   styling: PropTypes.object,

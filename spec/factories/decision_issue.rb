@@ -10,7 +10,7 @@ FactoryBot.define do
     caseflow_decision_date { decision_review.is_a?(Appeal) ? 5.days.ago.to_date : nil }
     decision_review { create(:higher_level_review) }
 
-    description { decision_review.is_a?(Appeal) ? "description" : nil }
+    description { decision_review.is_a?(Appeal) ? "description #{Faker::Lorem.words(number: 4).join(' ')}" : nil }
 
     transient do
       request_issues { [] }

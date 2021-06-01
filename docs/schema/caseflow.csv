@@ -9,13 +9,17 @@ advance_on_docket_motions,person_id,integer (8) FK,,,x,,x,Appellant ID
 advance_on_docket_motions,reason,string,,,,,,VLJ's rationale for their decision on motion to AOD.
 advance_on_docket_motions,updated_at,datetime ∗,x,,,,x,
 advance_on_docket_motions,user_id,integer (8) FK,,,x,,x,
-allocations,,,,,,,,
-allocations,allocated_days,float ∗,x,,,,,
-allocations,created_at,datetime ∗,x,,,,,
+allocations,,,,,,,,Hearing Day Requests for each Regional Office used for calculation and confirmation of the Build Hearings Schedule Algorithm
+allocations,allocated_days,float ∗,x,,,,,Number of Video or Central Hearing Days Requested by the Regional Office
+allocations,allocated_days_without_room,float,,,,,,Number of Hearing Days Allocated with no Rooms
+allocations,created_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
+allocations,first_slot_time,string (5),,,,,,The first time slot available for this allocation; interpreted as the local time at Central office or the RO
 allocations,id,integer (8) PK,x,x,,,,
-allocations,regional_office,string ∗,x,,,,,
-allocations,schedule_period_id,integer (8) ∗ FK,x,,x,,x,
-allocations,updated_at,datetime ∗,x,,,,x,
+allocations,number_of_slots,integer,,,,,,The number of time slots possible for this allocation
+allocations,regional_office,string ∗,x,,,,,Key of the Regional Office Requesting Hearing Days
+allocations,schedule_period_id,integer (8) ∗ FK,x,,x,,x,Hearings Schedule Period to which this request belongs
+allocations,slot_length_minutes,integer,,,,,,The length in minutes of each time slot for this allocation
+allocations,updated_at,datetime ∗,x,,,,x,Standard created_at/updated_at timestamps
 annotations,,,,,,,,
 annotations,comment,string ∗,x,,,,,
 annotations,created_at,datetime,,,,,,
@@ -42,6 +46,7 @@ api_views,updated_at,datetime,,,,,,
 api_views,vbms_id,string,,,,,,
 appeals,,,,,,,,Decision reviews intaken for AMA appeals to the board (also known as a notice of disagreement).
 appeals,aod_based_on_age,boolean,,,,,x,"If true, appeal is advance-on-docket due to claimant's age."
+appeals,changed_hearing_request_type,string,,,,,,The new hearing type preference for an appellant that needs a hearing scheduled
 appeals,closest_regional_office,string,,,,,,The code for the regional office closest to the Veteran on the appeal.
 appeals,created_at,datetime,,,,,,
 appeals,docket_range_date,date,,,,,,Date that appeal was added to hearing docket range.
@@ -55,6 +60,7 @@ appeals,establishment_processed_at,datetime,,,,,,Timestamp for when the establis
 appeals,establishment_submitted_at,datetime,,,,,,Timestamp for when the the intake was submitted for asynchronous processing.
 appeals,id,integer (8) PK,x,x,,,,
 appeals,legacy_opt_in_approved,boolean,,,,,,Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review.
+appeals,original_hearing_request_type,string,,,,,,The hearing type preference for an appellant before any changes were made in Caseflow
 appeals,poa_participant_id,string,,,,,,"Used to identify the power of attorney (POA) at the time the appeal was dispatched to BVA. Sometimes the POA changes in BGS after the fact, and BGS only returns the current representative."
 appeals,receipt_date,date ∗,x,,,,,Receipt date of the appeal form. Used to determine which issues are within the timeliness window to be appealed. Only issues decided prior to the receipt date will show up as contestable issues.
 appeals,stream_docket_number,string,,,,,,"Multiple appeals with the same docket number indicate separate appeal streams, mimicking the structure of legacy appeals."
@@ -83,6 +89,19 @@ appeal_views,id,integer PK,x,x,,,,
 appeal_views,last_viewed_at,datetime,,,,,,
 appeal_views,updated_at,datetime ∗,x,,,,,
 appeal_views,user_id,integer ∗ FK,x,,x,,x,
+appellant_substitutions,,,,,,,,Store appellant substitution form data
+appellant_substitutions,claimant_type,string ∗,x,,,,,Claimant type of substitute; needed to create Claimant record
+appellant_substitutions,created_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
+appellant_substitutions,created_by_id,integer (8) ∗ FK,x,,x,,,User that created this record
+appellant_substitutions,id,integer (8) PK,x,x,,,,
+appellant_substitutions,poa_participant_id,string ∗,x,,,,,"Identifier of the appellant's POA, if they have a CorpDB participant_id"
+appellant_substitutions,selected_task_ids,integer (8) ∗,x,,,,,User-selected task ids from source appeal
+appellant_substitutions,source_appeal_id,integer (8) ∗ FK,x,,x,,x,The relevant source appeal for this substitution
+appellant_substitutions,substitute_participant_id,string ∗,x,,,,,Participant ID of substitute appellant
+appellant_substitutions,substitution_date,date ∗,x,,,,,Date of substitution
+appellant_substitutions,target_appeal_id,integer (8) ∗ FK,x,,x,,x,The new appeal resulting from this substitution
+appellant_substitutions,task_params,jsonb ∗,x,,,,,"JSON hash to hold parameters for new tasks, such as an EvidenceSubmissionWindowTask's end-hold date, with keys from selected_task_ids"
+appellant_substitutions,updated_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
 attorney_case_reviews,,,,,,,,
 attorney_case_reviews,attorney_id,integer FK,,,x,,,
 attorney_case_reviews,created_at,datetime ∗,x,,,,,
@@ -179,7 +198,6 @@ cached_user_attributes,stitle,string (16),,,,,,
 cached_user_attributes,svlj,string,,,,,,
 cached_user_attributes,updated_at,datetime ∗,x,,,,x,
 cavc_remands,,,,,,,,
-cavc_remands,appeal_id,integer (8) ∗ FK,x,,x,,x,Appeal that CAVC has remanded
 cavc_remands,cavc_decision_type,string ∗,x,,,,,"CAVC decision type. Expecting 'remand', 'straight_reversal', or 'death_dismissal'"
 cavc_remands,cavc_docket_number,string ∗,x,,,,,Docket number of the CAVC judgement
 cavc_remands,cavc_judge_full_name,string ∗,x,,,,,CAVC judge that passed the judgement on the remand
@@ -187,12 +205,15 @@ cavc_remands,created_at,datetime ∗,x,,,,,Default timestamps
 cavc_remands,created_by_id,integer (8) ∗ FK,x,,x,,,User that created this record
 cavc_remands,decision_date,date ∗,x,,,,,"Date CAVC issued a decision, according to the CAVC"
 cavc_remands,decision_issue_ids,integer (8) ∗,x,,,,,"Decision issues being remanded; IDs refer to decision_issues table. For a JMR, all decision issues on the previous appeal will be remanded. For a JMPR, only some"
+cavc_remands,federal_circuit,boolean,,,,,,Whether the case has been appealed to the US Court of Appeals for the Federal Circuit
 cavc_remands,id,integer (8) PK,x,x,,,,
 cavc_remands,instructions,string ∗,x,,,,,Instructions and context provided upon creation of the remand record
 cavc_remands,judgement_date,date ∗,x,,,,,"Date CAVC issued a judgement, according to the CAVC"
 cavc_remands,mandate_date,date ∗,x,,,,,Date that CAVC reported the mandate was given
+cavc_remands,remand_appeal_id,integer (8) FK,,,x,,x,Appeal created by this CAVC Remand
 cavc_remands,remand_subtype,string ∗,x,,,,,"Type of remand. If the cavc_decision_type is 'remand', expecting one of 'jmp', 'jmpr', or 'mdr'. Otherwise, this can be null."
 cavc_remands,represented_by_attorney,boolean ∗,x,,,,,Whether or not the appellant was represented by an attorney
+cavc_remands,source_appeal_id,integer (8) ∗ FK,x,,x,,x,Appeal that CAVC has remanded
 cavc_remands,updated_at,datetime ∗,x,,,,,Default timestamps
 cavc_remands,updated_by_id,integer (8) FK,,,x,,,"User that updated this record. For MDR remands, judgement and mandate dates will be added after the record is first created."
 certifications,,,,,,,,
@@ -303,9 +324,9 @@ decision_issues,diagnostic_code,string,,,,,,"If a decision resulted in a rating,
 decision_issues,disposition,string ∗,x,,,,x,The disposition for a decision issue. Dispositions made in Caseflow and dispositions made in VBMS can have different values.
 decision_issues,end_product_last_action_date,date ∗,x,,,,,"After an end product gets synced with a status of CLR (cleared), the end product's last_action_date is saved on any decision issues that are created as a result. This is used as a proxy for decision date for non-rating issues that are processed in VBMS because they don't have a rating profile date, and the exact decision date is not available."
 decision_issues,id,integer (8) PK,x,x,,,,
-decision_issues,participant_id,string ∗,x,,,,x,The Veteran's participant id.
+decision_issues,participant_id,string ∗,x,,,,,The Veteran's participant id.
 decision_issues,percent_number,string,,,,,,percent_number from RatingIssue (prcntNo from Rating Profile)
-decision_issues,rating_issue_reference_id,string,,,,,x,Identifies the specific issue on the rating that resulted from the decision issue (a rating can have multiple issues). This is unique per rating issue.
+decision_issues,rating_issue_reference_id,string,,,,,x,Identifies the specific issue on the rating that resulted from the decision issue (a rating issue can be connected to multiple contentions).
 decision_issues,rating_profile_date,datetime,,,,,,"The profile date of the rating that a decision issue resulted in (if applicable). The profile_date is used as an identifier for the rating, and is the date that most closely maps to what the Veteran writes down as the decision date."
 decision_issues,rating_promulgation_date,datetime,,,,,,The promulgation date of the rating that a decision issue resulted in (if applicable). It is used for calculating whether a decision issue is within the timeliness window to be appealed or get a higher level review.
 decision_issues,subject_text,text,,,,,,subject_text from RatingIssue (subjctTxt from Rating Profile)
@@ -350,23 +371,23 @@ distributions,started_at,datetime,,,,,,when the Distribution job commenced
 distributions,statistics,json,,,,,,
 distributions,status,string,,,,,,
 distributions,updated_at,datetime ∗,x,,,,x,
-docket_changes,,,,,,,,Stores the disposition and associated data for Docket Change motions
-docket_changes,created_at,datetime ∗,x,,,,x,Standard created_at/updated_at timestamps
-docket_changes,disposition,string ∗,x,,,,,"Possible options are granted, partially_granted, and denied"
-docket_changes,docket_type,string,,,,,,The new docket
-docket_changes,granted_request_issue_ids,integer,,,,,,"When a docket change is partially granted, this includes an array of the appeal's request issue IDs that were selected for the new docket. For full grant, this includes all prior request issue IDs."
-docket_changes,id,integer (8) PK,x,x,,,,
-docket_changes,new_docket_stream_id,integer (8) FK,,,x,,x,References the new appeal stream with the updated docket; initially null until created by workflow
-docket_changes,old_docket_stream_id,integer (8) ∗ FK,x,,x,,x,References the original appeal stream with old docket
-docket_changes,receipt_date,datetime ∗,x,,,,,
-docket_changes,task_id,integer (8) ∗ FK,x,,x,,x,The task that triggered the switch
-docket_changes,updated_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
 docket_snapshots,,,,,,,,
 docket_snapshots,created_at,datetime,,,,,,
 docket_snapshots,docket_count,integer,,,,,,
 docket_snapshots,id,integer PK,x,x,,,,
 docket_snapshots,latest_docket_month,date,,,,,,
 docket_snapshots,updated_at,datetime,,,,,x,
+docket_switches,,,,,,,,Stores the disposition and associated data for Docket Switch motions.
+docket_switches,created_at,datetime ∗,x,,,,x,Standard created_at/updated_at timestamps
+docket_switches,disposition,string ∗,x,,,,,"Possible options are granted, partially_granted, and denied"
+docket_switches,docket_type,string,,,,,,The new docket
+docket_switches,granted_request_issue_ids,integer,,,,,,"When a docket switch is partially granted, this includes an array of the appeal's request issue IDs that were selected for the new docket. For full grant, this includes all prior request issue IDs."
+docket_switches,id,integer (8) PK,x,x,,,,
+docket_switches,new_docket_stream_id,integer (8) FK,,,x,,x,References the new appeal stream with the updated docket; initially null until created by workflow
+docket_switches,old_docket_stream_id,integer (8) ∗ FK,x,,x,,x,References the original appeal stream with old docket
+docket_switches,receipt_date,datetime ∗,x,,,,,Date the board receives the NOD with request for docket switch; entered by user performing docket switch
+docket_switches,task_id,integer (8) ∗ FK,x,,x,,x,The task that triggered the switch
+docket_switches,updated_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
 docket_tracers,,,,,,,,
 docket_tracers,ahead_and_ready_count,integer,,,,,,
 docket_tracers,ahead_count,integer,,,,,,
@@ -555,14 +576,17 @@ hearing_days,bva_poc,string,,,,,,Hearing coordinator full name
 hearing_days,created_at,datetime ∗,x,,,,,Automatic timestamp of when hearing day was created
 hearing_days,created_by_id,integer (8) ∗ FK,x,,x,,x,The ID of the user who created the Hearing Day
 hearing_days,deleted_at,datetime,,,,,x,Automatic timestamp of when hearing day was deleted
+hearing_days,first_slot_time,string (5),,,,,,The first time slot available; interpreted as the local time at Central office or the RO
 hearing_days,id,integer (8) PK,x,x,,,,
 hearing_days,judge_id,integer FK,,,x,,,User ID of judge who is assigned to the hearing day
 hearing_days,lock,boolean,,,,,,Determines if the hearing day is locked and can't be edited
 hearing_days,notes,text,,,,,,Any notes about hearing day
+hearing_days,number_of_slots,integer,,,,,,The number of time slots possible for this day
 hearing_days,regional_office,string,,,,,,Regional office key associated with hearing day
 hearing_days,request_type,string ∗,x,,,,,"Hearing request types for all associated hearings; can be one of: 'T', 'C' or 'V'"
 hearing_days,room,string,,,,,,The room at BVA where the hearing will take place
 hearing_days,scheduled_for,date ∗,x,,,,,The date when all associated hearings will take place
+hearing_days,slot_length_minutes,integer,,,,,,The length in minutes of each time slot for this day
 hearing_days,updated_at,datetime ∗,x,,,,x,Automatic timestamp of when hearing day was updated
 hearing_days,updated_by_id,integer (8) ∗ FK,x,,x,,x,The ID of the user who most recently updated the Hearing Day
 hearing_issue_notes,,,,,,,,
@@ -672,15 +696,9 @@ judge_case_reviews,positive_feedback,text,,,,,,
 judge_case_reviews,quality,string ∗,x,,,,,
 judge_case_reviews,task_id,string ∗ FK,x,,x,,,
 judge_case_reviews,updated_at,datetime ∗,x,,,,x,
-judge_team_roles,,,,,,,,Defines roles for individual members of judge teams
-judge_team_roles,created_at,datetime ∗,x,,,,,
-judge_team_roles,id,integer (8) PK,x,x,,,,
-judge_team_roles,organizations_user_id,integer FK,,,x,,x,
-judge_team_roles,type,string,,,,,,
-judge_team_roles,updated_at,datetime ∗,x,,,,x,
 legacy_appeals,,,,,,,,
 legacy_appeals,appeal_series_id,integer (8) FK,,,x,,x,
-legacy_appeals,changed_request_type,string,,,,,,The new hearing type preference for an appellant that had previously requested a travel board hearing
+legacy_appeals,changed_hearing_request_type,string,,,,,,The new hearing type preference for an appellant that needs a hearing scheduled
 legacy_appeals,closest_regional_office,string,,,,,,
 legacy_appeals,contaminated_water_at_camp_lejeune,boolean,,,,,,
 legacy_appeals,created_at,datetime,,,,,,
@@ -700,6 +718,7 @@ legacy_appeals,manlincon_compliance,boolean,,,,,,
 legacy_appeals,mustard_gas,boolean,,,,,,
 legacy_appeals,national_cemetery_administration,boolean,,,,,,
 legacy_appeals,nonrating_issue,boolean,,,,,,
+legacy_appeals,original_hearing_request_type,string,,,,,,The hearing type preference for an appellant before any changes were made in Caseflow
 legacy_appeals,pension_united_states,boolean,,,,,,
 legacy_appeals,private_attorney_or_agent,boolean,,,,,,
 legacy_appeals,radiation,boolean,,,,,,
@@ -761,6 +780,15 @@ messages,read_at,datetime,,,,,,When the message was read
 messages,text,string,,,,,,The message
 messages,updated_at,datetime ∗,x,,,,x,
 messages,user_id,integer ∗ FK,x,,x,,,The user for whom the message is intended
+nod_date_updates,,,,,,,,"Tracks changes to an AMA appeal's receipt date (aka, NOD date)"
+nod_date_updates,appeal_id,integer (8) ∗ FK,x,,x,,x,Appeal for which the NOD date is being edited
+nod_date_updates,change_reason,string ∗,x,,,,,Reason for change: entry_error or new_info
+nod_date_updates,created_at,datetime ∗,x,,,,,Default created_at/updated_at timestamps
+nod_date_updates,id,integer (8) PK,x,x,,,,
+nod_date_updates,new_date,date ∗,x,,,,,Date after update
+nod_date_updates,old_date,date ∗,x,,,,,Date before update
+nod_date_updates,updated_at,datetime ∗,x,,,,,Default created_at/updated_at timestamps
+nod_date_updates,user_id,integer (8) ∗ FK,x,,x,,x,User that updated the NOD date
 non_availabilities,,,,,,,,
 non_availabilities,created_at,datetime ∗,x,,,,,
 non_availabilities,date,date,,,,,,
@@ -924,7 +952,7 @@ request_issues,updated_at,datetime,,,,,x,Automatic timestamp whenever the record
 request_issues,vacols_id,string,,,,,,The vacols_id of the legacy appeal that had an issue found to match the request issue.
 request_issues,vacols_sequence_id,integer,,,,,,"The vacols_sequence_id, for the specific issue on the legacy appeal which the Claims Assistant determined to match the request issue on the Decision Review. A combination of the vacols_id (for the legacy appeal), and vacols_sequence_id (for which issue on the legacy appeal), is required to identify the issue being opted-in."
 request_issues,verified_unidentified_issue,boolean,,,,,,"A verified unidentified issue allows an issue whose rating data is missing to be intaken as a regular rating issue. In order to be marked as verified, a VSR needs to confirm that they were able to find the record of the decision for the issue."
-request_issues,veteran_participant_id,string,,,,,,The veteran participant ID. This should be unique in upstream systems and used in the future to reconcile duplicates.
+request_issues,veteran_participant_id,string,,,,,x,The veteran participant ID. This should be unique in upstream systems and used in the future to reconcile duplicates.
 request_issues_updates,,,,,,,,"Keeps track of edits to request issues on a decision review that happen after the initial intake, such as removing and adding issues.  When the decision review is processed in VBMS, this also tracks whether adding or removing contentions in VBMS for the update has succeeded."
 request_issues_updates,after_request_issue_ids,integer ∗,x,,,,,An array of the active request issue IDs after a user has finished editing a decision review. Used with before_request_issue_ids to determine appropriate actions (such as which contentions need to be added).
 request_issues_updates,attempted_at,datetime,,,,,,Timestamp for when the request issue update processing was last attempted.
@@ -1029,6 +1057,7 @@ tasks,assigned_at,datetime,,,,,,
 tasks,assigned_by_id,integer FK,,,x,,,
 tasks,assigned_to_id,integer ∗ FK,x,,x,,x,
 tasks,assigned_to_type,string ∗,x,,,,x,
+tasks,cancellation_reason,string,,,,,x,Reason for latest cancellation status
 tasks,cancelled_by_id,integer FK,,,x,,,ID of user that cancelled the task. Backfilled from versions table. Can be nil if task was cancelled before this column was added or if there is no user logged in when the task is cancelled
 tasks,closed_at,datetime,,,,,,
 tasks,created_at,datetime ∗,x,,,,,
@@ -1071,14 +1100,41 @@ transcriptions,task_number,string,,,,,,Number associated with transcription
 transcriptions,transcriber,string,,,,,,"Contractor who will transcribe the recording; i.e, 'Genesis Government Solutions, Inc.', 'Jamison Professional Services', etc"
 transcriptions,updated_at,datetime,,,,,x,Automatic timestamp of when transcription was updated
 transcriptions,uploaded_to_vbms_date,date,,,,,,Date when the hearing transcription was uploaded to VBMS
-users,,,,,,,,
+unrecognized_appellants,,,,,,,,Unrecognized non-veteran appellants
+unrecognized_appellants,claimant_id,integer (8) ∗ FK,x,,x,,x,The OtherClaimant record associating this appellant to a DecisionReview
+unrecognized_appellants,created_at,datetime ∗,x,,,,,
+unrecognized_appellants,id,integer (8) PK,x,x,,,,
+unrecognized_appellants,poa_participant_id,string,,,,,,"Identifier of the appellant's POA, if they have a CorpDB participant_id"
+unrecognized_appellants,relationship,string ∗,x,,,,,"Relationship to veteran. Allowed values: attorney, child, spouse, other"
+unrecognized_appellants,unrecognized_party_detail_id,integer (8) FK,,,x,,x,Contact details
+unrecognized_appellants,unrecognized_power_of_attorney_id,integer (8) FK,,,x,,x,"Appellant's POA, if they aren't in CorpDB."
+unrecognized_appellants,updated_at,datetime ∗,x,,,,,
+unrecognized_party_details,,,,,,,,"For an appellant or POA, name and contact details for an unrecognized person or organization"
+unrecognized_party_details,address_line_1,string ∗,x,,,,,
+unrecognized_party_details,address_line_2,string,,,,,,
+unrecognized_party_details,address_line_3,string,,,,,,
+unrecognized_party_details,city,string ∗,x,,,,,
+unrecognized_party_details,country,string ∗,x,,,,,
+unrecognized_party_details,created_at,datetime ∗,x,,,,,
+unrecognized_party_details,email_address,string,,,,,,
+unrecognized_party_details,id,integer (8) PK,x,x,,,,
+unrecognized_party_details,last_name,string,,,,,,
+unrecognized_party_details,middle_name,string,,,,,,
+unrecognized_party_details,name,string ∗,x,,,,,"Name of organization, or first name or mononym of person"
+unrecognized_party_details,party_type,string ∗,x,,,,,"The type of this party. Allowed values: individual, organization"
+unrecognized_party_details,phone_number,string,,,,,,
+unrecognized_party_details,state,string ∗,x,,,,,
+unrecognized_party_details,suffix,string,,,,,,
+unrecognized_party_details,updated_at,datetime ∗,x,,,,,
+unrecognized_party_details,zip,string ∗,x,,,,,
+users,,,,,,,,Authenticated Caseflow users
 users,created_at,datetime,,,,,,
 users,css_id,string ∗,x,,,,,
 users,efolder_documents_fetched_at,datetime,,,,,,Date when efolder documents were cached in s3 for this user
 users,email,string,,,,,,
 users,full_name,string,,,,,,
 users,id,integer PK,x,x,,,,
-users,last_login_at,datetime,,,,,,
+users,last_login_at,datetime,,,,,,The last time the user-agent (browser) provided session credentials; see User.from_session for precision
 users,roles,string,,,,,,
 users,selected_regional_office,string,,,,,,
 users,station_id,string ∗,x,,,,,
@@ -1107,9 +1163,11 @@ vbms_uploaded_documents,submitted_at,datetime,,,,,,
 vbms_uploaded_documents,updated_at,datetime ∗,x,,,,x,
 vbms_uploaded_documents,uploaded_to_vbms_at,datetime,,,,,,
 veterans,,,,,,,,
+veterans,bgs_last_synced_at,datetime,,,,,,The last time cached BGS attributes were synced
 veterans,closest_regional_office,string,,,,,,
 veterans,created_at,datetime,,,,,,
 veterans,date_of_death,date,,,,,,"Date of Death reported by BGS, cached locally"
+veterans,date_of_death_reported_at,datetime,,,,,,The datetime that date_of_death last changed for veteran.
 veterans,file_number,string ∗,x,,,,x,
 veterans,first_name,string ∗,x,,,,,
 veterans,id,integer (8) PK,x,x,,,,
@@ -1130,10 +1188,12 @@ virtual_hearings,conference_deleted,boolean ∗,x,,,,,Whether or not the confe
 virtual_hearings,conference_id,integer,,,,,x,ID of conference from Pexip
 virtual_hearings,created_at,datetime ∗,x,,,,,Automatic timestamp of when virtual hearing was created
 virtual_hearings,created_by_id,integer (8) ∗ FK,x,,x,,x,User who created the virtual hearing
+virtual_hearings,guest_hearing_link,string,,,,,,Link used by appellants and/or representatives to join virtual hearing conference
 virtual_hearings,guest_pin,integer,,,,,,PIN number for guests of Pexip conference
 virtual_hearings,guest_pin_long,string (11),,,,,,Change the guest pin to store a longer pin with the # sign trailing
 virtual_hearings,hearing_id,integer (8) FK,,,x,,x,Associated hearing
 virtual_hearings,hearing_type,string,,,,,x,'Hearing' or 'LegacyHearing'
+virtual_hearings,host_hearing_link,string,,,,,,Link used by judges to join virtual hearing conference
 virtual_hearings,host_pin,integer,,,,,,PIN number for host of Pexip conference
 virtual_hearings,host_pin_long,string (8),,,,,,Change the host pin to store a longer pin with the # sign trailing
 virtual_hearings,id,integer (8) PK,x,x,,,,

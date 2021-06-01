@@ -8,6 +8,10 @@ import COPY from '../../../../COPY';
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
 import { PowerOfAttorneyName } from '../../../queue/PowerOfAttorneyDetail';
 
+import FnodBadge from '../../../queue/components/FnodBadge';
+import { tooltipListStyling } from '../../../queue/components/style';
+import { DateString } from '../../../util/DateUtil';
+
 const hearingPropTypes = PropTypes.shape({
   appealExternalId: PropTypes.string,
   appellantAddressLine1: PropTypes.string,
@@ -32,7 +36,7 @@ export const getHearingAppellantName = (hearing) => {
   return `${veteranFirstName} ${veteranLastName}`;
 };
 
-const AppellantInformation = ({ hearing }) => {
+const AppellantInformation = ({ hearing, userCanViewFnodBadgeInHearings }) => {
   const appellantName = getHearingAppellantName(hearing);
 
   return <div>
@@ -45,6 +49,27 @@ const AppellantInformation = ({ hearing }) => {
     <DocketTypeBadge name={hearing.docketName} number={hearing.docketNumber} />
     {hearing.docketNumber} <br />
     {hearing.paperCase && <span>{COPY.IS_PAPER_CASE}</span>}
+    {userCanViewFnodBadgeInHearings && <FnodBadge
+      veteranAppellantDeceased={hearing.veteranDateOfDeathInfo?.veteranAppellantDeceased}
+      uniqueId={hearing.id}
+      tooltipText = {
+        <div>
+          <strong>Date of Death Reported</strong>
+          <ul {...tooltipListStyling}>
+            <li><strong>Veteran: </strong>{hearing.veteranDateOfDeathInfo?.veteranFullName}</li>
+            <li><strong>Source: </strong>{COPY.FNOD_SOURCE}</li>
+            <li>
+              <strong>Date of Death: </strong>
+              <DateString date={hearing.veteranDateOfDeathInfo?.veteranDeathDate} />
+            </li>
+            <li>
+              <strong>Reported on: </strong>
+              <DateString date={hearing.veteranDateOfDeathInfo?.veteranDeathDateReportedAt} />
+            </li>
+          </ul>
+        </div>
+      }
+    />}
     <br /><br />
     {hearing.appellantAddressLine1}<br />
     {hearing.appellantCity ?
@@ -56,10 +81,12 @@ const AppellantInformation = ({ hearing }) => {
 };
 
 AppellantInformation.propTypes = {
-  hearing: hearingPropTypes
+  hearing: hearingPropTypes,
+  userCanViewFnodBadgeInHearings: PropTypes.bool
 };
 
 export default class HearingText extends React.Component {
+
   render () {
     const { hearing, index, user, update, readOnly, initialState } = this.props;
 
@@ -68,7 +95,7 @@ export default class HearingText extends React.Component {
         <PreppedCheckbox hearing={hearing} update={update} readOnly={readOnly} />}
       </div>
       <div><strong>{index + 1}</strong></div>
-      <AppellantInformation hearing={hearing} />
+      <AppellantInformation hearing={hearing} userCanViewFnodBadgeInHearings={user.userCanViewFnodBadgeInHearings} />
       <HearingTime hearing={initialState} showIssueCount showRegionalOffice showRequestType />
     </React.Fragment>;
   }
@@ -78,7 +105,8 @@ HearingText.propTypes = {
   hearing: hearingPropTypes,
   index: PropTypes.number,
   user: PropTypes.shape({
-    userHasHearingPrepRole: PropTypes.bool
+    userHasHearingPrepRole: PropTypes.bool,
+    userCanViewFnodBadgeInHearings: PropTypes.bool,
   }),
   update: PropTypes.func,
   readOnly: PropTypes.bool,

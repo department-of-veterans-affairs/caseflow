@@ -13,6 +13,7 @@ class WorkQueue::TaskSerializer
   attribute :started_at
   attribute :created_at
   attribute :closed_at
+  attribute :cancellation_reason
   attribute :instructions do |object|
     object.instructions.presence || object.default_instructions.presence || []
   end
@@ -118,6 +119,10 @@ class WorkQueue::TaskSerializer
     object.appeal.try(:overtime?)
   end
 
+  attribute :veteran_appellant_deceased do |object|
+    object.appeal.try(:veteran_appellant_deceased?)
+  end
+
   attribute :issue_count do |object|
     object.appeal.is_a?(LegacyAppeal) ? object.appeal.undecided_issues.count : object.appeal.number_of_issues
   end
@@ -149,5 +154,19 @@ class WorkQueue::TaskSerializer
 
   attribute :available_actions do |object, params|
     object.available_actions_unwrapper(params[:user])
+  end
+
+  attribute :can_move_on_docket_switch do |object|
+    object.try(:can_move_on_docket_switch?)
+  end
+
+  attribute :timer_ends_at do |object|
+    if object.type == "EvidenceSubmissionWindowTask"
+      object.timer_ends_at
+    end
+  end
+
+  attribute :unscheduled_hearing_notes do |object|
+    object.try(:unscheduled_hearing_notes)
   end
 end

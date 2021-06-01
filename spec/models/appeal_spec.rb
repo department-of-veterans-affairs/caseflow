@@ -998,6 +998,26 @@ describe Appeal, :all_dbs do
     end
   end
 
+  describe "#cavc_remand" do
+    subject { appeal.cavc_remand }
+
+    context "an original appeal" do
+      let(:appeal) { create(:appeal) }
+      it "returns nil" do
+        expect(subject).to be_nil
+      end
+    end
+
+    context "a remand appeal" do
+      let(:cavc_remand) { create(:cavc_remand) }
+      let(:appeal) { cavc_remand.remand_appeal }
+
+      it "returns the CavcRemand" do
+        expect(subject).to eq(cavc_remand)
+      end
+    end
+  end
+
   describe "#status" do
     it "returns BVAAppealStatus object" do
       expect(appeal.status).to be_a(BVAAppealStatus)
@@ -1198,59 +1218,56 @@ describe Appeal, :all_dbs do
     end
   end
 
-  describe "#current_hearing_request_type" do
-    let(:appeal) { create(:appeal, closest_regional_office: closest_regional_office) }
-
-    subject { appeal.current_hearing_request_type }
-
-    context "closest_regional_office is 'C'" do
-      let(:closest_regional_office) { "C" }
-
-      it { expect(subject).to eq(:central) }
-    end
-
-    context "closest_regional_office is a RO" do
-      let(:closest_regional_office) { "RO39" }
-
-      it { expect(subject).to eq(:video) }
-    end
-
-    context "closest_regional_office is a nil" do
-      let(:closest_regional_office) { nil }
-
-      it { expect(subject).to eq(nil) }
-    end
-  end
-
-  describe "readable current_hearing_request_type" do
-    subject { appeal.current_hearing_request_type(readable: true) }
-
-    context "no hearings have been scheduled" do
-      let(:appeal) { create(:appeal, closest_regional_office: closest_regional_office) }
-
-      context "closest_regional_office is 'C'" do
-        let(:closest_regional_office) { "C" }
-
-        it { expect(subject).to eq("Central") }
-      end
-
-      context "closest_regional_office is a RO" do
-        let(:closest_regional_office) { "RO39" }
-
-        it { expect(subject).to eq("Video") }
-      end
-
-      context "closest_regional_office is a nil" do
-        let(:closest_regional_office) { nil }
-
-        it { expect(subject).to eq(nil) }
-      end
-    end
-  end
-
   describe "#latest_informal_hearing_presentation_task" do
     let(:appeal) { create(:appeal) }
 
     it_behaves_like "latest informal hearing presentation task"
+  end
+
+  describe "validate issue timeliness" do
+    subject { appeal.untimely_issues_report(receipt_date) }
+
+    let(:appeal) { create(:appeal, request_issues: request_issues) }
+    let(:receipt_date) { 7.days.ago }
+    let(:request_issues) { [timely_request_issue] }
+    let(:timely_request_issue) { create(:request_issue, decision_date: receipt_date - 365.days) }
+    let(:untimely_request_issue) { create(:request_issue, decision_date: 2.years.ago) }
+    let(:inactive_untimely_request_issue) { create(:request_issue, :removed, decision_date: 2.years.ago) }
+    let(:untimely_request_issue_with_exemption) do
+      create(:request_issue,
+             decision_date: 2.years.ago,
+             untimely_exemption: true)
+    end
+
+    context "appeal only has issues that are timely with the new date" do
+      let(:request_issues) { [timely_request_issue, untimely_request_issue_with_exemption] }
+
+      it { is_expected.to be nil }
+
+      context "The receipt date is before the decision date" do
+        let(:receipt_date) { 3.years.ago }
+        let(:timely_request_issue) { create(:request_issue, decision_date: 365.days.ago) }
+
+        it "considers the issues untimely" do
+          expect(subject[:affected_issues].count).to eq(request_issues.count)
+          expect(subject[:unaffected_issues].count).to eq(0)
+        end
+      end
+    end
+
+    context "appeal has an issue that would be untimely with the new date" do
+      let(:request_issues) { [timely_request_issue, untimely_request_issue] }
+
+      it "reflects the untimely issue" do
+        expect(subject[:affected_issues].first.id).to eq(untimely_request_issue.id)
+        expect(subject[:unaffected_issues].first.id).to eq(timely_request_issue.id)
+      end
+
+      context "the untimely issue is closed" do
+        let(:request_issues) { [timely_request_issue, inactive_untimely_request_issue] }
+
+        it { is_expected.to be nil }
+      end
+    end
   end
 end

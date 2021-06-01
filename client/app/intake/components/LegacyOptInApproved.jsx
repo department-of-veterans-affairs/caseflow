@@ -19,7 +19,7 @@ export default class LegacyOptInApproved extends React.PureComponent {
       onChange
     } = this.props;
 
-    return <div className="cf-legacy-opt-in">
+    return <div className="cf-legacy-opt-in" style={{ marginTop: '10px' }}>
       <RadioField
         name="legacy-opt-in"
         label={INTAKE_LEGACY_OPT_IN_MESSAGE}

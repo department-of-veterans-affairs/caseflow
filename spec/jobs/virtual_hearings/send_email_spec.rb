@@ -99,6 +99,15 @@ describe VirtualHearings::SendEmail do
         )
       end
 
+      before do
+        Fakes::BGSService.store_veteran_record(
+          veteran.file_number,
+          ptcpnt_id: veteran.participant_id.to_s,
+          first_name: "Bgsfirstname",
+          last_name: "Bgslastname"
+        )
+      end
+
       it "fetches veteran from BGS" do
         expect(virtual_hearing.hearing.appeal.veteran)
           .to receive(:update_cached_attributes!)
@@ -106,6 +115,10 @@ describe VirtualHearings::SendEmail do
           .and_call_original
 
         subject
+
+        veteran.reload
+        expect(veteran.first_name).to eq "Bgsfirstname"
+        expect(veteran.last_name).to eq "Bgslastname"
       end
     end
   end

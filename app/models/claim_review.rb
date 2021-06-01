@@ -44,6 +44,11 @@ class ClaimReview < DecisionReview
     Intake::ClaimReviewSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
+  def find_or_create_stream!(benefit_type)
+    attributes = stream_attributes.merge(benefit_type: benefit_type)
+    self.class.find_by(attributes) || create_stream!(attributes)
+  end
+
   def validate_prior_to_edit
     if processed?
       # force sync on initial edit call so that we have latest EP status.
@@ -79,8 +84,10 @@ class ClaimReview < DecisionReview
 
   # Save issues and assign it the appropriate end product establishment.
   # Create that end product establishment if it doesn't exist.
-  def create_issues!(new_issues)
-    new_issues.each(&:create_for_claim_review!)
+  def create_issues!(new_issues, request_issues_update = nil)
+    new_issues.each do |issue|
+      issue.create_for_claim_review!(request_issues_update)
+    end
     request_issues.reload
   end
 
@@ -233,14 +240,14 @@ class ClaimReview < DecisionReview
     ClaimReviewActiveTaskCancellation.new(self).call
   end
 
-  def end_product_establishment_for_issue(issue)
+  def end_product_establishment_for_issue(issue, request_issues_update = nil)
     return unless issue.eligible? && processed_in_vbms?
 
     end_product_establishments.find_by(
       "(code = ?) AND (synced_status IS NULL OR synced_status NOT IN (?))",
       issue.end_product_code,
       EndProduct::INACTIVE_STATUSES
-    ) || new_end_product_establishment(issue)
+    ) || new_end_product_establishment(issue, request_issues_update)
   end
 
   def cancel_establishment!
@@ -301,5 +308,27 @@ class ClaimReview < DecisionReview
     return if processed_in_caseflow? || intake.veteran.valid?(:bgs)
 
     errors.add(:veteran, "veteran_not_valid")
+  end
+
+  # Currently a new claim review stream is only created for claims processed in VBMS for EP Claim Label updates
+  # This only happens after the EP is established, and represents one AMA form that may need to be split, such as if
+  # The issues represent more than one benefit type.
+  def stream_attributes
+    slice(
+      :legacy_opt_in_approved,
+      :receipt_date,
+      :veteran_file_number,
+      :veteran_is_not_claimant,
+      :establishment_submitted_at,
+      :establishment_processed_at,
+      :establishment_attempted_at,
+      :establishment_last_submitted_at
+    )
+  end
+
+  # Note: this does not do a deep copy for unrecognized claimants
+  # Currently this is only in use for claims processed in VBMS which are not impacted
+  def create_stream!(attributes)
+    self.class.create(attributes).tap { |new_stream| new_stream.copy_claimants!(claimants) }
   end
 end

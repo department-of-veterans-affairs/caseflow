@@ -16,6 +16,7 @@ class HearingForHearingDaySerializer
   attribute :aod, &:aod?
   attribute :appeal_id
   attribute :appeal_external_id
+  attribute :current_issue_count
   attribute :appeal_type, if: proc { |hearing, _params| hearing.is_a?(LegacyHearing) }
   attribute :appellant_first_name
   attribute :appellant_last_name
@@ -29,4 +30,12 @@ class HearingForHearingDaySerializer
   attribute :veteran_file_number
   attribute :veteran_first_name
   attribute :veteran_last_name
+
+  attribute :case_type do |hearing|
+    if hearing.is_a?(Hearing)
+      hearing.appeal.type
+    end
+  end
+
+  attribute :poa_name
 end

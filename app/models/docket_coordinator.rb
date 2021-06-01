@@ -2,12 +2,8 @@
 
 class DocketCoordinator
   # MINIMUM_LEGACY_PROPORTION + MAXIMUM_DIRECT_REVIEW_PROPORTION cannot exceed 1.
-  MINIMUM_LEGACY_PROPORTION = 0.1
-  MAXIMUM_DIRECT_REVIEW_PROPORTION = 0.8
-
-  # A lever controlling how many direct review docket appeals are distributed before the time goal is reached.
-  # A lower number will distribute fewer appeals, accelerating faster toward the time goal.
-  INTERPOLATED_DIRECT_REVIEW_PROPORTION_ADJUSTMENT = 0.67
+  MINIMUM_LEGACY_PROPORTION = 0.9
+  MAXIMUM_DIRECT_REVIEW_PROPORTION = 0.07
 
   def dockets
     @dockets ||= {
@@ -33,8 +29,10 @@ class DocketCoordinator
     # Unlike the other dockets, the direct review docket observes a time goal.
     # We distribute appeals from the docket sufficient to meet the goal, instead of proportionally.
     # When there are no or few "due" direct review appeals, we instead calculate a curve out.
-    direct_review_proportion = (direct_review_due_count.to_f / docket_margin_net_of_priority)
-      .clamp(interpolated_minimum_direct_review_proportion, MAXIMUM_DIRECT_REVIEW_PROPORTION)
+    direct_review_proportion = [
+      due_direct_review_proportion,
+      MAXIMUM_DIRECT_REVIEW_PROPORTION
+    ].min
 
     @docket_proportions.add_fixed_proportions!(direct_review: direct_review_proportion)
 
@@ -111,30 +109,12 @@ class DocketCoordinator
     @direct_review_due_count ||= dockets[:direct_review].due_count
   end
 
-  def interpolated_minimum_direct_review_proportion
-    return @interpolated_minimum_direct_review_proportion if @interpolated_minimum_direct_review_proportion
-
-    interpolator = 1 - (dockets[:direct_review].time_until_due_of_oldest_appeal.to_f /
-                        dockets[:direct_review].time_until_due_of_new_appeal)
-
-    @interpolated_minimum_direct_review_proportion =
-      (pacesetting_direct_review_proportion * interpolator * INTERPOLATED_DIRECT_REVIEW_PROPORTION_ADJUSTMENT)
-        .clamp(0, MAXIMUM_DIRECT_REVIEW_PROPORTION)
-  end
-
-  def pacesetting_direct_review_proportion
-    # The pacesetting proportion is the percentage of our nonpriority decision capacity that would need to go
-    # to direct reviews in order to keep pace with what is arriving.
-
-    return @pacesetting_direct_review_proportion if @pacesetting_direct_review_proportion
-
-    receipts_per_year = dockets[:direct_review].nonpriority_receipts_per_year
-
-    @pacesetting_direct_review_proportion = receipts_per_year.to_f / nonpriority_decisions_per_year
-  end
-
   def total_batch_size
     JudgeTeam.includes(:non_admin_users).flat_map(&:non_admin_users).size * Distribution::CASES_PER_ATTORNEY
+  end
+
+  def due_direct_review_proportion
+    direct_review_due_count.to_f / docket_margin_net_of_priority
   end
 
   private

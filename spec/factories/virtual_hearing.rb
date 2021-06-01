@@ -7,7 +7,9 @@ FactoryBot.define do
     conference_id { nil }
     conference_deleted { false }
     guest_pin { nil }
+    guest_hearing_link { nil }
     host_pin { nil }
+    host_hearing_link { nil }
     judge_email { "caseflow-judge@test.com" }
     judge_email_sent { false }
     appellant_email { "caseflow-veteran@test.com" }
@@ -28,12 +30,12 @@ FactoryBot.define do
     end
 
     trait :initialized do
-      alias_name { rand(1..9).to_s[0..6] }
+      alias_name { format("%07<id>d", id: rand(99..10_001)) }
       conference_id { rand(1..9) }
       after(:build, &:generate_conference_pins)
     end
 
-    trait :previously_central do
+    trait :timezones_initialized do
       appellant_tz { "America/Denver" }
       representative_tz { "America/Los_Angeles" }
     end
@@ -42,6 +44,18 @@ FactoryBot.define do
       appellant_email_sent { true }
       representative_email_sent { true }
       judge_email_sent { true }
+    end
+
+    trait :link_generation_initialized do
+      alias_with_host { "BVA0000001@example.va.gov" }
+      host_pin_long { "3998472" }
+      guest_pin_long { "7470125694" }
+      host_hearing_link do
+        "https://example.va.gov/sample/?conference=#{alias_with_host}&pin=#{host_pin_long}&callType=video"
+      end
+      guest_hearing_link do
+        "https://example.va.gov/sample/?conference=#{alias_with_host}&pin=#{guest_pin_long}&callType=video"
+      end
     end
 
     after(:create) do |virtual_hearing, _evaluator|

@@ -58,6 +58,33 @@ describe User, :all_dbs do
     end
   end
 
+  describe "judges in VACOLS" do
+    context "user is a judge" do
+      let(:user) { create(:user, :with_vacols_judge_record) }
+      it "distinguishes a pure judge" do
+        expect(user.pure_judge_in_vacols?)
+        expect(user.attorney_in_vacols?).to be false
+        expect(user.acting_judge_in_vacols?).to be false
+      end
+    end
+    context "user is an acting judge" do
+      let(:user) { create(:user, :with_vacols_acting_judge_record) }
+      it "distinguishes an acting judge" do
+        expect(user.pure_judge_in_vacols?).to be false
+        expect(user.attorney_in_vacols?)
+        expect(user.acting_judge_in_vacols?)
+      end
+    end
+    context "user is a pure attorney" do
+      let(:user) { create(:user, :with_vacols_attorney_record) }
+      it "distinguishes an acting attorney" do
+        expect(user.pure_judge_in_vacols?).to be false
+        expect(user.attorney_in_vacols?)
+        expect(user.acting_judge_in_vacols?).to be false
+      end
+    end
+  end
+
   context ".batch_find_by_css_id_or_create_with_default_station_id" do
     subject { User.batch_find_by_css_id_or_create_with_default_station_id(css_ids) }
 
@@ -155,6 +182,15 @@ describe User, :all_dbs do
       it "is expected to return the aliases as well" do
         expect(subject).to include("Manage Claim Establishment", "Manage Claims Establishme")
       end
+    end
+  end
+
+  context "scope with_role" do
+    subject { User.with_role("VSO") }
+    let!(:user2) { create(:user, roles: ["VSO"]) }
+    before { user.update(roles: ["System Admin", "VSO", "Certify Appeal"]) }
+    it "returns all users with role" do
+      expect(subject).to match_array [user, user2]
     end
   end
 
@@ -348,13 +384,12 @@ describe User, :all_dbs do
     end
 
     context "when the user is a judge team admin" do
-      let(:judge_team) { create(:judge_team, :has_judge_team_lead_as_admin) }
-      let!(:judge) { judge_team.judge }
+      let(:judge_team) { JudgeTeam.create_for_judge(user) }
+      let!(:judge) { judge_team.admin }
 
       before do
-        OrganizationsUser.make_user_admin(user, judge_team)
-        allow(JudgeTeam).to receive(:for_judge).with(user).and_return(nil)
-        allow(user).to receive(:judge_in_vacols?).and_return(false)
+        allow(JudgeTeam).to receive(:for_judge).with(judge).and_return(nil)
+        allow(judge).to receive(:judge_in_vacols?).and_return(false)
       end
 
       it "does not return assigned cases link for judge" do
@@ -538,6 +573,50 @@ describe User, :all_dbs do
         session["user"]["pg_user_id"] = user.id + 1000 # integer not found
         expect(subject).to eq user
         expect(session["user"]["pg_user_id"]).to eq user.id
+      end
+
+      it "updates last_login_at if it was more than 5 minutes ago" do
+        user = create(:user, last_login_at: Time.zone.now - 10.minutes)
+        session["user"]["pg_user_id"] = user.id
+        expect(subject.last_login_at).to be_within(1.second).of(Time.zone.now)
+      end
+
+      it "does not update last_login_at if it was less than 5 minutes ago" do
+        user = create(:user, last_login_at: Time.zone.now - 1.minute)
+        session["user"]["pg_user_id"] = user.id
+        expect(subject.last_login_at).to be_within(1.second).of(Time.zone.now - 1.minute)
+      end
+
+      describe "check SQL queries are only called when needed" do
+        before do
+          Timecop.freeze(Time.zone.now - time_ago) do
+            user = create(:user)
+            session["user"]["pg_user_id"] = user.id
+            User.from_session(session)
+          end
+        end
+        context "last_login_at was more than 5 minutes ago" do
+          let(:time_ago) { 6.minutes }
+
+          it "executes SQL UPDATE" do
+            query_data = SqlTracker.track do
+              expect(subject).to eq user
+            end
+            update_queries = query_data.values.select { |o| o[:sql].start_with?("UPDATE \"users\"") }
+            expect(update_queries.pluck(:count).max).to eq 1
+          end
+        end
+        context "last_login_at was less than 5 minutes ago" do
+          let(:time_ago) { 4.minutes }
+
+          it "does not execute SQL UPDATE" do
+            query_data = SqlTracker.track do
+              expect(subject).to eq user
+            end
+            update_queries = query_data.values.select { |o| o[:sql].start_with?("UPDATE \"users\"") }
+            expect(update_queries).to be_empty
+          end
+        end
       end
     end
 
@@ -791,7 +870,7 @@ describe User, :all_dbs do
               expect(user.selectable_organizations.length).to eq 2
             end
 
-            expect(judge_team.admins).to include user
+            expect(judge_team.admin).to eq user
             expect(user.organizations.size).to eq 3
             expect(subject).to eq true
             expect(user.reload.status).to eq status
@@ -819,7 +898,7 @@ describe User, :all_dbs do
             expect(user.selectable_organizations.length).to eq 1
           end
 
-          context "when judge is a non-JudgeTeamLead in another JudgeTeam" do
+          context "when judge is a non-admin in another JudgeTeam" do
             let(:judge_team2) { JudgeTeam.create_for_judge(create(:user)) }
             before { allow(user).to receive(:judge_in_vacols?).and_return(true) }
             before { judge_team2.add_user(user) }

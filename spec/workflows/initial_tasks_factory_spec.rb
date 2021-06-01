@@ -65,6 +65,45 @@ describe InitialTasksFactory, :postgres do
           end
         end
 
+        context "on veteran date of death present" do
+          before { FeatureToggle.enable!(:death_dismissal_streamlining) }
+          after { FeatureToggle.disable!(:death_dismissal_streamlining) }
+
+          context "on the evidence submission docket is created" do
+            let(:appeal) do
+              create(
+                :appeal,
+                docket_type: Constants.AMA_DOCKETS.evidence_submission,
+                claimants: [create(:claimant, participant_id: participant_id_with_no_vso)],
+                veteran: create(:veteran, date_of_death: 30.days.ago.to_date)
+              )
+            end
+
+            it "is ready for distribution" do
+              InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+
+              expect(DistributionTask.find_by(appeal: appeal).status).to eq("assigned")
+            end
+          end
+
+          context "on hearing docket is created" do
+            let(:appeal) do
+              create(
+                :appeal,
+                docket_type: Constants.AMA_DOCKETS.hearing,
+                claimants: [create(:claimant, participant_id: participant_id_with_no_vso)],
+                veteran: create(:veteran, date_of_death: 30.days.ago.to_date)
+              )
+            end
+
+            it "is ready for distribution" do
+              InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+
+              expect(DistributionTask.find_by(appeal: appeal).status).to eq("assigned")
+            end
+          end
+        end
+
         context "when it has an ihp-writing vso" do
           let(:appeal) do
             create(:appeal, docket_type: Constants.AMA_DOCKETS.direct_review, claimants: [
@@ -210,25 +249,85 @@ describe InitialTasksFactory, :postgres do
     end
 
     context "when a Court Remand appeal stream is created" do
-      subject { InitialTasksFactory.new(appeal).create_root_and_sub_tasks! }
-
-      let(:appeal) do
-        create(:appeal,
-               stream_type: Constants.AMA_STREAM_TYPES.court_remand,
-               docket_type: Constants.AMA_DOCKETS.direct_review,
-               claimants: [
-                 create(:claimant, participant_id: participant_id_with_pva),
-                 create(:claimant, participant_id: participant_id_with_aml)
-               ])
+      # create(:cavc_remand, ...) indirectly calls InitialTasksFactory#create_root_and_sub_tasks!
+      subject do
+        create(:cavc_remand,
+               source_appeal: appeal,
+               cavc_decision_type: cavc_decision_type,
+               remand_subtype: remand_subtype,
+               judgement_date: judgement_date,
+               mandate_date: mandate_date)
       end
 
-      it "blocks distribution" do
-        subject
-        expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
-        expect(CavcTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
-        expect(CavcTask.find_by(appeal: appeal).status).to eq("on_hold")
-        expect(SendCavcRemandProcessedLetterTask.find_by(appeal: appeal).status).to eq("assigned")
-        expect(appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
+      let(:cavc_decision_type) { Constants.CAVC_DECISION_TYPES.remand }
+      let(:judgement_date) { 30.days.ago.to_date }
+      let(:mandate_date) { 30.days.ago.to_date }
+
+      before do
+        expect_any_instance_of(InitialTasksFactory).to receive(:create_root_and_sub_tasks!).once.and_call_original
+        expect_any_instance_of(InitialTasksFactory).to receive(:create_cavc_subtasks).once.and_call_original
+      end
+
+      shared_examples "remand appeal blocking distribution" do |some_task_class, some_task_status|
+        it "blocks distribution with a CavcTask" do
+          remand_appeal = subject.remand_appeal
+
+          expect(DistributionTask.find_by(appeal: remand_appeal).status).to eq("on_hold")
+          expect(CavcTask.find_by(appeal: remand_appeal).parent.class.name).to eq("DistributionTask")
+          expect(CavcTask.find_by(appeal: remand_appeal).status).to eq("on_hold")
+          expect(remand_appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
+
+          expect(some_task_class.find_by(appeal: remand_appeal).status).to eq(some_task_status)
+        end
+      end
+
+      context "when CavcRemand subtype is JMR or JMPR" do
+        let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.jmpr }
+
+        include_examples "remand appeal blocking distribution", SendCavcRemandProcessedLetterTask, "assigned"
+      end
+
+      context "when CavcRemand subtype is MDR" do
+        let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.mdr }
+
+        include_examples "remand appeal blocking distribution", MdrTask, "on_hold"
+      end
+
+      shared_examples "creates mandate hold task if needed" do
+        let(:remand_subtype) { nil }
+
+        it "sets appeal ready for distribution" do
+          remand_appeal = subject.remand_appeal
+
+          expect(DistributionTask.find_by(appeal: remand_appeal).status).to eq("assigned")
+          expect(MandateHoldTask.find_by(appeal: remand_appeal)).to be_nil
+          expect(CavcTask.find_by(appeal: remand_appeal)).to be_nil
+          expect(remand_appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
+        end
+
+        context "when mandate dates are not provided" do
+          let(:judgement_date) { nil }
+          let(:mandate_date) { nil }
+
+          include_examples "remand appeal blocking distribution", MandateHoldTask, "on_hold"
+        end
+
+        context "when either of the mandate dates is not provided" do
+          let(:judgement_date) { [nil, 30.days.ago.to_date].sample }
+          let(:mandate_date) { 30.days.ago.to_date if judgement_date.nil? }
+
+          include_examples "remand appeal blocking distribution", MandateHoldTask, "on_hold"
+        end
+      end
+
+      context "when CavcRemand decision type is straight_reversal" do
+        let(:cavc_decision_type) { Constants.CAVC_DECISION_TYPES.straight_reversal }
+        include_examples "creates mandate hold task if needed"
+      end
+
+      context "when CavcRemand decision type is death_dismissal" do
+        let(:cavc_decision_type) { Constants.CAVC_DECISION_TYPES.death_dismissal }
+        include_examples "creates mandate hold task if needed"
       end
     end
   end

@@ -177,9 +177,9 @@ class QueueRepository
       records.group_by(&:vacols_id).each_with_object([]) do |(_k, v), result|
         next result << v.first if v.size == 1
 
-        user = User.find_by(css_id: css_id, station_id: User::BOARD_STATION_ID) if css_id
+        user = User.find_by_css_id(css_id) if css_id
         # If user is an attorney, find all associated with the user's attorney_id
-        if user && attorney_id_match_found?(v, user)
+        if user&.station_id == User::BOARD_STATION_ID && attorney_id_match_found?(v, user)
           v.select! { |task| task.attorney_id == user.vacols_attorney_id }
         end
         # If DAS record doesn't have updated_at date, put it at the beginning of the list

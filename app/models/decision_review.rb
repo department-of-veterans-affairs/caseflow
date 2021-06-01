@@ -144,7 +144,28 @@ class DecisionReview < CaseflowRecord
   end
 
   def remove_claimants!
-    claimants.delete_all
+    claimants.each(&:destroy!)
+  end
+
+  # :reek:FeatureEnvy
+  def copy_claimants!(source_claimants)
+    # maintain the same ordering as used in the claimant method below so that claimant returns the correct one
+    source_claimants.order(:id).each_with_index do |claimant, index|
+      if index == 0
+        create_claimant!(
+          participant_id: claimant.participant_id,
+          payee_code: claimant.payee_code,
+          type: claimant.type
+        )
+      else
+        # Since create_claimant! removes all claimants, don't call it again
+        claimants.create_without_intake!(
+          participant_id: claimant.participant_id,
+          payee_code: claimant.payee_code,
+          type: claimant.type
+        )
+      end
+    end
   end
 
   # Currently AMA only supports one claimant per decision review

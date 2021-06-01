@@ -11,7 +11,8 @@ export const argTypes = {
   remand_subtype: { control: { type: "select", options: ["jmr", "jmpr", "mdr"] } },
   decision_date: { control: "text" },
   judgement_date: { control: "text" },
-  mandate_date: { control: "text" }
+  mandate_date: { control: "text" },
+  instructions: { control: "text" },
 };
 export const args = {
   cavc_docket_number: "9008",
@@ -22,6 +23,7 @@ export const args = {
   decision_date: "2020-09-30",
   judgement_date: "2020-09-30",
   mandate_date: "2020-09-30",
+  instructions: "Some instructions",
 };
 
 <Meta title="Queue/Components/CavcDetail" component={CavcDetail} argTypes={argTypes} args={args} />

@@ -9,7 +9,7 @@ import Tooltip from '../components/Tooltip';
 import { DoubleArrow } from '../components/RenderFunctions';
 import TableFilter from '../components/TableFilter';
 import FilterSummary from '../components/FilterSummary';
-import Pagination from '../components/Pagination';
+import Pagination from '../components/Pagination/Pagination';
 import { COLORS, LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import LoadingScreen from '../components/LoadingScreen';
@@ -113,11 +113,22 @@ export const HeaderRow = (props) => {
           let sortIcon;
           let filterIcon;
 
+          // Determine whether to apply an ID to the column title
+          const titleId = column?.columnName ? `header-${_.camelCase(column.columnName)}` : '';
+
+          // Define the aria label to exclude the filter/sort
+          const ariaLabel = column?.ariaLabel ? column?.ariaLabel : titleId;
+
+          // Set the Sort name for the column if sorting by this column
+          const sorting = props.sortColName === column.name;
+          const sortLabel = sorting && props.sortAscending ? 'ascending' : 'descending';
+
+          // Set the aria props for this column header
+          const sortProps = sorting ? { 'aria-sort': sortLabel } : {};
+
           if ((!props.useTaskPagesApi || column.backendCanSort) && column.getSortValue) {
-            const topColor =
-              props.sortColName === column.name && !props.sortAscending ? COLORS.PRIMARY : COLORS.GREY_LIGHT;
-            const botColor =
-              props.sortColName === column.name && props.sortAscending ? COLORS.PRIMARY : COLORS.GREY_LIGHT;
+            const topColor = sorting && !props.sortAscending ? COLORS.PRIMARY : COLORS.GREY_LIGHT;
+            const botColor = sorting && props.sortAscending ? COLORS.PRIMARY : COLORS.GREY_LIGHT;
 
             sortIcon = (
               <span
@@ -155,7 +166,7 @@ export const HeaderRow = (props) => {
               />
             );
           }
-          const columnTitleContent = <span>{column.header || ''}</span>;
+          const columnTitleContent = <span {...(titleId ? { id: titleId } : {})}>{column.header || ''}</span>;
           const columnContent = (
             <span {...iconHeaderStyle} aria-label="">
               {columnTitleContent}
@@ -165,7 +176,15 @@ export const HeaderRow = (props) => {
           );
 
           return (
-            <th role="columnheader" scope="col" key={columnNumber} className={cellClasses(column)}>
+            <th
+              {...sortProps}
+              {...(column?.sortProps || {})}
+              {...(ariaLabel ? { 'aria-labelledby': ariaLabel } : {})}
+              role="columnheader"
+              scope="col"
+              key={columnNumber}
+              className={cellClasses(column)}
+            >
               {column.tooltip ? (
                 <Tooltip id={`tooltip-${columnNumber}`} text={column.tooltip}>
                   {columnContent}
@@ -521,8 +540,8 @@ export default class QueueTable extends React.PureComponent {
     const {
       columns,
       summary,
-      headerClassName = '',
-      bodyClassName = '',
+      headerClassName,
+      bodyClassName,
       rowClassNames = this.defaultRowClassNames,
       getKeyForRow,
       slowReRendersAreOk,
@@ -639,7 +658,7 @@ export default class QueueTable extends React.PureComponent {
           columns={columns}
           getKeyForRow={keyGetter}
           rowObjects={rowObjects}
-          bodyClassName={bodyClassName}
+          bodyClassName={bodyClassName ?? ''}
           rowClassNames={rowClassNames}
           bodyStyling={bodyStyling}
           {...this.state}

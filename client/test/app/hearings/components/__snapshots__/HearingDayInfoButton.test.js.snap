@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HearingDayInfoButton renders correctly 1`] = `
+<div>
+  <span>
+    <button
+      class="unselected-hearing-day-info-button cf-btn-link usa-button"
+      data-css-1fa3cif=""
+      type="button"
+    >
+      <div>
+        <div
+          data-css-16v9b8i=""
+        >
+          <div
+            data-css-1o3wy7o=""
+          >
+            Mon Apr 12
+          </div>
+          <div
+            data-css-5bhwlq=""
+          >
+            <span
+              aria-describedby="hearing-day-undefined"
+              currentitem="false"
+              data-event="focus mouseenter"
+              data-event-off="keydown mouseleave"
+              data-for="hearing-day-undefined"
+              data-tip="true"
+              role="tooltip"
+              tabindex="0"
+            >
+              Video · VLJ Jerengal, Jonas
+            </span>
+            <span
+              data-css-ftxb8z=""
+            >
+              <div
+                class="__react_component_tooltip place-bottom type-dark "
+                data-id="tooltip"
+                id="hearing-day-undefined"
+              >
+                VLJ Jerengal, Jonas
+              </div>
+            </span>
+          </div>
+        </div>
+        <div
+          data-css-1fnaqki=""
+        >
+          <div
+            data-css-lrak98=""
+          >
+            2 of 8
+          </div>
+          <div
+            data-css-heqg99=""
+          >
+            scheduled
+          </div>
+        </div>
+      </div>
+    </button>
+  </span>
+</div>
+`;

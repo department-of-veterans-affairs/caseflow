@@ -82,7 +82,7 @@ export default class SearchBar extends React.Component {
         onClick={this.setInputFocus}
         className="cf-search-internal-text"
         readOnly
-        {...this.props.inputProps}
+        {...this.props.internalTextInputProps}
       />
     );
   };
@@ -266,6 +266,11 @@ SearchBar.propTypes = {
    * Text to show on the inside of the search bar, justified right. Only supported with size 'small'
    */
   internalText: PropTypes.string,
+
+  /**
+   * Props that will be passed along to the `input` element that is a child of the internal text element
+   */
+  internalTextInputProps: PropTypes.object,
 
   /**
    * Color of the loading icon to display while loading

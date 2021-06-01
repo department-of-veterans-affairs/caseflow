@@ -20,9 +20,11 @@ import { onReceiveAppealDetails, onReceiveTasks, setAttorneysOfJudge, fetchAllAt
 
 class CaseDetailsLoadingScreen extends React.PureComponent {
   componentWillUnmount = () => {
-    this.props.resetSaveState();
-    this.props.resetSuccessMessages();
-    this.props.resetErrorMessages();
+    if (!this.props.preventReset) {
+      this.props.resetSaveState();
+      this.props.resetSuccessMessages();
+      this.props.resetErrorMessages();
+    }
   }
 
   loadActiveAppealAndTask = () => {
@@ -139,7 +141,8 @@ CaseDetailsLoadingScreen.propTypes = {
   fetchAllAttorneys: PropTypes.func,
   resetErrorMessages: PropTypes.func,
   resetSuccessMessages: PropTypes.func,
-  resetSaveState: PropTypes.func
+  resetSaveState: PropTypes.func,
+  preventReset: PropTypes.bool
 };
 
 export default (connect(mapStateToProps, mapDispatchToProps)(CaseDetailsLoadingScreen));

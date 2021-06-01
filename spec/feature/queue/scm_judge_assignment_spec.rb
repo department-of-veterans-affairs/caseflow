@@ -184,9 +184,10 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           expect(page).to have_content("Reassigned 1 task to #{attorney_two.full_name}")
 
           visit "/queue/appeals/#{appeal.external_id}"
-          expect(page).not_to have_content("ASSIGNED TO\n#{attorney_one.css_id}")
-          expect(page).to have_content("ASSIGNED TO\n#{attorney_two.css_id}")
-          expect(page).to have_content("ASSIGNED BY\n#{assigner_name}")
+          active_tasks_section = page.find("#currently-active-tasks")
+          expect(active_tasks_section).not_to have_content("ASSIGNED TO\n#{attorney_one.css_id}")
+          expect(active_tasks_section).to have_content("ASSIGNED TO\n#{attorney_two.css_id}")
+          expect(active_tasks_section).to have_content("ASSIGNED BY\n#{assigner_name}")
         end
 
         step "cancel an AttorneyTask" do

@@ -181,21 +181,22 @@ exports[`RecommendDocketSwitchForm renders correctly 1`] = `
         style="max-width: 35rem;"
       >
         <div
-          class="cf-form-dropdown dropdown-judge"
+          class=""
         >
-          <label
-            class="question-label"
-            for="judge"
-          >
-            <strong>
-              <span>
-                Assign to judge
-              </span>
-            </strong>
-          </label>
           <div
-            class=""
+            class="cf-form-dropdown dropdown-judge"
           >
+            <label
+              class="question-label"
+              for="judge"
+              id="judge-label"
+            >
+              <strong>
+                <span>
+                  Assign to judge
+                </span>
+              </strong>
+            </label>
             <div
               class="cf-select"
             >
@@ -222,10 +223,15 @@ exports[`RecommendDocketSwitchForm renders correctly 1`] = `
                       >
                         <input
                           aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="judge-label"
+                          aria-owns="judge-listbox"
                           autocapitalize="none"
                           autocomplete="off"
                           autocorrect="off"
                           id="judge"
+                          role="combobox"
                           spellcheck="false"
                           style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                           tabindex="0"
@@ -263,6 +269,11 @@ exports[`RecommendDocketSwitchForm renders correctly 1`] = `
                     </div>
                   </div>
                 </div>
+                <input
+                  name="judge"
+                  type="hidden"
+                  value=""
+                />
               </div>
             </div>
           </div>

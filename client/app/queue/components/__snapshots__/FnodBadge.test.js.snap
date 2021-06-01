@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FnodBadge renders correctly 1`] = `
+<Provider
+  store={
+    Object {
+      "dispatch": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+      Symbol(observable): [Function],
+    }
+  }
+>
+  <FnodBadge
+    appeal={
+      Object {
+        "veteranAppellantDeceased": true,
+        "veteranDateOfDeath": "2019-03-17",
+      }
+    }
+  />
+</Provider>
+`;

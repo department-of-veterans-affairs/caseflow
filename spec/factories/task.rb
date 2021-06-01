@@ -3,7 +3,7 @@
 FactoryBot.define do
   module FactoryBotHelper
     def self.find_first_task_or_create(appeal, task_type, **kwargs)
-      (appeal.tasks.open.where(type: task_type.name).first if appeal) ||
+      (appeal.tasks.open.of_type(task_type.name).first if appeal) ||
         FactoryBot.create(task_type.name.underscore.to_sym, appeal: appeal, **kwargs) { |t| yield(t) if block_given? }
     end
   end
@@ -364,6 +364,16 @@ FactoryBot.define do
         parent { FactoryBotHelper.find_first_task_or_create(appeal, CavcTask) }
       end
 
+      factory :cavc_poa_clarification_task, class: CavcPoaClarificationTask do
+        assigned_to { CavcLitigationSupport.singleton }
+        parent { FactoryBotHelper.find_first_task_or_create(appeal, SendCavcRemandProcessedLetterTask) }
+      end
+
+      factory :cavc_remand_processed_letter_response_window_task, class: CavcRemandProcessedLetterResponseWindowTask do
+        assigned_to { CavcLitigationSupport.singleton }
+        parent { FactoryBotHelper.find_first_task_or_create(appeal, CavcTask) }
+      end
+
       factory :hearing_task, class: HearingTask do
         assigned_to { Bva.singleton }
         parent { appeal.root_task || create(:root_task, appeal: appeal) }
@@ -440,6 +450,11 @@ FactoryBot.define do
         assigned_to { QualityReview.singleton }
       end
 
+      factory :qr_task_no_parent, class: QualityReviewTask do
+        assigned_by { nil }
+        assigned_to { QualityReview.singleton }
+      end
+
       factory :quality_review_task, class: QualityReviewTask do
         assigned_by { nil }
       end
@@ -491,7 +506,6 @@ FactoryBot.define do
       end
 
       factory :docket_switch_mail_task, class: DocketSwitchMailTask do
-        parent { create(:root_task, appeal: appeal) }
         assigned_to { ClerkOfTheBoard.singleton }
       end
 
@@ -500,6 +514,10 @@ FactoryBot.define do
       end
 
       factory :docket_switch_denied_task, class: DocketSwitchDeniedTask do
+        parent { create(:docket_switch_ruling_task, appeal: appeal) }
+      end
+
+      factory :docket_switch_granted_task, class: DocketSwitchGrantedTask do
         parent { create(:docket_switch_ruling_task, appeal: appeal) }
       end
 

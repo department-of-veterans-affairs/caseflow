@@ -13,9 +13,14 @@
     "value": "modal/cancel_task",
     "func": "cancel_convert_hearing_request_type_data"
   },
+  "CHANGE_HEARING_REQUEST_TYPE_TO_CENTRAL": {
+    "label": "Convert hearing to Central",
+    "value": "modal/change_hearing_request_type_to_central",
+    "func": "change_hearing_request_type_data"
+  },
   "CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO": {
     "label": "Convert hearing to video",
-    "value": "<placeholder>modal/change_hearing_request_type</placeholder>",
+    "value": "modal/change_hearing_request_type_to_video",
     "func": "change_hearing_request_type_data"
   },
   "CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL": {
@@ -204,6 +209,18 @@
     "label": "End hold early",
     "value": "modal/end_hold"
   },
+  "CAVC_EXTENSION_REQUEST": {
+    "label": "Extension request",
+    "value": "modal/cavc_extension_request"
+  },
+  "CAVC_REMAND_RECEIVED_MDR": {
+    "label": "Remand ready for 90-day letter",
+    "value": "modal/cavc_remand_received"
+  },
+  "CAVC_REMAND_RECEIVED_VLJ": {
+    "label": "Ready for VLJ",
+    "value": "modal/cavc_remand_received"
+  },
   "SPECIAL_CASE_MOVEMENT": {
     "label": "Case Movement: Advance to judge",
     "value": "modal/distribute_to_judge",
@@ -310,6 +327,11 @@
     "value": "modal/assign_ihp_to_colocated_team",
     "func": "assign_ihp_to_colocated_blocking_distribution_data"
   },
+  "SEND_TO_HEARINGS_BLOCKING_DISTRIBUTION": {
+    "label": "Assign Schedule Hearing task to Hearings team",
+    "value": "modal/assign_schedule_hearing_to_hearings_team",
+    "func": "assign_schedule_hearing_to_hearings_blocking_distribution_data"
+  },
   "CLARIFY_POA_BLOCKING_CAVC": {
     "label": "Assign POA Clarification task to CAVC team",
     "value": "modal/assign_poa_to_cavc_team",
@@ -328,5 +350,9 @@
     "label": "Postpone hearing",
     "value": "modal/postpone_hearing",
     "func": "add_schedule_hearing_task_admin_actions_data"
+  },
+  "REMOVE_HEARING_SCHEDULED_IN_ERROR": {
+    "label": "Remove hearing to correct a scheduling error",
+    "value": "modal/hearing_scheduled_in_error"
   }
 }

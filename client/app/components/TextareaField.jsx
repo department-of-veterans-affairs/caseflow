@@ -35,6 +35,7 @@ export const TextareaField = (props) => {
     labelStyling,
     placeholder,
     optional,
+    characterLimitTopRight,
   } = props;
 
   const className = classNamesFn('cf-form-textarea', {
@@ -55,6 +56,15 @@ export const TextareaField = (props) => {
     />
   );
 
+  const characterLimitContent = (
+    <p style={characterLimitTopRight ? { float: 'right', marginBottom: 0, lineHeight: 'inherit' } : {}}>
+      <i>
+        {characterLimitCount} {pluralize('character', characterLimitCount)}{' '}
+        left
+      </i>
+    </p>
+  );
+
   // hideLabel still leaves the label element in the DOM (for a11y purposes)
   // but makes it invisible to any screens
   return (
@@ -69,6 +79,7 @@ export const TextareaField = (props) => {
       {errorMessage && (
         <span className="usa-input-error-message">{errorMessage}</span>
       )}
+      {characterLimitCount !== null && characterLimitTopRight && characterLimitContent}
       <textarea
         {...textAreaStyling}
         name={name}
@@ -84,14 +95,7 @@ export const TextareaField = (props) => {
         ref={inputRef}
         {...inputProps}
       />
-      {characterLimitCount !== null && (
-        <p>
-          <i>
-            {characterLimitCount} {pluralize('character', characterLimitCount)}{' '}
-            left
-          </i>
-        </p>
-      )}
+      {characterLimitCount !== null && !characterLimitTopRight && characterLimitContent}
     </div>
   );
 };
@@ -100,6 +104,7 @@ TextareaField.defaultProps = {
   disabled: false,
   optional: false,
   required: false,
+  characterLimitTopRight: false
 };
 
 TextareaField.propTypes = {
@@ -111,6 +116,11 @@ TextareaField.propTypes = {
 
   hideLabel: PropTypes.bool,
   id: PropTypes.string,
+
+  /**
+    * Position the character limit in the top-right corner (default: false == position bottom left)
+    */
+  characterLimitTopRight: PropTypes.bool,
 
   /**
    * Props to be applied to the `input` element

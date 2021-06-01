@@ -1,3 +1,7 @@
+$cf-hearing-day-label-color: #323a45;
+$form-spacing: 15px;
+$form-width: 575px;
+
 .worksheet-header {
   .cf-push-right {
     padding-top: 25px;
@@ -86,7 +90,7 @@
   .transcriptRequested {
     display: inline-block;
     text-align: left;
-    padding: .4em;
+    padding: 0.4em;
     width: 100%;
 
     .cf-form-checkboxes {
@@ -100,7 +104,7 @@
   margin-bottom: 15px;
 
   [type="text"] {
-    margin: .3em 0 0;
+    margin: 0.3em 0 0;
   }
 
   .cf-form-textarea {
@@ -153,7 +157,7 @@
 
   label {
     font-size: 1.05em;
-    padding-bottom: .3em;
+    padding-bottom: 0.3em;
   }
 
   h4 {
@@ -170,23 +174,21 @@
   }
 
   .cf-modal {
-
     h2 {
       border-bottom: none;
       font-size: 1.5em;
     }
-
   }
 
   .cf-hearings-worksheet-data-cell {
     display: inline-block;
     width: 20%;
     vertical-align: top;
-    padding-left: .2em;
+    padding-left: 0.2em;
   }
 
   .cf-appeal-stream-label {
-    margin-top: .5em;
+    margin-top: 0.5em;
     margin-bottom: 0;
   }
 
@@ -198,13 +200,13 @@
 
   h2 {
     border-bottom: 1px solid $color-gray-lighter;
-    margin-bottom: .5em;
+    margin-bottom: 0.5em;
   }
 }
 
 .cf-hearings-worksheet-issues {
   white-space: pre-line;
-  margin: .5em 0 1.5em;
+  margin: 0.5em 0 1.5em;
 
   tr:last-child {
     .cf-form-textarea {
@@ -222,9 +224,9 @@
   }
 
   .cf-txt-l {
-    padding-left: .4em;
+    padding-left: 0.4em;
 
-    [id=trash-can] {
+    [id="trash-can"] {
       margin-top: 20px;
     }
   }
@@ -239,7 +241,7 @@
 
   td {
     vertical-align: top;
-    padding: .5em;
+    padding: 0.5em;
 
     &:nth-of-type(1) {
       width: 5%;
@@ -273,7 +275,7 @@
       display: inline-block;
       box-sizing: border-box;
       margin: 0;
-      padding: .3em 0;
+      padding: 0.3em 0;
 
       &:nth-of-type(1),
       &:nth-of-type(4) {
@@ -339,5 +341,235 @@
   p {
     font-size: 11px;
     margin-top: 0;
+  }
+}
+
+// Schedule Veteran Styles
+.schedule-veteran-page {
+  min-height: 680px;
+}
+
+// Hearings Schedule Styles
+.hearing-day-list {
+  // Each item = 73px * 10 = 730px
+  max-height: 730px;
+  overflow: hidden;
+  overflow-y: auto;
+
+  label {
+    color: $cf-hearing-day-label-color;
+    font-weight: 700;
+    font-size: 19px;
+    position: sticky;
+    // Fixes strange behavior where the list text is slightly visible on scroll
+    top: -1px;
+    padding-top: 10px;
+    width: 100%;
+    background-color: $color-white;
+  }
+}
+
+@media screen and (min-width: 1224px) and (max-width: 1680px) {
+  .usa-width-three-fourths.assign-hearing-tabs {
+    width: 65%;
+  }
+}
+
+// Time Slot Styles
+.time-slot-label {
+  font-weight: bold;
+}
+
+.time-slot-button {
+  height: 75px;
+  width: 350px;
+  text-align: left;
+  padding-left: 25px;
+
+  > div:first-child {
+    display: flex;
+    height: 100%;
+    align-items: center;
+  }
+}
+
+.time-slot-button-selected.usa-button {
+  background-color: $color-primary-darker;
+  color: $color-white;
+
+  &:hover {
+    color: $color-white;
+  }
+}
+
+.time-slot-button-full.usa-button {
+  background-color: $caseflow-background;
+  border: 2px solid $color-gray-lighter;
+  color: $color-gray;
+  font-weight: 600;
+}
+
+.time-slot-arrow {
+  font-size: x-large;
+}
+
+.time-slot-details {
+  font-weight: 400;
+  font-size: 15px;
+  white-space: nowrap;
+  width: 295px;
+  margin-top: 5px;
+}
+
+.time-slot-button-container {
+  display: flex;
+  width: 800px;
+}
+
+.time-slot-container {
+  flex: 0;
+  max-width: 46rem;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  line-height: normal;
+
+  > span {
+    margin: 5px;
+  }
+}
+
+.time-slot-button-toggle.usa-button {
+  padding-left: 0;
+}
+
+.time-slot-card {
+  width: 100%;
+  border: 2px solid $color-gray-lighter;
+  border-radius: 5px;
+  padding: 15px 10px;
+  margin: 24px 0;
+}
+
+.time-slot-card-time {
+  margin-top: 0;
+  margin-left: 20px;
+  font-size: 15px;
+}
+
+.time-slot-card-label {
+  font-weight: 700;
+  font-size: 19px;
+}
+
+.no-hearings-label {
+  margin-top: 30px;
+  text-align: center;
+}
+
+// Appeal Information Styles
+.schedule-veteran-appeals-info {
+  width: 100%;
+  background-color: $caseflow-background;
+  border: 2px solid $color-gray-lighter;
+  border-radius: 2%;
+  padding: 25px 20px;
+  max-width: 300px;
+
+  pre {
+    white-space: normal;
+    word-wrap: break-word;
+    width: 200px;
+  }
+
+  a > div {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 200px;
+  }
+}
+
+.usa-width-one-fourth.schedule-veteran-appeal-info-container {
+  margin-right: 30px;
+  width: 300px;
+  height: 400px;
+  position: sticky;
+  top: 15px;
+
+  h2 {
+    margin-bottom: 10px;
+  }
+}
+
+// Add Hearing Day Styles
+.hearing-day-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+
+  h1 {
+    margin-bottom: $form-spacing;
+  }
+
+  .hearing-day-date {
+    margin: $form-spacing 0;
+
+    > input {
+      margin-bottom: 0;
+      max-width: $form-width;
+    }
+  }
+
+  .cf-form-dropdown {
+    margin: $form-spacing 0;
+  }
+
+  .cf-form-checkboxes {
+    margin: $form-spacing 0;
+  }
+
+  .cf-form-textarea {
+    margin: $form-spacing 0;
+    max-width: $form-width;
+  }
+
+  .time-slot-button.usa-button-disabled {
+    background-color: $caseflow-background;
+    border: 2px solid $color-gray-lighter;
+    color: $color-gray;
+    font-weight: 600;
+  }
+
+  .cf-select {
+    .cf-select__control {
+      max-width: $form-width;
+    }
+
+    .cf-select__menu {
+      max-width: $form-width;
+    }
+  }
+
+  .question-label {
+    max-width: $form-width;
+  }
+
+  .time-slot-container {
+    margin-right: $form-spacing;
+
+    > span {
+      margin: 0;
+      margin-top: $form-spacing;
+    }
+  }
+
+}
+
+.time-slot-preview-container {
+  margin: $form-spacing 0;
+
+  .time-slot-button {
+    width: 280px;
   }
 }

@@ -138,5 +138,249 @@
   {
     "value": "16:45",
     "label": "4:45 pm"
+  },
+  {
+    "value": "17:00",
+    "label": "5:00 pm"
+  },
+  {
+    "value": "17:15",
+    "label": "5:15 pm"
+  },
+  {
+    "value": "17:30",
+    "label": "5:30 pm"
+  },
+  {
+    "value": "17:45",
+    "label": "5:45 pm"
+  },
+  {
+    "value": "18:00",
+    "label": "6:00 pm"
+  },
+  {
+    "value": "18:15",
+    "label": "6:15 pm"
+  },
+  {
+    "value": "18:30",
+    "label": "6:30 pm"
+  },
+  {
+    "value": "18:45",
+    "label": "6:45 pm"
+  },
+  {
+    "value": "19:00",
+    "label": "7:00 pm"
+  },
+  {
+    "value": "19:15",
+    "label": "7:15 pm"
+  },
+  {
+    "value": "19:30",
+    "label": "7:30 pm"
+  },
+  {
+    "value": "19:45",
+    "label": "7:45 pm"
+  },
+  {
+    "value": "20:00",
+    "label": "8:00 pm"
+  },
+  {
+    "value": "20:15",
+    "label": "8:15 pm"
+  },
+  {
+    "value": "20:30",
+    "label": "8:30 pm"
+  },
+  {
+    "value": "20:45",
+    "label": "8:45 pm"
+  },
+  {
+    "value": "21:00",
+    "label": "9:00 pm"
+  },
+  {
+    "value": "21:15",
+    "label": "9:15 pm"
+  },
+  {
+    "value": "21:30",
+    "label": "9:30 pm"
+  },
+  {
+    "value": "21:45",
+    "label": "9:45 pm"
+  },
+  {
+    "value": "22:00",
+    "label": "10:00 pm"
+  },
+  {
+    "value": "22:15",
+    "label": "10:15 pm"
+  },
+  {
+    "value": "22:30",
+    "label": "10:30 pm"
+  },
+  {
+    "value": "22:45",
+    "label": "10:45 pm"
+  },
+  {
+    "value": "23:00",
+    "label": "11:00 pm"
+  },
+  {
+    "value": "23:15",
+    "label": "11:15 pm"
+  },
+  {
+    "value": "23:30",
+    "label": "11:30 pm"
+  },
+  {
+    "value": "23:45",
+    "label": "11:45 pm"
+  },
+  {
+    "value": "00:00",
+    "label": "12:00 am"
+  },
+  {
+    "value": "00:15",
+    "label": "12:15 am"
+  },
+  {
+    "value": "00:30",
+    "label": "12:30 am"
+  },
+  {
+    "value": "00:45",
+    "label": "12:45 am"
+  },
+  {
+    "value": "01:00",
+    "label": "1:00 am"
+  },
+  {
+    "value": "01:15",
+    "label": "1:15 am"
+  },
+  {
+    "value": "01:30",
+    "label": "1:30 am"
+  },
+  {
+    "value": "01:45",
+    "label": "1:45 am"
+  },
+  {
+    "value": "02:00",
+    "label": "2:00 am"
+  },
+  {
+    "value": "02:15",
+    "label": "2:15 am"
+  },
+  {
+    "value": "02:30",
+    "label": "2:30 am"
+  },
+  {
+    "value": "02:45",
+    "label": "2:45 am"
+  },
+  {
+    "value": "03:00",
+    "label": "3:00 am"
+  },
+  {
+    "value": "03:15",
+    "label": "3:15 am"
+  },
+  {
+    "value": "03:30",
+    "label": "3:30 am"
+  },
+  {
+    "value": "03:45",
+    "label": "3:45 am"
+  },
+  {
+    "value": "04:00",
+    "label": "4:00 am"
+  },
+  {
+    "value": "04:15",
+    "label": "4:15 am"
+  },
+  {
+    "value": "04:30",
+    "label": "4:30 am"
+  },
+  {
+    "value": "04:45",
+    "label": "4:45 am"
+  },
+  {
+    "value": "05:00",
+    "label": "5:00 am"
+  },
+  {
+    "value": "05:15",
+    "label": "5:15 am"
+  },
+  {
+    "value": "05:30",
+    "label": "5:30 am"
+  },
+  {
+    "value": "05:45",
+    "label": "5:45 am"
+  },
+  {
+    "value": "06:00",
+    "label": "6:00 am"
+  },
+  {
+    "value": "06:15",
+    "label": "6:15 am"
+  },
+  {
+    "value": "06:30",
+    "label": "6:30 am"
+  },
+  {
+    "value": "06:45",
+    "label": "6:45 am"
+  },
+  {
+    "value": "07:00",
+    "label": "7:00 am"
+  },
+  {
+    "value": "07:15",
+    "label": "7:15 am"
+  },
+  {
+    "value": "07:30",
+    "label": "7:30 am"
+  },
+  {
+    "value": "07:45",
+    "label": "7:45 am"
+  },
+  {
+    "value": "08:00",
+    "label": "8:00 am"
   }
 ]

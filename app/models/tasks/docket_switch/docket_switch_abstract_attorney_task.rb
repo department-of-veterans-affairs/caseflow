@@ -12,6 +12,11 @@ class DocketSwitchAbstractAttorneyTask < AttorneyTask
     actions
   end
 
+  # Allow docket switch attorney tasks to also be assigned to CotB
+  def assigned_to_role_is_valid
+    super unless assigned_to.is_a?(ClerkOfTheBoard)
+  end
+
   class << self
     # Necessary to have here to avoid bugs, but must implement in subclass
     def label

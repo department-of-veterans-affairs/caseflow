@@ -6,6 +6,7 @@ import TASK_ACTIONS from '../../../constants/TASK_ACTIONS';
 import { RecommendDocketSwitchContainer } from './recommendDocketSwitch/RecommendDocketSwitchContainer';
 import { DocketSwitchRulingContainer } from './judgeRuling/DocketSwitchRulingContainer';
 import { DocketSwitchDenialContainer } from './denial/DocketSwitchDenialContainer';
+import { DocketSwitchGrantContainer } from './grant/DocketSwitchGrantContainer';
 
 const PageRoutes = [
   <PageRoute
@@ -37,6 +38,14 @@ const PageRoutes = [
         title={`${TASK_ACTIONS.DOCKET_SWITCH_DENIED.label} | Caseflow`}
       >
         <DocketSwitchDenialContainer />
+      </PageRoute>
+      <PageRoute
+        path={`/queue/appeals/:appealId/tasks/:taskId/${
+      TASK_ACTIONS.DOCKET_SWITCH_GRANTED.value
+    }`}
+        title={`${TASK_ACTIONS.DOCKET_SWITCH_GRANTED.label} | Caseflow`}
+      >
+        <DocketSwitchGrantContainer />
       </PageRoute>
     </Switch>
   </Route>,

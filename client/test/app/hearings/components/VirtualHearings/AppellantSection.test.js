@@ -10,6 +10,7 @@ import { AddressLine } from 'app/hearings/components/details/Address';
 import { VirtualHearingEmail } from 'app/hearings/components/VirtualHearings/Emails';
 import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
 import TextField from 'app/components/TextField';
+import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
 
 const updateSpy = jest.fn();
 
@@ -52,11 +53,11 @@ describe('Appellant', () => {
     expect(appellantSection).toMatchSnapshot();
   });
 
-  test('Displays timezone when virtual', () => {
+  test('Displays timezone when showTimezoneField is passed as prop', () => {
     // Run the test
     const appellantSection = mount(
       <AppellantSection
-        virtual
+        showTimezoneField
         appellantTitle="Veteran"
         virtualHearing={virtualHearing.virtualHearing}
         hearing={defaultHearing}
@@ -74,7 +75,6 @@ describe('Appellant', () => {
     // Run the test
     const appellantSection = mount(
       <AppellantSection
-        virtual
         appellantTitle="Veteran"
         virtualHearing={{ appellantEmail: null }}
         hearing={defaultHearing}
@@ -94,7 +94,6 @@ describe('Appellant', () => {
     // Run the test
     const appellantSection = mount(
       <AppellantSection
-        virtual
         appellantTitle="Veteran"
         virtualHearing={{}}
         hearing={defaultHearing}
@@ -107,6 +106,33 @@ describe('Appellant', () => {
 
     // Ensure the alert displays
     expect(appellantSection.find(Alert)).toHaveLength(1);
+    expect(appellantSection).toMatchSnapshot();
+  });
+
+  test('Displays appellant information when appellant is not veteran', () => {
+    const appellantSection = mount(
+      <AppellantSection
+        appellantTitle='Appellant'
+        virtualHearing={virtualHearing.virtualHearing}
+        hearing={
+          {
+            ...defaultHearing,
+            appellantIsNotVeteran: true
+          }
+        }
+        type={HEARING_CONVERSION_TYPES[0]}
+        update={updateSpy}
+      />
+    );
+
+    expect(appellantSection.find(ReadOnly)).toHaveLength(3);
+    expect(appellantSection.text()).toContain('Appellant Name')
+    expect(appellantSection.text()).toContain(
+      `${defaultHearing.appellantFirstName} ${defaultHearing.appellantLastName}`
+    )
+    expect(appellantSection.text()).toContain('Relation to Veteran')
+    expect(appellantSection.text()).toContain(defaultHearing.appellantRelationship)
+    expect(appellantSection.text()).toContain('Appellant Mailing Address')
     expect(appellantSection).toMatchSnapshot();
   });
 });

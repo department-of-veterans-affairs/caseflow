@@ -2,7 +2,6 @@ import React from 'react';
 import COPY from '../../../COPY';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
-import _ from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import RadioField from '../../components/RadioField';
@@ -36,16 +35,18 @@ const inlineFormStyling = css({
 
 export default class BuildScheduleUpload extends React.Component {
 
-  getErrorMessage = (errors) => (
-    <div className="usa-input-error">
+  getErrorMessage = (errors) => {
+    return (
+      <div className="usa-input-error">
       We have found the following errors with your upload. Please check the file and dates and try again.
-      <ul>
-        {_.map(errors.replace('Validation failed: ', '').split(', '), (error, i) => {
-          return <li key={i}>{error}</li>;
-        })}
-      </ul>
-    </div>
-  );
+        <ul>
+          {errors.map((error, i) => {
+            return <li key={i}>{error}</li>;
+          })}
+        </ul>
+      </div>
+    );
+  };
 
   getRoCoDisplay = () => {
     return <div>{ SPREADSHEET_TYPES.RoSchedulePeriod.display }
@@ -176,8 +177,8 @@ BuildScheduleUpload.propTypes = {
   judgeFileUpload: PropTypes.object,
   onJudgeFileUpload: PropTypes.func,
   uploadFormErrors: PropTypes.string,
-  uploadRoCoFormErrors: PropTypes.string,
-  uploadJudgeFormErrors: PropTypes.string,
+  uploadRoCoFormErrors: PropTypes.array,
+  uploadJudgeFormErrors: PropTypes.array,
   onUploadContinue: PropTypes.func,
   uploadContinueLoading: PropTypes.bool
 };

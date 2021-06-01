@@ -139,6 +139,39 @@ describe BulkTaskAssignment, :postgres do
         create(:no_show_hearing_task, appeal: appeal, assigned_to: organization)
       end
 
+      context "when task has instructions" do
+        subject { BulkTaskAssignment.new(params).process }
+
+        let(:instructions1) { ["live long"] }
+        let(:instructions2) { ["prosper"] }
+
+        before do
+          no_show_hearing_task1.update(instructions: instructions1)
+          no_show_hearing_task2.update(instructions: instructions2)
+        end
+
+        it "copies instructions to assigned task" do
+          count_before = Task.count
+          subject
+          expect(Task.count).to eq count_before + 2
+          expect(subject.count).to eq 2
+
+          user_task_1 = subject.find { |task| task.appeal == no_show_hearing_task1.appeal }
+          expect(user_task_1.assigned_to).to eq assigned_to
+          expect(user_task_1.type).to eq "NoShowHearingTask"
+          expect(user_task_1.assigned_by).to eq assigned_by
+          expect(user_task_1.parent_id).to eq no_show_hearing_task1.id
+          expect(user_task_1.instructions).to eq no_show_hearing_task1.instructions
+
+          user_task_2 = subject.find { |task| task.appeal == no_show_hearing_task2.appeal }
+          expect(user_task_2.assigned_to).to eq assigned_to
+          expect(user_task_2.type).to eq "NoShowHearingTask"
+          expect(user_task_2.assigned_by).to eq assigned_by
+          expect(user_task_2.parent_id).to eq no_show_hearing_task2.id
+          expect(user_task_2.instructions).to eq no_show_hearing_task2.instructions
+        end
+      end
+
       context "when there are priority appeals" do
         let(:regional_office) { nil }
         let(:task_count) { 20 }
@@ -178,19 +211,14 @@ describe BulkTaskAssignment, :postgres do
         end
 
         let(:expected_appeal_ordering) do
-          [
-            cavc_aod_appeal,
-            cavc_aod_legacy_appeal,
-            aod_appeal,
-            aod_legacy_appeal,
-            cavc_appeal,
-            cavc_legacy_appeal
-          ]
+          [cavc_aod_appeal, cavc_aod_legacy_appeal].sort_by(&:docket_number) +
+            [aod_appeal, aod_legacy_appeal].sort_by(&:docket_number) +
+            [cavc_appeal, cavc_legacy_appeal].sort_by(&:docket_number)
         end
 
         subject { BulkTaskAssignment.new(params).process }
 
-        it "sorts priority appeals first" do
+        it "sorts priority appeals first, then by docket_number" do
           prioritized_assigned_tasks = subject
           expect(prioritized_assigned_tasks.first(6).map(&:appeal)).to eq(expected_appeal_ordering)
 

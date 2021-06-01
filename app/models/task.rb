@@ -51,6 +51,10 @@ class Task < CaseflowRecord
     Constants.TASK_STATUSES.cancelled.to_sym => Constants.TASK_STATUSES.cancelled
   }
 
+  enum cancellation_reason: {
+    Constants.TASK_CANCELLATION_REASONS.poa_change.to_sym => Constants.TASK_CANCELLATION_REASONS.poa_change
+  }
+
   # This suppresses a warning about the :open scope overwriting the Kernel#open method
   # https://ruby-doc.org/core-2.6.3/Kernel.html#method-i-open
   class << self; undef_method :open; end
@@ -66,6 +70,11 @@ class Task < CaseflowRecord
   scope :recently_completed, -> { completed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now) }
 
   scope :incomplete_or_recently_completed, -> { open.or(recently_completed) }
+
+  scope :of_type, ->(task_type) { where(type: task_type) }
+
+  scope :assigned_to_any_user, -> { where(assigned_to_type: "User") }
+  scope :assigned_to_any_org, -> { where(assigned_to_type: "Organization") }
 
   # Equivalent to .reject(&:hide_from_queue_table_view) but offloads that to the database.
   scope :visible_in_queue_table_view, lambda {
@@ -222,6 +231,19 @@ class Task < CaseflowRecord
         "#{Task.table_name}.created_at #{order}"
       )
     end
+
+    # Sorting tasks by docket number within each category of appeal: case type, aod, docket number
+    # Used by ScheduleHearingTaskPager and WarmBgsCachedJob to sort ScheduleHearingTasks
+    def order_by_cached_appeal_priority_clause
+      Arel.sql(<<-SQL)
+        (CASE
+          WHEN cached_appeal_attributes.case_type = 'Court Remand' THEN 1
+          ELSE 0
+        END) DESC,
+        cached_appeal_attributes.is_aod DESC,
+        cached_appeal_attributes.docket_number ASC
+      SQL
+    end
   end
 
   ########################################################################################
@@ -330,8 +352,8 @@ class Task < CaseflowRecord
   def actions_allowable?(user)
     return false if !open?
 
-    # Users who are assigned a subtask of an organization don't have actions on the organizational task.
-    return false if assigned_to.is_a?(Organization) && children.any? { |child| child.assigned_to == user }
+    # Users who are assigned an open subtask of an organization don't have actions on the organizational task.
+    return false if assigned_to.is_a?(Organization) && children.open.any? { |child| child.assigned_to == user }
 
     true
   end
@@ -498,6 +520,10 @@ class Task < CaseflowRecord
   def when_child_task_created(child_task)
     cancel_timed_hold unless child_task.is_a?(TimedHoldTask)
 
+    put_on_hold_due_to_new_child_task
+  end
+
+  def put_on_hold_due_to_new_child_task
     if !on_hold?
       Raven.capture_message("Closed task #{id} re-opened because child task created") if !open?
       update!(status: :on_hold)
@@ -546,6 +572,44 @@ class Task < CaseflowRecord
     appeal.overtime = false if appeal.overtime? && reassign_clears_overtime?
 
     [sibling, self, sibling.children].flatten
+  end
+
+  def can_move_on_docket_switch?
+    return false unless open_with_no_children?
+    return false if type.include?("DocketSwitch")
+    return false if %w[RootTask DistributionTask HearingTask EvidenceSubmissionWindowTask].include?(type)
+    return false if ancestor_task_of_type(HearingTask).present?
+    return false if ancestor_task_of_type(EvidenceSubmissionWindowTask).present?
+
+    true
+  end
+
+  ATTRIBUTES_EXCLUDED_FROM_TASK_COPY = %w[id created_at updated_at appeal_id parent_id].freeze
+
+  # This method is for copying a task and its ancestors to a new appeal stream
+  def copy_with_ancestors_to_stream(new_appeal_stream, extra_excluded_attributes: [])
+    return unless parent
+
+    new_task_attributes = attributes.except(*ATTRIBUTES_EXCLUDED_FROM_TASK_COPY, *extra_excluded_attributes)
+    new_task_attributes["appeal_id"] = new_appeal_stream.id
+
+    # This method recurses until the parent is nil or a task of its type is already present on the new stream
+    existing_new_parent = new_appeal_stream.tasks.find { |task| task.type == parent.type }
+    new_parent = existing_new_parent || parent.copy_with_ancestors_to_stream(new_appeal_stream)
+
+    # Do not copy orphaned branches
+    return unless new_parent
+
+    new_task_attributes["parent_id"] = new_parent.id
+
+    # Skip validation since these are not new tasks (and don't need to have a status of assigned, for example)
+    new_stream_task = self.class.new(new_task_attributes)
+    # Note that if we also want to skip 'before_create', 'after_create', 'before_save', and 'after_save' callbacks
+    # (such as in TimedHoldTask) or even things like 'validate :status_is_valid_on_create on: :create',
+    # see SanitizedJsonImporter::SkipCallbacks for a possible solution.
+    new_stream_task.save(validate: false)
+
+    new_stream_task
   end
 
   def root_task(task_id = nil)

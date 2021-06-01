@@ -6,15 +6,15 @@ export const task = {
     dispatch_decision_type: 'Remand',
     decisions: [
       {
-        label: null
-      }
+        label: null,
+      },
     ],
     non_canceled_end_products_within_30_days: [],
     pending_eps: [],
     station_key: '397',
-    regional_office_key: 'RO11'
+    regional_office_key: 'RO11',
   },
-  user: 'a'
+  user: 'a',
 };
 
 const amaTaskData = {
@@ -23,8 +23,8 @@ const amaTaskData = {
   type: null,
   appealType: null,
   addedByCssId: null,
-  appealId: "123",
-  externalAppealId: "23423534",
+  appealId: '123',
+  externalAppealId: '23423534',
   assignedOn: '2020-09-08T10:02:49.210-04:00',
   closestRegionalOffice: {
     key: 'RO17',
@@ -37,12 +37,12 @@ const amaTaskData = {
         'vc_0742V',
         'vba_317',
         'vba_317',
-        'vba_317'
+        'vba_317',
       ],
       facility_locator_id: 'vba_317',
       label: 'St. Petersburg regional office',
-      city: 'St. Petersburg'
-    }
+      city: 'St. Petersburg',
+    },
   },
   createdAt: '2020-09-08T10:02:49.210-04:00',
   closedAt: '2020-09-08T10:03:49.210-04:00',
@@ -53,13 +53,13 @@ const amaTaskData = {
     name: "Board of Veterans' Appeals",
     id: '1',
     isOrganization: true,
-    type: 'Bva'
+    type: 'Bva',
   },
   assignedBy: {
     firstName: null,
     lastName: null,
     cssId: null,
-    pgId: '1'
+    pgId: '1',
   },
   cancelledBy: {
     cssId: null,
@@ -90,9 +90,8 @@ const amaTaskData = {
   powerOfAttorneyName: null,
   suggestedHearingLocation: null,
   hearingRequestType: null,
-  isFormerTravel: null
+  isFormerTravel: null,
 };
-
 
 export const scheduleHearingTask = {
   ...amaTaskData,
@@ -100,13 +99,11 @@ export const scheduleHearingTask = {
   type: 'ScheduleHearingTask',
   status: 'completed',
   closedAt: '2020-09-08T14:13:33.878-04:00',
-  instructions: [
-    COPY.SCHEDULE_HEARING_TASK_DEFAULT_INSTRUCTIONS
-  ],
+  instructions: [COPY.SCHEDULE_HEARING_TASK_DEFAULT_INSTRUCTIONS],
   timelineTitle: 'ScheduleHearingTask completed',
   docketName: 'hearing',
-  externalHearingId: '93897397'
-}
+  externalHearingId: '93897397',
+};
 
 export const changeHearingRequestTypeTask = {
   ...amaTaskData,
@@ -120,13 +117,11 @@ export const changeHearingRequestTypeTask = {
   convertedBy: {
     cssId: 'BVASYELLOW',
   },
-  instructions: [
-    COPY.CHANGE_HEARING_REQUEST_TYPE_TASK_DEFAULT_INSTRUCTIONS
-  ],
+  instructions: [COPY.CHANGE_HEARING_REQUEST_TYPE_TASK_DEFAULT_INSTRUCTIONS],
   timelineTitle: 'Hearing type converted from Travel to Virtual',
   docketName: 'hearing',
-  externalHearingId: '93897397'
-}
+  externalHearingId: '93897397',
+};
 
 export const changeHearingRequestTypeTaskCancelAction = {
   label: 'Cancel convert hearing to virtual',
@@ -135,10 +130,15 @@ export const changeHearingRequestTypeTaskCancelAction = {
   data: {
     redirect_after: '/queue/appeals/1986897',
     modal_title: 'Cancel convert hearing to virtual task',
-    message_title: 'Task for Merlin V Langworth\'s case has been cancelled',
-    message_detail: 'You have successfully cancelled the convert hearing to virtual task',
-    show_instructions: false
-  }
+    message_title: "Task for Merlin V Langworth's case has been cancelled",
+    message_detail:
+      'You have successfully cancelled the convert hearing to virtual task',
+    show_instructions: false,
+  },
 };
-/* eslint-enable camelcase */
 
+export const generateAmaTask = (overrides = {}) => ({
+  ...amaTaskData,
+  ...overrides,
+});
+/* eslint-enable camelcase */

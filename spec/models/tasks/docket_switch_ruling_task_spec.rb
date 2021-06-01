@@ -6,7 +6,7 @@ describe DocketSwitchRulingTask, :postgres do
   let(:appeal) { create(:appeal) }
 
   describe ".additional_available_actions" do
-    let(:task) { task_class.create!(appeal: appeal, assigned_to: judge) }
+    let(:task) { create(task_class.name.underscore.to_sym, appeal: appeal, assigned_to: judge) }
 
     subject { task.additional_available_actions(judge) }
 

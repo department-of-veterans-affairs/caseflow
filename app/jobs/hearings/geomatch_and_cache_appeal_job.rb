@@ -24,9 +24,7 @@ class Hearings::GeomatchAndCacheAppealJob < ApplicationJob
   # :nocov:
 
   def perform(appeal_id:, appeal_type:)
-    fail ArgumentError, "expected LegacyAppeal type" if appeal_type != LegacyAppeal.name
-
-    @appeal = LegacyAppeal.find(appeal_id)
+    @appeal = appeal_type.constantize.find(appeal_id)
 
     begin
       GeomatchService.new(appeal: appeal).geomatch if appeal.closest_regional_office.nil?
@@ -39,16 +37,25 @@ class Hearings::GeomatchAndCacheAppealJob < ApplicationJob
       # the data can still be cached.
     end
 
-    appeal.reload
-
-    if appeal.closest_regional_office.present?
-      cached_appeal_service = CachedAppealService.new
-      cached_appeal_service.cache_legacy_appeal_postgres_data([appeal])
-      cached_appeal_service.cache_legacy_appeal_vacols_data([appeal.vacols_id])
-    end
+    cache_appeal_attributes(appeal_type)
   end
 
   private
 
   attr_reader :appeal
+
+  def cache_appeal_attributes(appeal_type)
+    appeal.reload
+
+    if appeal.closest_regional_office.present?
+      cached_appeal_service = CachedAppealService.new
+
+      if appeal_type == LegacyAppeal.name
+        cached_appeal_service.cache_legacy_appeal_postgres_data([appeal])
+        cached_appeal_service.cache_legacy_appeal_vacols_data([appeal.vacols_id])
+      else
+        cached_appeal_service.cache_ama_appeals([appeal])
+      end
+    end
+  end
 end

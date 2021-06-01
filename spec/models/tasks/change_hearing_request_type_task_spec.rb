@@ -4,9 +4,6 @@ describe ChangeHearingRequestTypeTask do
   let(:task) { create(:change_hearing_request_type_task, :assigned) }
   let(:user) { create(:user, roles: ["Edit HearSched"]) }
 
-  before { FeatureToggle.enable!(:convert_travel_board_to_video_or_virtual) }
-  after { FeatureToggle.disable!(:convert_travel_board_to_video_or_virtual) }
-
   describe "#update_from_params" do
     subject { task.update_from_params(payload, user) }
 
@@ -25,7 +22,7 @@ describe ChangeHearingRequestTypeTask do
         )
       end
 
-      context "when there's a full task tree" do
+      context "there's a full task tree" do
         let(:loc_schedule_hearing) { LegacyAppeal::LOCATION_CODES[:schedule_hearing] }
         let(:vacols_case) { create(:case, :travel_board_hearing, bfcurloc: loc_schedule_hearing) }
         let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
@@ -43,6 +40,83 @@ describe ChangeHearingRequestTypeTask do
           expect(schedule_hearing_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
           expect(hearing_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
           expect(vacols_case.reload.bfcurloc).to eq(loc_schedule_hearing)
+        end
+
+        context "the request type is being changed" do
+          context "to video from central" do
+            let(:vacols_case) { create(:case, :central_office_hearing) }
+            let(:payload) do
+              {
+                "status": "completed",
+                "business_payloads": {
+                  "values": {
+                    "changed_hearing_request_type": "V",
+                    "closest_regional_office": nil
+                  }
+                }
+              }
+            end
+
+            it "updates the hearing request type in VACOLS" do
+              expect(vacols_case.bfhr).to eq "1"
+              expect(vacols_case.bfdocind).to eq nil
+
+              subject
+
+              expect(vacols_case.reload.bfhr).to eq "2"
+              expect(vacols_case.reload.bfdocind).to eq "V"
+            end
+          end
+
+          context "to central from video" do
+            let(:vacols_case) { create(:case, :video_hearing_requested) }
+            let(:payload) do
+              {
+                "status": "completed",
+                "business_payloads": {
+                  "values": {
+                    "changed_hearing_request_type": "C",
+                    "closest_regional_office": "C"
+                  }
+                }
+              }
+            end
+
+            it "updates the hearing request type in VACOLS" do
+              expect(vacols_case.bfhr).to eq "2"
+              expect(vacols_case.bfdocind).to eq "V"
+
+              subject
+
+              expect(vacols_case.reload.bfhr).to eq "1"
+              expect(vacols_case.reload.bfdocind).to eq nil
+            end
+          end
+
+          context "to virtual from video" do
+            let(:vacols_case) { create(:case, :video_hearing_requested) }
+            let(:payload) do
+              {
+                "status": "completed",
+                "business_payloads": {
+                  "values": {
+                    "changed_hearing_request_type": "R",
+                    "closest_regional_office": "RO17"
+                  }
+                }
+              }
+            end
+
+            it "does not change the hearing request type in VACOLS" do
+              expect(vacols_case.bfhr).to eq "2"
+              expect(vacols_case.bfdocind).to eq "V"
+
+              subject
+
+              expect(vacols_case.reload.bfhr).to eq "2"
+              expect(vacols_case.reload.bfdocind).to eq "V"
+            end
+          end
         end
       end
     end

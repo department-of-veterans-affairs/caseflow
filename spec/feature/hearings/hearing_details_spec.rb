@@ -142,10 +142,9 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
 
     scenario "User can edit Judge and change virtual hearings" do
       visit "hearings/" + legacy_hearing.external_id.to_s + "/details"
-
-      expect(page).to have_field("judgeDropdown", disabled: false)
-      expect(page).to have_field("hearingCoordinatorDropdown", disabled: false)
-      expect(page).to have_field("hearingRoomDropdown", disabled: false)
+      expect(page).to have_field("judge-dropdown", disabled: false)
+      expect(page).to have_field("hearing-coordinator-dropdown", disabled: false)
+      expect(page).to have_field("hearing-room-dropdown", disabled: false)
       expect(page).to have_field("Notes", disabled: false)
       expect(page).to have_no_selector("label", text: "Yes, Waive 90 Day Evidence Hold")
 

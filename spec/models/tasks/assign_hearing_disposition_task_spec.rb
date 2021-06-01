@@ -36,6 +36,104 @@ describe AssignHearingDispositionTask, :all_dbs do
       end
     end
 
+    shared_context "scheduled later" do
+      it "creates a new HearingTask and ScheduleHearingTask" do
+        subject
+
+        expect(hearing_class.count).to eq 1
+        expect(hearing.disposition).to eq disposition
+        if disposition == Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
+          expect(hearing.notes).to eq hearing_notes
+        end
+        expect(HearingTask.count).to eq 2
+        expect(HearingTask.order(:id).first.cancelled?).to be_truthy
+        expect(HearingTask.order(:id).first.cancelled_by).to eq user
+        expect(HearingTask.order(:id).last.on_hold?).to be_truthy
+        expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
+        expect(AssignHearingDispositionTask.first.cancelled_by).to eq user
+        expect(ScheduleHearingTask.count).to eq 1
+        expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.order(:id).last.id
+      end
+
+      context "when task instructions are passed" do
+        let(:instructions_text) { "My informative task instructions" }
+        before do
+          params[:instructions] = instructions_text
+        end
+
+        it "adds the instructions to both the AssignHearingDispositionTask and the ScheduleHearingTask" do
+          subject
+
+          expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
+          expect(AssignHearingDispositionTask.first.instructions).to include(instructions_text)
+          expect(ScheduleHearingTask.count).to eq 1
+          expect(ScheduleHearingTask.first.instructions).to include(instructions_text)
+        end
+      end
+    end
+
+    shared_context "reschedule" do
+      it "creates a new hearing with a new AssignHearingDispositionTask" do
+        subject
+
+        expect(hearing_class.count).to eq 2
+        expect(hearing.disposition).to eq disposition
+        if disposition == Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
+          expect(hearing.notes).to eq hearing_notes
+        end
+        expect(hearing_class.last.hearing_location.facility_id).to eq "vba_370"
+        expect(hearing_class.last.scheduled_for.strftime("%I:%M%p")).to eq "12:30PM"
+        expect(HearingTask.count).to eq 2
+        expect(HearingTask.order(:id).first.cancelled?).to be_truthy
+        expect(HearingTask.order(:id).last.hearing_task_association.hearing.id).to eq hearing_class.last.id
+        expect(AssignHearingDispositionTask.count).to eq 2
+        expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
+      end
+
+      context "when params includes virtual_hearing_attributes" do
+        let(:appellant_email) { "fake@email.com" }
+        let(:virtual_hearing_attributes) do
+          {
+            appellant_email: appellant_email
+          }
+        end
+
+        before do
+          values[:after_disposition_update][:new_hearing_attrs][:virtual_hearing_attributes] =
+            virtual_hearing_attributes
+        end
+
+        it "converts hearing to virtual hearing", :aggregate_failures do
+          subject
+
+          expect(hearing_class.count).to eq 2
+          expect(AssignHearingDispositionTask.count).to eq(2)
+          expect(hearing_class.last.virtual_hearing).not_to eq(nil)
+          expect(hearing_class.last.virtual?).to eq(true)
+          expect(hearing_class.last.virtual_hearing.appellant_email).to eq(appellant_email)
+        end
+
+        context "with invalid params" do
+          let(:appellant_email) { "blah" }
+
+          it "raises error and does not create a hearing object", :aggregate_failures do
+            expect { subject }
+              .to raise_error(Caseflow::Error::VirtualHearingConversionFailed)
+              .with_message("Validation failed: Appellant email does not appear to be a valid e-mail address")
+
+            # does not create the hearing
+            expect(hearing_class.count).to eq(1)
+            expect(AssignHearingDispositionTask.count).to eq(1)
+            expect(hearing_class.first.disposition).not_to eq disposition
+          end
+        end
+      end
+
+      context "when hearing is virtual" do
+        include_context "when hearing is virtual"
+      end
+    end
+
     shared_examples "sets cancelled disposition" do
       it "sets the hearing disposition and calls cancel!", :aggregate_failures do
         expect(disposition_task).to receive(:cancel!).exactly(1).times.and_call_original
@@ -93,6 +191,110 @@ describe AssignHearingDispositionTask, :all_dbs do
       end
     end
 
+    shared_context "sets postponed disposition" do
+      let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
+      include_context "params"
+
+      context "when hearing should be scheduled later" do
+        let(:values) do
+          {
+            disposition: disposition,
+            after_disposition_update: {
+              action: "schedule_later"
+            }
+          }
+        end
+
+        include_context "scheduled later"
+      end
+
+      context "when hearing should be scheduled later with admin action" do
+        let(:admin_action_instructions) { "Fix this." }
+        let(:values) do
+          {
+            disposition: disposition,
+            after_disposition_update: {
+              action: "schedule_later",
+              with_admin_action_klass: "HearingAdminActionIncarceratedVeteranTask",
+              admin_action_instructions: admin_action_instructions
+            }
+          }
+        end
+
+        it "creates a new HearingTask and ScheduleHearingTask with admin action" do
+          subject
+
+          expect(hearing_class.count).to eq 1
+          expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.postponed
+          expect(HearingTask.count).to eq 2
+          expect(HearingTask.order(:id).first.cancelled?).to be_truthy
+          expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
+          expect(ScheduleHearingTask.count).to eq 1
+          expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.order(:id).last.id
+          expect(HearingAdminActionIncarceratedVeteranTask.count).to eq 1
+          expect(HearingAdminActionIncarceratedVeteranTask.last.instructions).to eq [admin_action_instructions]
+        end
+      end
+
+      context "when hearing should be rescheduled" do
+        let(:values) do
+          {
+            disposition: disposition,
+            after_disposition_update: {
+              action: "reschedule",
+              new_hearing_attrs: {
+                hearing_day_id: HearingDay.first.id,
+                hearing_location: { facility_id: "vba_370", distance: 10 },
+                scheduled_time_string: "12:30"
+              }
+            }
+          }
+        end
+
+        include_context "reschedule"
+      end
+    end
+
+    shared_context "sets scheduled_in_error disposition" do
+      let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error }
+      let(:hearing_notes) { "Hearing notes" }
+
+      include_context "params"
+
+      context "when hearing should be scheduled later" do
+        let(:values) do
+          {
+            disposition: disposition,
+            hearing_notes: hearing_notes,
+            after_disposition_update: {
+              action: "schedule_later"
+            }
+          }
+        end
+
+        include_context "scheduled later"
+      end
+
+      context "when hearing should be resecheduled" do
+        let(:values) do
+          {
+            disposition: disposition,
+            hearing_notes: hearing_notes,
+            after_disposition_update: {
+              action: "reschedule",
+              new_hearing_attrs: {
+                hearing_day_id: HearingDay.first.id,
+                hearing_location: { facility_id: "vba_370", distance: 10 },
+                scheduled_time_string: "12:30"
+              }
+            }
+          }
+        end
+
+        include_context "reschedule"
+      end
+    end
+
     let(:after_disposition_update) { nil }
     let(:user) { create(:user) }
     let(:params) { nil }
@@ -116,6 +318,7 @@ describe AssignHearingDispositionTask, :all_dbs do
       let(:appeal) { create(:appeal) }
       let!(:hearing) { create(:hearing, appeal: appeal) }
       let!(:root_task) { create(:root_task, appeal: appeal) }
+      let!(:hearing_class) { Hearing.name.constantize }
 
       describe "hearing disposition of cancelled" do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
@@ -144,151 +347,11 @@ describe AssignHearingDispositionTask, :all_dbs do
       end
 
       describe "hearing disposition of postponed" do
-        let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
-        include_context "params"
+        include_context "sets postponed disposition"
+      end
 
-        context "when hearing should be scheduled later" do
-          let(:values) do
-            {
-              disposition: disposition,
-              after_disposition_update: {
-                action: "schedule_later"
-              }
-            }
-          end
-
-          it "creates a new HearingTask and ScheduleHearingTask" do
-            subject
-
-            expect(Hearing.count).to eq 1
-            expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.postponed
-            expect(HearingTask.count).to eq 2
-            expect(HearingTask.order(:id).first.cancelled?).to be_truthy
-            expect(HearingTask.order(:id).first.cancelled_by).to eq user
-            expect(HearingTask.order(:id).last.on_hold?).to be_truthy
-            expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
-            expect(AssignHearingDispositionTask.first.cancelled_by).to eq user
-            expect(ScheduleHearingTask.count).to eq 1
-            expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.order(:id).last.id
-          end
-
-          context "when task instructions are passed" do
-            let(:instructions_text) { "My informative task instructions" }
-            before do
-              params[:instructions] = instructions_text
-            end
-
-            it "adds the instructions to both the AssignHearingDispositionTask and the ScheduleHearingTask" do
-              subject
-
-              expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
-              expect(AssignHearingDispositionTask.first.instructions).to include(instructions_text)
-              expect(ScheduleHearingTask.count).to eq 1
-              expect(ScheduleHearingTask.first.instructions).to include(instructions_text)
-            end
-          end
-        end
-
-        context "when hearing should be scheduled later with admin action" do
-          let(:admin_action_instructions) { "Fix this." }
-          let(:values) do
-            {
-              disposition: disposition,
-              after_disposition_update: {
-                action: "schedule_later",
-                with_admin_action_klass: "HearingAdminActionIncarceratedVeteranTask",
-                admin_action_instructions: admin_action_instructions
-              }
-            }
-          end
-
-          it "creates a new HearingTask and ScheduleHearingTask with admin action" do
-            subject
-
-            expect(Hearing.count).to eq 1
-            expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.postponed
-            expect(HearingTask.count).to eq 2
-            expect(HearingTask.order(:id).first.cancelled?).to be_truthy
-            expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
-            expect(ScheduleHearingTask.count).to eq 1
-            expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.order(:id).last.id
-            expect(HearingAdminActionIncarceratedVeteranTask.count).to eq 1
-            expect(HearingAdminActionIncarceratedVeteranTask.last.instructions).to eq [admin_action_instructions]
-          end
-        end
-
-        context "when hearing should be resecheduled" do
-          let(:values) do
-            {
-              disposition: disposition,
-              after_disposition_update: {
-                action: "reschedule",
-                new_hearing_attrs: {
-                  hearing_day_id: HearingDay.first.id,
-                  hearing_location: { facility_id: "vba_370", distance: 10 },
-                  scheduled_time_string: "12:30"
-                }
-              }
-            }
-          end
-
-          it "creates a new hearing with a new AssignHearingDispositionTask" do
-            subject
-
-            expect(Hearing.count).to eq 2
-            expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.postponed
-            expect(Hearing.last.hearing_location.facility_id).to eq "vba_370"
-            expect(Hearing.last.scheduled_time.strftime("%I:%M%p")).to eq "12:30PM"
-            expect(HearingTask.count).to eq 2
-            expect(HearingTask.order(:id).first.cancelled?).to be_truthy
-            expect(HearingTask.order(:id).last.hearing_task_association.hearing.id).to eq Hearing.last.id
-            expect(AssignHearingDispositionTask.count).to eq 2
-            expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
-          end
-
-          context "when params includes virtual_hearing_attributes" do
-            let(:appellant_email) { "fake@email.com" }
-            let(:virtual_hearing_attributes) do
-              {
-                appellant_email: appellant_email
-              }
-            end
-
-            before do
-              values[:after_disposition_update][:new_hearing_attrs][:virtual_hearing_attributes] =
-                virtual_hearing_attributes
-            end
-
-            it "converts hearing to virtual hearing", :aggregate_failures do
-              subject
-
-              expect(Hearing.count).to eq 2
-              expect(AssignHearingDispositionTask.count).to eq(2)
-              expect(Hearing.last.virtual_hearing).not_to eq(nil)
-              expect(Hearing.last.virtual?).to eq(true)
-              expect(Hearing.last.virtual_hearing.appellant_email).to eq(appellant_email)
-            end
-
-            context "with invalid params" do
-              let(:appellant_email) { "blah" }
-
-              it "raises error and does not create a hearing object", :aggregate_failures do
-                expect { subject }
-                  .to raise_error(Caseflow::Error::VirtualHearingConversionFailed)
-                  .with_message("Validation failed: Appellant email does not appear to be a valid e-mail address")
-
-                # does not create the hearing
-                expect(Hearing.count).to eq(1)
-                expect(AssignHearingDispositionTask.count).to eq(1)
-                expect(hearing.reload.disposition).not_to eq Constants.HEARING_DISPOSITION_TYPES.postponed
-              end
-            end
-          end
-
-          context "when hearing is virtual" do
-            include_context "when hearing is virtual"
-          end
-        end
+      describe "hearing disposition of scheduled_in_error" do
+        include_context "sets scheduled_in_error disposition"
       end
     end
 
@@ -297,6 +360,7 @@ describe AssignHearingDispositionTask, :all_dbs do
       let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
       let!(:hearing) { create(:legacy_hearing, appeal: appeal) }
       let!(:root_task) { create(:root_task, appeal: appeal) }
+      let!(:hearing_class) { LegacyHearing.name.constantize }
 
       describe "hearing disposition of cancelled" do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
@@ -322,6 +386,14 @@ describe AssignHearingDispositionTask, :all_dbs do
         include_context "params"
 
         it_behaves_like "sets no_show diposition"
+      end
+
+      describe "hearing disposition of postponed" do
+        include_context "sets postponed disposition"
+      end
+
+      describe "hearing disposition of scheduled_in_error" do
+        include_context "sets scheduled_in_error disposition"
       end
     end
   end
@@ -386,7 +458,7 @@ describe AssignHearingDispositionTask, :all_dbs do
 
     subject do
       disposition_task.send(
-        :update_hearing_disposition,
+        :update_hearing,
         disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled
       )
     end
@@ -612,7 +684,7 @@ describe AssignHearingDispositionTask, :all_dbs do
           expect(no_show_hearing_task).to_not be_nil
           expect(no_show_hearing_task.placed_on_hold_at).to_not be_nil
           expect(no_show_hearing_task.reload.on_hold?).to be_truthy
-          expect(no_show_hearing_task.calculated_on_hold_duration).to eq 25
+          expect(no_show_hearing_task.calculated_on_hold_duration).to eq NoShowHearingTask::DAYS_ON_HOLD
           instructions_text = "Mail must be received within 14 days of the original hearing date."
           expect(no_show_hearing_task.instructions).to eq [instructions_text]
         end

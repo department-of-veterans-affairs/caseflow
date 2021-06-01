@@ -67,5 +67,20 @@
   },
   "23" : {
     "label": "Omaha"
+  },
+  "24" : {
+    "label": "Anzio"
+  },
+  "25" : {
+    "label": "Coral Sea"
+  },
+  "26" : {
+    "label": "Hue City"
+  },
+  "27" : {
+    "label": "Antietam"
+  },
+  "28" : {
+    "label": "Mogadishu"
   }
 }

@@ -1,0 +1,551 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DocketSwitchReviewRequestForm default values full grant populates with default values 1`] = `
+<div>
+  <form
+    aria-label="Grant Docket Switch Request"
+    class="docket-switch-granted-request"
+  >
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <h1>
+        Switch Docket: Review Claimant 1's Request
+      </h1>
+      <div
+        data-css-1sbm5ab=""
+      >
+        Add the information based on how you are proceeding with this docket switch and the claimant's form.
+      </div>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="receiptDate"
+        >
+          <strong>
+            <span>
+              What is the Receipt Date of the docket switch request?
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="receiptDate"
+          max="9999-12-31"
+          name="receiptDate"
+          placeholder="mm/dd/yyyy"
+          type="date"
+          value=""
+        />
+      </div>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              How are you proceeding with this request to switch dockets?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_granted"
+              name="disposition"
+              type="radio"
+              value="granted"
+            />
+            <label
+              class=""
+              for="disposition_granted"
+            >
+              Grant all issues
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_partially_granted"
+              name="disposition"
+              type="radio"
+              value="partially_granted"
+            />
+            <label
+              class=""
+              for="disposition_partially_granted"
+            >
+              Grant a partial switch
+            </label>
+            <div
+              class="cf-form-radio-help helpText"
+            >
+              e.g. if the Board is only granting a few issues
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Which docket will the issue(s) be switched to?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="docketType_direct_review"
+              name="docketType"
+              type="radio"
+              value="direct_review"
+            />
+            <label
+              class=""
+              for="docketType_direct_review"
+            >
+              Direct Review
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              disabled=""
+              id="docketType_evidence_submission"
+              name="docketType"
+              type="radio"
+              value="evidence_submission"
+            />
+            <label
+              class="disabled"
+              for="docketType_evidence_submission"
+            >
+              Evidence Submission (current docket)
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="docketType_hearing"
+              name="docketType"
+              type="radio"
+              value="hearing"
+            />
+            <label
+              class=""
+              for="docketType_hearing"
+            >
+              Hearing
+            </label>
+          </div>
+        </div>
+      </fieldset>
+    </section>
+    <div
+      class="controls cf-app-segment"
+    >
+      <div
+        data-css-63oe3q=""
+      >
+        <span>
+          <button
+            class="cf-right-side usa-button"
+            data-css-wn5k45=""
+            id="button-next-button"
+            type="button"
+          >
+            Continue
+          </button>
+        </span>
+        <button
+          class="cf-btn-link cf-right-side usa-button"
+          id="button-cancel-button"
+          type="button"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`DocketSwitchReviewRequestForm default values partial grant populates with default values 1`] = `
+<div>
+  <form
+    aria-label="Grant Docket Switch Request"
+    class="docket-switch-granted-request"
+  >
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <h1>
+        Switch Docket: Review Claimant 1's Request
+      </h1>
+      <div
+        data-css-1sbm5ab=""
+      >
+        Add the information based on how you are proceeding with this docket switch and the claimant's form.
+      </div>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="receiptDate"
+        >
+          <strong>
+            <span>
+              What is the Receipt Date of the docket switch request?
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="receiptDate"
+          max="9999-12-31"
+          name="receiptDate"
+          placeholder="mm/dd/yyyy"
+          type="date"
+          value=""
+        />
+      </div>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              How are you proceeding with this request to switch dockets?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_granted"
+              name="disposition"
+              type="radio"
+              value="granted"
+            />
+            <label
+              class=""
+              for="disposition_granted"
+            >
+              Grant all issues
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_partially_granted"
+              name="disposition"
+              type="radio"
+              value="partially_granted"
+            />
+            <label
+              class=""
+              for="disposition_partially_granted"
+            >
+              Grant a partial switch
+            </label>
+            <div
+              class="cf-form-radio-help helpText"
+            >
+              e.g. if the Board is only granting a few issues
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset
+        class="checkbox-wrapper-issues cf-form-checkboxes cf-checkbox-group-inline"
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Select the issue(s) that are switching dockets:
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="1"
+            name="1"
+            type="checkbox"
+          />
+          <label
+            for="1"
+          >
+            1. PTSD denied
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="2"
+            name="2"
+            type="checkbox"
+          />
+          <label
+            for="2"
+          >
+            2. Left  knee denied
+          </label>
+        </div>
+      </fieldset>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Which docket will the issue(s) be switched to?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="docketType_direct_review"
+              name="docketType"
+              type="radio"
+              value="direct_review"
+            />
+            <label
+              class=""
+              for="docketType_direct_review"
+            >
+              Direct Review
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              disabled=""
+              id="docketType_evidence_submission"
+              name="docketType"
+              type="radio"
+              value="evidence_submission"
+            />
+            <label
+              class="disabled"
+              for="docketType_evidence_submission"
+            >
+              Evidence Submission (current docket)
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="docketType_hearing"
+              name="docketType"
+              type="radio"
+              value="hearing"
+            />
+            <label
+              class=""
+              for="docketType_hearing"
+            >
+              Hearing
+            </label>
+          </div>
+        </div>
+      </fieldset>
+    </section>
+    <div
+      class="controls cf-app-segment"
+    >
+      <div
+        data-css-63oe3q=""
+      >
+        <span>
+          <button
+            class="cf-right-side usa-button"
+            data-css-wn5k45=""
+            id="button-next-button"
+            type="button"
+          >
+            Continue
+          </button>
+        </span>
+        <button
+          class="cf-btn-link cf-right-side usa-button"
+          id="button-cancel-button"
+          type="button"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`DocketSwitchReviewRequestForm renders correctly 1`] = `
+<div>
+  <form
+    aria-label="Grant Docket Switch Request"
+    class="docket-switch-granted-request"
+  >
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <h1>
+        Switch Docket: Review Claimant 1's Request
+      </h1>
+      <div
+        data-css-1sbm5ab=""
+      >
+        Add the information based on how you are proceeding with this docket switch and the claimant's form.
+      </div>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="receiptDate"
+        >
+          <strong>
+            <span>
+              What is the Receipt Date of the docket switch request?
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="receiptDate"
+          max="9999-12-31"
+          name="receiptDate"
+          placeholder="mm/dd/yyyy"
+          type="date"
+          value=""
+        />
+      </div>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              How are you proceeding with this request to switch dockets?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_granted"
+              name="disposition"
+              type="radio"
+              value="granted"
+            />
+            <label
+              class=""
+              for="disposition_granted"
+            >
+              Grant all issues
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_partially_granted"
+              name="disposition"
+              type="radio"
+              value="partially_granted"
+            />
+            <label
+              class=""
+              for="disposition_partially_granted"
+            >
+              Grant a partial switch
+            </label>
+            <div
+              class="cf-form-radio-help helpText"
+            >
+              e.g. if the Board is only granting a few issues
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </section>
+    <div
+      class="controls cf-app-segment"
+    >
+      <div
+        data-css-63oe3q=""
+      >
+        <span>
+          <button
+            class="cf-right-side usa-button"
+            data-css-wn5k45=""
+            id="button-next-button"
+            type="button"
+          >
+            Continue
+          </button>
+        </span>
+        <button
+          class="cf-btn-link cf-right-side usa-button"
+          id="button-cancel-button"
+          type="button"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+`;

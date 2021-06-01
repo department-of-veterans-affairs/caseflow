@@ -60,6 +60,11 @@ describe('RecommendDocketSwitchForm', () => {
         expect(submit).toBeDisabled();
       });
 
+      await userEvent.type(
+        screen.getByLabelText('Add a summary of the request to switch dockets:'),
+        'Summary instructions for docket switch'
+      );
+
       //   Set timely
       await userEvent.click(
         screen.getByRole('radio', { container: timelyGroup, name: /yes/i })

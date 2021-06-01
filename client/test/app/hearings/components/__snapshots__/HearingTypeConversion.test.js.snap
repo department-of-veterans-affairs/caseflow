@@ -34,7 +34,16 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
       "closestRegionalOfficeLabel": "Nashville Regional office",
       "completedHearingOnPreviousAppeal": false,
       "decisionDate": null,
-      "decisionIssues": Array [],
+      "decisionIssues": Array [
+        Object {
+          "description": "This is a description of the decision",
+          "id": 1,
+        },
+        Object {
+          "description": "This is a description of another decision",
+          "id": 2,
+        },
+      ],
       "docketName": "Legacy",
       "docketNumber": "200805-541",
       "documentID": null,
@@ -59,7 +68,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
           "zip": "94103",
         },
         "representative_email_address": "tom.brady@caseflow.gov",
-        "representative_name": "Attorney McAttorneyFace",
+        "representative_name": "Clarence Darrow",
         "representative_type": "Attorney",
       },
       "readableHearingRequestType": "Travel",
@@ -68,6 +77,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
       "removed": false,
       "status": "not_distributed",
       "vacateType": null,
+      "veteranDateOfDeath": null,
       "veteranFileNumber": "123456789",
       "veteranFullName": "Abellona Valtas",
       "veteranInfo": Object {
@@ -126,7 +136,16 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
         "closestRegionalOfficeLabel": "Nashville Regional office",
         "completedHearingOnPreviousAppeal": false,
         "decisionDate": null,
-        "decisionIssues": Array [],
+        "decisionIssues": Array [
+          Object {
+            "description": "This is a description of the decision",
+            "id": 1,
+          },
+          Object {
+            "description": "This is a description of another decision",
+            "id": 2,
+          },
+        ],
         "docketName": "Legacy",
         "docketNumber": "200805-541",
         "documentID": null,
@@ -151,7 +170,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
             "zip": "94103",
           },
           "representative_email_address": "tom.brady@caseflow.gov",
-          "representative_name": "Attorney McAttorneyFace",
+          "representative_name": "Clarence Darrow",
           "representative_type": "Attorney",
         },
         "readableHearingRequestType": "Travel",
@@ -160,6 +179,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
         "removed": false,
         "status": "not_distributed",
         "vacateType": null,
+        "veteranDateOfDeath": null,
         "veteranFileNumber": "123456789",
         "veteranFullName": "Abellona Valtas",
         "veteranInfo": Object {
@@ -359,6 +379,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                 }
               }
               readOnly={true}
+              schedulingToVirtual={true}
               showDivider={false}
               showMissingEmailAlert={true}
               showOnlyAppellantName={true}
@@ -440,9 +461,6 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                           <div
                             className="usa-alert-body"
                           >
-                            <h2
-                              className="usa-alert-heading"
-                            />
                             <div
                               className="usa-alert-text"
                             >
@@ -468,6 +486,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                 }
               }
               readOnly={true}
+              schedulingToVirtual={true}
               showDivider={false}
               showMissingEmailAlert={true}
               showOnlyAppellantName={true}

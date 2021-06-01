@@ -18,7 +18,7 @@ class HearingDayRoomAssignment
                           room || ""
                         elsif request_type == HearingDay::REQUEST_TYPES[:central]
                           first_available_central_room
-                        else
+                        elsif request_type == HearingDay::REQUEST_TYPES[:video]
                           first_available_video_room
                         end
   end

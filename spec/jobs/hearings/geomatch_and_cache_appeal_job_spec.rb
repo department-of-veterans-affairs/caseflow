@@ -9,8 +9,24 @@ describe Hearings::GeomatchAndCacheAppealJob do
     context "with AMA appeal" do
       let(:appeal) { create(:appeal) }
 
-      it "throws an error" do
-        expect { subject }.to raise_error ArgumentError
+      it "sets the closest regional office field" do
+        subject
+
+        appeal.reload
+
+        expect(appeal.closest_regional_office).to eq("RO17") # Default RO based on address geomatch
+      end
+
+      it "creates the cached appeal row" do
+        subject
+
+        expect(CachedAppeal.count).to eq(1)
+
+        cached = CachedAppeal.first
+
+        expect(cached.closest_regional_office_city).to eq("St. Petersburg")
+        expect(cached.closest_regional_office_key).to eq("RO17") # Default RO based on address geomatch
+        expect(cached.hearing_request_type).to eq("Video")
       end
     end
 

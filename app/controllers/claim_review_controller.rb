@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ClaimReviewController < ApplicationController
+  include ValidationConcern
+
   before_action :verify_access, :react_routed, :set_application
 
   EDIT_ERRORS = {
@@ -22,6 +24,21 @@ class ClaimReviewController < ApplicationController
     else
       render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
     end
+  end
+
+  validates :edit_ep, using: ClaimReviewSchemas.edit_ep
+  def edit_ep
+    epe = claim_review.end_product_establishments.find_by(code: claim_label_edit_params[:previous_code])
+    return render json: { error_code: "EP not found" }, status: :not_found if epe.nil?
+
+    edit_ep = perform_ep_update!(epe)
+    if edit_ep.error?
+      render json: { error_code: "Error updating ep" }, status: :unprocessable_entity
+    else
+      render json: { veteran: claim_review.veteran }
+    end
+  rescue StandardError
+    render json: { error_code: "Unknown error" }, status: :unprocessable_entity
   end
 
   private
@@ -128,5 +145,21 @@ class ClaimReviewController < ApplicationController
 
   def review_withdrawn_message
     "You have successfully withdrawn a review."
+  end
+
+  def claim_label_edit_params
+    params.permit(:previous_code, :selected_code)
+  end
+
+  def perform_ep_update!(epe)
+    ep_update = EndProductUpdate.create!(
+      end_product_establishment: epe,
+      original_decision_review: claim_review,
+      original_code: claim_label_edit_params[:previous_code],
+      new_code: claim_label_edit_params[:selected_code],
+      user: current_user
+    )
+    ep_update.perform!
+    ep_update
   end
 end

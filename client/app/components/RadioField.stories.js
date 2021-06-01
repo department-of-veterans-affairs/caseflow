@@ -47,3 +47,22 @@ Controlled.parameters = {
     },
   },
 };
+
+export const ControlledBooleanValues = ControlledTemplate.bind({});
+ControlledBooleanValues.parameters = {
+  docs: {
+    description: {
+      story: `Demonstrates how to express boolean options. You cannot use booleans directly.
+              Use strings as the values and compare strings to get a boolean: <code>isTrueSet = (radioField.value === 'true')</code>.
+              Also see uses of <code>convertStringToBoolean</code>.`
+    },
+  },
+};
+ControlledBooleanValues.args = {
+  name: 'radioField',
+  label: 'Select boolean',
+  options: [
+    { displayText: 'True', value: 'true' },
+    { displayText: 'False', value: 'false' }
+  ],
+};

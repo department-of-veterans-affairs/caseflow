@@ -17,7 +17,10 @@ RSpec.describe DocketSwitch, type: :model do
     )
   end
   let(:new_docket_stream) { appeal.create_stream(:switched_docket) }
-  let(:docket_switch_mail_task) { create(:docket_switch_mail_task, appeal: appeal, assigned_to: cotb_user) }
+  let(:docket_switch_task) do
+    task_class_type = (disposition == "denied") ? "denied" : "granted"
+    create("docket_switch_#{task_class_type}_task".to_sym, appeal: appeal, assigned_to: cotb_user, assigned_by: judge)
+  end
   let(:disposition) { nil }
   let(:assigned_to_id) { nil }
   let(:granted_request_issue_ids) { appeal.request_issues.map(&:id) }
@@ -25,45 +28,106 @@ RSpec.describe DocketSwitch, type: :model do
     create(
       :docket_switch,
       old_docket_stream: appeal,
-      task: docket_switch_mail_task,
+      task: docket_switch_task,
       disposition: disposition,
       granted_request_issue_ids: granted_request_issue_ids
     )
   end
 
   before do
+    create(:staff, :attorney_role, sdomainid: cotb_user.css_id)
     create(:staff, :judge_role, sdomainid: judge.reload.css_id)
     cotb_team.add_user(cotb_user)
   end
 
-  context "#move_granted_request_issues" do
-    let(:disposition) { "granted" }
-    subject { docket_switch.move_granted_request_issues }
+  context "#process!" do
+    subject { docket_switch.process! }
 
-    it "updates the appeal stream for every selected request issue" do
-      expect(docket_switch.old_docket_stream.request_issues.size).to eq 3
-      expect(docket_switch.new_docket_stream.request_issues.size).to eq 0
-      subject
-      expect(docket_switch.new_docket_stream.reload.request_issues.size).to eq 3
-      expect(docket_switch.old_docket_stream.reload.request_issues.size).to eq 0
+    context "disposition is denied" do
+      let(:disposition) { "denied" }
+
+      it "closes the DocketSwitchDeniedTask" do
+        expect(docket_switch_task).to be_assigned
+
+        subject
+
+        expect(docket_switch_task).to be_completed
+      end
+    end
+
+    context "disposition is granted or partially granted" do
+      context "when disposition is granted (full grant)" do
+        let(:disposition) { "granted" }
+        let(:granted_request_issue_ids) { nil }
+
+        it "moves all request issues to a new appeal stream and marks the original appeal as docket switched" do
+          expect(docket_switch_task).to be_assigned
+
+          subject
+
+          # new stream has a the new docket type
+          expect(docket_switch.new_docket_stream.docket_type).to eq(docket_switch.docket_type)
+
+          # all request issues are copied to new appeal stream, accessible as new_docket_stream
+          expect(docket_switch.new_docket_stream.request_issues.count).to eq appeal.request_issues.count
+
+          # all old request issues closed
+          expect(appeal.request_issues.map { |ri| ri.reload.closed_status }.uniq).to eq ["docket_switch"]
+
+          # Docket switch task gets completed
+          expect(docket_switch_task).to be_completed
+
+          # Appeal Status API shows original stream's status of docket switched
+          expect(appeal.status.to_sym).to eq :docket_switched
+
+          # Docket switch task has been copied to new appeal stream
+          new_completed_task = DocketSwitchGrantedTask.find_by(appeal: docket_switch.new_docket_stream)
+          expect(new_completed_task).to_not be_nil
+          expect(new_completed_task).to be_completed
+        end
+      end
+
+      context "when disposition is partially_granted" do
+        let(:disposition) { "partially_granted" }
+        let(:granted_request_issue_ids) { appeal.request_issues[0..1].map(&:id) }
+
+        it "moves granted issues to new appeal stream and maintains original stream" do
+          expect(docket_switch_task).to be_assigned
+
+          subject
+
+          # new stream has a the new docket type
+          expect(docket_switch.new_docket_stream.docket_type).to eq(docket_switch.docket_type)
+
+          # granted request issues are copied to new appeal stream
+          expect(docket_switch.new_docket_stream.request_issues.count).to eq 2
+
+          # granted old request issues closed
+          expect(appeal.request_issues.map { |ri| ri.reload.closed_status }.compact.uniq).to eq ["docket_switch"]
+          expect(appeal.request_issues.active.count).to eq 1
+
+          # Docket switch task gets completed
+          expect(docket_switch_task).to be_completed
+
+          # Docket switch task has been copied to new appeal stream
+          new_completed_task = DocketSwitchGrantedTask.assigned_to_any_user.find_by(
+            appeal: docket_switch.new_docket_stream
+          )
+          expect(new_completed_task).to_not be_nil
+          expect(new_completed_task).to be_completed
+
+          # To do: Check for correct appeal status after task handling logic is implemented
+        end
+      end
     end
   end
 
-  context "#request_issues_for_switch" do
-    let(:disposition) { "granted" }
-    subject { docket_switch.request_issues_for_switch }
-
-    it "returns the correct request issues" do
-      expect(subject.size).to eq(granted_request_issue_ids.size)
-    end
-  end
-
-  context "#granted_issues_present_if_partial" do
+  context "#valid?" do
     subject do
       build(
         :docket_switch,
         old_docket_stream: appeal,
-        task: docket_switch_mail_task,
+        task: docket_switch_task,
         disposition: disposition,
         granted_request_issue_ids: granted_request_issue_ids
       )

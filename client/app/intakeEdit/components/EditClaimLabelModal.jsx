@@ -44,7 +44,7 @@ export const EditClaimLabelModal = ({ selectedEpCode, onCancel, onSubmit }) => {
         oldCode: selectedEpCode,
         newCode: newCode.label
       }),
-      disabled: !isValid,
+      disabled: !isValid
     },
   ];
 

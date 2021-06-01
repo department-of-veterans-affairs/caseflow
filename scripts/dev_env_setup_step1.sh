@@ -48,7 +48,7 @@ brew install rbenv nodenv yarn jq
 brew tap ouchxp/nodenv
 brew install nodenv-nvmrc
 brew install postgres
-brew cask install chromedriver
+brew install --cask chromedriver
 chromedriver --version
 
 echo "==> Setting up rbenv and nodenv"
@@ -80,7 +80,7 @@ echo "==> Installing Docker"
 if which docker > /dev/null; then
   echo "Docker is already installed. Skipping installation."
 else
-  brew cask install docker
+  brew install --cask docker
 fi
 
 echo "==> Installing InstantClient"

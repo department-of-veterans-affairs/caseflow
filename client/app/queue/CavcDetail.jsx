@@ -19,7 +19,9 @@ const CavcDetail = (props) => {
     remand_subtype: type,
     decision_date: decisionDate,
     judgement_date: judgementDate,
-    mandate_date: mandateDate
+    mandate_date: mandateDate,
+    federal_circuit: federalCircuit,
+    instructions: instructionText
   } = props;
 
   const details = [];
@@ -85,6 +87,20 @@ const CavcDetail = (props) => {
     });
   }
 
+  if (federalCircuit !== null) {
+    details.push({
+      label: COPY.CASE_DETAILS_CAVC_FEDERAL_CIRCUIT,
+      value: (federalCircuit === true) ? 'Yes' : 'No'
+    });
+  }
+
+  if (instructionText) {
+    details.push({
+      label: COPY.CASE_DETAILS_CAVC_REMAND_INSTRUCTIONS,
+      value: instructionText
+    });
+  }
+
   return (
     <>
       <ul {...detailListStyling}>
@@ -102,7 +118,9 @@ CavcDetail.propTypes = {
   remand_subtype: PropTypes.string,
   decision_date: PropTypes.string.isRequired,
   judgement_date: PropTypes.string,
-  mandate_date: PropTypes.string
+  mandate_date: PropTypes.string,
+  federal_circuit: PropTypes.bool,
+  instructions: PropTypes.string.isRequired
 };
 
 export default CavcDetail;

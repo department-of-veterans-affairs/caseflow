@@ -5,6 +5,7 @@
 # This is the type of appeal created by the Veterans Appeals Improvement and Modernization Act (AMA),
 # which went into effect Feb 19, 2019.
 
+# rubocop:disable Metrics/ClassLength
 class Appeal < DecisionReview
   include AppealConcern
   include BgsService
@@ -12,6 +13,7 @@ class Appeal < DecisionReview
   include PrintsTaskTree
   include HasTaskHistory
   include AppealAvailableHearingLocations
+  include HearingRequestTypeConcern
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -23,8 +25,16 @@ class Appeal < DecisionReview
   has_many :vbms_uploaded_documents
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
+  has_many :nod_date_updates
+
   has_one :special_issue_list
   has_one :post_decision_motion
+
+  # The has_one here provides the docket_switch object to the newly created appeal upon completion of the docket switch
+  has_one :docket_switch, class_name: "DocketSwitch", foreign_key: :new_docket_stream_id
+
+  has_one :appellant_substitution, foreign_key: :target_appeal_id
+
   has_many :record_synced_by_job, as: :record
   has_one :work_mode, as: :appeal
   has_one :latest_informal_hearing_presentation_task, lambda {
@@ -95,7 +105,8 @@ class Appeal < DecisionReview
     stream_type&.titlecase || "Original"
   end
 
-  def create_stream(stream_type)
+  # rubocop:disable Metrics/MethodLength
+  def create_stream(stream_type, new_claimants: nil)
     ActiveRecord::Base.transaction do
       Appeal.create!(slice(
         :aod_based_on_age,
@@ -110,14 +121,19 @@ class Appeal < DecisionReview
         stream_docket_number: docket_number,
         established_at: Time.zone.now
       )).tap do |stream|
-        stream.create_claimant!(
-          participant_id: claimant.participant_id,
-          payee_code: claimant.payee_code,
-          type: claimant.type
-        )
+        if new_claimants
+          new_claimants.each { |claimant| claimant.update(decision_review: stream) }
+
+          # Why isn't this a calculated value instead of stored in the DB?
+          stream.update(veteran_is_not_claimant: !new_claimants.map(&:person).include?(veteran.person))
+        else
+          stream.copy_claimants!(claimants)
+        end
+        stream.reload # so that stream.claimants returns updated list
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def vacate_type
     return nil unless vacate?
@@ -151,7 +167,7 @@ class Appeal < DecisionReview
   end
 
   def active_request_issues_or_decision_issues
-    decision_issues.empty? ? request_issues.active.all : fetch_all_decision_issues
+    decision_issues.empty? ? active_request_issues : fetch_all_decision_issues
   end
 
   def fetch_all_decision_issues
@@ -167,7 +183,7 @@ class Appeal < DecisionReview
   end
 
   def every_request_issue_has_decision?
-    eligible_request_issues.all? { |request_issue| request_issue.decision_issues.present? }
+    active_request_issues.all? { |request_issue| request_issue.decision_issues.present? }
   end
 
   def latest_attorney_case_review
@@ -179,11 +195,11 @@ class Appeal < DecisionReview
   end
 
   def reviewing_judge_name
-    task = tasks.not_cancelled.where(type: JudgeDecisionReviewTask.name).order(created_at: :desc).first
+    task = tasks.not_cancelled.of_type(:JudgeDecisionReviewTask).order(created_at: :desc).first
     task ? task.assigned_to.try(:full_name) : ""
   end
 
-  def eligible_request_issues
+  def active_request_issues
     # It's possible that two users create issues around the same time and the sequencer gets thrown off
     # (https://stackoverflow.com/questions/5818463/rails-created-at-timestamp-order-disagrees-with-id-order)
     request_issues.active.all.sort_by(&:id)
@@ -220,23 +236,15 @@ class Appeal < DecisionReview
   end
 
   def active?
-    tasks.open.where(type: RootTask.name).any?
+    tasks.open.of_type(:RootTask).any?
   end
 
   def ready_for_distribution?
-    tasks.active.where(type: DistributionTask.name).any?
+    tasks.active.of_type(:DistributionTask).any?
   end
 
   def ready_for_distribution_at
     tasks.select { |t| t.type == "DistributionTask" }.map(&:assigned_at).max
-  end
-
-  def veteran_is_deceased
-    veteran_death_date.present?
-  end
-
-  def veteran_death_date
-    veteran&.date_of_death
   end
 
   delegate :address_line_1,
@@ -252,23 +260,13 @@ class Appeal < DecisionReview
            :email_address,
            :country, to: :veteran, prefix: true
 
-  def veteran_if_exists
-    @veteran_if_exists ||= Veteran.find_by_file_number(veteran_file_number)
-  end
-
-  def veteran_closest_regional_office
-    veteran_if_exists&.closest_regional_office
-  end
-
-  def veteran_available_hearing_locations
-    veteran_if_exists&.available_hearing_locations
-  end
-
   def regional_office_key
     nil
   end
 
   def conditionally_set_aod_based_on_age
+    return unless claimant # do not update if claimant is not yet set, i.e., when create_stream is called
+
     updated_aod_based_on_age = claimant&.advanced_on_docket_based_on_age?
     update(aod_based_on_age: updated_aod_based_on_age) if aod_based_on_age != updated_aod_based_on_age
   end
@@ -351,7 +349,16 @@ class Appeal < DecisionReview
   def cavc_remand
     return nil if !cavc?
 
-    CavcRemand.find_by(appeal_id: stream_docket_number.split("-").last)
+    # If this appeal is a direct result of a CavcRemand, then return it
+    return CavcRemand.find_by(remand_appeal: self) if CavcRemand.find_by(remand_appeal: self)
+
+    # If this appeal went through appellant_substitution after a CavcRemand, then use the source_appeal,
+    # which is the same stream_type (cavc? == true) as this appeal.
+    appellant_substitution.source_appeal.cavc_remand if appellant_substitution?
+  end
+
+  def appellant_substitution?
+    !!appellant_substitution
   end
 
   def status
@@ -366,7 +373,7 @@ class Appeal < DecisionReview
     fail "benefit_type on Appeal is set per RequestIssue"
   end
 
-  def create_issues!(new_issues)
+  def create_issues!(new_issues, _request_issues_update = nil)
     new_issues.each do |issue|
       issue.benefit_type ||= issue.contested_benefit_type || issue.guess_benefit_type
       issue.veteran_participant_id = veteran.participant_id
@@ -388,6 +395,20 @@ class Appeal < DecisionReview
     update!(stream_docket_number: default_docket_number_from_receipt_date)
   end
 
+  def untimely_issues_report(new_date)
+    affected_issues = active_request_issues.reject { |request_issue| request_issue.timely_issue?(new_date.to_date) }
+    unaffected_issues = active_request_issues - affected_issues
+
+    return if affected_issues.blank?
+
+    issues_report = {
+      affected_issues: affected_issues,
+      unaffected_issues: unaffected_issues
+    }
+
+    issues_report
+  end
+
   # Currently AMA only supports one claimant per decision review
   def power_of_attorney
     claimant&.power_of_attorney
@@ -397,6 +418,9 @@ class Appeal < DecisionReview
            :representative_type,
            :representative_address,
            :representative_email_address,
+           :poa_last_synced_at,
+           :update_cached_attributes!,
+           :save_with_updated_bgs_record!,
            to: :power_of_attorney, allow_nil: true
 
   def power_of_attorneys
@@ -405,6 +429,9 @@ class Appeal < DecisionReview
 
   def representatives
     vso_participant_ids = power_of_attorneys.map(&:participant_id).compact.uniq
+    # Representatives are returned for Vso or PrivateBar POAs (i.e., subclasses of Representative)
+    # and typically not for POAs with `BgsPowerOfAttorney.representative_type` = 'Agent' or 'Attorney'.
+    # To get all POAs, call `power_of_attorneys`.
     Representative.where(participant_id: vso_participant_ids)
   end
 
@@ -416,6 +443,12 @@ class Appeal < DecisionReview
     InitialTasksFactory.new(self).create_root_and_sub_tasks!
     create_business_line_tasks!
     maybe_create_translation_task
+  end
+
+  # Stream change tasks indicate tasks that _may_ be moved to another appeal stream during a docket switch
+  # This includes open children tasks with no children, excluding docket related tasks
+  def docket_switchable_tasks
+    tasks.select(&:can_move_on_docket_switch?)
   end
 
   def establish!
@@ -527,29 +560,15 @@ class Appeal < DecisionReview
     false
   end
 
-  # Returns the hearing request type.
-  #
-  # @note See `LegacyAppeal#current_hearing_request_type` for more information.
-  #   This method is provided for compatibility.
-  def current_hearing_request_type(readable: false)
-    return nil if closest_regional_office.nil?
-
-    current_hearing_request_type = (closest_regional_office == "C") ? :central : :video
-
-    return current_hearing_request_type if !readable
-
-    # Determine type using closest_regional_office
-    # "Central" if closest_regional_office office is "C", "Video" otherwise
-    case current_hearing_request_type
-    when :central
-      Hearing::HEARING_TYPES[:C]
-    else
-      Hearing::HEARING_TYPES[:V]
-    end
+  # This method allows the old appeal stream to access the docket_switch objects
+  # rubocop:disable all
+  def switched_dockets
+    DocketSwitch.where(old_docket_stream_id: self.id)
   end
 
-  alias original_hearing_request_type current_hearing_request_type
-  alias previous_hearing_request_type current_hearing_request_type
+  def appellant_relationship
+    appellant&.relationship
+  end
 
   private
 
@@ -580,3 +599,4 @@ class Appeal < DecisionReview
     "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
 end
+# rubocop:enable Metrics/ClassLength

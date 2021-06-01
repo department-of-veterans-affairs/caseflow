@@ -232,7 +232,7 @@ describe ScheduleHearingTask, :all_dbs do
         it "completes the task and creates an EvidenceSubmissionWindowTask" do
           expect(subject.count).to eq(2)
           expect(schedule_hearing_task.status).to eq(Constants.TASK_STATUSES.cancelled)
-          expect(appeal.tasks.where(type: EvidenceSubmissionWindowTask.name).count).to eq(1)
+          expect(appeal.tasks.of_type(:EvidenceSubmissionWindowTask).count).to eq(1)
         end
       end
     end
@@ -271,10 +271,10 @@ describe ScheduleHearingTask, :all_dbs do
         expect(task.reload.status).to eq Constants.TASK_STATUSES.cancelled
         expect(task.cancelled_by).to eq hearings_management_user
         expect(task.closed_at).to_not be_nil
-        new_hearing_tasks = appeal.tasks.open.where(type: HearingTask.name)
+        new_hearing_tasks = appeal.tasks.open.of_type(:HearingTask)
         expect(new_hearing_tasks.count).to eq 1
         expect(new_hearing_tasks.first.hearing).to eq hearing
-        new_change_tasks = appeal.tasks.open.where(type: ChangeHearingDispositionTask.name)
+        new_change_tasks = appeal.tasks.open.of_type(:ChangeHearingDispositionTask)
         expect(new_change_tasks.count).to eq 1
         expect(new_change_tasks.first.parent).to eq new_hearing_tasks.first
       end
@@ -332,7 +332,7 @@ describe ScheduleHearingTask, :all_dbs do
       let(:vacols_case) { create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:caseflow]) }
       let(:veteran_pid) { "0000" }
       let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
-      let(:case_hearing_past_disposition) { "P" }
+      let(:case_hearing_past_disposition) { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:postponed] }
       let(:hearing) { create(:legacy_hearing, appeal: appeal, disposition: case_hearing_past_disposition) }
 
       include_examples "creates new task"

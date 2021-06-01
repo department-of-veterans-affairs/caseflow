@@ -52,7 +52,7 @@ class Hearing < CaseflowRecord
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
   delegate :appellant_first_name, :appellant_last_name, :representative_address,
-           :representative_type, :appellant_city, :appellant_state,
+           :representative_type, :appellant_city, :appellant_state, :appellant_relationship,
            :appellant_zip, :appellant_address_line_1, :appellant_email_address, :appellant_tz,
            :representative_tz, :veteran_age, :veteran_gender, :veteran_first_name,
            :veteran_last_name, :veteran_file_number, :veteran_email_address, :docket_number,
@@ -69,6 +69,14 @@ class Hearing < CaseflowRecord
   before_create :assign_created_by_user
 
   attr_accessor :override_full_hearing_day_validation
+
+  scope :not_scheduled_in_error,
+        lambda {
+          where(
+            "disposition != ? or disposition is null",
+            Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
+          )
+        }
 
   HEARING_TYPES = {
     R: "Virtual",

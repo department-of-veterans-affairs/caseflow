@@ -5,6 +5,7 @@ class HearingSchedule::GetSpreadsheetData
   RO_NON_AVAILABILITY_SHEET = 0
   CO_NON_AVAILABILITY_SHEET = 1
   HEARING_ALLOCATION_SHEET = 2
+  HEARING_ALLOCATION_SHEET_EXAMPLE_ROW = 4
   JUDGE_NON_AVAILABILITY_HEADER_COLUMNS = 7
 
   def initialize(spreadsheet)
@@ -53,9 +54,13 @@ class HearingSchedule::GetSpreadsheetData
     ro_codes.zip(ro_names).each_with_index do |row, index|
       dates = ro_non_availability_sheet.column(index + 3).drop(3).compact
       dates.each do |date|
+        # Get the RO city/state accounting for the Nation Virtual Hearings Queue
+        ro_city = get_ro_city_state(row[0].strip, row[1])[0]
+        ro_state = get_ro_city_state(row[0].strip, row[1])[1]
+
         non_availability_dates.push("ro_code" => row[0].strip,
-                                    "ro_city" => row[1].split(", ")[0].strip,
-                                    "ro_state" => row[1].split(", ")[1].strip,
+                                    "ro_city" => ro_city,
+                                    "ro_state" => ro_state,
                                     "date" => date)
       end
     end
@@ -85,22 +90,62 @@ class HearingSchedule::GetSpreadsheetData
   def allocation_template
     {
       title: allocation_sheet.row(1)[0],
-      example_row: allocation_sheet.row(3).uniq,
-      empty_column: allocation_sheet.column(5).uniq
+      example_row: allocation_sheet.row(HEARING_ALLOCATION_SHEET_EXAMPLE_ROW).uniq,
+      empty_column: allocation_sheet.column(9).uniq
     }
   end
 
   def allocation_data
+    # Instantiate the hearing allocation days to be filled by data from the spreadsheet
     hearing_allocation_days = []
-    ro_names = allocation_sheet.column(2).drop(3)
-    ro_codes = allocation_sheet.column(3).drop(3)
-    allocated_days = allocation_sheet.column(4).drop(3)
-    ro_names.zip(ro_codes, allocated_days).each do |row|
-      hearing_allocation_days.push("ro_code" => row[1].strip,
-                                   "ro_city" => row[0].split(", ")[0].strip,
-                                   "ro_state" => row[0].split(", ")[1].strip,
-                                   "allocated_days" => row[2])
+
+    # Extract the RO Name, Code, allocated days and Virtual Hearing Days
+    ro_names = allocation_sheet.column(2).drop(HEARING_ALLOCATION_SHEET_EXAMPLE_ROW)
+    ro_codes = allocation_sheet.column(3).drop(HEARING_ALLOCATION_SHEET_EXAMPLE_ROW)
+    allocated_days = allocation_sheet.column(4).drop(HEARING_ALLOCATION_SHEET_EXAMPLE_ROW)
+    allocated_days_without_room = allocation_sheet.column(5).drop(HEARING_ALLOCATION_SHEET_EXAMPLE_ROW)
+    number_of_slots = allocation_sheet.column(6).drop(HEARING_ALLOCATION_SHEET_EXAMPLE_ROW)
+    slot_length_minutes = allocation_sheet.column(7).drop(HEARING_ALLOCATION_SHEET_EXAMPLE_ROW)
+    first_slot_time = allocation_sheet.column(8).drop(HEARING_ALLOCATION_SHEET_EXAMPLE_ROW)
+
+    # Combine the parse spreadsheet data
+    parsed_data = ro_names.zip(
+      ro_codes,
+      allocated_days,
+      allocated_days_without_room,
+      number_of_slots,
+      slot_length_minutes,
+      first_slot_time
+    )
+
+    # Map the data to the hearing allocation days
+    parsed_data.each do |row|
+      # Get the RO city/state accounting for the Nation Virtual Hearings Queue
+      ro_city = get_ro_city_state(row[1].strip, row[0])[0]
+      ro_state = get_ro_city_state(row[1].strip, row[0])[1]
+      hearing_allocation_days.push(
+        "ro_code" => row[1].strip,
+        "ro_city" => ro_city,
+        "ro_state" => ro_state,
+        "allocated_days" => row[2],
+        "allocated_days_without_room" => row[3],
+        "number_of_slots" => row[4],
+        "slot_length_minutes" => row[5],
+        "first_slot_time" => row[6]
+      )
     end
+
+    # Return the list of allocated hearing days
     hearing_allocation_days
+  end
+
+  private
+
+  def get_ro_city_state(ro_key, ro_location)
+    if ro_key == "NVHQ"
+      []
+    else
+      ro_location.split(", ").map(&:strip)
+    end
   end
 end

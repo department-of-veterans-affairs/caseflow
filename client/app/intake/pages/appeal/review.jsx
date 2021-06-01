@@ -103,7 +103,7 @@ Review.propTypes = {
 };
 
 const SelectClaimantConnected = connect(
-  ({ appeal, intake }) => ({
+  ({ appeal, intake, featureToggles }) => ({
     isVeteranDeceased: intake.veteran.isDeceased,
     veteranIsNotClaimant: appeal.veteranIsNotClaimant,
     veteranIsNotClaimantError: appeal.veteranIsNotClaimantError,
@@ -112,7 +112,8 @@ const SelectClaimantConnected = connect(
     payeeCode: appeal.payeeCode,
     relationships: appeal.relationships,
     benefitType: appeal.benefitType,
-    formType: intake.formType
+    formType: intake.formType,
+    featureToggles
   }),
   (dispatch) => bindActionCreators({
     setVeteranIsNotClaimant,

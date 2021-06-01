@@ -24,6 +24,7 @@ import Checkbox from '../../components/Checkbox';
 import HEARING_ROOMS_LIST from '../../../constants/HEARING_ROOMS_LIST';
 import Modal from '../../components/Modal';
 import TextareaField from '../../components/TextareaField';
+import HEARING_REQUEST_TYPES from '../../../constants/HEARING_REQUEST_TYPES';
 
 const notesFieldStyling = css({
   height: '100px',
@@ -124,6 +125,7 @@ class HearingDayEditModal extends React.Component {
           name="roomEdit"
           label={<strong>Change Room</strong>}
           strongLabel
+          disabled={this.props.requestType === HEARING_REQUEST_TYPES.virtual}
           value={this.state.modifyRoom}
           onChange={this.onModifyRoom} />
         <Checkbox
@@ -229,7 +231,8 @@ HearingDayEditModal.propTypes = {
   selectHearingCoordinator: PropTypes.func,
   selectHearingRoom: PropTypes.func,
   setNotes: PropTypes.func,
-  selectVlj: PropTypes.func
+  selectVlj: PropTypes.func,
+  requestType: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({

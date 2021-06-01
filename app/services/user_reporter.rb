@@ -86,11 +86,8 @@ class UserReporter
     related_records
   end
 
+  # UPPER(css_id) is unique, so this should always return 1 or 0 records
   def all_users_for_css_id
     User.where("UPPER(css_id)=UPPER(?)", css_id)
-  end
-
-  def uppercase_user
-    User.find_by(css_id: css_id.upcase)
   end
 end

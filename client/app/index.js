@@ -4,7 +4,6 @@ import 'regenerator-runtime/runtime';
 import React, { Suspense } from 'react';
 import ReactOnRails from 'react-on-rails';
 import { render } from 'react-dom';
-import { AppContainer } from 'react-hot-loader';
 import _ from 'lodash';
 
 // Local Dependencies
@@ -115,7 +114,7 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
   /* eslint-enable */
 
   const renderApp = (Component) => {
-    const element = <AppContainer>{wrapComponent(Component)}</AppContainer>;
+    const element = wrapComponent(Component);
 
     render(element, document.getElementById(domNodeId));
   };

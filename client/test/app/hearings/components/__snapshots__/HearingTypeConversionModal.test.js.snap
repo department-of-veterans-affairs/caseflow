@@ -1,0 +1,933 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HearingTypeConversion Displays convert to Central text when converting from Central 1`] = `
+<withRouter(Connect(HearingTypeConversionModal))
+  appeal={
+    Object {
+      "appellantAddress": Object {
+        "address_line_1": "9999 MISSION ST",
+        "address_line_2": "UBER",
+        "address_line_3": "APT 2",
+        "city": "SAN FRANCISCO",
+        "country": "USA",
+        "state": "CA",
+        "zip": "94103",
+      },
+      "appellantFullName": "Abellona Valtas",
+      "appellantIsNotVeteran": false,
+      "appellantRelationship": "Spouse",
+      "assignedAttorney": null,
+      "assignedJudge": null,
+      "assignedToLocation": "Hearing Admin",
+      "attorneyCaseRewriteDetails": Object {
+        "note_from_attorney": null,
+        "untimely_evidence": null,
+      },
+      "availableHearingLocations": Array [],
+      "canEditDocumentId": false,
+      "canEditRequestIssues": false,
+      "caseReviewId": null,
+      "caseType": "Original",
+      "caseflowVeteranId": 541,
+      "certificationDate": null,
+      "closestRegionalOffice": null,
+      "closestRegionalOfficeLabel": null,
+      "completedHearingOnPreviousAppeal": false,
+      "decisionDate": null,
+      "decisionIssues": Array [
+        Object {
+          "description": "This is a description of the decision",
+          "id": 1,
+        },
+        Object {
+          "description": "This is a description of another decision",
+          "id": 2,
+        },
+      ],
+      "docketName": "hearing",
+      "docketNumber": "200805-541",
+      "documentID": null,
+      "isAdvancedOnDocket": false,
+      "isLegacyAppeal": false,
+      "isPaperCase": false,
+      "issueCount": 0,
+      "issues": Array [],
+      "nodDate": "2020-08-05",
+      "overtime": false,
+      "readableHearingRequestType": "Video",
+      "readableOriginalHearingRequestType": "Video",
+      "regionalOffice": null,
+      "removed": false,
+      "status": "not_distributed",
+      "vacateType": null,
+      "veteranDateOfDeath": null,
+      "veteranFileNumber": "123456789",
+      "veteranFullName": "Abellona Valtas",
+      "veteranInfo": Object {
+        "veteran": Object {
+          "address": Object {
+            "address_line_1": "1234 Main Street",
+            "address_line_2": null,
+            "address_line_3": null,
+            "city": "Orlando",
+            "country": "USA",
+            "state": "FL",
+            "zip": "12345",
+          },
+          "date_of_birth": "01/10/1935",
+          "date_of_death": null,
+          "email_address": "Abellona.Valtas@test.com",
+          "full_name": "Abellona Valtas",
+          "gender": "M",
+        },
+      },
+      "withdrawn": false,
+    }
+  }
+  hearingType="Central"
+>
+  <Connect(HearingTypeConversionModal)
+    appeal={
+      Object {
+        "appellantAddress": Object {
+          "address_line_1": "9999 MISSION ST",
+          "address_line_2": "UBER",
+          "address_line_3": "APT 2",
+          "city": "SAN FRANCISCO",
+          "country": "USA",
+          "state": "CA",
+          "zip": "94103",
+        },
+        "appellantFullName": "Abellona Valtas",
+        "appellantIsNotVeteran": false,
+        "appellantRelationship": "Spouse",
+        "assignedAttorney": null,
+        "assignedJudge": null,
+        "assignedToLocation": "Hearing Admin",
+        "attorneyCaseRewriteDetails": Object {
+          "note_from_attorney": null,
+          "untimely_evidence": null,
+        },
+        "availableHearingLocations": Array [],
+        "canEditDocumentId": false,
+        "canEditRequestIssues": false,
+        "caseReviewId": null,
+        "caseType": "Original",
+        "caseflowVeteranId": 541,
+        "certificationDate": null,
+        "closestRegionalOffice": null,
+        "closestRegionalOfficeLabel": null,
+        "completedHearingOnPreviousAppeal": false,
+        "decisionDate": null,
+        "decisionIssues": Array [
+          Object {
+            "description": "This is a description of the decision",
+            "id": 1,
+          },
+          Object {
+            "description": "This is a description of another decision",
+            "id": 2,
+          },
+        ],
+        "docketName": "hearing",
+        "docketNumber": "200805-541",
+        "documentID": null,
+        "isAdvancedOnDocket": false,
+        "isLegacyAppeal": false,
+        "isPaperCase": false,
+        "issueCount": 0,
+        "issues": Array [],
+        "nodDate": "2020-08-05",
+        "overtime": false,
+        "readableHearingRequestType": "Video",
+        "readableOriginalHearingRequestType": "Video",
+        "regionalOffice": null,
+        "removed": false,
+        "status": "not_distributed",
+        "vacateType": null,
+        "veteranDateOfDeath": null,
+        "veteranFileNumber": "123456789",
+        "veteranFullName": "Abellona Valtas",
+        "veteranInfo": Object {
+          "veteran": Object {
+            "address": Object {
+              "address_line_1": "1234 Main Street",
+              "address_line_2": null,
+              "address_line_3": null,
+              "city": "Orlando",
+              "country": "USA",
+              "state": "FL",
+              "zip": "12345",
+            },
+            "date_of_birth": "01/10/1935",
+            "date_of_death": null,
+            "email_address": "Abellona.Valtas@test.com",
+            "full_name": "Abellona Valtas",
+            "gender": "M",
+          },
+        },
+        "withdrawn": false,
+      }
+    }
+    hearingType="Central"
+    history={
+      Object {
+        "action": "POP",
+        "block": [Function],
+        "canGo": [Function],
+        "createHref": [Function],
+        "entries": Array [
+          Object {
+            "hash": "",
+            "pathname": "/",
+            "search": "",
+            "state": undefined,
+          },
+        ],
+        "go": [Function],
+        "goBack": [Function],
+        "goForward": [Function],
+        "index": 0,
+        "length": 1,
+        "listen": [Function],
+        "location": Object {
+          "hash": "",
+          "pathname": "/",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [Function],
+        "replace": [Function],
+      }
+    }
+    location={
+      Object {
+        "hash": "",
+        "pathname": "/",
+        "search": "",
+        "state": undefined,
+      }
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "/",
+        "url": "/",
+      }
+    }
+  >
+    <HearingTypeConversionModal
+      clearAppealDetails={[Function]}
+      hearingType="Central"
+      history={
+        Object {
+          "action": "POP",
+          "block": [Function],
+          "canGo": [Function],
+          "createHref": [Function],
+          "entries": Array [
+            Object {
+              "hash": "",
+              "pathname": "/",
+              "search": "",
+              "state": undefined,
+            },
+          ],
+          "go": [Function],
+          "goBack": [Function],
+          "goForward": [Function],
+          "index": 0,
+          "length": 1,
+          "listen": [Function],
+          "location": Object {
+            "hash": "",
+            "pathname": "/",
+            "search": "",
+            "state": undefined,
+          },
+          "push": [Function],
+          "replace": [Function],
+        }
+      }
+      location={
+        Object {
+          "hash": "",
+          "pathname": "/",
+          "search": "",
+          "state": undefined,
+        }
+      }
+      match={
+        Object {
+          "isExact": true,
+          "params": Object {},
+          "path": "/",
+          "url": "/",
+        }
+      }
+      showErrorMessage={[Function]}
+      showSuccessMessage={[Function]}
+    >
+      <Modal
+        buttons={Array []}
+        cancelButton={
+          <Button
+            classNames={
+              Array [
+                "cf-submit",
+              ]
+            }
+            disabled={false}
+            linkStyling={true}
+            loading={false}
+            onClick={[Function]}
+            type="button"
+            willNeverBeLoading={false}
+          >
+            Cancel
+          </Button>
+        }
+        className=""
+        closeHandler={[Function]}
+        confirmButton={
+          <Button
+            classNames={
+              Array [
+                "cf-submit",
+              ]
+            }
+            disabled={false}
+            linkStyling={false}
+            loading={false}
+            onClick={[Function]}
+            type="button"
+            willNeverBeLoading={false}
+          >
+            Convert Hearing to 
+            Central
+          </Button>
+        }
+        scrollLock={true}
+        title="Convert Hearing To Central"
+      >
+        <section
+          aria-describedby="modal_id-desc"
+          aria-labelledby="modal_id-title"
+          aria-modal="true"
+          className="cf-modal active "
+          id="modal_id"
+          role="dialog"
+        >
+          <TouchProvider>
+            <ScrollLock
+              accountForScrollbars={true}
+            >
+              <Sheet
+                styles="body {
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+      position: relative !important;
+      
+      padding-right: 1024px !important;
+    }"
+              />
+            </ScrollLock>
+          </TouchProvider>
+          <div
+            className="cf-modal-body"
+            id=""
+          >
+            <button
+              className="cf-modal-close"
+              id="Convert-Hearing-To-Central-button-id-close"
+              onClick={[Function]}
+              type="button"
+            >
+              <span
+                className="usa-sr-only"
+              >
+                Close
+              </span>
+              <svg
+                className="cf-icon-close"
+                height="55"
+                viewBox="0 0 55 55"
+                width="55"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <title>
+                  close
+                </title>
+                <path
+                  d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
+                />
+              </svg>
+            </button>
+            <div
+              style={
+                Object {
+                  "display": "flex",
+                }
+              }
+            >
+              <div
+                data-css-1gs0ko2=""
+              >
+                <h1
+                  id="modal_id-title"
+                >
+                  Convert Hearing To Central
+                </h1>
+                <div
+                  data-css-o98ubo=""
+                >
+                  <p
+                    dangerouslySetInnerHTML={
+                      Object {
+                        "__html": "The hearing request will appear in the scheduling queue for the <strong>Central Office</strong>.",
+                      }
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              className="cf-modal-divider"
+            />
+            <div
+              className="cf-modal-controls"
+            >
+              <div>
+                <span
+                  className="cf-push-right"
+                >
+                  <Button
+                    classNames={
+                      Array [
+                        "cf-submit",
+                      ]
+                    }
+                    disabled={false}
+                    linkStyling={false}
+                    loading={false}
+                    onClick={[Function]}
+                    type="button"
+                    willNeverBeLoading={false}
+                  >
+                    <span>
+                      <button
+                        className="cf-submit usa-button"
+                        disabled={false}
+                        onClick={[Function]}
+                        type="button"
+                      >
+                        Convert Hearing to 
+                        Central
+                      </button>
+                    </span>
+                  </Button>
+                </span>
+                <span
+                  className="cf-push-left"
+                >
+                  <Button
+                    classNames={
+                      Array [
+                        "cf-submit",
+                      ]
+                    }
+                    disabled={false}
+                    linkStyling={true}
+                    loading={false}
+                    onClick={[Function]}
+                    type="button"
+                    willNeverBeLoading={false}
+                  >
+                    <span>
+                      <button
+                        className="cf-submit cf-btn-link usa-button"
+                        disabled={false}
+                        onClick={[Function]}
+                        type="button"
+                      >
+                        Cancel
+                      </button>
+                    </span>
+                  </Button>
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </Modal>
+    </HearingTypeConversionModal>
+  </Connect(HearingTypeConversionModal)>
+</withRouter(Connect(HearingTypeConversionModal))>
+`;
+
+exports[`HearingTypeConversion Displays convert to Video text when converting from Video 1`] = `
+<withRouter(Connect(HearingTypeConversionModal))
+  appeal={
+    Object {
+      "appellantAddress": Object {
+        "address_line_1": "9999 MISSION ST",
+        "address_line_2": "UBER",
+        "address_line_3": "APT 2",
+        "city": "SAN FRANCISCO",
+        "country": "USA",
+        "state": "CA",
+        "zip": "94103",
+      },
+      "appellantFullName": "Abellona Valtas",
+      "appellantIsNotVeteran": false,
+      "appellantRelationship": "Spouse",
+      "assignedAttorney": null,
+      "assignedJudge": null,
+      "assignedToLocation": "Hearing Admin",
+      "attorneyCaseRewriteDetails": Object {
+        "note_from_attorney": null,
+        "untimely_evidence": null,
+      },
+      "availableHearingLocations": Array [],
+      "canEditDocumentId": false,
+      "canEditRequestIssues": false,
+      "caseReviewId": null,
+      "caseType": "Original",
+      "caseflowVeteranId": 541,
+      "certificationDate": null,
+      "closestRegionalOffice": null,
+      "closestRegionalOfficeLabel": null,
+      "completedHearingOnPreviousAppeal": false,
+      "decisionDate": null,
+      "decisionIssues": Array [
+        Object {
+          "description": "This is a description of the decision",
+          "id": 1,
+        },
+        Object {
+          "description": "This is a description of another decision",
+          "id": 2,
+        },
+      ],
+      "docketName": "hearing",
+      "docketNumber": "200805-541",
+      "documentID": null,
+      "isAdvancedOnDocket": false,
+      "isLegacyAppeal": false,
+      "isPaperCase": false,
+      "issueCount": 0,
+      "issues": Array [],
+      "nodDate": "2020-08-05",
+      "overtime": false,
+      "readableHearingRequestType": "Video",
+      "readableOriginalHearingRequestType": "Video",
+      "regionalOffice": null,
+      "removed": false,
+      "status": "not_distributed",
+      "vacateType": null,
+      "veteranDateOfDeath": null,
+      "veteranFileNumber": "123456789",
+      "veteranFullName": "Abellona Valtas",
+      "veteranInfo": Object {
+        "veteran": Object {
+          "address": Object {
+            "address_line_1": "1234 Main Street",
+            "address_line_2": null,
+            "address_line_3": null,
+            "city": "Orlando",
+            "country": "USA",
+            "state": "FL",
+            "zip": "12345",
+          },
+          "date_of_birth": "01/10/1935",
+          "date_of_death": null,
+          "email_address": "Abellona.Valtas@test.com",
+          "full_name": "Abellona Valtas",
+          "gender": "M",
+        },
+      },
+      "withdrawn": false,
+    }
+  }
+  hearingType="Video"
+>
+  <Connect(HearingTypeConversionModal)
+    appeal={
+      Object {
+        "appellantAddress": Object {
+          "address_line_1": "9999 MISSION ST",
+          "address_line_2": "UBER",
+          "address_line_3": "APT 2",
+          "city": "SAN FRANCISCO",
+          "country": "USA",
+          "state": "CA",
+          "zip": "94103",
+        },
+        "appellantFullName": "Abellona Valtas",
+        "appellantIsNotVeteran": false,
+        "appellantRelationship": "Spouse",
+        "assignedAttorney": null,
+        "assignedJudge": null,
+        "assignedToLocation": "Hearing Admin",
+        "attorneyCaseRewriteDetails": Object {
+          "note_from_attorney": null,
+          "untimely_evidence": null,
+        },
+        "availableHearingLocations": Array [],
+        "canEditDocumentId": false,
+        "canEditRequestIssues": false,
+        "caseReviewId": null,
+        "caseType": "Original",
+        "caseflowVeteranId": 541,
+        "certificationDate": null,
+        "closestRegionalOffice": null,
+        "closestRegionalOfficeLabel": null,
+        "completedHearingOnPreviousAppeal": false,
+        "decisionDate": null,
+        "decisionIssues": Array [
+          Object {
+            "description": "This is a description of the decision",
+            "id": 1,
+          },
+          Object {
+            "description": "This is a description of another decision",
+            "id": 2,
+          },
+        ],
+        "docketName": "hearing",
+        "docketNumber": "200805-541",
+        "documentID": null,
+        "isAdvancedOnDocket": false,
+        "isLegacyAppeal": false,
+        "isPaperCase": false,
+        "issueCount": 0,
+        "issues": Array [],
+        "nodDate": "2020-08-05",
+        "overtime": false,
+        "readableHearingRequestType": "Video",
+        "readableOriginalHearingRequestType": "Video",
+        "regionalOffice": null,
+        "removed": false,
+        "status": "not_distributed",
+        "vacateType": null,
+        "veteranDateOfDeath": null,
+        "veteranFileNumber": "123456789",
+        "veteranFullName": "Abellona Valtas",
+        "veteranInfo": Object {
+          "veteran": Object {
+            "address": Object {
+              "address_line_1": "1234 Main Street",
+              "address_line_2": null,
+              "address_line_3": null,
+              "city": "Orlando",
+              "country": "USA",
+              "state": "FL",
+              "zip": "12345",
+            },
+            "date_of_birth": "01/10/1935",
+            "date_of_death": null,
+            "email_address": "Abellona.Valtas@test.com",
+            "full_name": "Abellona Valtas",
+            "gender": "M",
+          },
+        },
+        "withdrawn": false,
+      }
+    }
+    hearingType="Video"
+    history={
+      Object {
+        "action": "POP",
+        "block": [Function],
+        "canGo": [Function],
+        "createHref": [Function],
+        "entries": Array [
+          Object {
+            "hash": "",
+            "pathname": "/",
+            "search": "",
+            "state": undefined,
+          },
+        ],
+        "go": [Function],
+        "goBack": [Function],
+        "goForward": [Function],
+        "index": 0,
+        "length": 1,
+        "listen": [Function],
+        "location": Object {
+          "hash": "",
+          "pathname": "/",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [Function],
+        "replace": [Function],
+      }
+    }
+    location={
+      Object {
+        "hash": "",
+        "pathname": "/",
+        "search": "",
+        "state": undefined,
+      }
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "/",
+        "url": "/",
+      }
+    }
+  >
+    <HearingTypeConversionModal
+      clearAppealDetails={[Function]}
+      hearingType="Video"
+      history={
+        Object {
+          "action": "POP",
+          "block": [Function],
+          "canGo": [Function],
+          "createHref": [Function],
+          "entries": Array [
+            Object {
+              "hash": "",
+              "pathname": "/",
+              "search": "",
+              "state": undefined,
+            },
+          ],
+          "go": [Function],
+          "goBack": [Function],
+          "goForward": [Function],
+          "index": 0,
+          "length": 1,
+          "listen": [Function],
+          "location": Object {
+            "hash": "",
+            "pathname": "/",
+            "search": "",
+            "state": undefined,
+          },
+          "push": [Function],
+          "replace": [Function],
+        }
+      }
+      location={
+        Object {
+          "hash": "",
+          "pathname": "/",
+          "search": "",
+          "state": undefined,
+        }
+      }
+      match={
+        Object {
+          "isExact": true,
+          "params": Object {},
+          "path": "/",
+          "url": "/",
+        }
+      }
+      showErrorMessage={[Function]}
+      showSuccessMessage={[Function]}
+    >
+      <Modal
+        buttons={Array []}
+        cancelButton={
+          <Button
+            classNames={
+              Array [
+                "cf-submit",
+              ]
+            }
+            disabled={false}
+            linkStyling={true}
+            loading={false}
+            onClick={[Function]}
+            type="button"
+            willNeverBeLoading={false}
+          >
+            Cancel
+          </Button>
+        }
+        className=""
+        closeHandler={[Function]}
+        confirmButton={
+          <Button
+            classNames={
+              Array [
+                "cf-submit",
+              ]
+            }
+            disabled={false}
+            linkStyling={false}
+            loading={false}
+            onClick={[Function]}
+            type="button"
+            willNeverBeLoading={false}
+          >
+            Convert Hearing to 
+            Video
+          </Button>
+        }
+        scrollLock={true}
+        title="Convert Hearing To Video"
+      >
+        <section
+          aria-describedby="modal_id-desc"
+          aria-labelledby="modal_id-title"
+          aria-modal="true"
+          className="cf-modal active "
+          id="modal_id"
+          role="dialog"
+        >
+          <TouchProvider>
+            <ScrollLock
+              accountForScrollbars={true}
+            >
+              <Sheet
+                styles="body {
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+      position: relative !important;
+      
+      padding-right: 1024px !important;
+    }"
+              />
+            </ScrollLock>
+          </TouchProvider>
+          <div
+            className="cf-modal-body"
+            id=""
+          >
+            <button
+              className="cf-modal-close"
+              id="Convert-Hearing-To-Video-button-id-close"
+              onClick={[Function]}
+              type="button"
+            >
+              <span
+                className="usa-sr-only"
+              >
+                Close
+              </span>
+              <svg
+                className="cf-icon-close"
+                height="55"
+                viewBox="0 0 55 55"
+                width="55"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <title>
+                  close
+                </title>
+                <path
+                  d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
+                />
+              </svg>
+            </button>
+            <div
+              style={
+                Object {
+                  "display": "flex",
+                }
+              }
+            >
+              <div
+                data-css-1gs0ko2=""
+              >
+                <h1
+                  id="modal_id-title"
+                >
+                  Convert Hearing To Video
+                </h1>
+                <div
+                  data-css-o98ubo=""
+                >
+                  <p
+                    dangerouslySetInnerHTML={
+                      Object {
+                        "__html": "The hearing request will appear in the scheduling queue for the appropriate regional office.",
+                      }
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              className="cf-modal-divider"
+            />
+            <div
+              className="cf-modal-controls"
+            >
+              <div>
+                <span
+                  className="cf-push-right"
+                >
+                  <Button
+                    classNames={
+                      Array [
+                        "cf-submit",
+                      ]
+                    }
+                    disabled={false}
+                    linkStyling={false}
+                    loading={false}
+                    onClick={[Function]}
+                    type="button"
+                    willNeverBeLoading={false}
+                  >
+                    <span>
+                      <button
+                        className="cf-submit usa-button"
+                        disabled={false}
+                        onClick={[Function]}
+                        type="button"
+                      >
+                        Convert Hearing to 
+                        Video
+                      </button>
+                    </span>
+                  </Button>
+                </span>
+                <span
+                  className="cf-push-left"
+                >
+                  <Button
+                    classNames={
+                      Array [
+                        "cf-submit",
+                      ]
+                    }
+                    disabled={false}
+                    linkStyling={true}
+                    loading={false}
+                    onClick={[Function]}
+                    type="button"
+                    willNeverBeLoading={false}
+                  >
+                    <span>
+                      <button
+                        className="cf-submit cf-btn-link usa-button"
+                        disabled={false}
+                        onClick={[Function]}
+                        type="button"
+                      >
+                        Cancel
+                      </button>
+                    </span>
+                  </Button>
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </Modal>
+    </HearingTypeConversionModal>
+  </Connect(HearingTypeConversionModal)>
+</withRouter(Connect(HearingTypeConversionModal))>
+`;

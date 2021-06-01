@@ -10,7 +10,7 @@ import {
   HearingRequestType
 } from './AssignHearingsFields';
 import { NoVeteransToAssignMessage } from './Messages';
-import { VeteranStateDetail } from '../../../queue/VeteranDetail';
+import VeteranDetail from '../../../queue/VeteranDetail';
 import { docketCutoffLineStyle } from './AssignHearingsDocketLine';
 import {
   encodeQueryParams,
@@ -175,8 +175,9 @@ export default class AssignHearingsTable extends React.PureComponent {
         header: 'Veteran State of Residence',
         align: 'left',
         valueFunction: (row) => (
-          <VeteranStateDetail
+          <VeteranDetail
             appealId={row.externalAppealId}
+            stateOnly
           />
         )
       },

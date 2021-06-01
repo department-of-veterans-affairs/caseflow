@@ -9,7 +9,7 @@ gem "activerecord-import"
 gem "acts_as_tree"
 # BGS
 
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "128938e80b083588164233b1db91ea7b677a2627"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "7d7c67f7bad5e5aa03e257f0d8e57a4aa1a6cbbf"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
@@ -26,16 +26,13 @@ gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
 gem "icalendar"
 gem "kaminari"
+gem "logstasher"
 gem "moment_timezone-rails"
 # Rails 6 has native support for multiple dbs, so prefer that over multiverse after upgrade.
 # https://github.com/ankane/multiverse#upgrading-to-rails-6
 gem "multiverse"
 gem "newrelic_rpm"
-# nokogiri versions before 1.10.4 are vulnerable to CVE-2019-5477.
-# https://github.com/sparklemotion/nokogiri/issues/1915
-# nokogiri 1.10.4 is vulnerable to CVE-2019-13117, CVE-2019-13118, CVE-2019-18197.
-# https://github.com/sparklemotion/nokogiri/issues/1943
-gem "nokogiri", "~> 1.10.8"
+gem "nokogiri", ">= 1.11.0.rc4"
 gem "paper_trail", "~> 10"
 # Used to speed up reporting
 gem "parallel"
@@ -48,10 +45,9 @@ gem "pg", platforms: :ruby
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
-# We are not yet at version 4.x because we have not tested.
-gem "puma", "~> 3.12.6"
+gem "puma", "~> 5"
 gem "rack", "~> 2.2.3"
-gem "rails", "5.2.4.4"
+gem "rails", "5.2.4.6"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
@@ -116,6 +112,7 @@ group :test, :development, :demo do
   gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
   gem "single_cov"
   gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git"
+  gem "sql_tracker"
   gem "test-prof"
   gem "timecop"
   gem "webdrivers"

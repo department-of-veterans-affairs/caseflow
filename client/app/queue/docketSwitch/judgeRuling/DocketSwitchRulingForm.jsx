@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers';
+import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
 import {
@@ -12,8 +12,7 @@ import {
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from 'app/components/Button';
 import { sprintf } from 'sprintf-js';
-import DISPOSITIONS from 'constants/DOCKET_SWITCH';
-import TextField from 'app/components/TextField';
+import DISPOSITIONS from 'constants/DOCKET_SWITCH_DISPOSITIONS';
 import TextareaField from 'app/components/TextareaField';
 import RadioField from 'app/components/RadioField';
 import SearchableDropdown from 'app/components/SearchableDropdown';
@@ -26,8 +25,7 @@ const schema = yup.object().shape({
     mixed().
     oneOf(Object.keys(DISPOSITIONS)).
     required(),
-  hyperlink: yup.string(),
-  context: yup.string().required(),
+  context: yup.string(),
   attorney: yup.
     object().
     shape({ label: yup.string().required(), value: yup.number().required() }).
@@ -87,14 +85,6 @@ export const DocketSwitchRulingForm = ({
           inputRef={register}
           strongLabel
           vertical
-        />
-
-        <TextField
-          inputRef={register}
-          name="hyperlink"
-          label="Insert hyperlink to signed ruling letter"
-          strongLabel
-          optional
         />
 
         <TextareaField

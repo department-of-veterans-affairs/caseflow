@@ -1,0 +1,1269 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AddCavcDatesModal renders correctly 1`] = `
+<withRouter(Connect(AddCavcDatesModal))
+  appealId="2afefa82-5736-47c8-a977-0b4b8586f73e"
+>
+  <Connect(AddCavcDatesModal)
+    appealId="2afefa82-5736-47c8-a977-0b4b8586f73e"
+    history={
+      Object {
+        "action": "POP",
+        "block": [Function],
+        "canGo": [Function],
+        "createHref": [Function],
+        "entries": Array [
+          Object {
+            "hash": "",
+            "pathname": "/",
+            "search": "",
+            "state": undefined,
+          },
+        ],
+        "go": [Function],
+        "goBack": [Function],
+        "goForward": [Function],
+        "index": 0,
+        "length": 1,
+        "listen": [Function],
+        "location": Object {
+          "hash": "",
+          "pathname": "/",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [Function],
+        "replace": [Function],
+      }
+    }
+    location={
+      Object {
+        "hash": "",
+        "pathname": "/",
+        "search": "",
+        "state": undefined,
+      }
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "/",
+        "url": "/",
+      }
+    }
+  >
+    <AddCavcDatesModal
+      appealId="2afefa82-5736-47c8-a977-0b4b8586f73e"
+      highlightInvalid={false}
+      history={
+        Object {
+          "action": "POP",
+          "block": [Function],
+          "canGo": [Function],
+          "createHref": [Function],
+          "entries": Array [
+            Object {
+              "hash": "",
+              "pathname": "/",
+              "search": "",
+              "state": undefined,
+            },
+          ],
+          "go": [Function],
+          "goBack": [Function],
+          "goForward": [Function],
+          "index": 0,
+          "length": 1,
+          "listen": [Function],
+          "location": Object {
+            "hash": "",
+            "pathname": "/",
+            "search": "",
+            "state": undefined,
+          },
+          "push": [Function],
+          "replace": [Function],
+        }
+      }
+      location={
+        Object {
+          "hash": "",
+          "pathname": "/",
+          "search": "",
+          "state": undefined,
+        }
+      }
+      match={
+        Object {
+          "isExact": true,
+          "params": Object {},
+          "path": "/",
+          "url": "/",
+        }
+      }
+      requestPatch={[Function]}
+      showErrorMessage={[Function]}
+    >
+      <withRouter(Connect(QueueFlowModal))
+        submit={[Function]}
+        title="Add Court dates"
+        validateForm={[Function]}
+      >
+        <Connect(QueueFlowModal)
+          history={
+            Object {
+              "action": "POP",
+              "block": [Function],
+              "canGo": [Function],
+              "createHref": [Function],
+              "entries": Array [
+                Object {
+                  "hash": "",
+                  "pathname": "/",
+                  "search": "",
+                  "state": undefined,
+                },
+              ],
+              "go": [Function],
+              "goBack": [Function],
+              "goForward": [Function],
+              "index": 0,
+              "length": 1,
+              "listen": [Function],
+              "location": Object {
+                "hash": "",
+                "pathname": "/",
+                "search": "",
+                "state": undefined,
+              },
+              "push": [Function],
+              "replace": [Function],
+            }
+          }
+          location={
+            Object {
+              "hash": "",
+              "pathname": "/",
+              "search": "",
+              "state": undefined,
+            }
+          }
+          match={
+            Object {
+              "isExact": true,
+              "params": Object {},
+              "path": "/",
+              "url": "/",
+            }
+          }
+          submit={[Function]}
+          title="Add Court dates"
+          validateForm={[Function]}
+        >
+          <QueueFlowModal
+            highlightInvalidFormItems={[Function]}
+            history={
+              Object {
+                "action": "POP",
+                "block": [Function],
+                "canGo": [Function],
+                "createHref": [Function],
+                "entries": Array [
+                  Object {
+                    "hash": "",
+                    "pathname": "/",
+                    "search": "",
+                    "state": undefined,
+                  },
+                ],
+                "go": [Function],
+                "goBack": [Function],
+                "goForward": [Function],
+                "index": 0,
+                "length": 1,
+                "listen": [Function],
+                "location": Object {
+                  "hash": "",
+                  "pathname": "/",
+                  "search": "",
+                  "state": undefined,
+                },
+                "push": [Function],
+                "replace": [Function],
+              }
+            }
+            location={
+              Object {
+                "hash": "",
+                "pathname": "/",
+                "search": "",
+                "state": undefined,
+              }
+            }
+            match={
+              Object {
+                "isExact": true,
+                "params": Object {},
+                "path": "/",
+                "url": "/",
+              }
+            }
+            resetSaveState={[Function]}
+            submit={[Function]}
+            title="Add Court dates"
+            validateForm={[Function]}
+          >
+            <FlowModal
+              button="Submit"
+              highlightInvalidFormItems={[Function]}
+              history={
+                Object {
+                  "action": "POP",
+                  "block": [Function],
+                  "canGo": [Function],
+                  "createHref": [Function],
+                  "entries": Array [
+                    Object {
+                      "hash": "",
+                      "pathname": "/",
+                      "search": "",
+                      "state": undefined,
+                    },
+                  ],
+                  "go": [Function],
+                  "goBack": [Function],
+                  "goForward": [Function],
+                  "index": 0,
+                  "length": 1,
+                  "listen": [Function],
+                  "location": Object {
+                    "hash": "",
+                    "pathname": "/",
+                    "search": "",
+                    "state": undefined,
+                  },
+                  "push": [Function],
+                  "replace": [Function],
+                }
+              }
+              location={
+                Object {
+                  "hash": "",
+                  "pathname": "/",
+                  "search": "",
+                  "state": undefined,
+                }
+              }
+              match={
+                Object {
+                  "isExact": true,
+                  "params": Object {},
+                  "path": "/",
+                  "url": "/",
+                }
+              }
+              pathAfterSubmit="/queue"
+              resetSaveState={[Function]}
+              submit={[Function]}
+              submitDisabled={false}
+              title="Add Court dates"
+              validateForm={[Function]}
+            >
+              <Modal
+                buttons={
+                  Array [
+                    Object {
+                      "classNames": Array [
+                        "usa-button",
+                        "cf-btn-link",
+                      ],
+                      "name": "Cancel",
+                      "onClick": [Function],
+                    },
+                    Object {
+                      "classNames": Array [
+                        "usa-button-secondary",
+                        "usa-button-hover",
+                        "usa-button-warning",
+                      ],
+                      "disabled": false,
+                      "loading": false,
+                      "name": "Submit",
+                      "onClick": [Function],
+                    },
+                  ]
+                }
+                className=""
+                closeHandler={[Function]}
+                scrollLock={true}
+                title="Add Court dates"
+              >
+                <section
+                  aria-describedby="modal_id-desc"
+                  aria-labelledby="modal_id-title"
+                  aria-modal="true"
+                  className="cf-modal active "
+                  id="modal_id"
+                  role="dialog"
+                >
+                  <TouchProvider>
+                    <ScrollLock
+                      accountForScrollbars={true}
+                    >
+                      <Sheet
+                        styles="body {
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+      position: relative !important;
+      
+      padding-right: 1024px !important;
+    }"
+                      />
+                    </ScrollLock>
+                  </TouchProvider>
+                  <div
+                    className="cf-modal-body"
+                    id=""
+                  >
+                    <button
+                      className="cf-modal-close"
+                      id="Add-Court-dates-button-id-close"
+                      onClick={[Function]}
+                      type="button"
+                    >
+                      <span
+                        className="usa-sr-only"
+                      >
+                        Close
+                      </span>
+                      <svg
+                        className="cf-icon-close"
+                        height="55"
+                        viewBox="0 0 55 55"
+                        width="55"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <title>
+                          close
+                        </title>
+                        <path
+                          d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
+                        />
+                      </svg>
+                    </button>
+                    <div
+                      style={
+                        Object {
+                          "display": "flex",
+                        }
+                      }
+                    >
+                      <div
+                        data-css-1gs0ko2=""
+                      >
+                        <h1
+                          id="modal_id-title"
+                        >
+                          Add Court dates
+                        </h1>
+                        <div
+                          data-css-o98ubo=""
+                        >
+                          <p>
+                            Complete the details below to intake this Court remand for further processing
+                          </p>
+                          <DateSelector
+                            errorMessage={null}
+                            label="What is the Court's judgement date?"
+                            name="judgement-date"
+                            onChange={[Function]}
+                            strongLabel={true}
+                            type="date"
+                            value={null}
+                          >
+                            <TextField
+                              className={
+                                Array [
+                                  "cf-form-textinput",
+                                ]
+                              }
+                              errorMessage={null}
+                              label="What is the Court's judgement date?"
+                              max="9999-12-31"
+                              name="judgement-date"
+                              onChange={[Function]}
+                              optional={false}
+                              placeholder="mm/dd/yyyy"
+                              required={false}
+                              strongLabel={true}
+                              type="date"
+                              useAriaLabel={false}
+                              value={null}
+                            >
+                              <div
+                                className="cf-form-textinput   "
+                              >
+                                <label
+                                  htmlFor="judgement-date"
+                                >
+                                  <strong>
+                                    <FormLabel
+                                      label="What is the Court's judgement date?"
+                                      name="judgement-date"
+                                      optional={false}
+                                      required={false}
+                                    >
+                                      <span>
+                                        What is the Court's judgement date?
+                                      </span>
+                                    </FormLabel>
+                                  </strong>
+                                </label>
+                                <input
+                                  className={
+                                    Array [
+                                      "cf-form-textinput",
+                                    ]
+                                  }
+                                  id="judgement-date"
+                                  max="9999-12-31"
+                                  name="judgement-date"
+                                  onChange={[Function]}
+                                  placeholder="mm/dd/yyyy"
+                                  type="date"
+                                  value=""
+                                />
+                              </div>
+                            </TextField>
+                          </DateSelector>
+                          <DateSelector
+                            errorMessage={null}
+                            label="What is the Court's mandate date?"
+                            name="mandate-date"
+                            onChange={[Function]}
+                            strongLabel={true}
+                            type="date"
+                            value={null}
+                          >
+                            <TextField
+                              className={
+                                Array [
+                                  "cf-form-textinput",
+                                ]
+                              }
+                              errorMessage={null}
+                              label="What is the Court's mandate date?"
+                              max="9999-12-31"
+                              name="mandate-date"
+                              onChange={[Function]}
+                              optional={false}
+                              placeholder="mm/dd/yyyy"
+                              required={false}
+                              strongLabel={true}
+                              type="date"
+                              useAriaLabel={false}
+                              value={null}
+                            >
+                              <div
+                                className="cf-form-textinput   "
+                              >
+                                <label
+                                  htmlFor="mandate-date"
+                                >
+                                  <strong>
+                                    <FormLabel
+                                      label="What is the Court's mandate date?"
+                                      name="mandate-date"
+                                      optional={false}
+                                      required={false}
+                                    >
+                                      <span>
+                                        What is the Court's mandate date?
+                                      </span>
+                                    </FormLabel>
+                                  </strong>
+                                </label>
+                                <input
+                                  className={
+                                    Array [
+                                      "cf-form-textinput",
+                                    ]
+                                  }
+                                  id="mandate-date"
+                                  max="9999-12-31"
+                                  name="mandate-date"
+                                  onChange={[Function]}
+                                  placeholder="mm/dd/yyyy"
+                                  type="date"
+                                  value=""
+                                />
+                              </div>
+                            </TextField>
+                          </DateSelector>
+                          <TextareaField
+                            characterLimitTopRight={false}
+                            disabled={false}
+                            errorMessage={null}
+                            label="Provide context and instructions for this action"
+                            name="context-and-instructions-textBox"
+                            onChange={[Function]}
+                            optional={false}
+                            required={false}
+                            strongLabel={true}
+                          >
+                            <div
+                              className="cf-form-textarea"
+                            >
+                              <label
+                                className="question-label"
+                                htmlFor="context-and-instructions-textBox"
+                              >
+                                <strong>
+                                  <FormLabel
+                                    label="Provide context and instructions for this action"
+                                    name="context-and-instructions-textBox"
+                                    optional={false}
+                                    required={false}
+                                  >
+                                    <span>
+                                      Provide context and instructions for this action
+                                    </span>
+                                  </FormLabel>
+                                </strong>
+                              </label>
+                              <textarea
+                                disabled={false}
+                                id="context-and-instructions-textBox"
+                                name="context-and-instructions-textBox"
+                                onChange={[Function]}
+                              />
+                            </div>
+                          </TextareaField>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      className="cf-modal-divider"
+                    />
+                    <div
+                      className="cf-modal-controls"
+                    >
+                      <Button
+                        classNames={
+                          Array [
+                            "usa-button",
+                            "cf-btn-link",
+                            "cf-push-left",
+                          ]
+                        }
+                        id="Add-Court-dates-button-id-0"
+                        key="0"
+                        linkStyling={false}
+                        loading={false}
+                        name="Cancel"
+                        onClick={[Function]}
+                        type="button"
+                        willNeverBeLoading={false}
+                      >
+                        <span>
+                          <button
+                            className="usa-button cf-btn-link cf-push-left usa-button"
+                            id="Add-Court-dates-button-id-0"
+                            onClick={[Function]}
+                            type="button"
+                          >
+                            Cancel
+                          </button>
+                        </span>
+                      </Button>
+                      <Button
+                        classNames={
+                          Array [
+                            "usa-button-secondary",
+                            "usa-button-hover",
+                            "usa-button-warning",
+                            "cf-push-right",
+                          ]
+                        }
+                        disabled={false}
+                        id="Add-Court-dates-button-id-1"
+                        key="1"
+                        linkStyling={false}
+                        loading={false}
+                        name="Submit"
+                        onClick={[Function]}
+                        type="button"
+                        willNeverBeLoading={false}
+                      >
+                        <span>
+                          <button
+                            className="usa-button-secondary usa-button-hover usa-button-warning cf-push-right usa-button"
+                            disabled={false}
+                            id="Add-Court-dates-button-id-1"
+                            onClick={[Function]}
+                            type="button"
+                          >
+                            Submit
+                          </button>
+                        </span>
+                      </Button>
+                    </div>
+                  </div>
+                </section>
+              </Modal>
+            </FlowModal>
+          </QueueFlowModal>
+        </Connect(QueueFlowModal)>
+      </withRouter(Connect(QueueFlowModal))>
+    </AddCavcDatesModal>
+  </Connect(AddCavcDatesModal)>
+</withRouter(Connect(AddCavcDatesModal))>
+`;
+
+exports[`AddCavcDatesModal submits succesfully 1`] = `
+<withRouter(Connect(AddCavcDatesModal))
+  appealId="2afefa82-5736-47c8-a977-0b4b8586f73e"
+>
+  <Connect(AddCavcDatesModal)
+    appealId="2afefa82-5736-47c8-a977-0b4b8586f73e"
+    history={
+      Object {
+        "action": "POP",
+        "block": [Function],
+        "canGo": [Function],
+        "createHref": [Function],
+        "entries": Array [
+          Object {
+            "hash": "",
+            "pathname": "/",
+            "search": "",
+            "state": undefined,
+          },
+        ],
+        "go": [Function],
+        "goBack": [Function],
+        "goForward": [Function],
+        "index": 0,
+        "length": 1,
+        "listen": [Function],
+        "location": Object {
+          "hash": "",
+          "pathname": "/",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [Function],
+        "replace": [Function],
+      }
+    }
+    location={
+      Object {
+        "hash": "",
+        "pathname": "/",
+        "search": "",
+        "state": undefined,
+      }
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "/",
+        "url": "/",
+      }
+    }
+  >
+    <AddCavcDatesModal
+      appealId="2afefa82-5736-47c8-a977-0b4b8586f73e"
+      highlightInvalid={false}
+      history={
+        Object {
+          "action": "POP",
+          "block": [Function],
+          "canGo": [Function],
+          "createHref": [Function],
+          "entries": Array [
+            Object {
+              "hash": "",
+              "pathname": "/",
+              "search": "",
+              "state": undefined,
+            },
+          ],
+          "go": [Function],
+          "goBack": [Function],
+          "goForward": [Function],
+          "index": 0,
+          "length": 1,
+          "listen": [Function],
+          "location": Object {
+            "hash": "",
+            "pathname": "/",
+            "search": "",
+            "state": undefined,
+          },
+          "push": [Function],
+          "replace": [Function],
+        }
+      }
+      location={
+        Object {
+          "hash": "",
+          "pathname": "/",
+          "search": "",
+          "state": undefined,
+        }
+      }
+      match={
+        Object {
+          "isExact": true,
+          "params": Object {},
+          "path": "/",
+          "url": "/",
+        }
+      }
+      requestPatch={[Function]}
+      showErrorMessage={[Function]}
+    >
+      <withRouter(Connect(QueueFlowModal))
+        submit={[Function]}
+        title="Add Court dates"
+        validateForm={[Function]}
+      >
+        <Connect(QueueFlowModal)
+          history={
+            Object {
+              "action": "POP",
+              "block": [Function],
+              "canGo": [Function],
+              "createHref": [Function],
+              "entries": Array [
+                Object {
+                  "hash": "",
+                  "pathname": "/",
+                  "search": "",
+                  "state": undefined,
+                },
+              ],
+              "go": [Function],
+              "goBack": [Function],
+              "goForward": [Function],
+              "index": 0,
+              "length": 1,
+              "listen": [Function],
+              "location": Object {
+                "hash": "",
+                "pathname": "/",
+                "search": "",
+                "state": undefined,
+              },
+              "push": [Function],
+              "replace": [Function],
+            }
+          }
+          location={
+            Object {
+              "hash": "",
+              "pathname": "/",
+              "search": "",
+              "state": undefined,
+            }
+          }
+          match={
+            Object {
+              "isExact": true,
+              "params": Object {},
+              "path": "/",
+              "url": "/",
+            }
+          }
+          submit={[Function]}
+          title="Add Court dates"
+          validateForm={[Function]}
+        >
+          <QueueFlowModal
+            highlightInvalidFormItems={[Function]}
+            history={
+              Object {
+                "action": "POP",
+                "block": [Function],
+                "canGo": [Function],
+                "createHref": [Function],
+                "entries": Array [
+                  Object {
+                    "hash": "",
+                    "pathname": "/",
+                    "search": "",
+                    "state": undefined,
+                  },
+                ],
+                "go": [Function],
+                "goBack": [Function],
+                "goForward": [Function],
+                "index": 0,
+                "length": 1,
+                "listen": [Function],
+                "location": Object {
+                  "hash": "",
+                  "pathname": "/",
+                  "search": "",
+                  "state": undefined,
+                },
+                "push": [Function],
+                "replace": [Function],
+              }
+            }
+            location={
+              Object {
+                "hash": "",
+                "pathname": "/",
+                "search": "",
+                "state": undefined,
+              }
+            }
+            match={
+              Object {
+                "isExact": true,
+                "params": Object {},
+                "path": "/",
+                "url": "/",
+              }
+            }
+            resetSaveState={[Function]}
+            submit={[Function]}
+            title="Add Court dates"
+            validateForm={[Function]}
+          >
+            <FlowModal
+              button="Submit"
+              highlightInvalidFormItems={[Function]}
+              history={
+                Object {
+                  "action": "POP",
+                  "block": [Function],
+                  "canGo": [Function],
+                  "createHref": [Function],
+                  "entries": Array [
+                    Object {
+                      "hash": "",
+                      "pathname": "/",
+                      "search": "",
+                      "state": undefined,
+                    },
+                  ],
+                  "go": [Function],
+                  "goBack": [Function],
+                  "goForward": [Function],
+                  "index": 0,
+                  "length": 1,
+                  "listen": [Function],
+                  "location": Object {
+                    "hash": "",
+                    "pathname": "/",
+                    "search": "",
+                    "state": undefined,
+                  },
+                  "push": [Function],
+                  "replace": [Function],
+                }
+              }
+              location={
+                Object {
+                  "hash": "",
+                  "pathname": "/",
+                  "search": "",
+                  "state": undefined,
+                }
+              }
+              match={
+                Object {
+                  "isExact": true,
+                  "params": Object {},
+                  "path": "/",
+                  "url": "/",
+                }
+              }
+              pathAfterSubmit="/queue"
+              resetSaveState={[Function]}
+              submit={[Function]}
+              submitDisabled={false}
+              title="Add Court dates"
+              validateForm={[Function]}
+            >
+              <Modal
+                buttons={
+                  Array [
+                    Object {
+                      "classNames": Array [
+                        "usa-button",
+                        "cf-btn-link",
+                      ],
+                      "name": "Cancel",
+                      "onClick": [Function],
+                    },
+                    Object {
+                      "classNames": Array [
+                        "usa-button-secondary",
+                        "usa-button-hover",
+                        "usa-button-warning",
+                      ],
+                      "disabled": false,
+                      "loading": true,
+                      "name": "Submit",
+                      "onClick": [Function],
+                    },
+                  ]
+                }
+                className=""
+                closeHandler={[Function]}
+                scrollLock={true}
+                title="Add Court dates"
+              >
+                <section
+                  aria-describedby="modal_id-desc"
+                  aria-labelledby="modal_id-title"
+                  aria-modal="true"
+                  className="cf-modal active "
+                  id="modal_id"
+                  role="dialog"
+                >
+                  <TouchProvider>
+                    <ScrollLock
+                      accountForScrollbars={true}
+                    >
+                      <Sheet
+                        styles="body {
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+      position: relative !important;
+      
+      padding-right: 1024px !important;
+    }"
+                      />
+                    </ScrollLock>
+                  </TouchProvider>
+                  <div
+                    className="cf-modal-body"
+                    id=""
+                  >
+                    <button
+                      className="cf-modal-close"
+                      id="Add-Court-dates-button-id-close"
+                      onClick={[Function]}
+                      type="button"
+                    >
+                      <span
+                        className="usa-sr-only"
+                      >
+                        Close
+                      </span>
+                      <svg
+                        className="cf-icon-close"
+                        height="55"
+                        viewBox="0 0 55 55"
+                        width="55"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <title>
+                          close
+                        </title>
+                        <path
+                          d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
+                        />
+                      </svg>
+                    </button>
+                    <div
+                      style={
+                        Object {
+                          "display": "flex",
+                        }
+                      }
+                    >
+                      <div
+                        data-css-1gs0ko2=""
+                      >
+                        <h1
+                          id="modal_id-title"
+                        >
+                          Add Court dates
+                        </h1>
+                        <div
+                          data-css-o98ubo=""
+                        >
+                          <p>
+                            Complete the details below to intake this Court remand for further processing
+                          </p>
+                          <DateSelector
+                            errorMessage={null}
+                            label="What is the Court's judgement date?"
+                            name="judgement-date"
+                            onChange={[Function]}
+                            strongLabel={true}
+                            type="date"
+                            value="03/27/2020"
+                          >
+                            <TextField
+                              className={
+                                Array [
+                                  "cf-form-textinput",
+                                ]
+                              }
+                              errorMessage={null}
+                              label="What is the Court's judgement date?"
+                              max="9999-12-31"
+                              name="judgement-date"
+                              onChange={[Function]}
+                              optional={false}
+                              placeholder="mm/dd/yyyy"
+                              required={false}
+                              strongLabel={true}
+                              type="date"
+                              useAriaLabel={false}
+                              value="03/27/2020"
+                            >
+                              <div
+                                className="cf-form-textinput   "
+                              >
+                                <label
+                                  htmlFor="judgement-date"
+                                >
+                                  <strong>
+                                    <FormLabel
+                                      label="What is the Court's judgement date?"
+                                      name="judgement-date"
+                                      optional={false}
+                                      required={false}
+                                    >
+                                      <span>
+                                        What is the Court's judgement date?
+                                      </span>
+                                    </FormLabel>
+                                  </strong>
+                                </label>
+                                <input
+                                  className={
+                                    Array [
+                                      "cf-form-textinput",
+                                    ]
+                                  }
+                                  id="judgement-date"
+                                  max="9999-12-31"
+                                  name="judgement-date"
+                                  onChange={[Function]}
+                                  placeholder="mm/dd/yyyy"
+                                  type="date"
+                                  value="03/27/2020"
+                                />
+                              </div>
+                            </TextField>
+                          </DateSelector>
+                          <DateSelector
+                            errorMessage={null}
+                            label="What is the Court's mandate date?"
+                            name="mandate-date"
+                            onChange={[Function]}
+                            strongLabel={true}
+                            type="date"
+                            value="03/31/2019"
+                          >
+                            <TextField
+                              className={
+                                Array [
+                                  "cf-form-textinput",
+                                ]
+                              }
+                              errorMessage={null}
+                              label="What is the Court's mandate date?"
+                              max="9999-12-31"
+                              name="mandate-date"
+                              onChange={[Function]}
+                              optional={false}
+                              placeholder="mm/dd/yyyy"
+                              required={false}
+                              strongLabel={true}
+                              type="date"
+                              useAriaLabel={false}
+                              value="03/31/2019"
+                            >
+                              <div
+                                className="cf-form-textinput   "
+                              >
+                                <label
+                                  htmlFor="mandate-date"
+                                >
+                                  <strong>
+                                    <FormLabel
+                                      label="What is the Court's mandate date?"
+                                      name="mandate-date"
+                                      optional={false}
+                                      required={false}
+                                    >
+                                      <span>
+                                        What is the Court's mandate date?
+                                      </span>
+                                    </FormLabel>
+                                  </strong>
+                                </label>
+                                <input
+                                  className={
+                                    Array [
+                                      "cf-form-textinput",
+                                    ]
+                                  }
+                                  id="mandate-date"
+                                  max="9999-12-31"
+                                  name="mandate-date"
+                                  onChange={[Function]}
+                                  placeholder="mm/dd/yyyy"
+                                  type="date"
+                                  value="03/31/2019"
+                                />
+                              </div>
+                            </TextField>
+                          </DateSelector>
+                          <TextareaField
+                            characterLimitTopRight={false}
+                            disabled={false}
+                            errorMessage={null}
+                            label="Provide context and instructions for this action"
+                            name="context-and-instructions-textBox"
+                            onChange={[Function]}
+                            optional={false}
+                            required={false}
+                            strongLabel={true}
+                            value="test instructions"
+                          >
+                            <div
+                              className="cf-form-textarea"
+                            >
+                              <label
+                                className="question-label"
+                                htmlFor="context-and-instructions-textBox"
+                              >
+                                <strong>
+                                  <FormLabel
+                                    label="Provide context and instructions for this action"
+                                    name="context-and-instructions-textBox"
+                                    optional={false}
+                                    required={false}
+                                  >
+                                    <span>
+                                      Provide context and instructions for this action
+                                    </span>
+                                  </FormLabel>
+                                </strong>
+                              </label>
+                              <textarea
+                                disabled={false}
+                                id="context-and-instructions-textBox"
+                                name="context-and-instructions-textBox"
+                                onChange={[Function]}
+                                value="test instructions"
+                              />
+                            </div>
+                          </TextareaField>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      className="cf-modal-divider"
+                    />
+                    <div
+                      className="cf-modal-controls"
+                    >
+                      <Button
+                        classNames={
+                          Array [
+                            "usa-button",
+                            "cf-btn-link",
+                            "cf-push-left",
+                          ]
+                        }
+                        id="Add-Court-dates-button-id-0"
+                        key="0"
+                        linkStyling={false}
+                        loading={false}
+                        name="Cancel"
+                        onClick={[Function]}
+                        type="button"
+                        willNeverBeLoading={false}
+                      >
+                        <span>
+                          <button
+                            className="usa-button cf-btn-link cf-push-left usa-button"
+                            id="Add-Court-dates-button-id-0"
+                            onClick={[Function]}
+                            type="button"
+                          >
+                            Cancel
+                          </button>
+                        </span>
+                      </Button>
+                      <Button
+                        classNames={
+                          Array [
+                            "usa-button-secondary",
+                            "usa-button-hover",
+                            "usa-button-warning",
+                            "cf-push-right",
+                          ]
+                        }
+                        disabled={false}
+                        id="Add-Court-dates-button-id-1"
+                        key="1"
+                        linkStyling={false}
+                        loading={true}
+                        name="Submit"
+                        onClick={[Function]}
+                        type="button"
+                        willNeverBeLoading={false}
+                      >
+                        <span>
+                          <button
+                            className="cf-push-right usa-button-disabled hidden-field usa-button"
+                            disabled={false}
+                            id="Add-Court-dates-button-id-1"
+                            onClick={[Function]}
+                            type="button"
+                          >
+                            Submit
+                          </button>
+                          <LoadingIndicator>
+                            <span>
+                              <button
+                                className="cf-push-right usa-button-disabled cf-default cf-loading"
+                                disabled={true}
+                                id="Add-Court-dates-button-id-1-loading"
+                                type="button"
+                              >
+                                <span
+                                  className="cf-loading-icon-container"
+                                >
+                                  <span
+                                    className="cf-loading-icon-front"
+                                  >
+                                    <span
+                                      className="cf-loading-icon-back"
+                                    >
+                                      Loading...
+                                    </span>
+                                  </span>
+                                </span>
+                              </button>
+                            </span>
+                          </LoadingIndicator>
+                        </span>
+                      </Button>
+                    </div>
+                  </div>
+                </section>
+              </Modal>
+            </FlowModal>
+          </QueueFlowModal>
+        </Connect(QueueFlowModal)>
+      </withRouter(Connect(QueueFlowModal))>
+    </AddCavcDatesModal>
+  </Connect(AddCavcDatesModal)>
+</withRouter(Connect(AddCavcDatesModal))>
+`;

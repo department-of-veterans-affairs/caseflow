@@ -20,14 +20,14 @@ const duplicateNumberMsg = <div>
         Duplicate phone numbers documented.<br />
   { COPY.DUPLICATE_PHONE_NUMBER_MESSAGE }</div>;
 
-const itemNotFoundTitle = { title: 'Information cannot be found' };
+const itemNotFoundTitle = { title: COPY.INFORMATION_CANNOT_BE_FOUND };
 const itemNotFoundMsg = <div>
         We could not find the information you were looking for.<br />
         Please return to the previous page, check the information provided, and try again.</div>;
 
 const DEFAULT_UNKNOWN_ERROR_MSG = (
   <div>
-    An unknown error occured.
+    {COPY.DEFAULT_UNKNOWN_ERROR_MESSAGE}
   </div>
 );
 
@@ -168,7 +168,7 @@ LoadingDataDisplay.propTypes = {
 LoadingDataDisplay.defaultProps = {
   slowLoadThresholdMs: 15 * 1000,
   timeoutMs: Infinity,
-  slowLoadMessage: 'Loading is taking longer than usual...',
+  slowLoadMessage: COPY.SLOW_LOADING_MESSAGE,
   loadingComponent: LoadingScreen,
   errorComponent: StatusMessage,
   loadingComponentProps: {},

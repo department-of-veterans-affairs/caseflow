@@ -1,3 +1,5 @@
+// File likely no longer needed -- marked for removal in future
+
 // This is what creates the hot assets so that you can edit assets,
 // JavaScript (and eventually SCSS), referenced in your webpack config,
 // and the page updated without you needing to reload the page.
@@ -11,25 +13,25 @@ const webpackConfig = require('./webpack.hot.config');
 const hotRailsPort = process.env.HOT_RAILS_PORT || 3500;
 /* eslint-enable no-process-env */
 
-const compiler = webpack(webpackConfig);
+const compiler = webpack({ ...webpackConfig });
 const baseUrl = `http://localhost:${hotRailsPort}`;
 
 const devServer = new WebpackDevServer(compiler, {
   publicPath: webpackConfig.output.publicPath,
   headers: {
-    'Access-Control-Allow-Origin': 'http://localhost:3000',
-    'Access-Control-Allow-Credentials': 'true'
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Credentials': 'true',
   },
   hot: true,
   inline: false,
   quiet: false,
   noInfo: false,
   proxy: {
-    '*': baseUrl
+    '*': baseUrl,
   },
   stats: {
-    colors: true
-  }
+    colors: true,
+  },
 });
 
 devServer.listen(hotRailsPort, '0.0.0.0', (err) => {

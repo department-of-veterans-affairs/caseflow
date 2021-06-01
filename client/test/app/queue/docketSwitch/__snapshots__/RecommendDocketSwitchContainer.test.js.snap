@@ -7,7 +7,7 @@ exports[`formatDocketSwitchRecommendation with denied disposition properly forma
   
 **Recommendation:** Deny all issues  
   
-**Draft letter:** https://example.com/file.txt"
+**Draft letter:** [View link](https://example.com/file.txt)"
 `;
 
 exports[`formatDocketSwitchRecommendation with granted disposition properly formats 1`] = `
@@ -17,7 +17,7 @@ exports[`formatDocketSwitchRecommendation with granted disposition properly form
   
 **Recommendation:** Grant all issues  
   
-**Draft letter:** https://example.com/file.txt"
+**Draft letter:** [View link](https://example.com/file.txt)"
 `;
 
 exports[`formatDocketSwitchRecommendation with partially_granted disposition properly formats 1`] = `
@@ -27,5 +27,5 @@ exports[`formatDocketSwitchRecommendation with partially_granted disposition pro
   
 **Recommendation:** Grant a partial switch  
   
-**Draft letter:** https://example.com/file.txt"
+**Draft letter:** [View link](https://example.com/file.txt)"
 `;

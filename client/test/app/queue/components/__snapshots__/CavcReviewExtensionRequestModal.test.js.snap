@@ -1,0 +1,313 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CavcReviewExtensionRequestModal renders correctly 1`] = `
+<CavcReviewExtensionRequestModalUnconnected
+  onCancel={[MockFunction]}
+  onSubmit={[MockFunction]}
+>
+  <Modal
+    buttons={
+      Array [
+        Object {
+          "classNames": Array [
+            "cf-modal-link",
+            "cf-btn-link",
+          ],
+          "name": "Cancel",
+          "onClick": [Function],
+        },
+        Object {
+          "classNames": Array [
+            "usa-button",
+            "usa-button-secondary",
+          ],
+          "name": "Confirm",
+          "onClick": [Function],
+        },
+      ]
+    }
+    className=""
+    closeHandler={[MockFunction]}
+    scrollLock={true}
+    title="Review extension request"
+  >
+    <section
+      aria-describedby="modal_id-desc"
+      aria-labelledby="modal_id-title"
+      aria-modal="true"
+      className="cf-modal active "
+      id="modal_id"
+      role="dialog"
+    >
+      <TouchProvider>
+        <ScrollLock
+          accountForScrollbars={true}
+        >
+          <Sheet
+            styles="body {
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+      position: relative !important;
+      
+      padding-right: 1024px !important;
+    }"
+          />
+        </ScrollLock>
+      </TouchProvider>
+      <div
+        className="cf-modal-body"
+        id=""
+      >
+        <button
+          className="cf-modal-close"
+          id="Review-extension-request-button-id-close"
+          onClick={[MockFunction]}
+          type="button"
+        >
+          <span
+            className="usa-sr-only"
+          >
+            Close
+          </span>
+          <svg
+            className="cf-icon-close"
+            height="55"
+            viewBox="0 0 55 55"
+            width="55"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <title>
+              close
+            </title>
+            <path
+              d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
+            />
+          </svg>
+        </button>
+        <div
+          style={
+            Object {
+              "display": "flex",
+            }
+          }
+        >
+          <div
+            data-css-1gs0ko2=""
+          >
+            <h1
+              id="modal_id-title"
+            >
+              Review extension request
+            </h1>
+            <div
+              data-css-o98ubo=""
+            >
+              <RadioField
+                className={
+                  Array [
+                    "usa-fieldset-inputs",
+                  ]
+                }
+                errorMessage={null}
+                label="How will you proceed?"
+                name="decision"
+                onChange={[Function]}
+                options={
+                  Array [
+                    Object {
+                      "displayText": "Grant",
+                      "help": "Task will go on hold for selected number of days",
+                      "value": "grant",
+                    },
+                    Object {
+                      "displayText": "Deny",
+                      "help": "Marks the extension request as denied",
+                      "value": "deny",
+                    },
+                  ]
+                }
+                required={false}
+                strongLabel={true}
+              >
+                <fieldset
+                  className="usa-fieldset-inputs cf-form-radio-inline "
+                >
+                  <legend
+                    className=""
+                  >
+                    <strong>
+                      <span>
+                        How will you proceed?
+                         
+                      </span>
+                    </strong>
+                  </legend>
+                  <div
+                    className="cf-form-radio-options"
+                  >
+                    <div
+                      className="cf-form-radio-option"
+                      key="decision-grant-0"
+                    >
+                      <input
+                        disabled={false}
+                        id="decision_grant"
+                        name="decision"
+                        onChange={[Function]}
+                        type="radio"
+                        value="grant"
+                      />
+                      <label
+                        className=""
+                        htmlFor="decision_grant"
+                      >
+                        Grant
+                      </label>
+                      <RadioFieldHelpText
+                        help="Task will go on hold for selected number of days"
+                      >
+                        <div
+                          className="cf-form-radio-help helpText"
+                        >
+                          Task will go on hold for selected number of days
+                        </div>
+                      </RadioFieldHelpText>
+                    </div>
+                    <div
+                      className="cf-form-radio-option"
+                      key="decision-deny-1"
+                    >
+                      <input
+                        disabled={false}
+                        id="decision_deny"
+                        name="decision"
+                        onChange={[Function]}
+                        type="radio"
+                        value="deny"
+                      />
+                      <label
+                        className=""
+                        htmlFor="decision_deny"
+                      >
+                        Deny
+                      </label>
+                      <RadioFieldHelpText
+                        help="Marks the extension request as denied"
+                      >
+                        <div
+                          className="cf-form-radio-help helpText"
+                        >
+                          Marks the extension request as denied
+                        </div>
+                      </RadioFieldHelpText>
+                    </div>
+                  </div>
+                </fieldset>
+              </RadioField>
+              <TextareaField
+                characterLimitTopRight={false}
+                disabled={false}
+                errorMessage={null}
+                label="Provide context and instructions for this action"
+                name="instructions"
+                onChange={[Function]}
+                optional={false}
+                required={false}
+              >
+                <div
+                  className="cf-form-textarea"
+                >
+                  <label
+                    className="question-label"
+                    htmlFor="instructions"
+                  >
+                    <FormLabel
+                      label="Provide context and instructions for this action"
+                      name="instructions"
+                      optional={false}
+                      required={false}
+                    >
+                      <span>
+                        Provide context and instructions for this action
+                      </span>
+                    </FormLabel>
+                  </label>
+                  <textarea
+                    disabled={false}
+                    id="instructions"
+                    name="instructions"
+                    onChange={[Function]}
+                  />
+                </div>
+              </TextareaField>
+            </div>
+          </div>
+        </div>
+        <div
+          className="cf-modal-divider"
+        />
+        <div
+          className="cf-modal-controls"
+        >
+          <Button
+            classNames={
+              Array [
+                "cf-modal-link",
+                "cf-btn-link",
+                "cf-push-left",
+              ]
+            }
+            id="Review-extension-request-button-id-0"
+            key="0"
+            linkStyling={false}
+            loading={false}
+            name="Cancel"
+            onClick={[Function]}
+            type="button"
+            willNeverBeLoading={false}
+          >
+            <span>
+              <button
+                className="cf-modal-link cf-btn-link cf-push-left usa-button"
+                id="Review-extension-request-button-id-0"
+                onClick={[Function]}
+                type="button"
+              >
+                Cancel
+              </button>
+            </span>
+          </Button>
+          <Button
+            classNames={
+              Array [
+                "usa-button",
+                "usa-button-secondary",
+                "cf-push-right",
+              ]
+            }
+            id="Review-extension-request-button-id-1"
+            key="1"
+            linkStyling={false}
+            loading={false}
+            name="Confirm"
+            onClick={[Function]}
+            type="button"
+            willNeverBeLoading={false}
+          >
+            <span>
+              <button
+                className="usa-button usa-button-secondary cf-push-right usa-button"
+                id="Review-extension-request-button-id-1"
+                onClick={[Function]}
+                type="button"
+              >
+                Confirm
+              </button>
+            </span>
+          </Button>
+        </div>
+      </div>
+    </section>
+  </Modal>
+</CavcReviewExtensionRequestModalUnconnected>
+`;

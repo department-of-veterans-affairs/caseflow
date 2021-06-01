@@ -42,7 +42,7 @@ export const DateSelector = (props) => {
       updatedVal = updatedVal.substr(0, updatedVal.length - 1);
     }
 
-    // Test the input agains the date regex above. The regex matches
+    // Test the input against the date regex above. The regex matches
     // as much of an allowed date as possible. Therefore this will just
     // removing any non-date characters
     const match = DATE_REGEX.exec(updatedVal);
@@ -85,7 +85,10 @@ DateSelector.propTypes = {
   /**
    * Text (or other node) to display to indicate an error state
    */
-  errorMessage: PropTypes.string,
+  errorMessage: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.node
+  ]),
   invisible: PropTypes.bool,
 
   /**
@@ -104,9 +107,9 @@ DateSelector.propTypes = {
   ]),
 
   /**
-   * Text to display in a `label` element
+   * Text or element to display in a `label` element
    */
-  label: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+  label: PropTypes.oneOfType([PropTypes.string, PropTypes.bool, PropTypes.element]),
 
   /**
    * String to be applied to the `name` attribute of the `input` element

@@ -272,8 +272,8 @@ describe TaskSorter, :all_dbs do
 
         before do
           tasks.each do |task|
-            first_name = fake_names.shuffle
-            last_name = "#{fake_names.shuffle} #{fake_names.shuffle}"
+            first_name = fake_names.sample
+            last_name = "#{fake_names.sample} #{fake_names.sample}"
             task.appeal.veteran.update!(first_name: first_name, last_name: last_name)
             create(
               :cached_appeal,
@@ -289,7 +289,10 @@ describe TaskSorter, :all_dbs do
             first_name = task.appeal.veteran_first_name.split(" ").first.upcase
             "#{last_name}, #{first_name}"
           end
-          expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+          # To help diagnose flaky test, print veteran names on failure
+          ordered_vets = expected_order.map(&:appeal).map(&:veteran)
+            .map { |v| "#{v.last_name.split(' ').last} (#{v.last_name}), #{v.first_name}" }
+          expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id)), ordered_vets.to_s
         end
       end
 

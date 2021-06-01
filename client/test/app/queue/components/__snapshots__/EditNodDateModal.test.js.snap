@@ -1,359 +1,218 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`EditNodDateModal renders correctly 1`] = `
-<EditNodDateModal
-  appealId="tb78ti7in77n"
-  nodDate="2020-10-31"
-  onCancel={[MockFunction]}
-  onSubmit={[MockFunction]}
->
-  <Modal
-    buttons={
-      Array [
-        Object {
-          "classNames": Array [
-            "cf-modal-link",
-            "cf-btn-link",
-          ],
-          "name": "Cancel",
-          "onClick": [MockFunction],
-        },
-        Object {
-          "classNames": Array [
-            "usa-button",
-            "usa-button-primary",
-          ],
-          "disabled": false,
-          "name": "Submit",
-          "onClick": [Function],
-        },
-      ]
-    }
-    className=""
-    closeHandler={[MockFunction]}
-    onCancel={[MockFunction]}
-    onSubmit={[MockFunction]}
-    scrollLock={true}
-    title="Edit NOD Date"
+<div>
+  <section
+    aria-describedby="modal_id-desc"
+    aria-labelledby="modal_id-title"
+    aria-modal="true"
+    class="cf-modal active "
+    id="modal_id"
+    role="dialog"
   >
-    <section
-      aria-describedby="modal_id-desc"
-      aria-labelledby="modal_id-title"
-      aria-modal="true"
-      className="cf-modal active "
-      id="modal_id"
-      role="alertdialog"
+    <div
+      class="cf-modal-body"
+      id=""
     >
-      <TouchProvider>
-        <ScrollLock
-          accountForScrollbars={true}
-        >
-          <Sheet
-            styles="body {
-      box-sizing: border-box !important;
-      overflow: hidden !important;
-      position: relative !important;
-      
-      padding-right: 1024px !important;
-    }"
-          />
-        </ScrollLock>
-      </TouchProvider>
-      <div
-        className="cf-modal-body"
-        id=""
+      <button
+        class="cf-modal-close"
+        id="Edit-NOD-Date-button-id-close"
+        type="button"
       >
-        <button
-          className="cf-modal-close"
-          id="Edit-NOD-Date-button-id-close"
-          onClick={[MockFunction]}
-          type="button"
+        <span
+          class="usa-sr-only"
         >
-          <span
-            className="usa-sr-only"
-          >
-            Close
-          </span>
-          <svg
-            className="cf-icon-close"
-            height="55"
-            viewBox="0 0 55 55"
-            width="55"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <title>
-              close
-            </title>
-            <path
-              d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
-            />
-          </svg>
-        </button>
+          Close
+        </span>
+        <svg
+          class="cf-icon-close"
+          height="55"
+          viewBox="0 0 55 55"
+          width="55"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <title>
+            close
+          </title>
+          <path
+            d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
+          />
+        </svg>
+      </button>
+      <div
+        style="display: flex;"
+      >
         <div
-          style={
-            Object {
-              "display": "flex",
-            }
-          }
+          data-css-1gs0ko2=""
         >
-          <div
-            data-css-1gs0ko2=""
+          <h1
+            id="modal_id-title"
           >
-            <h1
-              id="modal_id-title"
-            >
-              Edit NOD Date
-            </h1>
-            <div
-              data-css-o98ubo=""
-            >
+            Edit NOD Date
+          </h1>
+          <div
+            data-css-o98ubo=""
+          >
+            <div>
               <div>
-                <ReactMarkdown
-                  source="**Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.**"
-                  transformLinkUri={[Function]}
-                >
-                  <Root
-                    key="root-1-1-0"
-                    node={
-                      Object {
-                        "children": Array [
-                          Object {
-                            "children": Array [
-                              Object {
-                                "children": Array [
-                                  Object {
-                                    "position": Object {
-                                      "end": Object {
-                                        "column": 102,
-                                        "line": 1,
-                                        "offset": 101,
-                                      },
-                                      "start": Object {
-                                        "column": 3,
-                                        "line": 1,
-                                        "offset": 2,
-                                      },
-                                    },
-                                    "type": "text",
-                                    "value": "Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.",
-                                  },
-                                ],
-                                "position": Object {
-                                  "end": Object {
-                                    "column": 104,
-                                    "line": 1,
-                                    "offset": 103,
-                                  },
-                                  "start": Object {
-                                    "column": 1,
-                                    "line": 1,
-                                    "offset": 0,
-                                  },
-                                },
-                                "type": "strong",
-                              },
-                            ],
-                            "position": Object {
-                              "end": Object {
-                                "column": 104,
-                                "line": 1,
-                                "offset": 103,
-                              },
-                              "start": Object {
-                                "column": 1,
-                                "line": 1,
-                                "offset": 0,
-                              },
-                            },
-                            "type": "paragraph",
-                          },
-                        ],
-                        "position": Object {
-                          "end": Object {
-                            "column": 104,
-                            "line": 1,
-                            "offset": 103,
-                          },
-                          "start": Object {
-                            "column": 1,
-                            "line": 1,
-                            "offset": 0,
-                          },
-                        },
-                        "type": "root",
-                      }
-                    }
-                  >
-                    <p
-                      key="paragraph-1-1-0"
-                    >
-                      <strong
-                        key="strong-1-1-0"
-                      >
-                        <TextRenderer
-                          key="text-1-3-0"
-                          node={
-                            Object {
-                              "position": Object {
-                                "end": Object {
-                                  "column": 102,
-                                  "line": 1,
-                                  "offset": 101,
-                                },
-                                "start": Object {
-                                  "column": 3,
-                                  "line": 1,
-                                  "offset": 2,
-                                },
-                              },
-                              "type": "text",
-                              "value": "Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.",
-                            }
-                          }
-                          nodeKey="text-1-3-0"
-                          value="Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal."
-                        >
-                          Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.
-                        </TextRenderer>
-                      </strong>
-                    </p>
-                  </Root>
-                </ReactMarkdown>
+                <p>
+                  <strong>
+                    Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.
+                  </strong>
+                </p>
               </div>
-              <DateSelector
-                errorMessage={null}
-                label="NOD Date"
-                name="nodDate"
-                onChange={[Function]}
-                strongLabel={true}
-                type="date"
-                value="2020-10-31"
-              >
-                <TextField
-                  className={
-                    Array [
-                      "cf-form-textinput",
-                    ]
-                  }
-                  errorMessage={null}
-                  label="NOD Date"
-                  max="9999-12-31"
-                  name="nodDate"
-                  onChange={[Function]}
-                  optional={false}
-                  placeholder="mm/dd/yyyy"
-                  required={false}
-                  strongLabel={true}
-                  type="date"
-                  useAriaLabel={false}
-                  value="2020-10-31"
+              <form>
+                <div
+                  class="cf-form-textinput   "
+                >
+                  <label
+                    for="nodDate"
+                  >
+                    <strong>
+                      <span>
+                        NOD Date
+                      </span>
+                    </strong>
+                  </label>
+                  <input
+                    class="cf-form-textinput"
+                    id="nodDate"
+                    max="9999-12-31"
+                    name="nodDate"
+                    placeholder="mm/dd/yyyy"
+                    type="date"
+                    value=""
+                  />
+                </div>
+                <div
+                  class=""
                 >
                   <div
-                    className="cf-form-textinput   "
+                    class="cf-form-dropdown dropdown-reason"
                   >
                     <label
-                      htmlFor="nodDate"
+                      class="question-label"
+                      for="reason"
+                      id="reason-label"
                     >
                       <strong>
-                        <FormLabel
-                          label="NOD Date"
-                          name="nodDate"
-                          optional={false}
-                          required={false}
-                        >
-                          <span>
-                            NOD Date
-                          </span>
-                        </FormLabel>
+                        <span>
+                          Reason for edit
+                        </span>
                       </strong>
                     </label>
-                    <input
-                      className={
-                        Array [
-                          "cf-form-textinput",
-                        ]
-                      }
-                      id="nodDate"
-                      max="9999-12-31"
-                      name="nodDate"
-                      onChange={[Function]}
-                      placeholder="mm/dd/yyyy"
-                      type="date"
-                      value="2020-10-31"
-                    />
+                    <div
+                      class="cf-select"
+                    >
+                      <div
+                        class=" css-2b097c-container"
+                      >
+                        <div
+                          class="cf-select__control css-yk16xz-control"
+                        >
+                          <div
+                            class="cf-select__value-container css-g1d714-ValueContainer"
+                          >
+                            <div
+                              class="cf-select__placeholder css-1wa3eu0-placeholder"
+                            >
+                              Select the reason...
+                            </div>
+                            <div
+                              class="css-81nyic-Input"
+                            >
+                              <div
+                                class="cf-select__input"
+                                style="display: inline-block;"
+                              >
+                                <input
+                                  aria-autocomplete="list"
+                                  aria-expanded="false"
+                                  aria-haspopup="true"
+                                  aria-labelledby="reason-label"
+                                  aria-owns="reason-listbox"
+                                  autocapitalize="none"
+                                  autocomplete="off"
+                                  autocorrect="off"
+                                  id="reason"
+                                  role="combobox"
+                                  spellcheck="false"
+                                  style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                                  tabindex="0"
+                                  type="text"
+                                  value=""
+                                />
+                                <div
+                                  style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                          >
+                            <span
+                              class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                            />
+                            <div
+                              aria-hidden="true"
+                              class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                            >
+                              <svg
+                                aria-hidden="true"
+                                class="css-6q0nyr-Svg"
+                                focusable="false"
+                                height="20"
+                                viewBox="0 0 20 20"
+                                width="20"
+                              >
+                                <path
+                                  d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                                />
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                        <input
+                          name="reason"
+                          type="hidden"
+                          value=""
+                        />
+                      </div>
+                    </div>
                   </div>
-                </TextField>
-              </DateSelector>
+                </div>
+              </form>
             </div>
           </div>
         </div>
-        <div
-          className="cf-modal-divider"
-        />
-        <div
-          className="cf-modal-controls"
-        >
-          <Button
-            classNames={
-              Array [
-                "cf-modal-link",
-                "cf-btn-link",
-                "cf-push-left",
-              ]
-            }
-            id="Edit-NOD-Date-button-id-0"
-            key="0"
-            linkStyling={false}
-            loading={false}
-            name="Cancel"
-            onClick={[MockFunction]}
-            type="button"
-            willNeverBeLoading={false}
-          >
-            <span>
-              <button
-                className="cf-modal-link cf-btn-link cf-push-left usa-button"
-                id="Edit-NOD-Date-button-id-0"
-                onClick={[MockFunction]}
-                type="button"
-              >
-                Cancel
-              </button>
-            </span>
-          </Button>
-          <Button
-            classNames={
-              Array [
-                "usa-button",
-                "usa-button-primary",
-                "cf-push-right",
-              ]
-            }
-            disabled={false}
-            id="Edit-NOD-Date-button-id-1"
-            key="1"
-            linkStyling={false}
-            loading={false}
-            name="Submit"
-            onClick={[Function]}
-            type="button"
-            willNeverBeLoading={false}
-          >
-            <span>
-              <button
-                className="usa-button usa-button-primary cf-push-right usa-button"
-                disabled={false}
-                id="Edit-NOD-Date-button-id-1"
-                onClick={[Function]}
-                type="button"
-              >
-                Submit
-              </button>
-            </span>
-          </Button>
-        </div>
       </div>
-    </section>
-  </Modal>
-</EditNodDateModal>
+      <div
+        class="cf-modal-divider"
+      />
+      <div
+        class="cf-modal-controls"
+      >
+        <span>
+          <button
+            class="cf-modal-link cf-btn-link cf-push-left usa-button"
+            id="Edit-NOD-Date-button-id-0"
+            type="button"
+          >
+            Cancel
+          </button>
+        </span>
+        <span>
+          <button
+            class="usa-button usa-button-primary cf-push-right usa-button"
+            id="Edit-NOD-Date-button-id-1"
+            type="button"
+          >
+            Submit
+          </button>
+        </span>
+      </div>
+    </div>
+  </section>
+</div>
 `;

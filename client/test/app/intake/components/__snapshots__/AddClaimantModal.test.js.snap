@@ -8,7 +8,7 @@ exports[`AddClaimantModal renders correctly 1`] = `
     aria-modal="true"
     class="cf-modal active "
     id="modal_id"
-    role="alertdialog"
+    role="dialog"
   >
     <div
       class="cf-modal-body"
@@ -72,21 +72,22 @@ exports[`AddClaimantModal renders correctly 1`] = `
               </p>
             </div>
             <div
-              class="cf-form-dropdown dropdown-relationship"
+              class=""
             >
-              <label
-                class="question-label"
-                for="relationship"
-              >
-                <strong>
-                  <span>
-                    Claimant's relationship to the Veteran
-                  </span>
-                </strong>
-              </label>
               <div
-                class=""
+                class="cf-form-dropdown dropdown-relationship"
               >
+                <label
+                  class="question-label"
+                  for="relationship"
+                  id="relationship-label"
+                >
+                  <strong>
+                    <span>
+                      Claimant's relationship to the Veteran
+                    </span>
+                  </strong>
+                </label>
                 <div
                   class="cf-select"
                 >
@@ -113,10 +114,15 @@ exports[`AddClaimantModal renders correctly 1`] = `
                           >
                             <input
                               aria-autocomplete="list"
+                              aria-expanded="false"
+                              aria-haspopup="true"
+                              aria-labelledby="relationship-label"
+                              aria-owns="relationship-listbox"
                               autocapitalize="none"
                               autocomplete="off"
                               autocorrect="off"
                               id="relationship"
+                              role="combobox"
                               spellcheck="false"
                               style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                               tabindex="0"
@@ -154,26 +160,32 @@ exports[`AddClaimantModal renders correctly 1`] = `
                         </div>
                       </div>
                     </div>
+                    <input
+                      name="relationship"
+                      type="hidden"
+                      value="attorney"
+                    />
                   </div>
                 </div>
               </div>
             </div>
             <div
-              class="cf-form-dropdown dropdown-claimant"
+              class=""
             >
-              <label
-                class="question-label"
-                for="claimant"
-              >
-                <strong>
-                  <span>
-                    Claimant's name
-                  </span>
-                </strong>
-              </label>
               <div
-                class=""
+                class="cf-form-dropdown dropdown-claimant"
               >
+                <label
+                  class="question-label"
+                  for="claimant"
+                  id="claimant-label"
+                >
+                  <strong>
+                    <span>
+                      Claimant's name
+                    </span>
+                  </strong>
+                </label>
                 <div
                   class="cf-select"
                 >
@@ -200,10 +212,15 @@ exports[`AddClaimantModal renders correctly 1`] = `
                           >
                             <input
                               aria-autocomplete="list"
+                              aria-expanded="false"
+                              aria-haspopup="true"
+                              aria-labelledby="claimant-label"
+                              aria-owns="claimant-listbox"
                               autocapitalize="none"
                               autocomplete="off"
                               autocorrect="off"
                               id="claimant"
+                              role="combobox"
                               spellcheck="false"
                               style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                               tabindex="0"
@@ -255,6 +272,11 @@ exports[`AddClaimantModal renders correctly 1`] = `
                         </div>
                       </div>
                     </div>
+                    <input
+                      name="claimant"
+                      type="hidden"
+                      value=""
+                    />
                   </div>
                 </div>
               </div>

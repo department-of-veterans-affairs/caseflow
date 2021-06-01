@@ -31,6 +31,7 @@ class BulkTaskAssignment
         Task.create!(
           type: task_type,
           appeal: task.appeal,
+          instructions: task.instructions,
           assigned_by: assigned_by,
           parent: task,
           assigned_to: assigned_to

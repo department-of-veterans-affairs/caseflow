@@ -206,11 +206,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           create(:ama_task, assigned_to: user, appeal: legacy_appeal)
         end
 
-        it "does not make a BGS call" do
-          BGSService.instance_methods(false).each do |method_name|
-            expect_any_instance_of(BGSService).not_to receive(method_name)
-          end
-
+        it "returns tasks" do
           get :index, params: { user_id: user.id, role: "unknown" }
           expect(response).to be_successful
 
@@ -901,7 +897,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
               status: Constants.TASK_STATUSES.completed,
               business_payloads: {
                 values: {
-                  changed_request_type: HearingDay::REQUEST_TYPES[:video]
+                  changed_hearing_request_type: HearingDay::REQUEST_TYPES[:video]
                 }
               }
             },
@@ -911,12 +907,12 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
         it "sucessfully updates appeal and closes related tasks", :aggregate_failures do
           # Ensure that the changed request type is nil before we take action
-          expect(legacy_appeal.changed_request_type).to eq(nil)
+          expect(legacy_appeal.changed_hearing_request_type).to eq(nil)
           subject
 
           # Ensure the update successfully completed the task and changed the appeal
           expect(response.status).to eq 200
-          expect(legacy_appeal.reload.changed_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
+          expect(legacy_appeal.reload.changed_hearing_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
           expect(action.reload.status).to eq(Constants.TASK_STATUSES.completed)
           expect(ChangeHearingRequestTypeTask.find_by(
             appeal: legacy_appeal
@@ -1093,6 +1089,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
         colocated_task = response_body["tasks"].find { |task| task["attributes"]["type"] == "IhpColocatedTask" }
         expect(colocated_task).to_not be_nil
+        expect(colocated_task["attributes"]["timer_ends_at"]).to be_nil
         expect(colocated_task["attributes"]["assigned_to"]["css_id"]).to eq colocated_user.css_id
         expect(colocated_task["attributes"]["appeal_id"]).to eq appeal.id
         expect(colocated_task["attributes"]["status"]).to eq Task.statuses[:in_progress]

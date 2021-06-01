@@ -27,4 +27,10 @@ class WorkQueue::VeteranSerializer
       }
     end
   end
+
+  attribute :relationships do |object, params|
+    if params[:relationships].to_s == "true" && object.veteran&.relationships
+      object.veteran&.relationships&.map(&:serialize)
+    end
+  end
 end

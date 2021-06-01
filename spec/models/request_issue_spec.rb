@@ -937,6 +937,31 @@ describe RequestIssue, :all_dbs do
     end
   end
 
+  context "#move_stream!" do
+    subject { request_issue.move_stream!(new_appeal_stream: new_appeal_stream, closed_status: closed_status) }
+    let(:closed_status) { "docket_switch" }
+    let(:review) { create(:appeal) }
+    let(:new_appeal_stream) { create(:appeal, veteran_file_number: veteran.file_number) }
+    let(:request_issue) { create(:request_issue, nonrating_issue_description: "Moved issue", decision_review: review) }
+
+    it "copies the request issue to the new stream and closes with the provided status" do
+      subject
+      expect(request_issue.closed_status).to eq closed_status
+      expect(request_issue.closed_at).to eq Time.zone.now
+
+      request_issue_copy = new_appeal_stream.reload.request_issues.first
+
+      expect(request_issue_copy.nonrating_issue_description).to eq "Moved issue"
+      expect(request_issue_copy.created_at).to be_within(1.second).of Time.zone.now
+    end
+
+    context "the request issue's decision review is not an appeal" do
+      let(:review) { create(:higher_level_review) }
+
+      it { is_expected.to be_nil }
+    end
+  end
+
   context "#description" do
     subject { request_issue.description }
 

@@ -1,21 +1,16 @@
 # frozen_string_literal: true
 
 describe VirtualHearing do
-  def link(name)
-    "https://care.va.gov/webapp2/conference/test_call?name=#{name}&join=1"
+  URL_HOST = "example.va.gov"
+  URL_PATH = "/sample"
+  PIN_KEY = "mysecretkey"
+
+  before do
+    allow(ENV).to receive(:[]).and_call_original
+    allow(ENV).to receive(:fetch).and_call_original
   end
 
-  context "#test_link" do
-    let(:virtual_hearing) do
-      build(
-        :virtual_hearing,
-        hearing: build(
-          :hearing,
-          hearing_day: build(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:central])
-        )
-      )
-    end
-
+  shared_examples "all test link behaviors" do
     it "returns representative link when title is 'Representative'" do
       recipient = "Representative"
       expect(virtual_hearing.test_link(recipient)).to eq link(recipient)
@@ -35,6 +30,32 @@ describe VirtualHearing do
     it "returns veteran link when title is not rep and appellant is the veteran" do
       recipient = "Something"
       expect(virtual_hearing.test_link(recipient)).to eq link("Veteran")
+    end
+  end
+
+  shared_context "virtual hearing created with new link generation" do
+    let(:virtual_hearing) do
+      build(
+        :virtual_hearing,
+        :link_generation_initialized,
+        hearing: build(
+          :hearing,
+          hearing_day: build(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:central])
+        )
+      )
+    end
+  end
+
+  shared_context "virtual hearing not created with new link generation" do
+    let(:virtual_hearing) do
+      build(
+        :virtual_hearing,
+        :initialized,
+        hearing: build(
+          :hearing,
+          hearing_day: build(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:central])
+        )
+      )
     end
   end
 
@@ -190,6 +211,11 @@ describe VirtualHearing do
   end
 
   context "#status" do
+    shared_examples "returns correct status" do |status|
+      it "returns correct status" do
+        expect(subject).to eq(status)
+      end
+    end
     subject { virtual_hearing.status }
 
     context "cancelled" do
@@ -205,9 +231,7 @@ describe VirtualHearing do
         )
       end
 
-      it "returns correct status" do
-        expect(subject).to eq(:cancelled)
-      end
+      include_examples "returns correct status", :cancelled
     end
 
     context "closed" do
@@ -223,25 +247,18 @@ describe VirtualHearing do
         )
       end
 
-      it "returns correct status" do
-        expect(subject).to eq(:closed)
-      end
+      include_examples "returns correct status", :closed
     end
 
     context "active" do
-      let(:virtual_hearing) do
-        build(
-          :virtual_hearing,
-          :initialized,
-          hearing: build(
-            :hearing,
-            hearing_day: build(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:central])
-          )
-        )
+      context "vh created with new link generation" do
+        include_context "virtual hearing created with new link generation"
+        include_examples "returns correct status", :active
       end
 
-      it "returns correct status" do
-        expect(subject).to eq(:active)
+      context "vh not created with new link generation" do
+        include_context "virtual hearing not created with new link generation"
+        include_examples "returns correct status", :active
       end
     end
 
@@ -256,8 +273,98 @@ describe VirtualHearing do
         )
       end
 
-      it "returns correct status" do
-        expect(subject).to eq(:pending)
+      include_examples "returns correct status", :pending
+    end
+  end
+
+  context "rebuild_and_save_links" do
+    before do
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return PIN_KEY
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return URL_HOST
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return URL_PATH
+    end
+
+    context "with old link generation virtual hearing" do
+      include_context "virtual hearing not created with new link generation"
+
+      it "raises an error" do
+        virtual_hearing.update!(alias_with_host: "BVA#{virtual_hearing.alias_name}@nowhere.va.gov")
+        virtual_hearing.reload
+
+        expect { virtual_hearing.rebuild_and_save_links }
+          .to raise_error(VirtualHearing::LinkMismatchError)
+      end
+
+      context "with a virtual hearing that has a nil alias_with_host" do
+        it "raises an error" do
+          virtual_hearing.update!(alias_with_host: nil)
+          virtual_hearing.reload
+
+          expect { virtual_hearing.rebuild_and_save_links }.to raise_error(VirtualHearing::NoAliasWithHostPresentError)
+        end
+      end
+    end
+
+    context "with new link generation virtual hearing" do
+      include_context "virtual hearing created with new link generation"
+
+      it "rebuilds and saves the links as expected" do
+        # update virtual_hearing with old-style link
+        old_style_host_link = "https://example.va.gov/sample/?conference=BVA0000001@example.va.gov" \
+                              "&name=Judge&pin=3998472&callType=video&join=1"
+        old_style_guest_link = "https://example.va.gov/sample/?conference=BVA0000001@example.va.gov" \
+                               "&name=Guest&pin=7470125694&callType=video&join=1"
+        virtual_hearing.update!(host_hearing_link: old_style_host_link, guest_hearing_link: old_style_guest_link)
+
+        virtual_hearing.reload
+        expect(virtual_hearing.host_hearing_link).to eq old_style_host_link
+        expect(virtual_hearing.guest_hearing_link).to eq old_style_guest_link
+
+        alias_with_host = virtual_hearing.alias_with_host
+        host_pin_long = virtual_hearing.host_pin_long
+        guest_pin_long = virtual_hearing.guest_pin_long
+
+        virtual_hearing.rebuild_and_save_links
+        virtual_hearing.reload
+
+        current_style_host_link = "https://example.va.gov/sample/?conference=BVA0000001@example.va.gov" \
+                              "&pin=3998472&callType=video"
+        current_style_guest_link = "https://example.va.gov/sample/?conference=BVA0000001@example.va.gov" \
+                               "&pin=7470125694&callType=video"
+
+        expect(virtual_hearing.host_hearing_link).not_to eq old_style_host_link
+        expect(virtual_hearing.guest_hearing_link).not_to eq old_style_guest_link
+        expect(virtual_hearing.host_hearing_link).to eq current_style_host_link
+        expect(virtual_hearing.guest_hearing_link).to eq current_style_guest_link
+
+        # these pass because the values hard-coded into the virtual hearing factory
+        # with trait link_generation_initialized are consistent with the values
+        # algorithmically generated by VirtualHearings::LinkService
+        expect(virtual_hearing.host_hearing_link).to include alias_with_host
+        expect(virtual_hearing.host_hearing_link).to include host_pin_long
+
+        expect(virtual_hearing.guest_hearing_link).to include alias_with_host
+        expect(virtual_hearing.guest_hearing_link).to include guest_pin_long
+      end
+    end
+
+    context "#test_link" do
+      context "vh created with new link generation" do
+        def link(name)
+          "https://#{URL_HOST}#{URL_PATH}?conference=test_call&name=#{name}&join=1"
+        end
+
+        include_context "virtual hearing created with new link generation"
+        include_examples "all test link behaviors"
+      end
+
+      context "vh not created with new link generation" do
+        def link(name)
+          "https://care.va.gov/webapp2/conference/test_call?name=#{name}&join=1"
+        end
+
+        include_context "virtual hearing not created with new link generation"
+        include_examples "all test link behaviors"
       end
     end
   end

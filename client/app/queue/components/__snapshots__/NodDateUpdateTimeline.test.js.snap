@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NodDateUpdateTimeline renders correctly 1`] = `
+<Fragment>
+  <tr>
+    <td
+      className="taskContainerStyling taskTimeTimelineContainerStyling"
+    >
+      <div>
+        01/25/2021
+      </div>
+      <div
+        data-css-1e14v4t=""
+      >
+        15:10:29
+         EST
+      </div>
+    </td>
+    <td
+      className="taskInfoWithIconContainer taskInfoWithIconTimelineContainer"
+    >
+      <GreenCheckmark />
+      <div
+        data-css-78t0uq=""
+      />
+    </td>
+    <td
+      className="taskContainerStyling taskInformationTimelineContainerStyling"
+    >
+      Notice of disagreement edited
+      <div
+        data-css-qgrw5t=""
+      >
+        <div>
+          <span>
+            Edited:
+          </span>
+          J
+          . 
+          Doe
+        </div>
+        <div>
+          <span>
+            Old Nod:
+          </span>
+          01/05/2021
+        </div>
+        <div>
+          <span>
+            New Nod:
+          </span>
+          01/12/2021
+        </div>
+        <div>
+          <span>
+            Reason:
+          </span>
+          Data Entry Error
+        </div>
+      </div>
+    </td>
+  </tr>
+</Fragment>
+`;

@@ -47,6 +47,12 @@ describe Docket, :all_dbs do
              :with_post_intake_tasks,
              docket_type: Constants.AMA_DOCKETS.evidence_submission)
     end
+    let!(:cavc_appeal) do
+      create(:appeal,
+             :type_cavc_remand,
+             :cavc_ready_for_distribution,
+             docket_type: Constants.AMA_DOCKETS.direct_review)
+    end
 
     context "appeals" do
       context "when no options given" do
@@ -57,6 +63,7 @@ describe Docket, :all_dbs do
           expect(subject).to include inapplicable_aod_motion_appeal
           expect(subject).to include aod_age_appeal
           expect(subject).to include aod_motion_appeal
+          expect(subject).to include cavc_appeal
         end
       end
 
@@ -68,6 +75,7 @@ describe Docket, :all_dbs do
           expect(subject).to_not include inapplicable_aod_motion_appeal
           expect(subject).to include aod_age_appeal
           expect(subject).to include aod_motion_appeal
+          expect(subject).to include cavc_appeal
         end
       end
 
@@ -79,6 +87,7 @@ describe Docket, :all_dbs do
           expect(subject).to include inapplicable_aod_motion_appeal
           expect(subject).to_not include aod_age_appeal
           expect(subject).to_not include aod_motion_appeal
+          expect(subject).to_not include cavc_appeal
         end
       end
 
@@ -94,7 +103,8 @@ describe Docket, :all_dbs do
             denied_aod_motion_appeal,
             inapplicable_aod_motion_appeal,
             aod_age_appeal,
-            aod_motion_appeal
+            aod_motion_appeal,
+            cavc_appeal
           ]
           expect(subject).to match_array(expected_appeals)
         end
@@ -186,7 +196,7 @@ describe Docket, :all_dbs do
       subject { DirectReviewDocket.new.count(priority: priority) }
 
       it "counts appeals" do
-        expect(subject).to eq(5)
+        expect(subject).to eq(6)
       end
 
       context "when looking for nonpriority appeals" do
@@ -226,19 +236,22 @@ describe Docket, :all_dbs do
 
     context "distribute_appeals" do
       context "priority appeals" do
-        subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: true, limit: 2) }
+        subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: true, limit: 3) }
 
         let(:judge_user) { create(:user) }
         let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
         let!(:distribution) { Distribution.create!(judge: judge_user) }
 
-        it "distributes and appeals" do
+        it "distributes the priority appeals" do
           tasks = subject
 
-          expect(tasks.length).to eq(2)
+          expect(tasks.length).to eq(3)
           expect(tasks.first.class).to eq(DistributedCase)
-          expect(distribution.distributed_cases.length).to eq(2)
-          expect(judge_user.reload.tasks.map(&:appeal)).to include(aod_age_appeal)
+          expect(distribution.distributed_cases.length).to eq(3)
+          judge_appeals = judge_user.reload.tasks.map(&:appeal)
+          expect(judge_appeals).to include(aod_age_appeal)
+          expect(judge_appeals).to include(aod_motion_appeal)
+          expect(judge_appeals).to include(cavc_appeal)
         end
       end
     end
@@ -277,7 +290,7 @@ describe Docket, :all_dbs do
         subject { Docket.nonpriority_decisions_per_year }
 
         it "returns nonpriority decisions from the last year" do
-          expect(subject).to eq(2)
+          expect(subject).to eq(3)
         end
       end
     end

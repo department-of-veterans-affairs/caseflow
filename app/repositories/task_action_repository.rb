@@ -18,7 +18,7 @@ class TaskActionRepository
     end
 
     def mail_assign_to_organization_data(task, user = nil)
-      options = MailTask.subclass_routing_options(user)
+      options = MailTask.subclass_routing_options(user: user, appeal: task.appeal)
       valid_options = task.appeal.outcoded? ? options : options.reject { |opt| opt[:value] == "VacateMotionMailTask" }
       { options: valid_options }
     end
@@ -229,6 +229,10 @@ class TaskActionRepository
       cavc_add_blocking_distrbution_admin_action_data(task, Colocated.singleton, IhpColocatedTask)
     end
 
+    def assign_schedule_hearing_to_hearings_blocking_distribution_data(task, _user = nil)
+      cavc_add_blocking_distrbution_admin_action_data(task, Bva.singleton, ScheduleHearingTask)
+    end
+
     def assign_poa_to_cavc_blocking_cavc_data(task, _user = nil)
       org = CavcLitigationSupport.singleton
       task_type = CavcPoaClarificationTask
@@ -295,7 +299,8 @@ class TaskActionRepository
     COMPLETE_TASK_MODAL_BODY_HASH = {
       NoShowHearingTask: COPY::NO_SHOW_HEARING_TASK_COMPLETE_MODAL_BODY,
       HearingAdminActionTask: COPY::HEARING_SCHEDULE_COMPLETE_ADMIN_MODAL,
-      SendCavcRemandProcessedLetterTask: COPY::SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_COMPLETE_MODAL_BODY
+      SendCavcRemandProcessedLetterTask: COPY::SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_COMPLETE_MODAL_BODY,
+      CavcRemandProcessedLetterResponseWindowTask: COPY::CAVC_REMAND_LETTER_RESPONSE_TASK_COMPLETE_MODAL_BODY
     }.freeze
 
     def complete_data(task, _user = nil)

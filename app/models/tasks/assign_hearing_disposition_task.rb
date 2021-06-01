@@ -22,7 +22,7 @@
 class AssignHearingDispositionTask < Task
   include RunAsyncable
 
-  validates :parent, presence: true, parentTask: { task_type: HearingTask }
+  validates :parent, presence: true, parentTask: { task_type: HearingTask }, on: :create
   delegate :hearing, to: :hearing_task, allow_nil: true
 
   class HearingDispositionNotCanceled < StandardError; end
@@ -67,7 +67,8 @@ class AssignHearingDispositionTask < Task
     if HearingsManagement.singleton.user_has_access?(user)
       [
         Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h,
-        Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h
+        Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h,
+        Constants.TASK_ACTIONS.REMOVE_HEARING_SCHEDULED_IN_ERROR.to_h
       ] | hearing_admin_actions
     else
       hearing_admin_actions
@@ -137,10 +138,7 @@ class AssignHearingDispositionTask < Task
   end
 
   def update_children_status_after_closed
-    update_args = { status: status }
-    update_args[:closed_at] = Time.zone.now unless open?
-    update_args[:cancelled_by_id] = RequestStore[:current_user]&.id if cancelled?
-    children.open.update_all(update_args)
+    children.open.each { |task| task.update!(status: status) }
   end
 
   def cascade_closure_from_child_task?(_child_task)
@@ -155,10 +153,11 @@ class AssignHearingDispositionTask < Task
                       mark_hearing_held
                     when Constants.HEARING_DISPOSITION_TYPES.no_show
                       mark_hearing_no_show
-                    when Constants.HEARING_DISPOSITION_TYPES.postponed
-                      mark_hearing_postponed(
-                        instructions: params["instructions"],
-                        after_disposition_update: payload_values[:after_disposition_update]
+                    when Constants.HEARING_DISPOSITION_TYPES.postponed,
+                      Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
+                      mark_hearing_with_disposition(
+                        payload_values: payload_values,
+                        instructions: params["instructions"]
                       )
                     else
                       fail ArgumentError, "unknown disposition"
@@ -169,25 +168,32 @@ class AssignHearingDispositionTask < Task
     created_tasks
   end
 
-  def update_hearing_disposition(disposition:)
+  def update_hearing(hearing_hash)
     # Ensure the hearing exists
     fail HearingAssociationMissing, hearing_task&.id if hearing.nil?
 
     if hearing.is_a?(LegacyHearing)
-      hearing.update_caseflow_and_vacols(disposition: disposition)
+      hearing.update_caseflow_and_vacols(hearing_hash)
     else
-      hearing.update(disposition: disposition)
+      hearing.update(hearing_hash)
     end
   end
 
-  def reschedule(hearing_day_id:, scheduled_time_string:, hearing_location: nil, virtual_hearing_attributes: nil)
+  def reschedule(
+    hearing_day_id:,
+    scheduled_time_string:,
+    hearing_location: nil,
+    virtual_hearing_attributes: nil,
+    notes: nil
+  )
     multi_transaction do
       new_hearing_task = hearing_task.cancel_and_recreate
 
-      new_hearing = HearingRepository.slot_new_hearing(hearing_day_id,
+      new_hearing = HearingRepository.slot_new_hearing(hearing_day_id: hearing_day_id,
                                                        appeal: appeal,
                                                        hearing_location_attrs: hearing_location&.to_hash,
-                                                       scheduled_time_string: scheduled_time_string)
+                                                       scheduled_time_string: scheduled_time_string,
+                                                       notes: notes)
       if virtual_hearing_attributes.present?
         @alerts = VirtualHearings::ConvertToVirtualHearingService
           .convert_hearing_to_virtual(new_hearing, virtual_hearing_attributes)
@@ -199,7 +205,7 @@ class AssignHearingDispositionTask < Task
 
   def mark_hearing_cancelled
     multi_transaction do
-      update_hearing_disposition(disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled)
+      update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled)
       clean_up_virtual_hearing
       cancel!
     end
@@ -207,23 +213,31 @@ class AssignHearingDispositionTask < Task
 
   def mark_hearing_held
     multi_transaction do
-      update_hearing_disposition(disposition: Constants.HEARING_DISPOSITION_TYPES.held)
+      update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.held)
       hold!
     end
   end
 
   def mark_hearing_no_show
     multi_transaction do
-      update_hearing_disposition(disposition: Constants.HEARING_DISPOSITION_TYPES.no_show)
+      update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.no_show)
       no_show!
     end
   end
 
-  def mark_hearing_postponed(instructions: nil, after_disposition_update: nil)
+  def mark_hearing_with_disposition(payload_values:, instructions: nil)
     multi_transaction do
-      update_hearing_disposition(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
+      if payload_values[:disposition] == Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
+        update_hearing_disposition_and_notes(payload_values)
+      elsif payload_values[:disposition] == Constants.HEARING_DISPOSITION_TYPES.postponed
+        update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
+      end
+
       clean_up_virtual_hearing
-      reschedule_or_schedule_later(instructions: instructions, after_disposition_update: after_disposition_update)
+      reschedule_or_schedule_later(
+        instructions: instructions,
+        after_disposition_update: payload_values[:after_disposition_update]
+      )
     end
   end
 
@@ -235,7 +249,8 @@ class AssignHearingDispositionTask < Task
         hearing_day_id: new_hearing_attrs[:hearing_day_id],
         scheduled_time_string: new_hearing_attrs[:scheduled_time_string],
         hearing_location: new_hearing_attrs[:hearing_location],
-        virtual_hearing_attributes: new_hearing_attrs[:virtual_hearing_attributes]
+        virtual_hearing_attributes: new_hearing_attrs[:virtual_hearing_attributes],
+        notes: new_hearing_attrs[:notes]
       )
     when "schedule_later"
       schedule_later(
@@ -284,5 +299,18 @@ class AssignHearingDispositionTask < Task
                     end
 
     [transcription_task, evidence_task].compact
+  end
+
+  def update_hearing_disposition_and_notes(payload_values)
+    if payload_values[:hearing_notes].nil?
+      update_hearing(
+        disposition: Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
+      )
+    else
+      update_hearing(
+        disposition: Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error,
+        notes: payload_values[:hearing_notes]
+      )
+    end
   end
 end

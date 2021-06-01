@@ -13,6 +13,7 @@ $cf-select-text-color: #323a45;
     border-spacing: 0;
     color: $cf-select-text-color;
     cursor: default;
+    max-width: 46rem;
 
     &--is-disabled {
       background-color: $cf-select-disabled-bg-color;
@@ -79,6 +80,8 @@ $cf-select-text-color: #323a45;
   }
 
   .usa-input-error & {
+    border: 3px solid $color-secondary-dark;
+
     .cf-select--is-disabled {
       input { width: 1px; }
     }

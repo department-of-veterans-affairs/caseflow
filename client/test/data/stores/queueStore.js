@@ -34,7 +34,16 @@ export const initialState = {
   },
   queue: {
     appeals: appealsData,
-    appealDetails: appealsData
+    appealDetails: appealsData,
+    stagedChanges: {
+      appeals: {}
+    }
+  },
+  ui: {
+    messages: {},
+    saveState: {},
+    modals: {},
+    featureToggles: {}
   }
 };
 
@@ -66,6 +75,10 @@ export const queueWrapper = ({ children, ...props }) => {
       queue: {
         ...initialState.queue,
         ...props?.queue
+      },
+      ui: {
+        ...initialState.ui,
+        ...props?.ui
       },
     })}>
       <MemoryRouter

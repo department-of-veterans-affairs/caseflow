@@ -118,11 +118,14 @@ Rails.application.routes.draw do
     end
   end
 
+  put '/claimants/:participant_id/poa', to: 'claimants#refresh_claimant_poa'
+
   resources :appeals, param: :appeal_id, only: [:index, :show, :edit] do
     member do
       get :document_count
       get :veteran
       get :power_of_attorney
+      patch :update_power_of_attorney
       get 'hearings', to: "appeals#most_recent_hearing"
       resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
       resources :special_issues, only: [:create, :index]
@@ -130,8 +133,10 @@ Rails.application.routes.draw do
       get 'tasks', to: "tasks#for_appeal"
       patch 'update'
       post 'work_mode', to: "work_modes#create"
+      patch 'cavc_remand', to: "cavc_remands#update"
       post 'cavc_remand', to: "cavc_remands#create"
-      patch 'update_nod_date'
+      post 'appellant_substitution', to: "appellant_substitutions#create"
+      patch 'nod_date_update', to: "nod_date_updates#update"
     end
   end
   match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
@@ -149,9 +154,13 @@ Rails.application.routes.draw do
     resources :schedule_periods, only: [:index, :create]
     resources :schedule_periods, only: [:show, :update, :download], param: :schedule_period_id
     resources :hearing_day, only: [:update, :show], param: :hearing_key
+    namespace :hearing_day do
+      get '/:hearing_day_id/filled_hearing_slots', to: "filled_hearing_slots#index"
+    end
   end
   get '/hearings/dockets', to: redirect("/hearings/schedule")
   get 'hearings/schedule', to: "hearings/hearing_day#index"
+  get 'hearings/schedule/add_hearing_day', to: "hearings/hearing_day#index"
   get 'hearings/:hearing_id/details', to: "hearings_application#show_hearing_index"
   get 'hearings/:hearing_id/worksheet', to: "hearings_application#show_hearing_index"
   get 'hearings/:id/virtual_hearing_job_status', to: 'hearings#virtual_hearing_job_status'
@@ -201,11 +210,13 @@ Rails.application.routes.draw do
 
   resources :higher_level_reviews, param: :claim_id, only: [:edit] do
     patch 'update', on: :member
+    post 'edit_ep', on: :member
   end
   match '/higher_level_reviews/:claim_id/edit/:any' => 'higher_level_reviews#edit', via: [:get]
 
   resources :supplemental_claims, param: :claim_id, only: [:edit] do
     patch 'update', on: :member
+    post 'edit_ep', on: :member
   end
   match '/supplemental_claims/:claim_id/edit/:any' => 'supplemental_claims#edit', via: [:get]
 
@@ -239,6 +250,7 @@ Rails.application.routes.draw do
   scope path: '/queue' do
     get '/', to: 'queue#index'
     get '/appeals/:vacols_id', to: 'queue#index'
+    get '/appeals/:vacols_id/tasks/:task_id/schedule_veteran', to: 'queue#index' # Allow direct navigation from the Hearings App
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
@@ -265,6 +277,7 @@ Rails.application.routes.draw do
     end
     resources(:place_hold, only: [:create], controller: 'tasks/place_hold')
     resources(:end_hold, only: [:create], controller: 'tasks/end_hold')
+    resources(:extension_request, only: [:create], controller: 'extension_request')
   end
 
   resources :judge_assign_tasks, only: [:create]
@@ -315,6 +328,8 @@ Rails.application.routes.draw do
   post "post_decision_motions/return", to: "post_decision_motions#return_to_lit_support"
   post "post_decision_motions/return_to_judge", to: "post_decision_motions#return_to_judge"
   post "post_decision_motions", to: "post_decision_motions#create"
+  post "docket_switches", to: "docket_switches#create"
+  post "docket_switches/address_ruling", to: "docket_switches#address_ruling"
 
   # :nocov:
   namespace :test do

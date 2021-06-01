@@ -6,6 +6,7 @@ import { combineReducers } from 'redux';
 import _ from 'lodash';
 
 import { ACTIONS } from './constants';
+import ApiUtil from '../util/ApiUtil';
 
 import caseListReducer from './CaseList/CaseListReducer';
 import uiReducer from './uiReducer/uiReducer';
@@ -13,6 +14,8 @@ import teamManagementReducer from './teamManagement/reducers';
 
 import commonComponentsReducer from '../components/common/reducers';
 import mtvReducer from './mtv/reducers';
+import docketSwitchReducer from './docketSwitch/docketSwitchSlice';
+import substituteAppellantReducer from './substituteAppellant/substituteAppellant.slice';
 
 // TODO: Remove this when we move entirely over to the appeals search.
 import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
@@ -134,11 +137,37 @@ const deleteTask = (state, action) => {
   });
 };
 
+const clearAppealDetails = (state, action) => {
+  return update(state, {
+    appealDetails: { $unset: action.payload.appealId }
+  });
+};
+
 const editAppeal = (state, action) => {
   return update(state, {
     appealDetails: {
       [action.payload.appealId]: {
         $merge: action.payload.attributes
+      }
+    }
+  });
+};
+
+const editNodDateUpdates = (state, action) => {
+  const nodDateUpdate = ApiUtil.convertToCamelCase(action.payload.nodDateUpdate);
+
+  nodDateUpdate.appealId = action.payload.appealId;
+  nodDateUpdate.userFirstName = action.payload.nodDateUpdate.updated_by.split(' ')[0];
+  nodDateUpdate.userLastName = action.payload.nodDateUpdate.updated_by.split(' ')[
+    action.payload.nodDateUpdate.updated_by.split(' ').length - 1
+  ];
+
+  return update(state, {
+    appealDetails: {
+      [action.payload.appealId]: {
+        nodDateUpdates: {
+          $push: [nodDateUpdate]
+        }
       }
     }
   });
@@ -692,8 +721,10 @@ export const workQueueReducer = createReducer({
   [ACTIONS.RECEIVE_AMA_TASKS]: receiveAmaTasks,
   [ACTIONS.RECEIVE_JUDGE_DETAILS]: receiveJudgeDetails,
   [ACTIONS.DELETE_APPEAL]: deleteAppeal,
+  [ACTIONS.CLEAR_APPEAL]: clearAppealDetails,
   [ACTIONS.DELETE_TASK]: deleteTask,
   [ACTIONS.EDIT_APPEAL]: editAppeal,
+  [ACTIONS.EDIT_NOD_DATE_UPDATES]: editNodDateUpdates,
   [ACTIONS.SET_OVERTIME]: setOvertime,
   [ACTIONS.RECEIVE_NEW_FILES_FOR_APPEAL]: receiveNewFilesForAppeal,
   [ACTIONS.ERROR_ON_RECEIVE_NEW_FILES_FOR_APPEAL]: errorOnReceiveNewFilesForAppeal,
@@ -743,7 +774,9 @@ const rootReducer = combineReducers({
   teamManagement: teamManagementReducer,
   ui: uiReducer,
   components: commonComponentsReducer,
-  mtv: mtvReducer
+  docketSwitch: docketSwitchReducer,
+  mtv: mtvReducer,
+  substituteAppellant: substituteAppellantReducer,
 });
 
 export default timeFunction(

@@ -13,7 +13,14 @@ RSpec.describe Hearings::ScheduleHearingTasksColumnsController, :all_dbs, type: 
         closest_regional_office: regional_office_key
       )
     end
-    let!(:poa) { create(:bgs_power_of_attorney, claimant_participant_id: appeal.claimant.participant_id) }
+    let!(:poa) do
+      create(
+        :bgs_power_of_attorney,
+        :with_name_cached,
+        appeal: appeal,
+        claimant_participant_id: appeal.claimant.participant_id
+      )
+    end
 
     let!(:hearing_location) do
       create(

@@ -6,6 +6,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { isUndefined, isNil, isEmpty, omitBy, get } from 'lodash';
 
+import HEARING_DISPOSITION_TYPES from '../../../../constants/HEARING_DISPOSITION_TYPES';
+
 import { AodModal } from './DailyDocketModals';
 import {
   DispositionDropdown,
@@ -47,7 +49,7 @@ const SaveButton = ({ hearing, loading, cancelUpdate, saveHearing }) => {
       </Button>
       <Button
         styling={css({ float: 'right' })}
-        disabled={loading || (hearing.dateEdited && !hearing.dispositionEdited)}
+        disabled={loading || (hearing?.dateEdited && !hearing?.dispositionEdited)}
         onClick={saveHearing}
       >
         Save
@@ -105,7 +107,7 @@ class DailyDocketRow extends React.Component {
   updateAodMotion = (values) => {
     this.update({
       advanceOnDocketMotion: {
-        ...(this.props.hearing.advanceOnDocketMotion || {}),
+        ...(this.props.hearing?.advanceOnDocketMotion || {}),
         ...values
       }
     });
@@ -114,7 +116,7 @@ class DailyDocketRow extends React.Component {
   updateVirtualHearing = (_, values) => {
     this.update({
       virtualHearing: {
-        ...(this.props.hearing.virtualHearing || {}),
+        ...(this.props.hearing?.virtualHearing || {}),
         ...values
       }
     });
@@ -144,9 +146,9 @@ class DailyDocketRow extends React.Component {
 
     const invalid = {
       advanceOnDocketMotionReason:
-        hearing.advanceOnDocketMotion &&
-        !isNil(hearing.advanceOnDocketMotion.granted) &&
-        isNil(hearing.advanceOnDocketMotion.reason)
+        hearing?.advanceOnDocketMotion &&
+        !isNil(hearing?.advanceOnDocketMotion.granted) &&
+        isNil(hearing?.advanceOnDocketMotion.reason)
     };
 
     this.setState({ invalid });
@@ -202,7 +204,7 @@ class DailyDocketRow extends React.Component {
     this.setState({ loading: true });
 
     return this.props.
-      saveHearing(this.props.hearing.externalId, submitData).
+      saveHearing(this.props.hearing?.externalId, submitData).
       then((response) => {
         // false is returned from DailyDocketContainer in case of error
         if (!response) {
@@ -249,7 +251,7 @@ class DailyDocketRow extends React.Component {
 
         this.update(hearingWithDisp);
 
-        if (['postponed', 'cancelled'].indexOf(toDisposition) === -1) {
+        if ([HEARING_DISPOSITION_TYPES.postponed, HEARING_DISPOSITION_TYPES.cancelled].indexOf(toDisposition) === -1) {
           this.setState({
             initialState: hearingWithDisp,
             editedFields: [],
@@ -260,9 +262,9 @@ class DailyDocketRow extends React.Component {
       finally(() => this.setState({ loading: false }));
   };
 
-  isAmaHearing = () => this.props.hearing.docketName === 'hearing';
+  isAmaHearing = () => this.props.hearing?.docketName === 'hearing';
 
-  isLegacyHearing = () => this.props.hearing.docketName === 'legacy';
+  isLegacyHearing = () => this.props.hearing?.docketName === 'legacy';
 
   getInputProps = () => {
     const { hearing, readOnly } = this.props;
@@ -285,12 +287,12 @@ class DailyDocketRow extends React.Component {
         <StaticHearingDay hearing={hearing} />
         <HearingTime
           {...inputProps}
-          disableRadioOptions={hearing.isVirtual}
-          enableZone={hearing.regionalOfficeTimezone || 'America/New_York'}
+          disableRadioOptions={hearing?.isVirtual}
+          enableZone={hearing?.regionalOfficeTimezone || 'America/New_York'}
           componentIndex={rowIndex}
           regionalOffice={regionalOffice}
           readOnly={
-            hearing.scheduledForIsPast || readOnly || (hearing.isVirtual && !hearing.virtualHearing.jobCompleted)
+            hearing?.scheduledForIsPast || readOnly || (hearing?.isVirtual && !hearing?.virtualHearing?.jobCompleted)
           }
           onChange={(scheduledTimeString) => {
             this.update({ scheduledTimeString });
@@ -299,7 +301,7 @@ class DailyDocketRow extends React.Component {
               this.openVirtualHearingModal();
             }
           }}
-          value={hearing.scheduledTimeString}
+          value={hearing?.scheduledTimeString}
         />
       </React.Fragment>
     );
@@ -359,13 +361,13 @@ class DailyDocketRow extends React.Component {
 
     return (
       <div {...inputSpacing}>
-        {hearing.isVirtual && <StaticVirtualHearing hearing={hearing} user={user} />}
+        {hearing?.isVirtual && <StaticVirtualHearing hearing={hearing} user={user} />}
         <DispositionDropdown
           {...inputProps}
           cancelUpdate={this.cancelUpdate}
           saveHearing={this.saveThenUpdateDisposition}
           openDispositionModal={openDispositionModal}
-          readOnly={readOnly || (hearing.isVirtual && !hearing.virtualHearing.jobCompleted)}
+          readOnly={readOnly || (hearing?.isVirtual && !hearing?.virtualHearing?.jobCompleted)}
         />
         {user.userHasHearingPrepRole && this.isAmaHearing() && <Waive90DayHoldCheckbox {...inputProps} />}
         <TranscriptRequestedCheckbox {...inputProps} />
@@ -376,10 +378,10 @@ class DailyDocketRow extends React.Component {
   };
 
   startPolling = () => {
-    return pollVirtualHearingData(this.props.hearing.externalId, (response) => {
+    return pollVirtualHearingData(this.props.hearing?.externalId, (response) => {
       const resp = ApiUtil.convertToCamelCase(response);
 
-      if (resp.virtualHearing.jobCompleted) {
+      if (resp.virtualHearing?.jobCompleted) {
         this.setState({ startPolling: false, edited: false, editedFields: [] });
         this.updateVirtualHearing(null, resp.virtualHearing);
 
@@ -387,7 +389,7 @@ class DailyDocketRow extends React.Component {
       }
 
       // continue polling if return true (opposite of jobCompleted)
-      return !resp.virtualHearing.jobCompleted;
+      return !resp.virtualHearing?.jobCompleted;
     });
   };
 
@@ -396,7 +398,7 @@ class DailyDocketRow extends React.Component {
       closeModal={this.closeVirtualHearingModal}
       hearing={hearing}
       timeWasEdited={this.state.initialState.scheduledTimeString !== get(hearing, 'scheduledTimeString')}
-      virtualHearing={hearing.virtualHearing || {}}
+      virtualHearing={hearing?.virtualHearing || {}}
       reset={() => {
         this.update({ scheduledTimeString: this.state.initialState.scheduledTimeString });
       }}
@@ -410,12 +412,15 @@ class DailyDocketRow extends React.Component {
   render() {
     const { hearing, user, index, readOnly, hidePreviouslyScheduled } = this.props;
 
-    const hide = isPreviouslyScheduledHearing(hearing) && hidePreviouslyScheduled ? 'hide ' : '';
+    const previous = isPreviouslyScheduledHearing(hearing) && hidePreviouslyScheduled;
+    const scheduledInError = hearing?.disposition === HEARING_DISPOSITION_TYPES.scheduled_in_error;
+
+    const hide = (previous || scheduledInError) ? 'hide ' : '';
     const judgeView = user.userHasHearingPrepRole ? 'judge-view' : '';
     const className = `${hide}${judgeView}`;
 
     return (
-      <div {...docketRowStyle} key={hearing.externalId} className={className}>
+      <div {...docketRowStyle} key={hearing?.externalId} className={className}>
         <div>
           <HearingText
             readOnly={readOnly}
@@ -432,11 +437,11 @@ class DailyDocketRow extends React.Component {
         </div>
         {user.userCanScheduleVirtualHearings &&
           this.state.virtualHearingModalActive &&
-          hearing.isVirtual &&
+          hearing?.isVirtual &&
           this.renderVirtualHearingModal(user, hearing)}
         {this.state.aodModalActive && (
           <AodModal
-            advanceOnDocketMotion={hearing.advanceOnDocketMotion || {}}
+            advanceOnDocketMotion={hearing?.advanceOnDocketMotion || {}}
             onConfirm={() => {
               this.saveHearing();
               this.closeAodModal();

@@ -2,7 +2,7 @@
 
 describe VirtualHearings::ReminderService do
   let(:hearing_day) { build(:hearing_day, scheduled_for: hearing_date) }
-  let(:hearing) { build(:hearing, hearing_day: hearing_day) }
+  let(:hearing) { build(:hearing, hearing_day: hearing_day) } # scheduled_time is always 8:30 AM ET
   let(:virtual_hearing) do
     build(
       :virtual_hearing,
@@ -14,7 +14,7 @@ describe VirtualHearings::ReminderService do
   end
 
   before do
-    Timecop.freeze(Time.utc(2020, 11, 5, 12, 0, 0)) # Nov 5, 2020 (Thursday)
+    Timecop.freeze(Time.utc(2020, 11, 5, 12, 0, 0)) # Nov 5, 2020 12:00 ET (Thursday)
   end
 
   after { Timecop.return }
@@ -25,7 +25,7 @@ describe VirtualHearings::ReminderService do
     end
 
     context "hearing date is 7 days out" do
-      let(:hearing_date) { Time.zone.now + 7.days }
+      let(:hearing_date) { Time.zone.now + 6.days } # Nov 5, 2020 12:00 UTC + 6.days => 7 days or less
       let(:created_at) { hearing_date - 8.days }
 
       context "last_sent_reminder is nil" do
@@ -62,7 +62,7 @@ describe VirtualHearings::ReminderService do
     end
 
     context "hearing date is 2 days out" do
-      let(:hearing_date) { Time.zone.now + 2.days }
+      let(:hearing_date) { Time.zone.now + 1.day } # Nov 5, 2020 12:00 UTC + 1.day => 2 days or less
       let(:created_at) { hearing_date - 3.days }
 
       context "last_sent_reminder is nil" do
@@ -93,7 +93,7 @@ describe VirtualHearings::ReminderService do
     end
 
     context "hearing date is 1 day out" do
-      let(:hearing_date) { Time.zone.now + 1.day }
+      let(:hearing_date) { Time.zone.now + 10.hours } # Nov 5, 2020 12:00 UTC + 10.hours => 1 day or less
 
       context "created_at is 1.5 days from the hearing date" do
         let(:created_at) { hearing_date - 1.day - 12.hours }
@@ -112,14 +112,14 @@ describe VirtualHearings::ReminderService do
       let(:created_at) { hearing_date - 4.days }
 
       context "hearing date is on a monday" do
-        let(:hearing_date) { Time.utc(2020, 11, 9, 12, 0, 0) } # Nov 9, 2020 (Monday)
+        let(:hearing_date) { Time.utc(2020, 11, 9, 12, 0, 0) } # Nov 9, 2020(Monday)
 
         context "last_sent_reminder is 4 days out" do
           let(:last_sent_reminder) { hearing_date - 4.days }
 
           context "today is friday" do
             before do
-              Timecop.freeze(Time.utc(2020, 11, 6, 12, 0, 0)) # Nov 6, 2020 (Friday)
+              Timecop.freeze(Time.utc(2020, 11, 6, 13, 30, 0)) # Nov 6, 2020 13:30:00 UTC(Friday)
             end
 
             it "returns true" do

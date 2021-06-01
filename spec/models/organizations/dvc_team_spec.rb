@@ -16,7 +16,7 @@ describe DvcTeam, :postgres do
 
         expect(DvcTeam.count).to eq(1)
         expect(DvcTeam.first.dvc).to eq(dvc)
-        expect(DvcTeam.first.admins.first).to eq(dvc)
+        expect(DvcTeam.first.admin).to eq(dvc)
       end
     end
 
