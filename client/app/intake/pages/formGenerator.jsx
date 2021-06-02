@@ -146,8 +146,8 @@ const SelectClaimantConnected = connect(
 )(SelectClaimant);
 
 FormGenerator.propTypes = {
-  formHeader: PropTypes.string,
-  schema: PropTypes.object,
+  schema: PropTypes.object.isRequired,
+  formHeader: PropTypes.func.isRequired,
   veteranName: PropTypes.string,
   receiptDate: PropTypes.string,
   receiptDateError: PropTypes.string,
