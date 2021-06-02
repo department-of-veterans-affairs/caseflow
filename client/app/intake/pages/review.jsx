@@ -14,7 +14,7 @@ import RampElectionPage, { reviewRampElectionSchema } from './rampElection/revie
 import RampRefilingPage, { reviewRampRefilingSchema } from './rampRefiling/review';
 import SupplementalClaimPage, { reviewSupplementalClaimSchema } from './supplementalClaim/review';
 import HigherLevelReviewPage, { reviewHigherLevelReviewSchema } from './higherLevelReview/review';
-import AppealReviewPage, { reviewAppealSchema } from './appeal/review';
+import { appealFormHeader, reviewAppealSchema } from './appeal/review';
 
 import Button from '../../components/Button';
 import CancelButton from '../components/CancelButton';
@@ -25,6 +25,7 @@ import { setReceiptDateError } from '../actions/intake';
 import { toggleIneligibleError } from '../util';
 
 import SwitchOnForm from '../components/SwitchOnForm';
+import FormGenerator from './formGenerator';
 
 const textAlignRightStyling = css({
   textAlign: 'right',
@@ -91,7 +92,12 @@ const Review = (props) => {
           ramp_refiling: <RampRefilingPage {...formProps} />,
           supplemental_claim: <SupplementalClaimPage featureToggles={props.featureToggles} {...formProps} />,
           higher_level_review: <HigherLevelReviewPage featureToggles={props.featureToggles} {...formProps} />,
-          appeal: <AppealReviewPage featureToggles={props.featureToggles} {...formProps} />
+          appeal: <FormGenerator
+            formHeader={appealFormHeader}
+            schema={schemaMappings.appeal}
+            featureToggles={props.featureToggles}
+            {...formProps}
+          />
         }}
         componentForNoFormSelected={<Redirect to={PAGE_PATHS.BEGIN} />}
       />
