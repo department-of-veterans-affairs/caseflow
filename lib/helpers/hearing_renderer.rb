@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 
 class HearingRenderer
+  # Actually, we want to start this from the appeal
   RENDERABLE_CLASSNAMES = %w[
-    Veteran
     Appeal
-    RootTask
-    User
+    Hearing
+    HearingTask
+    ScheduleHearingTask
+    AssignHearingDispositionTask
+    HearingDay
+    VirtualHearing
   ].freeze
 
   class << self
@@ -75,23 +79,28 @@ class HearingRenderer
   end
 
   def appeal_children(appeal)
-    children = [structure(appeal.root_task)]
-    children
+    hearing_tasks = appeal.tasks.of_type("HearingTask")
+    hearing_tasks.map { |ht| structure(ht) }
   end
 
   def appeal_context(appeal)
     appeal.veteran
   end
 
-  def root_task_children(root_task)
-    root_task.children.of_type("DistributionTask")
+  def hearing_task_children(hearing_task)
+    children = []
+    children += hearing_task.children.of_type("ScheduleHearingTask")
+    children += hearing_task.children.of_type("AssignHearingDispositionTask")
+    children += hearing_task.children.of_type("AssignHearingDispositionTask")
+
+    children
   end
 
-  def root_task_details(root_task)
-    ["root_task details stub #{root_task.id}"]
+  def hearing_task_details(hearing_task)
+    ["root_task details stub #{hearing_task.id}"]
   end
 
-  def root_task_context(root_task)
-    root_task.appeal
+  def hearing_task_context(hearing_task)
+    hearing_task.appeal
   end
 end
