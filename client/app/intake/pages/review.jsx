@@ -13,7 +13,7 @@ import { PAGE_PATHS, FORM_TYPES, REQUEST_STATE, VBMS_BENEFIT_TYPES } from '../co
 import RampElectionPage, { reviewRampElectionSchema } from './rampElection/review';
 import RampRefilingPage, { reviewRampRefilingSchema } from './rampRefiling/review';
 import SupplementalClaimPage, { reviewSupplementalClaimSchema } from './supplementalClaim/review';
-import HigherLevelReviewPage, { reviewHigherLevelReviewSchema } from './higherLevelReview/review';
+import { higherLevelReviewFormHeader, reviewHigherLevelReviewSchema } from './higherLevelReview/review';
 import { appealFormHeader, reviewAppealSchema } from './appeal/review';
 
 import Button from '../../components/Button';
@@ -91,8 +91,15 @@ const Review = (props) => {
           ramp_election: <RampElectionPage {...formProps} />,
           ramp_refiling: <RampRefilingPage {...formProps} />,
           supplemental_claim: <SupplementalClaimPage featureToggles={props.featureToggles} {...formProps} />,
-          higher_level_review: <HigherLevelReviewPage featureToggles={props.featureToggles} {...formProps} />,
+          higher_level_review: <FormGenerator
+            formName={selectedForm.formName}
+            formHeader={higherLevelReviewFormHeader}
+            schema={schemaMappings.higher_level_review}
+            featureToggles={props.featureToggles}
+            {...formProps}
+          />,
           appeal: <FormGenerator
+            formName={selectedForm.formName}
             formHeader={appealFormHeader}
             schema={schemaMappings.appeal}
             featureToggles={props.featureToggles}

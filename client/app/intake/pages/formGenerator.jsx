@@ -15,17 +15,9 @@ import {
 import { bindActionCreators } from 'redux';
 import { getIntakeStatus } from '../selectors';
 import SelectClaimant from '../components/SelectClaimant';
-
-const FormGenerator = (props) => {
-  return(
-    <div>
-      <h1>
-        {props.formHeader(props.veteranName)}
-      </h1>
-      {Object.keys(props.schema.fields).map((field) => formFieldMapping(props)[field])}
-    </div>
-  )
-}
+import BenefitType from '../components/BenefitType';
+import { BOOLEAN_RADIO_OPTIONS } from '../constants';
+import { convertStringToBoolean } from '../util';
 
 const docketTypeRadioOptions = [
   { value: 'direct_review',
@@ -36,41 +28,86 @@ const docketTypeRadioOptions = [
     displayText: 'Hearing' }
 ];
 
-const formFieldMapping = (props) => ({
-  'receipt-date': <ReceiptDateInput {...props} />,
-  'docket-type': <RadioField
-    name="docket-type"
-    label="Which review option did the Veteran request?"
-    strongLabel
-    vertical
-    options={docketTypeRadioOptions}
-    onChange={props.setDocketType}
-    errorMessage={props.docketTypeError || props.errors?.['docket-type']?.message}
-    value={props.docketType}
-    inputRef={props.register}
-  />,
-  'legacy-opt-in': <LegacyOptInApproved
-    value={props.legacyOptInApproved}
-    onChange={props.setLegacyOptInApproved}
-    errorMessage={props.legacyOptInApprovedError || props.errors?.['legacy-opt-in']?.message}
-    register={props.register}
-  />,
-  'different-claimant-option': <SelectClaimantConnected
-    register={props.register}
-    errors={props.errors}
-  />
-})
+const formFieldMapping = (props) => {
+  return ({
+    'receipt-date': <ReceiptDateInput {...props} />,
+    'docket-type': <RadioField
+      name="docket-type"
+      label="Which review option did the Veteran request?"
+      strongLabel
+      vertical
+      options={docketTypeRadioOptions}
+      onChange={props.setDocketType}
+      errorMessage={props.docketTypeError || props.errors?.['docket-type']?.message}
+      value={props.docketType}
+      inputRef={props.register}
+    />,
+    'legacy-opt-in': <LegacyOptInApproved
+      value={props.legacyOptInApproved}
+      onChange={props.setLegacyOptInApproved}
+      errorMessage={props.legacyOptInApprovedError || props.errors?.['legacy-opt-in']?.message}
+      register={props.register}
+    />,
+    'different-claimant-option': <SelectClaimantConnected
+      register={props.register}
+      errors={props.errors}
+    />,
+    'benefit-type-options': <BenefitType
+      value={props.benefitType}
+      onChange={props.setBenefitType}
+      errorMessage={props.benefitTypeError || props.errors?.['benefit-type-options']?.message}
+      register={props.register}
+    />,
+    'informal-conference': <RadioField
+      name="informal-conference"
+      label="Was an informal conference requested?"
+      strongLabel
+      vertical
+      options={BOOLEAN_RADIO_OPTIONS}
+      onChange={(value) => {
+        props.setInformalConference(convertStringToBoolean(value));
+      }}
+      errorMessage={props.informalConferenceError || props.errors?.['informal-conference']?.message}
+      value={props.informalConference === null ? null : props.informalConference.toString()}
+      inputRef={props.register}
+    />,
+    'same-office': <RadioField
+      name="same-office"
+      label="Was an interview by the same office requested?"
+      strongLabel
+      vertical
+      options={BOOLEAN_RADIO_OPTIONS}
+      onChange={(value) => {
+        props.setSameOffice(convertStringToBoolean(value));
+      }}
+      errorMessage={props.sameOfficeError || props.errors?.['same-office']?.message}
+      value={props.sameOffice === null ? null : props.sameOffice.toString()}
+      inputRef={props.register}
+    />
+  });
+};
+
+const FormGenerator = (props) => {
+  return (
+    <div>
+      <h1>
+        {props.formHeader(props.veteranName)}
+      </h1>
+      {Object.keys(props.schema.fields).map((field) => formFieldMapping(props)[field])}
+    </div>
+  );
+};
 
 const SelectClaimantConnected = connect(
-  ({ appeal, intake, featureToggles }) => ({
+  ({ higherLevelReview, appeal, intake, featureToggles }) => ({
     isVeteranDeceased: intake.veteran.isDeceased,
-    veteranIsNotClaimant: appeal.veteranIsNotClaimant,
-    veteranIsNotClaimantError: appeal.veteranIsNotClaimantError,
-    claimant: appeal.claimant,
-    claimantError: appeal.claimantError,
-    payeeCode: appeal.payeeCode,
-    relationships: appeal.relationships,
-    benefitType: appeal.benefitType,
+    veteranIsNotClaimant: higherLevelReview.veteranIsNotClaimant || appeal.veteranIsNotClaimant,
+    veteranIsNotClaimantError: higherLevelReview.veteranIsNotClaimantError || appeal.veteranIsNotClaimantError,
+    claimant: higherLevelReview.claimant || appeal.claimant,
+    claimantError: higherLevelReview.claimantError || appeal.claimantError,
+    payeeCode: higherLevelReview.payeeCode || appeal.payeeCode,
+    relationships: higherLevelReview.relationships || appeal.relationships,
+    benefitType: higherLevelReview.benefitType || appeal.benefitType,
     formType: intake.formType,
     featureToggles
   }),
@@ -83,20 +120,43 @@ const SelectClaimantConnected = connect(
 
 FormGenerator.propTypes = {
   formHeader: PropTypes.string,
-  schema: PropTypes.object
-}
+  schema: PropTypes.object,
+  veteranName: PropTypes.string,
+  receiptDate: PropTypes.string,
+  receiptDateError: PropTypes.string,
+  docketType: PropTypes.string,
+  docketTypeError: PropTypes.string,
+  legacyOptInApproved: PropTypes.bool,
+  legacyOptInApprovedError: PropTypes.string,
+  reviewIntakeError: PropTypes.object,
+  setDocketType: PropTypes.func,
+  setReceiptDate: PropTypes.func,
+  setLegacyOptInApproved: PropTypes.func,
+  appealStatus: PropTypes.string,
+  register: PropTypes.func,
+  errors: PropTypes.array
+};
 
 export default connect(
-  (state) => console.log(state) || ({
+  (state, props) => ({
     veteranName: state.intake.veteran.name,
     appealStatus: getIntakeStatus(state),
-    receiptDate: state.appeal.receiptDate,
-    receiptDateError: state.appeal.receiptDateError,
-    docketType: state.appeal.docketType,
-    docketTypeError: state.appeal.docketTypeError,
-    legacyOptInApproved: state.appeal.legacyOptInApproved,
-    legacyOptInApprovedError: state.appeal.legacyOptInApprovedError,
-    reviewIntakeError: state.appeal.requestStatus.reviewIntakeError
+    higherLevelReviewStatus: getIntakeStatus(state),
+    receiptDate: state[props.formName].receiptDate,
+    receiptDateError: state[props.formName].receiptDateError,
+    docketType: state[props.formName].docketType,
+    docketTypeError: state[props.formName].docketTypeError,
+    legacyOptInApproved: state[props.formName].legacyOptInApproved,
+    benefitType: state[props.formName].benefitType,
+    benefitTypeError: state[props.formName].benefitTypeError,
+    legacyOptInApprovedError: state[props.formName].legacyOptInApprovedError,
+    informalConference: state[props.formName].informalConference,
+    informalConferenceError: state[props.formName].informalConferenceError,
+    sameOffice: state[props.formName].sameOffice,
+    sameOfficeError: state[props.formName].sameOfficeError,
+    reviewIntakeError: state[props.formName].requestStatus.reviewIntakeError,
+    veteranValid: state[props.formName].veteranValid,
+    veteranInvalidFields: state[props.formName].veteranInvalidFields
   }),
   (dispatch) => bindActionCreators({
     setDocketType,
