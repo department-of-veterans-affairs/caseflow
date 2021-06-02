@@ -56,13 +56,15 @@ class SanitizedJsonConfiguration
       AttorneyCaseReview => {
         retrieval: ->(records) { AttorneyCaseReview.where(task_id: records[Task].map(&:id)).order(:id) }
       },
+      DecisionIssue => {
+        # In order to import DecisionIssues before RequestIssues (since RequestIssue records refer to DecisionIssue),
+        # export DecisionIssue records first.
+        sanitize_fields: %w[decision_text description],
+        retrieval: ->(records) { records[Appeal].map(&:decision_issues).flatten.sort_by(&:id) }
+      },
       RequestIssue => {
         sanitize_fields: ["notes", "contested_issue_description", /_(notes|text|description)/],
         retrieval: ->(records) { records[Appeal].map(&:request_issues).flatten.sort_by(&:id) }
-      },
-      DecisionIssue => {
-        sanitize_fields: %w[decision_text description],
-        retrieval: ->(records) { records[Appeal].map(&:decision_issues).flatten.sort_by(&:id) }
       },
       RequestDecisionIssue => {
         retrieval: ->(records) { RequestDecisionIssue.where(request_issue: records[RequestIssue]).order(:id) }
@@ -121,9 +123,8 @@ class SanitizedJsonConfiguration
         track_imported_ids: true,
         retrieval: lambda do |records|
           # eager load task associations
-          org_tasks = Task.where(id: records[Task].map(&:id)).includes(:assigned_by, :assigned_to).assigned_to_any_org
-          org_ids = records[OrganizationsUser].map(&:organization_id) +
-                    org_tasks.map(&:assigned_to_id) + org_tasks.map(&:assigned_by_id)
+          org_tasks = Task.where(id: records[Task].map(&:id)).includes(:assigned_to).assigned_to_any_org
+          org_ids = records[OrganizationsUser].map(&:organization_id) + org_tasks.map(&:assigned_to_id)
           # Use Organization.unscoped to include inactive organizations when exporting
           Organization.unscoped.where(id: org_ids).order(:id)
         end
@@ -264,7 +265,8 @@ class SanitizedJsonConfiguration
     @id_offset ||= 2_000_000_000
   end
 
-  # Start with important types that other records will reassociate with
+  # Start with important types that other records will reassociate with.
+  # Then import according to the order in the Json file
   def first_types_to_import
     # HearingDay is needed by Hearing
     @first_types_to_import ||= [Appeal, Organization, User, HearingDay, Task]

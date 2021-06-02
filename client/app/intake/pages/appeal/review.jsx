@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import * as yup from 'yup';
 import RadioField from '../../../components/RadioField';
-import DateSelector from '../../../components/DateSelector';
 import { Redirect } from 'react-router-dom';
-import SelectClaimant from '../../components/SelectClaimant';
+import SelectClaimant, { selectClaimantValidations } from '../../components/SelectClaimant';
 import LegacyOptInApproved from '../../components/LegacyOptInApproved';
 import { setDocketType } from '../../actions/appeal';
 import {
@@ -14,23 +14,31 @@ import {
   setLegacyOptInApproved
 } from '../../actions/decisionReview';
 import { setReceiptDate } from '../../actions/intake';
-import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES } from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, GENERIC_FORM_ERRORS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 import PropTypes from 'prop-types';
+import ReceiptDateInput, { receiptDateInputValidation } from '../receiptDateInput';
+
+const reviewAppealSchema = yup.object().shape({
+  'docket-type': yup.string().required(GENERIC_FORM_ERRORS.blank),
+  'legacy-opt-in': yup.string().required(GENERIC_FORM_ERRORS.blank),
+  'different-claimant-option': yup.string().required(GENERIC_FORM_ERRORS.blank),
+  ...selectClaimantValidations(),
+  ...receiptDateInputValidation(true)
+});
 
 class Review extends React.PureComponent {
   render() {
     const {
       appealStatus,
       veteranName,
-      receiptDate,
-      receiptDateError,
       docketType,
       docketTypeError,
       legacyOptInApproved,
       legacyOptInApprovedError,
-      reviewIntakeError
+      reviewIntakeError,
+      errors
     } = this.props;
 
     switch (appealStatus) {
@@ -55,14 +63,8 @@ class Review extends React.PureComponent {
 
       { reviewIntakeError && <ErrorAlert {...reviewIntakeError} /> }
 
-      <DateSelector
-        name="receipt-date"
-        label="What is the Receipt Date of this form?"
-        value={receiptDate}
-        onChange={this.props.setReceiptDate}
-        errorMessage={receiptDateError}
-        type="date"
-        strongLabel
+      <ReceiptDateInput
+        {...this.props}
       />
 
       <RadioField
@@ -72,16 +74,21 @@ class Review extends React.PureComponent {
         vertical
         options={docketTypeRadioOptions}
         onChange={this.props.setDocketType}
-        errorMessage={docketTypeError}
+        errorMessage={docketTypeError || errors?.['docket-type']?.message}
         value={docketType}
+        inputRef={this.props.register}
       />
 
-      <SelectClaimantConnected />
+      <SelectClaimantConnected
+        register={this.props.register}
+        errors={this.props.errors}
+      />
 
       <LegacyOptInApproved
         value={legacyOptInApproved}
         onChange={this.props.setLegacyOptInApproved}
-        errorMessage={legacyOptInApprovedError}
+        errorMessage={legacyOptInApprovedError || errors?.['legacy-opt-in']?.message}
+        register={this.props.register}
       />
     </div>;
   }
@@ -99,7 +106,9 @@ Review.propTypes = {
   setDocketType: PropTypes.func,
   setReceiptDate: PropTypes.func,
   setLegacyOptInApproved: PropTypes.func,
-  appealStatus: PropTypes.string
+  appealStatus: PropTypes.string,
+  register: PropTypes.func,
+  errors: PropTypes.array
 };
 
 const SelectClaimantConnected = connect(
@@ -140,3 +149,5 @@ export default connect(
     setLegacyOptInApproved
   }, dispatch)
 )(Review);
+
+export { reviewAppealSchema };

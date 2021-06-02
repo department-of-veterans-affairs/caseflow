@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import RadioField from '../../../components/RadioField';
-import DateSelector from '../../../components/DateSelector';
+import * as yup from 'yup';
 import { Redirect } from 'react-router-dom';
 import _ from 'lodash';
 import { setReceiptDate, setOptionSelected } from '../../actions/intake';
@@ -10,6 +10,11 @@ import { PAGE_PATHS, INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 import PropTypes from 'prop-types';
+import ReceiptDateInput, { receiptDateInputValidation } from '../receiptDateInput';
+
+const reviewRampElectionSchema = yup.object().shape({
+  ...receiptDateInputValidation()
+});
 
 class Review extends React.PureComponent {
   render() {
@@ -18,9 +23,8 @@ class Review extends React.PureComponent {
       veteranName,
       optionSelected,
       optionSelectedError,
-      receiptDate,
-      receiptDateError,
-      reviewIntakeError
+      reviewIntakeError,
+      errors
     } = this.props;
 
     switch (rampElectionStatus) {
@@ -42,14 +46,8 @@ class Review extends React.PureComponent {
 
       { reviewIntakeError && <ErrorAlert /> }
 
-      <DateSelector
-        name="receipt-date"
-        label="What is the Receipt Date of this form?"
-        value={receiptDate}
-        onChange={this.props.setReceiptDate}
-        errorMessage={receiptDateError}
-        type="date"
-        strongLabel
+      <ReceiptDateInput
+        {...this.props}
       />
 
       <RadioField
@@ -58,8 +56,9 @@ class Review extends React.PureComponent {
         strongLabel
         options={radioOptions}
         onChange={this.props.setOptionSelected}
-        errorMessage={optionSelectedError}
+        errorMessage={optionSelectedError || errors?.['opt-in-election']?.message}
         value={optionSelected}
+        inputRef={this.props.register}
       />
     </div>;
   }
@@ -74,7 +73,9 @@ Review.propTypes = {
   setReceiptDate: PropTypes.func,
   setOptionSelected: PropTypes.func,
   rampElectionStatus: PropTypes.string,
-  reviewIntakeError: PropTypes.string
+  reviewIntakeError: PropTypes.string,
+  register: PropTypes.func,
+  errors: PropTypes.array
 };
 
 export default connect(
@@ -92,3 +93,5 @@ export default connect(
     setReceiptDate
   }, dispatch)
 )(Review);
+
+export { reviewRampElectionSchema };

@@ -12,7 +12,7 @@ import AppFrame from '../components/AppFrame';
 import CancelIntakeModal from './components/CancelIntakeModal';
 import SelectFormPage, { SelectFormButton } from './pages/selectForm';
 import SearchPage from './pages/search';
-import ReviewPage, { ReviewButtons } from './pages/review';
+import ReviewPage from './pages/review';
 import FinishPage, { FinishButtons } from './pages/finish';
 import { IntakeAddIssuesPage } from './pages/addIssues';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
@@ -91,7 +91,7 @@ export const IntakeFrame = (props) => {
             path={PAGE_PATHS.REVIEW}
             title="Review Request | Caseflow Intake"
           >
-            <IntakeLayout buttons={<ReviewButtons history={history} />}>
+            <IntakeLayout>
               <ReviewPage featureToggles={props.featureToggles} />
             </IntakeLayout>
           </PageRoute>
