@@ -1,18 +1,18 @@
 import React from 'react';
 
-import { mount } from 'enzyme';
+import { render } from '@testing-library/react';
 
 // Component to be tested
 import CaseWorkerIndex from 'app/containers/CaseWorker/CaseWorkerIndex';
 
 const setup = () => {
-  return mount(<CaseWorkerIndex currentUserHistoricalTasks={[]}/>)
+  return render(<CaseWorkerIndex currentUserHistoricalTasks={[]} />);
 };
 
 describe('CaseWorkerIndex', () => {
   it('renders correctly', async () => {
-    const caseWorkerIndex = setup();
+    const { container } = setup();
 
-    expect(caseWorkerIndex).toMatchSnapshot();
+    expect(container).toMatchSnapshot();
   });
 });

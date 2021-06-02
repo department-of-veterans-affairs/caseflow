@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import * as yup from 'yup';
 import RadioField from '../../../components/RadioField';
-import DateSelector from '../../../components/DateSelector';
 import Button from '../../../components/Button';
 import Alert from '../../../components/Alert';
 import { Redirect } from 'react-router-dom';
@@ -15,6 +15,11 @@ import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 import COPY from '../../../../COPY';
 import PropTypes from 'prop-types';
+import ReceiptDateInput, { receiptDateInputValidation } from '../receiptDateInput';
+
+const reviewRampRefilingSchema = yup.object().shape({
+  ...receiptDateInputValidation()
+});
 
 class Review extends React.PureComponent {
   beginNextIntake = () => {
@@ -27,12 +32,11 @@ class Review extends React.PureComponent {
       optionSelected,
       optionSelectedError,
       hasInvalidOption,
-      receiptDate,
-      receiptDateError,
       appealDocket,
       appealDocketError,
       submitInvalidOptionError,
-      reviewIntakeError
+      reviewIntakeError,
+      errors
     } = this.props;
 
     switch (rampRefilingStatus) {
@@ -82,14 +86,8 @@ class Review extends React.PureComponent {
 
       { reviewIntakeError && <ErrorAlert /> }
 
-      <DateSelector
-        name="receipt-date"
-        label="What is the Receipt Date of this form?"
-        value={receiptDate}
-        onChange={this.props.setReceiptDate}
-        errorMessage={receiptDateError}
-        strongLabel
-        type="date"
+      <ReceiptDateInput
+        {...this.props}
       />
 
       <RadioField
@@ -98,8 +96,9 @@ class Review extends React.PureComponent {
         strongLabel
         options={reviewRadioOptions}
         onChange={this.props.setOptionSelected}
-        errorMessage={optionSelectedError}
+        errorMessage={optionSelectedError || errors?.['opt-in-election']?.message}
         value={optionSelected}
+        inputRef={this.props.register}
       />
 
       { optionSelected === REVIEW_OPTIONS.APPEAL.key &&
@@ -109,8 +108,9 @@ class Review extends React.PureComponent {
           strongLabel
           options={docketRadioOptions}
           onChange={this.props.setAppealDocket}
-          errorMessage={appealDocketError}
+          errorMessage={appealDocketError || errors?.['appeal-docket']?.message}
           value={appealDocket}
+          inputRef={this.props.register}
         />
       }
     </div>;
@@ -133,7 +133,9 @@ Review.propTypes = {
   setReceiptDate: PropTypes.func,
   requestState: PropTypes.string,
   intakeId: PropTypes.string,
-  confirmIneligibleForm: PropTypes.func
+  confirmIneligibleForm: PropTypes.func,
+  register: PropTypes.func,
+  errors: PropTypes.array
 };
 
 export default connect(
@@ -159,3 +161,5 @@ export default connect(
     confirmIneligibleForm
   }, dispatch)
 )(Review);
+
+export { reviewRampRefilingSchema };
