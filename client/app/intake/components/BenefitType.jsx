@@ -1,6 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import RadioField from '../../components/RadioField';
-import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES.json';
+import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
 import { formatRadioOptions, formatSearchableDropdownOptions } from '../util';
 import SearchableDropdown from '../../components/SearchableDropdown';
 
@@ -9,7 +10,8 @@ export default class BenefitType extends React.PureComponent {
     const {
       value,
       errorMessage,
-      onChange
+      onChange,
+      register
     } = this.props;
 
     return <div className="cf-benefit-type">
@@ -22,6 +24,7 @@ export default class BenefitType extends React.PureComponent {
         onChange={onChange}
         value={value}
         errorMessage={errorMessage}
+        inputRef={register}
       />
     </div>;
   }
@@ -55,3 +58,11 @@ export default class BenefitType extends React.PureComponent {
     return this.asRadioField();
   }
 }
+
+BenefitType.propTypes = {
+  value: PropTypes.string,
+  errorMessage: PropTypes.string,
+  onChange: PropTypes.func,
+  register: PropTypes.func,
+  asDropdown: PropTypes.bool
+};

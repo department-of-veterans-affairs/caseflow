@@ -2,11 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
+import * as yup from 'yup';
 import RadioField from '../../../components/RadioField';
-import DateSelector from '../../../components/DateSelector';
 import BenefitType from '../../components/BenefitType';
 import LegacyOptInApproved from '../../components/LegacyOptInApproved';
-import SelectClaimant from '../../components/SelectClaimant';
+import SelectClaimant, { selectClaimantValidations } from '../../components/SelectClaimant';
 import { setInformalConference, setSameOffice } from '../../actions/higherLevelReview';
 import {
   setBenefitType,
@@ -16,19 +16,29 @@ import {
   setLegacyOptInApproved
 } from '../../actions/decisionReview';
 import { setReceiptDate } from '../../actions/intake';
-import { PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS, FORM_TYPES, VBMS_BENEFIT_TYPES } from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS,
+  FORM_TYPES, VBMS_BENEFIT_TYPES, GENERIC_FORM_ERRORS } from '../../constants';
 import { convertStringToBoolean } from '../../util';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 import PropTypes from 'prop-types';
+import ReceiptDateInput, { receiptDateInputValidation } from '../receiptDateInput';
+
+const reviewHigherLevelReviewSchema = yup.object().shape({
+  'benefit-type-options': yup.string().required(GENERIC_FORM_ERRORS.blank),
+  'informal-conference': yup.string().required(GENERIC_FORM_ERRORS.blank),
+  'same-office': yup.string().required(GENERIC_FORM_ERRORS.blank),
+  'different-claimant-option': yup.string().required(GENERIC_FORM_ERRORS.blank),
+  'legacy-opt-in': yup.string().required(GENERIC_FORM_ERRORS.blank),
+  ...selectClaimantValidations(),
+  ...receiptDateInputValidation(true)
+});
 
 class Review extends React.PureComponent {
   render() {
     const {
       higherLevelReviewStatus,
       veteranName,
-      receiptDate,
-      receiptDateError,
       benefitType,
       benefitTypeError,
       informalConference,
@@ -39,7 +49,8 @@ class Review extends React.PureComponent {
       legacyOptInApprovedError,
       reviewIntakeError,
       veteranValid,
-      veteranInvalidFields
+      veteranInvalidFields,
+      errors
     } = this.props;
 
     switch (higherLevelReviewStatus) {
@@ -61,17 +72,12 @@ class Review extends React.PureComponent {
       <BenefitType
         value={benefitType}
         onChange={this.props.setBenefitType}
-        errorMessage={benefitTypeError}
+        errorMessage={benefitTypeError || errors?.['benefit-type-options']?.message}
+        register={this.props.register}
       />
 
-      <DateSelector
-        name="receipt-date"
-        label="What is the Receipt Date of this form?"
-        value={receiptDate}
-        onChange={this.props.setReceiptDate}
-        errorMessage={receiptDateError}
-        type="date"
-        strongLabel
+      <ReceiptDateInput
+        {...this.props}
       />
 
       <RadioField
@@ -83,8 +89,9 @@ class Review extends React.PureComponent {
         onChange={(value) => {
           this.props.setInformalConference(convertStringToBoolean(value));
         }}
-        errorMessage={informalConferenceError}
+        errorMessage={informalConferenceError || errors?.['informal-conference']?.message}
         value={informalConference === null ? null : informalConference.toString()}
+        inputRef={this.props.register}
       />
 
       <RadioField
@@ -96,16 +103,21 @@ class Review extends React.PureComponent {
         onChange={(value) => {
           this.props.setSameOffice(convertStringToBoolean(value));
         }}
-        errorMessage={sameOfficeError}
+        errorMessage={sameOfficeError || errors?.['same-office']?.message}
         value={sameOffice === null ? null : sameOffice.toString()}
+        inputRef={this.props.register}
       />
 
-      <SelectClaimantConnected />
+      <SelectClaimantConnected
+        register={this.props.register}
+        errors={this.props.errors}
+      />
 
       <LegacyOptInApproved
         value={legacyOptInApproved}
         onChange={this.props.setLegacyOptInApproved}
-        errorMessage={legacyOptInApprovedError}
+        errorMessage={legacyOptInApprovedError || errors?.['legacy-opt-in']?.message}
+        register={this.props.register}
       />
     </div>;
   }
@@ -131,7 +143,9 @@ Review.propTypes = {
   setInformalConference: PropTypes.func,
   setSameOffice: PropTypes.func,
   setLegacyOptInApproved: PropTypes.func,
-  higherLevelReviewStatus: PropTypes.string
+  higherLevelReviewStatus: PropTypes.string,
+  register: PropTypes.func,
+  errors: PropTypes.array
 };
 
 const SelectClaimantConnected = connect(
@@ -181,3 +195,5 @@ export default connect(
     setLegacyOptInApproved
   }, dispatch)
 )(Review);
+
+export { reviewHigherLevelReviewSchema };

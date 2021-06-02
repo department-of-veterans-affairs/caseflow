@@ -2,6 +2,7 @@ import * as React from 'react';
 import moment from 'moment';
 import pluralize from 'pluralize';
 import { _, isEmpty } from 'lodash';
+import { css } from 'glamor';
 
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import BadgeArea from './BadgeArea';
@@ -221,6 +222,8 @@ export const readerLinkColumn = (requireDasRecord, includeNewDocsIcon) => {
 export const readerLinkColumnWithNewDocsIcon = (requireDasRecord) => readerLinkColumn(requireDasRecord, true);
 
 export const daysWaitingColumn = (requireDasRecord) => {
+  const daysWaitingStyle = css({ display: 'inline-block' });
+
   return {
     header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
     name: QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
@@ -234,11 +237,13 @@ export const daysWaitingColumn = (requireDasRecord) => {
           diff(task.placedOnHoldAt, 'days');
 
       return <IhpDaysWaitingTooltip {...task.latestInformalHearingPresentationTask}>
-        <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>
-          {daysSinceAssigned} {pluralize('day', daysSinceAssigned)}
-        </span>
-        { taskHasCompletedHold(task) &&
+        <div className={daysWaitingStyle}>
+          <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>
+            {daysSinceAssigned} {pluralize('day', daysSinceAssigned)}
+          </span>
+          { taskHasCompletedHold(task) &&
           <ContinuousProgressBar level={daysSincePlacedOnHold} limit={task.onHoldDuration} warning /> }
+        </div>
       </IhpDaysWaitingTooltip>;
     },
     backendCanSort: true,
