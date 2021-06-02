@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom';
 import RadioField from '../../components/RadioField';
 import ReceiptDateInput from './receiptDateInput';
 import { setDocketType } from '../actions/appeal';
@@ -16,7 +17,7 @@ import { bindActionCreators } from 'redux';
 import { getIntakeStatus } from '../selectors';
 import SelectClaimant from '../components/SelectClaimant';
 import BenefitType from '../components/BenefitType';
-import { BOOLEAN_RADIO_OPTIONS } from '../constants';
+import { BOOLEAN_RADIO_OPTIONS, INTAKE_STATES, PAGE_PATHS } from '../constants';
 import { convertStringToBoolean } from '../util';
 
 const docketTypeRadioOptions = [
@@ -88,6 +89,14 @@ const formFieldMapping = (props) => {
 };
 
 const FormGenerator = (props) => {
+  switch (props.intakeStatus) {
+  case INTAKE_STATES.NONE:
+    return <Redirect to={PAGE_PATHS.BEGIN} />;
+  case INTAKE_STATES.COMPLETED:
+    return <Redirect to={PAGE_PATHS.COMPLETED} />;
+  default:
+  }
+
   return (
     <div>
       <h1>
@@ -133,6 +142,7 @@ FormGenerator.propTypes = {
   setReceiptDate: PropTypes.func,
   setLegacyOptInApproved: PropTypes.func,
   appealStatus: PropTypes.string,
+  intakeStatus: PropTypes.string,
   register: PropTypes.func,
   errors: PropTypes.array
 };
@@ -140,8 +150,7 @@ FormGenerator.propTypes = {
 export default connect(
   (state, props) => ({
     veteranName: state.intake.veteran.name,
-    appealStatus: getIntakeStatus(state),
-    higherLevelReviewStatus: getIntakeStatus(state),
+    intakeStatus: getIntakeStatus(state),
     receiptDate: state[props.formName].receiptDate,
     receiptDateError: state[props.formName].receiptDateError,
     docketType: state[props.formName].docketType,
