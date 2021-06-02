@@ -8,6 +8,7 @@ RSpec.describe ClaimantsController, :all_dbs, type: :controller do
     let(:request_params) { { participant_id: participant_id } }
 
     before do
+      BgsPowerOfAttorney.set_callback(:save, :before, :update_cached_attributes!)
       allow(controller).to receive(:verify_authentication).and_return(true)
     end
 
