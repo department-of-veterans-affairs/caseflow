@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_01_143622) do
+ActiveRecord::Schema.define(version: 2021_06_02_145330) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1662,6 +1662,7 @@ ActiveRecord::Schema.define(version: 2021_06_01_143622) do
   add_foreign_key "docket_switches", "appeals", column: "old_docket_stream_id"
   add_foreign_key "docket_switches", "tasks"
   add_foreign_key "document_views", "users"
+  add_foreign_key "end_product_code_updates", "end_product_establishments"
   add_foreign_key "end_product_establishments", "users"
   add_foreign_key "end_product_updates", "end_product_establishments"
   add_foreign_key "end_product_updates", "users"
