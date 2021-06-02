@@ -1,12 +1,4 @@
-require "fileutils"
 Rails.application.configure do
-  config.after_initialize do
-    Bullet.enable        = false
-    Bullet.bullet_logger = true
-    Bullet.rails_logger  = true
-    Bullet.raise = true
-    Bullet.unused_eager_loading_enable = false
-  end
   # Settings specified here will take precedence over those in config/application.rb.
 
   # The test environment is used exclusively to run your application's
@@ -14,10 +6,6 @@ Rails.application.configure do
   # your test database is "scratch space" for the test suite and is wiped
   # and recreated between test runs. Don't rely on the data there!
   config.cache_classes = true
-
-  cache_dir = Rails.root.join("tmp", "cache", "test_#{ENV['TEST_SUBCATEGORY']}", $$.to_s)
-  FileUtils.mkdir_p(cache_dir) unless File.exists?(cache_dir)
-  config.cache_store = :file_store, cache_dir
 
   # Do not eager load code on boot. This avoids loading your whole application
   # just for the purpose of running a single test. If you are using a tool that
@@ -27,18 +15,22 @@ Rails.application.configure do
   # Configure public file server for tests with Cache-Control for performance.
   config.public_file_server.enabled = true
   config.public_file_server.headers = {
-    'Cache-Control' => 'public, max-age=#{1.hour.seconds.to_i}'
+    'Cache-Control' => "public, max-age=#{1.hour.to_i}"
   }
 
   # Show full error reports and disable caching.
-  config.consider_all_requests_local       = false
+  config.consider_all_requests_local       = true
   config.action_controller.perform_caching = false
 
   # Raise exceptions instead of rendering exception templates.
-  config.action_dispatch.show_exceptions = true
+  config.action_dispatch.show_exceptions = false
 
   # Disable request forgery protection in test environment.
   config.action_controller.allow_forgery_protection = false
+
+  # Store uploaded files on the local file system in a temporary directory
+  config.active_storage.service = :test
+
   config.action_mailer.perform_caching = false
 
   # Tell Action Mailer not to deliver emails to the real world.
@@ -48,6 +40,9 @@ Rails.application.configure do
 
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
+
+  # Raises error for missing translations
+  # config.action_view.raise_on_missing_translations = true
 
   # Setup S3
   config.s3_enabled = false
@@ -70,8 +65,6 @@ Rails.application.configure do
     config.logger = Logger.new(nil)
     config.log_level = :error
   end
-
-  config.action_mailer.delivery_method = :test
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true

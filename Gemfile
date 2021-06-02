@@ -47,7 +47,7 @@ gem "pg", platforms: :ruby
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
 gem "puma", "~> 5"
 gem "rack", "~> 2.2.3"
-gem "rails", "5.2.4.6"
+gem "rails", "5.2.6"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
@@ -86,7 +86,7 @@ group :test, :development, :demo do
   gem "bullet"
   gem "bundler-audit"
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem "byebug", platforms: :ruby
+  # gem "pry-byebug", "~> 3.9", platforms: :ruby
   # Testing tools
   gem "capybara"
   gem "capybara-screenshot"
@@ -98,7 +98,7 @@ group :test, :development, :demo do
   # Linters
   gem "jshint", platforms: :ruby
   gem "pry"
-  gem "pry-byebug"
+  gem "pry-byebug", "~> 3.9"
   gem "rails-erd"
   gem "rb-readline"
   gem "rspec"
