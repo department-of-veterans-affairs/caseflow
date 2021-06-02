@@ -92,14 +92,14 @@ const Review = (props) => {
           ramp_refiling: <RampRefilingPage {...formProps} />,
           supplemental_claim: <SupplementalClaimPage featureToggles={props.featureToggles} {...formProps} />,
           higher_level_review: <FormGenerator
-            formName={selectedForm.formName}
+            formName={selectedForm?.formName}
             formHeader={higherLevelReviewFormHeader}
             schema={schemaMappings.higher_level_review}
             featureToggles={props.featureToggles}
             {...formProps}
           />,
           appeal: <FormGenerator
-            formName={selectedForm.formName}
+            formName={selectedForm?.formName}
             formHeader={appealFormHeader}
             schema={schemaMappings.appeal}
             featureToggles={props.featureToggles}

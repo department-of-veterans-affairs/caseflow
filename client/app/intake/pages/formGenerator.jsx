@@ -131,6 +131,7 @@ const SelectClaimantConnected = connect(
       claimant: state[props.formName].claimant,
       claimantError: state[props.formName].claimantError,
       payeeCode: state[props.formName].payeeCode,
+      payeeCodeError: state[props.formName].payeeCodeError,
       relationships: state[props.formName].relationships,
       benefitType: state[props.formName].benefitType,
       formType: state.intake.formType,
