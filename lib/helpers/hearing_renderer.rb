@@ -3,6 +3,7 @@
 class HearingRenderer
   # Actually, we want to start this from the appeal
   RENDERABLE_CLASSNAMES = %w[
+    Veteran
     Appeal
     Hearing
     HearingTask
@@ -79,12 +80,38 @@ class HearingRenderer
   end
 
   def appeal_children(appeal)
-    hearing_tasks = appeal.tasks.of_type("HearingTask")
-    hearing_tasks.map { |ht| structure(ht) }
+    children = []
+    children << appeal.hearings.map { |hearing| structure(hearing) }
+    children << { "Appellant": ["Appellant is not veteran", "Relationship to veteran: spouse"] }
+    children << { "History": { "Hearing Request Type": ["Converted to Virtual from Video  by `BVASYELLOW` at [Datetime]", "Converted to Video from Central  by `BVASYELLOW` at [Datetime]"] } }
+
+    children
   end
 
   def appeal_context(appeal)
     appeal.veteran
+  end
+
+  def hearing_children(hearing)
+    children = []
+    children << structure(hearing.hearing_task)
+    children << "Notes example notes"
+    children << "Scheduled Time: 05012021 8:30 AM EDT 5:30 PST (RO time)"
+    children << "type: Virtual, disp: held, HC: BVASYELLOW"
+    children << { "HearingDay [id]": "hearing day info" }
+    virtual_hearings = VirtualHearing.where(hearing_id: hearing.id, hearing_type: hearing.class.name)
+    children << virtual_hearings.map { |vh| structure(vh) }
+    children << { "Email Events": ["Appellant, confirmation, id23134", "Representative, confirmation, id4234"] }
+
+    children
+  end
+
+  def hearing_details(hearing)
+    ["hearing details stub #{hearing.id}"]
+  end
+
+  def hearing_context(hearing)
+    hearing.appeal
   end
 
   def hearing_task_children(hearing_task)
@@ -102,5 +129,21 @@ class HearingRenderer
 
   def hearing_task_context(hearing_task)
     hearing_task.appeal
+  end
+
+  def virtual_hearing_children(virtual_hearing)
+    children = []
+    children << "Appellant - email sent, Rep - email sent, Judge - email not sent"
+    children << "Scheduled by BVASYELLOW at 5012021"
+
+    children
+  end
+
+  def virtual_hearing_details(virtual_hearing)
+    ["VirtualHearing [ID] (Status: Pending)"]
+  end
+
+  def virtual_hearing_context(virtual_hearing)
+    virtual_hearing.hearing
   end
 end
