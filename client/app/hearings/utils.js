@@ -127,6 +127,11 @@ export const getAppellantTitle = (appellantIsNotVeteran) =>
 export const VIRTUAL_HEARING_HOST = 'host';
 export const VIRTUAL_HEARING_GUEST = 'guest';
 
+export const TIMEZONES_WITH_LUNCHBREAK = [
+  'America/New_York', 'America/Chicago', 'America/Indiana/Indianapolis',
+  'America/Kentucky/Louisville', 'America/Puerto_Rico'
+];
+
 /**
  * Method to override falsy values for comparison
  * @param {*} init -- Initial value to compare against
@@ -504,13 +509,20 @@ export const dispositionLabel = (disposition) => HEARING_DISPOSITION_TYPE_TO_LAB
  * @param {string} roTimezone -- Timezone like 'America/Los_Angeles' of the ro
  * @param {array} hearings    -- List of hearings scheduled for a specific date
  **/
-const calculateAvailableTimeslots = ({ numberOfSlots, beginsAt, roTimezone, scheduledHearings, slotLengthMinutes }) => {
+const calculateAvailableTimeslots = ({
+  numberOfSlots,
+  beginsAt,
+  roTimezone,
+  scheduledHearings,
+  slotLengthMinutes,
+  lunchBreak
+}) => {
   // Extract the hearing time, add the hearing_day date from beginsAt, set the timezone be the ro timezone
   const hearingTimes = scheduledHearings.map((hearing) => {
     const [hearingHour, hearingMinute] = hearing.hearingTime.split(':');
     const hearingTimeMoment = beginsAt.clone().set({ hour: hearingHour, minute: hearingMinute });
 
-    // Change which zone the time is in but don't conver, "08:15 EDT" -> "08:15 PDT"
+    // Change which zone the time is in but don't convert, "08:15 EDT" -> "08:15 PDT"
     return hearingTimeMoment.tz(roTimezone, true);
   });
 
@@ -518,6 +530,20 @@ const calculateAvailableTimeslots = ({ numberOfSlots, beginsAt, roTimezone, sche
   const availableSlots = _.times(numberOfSlots).map((index) => {
     // Create the possible time by adding our offset * slotLengthMinutes to beginsAt
     const possibleTime = beginsAt.clone().add(index * slotLengthMinutes, 'minutes');
+
+    // If slot is after the lunch break, move it forward by the length of the break
+    if (lunchBreak) {
+      // Set the constants for lunch breaks
+      const LUNCH_TIME = { hour: '12', minute: '30', lengthInMinutes: '30' };
+
+      // Get the lunchbreak moment on the correct date
+      const lunchBreakMoment = beginsAt.clone().tz(roTimezone).
+        set({ hour: LUNCH_TIME.hour, minute: LUNCH_TIME.hour });
+
+      if (possibleTime.isSameOrAfter(lunchBreakMoment)) {
+        possibleTime.add(LUNCH_TIME.lengthInMinutes, 'minutes');
+      }
+    }
 
     // This slot is not available (full) if there's a scheduled hearing less than an hour before
     // or after the slot.
@@ -638,6 +664,7 @@ export const setTimeSlots = ({
   beginsAt,
   numberOfSlots,
   slotLengthMinutes,
+  lunchBreak = false,
   selected,
   hearingDayDate
 }) => {
@@ -656,7 +683,8 @@ export const setTimeSlots = ({
     slotLengthMinutes: slotLengthMinutes || defaultSlotLengthMinutes,
     beginsAt: beginsAt ? momentBeginsAt : momentDefaultBeginsAt,
     roTimezone,
-    scheduledHearings
+    scheduledHearings,
+    lunchBreak
   });
 
   const slotsAndHearings = combineSlotsAndHearings({

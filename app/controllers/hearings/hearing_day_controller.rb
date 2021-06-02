@@ -52,9 +52,7 @@ class Hearings::HearingDayController < HearingsApplicationController
   def create
     return no_available_rooms unless hearing_day_rooms.rooms_are_available?
 
-    hearing_day = HearingDay.create(
-      create_params.merge(room: hearing_day_rooms.available_room)
-    )
+    hearing_day = HearingDay.create(create_params.merge(room: hearing_day_rooms.available_room))
 
     render json: { hearing: hearing_day.to_hash }, status: :created
   rescue ActiveRecord::RecordInvalid => error
@@ -154,6 +152,9 @@ class Hearings::HearingDayController < HearingsApplicationController
                   :judge_id,
                   :regional_office,
                   :notes,
+                  :number_of_slots,
+                  :first_slot_time,
+                  :slot_length_minutes,
                   :bva_poc)
       .merge(created_by: current_user, updated_by: current_user)
   end

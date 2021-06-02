@@ -13,6 +13,7 @@ Rails.application.config.assets.paths << Rails.root.join('client', 'node_modules
 # Precompile additional assets.
 # application.js, application.css, and all non-JS/CSS in the app/assets 
 # folder are already added.
+Rails.application.config.assets.precompile += %w( explain-appeal.js )
 Rails.application.config.assets.precompile += %w( stats.js )
 Rails.application.config.assets.precompile += %w( task-tree.js )
 Rails.application.config.assets.precompile += %w( pdf.worker.js )
@@ -24,6 +25,7 @@ Rails.application.config.assets.precompile += %w( 0.webpack-bundle.js )
 Rails.application.config.assets.precompile += %w( print/hearings_worksheet.css )
 Rails.application.config.assets.precompile += %w( print/hearings_worksheet_overrides.css )
 Rails.application.config.assets.precompile += %w( print/hearings_schedule.css )
+Rails.application.config.assets.precompile += %w( explain_appeal.css )
 
 Rails.application.config.assets.precompile += %w( favicon.ico )
 Rails.application.config.assets.precompile << %w( *.woff *.woff2 *.eot *.ttf )

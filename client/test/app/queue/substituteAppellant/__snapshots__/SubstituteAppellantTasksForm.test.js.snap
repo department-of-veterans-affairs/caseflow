@@ -129,7 +129,7 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
                 </div>
               </td>
               <td>
-                Root Task
+                Root 
               </td>
               <td>
                 Completed
@@ -168,7 +168,7 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
                 </div>
               </td>
               <td>
-                Distribution Task
+                Distribution 
               </td>
               <td>
                 Completed
@@ -207,7 +207,7 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
                 </div>
               </td>
               <td>
-                Evidence Submission Window Task
+                Evidence Submission Window 
               </td>
               <td>
                 Completed
@@ -573,7 +573,7 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
                 </div>
               </td>
               <td>
-                Root Task
+                Root 
               </td>
               <td>
                 Completed
@@ -613,7 +613,7 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
                 </div>
               </td>
               <td>
-                Distribution Task
+                Distribution 
               </td>
               <td>
                 Completed
@@ -653,7 +653,7 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
                 </div>
               </td>
               <td>
-                Evidence Submission Window Task
+                Evidence Submission Window 
               </td>
               <td>
                 Completed

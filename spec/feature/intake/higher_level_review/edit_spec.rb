@@ -336,15 +336,15 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
     let!(:starting_request_issues) do
       [
-         eligible_request_issue,
-         untimely_request_issue,
-         ri_with_active_previous_review,
-         ri_with_previous_hlr,
-         ri_before_ama,
-         eligible_ri_before_ama,
-         ri_legacy_issue_not_withdrawn,
-         ri_legacy_issue_ineligible
-       ]
+        eligible_request_issue,
+        untimely_request_issue,
+        ri_with_active_previous_review,
+        ri_with_previous_hlr,
+        ri_before_ama,
+        eligible_ri_before_ama,
+        ri_legacy_issue_not_withdrawn,
+        ri_legacy_issue_ineligible
+      ]
     end
 
     before do
@@ -370,16 +370,16 @@ feature "Higher Level Review Edit issues", :all_dbs do
       end
       let!(:starting_request_issues) do
         [
-           eligible_request_issue,
-           untimely_request_issue,
-           ri_with_active_previous_review,
-           ri_with_previous_hlr,
-           ri_before_ama,
-           eligible_ri_before_ama,
-           ri_legacy_issue_not_withdrawn,
-           ri_legacy_issue_ineligible,
-           ri_legacy_issue_eligible
-         ]
+          eligible_request_issue,
+          untimely_request_issue,
+          ri_with_active_previous_review,
+          ri_with_previous_hlr,
+          ri_before_ama,
+          eligible_ri_before_ama,
+          ri_legacy_issue_not_withdrawn,
+          ri_legacy_issue_ineligible,
+          ri_legacy_issue_eligible
+        ]
       end
       let(:legacy_opt_in_approved) { true }
 
@@ -1578,14 +1578,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
     end
 
     context "when a rating decision text is edited" do
-      before do
-        FeatureToggle.enable!(:edit_contention_text, users: [current_user.css_id])
-      end
-
-      after do
-        FeatureToggle.disable!(:edit_contention_text, users: [current_user.css_id])
-      end
-
       let!(:issue) do
         create(:request_issue, :rating, decision_review: higher_level_review, contested_issue_description: "PTSD")
       end
