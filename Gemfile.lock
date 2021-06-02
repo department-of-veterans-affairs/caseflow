@@ -141,7 +141,7 @@ GEM
       aws-sdk-core (= 2.10.112)
     aws-sigv4 (1.0.2)
     benchmark-ips (2.7.2)
-    bootsnap (1.4.4)
+    bootsnap (1.7.5)
       msgpack (~> 1.0)
     bourbon (4.2.7)
       sass (~> 3.4)
@@ -766,4 +766,4 @@ DEPENDENCIES
   ziptz
 
 BUNDLED WITH
-   1.17.3
+   2.1.4
