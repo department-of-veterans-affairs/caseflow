@@ -121,18 +121,22 @@ const FormGenerator = (props) => {
 };
 
 const SelectClaimantConnected = connect(
-  (state, props) => ({
-    isVeteranDeceased: state.intake.veteran.isDeceased,
-    veteranIsNotClaimant: state[props.formName].veteranIsNotClaimant,
-    veteranIsNotClaimantError: state[props.formName].veteranIsNotClaimantError,
-    claimant: state[props.formName].claimant,
-    claimantError: state[props.formName].claimantError,
-    payeeCode: state[props.formName].payeeCode,
-    relationships: state[props.formName].relationships,
-    benefitType: state[props.formName].benefitType,
-    formType: state.intake.formType,
-    ...state.featureToggles
-  }),
+  (state, props) => {
+    const { featureToggles } = state;
+
+    return ({
+      isVeteranDeceased: state.intake.veteran.isDeceased,
+      veteranIsNotClaimant: state[props.formName].veteranIsNotClaimant,
+      veteranIsNotClaimantError: state[props.formName].veteranIsNotClaimantError,
+      claimant: state[props.formName].claimant,
+      claimantError: state[props.formName].claimantError,
+      payeeCode: state[props.formName].payeeCode,
+      relationships: state[props.formName].relationships,
+      benefitType: state[props.formName].benefitType,
+      formType: state.intake.formType,
+      featureToggles
+    });
+  },
   (dispatch) => bindActionCreators({
     setVeteranIsNotClaimant,
     setClaimant,
