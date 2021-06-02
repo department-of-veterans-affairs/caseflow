@@ -11,8 +11,10 @@ import {
   setVeteranIsNotClaimant,
   setClaimant,
   setPayeeCode,
-  setLegacyOptInApproved
+  setLegacyOptInApproved,
+  setBenefitType,
 } from '../actions/decisionReview';
+import { setInformalConference, setSameOffice } from '../actions/higherLevelReview';
 import { bindActionCreators } from 'redux';
 import { getIntakeStatus } from '../selectors';
 import SelectClaimant from '../components/SelectClaimant';
@@ -170,6 +172,9 @@ export default connect(
   (dispatch) => bindActionCreators({
     setDocketType,
     setReceiptDate,
-    setLegacyOptInApproved
+    setLegacyOptInApproved,
+    setInformalConference,
+    setSameOffice,
+    setBenefitType,
   }, dispatch)
 )(FormGenerator);
