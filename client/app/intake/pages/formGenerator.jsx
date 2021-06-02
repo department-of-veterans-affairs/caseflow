@@ -55,6 +55,7 @@ const formFieldMapping = (props) => {
     'different-claimant-option': <SelectClaimantConnected
       register={props.register}
       errors={props.errors}
+      formName={props.formName}
     />,
     'benefit-type-options': <BenefitType
       value={props.benefitType}
@@ -120,17 +121,17 @@ const FormGenerator = (props) => {
 };
 
 const SelectClaimantConnected = connect(
-  ({ higherLevelReview, appeal, intake, featureToggles }) => ({
-    isVeteranDeceased: intake.veteran.isDeceased,
-    veteranIsNotClaimant: higherLevelReview.veteranIsNotClaimant || appeal.veteranIsNotClaimant,
-    veteranIsNotClaimantError: higherLevelReview.veteranIsNotClaimantError || appeal.veteranIsNotClaimantError,
-    claimant: higherLevelReview.claimant || appeal.claimant,
-    claimantError: higherLevelReview.claimantError || appeal.claimantError,
-    payeeCode: higherLevelReview.payeeCode || appeal.payeeCode,
-    relationships: higherLevelReview.relationships || appeal.relationships,
-    benefitType: higherLevelReview.benefitType || appeal.benefitType,
-    formType: intake.formType,
-    featureToggles
+  (state, props) => ({
+    isVeteranDeceased: state.intake.veteran.isDeceased,
+    veteranIsNotClaimant: state[props.formName].veteranIsNotClaimant,
+    veteranIsNotClaimantError: state[props.formName].veteranIsNotClaimantError,
+    claimant: state[props.formName].claimant,
+    claimantError: state[props.formName].claimantError,
+    payeeCode: state[props.formName].payeeCode,
+    relationships: state[props.formName].relationships,
+    benefitType: state[props.formName].benefitType,
+    formType: state.intake.formType,
+    ...state.featureToggles
   }),
   (dispatch) => bindActionCreators({
     setVeteranIsNotClaimant,
