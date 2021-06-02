@@ -19,8 +19,9 @@ import { bindActionCreators } from 'redux';
 import { getIntakeStatus } from '../selectors';
 import SelectClaimant from '../components/SelectClaimant';
 import BenefitType from '../components/BenefitType';
-import { BOOLEAN_RADIO_OPTIONS, INTAKE_STATES, PAGE_PATHS } from '../constants';
+import { BOOLEAN_RADIO_OPTIONS, INTAKE_STATES, PAGE_PATHS, VBMS_BENEFIT_TYPES } from '../constants';
 import { convertStringToBoolean } from '../util';
+import ErrorAlert from '../components/ErrorAlert';
 
 const docketTypeRadioOptions = [
   { value: 'direct_review',
@@ -71,7 +72,9 @@ const formFieldMapping = (props) => {
         props.setInformalConference(convertStringToBoolean(value));
       }}
       errorMessage={props.informalConferenceError || props.errors?.['informal-conference']?.message}
-      value={props.informalConference === null ? null : props.informalConference.toString()}
+      // eslint-disable-next-line no-undefined
+      value={props.informalConference === null || props.informalConference === undefined ?
+        null : props.informalConference.toString()}
       inputRef={props.register}
     />,
     'same-office': <RadioField
@@ -84,7 +87,8 @@ const formFieldMapping = (props) => {
         props.setSameOffice(convertStringToBoolean(value));
       }}
       errorMessage={props.sameOfficeError || props.errors?.['same-office']?.message}
-      value={props.sameOffice === null ? null : props.sameOffice.toString()}
+      // eslint-disable-next-line no-undefined
+      value={props.sameOffice === null || props.sameOffice === undefined ? null : props.sameOffice.toString()}
       inputRef={props.register}
     />
   });
@@ -99,11 +103,17 @@ const FormGenerator = (props) => {
   default:
   }
 
+  const showInvalidVeteranError = !props.veteranValid && VBMS_BENEFIT_TYPES.includes(props.benefitType);
+
   return (
     <div>
       <h1>
         {props.formHeader(props.veteranName)}
       </h1>
+
+      { props.reviewIntakeError && <ErrorAlert {...props.reviewIntakeError} /> }
+      { showInvalidVeteranError && <ErrorAlert errorCode="veteran_not_valid" errorData={props.veteranInvalidFields} /> }
+
       {Object.keys(props.schema.fields).map((field) => formFieldMapping(props)[field])}
     </div>
   );
@@ -145,6 +155,9 @@ FormGenerator.propTypes = {
   setLegacyOptInApproved: PropTypes.func,
   appealStatus: PropTypes.string,
   intakeStatus: PropTypes.string,
+  veteranValid: PropTypes.bool,
+  veteranInvalidFields: PropTypes.object,
+  benefitType: PropTypes.string,
   register: PropTypes.func,
   errors: PropTypes.array
 };
