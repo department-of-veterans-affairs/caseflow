@@ -5,6 +5,7 @@ class HearingRenderer
   RENDERABLE_CLASSNAMES = %w[
     Veteran
     Appeal
+    LegacyAppeal
     Hearing
     HearingTask
     ScheduleHearingTask
@@ -14,6 +15,12 @@ class HearingRenderer
   ].freeze
 
   class << self
+    def test
+      # This veteran, file_number: "100000290" has both in my local db
+      vet_with_ama_and_legacy = Hearing.last.appeal.veteran
+      puts render(vet_with_ama_and_legacy)
+    end
+
     def render(obj, show_pii: false)
       renderer = HearingRenderer.new(show_pii: show_pii)
       TTY::Tree.new(renderer.structure(obj, include_breadcrumbs: true)).render
@@ -71,8 +78,26 @@ class HearingRenderer
 
   def veteran_children(vet)
     appeals = Appeal.where(veteran_file_number: vet.file_number)
-    appeals.sort_by { |appeal| appeal.receipt_date || Time.zone.today }
-    appeals.map { |appeal| structure(appeal) }
+    appeals.sort_by { |a| a.receipt_date || Time.zone.today }
+    legacy_appeals = LegacyAppeal.fetch_appeals_by_file_number("300000289")
+    legacy_appeals.sort_by { |la| la.created_at || Time.zone.today }
+
+    children = []
+    children << legacy_appeals.map { |legacy_appeal| structure(legacy_appeal) }
+    children << appeals.map { |appeal| structure(appeal) }
+    children
+  end
+
+  def legacy_appeal_details(legacy_appeal)
+    ["legacy appeal details stub #{legacy_appeal.id}"]
+  end
+
+  def legacy_appeal_children(legacy_appeal)
+    legacy_appeal.hearings.map { |lh| { "Legacy Hearing": lh.id } }
+  end
+
+  def legacy_appeal_context(legacy_appeal)
+    legacy_appeal.veteran
   end
 
   def appeal_details(appeal)
