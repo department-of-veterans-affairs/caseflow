@@ -105,7 +105,7 @@ feature "RAMP Election Intake", :all_dbs do
     expect(page).to have_content("Review Ed Merica's Opt-In Election Form")
   end
 
-  scenario "Search for a veteran that has received a RAMP election" do
+  fscenario "Search for a veteran that has received a RAMP election" do
     create(:ramp_election, veteran_file_number: "12341234", notice_date: 5.days.ago)
 
     # Validate you're redirected back to the search page if you haven't started yet
