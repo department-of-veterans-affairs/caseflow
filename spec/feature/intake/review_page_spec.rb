@@ -110,7 +110,7 @@ feature "Intake Review Page", :postgres do
         describe "given a #{claim_review_type}" do
           it "only saves one claimant" do
             review = start_claim_review(claim_review_type, veteran: veteran).first
-            
+
             check_edited_claimant(review)
           end
         end
@@ -679,9 +679,6 @@ def check_deceased_veteran_cant_be_payee
   expect(page).to have_content("10 - Spouse")
 
   find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
-  # first click needed to just close the dropdown clicked on above
-  find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
-
   expect(find(".cf-select__value-container")).to have_content("10 - Spouse")
 end
 
@@ -755,7 +752,6 @@ end
 
 def check_edited_claimant(review)
   visit "/intake"
-
   click_intake_continue
 
   expect(page).to have_current_path("/intake/add_issues")
@@ -766,7 +762,7 @@ def check_edited_claimant(review)
     find("label", text: "Yes", match: :prefer_exact).click
   end
   find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
-  
+  fill_in "What is the payee code for this claimant?", with: "10 - Spouse" unless review.is_a?(Appeal)
   click_intake_continue
 
   expect(page).to have_current_path("/intake/add_issues")
