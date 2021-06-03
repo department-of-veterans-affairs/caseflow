@@ -48,10 +48,20 @@ class JudgeDropdown extends React.Component {
   }
 
   render() {
-    const { name, label, onChange, judges: { options, isFetching }, readOnly, errorMessage, placeholder } = this.props;
+    const {
+      optional,
+      name,
+      label,
+      onChange,
+      judges: { options, isFetching },
+      readOnly,
+      errorMessage,
+      placeholder,
+    } = this.props;
 
     return (
       <SearchableDropdown
+        optional={optional}
         name={name}
         label={isFetching ? <LoadingLabel text="Loading judges..." /> : label}
         strongLabel
@@ -66,6 +76,7 @@ class JudgeDropdown extends React.Component {
 }
 
 JudgeDropdown.propTypes = {
+  optional: PropTypes.bool,
   name: PropTypes.string,
   label: PropTypes.string,
   value: PropTypes.string,

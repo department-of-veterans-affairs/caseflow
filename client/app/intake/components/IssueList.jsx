@@ -53,14 +53,9 @@ export default class IssuesList extends React.Component {
       formType,
       onClickIssueAction,
       withdrawReview,
-      featureToggles,
       userCanWithdrawIssues,
       editPage
     } = this.props;
-
-    const {
-      editContentionText
-    } = featureToggles;
 
     return <div className="issues">
       <div>
@@ -115,7 +110,7 @@ export default class IssuesList extends React.Component {
 
               </div>
             </div>
-            {editContentionText && editableContentionText && <EditContentionTitle
+            {editableContentionText && <EditContentionTitle
               issue= {issue}
               issueIdx={issue.index} />}
           </div>;
@@ -131,7 +126,6 @@ IssuesList.propTypes = {
   formType: PropTypes.string,
   onClickIssueAction: PropTypes.func,
   withdrawReview: PropTypes.bool,
-  featureToggles: PropTypes.object,
   userCanWithdrawIssues: PropTypes.bool,
   editPage: PropTypes.bool
 };

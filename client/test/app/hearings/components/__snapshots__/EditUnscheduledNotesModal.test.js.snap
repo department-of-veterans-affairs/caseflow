@@ -1,0 +1,119 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditUnscheduledNotesModal renders correctly 1`] = `
+<div>
+  <section
+    aria-describedby="modal_id-desc"
+    aria-labelledby="modal_id-title"
+    aria-modal="true"
+    class="cf-modal active "
+    id="modal_id"
+    role="dialog"
+  >
+    <div
+      class="cf-modal-body"
+      id=""
+    >
+      <button
+        class="cf-modal-close"
+        id="Edit-Notes-button-id-close"
+        type="button"
+      >
+        <span
+          class="usa-sr-only"
+        >
+          Close
+        </span>
+        <svg
+          class="cf-icon-close"
+          height="55"
+          viewBox="0 0 55 55"
+          width="55"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <title>
+            close
+          </title>
+          <path
+            d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
+          />
+        </svg>
+      </button>
+      <div
+        style="display: flex;"
+      >
+        <div
+          data-css-1gs0ko2=""
+        >
+          <h1
+            id="modal_id-title"
+          >
+            Edit Notes
+          </h1>
+          <div
+            data-css-o98ubo=""
+          >
+            <div>
+              <div
+                class="cf-form-textarea"
+                data-css-1tc952m=""
+              >
+                <label
+                  class="question-label"
+                  data-css-42cjjw=""
+                  for="null-unscheduled-notes"
+                >
+                  <strong>
+                    <span>
+                      Notes
+                    </span>
+                  </strong>
+                </label>
+                <textarea
+                  id="null-unscheduled-notes"
+                  maxlength="1000"
+                  name="null-unscheduled-notes"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="cf-modal-divider"
+      />
+      <div
+        class="cf-modal-controls"
+      >
+        <div>
+          <span
+            class="cf-push-right"
+          >
+            <span>
+              <button
+                class="cf-submit usa-button-disabled usa-button"
+                disabled=""
+                type="button"
+              >
+                Save
+              </button>
+            </span>
+          </span>
+          <span
+            class="cf-push-left"
+          >
+            <span>
+              <button
+                class="cf-submit cf-btn-link usa-button"
+                type="button"
+              >
+                Cancel
+              </button>
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+`;

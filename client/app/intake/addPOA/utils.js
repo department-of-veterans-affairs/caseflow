@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
 export const schema = yup.object().shape({
+  listedAttorney: yup.object().required(),
   partyType: yup.string().when('listedAttorney', {
     is: (value) =>
       value?.value === 'not_listed',

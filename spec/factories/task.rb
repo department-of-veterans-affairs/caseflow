@@ -450,6 +450,11 @@ FactoryBot.define do
         assigned_to { QualityReview.singleton }
       end
 
+      factory :qr_task_no_parent, class: QualityReviewTask do
+        assigned_by { nil }
+        assigned_to { QualityReview.singleton }
+      end
+
       factory :quality_review_task, class: QualityReviewTask do
         assigned_by { nil }
       end
