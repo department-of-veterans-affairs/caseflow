@@ -101,11 +101,11 @@ class ExplainController < ApplicationController
   def sanitized_json
     return "(LegacyAppeals are not yet supported)".to_json if legacy_appeal?
 
-    sje.file_contents
+    SanitizedJsonExporter.new(appeal, sanitize: !show_pii_query_param, verbosity: 0).file_contents
   end
 
   def sje
-    @sje ||= SanitizedJsonExporter.new(appeal, sanitize: !show_pii_query_param, verbosity: 0)
+    @sje ||= SanitizedJsonExporter.new(appeal, sanitize: false, verbosity: 0)
   end
 
   def legacy_appeal?
