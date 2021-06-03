@@ -25,13 +25,16 @@ export const SubstituteAppellantTasksView = () => {
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
+  const { powerOfAttorney } = appeal;
+  const poaType = powerOfAttorney.representative_type;
+
   const allTasks = useSelector((state) =>
     getAllTasksForAppeal(state, { appealId })
   );
 
   const filteredTasks = useMemo(() => {
-    return prepTaskDataForUi(allTasks);
-  }, [allTasks]);
+    return prepTaskDataForUi(allTasks, poaType);
+  }, [allTasks, poaType]);
 
   const { formData: existingValues } = useSelector(
     (state) => state.substituteAppellant

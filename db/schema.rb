@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_21_184436) do
+ActiveRecord::Schema.define(version: 2021_06_02_145330) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1662,6 +1662,7 @@ ActiveRecord::Schema.define(version: 2021_05_21_184436) do
   add_foreign_key "docket_switches", "appeals", column: "old_docket_stream_id"
   add_foreign_key "docket_switches", "tasks"
   add_foreign_key "document_views", "users"
+  add_foreign_key "end_product_code_updates", "end_product_establishments"
   add_foreign_key "end_product_establishments", "users"
   add_foreign_key "end_product_updates", "end_product_establishments"
   add_foreign_key "end_product_updates", "users"
@@ -1689,6 +1690,8 @@ ActiveRecord::Schema.define(version: 2021_05_21_184436) do
   add_foreign_key "legacy_hearings", "users", column: "created_by_id"
   add_foreign_key "legacy_hearings", "users", column: "updated_by_id"
   add_foreign_key "legacy_issue_optins", "legacy_issues"
+  add_foreign_key "legacy_issue_optins", "request_issues"
+  add_foreign_key "legacy_issues", "request_issues"
   add_foreign_key "messages", "users"
   add_foreign_key "nod_date_updates", "appeals"
   add_foreign_key "nod_date_updates", "users"
@@ -1698,6 +1701,12 @@ ActiveRecord::Schema.define(version: 2021_05_21_184436) do
   add_foreign_key "post_decision_motions", "tasks"
   add_foreign_key "ramp_closed_appeals", "ramp_elections"
   add_foreign_key "ramp_election_rollbacks", "users"
+  add_foreign_key "request_decision_issues", "decision_issues"
+  add_foreign_key "request_decision_issues", "request_issues"
+  add_foreign_key "request_issues", "decision_issues", column: "contested_decision_issue_id"
+  add_foreign_key "request_issues", "end_product_establishments"
+  add_foreign_key "request_issues", "request_issues", column: "corrected_by_request_issue_id"
+  add_foreign_key "request_issues", "request_issues", column: "ineligible_due_to_id"
   add_foreign_key "request_issues_updates", "users"
   add_foreign_key "schedule_periods", "users"
   add_foreign_key "sent_hearing_email_events", "users", column: "sent_by_id"

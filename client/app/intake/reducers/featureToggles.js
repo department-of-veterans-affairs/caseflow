@@ -5,9 +5,6 @@ const updateFromServerFeatures = (state, featureToggles) => {
     useAmaActivationDate: {
       $set: Boolean(featureToggles.useAmaActivationDate)
     },
-    editContentionText: {
-      $set: Boolean(featureToggles.editContentionText)
-    },
     correctClaimReviews: {
       $set: Boolean(featureToggles.correctClaimReviews)
     },
@@ -45,7 +42,6 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
   updateFromServerFeatures(
     {
       useAmaActivationDate: false,
-      editContentionText: false,
       correctClaimReviews: false,
       unidentifiedIssueDecisionDate: false,
       verifyUnidentifiedIssue: false,

@@ -180,9 +180,6 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     end
 
     context "when it is created due to a DTA error" do
-      before { FeatureToggle.enable!(:edit_contention_text) }
-      after { FeatureToggle.disable!(:edit_contention_text) }
-
       let(:decision_review_remanded) { create(:higher_level_review) }
       let(:contested_decision_issue) { create(:decision_issue, :nonrating, disposition: "remanded") }
 
@@ -236,9 +233,6 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     end
 
     context "when it is created due to a DTA error" do
-      before { FeatureToggle.enable!(:edit_contention_text) }
-      after { FeatureToggle.disable!(:edit_contention_text) }
-
       let(:decision_review_remanded) { create(:higher_level_review) }
       let(:contested_decision_issue) { create(:decision_issue, disposition: "remanded") }
 
