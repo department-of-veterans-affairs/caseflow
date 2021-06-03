@@ -20,12 +20,16 @@ import ErrorAlert from '../../components/ErrorAlert';
 import PropTypes from 'prop-types';
 import ReceiptDateInput, { receiptDateInputValidation } from '../receiptDateInput';
 
+const supplementalClaimHeader = (veteranName) => (
+  <h1>Review { veteranName }'s { FORM_TYPES.SUPPLEMENTAL_CLAIM.name }</h1>
+);
+
 const reviewSupplementalClaimSchema = yup.object().shape({
   'benefit-type-options': yup.string().required(GENERIC_FORM_ERRORS.blank),
-  'different-claimant-option': yup.string().required(GENERIC_FORM_ERRORS.blank),
-  'legacy-opt-in': yup.string().required(GENERIC_FORM_ERRORS.blank),
+  ...receiptDateInputValidation(true),
   ...selectClaimantValidations(),
-  ...receiptDateInputValidation(true)
+  'legacy-opt-in': yup.string().required(GENERIC_FORM_ERRORS.blank),
+  'different-claimant-option': yup.string().required(GENERIC_FORM_ERRORS.blank)
 });
 
 class Review extends React.PureComponent {
@@ -159,4 +163,4 @@ export default connect(
   }, dispatch)
 )(Review);
 
-export { reviewSupplementalClaimSchema };
+export { reviewSupplementalClaimSchema, supplementalClaimHeader };

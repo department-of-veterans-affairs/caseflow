@@ -12,7 +12,7 @@ import { css } from 'glamor';
 import { PAGE_PATHS, FORM_TYPES, REQUEST_STATE, VBMS_BENEFIT_TYPES } from '../constants';
 import RampElectionPage, { reviewRampElectionSchema } from './rampElection/review';
 import RampRefilingPage, { reviewRampRefilingSchema } from './rampRefiling/review';
-import SupplementalClaimPage, { reviewSupplementalClaimSchema } from './supplementalClaim/review';
+import { reviewSupplementalClaimSchema, supplementalClaimHeader } from './supplementalClaim/review';
 import { higherLevelReviewFormHeader, reviewHigherLevelReviewSchema } from './higherLevelReview/review';
 import { appealFormHeader, reviewAppealSchema } from './appeal/review';
 
@@ -90,7 +90,13 @@ const Review = (props) => {
         formComponentMapping={{
           ramp_election: <RampElectionPage {...formProps} />,
           ramp_refiling: <RampRefilingPage {...formProps} />,
-          supplemental_claim: <SupplementalClaimPage featureToggles={props.featureToggles} {...formProps} />,
+          supplemental_claim: <FormGenerator
+            formName={selectedForm?.formName}
+            formHeader={supplementalClaimHeader}
+            schema={schemaMappings.supplemental_claim}
+            featureToggles={props.featureToggles}
+            {...formProps}
+          />,
           higher_level_review: <FormGenerator
             formName={selectedForm?.formName}
             formHeader={higherLevelReviewFormHeader}
