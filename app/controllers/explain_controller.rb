@@ -5,6 +5,8 @@
 # The returned data is also used to display visualizations for the specified appeal.
 
 class ExplainController < ApplicationController
+  include ExplainAppealEventsConcern
+
   def show
     return render_access_error unless current_user.admin?
 
@@ -24,6 +26,7 @@ class ExplainController < ApplicationController
                 :show_pii_query_param, :treee_fields,
                 :available_fields,
                 :task_tree_as_text, :intake_as_text,
+                :event_table_data,
                 :sje
 
   def explain_as_text
@@ -77,6 +80,22 @@ class ExplainController < ApplicationController
 
   def intake_as_text
     IntakeRenderer.render(appeal, show_pii: show_pii_query_param)
+  end
+
+  class AppealEventData
+    attr_reader :timestamp, :object_type, :object_id, :event_type
+    attr_accessor :comment, :relevant_data, :details
+    def initialize(timestamp, object_type, object_id, event_type)
+      @timestamp = timestamp
+      @object_type = object_type
+      @object_id = object_id
+      @event_type = event_type
+    end
+  end
+
+  # :reek:FeatureEnvy
+  def event_table_data
+    tasks_as_event_data.map(&:as_json)
   end
 
   def sanitized_json
