@@ -31,6 +31,7 @@ class JudgeAssignTaskCreator
                                       assigned_to_id: @judge.id,
                                       appeal: appeal
                                     }, current_user)
+    @task = @appeal.tasks.open.find_by_type(:JudgeAssignTask)
   end
 
   def task
