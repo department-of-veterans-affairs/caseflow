@@ -113,12 +113,7 @@ const FormGenerator = (props) => {
       </h1>
 
       { props.reviewIntakeError && <ErrorAlert {...props.reviewIntakeError} /> }
-      { showInvalidVeteranError &&
-          <ErrorAlert
-            errorUUID={this.props.errorUUID}
-            errorCode="veteran_not_valid"
-            errorData={props.veteranInvalidFields} />
-      }
+      { showInvalidVeteranError && <ErrorAlert errorCode="veteran_not_valid" errorData={props.veteranInvalidFields} /> }
 
       {Object.keys(props.schema.fields).map((field) => formFieldMapping(props)[field])}
     </div>
@@ -191,8 +186,7 @@ export default connect(
     sameOfficeError: state[props.formName].sameOfficeError,
     reviewIntakeError: state[props.formName].requestStatus.reviewIntakeError,
     veteranValid: state[props.formName].veteranValid,
-    veteranInvalidFields: state[props.formName].veteranInvalidFields,
-    errorUUID: state.supplementalClaim.requestStatus.errorUUID,
+    veteranInvalidFields: state[props.formName].veteranInvalidFields
   }),
   (dispatch) => bindActionCreators({
     setDocketType,
