@@ -549,16 +549,27 @@ RSpec.feature "Case details", :all_dbs do
         )
       end
 
+      let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+      let!(:legacy_poa) do
+        create(
+          :bgs_power_of_attorney,
+          :with_name_cached,
+          appeal: legacy_appeal
+        )
+      end
+
       before do
         FeatureToggle.enable!(:poa_button_refresh)
+        Rails.cache.write("bgs-participant-poa-not-found-#{appeal.veteran.file_number}", true)
+        Rails.cache.write("bgs-participant-poa-not-found-#{appeal.claimant.participant_id}", true)
+        BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
       end
       after do
         FeatureToggle.disable!(:poa_button_refresh)
+        BgsPowerOfAttorney.set_callback(:save, :before, :update_cached_attributes!)
       end
 
-      scenario "attempts to refresh with no BGS data" do
-        BgsPowerOfAttorney.set_callback(:save, :before, :update_cached_attributes!)
-        BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
+      scenario "clears not_found cache for veteran or non-veteran claimant POA" do
         poa.last_synced_at = Time.zone.now - 5.years
         poa.save!
         claimant_poa.last_synced_at = Time.zone.now - 5.years
@@ -566,9 +577,12 @@ RSpec.feature "Case details", :all_dbs do
 
         expect(appeal.claimant.power_of_attorney).to_not eq(nil)
         expect(appeal.power_of_attorney).to_not eq(nil)
+        expect(Rails.cache.read("bgs-participant-poa-not-found-#{appeal.claimant.participant_id}")).to eq(true)
+        expect(Rails.cache.read("bgs-participant-poa-not-found-#{appeal.veteran.file_number}")).to eq(true)
 
         visit "/queue/appeals/#{appeal.uuid}"
         expect(page).to have_content("Refresh POA")
+
         allow_any_instance_of(BgsPowerOfAttorney).to receive(:bgs_record).and_return(:not_found)
         click_on "Refresh POA"
         expect(page).to have_content("Successfully refreshed. No power of attorney information was found at this time.")
@@ -576,6 +590,8 @@ RSpec.feature "Case details", :all_dbs do
 
         expect(appeal.claimant.power_of_attorney).to eq(nil)
         expect(appeal.power_of_attorney).to eq(nil)
+        expect(Rails.cache.read("bgs-participant-poa-not-found-#{appeal.claimant.participant_id}")).to eq(nil)
+        expect(Rails.cache.read("bgs-participant-poa-not-found-#{appeal.veteran.file_number}")).to eq(nil)
       end
     end
 
