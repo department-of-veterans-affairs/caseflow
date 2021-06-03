@@ -22,5 +22,3 @@ export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_2
 export ORACLE_HOME=/opt/oracle/instantclient_12_2
 
 export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.1
-
-export APPOPTICS_SERVICE_KEY=`credstash -t appeals-credstash get appoptics.api.key`

@@ -42,6 +42,7 @@ cd ../../
 printf "commit: `git rev-parse HEAD`\ndate: `git log -1 --format=%cd`" > config/build_version.yml
 
 credstash -t appeals-credstash get datadog.api.key > config/datadog.key
+credstash -t appeals-credstash get appoptics.api.key > config/appoptics.key
 
 # Build Docker
 echo -e "\tCreating Caseflow App Docker Image"
@@ -49,5 +50,6 @@ docker build -t caseflow .
 
 echo -e "\tCleaning Up..."
 rm -rf config/datadog.key
+rm -rf config/appoptics.key
 rm -rf docker-bin/oracle_libs/
 echo -e "\tBuilding Caseflow Docker App: Completed"
