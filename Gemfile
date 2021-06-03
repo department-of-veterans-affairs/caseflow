@@ -50,6 +50,7 @@ gem "rack", "~> 2.2.3"
 gem "rails", "5.2.4.6"
 # Used to colorize output for rake tasks
 gem "rainbow"
+gem "rbtrace"
 # React
 gem "react_on_rails", "11.3.0"
 gem "redis-namespace"
@@ -94,11 +95,13 @@ group :test, :development, :demo do
   gem "database_cleaner"
   gem "factory_bot_rails", "~> 5.2"
   gem "faker"
+  gem "flamegraph"
   gem "guard-rspec"
   # Linters
   gem "jshint", platforms: :ruby
   gem "pry"
   gem "pry-byebug"
+  gem "rack-mini-profiler"
   gem "rails-erd"
   gem "rb-readline"
   gem "rspec"
@@ -113,6 +116,7 @@ group :test, :development, :demo do
   gem "single_cov"
   gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git"
   gem "sql_tracker"
+  gem "stackprof"
   gem "test-prof"
   gem "timecop"
   gem "webdrivers"
@@ -138,3 +142,4 @@ end
 # rubocop:enable Metrics/LineLength
 
 gem "json_schemer", "~> 0.2.16"
+gem "appoptics_apm"
