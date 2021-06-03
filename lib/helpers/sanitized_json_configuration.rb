@@ -60,7 +60,13 @@ class SanitizedJsonConfiguration
         # In order to import DecisionIssues before RequestIssues (since RequestIssue records refer to DecisionIssue),
         # export DecisionIssue records first.
         sanitize_fields: %w[decision_text description],
-        retrieval: ->(records) { records[Appeal].map(&:decision_issues).flatten.sort_by(&:id) }
+        retrieval: lambda do |records|
+          appeal_decision_issue_ids = records[Appeal].map(&:decision_issues).flatten.map(&:id)
+          request_issues = records[Appeal].map(&:request_issues).flatten
+          other_decision_issues_ids = request_issues.map(&:contested_decision_issue).map(&:id)
+
+          DecisionIssue.where(id: appeal_decision_issue_ids + other_decision_issues_ids).order(:id)
+        end
       },
       RequestIssue => {
         sanitize_fields: ["notes", "contested_issue_description", /_(notes|text|description)/],
