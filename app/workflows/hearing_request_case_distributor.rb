@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 class HearingRequestCaseDistributor
-  def initialize(appeals:, genpop:, distribution:, priority:)
+  def initialize(appeals:, distribution:, priority:)
     @appeals = appeals
-    @genpop = genpop
     @distribution = distribution
     @priority = priority
   end
@@ -28,7 +27,7 @@ class HearingRequestCaseDistributor
 
   private
 
-  attr_reader :appeals, :genpop, :distribution, :priority
+  attr_reader :appeals, :distribution, :priority
 
   def create_judge_assign_task_for_appeal(appeal)
     JudgeAssignTaskCreator.new(appeal: appeal, judge: distribution.judge).call
@@ -42,7 +41,7 @@ class HearingRequestCaseDistributor
       ready_at: task.appeal.ready_for_distribution_at,
       task: task,
       genpop: :true,
-      genpop_query: genpop
+      genpop_query: :true
     )
   end
 end
