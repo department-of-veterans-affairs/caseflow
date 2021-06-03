@@ -279,9 +279,10 @@ class RequestIssue < CaseflowRecord
 
   def description
     return edited_description if edited_description.present?
-    return contested_issue_description if contested_issue_description
-    return "#{nonrating_issue_category} - #{nonrating_issue_description}" if nonrating?
-    return unidentified_issue_text if is_unidentified? || verified_unidentified_issue
+    return contested_issue_description if contested_issue_description.present?
+    return "#{nonrating_issue_category} - #{nonrating_issue_description}" if
+      nonrating_issue_category.present? && type != "RatingRequestIssue"
+    return unidentified_issue_text if is_unidentified? || verified_unidentified_issue?
   end
 
   # If the request issue is unidentified, we want to prompt the VBMS/SHARE user to correct the issue.
