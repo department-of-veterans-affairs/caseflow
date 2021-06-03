@@ -82,6 +82,7 @@ class ExplainController < ApplicationController
     IntakeRenderer.render(appeal, show_pii: show_pii_query_param)
   end
 
+  # :reek:LongParameterList
   # :reek:TooManyInstanceVariables
   class AppealEventData
     attr_reader :timestamp, :appeal_id, :object_type, :object_id, :event_type
