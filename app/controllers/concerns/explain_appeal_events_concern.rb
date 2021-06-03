@@ -19,12 +19,13 @@ module ExplainAppealEventsConcern
   # :reek:UtilityFunction
   def task_created_event(record)
     significant_duration = record["closed_at"] - record["created_at"] > 120 if record["closed_at"]
+    appeal_object_id = "#{record['appeal_type']}_#{record['appeal_id']}"
     ExplainController::AppealEventData.new(
-      record["created_at"], Task.name.downcase, "#{record['type']}_#{record['id']}", "created"
+      record["created_at"], appeal_object_id, Task.name.downcase, "#{record['type']}_#{record['id']}", "created"
     ).tap do |event|
       event.comment = "created task"
       event.relevant_data = {
-        appeal_id: record["appeal_id"],
+        blocks_task: record["parent_id"],
         duration: significant_duration ? record["closed_at"] - record["created_at"] : nil
       }
       event.details = record
@@ -36,13 +37,13 @@ module ExplainAppealEventsConcern
     return nil unless record["closed_at"]
 
     significant_duration = record["closed_at"] - record["created_at"] > 120
+    appeal_object_id = "#{record['appeal_type']}_#{record['appeal_id']}"
     ExplainController::AppealEventData.new(
-      record["closed_at"], Task.name.downcase, "#{record['type']}_#{record['id']}", "closed"
+      record["closed_at"], appeal_object_id, Task.name.downcase, "#{record['type']}_#{record['id']}", "closed"
     ).tap do |event|
       event.comment = "closed task"
       event.relevant_data = {
         status: record["status"],
-        appeal_id: record["appeal_id"],
         duration: significant_duration ? record["closed_at"] - record["created_at"] : nil
       }
       event.details = record
