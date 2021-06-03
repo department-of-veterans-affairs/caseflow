@@ -12,8 +12,8 @@ const reviewSupplementalClaimSchema = yup.object().shape({
   'benefit-type-options': yup.string().required(GENERIC_FORM_ERRORS.blank),
   ...receiptDateInputValidation(true),
   ...selectClaimantValidations(),
+  'different-claimant-option': yup.string().required(GENERIC_FORM_ERRORS.blank),
   'legacy-opt-in': yup.string().required(GENERIC_FORM_ERRORS.blank),
-  'different-claimant-option': yup.string().required(GENERIC_FORM_ERRORS.blank)
 });
 
 export { reviewSupplementalClaimSchema, supplementalClaimHeader };
