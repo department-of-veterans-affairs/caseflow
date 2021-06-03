@@ -1355,7 +1355,7 @@ RSpec.feature "Reader", :all_dbs do
     # Created issue #3883 to address this browser cache retention issue.
     let(:documents) { [Generators::Document.create(id: rand(999_999..1_000_997))] }
 
-    fscenario "causes individual file view will display error message" do
+    scenario "causes individual file view will display error message" do
       allow_any_instance_of(DocumentController).to receive(:pdf).and_raise(StandardError)
       visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
       expect(page).to have_content("Unable to load document")

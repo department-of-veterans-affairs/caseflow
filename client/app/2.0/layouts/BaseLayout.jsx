@@ -22,8 +22,6 @@ const BaseLayout = ({
   // Get the Breadcrumbs from the store
   const { crumbs } = useSelector((state) => ({ crumbs: state.routes.crumbs }));
 
-  console.log('CRUMBS: ', crumbs);
-
   return (
     <React.Fragment>
       <NavigationBar
