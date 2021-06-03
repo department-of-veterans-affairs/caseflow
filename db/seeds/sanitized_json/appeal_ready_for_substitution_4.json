@@ -1,12 +1,12 @@
 {
   "metadata": {
-    "exported_at": "2021-05-27 15:45:14 UTC",
-    "purpose": "CASEFLOW-1638 backport"
+    "exported_at": "2021-06-03 21:31:20 UTC",
+    "purpose": "CASEFLOW-1638: Backport realistic appeals ready for substitutes from prod"
   },
   "appeals": [
     {
       "id": 112569,
-      "veteran_file_number": "000129065",
+      "veteran_file_number": "000734256",
       "receipt_date": "2020-06-25",
       "docket_type": "evidence_submission",
       "established_at": "2020-12-29 16:19:53 UTC",
@@ -35,14 +35,14 @@
   "veterans": [
     {
       "id": 883615,
-      "file_number": "000129065",
+      "file_number": "000734256",
       "participant_id": "51501412",
-      "first_name": "Daryl",
-      "last_name": "Osinski",
+      "first_name": "Wilton",
+      "last_name": "McKenzie",
       "middle_name": null,
       "name_suffix": null,
       "closest_regional_office": null,
-      "ssn": "000123427",
+      "ssn": "000989813",
       "created_at": "2020-10-13 18:13:27 UTC",
       "updated_at": "2021-05-25 20:44:07 UTC",
       "date_of_death": "2020-08-15",
@@ -56,7 +56,7 @@
       "detail_id": 112569,
       "detail_type": "Appeal",
       "user_id": 8363,
-      "veteran_file_number": "000129065",
+      "veteran_file_number": "000734256",
       "started_at": "2020-12-29 16:16:05 UTC",
       "completed_at": "2020-12-29 16:19:55 UTC",
       "completion_status": "success",
@@ -73,7 +73,7 @@
     {
       "id": 149684,
       "appeal_id": 112569,
-      "citation_number": "A00491071",
+      "citation_number": "A00951071",
       "decision_date": "2021-01-14",
       "redacted_document_location": "\\\\vacohsm01.dva.va.gov\\vaco_workgroups\\BVA\\archdata\\arch2101\\A21001071.txt",
       "created_at": "2021-01-14 18:48:46 UTC",
@@ -429,7 +429,43 @@
     }
   ],
   "attorney_case_reviews": [
-
+    {
+      "id": 231729,
+      "document_id": "00860-00000403",
+      "reviewing_judge_id": 1296,
+      "attorney_id": 1310,
+      "work_product": "Decision",
+      "overtime": false,
+      "document_type": "draft_decision",
+      "note": null,
+      "created_at": "2021-01-14 11:38:48 UTC",
+      "updated_at": "2021-01-14 11:38:48 UTC",
+      "task_id": "1380906",
+      "untimely_evidence": false
+    }
+  ],
+  "decision_issues": [
+    {
+      "id": 1120085,
+      "disposition": "dismissed_death",
+      "description": "Th ap as to en to sp mo pe be is di",
+      "participant_id": "51501412",
+      "rating_issue_reference_id": null,
+      "decision_text": null,
+      "decision_review_type": "Appeal",
+      "decision_review_id": 112569,
+      "benefit_type": "compensation",
+      "end_product_last_action_date": null,
+      "diagnostic_code": null,
+      "caseflow_decision_date": "2021-01-14",
+      "created_at": "2021-01-14 16:57:31 UTC",
+      "deleted_at": null,
+      "rating_promulgation_date": null,
+      "rating_profile_date": null,
+      "updated_at": "2021-01-14 18:48:46 UTC",
+      "subject_text": null,
+      "percent_number": null
+    }
   ],
   "request_issues": [
     {
@@ -480,29 +516,6 @@
       "type": "RequestIssue"
     }
   ],
-  "decision_issues": [
-    {
-      "id": 1120085,
-      "disposition": "dismissed_death",
-      "description": "Th ap as to en to sp mo pe be is di",
-      "participant_id": "51501412",
-      "rating_issue_reference_id": null,
-      "decision_text": null,
-      "decision_review_type": "Appeal",
-      "decision_review_id": 112569,
-      "benefit_type": "compensation",
-      "end_product_last_action_date": null,
-      "diagnostic_code": null,
-      "caseflow_decision_date": "2021-01-14",
-      "created_at": "2021-01-14 16:57:31 UTC",
-      "deleted_at": null,
-      "rating_promulgation_date": null,
-      "rating_profile_date": null,
-      "updated_at": "2021-01-14 18:48:46 UTC",
-      "subject_text": null,
-      "percent_number": null
-    }
-  ],
   "request_decision_issues": [
     {
       "id": 1116534,
@@ -533,17 +546,17 @@
       "id": 1296,
       "station_id": "101",
       "css_id": "KILCOYNBVAM",
-      "full_name": "Reid Kulas",
-      "email": "kecia_effertz@bergnaum-cole.name",
+      "full_name": "Henry Haley",
+      "email": "sterling@friesen.name",
       "roles": [
         "Reader",
         "Hearing Prep"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-26 00:22:45 UTC",
+      "last_login_at": "2021-06-03 20:28:21 UTC",
       "created_at": "2019-02-19 00:00:00 UTC",
-      "updated_at": "2021-05-27 15:20:36 UTC",
-      "efolder_documents_fetched_at": "2021-05-27 15:20:36 UTC",
+      "updated_at": "2021-06-03 20:28:21 UTC",
+      "efolder_documents_fetched_at": "2021-06-03 15:40:36 UTC",
       "status": "active",
       "status_updated_at": null
     },
@@ -551,17 +564,17 @@
       "id": 1310,
       "station_id": "101",
       "css_id": "ADAMSONBVAA",
-      "full_name": "Fumiko Osinski",
-      "email": "teodoro@cruickshank.co",
+      "full_name": "Ronald Lindgren",
+      "email": "madie@ortiz.name",
       "roles": [
         "Reader",
         "Hearing Prep"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-27 14:33:54 UTC",
+      "last_login_at": "2021-06-03 21:08:30 UTC",
       "created_at": "2019-02-19 00:00:00 UTC",
-      "updated_at": "2021-05-27 14:33:54 UTC",
-      "efolder_documents_fetched_at": "2021-05-27 06:40:37 UTC",
+      "updated_at": "2021-06-03 21:08:30 UTC",
+      "efolder_documents_fetched_at": "2021-06-03 05:30:37 UTC",
       "status": "active",
       "status_updated_at": null
     },
@@ -569,18 +582,17 @@
       "id": 1353,
       "station_id": "101",
       "css_id": "BRENNBVAD",
-      "full_name": "Milda Hoeger",
-      "email": "pierre@will-dickens.com",
+      "full_name": "Corrine DuBuque DO",
+      "email": "kristan.kreiger@rau.com",
       "roles": [
-        "User",
-        "Hearing Prep",
-        "Reader"
+        "Reader",
+        "Hearing Prep"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-26 20:40:46 UTC",
+      "last_login_at": "2021-06-03 18:44:20 UTC",
       "created_at": "2019-02-19 00:00:00 UTC",
-      "updated_at": "2021-05-26 20:43:05 UTC",
-      "efolder_documents_fetched_at": "2021-05-24 14:25:37 UTC",
+      "updated_at": "2021-06-03 18:44:20 UTC",
+      "efolder_documents_fetched_at": "2021-05-31 14:20:36 UTC",
       "status": "active",
       "status_updated_at": null
     },
@@ -588,8 +600,8 @@
       "id": 1600,
       "station_id": "101",
       "css_id": "BRAYWVACO",
-      "full_name": "Natalie Kemmer",
-      "email": "sacha_pouros@robel.biz",
+      "full_name": "Louanne Reichert JD",
+      "email": "reena@kertzmann-harvey.biz",
       "roles": [
         "Download eFolder",
         "Reader"
@@ -606,17 +618,17 @@
       "id": 1769,
       "station_id": "101",
       "css_id": "WILLIAMSBVAC",
-      "full_name": "Noel Waters",
-      "email": "stephan.marquardt@green.com",
+      "full_name": "Sherril Blick",
+      "email": "kerri@murphy-frami.com",
       "roles": [
         "Reader",
         "Mail Intake"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-27 10:19:08 UTC",
+      "last_login_at": "2021-06-03 11:13:07 UTC",
       "created_at": "2019-02-19 00:00:00 UTC",
-      "updated_at": "2021-05-27 10:19:08 UTC",
-      "efolder_documents_fetched_at": "2021-05-26 07:25:37 UTC",
+      "updated_at": "2021-06-03 11:13:07 UTC",
+      "efolder_documents_fetched_at": "2021-06-02 05:25:37 UTC",
       "status": "active",
       "status_updated_at": null
     },
@@ -624,16 +636,16 @@
       "id": 2111,
       "station_id": "101",
       "css_id": "MUMFORDBVAP",
-      "full_name": "Ghislaine Schmeler Jr.",
-      "email": "reginia@volkman.com",
+      "full_name": "Lashonda Kirlin",
+      "email": "patrica.halvorson@dare.com",
       "roles": [
         "Reader"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-27 15:44:21 UTC",
+      "last_login_at": "2021-06-03 18:56:42 UTC",
       "created_at": "2019-02-19 00:00:00 UTC",
-      "updated_at": "2021-05-27 15:44:21 UTC",
-      "efolder_documents_fetched_at": "2021-05-24 03:50:37 UTC",
+      "updated_at": "2021-06-03 18:56:42 UTC",
+      "efolder_documents_fetched_at": "2021-05-31 07:10:36 UTC",
       "status": "active",
       "status_updated_at": null
     },
@@ -641,18 +653,18 @@
       "id": 6169,
       "station_id": "101",
       "css_id": "BERGERVACO",
-      "full_name": "Lucio Predovic",
-      "email": "stephani@wolff-bogisich.co",
+      "full_name": "Mr. Liana Ziemann",
+      "email": "loni_haag@kautzer.com",
       "roles": [
         "Reader",
         "Mail Intake",
         "Edit HearSched"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-27 15:34:56 UTC",
+      "last_login_at": "2021-06-03 21:09:43 UTC",
       "created_at": "2019-03-29 17:59:02 UTC",
-      "updated_at": "2021-05-27 15:34:56 UTC",
-      "efolder_documents_fetched_at": "2021-05-24 00:10:36 UTC",
+      "updated_at": "2021-06-03 21:09:43 UTC",
+      "efolder_documents_fetched_at": "2021-06-03 18:35:36 UTC",
       "status": "active",
       "status_updated_at": null
     },
@@ -660,17 +672,17 @@
       "id": 8363,
       "station_id": "101",
       "css_id": "WOOLFQVACO",
-      "full_name": "Tawana Wilderman",
-      "email": "willy@christiansen.org",
+      "full_name": "Merlin Volkman",
+      "email": "judie_goldner@hickle-metz.info",
       "roles": [
         "Reader",
         "Mail Intake"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-27 15:24:50 UTC",
+      "last_login_at": "2021-06-03 18:42:59 UTC",
       "created_at": "2019-05-06 11:07:02 UTC",
-      "updated_at": "2021-05-27 15:24:50 UTC",
-      "efolder_documents_fetched_at": "2021-05-23 23:25:36 UTC",
+      "updated_at": "2021-06-03 18:42:59 UTC",
+      "efolder_documents_fetched_at": "2021-06-03 17:35:37 UTC",
       "status": "active",
       "status_updated_at": null
     },
@@ -678,17 +690,17 @@
       "id": 12305,
       "station_id": "101",
       "css_id": "MILLEK2VACO",
-      "full_name": "The Hon. Karry Klocko",
-      "email": "jae@price.net",
+      "full_name": "Elias Cassin",
+      "email": "aleshia@jast.io",
       "roles": [
         "Reader",
         "Mail Intake"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-27 15:16:03 UTC",
+      "last_login_at": "2021-06-03 18:54:24 UTC",
       "created_at": "2019-09-26 10:25:58 UTC",
-      "updated_at": "2021-05-27 15:16:03 UTC",
-      "efolder_documents_fetched_at": "2021-05-26 19:15:36 UTC",
+      "updated_at": "2021-06-03 18:54:24 UTC",
+      "efolder_documents_fetched_at": "2021-06-02 20:15:37 UTC",
       "status": "active",
       "status_updated_at": null
     }
@@ -738,9 +750,9 @@
       "id": 6784,
       "organization_id": 330,
       "user_id": 8363,
-      "admin": false,
+      "admin": true,
       "created_at": "2020-04-08 13:00:33 UTC",
-      "updated_at": "2020-04-08 13:00:33 UTC"
+      "updated_at": "2021-05-28 12:37:29 UTC"
     },
     {
       "id": 1882,
@@ -810,25 +822,25 @@
       "id": 7125,
       "organization_id": 461,
       "user_id": 8363,
-      "admin": false,
+      "admin": true,
       "created_at": "2020-04-29 14:10:49 UTC",
-      "updated_at": "2020-04-29 14:10:49 UTC"
-    },
-    {
-      "id": 9598,
-      "organization_id": 330,
-      "user_id": 1769,
-      "admin": false,
-      "created_at": "2020-12-14 11:23:22 UTC",
-      "updated_at": "2020-12-14 11:23:22 UTC"
+      "updated_at": "2021-05-28 12:36:31 UTC"
     },
     {
       "id": 9600,
       "organization_id": 461,
       "user_id": 1769,
-      "admin": false,
+      "admin": true,
       "created_at": "2020-12-14 11:23:56 UTC",
-      "updated_at": "2020-12-14 11:23:56 UTC"
+      "updated_at": "2021-05-28 12:36:24 UTC"
+    },
+    {
+      "id": 9598,
+      "organization_id": 330,
+      "user_id": 1769,
+      "admin": true,
+      "created_at": "2020-12-14 11:23:22 UTC",
+      "updated_at": "2021-05-28 12:37:49 UTC"
     }
   ],
   "organizations": [
@@ -967,15 +979,15 @@
     {
       "id": 643495,
       "participant_id": "51501412",
-      "date_of_birth": "1927-02-01",
+      "date_of_birth": "1926-10-11",
       "created_at": "2020-12-29 16:16:38 UTC",
       "updated_at": "2020-12-29 16:16:39 UTC",
-      "first_name": "Mellisa",
-      "last_name": "Sauer",
+      "first_name": "Sung",
+      "last_name": "Hayes",
       "middle_name": null,
       "name_suffix": null,
       "email_address": null,
-      "ssn": "000123427"
+      "ssn": "000989813"
     }
   ]
 }

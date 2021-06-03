@@ -235,8 +235,9 @@ class SanitizedJsonConfiguration
     # To-do: include other source appeals, e.g., those with the same docket number
     [
       appeal.cavc_remand&.source_appeal,
-      appeal.appellant_substitution&.source_appeal
-    ].compact
+      appeal.appellant_substitution&.source_appeal,
+      appeal.request_issues.map{|rqi| rqi.contested_decision_issue&.decision_review}
+    ].flatten.compact
   end
 
   def before_sanitize(record, obj_hash)

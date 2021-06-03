@@ -1,12 +1,12 @@
 {
   "metadata": {
-    "exported_at": "2021-05-27 15:45:14 UTC",
-    "purpose": "CASEFLOW-1638 backport"
+    "exported_at": "2021-06-03 21:31:20 UTC",
+    "purpose": "CASEFLOW-1638: Backport realistic appeals ready for substitutes from prod"
   },
   "appeals": [
     {
       "id": 112617,
-      "veteran_file_number": "000703563",
+      "veteran_file_number": "000928521",
       "receipt_date": "2020-08-05",
       "docket_type": "direct_review",
       "established_at": "2020-12-29 17:38:53 UTC",
@@ -35,14 +35,14 @@
   "veterans": [
     {
       "id": 440476,
-      "file_number": "000703563",
+      "file_number": "000928521",
       "participant_id": "46778986",
-      "first_name": "Wilhemina",
-      "last_name": "Jenkins",
-      "middle_name": "V",
+      "first_name": "Brittaney",
+      "last_name": "Schamberger",
+      "middle_name": "T",
       "name_suffix": null,
       "closest_regional_office": null,
-      "ssn": "000465654",
+      "ssn": "000639848",
       "created_at": "2019-09-27 15:02:16 UTC",
       "updated_at": "2021-05-25 20:42:28 UTC",
       "date_of_death": "2020-10-20",
@@ -56,7 +56,7 @@
       "detail_id": 112617,
       "detail_type": "Appeal",
       "user_id": 8363,
-      "veteran_file_number": "000703563",
+      "veteran_file_number": "000928521",
       "started_at": "2020-12-29 17:37:53 UTC",
       "completed_at": "2020-12-29 17:38:56 UTC",
       "completion_status": "success",
@@ -73,7 +73,7 @@
     {
       "id": 149089,
       "appeal_id": 112617,
-      "citation_number": "A00770871",
+      "citation_number": "A00780871",
       "decision_date": "2021-01-13",
       "redacted_document_location": "\\\\vacohsm01.dva.va.gov\\vaco_workgroups\\BVA\\archdata\\arch2101\\A21000871.txt",
       "created_at": "2021-01-13 15:40:18 UTC",
@@ -352,7 +352,64 @@
     }
   ],
   "attorney_case_reviews": [
-
+    {
+      "id": 230453,
+      "document_id": "02646-00000044",
+      "reviewing_judge_id": 1353,
+      "attorney_id": 16654,
+      "work_product": "Decision",
+      "overtime": false,
+      "document_type": "draft_decision",
+      "note": null,
+      "created_at": "2021-01-11 17:03:47 UTC",
+      "updated_at": "2021-01-11 17:03:47 UTC",
+      "task_id": "1373176",
+      "untimely_evidence": false
+    }
+  ],
+  "decision_issues": [
+    {
+      "id": 239645,
+      "disposition": "Denied",
+      "description": "Se co fo bi he lo is de",
+      "participant_id": "46778986",
+      "rating_issue_reference_id": "90873016",
+      "decision_text": "Se co fo bi he lo is de",
+      "decision_review_type": "HigherLevelReview",
+      "decision_review_id": 50893,
+      "benefit_type": "compensation",
+      "end_product_last_action_date": "2019-11-15",
+      "diagnostic_code": null,
+      "caseflow_decision_date": null,
+      "created_at": "2019-11-18 23:56:21 UTC",
+      "deleted_at": null,
+      "rating_promulgation_date": "2019-11-15 19:39:39 UTC",
+      "rating_profile_date": "2019-11-14 12:07:22 UTC",
+      "updated_at": "2019-11-18 23:56:21 UTC",
+      "subject_text": null,
+      "percent_number": null
+    },
+    {
+      "id": 1112240,
+      "disposition": "dismissed_death",
+      "description": "SC fo bi he lo is di",
+      "participant_id": "46778986",
+      "rating_issue_reference_id": null,
+      "decision_text": null,
+      "decision_review_type": "Appeal",
+      "decision_review_id": 112617,
+      "benefit_type": "compensation",
+      "end_product_last_action_date": null,
+      "diagnostic_code": null,
+      "caseflow_decision_date": "2021-01-13",
+      "created_at": "2021-01-11 19:45:03 UTC",
+      "deleted_at": null,
+      "rating_promulgation_date": null,
+      "rating_profile_date": null,
+      "updated_at": "2021-01-13 15:40:18 UTC",
+      "subject_text": null,
+      "percent_number": null
+    }
   ],
   "request_issues": [
     {
@@ -403,29 +460,6 @@
       "type": "RequestIssue"
     }
   ],
-  "decision_issues": [
-    {
-      "id": 1112240,
-      "disposition": "dismissed_death",
-      "description": "SC fo bi he lo is di",
-      "participant_id": "46778986",
-      "rating_issue_reference_id": null,
-      "decision_text": null,
-      "decision_review_type": "Appeal",
-      "decision_review_id": 112617,
-      "benefit_type": "compensation",
-      "end_product_last_action_date": null,
-      "diagnostic_code": null,
-      "caseflow_decision_date": "2021-01-13",
-      "created_at": "2021-01-11 19:45:03 UTC",
-      "deleted_at": null,
-      "rating_promulgation_date": null,
-      "rating_profile_date": null,
-      "updated_at": "2021-01-13 15:40:18 UTC",
-      "subject_text": null,
-      "percent_number": null
-    }
-  ],
   "request_decision_issues": [
     {
       "id": 1108755,
@@ -456,8 +490,8 @@
       "id": 803,
       "station_id": "101",
       "css_id": "WALLACEBVAM",
-      "full_name": "Trey Green",
-      "email": "hassan@west.info",
+      "full_name": "Julio Schmidt",
+      "email": "rick.schumm@swift-morar.org",
       "roles": [
         "Download eFolder",
         "Manage Claims Establishme",
@@ -465,10 +499,10 @@
         "Mail Intake"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-26 19:51:42 UTC",
+      "last_login_at": "2021-06-03 20:23:31 UTC",
       "created_at": "2019-02-19 00:00:00 UTC",
-      "updated_at": "2021-05-26 19:51:42 UTC",
-      "efolder_documents_fetched_at": "2021-05-25 11:30:37 UTC",
+      "updated_at": "2021-06-03 20:23:31 UTC",
+      "efolder_documents_fetched_at": "2021-06-01 08:45:37 UTC",
       "status": "active",
       "status_updated_at": null
     },
@@ -476,18 +510,17 @@
       "id": 1353,
       "station_id": "101",
       "css_id": "BRENNBVAD",
-      "full_name": "Burt DuBuque",
-      "email": "bryan_pollich@mertz-corwin.co",
+      "full_name": "Jonathan Upton",
+      "email": "ardell@grady.co",
       "roles": [
-        "User",
-        "Hearing Prep",
-        "Reader"
+        "Reader",
+        "Hearing Prep"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-26 20:40:46 UTC",
+      "last_login_at": "2021-06-03 18:44:20 UTC",
       "created_at": "2019-02-19 00:00:00 UTC",
-      "updated_at": "2021-05-26 20:43:05 UTC",
-      "efolder_documents_fetched_at": "2021-05-24 14:25:37 UTC",
+      "updated_at": "2021-06-03 18:44:20 UTC",
+      "efolder_documents_fetched_at": "2021-05-31 14:20:36 UTC",
       "status": "active",
       "status_updated_at": null
     },
@@ -495,17 +528,17 @@
       "id": 8363,
       "station_id": "101",
       "css_id": "WOOLFQVACO",
-      "full_name": "Manuel Muller Sr.",
-      "email": "titus@cole.name",
+      "full_name": "Zane Davis",
+      "email": "manuela_cruickshank@towne-schulist.name",
       "roles": [
         "Reader",
         "Mail Intake"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-27 15:24:50 UTC",
+      "last_login_at": "2021-06-03 18:42:59 UTC",
       "created_at": "2019-05-06 11:07:02 UTC",
-      "updated_at": "2021-05-27 15:24:50 UTC",
-      "efolder_documents_fetched_at": "2021-05-23 23:25:36 UTC",
+      "updated_at": "2021-06-03 18:42:59 UTC",
+      "efolder_documents_fetched_at": "2021-06-03 17:35:37 UTC",
       "status": "active",
       "status_updated_at": null
     },
@@ -513,17 +546,17 @@
       "id": 16615,
       "station_id": "101",
       "css_id": "ADAMSD2VACO",
-      "full_name": "Ross Konopelski",
-      "email": "cristin.heathcote@kuhn.name",
+      "full_name": "Mrs. King Padberg",
+      "email": "dora@jast-will.info",
       "roles": [
         "Reader",
         "Mail Intake"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-27 15:40:45 UTC",
+      "last_login_at": "2021-06-03 19:09:58 UTC",
       "created_at": "2020-07-23 19:25:59 UTC",
-      "updated_at": "2021-05-27 15:40:45 UTC",
-      "efolder_documents_fetched_at": "2021-05-24 01:20:36 UTC",
+      "updated_at": "2021-06-03 20:35:36 UTC",
+      "efolder_documents_fetched_at": "2021-06-03 20:35:36 UTC",
       "status": "active",
       "status_updated_at": null
     },
@@ -531,17 +564,17 @@
       "id": 16654,
       "station_id": "101",
       "css_id": "LEONAJVACO",
-      "full_name": "Kasey Goodwin Jr.",
-      "email": "britteny@braun.info",
+      "full_name": "Mavis Kunde",
+      "email": "rosendo_mitchell@boyer.biz",
       "roles": [
         "Reader",
         "Mail Intake"
       ],
       "selected_regional_office": null,
-      "last_login_at": "2021-05-27 15:37:18 UTC",
+      "last_login_at": "2021-06-03 20:31:45 UTC",
       "created_at": "2020-07-27 18:53:56 UTC",
-      "updated_at": "2021-05-27 15:37:18 UTC",
-      "efolder_documents_fetched_at": "2021-05-24 18:15:36 UTC",
+      "updated_at": "2021-06-03 20:31:45 UTC",
+      "efolder_documents_fetched_at": "2021-05-31 18:00:37 UTC",
       "status": "active",
       "status_updated_at": null
     }
@@ -567,9 +600,9 @@
       "id": 6784,
       "organization_id": 330,
       "user_id": 8363,
-      "admin": false,
+      "admin": true,
       "created_at": "2020-04-08 13:00:33 UTC",
-      "updated_at": "2020-04-08 13:00:33 UTC"
+      "updated_at": "2021-05-28 12:37:29 UTC"
     },
     {
       "id": 3438,
@@ -599,9 +632,9 @@
       "id": 7125,
       "organization_id": 461,
       "user_id": 8363,
-      "admin": false,
+      "admin": true,
       "created_at": "2020-04-29 14:10:49 UTC",
-      "updated_at": "2020-04-29 14:10:49 UTC"
+      "updated_at": "2021-05-28 12:36:31 UTC"
     },
     {
       "id": 8082,
@@ -743,15 +776,15 @@
     {
       "id": 156902,
       "participant_id": "46778986",
-      "date_of_birth": "1939-12-01",
+      "date_of_birth": "1940-02-28",
       "created_at": "2019-09-27 15:02:46 UTC",
       "updated_at": "2020-12-29 17:38:23 UTC",
-      "first_name": "Lonnie",
-      "last_name": "Reichert",
-      "middle_name": "J",
+      "first_name": "Donny",
+      "last_name": "Stamm",
+      "middle_name": "H",
       "name_suffix": null,
       "email_address": null,
-      "ssn": "000465654"
+      "ssn": "000639848"
     }
   ]
 }
