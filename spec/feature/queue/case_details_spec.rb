@@ -562,7 +562,6 @@ RSpec.feature "Case details", :all_dbs do
         FeatureToggle.enable!(:poa_button_refresh)
         Rails.cache.write("bgs-participant-poa-not-found-#{appeal.veteran.file_number}", true)
         Rails.cache.write("bgs-participant-poa-not-found-#{appeal.claimant.participant_id}", true)
-        Rails.cache.write("bgs-participant-poa-not-found-#{legacy_appeal.claimant&.dig(:representative, :participant_id)}", true)
         BgsPowerOfAttorney.skip_callback(:save, :before, :update_cached_attributes!)
       end
       after do

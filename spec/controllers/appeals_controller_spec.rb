@@ -636,16 +636,17 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
     context do
       subject do
-        Rails.cache.write("bgs-participant-poa-not-found-#{appeal.claimant&.dig(:representative, :participant_id)}", true)
+        participant_id = appeal.claimant&.dig(:representative, :participant_id)
+        Rails.cache.write("bgs-participant-poa-not-found-#{participant_id}", true)
         patch :update_power_of_attorney, params: patch_params
       end
-      
+
       it "clears not_found cache when claimant is a hash" do
         expect(appeal.power_of_attorney).to_not eq(nil)
         expect(appeal.claimant.is_a?(Hash)).to eq(true)
-        expect(Rails.cache.read("bgs-participant-poa-not-found-#{appeal.claimant&.dig(:representative, :participant_id)}")).to eq(nil)
+        participant_id = appeal.claimant&.dig(:representative, :participant_id)
+        expect(Rails.cache.read("bgs-participant-poa-not-found-#{participant_id}")).to eq(nil)
       end
-
     end
   end
 
