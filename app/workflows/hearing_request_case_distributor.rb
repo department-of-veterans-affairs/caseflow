@@ -12,8 +12,7 @@ class HearingRequestCaseDistributor
     appeals_to_distribute.map do |appeal, genpop_value|
       Distribution.transaction do
         rename_any_existing_distributed_case(appeal)
-        judge_assign_task_creator = JudgeAssignTaskCreator.new(appeal: appeal, judge: distribution.judge)
-        task = judge_assign_task_creator.manage_judge_assign_tasks_for_appeal
+        task = create_judge_assign_task_for_appeal(appeal)
         create_distribution_case_for_task(task, genpop_value)
       end
     end
@@ -33,6 +32,10 @@ class HearingRequestCaseDistributor
 
   def appeals_to_distribute
     not_genpop_appeals.map { |appeal| [appeal, false] }.concat(only_genpop_appeals.map { |appeal| [appeal, true] })
+  end
+
+  def create_judge_assign_task_for_appeal(appeal)
+    JudgeAssignTaskCreator.new(appeal: appeal, judge: distribution.judge).call
   end
 
   def create_distribution_case_for_task(task, genpop_value)

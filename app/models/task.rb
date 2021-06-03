@@ -556,6 +556,8 @@ class Task < CaseflowRecord
 
   # rubocop:disable Metrics/AbcSize
   def reassign(reassign_params, current_user)
+    # We do not validate the number of tasks in this scenario because when a
+    # JudgeAssignTask is reassigned, more than one task must exist at the same time.
     Thread.current.thread_variable_set(:skip_duplicate_validation, true)
     replacement = dup.tap do |task|
       begin
@@ -583,8 +585,8 @@ class Task < CaseflowRecord
 
     [replacement, self, replacement.children].flatten
   end
-
   # rubocop:enable Metrics/AbcSize
+
   def can_move_on_docket_switch?
     return false unless open_with_no_children?
     return false if type.include?("DocketSwitch")
@@ -823,14 +825,12 @@ class Task < CaseflowRecord
     true
   end
 
-  def no_multiples_of_noncancelled_task
-    if Thread.current.thread_variable_get(:skip_duplicate_validation)
-      return
-    end
+  def open_task_count_validation_required?
+    !Thread.current.thread_variable_get(:skip_duplicate_validation)
+  end
 
-    tasks = appeal.reload.tasks
-    target_tasks = tasks.open.of_type(type)
-    if target_tasks.length >= 1
+  def no_multiples_of_open_task_type
+    if appeal.reload.tasks.open.of_type(type).count >= 1
       errors.add(:type, COPY::INVALID_MULTIPLE_TASKS)
     end
   end

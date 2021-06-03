@@ -11,7 +11,7 @@ describe JudgeTask, :all_dbs do
     create(:staff, :attorney_role, sdomainid: attorney.css_id)
   end
 
-  describe "no_multiples_of_noncancelled_task" do
+  describe "no_multiples_of_open_task_type" do
     let(:user) { judge }
     let(:stream_type) { Constants.AMA_STREAM_TYPES.original }
     let(:appeal) { create(:appeal, stream_type: stream_type) }
@@ -48,7 +48,7 @@ describe JudgeTask, :all_dbs do
     subject { task.reassign(params, old_assignee) }
 
     context "when a judge task is reassigned successfully" do
-      it "should not violate the no_multiples_of_noncancelled_task validation" do
+      it "should not violate the no_multiples_of_open_task_type validation" do
         expect { subject }.to_not raise_error
         expect(Thread.current.thread_variable_get(:skip_duplicate_validation)).to be_nil
       end
