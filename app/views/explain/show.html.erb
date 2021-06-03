@@ -4,6 +4,29 @@
 
 <div style="font-size:0.875em; padding:10px">
 
+  <table>
+    <tr>
+      <th>timestamp</th>
+      <th>object type</th>
+      <th>object id</th>
+      <th>event type</th>
+      <th>comment</th>
+      <th>relevant_data</th>
+      <th>details count</th>
+    </tr>
+    <% event_table_data.each do |event| %>
+      <tr>
+        <td style="padding: 2px"><%= event["timestamp"] %></td>
+        <td style="padding: 2px"><%= event["object_type"] %></td>
+        <td style="padding: 2px"><%= event["object_id"] %></td>
+        <td style="padding: 2px"><%= event["event_type"] %></td>
+        <td style="padding: 2px"><%= event["comment"] %></td>
+        <td style="padding: 2px"><%= event["relevant_data"] %></td>
+        <td style="padding: 2px"><%= event["details"].size %></td>
+      </tr>
+    <% end %>
+  </table>
+
   <pre style="font-size:0.84em; padding:10px"><code><%= JSON.pretty_generate(event_table_data) %></code></pre>
 
   <details>
