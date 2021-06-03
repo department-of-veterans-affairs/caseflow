@@ -376,6 +376,7 @@ RSpec.feature "Case details", :all_dbs do
         scenario "details view renders unrecognized POA copy" do
           visit "/queue/appeals/#{appeal.uuid}"
           expect(page).to have_content(COPY::CASE_DETAILS_UNRECOGNIZED_POA)
+          expect(page).to_not have_css("button-Refresh-Poa")
         end
       end
 
@@ -397,8 +398,64 @@ RSpec.feature "Case details", :all_dbs do
 
         scenario "details view contains POA information" do
           visit "/queue/appeals/#{appeal.uuid}"
-          expect(page).to have_content("Appellant's Power of Attorney")
+          expect(page).to have_content("Unrecognized representative")
           expect(page).to have_content(appeal.representative_name)
+          expect(page).to_not have_css("button-Refresh-Poa")
+        end
+      end
+
+      context "when a recognized appellant does NOT have a recognized POA" do
+        before do
+          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return(nil)
+
+          allow_any_instance_of(BgsPowerOfAttorney).to receive(:representative_type)
+            .and_return("Unrecognized representative")
+
+          allow(BgsPowerOfAttorney).to receive(:fetch_bgs_poa_by_participant_id).and_return(nil)
+          allow(BgsPowerOfAttorney).to receive(:find_or_create_by_claimant_participant_id).and_return(nil)
+        end
+
+        scenario "details view does not contain POA information" do
+          visit "/queue/appeals/#{appeal.uuid}"
+          byebug
+          expect(page).to have_content("Unrecognized representative")
+          expect(page).to have_content(COPY::CASE_DETAILS_UNRECOGNIZED_POA)
+          expect(page).to_not have_css("button-Refresh-Poa")
+        end
+      end
+
+      context "when a recognized appellant has a recognized POA" do
+        before do
+          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(true)
+        end
+
+        let(:veteran_file_number) { "4205555" }
+        let(:veteran_participant_id) { "123456" }
+        let(:veteran_date_of_death) { nil }
+        let(:receipt_date) { ama_test_start_date + 1 }
+        let(:claim_review) do
+          build(
+            :higher_level_review,
+            veteran_file_number: veteran_file_number,
+            receipt_date: receipt_date,
+            informal_conference: nil,
+            same_office: nil,
+            benefit_type: "compensation"
+          )
+        end
+        let!(:claimant) do
+          create(
+            :claimant,
+            decision_review: claim_review,
+            participant_id: veteran_participant_id,
+            payee_code: "00"
+          )
+        end
+
+        scenario "details view contains POA information" do
+          visit "/queue/appeals/#{appeal.uuid}"
+          expect(page).to have_content(appeal.representative_name)
+          expect(page).to have_css("button-Refresh-Poa")
         end
       end
     end
