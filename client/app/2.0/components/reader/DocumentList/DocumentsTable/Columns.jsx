@@ -128,7 +128,7 @@ ReceiptDateHeader.propTypes = {
 export const ReceiptDateCell = ({ doc, filterCriteria }) => (
   <span className="document-list-receipt-date">
     <Highlight searchQuery={filterCriteria.searchQuery}>
-      {formatDateStr(doc.receivedAt)}
+      {formatDateStr(doc?.receivedAt)}
     </Highlight>
   </span>
 );

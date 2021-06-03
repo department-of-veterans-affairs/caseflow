@@ -152,7 +152,7 @@ export const columnCount = (width, pageWidth, numPages) =>
  */
 export const sortKeysBy = ({ keys, list, value, dir }) => keys.sort((first, second) => {
   // Return the keys if there is no list
-  if (!list[first]) {
+  if (!list[first] || !list[second]) {
     return keys;
   }
 
@@ -199,7 +199,7 @@ export const filterDocuments = (criteria, documents, state) => {
       let include = true;
 
       // Set the Current Document
-      const document = docs[id];
+      const [document] = Object.values(docs).filter((doc) => doc.id === id);
 
       // Apply the Category filters
       if (!isEmpty(filters.category)) {
@@ -209,7 +209,7 @@ export const filterDocuments = (criteria, documents, state) => {
       // Apply the Tag filters
       if (!isEmpty(filters.tag)) {
         // include = include && filters.tag.filter((name) => document[name] === true).length;
-        include = include && document.tags.some((tag) => filters.tag.includes(tag.text));
+        include = include && document?.tags?.some((tag) => filters.tag.includes(tag.text));
       }
 
       // Apply the search filters

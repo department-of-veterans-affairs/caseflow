@@ -53,12 +53,12 @@ def add_comment_without_clicking_save(text)
   3.times do
     # Add a comment
     click_on "button-AddComment"
-    expect(page).to have_css(".cf-pdf-placing-comment", visible: true)
+    expect(page).to have_css(".canvas-cursor", visible: true)
 
-    # comment-layer-${pageIndex}-${fileName} is the id of the first page's CommentLayer
-    page.execute_script("document.querySelectorAll('[id^=\"comment-layer-0\"]')[0].click()")
+    # text-${pageIndex} is the id of the first page's CommentLayer
+    find("#text-0").click
 
-    expect(page).to_not have_css(".cf-pdf-placing-comment")
+    expect(page).to_not have_css(".canvas-cursor")
 
     begin
       find("#addComment")
@@ -77,6 +77,7 @@ end
 
 RSpec.feature "Reader", :all_dbs do
   before do
+    FeatureToggle.enable!(:interface_version_2)
     Fakes::Initializer.load!
 
     RequestStore[:current_user] = User.find_or_create_by(css_id: "BVASCASPER1", station_id: 101)
@@ -323,6 +324,7 @@ RSpec.feature "Reader", :all_dbs do
     scenario "Clicking outside pdf or next pdf removes annotation mode" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
       expect(page).to have_content("CaseflowQueue")
+      expect(page).to have_content(Document.find(2).type)
 
       add_comment_without_clicking_save("text")
       page.find("body").click
@@ -372,6 +374,7 @@ RSpec.feature "Reader", :all_dbs do
       expect(page.find("#comments-header")).to have_content("Page 1")
       click_on "Edit"
       find("h3", text: "Document information").click
+      # byebug
       find("#editCommentBox-1").send_keys(:arrow_left)
       expect_doc_type_to_be "Form 9"
       find("#editCommentBox-1").send_keys(:arrow_right)
@@ -1245,8 +1248,8 @@ RSpec.feature "Reader", :all_dbs do
     scenario "Show and Hide Document Searchbar with Keyboard" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
 
+      expect(page).to have_content(Document.find(documents[0].id).type)
       find("body").send_keys [:meta, "f"]
-
       search_bar = find(".cf-search-bar")
       expect(search_bar).not_to match_css(".hidden")
 
@@ -1352,7 +1355,7 @@ RSpec.feature "Reader", :all_dbs do
     # Created issue #3883 to address this browser cache retention issue.
     let(:documents) { [Generators::Document.create(id: rand(999_999..1_000_997))] }
 
-    scenario "causes individual file view will display error message" do
+    fscenario "causes individual file view will display error message" do
       allow_any_instance_of(DocumentController).to receive(:pdf).and_raise(StandardError)
       visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
       expect(page).to have_content("Unable to load document")

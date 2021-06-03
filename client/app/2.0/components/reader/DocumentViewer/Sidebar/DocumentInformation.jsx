@@ -40,7 +40,7 @@ export const DocumentInformation = ({
       errorMessage={error?.visible ? error.message : null}
     />
     <p className="cf-pdf-meta-title">
-      <strong>Receipt Date:</strong> {formatDateStr(currentDocument.receivedAt)}
+      <strong>Receipt Date:</strong> {formatDateStr(currentDocument?.receivedAt)}
     </p>
     <hr />
     {isEmpty(appeal) ? <LoadingMessage message="Loading details..." /> : (

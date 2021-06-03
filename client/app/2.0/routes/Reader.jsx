@@ -9,6 +9,7 @@ import AppFrame from 'app/components/AppFrame';
 import { claimsFolderPageTitle } from 'utils';
 import { LOADING_DATA_MESSAGE } from 'store/constants/reader';
 import { useSelector } from 'react-redux';
+import BaseLayout from 'layouts/BaseLayout';
 
 // Lazy load screens
 const DocumentList = React.lazy(() => import('screens/reader/DocumentList'));
@@ -26,30 +27,34 @@ const ReaderRoutes = (props) => {
   // Return the list of routes
   return (
     <AppFrame wideApp>
-      <PageRoute
-        exact
-        loading={loading}
-        loadingMessage={LOADING_DATA_MESSAGE}
-        title={claimsFolderPageTitle(props.appeal)}
-        path="/reader/appeal/:vacolsId/documents"
-        render={(routeProps) => <DocumentList {...props} {...routeProps} />}
-        appName={appName}
-      />
-      <PageRoute
-        exact
-        loading={loading}
-        loadingMessage={LOADING_DATA_MESSAGE}
-        title="Document Viewer | Caseflow Reader"
-        path="/reader/appeal/:vacolsId/documents/:docId"
-        render={(routeProps) => (
-          <DocumentViewer
-            {...props}
-            {...routeProps}
-            documentPathBase={`/reader/appeal/${ routeProps.match.params.vacolsId }/documents`}
-          />
-        )}
-        appName={appName}
-      />
+      <BaseLayout appName={appName} {...props}>
+        <PageRoute
+          exact
+          loading={loading}
+          loadingMessage={LOADING_DATA_MESSAGE}
+          title={claimsFolderPageTitle(props.appeal)}
+          path="/reader/appeal/:vacolsId/documents"
+          breadcrumb="Reader"
+          render={(routeProps) => <DocumentList {...props} {...routeProps} />}
+          appName={appName}
+        />
+        <PageRoute
+          exact
+          loading={loading}
+          loadingMessage={LOADING_DATA_MESSAGE}
+          title="Document Viewer | Caseflow Reader"
+          path="/reader/appeal/:vacolsId/documents/:docId"
+          breadcrumb="Document Viewer"
+          render={(routeProps) => (
+            <DocumentViewer
+              {...props}
+              {...routeProps}
+              documentPathBase={`/reader/appeal/${ routeProps.match.params.vacolsId }/documents`}
+            />
+          )}
+          appName={appName}
+        />
+      </BaseLayout>
     </AppFrame>
   );
 };

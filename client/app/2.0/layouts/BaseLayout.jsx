@@ -8,7 +8,6 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import NavigationBar from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/NavigationBar';
 import CaseSearchLink from 'app/components/CaseSearchLink';
 import { LOGO_COLORS } from 'app/constants/AppConstants';
-import Loadable from 'components/shared/Loadable';
 
 const BaseLayout = ({
   children,
@@ -22,6 +21,8 @@ const BaseLayout = ({
 }) => {
   // Get the Breadcrumbs from the store
   const { crumbs } = useSelector((state) => ({ crumbs: state.routes.crumbs }));
+
+  console.log('CRUMBS: ', crumbs);
 
   return (
     <React.Fragment>
@@ -40,9 +41,7 @@ const BaseLayout = ({
         defaultUrl={defaultUrl}
         outsideCurrentRouter
       >
-        <Loadable spinnerColor={LOGO_COLORS[appName.toUpperCase()].ACCENT}>
-          {children}
-        </Loadable>
+        {children}
       </NavigationBar>
       <Footer wideApp appName={appName} feedbackUrl={feedbackUrl} buildDate={buildDate} />
     </React.Fragment>

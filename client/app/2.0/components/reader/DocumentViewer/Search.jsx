@@ -25,6 +25,8 @@ export const DocumentSearch = ({
 }) => !hidden && (
   <div className={classNames('cf-search-bar', { hidden })}>
     <SearchBar
+      value={searchTerm || ''}
+      onClearSearch={() => searchText('')}
       inputProps={{ autoFocus: true }}
       ref={searchBarRef}
       isSearchAhead

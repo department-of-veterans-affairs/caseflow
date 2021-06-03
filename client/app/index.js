@@ -14,6 +14,8 @@ import BaseLayout from 'layouts/BaseLayout';
 import ReduxBase from 'app/components/ReduxBase';
 import rootReducer from 'store/root';
 import { ErrorBoundary } from 'components/shared/ErrorBoundary';
+import Loadable from 'components/shared/Loadable';
+import { LOGO_COLORS } from 'app/constants/AppConstants';
 
 // List of container components we render directly in  Rails .erb files
 const Router = React.lazy(() => import('app/2.0/router'));
@@ -97,9 +99,9 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
         <ReduxBase reducer={rootReducer}>
           <BrowserRouter>
             <Switch>
-              <BaseLayout appName={props.appName} {...props}>
+            <Loadable spinnerColor={LOGO_COLORS[props.appName.toUpperCase()].ACCENT}>
                 <Component {...props} />
-              </BaseLayout>
+            </Loadable>
             </Switch>
           </BrowserRouter>
         </ReduxBase>

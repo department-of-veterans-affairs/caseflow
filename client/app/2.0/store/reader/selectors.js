@@ -1,6 +1,7 @@
 // Local Dependencies
 import { documentCategories } from 'store/constants/reader';
 import { documentsView, formatTagOptions, formatTagValue, formatCategoryName } from 'utils/reader';
+import { isEmpty } from 'lodash';
 
 /**
  * Filtered Documents state
@@ -45,6 +46,10 @@ export const documentListScreen = (state) => {
   return {
     documents,
     docsCount,
+    docsFiltered:
+      state.reader.documentList.filterCriteria.searchQuery ||
+      !isEmpty(state.reader.documentList.filterCriteria.category) ||
+      !isEmpty(state.reader.documentList.filterCriteria.tag),
     tagOptions: formatTagOptions(state.reader.documentList.documents),
     currentDocument: state.reader.documentViewer.selected,
     storeDocuments: state.reader.documentList.documents,
@@ -57,13 +62,14 @@ export const documentListScreen = (state) => {
     ),
     filterCriteria: state.reader.documentList.filterCriteria,
     filteredDocIds: state.reader.documentList.filteredDocIds,
-    searchCategoryHighlights: state.reader.documentList.searchCategoryHighlights,
+    searchCategoryHighlights:
+      state.reader.documentList.searchCategoryHighlights,
     manifestVbmsFetchedAt: state.reader.documentList.manifestVbmsFetchedAt,
     manifestVvaFetchedAt: state.reader.documentList.manifestVvaFetchedAt,
     queueRedirectUrl: state.reader.documentList.queueRedirectUrl,
     queueTaskType: state.reader.documentList.queueTaskType,
     appeal: state.reader.appeal.selected,
-    scale: state.reader.documentViewer.scale
+    scale: state.reader.documentViewer.scale,
   };
 };
 
@@ -95,11 +101,17 @@ export const documentScreen = (state) => {
     docsCount,
     categories,
     comments,
+    docsFiltered:
+      state.reader.documentList.filterCriteria.searchQuery ||
+      !isEmpty(state.reader.documentList.filterCriteria.category) ||
+      !isEmpty(state.reader.documentList.filterCriteria.tag),
     currentPageIndex: state.reader.documentViewer.currentPageIndex,
     pendingTag: state.reader.documentViewer.pendingTag,
     pendingCategory: state.reader.documentViewer.pendingCategory,
     documentTags: state.reader.documentViewer.tags,
-    tagOptions: formatTagValue(formatTagOptions(state.reader.documentList.documents)),
+    tagOptions: formatTagValue(
+      formatTagOptions(state.reader.documentList.documents)
+    ),
     viewport: state.reader.documentViewer.viewport,
     keyboardInfoOpen: state.reader.documentViewer.keyboardInfoOpen,
     pendingDeletion: state.reader.annotationLayer.pendingDeletion,
@@ -118,7 +130,8 @@ export const documentScreen = (state) => {
     currentDocument: state.reader.documentViewer.selected,
     filteredDocIds: state.reader.documentList.filteredDocIds,
     appeal: state.reader.appeal.selected,
-    searchCategoryHighlights: state.reader.documentList.searchCategoryHighlights,
+    searchCategoryHighlights:
+      state.reader.documentList.searchCategoryHighlights,
     storeDocuments: state.reader.documentList.documents,
     annotationLayer: state.reader.annotationLayer,
     hidePdfSidebar: state.reader.documentViewer.hidePdfSidebar,

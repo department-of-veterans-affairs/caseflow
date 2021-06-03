@@ -82,7 +82,7 @@ export const keyHandler = (event, props) => {
         // Move the cursor
         props.moveMouse(props.getCoords({ pageX: coords.x, pageY: coords.y }, pageIndex), pageIndex);
       // Ignore arrow keys when editing search fields
-      } else if (!['search-ahead', 'commentEditBox'].includes(event.target.id)) {
+      } else if (!['search-ahead', 'commentEditBox'].includes(event.target.id) && !props.addingComment) {
         changeDocument(event, props);
       }
 
@@ -109,7 +109,7 @@ export const keyHandler = (event, props) => {
       break;
     case 'KeyF':
       // If the meta key is pressed open the search bar
-      if (event[metaKey]) {
+      if (event.ctrlKey || event.metaKey) {
         event.preventDefault();
         props.toggleSearchBar(false);
       }

@@ -29,7 +29,7 @@ export const SidebarComments = ({
 }) => (
   <div>
     <span className="cf-right-side cf-add-comment-button">
-      <Button name="AddComment" onClick={addComment} disabled={Boolean(droppedComment)} >
+      <Button name="AddComment" onClick={addComment} >
         <span>{plusIcon()}&nbsp; Add a comment</span>
       </Button>
     </span>
@@ -42,7 +42,7 @@ export const SidebarComments = ({
             {...props}
             resetEdit={cancelDrop}
             comment={droppedComment}
-            id="addComment"
+            nodeId="addComment"
             disableOnEmpty
             onChange={(val) => updateComment({ ...droppedComment, pendingComment: val })}
             changeDate={(val) => updateComment({ ...droppedComment, pendingDate: val })}
@@ -54,7 +54,7 @@ export const SidebarComments = ({
             {comment.editing ? (
               <EditComment
                 {...props}
-                id={`editCommentBox-${comment.temporaryId || comment.id}`}
+                nodeId={`editCommentBox-${comment.temporaryId || comment.id}`}
                 saveComment={() => saveComment(comment)}
                 comment={comment}
                 onChange={(val) => updateComment({ ...comment, pendingComment: val })}
@@ -63,10 +63,9 @@ export const SidebarComments = ({
                 key={comment.temporaryId || comment.id}
               />
             ) : (
-              <div ref={commentRef} key={comment.temporaryId || comment.id}>
+              <div id={`comment${index}`} ref={commentRef} key={comment.temporaryId || comment.id}>
                 <Comment
                   {...props}
-                  id={`comment${index}`}
                   comment={comment}
                   selected={comment?.id === selectedComment?.id}
                   handleClick={(event) => {
