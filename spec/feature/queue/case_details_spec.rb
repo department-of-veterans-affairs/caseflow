@@ -569,7 +569,7 @@ RSpec.feature "Case details", :all_dbs do
         BgsPowerOfAttorney.set_callback(:save, :before, :update_cached_attributes!)
       end
 
-      scenario "clears not_found cache for veretan or non-veteran claimant POA" do
+      scenario "clears not_found cache for veteran or non-veteran claimant POA" do
         poa.last_synced_at = Time.zone.now - 5.years
         poa.save!
         claimant_poa.last_synced_at = Time.zone.now - 5.years
