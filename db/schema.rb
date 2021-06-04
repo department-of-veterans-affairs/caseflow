@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_02_145330) do
+ActiveRecord::Schema.define(version: 2021_06_04_114441) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1661,6 +1661,7 @@ ActiveRecord::Schema.define(version: 2021_06_02_145330) do
   add_foreign_key "docket_switches", "appeals", column: "new_docket_stream_id"
   add_foreign_key "docket_switches", "appeals", column: "old_docket_stream_id"
   add_foreign_key "docket_switches", "tasks"
+  add_foreign_key "docket_tracers", "docket_snapshots"
   add_foreign_key "document_views", "users"
   add_foreign_key "end_product_code_updates", "end_product_establishments"
   add_foreign_key "end_product_establishments", "users"
@@ -1695,6 +1696,7 @@ ActiveRecord::Schema.define(version: 2021_06_02_145330) do
   add_foreign_key "messages", "users"
   add_foreign_key "nod_date_updates", "appeals"
   add_foreign_key "nod_date_updates", "users"
+  add_foreign_key "non_availabilities", "schedule_periods"
   add_foreign_key "organizations_users", "organizations"
   add_foreign_key "organizations_users", "users"
   add_foreign_key "post_decision_motions", "appeals"
@@ -1718,6 +1720,7 @@ ActiveRecord::Schema.define(version: 2021_06_02_145330) do
   add_foreign_key "unrecognized_appellants", "claimants"
   add_foreign_key "unrecognized_appellants", "unrecognized_party_details"
   add_foreign_key "unrecognized_appellants", "unrecognized_party_details", column: "unrecognized_power_of_attorney_id"
+  add_foreign_key "user_quotas", "team_quotas"
   add_foreign_key "user_quotas", "users"
   add_foreign_key "virtual_hearing_establishments", "virtual_hearings"
   add_foreign_key "virtual_hearings", "users", column: "created_by_id"
