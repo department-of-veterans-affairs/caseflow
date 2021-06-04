@@ -103,9 +103,10 @@ class HearingRenderer
   def get_appeal_type_conversions(appeal)
     unformatted_versions = appeal.versions
     versions = unformatted_versions.map do |v|
-      change = v.changeset["changed_hearing_request_type"]
+      change = v.changeset["changed_hearing_request_type"] ||
+               v.changeset["changed_request_type"]
       {
-        "from_type" => Hearing::HEARING_TYPES[change[0]&.to_sym],
+        "from_type" => print_nil(Hearing::HEARING_TYPES[change[0]&.to_sym]),
         "to_type" => Hearing::HEARING_TYPES[change[1]&.to_sym],
         "converted_by" => User.find(v.whodunnit).css_id,
         "converted_at" => v.created_at
@@ -115,10 +116,9 @@ class HearingRenderer
     versions
   end
 
-  # TODO, use the nil to "None" converter that's being added
   def format_original_and_current_type(appeal)
-    original = appeal.readable_original_hearing_request_type
-    current = appeal.readable_current_hearing_request_type
+    original = print_nil(appeal.readable_original_hearing_request_type)
+    current = print_nil(appeal.readable_current_hearing_request_type)
     if original == current && appeal.versions.count == 0
       ["Current type: #{current}"]
     else
@@ -163,8 +163,6 @@ class HearingRenderer
 
     children += appeal.hearings.map { |hearing| structure(hearing) }
 
-    # TODO: create list of type conversion history from Papertrail
-    # TODO: remove Hearing Request Type subheader
     children << {
       "History": get_appeal_history(appeal)
     }
