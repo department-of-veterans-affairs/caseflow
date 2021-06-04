@@ -8,8 +8,6 @@ class HearingRenderer
     Hearing
     LegacyHearing
     HearingTask
-    ScheduleHearingTask
-    AssignHearingDispositionTask
     VirtualHearing
   ].freeze
 
@@ -86,12 +84,13 @@ class HearingRenderer
     details
   end
 
-  def readable_date_in_est(date)
+  def readable_date(date)
+    date.strftime("%m-%d-%Y %I:%M%p %Z")
   end
 
   def veteran_children(vet)
     appeals = Appeal.where(veteran_file_number: vet.file_number)
-    appeals.sort_by { |a| a.receipt_date || Time.zone.today }
+    appeals.sort_by { |appeal| appeal.receipt_date || Time.zone.today }
     legacy_appeals = LegacyAppeal.fetch_appeals_by_file_number(vet.file_number)
     legacy_appeals.sort_by { |la| la.created_at || Time.zone.today }
 
@@ -163,7 +162,6 @@ class HearingRenderer
     end
 
     children += appeal.hearings.map { |hearing| structure(hearing) }
-    # TODO: HearingTask subtree
 
     # TODO: create list of type conversion history from Papertrail
     # TODO: remove Hearing Request Type subheader
@@ -200,27 +198,37 @@ class HearingRenderer
   def scheduled_for(hearing)
     ro_time = hearing.scheduled_for.in_time_zone(hearing.regional_office_timezone)
     if ro_time != hearing.scheduled_for
-      "Scheduled for: #{hearing.scheduled_for.strftime("%m-%d-%Y %I:%M%p %Z")} / #{ro_time.strftime("%I:%M%p %Z")}(RO time)"
+      "Scheduled for: #{readable_date(hearing.scheduled_for)} / #{ro_time.strftime('%I:%M%p %Z')}(RO time)"
     end
 
-    "Scheduled for: #{hearing.scheduled_for.strftime("%m-%d-%Y %I:%M%p %Z")}"
+    "Scheduled for: #{readable_date(hearing.scheduled_for)}"
+  end
+
+  def print_nil(obj)
+    obj.present? ? obj : "none"
   end
 
   def shared_hearing_children(hearing)
     children = []
-    children << "Notes: #{hearing.notes}" if hearing.notes.present? && show_pii
-    ro_time = hearing.scheduled_for.in_time_zone(hearing.regional_office_timezone).strftime("%I:%M%p %Z")
+    children << "Notes: #{print_nil(hearing.notes)}" if show_pii
     children << scheduled_for(hearing)
-    children << "Type: #{hearing.readable_request_type}, Disp: #{hearing.disposition}, HC: #{hearing.bva_poc}"
-    children << "HearingDay #{hearing.hearing_day.id} (Docket: #{hearing.hearing_day.id})"
+    children <<
+      "Type: #{print_nil(hearing.readable_request_type)}, "\
+      "Disp: #{print_nil(hearing.disposition)}, HC: #{print_nil(hearing.bva_poc)}"
+    children << "HearingDay #{hearing.hearing_day.id} " \
+      "(Docket: #{hearing.hearing_day.id}, " \
+      "RO: #{print_nil(hearing.hearing_day.regional_office)}, " \
+      "RT: #{hearing.hearing_day.request_type})"
 
     virtual_hearings = VirtualHearing.where(hearing_id: hearing.id, hearing_type: hearing.class.name)
     children += virtual_hearings.map { |vh| structure(vh) }
     children << {
-      "Email Events": hearing.email_events.map do |ev|
-        "#{ev.recipient_role}, #{ev.email_type}, #{ev.sent_at}, #{ev.external_message_id}"
+      "Email events": hearing.email_events.map do |ev|
+        "#{ev.recipient_role}, #{ev.email_type}, "\
+          "#{readable_date(ev.sent_at)}, #{ev.external_message_id}"
       end
     }
+    children << structure(hearing.hearing_task_association.hearing_task)
   end
 
   def legacy_hearing_children(hearing)
@@ -249,16 +257,18 @@ class HearingRenderer
 
   def hearing_task_children(hearing_task)
     children = []
-    # status,
-    children += hearing_task.children.of_type("ScheduleHearingTask")
-    children += hearing_task.children.of_type("AssignHearingDispositionTask")
-    children += hearing_task.children.of_type("AssignHearingDispositionTask")
+    children << "instr: #{print_nil(hearing_task.instructions)}" if show_pii
+    children += hearing_task.children.map do |ct|
+      if ct.is_a?(ScheduleHearingTask) || ct.is_a?(AssignHearingDispositionTask)
+        "#{ct.class.name} #{ct.id} (#{ct.status}, ca: #{readable_date(ct.created_at)})"
+      end
+    end
 
     children
   end
 
   def hearing_task_details(hearing_task)
-    ["#{hearing_task.status}, #{hearing_task.created_at}, #{hearing_task.updated_at}"]
+    ["#{hearing_task.status}, ca: #{readable_date(hearing_task.created_at)}"]
   end
 
   def hearing_task_context(hearing_task)
@@ -272,17 +282,20 @@ class HearingRenderer
   def virtual_hearing_children(virtual_hearing)
     children = []
     recipients = []
-    recipients << "Appellant - #{email_sent(virtual_hearing.appellant_email_sent)} "if virtual_hearing.appellant_email.present?
-    recipients << "Rep - #{email_sent(virtual_hearing.representative_email_sent)} " if virtual_hearing.representative_email.present?
-    recipients << "Judge - #{email_sent(virtual_hearing.judge_email_sent)}" if virtual_hearing.judge_email.present?
+    recipients <<
+      "appellant - #{email_sent(virtual_hearing.appellant_email_sent)}" if virtual_hearing.appellant_email.present?
+    recipients << ", rep - " \
+      "#{email_sent(virtual_hearing.representative_email_sent)}" if virtual_hearing.representative_email.present?
+    recipients <<
+      ", judge - #{email_sent(virtual_hearing.judge_email_sent)}" if virtual_hearing.judge_email.present?
     children << recipients.join
-    children << "Scheduled by #{virtual_hearing.created_by&.css_id} at #{virtual_hearing.created_at}"
 
     children
   end
 
   def virtual_hearing_details(virtual_hearing)
-    ["#{virtual_hearing.status}"]
+    ["#{virtual_hearing.status}, ca: #{readable_date(virtual_hearing.created_at)}, "\
+      "#{virtual_hearing.created_by&.css_id}"]
   end
 
   def virtual_hearing_context(virtual_hearing)
