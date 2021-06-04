@@ -62,6 +62,6 @@ Basic.args = {
 Basic.argTypes = {
   issueCount: { control: { type: 'number' } },
   caseType: { control: { type: 'select', options: ['Original', LEGACY_APPEAL_TYPES.CAVC_REMAND] } },
-  docketName: { control: { type: 'select', options: ['', 'legacy', 'hearings'] } },
+  docketName: { control: { type: 'select', options: ['', 'legacy', 'hearing'] } },
   veteranDateOfDeath: { control: { type: 'date' } }
 };

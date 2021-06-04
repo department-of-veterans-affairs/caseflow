@@ -20,7 +20,7 @@ export default {
       },
     },
     roTimezone: { control: { type: 'select', options: roTimezones() } },
-    docketName: { control: { type: 'select', options: ['', 'legacy', 'hearings'] } },
+    docketName: { control: { type: 'select', options: ['', 'legacy', 'hearing'] } },
     issueCount: { control: { type: 'number' } },
     poaName: { control: { type: 'select', options: ['', 'American Legion'] } }
   }
