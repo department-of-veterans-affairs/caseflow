@@ -48,7 +48,7 @@ export const VirtualHearingLinkDetails = ({
       {pin}
     </div>
     {!hearing?.scheduledForIsPast && !wasVirtual && (
-      <CopyTextButton label="" text={`Copy ${role} Link`} textToCopy={link} />
+      <CopyTextButton label="" text={`${role} Link`} textToCopy={link} />
     )}
   </React.Fragment>
 );
