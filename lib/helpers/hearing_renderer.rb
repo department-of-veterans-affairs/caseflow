@@ -1,24 +1,29 @@
 # frozen_string_literal: true
 
 class HearingRenderer
-  # Actually, we want to start this from the appeal
   RENDERABLE_CLASSNAMES = %w[
     Veteran
     Appeal
     LegacyAppeal
     Hearing
+    LegacyHearing
     HearingTask
     ScheduleHearingTask
     AssignHearingDispositionTask
-    HearingDay
     VirtualHearing
   ].freeze
 
   class << self
     def test
-      # This veteran, file_number: "100000290" has both in my local db
-      vet_with_ama_and_legacy = Hearing.last.appeal.veteran
-      puts render(vet_with_ama_and_legacy)
+      ama_virtual_hearing = VirtualHearing.not_cancelled.where(hearing_type: LegacyHearing.name).last
+      vet_with_ama_appeal = ama_virtual_hearing.hearing.appeal.veteran
+      puts render(vet_with_ama_appeal)
+    end
+
+    def test_breadcrumbs
+      ama_virtual_hearing = VirtualHearing.not_cancelled.where(hearing_type: LegacyHearing.name).last
+      vet_with_ama_appeal = ama_virtual_hearing.hearing.appeal.veteran
+      puts render(ama_virtual_hearing.hearing)
     end
 
     def render(obj, show_pii: false)
@@ -76,24 +81,49 @@ class HearingRenderer
     details
   end
 
+  def readable_date_in_est(date)
+  end
+
   def veteran_children(vet)
     appeals = Appeal.where(veteran_file_number: vet.file_number)
     appeals.sort_by { |a| a.receipt_date || Time.zone.today }
-    legacy_appeals = LegacyAppeal.fetch_appeals_by_file_number("300000289")
+    legacy_appeals = LegacyAppeal.fetch_appeals_by_file_number(vet.file_number)
     legacy_appeals.sort_by { |la| la.created_at || Time.zone.today }
 
     children = []
-    children << legacy_appeals.map { |legacy_appeal| structure(legacy_appeal) }
-    children << appeals.map { |appeal| structure(appeal) }
+    children += legacy_appeals.map { |legacy_appeal| structure(legacy_appeal) }
+    children += appeals.map { |appeal| structure(appeal) }
+    children
+  end
+
+  def shared_appeal_children(appeal)
+    children = []
+    if appeal.appellant_is_not_veteran
+      children << "Appellant is not veteran - #{appeal&.appellant_relationship}"
+    end
+
+    children += appeal.hearings.map { |hearing| structure(hearing) }
+    # TODO: HearingTask subtree
+
+    # TODO: create list of type conversion history from Papertrail
+    # TODO: remove Hearing Request Type subheader
+    children << {
+      "History": [{
+        "Hearing Request Type": [
+          "converted to Virtual from Video by `BVASYELLOW` at [Datetime]",
+          "Converted to Video from Central by `BVASYELLOW` at [Datetime]"
+        ]
+      }]
+    }
     children
   end
 
   def legacy_appeal_details(legacy_appeal)
-    ["legacy appeal details stub #{legacy_appeal.id}"]
+    ["VACOLS ID: #{legacy_appeal.vacols_id}"]
   end
 
   def legacy_appeal_children(legacy_appeal)
-    legacy_appeal.hearings.map { |lh| { "Legacy Hearing": lh.id } }
+    shared_appeal_children(legacy_appeal)
   end
 
   def legacy_appeal_context(legacy_appeal)
@@ -101,38 +131,61 @@ class HearingRenderer
   end
 
   def appeal_details(appeal)
-    ["appeal details stub #{appeal.id}"]
+    ["UUID: #{legacy_appeal.uuid}"]
   end
 
   def appeal_children(appeal)
-    children = []
-    children << appeal.hearings.map { |hearing| structure(hearing) }
-    children << { "Appellant": ["Appellant is not veteran", "Relationship to veteran: spouse"] }
-    children << { "History": { "Hearing Request Type": ["Converted to Virtual from Video  by `BVASYELLOW` at [Datetime]", "Converted to Video from Central  by `BVASYELLOW` at [Datetime]"] } }
-
-    children
+    shared_appeal_children(appeal)
   end
 
   def appeal_context(appeal)
     appeal.veteran
   end
 
-  def hearing_children(hearing)
-    children = []
-    children << structure(hearing.hearing_task)
-    children << "Notes example notes"
-    children << "Scheduled Time: 05012021 8:30 AM EDT 5:30 PST (RO time)"
-    children << "type: Virtual, disp: held, HC: BVASYELLOW"
-    children << { "HearingDay [id]": "hearing day info" }
-    virtual_hearings = VirtualHearing.where(hearing_id: hearing.id, hearing_type: hearing.class.name)
-    children << virtual_hearings.map { |vh| structure(vh) }
-    children << { "Email Events": ["Appellant, confirmation, id23134", "Representative, confirmation, id4234"] }
+  def scheduled_for(hearing)
+    ro_time = hearing.scheduled_for.in_time_zone(hearing.regional_office_timezone)
+    if ro_time != hearing.scheduled_for
+      "Scheduled for: #{hearing.scheduled_for.strftime("%m-%d-%Y %I:%M%p %Z")} / #{ro_time.strftime("%I:%M%p %Z")}(RO time)"
+    end
 
-    children
+    "Scheduled for: #{hearing.scheduled_for.strftime("%m-%d-%Y %I:%M%p %Z")}"
+  end
+
+  def shared_hearing_children(hearing)
+    children = []
+    children << "Notes: #{hearing.notes}" if hearing.notes.present? && show_pii
+    ro_time = hearing.scheduled_for.in_time_zone(hearing.regional_office_timezone).strftime("%I:%M%p %Z")
+    children << scheduled_for(hearing)
+    children << "Type: #{hearing.readable_request_type}, Disp: #{hearing.disposition}, HC: #{hearing.bva_poc}"
+    children << "HearingDay #{hearing.hearing_day.id} (Docket: #{hearing.hearing_day.id})"
+
+    virtual_hearings = VirtualHearing.where(hearing_id: hearing.id, hearing_type: hearing.class.name)
+    children += virtual_hearings.map { |vh| structure(vh) }
+    children << {
+      "Email Events": hearing.email_events.map do |ev|
+        "#{ev.recipient_role}, #{ev.email_type}, #{ev.sent_at}, #{ev.external_message_id}"
+      end
+    }
+  end
+
+  def legacy_hearing_children(hearing)
+    shared_hearing_children(hearing)
+  end
+
+  def legacy_hearing_details(hearing)
+    ["VACOLS ID: #{hearing.vacols_id}"]
+  end
+
+  def legacy_hearing_context(hearing)
+    hearing.appeal
+  end
+
+  def hearing_children(hearing)
+    shared_hearing_children(hearing)
   end
 
   def hearing_details(hearing)
-    ["hearing details stub #{hearing.id}"]
+    ["UUID: #{hearing.uuid}"]
   end
 
   def hearing_context(hearing)
@@ -141,6 +194,7 @@ class HearingRenderer
 
   def hearing_task_children(hearing_task)
     children = []
+    # status,
     children += hearing_task.children.of_type("ScheduleHearingTask")
     children += hearing_task.children.of_type("AssignHearingDispositionTask")
     children += hearing_task.children.of_type("AssignHearingDispositionTask")
@@ -149,23 +203,31 @@ class HearingRenderer
   end
 
   def hearing_task_details(hearing_task)
-    ["root_task details stub #{hearing_task.id}"]
+    ["#{hearing_task.status}, #{hearing_task.created_at}, #{hearing_task.updated_at}"]
   end
 
   def hearing_task_context(hearing_task)
     hearing_task.appeal
   end
 
+  def email_sent(flag)
+    flag ? "email sent" : "email not sent"
+  end
+
   def virtual_hearing_children(virtual_hearing)
     children = []
-    children << "Appellant - email sent, Rep - email sent, Judge - email not sent"
-    children << "Scheduled by BVASYELLOW at 5012021"
+    recipients = []
+    recipients << "Appellant - #{email_sent(virtual_hearing.appellant_email_sent)} "if virtual_hearing.appellant_email.present?
+    recipients << "Rep - #{email_sent(virtual_hearing.representative_email_sent)} " if virtual_hearing.representative_email.present?
+    recipients << "Judge - #{email_sent(virtual_hearing.judge_email_sent)}" if virtual_hearing.judge_email.present?
+    children << recipients.join
+    children << "Scheduled by #{virtual_hearing.created_by&.css_id} at #{virtual_hearing.created_at}"
 
     children
   end
 
   def virtual_hearing_details(virtual_hearing)
-    ["VirtualHearing [ID] (Status: Pending)"]
+    ["#{virtual_hearing.status}"]
   end
 
   def virtual_hearing_context(virtual_hearing)
