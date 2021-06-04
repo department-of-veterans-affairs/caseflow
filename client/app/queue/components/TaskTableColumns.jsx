@@ -104,7 +104,7 @@ export const detailsColumn = (tasks, requireDasRecord, userRole) => {
       const vetName = task.appeal.veteranFullName.split(' ');
       // only take last, first names. ignore middle names/initials
 
-      return `${_.last(vetName)} ${vetName[0]}`;
+      return `${vetName[vetName.length - 1]} ${vetName[0]}`;
     }
   };
 };
