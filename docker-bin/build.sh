@@ -45,7 +45,7 @@ credstash -t appeals-credstash get datadog.api.key > config/datadog.key
 
 # Build Docker
 echo -e "\tCreating Caseflow App Docker Image"
-docker build -t caseflow . --no-cache
+docker build -t caseflow .
 
 echo -e "\tCleaning Up..."
 rm -rf config/datadog.key
