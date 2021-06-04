@@ -23,7 +23,7 @@ const Template = (args) => {
 
   return (
     <TimeSlotCard
-      hearing={{args || defaultHearing}
+      hearing={args || defaultHearing}
       hearingDay={defaultHearingDay}
     />
   );
