@@ -84,12 +84,12 @@ class ExplainController < ApplicationController
 
   # :reek:TooManyInstanceVariables
   class AppealEventData
-    attr_reader :timestamp, :appeal_id, :object_type, :object_id, :event_type
+    attr_reader :timestamp, :context_id, :object_type, :object_id, :event_type
     attr_accessor :comment, :relevant_data, :details
 
-    def initialize(timestamp, appeal_id, object_type, object_id, event_type)
+    def initialize(timestamp, context_id, object_type, object_id, event_type)
       @timestamp = timestamp
-      @appeal_id = appeal_id
+      @context_id = context_id
       @object_type = object_type
       @object_id = object_id
       @event_type = event_type

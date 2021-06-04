@@ -7,7 +7,7 @@
   <table>
     <tr>
       <th>timestamp</th>
-      <th>appeal</th>
+      <th>context</th>
       <th>object type</th>
       <th>object id</th>
       <th>event type</th>
@@ -18,7 +18,7 @@
     <% event_table_data.each do |event| %>
       <tr>
         <td style="padding: 2px"><%= event["timestamp"] %></td>
-        <td style="padding: 2px"><%= event["appeal_id"] %></td>
+        <td style="padding: 2px"><%= event["context_id"] %></td>
         <td style="padding: 2px"><%= event["object_type"] %></td>
         <td style="padding: 2px"><%= event["object_id"] %></td>
         <td style="padding: 2px"><%= event["event_type"] %></td>
