@@ -1,7 +1,7 @@
 import * as React from 'react';
 import moment from 'moment';
 import pluralize from 'pluralize';
-import { _, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import { css } from 'glamor';
 
 import DocketTypeBadge from '../../components/DocketTypeBadge';
