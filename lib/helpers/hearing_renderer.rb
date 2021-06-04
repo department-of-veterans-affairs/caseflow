@@ -18,10 +18,22 @@ class HearingRenderer
       puts render(veteran_with_ama_hearing)
     end
 
+    def test_veteran_with_ama_with_pii
+      ama_virtual_hearing = VirtualHearing.not_cancelled.where(hearing_type: Hearing.name).last
+      veteran_with_ama_hearing = ama_virtual_hearing.hearing.appeal.veteran
+      puts render(veteran_with_ama_hearing, show_pii: true)
+    end
+
     def test_veteran_with_legacy
       legacy_virtual_hearing = VirtualHearing.not_cancelled.where(hearing_type: LegacyHearing.name).last
       veteran_with_legacy_hearing = legacy_virtual_hearing.hearing.appeal.veteran
       puts render(veteran_with_legacy_hearing)
+    end
+
+    def test_veteran_with_legacy_with_pii
+      legacy_virtual_hearing = VirtualHearing.not_cancelled.where(hearing_type: LegacyHearing.name).last
+      veteran_with_legacy_hearing = legacy_virtual_hearing.hearing.appeal.veteran
+      puts render(veteran_with_legacy_hearing, show_pii: true)
     end
 
     def test_breadcrumbs
