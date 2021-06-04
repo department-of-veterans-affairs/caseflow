@@ -5,6 +5,8 @@ MAINTAINER Development and Operations team @ Department of Veterans Affairs
 ENV BUILD build-essential postgresql-client libaio1 libpq-dev libsqlite3-dev curl software-properties-common apt-transport-https pdftk
 ENV CASEFLOW git nodejs yarn
 
+RUN APPOPTICS_SERVICE_KEY=$(cat config/appoptics.key)
+
 # Environment (system) variables
 ENV LD_LIBRARY_PATH="/opt/oracle/instantclient_12_2:$LD_LIBRARY_PATH" \
     ORACLE_HOME="/opt/oracle/instantclient_12_2" \
@@ -12,7 +14,8 @@ ENV LD_LIBRARY_PATH="/opt/oracle/instantclient_12_2:$LD_LIBRARY_PATH" \
     RAILS_ENV="development" \
     DEPLOY_ENV="demo" \
     PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-    APPOPTICS_SERVICE_KEY=$(cat config/appoptics.key)
+
+ENV APPOPTICS_SERVICE_KEY=$APPOPTICS_SERVICE_KEY
 
 # install oracle deps
 WORKDIR /opt/oracle/instantclient_12_2/
