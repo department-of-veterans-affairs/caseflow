@@ -109,7 +109,7 @@ class HearingRenderer
         "from_type" => print_nil(Hearing::HEARING_TYPES[change[0]&.to_sym]),
         "to_type" => Hearing::HEARING_TYPES[change[1]&.to_sym],
         "converted_by" => User.find(v.whodunnit).css_id,
-        "converted_at" => v.created_at
+        "converted_at" => readable_date(v.created_at)
       }
     end
 
