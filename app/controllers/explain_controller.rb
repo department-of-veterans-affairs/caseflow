@@ -87,7 +87,6 @@ class ExplainController < ApplicationController
     attr_reader :timestamp, :appeal_id, :object_type, :object_id, :event_type
     attr_accessor :comment, :relevant_data, :details
 
-    # :reek:LongParameterList
     def initialize(timestamp, appeal_id, object_type, object_id, event_type)
       @timestamp = timestamp
       @appeal_id = appeal_id

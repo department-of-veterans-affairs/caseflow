@@ -138,7 +138,6 @@ detectors:
     exclude:
       - Address#initialize
       - AssignHearingDispositionTask#reschedule
-      - ExplainController::AppealEventData#initialize
       - ExternalApi::VBMSService#self.create_contentions!
       - JobSentryScopeMiddleware#call
       - LegacyDocket#new_distributed_case
