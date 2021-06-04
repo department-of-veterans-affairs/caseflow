@@ -46,7 +46,7 @@ credstash -t appeals-credstash get appoptics.api.key > config/appoptics.key
 
 # Build Docker
 echo -e "\tCreating Caseflow App Docker Image"
-docker build -t caseflow .
+docker build -t caseflow . --no-cache
 
 echo -e "\tCleaning Up..."
 rm -rf config/datadog.key
