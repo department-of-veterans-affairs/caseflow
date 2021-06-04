@@ -81,22 +81,16 @@ module ExplainAppealEventsConcern
     def task_created_event
       new_appeal_event(record["created_at"], "opened") do |event|
         event.comment = "created task"
-        event.relevant_data = {
-          blocks_task: task_parent_id
-        }
+        event.relevant_data = { blocks_task: task_parent_id }
       end
     end
 
     def task_assigned_event
       new_appeal_event(record["assigned_at"], "opened") do |event|
         event.comment = "#{task_assigned_by} assigned '#{record['type'].constantize.label}' to #{task_assigned_to}"
-        event.relevant_data = {
-          blocks_task: task_parent_id
-        }
-        event.details.merge!({
-          assigned_by: task_assigned_by,
-          assigned_to: task_assigned_to,
-        })
+        event.relevant_data = { blocks_task: task_parent_id }
+        event.details.merge!(assigned_by: task_assigned_by,
+                             assigned_to: task_assigned_to)
       end
     end
 
@@ -105,8 +99,7 @@ module ExplainAppealEventsConcern
 
       new_appeal_event(record["started_at"], "started") do |event|
         event.comment = "#{task_assigned_to} started task"
-        event.relevant_data = {
-        }
+        event.relevant_data = {}
       end
     end
 
@@ -117,12 +110,8 @@ module ExplainAppealEventsConcern
       new_appeal_event(record["closed_at"], "closed") do |event|
         duration_in_words = distance_of_time_in_words(record["created_at"], record["closed_at"])
         event.comment = "#{record['status']} task in #{duration_in_words}"
-        event.relevant_data = {
-          unblocks_task: task_parent_id
-        }
-        event.details.merge!({
-          duration: task_duration
-        })
+        event.relevant_data = { unblocks_task: task_parent_id }
+        event.details.merge!(duration: task_duration)
       end
     end
   end
