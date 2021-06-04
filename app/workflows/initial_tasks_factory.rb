@@ -40,7 +40,7 @@ class InitialTasksFactory
       create_selected_tasks
     elsif @appeal.cavc?
       create_cavc_subtasks
-    elsif @appeal.veteran.date_of_death.present? && FeatureToggle.enabled?(:death_dismissal_streamlining)
+    elsif should_streamline_death_dismissal?
       distribution_task.ready_for_distribution!
     else
       case @appeal.docket_type
@@ -155,5 +155,12 @@ class InitialTasksFactory
     else
       fail "Unsupported remand subtype: #{@cavc_remand.remand_subtype}"
     end
+  end
+
+  def should_streamline_death_dismissal?
+    return false if @appeal.appellant_is_not_veteran
+    return false if @appeal.veteran.date_of_death.nil?
+
+    FeatureToggle.enabled?(:death_dismissal_streamlining)
   end
 end
