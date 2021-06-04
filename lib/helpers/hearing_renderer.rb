@@ -101,6 +101,61 @@ class HearingRenderer
     children
   end
 
+  def get_appeal_type_conversions(appeal)
+    unformatted_versions = appeal.versions
+    versions = unformatted_versions.map do |v|
+      change = v.changeset["changed_hearing_request_type"]
+      {
+        "from_type" => Hearing::HEARING_TYPES[change[0]&.to_sym],
+        "to_type" => Hearing::HEARING_TYPES[change[1]&.to_sym],
+        "converted_by" => User.find(v.whodunnit).css_id,
+        "converted_at" => v.created_at
+      }
+    end
+
+    versions
+  end
+
+  # TODO, use the nil to "None" converter that's being added
+  def format_original_and_current_type(appeal)
+    original = appeal.readable_original_hearing_request_type
+    current = appeal.readable_current_hearing_request_type
+    if original == current && appeal.versions.count == 0
+      ["Current type: #{current}"]
+    else
+      ["Original Type: #{original}, current type: #{current}"]
+    end
+  end
+
+  def format_conversions(type_conversions)
+    type_conversions.map do |tc|
+      "Converted to #{tc['to_type']} from #{tc['from_type']} by #{tc['converted_by']} at #{tc['converted_at']}"
+    end
+  end
+
+  def add_original_type(original_type, type_conversions)
+    first_conversion = type_conversions[0]
+    first_conversion["from_type"] = original_type
+    type_conversions[0] = first_conversion
+
+    type_conversions
+  end
+
+  def get_appeal_history(appeal)
+    if appeal.versions.empty?
+      format_original_and_current_type(appeal)
+    else
+      type_conversions = get_appeal_type_conversions(appeal)
+      type_conversions_with_original_type = add_original_type(
+        appeal.readable_original_hearing_request_type,
+        type_conversions
+      )
+      text = format_original_and_current_type(appeal)
+      text += format_conversions(type_conversions_with_original_type)
+      text
+    end
+  end
+
   def shared_appeal_children(appeal)
     children = []
     if appeal.appellant_is_not_veteran
@@ -113,12 +168,7 @@ class HearingRenderer
     # TODO: create list of type conversion history from Papertrail
     # TODO: remove Hearing Request Type subheader
     children << {
-      "History": [{
-        "Hearing Request Type": [
-          "converted to Virtual from Video by `BVASYELLOW` at [Datetime]",
-          "Converted to Video from Central by `BVASYELLOW` at [Datetime]"
-        ]
-      }]
+      "History": get_appeal_history(appeal)
     }
     children
   end
