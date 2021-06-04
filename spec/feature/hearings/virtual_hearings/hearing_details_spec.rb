@@ -99,7 +99,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
         "VLJ Link: Start Virtual Hearing \n" \
         "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}\n" \
         "PIN: #{virtual_hearing.host_pin}\n" \
-        "VLJ Link "
+        "Copy VLJ Link "
       )
 
       ensure_link_present(virtual_hearing.host_link, disable_link)
@@ -109,7 +109,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
         "Guest Link: Join Virtual Hearing \n" \
         "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}\n" \
         "PIN: #{virtual_hearing.guest_pin}\n" \
-        "Guest Link "
+        "Copy Guest Link "
       )
 
       ensure_link_present(virtual_hearing.guest_link, disable_link)
