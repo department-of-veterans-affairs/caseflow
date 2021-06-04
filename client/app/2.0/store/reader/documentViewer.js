@@ -1,5 +1,5 @@
 import { createSlice, createAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { random, range } from 'lodash';
+import { random, range, difference } from 'lodash';
 import * as PDF from 'pdfjs';
 import Mark from 'mark.js';
 
@@ -375,9 +375,12 @@ const documentViewerSlice = createSlice({
   name: 'documentViewer',
   initialState,
   reducers: {
-    clearSearch: (state) => {
+    clearSearch: {
+      reducer: (state) => {
       // Clear the Search Term
-      state.search.searchTerm = '';
+        state.search.searchTerm = '';
+      },
+      prepare: () => addMetaLabel('clear-search')
     },
     toggleKeyboardInfo: (state, action) => {
       state.keyboardInfoOpen = action.payload;
@@ -394,18 +397,50 @@ const documentViewerSlice = createSlice({
     setOverscanValue: (state, action) => {
       state.windowingOverscan = action.payload;
     },
-    toggleShareModal: (state, action) => {
-      state.shareCommentId = action.payload;
+    toggleShareModal: {
+      reducer: (state, action) => {
+        state.shareCommentId = action.payload;
+      },
+      prepare: (shareCommentId) =>
+        addMetaLabel(
+          shareCommentId ?
+            'open-annotation-share-modal' :
+            'close-annotation-share-modal',
+          shareCommentId
+        ),
     },
-    toggleDeleteModal: (state, action) => {
-      state.deleteCommentId = action.payload;
+    toggleDeleteModal: {
+      reducer: (state, action) => {
+        state.deleteCommentId = action.payload;
+      },
+      prepare: (deleteCommentId) =>
+        addMetaLabel(
+          deleteCommentId ?
+            'open-annotation-delete-modal' :
+            'close-annotation-delete-modal',
+          deleteCommentId
+        ),
     },
-    toggleAccordion: (state, action) => {
-      state.openedAccordionSections = action.payload;
+    toggleAccordion: {
+      reducer: (state, action) => {
+        state.openedAccordionSections = action.payload;
+      },
+      prepare: (sections, prevSections) => {
+        const addedSectionKeys = difference(sections, prevSections);
+        const removedSectionKeys = difference(prevSections, sections);
+
+        addedSectionKeys.map((key) => addMetaLabel('opened-accordion-section', null, key));
+        removedSectionKeys.map((key) => addMetaLabel('closed-accordion-section', null, key));
+
+        return sections;
+      }
     },
-    togglePdfSideBar: (state, action) => {
-      state.hidePdfSidebar =
+    togglePdfSideBar: {
+      reducer: (state, action) => {
+        state.hidePdfSidebar =
         action.payload === null ? !state.hidePdfSidebar : action.payload;
+      },
+      prepare: (payload) => addMetaLabel('toggle-pdf-sidebar', payload)
     },
     toggleSearchBar: (state, action) => {
       state.hideSearchBar =
@@ -416,7 +451,7 @@ const documentViewerSlice = createSlice({
     builder.
       addCase(showPdf.rejected, (state) => {
         state.selected = {
-          loadError: true
+          loadError: true,
         };
       }).
       addCase(showPdf.pending, (state) => {

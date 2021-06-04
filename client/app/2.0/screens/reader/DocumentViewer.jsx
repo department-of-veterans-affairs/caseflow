@@ -200,6 +200,9 @@ const DocumentViewer = (props) => {
         comment: comment.pendingComment || comment.comment
       };
 
+      // Send the analytics event based on the action
+      window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, `request-${action}-annotation`);
+
       // Determine whether to save or create the comment
       const dispatcher = action === 'create' ? createComment : saveComment;
 
@@ -238,8 +241,13 @@ const DocumentViewer = (props) => {
     closeDeleteModal: () => dispatch(toggleDeleteModal(null)),
     shareComment: (id) => dispatch(toggleShareModal(id)),
     deleteComment: (id) => dispatch(toggleDeleteModal(id)),
-    removeComment: () => dispatch(removeComment({ commentId: state.deleteCommentId, docId: state.currentDocument.id })),
-    toggleAccordion: (sections) => dispatch(toggleAccordion(sections)),
+    removeComment: () => {
+      // Send the analytics event
+      window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'request-delete-annotation');
+
+      dispatch(removeComment({ commentId: state.deleteCommentId, docId: state.currentDocument.id }));
+    },
+    toggleAccordion: (sections) => dispatch(toggleAccordion(sections, state.openSections)),
     togglePdfSidebar: (open = null) => dispatch(togglePdfSideBar(open)),
     toggleSearchBar: (open = null) => {
       // Toggle the Search
@@ -298,6 +306,9 @@ const DocumentViewer = (props) => {
       dispatch(showPdf({ currentDocument: state.currentDocument, worker: props.pdfWorker, scale }));
     },
     setPageNumber: (pageNumber) => {
+      // Add the analytics event
+      window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'jump-to-page');
+
       // Calculate the page number
       const number = pageNumber - 1;
       const page = number >= gridRef.current?.props?.rowCount ? gridRef.current?.props?.rowCount - 1 : number;

@@ -55,7 +55,7 @@ export const SidebarComments = ({
               <EditComment
                 {...props}
                 nodeId={`editCommentBox-${comment.temporaryId || comment.id}`}
-                saveComment={() => saveComment(comment)}
+                saveComment={() => saveComment(comment, 'edit')}
                 comment={comment}
                 onChange={(val) => updateComment({ ...comment, pendingComment: val })}
                 changeDate={(val) => updateComment({ ...comment, pendingDate: val })}
