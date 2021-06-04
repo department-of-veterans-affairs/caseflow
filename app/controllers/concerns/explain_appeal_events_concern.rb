@@ -115,7 +115,7 @@ module ExplainAppealEventsConcern
         duration_in_words = distance_of_time_in_words(record["created_at"], record["closed_at"])
         event.comment = "#{task_assigned_to} #{record['status']} '#{task_label}' in #{duration_in_words}"
         event.relevant_data = { unblocks_task: task_parent_id }
-        event.details.merge[:duration] = record["closed_at"] - record["created_at"]
+        event.details[:duration] = record["closed_at"] - record["created_at"]
       end
     end
   end
