@@ -8,7 +8,7 @@ require "action_view"
 module ExplainAppealEventsConcern
   extend ActiveSupport::Concern
 
-  TASK_TYPES_TO_SKIP_CREATION_EVENTS = %w[RootTask DistributionTask HearingTask].freeze
+  TASK_TYPES_TO_SKIP_CREATION_EVENTS = %w[RootTask DistributionTask HearingTask AssignHearingDispositionTask].freeze
 
   # :reek:FeatureEnvy
   def tasks_as_event_data
@@ -52,6 +52,10 @@ module ExplainAppealEventsConcern
       @object_id_cache[:tasks][record["id"]]
     end
 
+    def task_label
+      record['type'].constantize.label
+    end
+
     def task_assigned_by
       @object_id_cache[:users][record["assigned_by_id"]]
     end
@@ -87,7 +91,7 @@ module ExplainAppealEventsConcern
 
     def task_assigned_event
       new_appeal_event(record["assigned_at"], "opened") do |event|
-        event.comment = "#{task_assigned_by} assigned '#{record['type'].constantize.label}' to #{task_assigned_to}"
+        event.comment = "#{task_assigned_by} assigned '#{task_label}' to #{task_assigned_to}"
         event.relevant_data = { blocks_task: task_parent_id }
         event.details.merge!(assigned_by: task_assigned_by,
                              assigned_to: task_assigned_to)
@@ -97,8 +101,9 @@ module ExplainAppealEventsConcern
     def task_started_event
       return nil unless record["started_at"]
 
+      wait_time = distance_of_time_in_words(record["assigned_at"], record["started_at"]) if record["assigned_at"]
       new_appeal_event(record["started_at"], "started") do |event|
-        event.comment = "#{task_assigned_to} started task"
+        event.comment = "#{task_assigned_to} started task #{wait_time} after assignment"
         event.relevant_data = {}
       end
     end
@@ -106,12 +111,11 @@ module ExplainAppealEventsConcern
     def task_closed_event
       return nil unless record["closed_at"]
 
-      task_duration = record["closed_at"] - record["created_at"]
       new_appeal_event(record["closed_at"], "closed") do |event|
         duration_in_words = distance_of_time_in_words(record["created_at"], record["closed_at"])
-        event.comment = "#{record['status']} task in #{duration_in_words}"
+        event.comment = "#{task_assigned_to} #{record['status']} '#{task_label}' in #{duration_in_words}"
         event.relevant_data = { unblocks_task: task_parent_id }
-        event.details.merge!(duration: task_duration)
+        event.details.merge[:duration] = record["closed_at"] - record["created_at"]
       end
     end
   end
