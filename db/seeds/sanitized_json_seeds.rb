@@ -18,6 +18,9 @@ module Seeds
     private
 
     def import_json_seed_data
+      # appeal_ready_for_substitution_3.json requires this to exist
+      FactoryBot.create(:higher_level_review, id: 2000050893)
+
       Dir.glob("db/seeds/sanitized_json/*.json").each do |json_seed|
         sji = SanitizedJsonImporter.from_file(json_seed, verbosity: 0)
         sji.import
