@@ -14,15 +14,20 @@ class HearingRenderer
   ].freeze
 
   class << self
-    def test
-      ama_virtual_hearing = VirtualHearing.not_cancelled.where(hearing_type: LegacyHearing.name).last
-      vet_with_ama_appeal = ama_virtual_hearing.hearing.appeal.veteran
-      puts render(vet_with_ama_appeal)
+    def test_veteran_with_ama
+      ama_virtual_hearing = VirtualHearing.not_cancelled.where(hearing_type: Hearing.name).last
+      veteran_with_ama_hearing = ama_virtual_hearing.hearing.appeal.veteran
+      puts render(veteran_with_ama_hearing)
+    end
+
+    def test_veteran_with_legacy
+      legacy_virtual_hearing = VirtualHearing.not_cancelled.where(hearing_type: LegacyHearing.name).last
+      veteran_with_legacy_hearing = legacy_virtual_hearing.hearing.appeal.veteran
+      puts render(veteran_with_legacy_hearing)
     end
 
     def test_breadcrumbs
-      ama_virtual_hearing = VirtualHearing.not_cancelled.where(hearing_type: LegacyHearing.name).last
-      vet_with_ama_appeal = ama_virtual_hearing.hearing.appeal.veteran
+      ama_virtual_hearing = VirtualHearing.not_cancelled.where(hearing_type: Hearing.name).last
       puts render(ama_virtual_hearing.hearing)
     end
 
@@ -131,7 +136,7 @@ class HearingRenderer
   end
 
   def appeal_details(appeal)
-    ["UUID: #{legacy_appeal.uuid}"]
+    ["UUID: #{appeal.uuid}"]
   end
 
   def appeal_children(appeal)
