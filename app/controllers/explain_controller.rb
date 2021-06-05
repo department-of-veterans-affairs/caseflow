@@ -12,11 +12,15 @@ class ExplainController < ApplicationController
 
     no_cache
 
-    # https://chodounsky.com/2015/01/26/respond-to-different-formats-in-rails-controller/
-    respond_to do |format|
-      format.html { render layout: "plain_application" }
-      format.text { render plain:  explain_as_text }
-      format.json { render json: sanitized_json }
+    begin
+      # https://chodounsky.com/2015/01/26/respond-to-different-formats-in-rails-controller/
+      respond_to do |format|
+        format.html { render layout: "plain_application" }
+        format.text { render plain:  explain_as_text }
+        format.json { render json: sanitized_json }
+      end
+    rescue => e
+      binding.pry
     end
   end
 
@@ -98,7 +102,8 @@ class ExplainController < ApplicationController
 
   # :reek:FeatureEnvy
   def event_table_data
-    tasks_as_event_data.map(&:as_json)
+    task_events = tasks_as_event_data
+    (time_periods_as_event_data(task_events.last.timestamp) + task_events).sort_by(&:timestamp).map(&:as_json)
   end
 
   def sanitized_json

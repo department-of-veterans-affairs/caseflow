@@ -3,6 +3,10 @@
 <% end %>
 
 <div style="font-size:0.875em; padding:10px">
+  <details>
+    <summary style="color: rgb(255, 0, 0)">Table Data</summary>
+    <pre style="font-size:0.84em; padding:10px"><code><%= JSON.pretty_generate(event_table_data) %></code></pre>
+  </details>
 
   <table>
     <tr>
@@ -24,12 +28,10 @@
         <td style="padding: 2px"><%= event["event_type"] %></td>
         <td style="padding: 2px"><%= event["comment"] %></td>
         <td style="padding: 2px"><%= event["relevant_data"] %></td>
-        <td style="padding: 2px"><%= event["details"].size %></td>
+        <td style="padding: 2px"><%= event["details"]&.size %></td>
       </tr>
     <% end %>
   </table>
-
-  <pre style="font-size:0.84em; padding:10px"><code><%= JSON.pretty_generate(event_table_data) %></code></pre>
 
   <details>
     <summary style="color: blue">Help</summary>
