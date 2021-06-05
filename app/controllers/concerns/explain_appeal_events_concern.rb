@@ -96,6 +96,11 @@ module ExplainAppealEventsConcern
       record['type'].constantize.label
     end
 
+    def timeline_title
+      # To-do: eager load slow queries or use alternative indicator
+      Task.find(record['id']).timeline_title
+    end
+
     def task_assigned_by
       @object_id_cache[:users][record["assigned_by_id"]]
     end
@@ -154,7 +159,7 @@ module ExplainAppealEventsConcern
       new_task_event(record["closed_at"], "closed") do |event|
         duration_in_words = distance_of_time_in_words(record["created_at"], record["closed_at"])
         event.comment = "#{task_assigned_to} #{record['status']} '#{task_label}' in #{duration_in_words}"
-        event.relevant_data = { unblocks_task: task_parent_id }
+        event.relevant_data = { unblocks_task: task_parent_id, timeline_title: timeline_title }
         event.details[:duration] = record["closed_at"] - record["created_at"]
       end
     end
