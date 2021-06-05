@@ -19,8 +19,8 @@ class ExplainController < ApplicationController
         format.text { render plain:  explain_as_text }
         format.json { render json: sanitized_json }
       end
-    rescue => e
-      binding.pry
+    rescue StandardError => error
+      puts error.full_message
     end
   end
 
@@ -103,7 +103,7 @@ class ExplainController < ApplicationController
   # :reek:FeatureEnvy
   def event_table_data
     task_events = tasks_as_event_data
-    (time_periods_as_event_data(task_events.last.timestamp) + task_events).sort_by(&:timestamp).map(&:as_json)
+    (milestones_as_event_data(task_events.last.timestamp) + task_events).sort_by(&:timestamp).map(&:as_json)
   end
 
   def sanitized_json
