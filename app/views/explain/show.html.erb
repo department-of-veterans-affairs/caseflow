@@ -20,7 +20,7 @@
       <th>details count</th>
     </tr>
     <% event_table_data.each do |event| %>
-      <tr>
+      <tr class="<%= event["object_type"] %> <%=event['event_type']%>">
         <td style="padding: 2px"><%= event["timestamp"] %></td>
         <td style="padding: 2px"><%= event["context_id"] %></td>
         <td style="padding: 2px"><%= event["object_type"] %></td>

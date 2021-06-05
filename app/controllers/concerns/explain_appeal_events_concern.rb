@@ -31,7 +31,7 @@ module ExplainAppealEventsConcern
         mapper.task_closed_event,
         (mapper.milestone_event if task["status"] == "completed")
       ]
-    end.flatten.compact.sort_by { |event| [event.timestamp, event.object_id] }
+    end.flatten.compact.sort_by { |event| [event.timestamp, event.details["id"]] }
   end
 
   private
@@ -186,14 +186,14 @@ module ExplainAppealEventsConcern
     end
 
     def task_created_event
-      new_task_event(record["created_at"], "opened") do |event|
+      new_task_event(record["created_at"], "created") do |event|
         event.comment = "#{task_assigned_by} created task '#{task_label}'"
         event.relevant_data[:blocks] = blocked_task_id if blocked_task_id
       end
     end
 
     def task_assigned_event
-      new_task_event(record["assigned_at"], "opened") do |event|
+      new_task_event(record["assigned_at"], "assigned") do |event|
         event.comment = "#{task_assigned_by} assigned '#{task_label}' to #{task_assigned_to}"
         event.relevant_data[:blocks] = blocked_task_id if blocked_task_id
         event.details.merge!(assigned_by: task_assigned_by,
@@ -213,7 +213,7 @@ module ExplainAppealEventsConcern
     def task_closed_event
       return nil unless record["closed_at"]
 
-      new_task_event(record["closed_at"], "closed") do |event|
+      new_task_event(record["closed_at"], record["status"]) do |event|
         start_time = record["started_at"] || record["assigned_at"] || record["created_at"]
         duration_in_words = duration_in_words(start_time, record["closed_at"])
         user = (record["status"] == "cancelled") ? task_cancelled_by : task_assigned_to
