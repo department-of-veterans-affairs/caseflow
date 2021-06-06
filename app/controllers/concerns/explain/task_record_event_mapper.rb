@@ -13,7 +13,7 @@ class Explain::TaskRecordEventMapper < Explain::RecordEventMapper
 
   def events
     [
-      task_created_or_assigned_event,
+      task_created_and_or_assigned_events,
       (task_started_event if record["started_at"]),
       (task_closed_event if record["closed_at"]),
       (milestone_event if record["status"] == "completed")
@@ -43,8 +43,11 @@ class Explain::TaskRecordEventMapper < Explain::RecordEventMapper
     record["assigned_at"] ? task_assigned_event : task_created_event
   end
 
-  def task_created_and_or_assigned_event
+  def task_created_and_or_assigned_events
     return if TASK_TYPES_THAT_SKIP_CREATION_EVENTS.include?(record["type"])
+
+    # task_started_event is sufficient; skip created and assigned events
+    return nil if record["assigned_at"] == record["started_at"] && record["assigned_at"] == record["created_at"]
 
     return task_assigned_event if record["assigned_at"] == record["created_at"]
 
@@ -60,6 +63,7 @@ class Explain::TaskRecordEventMapper < Explain::RecordEventMapper
     new_event(record["created_at"], "created") do |event|
       event.comment = "#{task_assigned_by} created task '#{task_label}'"
       event.relevant_data[:blocks] = blocked_task_id if blocked_task_id
+      event.relevant_data[:instructions] = record["instructions"] unless record["instructions"].empty?
     end
   end
 

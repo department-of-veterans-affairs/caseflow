@@ -35,12 +35,12 @@ class Explain::RequestIssueRecordEventMapper < Explain::RecordEventMapper
 
   def request_issue_created_event
     new_event(record["created_at"], "created",
-              comment: "created #{record['benefit_type']} request_issue",
+              comment: "created #{record['benefit_type']} #{record['type']}",
               relevant_data_keys: RELEVANT_DATA_KEYS)
   end
 
   def request_issue_closed_event
     new_event(record["closed_at"], "closed",
-              comment: "request_issue #{record['closed_status']}")
+              comment: "#{record['type']} #{record['closed_status']}")
   end
 end
