@@ -43,20 +43,24 @@ module ExplainAppealEventsConcern
 
       return row_order <=> other.row_order unless row_order == other.row_order
 
-      if CLOSED_STATUSES.include?(other.event_type)
+      if CLOSED_STATUSES.include?(event_type)
         # sort by id in reverse ordering to close child tasks first
         other.details["id"] <=> details["id"]
       else
         details["id"] <=> other.details["id"]
       end
+    rescue
+      fail "#{self} <=> #{other}"
+      binding.pry
     end
   end
 
   def milestones_as_event_data(last_timestamp)
     all_events = sje.records_hash[Appeal.table_name].map do |appeal|
-      mapper = RecordToMilestoneEventMapper.new("milestone", appeal, object_id_cache)
+      mapper = RecordToMilestoneEventMapper.new("milestone", appeal, object_id_cache, records_hash_for(appeal))
       [
         mapper.receipt_date_event,
+        mapper.intake_events,
         mapper.appeal_creation_event
       ] + mapper.timing_events(last_timestamp)
     end
@@ -138,7 +142,7 @@ module ExplainAppealEventsConcern
   class RecordToMilestoneEventMapper < RecordToEventMapper
     def initialize(object_type, record, object_id_cache, records_hash)
       @records_hash = records_hash
-      super
+      super(object_type, record, object_id_cache)
     end
 
     def new_milestone_event(timestamp, event_type, &block)
@@ -155,6 +159,22 @@ module ExplainAppealEventsConcern
 
     def receipt_date_event
       new_milestone_event(receipt_date, "receipt_date")
+    end
+
+    def intake_object_id(intake)
+      "#{intake['type']}_#{record['id']}"
+    end
+
+    def intake_events
+      @records_hash[Intake.table_name].map do |intake|
+        appeal_object_id = "#{intake['detail_type']}_#{intake['detail_id']}"
+        events = []
+        events << new_event(intake["started_at"], appeal_object_id, intake_object_id(intake), "started", object_type: "intake")
+        if intake["completed_at"]
+          events << new_event(intake["completed_at"], appeal_object_id, intake_object_id(intake), "completed", object_type: "intake")
+        end
+        events
+      end
     end
 
     def appeal_creation_event
