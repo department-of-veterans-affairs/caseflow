@@ -53,6 +53,8 @@ class Explain::RecordToEventMapper
         [attribute, record[attribute]] if record[attribute]
       end.compact.to_h
       yield event if block_given?
+
+      event.relevant_data = nil if event.relevant_data.empty?
     end
   end
   # rubocop:enable Metrics/ParameterLists

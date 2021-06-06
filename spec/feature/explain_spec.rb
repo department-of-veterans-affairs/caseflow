@@ -97,7 +97,8 @@ RSpec.feature "Explain JSON" do
     it "present realistic appeal events" do
       visit "explain/appeals/#{real_appeal.uuid}"
       # binding.pry
-      # expect(page).to have_content("Appeal.find(#{appellant_substitution.target_appeal.id})")
+      task = real_appeal.tasks.sample
+      expect(page).to have_content("#{task.type}_#{task.id}")
     end
   end
 end
