@@ -79,7 +79,7 @@ class Explain::RecordEventMapper
 
       # order before "task completed" and "milestone"
       "issue closed" => -13,
-      "document processed" => -12,  # DecisionDocument
+      "document processed" => -12, # for DecisionDocuments
 
       # handle scenario where task is reassigned.
       "task cancelled" => -4,

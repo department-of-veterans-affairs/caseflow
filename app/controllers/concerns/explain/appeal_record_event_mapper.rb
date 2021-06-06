@@ -37,7 +37,8 @@ class Explain::AppealRecordEventMapper < Explain::RecordEventMapper
   end
 
   def receipt_date_event
-    new_event(receipt_date, "milestone", category: "milestone",
+    new_event(receipt_date, "milestone",
+              category: "milestone",
               comment: "NOD received",
               relevant_data_keys: %w[stream_type docket_type veteran_is_not_claimant])
   end
