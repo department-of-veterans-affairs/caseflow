@@ -4,7 +4,7 @@
 # Maps RequestIssue records (exported by SanitizedJsonExporter) to AppealEventData objects
 # for use by ExplainController.
 
-class Explain::RequestIssueRecordToEventMapper < Explain::RecordToEventMapper
+class Explain::RequestIssueRecordEventMapper < Explain::RecordEventMapper
   # :reek:FeatureEnvy
   def initialize(record)
     super("issue", record,
