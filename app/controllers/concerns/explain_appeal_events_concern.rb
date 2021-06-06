@@ -31,11 +31,29 @@ module ExplainAppealEventsConcern
     end.flatten.compact.sort
   end
 
+  # rubocop:disable Metrics/AbcSize
   def request_issues_as_event_data
-    sje.records_hash[RequestIssue.table_name].map do |req_issue|
-      # Explain::RequestIssueRecordToEventMapper.new(req_issue, object_id_cache).events
-    end.flatten.compact.sort
+    req_issues = sje.records_hash[RequestIssue.table_name].index_by { |req| req["id"] }
+    dec_issues = sje.records_hash[DecisionIssue.table_name].index_by { |dec| dec["id"] }
+
+    events = []
+    sje.records_hash[RequestDecisionIssue.table_name].map do |req_dec_issue|
+      req_issue = req_issues.delete(req_dec_issue["request_issue_id"])
+      events += Explain::RequestIssueRecordToEventMapper.new(req_issue).events
+      dec_issue = dec_issues.delete(req_dec_issue["decision_issue_id"])
+      events += Explain::DecisionIssueRecordToEventMapper.new(dec_issue, req_dec_issue, req_issue).events
+    end
+
+    fail "Remaining DecisionIssue are not associated: #{dec_issues}" unless dec_issues.blank?
+
+    # process remaining req_issues
+    req_issues.values.map do |req_issue|
+      events += Explain::RequestIssueRecordToEventMapper.new(req_issue).events
+    end
+
+    events.flatten.compact.sort
   end
+  # rubocop:enable Metrics/AbcSize
 
   private
 

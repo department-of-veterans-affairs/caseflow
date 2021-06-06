@@ -31,7 +31,7 @@ class Explain::DecisionDocumentRecordToEventMapper < Explain::RecordToEventMappe
 
   def decision_document_processed_event
     new_event(record["processed_at"], "processed",
-              comment: "submitted decision_document #{record['citation_number']}",
+              comment: "processed decision_document #{record['citation_number']}",
               relevant_data_keys: %w[uploaded_to_vbms_at])
   end
 end
