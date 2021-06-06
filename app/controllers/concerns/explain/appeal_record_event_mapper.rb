@@ -3,12 +3,13 @@
 ##
 # Maps Appeal records (exported by SanitizedJsonExporter) to AppealEventData objects for use by ExplainController.
 
-class Explain::AppealRecordToEventMapper < Explain::RecordToEventMapper
+class Explain::AppealRecordEventMapper < Explain::RecordEventMapper
   # :reek:FeatureEnvy
   def initialize(record)
+    appeal_object_id = "#{Appeal.name}_#{record['id']}"
     super("appeal", record,
-          default_context_id: "#{Appeal.name}_#{record['id']}",
-          default_object_id: "#{Appeal.name}_#{record['id']}")
+          default_context_id: appeal_object_id,
+          default_object_id: appeal_object_id)
   end
 
   def events

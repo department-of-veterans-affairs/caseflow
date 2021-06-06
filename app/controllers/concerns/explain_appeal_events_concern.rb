@@ -12,14 +12,14 @@ module ExplainAppealEventsConcern
 
   def appeal_as_event_data(last_timestamp)
     all_events = sje.records_hash[Appeal.table_name].map do |appeal|
-      mapper = Explain::AppealRecordToEventMapper.new(appeal)
+      mapper = Explain::AppealRecordEventMapper.new(appeal)
       mapper.events + mapper.timing_events(last_timestamp)
     end
     all_events += sje.records_hash[Intake.table_name].map do |intake|
-      Explain::IntakeRecordToEventMapper.new(intake, object_id_cache).events
+      Explain::IntakeRecordEventMapper.new(intake, object_id_cache).events
     end
     all_events += sje.records_hash[DecisionDocument.table_name].map do |decis_doc|
-      Explain::DecisionDocumentRecordToEventMapper.new(decis_doc).events
+      Explain::DecisionDocumentRecordEventMapper.new(decis_doc).events
     end
     # To-do: judge_case_reviews, attorney_case_reviews
     all_events.flatten.compact.sort
@@ -27,7 +27,7 @@ module ExplainAppealEventsConcern
 
   def tasks_as_event_data
     sje.records_hash[Task.table_name].map do |task|
-      Explain::TaskRecordToEventMapper.new(task, object_id_cache).events
+      Explain::TaskRecordEventMapper.new(task, object_id_cache).events
     end.flatten.compact.sort
   end
 
@@ -40,8 +40,8 @@ module ExplainAppealEventsConcern
     sje.records_hash[RequestDecisionIssue.table_name].each do |req_dec_issue|
       req_issue = req_issues[req_dec_issue["request_issue_id"]]
       dec_issue = dec_issues[req_dec_issue["decision_issue_id"]]
-      events += Explain::RequestIssueRecordToEventMapper.new(req_issue).events
-      events += Explain::DecisionIssueRecordToEventMapper.new(dec_issue, req_issue).events
+      events += Explain::RequestIssueRecordEventMapper.new(req_issue).events
+      events += Explain::DecisionIssueRecordEventMapper.new(dec_issue, req_issue).events
     end
 
     # Remove records after processing them.
@@ -54,7 +54,7 @@ module ExplainAppealEventsConcern
 
     # Process remaining req_issues
     req_issues.values.map do |req_issue|
-      events += Explain::RequestIssueRecordToEventMapper.new(req_issue).events
+      events += Explain::RequestIssueRecordEventMapper.new(req_issue).events
     end
 
     events.flatten.compact.sort

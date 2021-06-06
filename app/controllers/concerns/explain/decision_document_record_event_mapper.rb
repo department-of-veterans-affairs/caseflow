@@ -4,7 +4,7 @@
 # Maps DecisionDocument records (exported by SanitizedJsonExporter) to AppealEventData objects
 # for use by ExplainController.
 
-class Explain::DecisionDocumentRecordToEventMapper < Explain::RecordToEventMapper
+class Explain::DecisionDocumentRecordEventMapper < Explain::RecordEventMapper
   # :reek:FeatureEnvy
   def initialize(record)
     super("document", record,

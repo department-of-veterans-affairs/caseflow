@@ -4,7 +4,7 @@
 # Base class that maps records (exported by SanitizedJsonExporter) to AppealEventData objects
 # for use by ExplainController.
 
-class Explain::RecordToEventMapper
+class Explain::RecordEventMapper
   include ActionView::Helpers::DateHelper # defines distance_of_time_in_words
 
   attr_reader :record

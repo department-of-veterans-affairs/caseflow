@@ -4,7 +4,7 @@
 # Maps DecisionIssue records (exported by SanitizedJsonExporter) to AppealEventData objects
 # for use by ExplainController.
 
-class Explain::DecisionIssueRecordToEventMapper < Explain::RecordToEventMapper
+class Explain::DecisionIssueRecordEventMapper < Explain::RecordEventMapper
   # :reek:FeatureEnvy
   def initialize(record, req_issue_record)
     @req_issue_record = req_issue_record
