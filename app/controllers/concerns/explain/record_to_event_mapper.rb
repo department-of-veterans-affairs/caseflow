@@ -80,7 +80,7 @@ class Explain::RecordToEventMapper
     }.freeze
 
     def initialize(timestamp, context_id, object_type, object_id, event_type)
-      @timestamp = timestamp
+      @timestamp = timestamp || Time.now.utc.end_of_year
       @context_id = context_id
       @object_type = object_type
       @object_id = object_id
@@ -97,17 +97,16 @@ class Explain::RecordToEventMapper
       # row_order is an ordering based on event_type
       return row_order <=> other.row_order unless row_order == other.row_order
 
-      if details && other.details
-        if CLOSED_STATUSES.include?(event_type)
-          # sort by id in reverse ordering to close child tasks first
-          other.details["id"] <=> details["id"]
-        else
-          details["id"] <=> other.details["id"]
-        end
+      if details.has_key?("id") && other.details.has_key?("id")
+        # sort by id in reverse ordering to close child tasks first
+        return other.details["id"] <=> details["id"] if CLOSED_STATUSES.include?(event_type)
+
+        return details["id"] <=> other.details["id"]
       end
 
       0
     rescue StandardError => error
+      # binding.pry
       raise "#{error}:\n #{inspect}\n #{other.inspect}"
     end
     # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity:
