@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 ##
-# Maps DecisionDocument records (exported by SanitizedJsonExporter) to AppealEventData objects for use by ExplainController.
+# Maps DecisionDocument records (exported by SanitizedJsonExporter) to AppealEventData objects
+# for use by ExplainController.
 
 class Explain::DecisionDocumentRecordToEventMapper < Explain::RecordToEventMapper
+  # :reek:FeatureEnvy
   def initialize(record)
     super("document", record,
           default_context_id: "#{record['appeal_type']}_#{record['appeal_id']}",
@@ -20,13 +22,16 @@ class Explain::DecisionDocumentRecordToEventMapper < Explain::RecordToEventMappe
   private
 
   def decision_document_submitted_event
-    relevant_data_keys = %w[attempted_at canceled_at last_submitted_at decision_date redacted_document_location error].freeze
+    relevant_data_keys = %w[attempted_at canceled_at last_submitted_at
+                            decision_date redacted_document_location error].freeze
     new_event(record["submitted_at"], "submitted",
               comment: "submitted decision_document #{record['citation_number']}",
               relevant_data_keys: relevant_data_keys)
   end
 
   def decision_document_processed_event
-    new_event(record["processed_at"], "decision_document_processed", relevant_data_keys: %w[uploaded_to_vbms_at])
+    new_event(record["processed_at"], "processed",
+              comment: "submitted decision_document #{record['citation_number']}",
+              relevant_data_keys: %w[uploaded_to_vbms_at])
   end
 end

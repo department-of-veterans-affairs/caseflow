@@ -21,12 +21,19 @@ module ExplainAppealEventsConcern
     all_events += sje.records_hash[DecisionDocument.table_name].map do |decis_doc|
       Explain::DecisionDocumentRecordToEventMapper.new(decis_doc).events
     end
+    # To-do: judge_case_reviews, attorney_case_reviews
     all_events.flatten.compact.sort
   end
 
   def tasks_as_event_data
     sje.records_hash[Task.table_name].map do |task|
       Explain::TaskRecordToEventMapper.new(task, object_id_cache).events
+    end.flatten.compact.sort
+  end
+
+  def request_issues_as_event_data
+    sje.records_hash[RequestIssue.table_name].map do |req_issue|
+      # Explain::RequestIssueRecordToEventMapper.new(req_issue, object_id_cache).events
     end.flatten.compact.sort
   end
 

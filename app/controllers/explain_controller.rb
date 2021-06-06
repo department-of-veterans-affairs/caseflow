@@ -89,7 +89,9 @@ class ExplainController < ApplicationController
   # :reek:FeatureEnvy
   def event_table_data
     task_events = tasks_as_event_data
-    events = appeal_as_event_data(task_events.last.timestamp) + task_events
+    events = appeal_as_event_data(task_events.last.timestamp) +
+             task_events +
+             request_issues_as_event_data
     events.sort.map(&:as_json)
   end
 
