@@ -86,24 +86,11 @@ class ExplainController < ApplicationController
     IntakeRenderer.render(appeal, show_pii: show_pii_query_param)
   end
 
-  # :reek:TooManyInstanceVariables
-  class AppealEventData
-    attr_reader :timestamp, :context_id, :object_type, :object_id, :event_type
-    attr_accessor :comment, :relevant_data, :details
-
-    def initialize(timestamp, context_id, object_type, object_id, event_type)
-      @timestamp = timestamp
-      @context_id = context_id
-      @object_type = object_type
-      @object_id = object_id
-      @event_type = event_type
-    end
-  end
-
   # :reek:FeatureEnvy
   def event_table_data
     task_events = tasks_as_event_data
-    (milestones_as_event_data(task_events.last.timestamp) + task_events).sort_by(&:timestamp).map(&:as_json)
+    events = milestones_as_event_data(task_events.last.timestamp) + task_events
+    events.sort.map(&:as_json)
   end
 
   def sanitized_json
