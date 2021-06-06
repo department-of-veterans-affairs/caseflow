@@ -20,7 +20,7 @@ class ExplainController < ApplicationController
         format.json { render json: sanitized_json }
       end
     rescue StandardError => error
-      puts error.full_message
+      fail error.full_message
     end
   end
 
