@@ -13,10 +13,10 @@ class Explain::TaskRecordToEventMapper < Explain::RecordToEventMapper
   def events
     [
       task_created_or_assigned_event,
-      task_started_event,
-      task_closed_event,
+      (task_started_event if record["started_at"]),
+      (task_closed_event if record["closed_at"]),
       (milestone_event if record["status"] == "completed")
-    ]
+    ].compact
   end
 
   private
@@ -77,8 +77,6 @@ class Explain::TaskRecordToEventMapper < Explain::RecordToEventMapper
   end
 
   def task_started_event
-    return nil unless record["started_at"]
-
     ending_phrase = if record["assigned_at"]
                       wait_time = duration_in_words(record["assigned_at"], record["started_at"])
                       "#{wait_time} after assignment"
@@ -87,10 +85,8 @@ class Explain::TaskRecordToEventMapper < Explain::RecordToEventMapper
               comment: "#{task_assigned_to} started task #{ending_phrase}")
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/AbcSize
   def task_closed_event
-    return nil unless record["closed_at"]
-
     new_event(record["closed_at"], record["status"]) do |event|
       start_time = record["started_at"] || record["assigned_at"] || record["created_at"]
       duration_in_words = duration_in_words(start_time, record["closed_at"])
@@ -120,5 +116,5 @@ class Explain::TaskRecordToEventMapper < Explain::RecordToEventMapper
       event.details[:duration] = record["closed_at"] - record["created_at"]
     end
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/AbcSize
 end

@@ -13,8 +13,8 @@ class Explain::IntakeRecordToEventMapper < Explain::RecordToEventMapper
   def events
     [
       intake_started_event,
-      intake_completed_event
-    ]
+      (intake_completed_event if record["completed_at"])
+    ].compact
   end
 
   private
@@ -27,8 +27,6 @@ class Explain::IntakeRecordToEventMapper < Explain::RecordToEventMapper
   end
 
   def intake_completed_event
-    return unless record["completed_at"]
-
     new_event(record["completed_at"], "intake_completed", object_type: "milestone")
   end
 end

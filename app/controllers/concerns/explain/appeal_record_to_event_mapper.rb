@@ -13,13 +13,13 @@ class Explain::AppealRecordToEventMapper < Explain::RecordToEventMapper
   def events
     [
       receipt_date_event,
-      appeal_creation_event
-    ]
+      (appeal_creation_event if record["created_at"])
+    ].compact
   end
 
   def timing_events(last_timestamp)
     number_of_months = (last_timestamp.year * 12 + last_timestamp.month) -
-                        (receipt_date.year * 12 + receipt_date.month) + 2
+                       (receipt_date.year * 12 + receipt_date.month) + 2
     number_of_months.times.each_with_object([]) do |count, events|
       next if count == 0
 

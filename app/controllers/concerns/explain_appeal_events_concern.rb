@@ -18,6 +18,9 @@ module ExplainAppealEventsConcern
     all_events += sje.records_hash[Intake.table_name].map do |intake|
       Explain::IntakeRecordToEventMapper.new(intake, object_id_cache).events
     end
+    all_events += sje.records_hash[DecisionDocument.table_name].map do |decis_doc|
+      Explain::DecisionDocumentRecordToEventMapper.new(decis_doc).events
+    end
     all_events.flatten.compact.sort
   end
 

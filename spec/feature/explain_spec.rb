@@ -24,6 +24,7 @@ RSpec.feature "Explain JSON" do
       user: create(:user),
       detail: appeal,
       veteran_file_number: veteran.file_number,
+      started_at: 2.days.ago,
       completed_at: 1.day.ago
     )
   end
