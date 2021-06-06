@@ -5,6 +5,7 @@ require "action_view"
 # Used by ExplainController to build the data for presenting events based on
 # exported data from SanitizedJsonExporter sje.
 
+# :reek:FeatureEnvy
 module ExplainAppealEventsConcern
   extend ActiveSupport::Concern
 
@@ -73,7 +74,6 @@ module ExplainAppealEventsConcern
     all_events.flatten.compact.sort
   end
 
-  # :reek:FeatureEnvy
   def tasks_as_event_data
     sje.records_hash[Task.table_name].map do |task|
       TaskRecordToEventMapper.new(task, object_id_cache).events
@@ -82,6 +82,7 @@ module ExplainAppealEventsConcern
 
   private
 
+  # :reek:NestedIterators
   def records_hash_for(appeal)
     sje.records_hash.map do |table_name, records|
       next unless records.is_a?(Array)
@@ -138,6 +139,7 @@ module ExplainAppealEventsConcern
     end
 
     # rubocop:disable Metrics/ParameterLists
+    # :reek:LongParameterList
     def new_event(timestamp, event_type,
                   context_id: @default_context_id,
                   object_id: @default_object_id,
