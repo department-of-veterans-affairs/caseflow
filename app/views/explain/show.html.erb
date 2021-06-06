@@ -10,19 +10,19 @@
       <tr>
         <th>timestamp</th>
         <th>context</th>
-        <th>event type</th>
         <th>category</th>
+        <th>event type</th>
         <th>object id</th>
         <th>comment</th>
         <th>relevant_data</th>
         <th>details count</th>
       </tr>
       <% event_table_data.each do |event| %>
-        <tr class="<%= event["category"] %> <%=event['event_type']%>">
+        <tr class="<%=event["category"]+'_'+event['event_type']%> <%=event["category"]%>">
           <td style="padding: 2px"><%= event["timestamp"] %></td>
           <td style="padding: 2px"><%= event["context_id"] %></td>
-          <td style="padding: 2px"><%= event["event_type"] %></td>
           <td style="padding: 2px"><%= event["category"] %></td>
+          <td style="padding: 2px"><%= event["event_type"] %></td>
           <td style="padding: 2px"><%= event["object_id"] %></td>
           <td style="padding: 2px"><%= event["comment"] %></td>
           <td style="padding: 2px"><%= event["relevant_data"] %></td>

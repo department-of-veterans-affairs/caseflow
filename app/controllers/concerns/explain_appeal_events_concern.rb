@@ -37,16 +37,22 @@ module ExplainAppealEventsConcern
     dec_issues = sje.records_hash[DecisionIssue.table_name].index_by { |dec| dec["id"] }
 
     events = []
-    sje.records_hash[RequestDecisionIssue.table_name].map do |req_dec_issue|
-      req_issue = req_issues.delete(req_dec_issue["request_issue_id"])
+    sje.records_hash[RequestDecisionIssue.table_name].each do |req_dec_issue|
+      req_issue = req_issues[req_dec_issue["request_issue_id"]]
+      dec_issue = dec_issues[req_dec_issue["decision_issue_id"]]
       events += Explain::RequestIssueRecordToEventMapper.new(req_issue).events
-      dec_issue = dec_issues.delete(req_dec_issue["decision_issue_id"])
-      events += Explain::DecisionIssueRecordToEventMapper.new(dec_issue, req_dec_issue, req_issue).events
+      events += Explain::DecisionIssueRecordToEventMapper.new(dec_issue, req_issue).events
     end
 
+    # Remove records after processing them.
+    # Don't remove them while processing because multiple request_issues can map to same decision_issue.
+    sje.records_hash[RequestDecisionIssue.table_name].each do |req_dec_issue|
+      req_issues.delete(req_dec_issue["request_issue_id"])
+      dec_issues.delete(req_dec_issue["decision_issue_id"])
+    end
     fail "Remaining DecisionIssue are not associated: #{dec_issues}" unless dec_issues.blank?
 
-    # process remaining req_issues
+    # Process remaining req_issues
     req_issues.values.map do |req_issue|
       events += Explain::RequestIssueRecordToEventMapper.new(req_issue).events
     end

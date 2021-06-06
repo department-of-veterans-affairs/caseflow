@@ -26,11 +26,6 @@ class Explain::TaskRecordToEventMapper < Explain::RecordToEventMapper
     record["type"].constantize.label
   end
 
-  def timeline_title
-    # To-do: eager load slow queries or use alternative indicator
-    Task.find(record["id"]).timeline_title
-  end
-
   def task_assigned_by
     user(record["assigned_by_id"])
   end
@@ -94,8 +89,6 @@ class Explain::TaskRecordToEventMapper < Explain::RecordToEventMapper
       user = (record["status"] == "cancelled") ? user(record["cancelled_by_id"]) : task_assigned_to
       event.comment = "#{user} #{record['status']} '#{task_label}' in #{duration_in_words}"
 
-      # To-do: only show timeline_title if task is shown in timeline
-      event.relevant_data[:timeline_title] = timeline_title if record["status"] == "completed"
       event.relevant_data[:unblocks] = blocked_task_id if blocked_task_id
       event.details[:duration] = record["closed_at"] - start_time
     end

@@ -11,7 +11,7 @@
  * file per style scope.
  */
 
-.month {
+.clock {
   color: rgb(146, 146, 146);
 }
 
@@ -19,10 +19,14 @@
   color: rgb(0, 8, 126);
 }
 
-.cancelled {
+.task_assigned {
+  color: rgb(134, 132, 1)
+}
+
+.task_cancelled {
   color: rgb(143, 80, 80)
 }
 
-.completed {
+.task_completed {
   color: rgb(0, 90, 0)
 }

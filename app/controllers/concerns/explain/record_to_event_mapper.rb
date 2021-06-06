@@ -67,19 +67,29 @@ class Explain::RecordToEventMapper
     attr_reader :timestamp, :context_id, :category, :object_id, :event_type
     attr_accessor :comment, :relevant_data, :details, :row_order
 
-    # Maps event_type to row_order, which is used for sorting for events with the same timestamp
-    # Handles the scenario where task is reassigned
-    # Assumes that event_types are for different object_ids
+    # For events with the same timestamp, this hash maps "#{category} #{event_type}", "#{event_type}", or
+    # "#{category}" to row_order, which is used for sorting.
     ROW_ORDERING = {
-      "month" => -10,
-      "cancelled" => -2,
-      "completed" => -1,
+      "clock" => -20,
+
+      # order before "milestone"
+      "appeal created" => -8,
+      "issue created" => -7,
+      "issue decision" => -6, # before JudgeDecisionReviewTask "task completed"
+
+      # order before "task completed" and "milestone"
+      "issue closed" => -13,
+      "document processed" => -12,  # DecisionDocument
+
+      # handle scenario where task is reassigned.
+      "task cancelled" => -4,
+      "task completed" => -3,
       "milestone" => 0,
-      "created" => 2,
-      "assigned" => 3,
-      "on_hold" => 5,
-      "started" => 6,
-      "in_progress" => 7
+      "task created" => 2,
+      "task assigned" => 3,
+      "task on_hold" => 5,
+      "task started" => 6,
+      "task in_progress" => 7
     }.freeze
 
     def initialize(timestamp, context_id, category, object_id, event_type)
@@ -88,7 +98,7 @@ class Explain::RecordToEventMapper
       @category = category
       @object_id = object_id
       @event_type = event_type
-      @row_order = ROW_ORDERING[event_type] || 0
+      @row_order = ROW_ORDERING["#{category} #{event_type}"] || ROW_ORDERING[event_type] || ROW_ORDERING[category] || 0
     end
 
     CLOSED_STATUSES = %w[completed cancelled milestone].freeze
