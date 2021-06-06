@@ -4,6 +4,7 @@
 # Maps Task records (exported by SanitizedJsonExporter) to AppealEventData objects for use by ExplainController.
 
 class Explain::TaskRecordToEventMapper < Explain::RecordToEventMapper
+  # :reek:FeatureEnvy
   def initialize(record, object_id_cache)
     super("task", record,
       object_id_cache: object_id_cache,

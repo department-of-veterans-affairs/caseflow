@@ -4,6 +4,7 @@
 # Maps Intake records (exported by SanitizedJsonExporter) to AppealEventData objects for use by ExplainController.
 
 class Explain::IntakeRecordToEventMapper < Explain::RecordToEventMapper
+  # :reek:FeatureEnvy
   def initialize(record, object_id_cache)
     super("intake", record,
           object_id_cache: object_id_cache,

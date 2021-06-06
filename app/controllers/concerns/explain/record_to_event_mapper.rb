@@ -1,17 +1,19 @@
 # frozen_string_literal: true
 
 ##
-# Base class that maps records (exported by SanitizedJsonExporter) to AppealEventData objects for use by ExplainController.
+# Base class that maps records (exported by SanitizedJsonExporter) to AppealEventData objects
+# for use by ExplainController.
 
 class Explain::RecordToEventMapper
   include ActionView::Helpers::DateHelper # defines distance_of_time_in_words
 
   attr_reader :record
 
+  # :reek:FeatureEnvy
   def initialize(object_type, record,
-                  object_id_cache: {},
-                  default_context_id: "#{record['type']}_#{record['id']}",
-                  default_object_id: "#{record['type']}_#{record['id']}")
+                 object_id_cache: {},
+                 default_context_id: "#{record['type']}_#{record['id']}",
+                 default_object_id: "#{record['type']}_#{record['id']}")
     @record = record
     @object_type = object_type
     @object_id_cache = object_id_cache
@@ -19,6 +21,7 @@ class Explain::RecordToEventMapper
     @default_object_id = default_object_id
   end
 
+  # :reek:FeatureEnvy
   def duration_in_words(from_time, to_time, options = {})
     delta_days = (to_time.to_date - from_time.to_date).round
     return distance_of_time_in_words(from_time, to_time, options) if delta_days < 365
@@ -90,14 +93,14 @@ class Explain::RecordToEventMapper
 
     CLOSED_STATUSES = %w[completed cancelled milestone].freeze
 
-    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity:
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/AbcSize
     def <=>(other)
       return timestamp <=> other.timestamp unless timestamp == other.timestamp
 
       # row_order is an ordering based on event_type
       return row_order <=> other.row_order unless row_order == other.row_order
 
-      if details.has_key?("id") && other.details.has_key?("id")
+      if details.key?("id") && other.details.key?("id")
         # sort by id in reverse ordering to close child tasks first
         return other.details["id"] <=> details["id"] if CLOSED_STATUSES.include?(event_type)
 
@@ -109,6 +112,6 @@ class Explain::RecordToEventMapper
       # binding.pry
       raise "#{error}:\n #{inspect}\n #{other.inspect}"
     end
-    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity:
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/AbcSize
   end
 end
