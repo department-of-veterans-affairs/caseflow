@@ -3,35 +3,40 @@
 <% end %>
 
 <div style="font-size:0.875em; padding:10px">
-  <details>
-    <summary style="color: rgb(255, 0, 0)">Table Data</summary>
-    <pre style="font-size:0.84em; padding:10px"><code><%= JSON.pretty_generate(event_table_data) %></code></pre>
+  <h2>Appeal Narrative</h2>
+  <details open>
+    <summary style="color: purple">Narrative table</summary>
+    <table>
+      <tr>
+        <th>timestamp</th>
+        <th>context</th>
+        <th>object type</th>
+        <th>object id</th>
+        <th>event type</th>
+        <th>comment</th>
+        <th>relevant_data</th>
+        <th>details count</th>
+      </tr>
+      <% event_table_data.each do |event| %>
+        <tr class="<%= event["object_type"] %> <%=event['event_type']%>">
+          <td style="padding: 2px"><%= event["timestamp"] %></td>
+          <td style="padding: 2px"><%= event["context_id"] %></td>
+          <td style="padding: 2px"><%= event["object_type"] %></td>
+          <td style="padding: 2px"><%= event["object_id"] %></td>
+          <td style="padding: 2px"><%= event["event_type"] %></td>
+          <td style="padding: 2px"><%= event["comment"] %></td>
+          <td style="padding: 2px"><%= event["relevant_data"] %></td>
+          <td style="padding: 2px"><%= event["details"]&.size %></td>
+        </tr>
+      <% end %>
+    </table>
   </details>
 
-  <table>
-    <tr>
-      <th>timestamp</th>
-      <th>context</th>
-      <th>object type</th>
-      <th>object id</th>
-      <th>event type</th>
-      <th>comment</th>
-      <th>relevant_data</th>
-      <th>details count</th>
-    </tr>
-    <% event_table_data.each do |event| %>
-      <tr class="<%= event["object_type"] %> <%=event['event_type']%>">
-        <td style="padding: 2px"><%= event["timestamp"] %></td>
-        <td style="padding: 2px"><%= event["context_id"] %></td>
-        <td style="padding: 2px"><%= event["object_type"] %></td>
-        <td style="padding: 2px"><%= event["object_id"] %></td>
-        <td style="padding: 2px"><%= event["event_type"] %></td>
-        <td style="padding: 2px"><%= event["comment"] %></td>
-        <td style="padding: 2px"><%= event["relevant_data"] %></td>
-        <td style="padding: 2px"><%= event["details"]&.size %></td>
-      </tr>
-    <% end %>
-  </table>
+  <details>
+    <summary style="color: red">Narrative table data</summary>
+    <pre style="font-size:0.84em; padding:10px"><code><%= JSON.pretty_generate(event_table_data) %></code></pre>
+  </details>
+  <hr/>
 
   <details>
     <summary style="color: blue">Help</summary>
@@ -57,6 +62,7 @@
     <%= link_to('json', {action: 'show', format: "json"}) %>
     <hr/>
   </details>
+  <hr/>
 
   <h2>Basic Info about this Appeal</h2>
   <ul>
