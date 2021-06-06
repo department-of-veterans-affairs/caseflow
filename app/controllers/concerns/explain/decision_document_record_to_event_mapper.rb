@@ -21,12 +21,14 @@ class Explain::DecisionDocumentRecordToEventMapper < Explain::RecordToEventMappe
 
   private
 
+  RELEVANT_DATA_KEYS = %w[attempted_at canceled_at last_submitted_at
+                          decision_date redacted_document_location
+                          error].freeze
+
   def decision_document_submitted_event
-    relevant_data_keys = %w[attempted_at canceled_at last_submitted_at
-                            decision_date redacted_document_location error].freeze
     new_event(record["submitted_at"], "submitted",
               comment: "submitted decision_document #{record['citation_number']}",
-              relevant_data_keys: relevant_data_keys)
+              relevant_data_keys: RELEVANT_DATA_KEYS)
   end
 
   def decision_document_processed_event

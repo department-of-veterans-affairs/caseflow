@@ -36,14 +36,22 @@ class Explain::AppealRecordToEventMapper < Explain::RecordToEventMapper
   end
 
   def receipt_date_event
-    new_event(receipt_date, "milestone", category: "milestone", comment: "Appeal received")
+    new_event(receipt_date, "milestone", category: "milestone",
+              comment: "NOD received",
+              relevant_data_keys: %w[stream_type docket_type veteran_is_not_claimant])
   end
+
+  RELEVANT_DATA_KEYS = %w[stream_type docket_type veteran_is_not_claimant
+                          aod_based_on_age
+                          established_at establishment_canceled_at
+                          closest_regional_office
+                          target_decision_date docket_range_date
+                          legacy_opt_in_approved].freeze
 
   def appeal_creation_event
     duration_in_words = duration_in_words(receipt_date, record["created_at"])
-    relevant_data_keys = %w[stream_type docket_type closest_regional_office].freeze
     new_event(record["created_at"], "created",
-              comment: "#{duration_in_words} from receipt date",
-              relevant_data_keys: relevant_data_keys)
+              comment: "#{record['stream_docket_number']} created #{duration_in_words} from receipt date",
+              relevant_data_keys: RELEVANT_DATA_KEYS)
   end
 end

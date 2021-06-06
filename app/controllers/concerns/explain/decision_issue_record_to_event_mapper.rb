@@ -26,17 +26,18 @@ class Explain::DecisionIssueRecordToEventMapper < Explain::RecordToEventMapper
     "RequestIssue_#{@req_issue_record['id']}"
   end
 
+  RELEVANT_DATA_KEYS = %w[description decision_text diagnostic_code
+                          caseflow_decision_date
+                          subject_text percent_number].freeze
+
   def decision_event
-    relevant_data_keys = %w[description decision_text diagnostic_code caseflow_decision_date
-                            subject_text percent_number].freeze
     new_event(record["created_at"], "decision",
               comment: "#{record['disposition']} #{record['benefit_type']} for #{request_issue}",
-              relevant_data_keys: relevant_data_keys)
+              relevant_data_keys: RELEVANT_DATA_KEYS)
   end
 
   def decision_deleted_event
     new_event(record["deleted_at"], "deleted",
-              comment: "decision #{record['disposition']}",
-              relevant_data_keys: %w[])
+              comment: "decision #{record['disposition']}")
   end
 end
