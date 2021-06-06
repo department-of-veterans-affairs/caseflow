@@ -25,7 +25,7 @@ class Explain::AppealRecordToEventMapper < Explain::RecordToEventMapper
       next if count == 0
 
       current_time = receipt_date + count.month
-      events << new_event(current_time, "month", object_type: "clock", object_id: "month_#{count}")
+      events << new_event(current_time, "month", category: "clock", object_id: "month_#{count}")
     end
   end
 
@@ -36,13 +36,13 @@ class Explain::AppealRecordToEventMapper < Explain::RecordToEventMapper
   end
 
   def receipt_date_event
-    new_event(receipt_date, "receipt_date", object_type: "milestone")
+    new_event(receipt_date, "milestone", category: "milestone", comment: "Appeal received")
   end
 
   def appeal_creation_event
     duration_in_words = duration_in_words(receipt_date, record["created_at"])
     relevant_data_keys = %w[stream_type docket_type closest_regional_office].freeze
-    new_event(record["created_at"], "appeal_created",
+    new_event(record["created_at"], "created",
               comment: "#{duration_in_words} from receipt date",
               relevant_data_keys: relevant_data_keys)
   end

@@ -111,7 +111,7 @@ class Explain::TaskRecordToEventMapper < Explain::RecordToEventMapper
 
     return nil unless record["status"] == "completed" && TASK_TYPES_FOR_MILESTONE_EVENTS.include?(record["type"])
 
-    new_event(record["closed_at"], "milestone", object_type: "milestone") do |event|
+    new_event(record["closed_at"], "milestone", category: "milestone") do |event|
       duration_in_words = duration_in_words(record["created_at"], record["closed_at"])
       event.comment = "'#{task_label}' completed in #{duration_in_words}"
       event.details[:duration] = record["closed_at"] - record["created_at"]

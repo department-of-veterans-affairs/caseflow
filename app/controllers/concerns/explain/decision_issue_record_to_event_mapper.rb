@@ -8,7 +8,7 @@ class Explain::DecisionIssueRecordToEventMapper < Explain::RecordToEventMapper
   # :reek:FeatureEnvy
   def initialize(record, join_record, req_issue_record)
     @req_issue_record = req_issue_record
-    super("decision", record,
+    super("issue", record,
           default_context_id: "#{record['decision_review_type']}_#{record['decision_review_id']}",
           default_object_id: "DecisionIssue_#{record['id']}")
   end

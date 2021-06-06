@@ -28,6 +28,6 @@ class Explain::IntakeRecordToEventMapper < Explain::RecordToEventMapper
   end
 
   def intake_completed_event
-    new_event(record["completed_at"], "intake_completed", object_type: "milestone")
+    new_event(record["completed_at"], "milestone", category: "milestone", comment: "Intake completed")
   end
 end

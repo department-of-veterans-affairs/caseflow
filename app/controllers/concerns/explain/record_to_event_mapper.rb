@@ -10,12 +10,12 @@ class Explain::RecordToEventMapper
   attr_reader :record
 
   # :reek:FeatureEnvy
-  def initialize(object_type, record,
+  def initialize(category, record,
                  object_id_cache: {},
                  default_context_id: "#{record['type']}_#{record['id']}",
                  default_object_id: "#{record['type']}_#{record['id']}")
+    @category = category
     @record = record
-    @object_type = object_type
     @object_id_cache = object_id_cache
     @default_context_id = default_context_id
     @default_object_id = default_object_id
@@ -44,11 +44,11 @@ class Explain::RecordToEventMapper
   def new_event(timestamp, event_type,
                 context_id: @default_context_id,
                 object_id: @default_object_id,
-                object_type: @object_type,
+                category: @category,
                 comment: nil,
                 relevant_data_keys: [])
     AppealEventData.new(
-      timestamp, context_id, object_type, object_id, event_type
+      timestamp, context_id, category, object_id, event_type
     ).tap do |event|
       event.details = record
       event.comment = comment if comment
@@ -64,7 +64,7 @@ class Explain::RecordToEventMapper
 
   # :reek:TooManyInstanceVariables
   class AppealEventData
-    attr_reader :timestamp, :context_id, :object_type, :object_id, :event_type
+    attr_reader :timestamp, :context_id, :category, :object_id, :event_type
     attr_accessor :comment, :relevant_data, :details, :row_order
 
     # Maps event_type to row_order, which is used for sorting for events with the same timestamp
@@ -82,10 +82,10 @@ class Explain::RecordToEventMapper
       "in_progress" => 7
     }.freeze
 
-    def initialize(timestamp, context_id, object_type, object_id, event_type)
+    def initialize(timestamp, context_id, category, object_id, event_type)
       @timestamp = timestamp || Time.now.utc.end_of_year
       @context_id = context_id
-      @object_type = object_type
+      @category = category
       @object_id = object_id
       @event_type = event_type
       @row_order = ROW_ORDERING[event_type] || 0
