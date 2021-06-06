@@ -17,6 +17,7 @@ module ExplainAppealEventsConcern
     # Handles the scenario where task is reassigned
     # Assumes that event_types are for different object_ids
     ROW_ORDERING = {
+      "month" => -10,
       "cancelled" => -2,
       "completed" => -1,
       "milestone" => 0,
@@ -38,20 +39,27 @@ module ExplainAppealEventsConcern
 
     CLOSED_STATUSES = %w[completed cancelled milestone].freeze
 
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity:
     def <=>(other)
       return timestamp <=> other.timestamp unless timestamp == other.timestamp
 
+      # row_order is an ordering based on event_type
       return row_order <=> other.row_order unless row_order == other.row_order
 
-      if CLOSED_STATUSES.include?(event_type)
-        # sort by id in reverse ordering to close child tasks first
-        other.details["id"] <=> details["id"]
-      else
-        details["id"] <=> other.details["id"]
+      if details && other.details
+        if CLOSED_STATUSES.include?(event_type)
+          # sort by id in reverse ordering to close child tasks first
+          other.details["id"] <=> details["id"]
+        else
+          details["id"] <=> other.details["id"]
+        end
       end
-    rescue StandardError
-      raise "#{self} <=> #{other}"
+
+      0
+    rescue StandardError => error
+      raise "#{error}:\n #{inspect}\n #{other.inspect}"
     end
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity:
   end
 
   def appeal_as_event_data(last_timestamp)
@@ -165,15 +173,14 @@ module ExplainAppealEventsConcern
     end
 
     def timing_events(last_timestamp)
-      current_time = receipt_date
-      month_count = 0
-      events = []
-      while current_time < last_timestamp
-        month_count += 1
-        current_time += 1.month
-        events << AppealEventData.new(current_time, @default_object_id, "clock", "month_#{month_count}", "month")
+      number_of_months = (last_timestamp.year * 12 + last_timestamp.month) -
+                         (receipt_date.year * 12 + receipt_date.month) + 2
+      number_of_months.times.each_with_object([]) do |count, events|
+        next if count == 0
+
+        current_time = receipt_date + count.month
+        events << AppealEventData.new(current_time, @default_object_id, "clock", "month_#{count}", "month")
       end
-      events
     end
 
     private
