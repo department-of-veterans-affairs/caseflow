@@ -10,6 +10,16 @@ require "action_view"
 module ExplainAppealEventsConcern
   extend ActiveSupport::Concern
 
+  # :reek:FeatureEnvy
+  def event_table_data
+    task_events = tasks_as_event_data
+    events = appeal_as_event_data(task_events.last.timestamp) +
+             task_events +
+             request_issues_as_event_data +
+             hearings_as_event_data
+    events.sort.map(&:as_json)
+  end
+
   def appeal_as_event_data(last_timestamp)
     all_events = sje.records_hash[Appeal.table_name].map do |appeal|
       mapper = Explain::AppealRecordEventMapper.new(appeal)
@@ -60,6 +70,16 @@ module ExplainAppealEventsConcern
     events.flatten.compact.sort
   end
   # rubocop:enable Metrics/AbcSize
+
+  def hearings_as_event_data
+    hearing_days = sje.records_hash[HearingDay.table_name].index_by { |req| req["id"] }
+    virtual_hearings = sje.records_hash[VirtualHearing.table_name].index_by { |req| req["hearing_id"] }
+    sje.records_hash[Hearing.table_name].map do |hearing|
+      hearing_day = hearing_days[hearing["hearing_day_id"]]
+      virtual_hearing = virtual_hearings[hearing["id"]]
+      Explain::HearingRecordEventMapper.new(hearing, hearing_day, virtual_hearing, object_id_cache).events
+    end.flatten.compact.sort
+  end
 
   private
 

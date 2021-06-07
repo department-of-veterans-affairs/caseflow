@@ -20,6 +20,7 @@ class ExplainController < ApplicationController
         format.json { render json: sanitized_json }
       end
     rescue StandardError => error
+      binding.pry
       raise error.full_message
     end
   end
@@ -84,15 +85,6 @@ class ExplainController < ApplicationController
 
   def intake_as_text
     IntakeRenderer.render(appeal, show_pii: show_pii_query_param)
-  end
-
-  # :reek:FeatureEnvy
-  def event_table_data
-    task_events = tasks_as_event_data
-    events = appeal_as_event_data(task_events.last.timestamp) +
-             task_events +
-             request_issues_as_event_data
-    events.sort.map(&:as_json)
   end
 
   def sanitized_json
