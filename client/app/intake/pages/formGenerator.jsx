@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
+import { reject, map } from 'lodash';
 import RadioField from '../../components/RadioField';
 import ReceiptDateInput from './receiptDateInput';
 import { setDocketType } from '../actions/appeal';
@@ -19,7 +20,7 @@ import { bindActionCreators } from 'redux';
 import { getIntakeStatus } from '../selectors';
 import SelectClaimant from '../components/SelectClaimant';
 import BenefitType from '../components/BenefitType';
-import { BOOLEAN_RADIO_OPTIONS, INTAKE_STATES, PAGE_PATHS, VBMS_BENEFIT_TYPES } from '../constants';
+import { BOOLEAN_RADIO_OPTIONS, INTAKE_STATES, PAGE_PATHS, VBMS_BENEFIT_TYPES, REVIEW_OPTIONS } from '../constants';
 import { convertStringToBoolean } from '../util';
 import ErrorAlert from '../components/ErrorAlert';
 
@@ -31,6 +32,12 @@ const docketTypeRadioOptions = [
   { value: 'hearing',
     displayText: 'Hearing' }
 ];
+
+const rampElectionReviewOptions = reject(REVIEW_OPTIONS, REVIEW_OPTIONS.APPEAL);
+const rampElectionRadioOptions = map(rampElectionReviewOptions, (option) => ({
+  value: option.key,
+  displayText: option.name
+}));
 
 const formFieldMapping = (props) => {
   return ({
@@ -76,6 +83,16 @@ const formFieldMapping = (props) => {
       // eslint-disable-next-line no-undefined
       value={props.informalConference === null || props.informalConference === undefined ?
         null : props.informalConference.toString()}
+      inputRef={props.register}
+    />,
+    'opt-in-election': <RadioField
+      name="opt-in-election"
+      label="Which review lane did the Veteran select?"
+      strongLabel
+      options={rampElectionRadioOptions}
+      onChange={props.setOptionSelected}
+      errorMessage={props.optionSelectedError || props.errors?.['opt-in-election']?.message}
+      value={props.optionSelected}
       inputRef={props.register}
     />,
     'same-office': <RadioField
