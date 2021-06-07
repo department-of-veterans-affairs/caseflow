@@ -269,6 +269,7 @@ RSpec.feature "Reader", :all_dbs do
     end
 
     scenario "Open document in new tab" do
+      Rails.logger.error("Opening document #{documents[0]} on appeal #{appeal.vacols_id}")
       # Open the URL that the first document button points to. We cannot simply
       # click on the link since we've overridden the mouseup event to not open
       # the link, but instead to move to the document view in the SPA. Middle clicking
