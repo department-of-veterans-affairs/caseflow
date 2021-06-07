@@ -218,6 +218,28 @@ class HearingRenderer
     obj.present? ? obj : "none"
   end
 
+  def format_hearing_day_label(hearing_day)
+    regional_office = hearing_day.regional_office
+    regional_office_city_info ||= RegionalOffice::CITIES[regional_office]
+    city_state_string = if regional_office_city_info.nil?
+                          ""
+                        else
+                          "#{regional_office_city_info[:city]} #{regional_office_city_info[:state]}"
+                        end
+
+    formatted_text = "HearingDay #{hearing_day.id}"
+    formatted_text += " ("
+    formatted_text += if regional_office.nil?
+                        "no ro, "
+                      else
+                        "#{regional_office} - #{city_state_string}, "
+                      end
+    formatted_text += Hearing::HEARING_TYPES[hearing_day.request_type&.to_sym]
+    formatted_text += ") "
+
+    formatted_text
+  end
+
   def shared_hearing_children(hearing)
     children = []
     children << "Notes: #{print_nil(hearing.notes)}" if show_pii
@@ -225,11 +247,7 @@ class HearingRenderer
     children <<
       "Type: #{print_nil(hearing.readable_request_type)}, "\
       "Disp: #{print_nil(hearing.disposition)}, HC: #{print_nil(hearing.bva_poc)}"
-    children << "HearingDay #{hearing.hearing_day.id} " \
-      "(Docket: #{hearing.hearing_day.id}, " \
-      "RO: #{print_nil(hearing.hearing_day.regional_office)}, " \
-      "RT: #{hearing.hearing_day.request_type})"
-
+    children << format_hearing_day_label(hearing.hearing_day)
     virtual_hearings = VirtualHearing.where(hearing_id: hearing.id, hearing_type: hearing.class.name)
     children += virtual_hearings.map { |vh| structure(vh) }
     children << {
