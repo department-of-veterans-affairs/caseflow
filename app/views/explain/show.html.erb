@@ -2,6 +2,22 @@
 <%= stylesheet_link_tag 'explain_appeal' %>
 <% end %>
 
+<%= react_component("Explain", props: {
+  # userDisplayName: current_user.display_name,
+  # dropdownUrls: dropdown_urls,
+  # page: "TestUsers",
+  # feedbackUrl: feedback_url,
+  # currentUser: current_user.to_hash,
+  # isGlobalAdmin: current_user.global_admin?,
+  # dependenciesFaked: ApplicationController.dependencies_faked?,
+  # testUsersList: test_users,
+  # featuresList: features_list,
+  # appSelectList: Test::UsersController::APPS,
+  # userSession: user_session,
+  # timezone: { getlocal: Time.now.getlocal.zone, zone: Time.zone.name },
+  # epTypes: ep_types
+}) %>
+
 <div style="font-size:0.875em; padding:10px">
   <details>
     <summary style="color: blue">Help</summary>
@@ -56,12 +72,12 @@
   <%= javascript_include_tag 'explain-appeal' %>
   <script type="text/javascript">
     // Handle Task Tree field checkboxes
-    function updateTaskTreeLink(){
-      var selected = $('#treeefields input:checked').map( (idx, elem) => elem.name ).get();
-      $('#task_tree_link').attr("href", window.location.href.split('?')[0]+"?fields="+selected.join(','));
-    }
-    updateTaskTreeLink();
-    $('#treeefields input').change( () => updateTaskTreeLink() );
+    // function updateTaskTreeLink(){
+      // var selected = $('#treeefields input:checked').map( (idx, elem) => elem.name ).get();
+      // $('#task_tree_link').attr("href", window.location.href.split('?')[0]+"?fields="+selected.join(','));
+    // }
+    // updateTaskTreeLink();
+    // $('#treeefields input').change( () => updateTaskTreeLink() );
   </script>
 
   <% unless legacy_appeal? %>

@@ -117,7 +117,7 @@ class QueueTableBuilder extends React.PureComponent {
       [QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name]: taskCompletedDateColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, filterOptions),
     };
-
+    console.log(column)
     return functionForColumn[column.name];
   };
 
@@ -146,7 +146,7 @@ class QueueTableBuilder extends React.PureComponent {
         </p>
       );
     }
-
+    console.log(this.columnsFromConfig(config, tabConfig, tasks));
     return {
       label: sprintf(tabConfig.label, totalTaskCount),
       page: (
