@@ -121,6 +121,7 @@ group :test, :development, :demo do
   gem "test-prof"
   gem "timecop"
   gem "webdrivers"
+  # Temporary adding this gem to experiment with Appoptics APM
   gem "appoptics_apm"
 end
 
