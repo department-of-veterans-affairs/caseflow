@@ -63,19 +63,19 @@ module ExplainAppealEventsConcern
 
   private
 
-  # :reek:NestedIterators
-  def records_hash_for(appeal)
-    sje.records_hash.map do |table_name, records|
-      next unless records.is_a?(Array)
+  # # :reek:NestedIterators
+  # def records_hash_for(appeal)
+  #   sje.records_hash.map do |table_name, records|
+  #     next unless records.is_a?(Array)
 
-      filtered_records = records.select do |record|
-        record.find do |attrib_name, value|
-          value == appeal["id"] && attrib_name.end_with?("id")
-        end
-      end
-      [table_name, filtered_records]
-    end.compact.to_h
-  end
+  #     filtered_records = records.select do |record|
+  #       record.find do |attrib_name, value|
+  #         value == appeal["id"] && attrib_name.end_with?("_id")
+  #       end
+  #     end
+  #     [table_name, filtered_records]
+  #   end.compact.to_h
+  # end
 
   def object_id_cache
     @object_id_cache ||= {
