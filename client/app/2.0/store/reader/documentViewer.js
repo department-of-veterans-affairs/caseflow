@@ -160,6 +160,7 @@ export const searchText = createAsyncThunk(
         // Highlight the selected mark in the document
         if (index === matchIndex) {
           item.classList.add('highlighted');
+          item.scrollIntoView();
 
           // Send the New Match Position
           return parseFloat(item.parentElement.style.top);

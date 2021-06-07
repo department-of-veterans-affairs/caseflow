@@ -222,13 +222,13 @@ export const filterDocuments = (criteria, documents, state) => {
     }) :
     Object.keys(docs).map((doc) => docs[doc].id);
 
-  // Return the filtered IDs
-  return sortKeysBy({
-    keys: ids,
-    list: docs,
-    value: criteria.sort.sortBy,
-    dir: !criteria.sort.sortAscending && 'desc'
-  });
+  const sorted = sortBy(ids, criteria.sort.sortBy);
+
+  if (criteria.sort.sortAscending) {
+    sorted.reverse();
+  }
+
+  return sorted;
 };
 
 export const rowHeight = ({ numPages, dimensions, horizontal }) => {

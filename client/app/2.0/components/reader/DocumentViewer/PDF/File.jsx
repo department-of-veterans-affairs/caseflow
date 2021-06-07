@@ -48,7 +48,7 @@ export const File = ({ gridRef, overscanIndices, windowingOverscan, scrollPage, 
           height={height}
           rowCount={rowCount}
           rowHeight={pageHeight}
-          cellRenderer={(cellProps) => cellProps.isVisible && (
+          cellRenderer={(cellProps) => (
             <Page
               {...cellProps}
               {...props}

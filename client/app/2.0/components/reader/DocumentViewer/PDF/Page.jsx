@@ -36,7 +36,7 @@ export const Page = ({
   const pageIndex = (numColumns * rowIndex) + columnIndex;
 
   useEffect(() => {
-    if (currentDocument?.id && props.isVisible) {
+    if (currentDocument?.id) {
       showPage({
         pageIndex,
         scale,

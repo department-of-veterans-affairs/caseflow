@@ -266,8 +266,8 @@ const DocumentViewer = (props) => {
 
     },
     overscanIndices: ({ cellCount, overscanCellsCount, startIndex, stopIndex }) => ({
-      overscanStartIndex: Math.max(0, startIndex - Math.ceil(overscanCellsCount / 2)),
-      overscanStopIndex: Math.min(cellCount - 1, stopIndex + Math.ceil(overscanCellsCount / 2))
+      overscanStartIndex: Math.max(0, startIndex - Math.ceil(overscanCellsCount)),
+      overscanStopIndex: Math.min(cellCount - 1, stopIndex + Math.ceil(overscanCellsCount))
     }),
     fitToScreen: () => {
       window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'fit to screen');

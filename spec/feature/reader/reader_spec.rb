@@ -56,7 +56,7 @@ def add_comment_without_clicking_save(text)
     expect(page).to have_css(".canvas-cursor", visible: true)
 
     # text-${pageIndex} is the id of the first page's CommentLayer
-    find("#text-0").click
+    page.execute_script("document.querySelectorAll('[id^=\"comment-layer-0\"]')[0].click()")
 
     expect(page).to_not have_css(".canvas-cursor")
 
@@ -336,9 +336,10 @@ RSpec.feature "Reader", :all_dbs do
 
     scenario "Next and Previous buttons move between docs" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
+      find("h3", text: "Document information").click
+      expect(find(".cf-document-type")).to have_text("Form 9")
       find("#button-next").click
 
-      find("h3", text: "Document information").click
       expect(find(".cf-document-type")).to have_text("BVA Decision")
       find("#button-previous").click
       find("#button-previous").click
@@ -1213,6 +1214,7 @@ RSpec.feature "Reader", :all_dbs do
 
       expect(search_input).to match_xpath("//input[@placeholder='Type to search...']")
 
+      search_input.click
       fill_in "search-ahead", with: "decision"
 
       expect(search_input.value).to eq("decision")
@@ -1255,7 +1257,7 @@ RSpec.feature "Reader", :all_dbs do
 
       find("body").send_keys [:escape]
 
-      expect(search_bar).to match_css(".hidden")
+      expect(page).not_to have_selector(".cf-search-bar")
     end
 
     scenario "Navigating Search Results scrolls page" do
