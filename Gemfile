@@ -62,6 +62,7 @@ gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
 gem "sentry-raven"
 gem "shoryuken", "3.1.11"
+gem "stackprof", require: false
 gem "stringex", require: false
 # catch problematic migrations at development/test time
 gem "strong_migrations"
@@ -120,6 +121,7 @@ group :test, :development, :demo do
   gem "test-prof"
   gem "timecop"
   gem "webdrivers"
+  gem "appoptics_apm"
 end
 
 group :development do
@@ -142,4 +144,3 @@ end
 # rubocop:enable Metrics/LineLength
 
 gem "json_schemer", "~> 0.2.16"
-gem "appoptics_apm"
