@@ -174,7 +174,7 @@ class HearingRenderer
   def get_unscheduled_hearings(appeal)
     unscheduled = appeal.tasks.open.of_type(:ScheduleHearingTask)&.pluck(:id)&.map { |i| "id: #{i}" }
     # TODO, does this get the regional_office correctly?
-    regional_office = appeal.closest_regional_office || appeal.regional_office&.key
+    regional_office = appeal.closest_regional_office || COPY::UNKNOWN_REGIONAL_OFFICE
     ro_label = get_ro_label(regional_office)
     unscheduled.nil? ? "" : ["Unsched hearing #{unscheduled} for #{ro_label}"]
   end
