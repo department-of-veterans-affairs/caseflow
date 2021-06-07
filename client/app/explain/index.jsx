@@ -3,12 +3,6 @@ import React from 'react';
 import QueueTable from '../queue/QueueTable';
 import EXPLAIN_CONFIG from '../../constants/EXPLAIN';
 
-// import queueReducer, { initialState } from './reducers';
-
-// import QueueApp from './QueueApp';
-// import ReduxBase from '../components/ReduxBase';
-
-// const Explain = (props) => {
 class Explain extends React.PureComponent {
   createColumnObject = (column) => {
     return { header: column.header, name: column.name }
@@ -22,7 +16,6 @@ class Explain extends React.PureComponent {
     return builtColumns;
   }
  
-
   render = () => {
     return ( 
       <QueueTable 
