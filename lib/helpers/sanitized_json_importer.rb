@@ -100,6 +100,7 @@ class SanitizedJsonImporter
     @unique_indices_per_class.fetch(klass) do
       @unique_indices_per_class[klass] = ActiveRecord::Base.connection.indexes(klass.table_name).select(&:unique)
     end
+  end
 
   def import_array_of(klass, key = klass.table_name, obj_hash_array = @records_hash.fetch(key, []))
     puts "Importing #{obj_hash_array.count} #{klass} records" if @verbosity > 1
@@ -110,7 +111,7 @@ class SanitizedJsonImporter
     end.compact
     @records_hash.delete(key)
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:enable
 
   def import_record(key, klass, obj_hash)
     # Record original id in case it changes in the following lines
@@ -143,7 +144,7 @@ class SanitizedJsonImporter
     id_mapping[id_mapping_key] ||= {}
     id_mapping[id_mapping_key][orig_id] = new_id
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
+  # rubocop:enable
 
   private
 
@@ -168,7 +169,7 @@ class SanitizedJsonImporter
     @mapped_ids[Organization.name.underscore]
   end
 
-  OFFSET_ID_TABLE_FIELDS = SanitizedJsonExporter::OFFSET_ID_FIELDS.transform_keys(&:table_name).freeze
+  # OFFSET_ID_TABLE_FIELDS = SanitizedJsonExporter::OFFSET_ID_FIELDS.transform_keys(&:table_name).freeze
 
   # :reek:FeatureEnvy
   def adjust_ids_by_offset(klass, obj_hash)
@@ -253,7 +254,6 @@ class SanitizedJsonImporter
       .freeze
   end
 
-  # rubocop:disable Metrics/PerceivedComplexity
   # :reek:FeatureEnvy
   def reassociate_with_imported_records(klass, obj_hash)
     # Handle polymorphic associations (where the association class is stored in the *'_type' field)
