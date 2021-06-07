@@ -171,6 +171,13 @@ class HearingRenderer
     end
   end
 
+  def get_unscheduled_hearings(appeal)
+    unscheduled = appeal.tasks.open.of_type(:ScheduleHearingTask)&.pluck(:id)&.map { |i| "id: #{i}" }
+    regional_office = appeal.closest_regional_office || appeal.regional_office&.key
+    ro_label = get_ro_label(regional_office)
+    unscheduled.nil? ? "" : ["Unsched hearing #{unscheduled} for #{ro_label}"]
+  end
+
   def shared_appeal_children(appeal)
     children = []
     if appeal.appellant_is_not_veteran
@@ -178,9 +185,10 @@ class HearingRenderer
     end
 
     children += appeal.hearings.map { |hearing| structure(hearing) }
+    children += get_unscheduled_hearings(appeal)
 
     children << {
-      "History": get_appeal_history(appeal)
+      "Appeal History": get_appeal_history(appeal)
     }
     children
   end
@@ -222,8 +230,7 @@ class HearingRenderer
     obj.present? ? obj : "none"
   end
 
-  def format_hearing_day_label(hearing_day)
-    regional_office = hearing_day.regional_office
+  def get_ro_label(regional_office, request_type = false)
     regional_office_city_info ||= RegionalOffice::CITIES[regional_office]
     city_state_string = if regional_office_city_info.nil?
                           ""
@@ -231,16 +238,15 @@ class HearingRenderer
                           "#{regional_office_city_info[:city]} #{regional_office_city_info[:state]}"
                         end
 
-    formatted_text = "HearingDay #{hearing_day.id}"
-    formatted_text += " ("
-    formatted_text += if regional_office.nil?
-                        "no ro, "
-                      else
-                        "#{regional_office} - #{city_state_string}, "
-                      end
-    formatted_text += Hearing::HEARING_TYPES[hearing_day.request_type&.to_sym]
-    formatted_text += ") "
+    formatted_text = regional_office.nil? ? "no ro, " : "#{regional_office} - #{city_state_string}"
+    formatted_text += request_type ? ", #{Hearing::HEARING_TYPES[request_type&.to_sym]}" : ""
 
+    formatted_text
+  end
+
+  def format_hearing_day_label(hearing_day)
+    formatted_text = "HearingDay #{hearing_day.id}"
+    formatted_text += " (#{get_ro_label(hearing_day.regional_office, hearing_day.request_type)}) "
     formatted_text
   end
 
