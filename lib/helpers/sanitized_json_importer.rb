@@ -25,9 +25,6 @@ require "helpers/sanitized_json_difference.rb"
 class SanitizedJsonImporter
   prepend SanitizedJsonDifference
 
-  # parsed from JSON input
-  attr_accessor :metadata
-
   # Hash parsed from JSON input, whose id fields are modified during importing
   # key = ActiveRecord class's table_name; value = array of JSON of ActiveRecords
   attr_accessor :records_hash
@@ -36,9 +33,6 @@ class SanitizedJsonImporter
   # Hash of records imported into the database
   # key = ActiveRecord class's table_name; value = ActiveRecords in the database
   attr_accessor :imported_records
-
-  # Existing ActiveRecords that are not imported because they already exist in the database
-  attr_accessor :reused_records
 
   # Existing ActiveRecords that are not imported because they already exist in the database
   attr_accessor :reused_records
@@ -148,29 +142,6 @@ class SanitizedJsonImporter
 
   private
 
-  def mapped_appeal_ids
-    @mapped_ids[Appeal.name.underscore]
-  end
-
-  def mapped_user_ids
-    @mapped_ids[User.name.underscore]
-  end
-
-  def add_to_id_mapping(clazz, orig_id, new_id)
-    id_mapping_key = clazz.table_name.classify
-    unless id_mapping[id_mapping_key]
-      # puts "Consider: adding #{id_mapping_key} to @configuration.id_mapping_types"
-      id_mapping[id_mapping_key] = {}
-    end
-    id_mapping[id_mapping_key][orig_id] = new_id
-  end
-
-  def mapped_org_ids
-    @mapped_ids[Organization.name.underscore]
-  end
-
-  # OFFSET_ID_TABLE_FIELDS = SanitizedJsonExporter::OFFSET_ID_FIELDS.transform_keys(&:table_name).freeze
-
   # :reek:FeatureEnvy
   def adjust_ids_by_offset(klass, obj_hash)
     obj_hash["id"] += @id_offset
@@ -226,25 +197,6 @@ class SanitizedJsonImporter
 
   def reassociate_type_table_fields
     @reassociate_type_table_fields ||= @configuration.reassociate_fields[:type].transform_keys(&:table_name).freeze
-  end
-
-  def reassociate_table_fields_hash
-    @reassociate_table_fields_hash ||= @configuration.reassociate_fields
-      .select { |type_string, _| type_string.is_a?(String) }
-      .transform_values { |class_to_fieldnames_hash| class_to_fieldnames_hash.transform_keys(&:table_name) }
-      .freeze
-  end
-
-  def user_id_mapping
-    @id_mapping[User.name.underscore]
-  end
-
-  def reassociate_type_table_fields
-    @reassociate_type_table_fields ||= @configuration.reassociate_fields[:type].transform_keys(&:table_name).freeze
-  end
-
-  def reassociate(obj_hash, id_field, record_id_mapping)
-    obj_hash[id_field] = record_id_mapping[obj_hash[id_field]] if record_id_mapping[obj_hash[id_field]]
   end
 
   def reassociate_table_fields_hash
