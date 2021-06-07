@@ -95,7 +95,7 @@ group :test, :development, :demo do
   gem "factory_bot_rails", "~> 5.2"
   gem "faker"
   gem "guard-rspec"
-  gem 'immigrant'
+  gem "immigrant"
   # Linters
   gem "jshint", platforms: :ruby
   gem "pry"
