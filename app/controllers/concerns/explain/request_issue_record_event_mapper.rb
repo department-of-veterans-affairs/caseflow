@@ -39,6 +39,8 @@ class Explain::RequestIssueRecordEventMapper < Explain::RecordEventMapper
               relevant_data_keys: RELEVANT_DATA_KEYS)
   end
 
+  # To-do: add RequestIssueUpdate events
+
   def request_issue_closed_event
     new_event(record["closed_at"], "closed",
               comment: "#{record['type']} #{record['closed_status']}")
