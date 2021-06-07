@@ -96,8 +96,12 @@ class HearingRenderer
     details
   end
 
-  def readable_date(date)
-    date.strftime("%m-%d-%Y %I:%M%p %Z")
+  def readable_date(date, include_time = true)
+    if include_time
+      date.strftime("%m-%d-%Y %I:%M%p %Z")
+    else
+      date.strftime("%m-%d-%Y")
+    end
   end
 
   def veteran_children(vet)
@@ -253,7 +257,7 @@ class HearingRenderer
     children << {
       "Email events": hearing.email_events.map do |ev|
         "#{ev.recipient_role}, #{ev.email_type}, "\
-          "#{readable_date(ev.sent_at)}, #{ev.external_message_id}"
+          "#{readable_date(ev.sent_at, false)}, #{ev.external_message_id}"
       end
     }
     children << structure(hearing.hearing_task_association.hearing_task)
