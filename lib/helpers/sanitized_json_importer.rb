@@ -25,10 +25,12 @@ require "helpers/sanitized_json_difference.rb"
 class SanitizedJsonImporter
   prepend SanitizedJsonDifference
 
+  # parsed from JSON input
+  attr_accessor :metadata
+
   # Hash parsed from JSON input, whose id fields are modified during importing
   # key = ActiveRecord class's table_name; value = array of JSON of ActiveRecords
   attr_accessor :records_hash
-  attr_accessor :metadata
 
   # Hash of records imported into the database
   # key = ActiveRecord class's table_name; value = ActiveRecords in the database
@@ -105,7 +107,6 @@ class SanitizedJsonImporter
     end.compact
     @records_hash.delete(key)
   end
-  # rubocop:enable
 
   def import_record(key, klass, obj_hash)
     # Record original id in case it changes in the following lines
@@ -138,9 +139,6 @@ class SanitizedJsonImporter
     id_mapping[id_mapping_key] ||= {}
     id_mapping[id_mapping_key][orig_id] = new_id
   end
-  # rubocop:enable
-
-  private
 
   # :reek:FeatureEnvy
   def adjust_ids_by_offset(klass, obj_hash)
