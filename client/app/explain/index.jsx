@@ -24,12 +24,10 @@ class Explain extends React.PureComponent {
  
 
   render = () => {
-    const data = [];
-    console.log(this.columnsFromConfig(EXPLAIN_CONFIG.COLUMNS));
     return ( 
       <QueueTable 
         columns={this.columnsFromConfig(EXPLAIN_CONFIG.COLUMNS)}
-        rowObjects={data}
+        rowObjects={[]}
         summary="test table" slowReRendersAreOk />
     );
   };

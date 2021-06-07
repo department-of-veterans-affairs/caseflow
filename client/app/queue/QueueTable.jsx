@@ -129,7 +129,7 @@ export const HeaderRow = (props) => {
           if ((!props.useTaskPagesApi || column.backendCanSort) && column.getSortValue) {
             const topColor = sorting && !props.sortAscending ? COLORS.PRIMARY : COLORS.GREY_LIGHT;
             const botColor = sorting && props.sortAscending ? COLORS.PRIMARY : COLORS.GREY_LIGHT;
-console.log(column);
+
             sortIcon = (
               <span
                 {...iconStyle}
