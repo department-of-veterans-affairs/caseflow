@@ -244,13 +244,19 @@ class HearingRenderer
     formatted_text
   end
 
+  def format_hearing_label(hearing)
+    hearing_type = print_nil(hearing.readable_request_type)
+    disposition = hearing.disposition.nil? ? "no disposition" : hearing.disposition
+    coordinator = hearing.bva_poc.nil? ? "no coordinator" : hearing.bva_poc
+
+    "#{hearing_type}, #{disposition}, #{coordinator}"
+  end
+
   def shared_hearing_children(hearing)
     children = []
     children << "Notes: #{print_nil(hearing.notes)}" if show_pii
     children << scheduled_for(hearing)
-    children <<
-      "Type: #{print_nil(hearing.readable_request_type)}, "\
-      "Disp: #{print_nil(hearing.disposition)}, HC: #{print_nil(hearing.bva_poc)}"
+    children << format_hearing_label(hearing)
     children << format_hearing_day_label(hearing.hearing_day)
     virtual_hearings = VirtualHearing.where(hearing_id: hearing.id, hearing_type: hearing.class.name)
     children += virtual_hearings.map { |vh| structure(vh) }
