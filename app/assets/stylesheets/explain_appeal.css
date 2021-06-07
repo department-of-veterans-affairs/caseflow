@@ -10,3 +10,23 @@
  * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
  * file per style scope.
  */
+
+.clock {
+  color: rgb(146, 146, 146);
+}
+
+.milestone {
+  color: rgb(0, 8, 126);
+}
+
+.task_assigned {
+  color: rgb(134, 132, 1)
+}
+
+.task_cancelled {
+  color: rgb(143, 80, 80)
+}
+
+.task_completed {
+  color: rgb(0, 90, 0)
+}
