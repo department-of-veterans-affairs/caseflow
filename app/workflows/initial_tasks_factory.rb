@@ -159,7 +159,7 @@ class InitialTasksFactory
 
   def should_streamline_death_dismissal?
     return false if @appeal.appellant_is_not_veteran
-    return false if @appeal.veteran.date_of_death.nil?
+    return false if @appeal.veteran.alive?
 
     FeatureToggle.enabled?(:death_dismissal_streamlining)
   end
