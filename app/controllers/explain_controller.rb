@@ -5,16 +5,22 @@
 # The returned data is also used to display visualizations for the specified appeal.
 
 class ExplainController < ApplicationController
+  include ExplainAppealEventsConcern
+
   def show
     return render_access_error unless current_user.admin?
 
     no_cache
 
-    # https://chodounsky.com/2015/01/26/respond-to-different-formats-in-rails-controller/
-    respond_to do |format|
-      format.html { render layout: "plain_application" }
-      format.text { render plain:  explain_as_text }
-      format.json { render json: sanitized_json }
+    begin
+      # https://chodounsky.com/2015/01/26/respond-to-different-formats-in-rails-controller/
+      respond_to do |format|
+        format.html { render layout: "plain_application" }
+        format.text { render plain:  explain_as_text }
+        format.json { render json: sanitized_json }
+      end
+    rescue StandardError => error
+      raise error.full_message
     end
   end
 
@@ -24,6 +30,7 @@ class ExplainController < ApplicationController
                 :show_pii_query_param, :treee_fields,
                 :available_fields,
                 :task_tree_as_text, :intake_as_text,
+                :event_table_data,
                 :sje
 
   def explain_as_text
@@ -79,14 +86,23 @@ class ExplainController < ApplicationController
     IntakeRenderer.render(appeal, show_pii: show_pii_query_param)
   end
 
+  # :reek:FeatureEnvy
+  def event_table_data
+    task_events = tasks_as_event_data
+    events = appeal_as_event_data(task_events.last.timestamp) +
+             task_events +
+             request_issues_as_event_data
+    events.sort.map(&:as_json)
+  end
+
   def sanitized_json
     return "(LegacyAppeals are not yet supported)".to_json if legacy_appeal?
 
-    sje.file_contents
+    SanitizedJsonExporter.new(appeal, sanitize: !show_pii_query_param, verbosity: 0).file_contents
   end
 
   def sje
-    @sje ||= SanitizedJsonExporter.new(appeal, sanitize: !show_pii_query_param, verbosity: 0)
+    @sje ||= SanitizedJsonExporter.new(appeal, sanitize: false, verbosity: 0)
   end
 
   def legacy_appeal?
