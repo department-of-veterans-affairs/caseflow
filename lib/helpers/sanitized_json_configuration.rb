@@ -74,11 +74,6 @@ class SanitizedJsonConfiguration
         sanitize_fields: %w[instructions],
         retrieval: ->(records) { records[Appeal].map(&:cavc_remand).compact.sort_by(&:id) }
       },
-      CavcRemand => { # dependent on DecisionIssue records
-        # cavc_judge_full_name is selected from Constants::CAVC_JUDGE_FULL_NAMES; no need to sanitize
-        sanitize_fields: %w[instructions],
-        retrieval: ->(records) { records[Appeal].map(&:cavc_remand).compact }
-      },
       Hearing => {
         sanitize_fields: %w[bva_poc military_service notes representative_name summary witness],
         retrieval: lambda do |records|
@@ -356,13 +351,5 @@ class SanitizedJsonConfiguration
     @expected_differences ||= {
       User => [:display_name]
     }
-  end
-  # rubocop:enable Lint/UnusedMethodArgument, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-
-  # ==========  Difference Configuration ==============
-  def expected_differences
-    @expected_differences ||= {
-      User => [:display_name]
-    }.freeze
   end
 end

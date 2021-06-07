@@ -96,22 +96,6 @@ class SanitizedJsonExporter
     obj_hash[field_name]
   end
 
-  def sanitize_object_hash(obj_hash, fieldname_expression, record)
-    if fieldname_expression.is_a?(Regexp)
-      obj_hash.keys.select { |key| key.match?(fieldname_expression) }.each do |key|
-        find_or_create_mapped_value_for(obj_hash, key, obj_class: record.class)
-      end
-    elsif fieldname_expression.is_a?(String)
-      unless obj_hash.key?(fieldname_expression)
-        fail "#{record.class} record doesn't have attribute '#{fieldname_expression}': #{obj_hash}"
-      end
-
-      find_or_create_mapped_value_for(obj_hash, fieldname_expression, obj_class: record.class)
-    else
-      fail "Expecting string or regex for the #{record.class}'s field name: #{fieldname_expression}"
-    end
-  end
-
   # :reek:FeatureEnvy
   def find_or_create_mapped_value_for(obj_hash, field_name, **kwargs)
     return unless obj_hash[field_name]
