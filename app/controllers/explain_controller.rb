@@ -6,6 +6,7 @@
 
 class ExplainController < ApplicationController
   include ExplainAppealEventsConcern
+  include ExplainTimelineConcern
 
   def show
     return render_access_error unless current_user.admin?
@@ -32,11 +33,8 @@ class ExplainController < ApplicationController
                 :available_fields,
                 :task_tree_as_text, :intake_as_text,
                 :event_table_data, :appeal_object_id,
+                :timeline_data,
                 :sje
-
-  def appeal_object_id
-    @appeal_object_id ||= "#{appeal.class.name}_#{appeal.id}"
-  end
 
   def explain_as_text
     [

@@ -4,7 +4,7 @@
 
 <div style="font-size:0.875em; padding:10px">
   <h2>Appeal Narrative</h2>
-  <details open>
+  <details>
     <summary style="color: purple">Narrative table</summary>
     <table style="width: 100%;">
       <tr>
@@ -129,5 +129,17 @@
         <% end %>
       </ul>
     </p>
+
+    <hr/>
+    <h3>Timeline</h3>
+    <div id="timeline"></div>
+    <hr/>
+
+    <script type="text/javascript">
+      // Timeline
+      var timeline_data = <%= timeline_data.to_json.html_safe %>;
+      addTimeline('timeline', timeline_data);
+    </script>
   <% end %>
+
 </div>

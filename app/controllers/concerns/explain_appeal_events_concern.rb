@@ -10,6 +10,10 @@ require "action_view"
 module ExplainAppealEventsConcern
   extend ActiveSupport::Concern
 
+  def appeal_object_id
+    @appeal_object_id ||= "#{appeal.class.name}_#{appeal.id}"
+  end
+
   # :reek:FeatureEnvy
   def event_table_data
     task_events = tasks_as_event_data

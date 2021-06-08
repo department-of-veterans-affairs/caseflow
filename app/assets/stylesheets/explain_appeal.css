@@ -11,6 +11,8 @@
  * file per style scope.
  */
 
+@import 'vis-timeline/dist/vis-timeline-graph2d.min.css';
+
 .clock {
   color: rgb(146, 146, 146);
 }
