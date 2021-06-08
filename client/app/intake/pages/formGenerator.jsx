@@ -24,7 +24,7 @@ import SelectClaimant from '../components/SelectClaimant';
 import BenefitType from '../components/BenefitType';
 import { BOOLEAN_RADIO_OPTIONS, FORM_TYPES, INTAKE_STATES, PAGE_PATHS,
   REQUEST_STATE, REVIEW_OPTIONS, VBMS_BENEFIT_TYPES } from '../constants';
-
+import { convertStringToBoolean } from '../util';
 import ErrorAlert from '../components/ErrorAlert';
 import COPY from '../../../COPY';
 import Alert from '../../components/Alert';
@@ -95,6 +95,16 @@ const formFieldMapping = (props) => {
       // eslint-disable-next-line no-undefined
       value={props.informalConference === null || props.informalConference === undefined ?
         null : props.informalConference.toString()}
+      inputRef={props.register}
+    />,
+    'opt-in-election': <RadioField
+      name="opt-in-election"
+      label="Which review lane did the Veteran select?"
+      strongLabel
+      options={rampElectionRadioOptions}
+      onChange={props.setOptionSelected}
+      errorMessage={props.optionSelectedError || props.errors?.['opt-in-election']?.message}
+      value={props.optionSelected}
       inputRef={props.register}
     />,
     'same-office': <RadioField
@@ -248,6 +258,8 @@ export default connect(
     optionSelectedError: state[props.formName].optionSelectedError,
     informalConference: state[props.formName].informalConference,
     informalConferenceError: state[props.formName].informalConferenceError,
+    optionSelected: state.rampElection.optionSelected,
+    optionSelectedError: state.rampElection.optionSelectedError,
     sameOffice: state[props.formName].sameOffice,
     sameOfficeError: state[props.formName].sameOfficeError,
     appealDocket: state[props.formName].appealDocket,
@@ -263,8 +275,8 @@ export default connect(
     setInformalConference,
     setSameOffice,
     setBenefitType,
-    setOptionSelected,
     setAppealDocket,
-    confirmIneligibleForm
+    confirmIneligibleForm,
+    setOptionSelected
   }, dispatch)
 )(FormGenerator);
