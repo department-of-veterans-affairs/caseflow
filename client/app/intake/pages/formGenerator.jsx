@@ -6,7 +6,7 @@ import { reject, map } from 'lodash';
 import RadioField from '../../components/RadioField';
 import ReceiptDateInput from './receiptDateInput';
 import { setDocketType } from '../actions/appeal';
-import { setReceiptDate } from '../actions/intake';
+import { setReceiptDate, setOptionSelected } from '../actions/intake';
 import LegacyOptInApproved from '../components/LegacyOptInApproved';
 import {
   setVeteranIsNotClaimant,
@@ -199,6 +199,8 @@ export default connect(
     legacyOptInApprovedError: state[props.formName].legacyOptInApprovedError,
     informalConference: state[props.formName].informalConference,
     informalConferenceError: state[props.formName].informalConferenceError,
+    optionSelected: state.rampElection.optionSelected,
+    optionSelectedError: state.rampElection.optionSelectedError,
     sameOffice: state[props.formName].sameOffice,
     sameOfficeError: state[props.formName].sameOfficeError,
     reviewIntakeError: state[props.formName].requestStatus.reviewIntakeError,
@@ -212,5 +214,6 @@ export default connect(
     setInformalConference,
     setSameOffice,
     setBenefitType,
+    setOptionSelected
   }, dispatch)
 )(FormGenerator);

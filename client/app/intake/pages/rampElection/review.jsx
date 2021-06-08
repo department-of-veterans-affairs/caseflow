@@ -8,7 +8,7 @@ const rampElectionFormHeader = (veteranName) => (
 );
 
 const reviewRampElectionSchema = yup.object().shape({
-  ...receiptDateInputValidation(),
+  ...receiptDateInputValidation(true),
   'opt-in-election': yup.string().required(GENERIC_FORM_ERRORS.blank)
 });
 
