@@ -116,7 +116,8 @@ const formFieldMapping = (props) => {
         name="opt-in-election"
         label="Which review lane did the Veteran select?"
         strongLabel
-        options={props.formName === FORM_TYPES.RAMP_REFILING.formName ? rampRefilingRadioOptions : rampElectionRadioOptions}
+        options={props.formName === FORM_TYPES.RAMP_REFILING.formName ?
+          rampRefilingRadioOptions : rampElectionRadioOptions}
         onChange={props.setOptionSelected}
         errorMessage={props.optionSelectedError || props.errors?.['opt-in-election']?.message}
         value={props.optionSelected}
