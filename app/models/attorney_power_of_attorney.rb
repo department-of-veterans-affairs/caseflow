@@ -30,6 +30,10 @@ class AttorneyPowerOfAttorney
     nil
   end
 
+  def stale_attributes?
+    nil
+  end
+
   def bgs_attorney
     @bgs_attorney ||= begin
       BgsAttorney.find_by_participant_id(participant_id)

@@ -93,11 +93,14 @@
   <script type="text/javascript">
     // Handle Task Tree field checkboxes
     function updateTaskTreeLink(){
-      var selected = $('#treeefields input:checked').map( (idx, elem) => elem.name ).get();
-      $('#task_tree_link').attr("href", window.location.href.split('?')[0]+"?fields="+selected.join(','));
+      const selected = Array.prototype.map.call(document.querySelectorAll('#treeefields input:checked'), elem => elem.name);
+      const newUrl = window.location.href.split('?')[0]+"?fields="+selected.join(',');
+      document.querySelector('#task_tree_link').setAttribute("href", newUrl);
     }
     updateTaskTreeLink();
-    $('#treeefields input').change( () => updateTaskTreeLink() );
+    document.querySelectorAll('#treeefields input').forEach((elem)=>{
+      elem.addEventListener('click', () => updateTaskTreeLink());
+    });
   </script>
 
   <% unless legacy_appeal? %>
