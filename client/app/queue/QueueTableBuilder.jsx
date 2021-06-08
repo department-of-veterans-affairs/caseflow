@@ -118,6 +118,7 @@ class QueueTableBuilder extends React.PureComponent {
       [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, filterOptions),
     };
 
+    console.log(functionForColumn[column.name]);
     return functionForColumn[column.name];
   };
 

@@ -2,35 +2,35 @@
   "COLUMNS": {
     "TIMESTAMP": {
       "header": "Timestamp",
-      "name": "timestampColumn"
+      "name": "timestamp"
     },
-    "APPEAL": {
-      "header": "Appeal",
-      "name": "appealColumn"
+    "CONTEXT": {
+      "header": "Context",
+      "name": "context_id"
     },
     "OBJECT_TYPE": {
-      "header": "Object Type",
-      "name": "objectTypeColumn"
-    },
-    "OBJECT_ID": {
-      "header": "Object ID",
-      "name": "objectIdColumn"
+      "header": "Category",
+      "name": "category"
     },
     "EVENT_TYPE": {
       "header": "Event Type",
-      "name": "eventTypeColumn"
+      "name": "event_type"
     },
-    "RELEVANT_DATA": {
-      "header": "Relevant Data",
-      "name": "relevantDataColumn"
+    "OBJECT_ID": {
+      "header": "Object ID",
+      "name": "object_id"
     },
     "COMMENT": {
       "header": "Comment",
-      "name": "commentColumn"
+      "name": "comment"
+    },
+    "RELEVANT_DATA": {
+      "header": "Relevant Data",
+      "name": "relevant_dataaa"
     },
     "DETAILS": {
       "header": "Details",
-      "name": "detailsColumn"
+      "name": "detailsss"
     }
   }
 }

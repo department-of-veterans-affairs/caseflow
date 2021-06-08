@@ -4,23 +4,29 @@ import QueueTable from '../queue/QueueTable';
 import EXPLAIN_CONFIG from '../../constants/EXPLAIN';
 
 class Explain extends React.PureComponent {
-  createColumnObject = (column) => {
-    return { header: column.header, name: column.name }
+  createColumnObject = (column, data) => {
+    console.log(data)
+    return { header: column.header, 
+             name: column.name,
+             valueFunction: (task) => task.[column.name] }
   }
 
-  columnsFromConfig = (columns) => {
+  columnsFromConfig = (columns, data) => {
+    console.log(data)
     let builtColumns = [];
     for (const [columnName, columnKeys] of Object.entries(columns)) {
-      builtColumns.push(this.createColumnObject(columnKeys));
+      builtColumns.push(this.createColumnObject(columnKeys, data));
     }
     return builtColumns;
   }
  
   render = () => {
+    const eventData = this.props.eventData;
+    console.log(eventData)
     return ( 
       <QueueTable 
-        columns={this.columnsFromConfig(EXPLAIN_CONFIG.COLUMNS)}
-        rowObjects={[]}
+        columns={this.columnsFromConfig(EXPLAIN_CONFIG.COLUMNS, eventData)}
+        rowObjects={eventData}
         summary="test table" slowReRendersAreOk />
     );
   };
