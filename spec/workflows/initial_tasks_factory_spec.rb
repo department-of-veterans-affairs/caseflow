@@ -68,16 +68,19 @@ describe InitialTasksFactory, :postgres do
         context "on veteran date of death present" do
           before { FeatureToggle.enable!(:death_dismissal_streamlining) }
           after { FeatureToggle.disable!(:death_dismissal_streamlining) }
+          let(:appeal) do
+            create(
+              :appeal,
+              docket_type: docket_type,
+              claimants: [create(:claimant, participant_id: participant_id_with_no_vso)],
+              veteran: create(:veteran, date_of_death: 30.days.ago.to_date),
+              veteran_is_not_claimant: veteran_is_not_claimant
+            )
+          end
+          let(:veteran_is_not_claimant) { false }
 
           context "on the evidence submission docket is created" do
-            let(:appeal) do
-              create(
-                :appeal,
-                docket_type: Constants.AMA_DOCKETS.evidence_submission,
-                claimants: [create(:claimant, participant_id: participant_id_with_no_vso)],
-                veteran: create(:veteran, date_of_death: 30.days.ago.to_date)
-              )
-            end
+            let(:docket_type) { Constants.AMA_DOCKETS.evidence_submission }
 
             it "is ready for distribution" do
               InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
@@ -87,19 +90,23 @@ describe InitialTasksFactory, :postgres do
           end
 
           context "on hearing docket is created" do
-            let(:appeal) do
-              create(
-                :appeal,
-                docket_type: Constants.AMA_DOCKETS.hearing,
-                claimants: [create(:claimant, participant_id: participant_id_with_no_vso)],
-                veteran: create(:veteran, date_of_death: 30.days.ago.to_date)
-              )
-            end
+            let(:docket_type) { Constants.AMA_DOCKETS.hearing }
 
             it "is ready for distribution" do
               InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
 
               expect(DistributionTask.find_by(appeal: appeal).status).to eq("assigned")
+            end
+          end
+
+          context "when the appellant is not the veteran" do
+            let(:docket_type) { Constants.AMA_DOCKETS.evidence_submission }
+            let(:veteran_is_not_claimant) { true }
+
+            it "does not streamline death dismissal" do
+              InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+
+              expect(EvidenceSubmissionWindowTask.find_by(appeal: appeal)).not_to be_nil
             end
           end
         end

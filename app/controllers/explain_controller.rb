@@ -20,6 +20,7 @@ class ExplainController < ApplicationController
         format.json { render json: sanitized_json }
       end
     rescue StandardError => error
+      # binding.pry
       raise error.full_message
     end
   end

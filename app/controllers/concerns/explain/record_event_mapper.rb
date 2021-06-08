@@ -78,18 +78,18 @@ class Explain::RecordEventMapper
       "issue decision" => -6, # before JudgeDecisionReviewTask "task completed"
 
       # order before "task completed" and "milestone"
-      "issue closed" => -13,
-      "document processed" => -12, # for DecisionDocuments
+      "issue closed" => -3,
+      "document processed" => -2, # for DecisionDocuments
 
       # handle scenario where task is reassigned.
-      "task cancelled" => -4,
-      "task completed" => -3,
-      "milestone" => 0,
-      "task created" => 2,
-      "task assigned" => 3,
-      "task on_hold" => 5,
-      "task started" => 6,
-      "task in_progress" => 7
+      "task cancelled" => 7,
+      "task completed" => 8,
+      "milestone" => 10,
+      "task created" => 13,
+      "task assigned" => 14,
+      "task on_hold" => 15,
+      "task started" => 16,
+      "task in_progress" => 17
     }.freeze
 
     def initialize(timestamp, context_id, category, object_id, event_type)
