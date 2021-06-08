@@ -6,26 +6,42 @@
   <h2>Appeal Narrative</h2>
   <details open>
     <summary style="color: purple">Narrative table</summary>
-    <table>
+    <table style="width: 100%;">
       <tr>
         <th>timestamp</th>
-        <th>context</th>
         <th>category</th>
         <th>event type</th>
-        <th>object id</th>
-        <th>comment</th>
-        <th>relevant_data</th>
+        <th style="width: 60%;">narrative</th>
+        <th style="width: 20%;">relevant_data</th>
         <th>details count</th>
       </tr>
       <% event_table_data.each do |event| %>
         <tr class="<%=event["category"]+'_'+event['event_type']%> <%=event["category"]%>">
-          <td style="padding: 2px"><%= event["timestamp"] %></td>
-          <td style="padding: 2px"><%= event["context_id"] %></td>
+          <td style="padding: 2px"><%=
+            if event["category"] == "clock"
+              event["timestamp"]
+            else
+              DateTime.parse(event["timestamp"]).strftime("%F %T") rescue event["timestamp"]
+            end
+          %></td>
           <td style="padding: 2px"><%= event["category"] %></td>
           <td style="padding: 2px"><%= event["event_type"] %></td>
-          <td style="padding: 2px"><%= event["object_id"] %></td>
-          <td style="padding: 2px"><%= event["comment"] %></td>
-          <td style="padding: 2px"><%= event["relevant_data"] %></td>
+          <td style="padding: 2px">
+            <% if event["comment"] %>
+              <%= event["comment"] %><br/>
+            <% end %>
+            <i>(<%= event["object_id"] %>)</i>
+          </td>
+          <td style="padding: 2px; font-size:0.8em">
+            <% if event["context_id"] != event["object_id"] %>
+              <i>context: <%= event["context_id"] %></i>
+            <% end %>
+            <% if event["relevant_data"] %>
+              <pre style="margin: 0px; width: 300px;"><%=
+                JSON.pretty_generate(event["relevant_data"]).sub("{\n","").sub("\n}","").gsub(/^  /,"")
+              %></pre>
+            <% end %>
+          </td>
           <td style="padding: 2px"><%= event["details"]&.size %></td>
         </tr>
       <% end %>

@@ -26,7 +26,7 @@ class Explain::AppealRecordEventMapper < Explain::RecordEventMapper
       next if count == 0
 
       current_time = receipt_date + count.month
-      events << new_event(current_time, "month", category: "clock", object_id: "month_#{count}")
+      events << new_event(current_time, "month", category: "clock", object_id: "month #{count}")
     end
   end
 
