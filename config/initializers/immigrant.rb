@@ -1,3 +1,4 @@
+require "immigrant"
 
 Immigrant.ignore_keys = [
   # Add FK to column file_number in veterans table
