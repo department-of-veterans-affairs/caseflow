@@ -224,7 +224,7 @@ export const filterDocuments = (criteria, documents, state) => {
 
   const sorted = sortBy(ids, criteria.sort.sortBy);
 
-  if (criteria.sort.sortAscending) {
+  if (!criteria.sort.sortAscending) {
     sorted.reverse();
   }
 
