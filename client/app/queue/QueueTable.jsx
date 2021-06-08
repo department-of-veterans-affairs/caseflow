@@ -234,7 +234,6 @@ export class BodyRows extends React.PureComponent {
       <tbody className={bodyClassName} ref={tbodyRef} id={id} {...bodyStyling}>
         {rowObjects &&
           rowObjects.map((object, rowNumber) => {
-            console.log(object)
             const key = getKeyForRow(rowNumber, object);
 
             return <Row rowObject={object} columns={columns} rowClassNames={rowClassNames} key={key} rowId={key} />;

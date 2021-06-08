@@ -26,11 +26,11 @@
     },
     "RELEVANT_DATA": {
       "header": "Relevant Data",
-      "name": "relevant_dataaa"
+      "name": "relevant_data"
     },
     "DETAILS": {
       "header": "Details",
-      "name": "detailsss"
+      "name": "details"
     }
   }
 }
