@@ -33,7 +33,7 @@
             <i>(<%= event["object_id"] %>)</i>
           </td>
           <td style="padding: 2px; font-size:0.8em">
-            <% if event["context_id"] != event["object_id"] && event["category"] != "clock" %>
+            <% if event["context_id"] != appeal_object_id && event["category"] != "clock" %>
               <i>context: <%= event["context_id"] %></i>
             <% end %>
             <% if event["relevant_data"] %>
