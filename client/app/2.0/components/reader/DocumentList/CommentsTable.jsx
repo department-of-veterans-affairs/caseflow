@@ -15,7 +15,11 @@ import { documentHeaders } from 'components/reader/DocumentList/DocumentsTable/C
 export const CommentsTable = ({ showPdf, documents, comments, filterCriteria, show, documentPathBase, ...props }) => {
   // Filter the rows
   const rows = filterCriteria?.searchQuery ?
-    comments.filter((item) => item.comment.includes(filterCriteria?.searchQuery)) :
+    comments.filter(
+      (item) =>
+        item.comment.includes(filterCriteria?.searchQuery) ||
+          documents[item.document_id]?.type?.toLowerCase()?.includes(filterCriteria?.searchQuery)
+    ) :
     comments;
 
   // Get the row Span for the table
@@ -35,6 +39,8 @@ export const CommentsTable = ({ showPdf, documents, comments, filterCriteria, sh
               return (
                 <Comment
                   {...props}
+                  filterCriteria={filterCriteria}
+                  docType={doc?.type}
                   showPdf={() => showPdf(doc.id)}
                   documentPathBase={documentPathBase}
                   currentDocument={doc}

@@ -115,11 +115,11 @@ export const formatRedirectText = ({ queueTaskType, veteranFullName, vbmsId }) =
  */
 export const formatAppealType = ({ claim }) => {
   // Handle the Claim Type
-  if (claim.cavc && claim.aod) {
+  if (claim?.cavc && claim?.aod) {
     return 'AOD, CAVC';
-  } else if (claim.cavc) {
+  } else if (claim?.cavc) {
     return 'CAVC';
-  } else if (claim.aod) {
+  } else if (claim?.aod) {
     return 'AOD';
   }
 

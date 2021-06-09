@@ -47,6 +47,7 @@ export const Comment = ({
   editComment,
   shareComment,
   filterCriteria,
+  docType,
   ...props
 }) => {
   // Set the Classes for the component
@@ -55,14 +56,16 @@ export const Comment = ({
     'comment-horizontal-container': horizontalLayout
   });
 
+  console.log(filterCriteria?.searchQuery);
+
   return horizontalLayout ? (
     <div className="horizontal-comment">
       <DateLabel date={date} />
       <div className="comment-page-number">
-        {comment.docType && (
+        {docType && (
           <span>
             <Highlight searchQuery={filterCriteria?.searchQuery}>
-              {comment.docType}
+              {docType}
             </Highlight>
           </span>
         )}
@@ -132,6 +135,7 @@ Comment.propTypes = {
   selected: PropTypes.bool,
   filterCriteria: PropTypes.object,
   date: PropTypes.string,
+  docType: PropTypes.string,
   children: PropTypes.element,
   page: PropTypes.number,
   currentDocument: PropTypes.object,

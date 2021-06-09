@@ -35,6 +35,7 @@ import {
   addTag,
   removeTag,
   clearSearch,
+  toggleTagEdit
 } from 'store/reader/documentViewer';
 import {
   selectComment,
@@ -82,6 +83,13 @@ const DocumentViewer = (props) => {
 
   // Create the dispatchers
   const actions = {
+    handleTagEdit: (event) => () => {
+      if (event === 'focus') {
+        return dispatch(toggleTagEdit(true));
+      }
+
+      return dispatch(toggleTagEdit(false));
+    },
     changeTags: (values, deleted) => {
       // Delete tags if there are any removed
       if (deleted) {

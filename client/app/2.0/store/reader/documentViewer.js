@@ -43,6 +43,7 @@ export const initialState = {
   canvasList: [],
   hideSearchBar: true,
   hidePdfSidebar: false,
+  editingTag: false,
   scrollToComment: null,
   pageDimensions: {},
   documentErrors: {},
@@ -380,6 +381,9 @@ const documentViewerSlice = createSlice({
       // Clear the Search Term
       state.search.searchTerm = '';
     },
+    toggleTagEdit: (state, action) => {
+      state.editingTag = action.payload;
+    },
     toggleKeyboardInfo: (state, action) => {
       state.keyboardInfoOpen = action.payload;
     },
@@ -460,6 +464,7 @@ const documentViewerSlice = createSlice({
       addCase(addTag.fulfilled, (state, action) => {
         // Reset the state
         state.pendingTag = false;
+        state.editingTag = false;
 
         // Update the tags
         state.selected.tags = action.payload.tags;
@@ -477,6 +482,7 @@ const documentViewerSlice = createSlice({
       addCase(removeTag.fulfilled, (state, action) => {
         // Reset the state on success
         state.pendingTag = false;
+        state.editingTag = false;
 
         // Filter out the removed text
         state.selected.tags = state.selected.tags.filter(
@@ -533,7 +539,8 @@ export const {
   resetDescription,
   setPageNumber,
   toggleKeyboardInfo,
-  clearSearch
+  clearSearch,
+  toggleTagEdit
 } = documentViewerSlice.actions;
 
 // Default export the reducer

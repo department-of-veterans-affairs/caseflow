@@ -277,17 +277,9 @@ RSpec.feature "Reader", :all_dbs do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       single_link = find_link(documents[0].type)[:href]
       visit single_link
-      # Make sure there is document metadata, but no back button.
-      begin
-        expect(page).to have_content(documents[0].type)
-      rescue StandardError
-        Rails.logger.error("BEGIN LOGS")
-        page.driver.browser.manage.logs.get(:browser).each do |log|
-          Rails.logger.error(log)
-        end
-        Rails.logger.error("END LOGS")
-      end
 
+      # Make sure there is document metadata, but no back button.
+      expect(page).to have_content(documents[0].type)
       expect(page).to_not have_content("Back to all documents")
 
       visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
@@ -615,6 +607,7 @@ RSpec.feature "Reader", :all_dbs do
         # Filtering the document list should work in "Comments" mode.
         fill_in "searchBar", with: "form"
         expect(page.has_no_content?(documents[0].type)).to eq(true)
+        # byebug
         expect(page).to have_content(documents[1].type)
 
         click_on "Documents"

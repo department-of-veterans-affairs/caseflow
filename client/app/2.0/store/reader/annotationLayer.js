@@ -23,6 +23,7 @@ export const initialState = {
   moving: 0,
   droppedComment: null,
   pendingDeletion: false,
+  editingComment: false,
 };
 
 /**
@@ -131,6 +132,7 @@ const annotationLayerSlice = createSlice({
       state.errors = initialState.errors;
     },
     startEdit: (state, action) => {
+      state.editingComment = Boolean(action.payload);
       state.comments = state.comments.map((comment) => ({
         ...comment,
         pendingComment: comment.comment,
@@ -187,6 +189,7 @@ const annotationLayerSlice = createSlice({
       addCase(saveComment.fulfilled, (state, action) => {
         // Reset the state
         state.saving = false;
+        state.editingComment = false;
         state.droppedComment = null;
 
         // Update the comment state

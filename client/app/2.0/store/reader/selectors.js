@@ -107,6 +107,7 @@ export const documentScreen = (state) => {
       !isEmpty(state.reader.documentList.filterCriteria.tag),
     currentPageIndex: state.reader.documentViewer.currentPageIndex,
     pendingTag: state.reader.documentViewer.pendingTag,
+    editingTag: state.reader.documentViewer.editingTag,
     pendingCategory: state.reader.documentViewer.pendingCategory,
     documentTags: state.reader.documentViewer.tags,
     tagOptions: formatTagValue(
@@ -116,6 +117,7 @@ export const documentScreen = (state) => {
     keyboardInfoOpen: state.reader.documentViewer.keyboardInfoOpen,
     pendingDeletion: state.reader.annotationLayer.pendingDeletion,
     droppedComment: state.reader.annotationLayer.droppedComment,
+    editingComment: state.reader.annotationLayer.editingComment,
     addingComment: state.reader.annotationLayer.dropping,
     movingComment: state.reader.annotationLayer.moving,
     savingComment: state.reader.annotationLayer.saving,
