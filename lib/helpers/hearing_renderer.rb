@@ -182,7 +182,7 @@ class HearingRenderer
       unscheduled_hearing_label = "Unscheduled Hearing (SCH Task ID: #{sh_task.id}, RO queue: #{ro_label})"
       unscheduled_note = show_pii ? sh_task.parent&.instructions : 'Show PII to see notes'
 
-      { unscheduled_hearing_label => ["Notes: #{unscheduled_note}"] }
+      { unscheduled_hearing_label => ["Notes: #{print_nil(unscheduled_note)}"] }
     end
 
     unscheduled_hearings
