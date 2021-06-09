@@ -554,9 +554,8 @@ describe Distribution, :all_dbs do
       end
 
       context "when there is no limit specified" do
-        it "distributes all priority cases associated with the judge" do
+        it "distributes all legacy priority cases associated with the judge" do
           distributed_case_ids = priority_legacy_hearings_tied_to_judge.map(&:folder_nr)
-            .concat(priority_ama_hearings_tied_to_judge.map(&:uuid))
           subject.distribute!
           expect(subject.valid?).to eq(true)
           expect(subject.priority_push).to eq(true)
@@ -573,9 +572,7 @@ describe Distribution, :all_dbs do
           expect(subject.distributed_cases.where(docket: "legacy").count).to eq(
             priority_legacy_hearings_tied_to_judge.count
           )
-          expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.hearing).count).to eq(
-            priority_ama_hearings_tied_to_judge.count
-          )
+          expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.hearing).count).to eq 0
           expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.direct_review).count).to eq 0
           expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.evidence_submission).count).to eq 0
           expect(subject.distributed_cases.pluck(:case_id)).to match_array distributed_case_ids

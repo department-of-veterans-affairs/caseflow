@@ -20,11 +20,12 @@ describe HearingRequestDocket, :all_dbs do
       second_appeal = matching_all_base_conditions_with_no_hearings
       third_appeal = matching_all_base_conditions_with_no_held_hearings
       fourth_appeal = matching_all_base_conditions_with_most_recent_hearing_tied_to_other_active_judge_but_not_held
+      fifth_appeal = matching_all_conditions_except_not_tied_to_active_judge
+      sixth_appeal = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_active_judge
       # This one below should never happen, but is included for completeness
-      fifth_appeal = matching_all_base_conditions_with_most_recent_held_hearing_not_tied_to_any_judge
+      seventh_appeal = matching_all_base_conditions_with_most_recent_held_hearing_not_tied_to_any_judge
 
-      result = [first_appeal, second_appeal, third_appeal, fourth_appeal, fifth_appeal]
-        .map(&:ready_for_distribution_at).map(&:to_s)
+      result = [first_appeal, second_appeal, third_appeal, fourth_appeal, fifth_appeal, sixth_appeal, seventh_appeal].map(&:ready_for_distribution_at).map(&:to_s)
 
       # For some reason, in Circle CI, the datetimes are not matching exactly to the millisecond
       expect(subject.map(&:to_s)).to match_array(result)
@@ -47,16 +48,11 @@ describe HearingRequestDocket, :all_dbs do
           where the most recent held hearing is tied to the distribution judge" do
         create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
         matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
-        appeal = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
+        create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
 
         tasks = subject
-
-        expect(tasks.length).to eq(1)
-        expect(tasks.first.class).to eq(DistributedCase)
-        expect(tasks.first.genpop).to eq false
-        expect(tasks.first.genpop_query).to eq "not_genpop"
-        expect(distribution.distributed_cases.length).to eq(1)
-        expect(distribution_judge.reload.tasks.map(&:appeal)).to eq([appeal])
+        expect(tasks.length).to eq(0)
+        expect(distribution.distributed_cases.length).to eq(0)
       end
     end
 
@@ -76,18 +72,13 @@ describe HearingRequestDocket, :all_dbs do
         matching_all_base_conditions_with_most_recent_hearing_tied_to_distribution_judge_but_not_held
         matching_all_base_conditions_with_most_recent_held_hearing_not_tied_to_any_judge
         matching_all_base_conditions_with_most_recent_held_hearing_tied_to_other_active_judge
-
-        appeal = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
-        another = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
+        matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
+        matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
 
         tasks = subject
 
-        expect(tasks.length).to eq(2)
-        expect(tasks.first.class).to eq(DistributedCase)
-        expect(tasks.first.genpop).to eq false
-        expect(tasks.first.genpop_query).to eq "not_genpop"
-        expect(distribution.distributed_cases.length).to eq(2)
-        expect(distribution_judge.reload.tasks.map(&:appeal)).to match_array([appeal, another])
+        expect(tasks.length).to eq(0)
+        expect(distribution.distributed_cases.length).to eq(0)
       end
     end
 
@@ -104,20 +95,21 @@ describe HearingRequestDocket, :all_dbs do
           that are either genpop or not genpop" do
         not_tied = create_priority_distributable_hearing_appeal_not_tied_to_any_judge
         tied = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
+        other_judge = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_active_judge
+
         create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
         create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
-        matching_all_base_conditions_with_most_recent_held_hearing_tied_to_active_judge
 
         tasks = subject
 
-        expect(tasks.length).to eq(2)
+        expect(tasks.length).to eq(3)
         expect(tasks.first.class).to eq(DistributedCase)
-        expect(tasks.first.genpop).to eq false
+        expect(tasks.first.genpop).to eq true
         expect(tasks.first.genpop_query).to eq "any"
         expect(tasks.second.genpop).to eq true
         expect(tasks.second.genpop_query).to eq "any"
-        expect(distribution.distributed_cases.length).to eq(2)
-        expect(distribution_judge.reload.tasks.map(&:appeal)).to match_array([tied, not_tied])
+        expect(distribution.distributed_cases.length).to eq(3)
+        expect(distribution_judge.reload.tasks.map(&:appeal)).to match_array([tied, not_tied, other_judge])
       end
 
       context "when the limit is one" do
@@ -160,7 +152,7 @@ describe HearingRequestDocket, :all_dbs do
 
         expect(tasks.length).to eq(4)
         expect(tasks.first.class).to eq(DistributedCase)
-        expect(tasks.first.genpop).to eq false
+        expect(tasks.first.genpop).to eq true
         expect(tasks.first.genpop_query).to eq "any"
         expect(tasks.second.genpop).to eq true
         expect(tasks.second.genpop_query).to eq "any"
@@ -181,6 +173,8 @@ describe HearingRequestDocket, :all_dbs do
         appeal = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_inactive_judge
         no_held_hearings = matching_all_base_conditions_with_no_held_hearings
         no_hearings = matching_all_base_conditions_with_no_hearings
+        hearing_for_different_judge = matching_all_conditions_except_not_tied_to_active_judge
+        no_judge_for_hearing = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_active_judge
 
         create_appeals_that_should_not_be_returned_by_query
         create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
@@ -188,13 +182,13 @@ describe HearingRequestDocket, :all_dbs do
 
         tasks = subject
 
-        expect(tasks.length).to eq(3)
+        expect(tasks.length).to eq(5)
         expect(tasks.first.class).to eq(DistributedCase)
         expect(tasks.first.genpop).to eq true
         expect(tasks.first.genpop_query).to eq "only_genpop"
-        expect(distribution.distributed_cases.length).to eq(3)
+        expect(distribution.distributed_cases.length).to eq(5)
         expect(distribution_judge.reload.tasks.map(&:appeal))
-          .to match_array([appeal, no_held_hearings, no_hearings])
+          .to match_array([appeal, no_held_hearings, no_hearings, hearing_for_different_judge, no_judge_for_hearing])
       end
     end
 
@@ -208,21 +202,21 @@ describe HearingRequestDocket, :all_dbs do
       it "only distributes nonpriority, distributable, hearing docket, genpop cases" do
         create_priority_distributable_hearing_appeal_not_tied_to_any_judge
         matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
-        create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
-
+        
+        non_genpop_appeal = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
         appeal = create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
         no_held_hearings = non_priority_with_no_held_hearings
         no_hearings = non_priority_with_no_hearings
 
         tasks = subject
 
-        expect(tasks.length).to eq(3)
+        expect(tasks.length).to eq(4)
         expect(tasks.first.class).to eq(DistributedCase)
         expect(tasks.map(&:genpop).uniq).to eq [true]
         expect(tasks.map(&:genpop_query).uniq).to eq ["only_genpop"]
-        expect(distribution.distributed_cases.length).to eq(3)
+        expect(distribution.distributed_cases.length).to eq(4)
         expect(distribution_judge.reload.tasks.map(&:appeal))
-          .to match_array([appeal, no_held_hearings, no_hearings])
+          .to match_array([non_genpop_appeal, appeal, no_held_hearings, no_hearings])
       end
     end
 
@@ -290,12 +284,10 @@ describe HearingRequestDocket, :all_dbs do
   private
 
   def create_appeals_that_should_not_be_returned_by_query
-    matching_all_conditions_except_not_tied_to_active_judge
     matching_all_conditions_except_priority
     matching_all_conditions_except_ready_for_distribution
     matching_all_conditions_except_priority_and_ready_for_distribution
     matching_only_priority_and_ready_for_distribution
-    matching_all_base_conditions_with_most_recent_held_hearing_tied_to_active_judge
   end
 
   def matching_all_base_conditions_with_no_hearings
@@ -340,6 +332,7 @@ describe HearingRequestDocket, :all_dbs do
                      disposition: "held",
                      appeal: appeal)
     hearing.update(judge: active_judge)
+    appeal
   end
 
   def matching_all_conditions_except_priority
