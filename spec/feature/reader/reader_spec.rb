@@ -269,7 +269,6 @@ RSpec.feature "Reader", :all_dbs do
     end
 
     scenario "Open document in new tab" do
-      Rails.logger.error("Opening document #{documents[0]} on appeal #{appeal.vacols_id}")
       # Open the URL that the first document button points to. We cannot simply
       # click on the link since we've overridden the mouseup event to not open
       # the link, but instead to move to the document view in the SPA. Middle clicking
@@ -279,8 +278,19 @@ RSpec.feature "Reader", :all_dbs do
       single_link = find_link(documents[0].type)[:href]
       visit single_link
 
+      Rails.logger.error("BEGIN LOGS")
+      page.driver.browser.manage.logs.get(:browser).each do |log|
+        Rails.logger.error(log)
+      end
+      Rails.logger.error("END LOGS")
       # Make sure there is document metadata, but no back button.
       expect(page).to have_content(documents[0].type)
+      Rails.logger.error("AFTER LOGS")
+      page.driver.browser.manage.logs.get(:browser).each do |log|
+        Rails.logger.error(log)
+      end
+      Rails.logger.error("FINISH LOGS")
+
       expect(page).to_not have_content("Back to all documents")
 
       visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
