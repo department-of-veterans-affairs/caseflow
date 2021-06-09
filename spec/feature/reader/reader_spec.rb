@@ -277,19 +277,16 @@ RSpec.feature "Reader", :all_dbs do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       single_link = find_link(documents[0].type)[:href]
       visit single_link
-
-      Rails.logger.error("BEGIN LOGS")
-      page.driver.browser.manage.logs.get(:browser).each do |log|
-        Rails.logger.error(log)
-      end
-      Rails.logger.error("END LOGS")
       # Make sure there is document metadata, but no back button.
-      expect(page).to have_content(documents[0].type)
-      Rails.logger.error("AFTER LOGS")
-      page.driver.browser.manage.logs.get(:browser).each do |log|
-        Rails.logger.error(log)
+      begin
+        expect(page).to have_content(documents[0].type)
+      rescue StandardError
+        Rails.logger.error("BEGIN LOGS")
+        page.driver.browser.manage.logs.get(:browser).each do |log|
+          Rails.logger.error(log)
+        end
+        Rails.logger.error("END LOGS")
       end
-      Rails.logger.error("FINISH LOGS")
 
       expect(page).to_not have_content("Back to all documents")
 
