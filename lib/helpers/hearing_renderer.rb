@@ -279,7 +279,7 @@ class HearingRenderer
     children << {
       "Email events": hearing.email_events.map do |ev|
         "#{ev.recipient_role}, #{ev.email_type}, "\
-          "#{readable_date(ev.sent_at, false)}, #{ev.external_message_id}"
+          "#{readable_date(ev.sent_at, false)}"
       end
     }
     children << structure(hearing&.hearing_task_association&.hearing_task)
