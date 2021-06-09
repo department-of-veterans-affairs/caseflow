@@ -118,14 +118,14 @@ class HearingRenderer
 
   def get_appeal_type_conversions(appeal)
     unformatted_versions = appeal.versions
-    versions = unformatted_versions.map do |v|
-      change = v.changeset["changed_hearing_request_type"] ||
-               v.changeset["changed_request_type"]
+    versions = unformatted_versions.map do |version|
+      change = version.changeset["changed_hearing_request_type"] ||
+               version.changeset["changed_request_type"]
       {
         "from_type" => print_nil(Hearing::HEARING_TYPES[change[0]&.to_sym]),
         "to_type" => Hearing::HEARING_TYPES[change[1]&.to_sym],
-        "converted_by" => User.find(v.whodunnit).css_id,
-        "converted_at" => readable_date(v.created_at)
+        "converted_by" => User.find(version.whodunnit).css_id,
+        "converted_at" => readable_date(version.created_at)
       }
     end
 
