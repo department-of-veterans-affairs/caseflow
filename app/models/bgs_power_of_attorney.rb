@@ -243,12 +243,7 @@ class BgsPowerOfAttorney < CaseflowRecord
   end
 
   def update_ihp_enabled?
-    toggle_on = FeatureToggle.enabled?(:poa_auto_ihp_update, user: RequestStore.store[:current_user])
-    Raven.capture_message("Checking if IHP should be updated..." \
-    "Is feature toggle enabled for this user?: #{toggle_on}" \
-    "Was there a POA participant ID change?: #{saved_change_to_poa_participant_id?}" \
-    "POA participant ID: #{poa_participant_id}" \
-    "File number: #{file_number}")
-    toggle_on && saved_change_to_poa_participant_id?
+    FeatureToggle.enabled?(:poa_auto_ihp_update, user: RequestStore.store[:current_user]) &&
+      saved_change_to_poa_participant_id?
   end
 end
