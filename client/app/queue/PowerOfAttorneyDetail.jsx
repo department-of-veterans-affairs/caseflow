@@ -93,10 +93,6 @@ export const PowerOfAttorneyNameUnconnected = ({ powerOfAttorney }) => (
 export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, poaAlert, appellantType }) => {
   let poa = powerOfAttorney;
 
-  // poa.representative_type = 'Unrecognized representative';
-
-  // poa.representative_type = 'Attorney';
-
   if (poaAlert.powerOfAttorney) {
     poa = poaAlert.powerOfAttorney;
   }
