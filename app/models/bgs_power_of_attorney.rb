@@ -153,7 +153,7 @@ class BgsPowerOfAttorney < CaseflowRecord
   end
 
   def update_ihp_task
-    appeals = Appeal.where(veteran_file_number: file_number, poa_participant_id: poa_participant_id)
+    appeals = fetch_appeals
     appeals.each do |appeal|
       InformalHearingPresentationTask.update_to_new_poa(appeal)
     end
@@ -190,6 +190,10 @@ class BgsPowerOfAttorney < CaseflowRecord
     return if poa_participant_id.blank?
 
     @person ||= Person.find_or_create_by_participant_id(poa_participant_id)
+  end
+
+  def fetch_appeals
+    Appeal.where(veteran_file_number: file_number, claimant_participant_id: claimant_participant_id)
   end
 
   def fetch_bgs_record
