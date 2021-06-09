@@ -33,7 +33,6 @@ class HearingRenderer
     @show_pii = show_pii
   end
 
-  # :reek:DuplicateMethodCall 
   def structure(obj, include_breadcrumbs: false)
     return if obj.nil?
 
@@ -45,7 +44,6 @@ class HearingRenderer
     { "#{label(obj)}": children }
   end
 
-  # :reek:DuplicateMethodCall 
   def label(obj)
     return "nil" if obj.nil?
 
