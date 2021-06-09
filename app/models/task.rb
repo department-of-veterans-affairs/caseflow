@@ -95,7 +95,7 @@ class Task < CaseflowRecord
 
   scope :with_cached_appeals, -> { joins(Task.joins_with_cached_appeals_clause) }
 
-  scope :with_children_existence, -> { joins(Task.joins_with_no_children_exist_clause).select('*') }
+  scope :with_children_existence, -> { joins(Task.joins_with_no_children_exist_clause).select("*") }
 
   ############################################################################################
   ## class methods
@@ -237,7 +237,9 @@ class Task < CaseflowRecord
     # preload a has_no_children boolean method.
     def joins_with_no_children_exist_clause
       "LEFT OUTER JOIN (" \
-      "SELECT $1::INTEGER AS id, NOT EXISTS (SELECT 1 FROM #{Task.table_name} WHERE #{Task.table_name}.parent_id = $1) AS has_no_children) AS kids USING (id)"
+      "SELECT $1::INTEGER AS id, " \
+      "NOT EXISTS (SELECT 1 FROM #{Task.table_name} WHERE #{Task.table_name}.parent_id = $1) " \
+      "AS has_no_children) AS kids USING (id)"
     end
 
     # Sorting tasks by docket number within each category of appeal: case type, aod, docket number
@@ -329,13 +331,15 @@ class Task < CaseflowRecord
   end
 
   # check for pre-loaded existence method first
+  # rubocop:disable Lint/UselessAssignment
   def open_with_no_children?
     begin
       open? && has_no_children
-    rescue NameError => e
+    rescue NameError => error
       open? && children.empty?
     end
   end
+  # rubocop:enable Lint/UselessAssignment
 
   # When a status is "active" we expect properties of the task to change
   # When a task is not "active" we expect that properties of the task will not change
@@ -838,4 +842,3 @@ class Task < CaseflowRecord
     true
   end
 end
-# rubocop:enable Metrics/ClassLength
