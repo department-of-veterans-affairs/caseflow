@@ -334,7 +334,7 @@ RSpec.feature "Case details", :all_dbs do
       end
 
       %w[Attorney Other].each do |claimant_type|
-        xscenario "details view informs us that appellant's relationship to Veteran is #{claimant_type}" do
+        scenario "details view informs us that appellant's relationship to Veteran is #{claimant_type}" do
           claimant = create(
             :claimant,
             :with_unrecognized_appellant_detail,
@@ -404,28 +404,6 @@ RSpec.feature "Case details", :all_dbs do
           visit "/queue/appeals/#{appeal.uuid}"
           expect(page).to_not have_content(COPY::CASE_DETAILS_UNRECOGNIZED_POA)
           expect(page).to have_content(appeal.representative_name)
-          expect(page).to_not have_button('Refresh POA')
-        end
-      end
-
-      context "when a recognized appellant has an unrecognized POA" do
-        before do
-          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return(nil)
-
-          allow_any_instance_of(BgsPowerOfAttorney).to receive(:representative_type)
-            .and_return("Unrecognized representative")
-
-          allow(BgsPowerOfAttorney).to receive(:fetch_bgs_poa_by_participant_id).and_return(nil)
-          allow(BgsPowerOfAttorney).to receive(:find_or_create_by_claimant_participant_id).and_return(nil)
-          FeatureToggle.enable!(:poa_button_refresh)
-        end
-        after { FeatureToggle.disable!(:poa_button_refresh) }
-
-        let(:appeal) { create(:appeal) }
-
-        scenario "details view does not contain POA information" do
-          visit "/queue/appeals/#{appeal.uuid}"
-          expect(page).to have_content(COPY::CASE_DETAILS_UNRECOGNIZED_POA)
           expect(page).to_not have_button('Refresh POA')
         end
       end
