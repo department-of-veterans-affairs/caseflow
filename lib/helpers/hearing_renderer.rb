@@ -51,8 +51,8 @@ class HearingRenderer
     end
 
     def prefix(obj)
-      klass = renderable_classes.find { |k| obj.is_a?(k) }
-      klass&.name&.underscore
+      klass_to_prefix = renderable_classes.find { |klass| obj.is_a?(klass) }
+      klass_to_prefix&.name&.underscore
     end
   end
 
@@ -172,11 +172,11 @@ class HearingRenderer
   end
 
   def get_unscheduled_hearings(appeal)
-    regional_office = appeal.closest_regional_office
-    ro_label = regional_office.nil? ? COPY::UNKNOWN_REGIONAL_OFFICE : get_ro_label(regional_office)
-
     open_schedule_hearing_tasks = appeal.tasks.open.of_type(:ScheduleHearingTask)
     return "" if open_schedule_hearing_tasks.nil?
+
+    regional_office = appeal.closest_regional_office
+    ro_label = regional_office.nil? ? COPY::UNKNOWN_REGIONAL_OFFICE : get_ro_label(regional_office)
 
     unscheduled_hearings = open_schedule_hearing_tasks.map do |sh_task|
       unscheduled_hearing_label = "Unscheduled Hearing (SCH Task ID: #{sh_task.id}, RO queue: #{ro_label})"
