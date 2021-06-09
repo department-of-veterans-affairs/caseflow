@@ -21,7 +21,7 @@
       "name": "object_id"
     },
     "COMMENT": {
-      "header": "Comment",
+      "header": "Narrative",
       "name": "comment"
     },
     "RELEVANT_DATA": {
