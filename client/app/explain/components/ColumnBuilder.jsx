@@ -31,23 +31,32 @@ export const contextColumn = (column) => {
   }
 }
 
-export const objectTyleColumn = (column) => {
+export const objectTypeColumn = (column, filterOptions, narratives) => {
   return {
     header: column.header,
     name: column.name,
     valueFunction: (rowData) => rowData.[column.name],
     backendCanSort: true,
+    columnName: 'category',
+    enableFilter: true,
+    anyFiltersAreSet: true,
+    tableData: narratives,
     label: 'Sort by category',
+    bodyClassName: 'closestRegionalOffice.location_hash.city',
     getSortValue: (rowData) => rowData.[column.name]
   }
 }
 
-export const eventTypeColumn = (column) => {
+export const eventTypeColumn = (column, filterOptions, narratives) => {
   return {
     header: column.header,
     name: column.name,
     valueFunction: (rowData) => rowData.[column.name],
     backendCanSort: true,
+    columnName: 'event_type',
+    enableFilter: true,
+    anyFiltersAreSet: true,
+    tableData: narratives,
     label: 'Sort by event type',
     getSortValue: (rowData) => rowData.[column.name]
   }

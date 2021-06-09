@@ -91,7 +91,6 @@ export const badgesColumn = () => {
 };
 
 export const detailsColumn = (tasks, requireDasRecord, userRole) => {
-  console.log(tasks)
   return {
     header: COPY.CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE,
     name: QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,

@@ -10,11 +10,13 @@
     },
     "OBJECT_TYPE": {
       "header": "Category",
-      "name": "category"
+      "name": "category",
+      "filterable": true
     },
     "EVENT_TYPE": {
       "header": "Event Type",
-      "name": "event_type"
+      "name": "event_type",
+      "filterable": true
     },
     "OBJECT_ID": {
       "header": "Object ID",

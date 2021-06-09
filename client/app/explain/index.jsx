@@ -5,7 +5,7 @@ import EXPLAIN_CONFIG from '../../constants/EXPLAIN';
 import {
   timestampColumn,
   contextColumn,
-  objectTyleColumn,
+  objectTypeColumn,
   eventTypeColumn,
   objectIdColumn,
   commentColumn,
@@ -14,7 +14,11 @@ import {
 } from './components/ColumnBuilder'
 
 class Explain extends React.PureComponent {
-  createColumnObject = (column) => {
+  filterValuesForColumn = (column) =>
+    column && column.filterable && column.filter_options;
+
+  createColumnObject = (column, narratives) => {
+    const filterOptions = this.filterValuesForColumn(column);
     const functionForColumn = {
       [EXPLAIN_CONFIG.COLUMNS.TIMESTAMP.name]: timestampColumn(
         column
@@ -22,11 +26,15 @@ class Explain extends React.PureComponent {
       [EXPLAIN_CONFIG.COLUMNS.CONTEXT.name]: contextColumn(
         column
       ),
-      [EXPLAIN_CONFIG.COLUMNS.OBJECT_TYPE.name]: objectTyleColumn(
-        column
+      [EXPLAIN_CONFIG.COLUMNS.OBJECT_TYPE.name]: objectTypeColumn(
+        column,
+        filterOptions,
+        narratives
       ),
       [EXPLAIN_CONFIG.COLUMNS.EVENT_TYPE.name]: eventTypeColumn(
-        column
+        column,
+        filterOptions,
+        narratives
       ),
       [EXPLAIN_CONFIG.COLUMNS.OBJECT_ID.name]: objectIdColumn(
         column
@@ -41,28 +49,22 @@ class Explain extends React.PureComponent {
         column
       )
     };
-    console.log(column)
     return functionForColumn[column.name];
-
-    // return { header: column.header, 
-    //          name: column.name,
-    //          valueFunction: (task) => task.[column.name] }
   }
 
-  columnsFromConfig = (columns) => {
+  columnsFromConfig = (columns, narratives) => {
     let builtColumns = [];
     for (const [columnName, columnKeys] of Object.entries(columns)) {
-      builtColumns.push(this.createColumnObject(columnKeys));
+      builtColumns.push(this.createColumnObject(columnKeys, narratives));
     }
     return builtColumns;
   }
- 
+
   render = () => {
     const eventData = this.props.eventData;
-    console.log(eventData)
     return ( 
       <QueueTable 
-        columns={this.columnsFromConfig(EXPLAIN_CONFIG.COLUMNS)}
+        columns={this.columnsFromConfig(EXPLAIN_CONFIG.COLUMNS, eventData)}
         rowObjects={eventData}
         summary="test table" slowReRendersAreOk />
     );
