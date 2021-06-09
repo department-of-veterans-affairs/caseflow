@@ -3,14 +3,14 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { useHistory } from 'react-router';
 import { bindActionCreators } from 'redux';
-import _ from 'lodash';
+import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { css } from 'glamor';
 
 import { PAGE_PATHS, FORM_TYPES, REQUEST_STATE, VBMS_BENEFIT_TYPES } from '../constants';
-import RampElectionPage, { reviewRampElectionSchema } from './rampElection/review';
+import { rampElectionFormHeader, reviewRampElectionSchema } from './rampElection/review';
 import RampRefilingPage, { reviewRampRefilingSchema } from './rampRefiling/review';
 import { reviewSupplementalClaimSchema, supplementalClaimHeader } from './supplementalClaim/review';
 import { higherLevelReviewFormHeader, reviewHigherLevelReviewSchema } from './higherLevelReview/review';
@@ -50,7 +50,7 @@ const Review = (props) => {
   );
 
   const { push } = useHistory();
-  const selectedForm = _.find(FORM_TYPES, { key: props.formType });
+  const selectedForm = find(FORM_TYPES, { key: props.formType });
   const intakeData = selectedForm ? props.intakeForms[selectedForm.key] : null;
 
   const submitReview = () => {
@@ -88,7 +88,13 @@ const Review = (props) => {
     >
       <SwitchOnForm
         formComponentMapping={{
-          ramp_election: <RampElectionPage {...formProps} />,
+          ramp_election: <FormGenerator
+            formName={selectedForm?.formName}
+            formHeader={rampElectionFormHeader}
+            schema={schemaMappings.ramp_election}
+            featureToggles={props.featureToggles}
+            {...formProps}
+          />,
           ramp_refiling: <RampRefilingPage {...formProps} />,
           supplemental_claim: <FormGenerator
             formName={selectedForm?.formName}
@@ -151,7 +157,7 @@ const ReviewNextButton = (props) => {
 
   // selected form might be null or empty if the review has been canceled
   // in that case, just use null as data types since page will be redirected
-  const selectedFormState = _.find(FORM_TYPES, { key: formType });
+  const selectedFormState = find(FORM_TYPES, { key: formType });
   const intakeDataState = selectedFormState ? intakeForms[selectedFormState.key] : null;
 
   const rampRefilingIneligibleOption = () => {
