@@ -1,6 +1,9 @@
 import * as React from 'react';
 import COPY from '../../../COPY';
 import EXPLAIN_CONFIG from '../../../constants/EXPLAIN';
+import Modal from '../../components/Modal'
+import Link from '../../components/Link'
+import { css } from 'glamor';
 
 export const timestampColumn = (column) => {
   return {
@@ -101,10 +104,41 @@ export const relevanttDataColumn = (column) => {
 }
 
 export const detailsColumn = (column) => {
+  const linkStyling = css({
+    cursor: 'pointer',
+  });
+
+  let displayDetails = (details) => {
+    <Modal
+      title="Details"
+      buttons={[
+        {
+          classNames: ['usa-button', 'cf-btn-link'],
+          name: COPY.MODAL_CANCEL_BUTTON,
+        }
+      ]}
+    >
+      JSON.stringify(details)
+    </Modal>
+  }
+
   return {
     header: column.header,
     name: column.name,
-    valueFunction: (rowData) => JSON.stringify(rowData.[column.name])
+    valueFunction: (rowData) => {
+      var count = 0;
+
+      for(var prop in rowData.[column.name]) {
+        if(rowData.[column.name].hasOwnProperty(prop))
+          ++count;
+      }
+      return <span {...linkStyling}> 
+        <Link onClick={displayDetails(rowData.[column.name])}>
+          {count}
+        </Link>
+      </span>
+
+    }
   }
 }
 
