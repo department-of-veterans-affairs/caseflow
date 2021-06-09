@@ -25,7 +25,15 @@ describe HearingRequestDocket, :all_dbs do
       # This one below should never happen, but is included for completeness
       seventh_appeal = matching_all_base_conditions_with_most_recent_held_hearing_not_tied_to_any_judge
 
-      result = [first_appeal, second_appeal, third_appeal, fourth_appeal, fifth_appeal, sixth_appeal, seventh_appeal].map(&:ready_for_distribution_at).map(&:to_s)
+      result = [
+        first_appeal,
+        second_appeal,
+        third_appeal,
+        fourth_appeal,
+        fifth_appeal,
+        sixth_appeal,
+        seventh_appeal
+      ].map(&:ready_for_distribution_at).map(&:to_s)
 
       # For some reason, in Circle CI, the datetimes are not matching exactly to the millisecond
       expect(subject.map(&:to_s)).to match_array(result)
@@ -202,7 +210,7 @@ describe HearingRequestDocket, :all_dbs do
       it "only distributes nonpriority, distributable, hearing docket, genpop cases" do
         create_priority_distributable_hearing_appeal_not_tied_to_any_judge
         matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
-        
+
         non_genpop_appeal = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
         appeal = create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
         no_held_hearings = non_priority_with_no_held_hearings

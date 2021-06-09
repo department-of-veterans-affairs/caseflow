@@ -32,7 +32,7 @@ class HearingRequestDistributionQuery
   def not_genpop_appeals
     # (7 June 2021) Hearing request docket "affinity" temporarily removed in
     # https://github.com/department-of-veterans-affairs/caseflow/pull/16326
-    # 
+    #
     # base_relation.most_recent_hearings.tied_to_distribution_judge(judge)
     []
   end
