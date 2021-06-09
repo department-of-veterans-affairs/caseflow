@@ -1,5 +1,5 @@
 import React from 'react';
-
+import useSelector from 'react-redux';
 import QueueTable from '../queue/QueueTable';
 import EXPLAIN_CONFIG from '../../constants/EXPLAIN';
 import {
@@ -12,8 +12,29 @@ import {
   relevanttDataColumn,
   detailsColumn
 } from './components/ColumnBuilder'
+import Modal from '../components/Modal'
+import COPY from '../../COPY';
 
 class Explain extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      modal: false,
+      details: {}
+    };
+  }
+
+  handleModalClose = () => {
+    console.log('close')
+    this.setState({ modal: false });
+  };
+
+  handleModalOpen = (details) => {
+    console.log("hi");
+    this.setState({ modal: true, details: details });
+  };
+
   filterValuesForColumn = (column) =>
     column && column.filterable && column.filter_options;
 
@@ -46,7 +67,8 @@ class Explain extends React.PureComponent {
         column
       ),
       [EXPLAIN_CONFIG.COLUMNS.DETAILS.name]: detailsColumn(
-        column
+        column,
+        this.handleModalOpen
       )
     };
     return functionForColumn[column.name];
@@ -61,12 +83,31 @@ class Explain extends React.PureComponent {
   }
 
   render = () => {
+    const showModal = this.state.modal
+
     const eventData = this.props.eventData;
     return ( 
-      <QueueTable 
-        columns={this.columnsFromConfig(EXPLAIN_CONFIG.COLUMNS, eventData)}
-        rowObjects={eventData}
-        summary="test table" slowReRendersAreOk />
+      <React.Fragment>
+        <QueueTable 
+          columns={this.columnsFromConfig(EXPLAIN_CONFIG.COLUMNS, eventData)}
+          rowObjects={eventData}
+          summary="test table" slowReRendersAreOk />
+        {showModal && <React.Fragment>
+          <Modal
+            title="Details"
+            buttons={[
+              {
+                classNames: ['usa-button', 'cf-btn-link'],
+                name: COPY.MODAL_CANCEL_BUTTON,
+                onClick: this.handleModalClose
+              }
+            ]}
+            closeHandler={this.handleModalClose}
+          >
+            JSON.stringify(modalDetails)
+          </Modal>
+        </React.Fragment>}
+      </React.Fragment>
     );
   };
 }

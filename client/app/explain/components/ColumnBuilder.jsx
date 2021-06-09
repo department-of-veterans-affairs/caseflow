@@ -103,7 +103,7 @@ export const relevanttDataColumn = (column) => {
   }
 }
 
-export const detailsColumn = (column) => {
+export const detailsColumn = (column, handleModalOpen) => {
   const linkStyling = css({
     cursor: 'pointer',
   });
@@ -132,8 +132,9 @@ export const detailsColumn = (column) => {
         if(rowData.[column.name].hasOwnProperty(prop))
           ++count;
       }
+      console.log(handleModalOpen);
       return <span {...linkStyling}> 
-        <Link onClick={displayDetails(rowData.[column.name])}>
+        <Link onClick={handleModalOpen(rowData.[column.name])}>
           {count}
         </Link>
       </span>
