@@ -346,7 +346,7 @@ class HearingRenderer
     end
 
     if virtual_hearing.judge_email.present?
-      recipients << ", judge - #{email_sent(virtual_hearing.judge_email_sent)}" 
+      recipients << ", judge - #{email_sent(virtual_hearing.judge_email_sent)}"
     end
 
     children << recipients.join
