@@ -42,7 +42,7 @@ class HearingRequestDistributionQuery
   def only_genpop_appeals
     # (7 June 2021) Hearing request docket "affinity" temporarily removed in
     # https://github.com/department-of-veterans-affairs/caseflow/pull/16326
-    # 
+    #
     # no_hearings_or_no_held_hearings = with_no_hearings.or(with_no_held_hearings)
     # [most_recent_held_hearings_not_tied_to_any_active_judge, no_hearings_or_no_held_hearings].flatten
     base_relation.to_a
