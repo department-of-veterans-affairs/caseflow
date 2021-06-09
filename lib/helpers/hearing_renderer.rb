@@ -180,7 +180,7 @@ class HearingRenderer
 
     unscheduled_hearings = open_schedule_hearing_tasks.map do |sh_task|
       unscheduled_hearing_label = "Unscheduled Hearing (SCH Task ID: #{sh_task.id}, RO queue: #{ro_label})"
-      unscheduled_note = sh_task.parent&.instructions
+      unscheduled_note = show_pii ? sh_task.parent&.instructions : 'Show PII to see notes'
 
       { unscheduled_hearing_label => ["Notes: #{unscheduled_note}"] }
     end
