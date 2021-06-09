@@ -148,7 +148,7 @@ const FormGenerator = (props) => {
   }
 
   const beginNextIntake = () => {
-    props.confirmIneligibleForm(this.props.intakeId);
+    props.confirmIneligibleForm(props.intakeId);
   };
 
   const showInvalidVeteranError = !props.veteranValid && VBMS_BENEFIT_TYPES.includes(props.benefitType);
@@ -165,7 +165,9 @@ const FormGenerator = (props) => {
           <Button
             name="begin-next-intake"
             onClick={beginNextIntake}
-            loading={props.requestState === REQUEST_STATE.IN_PROGRESS}>
+            loading={props.requestState === REQUEST_STATE.IN_PROGRESS}
+            type="button"
+          >
             Begin next intake
           </Button>
         </Alert>
@@ -228,12 +230,14 @@ FormGenerator.propTypes = {
   optionSelected: PropTypes.string,
   requestState: PropTypes.string,
   register: PropTypes.func,
-  errors: PropTypes.array
+  errors: PropTypes.array,
+  intakeId: PropTypes.string
 };
 
 export default connect(
   (state, props) => ({
     veteranName: state.intake.veteran.name,
+    intakeId: state.intake.id,
     intakeStatus: getIntakeStatus(state),
     receiptDate: state[props.formName].receiptDate,
     receiptDateError: state[props.formName].receiptDateError,
@@ -245,15 +249,17 @@ export default connect(
     benefitTypeError: state[props.formName].benefitTypeError,
     informalConference: state[props.formName].informalConference,
     informalConferenceError: state[props.formName].informalConferenceError,
-    optionSelected: state.rampElection.optionSelected,
-    optionSelectedError: state.rampElection.optionSelectedError,
+    optionSelected: state[props.formName].optionSelected,
+    optionSelectedError: state[props.formName].optionSelectedError,
     sameOffice: state[props.formName].sameOffice,
     sameOfficeError: state[props.formName].sameOfficeError,
     appealDocket: state[props.formName].appealDocket,
     appealDocketError: state[props.formName].appealDocketError,
     reviewIntakeError: state[props.formName].requestStatus.reviewIntakeError,
     veteranValid: state[props.formName].veteranValid,
-    veteranInvalidFields: state[props.formName].veteranInvalidFields
+    veteranInvalidFields: state[props.formName].veteranInvalidFields,
+    hasInvalidOption: state[props.formName].hasInvalidOption,
+    confirmIneligibleForm: state[props.formName].confirmIneligibleForm
   }),
   (dispatch) => bindActionCreators({
     setDocketType,
