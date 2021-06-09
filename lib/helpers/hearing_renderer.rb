@@ -180,7 +180,7 @@ class HearingRenderer
 
     unscheduled_hearings = open_schedule_hearing_tasks.map do |sh_task|
       unscheduled_hearing_label = "Unscheduled Hearing (SCH Task ID: #{sh_task.id}, RO queue: #{ro_label})"
-      unscheduled_note = show_pii ? sh_task.parent&.instructions : 'Show PII to see notes'
+      unscheduled_note = show_pii ? sh_task.parent&.instructions : "Show PII to see notes"
 
       { unscheduled_hearing_label => ["Notes: #{unscheduled_note}"] }
     end
@@ -237,7 +237,7 @@ class HearingRenderer
   end
 
   def print_nil(obj)
-    obj.present? ? obj : "none"
+    obj.presence || "none"
   end
 
   def get_ro_label(regional_office, request_type = false)
@@ -336,14 +336,20 @@ class HearingRenderer
   def virtual_hearing_children(virtual_hearing)
     children = []
     recipients = []
-    recipients <<
-      "appellant - #{email_sent(virtual_hearing.appellant_email_sent)}" if virtual_hearing.appellant_email.present?
-    recipients << ", rep - " \
-      "#{email_sent(virtual_hearing.representative_email_sent)}" if virtual_hearing.representative_email.present?
-    recipients <<
-      ", judge - #{email_sent(virtual_hearing.judge_email_sent)}" if virtual_hearing.judge_email.present?
-    children << recipients.join
 
+    if virtual_hearing.appellant_email.present?
+      recipients << "appellant - #{email_sent(virtual_hearing.appellant_email_sent)}"
+    end
+
+    if virtual_hearing.representative_email.present?
+      recipients << ", rep - #{email_sent(virtual_hearing.representative_email_sent)}"
+    end
+
+    if virtual_hearing.judge_email.present?
+      recipients << ", judge - #{email_sent(virtual_hearing.judge_email_sent)}" 
+    end
+
+    children << recipients.join
     children
   end
 
