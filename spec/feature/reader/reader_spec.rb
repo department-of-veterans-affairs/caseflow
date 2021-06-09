@@ -375,7 +375,6 @@ RSpec.feature "Reader", :all_dbs do
       expect(page.find("#comments-header")).to have_content("Page 1")
       click_on "Edit"
       find("h3", text: "Document information").click
-      # byebug
       find("#editCommentBox-1").send_keys(:arrow_left)
       expect_doc_type_to_be "Form 9"
       find("#editCommentBox-1").send_keys(:arrow_right)
@@ -607,7 +606,6 @@ RSpec.feature "Reader", :all_dbs do
         # Filtering the document list should work in "Comments" mode.
         fill_in "searchBar", with: "form"
         expect(page.has_no_content?(documents[0].type)).to eq(true)
-        # byebug
         expect(page).to have_content(documents[1].type)
 
         click_on "Documents"
@@ -636,7 +634,7 @@ RSpec.feature "Reader", :all_dbs do
         assert_selector(".commentIcon-container", count: 7)
 
         def placing_annotation_icon_position
-          element_position "[data-placing-annotation-icon]"
+          element_position "#canvas-cursor-0"
         end
 
         orig_position = placing_annotation_icon_position
@@ -724,7 +722,7 @@ RSpec.feature "Reader", :all_dbs do
         original_scroll = scrolled_amount(element_class)
 
         # Click on the off screen comment (0 through 4 are on screen)
-        find("#comment5").click
+        find("#comment-5").click
         after_click_scroll = scrolled_amount(element_class)
 
         expect(after_click_scroll - original_scroll).to be > 0
@@ -1322,7 +1320,7 @@ RSpec.feature "Reader", :all_dbs do
       safe_click "#button-previous"
       click_on "Back"
 
-      expect(find("#documents-table-body tr:nth-child(#{documents.count - 1})")).to have_css("#read-indicator")
+      expect(find("#table-row-#{documents.count - 1}")).to have_css("#read-indicator")
     end
 
     scenario "Open a document and return to list", skip: true do
@@ -1392,14 +1390,14 @@ RSpec.feature "Reader", :all_dbs do
     it "should alert user" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       expect(page).to have_content("Reader")
-      click_on Document.last.type
+      click_on appeal.documents.last.type
       expect(page).to have_content("Document Viewer")
 
       add_comment("test comment")
 
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       expect(page).to have_content("Reader")
-      click_on Document.last.type
+      click_on appeal.documents.last.type
 
       expect(page).to have_content("test comment")
       expect(page).to_not have_content("This document has been updated")

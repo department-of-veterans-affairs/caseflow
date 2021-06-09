@@ -22,7 +22,7 @@ export const DocumentListHeader = ({ filterCriteria, docsCount, search, clearSea
           recordSearch={recordSearch}
           isSearchAhead
           placeholder="Type to search..."
-          value={filterCriteria.searchQuersearchQueryy}
+          value={filterCriteria.searchQuery}
           size="small"
           analyticsCategory="Claims Folder"
         />
