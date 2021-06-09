@@ -29,7 +29,6 @@ JumpToComment.propTypes = {
   documentPathBase: PropTypes.string,
   currentDocument: PropTypes.object,
   comment: PropTypes.object,
-  showPdf: PropTypes.func,
 };
 
 /**
@@ -55,8 +54,6 @@ export const Comment = ({
     'comment-container-selected': selected,
     'comment-horizontal-container': horizontalLayout
   });
-
-  console.log(filterCriteria?.searchQuery);
 
   return horizontalLayout ? (
     <div className="horizontal-comment">
