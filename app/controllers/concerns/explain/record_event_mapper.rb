@@ -110,7 +110,7 @@ class Explain::RecordEventMapper
       # row_order is an ordering based on event_type
       return row_order <=> other.row_order unless row_order == other.row_order
 
-      if details.key?("id") && other.details.key?("id")
+      if details&.key?("id") && other.details&.key?("id")
         # sort by id in reverse ordering to close child tasks first
         return other.details["id"] <=> details["id"] if CLOSED_STATUSES.include?(event_type)
 

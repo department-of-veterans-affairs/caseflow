@@ -4,29 +4,45 @@
 
 <div style="font-size:0.875em; padding:10px">
   <h2>Appeal Narrative</h2>
-  <details open>
+  <details>
     <summary style="color: purple">Narrative table</summary>
-    <table>
+    <table id="events_table" style="width: 100%;">
       <tr>
         <th>timestamp</th>
-        <th>context</th>
         <th>category</th>
         <th>event type</th>
-        <th>object id</th>
-        <th>comment</th>
-        <th>relevant_data</th>
-        <th>details count</th>
+        <th style="width: 60%;">narrative</th>
+        <th style="width: 20%;">relevant data</th>
+        <th>attribute count</th>
       </tr>
       <% event_table_data.each do |event| %>
         <tr class="<%=event["category"]+'_'+event['event_type']%> <%=event["category"]%>">
-          <td style="padding: 2px"><%= event["timestamp"] %></td>
-          <td style="padding: 2px"><%= event["context_id"] %></td>
-          <td style="padding: 2px"><%= event["category"] %></td>
-          <td style="padding: 2px"><%= event["event_type"] %></td>
-          <td style="padding: 2px"><%= event["object_id"] %></td>
-          <td style="padding: 2px"><%= event["comment"] %></td>
-          <td style="padding: 2px"><%= event["relevant_data"] %></td>
-          <td style="padding: 2px"><%= event["details"]&.size %></td>
+          <td style="padding: 2px" class="timestamp"><%=
+            if event["category"] == "clock"
+              event["timestamp"]
+            else
+              DateTime.parse(event["timestamp"]).strftime("%F %T") rescue event["timestamp"]
+            end
+          %></td>
+          <td style="padding: 2px" class="category"><%= event["category"] %></td>
+          <td style="padding: 2px" class="event_type"><%= event["event_type"] %></td>
+          <td style="padding: 2px" class="narrative">
+            <% if event["comment"] %>
+              <%= event["comment"] %><br/>
+            <% end %>
+            <i>(<%= event["object_id"] %>)</i>
+          </td>
+          <td style="padding: 2px; font-size:0.8em" class="rel_data">
+            <% if event["context_id"] != appeal_object_id && event["category"] != "clock" %>
+              <i>context: <%= event["context_id"] %></i>
+            <% end %>
+            <% if event["relevant_data"] %>
+              <pre style="margin: 0px; width: 300px;"><%=
+                JSON.pretty_generate(event["relevant_data"]).sub("{\n","").sub("\n}","").gsub(/^  /,"")
+              %></pre>
+            <% end %>
+          </td>
+          <td style="padding: 2px" class="details"><%= event["details"]&.size %></td>
         </tr>
       <% end %>
     </table>
@@ -93,11 +109,14 @@
   <script type="text/javascript">
     // Handle Task Tree field checkboxes
     function updateTaskTreeLink(){
-      var selected = $('#treeefields input:checked').map( (idx, elem) => elem.name ).get();
-      $('#task_tree_link').attr("href", window.location.href.split('?')[0]+"?fields="+selected.join(','));
+      const selected = Array.prototype.map.call(document.querySelectorAll('#treeefields input:checked'), elem => elem.name);
+      const newUrl = window.location.href.split('?')[0]+"?fields="+selected.join(',');
+      document.querySelector('#task_tree_link').setAttribute("href", newUrl);
     }
     updateTaskTreeLink();
-    $('#treeefields input').change( () => updateTaskTreeLink() );
+    document.querySelectorAll('#treeefields input').forEach((elem)=>{
+      elem.addEventListener('click', () => updateTaskTreeLink());
+    });
   </script>
 
   <% unless legacy_appeal? %>
