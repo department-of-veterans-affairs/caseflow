@@ -172,11 +172,20 @@ class HearingRenderer
   end
 
   def get_unscheduled_hearings(appeal)
-    unscheduled = appeal.tasks.open.of_type(:ScheduleHearingTask)&.pluck(:id)&.map { |i| "id: #{i}" }
-    # TODO, does this get the regional_office correctly?
-    regional_office = appeal.closest_regional_office || COPY::UNKNOWN_REGIONAL_OFFICE
-    ro_label = get_ro_label(regional_office)
-    unscheduled.nil? ? "" : ["Unsched hearing #{unscheduled} for #{ro_label}"]
+    regional_office = appeal.closest_regional_office
+    ro_label = regional_office.nil? ? COPY::UNKNOWN_REGIONAL_OFFICE : get_ro_label(regional_office)
+
+    open_schedule_hearing_tasks = appeal.tasks.open.of_type(:ScheduleHearingTask)
+    return "" if open_schedule_hearing_tasks.nil?
+
+    unscheduled_hearings = open_schedule_hearing_tasks.map do |sh_task|
+      unscheduled_hearing_label = "Unscheduled Hearing (SCH Task ID: #{sh_task.id}, RO queue: #{ro_label})"
+      unscheduled_note = sh_task.parent&.instructions
+
+      { unscheduled_hearing_label => ["Notes: #{unscheduled_note}"] }
+    end
+
+    unscheduled_hearings
   end
 
   def shared_appeal_children(appeal)
