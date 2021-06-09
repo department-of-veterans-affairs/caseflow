@@ -136,7 +136,7 @@ class TasksController < ApplicationController
 
     tasks = TasksForAppeal.new(appeal: appeal, user: current_user, user_role: user_role).call
 
-    render json: { tasks: json_tasks(tasks)[:data] }
+    render json: { tasks: json_tasks(tasks.with_children_existence)[:data] }
   end
 
   def reschedule

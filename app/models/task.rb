@@ -95,6 +95,8 @@ class Task < CaseflowRecord
 
   scope :with_cached_appeals, -> { joins(Task.joins_with_cached_appeals_clause) }
 
+  scope :with_children_existence, -> { joins(Task.joins_with_no_children_exist_clause).select('*') }
+
   ############################################################################################
   ## class methods
   class << self
@@ -232,6 +234,12 @@ class Task < CaseflowRecord
       )
     end
 
+    # preload a has_no_children boolean method.
+    def joins_with_no_children_exist_clause
+      "LEFT OUTER JOIN (" \
+      "SELECT $1::INTEGER AS id, NOT EXISTS (SELECT 1 FROM #{Task.table_name} WHERE #{Task.table_name}.parent_id = $1) AS has_no_children) AS kids USING (id)"
+    end
+
     # Sorting tasks by docket number within each category of appeal: case type, aod, docket number
     # Used by ScheduleHearingTaskPager and WarmBgsCachedJob to sort ScheduleHearingTasks
     def order_by_cached_appeal_priority_clause
@@ -320,8 +328,13 @@ class Task < CaseflowRecord
     self.class.closed_statuses.include?(status)
   end
 
+  # check for pre-loaded existence method first
   def open_with_no_children?
-    open? && children.empty?
+    begin
+      open? && has_no_children
+    rescue NameError => e
+      open? && children.empty?
+    end
   end
 
   # When a status is "active" we expect properties of the task to change
