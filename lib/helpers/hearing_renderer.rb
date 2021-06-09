@@ -282,7 +282,7 @@ class HearingRenderer
           "#{readable_date(ev.sent_at, false)}, #{ev.external_message_id}"
       end
     }
-    children << structure(hearing.hearing_task_association.hearing_task)
+    children << structure(hearing&.hearing_task_association&.hearing_task)
   end
 
   def legacy_hearing_children(hearing)
