@@ -145,7 +145,7 @@ class HearingRenderer
 
   def unscheduled_hearings(appeal)
     open_schedule_hearing_tasks = appeal.tasks.open.of_type(:ScheduleHearingTask)
-    return "" if open_schedule_hearing_tasks.nil?
+    return [] if open_schedule_hearing_tasks.empty?
 
     regional_office = appeal.closest_regional_office
     ro_label = regional_office.nil? ? COPY::UNKNOWN_REGIONAL_OFFICE : ro_label(regional_office)
