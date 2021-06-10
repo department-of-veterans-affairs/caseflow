@@ -199,12 +199,14 @@ class HearingRenderer
   end
 
   def scheduled_for(hearing)
+    scheduled_label = "Scheduled for: #{readable_date(hearing.scheduled_for)}"
+
     ro_time = hearing.scheduled_for.in_time_zone(hearing.regional_office_timezone)
     if ro_time != hearing.scheduled_for
-      "Scheduled for: #{readable_date(hearing.scheduled_for)} / #{ro_time.strftime('%I:%M%p %Z')}(RO time)"
+      scheduled_label = "#{scheduled_label} / #{ro_time.strftime('%I:%M%p %Z')} (RO time)"
     end
 
-    "Scheduled for: #{readable_date(hearing.scheduled_for)}"
+    scheduled_label
   end
 
   def print_nil(obj)
