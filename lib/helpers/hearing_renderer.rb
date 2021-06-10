@@ -247,12 +247,14 @@ class HearingRenderer
     children << format_hearing_day_label(hearing.hearing_day)
     virtual_hearings = VirtualHearing.where(hearing_id: hearing.id, hearing_type: hearing.class.name)
     children += virtual_hearings.map { |vh| structure(vh) }
-    children << {
-      "Email events": hearing.email_events.map do |ev|
-        "#{ev.recipient_role}, #{ev.email_type}, "\
-          "#{readable_date(ev.sent_at, false)}"
-      end
-    }
+    if hearing.email_events.present?
+      children << {
+        "Email events": hearing.email_events.map do |ev|
+          "#{ev.recipient_role}, #{ev.email_type}, "\
+            "#{readable_date(ev.sent_at, false)}"
+        end
+      }
+    end
     children << structure(hearing&.hearing_task_association&.hearing_task)
   end
 
