@@ -91,7 +91,7 @@ class HearingRenderer
     children
   end
 
-  def get_appeal_type_conversions(appeal)
+  def appeal_type_conversions(appeal)
     unformatted_versions = appeal.versions
     versions = unformatted_versions.map do |version|
       change = version.changeset["changed_hearing_request_type"] ||
@@ -131,11 +131,11 @@ class HearingRenderer
     type_conversions
   end
 
-  def get_appeal_history(appeal)
+  def appeal_history(appeal)
     if appeal.versions.empty?
       format_original_and_current_type(appeal)
     else
-      type_conversions = get_appeal_type_conversions(appeal)
+      type_conversions = appeal_type_conversions(appeal)
       type_conversions_with_original_type = add_original_type(
         appeal.readable_original_hearing_request_type,
         type_conversions
@@ -146,12 +146,12 @@ class HearingRenderer
     end
   end
 
-  def get_unscheduled_hearings(appeal)
+  def unscheduled_hearings(appeal)
     open_schedule_hearing_tasks = appeal.tasks.open.of_type(:ScheduleHearingTask)
     return "" if open_schedule_hearing_tasks.nil?
 
     regional_office = appeal.closest_regional_office
-    ro_label = regional_office.nil? ? COPY::UNKNOWN_REGIONAL_OFFICE : get_ro_label(regional_office)
+    ro_label = regional_office.nil? ? COPY::UNKNOWN_REGIONAL_OFFICE : ro_label(regional_office)
 
     unscheduled_hearings = open_schedule_hearing_tasks.map do |sh_task|
       unscheduled_hearing_label = "Unscheduled Hearing (SCH Task ID: #{sh_task.id}, RO queue: #{ro_label})"
@@ -170,10 +170,10 @@ class HearingRenderer
     end
 
     children += appeal.hearings.map { |hearing| structure(hearing) }
-    children += get_unscheduled_hearings(appeal)
+    children += unscheduled_hearings(appeal)
 
     children << {
-      "Appeal History": get_appeal_history(appeal)
+      "Appeal History": appeal_history(appeal)
     }
     children
   end
@@ -231,7 +231,7 @@ class HearingRenderer
 
   def format_hearing_day_label(hearing_day)
     formatted_text = "HearingDay #{hearing_day.id}"
-    formatted_text += " (#{get_ro_label(hearing_day.regional_office, hearing_day.request_type)}) "
+    formatted_text += " (#{ro_label(hearing_day.regional_office, hearing_day.request_type)}) "
     formatted_text
   end
 
