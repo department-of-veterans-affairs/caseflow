@@ -1016,6 +1016,9 @@ RSpec.feature "Reader", :all_dbs do
       step "return to the index and view the Form 9 document" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
+        # this will wait for the document count to display before expecting anything
+        find("div.num-of-documents", text: "#{documents.length} Documents")
+
         click_on documents[1].type
 
         # this will wait for the document title to display before expecting anything
