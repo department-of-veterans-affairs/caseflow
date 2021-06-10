@@ -79,10 +79,10 @@ class HearingRenderer
     end
   end
 
-  def veteran_children(vet)
-    appeals = Appeal.where(veteran_file_number: vet.file_number)
+  def veteran_children(veteran)
+    appeals = Appeal.where(veteran_file_number: veteran.file_number)
     appeals.sort_by { |appeal| appeal.receipt_date || Time.zone.today }
-    legacy_appeals = LegacyAppeal.fetch_appeals_by_file_number(vet.file_number)
+    legacy_appeals = LegacyAppeal.fetch_appeals_by_file_number(veteran.file_number)
     legacy_appeals.sort_by { |la| la.created_at || Time.zone.today }
 
     children = []
