@@ -3,16 +3,16 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { useHistory } from 'react-router';
 import { bindActionCreators } from 'redux';
-import _ from 'lodash';
+import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { css } from 'glamor';
 
 import { PAGE_PATHS, FORM_TYPES, REQUEST_STATE, VBMS_BENEFIT_TYPES } from '../constants';
-import RampElectionPage, { reviewRampElectionSchema } from './rampElection/review';
-import RampRefilingPage, { reviewRampRefilingSchema } from './rampRefiling/review';
-import SupplementalClaimPage, { reviewSupplementalClaimSchema } from './supplementalClaim/review';
+import { rampElectionFormHeader, reviewRampElectionSchema } from './rampElection/review';
+import { rampRefilingHeader, reviewRampRefilingSchema } from './rampRefiling/review';
+import { reviewSupplementalClaimSchema, supplementalClaimHeader } from './supplementalClaim/review';
 import { higherLevelReviewFormHeader, reviewHigherLevelReviewSchema } from './higherLevelReview/review';
 import { appealFormHeader, reviewAppealSchema } from './appeal/review';
 
@@ -39,6 +39,22 @@ const schemaMappings = {
   ramp_refiling: reviewRampRefilingSchema
 };
 
+const headerMappings = {
+  appeal: appealFormHeader,
+  higher_level_review: higherLevelReviewFormHeader,
+  supplemental_claim: supplementalClaimHeader,
+  ramp_election: rampElectionFormHeader,
+  ramp_refiling: rampRefilingHeader
+};
+
+const reviewForms = [
+  FORM_TYPES.RAMP_ELECTION.key,
+  FORM_TYPES.RAMP_REFILING.key,
+  FORM_TYPES.APPEAL.key,
+  FORM_TYPES.SUPPLEMENTAL_CLAIM.key,
+  FORM_TYPES.HIGHER_LEVEL_REVIEW.key
+];
+
 const Review = (props) => {
   const formProps = useForm(
     {
@@ -50,7 +66,7 @@ const Review = (props) => {
   );
 
   const { push } = useHistory();
-  const selectedForm = _.find(FORM_TYPES, { key: props.formType });
+  const selectedForm = find(FORM_TYPES, { key: props.formType });
   const intakeData = selectedForm ? props.intakeForms[selectedForm.key] : null;
 
   const submitReview = () => {
@@ -82,37 +98,30 @@ const Review = (props) => {
       });
   };
 
+  const formComponentMapping = reviewForms.reduce((formAccumulator, formKey) => {
+    formAccumulator[formKey] = <FormGenerator
+      formName={selectedForm?.formName}
+      formHeader={headerMappings[formKey]}
+      schema={schemaMappings[formKey]}
+      featureToggles={props.featureToggles}
+      {...formProps}
+    />;
+
+    return formAccumulator;
+  }, {});
+
   return (
     <form
       onSubmit={formProps.handleSubmit(handleClick)}
     >
       <SwitchOnForm
-        formComponentMapping={{
-          ramp_election: <RampElectionPage {...formProps} />,
-          ramp_refiling: <RampRefilingPage {...formProps} />,
-          supplemental_claim: <SupplementalClaimPage featureToggles={props.featureToggles} {...formProps} />,
-          higher_level_review: <FormGenerator
-            formName={selectedForm?.formName}
-            formHeader={higherLevelReviewFormHeader}
-            schema={schemaMappings.higher_level_review}
-            featureToggles={props.featureToggles}
-            {...formProps}
-          />,
-          appeal: <FormGenerator
-            formName={selectedForm?.formName}
-            formHeader={appealFormHeader}
-            schema={schemaMappings.appeal}
-            featureToggles={props.featureToggles}
-            {...formProps}
-          />
-        }}
+        formComponentMapping={formComponentMapping}
         componentForNoFormSelected={<Redirect to={PAGE_PATHS.BEGIN} />}
       />
       <nav role="navigation" className={`cf-app-segment ${textAlignRightStyling}`}>
         <ReviewButtons />
       </nav>
     </form>
-
   );
 };
 
@@ -145,11 +154,11 @@ const ReviewNextButton = (props) => {
 
   // selected form might be null or empty if the review has been canceled
   // in that case, just use null as data types since page will be redirected
-  const selectedFormState = _.find(FORM_TYPES, { key: formType });
+  const selectedFormState = find(FORM_TYPES, { key: formType });
   const intakeDataState = selectedFormState ? intakeForms[selectedFormState.key] : null;
 
   const rampRefilingIneligibleOption = () => {
-    if (formType === 'ramp_refiling') {
+    if (formType === FORM_TYPES.RAMP_REFILING.key) {
       return toggleIneligibleError(intakeDataState.hasInvalidOption, intakeDataState.optionSelected);
     }
 
