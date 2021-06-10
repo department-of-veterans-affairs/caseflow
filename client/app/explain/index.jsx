@@ -31,7 +31,7 @@ class Explain extends React.PureComponent {
   };
 
   handleModalOpen = (details) => {
-    console.log("hi");
+    console.log("open");
     this.setState({ modal: true, details: details });
   };
 
@@ -84,7 +84,6 @@ class Explain extends React.PureComponent {
 
   render = () => {
     const showModal = this.state.modal
-
     const eventData = this.props.eventData;
     return ( 
       <React.Fragment>
@@ -104,7 +103,7 @@ class Explain extends React.PureComponent {
             ]}
             closeHandler={this.handleModalClose}
           >
-            JSON.stringify(modalDetails)
+            {JSON.stringify(this.state.details)}
           </Modal>
         </React.Fragment>}
       </React.Fragment>
