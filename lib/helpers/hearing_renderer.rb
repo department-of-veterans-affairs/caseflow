@@ -147,8 +147,7 @@ class HearingRenderer
     open_schedule_hearing_tasks = appeal.tasks.open.of_type(:ScheduleHearingTask)
     return [] if open_schedule_hearing_tasks.empty?
 
-    regional_office = appeal.closest_regional_office
-    ro_label = regional_office.nil? ? COPY::UNKNOWN_REGIONAL_OFFICE : ro_label(regional_office)
+    ro_label = ro_location(appeal.closest_regional_office)
 
     unscheduled_hearings = open_schedule_hearing_tasks.map do |sh_task|
       unscheduled_hearing_label = "Unscheduled Hearing (SCH Task ID: #{sh_task.id}, RO queue: #{ro_label})"
@@ -212,13 +211,15 @@ class HearingRenderer
     obj.presence || "none"
   end
 
-  def ro_label(regional_office, request_type = false)
-    city_state_string = RegionalOffice.city_state_by_key(regional_office).presence&.tr(",", "") || ""
+  def ro_location(regional_office)
+    RegionalOffice.city_state_by_key(regional_office).presence&.tr(",", "") || COPY::UNKNOWN_REGIONAL_OFFICE
+  end
 
-    formatted_text = regional_office.nil? ? "no ro," : "#{regional_office} - #{city_state_string},"
-    formatted_text += request_type ? " #{Hearing::HEARING_TYPES[request_type&.to_sym]}" : " No request type"
+  def ro_label(regional_office, request_type = nil)
+    about_ro = regional_office.blank? ? "No RO" : "#{regional_office} - #{ro_location(regional_office)}"
+    about_request = Hearing::HEARING_TYPES[request_type&.to_sym]&.presence || "No request type"
 
-    formatted_text
+    [about_ro, about_request].join(", ")
   end
 
   def format_hearing_day_label(hearing_day)
