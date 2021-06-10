@@ -309,7 +309,6 @@ class HearingRenderer
   end
 
   def virtual_hearing_children(virtual_hearing)
-    children = []
     recipients = []
 
     if virtual_hearing.appellant_email.present?
@@ -317,15 +316,14 @@ class HearingRenderer
     end
 
     if virtual_hearing.representative_email.present?
-      recipients << ", rep - #{email_sent(virtual_hearing.representative_email_sent)}"
+      recipients << "rep - #{email_sent(virtual_hearing.representative_email_sent)}"
     end
 
     if virtual_hearing.judge_email.present?
-      recipients << ", judge - #{email_sent(virtual_hearing.judge_email_sent)}"
+      recipients << "judge - #{email_sent(virtual_hearing.judge_email_sent)}"
     end
 
-    children << recipients.join
-    children
+    [recipients.join(", ")]
   end
 
   def virtual_hearing_details(virtual_hearing)
