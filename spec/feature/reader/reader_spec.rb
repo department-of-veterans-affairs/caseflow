@@ -955,56 +955,70 @@ RSpec.feature "Reader", :all_dbs do
     end
 
     scenario "Categories" do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      cats = {
+        procedural: "Procedural",
+        medical: "Medical",
+        other: "Other Evidence",
+        case_summary: "Case Summary"
+      }
 
-      def get_aria_labels(elems)
-        elems.map do |elem|
-          # I don't know why this is necessary, but it seems to trigger capybara to wait for the elements
-          # to have content in the correct way. Without this, we'll sometimes see an empty list of elements,
-          # but when we insert a quick sleep or inspect the browser, we see the full list. That means that
-          # capybara is not waiting properly.
-          elem["outerHTML"]
-
-          elem["aria-label"]
-        end
+      def cats_in_row(row)
+        selector = "#documents-table-body tr:nth-child(#{row}) .categories-column .cf-no-styling-list"
+        all(selector).map { |elem| elem["aria-label"] }
       end
 
-      doc_0_categories =
-        get_aria_labels all("table tr:first-child .cf-document-category-icons li", count: 1)
-      expect(doc_0_categories).to eq(["Case Summary"])
+      def cats_in_header
+        all(".cf-pdf-header .cf-pdf-doc-category-icons .cf-no-styling-list").map { |elem| elem["aria-label"] }
+      end
 
-      doc_1_categories =
-        get_aria_labels all("table tr:nth-child(2) .cf-document-category-icons li", count: 3)
-      expect(doc_1_categories).to eq(["Medical", "Other Evidence", "Case Summary"])
+      step "visit the documents index" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-      click_on documents[0].type
+        # this will wait for the document count to display before expecting anything
+        find("div.num-of-documents", text: "#{documents.length} Documents")
 
-      expect((get_aria_labels all(".cf-document-category-icons li", count: 2))).to eq(["Procedural", "Case Summary"])
+        # these are the categories we expect the documents to have in the expected sort order
+        expect(cats_in_row(1)).to match_array [cats[:procedural], cats[:case_summary]]
+        expect(cats_in_row(2)).to match_array [cats[:medical], cats[:other], cats[:case_summary]]
+        expect(cats_in_row(3)).to match_array [cats[:case_summary]]
+      end
 
-      find(".checkbox-wrapper-procedural").click
-      find(".checkbox-wrapper-medical").click
+      step "edit the BVA Decision document categories" do
+        click_on documents[0].type
 
-      expect((get_aria_labels all(".cf-document-category-icons li", count: 2))).to eq(["Medical", "Case Summary"])
+        # this will wait for the document title to display before expecting anything
+        find(".cf-pdf-header .cf-pdf-doc-type-button-container", text: "BVA Decision")
+        expect(cats_in_header).to match_array [cats[:procedural], cats[:case_summary]]
 
-      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+        find(".checkbox-wrapper-procedural").click
+        find(".checkbox-wrapper-medical").click
 
-      doc_0_categories =
-        get_aria_labels all("table tr:first-child .cf-document-category-icons li", count: 1)
-      expect(doc_0_categories).to eq(["Case Summary"])
+        # this will wait for the categories to update in the header before expecting anything
+        find(".cf-pdf-header li[aria-label='Medical']")
+        expect(cats_in_header).to match_array [cats[:medical], cats[:case_summary]]
+      end
 
-      click_on documents[1].type
+      step "return to the index and view the Form 9 document" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-      expect((get_aria_labels all(".cf-document-category-icons li", count: 3))).to eq(
-        ["Medical", "Other Evidence", "Case Summary"]
-      )
-      expect(find("#case_summary", visible: false).disabled?).to be true
+        click_on documents[1].type
 
-      find("#button-next").click
+        # this will wait for the document title to display before expecting anything
+        find(".cf-pdf-header .cf-pdf-doc-type-button-container", text: "Form 9")
+        expect(cats_in_header).to match_array [cats[:medical], cats[:other], cats[:case_summary]]
+        expect(find("#case_summary", visible: false).disabled?).to be true
+      end
 
-      expect(find("#procedural", visible: false).checked?).to be false
-      expect(find("#medical", visible: false).checked?).to be true
-      expect(find("#case_summary", visible: false).checked?).to be true
-      expect(find("#other", visible: false).checked?).to be false
+      step "view the next document, NOD" do
+        find("#button-next").click
+
+        # this will wait for the document title to display before expecting anything
+        find(".cf-pdf-header .cf-pdf-doc-type-button-container", text: "NOD")
+        expect(find("#procedural", visible: false).checked?).to be false
+        expect(find("#medical", visible: false).checked?).to be false
+        expect(find("#other", visible: false).checked?).to be false
+        expect(find("#case_summary", visible: false).checked?).to be true
+      end
     end
 
     scenario "Claim Folder Details" do
