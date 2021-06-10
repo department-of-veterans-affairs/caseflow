@@ -923,39 +923,40 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                     2684353125#
                   </div>
                   <CopyTextButton
+                    ariaLabel="Copy Guest Link"
                     label=""
                     styling={Object {}}
-                    text="Guest Link"
+                    text="Copy Guest Link"
                     textToCopy="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
                   >
                     <Tooltip
-                      id="tooltip-Guest Link"
+                      id="tooltip-Copy Guest Link"
                       position="bottom"
                       text="Click to copy"
                     >
                       <CopyToClipboard
-                        aria-describedby="tooltip-Guest Link"
+                        aria-describedby="tooltip-Copy Guest Link"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
-                        data-for="tooltip-Guest Link"
+                        data-for="tooltip-Copy Guest Link"
                         data-tip={true}
                         tabIndex={0}
                         text="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
                       >
                         <button
-                          aria-describedby="tooltip-Guest Link"
-                          aria-label="Copy  Guest Link"
+                          aria-describedby="tooltip-Copy Guest Link"
+                          aria-label="Copy Guest Link"
                           className="cf-apppeal-id"
                           data-css-cjlnsd=""
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
-                          data-for="tooltip-Guest Link"
+                          data-for="tooltip-Copy Guest Link"
                           data-tip={true}
                           onClick={[Function]}
                           tabIndex={0}
                           type="submit"
                         >
-                          Guest Link
+                          Copy Guest Link
                            
                           <ClipboardIcon>
                             <svg
@@ -974,12 +975,12 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                         </button>
                       </CopyToClipboard>
                       <span
-                        data-css-1iuvjho=""
+                        data-css-4jj7wk=""
                       >
                         <ReactTooltip
                           clickable={false}
                           effect="solid"
-                          id="tooltip-Guest Link"
+                          id="tooltip-Copy Guest Link"
                           insecure={true}
                           multiline={true}
                           offset={Object {}}
@@ -991,7 +992,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                           <div
                             className="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                             data-id="tooltip"
-                            id="tooltip-Guest Link"
+                            id="tooltip-Copy Guest Link"
                             role="tooltip"
                           >
                             <style
