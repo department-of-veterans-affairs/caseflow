@@ -85,10 +85,7 @@ class HearingRenderer
     legacy_appeals = LegacyAppeal.fetch_appeals_by_file_number(veteran.file_number)
     legacy_appeals.sort_by { |la| la.created_at || Time.zone.today }
 
-    children = []
-    children += legacy_appeals.map { |legacy_appeal| structure(legacy_appeal) }
-    children += appeals.map { |appeal| structure(appeal) }
-    children
+    (appeals + legacy_appeals).map { |appeal| structure(appeal) }
   end
 
   def appeal_type_conversions(appeal)
