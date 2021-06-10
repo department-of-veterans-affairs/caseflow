@@ -327,8 +327,11 @@ class HearingRenderer
   end
 
   def virtual_hearing_details(virtual_hearing)
-    ["#{virtual_hearing.status}, ca: #{readable_date(virtual_hearing.created_at)}, "\
-      "#{virtual_hearing.created_by&.css_id}"]
+    status = virtual_hearing.status
+    created_at = readable_date(virtual_hearing.created_at)
+    created_by = virtual_hearing.created_by&.css_id
+
+    ["#{status}, ca: #{created_at}, #{created_by}"]
   end
 
   def virtual_hearing_context(virtual_hearing)
