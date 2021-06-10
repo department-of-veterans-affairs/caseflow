@@ -25,6 +25,10 @@ class HearingRenderer
       klass_to_prefix = renderable_classes.find { |klass| obj.is_a?(klass) }
       klass_to_prefix&.name&.underscore
     end
+
+    def patch_hearing_classes
+      renderable_classes.each { |klass| klass.include HearingRenderable }
+    end
   end
 
   attr_reader :show_pii
