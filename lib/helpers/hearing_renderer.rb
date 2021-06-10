@@ -219,8 +219,8 @@ class HearingRenderer
                           "#{regional_office_city_info[:city]} #{regional_office_city_info[:state]}"
                         end
 
-    formatted_text = regional_office.nil? ? "no ro, " : "#{regional_office} - #{city_state_string}"
-    formatted_text += request_type ? ", #{Hearing::HEARING_TYPES[request_type&.to_sym]}" : ""
+    formatted_text = regional_office.nil? ? "no ro," : "#{regional_office} - #{city_state_string},"
+    formatted_text += request_type ? " #{Hearing::HEARING_TYPES[request_type&.to_sym]}" : " No request type"
 
     formatted_text
   end
