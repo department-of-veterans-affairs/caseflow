@@ -215,13 +215,9 @@ class HearingRenderer
     obj.presence || "none"
   end
 
-  def get_ro_label(regional_office, request_type = false)
+  def ro_label(regional_office, request_type = false)
     regional_office_city_info ||= RegionalOffice::CITIES[regional_office]
-    city_state_string = if regional_office_city_info.nil?
-                          ""
-                        else
-                          "#{regional_office_city_info[:city]} #{regional_office_city_info[:state]}"
-                        end
+    city_state_string = RegionalOffice.city_state_by_key(regional_office).presence || ""
 
     formatted_text = regional_office.nil? ? "no ro," : "#{regional_office} - #{city_state_string},"
     formatted_text += request_type ? " #{Hearing::HEARING_TYPES[request_type&.to_sym]}" : " No request type"
