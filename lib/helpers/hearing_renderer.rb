@@ -239,13 +239,16 @@ class HearingRenderer
   end
 
   def shared_hearing_children(hearing)
-    children = []
-    children << "Notes: #{print_nil(hearing.notes)}" if show_pii
-    children << scheduled_for(hearing)
-    children << format_hearing_label(hearing)
-    children << format_hearing_day_label(hearing.hearing_day)
     virtual_hearings = VirtualHearing.where(hearing_id: hearing.id, hearing_type: hearing.class.name)
-    children += virtual_hearings.map { |vh| structure(vh) }
+    children = [
+      scheduled_for(hearing),
+      format_hearing_label(hearing),
+      format_hearing_day_label(hearing.hearing_day),
+      virtual_hearings.map { |vh| structure(vh) }
+    ].flatten
+
+    children.unshift("Notes: #{print_nil(hearing.notes)}") if show_pii
+
     if hearing.email_events.present?
       children << {
         "Email events": hearing.email_events.map do |ev|
