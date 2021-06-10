@@ -64,10 +64,10 @@ class HearingRenderer
     [label(context), calculate_breadcrumbs(context)].flatten
   end
 
-  def veteran_details(vet)
+  def veteran_details(veteran)
     details = []
-    details += [vet.name, "FN: #{vet.file_number}"] if show_pii
-    details << "PID: #{vet.participant_id}"
+    details += [veteran.name, "FN: #{veteran.file_number}"] if show_pii
+    details << "PID: #{veteran.participant_id}"
     details
   end
 
