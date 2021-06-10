@@ -133,11 +133,15 @@ export const detailsColumn = (column, handleModalOpen) => {
         if(rowData.[column.name].hasOwnProperty(prop))
           ++count;
       }
-      return <span {...linkStyling}> 
-        <Link onClick={onClick}>
-          {count}
-        </Link>
-      </span>
+      if (count > 0) {
+        return <span {...linkStyling}> 
+          <Link onClick={onClick}>
+            {count}
+          </Link>
+        </span>
+      } else {
+        return count
+      }
 
     }
   }
