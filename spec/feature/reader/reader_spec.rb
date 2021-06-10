@@ -954,6 +954,21 @@ RSpec.feature "Reader", :all_dbs do
       expect(page).to_not have_css(".cf-modal")
     end
 
+    scenario "Sort order" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+      # this will wait for the document count to display before expecting anything
+      find("div.num-of-documents", text: "#{documents.length} Documents")
+
+      # confirm that the documents are sorted by receipt date ascending (oldest first)
+      sorted_documents = documents.sort_by(&:received_at)
+
+      sorted_documents.each_with_index do |doc, index|
+        selector = "#documents-table-body tr:nth-child(#{index + 1}) td.receipt-date-column"
+        expect(find(selector).text).to eq doc.received_at.strftime("%m/%d/%Y")
+      end
+    end
+
     scenario "Categories" do
       cats = {
         procedural: "Procedural",
