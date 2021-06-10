@@ -725,6 +725,7 @@ DEPENDENCIES
   kaminari
   knapsack_pro
   logstasher
+  memory_profiler
   meta_request
   moment_timezone-rails
   multiverse

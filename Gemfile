@@ -100,6 +100,7 @@ group :test, :development, :demo do
   gem "guard-rspec"
   # Linters
   gem "jshint", platforms: :ruby
+  gem "memory_profiler"
   gem "meta_request"
   gem "pry"
   gem "pry-byebug"
