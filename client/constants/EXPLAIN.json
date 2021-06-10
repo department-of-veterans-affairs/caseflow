@@ -2,37 +2,45 @@
   "COLUMNS": {
     "TIMESTAMP": {
       "header": "Timestamp",
-      "name": "timestamp"
+      "name": "timestamp",
+      "class": "timestamp"
     },
     "CONTEXT": {
       "header": "Context",
-      "name": "context_id"
+      "name": "context_id",
+      "class": ""
     },
     "OBJECT_TYPE": {
       "header": "Category",
       "name": "category",
-      "filterable": true
+      "filterable": true,
+      "class": "category"
     },
     "EVENT_TYPE": {
       "header": "Event Type",
       "name": "event_type",
-      "filterable": true
+      "filterable": true,
+      "class": "event_type"
     },
     "OBJECT_ID": {
       "header": "Object ID",
-      "name": "object_id"
+      "name": "object_id",
+      "class": ""
     },
     "COMMENT": {
       "header": "Narrative",
-      "name": "comment"
+      "name": "comment",
+      "class": "narrative"
     },
     "RELEVANT_DATA": {
       "header": "Relevant Data",
-      "name": "relevant_data"
+      "name": "relevant_data",
+      "class": "rel_data"
     },
     "DETAILS": {
       "header": "Details",
-      "name": "details"
+      "name": "details",
+      "class": "details"
     }
   }
 }

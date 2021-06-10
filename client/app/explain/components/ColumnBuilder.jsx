@@ -9,12 +9,13 @@ export const timestampColumn = (column) => {
   return {
     header: column.header,
     name: column.name,
+    cellClass: (rowData) => column.class,
     valueFunction: (rowData) => {
       const date = new Date(rowData.[column.name])
       if (rowData.['category'] == 'clock') {
-        return date.toLocaleDateString('en-US')
+        return date.toLocaleDateString('en-US');
       } else {
-        return date.toLocaleString('en-US')
+        return date.toLocaleString('en-US');
       }
     },
     backendCanSort: true,
@@ -27,6 +28,7 @@ export const contextColumn = (column) => {
   return {
     // header: column.header,
     // name: column.name,
+    // cellClass: column.class,
     // valueFunction: (rowData) => rowData.[column.name],
     // backendCanSort: true,
     // label: 'Sort by context',
@@ -34,32 +36,32 @@ export const contextColumn = (column) => {
   }
 }
 
-export const objectTypeColumn = (column, filterOptions, narratives) => {
+export const objectTypeColumn = (column, filterOptions) => {
   return {
     header: column.header,
     name: column.name,
+    cellClass: column.class,
     valueFunction: (rowData) => rowData.[column.name],
     backendCanSort: true,
     columnName: 'category',
     enableFilter: true,
     anyFiltersAreSet: true,
-    tableData: narratives,
     label: 'Sort by category',
     bodyClassName: 'closestRegionalOffice.location_hash.city',
     getSortValue: (rowData) => rowData.[column.name]
   }
 }
 
-export const eventTypeColumn = (column, filterOptions, narratives) => {
+export const eventTypeColumn = (column, filterOptions) => {
   return {
     header: column.header,
     name: column.name,
+    cellClass: column.class,
     valueFunction: (rowData) => rowData.[column.name],
     backendCanSort: true,
     columnName: 'event_type',
     enableFilter: true,
     anyFiltersAreSet: true,
-    tableData: narratives,
     label: 'Sort by event type',
     getSortValue: (rowData) => rowData.[column.name]
   }
@@ -69,6 +71,7 @@ export const objectIdColumn = (column) => {
   return {
     // header: column.header,
     // name: column.name,
+    // cellClass: column.class,
     // valueFunction: (rowData) => rowData.[column.name],
     // backendCanSort: true,
     // label: 'Sort by object id',
@@ -80,8 +83,9 @@ export const commentColumn = (column) => {
   return {
     header: column.header,
     name: column.name,
+    cellClass: column.class,
     valueFunction: (rowData) => {
-      return `${rowData.[column.name]} (${rowData.['object_id']})`
+      return `${rowData.[column.name]} (${rowData.['object_id']})`;
     },
     backendCanSort: true,
     label: 'Sort by comment',
@@ -93,9 +97,10 @@ export const relevanttDataColumn = (column) => {
   return {
     header: column.header,
     name: column.name,
+    cellClass: column.class,
     valueFunction: (rowData) => {
       if (rowData.[column.name]) {
-        return JSON.stringify(rowData.[column.name])
+        return JSON.stringify(rowData.[column.name]);
       } else {
         return '';
       }
@@ -125,6 +130,7 @@ export const detailsColumn = (column, handleModalOpen) => {
   return {
     header: column.header,
     name: column.name,
+    cellClass: column.class,
     valueFunction: (rowData) => {
       var count = 0;
       const onClick = () => handleModalOpen(rowData.[column.name]);
@@ -138,9 +144,9 @@ export const detailsColumn = (column, handleModalOpen) => {
           <Link onClick={onClick}>
             {count}
           </Link>
-        </span>
+        </span>;
       } else {
-        return count
+        return count;
       }
 
     }

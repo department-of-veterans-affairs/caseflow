@@ -43,17 +43,15 @@ class Explain extends React.PureComponent {
         column
       ),
       [EXPLAIN_CONFIG.COLUMNS.CONTEXT.name]: contextColumn(
-        column
+        column,
       ),
       [EXPLAIN_CONFIG.COLUMNS.OBJECT_TYPE.name]: objectTypeColumn(
         column,
-        filterOptions,
-        narratives
+        filterOptions
       ),
       [EXPLAIN_CONFIG.COLUMNS.EVENT_TYPE.name]: eventTypeColumn(
         column,
-        filterOptions,
-        narratives
+        filterOptions        
       ),
       [EXPLAIN_CONFIG.COLUMNS.OBJECT_ID.name]: objectIdColumn(
         column
@@ -69,6 +67,7 @@ class Explain extends React.PureComponent {
         this.handleModalOpen
       )
     };
+    console.log(functionForColumn[column.name])
     return functionForColumn[column.name];
   }
 
@@ -82,12 +81,13 @@ class Explain extends React.PureComponent {
 
   render = () => {
     const showModal = this.state.modal
-    const eventData = this.props.eventData;
+    const narratives = this.props.eventData;
     return ( 
       <React.Fragment>
         <QueueTable 
-          columns={this.columnsFromConfig(EXPLAIN_CONFIG.COLUMNS, eventData)}
-          rowObjects={eventData}
+          id="events_table"
+          columns={this.columnsFromConfig(EXPLAIN_CONFIG.COLUMNS, narratives)}
+          rowObjects={narratives}
           summary="test table" slowReRendersAreOk />
         {showModal && <React.Fragment>
           <Modal
@@ -95,7 +95,7 @@ class Explain extends React.PureComponent {
             buttons={[
               {
                 classNames: ['usa-button', 'cf-btn-link'],
-                name: COPY.MODAL_CANCEL_BUTTON,
+                name: COPY.MODAL_CLOSE_BUTTON,
                 onClick: this.handleModalClose
               }
             ]}
