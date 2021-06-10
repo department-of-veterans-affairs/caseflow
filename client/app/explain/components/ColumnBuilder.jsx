@@ -127,13 +127,14 @@ export const detailsColumn = (column, handleModalOpen) => {
     name: column.name,
     valueFunction: (rowData) => {
       var count = 0;
+      const onClick = () => handleModalOpen(rowData.[column.name]);
 
       for(var prop in rowData.[column.name]) {
         if(rowData.[column.name].hasOwnProperty(prop))
           ++count;
       }
       return <span {...linkStyling}> 
-        <Link onClick={handleModalOpen(rowData.[column.name])}>
+        <Link onClick={onClick}>
           {count}
         </Link>
       </span>
