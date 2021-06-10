@@ -42,7 +42,7 @@ class Explain::HearingRecordEventMapper < Explain::RecordEventMapper
   end
 
   def hearing_as_word
-    "#{@hearing_day['scheduled_for']} #{hearing_type} hearing (with judge #{user(record['judge_id'])})"
+    "#{@hearing_day['scheduled_for']} #{hearing_type} hearing with judge #{user(record['judge_id'])}"
   end
 
   RELEVANT_DATA_KEYS = %w[scheduled_time military_service representative_name bva_poc room].freeze
