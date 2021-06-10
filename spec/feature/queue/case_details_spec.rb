@@ -378,7 +378,7 @@ RSpec.feature "Case details", :all_dbs do
         scenario "details view renders unrecognized POA copy" do
           visit "/queue/appeals/#{appeal.uuid}"
           expect(page).to have_content(COPY::CASE_DETAILS_UNRECOGNIZED_POA)
-          expect(page).to_not have_button('Refresh POA')
+          expect(page).to_not have_button("Refresh POA")
         end
       end
 
@@ -404,7 +404,7 @@ RSpec.feature "Case details", :all_dbs do
           visit "/queue/appeals/#{appeal.uuid}"
           expect(page).to_not have_content(COPY::CASE_DETAILS_UNRECOGNIZED_POA)
           expect(page).to have_content(appeal.representative_name)
-          expect(page).to_not have_button('Refresh POA')
+          expect(page).to_not have_button("Refresh POA")
         end
       end
 
@@ -433,7 +433,7 @@ RSpec.feature "Case details", :all_dbs do
         scenario "details view contains POA information and displays POA Refresh Btn" do
           visit "/queue/appeals/#{appeal.uuid}"
           expect(page).to have_content(appeal.representative_name)
-          expect(page).to have_button('Refresh POA')
+          expect(page).to have_button("Refresh POA")
         end
       end
     end
