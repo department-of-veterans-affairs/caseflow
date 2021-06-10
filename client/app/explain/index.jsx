@@ -26,12 +26,10 @@ class Explain extends React.PureComponent {
   }
 
   handleModalClose = () => {
-    console.log('close')
     this.setState({ modal: false });
   };
 
   handleModalOpen = (details) => {
-    console.log("open");
     this.setState({ modal: true, details: details });
   };
 
