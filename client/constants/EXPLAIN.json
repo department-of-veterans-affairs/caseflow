@@ -38,7 +38,7 @@
       "class": "rel_data"
     },
     "DETAILS": {
-      "header": "Details",
+      "header": "Attribute Count",
       "name": "details",
       "class": "details"
     }

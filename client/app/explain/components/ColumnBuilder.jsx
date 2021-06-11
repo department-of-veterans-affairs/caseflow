@@ -15,7 +15,7 @@ export const timestampColumn = (column) => {
       if (rowData.['category'] == 'clock') {
         return date.toLocaleDateString('en-US');
       } else {
-        return date.toLocaleString('en-US');
+        return date.toLocaleString('en-US', { hour12: false });
       }
     },
     backendCanSort: true,

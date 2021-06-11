@@ -55,3 +55,16 @@
 #events_table .task_completed .narrative {
   color: rgb(0, 90, 0)
 }
+
+#events_table {
+  margin: 5px;
+}
+#events_table [role="cell"] {
+  font-size: 0.775em;
+}
+
+#events_table .rel_data,
+#events_table .narrative {
+  max-width: 300px;
+  word-wrap: break-word;
+}
