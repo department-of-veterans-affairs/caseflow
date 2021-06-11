@@ -100,11 +100,9 @@ group :test, :development, :demo do
   gem "guard-rspec"
   # Linters
   gem "jshint", platforms: :ruby
-  gem "memory_profiler"
   gem "meta_request"
   gem "pry"
   gem "pry-byebug"
-  gem "rack-mini-profiler"
   gem "rails-erd"
   gem "rb-readline"
   gem "rspec"
@@ -119,12 +117,9 @@ group :test, :development, :demo do
   gem "single_cov"
   gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git"
   gem "sql_tracker"
-  gem "stackprof"
   gem "test-prof"
   gem "timecop"
   gem "webdrivers"
-  # Temporary adding this gem to experiment with Appoptics APM
-  gem "appoptics_apm"
 end
 
 group :development do
@@ -134,8 +129,11 @@ group :development do
   gem "dotenv-rails"
   gem "fasterer", require: false
   gem "foreman"
+  gem "memory_profiler"
   gem "meta_request"
+  gem "rack-mini-profiler"
   gem "ruby-prof", "~> 1.4"
+  gem "stackprof"
 end
 
 group :test do

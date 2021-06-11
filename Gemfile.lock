@@ -130,9 +130,6 @@ GEM
       gyoku (>= 0.4.0)
       nokogiri
     anbt-sql-formatter (0.1.0)
-    appoptics_apm (4.12.2)
-      json
-      no_proxy_fix (~> 0.1.2, >= 0.1.2)
     arel (9.0.0)
     ast (2.4.0)
     aws-sdk (2.10.112)
@@ -687,7 +684,6 @@ DEPENDENCIES
   activerecord-oracle_enhanced-adapter (~> 5.2.0)
   acts_as_tree
   anbt-sql-formatter
-  appoptics_apm
   bgs!
   bootsnap
   brakeman
