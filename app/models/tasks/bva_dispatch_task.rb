@@ -51,6 +51,6 @@ class BvaDispatchTask < Task
   private
 
   def prevent_dispatch_task_creation_for_unrecognized_appellants
-      fail NotImplementedError if appeal.claimant.is_a?(OtherClaimant)
+    fail NotImplementedError if appeal.claimant.is_a?(OtherClaimant)
   end
 end
