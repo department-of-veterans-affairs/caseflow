@@ -143,7 +143,9 @@ export const prepareReviewData = (intakeData, intakeType) => {
   const fields = REVIEW_DATA_FIELDS[intakeType];
   const result = {};
   for (let fieldName in fields) {
-    result[fieldName] = intakeData[fields[fieldName].key];
+    let value = intakeData[fields[fieldName].key]
+    if(value === "true" || value === "false") value = value === "true"
+    result[fieldName] = value;
   }
   console.log('un prepared data', result)
   console.log('Prepared data', keysToSnakeCase(result))

@@ -16,7 +16,7 @@ export default class BenefitType extends React.PureComponent {
 
     return <div className="cf-benefit-type">
       <RadioField
-        name="benefitTypeOptions"
+        name="benefitType"
         label="What is the Benefit Type?"
         strongLabel
         vertical

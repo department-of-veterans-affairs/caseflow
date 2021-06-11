@@ -147,14 +147,14 @@ export const SelectClaimant = (props) => {
       claimantType: 'dependent',
       claimantNotes: null,
     });
+    setValue('claimant', null)
+    setValue('claimantType', 'dependent')
   };
   const handleSelectNonVeteran = (value) => {
     const claimantType = value === 'claimant_not_listed' ? 'other' : 'dependent';
 
     if (newClaimant && value === newClaimant.value) {
       setValue('claimantType', newClaimant.claimantType);
-      setValue('claimantNotes', newClaimant.claimantNotes);
-      setValue('claimantName', newClaimant.claimantName);
       setClaimant({
         claimant: value || null,
         claimantName: newClaimant.claimantName,
@@ -193,10 +193,15 @@ export const SelectClaimant = (props) => {
       claimantNotes,
       claimantName: name,
     });
+    setValue('claimaintType', claimantType)
+    setValue('claimaintName', name)
     setShowClaimantModal(false);
   };
-  const handlePayeeCodeChange = (event) =>
+  const handlePayeeCodeChange = (event) => {
     setPayeeCode(event ? event.value : null);
+    setValue('payeeCode', event ? event.value : null)
+  }
+    
 
   const hasRelationships = relationships.length > 0;
   const showClaimants = ['true', true].includes(veteranIsNotClaimant);
@@ -240,8 +245,7 @@ export const SelectClaimant = (props) => {
     return (
       <div>
         <input name="claimantType" type="hidden" ref={props.register} />
-        <input name="claimantName" type="hidden" ref={props.register} />
-        <input name="claimantNotes" type="hidden" ref={props.register} />
+        <input name="payeeCode" type="hidden" ref={props.register} />
         <RadioField
           name="claimant"
           label={claimantLabel()}
@@ -302,13 +306,13 @@ export const SelectClaimant = (props) => {
   return (
     <div className="cf-different-claimant" style={{ marginTop: '10px' }}>
       <RadioField
-        name="unlistedClaimant"
+        name="unlistedClaimantField"
         label="Is the claimant someone other than the Veteran?"
         strongLabel
         vertical
         options={veteranClaimantOptions}
         onChange={handleVeteranIsNotClaimantChange}
-        errorMessage={veteranIsNotClaimantError || props.errors?.['unlistedClaimant']?.message}
+        errorMessage={veteranIsNotClaimantError || props.errors?.['unlistedClaimantField']?.message}
         value={
           veteranIsNotClaimant === null ?
             null :
@@ -373,7 +377,7 @@ SelectClaimant.propTypes = {
 
 const selectClaimantValidations = () => ({
   claimant: yup.string().notRequired().
-    when('unlistedClaimant', {
+    when('unlistedClaimantField', {
       is: 'true',
       then: yup.string().required(GENERIC_FORM_ERRORS.blank)
     }),

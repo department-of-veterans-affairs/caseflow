@@ -12,17 +12,17 @@ export const submitReview = (intakeId, intakeData, intakeType) => (dispatch) => 
     meta: { analytics }
   });
 
-  const validationErrors = validateReviewData(intakeData, intakeType);
+  // const validationErrors = validateReviewData(intakeData, intakeType);
 
-  if (validationErrors) {
-    dispatch({
-      type: ACTIONS.SUBMIT_REVIEW_FAIL,
-      payload: { responseErrorCodes: validationErrors },
-      meta: { analytics }
-    });
+  // if (validationErrors) {
+  //   dispatch({
+  //     type: ACTIONS.SUBMIT_REVIEW_FAIL,
+  //     payload: { responseErrorCodes: validationErrors },
+  //     meta: { analytics }
+  //   });
 
-    return Promise.reject();
-  }
+  //   return Promise.reject();
+  // }
 
   const data = prepareReviewData(intakeData, intakeType);
 

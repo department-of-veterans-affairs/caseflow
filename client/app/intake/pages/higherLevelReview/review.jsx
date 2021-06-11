@@ -9,11 +9,11 @@ const higherLevelReviewFormHeader = (veteranName) => (
 );
 
 const reviewHigherLevelReviewSchema = yup.object().shape({
-  benefitTypeOptions: yup.string().required(GENERIC_FORM_ERRORS.blank),
+  benefitType: yup.string().required(GENERIC_FORM_ERRORS.blank),
   ...receiptDateInputValidation(true),
   informalConference: yup.string().required(GENERIC_FORM_ERRORS.blank),
   sameOffice: yup.string().required(GENERIC_FORM_ERRORS.blank),
-  unlistedClaimant: yup.string().required(GENERIC_FORM_ERRORS.blank),
+  unlistedClaimantField: yup.string().required(GENERIC_FORM_ERRORS.blank),
   legacyOptInApproved: yup.string().required(GENERIC_FORM_ERRORS.blank),
   ...selectClaimantValidations()
 });

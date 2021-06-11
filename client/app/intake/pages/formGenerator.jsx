@@ -70,16 +70,16 @@ const formFieldMapping = (props) => {
       errorMessage={props.legacyOptInApprovedError || props.errors?.['legacyOptInApproved']?.message}
       register={props.register}
     />,
-    unlistedClaimant: <SelectClaimantConnected
+    unlistedClaimantField: <SelectClaimantConnected
       register={props.register}
       errors={props.errors}
       formName={props.formName}
       setValue={props.setValue}
     />,
-    benefitTypeOptions: <BenefitType
+    benefitType: <BenefitType
       value={props.benefitType}
       onChange={props.setBenefitType}
-      errorMessage={props.benefitTypeError || props.errors?.['benefitTypeOptions']?.message}
+      errorMessage={props.benefitTypeError || props.errors?.['benefitType']?.message}
       register={props.register}
     />,
     informalConference: <RadioField
