@@ -153,8 +153,8 @@ class BgsPowerOfAttorney < CaseflowRecord
   end
 
   def update_ihp_task
-    related_appeals.active.each do |appeal|
-      InformalHearingPresentationTask.update_to_new_poa(appeal)
+    related_appeals.each do |appeal|
+      InformalHearingPresentationTask.update_to_new_poa(appeal) if appeal.active?
     end
   end
 
@@ -192,9 +192,9 @@ class BgsPowerOfAttorney < CaseflowRecord
   end
 
   def related_appeals
-    claimant = claimants.select { |claimant| claimant.decision_review_type == "Appeal" }
-
-    Appeal.where(id: claimant.first.decision_review_id)
+    returned_appeals = []
+    appeal_claimants = claimants.select { |claimant| claimant.decision_review_type == "Appeal" }
+    appeal_claimants.each { |claimant| returned_appeals << Appeal.where(id: claimant.decision_review_id) }
   end
 
   def fetch_bgs_record
