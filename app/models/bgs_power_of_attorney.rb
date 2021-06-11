@@ -193,8 +193,8 @@ class BgsPowerOfAttorney < CaseflowRecord
 
   def related_appeals
     returned_appeals = []
-    appeal_claimants = claimants.select { |claimant| claimant.decision_review_type == "Appeal" }
-    appeal_claimants.each { |claimant| returned_appeals << Appeal.where(id: claimant.decision_review_id) }
+    appeal_claimants = claimants.select { |appeal_claimant| claimant.decision_review_type == "Appeal" }
+    appeal_claimants.each { |appeal_claimant| returned_appeals << Appeal.where(id: claimant.decision_review_id) }
     returned_appeals
   end
 
