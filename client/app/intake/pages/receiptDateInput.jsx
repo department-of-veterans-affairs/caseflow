@@ -28,7 +28,7 @@ const ReceiptDateInput = ({
 const receiptDateInputValidation = (includeAmaValidation = false) => {
   return includeAmaValidation ?
     {
-      'receipt-date':
+      receiptDate:
       yup.date().
         when(['$useAmaActivationDate'], {
           is: true,
@@ -50,7 +50,7 @@ const receiptDateInputValidation = (includeAmaValidation = false) => {
         required(RECEIPT_DATE_ERRORS.invalid)
     } :
     {
-      'receipt-date': yup.date().typeError(RECEIPT_DATE_ERRORS.invalid).
+      receiptDate: yup.date().typeError(RECEIPT_DATE_ERRORS.invalid).
         max(format(add(new Date(), { hours: 1 }), 'MM/dd/yyyy'), RECEIPT_DATE_ERRORS.in_future).
         required(RECEIPT_DATE_ERRORS.invalid),
     };

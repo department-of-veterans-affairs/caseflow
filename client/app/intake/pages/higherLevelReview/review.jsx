@@ -9,12 +9,12 @@ const higherLevelReviewFormHeader = (veteranName) => (
 );
 
 const reviewHigherLevelReviewSchema = yup.object().shape({
-  'benefit-type-options': yup.string().required(GENERIC_FORM_ERRORS.blank),
+  benefitType: yup.string().required(GENERIC_FORM_ERRORS.blank),
   ...receiptDateInputValidation(true),
-  'informal-conference': yup.string().required(GENERIC_FORM_ERRORS.blank),
-  'same-office': yup.string().required(GENERIC_FORM_ERRORS.blank),
-  'different-claimant-option': yup.string().required(GENERIC_FORM_ERRORS.blank),
-  'legacy-opt-in': yup.string().required(GENERIC_FORM_ERRORS.blank),
+  informalConference: yup.string().required(GENERIC_FORM_ERRORS.blank),
+  sameOffice: yup.string().required(GENERIC_FORM_ERRORS.blank),
+  claimant: yup.string().required(GENERIC_FORM_ERRORS.blank),
+  legacyOptInApproved: yup.string().required(GENERIC_FORM_ERRORS.blank),
   ...selectClaimantValidations()
 });
 

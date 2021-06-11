@@ -82,7 +82,7 @@ export const SelectClaimant = (props) => {
     relationships,
     payeeCode,
     payeeCodeError,
-    setPayeeCode,
+    // setPayeeCode,
   } = props;
 
   const {
@@ -133,32 +133,45 @@ export const SelectClaimant = (props) => {
     const boolValue = convertStringToBoolean(value);
 
     setVeteranIsNotClaimant(boolValue);
-    setClaimant({
-      claimant: null,
-      claimantType: boolValue ? 'dependent' : 'veteran',
-    });
+
+    props.formProps.setValue('claimantType', boolValue ? 'dependent' : 'veteran');
+    // setClaimant({
+    //   claimant: null,
+    //   claimantType: boolValue ? 'dependent' : 'veteran',
+    // });
   };
   const handleRemove = () => {
     setNewClaimant(null);
-    setClaimant({
-      claimant: null,
-      claimantType: 'dependent',
-      claimantNotes: null,
-    });
+    // setClaimant({
+    //   claimant: null,
+    //   claimantType: 'dependent',
+    //   claimantNotes: null,
+    // });
+    props.formProps.setValue('claimant', null);
+    props.formProps.setValue('claimantType', 'dependent');
+    props.formProps.setValue('claimantNotes', null);
   };
+
   const handleSelectNonVeteran = (value) => {
     const claimantType = value === 'claimant_not_listed' ? 'other' : 'dependent';
 
     if (newClaimant && value === newClaimant.value) {
-      setClaimant({
-        claimant: value || null,
-        claimantName: newClaimant.claimantName,
-        claimantNotes: newClaimant.claimantNotes,
-        claimantType: newClaimant.claimantType,
-      });
+      // setClaimant({
+      //   claimant: value || null,
+      //   claimantName: newClaimant.claimantName,
+      //   claimantNotes: newClaimant.claimantNotes,
+      //   claimantType: newClaimant.claimantType,
+      // });
+      props.formProps.setValue('claimant', value);
+      props.formProps.setValue('claimantName', newClaimant.claimantName);
+      props.formProps.setValue('claimantType', newClaimant.claimantType);
+      props.formProps.setValue('claimantNotes', newClaimant.claimantNotes);
+
     } else {
-      setClaimant({ claimant: value,
-        claimantType });
+      // setClaimant({ claimant: value,
+      //   claimantType });
+      props.formProps.setValue('claimant', value);
+      props.formProps.setValue('claimantType', claimantType);
     }
   };
   const handleAddClaimant = ({
@@ -189,8 +202,8 @@ export const SelectClaimant = (props) => {
     });
     setShowClaimantModal(false);
   };
-  const handlePayeeCodeChange = (event) =>
-    setPayeeCode(event ? event.value : null);
+  const handlePayeeCodeChange = (event, formProps) =>
+    formProps.setValue('payeeCode', event ? event.value : null);
 
   const hasRelationships = relationships.length > 0;
   const showClaimants = ['true', true].includes(veteranIsNotClaimant);
@@ -230,7 +243,7 @@ export const SelectClaimant = (props) => {
     );
   };
 
-  const claimantOptions = () => {
+  const claimantOptions = (formProps) => {
     return (
       <div>
         <RadioField
@@ -256,7 +269,7 @@ export const SelectClaimant = (props) => {
             }
             value={payeeCode}
             errorMessage={payeeCodeError}
-            onChange={(event) => handlePayeeCodeChange(event)}
+            onChange={(event) => handlePayeeCodeChange(event, formProps)}
           />
         )}
       </div>
@@ -310,7 +323,7 @@ export const SelectClaimant = (props) => {
       {showDeceasedVeteranAlert && deceasedVeteranAlert()}
       {showClaimants && (
         (enableAddClaimant || hasRelationships || newClaimant) ?
-          claimantOptions() :
+          claimantOptions(props.formProps) :
           noClaimantsCopy()
       )}
 
@@ -336,6 +349,7 @@ export const SelectClaimant = (props) => {
 };
 
 SelectClaimant.propTypes = {
+  formProps: PropTypes.object,
   benefitType: PropTypes.string,
   featureToggles: PropTypes.shape({
     attorneyFees: PropTypes.bool,

@@ -52,9 +52,9 @@ const rampElectionRadioOptions = map(rampElectionReviewOptions, (option) => ({
 
 const formFieldMapping = (props) => {
   return ({
-    'receipt-date': <ReceiptDateInput {...props} />,
-    'docket-type': <RadioField
-      name="docket-type"
+    receiptDate: <ReceiptDateInput {...props} />,
+    docketType: <RadioField
+      name="docketType"
       label="Which review option did the Veteran request?"
       strongLabel
       vertical
@@ -64,24 +64,25 @@ const formFieldMapping = (props) => {
       value={props.docketType}
       inputRef={props.register}
     />,
-    'legacy-opt-in': <LegacyOptInApproved
+    legacyOptInApproved: <LegacyOptInApproved
       value={props.legacyOptInApproved}
       onChange={props.setLegacyOptInApproved}
       errorMessage={props.legacyOptInApprovedError || props.errors?.['legacy-opt-in']?.message}
       register={props.register}
     />,
-    'different-claimant-option': <SelectClaimantConnected
+    claimant: <SelectClaimantConnected
       register={props.register}
       errors={props.errors}
       formName={props.formName}
+      formProps={props.formProps}
     />,
-    'benefit-type-options': <BenefitType
+    benefitType: <BenefitType
       value={props.benefitType}
       onChange={props.setBenefitType}
       errorMessage={props.benefitTypeError || props.errors?.['benefit-type-options']?.message}
       register={props.register}
     />,
-    'informal-conference': <RadioField
+    informalConference: <RadioField
       name="informal-conference"
       label="Was an informal conference requested?"
       strongLabel
@@ -96,7 +97,7 @@ const formFieldMapping = (props) => {
         null : props.informalConference.toString()}
       inputRef={props.register}
     />,
-    'same-office': <RadioField
+    sameOffice: <RadioField
       name="same-office"
       label="Was an interview by the same office requested?"
       strongLabel
@@ -110,7 +111,7 @@ const formFieldMapping = (props) => {
       value={props.sameOffice === null || props.sameOffice === undefined ? null : props.sameOffice.toString()}
       inputRef={props.register}
     />,
-    'opt-in-election': <Fragment>
+    optionSelected: <Fragment>
       <RadioField
         name="opt-in-election"
         label="Which review lane did the Veteran select?"
@@ -207,6 +208,7 @@ const SelectClaimantConnected = connect(
 )(SelectClaimant);
 
 FormGenerator.propTypes = {
+  formProps: PropTypes.object.isRequired,
   schema: PropTypes.object.isRequired,
   formHeader: PropTypes.func.isRequired,
   veteranName: PropTypes.string,

@@ -70,6 +70,7 @@ const Review = (props) => {
   const intakeData = selectedForm ? props.intakeForms[selectedForm.key] : null;
 
   const submitReview = () => {
+    console.log(formProps.getValues());
     if (selectedForm.category === 'decisionReview') {
       return props.submitDecisionReview(props.intakeId, intakeData, selectedForm.formName);
     }
@@ -84,6 +85,7 @@ const Review = (props) => {
   };
 
   const handleClick = () => {
+    console.log('INTAKE DATA: ', intakeData);
     if (intakeData?.claimant === 'claimant_not_listed') {
       return push('/add_claimant');
     }
@@ -104,7 +106,8 @@ const Review = (props) => {
       formHeader={headerMappings[formKey]}
       schema={schemaMappings[formKey]}
       featureToggles={props.featureToggles}
-      {...formProps}
+      formProps={formProps}
+      // {...formProps}
     />;
 
     return formAccumulator;
