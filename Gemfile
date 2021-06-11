@@ -96,7 +96,6 @@ group :test, :development, :demo do
   gem "database_cleaner"
   gem "factory_bot_rails", "~> 5.2"
   gem "faker"
-  gem "flamegraph"
   gem "guard-rspec"
   # Linters
   gem "jshint", platforms: :ruby
@@ -128,6 +127,7 @@ group :development do
   gem "derailed_benchmarks"
   gem "dotenv-rails"
   gem "fasterer", require: false
+  gem "flamegraph"
   gem "foreman"
   gem "memory_profiler"
   gem "meta_request"
