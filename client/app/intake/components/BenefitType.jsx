@@ -16,7 +16,7 @@ export default class BenefitType extends React.PureComponent {
 
     return <div className="cf-benefit-type">
       <RadioField
-        name="benefit-type-options"
+        name="benefitTypeOptions"
         label="What is the Benefit Type?"
         strongLabel
         vertical
@@ -38,7 +38,7 @@ export default class BenefitType extends React.PureComponent {
 
     return <div className="cf-benefit-type">
       <SearchableDropdown
-        name="issue-benefit-type"
+        name="benefitTypeOptions"
         label="Benefit type"
         strongLabel
         placeholder="Select or enter..."

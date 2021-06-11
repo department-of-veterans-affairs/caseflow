@@ -22,7 +22,7 @@ export default class LegacyOptInApproved extends React.PureComponent {
 
     return <div className="cf-legacy-opt-in" style={{ marginTop: '10px' }}>
       <RadioField
-        name="legacy-opt-in"
+        name="legacyOptInApproved"
         label={INTAKE_LEGACY_OPT_IN_MESSAGE}
         strongLabel
         vertical

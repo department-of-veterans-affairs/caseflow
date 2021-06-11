@@ -145,5 +145,7 @@ export const prepareReviewData = (intakeData, intakeType) => {
   for (let fieldName in fields) {
     result[fieldName] = intakeData[fields[fieldName].key];
   }
+  console.log('un prepared data', result)
+  console.log('Prepared data', keysToSnakeCase(result))
   return keysToSnakeCase(result);
 };

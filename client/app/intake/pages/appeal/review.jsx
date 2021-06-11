@@ -10,9 +10,9 @@ const appealFormHeader = (veteranName) => (
 
 const reviewAppealSchema = yup.object().shape({
   ...receiptDateInputValidation(true),
-  'docket-type': yup.string().required(GENERIC_FORM_ERRORS.blank),
-  'different-claimant-option': yup.string().required(GENERIC_FORM_ERRORS.blank),
-  'legacy-opt-in': yup.string().required(GENERIC_FORM_ERRORS.blank),
+  docketType: yup.string().required(GENERIC_FORM_ERRORS.blank),
+  unlistedClaimant: yup.string().required(GENERIC_FORM_ERRORS.blank),
+  legacyOptInApproved: yup.string().required(GENERIC_FORM_ERRORS.blank),
   ...selectClaimantValidations()
 });
 

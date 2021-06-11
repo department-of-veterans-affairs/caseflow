@@ -75,7 +75,7 @@ const Review = (props) => {
     }
 
     if (selectedForm.key === 'ramp_election') {
-      return props.submitRampElection(props.intakeId, intakeData);
+      return props.submitRampElection(props.intakeId, formProps.getValues());
     }
 
     if (selectedForm.key === 'ramp_refiling') {

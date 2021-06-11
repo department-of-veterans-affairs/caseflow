@@ -83,6 +83,7 @@ export const SelectClaimant = (props) => {
     payeeCode,
     payeeCodeError,
     setPayeeCode,
+    setValue
   } = props;
 
   const {
@@ -137,6 +138,7 @@ export const SelectClaimant = (props) => {
       claimant: null,
       claimantType: boolValue ? 'dependent' : 'veteran',
     });
+    setValue('claimantType', boolValue ? 'dependent' : 'veteran');
   };
   const handleRemove = () => {
     setNewClaimant(null);
@@ -150,6 +152,9 @@ export const SelectClaimant = (props) => {
     const claimantType = value === 'claimant_not_listed' ? 'other' : 'dependent';
 
     if (newClaimant && value === newClaimant.value) {
+      setValue('claimantType', newClaimant.claimantType);
+      setValue('claimantNotes', newClaimant.claimantNotes);
+      setValue('claimantName', newClaimant.claimantName);
       setClaimant({
         claimant: value || null,
         claimantName: newClaimant.claimantName,
@@ -157,6 +162,7 @@ export const SelectClaimant = (props) => {
         claimantType: newClaimant.claimantType,
       });
     } else {
+      setValue('claimantType', claimantType);
       setClaimant({ claimant: value,
         claimantType });
     }
@@ -233,21 +239,24 @@ export const SelectClaimant = (props) => {
   const claimantOptions = () => {
     return (
       <div>
+        <input name="claimantType" type="hidden" ref={props.register} />
+        <input name="claimantName" type="hidden" ref={props.register} />
+        <input name="claimantNotes" type="hidden" ref={props.register} />
         <RadioField
-          name="claimant-options"
+          name="claimant"
           label={claimantLabel()}
           strongLabel
           vertical
           options={radioOpts}
           onChange={handleSelectNonVeteran}
           value={claimant ?? ''}
-          errorMessage={claimantError || props.errors?.['claimant-options']?.message}
+          errorMessage={claimantError || props.errors?.['claimant']?.message}
           inputRef={props.register}
         />
 
         {shouldShowPayeeCode && (
           <SearchableDropdown
-            name="cf-payee-code"
+            name="payeeCode"
             strongLabel
             label="What is the payee code for this claimant?"
             placeholder="Select"
@@ -257,6 +266,7 @@ export const SelectClaimant = (props) => {
             value={payeeCode}
             errorMessage={payeeCodeError}
             onChange={(event) => handlePayeeCodeChange(event)}
+            inputRef={props.register}
           />
         )}
       </div>
@@ -292,13 +302,13 @@ export const SelectClaimant = (props) => {
   return (
     <div className="cf-different-claimant" style={{ marginTop: '10px' }}>
       <RadioField
-        name="different-claimant-option"
+        name="unlistedClaimant"
         label="Is the claimant someone other than the Veteran?"
         strongLabel
         vertical
         options={veteranClaimantOptions}
         onChange={handleVeteranIsNotClaimantChange}
-        errorMessage={veteranIsNotClaimantError || props.errors?.['different-claimant-option']?.message}
+        errorMessage={veteranIsNotClaimantError || props.errors?.['unlistedClaimant']?.message}
         value={
           veteranIsNotClaimant === null ?
             null :
@@ -357,12 +367,13 @@ SelectClaimant.propTypes = {
   setPayeeCode: PropTypes.func,
   claimantNotes: PropTypes.string,
   register: PropTypes.func,
-  errors: PropTypes.array
+  errors: PropTypes.array,
+  setValue: PropTypes.func
 };
 
 const selectClaimantValidations = () => ({
-  'claimant-options': yup.string().notRequired().
-    when('different-claimant-option', {
+  claimant: yup.string().notRequired().
+    when('unlistedClaimant', {
       is: 'true',
       then: yup.string().required(GENERIC_FORM_ERRORS.blank)
     }),

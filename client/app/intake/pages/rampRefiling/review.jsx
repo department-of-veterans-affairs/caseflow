@@ -9,9 +9,9 @@ const rampRefilingHeader = (veteranName) => (
 
 const reviewRampRefilingSchema = yup.object().shape({
   ...receiptDateInputValidation(),
-  'opt-in-election': yup.string().required(GENERIC_FORM_ERRORS.blank),
-  'appeal-docket': yup.string().notRequired().
-    when('opt-in-election', {
+  optionSelected: yup.string().required(GENERIC_FORM_ERRORS.blank),
+  appealDocket: yup.string().notRequired().
+    when('optionSelected', {
       is: REVIEW_OPTIONS.APPEAL.key,
       then: yup.string().required(GENERIC_FORM_ERRORS.blank)
     }),

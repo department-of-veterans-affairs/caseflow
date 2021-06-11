@@ -52,37 +52,38 @@ const rampElectionRadioOptions = map(rampElectionReviewOptions, (option) => ({
 
 const formFieldMapping = (props) => {
   return ({
-    'receipt-date': <ReceiptDateInput {...props} />,
-    'docket-type': <RadioField
-      name="docket-type"
+    receiptDate: <ReceiptDateInput {...props} />,
+    docketType: <RadioField
+      name="docketType"
       label="Which review option did the Veteran request?"
       strongLabel
       vertical
       options={docketTypeRadioOptions}
       onChange={props.setDocketType}
-      errorMessage={props.docketTypeError || props.errors?.['docket-type']?.message}
+      errorMessage={props.docketTypeError || props.errors?.['docketType']?.message}
       value={props.docketType}
       inputRef={props.register}
     />,
-    'legacy-opt-in': <LegacyOptInApproved
+    legacyOptInApproved: <LegacyOptInApproved
       value={props.legacyOptInApproved}
       onChange={props.setLegacyOptInApproved}
-      errorMessage={props.legacyOptInApprovedError || props.errors?.['legacy-opt-in']?.message}
+      errorMessage={props.legacyOptInApprovedError || props.errors?.['legacyOptInApproved']?.message}
       register={props.register}
     />,
-    'different-claimant-option': <SelectClaimantConnected
+    unlistedClaimant: <SelectClaimantConnected
       register={props.register}
       errors={props.errors}
       formName={props.formName}
+      setValue={props.setValue}
     />,
-    'benefit-type-options': <BenefitType
+    benefitTypeOptions: <BenefitType
       value={props.benefitType}
       onChange={props.setBenefitType}
-      errorMessage={props.benefitTypeError || props.errors?.['benefit-type-options']?.message}
+      errorMessage={props.benefitTypeError || props.errors?.['benefitTypeOptions']?.message}
       register={props.register}
     />,
-    'informal-conference': <RadioField
-      name="informal-conference"
+    informalConference: <RadioField
+      name="informalConference"
       label="Was an informal conference requested?"
       strongLabel
       vertical
@@ -90,14 +91,14 @@ const formFieldMapping = (props) => {
       onChange={(value) => {
         props.setInformalConference(convertStringToBoolean(value));
       }}
-      errorMessage={props.informalConferenceError || props.errors?.['informal-conference']?.message}
+      errorMessage={props.informalConferenceError || props.errors?.['informalConference']?.message}
       // eslint-disable-next-line no-undefined
       value={props.informalConference === null || props.informalConference === undefined ?
         null : props.informalConference.toString()}
       inputRef={props.register}
     />,
-    'same-office': <RadioField
-      name="same-office"
+    sameOffice: <RadioField
+      name="sameOffice"
       label="Was an interview by the same office requested?"
       strongLabel
       vertical
@@ -105,31 +106,31 @@ const formFieldMapping = (props) => {
       onChange={(value) => {
         props.setSameOffice(convertStringToBoolean(value));
       }}
-      errorMessage={props.sameOfficeError || props.errors?.['same-office']?.message}
+      errorMessage={props.sameOfficeError || props.errors?.['sameOffice']?.message}
       // eslint-disable-next-line no-undefined
       value={props.sameOffice === null || props.sameOffice === undefined ? null : props.sameOffice.toString()}
       inputRef={props.register}
     />,
-    'opt-in-election': <Fragment>
+    optionSelected: <Fragment>
       <RadioField
-        name="opt-in-election"
+        name="optionSelected"
         label="Which review lane did the Veteran select?"
         strongLabel
         options={props.formName === FORM_TYPES.RAMP_REFILING.formName ?
           rampRefilingRadioOptions : rampElectionRadioOptions}
         onChange={props.setOptionSelected}
-        errorMessage={props.optionSelectedError || props.errors?.['opt-in-election']?.message}
+        errorMessage={props.optionSelectedError || props.errors?.['optionSelected']?.message}
         value={props.optionSelected}
         inputRef={props.register}
       />
       { props.optionSelected === REVIEW_OPTIONS.APPEAL.key &&
         <RadioField
-          name="appeal-docket"
+          name="appealDocket"
           label="Which type of appeal did the Veteran request?"
           strongLabel
           options={docketTypeRadioOptions}
           onChange={props.setAppealDocket}
-          errorMessage={props.appealDocketError || props.errors?.['appeal-docket']?.message}
+          errorMessage={props.appealDocketError || props.errors?.['appealDocket']?.message}
           value={props.appealDocket}
           inputRef={props.register}
         />
