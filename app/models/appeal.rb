@@ -299,33 +299,7 @@ class Appeal < DecisionReview
            :state,
            :email_address, to: :appellant, prefix: true, allow_nil: true
 
-  def appellant_tz
-    return if address.blank?
-
-    # Use an address object if this is a hash
-    appellant_address = address.is_a?(Hash) ? Address.new(address) : address
-
-    begin
-      TimezoneService.address_to_timezone(appellant_address).identifier
-    rescue StandardError => error
-      Raven.capture_exception(error)
-      nil
-    end
-  end
-
-  def representative_tz
-    return if representative_address.blank?
-
-    # Use an address object if this is a hash
-    rep_address = representative_address.is_a?(Hash) ? Address.new(representative_address) : representative_address
-
-    begin
-      TimezoneService.address_to_timezone(rep_address).identifier
-    rescue StandardError => error
-      Raven.capture_exception(error)
-      nil
-    end
-  end
+  alias appellant_address address
 
   def appellant_middle_initial
     appellant_middle_name&.first
