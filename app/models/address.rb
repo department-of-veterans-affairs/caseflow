@@ -43,6 +43,6 @@ class Address
 
   # Identify APO/FPO/DPO addresses by zip code pattern.
   def military_or_diplomatic_address?
-    zip.match?(/^(96[23456]|09|340)/)
+    !zip.nil? && zip.match?(/^(96[23456]|09|340)/)
   end
 end

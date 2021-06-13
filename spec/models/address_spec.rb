@@ -85,5 +85,7 @@ describe Address do
     include_examples "address is properly identified as APO/FPO/DPO", "33034", false
     include_examples "address is properly identified as APO/FPO/DPO", "79667", false
     include_examples "address is properly identified as APO/FPO/DPO", "90210", false
+
+    include_examples "address is properly identified as APO/FPO/DPO", nil, false
   end
 end
