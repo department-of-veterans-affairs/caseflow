@@ -299,7 +299,9 @@ class Appeal < DecisionReview
            :state,
            :email_address, to: :appellant, prefix: true, allow_nil: true
 
-  alias appellant_address address
+  def appellant_address
+    address
+  end
 
   def appellant_middle_initial
     appellant_middle_name&.first
