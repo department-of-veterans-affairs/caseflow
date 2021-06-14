@@ -99,7 +99,6 @@ group :test, :development, :demo do
   gem "guard-rspec"
   # Linters
   gem "jshint", platforms: :ruby
-  gem "meta_request"
   gem "pry"
   gem "pry-byebug"
   gem "rails-erd"

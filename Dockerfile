@@ -12,6 +12,7 @@ ENV LD_LIBRARY_PATH="/opt/oracle/instantclient_12_2:$LD_LIBRARY_PATH" \
     RAILS_ENV="development" \
     DEPLOY_ENV="demo" \
     PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+    BUNDLE_WITHOUT="development"
 
 # install oracle deps
 WORKDIR /opt/oracle/instantclient_12_2/
