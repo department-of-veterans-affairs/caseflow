@@ -141,3 +141,12 @@ export const REQUEST_TYPE_OPTIONS = [
   { label: 'Virtual',
     value: HEARING_REQUEST_TYPES.virtual }
 ];
+
+/* eslint-disable id-length */
+export const REQUEST_TYPE_LABELS = {
+  R: 'Virtual',
+  V: 'Video',
+  C: 'Central',
+  T: 'Travel'
+};
+/* eslint-enable id-length */

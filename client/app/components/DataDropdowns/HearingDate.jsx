@@ -15,13 +15,14 @@ import ApiUtil from '../../util/ApiUtil';
 import COPY from '../../../COPY';
 import LoadingLabel from './LoadingLabel';
 import SearchableDropdown from '../SearchableDropdown';
+import { REQUEST_TYPE_LABELS } from '../../hearings/constants';
 
 export const HearingDateLabel = ({ date, requestType, scheduled, detail }) => {
   return (
     <React.Fragment>
       <strong>{date}</strong>
       <Dot spacing={5} />{' '}
-      {requestType}
+      {REQUEST_TYPE_LABELS[requestType]}
       <Dot spacing={5} />{' '}
       {scheduled}
       {detail && (
