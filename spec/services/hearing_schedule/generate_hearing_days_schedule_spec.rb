@@ -161,27 +161,6 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
     end
   end
 
-  context ".monthly_distributed_days" do
-    let(:allocated_days) { 118.0 }
-    subject { generate_hearing_days_schedule.monthly_distributed_days(allocated_days) }
-
-    it do
-      expect(subject).to eq([4, 2018] => 20, [5, 2018] => 19, [6, 2018] => 20,
-                            [7, 2018] => 20, [8, 2018] => 19, [9, 2018] => 20)
-    end
-    it { expect(subject.values.inject(:+).to_f).to eq(allocated_days) }
-
-    context "for a few hearing days" do
-      let(:allocated_days) { 3.0 }
-
-      it do
-        expect(subject).to eq([4, 2018] => 1, [5, 2018] => 0, [6, 2018] => 1,
-                              [7, 2018] => 0, [8, 2018] => 1, [9, 2018] => 0)
-      end
-      it { expect(subject.values.inject(:+).to_f).to eq(allocated_days) }
-    end
-  end
-
   context "RO hearing days allocation" do
     let(:ro_schedule_period) { create(:ro_schedule_period) }
 
