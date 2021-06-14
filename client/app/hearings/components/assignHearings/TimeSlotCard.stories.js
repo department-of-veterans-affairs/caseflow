@@ -5,6 +5,7 @@ import { LEGACY_APPEAL_TYPES } from '../../../queue/constants';
 import { TimeSlotCard } from './TimeSlotCard';
 import HEARING_TIME_OPTIONS from '../../../../constants/HEARING_TIME_OPTIONS';
 import { roTimezones } from '../../utils';
+import { defaultHearing, defaultHearingDay } from '../../../../test/data/hearings'
 
 export default {
   title: 'Hearings/Components/Assign Hearings/TimeSlotCard',
@@ -22,28 +23,8 @@ const Template = (args) => {
 
   return (
     <TimeSlotCard
-      hearing={{
-        regionalOfficeTimezone: args.regionalOfficeTimezone,
-        appellantFirstName: args.appellantFirstName,
-        appellantLastName: args.appellantLastName,
-        veteranFirstName: args.veteranFirstName,
-        veteranLastName: args.veteranLastName,
-        veteranFileNumber: args.veteranFileNumber,
-        aod: args.aod,
-        scheduledTimeString: args.scheduledTimeString,
-        issueCount: args.issueCount,
-        docketName: args.docketName,
-        caseType: args.caseType,
-        appealId: args.appealId,
-        requestType: args.requestType,
-        label: args.label,
-        docketNumber: args.docketNumber,
-        showDetails: args.showDetails,
-        showType: args.showType,
-        isFormerTravel: args.isFormerTravel,
-        itemSpacing: args.itemSpacing,
-        poaName: args.poaName
-      }}
+      hearing={args || defaultHearing}
+      hearingDay={defaultHearingDay}
     />
   );
 };

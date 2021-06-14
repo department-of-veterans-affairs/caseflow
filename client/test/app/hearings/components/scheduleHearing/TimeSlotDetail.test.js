@@ -2,7 +2,7 @@ import React from 'react';
 
 import { TimeSlotDetail } from 'app/hearings/components/scheduleHearing/TimeSlotDetail';
 import { render } from '@testing-library/react';
-import { getHearingDetails, getHearingType, defaultHearing, defaultHearingDay } from 'test/data';
+import { getHearingDetailsArray, getHearingType, defaultHearing, defaultHearingDay } from 'test/data';
 
 const testLabel = 'Something';
 
@@ -16,7 +16,7 @@ const defaultProps = {
 };
 
 // Row 2 data
-const secondRowLabel = getHearingDetails(defaultProps, '');
+const secondRowLabelArray = getHearingDetailsArray(defaultProps, '');
 
 // Row 3 data
 const lastRowLabel = getHearingType(defaultProps);
@@ -40,7 +40,9 @@ describe('TimeSlotDetail', () => {
     );
 
     expect(document.getElementsByClassName('time-slot-details')).toHaveLength(1);
-    expect(document.getElementsByClassName('time-slot-details')[0]).toHaveTextContent(secondRowLabel);
+    secondRowLabelArray.forEach((elem) => {
+      expect(document.getElementsByClassName('time-slot-details')[0]).toHaveTextContent(elem);
+    });
     expect(card.baseElement).toHaveTextContent(testLabel);
     expect(card).toMatchSnapshot();
   });
@@ -64,8 +66,10 @@ describe('TimeSlotDetail', () => {
     );
 
     expect(document.getElementsByClassName('time-slot-details')).toHaveLength(2);
-    expect(document.getElementsByClassName('time-slot-details')[0]).
-      toHaveTextContent(getHearingDetails(defaultProps, true));
+
+    getHearingDetailsArray(defaultProps, true).forEach((elem) => {
+      expect(document.getElementsByClassName('time-slot-details')[0]).toHaveTextContent(elem);
+    });
     expect(document.getElementsByClassName('time-slot-details')[1]).toHaveTextContent(lastRowLabel);
     expect(card.baseElement).toHaveTextContent(testLabel);
     expect(card).toMatchSnapshot();

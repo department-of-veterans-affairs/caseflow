@@ -1,0 +1,133 @@
+<% content_for :head do %>
+<%= stylesheet_link_tag 'explain_appeal' %>
+<% end %>
+
+<div style="font-size:0.875em; padding:10px">
+  <h2>Appeal Narrative</h2>
+  <details>
+    <summary style="color: purple">Narrative table</summary>
+    <table id="events_table" style="width: 100%;">
+      <tr>
+        <th>timestamp</th>
+        <th>category</th>
+        <th>event type</th>
+        <th style="width: 60%;">narrative</th>
+        <th style="width: 20%;">relevant data</th>
+        <th>attribute count</th>
+      </tr>
+      <% event_table_data.each do |event| %>
+        <tr class="<%=event["category"]+'_'+event['event_type']%> <%=event["category"]%>">
+          <td style="padding: 2px" class="timestamp"><%=
+            if event["category"] == "clock"
+              event["timestamp"]
+            else
+              DateTime.parse(event["timestamp"]).strftime("%F %T") rescue event["timestamp"]
+            end
+          %></td>
+          <td style="padding: 2px" class="category"><%= event["category"] %></td>
+          <td style="padding: 2px" class="event_type"><%= event["event_type"] %></td>
+          <td style="padding: 2px" class="narrative">
+            <% if event["comment"] %>
+              <%= event["comment"] %><br/>
+            <% end %>
+            <i>(<%= event["object_id"] %>)</i>
+          </td>
+          <td style="padding: 2px; font-size:0.8em" class="rel_data">
+            <% if event["context_id"] != appeal_object_id && event["category"] != "clock" %>
+              <i>context: <%= event["context_id"] %></i>
+            <% end %>
+            <% if event["relevant_data"] %>
+              <pre style="margin: 0px; width: 300px;"><%=
+                JSON.pretty_generate(event["relevant_data"]).sub("{\n","").sub("\n}","").gsub(/^  /,"")
+              %></pre>
+            <% end %>
+          </td>
+          <td style="padding: 2px" class="details"><%= event["details"]&.size %></td>
+        </tr>
+      <% end %>
+    </table>
+  </details>
+
+  <details>
+    <summary style="color: red">Narrative table data</summary>
+    <pre style="font-size:0.84em; padding:10px"><code><%= JSON.pretty_generate(event_table_data) %></code></pre>
+  </details>
+  <hr/>
+
+  <details>
+    <summary style="color: blue">Help</summary>
+    URL query parameter options:
+    <ul>
+      <li><code><%= link_to('show_pii', {action: 'show', show_pii: ""}) %></code>: shows PII in the Intake section</li>
+      <li><code><%= link_to('fields=id,status,updated_at', {action: 'show', fields: "id,status,updated_at"}) %></code>: custom fields to show in the Task tree section</li>
+    </ul>
+    <div id="treeefields" style="width: 200px; height: 300px; overflow-y: scroll; padding:10px">
+      <% available_fields.each do |field_name| %>
+        <% if treee_fields.include?(field_name.to_sym) %>
+          <input type="checkbox" name="<%=field_name%>" id="<%=field_name%>" checked />
+        <% else %>
+          <input type="checkbox" name="<%=field_name%>" id="<%=field_name%>" />
+        <% end %>
+        <label for="<%=field_name%>"><%=field_name%></label>
+      <% end %>
+    </div>
+    <p/><a id="task_tree_link" href="">Update task tree</a>
+
+    <p/>Other formats:
+    <%= link_to('text', {action: 'show', format: "text"}) %>, 
+    <%= link_to('json', {action: 'show', format: "json"}) %>
+    <hr/>
+  </details>
+  <hr/>
+
+  <h2>Basic Info about this Appeal</h2>
+  <ul>
+    <li>status: <%= appeal_status.to_s %></li>
+    <li>priority? AOD: <%= appeal.aod? %>, CAVC: <%= appeal.cavc? %></li>
+  </ul>
+
+  <h3>Task tree</h3>
+  <code style="color: green">
+    Appeal.find(<%= appeal.id %>).treee(<%= treee_fields.map{|f| f.to_s.prepend(":")}.join(", ") %>)
+    <% if appeal.is_a?(LegacyAppeal) %>
+      <br/>la = LegacyWorkQueue.tasks_by_appeal_id(<%= appeal.vacols_id %>)
+      <br/>la.location_history.map(&:summary)
+    <% end %>
+  </code>
+  <pre style="font-size:0.84em; padding:10px"><code><%= task_tree_as_text %></code></pre>
+  <hr/>
+
+  <h3>Intake</h3>
+  <code style="color: green">
+    puts IntakeRenderer.render(Appeal.find(<%= appeal.id %>), 
+      show_pii: <%= show_pii_query_param ? "true" : "false" %>)
+  </code>
+  <pre style="font-size:0.84em; padding:10px"><code><%= intake_as_text %></code></pre>
+  <hr/>
+
+  <%= javascript_include_tag 'explain-appeal' %>
+  <script type="text/javascript">
+    // Handle Task Tree field checkboxes
+    function updateTaskTreeLink(){
+      const selected = Array.prototype.map.call(document.querySelectorAll('#treeefields input:checked'), elem => elem.name);
+      const newUrl = window.location.href.split('?')[0]+"?fields="+selected.join(',');
+      document.querySelector('#task_tree_link').setAttribute("href", newUrl);
+    }
+    updateTaskTreeLink();
+    document.querySelectorAll('#treeefields input').forEach((elem)=>{
+      elem.addEventListener('click', () => updateTaskTreeLink());
+    });
+  </script>
+
+  <% unless legacy_appeal? %>
+    <h2>Related Appeals and Associated Records</h2>
+    <p>The following subsections are created from the <b><%= show_pii_query_param ? "unsanitized" : "sanitized" %></b>
+      <%= link_to('json export', {action: 'show', format: "json"}) %>, which are composed of these appeals:
+      <ul>
+        <% sje.records_hash["appeals"].each do |appeal| %>
+          <li>Appeal id: <%= appeal["id"] %>, uuid: <%= appeal["uuid"] %></li>
+        <% end %>
+      </ul>
+    </p>
+  <% end %>
+</div>

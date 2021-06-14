@@ -180,6 +180,18 @@ describe DecisionDocument, :postgres do
         end
       end
 
+      context "when appellant is unrecognized" do
+        let(:claimant) { create(:claimant, type: "OtherClaimant") }
+
+        it "uploads the document and then gets blocked" do
+          expect { subject }.to raise_error(NotImplementedError)
+
+          expect(VBMSService).to have_received(:upload_document_to_vbms).with(
+            decision_document.appeal, decision_document
+          )
+        end
+      end
+
       it "uploads document" do
         subject
 

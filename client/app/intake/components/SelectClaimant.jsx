@@ -1,11 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
+import * as yup from 'yup';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import {
   BOOLEAN_RADIO_OPTIONS,
   BOOLEAN_RADIO_OPTIONS_DISABLED_FALSE,
+  GENERIC_FORM_ERRORS,
   DECEASED_PAYEE_CODES,
   LIVING_PAYEE_CODES,
 } from '../constants';
@@ -239,7 +241,8 @@ export const SelectClaimant = (props) => {
           options={radioOpts}
           onChange={handleSelectNonVeteran}
           value={claimant ?? ''}
-          errorMessage={claimantError}
+          errorMessage={claimantError || props.errors?.['claimant-options']?.message}
+          inputRef={props.register}
         />
 
         {shouldShowPayeeCode && (
@@ -295,12 +298,13 @@ export const SelectClaimant = (props) => {
         vertical
         options={veteranClaimantOptions}
         onChange={handleVeteranIsNotClaimantChange}
-        errorMessage={veteranIsNotClaimantError}
+        errorMessage={veteranIsNotClaimantError || props.errors?.['different-claimant-option']?.message}
         value={
           veteranIsNotClaimant === null ?
             null :
             veteranIsNotClaimant?.toString()
         }
+        inputRef={props.register}
       />
 
       {showDeceasedVeteranAlert && deceasedVeteranAlert()}
@@ -352,6 +356,17 @@ SelectClaimant.propTypes = {
   payeeCodeError: PropTypes.string,
   setPayeeCode: PropTypes.func,
   claimantNotes: PropTypes.string,
+  register: PropTypes.func,
+  errors: PropTypes.array
 };
 
+const selectClaimantValidations = () => ({
+  'claimant-options': yup.string().notRequired().
+    when('different-claimant-option', {
+      is: 'true',
+      then: yup.string().required(GENERIC_FORM_ERRORS.blank)
+    }),
+});
+
+export { selectClaimantValidations };
 export default SelectClaimant;
