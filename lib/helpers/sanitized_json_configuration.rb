@@ -63,7 +63,7 @@ class SanitizedJsonConfiguration
         retrieval: lambda do |records|
           appeal_decision_issue_ids = records[Appeal].map(&:decision_issues).flatten.map(&:id)
           request_issues = records[Appeal].map(&:request_issues).flatten
-          other_decision_issues_ids = request_issues.compact.map(&:contested_decision_issue).map(&:id)
+          other_decision_issues_ids = request_issues.compact.map(&:contested_decision_issue).compact.map(&:id)
 
           DecisionIssue.where(id: appeal_decision_issue_ids + other_decision_issues_ids).order(:id)
         end
