@@ -56,7 +56,7 @@ describe Docket, :all_dbs do
     let!(:unrecognized_appellant_appeal) do
       create(:appeal,
              :with_post_intake_tasks,
-             claimants: [create(:claimant, :with_unrecognized_appellant_detail)],
+             claimants: [create(:claimant, :with_unrecognized_appellant_detail, type: "OtherClaimant")],
              docket_type: Constants.AMA_DOCKETS.direct_review)
     end
 
