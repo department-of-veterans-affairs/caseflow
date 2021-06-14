@@ -60,7 +60,13 @@ class SanitizedJsonConfiguration
         # In order to import DecisionIssues before RequestIssues (since RequestIssue records refer to DecisionIssue),
         # export DecisionIssue records first.
         sanitize_fields: %w[decision_text description],
-        retrieval: ->(records) { records[Appeal].map(&:decision_issues).flatten.sort_by(&:id) }
+        retrieval: lambda do |records|
+          appeal_decision_issue_ids = records[Appeal].map(&:decision_issues).flatten.map(&:id)
+          request_issues = records[Appeal].map(&:request_issues).flatten
+          other_decision_issues_ids = request_issues.compact.map(&:contested_decision_issue).compact.map(&:id)
+
+          DecisionIssue.where(id: appeal_decision_issue_ids + other_decision_issues_ids).order(:id)
+        end
       },
       RequestIssue => {
         sanitize_fields: ["notes", "contested_issue_description", /_(notes|text|description)/],
@@ -229,8 +235,9 @@ class SanitizedJsonConfiguration
     # To-do: include other source appeals, e.g., those with the same docket number
     [
       appeal.cavc_remand&.source_appeal,
-      appeal.appellant_substitution&.source_appeal
-    ].compact
+      appeal.appellant_substitution&.source_appeal,
+      appeal.request_issues.map { |rqi| rqi.contested_decision_issue&.decision_review }
+    ].flatten.compact
   end
 
   def before_sanitize(record, obj_hash)
