@@ -35,6 +35,7 @@ class InitialTasksFactory
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def create_subtasks!
     distribution_task # ensure distribution_task exists
+    return if @appeal.claimant.is_a?(OtherClaimant)
 
     if @appeal.appellant_substitution?
       create_selected_tasks
