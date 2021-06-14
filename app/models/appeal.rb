@@ -300,7 +300,7 @@ class Appeal < DecisionReview
            :email_address, to: :appellant, prefix: true, allow_nil: true
 
   def appellant_address
-    address
+    appellant&.address
   end
 
   def appellant_middle_initial
