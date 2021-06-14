@@ -258,7 +258,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
 
     def format_hearing_day(hearing_day, detail_label = nil, total_slots = 0)
-      # Initializze the label with the formatted hearing day
+      # Initialize the label with the formatted hearing day
       label = hearing_day.scheduled_for.strftime("%a %b %-d").to_s
 
       # Add the Formatted request type
