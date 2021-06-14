@@ -165,8 +165,14 @@ export const calculateEvidenceSubmissionEndDate = ({
   const timerEndsAt = evidenceSubmissionTask.timerEndsAt;
   const timerEndsAtDate = parseISO(timerEndsAt);
 
-  const remainingTime =
-    timerEndsAtDate.getTime() - veteranDateOfDeath.getTime();
+  let remainingTime = timerEndsAtDate.getTime() - veteranDateOfDeath.getTime();
+
+  const maxEvidenceSubmissionWindow = 90 * 86400000;
+
+  if (remainingTime > maxEvidenceSubmissionWindow) {
+    remainingTime = maxEvidenceSubmissionWindow;
+  }
+
   const newEndTime = substitutionDate.getTime() + remainingTime;
 
   return new Date(newEndTime);
