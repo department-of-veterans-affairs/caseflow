@@ -32,6 +32,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     @number_to_allocate = 1
     @ro_non_available_days = {}
     @ros = {}
+    @request_type_allocations = :allocated_days
 
     extract_non_available_days
 
@@ -133,9 +134,11 @@ class HearingSchedule::GenerateHearingDaysSchedule
   #   :available_days=>["Thu, 01 Apr 2021", "Fri, 02 Apr 2021"],
   #   :num_of_rooms=>1,
   #   :allocated_dates=>{[4, 2021]=>{Thu, 01 Apr 2021=>[{:room_num=>nil}]}, [5, 2021]=>{}, [6, 2021]=>{}}}}
-  def allocate_no_room_hearing_days_to_ros
+  def allocate_no_room_hearing_days_to_ros(request_type_allocations = :allocated_days)
+    @request_type_allocations = request_type_allocations
+
     # Add up all the hearing days we need to distribute
-    days_to_allocate = @ros.values.pluck(:allocated_days_without_room).sum.to_i
+    days_to_allocate = @ros.values.pluck(@request_type_allocations).sum.to_i
 
     # Create a lookup table of available days to track the number of allocations per date
     available_days = @available_days.product([0]).to_h
@@ -160,10 +163,12 @@ class HearingSchedule::GenerateHearingDaysSchedule
       ro = available_ro_and_day.last
 
       # Add the hearing day to this RO
-      @ros[ro[:ro_key]][:allocated_dates][[hearing_day.month, hearing_day.year]][hearing_day].push(room_num: nil)
+      docket_type = (@request_type_allocations == :allocated_days) ? :video : :virtual
+      @ros[ro[:ro_key]][:allocated_dates][[hearing_day.month, hearing_day.year]][hearing_day]
+        .push(docket_type: docket_type)
 
       # Decrement the requested days for this RO
-      ro[:allocated_days_without_room] -= 1
+      ro[@request_type_allocations] -= 1
 
       # Increase the lookup table value for this date
       available_days[hearing_day] += 1
@@ -175,14 +180,14 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   def sort_ro_list(ro_list, ro_info = {})
     # Remove any ROs that don't have any allocated hearing days without rooms left
-    ros_with_request = ro_list.reject { |ro| ro[:allocated_days_without_room].to_i == 0 }
+    ros_with_request = ro_list.reject { |ro| ro[@request_type_allocations].to_i == 0 }
 
     # If we are shuffling the list, move the first element to the last
     if ro_info.any? && ros_with_request.pluck(:ro_key).include?(ro_info[:ro_key])
       ros_with_request.push(ros_with_request.delete_at(ros_with_request.index(ro_info)))
     else
       # Sort the list so the RO with the fewest requests is first
-      ros_with_request.sort_by { |ro| ro[:allocated_days_without_room] }
+      ros_with_request.sort_by { |ro| ro[@request_type_allocations] }
     end
   end
 
@@ -252,7 +257,6 @@ class HearingSchedule::GenerateHearingDaysSchedule
     co_schedule = []
     co_schedule_args = {
       request_type: HearingDay::REQUEST_TYPES[:central],
-      room: "2",
       bva_poc: "CAROL COLEMAN-DEW"
     }
 
@@ -529,7 +533,6 @@ class HearingSchedule::GenerateHearingDaysSchedule
         allocated_days: allocation.allocated_days,
         allocated_days_without_room: allocation.allocated_days_without_room,
         available_days: @available_days,
-        num_of_rooms: RegionalOffice.new(ro_key).rooms,
         number_of_slots: allocation.number_of_slots,
         slot_length_minutes: allocation.slot_length_minutes,
         first_slot_time: allocation.first_slot_time
