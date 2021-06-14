@@ -60,6 +60,14 @@ module AppealConcern
     end
   end
 
+  def appellant_tz
+    timezone_identifier_for_address(appellant_address)
+  end
+
+  def representative_tz
+    timezone_identifier_for_address(representative_address)
+  end
+
   #
   # This section was added to deal with displaying FNOD information in various places.
   # Currently, the FNOD information is used by both queue and hearings in:
@@ -98,5 +106,22 @@ module AppealConcern
   # the naming of the helper methods.
   def veteran_name_object
     FullName.new(veteran_first_name, veteran_middle_initial, veteran_last_name)
+  end
+
+  def timezone_identifier_for_address(addr)
+    return if addr.blank?
+
+    # Use an address object if this is a hash
+    address_obj = addr.is_a?(Hash) ? Address.new(addr) : addr
+
+    # APO/FPO/DPO addresses do not have time zones so we don't attempt to fetch them.
+    return if address_obj.military_or_diplomatic_address?
+
+    begin
+      TimezoneService.address_to_timezone(address_obj).identifier
+    rescue StandardError => error
+      Raven.capture_exception(error)
+      nil
+    end
   end
 end
