@@ -53,5 +53,5 @@ PoaRefresh.propTypes = {
     poa_last_synced_at: PropTypes.string,
     representative_id: PropTypes.number
   }),
-  appealId: PropTypes.number
+  appealId: PropTypes.string
 };
