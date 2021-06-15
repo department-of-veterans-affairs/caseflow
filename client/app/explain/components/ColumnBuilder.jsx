@@ -30,13 +30,13 @@ export const timestampColumn = (column) => {
 
 export const contextColumn = (column) => {
   return {
-    // header: column.header,
-    // name: column.name,
-    // cellClass: column.class,
-    // valueFunction: (rowData) => rowData.[column.name],
-    // backendCanSort: true,
-    // label: 'Sort by context',
-    // getSortValue: (rowData) => rowData.[column.name]
+    header: column.header,
+    name: column.name,
+    cellClass: column.class,
+    valueFunction: (rowData) => rowData.[column.name],
+    backendCanSort: true,
+    label: 'Sort by context',
+    getSortValue: (rowData) => rowData.[column.name]
   }
 }
 
@@ -81,13 +81,13 @@ export const eventTypeColumn = (column, filterOptions) => {
 
 export const objectIdColumn = (column) => {
   return {
-    // header: column.header,
-    // name: column.name,
-    // cellClass: column.class,
-    // valueFunction: (rowData) => rowData.[column.name],
-    // backendCanSort: true,
-    // label: 'Sort by object id',
-    // getSortValue: (rowData) => rowData.[column.name]
+    header: column.header,
+    name: column.name,
+    cellClass: column.class,
+    valueFunction: (rowData) => rowData.[column.name],
+    backendCanSort: true,
+    label: 'Sort by object id',
+    getSortValue: (rowData) => rowData.[column.name]
   }
 }
 

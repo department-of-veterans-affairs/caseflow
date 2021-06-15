@@ -5,11 +5,6 @@
       "name": "timestamp",
       "class": "timestamp"
     },
-    "CONTEXT": {
-      "header": "Context",
-      "name": "context_id",
-      "class": ""
-    },
     "OBJECT_TYPE": {
       "header": "Category",
       "name": "category",
@@ -21,11 +16,6 @@
       "name": "event_type",
       "filterable": true,
       "class": "event_type"
-    },
-    "OBJECT_ID": {
-      "header": "Object ID",
-      "name": "object_id",
-      "class": ""
     },
     "COMMENT": {
       "header": "Narrative",
@@ -41,6 +31,18 @@
       "header": "Attribute Count",
       "name": "details",
       "class": "details"
+    }
+  },
+  "UNUSED_COLUMNS": {
+    "CONTEXT": {
+      "header": "Context",
+      "name": "context_id",
+      "class": ""
+    },
+    "OBJECT_ID": {
+      "header": "Object ID",
+      "name": "object_id",
+      "class": ""
     }
   }
 }
