@@ -300,7 +300,16 @@ class EndProductCodeSelector
     if benefit_type == "fiduciary"
       END_PRODUCT_CODES[:fiduciary][review_type]
     else
-      end_product_codes[benefit_type.to_sym][review_type][issue_type]
+      code = end_product_codes[benefit_type.to_sym][review_type][issue_type]
+      (code == "040SCR" && request_issues_older_than_ayear?) ? "040SCRGTY" : code
+    end
+  end
+
+  def request_issues_older_than_ayear?
+    return false unless FeatureToggle.enabled?(:itf_supplemental_claims)
+
+    decision_review.request_issues.active.rating.any? do |request_issue|
+      request_issue.decision_date < (decision_review.receipt_date - 1.year)
     end
   end
 end
