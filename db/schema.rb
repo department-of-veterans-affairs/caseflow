@@ -1077,14 +1077,14 @@ ActiveRecord::Schema.define(version: 2021_06_15_221829) do
 
   create_table "people", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.date "date_of_birth"
-    t.string "email_address", comment: "Person email address, cached from BGS"
-    t.string "first_name", comment: "Person first name, cached from BGS"
-    t.string "last_name", comment: "Person last name, cached from BGS"
-    t.string "middle_name", comment: "Person middle name, cached from BGS"
-    t.string "name_suffix", comment: "Person name suffix, cached from BGS"
+    t.date "date_of_birth", comment: "PII"
+    t.string "email_address", comment: "PII. Person email address, cached from BGS"
+    t.string "first_name", comment: "PII. Person first name, cached from BGS"
+    t.string "last_name", comment: "PII. Person last name, cached from BGS"
+    t.string "middle_name", comment: "PII. Person middle name, cached from BGS"
+    t.string "name_suffix", comment: "PII. Person name suffix, cached from BGS"
     t.string "participant_id", null: false
-    t.string "ssn", comment: "Person Social Security Number, cached from BGS"
+    t.string "ssn", comment: "PII. Person Social Security Number, cached from BGS"
     t.datetime "updated_at", null: false
     t.index ["participant_id"], name: "index_people_on_participant_id", unique: true
     t.index ["ssn"], name: "index_people_on_ssn"

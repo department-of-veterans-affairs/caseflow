@@ -138,12 +138,11 @@ class SanitizedJsonConfiguration
       },
       Person => {
         track_imported_ids: true,
-        sanitize_fields: %w[date_of_birth email_address first_name last_name middle_name ssn],
         retrieval: ->(records) { (records[Veteran] + records[Claimant]).map(&:person).uniq.compact }
       }
     }.each do |clazz, class_configuration|
       class_configuration[:sanitize_fields] ||= self.class.select_sanitize_fields(clazz).tap do |fields|
-        puts "  Inferring #{clazz}'s' sanitize_fields: #{fields}" unless fields.blank?
+        puts "  Inferring #{clazz} sanitize_fields: #{fields}" unless fields.blank?
       end
     end
   end

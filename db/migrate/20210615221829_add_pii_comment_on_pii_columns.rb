@@ -18,6 +18,14 @@ class AddPiiCommentOnPiiColumns < Caseflow::Migration
     change_column_comment :bgs_power_of_attorneys, :file_number, "PII. Claimant file number"
     change_column_comment :documents, :file_number, "PII"
     change_column_comment :form8s, :file_number, "PII"
+
+    change_column_comment :people, :date_of_birth, "PII"
+    change_column_comment :people, :email_address, "PII. Person email address, cached from BGS"
+    change_column_comment :people, :first_name, "PII. Person first name, cached from BGS"
+    change_column_comment :people, :last_name, "PII. Person last name, cached from BGS"
+    change_column_comment :people, :middle_name, "PII. Person middle name, cached from BGS"
+    change_column_comment :people, :name_suffix, "PII. Person name suffix, cached from BGS"
+    change_column_comment :people, :ssn, "PII. Person Social Security Number, cached from BGS"
   end
 
   def down
@@ -38,6 +46,14 @@ class AddPiiCommentOnPiiColumns < Caseflow::Migration
 
     change_column_comment :bgs_power_of_attorneys, :file_number, "Claimant file number"
     change_column_comment :documents, :file_number, nil
-    change_column_comment :form8s, :file_number, nil  
+    change_column_comment :form8s, :file_number, nil
+
+    change_column_comment :people, :date_of_birth, nil
+    change_column_comment :people, :email_address, "Person email address, cached from BGS"
+    change_column_comment :people, :first_name, "Person first name, cached from BGS"
+    change_column_comment :people, :last_name, "Person last name, cached from BGS"
+    change_column_comment :people, :middle_name, "Person middle name, cached from BGS"
+    change_column_comment :people, :name_suffix, "Person name suffix, cached from BGS"
+    change_column_comment :people, :ssn, "Person Social Security Number, cached from BGS"
   end
 end
