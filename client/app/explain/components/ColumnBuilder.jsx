@@ -5,6 +5,10 @@ import Modal from '../../components/Modal'
 import Link from '../../components/Link'
 import { css } from 'glamor';
 
+const className = (rowData) => {
+  return rowData['category']+' '+rowData['category']+'_'+rowData['event_type']
+}
+
 export const timestampColumn = (column) => {
   return {
     header: column.header,
@@ -41,7 +45,11 @@ export const objectTypeColumn = (column, filterOptions) => {
     header: column.header,
     name: column.name,
     cellClass: column.class,
-    valueFunction: (rowData) => rowData.[column.name],
+    valueFunction: (rowData) => {
+      return <span class={className(rowData)}>
+        {rowData.[column.name]}
+      </span>
+    },
     backendCanSort: true,
     columnName: 'category',
     enableFilter: true,
@@ -57,7 +65,11 @@ export const eventTypeColumn = (column, filterOptions) => {
     header: column.header,
     name: column.name,
     cellClass: column.class,
-    valueFunction: (rowData) => rowData.[column.name],
+    valueFunction: (rowData) => {
+      return <span class={className(rowData)}>
+        {rowData.[column.name]}
+      </span>
+    },
     backendCanSort: true,
     columnName: 'event_type',
     enableFilter: true,
@@ -85,7 +97,9 @@ export const commentColumn = (column) => {
     name: column.name,
     cellClass: column.class,
     valueFunction: (rowData) => {
-      return `${rowData.[column.name]} (${rowData.['object_id']})`;
+      return <span class={className(rowData)}>
+        {rowData.[column.name]} ({rowData.['object_id']})
+      </span>
     },
     backendCanSort: true,
     label: 'Sort by comment',
