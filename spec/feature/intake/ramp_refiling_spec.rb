@@ -268,6 +268,13 @@ RSpec.feature "RAMP Refiling Intake", :postgres do
 
       click_intake_continue
 
+      expect(page).to have_content("Please select an option")
+
+      within_fieldset("Which type of appeal did the Veteran request?") do
+        find("label", text: "Evidence Submission").click
+      end
+      click_intake_continue
+
       expect(page).to have_content(
         "Receipt date cannot be earlier than the original RAMP election receipt date of #{receipt_date.mdY}"
       )
@@ -275,13 +282,6 @@ RSpec.feature "RAMP Refiling Intake", :postgres do
       fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
       click_intake_continue
 
-      expect(page).to have_content("Please select an option")
-
-      within_fieldset("Which type of appeal did the Veteran request?") do
-        find("label", text: "Evidence Submission").click
-      end
-
-      click_intake_continue
       expect(page).to have_content("Finish processing RAMP Selection form")
 
       ramp_refiling = RampRefiling.find_by(veteran_file_number: "12341234")
