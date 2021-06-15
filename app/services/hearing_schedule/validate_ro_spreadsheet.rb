@@ -196,21 +196,19 @@ class HearingSchedule::ValidateRoSpreadsheet
     end
   end
 
-  def filter_missing_time_slot_details
-    @allocation_spreadsheet_data.select do |row|
-      # Skip validation if this RO does not have any requested virtual Dockets
-      next if row["allocated_days_without_room"] == 0
+  def virtual_docket_day_allocations
+    @allocation_spreadsheet_data.reject { |row| row["allocated_days_without_room"] == 0 }
+  end
 
+  def filter_missing_time_slot_details
+    virtual_docket_day_allocations.select do |row|
       row["first_slot_time"].nil? || row["slot_length_minutes"].nil? || row["number_of_slots"].nil?
     end.pluck("ro_code").uniq
   end
 
   def filter_invalid_number_of_slots
-    @allocation_spreadsheet_data.select do |row|
+    virtual_docket_day_allocations.select do |row|
       begin
-        # Skip validation if this RO does not have any requested virtual Dockets
-        next if row["allocated_days_without_room"] == 0
-
         # Ensure non-negative values that are below the max slots per day
         row["number_of_slots"] > HearingDay::SLOTS_BY_REQUEST_TYPE[HearingDay::REQUEST_TYPES[:virtual]][:maximum] ||
           row["number_of_slots"] <= 0
@@ -222,11 +220,8 @@ class HearingSchedule::ValidateRoSpreadsheet
   end
 
   def filter_invalid_slot_lengths
-    @allocation_spreadsheet_data.select do |row|
+    virtual_docket_day_allocations.select do |row|
       begin
-        # Skip validation if this RO does not have any requested virtual Dockets
-        next if row["allocated_days_without_room"] == 0
-
         row["slot_length_minutes"] > MAX_DURATION_IN_MINUTES ||
           row["slot_length_minutes"] < 0 ||
           (row["allocated_days_without_room"] > 0 && row["slot_length_minutes"] == 0)
@@ -238,10 +233,7 @@ class HearingSchedule::ValidateRoSpreadsheet
   end
 
   def filter_incorrectly_formatted_start_times
-    @allocation_spreadsheet_data.select do |row|
-      # Skip validation if this RO does not have any requested virtual Dockets
-      next if row["allocated_days_without_room"] == 0
-
+    virtual_docket_day_allocations.select do |row|
       row["first_slot_time"].to_s.match(HearingDay::HEARING_TIME_STRING_PATTERN).blank?
     end.pluck("ro_code").uniq
   end
