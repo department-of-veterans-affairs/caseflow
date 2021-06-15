@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_04_133455) do
+ActiveRecord::Schema.define(version: 2021_06_15_170300) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1667,6 +1667,8 @@ ActiveRecord::Schema.define(version: 2021_06_04_133455) do
   add_foreign_key "end_product_establishments", "users"
   add_foreign_key "end_product_updates", "end_product_establishments"
   add_foreign_key "end_product_updates", "users"
+  add_foreign_key "hearing_appeal_stream_snapshots", "legacy_appeals", column: "appeal_id"
+  add_foreign_key "hearing_appeal_stream_snapshots", "legacy_hearings", column: "hearing_id"
   add_foreign_key "hearing_days", "users", column: "created_by_id"
   add_foreign_key "hearing_days", "users", column: "judge_id"
   add_foreign_key "hearing_days", "users", column: "updated_by_id"
