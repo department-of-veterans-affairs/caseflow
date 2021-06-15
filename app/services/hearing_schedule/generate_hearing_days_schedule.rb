@@ -128,6 +128,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     end
   end
 
+  # :reek:FeatureEnvy
   def sort_ro_list(ro_list, ro_info = {})
     # Remove any ROs that don't have any allocated hearing days without rooms left
     ros_with_request = ro_list.reject { |ro| ro[@request_type_allocations].to_i == 0 }
