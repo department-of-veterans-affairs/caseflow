@@ -73,3 +73,6 @@ Makefile
 
 # ERD diagrams are not checked in
 *-erd.pdf
+docs/schema/*_erd-*
+docs/schema/*_erd.*
+docs/schema/*-subclasses.*

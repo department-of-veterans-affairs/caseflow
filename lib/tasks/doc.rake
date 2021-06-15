@@ -3,6 +3,8 @@
 require "rails_erd/domain"
 require "csv"
 require "ruby-graphviz"
+require "tasks/support/erd_record_associations.rb"
+require "tasks/support/erd_graph_styling.rb"
 
 namespace :doc do
   desc "prepare environment"
