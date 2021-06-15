@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require "helpers/association_wrapper.rb"
+require "tasks/support/erd_record_associations.rb"
+require "tasks/support/erd_graph_styling.rb"
 require 'ruby-graphviz'
 
 describe "AssocationWrapper" do
@@ -167,8 +169,9 @@ describe "AssocationWrapper" do
           }.compact.presence&.join("\n")
         }.compact.join("\n\n")
 
-        g.output( :png => "belongs_to_erd_all.png" )
-        g.output( :dot => "belongs_to_erd_all.dot" )
+        puts g.output( :canon => String )
+        # g.output( :png => "belongs_to_erd_all.png" )
+        # g.output( :dot => "belongs_to_erd_all.dot" )
       end
     end
   end

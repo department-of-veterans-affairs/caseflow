@@ -122,12 +122,17 @@ digraph belongs_to_erd_subclasses {
 	Task -> assigned_to_type	[label=assigned_to,
 		];
 	appeal_type	[color=blue,
+		fillcolor=yellow,
 		fontcolor=blue,
 		label="appeal_type|Appeal,\nLegacyAppeal",
 		shape=record,
-		style=dotted,
+		style=filled,
 		];
 	Task -> appeal_type	[label=appeal,
+		];
+	HearingDay	[fillcolor="#66ccff",
+		label="HearingDay\n  (assoc with judge User)",
+		style=filled,
 		];
 	"Dispatch::Task"	[color=blue,
 		fontcolor=blue,
@@ -170,10 +175,6 @@ digraph belongs_to_erd_subclasses {
 		label=ApiView,
 		];
 	ApiView -> ApiKey	[label=api_key,
-		];
-	HearingDay	[fillcolor="#66ccff",
-		label="HearingDay\n  (assoc with judge User)",
-		style=filled,
 		];
 	LegacyHearing	[fillcolor="#66ccff",
 		label="LegacyHearing\n  (assoc with User)",

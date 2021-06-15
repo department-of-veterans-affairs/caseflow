@@ -104,10 +104,11 @@ digraph belongs_to_erd_subclasses {
 		style=filled,
 		];
 	appeal_type	[color=blue,
+		fillcolor=yellow,
 		fontcolor=blue,
 		label="appeal_type|Appeal,\nLegacyAppeal",
 		shape=record,
-		style=dotted,
+		style=filled,
 		];
 	hearing_type	[color=blue,
 		fontcolor=blue,
