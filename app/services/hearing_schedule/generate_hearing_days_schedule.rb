@@ -49,7 +49,12 @@ class HearingSchedule::GenerateHearingDaysSchedule
   #   :available_days=>["Thu, 01 Apr 2021", "Fri, 02 Apr 2021"],
   #   :num_of_rooms=>1,
   #   :allocated_dates=>{[4, 2021]=>{Thu, 01 Apr 2021=>[{:room_num=>nil}]}, [5, 2021]=>{}, [6, 2021]=>{}}}}
-  def allocate_no_room_hearing_days_to_ros(request_type_allocations = :allocated_days)
+  def allocation_results
+    # Return the list of ROs containing the hearing days per date
+    @ros
+  end
+
+  def allocate_hearing_days_to_ros(request_type_allocations = :allocated_days)
     @request_type_allocations = request_type_allocations
 
     # Add up all the hearing days we need to distribute
@@ -63,9 +68,6 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
     # Distribute all of the hearing days to each RO in the list
     allocate_hearing_days(days_to_allocate, ro_list, available_days)
-
-    # Return the list of ROs containing the hearing days per date
-    @ros
   end
 
   #
