@@ -196,18 +196,18 @@ class HearingSchedule::ValidateRoSpreadsheet
     end
   end
 
-  def virtual_docket_day_allocations
+  def virtual_docket_allocations
     @allocation_spreadsheet_data.reject { |row| row["allocated_days_without_room"] == 0 }
   end
 
   def filter_missing_time_slot_details
-    virtual_docket_day_allocations.select do |row|
+    virtual_docket_allocations.select do |row|
       row["first_slot_time"].nil? || row["slot_length_minutes"].nil? || row["number_of_slots"].nil?
     end.pluck("ro_code").uniq
   end
 
   def filter_invalid_range(key, max)
-    virtual_docket_day_allocations.select do |row|
+    virtual_docket_allocations.select do |row|
       begin
         # Ensure non-negative values that are below the max slots per day
         row[key] > max || row[key] <= 0
@@ -219,7 +219,7 @@ class HearingSchedule::ValidateRoSpreadsheet
   end
 
   def filter_incorrectly_formatted_start_times
-    virtual_docket_day_allocations.select do |row|
+    virtual_docket_allocations.select do |row|
       row["first_slot_time"].to_s.match(HearingDay::HEARING_TIME_STRING_PATTERN).blank?
     end.pluck("ro_code").uniq
   end
