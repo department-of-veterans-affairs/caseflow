@@ -183,6 +183,7 @@ describe HearingSchedule::ValidateRoSpreadsheet do
 
       expect(subject.first.message).to include("RO01")
       expect(subject.first.message).to include("RO50")
+      expect(subject.first.message).not_to include("RO02")
     end
   end
 
@@ -201,6 +202,7 @@ describe HearingSchedule::ValidateRoSpreadsheet do
       expect(subject.first.message).to include("RO01")
       expect(subject.first.message).to include("RO02")
       expect(subject.first.message).to include("RO49")
+      expect(subject.first.message).not_to include("RO06")
     end
   end
 
@@ -219,6 +221,7 @@ describe HearingSchedule::ValidateRoSpreadsheet do
       expect(subject.first.message).to include("RO01")
       expect(subject.first.message).to include("RO02")
       expect(subject.first.message).to include("RO59")
+      expect(subject.first.message).not_to include("RO06")
     end
   end
 
@@ -237,6 +240,7 @@ describe HearingSchedule::ValidateRoSpreadsheet do
       expect(subject.first.message).to include("RO01")
       expect(subject.first.message).to include("RO02")
       expect(subject.first.message).to include("RO39")
+      expect(subject.first.message).not_to include("RO06")
     end
   end
 
