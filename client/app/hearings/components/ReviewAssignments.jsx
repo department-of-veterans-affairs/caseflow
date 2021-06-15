@@ -11,12 +11,21 @@ import Modal from '../../components/Modal';
 import Table from '../../components/Table';
 import StatusMessage from '../../components/StatusMessage';
 import { formatDateStr } from '../../util/DateUtil';
-import { REQUEST_TYPE_LABELS, SPREADSHEET_TYPES } from '../constants';
+import { SPREADSHEET_TYPES } from '../constants';
 
 const tableStyling = css({
   '& > thead > tr > th': { backgroundColor: '#f1f1f1' },
   border: '1px solid #dadbdc'
 });
+
+/* eslint-disable id-length */
+const REQUEST_TYPE_LABELS = {
+  R: 'Virtual',
+  V: 'Video',
+  C: 'Central',
+  T: 'Travel'
+};
+/* eslint-enable id-length */
 
 export default class ReviewAssignments extends React.Component {
 

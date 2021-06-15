@@ -15,14 +15,13 @@ import ApiUtil from '../../util/ApiUtil';
 import COPY from '../../../COPY';
 import LoadingLabel from './LoadingLabel';
 import SearchableDropdown from '../SearchableDropdown';
-import { REQUEST_TYPE_LABELS } from '../../hearings/constants';
 
 export const HearingDateLabel = ({ date, requestType, scheduled, detail }) => {
   return (
     <React.Fragment>
       <strong>{date}</strong>
       <Dot spacing={5} />{' '}
-      {REQUEST_TYPE_LABELS[requestType]}
+      {requestType}
       <Dot spacing={5} />{' '}
       {scheduled}
       {detail && (
@@ -68,7 +67,7 @@ export const HearingDateDropdown = (props) => {
   const formatHearingDays = (hearingDays) => hearingDays.map((hearingDate) => ({
     label: (
       <HearingDateLabel
-        requestType={hearingDate.requestType}
+        requestType={hearingDate.readableRequestType}
         date={formatDateStr(hearingDate.scheduledFor, 'YYYY-MM-DD', 'ddd MMM D')}
         scheduled={`${hearingDate.filledSlots} of ${ hearingDate.totalSlots } scheduled`}
         detail={hearingDate.vlj || hearingDate.roomLabel}
