@@ -68,7 +68,6 @@ class NarrativeTable extends React.PureComponent {
     let builtColumns = [];
 
     for (const column of Object.values(columns)) {
-      console.log(column);
       builtColumns.push(this.createColumnObject(column));
     }
 
@@ -110,7 +109,7 @@ class NarrativeTable extends React.PureComponent {
 }
 
 NarrativeTable.propTypes = {
-  eventData: PropTypes.object,
+  eventData: PropTypes.array,
 };
 
 export default NarrativeTable;

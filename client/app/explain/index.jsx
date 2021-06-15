@@ -1,5 +1,5 @@
 import React from 'react';
-import NarrativeTable from './components/NarrativeTable';
+import NarrativeTable from './components/NarrativeTable'
 import PropTypes from 'prop-types';
 
 class Explain extends React.PureComponent {
@@ -16,7 +16,7 @@ class Explain extends React.PureComponent {
 }
 
 Explain.propTypes = {
-  eventData: PropTypes.object,
+  eventData: PropTypes.array,
 };
 
 export default Explain;
