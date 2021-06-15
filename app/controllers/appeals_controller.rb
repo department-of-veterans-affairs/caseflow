@@ -316,6 +316,7 @@ class AppealsController < ApplicationController
   end
 
   def claimant_participant_id
+    # Checks whether the appeal is an AMA or Legacy appeal to find the claimant's participant ID
     appeal.is_a?(Appeal) ? appeal.claimant&.participant_id : appeal.claimant&.dig(:representative, :participant_id)
   end
 
