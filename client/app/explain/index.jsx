@@ -1,18 +1,22 @@
 import React from 'react';
-import useSelector from 'react-redux';
-import NarrativeTable from './components/NarrativeTable'
+import NarrativeTable from './components/NarrativeTable';
+import PropTypes from 'prop-types';
 
 class Explain extends React.PureComponent {
   render = () => {
     const narratives = this.props.eventData;
 
-    return ( 
+    return (
       <React.Fragment>
-        <NarrativeTable 
+        <NarrativeTable
           eventData={narratives} />
       </React.Fragment>
     );
   };
 }
+
+Explain.propTypes = {
+  eventData: PropTypes.object,
+};
 
 export default Explain;

@@ -1,20 +1,18 @@
 import React from 'react';
-import useSelector from 'react-redux';
 import QueueTable from '../../queue/QueueTable';
 import EXPLAIN_CONFIG from '../../../constants/EXPLAIN';
 import {
   timestampColumn,
-  contextColumn,
   objectTypeColumn,
   eventTypeColumn,
-  objectIdColumn,
   commentColumn,
   relevanttDataColumn,
   detailsColumn
-} from './ColumnBuilder'
-import Modal from '../../components/Modal'
+} from './ColumnBuilder';
+import Modal from '../../components/Modal';
 import COPY from '../../../COPY';
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
 
 class NarrativeTable extends React.PureComponent {
   constructor(props) {
@@ -31,13 +29,13 @@ class NarrativeTable extends React.PureComponent {
   };
 
   handleModalOpen = (details) => {
-    this.setState({ modal: true, details: details });
+    this.setState({ modal: true, details });
   };
 
   filterValuesForColumn = (column) =>
     column && column.filterable && column.filter_options;
 
-  createColumnObject = (column, narratives) => {
+  createColumnObject = (column) => {
     const filterOptions = this.filterValuesForColumn(column);
     const functionForColumn = {
       [EXPLAIN_CONFIG.COLUMNS.TIMESTAMP.name]: timestampColumn(
@@ -49,7 +47,7 @@ class NarrativeTable extends React.PureComponent {
       ),
       [EXPLAIN_CONFIG.COLUMNS.EVENT_TYPE.name]: eventTypeColumn(
         column,
-        filterOptions        
+        filterOptions
       ),
       [EXPLAIN_CONFIG.COLUMNS.COMMENT.name]: commentColumn(
         column
@@ -62,28 +60,31 @@ class NarrativeTable extends React.PureComponent {
         this.handleModalOpen
       )
     };
+
     return functionForColumn[column.name];
   }
 
-  columnsFromConfig = (columns, narratives) => {
+  columnsFromConfig = (columns) => {
     let builtColumns = [];
-    for (const [columnName, columnKeys] of Object.entries(columns)) {
-      builtColumns.push(this.createColumnObject(columnKeys, narratives));
+
+    for (const column of Object.values(columns)) {
+      console.log(column);
+      builtColumns.push(this.createColumnObject(column));
     }
+
     return builtColumns;
   }
-
   render = () => {
-    const showModal = this.state.modal
+    const showModal = this.state.modal;
     const narratives = this.props.eventData;
     const textAreaStyling = css({
       wideth: '100%',
       fontSize: '10pt'
     });
 
-    return ( 
+    return (
       <React.Fragment>
-        <QueueTable 
+        <QueueTable
           id="events_table"
           columns={this.columnsFromConfig(EXPLAIN_CONFIG.COLUMNS, narratives)}
           rowObjects={narratives}
@@ -100,12 +101,16 @@ class NarrativeTable extends React.PureComponent {
             ]}
             closeHandler={this.handleModalClose}
           >
-            <textarea {...textAreaStyling}>{JSON.stringify(this.state.details)}</textarea>
+            <textarea {...textAreaStyling} value={JSON.stringify(this.state.details)} />
           </Modal>
         </React.Fragment>}
       </React.Fragment>
     );
   };
 }
+
+NarrativeTable.propTypes = {
+  eventData: PropTypes.object,
+};
 
 export default NarrativeTable;

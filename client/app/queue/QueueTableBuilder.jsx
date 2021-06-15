@@ -66,7 +66,7 @@ class QueueTableBuilder extends React.PureComponent {
     return config;
   };
 
-  filterValuesForColumn = (column) => 
+  filterValuesForColumn = (column) =>
     column && column.filterable && column.filter_options;
 
   createColumnObject = (column, config, tasks) => {
