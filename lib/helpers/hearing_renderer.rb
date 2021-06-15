@@ -3,6 +3,7 @@
 class HearingRenderer
   RENDERABLE_CLASSNAMES = %w[
     Veteran
+    HearingDay
     Appeal
     LegacyAppeal
     Hearing
@@ -86,6 +87,14 @@ class HearingRenderer
     legacy_appeals.sort_by { |la| la.created_at || Time.zone.today }
 
     (appeals + legacy_appeals).map { |appeal| structure(appeal) }
+  end
+
+  def hearing_day_details(hearing_day)
+    [format_hearing_day_label(hearing_day)]
+  end
+
+  def hearing_day_children(hearing_day)
+    hearing_day.hearings.map { |hearing| structure(hearing) }
   end
 
   def appeal_type_conversions(appeal)
