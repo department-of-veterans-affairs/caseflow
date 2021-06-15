@@ -199,11 +199,13 @@ class HearingRenderer
   end
 
   def scheduled_for(hearing)
-    scheduled_label = "Scheduled for: #{readable_date(hearing.scheduled_for)}"
+    time_in_ro_zone = hearing.scheduled_for.in_time_zone(hearing.regional_office_timezone)
+    time_in_eastern = hearing.scheduled_for.in_time_zone("Eastern Time (US & Canada)")
 
-    ro_time = hearing.scheduled_for.in_time_zone(hearing.regional_office_timezone)
-    if ro_time != hearing.scheduled_for
-      scheduled_label = "#{scheduled_label} / #{ro_time.strftime('%I:%M%p %Z')} (RO time)"
+    scheduled_label = "Scheduled for: #{readable_date(time_in_eastern)}"
+
+    if time_in_ro_zone.zone != time_in_eastern.zone
+      scheduled_label = "#{scheduled_label} AKA #{readable_date(time_in_ro_zone)} (RO time)"
     end
 
     scheduled_label
