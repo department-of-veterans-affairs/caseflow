@@ -9,9 +9,6 @@
 # WIKI : https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Hearings#build-hearing-schedule
 ##
 class HearingSchedule::GenerateHearingDaysSchedule
-  include HearingSchedule::RoAllocation
-  include HearingSchedule::RoDistribution
-
   class NoDaysAvailableForRO < StandardError; end
 
   attr_reader :available_days, :ros
