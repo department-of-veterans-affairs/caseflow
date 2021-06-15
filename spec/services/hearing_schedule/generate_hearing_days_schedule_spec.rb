@@ -270,7 +270,10 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
     end
 
     context "without an associated room (currently used as Virtual)" do
-      subject { generate_hearing_days_schedule.allocate_no_room_hearing_days_to_ros }
+      subject do
+        generate_hearing_days_schedule.allocate_hearing_days_to_ros(:allocated_days_without_room)
+        generate_hearing_days_schedule.allocation_results
+      end
 
       context "allocated days to ros" do
         it "allocates hearing days based on allocated_days_without_room" do
