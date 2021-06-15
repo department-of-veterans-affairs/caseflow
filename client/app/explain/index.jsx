@@ -14,6 +14,7 @@ import {
 } from './components/ColumnBuilder'
 import Modal from '../components/Modal'
 import COPY from '../../COPY';
+import { css } from 'glamor';
 
 class Explain extends React.PureComponent {
   constructor(props) {
@@ -67,7 +68,6 @@ class Explain extends React.PureComponent {
         this.handleModalOpen
       )
     };
-    console.log(functionForColumn[column.name])
     return functionForColumn[column.name];
   }
 
@@ -82,6 +82,11 @@ class Explain extends React.PureComponent {
   render = () => {
     const showModal = this.state.modal
     const narratives = this.props.eventData;
+    const textAreaStyling = css({
+      wideth: '100%',
+      fontSize: '10pt'
+    });
+
     return ( 
       <React.Fragment>
         <QueueTable 
@@ -101,7 +106,7 @@ class Explain extends React.PureComponent {
             ]}
             closeHandler={this.handleModalClose}
           >
-            {JSON.stringify(this.state.details)}
+            <textarea {...textAreaStyling}>{JSON.stringify(this.state.details)}</textarea>
           </Modal>
         </React.Fragment>}
       </React.Fragment>
