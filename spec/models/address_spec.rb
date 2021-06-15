@@ -59,4 +59,33 @@ describe Address do
       end
     end
   end
+
+  context ".military_or_diplomatic_address?" do
+    shared_examples "address is properly identified as APO/FPO/DPO" do |zip, result|
+      it "#{zip} is #{'not ' if !result}a military or diplomatic address" do
+        address = Address.new(
+          address_line_1: "PO Box 1000",
+          address_line_2: nil,
+          city: nil,
+          state: nil,
+          zip: zip,
+          country: "USA"
+        )
+        expect(address.military_or_diplomatic_address?).to be(result)
+      end
+    end
+
+    include_examples "address is properly identified as APO/FPO/DPO", "09060", true
+    include_examples "address is properly identified as APO/FPO/DPO", "09833", true
+    include_examples "address is properly identified as APO/FPO/DPO", "34033", true
+    include_examples "address is properly identified as APO/FPO/DPO", "96677", true
+
+    include_examples "address is properly identified as APO/FPO/DPO", "06090", false
+    include_examples "address is properly identified as APO/FPO/DPO", "83309", false
+    include_examples "address is properly identified as APO/FPO/DPO", "33034", false
+    include_examples "address is properly identified as APO/FPO/DPO", "79667", false
+    include_examples "address is properly identified as APO/FPO/DPO", "90210", false
+
+    include_examples "address is properly identified as APO/FPO/DPO", nil, false
+  end
 end
