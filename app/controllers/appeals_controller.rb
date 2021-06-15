@@ -312,11 +312,11 @@ class AppealsController < ApplicationController
 
   def clear_poa_not_found_cache
     Rails.cache.delete("bgs-participant-poa-not-found-#{appeal.veteran.file_number}") if appeal.veteran&.file_number
-    if appeal.claimant&.participant_id
-      Rails.cache.delete("bgs-participant-poa-not-found-#{appeal.claimant&.participant_id}")
-    elsif claimant.is_a?(Hash)
-      Rails.cache.delete("bgs-participant-poa-not-found-#{appeal.claimant&.dig(:representative, :participant_id)}")
-    end
+    Rails.cache.delete("bgs-participant-poa-not-found-#{claimant_participant_id}") if claimant_participant_id
+  end
+
+  def claimant_participant_id
+    appeal.is_a?(Appeal) ? appeal.claimant&.participant_id : appeal.claimant&.dig(:representative, :participant_id)
   end
 
   def cooldown_period_remaining
