@@ -5,6 +5,9 @@
 # cases tied to a judge without limit. The second step distributes remaining general population cases (cases not tied to
 # an active judge) while attempting to even out the number of priority cases all judges have received over one month.
 class PushPriorityAppealsToJudgesJob < CaseflowJob
+  # For time_ago_in_words()
+  include ActionView::Helpers::DateHelper
+
   queue_with_priority :low_priority
   application_attr :queue
 
@@ -14,11 +17,17 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     @tied_distributions = distribute_non_genpop_priority_appeals
     @genpop_distributions = distribute_genpop_priority_appeals
     send_job_report
+  rescue StandardError => error
+    duration = time_ago_in_words(start_time)
+    slack_msg = "[ERROR] after running for #{duration}: #{error.message}"
+    slack_service.send_notification(slack_msg, self.class.name, "#appeals-echo")
+    log_error(error)
+  ensure
+    datadog_report_runtime(metric_group_name: "priority_appeal_push_job")
   end
 
   def send_job_report
     slack_service.send_notification(slack_report.join("\n"), self.class.name, "#appeals-job-alerts")
-    datadog_report_runtime(metric_group_name: "priority_appeal_push_job")
   end
 
   def slack_report
