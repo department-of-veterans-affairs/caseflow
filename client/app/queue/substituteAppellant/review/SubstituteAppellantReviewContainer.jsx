@@ -10,7 +10,6 @@ import { cancel, stepBack, completeSubstituteAppellant } from '../substituteAppe
 import { getAllTasksForAppeal, appealWithDetailSelector } from 'app/queue/selectors';
 
 import COPY from 'app/../COPY';
-import { format } from 'date-fns';
 
 export const SubstituteAppellantReviewContainer = () => {
   const { appealId } = useParams();

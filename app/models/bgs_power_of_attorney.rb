@@ -253,5 +253,5 @@ class BgsPowerOfAttorney < CaseflowRecord
   def update_ihp_enabled?
     FeatureToggle.enabled?(:poa_auto_ihp_update, user: RequestStore.store[:current_user]) &&
       saved_change_to_poa_participant_id?
- end
+  end
 end
