@@ -6,6 +6,7 @@ FactoryBot.define do
     sequence(:poa_participant_id)
     representative_name { "POA Name" }
     representative_type { "VSO" }
+    # synced_at { 2.days.ago }
 
     trait :with_name_cached do
       transient do

@@ -136,7 +136,11 @@ class BgsPowerOfAttorney < CaseflowRecord
   end
 
   def update_cached_attributes!
-    stale_attributes.each { |attr| send(attr) } if found?
+    binding.pry
+    if found?
+      clear_poa_not_found_cache
+      stale_attributes.each { |attr| send(attr) }
+    end
     self.last_synced_at = Time.zone.now
   end
 
@@ -214,6 +218,7 @@ class BgsPowerOfAttorney < CaseflowRecord
   end
 
   def fetch_bgs_record_by_claimant_participant_id
+    binding.pry
     pid = self[:claimant_participant_id]
     not_found_flag = "bgs-participant-poa-not-found-#{pid}"
     return if Rails.cache.fetch(not_found_flag)
@@ -225,11 +230,13 @@ class BgsPowerOfAttorney < CaseflowRecord
       return
     end
 
+    Rails.cache.delete(not_found_flag)
     poa[:claimant_participant_id] ||= pid
     poa
   end
 
   def fetch_bgs_record_by_file_number
+    binding.pry
     file_number = self[:file_number]
     not_found_flag = "bgs-participant-poa-not-found-#{file_number}"
     return if Rails.cache.fetch(not_found_flag)
@@ -253,5 +260,11 @@ class BgsPowerOfAttorney < CaseflowRecord
   def update_ihp_enabled?
     FeatureToggle.enabled?(:poa_auto_ihp_update, user: RequestStore.store[:current_user]) &&
       saved_change_to_poa_participant_id?
+  end
+
+  def clear_poa_not_found_cache
+    binding.pry # in the BGS Power of Attorney Model
+    Rails.cache.delete("bgs-participant-poa-not-found-#{file_number}") if file_number
+    Rails.cache.delete("bgs-participant-poa-not-found-#{claimant_participant_id}") if claimant_participant_id
   end
 end

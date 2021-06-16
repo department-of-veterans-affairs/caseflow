@@ -62,6 +62,9 @@ class AppealsController < ApplicationController
   end
 
   def update_power_of_attorney
+    binding.pry
+    poa = BgsPowerOfAttorney.find(params[:poaId])
+    clear_poa_not_found_cache
     if cooldown_period_remaining > 0
       message = "Information is current at this time. Please try again in #{cooldown_period_remaining} minutes"
       render json: {
@@ -72,7 +75,6 @@ class AppealsController < ApplicationController
       return
     end
 
-    clear_poa_not_found_cache
     if appeal.is_a?(Appeal)
       poa = BgsPowerOfAttorney.find(params[:poaId])
       render json: update_ama_poa(poa)
@@ -310,14 +312,9 @@ class AppealsController < ApplicationController
     end
   end
 
-  def clear_poa_not_found_cache
-    Rails.cache.delete("bgs-participant-poa-not-found-#{appeal.veteran.file_number}") if appeal.veteran&.file_number
-    Rails.cache.delete("bgs-participant-poa-not-found-#{claimant_participant_id}") if claimant_participant_id
-  end
-
   def claimant_participant_id
     # Checks whether the appeal is an AMA or Legacy appeal to find the claimant's participant ID
-    appeal.is_a?(Appeal) ? appeal.claimant&.participant_id : appeal.claimant&.dig(:representative, :participant_id)
+    appeal.is_a?(Appeal) ? appeal.claimant&.participant_id : appeal.claimant_participant_id
   end
 
   def cooldown_period_remaining
@@ -327,5 +324,11 @@ class AppealsController < ApplicationController
     end
 
     0
+  end
+
+  def clear_poa_not_found_cache
+    binding.pry # in the Appeals Controller
+    Rails.cache.delete("bgs-participant-poa-not-found-#{file_number}") if file_number
+    Rails.cache.delete("bgs-participant-poa-not-found-#{claimant_participant_id}") if claimant_participant_id
   end
 end

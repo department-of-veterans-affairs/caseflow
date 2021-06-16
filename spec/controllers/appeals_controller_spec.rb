@@ -605,17 +605,23 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
   describe "Get legacy appeal Power of Attorney" do
     let!(:user) { User.authenticate!(roles: ["System Admin"]) }
-    let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
-    let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
-    let(:get_params) { { appeal_id: appeal.vacols_id } }
-    let(:patch_params) { { appeal_id: appeal.vacols_id, poaId: appeal.power_of_attorney.id } }
-    let!(:poa) do
+    let!(:appellant) { create(:person, ssn: veteran.ssn, participant_id: veteran.participant_id) }
+    let(:appeal) do
       create(
-        :bgs_power_of_attorney,
-        :with_name_cached,
-        appeal: appeal
+        :legacy_appeal,
+        vacols_case: create(:case, bfcorlid: "0000000000S")
       )
     end
+    let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
+    let(:get_params) { { appeal_id: appeal.vacols_id } }
+    let(:patch_params) { { appeal_id: appeal.vacols_id, poaId: appeal.power_of_attorney&.bgs_id } }
+    # let!(:poa) do
+    #   create(
+    #     :bgs_power_of_attorney,
+    #     :with_name_cached,
+    #     appeal: appeal
+    #   )
+    # end
 
     context "get the appeals POA information" do
       subject do
@@ -634,18 +640,31 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       end
     end
 
-    context do
+    context "when the POA was previously cached as not_found" do
+      let(:claimant_participant_id) { appeal.claimant_participant_id }
+      let(:patch_params) { { appeal_id: appeal.vacols_id } }
+      let!(:poa) do
+        create(
+          :bgs_power_of_attorney,
+          claimant_participant_id: veteran.participant_id
+        )
+      end
+      before do
+        Rails.cache.write("bgs-participant-poa-not-found-#{claimant_participant_id}", true)
+        # allow_any_instance_of(PowerOfAttorney).to receive(:bgs_power_of_attorney).and_return(nil)
+      end
+
       subject do
-        participant_id = appeal.claimant&.dig(:representative, :participant_id)
-        Rails.cache.write("bgs-participant-poa-not-found-#{participant_id}", true)
         patch :update_power_of_attorney, params: patch_params
       end
 
-      it "clears not_found cache when claimant is a hash" do
+      fit "clears not_found cache when claimant is a hash" do
+        binding.pry
+        subject
+        binding.pry
         expect(appeal.power_of_attorney).to_not eq(nil)
         expect(appeal.claimant.is_a?(Hash)).to eq(true)
-        participant_id = appeal.claimant&.dig(:representative, :participant_id)
-        expect(Rails.cache.read("bgs-participant-poa-not-found-#{participant_id}")).to eq(nil)
+        expect(Rails.cache.read("bgs-participant-poa-not-found-#{claimant_participant_id}")).to eq(nil)
       end
     end
   end
