@@ -227,49 +227,33 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
       end
     end
 
-    context "with an associated room", skip: "Temporarily skipping to push a change to PROD #16010" do
-      subject { generate_hearing_days_schedule.allocate_hearing_days_to_ros }
+    context "video hearing days" do
+      subject do
+        generate_hearing_days_schedule.allocate_hearing_days_to_ros
+        generate_hearing_days_schedule.allocation_results
+      end
 
-      context "allocated days to ros" do
-        it "assigned as rooms" do
-          allocations = ro_schedule_period.allocations.reduce({}) do |acc, ro|
-            acc[ro.regional_office] = ro.allocated_days
-            acc
-          end
-
-          # Calculate how many assignments were made
-          total_assignments = subject.reduce(0) do |acc, (_k, v)|
-            acc += v[:allocated_dates].values.map(&:values).flatten.count
-            acc
-          end
-
-          # Ensure there are the correct number of allocations for each RO
-          expect(subject.keys.sort).to eq(allocations.keys.sort)
-
-          # Ensure that only allocations with rooms were applied
-          expect(total_assignments).to eq(allocations.values.sum.to_i)
-
-          subject.each_key do |ro_key|
-            rooms = subject[ro_key][:allocated_dates].reduce({}) do |acc, (k, v)|
-              acc[k] = acc[k] || 0
-              acc[k] += v.values.map(&:size).inject(:+)
-              acc
-            end
-
-            # making sure rooms are filled
-            if subject[ro_key][:allocated_days].ceil % subject[ro_key][:num_of_rooms] == 0
-              expect(rooms.map { |_key, num| num % subject[ro_key][:num_of_rooms] == 0 }.all?).to eq(true)
-            else
-              expect(rooms.map { |_key, num| num % subject[ro_key][:num_of_rooms] == 0 }.count(false)).to eq(1)
-            end
-
-            expect(rooms.values.inject(:+)).to eq(allocations[ro_key].ceil)
-          end
+      it "assigned as rooms" do
+        allocations = ro_schedule_period.allocations.reduce({}) do |acc, ro|
+          acc[ro.regional_office] = ro.allocated_days
+          acc
         end
+
+        # Calculate how many assignments were made
+        total_assignments = subject.reduce(0) do |acc, (_k, v)|
+          acc += v[:allocated_dates].values.map(&:values).flatten.count
+          acc
+        end
+
+        # Ensure there are the correct number of allocations for each RO
+        expect(subject.keys.sort).to eq(allocations.keys.sort)
+
+        # Ensure that only allocations with rooms were applied
+        expect(total_assignments).to eq(allocations.values.sum.to_i)
       end
     end
 
-    context "without an associated room (currently used as Virtual)" do
+    context "virtual hearing days" do
       subject do
         generate_hearing_days_schedule.allocate_hearing_days_to_ros(:allocated_days_without_room)
         generate_hearing_days_schedule.allocation_results
