@@ -64,6 +64,10 @@ class InformalHearingPresentationTask < Task
   def self.update_to_new_poa(appeal)
     begin
       TrackVeteranTask.sync_tracking_tasks(appeal)
+      parent = appeal.tasks.closed.where(type: :InformalHearingPresentationTask).first.parent
+      newIHP = appeal.tasks.open.where(type: :InformalHearingPresentationTask).first
+      newIHP.update(parent: parent)
+      parent.on_hold!
     rescue StandardError => error
       Raven.capture_exception(error)
       nil
