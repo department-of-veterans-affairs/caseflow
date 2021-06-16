@@ -20,6 +20,7 @@ EP_CODES = [
   %w[040SCNR primary na original na compensation nonrating supplemental_claim],
   %w[040SCNRPMC primary na original na pension nonrating supplemental_claim],
   %w[040SCR primary na original na compensation rating supplemental_claim],
+  %w[040SCRGTY primary na original na compensation rating supplemental_claim],
   %w[040SCRPMC primary na original na pension rating supplemental_claim],
   %w[930AHCNRLPMC 930 local_quality_error original na pension nonrating higher_level_review],
   %w[930AHCNRLQE 930 local_quality_error original na compensation nonrating higher_level_review],
@@ -130,6 +131,35 @@ describe "Request Issue Correction Cleaner", :postgres do
 
       it "returns a rating EP code" do
         expect(subject).to eq("030HLRR")
+      end
+    end
+
+    fcontext "040SCRGTY EP Code supplemental_claim" do
+      before { FeatureToggle.enable!(:itf_supplemental_claims) }
+      after { FeatureToggle.disable!(:itf_supplemental_claims) }
+
+      let(:benefit_type) { "compensation" }
+      let(:receipt_date) { Time.zone.today - 1.year }
+      let(:decision_review) { supplemental_claim }
+      let!(:supplemental_claim) do
+        create(:supplemental_claim,
+               benefit_type: benefit_type,
+               receipt_date: receipt_date)
+      end
+
+      let(:request_issue) do
+        RequestIssue.create!(
+          contested_rating_issue_reference_id: "def456",
+          decision_review: decision_review,
+          benefit_type: decision_review.benefit_type,
+          contested_issue_description: "PTSD denied",
+          decision_date: Time.zone.today - 10.days
+        )
+      end
+
+      it "returns a rating EP code" do
+        binding.pry
+        expect(subject).to eq("40SCRGTY")
       end
     end
 
