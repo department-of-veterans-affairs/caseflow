@@ -7,27 +7,53 @@ import { setViewingDocumentsOrComments } from '../reader/DocumentList/DocumentLi
 import { DOCUMENTS_OR_COMMENTS_ENUM } from './DocumentList/actionTypes';
 
 class DocumentsCommentsButton extends PureComponent {
-  render = () => <div className="cf-documents-comments-control">
-    <span className="cf-show-all-label">Show all:</span>
-    <ToggleButton
-      active={this.props.viewingDocumentsOrComments}
-      onClick={this.props.setViewingDocumentsOrComments}>
-
-      <Button name={DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS}>
-        Documents
-      </Button>
-      <Button name={DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS}>
-        Comments
-      </Button>
-    </ToggleButton>
-  </div>;
+  render = () => (
+    <div className="cf-documents-comments-control">
+      <span id="toggle-label" className="cf-show-all-label" aria-label="Show all">Show all:</span>
+      <ToggleButton
+        active={this.props.viewingDocumentsOrComments}
+        onClick={this.props.setViewingDocumentsOrComments}
+      >
+        <Button
+          id="show-documents-view"
+          ariaLabel={DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS}
+          name={DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS}
+          styling={{
+            'aria-labelledby': 'toggle-label show-documents-view',
+            'aria-selected':
+              this.props.viewingDocumentsOrComments ===
+              DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
+          }}
+        >
+          Documents
+        </Button>
+        <Button
+          id="show-comments-view"
+          ariaLabel={DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS}
+          name={DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS}
+          styling={{
+            'aria-labelledby': 'toggle-label show-comments-view',
+            'aria-selected':
+              this.props.viewingDocumentsOrComments ===
+              DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS,
+          }}
+        >
+          Comments
+        </Button>
+      </ToggleButton>
+    </div>
+  );
 }
 
 export default connect(
   (state) => ({
-    viewingDocumentsOrComments: state.documentList.viewingDocumentsOrComments
+    viewingDocumentsOrComments: state.documentList.viewingDocumentsOrComments,
   }),
-  (dispatch) => bindActionCreators({
-    setViewingDocumentsOrComments
-  }, dispatch)
+  (dispatch) =>
+    bindActionCreators(
+      {
+        setViewingDocumentsOrComments,
+      },
+      dispatch
+    )
 )(DocumentsCommentsButton);
