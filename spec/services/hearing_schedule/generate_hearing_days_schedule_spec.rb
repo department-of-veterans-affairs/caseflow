@@ -94,7 +94,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
       end
       subject { generate_hearing_days_schedule_removed_ro_na }
 
-      it "assigns ros to initial available days", skip: "to be fixed in a future PR" do
+      it "assigns ros to initial available days" do
         subject.ros.map { |key, _value| expect(subject.ros[key][:available_days]).to eq subject.available_days }
       end
 
@@ -173,24 +173,9 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
         HearingSchedule::GenerateHearingDaysSchedule.new(schedule_period)
       end
 
-      subject { generate_invalid_hearing_days_schedule.allocate_hearing_days_to_ros }
-
-      context "too many allocated days for an RO with multiple rooms", skip: "This test is failing intermittently" do
-        let!(:ro_allocations) do
-          [
-            create(:allocation, regional_office: "RO17", allocated_days: 255, schedule_period: schedule_period)
-          ]
-        end
-        it { expect { subject }.to raise_error(HearingSchedule::Errors::NotEnoughAvailableDays) }
-      end
-
-      context "too many allocated days for an RO with one room", skip: "This test is failing intermittently" do
-        let!(:ro_allocations) do
-          [
-            create(:allocation, regional_office: "RO16", allocated_days: 128, schedule_period: schedule_period)
-          ]
-        end
-        it { expect { subject }.to raise_error(HearingSchedule::Errors::NotEnoughAvailableDays) }
+      subject do
+        generate_invalid_hearing_days_schedule.allocate_hearing_days_to_ros
+        generate_hearing_days_schedule.allocation_result
       end
 
       context "too many ro non-availability days" do
@@ -233,7 +218,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
         generate_hearing_days_schedule.allocation_results
       end
 
-      it "assigned as rooms" do
+      it "assigns hearing days" do
         allocations = ro_schedule_period.allocations.reduce({}) do |acc, ro|
           acc[ro.regional_office] = ro.allocated_days
           acc
@@ -248,7 +233,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
         # Ensure there are the correct number of allocations for each RO
         expect(subject.keys.sort).to eq(allocations.keys.sort)
 
-        # Ensure that only allocations with rooms were applied
+        # Ensure that only video days were allocated
         expect(total_assignments).to eq(allocations.values.sum.to_i)
       end
     end
@@ -276,7 +261,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
           # Ensure there are the correct number of allocations for each RO
           expect(subject.keys.sort).to eq(allocations.keys.sort)
 
-          # Ensure that only allocations with rooms were applied
+          # Ensure that only virtual days were allocated
           expect(total_assignments).to eq(allocations.values.sum.to_i)
 
           subject.each_key do |ro_key|
