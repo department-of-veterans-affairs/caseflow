@@ -1,3 +1,4 @@
+import { formatISO } from 'date-fns';
 import parseISO from 'date-fns/parseISO';
 
 const automatedTasks = [
@@ -153,8 +154,8 @@ export const calculateEvidenceSubmissionEndDate = ({
   veteranDateOfDeath: veteranDateOfDeathStr,
   selectedTasks,
 }) => {
-  const substitutionDate = new Date(substitutionDateStr);
-  const veteranDateOfDeath = new Date(veteranDateOfDeathStr);
+  const substitutionDate = parseISO(substitutionDateStr);
+  const veteranDateOfDeath = parseISO(veteranDateOfDeathStr);
   const evidenceSubmissionTask = selectedTasks.find(
     (task) => task.type === 'EvidenceSubmissionWindowTask'
   );
@@ -175,5 +176,5 @@ export const calculateEvidenceSubmissionEndDate = ({
 
   const newEndTime = substitutionDate.getTime() + remainingTime;
 
-  return new Date(newEndTime);
+  return formatISO(newEndTime, { representation: 'date' });
 };

@@ -48,10 +48,6 @@ export const SubstituteAppellantReviewContainer = () => {
       veteranDateOfDeath: appeal.veteranDateOfDeath,
       selectedTasks });
 
-  const formatSubmissionEndDateToBackend = (endDate) => {
-    return evidenceSubmissionEndDate ? format(endDate, 'yyyy-MM-dd') : null;
-  };
-
   const handleBack = () => {
     dispatch(stepBack());
     history.goBack();
@@ -73,7 +69,7 @@ export const SubstituteAppellantReviewContainer = () => {
 
     if (evidenceSubmissionTask) {
       taskParams[evidenceSubmissionTask.uniqueId] = {
-        hold_end_date: formatSubmissionEndDateToBackend(evidenceSubmissionEndDate)
+        hold_end_date: evidenceSubmissionEndDate
       };
     }
 
