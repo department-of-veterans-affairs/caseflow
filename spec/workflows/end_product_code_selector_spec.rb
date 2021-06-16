@@ -20,7 +20,6 @@ EP_CODES = [
   %w[040SCNR primary na original na compensation nonrating supplemental_claim],
   %w[040SCNRPMC primary na original na pension nonrating supplemental_claim],
   %w[040SCR primary na original na compensation rating supplemental_claim],
-  %w[040SCRGTY primary na original na compensation rating supplemental_claim],
   %w[040SCRPMC primary na original na pension rating supplemental_claim],
   %w[930AHCNRLPMC 930 local_quality_error original na pension nonrating higher_level_review],
   %w[930AHCNRLQE 930 local_quality_error original na compensation nonrating higher_level_review],

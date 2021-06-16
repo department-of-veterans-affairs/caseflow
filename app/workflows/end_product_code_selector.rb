@@ -296,16 +296,20 @@ class EndProductCodeSelector
     type.underscore.to_sym
   end
 
+  def compensation_sc_rating_ep_code
+    rating? ? END_PRODUCT_CODES[:primary][:original][:compensation][review_type][issue_type] : nil
+  end
+
   def choose_code(end_product_codes)
     if benefit_type == "fiduciary"
       END_PRODUCT_CODES[:fiduciary][review_type]
     else
       code = end_product_codes[benefit_type.to_sym][review_type][issue_type]
-      (code == "040SCR" && request_issues_older_than_ayear?) ? "040SCRGTY" : code
+      (code == compensation_sc_rating_ep_code && request_issues_older_than_a_year?) ? "040SCRGTY" : code
     end
   end
 
-  def request_issues_older_than_ayear?
+  def request_issues_older_than_a_year?
     return false unless FeatureToggle.enabled?(:itf_supplemental_claims)
 
     decision_review.request_issues.active.rating.any? do |request_issue|
