@@ -5758,7 +5758,7 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
+                                              role="listbox"
                                               selectProps={
                                                 Object {
                                                   "backspaceRemovesValue": true,
@@ -6285,7 +6285,7 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                                     onBlur={[Function]}
                                                     onChange={[Function]}
                                                     onFocus={[Function]}
-                                                    role="combobox"
+                                                    role="listbox"
                                                     spellCheck="false"
                                                     tabIndex="0"
                                                     type="text"
@@ -6313,7 +6313,7 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
                                                         onBlur={[Function]}
                                                         onChange={[Function]}
                                                         onFocus={[Function]}
-                                                        role="combobox"
+                                                        role="listbox"
                                                         spellCheck="false"
                                                         style={
                                                           Object {
@@ -15256,7 +15256,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
+                                              role="listbox"
                                               selectProps={
                                                 Object {
                                                   "backspaceRemovesValue": true,
@@ -15783,7 +15783,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                                     onBlur={[Function]}
                                                     onChange={[Function]}
                                                     onFocus={[Function]}
-                                                    role="combobox"
+                                                    role="listbox"
                                                     spellCheck="false"
                                                     tabIndex="0"
                                                     type="text"
@@ -15811,7 +15811,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                                         onBlur={[Function]}
                                                         onChange={[Function]}
                                                         onFocus={[Function]}
-                                                        role="combobox"
+                                                        role="listbox"
                                                         spellCheck="false"
                                                         style={
                                                           Object {
@@ -28893,7 +28893,7 @@ SAN FRANCISCO, CA 94103
                                                   onBlur={[Function]}
                                                   onChange={[Function]}
                                                   onFocus={[Function]}
-                                                  role="combobox"
+                                                  role="listbox"
                                                   selectProps={
                                                     Object {
                                                       "backspaceRemovesValue": true,
@@ -29801,7 +29801,7 @@ SAN FRANCISCO, CA 94103
                                                         onBlur={[Function]}
                                                         onChange={[Function]}
                                                         onFocus={[Function]}
-                                                        role="combobox"
+                                                        role="listbox"
                                                         spellCheck="false"
                                                         tabIndex="0"
                                                         type="text"
@@ -29829,7 +29829,7 @@ SAN FRANCISCO, CA 94103
                                                             onBlur={[Function]}
                                                             onChange={[Function]}
                                                             onFocus={[Function]}
-                                                            role="combobox"
+                                                            role="listbox"
                                                             spellCheck="false"
                                                             style={
                                                               Object {
@@ -45273,7 +45273,7 @@ SAN FRANCISCO, CA 94103
                                                   onBlur={[Function]}
                                                   onChange={[Function]}
                                                   onFocus={[Function]}
-                                                  role="combobox"
+                                                  role="listbox"
                                                   selectProps={
                                                     Object {
                                                       "backspaceRemovesValue": true,
@@ -46181,7 +46181,7 @@ SAN FRANCISCO, CA 94103
                                                         onBlur={[Function]}
                                                         onChange={[Function]}
                                                         onFocus={[Function]}
-                                                        role="combobox"
+                                                        role="listbox"
                                                         spellCheck="false"
                                                         tabIndex="0"
                                                         type="text"
@@ -46209,7 +46209,7 @@ SAN FRANCISCO, CA 94103
                                                             onBlur={[Function]}
                                                             onChange={[Function]}
                                                             onFocus={[Function]}
-                                                            role="combobox"
+                                                            role="listbox"
                                                             spellCheck="false"
                                                             style={
                                                               Object {
@@ -52267,7 +52267,7 @@ SAN FRANCISCO, CA 94103
                                                   onBlur={[Function]}
                                                   onChange={[Function]}
                                                   onFocus={[Function]}
-                                                  role="combobox"
+                                                  role="listbox"
                                                   selectProps={
                                                     Object {
                                                       "backspaceRemovesValue": true,
@@ -52409,7 +52409,7 @@ SAN FRANCISCO, CA 94103
                                                         onBlur={[Function]}
                                                         onChange={[Function]}
                                                         onFocus={[Function]}
-                                                        role="combobox"
+                                                        role="listbox"
                                                         spellCheck="false"
                                                         tabIndex="0"
                                                         type="text"
@@ -52437,7 +52437,7 @@ SAN FRANCISCO, CA 94103
                                                             onBlur={[Function]}
                                                             onChange={[Function]}
                                                             onFocus={[Function]}
-                                                            role="combobox"
+                                                            role="listbox"
                                                             spellCheck="false"
                                                             style={
                                                               Object {

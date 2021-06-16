@@ -10061,7 +10061,7 @@ exports[`Timezone Can set timezone 1`] = `
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
-                                    role="combobox"
+                                    role="listbox"
                                     selectProps={
                                       Object {
                                         "backspaceRemovesValue": true,
@@ -10969,7 +10969,7 @@ exports[`Timezone Can set timezone 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
-                                          role="combobox"
+                                          role="listbox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -10997,7 +10997,7 @@ exports[`Timezone Can set timezone 1`] = `
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
+                                              role="listbox"
                                               spellCheck="false"
                                               style={
                                                 Object {
@@ -26100,7 +26100,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
-                                    role="combobox"
+                                    role="listbox"
                                     selectProps={
                                       Object {
                                         "backspaceRemovesValue": true,
@@ -27004,7 +27004,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
-                                          role="combobox"
+                                          role="listbox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -27032,7 +27032,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
+                                              role="listbox"
                                               spellCheck="false"
                                               style={
                                                 Object {
@@ -56328,7 +56328,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
-                                    role="combobox"
+                                    role="listbox"
                                     selectProps={
                                       Object {
                                         "backspaceRemovesValue": true,
@@ -57232,7 +57232,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
-                                          role="combobox"
+                                          role="listbox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -57260,7 +57260,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
+                                              role="listbox"
                                               spellCheck="false"
                                               style={
                                                 Object {
@@ -73152,7 +73152,7 @@ exports[`Timezone Respects required prop 1`] = `
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
-                                    role="combobox"
+                                    role="listbox"
                                     selectProps={
                                       Object {
                                         "backspaceRemovesValue": true,
@@ -74056,7 +74056,7 @@ exports[`Timezone Respects required prop 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
-                                          role="combobox"
+                                          role="listbox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -74084,7 +74084,7 @@ exports[`Timezone Respects required prop 1`] = `
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
+                                              role="listbox"
                                               spellCheck="false"
                                               style={
                                                 Object {

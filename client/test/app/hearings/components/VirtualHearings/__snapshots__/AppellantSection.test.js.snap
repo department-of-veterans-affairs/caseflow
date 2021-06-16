@@ -10937,7 +10937,7 @@ SAN FRANCISCO, CA 94103
                                             onBlur={[Function]}
                                             onChange={[Function]}
                                             onFocus={[Function]}
-                                            role="combobox"
+                                            role="listbox"
                                             selectProps={
                                               Object {
                                                 "backspaceRemovesValue": true,
@@ -11845,7 +11845,7 @@ SAN FRANCISCO, CA 94103
                                                   onBlur={[Function]}
                                                   onChange={[Function]}
                                                   onFocus={[Function]}
-                                                  role="combobox"
+                                                  role="listbox"
                                                   spellCheck="false"
                                                   tabIndex="0"
                                                   type="text"
@@ -11873,7 +11873,7 @@ SAN FRANCISCO, CA 94103
                                                       onBlur={[Function]}
                                                       onChange={[Function]}
                                                       onFocus={[Function]}
-                                                      role="combobox"
+                                                      role="listbox"
                                                       spellCheck="false"
                                                       style={
                                                         Object {

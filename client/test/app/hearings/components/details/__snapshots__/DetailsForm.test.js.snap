@@ -936,7 +936,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
-                                                role="combobox"
+                                                role="listbox"
                                                 selectProps={
                                                   Object {
                                                     "backspaceRemovesValue": true,
@@ -1078,7 +1078,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                       onBlur={[Function]}
                                                       onChange={[Function]}
                                                       onFocus={[Function]}
-                                                      role="combobox"
+                                                      role="listbox"
                                                       spellCheck="false"
                                                       tabIndex="0"
                                                       type="text"
@@ -1106,7 +1106,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                           onBlur={[Function]}
                                                           onChange={[Function]}
                                                           onFocus={[Function]}
-                                                          role="combobox"
+                                                          role="listbox"
                                                           spellCheck="false"
                                                           style={
                                                             Object {
@@ -2447,7 +2447,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
-                                                role="combobox"
+                                                role="listbox"
                                                 selectProps={
                                                   Object {
                                                     "backspaceRemovesValue": true,
@@ -2589,7 +2589,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                       onBlur={[Function]}
                                                       onChange={[Function]}
                                                       onFocus={[Function]}
-                                                      role="combobox"
+                                                      role="listbox"
                                                       spellCheck="false"
                                                       tabIndex="0"
                                                       type="text"
@@ -2617,7 +2617,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                           onBlur={[Function]}
                                                           onChange={[Function]}
                                                           onFocus={[Function]}
-                                                          role="combobox"
+                                                          role="listbox"
                                                           spellCheck="false"
                                                           style={
                                                             Object {
@@ -5365,7 +5365,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
+                                              role="listbox"
                                               selectProps={
                                                 Object {
                                                   "backspaceRemovesValue": true,
@@ -5624,7 +5624,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                     onBlur={[Function]}
                                                     onChange={[Function]}
                                                     onFocus={[Function]}
-                                                    role="combobox"
+                                                    role="listbox"
                                                     spellCheck="false"
                                                     tabIndex="0"
                                                     type="text"
@@ -5652,7 +5652,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                         onBlur={[Function]}
                                                         onChange={[Function]}
                                                         onFocus={[Function]}
-                                                        role="combobox"
+                                                        role="listbox"
                                                         spellCheck="false"
                                                         style={
                                                           Object {
@@ -8191,7 +8191,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
-                                                role="combobox"
+                                                role="listbox"
                                                 selectProps={
                                                   Object {
                                                     "backspaceRemovesValue": true,
@@ -8347,7 +8347,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                       onBlur={[Function]}
                                                       onChange={[Function]}
                                                       onFocus={[Function]}
-                                                      role="combobox"
+                                                      role="listbox"
                                                       spellCheck="false"
                                                       tabIndex="0"
                                                       type="text"
@@ -8375,7 +8375,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                           onBlur={[Function]}
                                                           onChange={[Function]}
                                                           onFocus={[Function]}
-                                                          role="combobox"
+                                                          role="listbox"
                                                           spellCheck="false"
                                                           style={
                                                             Object {
@@ -10219,7 +10219,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
-                                                role="combobox"
+                                                role="listbox"
                                                 selectProps={
                                                   Object {
                                                     "backspaceRemovesValue": true,
@@ -10379,7 +10379,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                       onBlur={[Function]}
                                                       onChange={[Function]}
                                                       onFocus={[Function]}
-                                                      role="combobox"
+                                                      role="listbox"
                                                       spellCheck="false"
                                                       tabIndex="0"
                                                       type="text"
@@ -10407,7 +10407,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                           onBlur={[Function]}
                                                           onChange={[Function]}
                                                           onFocus={[Function]}
-                                                          role="combobox"
+                                                          role="listbox"
                                                           spellCheck="false"
                                                           style={
                                                             Object {
@@ -12372,7 +12372,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
-                                                role="combobox"
+                                                role="listbox"
                                                 selectProps={
                                                   Object {
                                                     "backspaceRemovesValue": true,
@@ -12514,7 +12514,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                       onBlur={[Function]}
                                                       onChange={[Function]}
                                                       onFocus={[Function]}
-                                                      role="combobox"
+                                                      role="listbox"
                                                       spellCheck="false"
                                                       tabIndex="0"
                                                       type="text"
@@ -12542,7 +12542,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                           onBlur={[Function]}
                                                           onChange={[Function]}
                                                           onFocus={[Function]}
-                                                          role="combobox"
+                                                          role="listbox"
                                                           spellCheck="false"
                                                           style={
                                                             Object {
@@ -13883,7 +13883,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
-                                                role="combobox"
+                                                role="listbox"
                                                 selectProps={
                                                   Object {
                                                     "backspaceRemovesValue": true,
@@ -14025,7 +14025,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                       onBlur={[Function]}
                                                       onChange={[Function]}
                                                       onFocus={[Function]}
-                                                      role="combobox"
+                                                      role="listbox"
                                                       spellCheck="false"
                                                       tabIndex="0"
                                                       type="text"
@@ -14053,7 +14053,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                           onBlur={[Function]}
                                                           onChange={[Function]}
                                                           onFocus={[Function]}
-                                                          role="combobox"
+                                                          role="listbox"
                                                           spellCheck="false"
                                                           style={
                                                             Object {
@@ -16801,7 +16801,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
+                                              role="listbox"
                                               selectProps={
                                                 Object {
                                                   "backspaceRemovesValue": true,
@@ -17060,7 +17060,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                     onBlur={[Function]}
                                                     onChange={[Function]}
                                                     onFocus={[Function]}
-                                                    role="combobox"
+                                                    role="listbox"
                                                     spellCheck="false"
                                                     tabIndex="0"
                                                     type="text"
@@ -17088,7 +17088,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                         onBlur={[Function]}
                                                         onChange={[Function]}
                                                         onFocus={[Function]}
-                                                        role="combobox"
+                                                        role="listbox"
                                                         spellCheck="false"
                                                         style={
                                                           Object {
@@ -19648,7 +19648,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
-                                                role="combobox"
+                                                role="listbox"
                                                 selectProps={
                                                   Object {
                                                     "backspaceRemovesValue": true,
@@ -19804,7 +19804,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                       onBlur={[Function]}
                                                       onChange={[Function]}
                                                       onFocus={[Function]}
-                                                      role="combobox"
+                                                      role="listbox"
                                                       spellCheck="false"
                                                       tabIndex="0"
                                                       type="text"
@@ -19832,7 +19832,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                           onBlur={[Function]}
                                                           onChange={[Function]}
                                                           onFocus={[Function]}
-                                                          role="combobox"
+                                                          role="listbox"
                                                           spellCheck="false"
                                                           style={
                                                             Object {
@@ -21676,7 +21676,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
-                                                role="combobox"
+                                                role="listbox"
                                                 selectProps={
                                                   Object {
                                                     "backspaceRemovesValue": true,
@@ -21836,7 +21836,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                       onBlur={[Function]}
                                                       onChange={[Function]}
                                                       onFocus={[Function]}
-                                                      role="combobox"
+                                                      role="listbox"
                                                       spellCheck="false"
                                                       tabIndex="0"
                                                       type="text"
@@ -21864,7 +21864,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                           onBlur={[Function]}
                                                           onChange={[Function]}
                                                           onFocus={[Function]}
-                                                          role="combobox"
+                                                          role="listbox"
                                                           spellCheck="false"
                                                           style={
                                                             Object {
@@ -23839,7 +23839,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
-                                                role="combobox"
+                                                role="listbox"
                                                 selectProps={
                                                   Object {
                                                     "backspaceRemovesValue": true,
@@ -23981,7 +23981,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                       onBlur={[Function]}
                                                       onChange={[Function]}
                                                       onFocus={[Function]}
-                                                      role="combobox"
+                                                      role="listbox"
                                                       spellCheck="false"
                                                       tabIndex="0"
                                                       type="text"
@@ -24009,7 +24009,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                           onBlur={[Function]}
                                                           onChange={[Function]}
                                                           onFocus={[Function]}
-                                                          role="combobox"
+                                                          role="listbox"
                                                           spellCheck="false"
                                                           style={
                                                             Object {
@@ -25350,7 +25350,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
-                                                role="combobox"
+                                                role="listbox"
                                                 selectProps={
                                                   Object {
                                                     "backspaceRemovesValue": true,
@@ -25492,7 +25492,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                       onBlur={[Function]}
                                                       onChange={[Function]}
                                                       onFocus={[Function]}
-                                                      role="combobox"
+                                                      role="listbox"
                                                       spellCheck="false"
                                                       tabIndex="0"
                                                       type="text"
@@ -25520,7 +25520,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                           onBlur={[Function]}
                                                           onChange={[Function]}
                                                           onFocus={[Function]}
-                                                          role="combobox"
+                                                          role="listbox"
                                                           spellCheck="false"
                                                           style={
                                                             Object {
@@ -28268,7 +28268,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
+                                              role="listbox"
                                               selectProps={
                                                 Object {
                                                   "backspaceRemovesValue": true,
@@ -28527,7 +28527,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                     onBlur={[Function]}
                                                     onChange={[Function]}
                                                     onFocus={[Function]}
-                                                    role="combobox"
+                                                    role="listbox"
                                                     spellCheck="false"
                                                     tabIndex="0"
                                                     type="text"
@@ -28555,7 +28555,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                         onBlur={[Function]}
                                                         onChange={[Function]}
                                                         onFocus={[Function]}
-                                                        role="combobox"
+                                                        role="listbox"
                                                         spellCheck="false"
                                                         style={
                                                           Object {
@@ -30679,7 +30679,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
+                                              role="listbox"
                                               selectProps={
                                                 Object {
                                                   "backspaceRemovesValue": true,
@@ -30826,7 +30826,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                     onBlur={[Function]}
                                                     onChange={[Function]}
                                                     onFocus={[Function]}
-                                                    role="combobox"
+                                                    role="listbox"
                                                     spellCheck="false"
                                                     tabIndex="0"
                                                     type="text"
@@ -30854,7 +30854,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                         onBlur={[Function]}
                                                         onChange={[Function]}
                                                         onFocus={[Function]}
-                                                        role="combobox"
+                                                        role="listbox"
                                                         spellCheck="false"
                                                         style={
                                                           Object {
@@ -32738,7 +32738,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
-                                                role="combobox"
+                                                role="listbox"
                                                 selectProps={
                                                   Object {
                                                     "backspaceRemovesValue": true,
@@ -32894,7 +32894,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                       onBlur={[Function]}
                                                       onChange={[Function]}
                                                       onFocus={[Function]}
-                                                      role="combobox"
+                                                      role="listbox"
                                                       spellCheck="false"
                                                       tabIndex="0"
                                                       type="text"
@@ -32922,7 +32922,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                           onBlur={[Function]}
                                                           onChange={[Function]}
                                                           onFocus={[Function]}
-                                                          role="combobox"
+                                                          role="listbox"
                                                           spellCheck="false"
                                                           style={
                                                             Object {
@@ -34766,7 +34766,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
-                                                role="combobox"
+                                                role="listbox"
                                                 selectProps={
                                                   Object {
                                                     "backspaceRemovesValue": true,
@@ -34926,7 +34926,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                       onBlur={[Function]}
                                                       onChange={[Function]}
                                                       onFocus={[Function]}
-                                                      role="combobox"
+                                                      role="listbox"
                                                       spellCheck="false"
                                                       tabIndex="0"
                                                       type="text"
@@ -34954,7 +34954,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                           onBlur={[Function]}
                                                           onChange={[Function]}
                                                           onFocus={[Function]}
-                                                          role="combobox"
+                                                          role="listbox"
                                                           spellCheck="false"
                                                           style={
                                                             Object {
@@ -36930,7 +36930,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
-                                                role="combobox"
+                                                role="listbox"
                                                 selectProps={
                                                   Object {
                                                     "backspaceRemovesValue": true,
@@ -37072,7 +37072,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                       onBlur={[Function]}
                                                       onChange={[Function]}
                                                       onFocus={[Function]}
-                                                      role="combobox"
+                                                      role="listbox"
                                                       spellCheck="false"
                                                       tabIndex="0"
                                                       type="text"
@@ -37100,7 +37100,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                           onBlur={[Function]}
                                                           onChange={[Function]}
                                                           onFocus={[Function]}
-                                                          role="combobox"
+                                                          role="listbox"
                                                           spellCheck="false"
                                                           style={
                                                             Object {
@@ -38441,7 +38441,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
-                                                role="combobox"
+                                                role="listbox"
                                                 selectProps={
                                                   Object {
                                                     "backspaceRemovesValue": true,
@@ -38583,7 +38583,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                       onBlur={[Function]}
                                                       onChange={[Function]}
                                                       onFocus={[Function]}
-                                                      role="combobox"
+                                                      role="listbox"
                                                       spellCheck="false"
                                                       tabIndex="0"
                                                       type="text"
@@ -38611,7 +38611,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                           onBlur={[Function]}
                                                           onChange={[Function]}
                                                           onFocus={[Function]}
-                                                          role="combobox"
+                                                          role="listbox"
                                                           spellCheck="false"
                                                           style={
                                                             Object {
@@ -41359,7 +41359,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
+                                              role="listbox"
                                               selectProps={
                                                 Object {
                                                   "backspaceRemovesValue": true,
@@ -41618,7 +41618,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                     onBlur={[Function]}
                                                     onChange={[Function]}
                                                     onFocus={[Function]}
-                                                    role="combobox"
+                                                    role="listbox"
                                                     spellCheck="false"
                                                     tabIndex="0"
                                                     type="text"
@@ -41646,7 +41646,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                         onBlur={[Function]}
                                                         onChange={[Function]}
                                                         onFocus={[Function]}
-                                                        role="combobox"
+                                                        role="listbox"
                                                         spellCheck="false"
                                                         style={
                                                           Object {
@@ -43770,7 +43770,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
+                                              role="listbox"
                                               selectProps={
                                                 Object {
                                                   "backspaceRemovesValue": true,
@@ -43917,7 +43917,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                     onBlur={[Function]}
                                                     onChange={[Function]}
                                                     onFocus={[Function]}
-                                                    role="combobox"
+                                                    role="listbox"
                                                     spellCheck="false"
                                                     tabIndex="0"
                                                     type="text"
@@ -43945,7 +43945,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                         onBlur={[Function]}
                                                         onChange={[Function]}
                                                         onFocus={[Function]}
-                                                        role="combobox"
+                                                        role="listbox"
                                                         spellCheck="false"
                                                         style={
                                                           Object {
@@ -45829,7 +45829,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
-                                                role="combobox"
+                                                role="listbox"
                                                 selectProps={
                                                   Object {
                                                     "backspaceRemovesValue": true,
@@ -45985,7 +45985,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                       onBlur={[Function]}
                                                       onChange={[Function]}
                                                       onFocus={[Function]}
-                                                      role="combobox"
+                                                      role="listbox"
                                                       spellCheck="false"
                                                       tabIndex="0"
                                                       type="text"
@@ -46013,7 +46013,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                           onBlur={[Function]}
                                                           onChange={[Function]}
                                                           onFocus={[Function]}
-                                                          role="combobox"
+                                                          role="listbox"
                                                           spellCheck="false"
                                                           style={
                                                             Object {
@@ -47857,7 +47857,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
-                                                role="combobox"
+                                                role="listbox"
                                                 selectProps={
                                                   Object {
                                                     "backspaceRemovesValue": true,
@@ -48017,7 +48017,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                       onBlur={[Function]}
                                                       onChange={[Function]}
                                                       onFocus={[Function]}
-                                                      role="combobox"
+                                                      role="listbox"
                                                       spellCheck="false"
                                                       tabIndex="0"
                                                       type="text"
@@ -48045,7 +48045,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                           onBlur={[Function]}
                                                           onChange={[Function]}
                                                           onFocus={[Function]}
-                                                          role="combobox"
+                                                          role="listbox"
                                                           spellCheck="false"
                                                           style={
                                                             Object {
@@ -50021,7 +50021,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
-                                                role="combobox"
+                                                role="listbox"
                                                 selectProps={
                                                   Object {
                                                     "backspaceRemovesValue": true,
@@ -50163,7 +50163,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                       onBlur={[Function]}
                                                       onChange={[Function]}
                                                       onFocus={[Function]}
-                                                      role="combobox"
+                                                      role="listbox"
                                                       spellCheck="false"
                                                       tabIndex="0"
                                                       type="text"
@@ -50191,7 +50191,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                           onBlur={[Function]}
                                                           onChange={[Function]}
                                                           onFocus={[Function]}
-                                                          role="combobox"
+                                                          role="listbox"
                                                           spellCheck="false"
                                                           style={
                                                             Object {
@@ -51532,7 +51532,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                 onBlur={[Function]}
                                                 onChange={[Function]}
                                                 onFocus={[Function]}
-                                                role="combobox"
+                                                role="listbox"
                                                 selectProps={
                                                   Object {
                                                     "backspaceRemovesValue": true,
@@ -51674,7 +51674,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                       onBlur={[Function]}
                                                       onChange={[Function]}
                                                       onFocus={[Function]}
-                                                      role="combobox"
+                                                      role="listbox"
                                                       spellCheck="false"
                                                       tabIndex="0"
                                                       type="text"
@@ -51702,7 +51702,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                           onBlur={[Function]}
                                                           onChange={[Function]}
                                                           onFocus={[Function]}
-                                                          role="combobox"
+                                                          role="listbox"
                                                           spellCheck="false"
                                                           style={
                                                             Object {
@@ -54450,7 +54450,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
+                                              role="listbox"
                                               selectProps={
                                                 Object {
                                                   "backspaceRemovesValue": true,
@@ -54709,7 +54709,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                     onBlur={[Function]}
                                                     onChange={[Function]}
                                                     onFocus={[Function]}
-                                                    role="combobox"
+                                                    role="listbox"
                                                     spellCheck="false"
                                                     tabIndex="0"
                                                     type="text"
@@ -54737,7 +54737,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                         onBlur={[Function]}
                                                         onChange={[Function]}
                                                         onFocus={[Function]}
-                                                        role="combobox"
+                                                        role="listbox"
                                                         spellCheck="false"
                                                         style={
                                                           Object {
@@ -56861,7 +56861,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
+                                              role="listbox"
                                               selectProps={
                                                 Object {
                                                   "backspaceRemovesValue": true,
@@ -57008,7 +57008,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                     onBlur={[Function]}
                                                     onChange={[Function]}
                                                     onFocus={[Function]}
-                                                    role="combobox"
+                                                    role="listbox"
                                                     spellCheck="false"
                                                     tabIndex="0"
                                                     type="text"
@@ -57036,7 +57036,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                         onBlur={[Function]}
                                                         onChange={[Function]}
                                                         onFocus={[Function]}
-                                                        role="combobox"
+                                                        role="listbox"
                                                         spellCheck="false"
                                                         style={
                                                           Object {

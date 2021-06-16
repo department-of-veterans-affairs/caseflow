@@ -22,7 +22,7 @@ const CustomMenuList = (props) => {
   const innerProps = {
     ...props.innerProps,
     id: `${kebabCase(props.selectProps.name)}-listbox`,
-    role: 'combobox',
+    role: 'listbox',
     'aria-label': `${kebabCase(props.selectProps.name)}-listbox`,
   };
 

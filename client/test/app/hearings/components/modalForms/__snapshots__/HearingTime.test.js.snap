@@ -5580,7 +5580,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
-                                    role="combobox"
+                                    role="listbox"
                                     selectProps={
                                       Object {
                                         "backspaceRemovesValue": true,
@@ -6107,7 +6107,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
-                                          role="combobox"
+                                          role="listbox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -6135,7 +6135,7 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
+                                              role="listbox"
                                               spellCheck="false"
                                               style={
                                                 Object {
@@ -14655,7 +14655,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
-                                    role="combobox"
+                                    role="listbox"
                                     selectProps={
                                       Object {
                                         "backspaceRemovesValue": true,
@@ -15182,7 +15182,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
-                                          role="combobox"
+                                          role="listbox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -15210,7 +15210,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
+                                              role="listbox"
                                               spellCheck="false"
                                               style={
                                                 Object {
@@ -23569,7 +23569,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
-                                    role="combobox"
+                                    role="listbox"
                                     selectProps={
                                       Object {
                                         "backspaceRemovesValue": true,
@@ -24093,7 +24093,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
-                                          role="combobox"
+                                          role="listbox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -24121,7 +24121,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
+                                              role="listbox"
                                               spellCheck="false"
                                               style={
                                                 Object {
@@ -32471,7 +32471,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                     onBlur={[Function]}
                                     onChange={[Function]}
                                     onFocus={[Function]}
-                                    role="combobox"
+                                    role="listbox"
                                     selectProps={
                                       Object {
                                         "backspaceRemovesValue": true,
@@ -32995,7 +32995,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
-                                          role="combobox"
+                                          role="listbox"
                                           spellCheck="false"
                                           tabIndex="0"
                                           type="text"
@@ -33023,7 +33023,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                               onBlur={[Function]}
                                               onChange={[Function]}
                                               onFocus={[Function]}
-                                              role="combobox"
+                                              role="listbox"
                                               spellCheck="false"
                                               style={
                                                 Object {
