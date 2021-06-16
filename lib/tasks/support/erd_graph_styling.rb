@@ -145,6 +145,10 @@ module ErdGraphStyling
       SchedulePeriod => {
         fillcolor: "cyan",
         style: "filled"
+      },
+      Dispatch::Task => {
+        fillcolor: "greenyellow",
+        style: "filled"
       }
     }
   end

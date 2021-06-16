@@ -169,7 +169,7 @@ describe "AssocationWrapper" do
           }.compact.presence&.join("\n")
         }.compact.join("\n\n")
 
-        puts g.output( :canon => String )
+        # puts g.output( :canon => String )
         # g.output( :png => "belongs_to_erd_all.png" )
         # g.output( :dot => "belongs_to_erd_all.dot" )
       end
