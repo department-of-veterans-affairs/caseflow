@@ -81,13 +81,13 @@ class RoSchedulePeriod < SchedulePeriod
     # Initialize the hearing day schedule
     generate_hearings_days = HearingSchedule::GenerateHearingDaysSchedule.new(self)
 
-    # Allocate the requested video docket days
+    # Allocate the requested video docket days, mutates the @ros instance variable
     generate_hearings_days.allocate_hearing_days_to_ros
 
-    # Allocate the requested virtual docket days
+    # Allocate the requested virtual docket days, mutates the @ros instance variable
     generate_hearings_days.allocate_hearing_days_to_ros(:allocated_days_without_room)
 
-    # Get the allocated video and virtual days from the @ros variable in generate_hearing_days
+    # Get the allocated video and virtual days (the @ros variable), add HearingDay info
     non_co_hearing_days = format_ro_hearing_data(generate_hearings_days.allocation_results)
 
     # Distribute the available Central Office hearing days
