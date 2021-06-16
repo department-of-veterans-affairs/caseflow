@@ -38,7 +38,7 @@ module ErdGraphStyling
       node_names: DECISION_REVIEW_POLYTYPES +
                   %w[Appeal SupplementalClaim HigherLevelReview LegacyAppeal DecisionReview ClaimReview],
       attribs: {
-        fillcolor: "yellow",
+        fillcolor: "#ffff00",  # yellow
         style: "filled"
       }
     },
@@ -69,7 +69,7 @@ module ErdGraphStyling
       end
     end
 
-    style_subclass_nodes(graph)
+    style_nodes_by_category(graph)
   end
 
   private
@@ -84,7 +84,7 @@ module ErdGraphStyling
   ].freeze
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-  def style_subclass_nodes(graph)
+  def style_nodes_by_category(graph)
     graph.each_node do |name, node|
       if COMPLETION_RECORDS.include?(name)
         node[:shape] = "note"
@@ -97,7 +97,7 @@ module ErdGraphStyling
       elsif name.ends_with?("Availability")
         node[:style] = "filled"
         node[:fillcolor] = "#00aaff"
-      elsif name.include?("Hearing")
+      elsif name.include?("Hearing") || %w[WorksheetIssue Transcription].include?(name)
         node[:style] = "filled" unless node[:style]
         node[:fillcolor] = "#66ccff" unless node[:fillcolor]
       end
@@ -120,12 +120,13 @@ module ErdGraphStyling
   # rubocop:disable Metrics/MethodLength
   def subclass_styling_config
     @subclass_styling_config ||= {
+      # Specify colors in hex for consistent colors between png and svg files
       Organization => {
-        fillcolor: "#d9d9ee",
+        fillcolor: "#d9d9ff",
         style: "filled"
       },
       Task => {
-        fillcolor: "green",
+        fillcolor: "#00ff00",
         style: "filled"
       },
       Intake => {
@@ -135,19 +136,19 @@ module ErdGraphStyling
         style: "filled"
       },
       Claimant => {
-        fillcolor: "gray",
+        fillcolor: "#a9a9a9",
         style: "filled"
       },
       RequestIssue => {
-        fillcolor: "orange",
+        fillcolor: "#ffa500", # orange
         style: "filled"
       },
       SchedulePeriod => {
-        fillcolor: "cyan",
+        fillcolor: "#00ffff", # cyan
         style: "filled"
       },
       Dispatch::Task => {
-        fillcolor: "greenyellow",
+        fillcolor: "#adff2f", # greenyellow
         style: "filled"
       }
     }

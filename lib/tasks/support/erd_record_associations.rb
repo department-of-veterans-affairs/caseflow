@@ -55,7 +55,7 @@ module ErdRecordAssociations
 
   private
 
-  POLYMORPHIC_COLOR = "blue"
+  POLYMORPHIC_COLOR = "#0000ff" # blue
 
   def add_subclass_edges_for(graph, klass)
     (klass.subclasses & record_classes).each do |subclass|

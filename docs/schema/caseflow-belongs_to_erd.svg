@@ -18,7 +18,7 @@
 <!-- LegacyAppeal -->
 <g id="node2" class="node">
 <title>LegacyAppeal</title>
-<ellipse fill="yellow" stroke="black" cx="974.62" cy="-2060" rx="61.99" ry="18"/>
+<ellipse fill="#ffff00" stroke="black" cx="974.62" cy="-2060" rx="61.99" ry="18"/>
 <text text-anchor="middle" x="974.62" y="-2056.3" font-family="Times,serif" font-size="14.00">LegacyAppeal</text>
 </g>
 <!-- LegacyAppeal&#45;&gt;AppealSeries -->
@@ -31,7 +31,7 @@
 <!-- HearingTask -->
 <g id="node3" class="node">
 <title>HearingTask</title>
-<ellipse fill="green" stroke="black" cx="1728.2" cy="-1505" rx="55.79" ry="18"/>
+<ellipse fill="#00ff00" stroke="black" cx="1728.2" cy="-1505" rx="55.79" ry="18"/>
 <text text-anchor="middle" x="1728.2" y="-1501.3" font-family="Times,serif" font-size="14.00">HearingTask</text>
 </g>
 <!-- HearingTaskAssociation -->
@@ -52,11 +52,11 @@
 <!-- hearing_type -->
 <g id="node5" class="node">
 <title>hearing_type</title>
-<polygon fill="none" stroke="blue" stroke-dasharray="1,5" points="1678.2,-1618.5 1678.2,-1679.5 1778.2,-1679.5 1778.2,-1618.5 1678.2,-1618.5"/>
-<text text-anchor="middle" x="1728.2" y="-1664.3" font-family="Times,serif" font-size="14.00" fill="blue">hearing_type</text>
-<polyline fill="none" stroke="blue" stroke-dasharray="1,5" points="1678.2,-1656.5 1778.2,-1656.5 "/>
-<text text-anchor="middle" x="1728.2" y="-1641.3" font-family="Times,serif" font-size="14.00" fill="blue">Hearing,</text>
-<text text-anchor="middle" x="1728.2" y="-1626.3" font-family="Times,serif" font-size="14.00" fill="blue">LegacyHearing</text>
+<polygon fill="none" stroke="#0000ff" stroke-dasharray="1,5" points="1678.2,-1618.5 1678.2,-1679.5 1778.2,-1679.5 1778.2,-1618.5 1678.2,-1618.5"/>
+<text text-anchor="middle" x="1728.2" y="-1664.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">hearing_type</text>
+<polyline fill="none" stroke="#0000ff" stroke-dasharray="1,5" points="1678.2,-1656.5 1778.2,-1656.5 "/>
+<text text-anchor="middle" x="1728.2" y="-1641.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">Hearing,</text>
+<text text-anchor="middle" x="1728.2" y="-1626.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">LegacyHearing</text>
 </g>
 <!-- HearingTaskAssociation&#45;&gt;hearing_type -->
 <g id="edge3" class="edge">
@@ -68,35 +68,35 @@
 <!-- SchedulePeriod -->
 <g id="node6" class="node">
 <title>SchedulePeriod</title>
-<polygon fill="cyan" stroke="blue" points="484.12,-2317 484.12,-2355 600.12,-2355 600.12,-2317 484.12,-2317"/>
-<text text-anchor="middle" x="542.12" y="-2339.8" font-family="Times,serif" font-size="14.00" fill="blue">SchedulePeriod</text>
-<text text-anchor="middle" x="542.12" y="-2324.8" font-family="Times,serif" font-size="14.00" fill="blue"> (assoc with User)</text>
+<polygon fill="#00ffff" stroke="#0000ff" points="484.12,-2317 484.12,-2355 600.12,-2355 600.12,-2317 484.12,-2317"/>
+<text text-anchor="middle" x="542.12" y="-2339.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">SchedulePeriod</text>
+<text text-anchor="middle" x="542.12" y="-2324.8" font-family="Times,serif" font-size="14.00" fill="#0000ff"> (assoc with User)</text>
 </g>
 <!-- JudgeSchedulePeriod -->
 <g id="node103" class="node">
 <title>JudgeSchedulePeriod</title>
-<ellipse fill="cyan" stroke="black" cx="974.62" cy="-2372" rx="94.09" ry="26.74"/>
+<ellipse fill="#00ffff" stroke="black" cx="974.62" cy="-2372" rx="94.09" ry="26.74"/>
 <text text-anchor="middle" x="974.62" y="-2375.8" font-family="Times,serif" font-size="14.00">JudgeSchedulePeriod</text>
 <text text-anchor="middle" x="974.62" y="-2360.8" font-family="Times,serif" font-size="14.00"> &#160;(assoc with User)</text>
 </g>
 <!-- SchedulePeriod&#45;&gt;JudgeSchedulePeriod -->
 <g id="edge109" class="edge">
 <title>SchedulePeriod&#45;&gt;JudgeSchedulePeriod</title>
-<path fill="none" stroke="blue" stroke-dasharray="1,5" d="M600.28,-2340.78C669.96,-2346.61 788.88,-2356.55 873.78,-2363.65"/>
-<polygon fill="blue" stroke="blue" points="873.7,-2367.16 883.96,-2364.5 874.29,-2360.18 873.7,-2367.16"/>
+<path fill="none" stroke="#0000ff" stroke-dasharray="1,5" d="M600.28,-2340.78C669.96,-2346.61 788.88,-2356.55 873.78,-2363.65"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="873.7,-2367.16 883.96,-2364.5 874.29,-2360.18 873.7,-2367.16"/>
 </g>
 <!-- RoSchedulePeriod -->
 <g id="node104" class="node">
 <title>RoSchedulePeriod</title>
-<ellipse fill="cyan" stroke="black" cx="974.62" cy="-2300" rx="84.29" ry="26.74"/>
+<ellipse fill="#00ffff" stroke="black" cx="974.62" cy="-2300" rx="84.29" ry="26.74"/>
 <text text-anchor="middle" x="974.62" y="-2303.8" font-family="Times,serif" font-size="14.00">RoSchedulePeriod</text>
 <text text-anchor="middle" x="974.62" y="-2288.8" font-family="Times,serif" font-size="14.00"> &#160;(assoc with User)</text>
 </g>
 <!-- SchedulePeriod&#45;&gt;RoSchedulePeriod -->
 <g id="edge110" class="edge">
 <title>SchedulePeriod&#45;&gt;RoSchedulePeriod</title>
-<path fill="none" stroke="blue" stroke-dasharray="1,5" d="M600.28,-2331.22C672.48,-2325.18 797.57,-2314.72 882.88,-2307.59"/>
-<polygon fill="blue" stroke="blue" points="883.41,-2311.06 893.08,-2306.73 882.83,-2304.08 883.41,-2311.06"/>
+<path fill="none" stroke="#0000ff" stroke-dasharray="1,5" d="M600.28,-2331.22C672.48,-2325.18 797.57,-2314.72 882.88,-2307.59"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="883.41,-2311.06 893.08,-2306.73 882.83,-2304.08 883.41,-2311.06"/>
 </g>
 <!-- NonAvailability -->
 <g id="node7" class="node">
@@ -122,12 +122,12 @@
 <!-- decision_review_type -->
 <g id="node27" class="node">
 <title>decision_review_type</title>
-<polygon fill="yellow" stroke="blue" points="1660.7,-284 1660.7,-360 1795.7,-360 1795.7,-284 1660.7,-284"/>
-<text text-anchor="middle" x="1728.2" y="-344.8" font-family="Times,serif" font-size="14.00" fill="blue">decision_review_type</text>
-<polyline fill="none" stroke="blue" points="1660.7,-337 1795.7,-337 "/>
-<text text-anchor="middle" x="1728.2" y="-321.8" font-family="Times,serif" font-size="14.00" fill="blue">Appeal,</text>
-<text text-anchor="middle" x="1728.2" y="-306.8" font-family="Times,serif" font-size="14.00" fill="blue">SupplementalClaim,</text>
-<text text-anchor="middle" x="1728.2" y="-291.8" font-family="Times,serif" font-size="14.00" fill="blue">HigherLevelReview</text>
+<polygon fill="#ffff00" stroke="#0000ff" points="1660.7,-284 1660.7,-360 1795.7,-360 1795.7,-284 1660.7,-284"/>
+<text text-anchor="middle" x="1728.2" y="-344.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">decision_review_type</text>
+<polyline fill="none" stroke="#0000ff" points="1660.7,-337 1795.7,-337 "/>
+<text text-anchor="middle" x="1728.2" y="-321.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">Appeal,</text>
+<text text-anchor="middle" x="1728.2" y="-306.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">SupplementalClaim,</text>
+<text text-anchor="middle" x="1728.2" y="-291.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">HigherLevelReview</text>
 </g>
 <!-- DecisionIssue&#45;&gt;decision_review_type -->
 <g id="edge32" class="edge">
@@ -152,10 +152,10 @@
 <!-- Task -->
 <g id="node10" class="node">
 <title>Task</title>
-<polygon fill="green" stroke="blue" points="1383.36,-1404 1383.36,-1450 1460.36,-1450 1460.36,-1404 1383.36,-1404"/>
-<text text-anchor="middle" x="1421.86" y="-1434.8" font-family="Times,serif" font-size="14.00" fill="blue">Task</text>
-<polyline fill="none" stroke="blue" points="1383.36,-1427 1460.36,-1427 "/>
-<text text-anchor="middle" x="1421.86" y="-1411.8" font-family="Times,serif" font-size="14.00" fill="blue">(105 tasks)</text>
+<polygon fill="#00ff00" stroke="#0000ff" points="1383.36,-1404 1383.36,-1450 1460.36,-1450 1460.36,-1404 1383.36,-1404"/>
+<text text-anchor="middle" x="1421.86" y="-1434.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">Task</text>
+<polyline fill="none" stroke="#0000ff" points="1383.36,-1427 1460.36,-1427 "/>
+<text text-anchor="middle" x="1421.86" y="-1411.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">(105 tasks)</text>
 </g>
 <!-- Task&#45;&gt;HearingTask -->
 <g id="edge117" class="edge">
@@ -179,11 +179,11 @@
 <!-- assigned_to_type -->
 <g id="node11" class="node">
 <title>assigned_to_type</title>
-<polygon fill="none" stroke="blue" stroke-dasharray="1,5" points="1673.2,-1396.5 1673.2,-1457.5 1783.2,-1457.5 1783.2,-1396.5 1673.2,-1396.5"/>
-<text text-anchor="middle" x="1728.2" y="-1442.3" font-family="Times,serif" font-size="14.00" fill="blue">assigned_to_type</text>
-<polyline fill="none" stroke="blue" stroke-dasharray="1,5" points="1673.2,-1434.5 1783.2,-1434.5 "/>
-<text text-anchor="middle" x="1728.2" y="-1419.3" font-family="Times,serif" font-size="14.00" fill="blue">User,</text>
-<text text-anchor="middle" x="1728.2" y="-1404.3" font-family="Times,serif" font-size="14.00" fill="blue">Organization</text>
+<polygon fill="none" stroke="#0000ff" stroke-dasharray="1,5" points="1673.2,-1396.5 1673.2,-1457.5 1783.2,-1457.5 1783.2,-1396.5 1673.2,-1396.5"/>
+<text text-anchor="middle" x="1728.2" y="-1442.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">assigned_to_type</text>
+<polyline fill="none" stroke="#0000ff" stroke-dasharray="1,5" points="1673.2,-1434.5 1783.2,-1434.5 "/>
+<text text-anchor="middle" x="1728.2" y="-1419.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">User,</text>
+<text text-anchor="middle" x="1728.2" y="-1404.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">Organization</text>
 </g>
 <!-- Task&#45;&gt;assigned_to_type -->
 <g id="edge7" class="edge">
@@ -195,11 +195,11 @@
 <!-- appeal_type -->
 <g id="node12" class="node">
 <title>appeal_type</title>
-<polygon fill="yellow" stroke="blue" points="1680.7,-1100.5 1680.7,-1161.5 1775.7,-1161.5 1775.7,-1100.5 1680.7,-1100.5"/>
-<text text-anchor="middle" x="1728.2" y="-1146.3" font-family="Times,serif" font-size="14.00" fill="blue">appeal_type</text>
-<polyline fill="none" stroke="blue" points="1680.7,-1138.5 1775.7,-1138.5 "/>
-<text text-anchor="middle" x="1728.2" y="-1123.3" font-family="Times,serif" font-size="14.00" fill="blue">Appeal,</text>
-<text text-anchor="middle" x="1728.2" y="-1108.3" font-family="Times,serif" font-size="14.00" fill="blue">LegacyAppeal</text>
+<polygon fill="#ffff00" stroke="#0000ff" points="1680.7,-1100.5 1680.7,-1161.5 1775.7,-1161.5 1775.7,-1100.5 1680.7,-1100.5"/>
+<text text-anchor="middle" x="1728.2" y="-1146.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">appeal_type</text>
+<polyline fill="none" stroke="#0000ff" points="1680.7,-1138.5 1775.7,-1138.5 "/>
+<text text-anchor="middle" x="1728.2" y="-1123.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">Appeal,</text>
+<text text-anchor="middle" x="1728.2" y="-1108.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">LegacyAppeal</text>
 </g>
 <!-- Task&#45;&gt;appeal_type -->
 <g id="edge8" class="edge">
@@ -218,7 +218,7 @@
 <!-- Dispatch::Task -->
 <g id="node14" class="node">
 <title>Dispatch::Task</title>
-<ellipse fill="greenyellow" stroke="black" cx="542.12" cy="-2060" rx="84.29" ry="26.74"/>
+<ellipse fill="#adff2f" stroke="black" cx="542.12" cy="-2060" rx="84.29" ry="26.74"/>
 <text text-anchor="middle" x="542.12" y="-2063.8" font-family="Times,serif" font-size="14.00">Dispatch::Task</text>
 <text text-anchor="middle" x="542.12" y="-2048.8" font-family="Times,serif" font-size="14.00"> &#160;(assoc with User)</text>
 </g>
@@ -353,7 +353,7 @@
 <!-- Appeal -->
 <g id="node24" class="node">
 <title>Appeal</title>
-<ellipse fill="yellow" stroke="black" cx="1421.86" cy="-1704" rx="36.29" ry="18"/>
+<ellipse fill="#ffff00" stroke="black" cx="1421.86" cy="-1704" rx="36.29" ry="18"/>
 <text text-anchor="middle" x="1421.86" y="-1700.3" font-family="Times,serif" font-size="14.00">Appeal</text>
 </g>
 <!-- AppellantSubstitution -->
@@ -395,14 +395,14 @@
 <!-- Claimant -->
 <g id="node28" class="node">
 <title>Claimant</title>
-<polygon fill="gray" stroke="blue" points="1355.36,-699 1355.36,-805 1488.36,-805 1488.36,-699 1355.36,-699"/>
-<text text-anchor="middle" x="1421.86" y="-789.8" font-family="Times,serif" font-size="14.00" fill="blue">Claimant</text>
-<polyline fill="none" stroke="blue" points="1355.36,-782 1488.36,-782 "/>
-<text text-anchor="middle" x="1421.86" y="-766.8" font-family="Times,serif" font-size="14.00" fill="blue">AttorneyClaimant,</text>
-<text text-anchor="middle" x="1421.86" y="-751.8" font-family="Times,serif" font-size="14.00" fill="blue">BgsRelatedClaimant,</text>
-<text text-anchor="middle" x="1421.86" y="-736.8" font-family="Times,serif" font-size="14.00" fill="blue">OtherClaimant,</text>
-<text text-anchor="middle" x="1421.86" y="-721.8" font-family="Times,serif" font-size="14.00" fill="blue">DependentClaimant,</text>
-<text text-anchor="middle" x="1421.86" y="-706.8" font-family="Times,serif" font-size="14.00" fill="blue">VeteranClaimant</text>
+<polygon fill="#a9a9a9" stroke="#0000ff" points="1355.36,-699 1355.36,-805 1488.36,-805 1488.36,-699 1355.36,-699"/>
+<text text-anchor="middle" x="1421.86" y="-789.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">Claimant</text>
+<polyline fill="none" stroke="#0000ff" points="1355.36,-782 1488.36,-782 "/>
+<text text-anchor="middle" x="1421.86" y="-766.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">AttorneyClaimant,</text>
+<text text-anchor="middle" x="1421.86" y="-751.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">BgsRelatedClaimant,</text>
+<text text-anchor="middle" x="1421.86" y="-736.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">OtherClaimant,</text>
+<text text-anchor="middle" x="1421.86" y="-721.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">DependentClaimant,</text>
+<text text-anchor="middle" x="1421.86" y="-706.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">VeteranClaimant</text>
 </g>
 <!-- Claimant&#45;&gt;Person -->
 <g id="edge21" class="edge">
@@ -479,14 +479,14 @@
 <!-- source_type -->
 <g id="node46" class="node">
 <title>source_type</title>
-<polygon fill="none" stroke="blue" stroke-dasharray="1,5" points="1663.7,-406 1663.7,-512 1792.7,-512 1792.7,-406 1663.7,-406"/>
-<text text-anchor="middle" x="1728.2" y="-496.8" font-family="Times,serif" font-size="14.00" fill="blue">source_type</text>
-<polyline fill="none" stroke="blue" stroke-dasharray="1,5" points="1663.7,-489 1792.7,-489 "/>
-<text text-anchor="middle" x="1728.2" y="-473.8" font-family="Times,serif" font-size="14.00" fill="blue">DecisionDocument,</text>
-<text text-anchor="middle" x="1728.2" y="-458.8" font-family="Times,serif" font-size="14.00" fill="blue">SupplementalClaim,</text>
-<text text-anchor="middle" x="1728.2" y="-443.8" font-family="Times,serif" font-size="14.00" fill="blue">HigherLevelReview,</text>
-<text text-anchor="middle" x="1728.2" y="-428.8" font-family="Times,serif" font-size="14.00" fill="blue">RampRefiling,</text>
-<text text-anchor="middle" x="1728.2" y="-413.8" font-family="Times,serif" font-size="14.00" fill="blue">RampElection</text>
+<polygon fill="none" stroke="#0000ff" stroke-dasharray="1,5" points="1663.7,-406 1663.7,-512 1792.7,-512 1792.7,-406 1663.7,-406"/>
+<text text-anchor="middle" x="1728.2" y="-496.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">source_type</text>
+<polyline fill="none" stroke="#0000ff" stroke-dasharray="1,5" points="1663.7,-489 1792.7,-489 "/>
+<text text-anchor="middle" x="1728.2" y="-473.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">DecisionDocument,</text>
+<text text-anchor="middle" x="1728.2" y="-458.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">SupplementalClaim,</text>
+<text text-anchor="middle" x="1728.2" y="-443.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">HigherLevelReview,</text>
+<text text-anchor="middle" x="1728.2" y="-428.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">RampRefiling,</text>
+<text text-anchor="middle" x="1728.2" y="-413.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">RampElection</text>
 </g>
 <!-- EndProductEstablishment&#45;&gt;source_type -->
 <g id="edge43" class="edge">
@@ -712,11 +712,11 @@
 <!-- original_decision_review_type -->
 <g id="node48" class="node">
 <title>original_decision_review_type</title>
-<polygon fill="yellow" stroke="blue" points="1329.86,-618.5 1329.86,-679.5 1513.86,-679.5 1513.86,-618.5 1329.86,-618.5"/>
-<text text-anchor="middle" x="1421.86" y="-664.3" font-family="Times,serif" font-size="14.00" fill="blue">original_decision_review_type</text>
-<polyline fill="none" stroke="blue" points="1329.86,-656.5 1513.86,-656.5 "/>
-<text text-anchor="middle" x="1421.86" y="-641.3" font-family="Times,serif" font-size="14.00" fill="blue">SupplementalClaim,</text>
-<text text-anchor="middle" x="1421.86" y="-626.3" font-family="Times,serif" font-size="14.00" fill="blue">HigherLevelReview</text>
+<polygon fill="#ffff00" stroke="#0000ff" points="1329.86,-618.5 1329.86,-679.5 1513.86,-679.5 1513.86,-618.5 1329.86,-618.5"/>
+<text text-anchor="middle" x="1421.86" y="-664.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">original_decision_review_type</text>
+<polyline fill="none" stroke="#0000ff" points="1329.86,-656.5 1513.86,-656.5 "/>
+<text text-anchor="middle" x="1421.86" y="-641.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">SupplementalClaim,</text>
+<text text-anchor="middle" x="1421.86" y="-626.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">HigherLevelReview</text>
 </g>
 <!-- EndProductUpdate&#45;&gt;original_decision_review_type -->
 <g id="edge45" class="edge">
@@ -749,11 +749,11 @@
 <!-- RequestIssue -->
 <g id="node50" class="node">
 <title>RequestIssue</title>
-<polygon fill="orange" stroke="blue" points="903.12,-354.5 903.12,-415.5 1046.12,-415.5 1046.12,-354.5 903.12,-354.5"/>
-<text text-anchor="middle" x="974.62" y="-400.3" font-family="Times,serif" font-size="14.00" fill="blue">RequestIssue</text>
-<polyline fill="none" stroke="blue" points="903.12,-392.5 1046.12,-392.5 "/>
-<text text-anchor="middle" x="974.62" y="-377.3" font-family="Times,serif" font-size="14.00" fill="blue">RatingRequestIssue,</text>
-<text text-anchor="middle" x="974.62" y="-362.3" font-family="Times,serif" font-size="14.00" fill="blue">NonratingRequestIssue</text>
+<polygon fill="#ffa500" stroke="#0000ff" points="903.12,-354.5 903.12,-415.5 1046.12,-415.5 1046.12,-354.5 903.12,-354.5"/>
+<text text-anchor="middle" x="974.62" y="-400.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">RequestIssue</text>
+<polyline fill="none" stroke="#0000ff" points="903.12,-392.5 1046.12,-392.5 "/>
+<text text-anchor="middle" x="974.62" y="-377.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">RatingRequestIssue,</text>
+<text text-anchor="middle" x="974.62" y="-362.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">NonratingRequestIssue</text>
 </g>
 <!-- RequestIssue&#45;&gt;DecisionIssue -->
 <g id="edge71" class="edge">
@@ -953,7 +953,7 @@
 <!-- Organization -->
 <g id="node62" class="node">
 <title>Organization</title>
-<ellipse fill="#d9d9ee" stroke="black" cx="1728.2" cy="-581" rx="56.59" ry="18"/>
+<ellipse fill="#d9d9ff" stroke="black" cx="1728.2" cy="-581" rx="56.59" ry="18"/>
 <text text-anchor="middle" x="1728.2" y="-577.3" font-family="Times,serif" font-size="14.00">Organization</text>
 </g>
 <!-- IhpDraft&#45;&gt;Organization -->
@@ -973,28 +973,28 @@
 <!-- SupplementalClaim -->
 <g id="node102" class="node">
 <title>SupplementalClaim</title>
-<ellipse fill="yellow" stroke="black" cx="974.62" cy="-87" rx="81.49" ry="18"/>
+<ellipse fill="#ffff00" stroke="black" cx="974.62" cy="-87" rx="81.49" ry="18"/>
 <text text-anchor="middle" x="974.62" y="-83.3" font-family="Times,serif" font-size="14.00">SupplementalClaim</text>
 </g>
 <!-- JobNote&#45;&gt;SupplementalClaim -->
 <g id="edge107" class="edge">
 <title>JobNote&#45;&gt;SupplementalClaim</title>
-<path fill="none" stroke="blue" d="M626.38,-93.45C700.18,-92.08 807.7,-90.08 883.5,-88.67"/>
-<polygon fill="blue" stroke="blue" points="883.58,-92.17 893.52,-88.49 883.45,-85.18 883.58,-92.17"/>
-<text text-anchor="middle" x="751.73" y="-93.8" font-family="Times,serif" font-size="14.00" fill="blue">JobNote#job</text>
+<path fill="none" stroke="#0000ff" d="M626.38,-93.45C700.18,-92.08 807.7,-90.08 883.5,-88.67"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="883.58,-92.17 893.52,-88.49 883.45,-85.18 883.58,-92.17"/>
+<text text-anchor="middle" x="751.73" y="-93.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">JobNote#job</text>
 </g>
 <!-- HigherLevelReview -->
 <g id="node108" class="node">
 <title>HigherLevelReview</title>
-<ellipse fill="yellow" stroke="black" cx="974.62" cy="-267" rx="81.79" ry="18"/>
+<ellipse fill="#ffff00" stroke="black" cx="974.62" cy="-267" rx="81.79" ry="18"/>
 <text text-anchor="middle" x="974.62" y="-263.3" font-family="Times,serif" font-size="14.00">HigherLevelReview</text>
 </g>
 <!-- JobNote&#45;&gt;HigherLevelReview -->
 <g id="edge108" class="edge">
 <title>JobNote&#45;&gt;HigherLevelReview</title>
-<path fill="none" stroke="blue" d="M595.47,-115.92C679.45,-149.47 843.09,-214.85 924.78,-247.49"/>
-<polygon fill="blue" stroke="blue" points="923.74,-250.84 934.33,-251.3 926.34,-244.34 923.74,-250.84"/>
-<text text-anchor="middle" x="751.73" y="-214.8" font-family="Times,serif" font-size="14.00" fill="blue">JobNote#job</text>
+<path fill="none" stroke="#0000ff" d="M595.47,-115.92C679.45,-149.47 843.09,-214.85 924.78,-247.49"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="923.74,-250.84 934.33,-251.3 926.34,-244.34 923.74,-250.84"/>
+<text text-anchor="middle" x="751.73" y="-214.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">JobNote#job</text>
 </g>
 <!-- JudgeCaseReview -->
 <g id="node64" class="node">
@@ -1057,23 +1057,23 @@
 <!-- Message&#45;&gt;JobNote -->
 <g id="edge97" class="edge">
 <title>Message&#45;&gt;JobNote</title>
-<path fill="none" stroke="blue" d="M182.01,-149.17C253.16,-138.44 373.83,-120.24 455.45,-107.92"/>
-<polygon fill="blue" stroke="blue" points="456.33,-111.33 465.7,-106.38 455.29,-104.41 456.33,-111.33"/>
-<text text-anchor="middle" x="343" y="-132.8" font-family="Times,serif" font-size="14.00" fill="blue">Message#detail</text>
+<path fill="none" stroke="#0000ff" d="M182.01,-149.17C253.16,-138.44 373.83,-120.24 455.45,-107.92"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="456.33,-111.33 465.7,-106.38 455.29,-104.41 456.33,-111.33"/>
+<text text-anchor="middle" x="343" y="-132.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">Message#detail</text>
 </g>
 <!-- Message&#45;&gt;SupplementalClaim -->
 <g id="edge98" class="edge">
 <title>Message&#45;&gt;SupplementalClaim</title>
-<path fill="none" stroke="blue" d="M182.26,-158C288.59,-158 499.62,-158 499.62,-158 499.62,-158 762.08,-118.77 896.81,-98.63"/>
-<polygon fill="blue" stroke="blue" points="897.7,-102.04 907.07,-97.1 896.66,-95.11 897.7,-102.04"/>
-<text text-anchor="middle" x="542.12" y="-161.8" font-family="Times,serif" font-size="14.00" fill="blue">Message#detail</text>
+<path fill="none" stroke="#0000ff" d="M182.26,-158C288.59,-158 499.62,-158 499.62,-158 499.62,-158 762.08,-118.77 896.81,-98.63"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="897.7,-102.04 907.07,-97.1 896.66,-95.11 897.7,-102.04"/>
+<text text-anchor="middle" x="542.12" y="-161.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">Message#detail</text>
 </g>
 <!-- Message&#45;&gt;HigherLevelReview -->
 <g id="edge99" class="edge">
 <title>Message&#45;&gt;HigherLevelReview</title>
-<path fill="none" stroke="blue" d="M182.26,-176.86C288.59,-210.41 499.62,-277 499.62,-277 499.62,-277 744.73,-271.84 882.81,-268.93"/>
-<polygon fill="blue" stroke="blue" points="883.04,-272.43 892.97,-268.72 882.89,-265.43 883.04,-272.43"/>
-<text text-anchor="middle" x="542.12" y="-280.8" font-family="Times,serif" font-size="14.00" fill="blue">Message#detail</text>
+<path fill="none" stroke="#0000ff" d="M182.26,-176.86C288.59,-210.41 499.62,-277 499.62,-277 499.62,-277 744.73,-271.84 882.81,-268.93"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="883.04,-272.43 892.97,-268.72 882.89,-265.43 883.04,-272.43"/>
+<text text-anchor="middle" x="542.12" y="-280.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">Message#detail</text>
 </g>
 <!-- NodDateUpdate -->
 <g id="node68" class="node">
@@ -1148,17 +1148,17 @@
 <!-- RampReview -->
 <g id="node73" class="node">
 <title>RampReview</title>
-<polygon fill="#cc99ff" stroke="blue" points="493.12,-2881.5 493.12,-2942.5 591.12,-2942.5 591.12,-2881.5 493.12,-2881.5"/>
-<text text-anchor="middle" x="542.12" y="-2927.3" font-family="Times,serif" font-size="14.00" fill="blue">RampReview</text>
-<polyline fill="none" stroke="blue" points="493.12,-2919.5 591.12,-2919.5 "/>
-<text text-anchor="middle" x="542.12" y="-2904.3" font-family="Times,serif" font-size="14.00" fill="blue">RampElection,</text>
-<text text-anchor="middle" x="542.12" y="-2889.3" font-family="Times,serif" font-size="14.00" fill="blue">RampRefiling</text>
+<polygon fill="#cc99ff" stroke="#0000ff" points="493.12,-2881.5 493.12,-2942.5 591.12,-2942.5 591.12,-2881.5 493.12,-2881.5"/>
+<text text-anchor="middle" x="542.12" y="-2927.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">RampReview</text>
+<polyline fill="none" stroke="#0000ff" points="493.12,-2919.5 591.12,-2919.5 "/>
+<text text-anchor="middle" x="542.12" y="-2904.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">RampElection,</text>
+<text text-anchor="middle" x="542.12" y="-2889.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">RampRefiling</text>
 </g>
 <!-- RampReview&#45;&gt;RampElection -->
 <g id="edge111" class="edge">
 <title>RampReview&#45;&gt;RampElection</title>
-<path fill="none" stroke="blue" stroke-dasharray="1,5" d="M591.25,-2920.5C663.71,-2933.29 801.8,-2957.67 890.69,-2973.36"/>
-<polygon fill="blue" stroke="blue" points="890.29,-2976.84 900.74,-2975.13 891.5,-2969.95 890.29,-2976.84"/>
+<path fill="none" stroke="#0000ff" stroke-dasharray="1,5" d="M591.25,-2920.5C663.71,-2933.29 801.8,-2957.67 890.69,-2973.36"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="890.29,-2976.84 900.74,-2975.13 891.5,-2969.95 890.29,-2976.84"/>
 </g>
 <!-- RampRefiling -->
 <g id="node105" class="node">
@@ -1170,8 +1170,8 @@
 <!-- RampReview&#45;&gt;RampRefiling -->
 <g id="edge112" class="edge">
 <title>RampReview&#45;&gt;RampRefiling</title>
-<path fill="none" stroke="blue" stroke-dasharray="1,5" d="M591.25,-2909.32C661.28,-2905.41 792.61,-2898.09 881.59,-2893.13"/>
-<polygon fill="blue" stroke="blue" points="881.89,-2896.62 891.68,-2892.57 881.5,-2889.63 881.89,-2896.62"/>
+<path fill="none" stroke="#0000ff" stroke-dasharray="1,5" d="M591.25,-2909.32C661.28,-2905.41 792.61,-2898.09 881.59,-2893.13"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="881.89,-2896.62 891.68,-2892.57 881.5,-2889.63 881.89,-2896.62"/>
 </g>
 <!-- RampElectionRollback -->
 <g id="node74" class="node">
@@ -1210,11 +1210,11 @@
 <!-- record_type -->
 <g id="node76" class="node">
 <title>record_type</title>
-<polygon fill="yellow" stroke="blue" points="1374.36,-247.5 1374.36,-308.5 1469.36,-308.5 1469.36,-247.5 1374.36,-247.5"/>
-<text text-anchor="middle" x="1421.86" y="-293.3" font-family="Times,serif" font-size="14.00" fill="blue">record_type</text>
-<polyline fill="none" stroke="blue" points="1374.36,-285.5 1469.36,-285.5 "/>
-<text text-anchor="middle" x="1421.86" y="-270.3" font-family="Times,serif" font-size="14.00" fill="blue">Appeal,</text>
-<text text-anchor="middle" x="1421.86" y="-255.3" font-family="Times,serif" font-size="14.00" fill="blue">LegacyAppeal</text>
+<polygon fill="#ffff00" stroke="#0000ff" points="1374.36,-247.5 1374.36,-308.5 1469.36,-308.5 1469.36,-247.5 1374.36,-247.5"/>
+<text text-anchor="middle" x="1421.86" y="-293.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">record_type</text>
+<polyline fill="none" stroke="#0000ff" points="1374.36,-285.5 1469.36,-285.5 "/>
+<text text-anchor="middle" x="1421.86" y="-270.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">Appeal,</text>
+<text text-anchor="middle" x="1421.86" y="-255.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">LegacyAppeal</text>
 </g>
 <!-- record_type&#45;&gt;decision_review_type -->
 <g id="edge115" class="edge">
@@ -1268,12 +1268,12 @@
 <!-- review_type -->
 <g id="node80" class="node">
 <title>review_type</title>
-<polygon fill="yellow" stroke="blue" points="1357.36,-151 1357.36,-227 1486.36,-227 1486.36,-151 1357.36,-151"/>
-<text text-anchor="middle" x="1421.86" y="-211.8" font-family="Times,serif" font-size="14.00" fill="blue">review_type</text>
-<polyline fill="none" stroke="blue" points="1357.36,-204 1486.36,-204 "/>
-<text text-anchor="middle" x="1421.86" y="-188.8" font-family="Times,serif" font-size="14.00" fill="blue">Appeal,</text>
-<text text-anchor="middle" x="1421.86" y="-173.8" font-family="Times,serif" font-size="14.00" fill="blue">SupplementalClaim,</text>
-<text text-anchor="middle" x="1421.86" y="-158.8" font-family="Times,serif" font-size="14.00" fill="blue">HigherLevelReview</text>
+<polygon fill="#ffff00" stroke="#0000ff" points="1357.36,-151 1357.36,-227 1486.36,-227 1486.36,-151 1357.36,-151"/>
+<text text-anchor="middle" x="1421.86" y="-211.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">review_type</text>
+<polyline fill="none" stroke="#0000ff" points="1357.36,-204 1486.36,-204 "/>
+<text text-anchor="middle" x="1421.86" y="-188.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">Appeal,</text>
+<text text-anchor="middle" x="1421.86" y="-173.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">SupplementalClaim,</text>
+<text text-anchor="middle" x="1421.86" y="-158.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">HigherLevelReview</text>
 </g>
 <!-- RequestIssuesUpdate&#45;&gt;review_type -->
 <g id="edge81" class="edge">
@@ -1458,7 +1458,7 @@
 <!-- EstablishClaim -->
 <g id="node93" class="node">
 <title>EstablishClaim</title>
-<ellipse fill="greenyellow" stroke="black" cx="542.12" cy="-1988" rx="84.29" ry="26.74"/>
+<ellipse fill="#adff2f" stroke="black" cx="542.12" cy="-1988" rx="84.29" ry="26.74"/>
 <text text-anchor="middle" x="542.12" y="-1991.8" font-family="Times,serif" font-size="14.00">EstablishClaim</text>
 <text text-anchor="middle" x="542.12" y="-1976.8" font-family="Times,serif" font-size="14.00"> &#160;(assoc with User)</text>
 </g>
@@ -1479,20 +1479,20 @@
 <!-- DecisionReview -->
 <g id="node106" class="node">
 <title>DecisionReview</title>
-<polygon fill="yellow" stroke="blue" points="477.62,-3209.5 477.62,-3300.5 606.62,-3300.5 606.62,-3209.5 477.62,-3209.5"/>
-<text text-anchor="middle" x="542.12" y="-3285.3" font-family="Times,serif" font-size="14.00" fill="blue">DecisionReview</text>
-<polyline fill="none" stroke="blue" points="477.62,-3277.5 606.62,-3277.5 "/>
-<text text-anchor="middle" x="542.12" y="-3262.3" font-family="Times,serif" font-size="14.00" fill="blue">Appeal,</text>
-<text text-anchor="middle" x="542.12" y="-3247.3" font-family="Times,serif" font-size="14.00" fill="blue">ClaimReview,</text>
-<text text-anchor="middle" x="542.12" y="-3232.3" font-family="Times,serif" font-size="14.00" fill="blue">HigherLevelReview,</text>
-<text text-anchor="middle" x="542.12" y="-3217.3" font-family="Times,serif" font-size="14.00" fill="blue">SupplementalClaim</text>
+<polygon fill="#ffff00" stroke="#0000ff" points="477.62,-3209.5 477.62,-3300.5 606.62,-3300.5 606.62,-3209.5 477.62,-3209.5"/>
+<text text-anchor="middle" x="542.12" y="-3285.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">DecisionReview</text>
+<polyline fill="none" stroke="#0000ff" points="477.62,-3277.5 606.62,-3277.5 "/>
+<text text-anchor="middle" x="542.12" y="-3262.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">Appeal,</text>
+<text text-anchor="middle" x="542.12" y="-3247.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">ClaimReview,</text>
+<text text-anchor="middle" x="542.12" y="-3232.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">HigherLevelReview,</text>
+<text text-anchor="middle" x="542.12" y="-3217.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">SupplementalClaim</text>
 </g>
 <!-- DecisionReviewIntake&#45;&gt;DecisionReview -->
 <g id="edge105" class="edge">
 <title>DecisionReviewIntake&#45;&gt;DecisionReview</title>
-<path fill="none" stroke="blue" d="M192.93,-3255C268.73,-3255 389.64,-3255 467.17,-3255"/>
-<polygon fill="blue" stroke="blue" points="467.35,-3258.5 477.35,-3255 467.35,-3251.5 467.35,-3258.5"/>
-<text text-anchor="middle" x="343" y="-3258.8" font-family="Times,serif" font-size="14.00" fill="blue">DecisionReviewIntake#detail</text>
+<path fill="none" stroke="#0000ff" d="M192.93,-3255C268.73,-3255 389.64,-3255 467.17,-3255"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="467.35,-3258.5 477.35,-3255 467.35,-3251.5 467.35,-3258.5"/>
+<text text-anchor="middle" x="343" y="-3258.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">DecisionReviewIntake#detail</text>
 </g>
 <!-- RampElectionIntake -->
 <g id="node95" class="node">
@@ -1504,9 +1504,9 @@
 <!-- RampElectionIntake&#45;&gt;RampElection -->
 <g id="edge101" class="edge">
 <title>RampElectionIntake&#45;&gt;RampElection</title>
-<path fill="none" stroke="blue" d="M606.18,-3032.38C679.9,-3023.48 802.39,-3008.68 885.49,-2998.65"/>
-<polygon fill="blue" stroke="blue" points="885.92,-3002.12 895.42,-2997.45 885.08,-2995.17 885.92,-3002.12"/>
-<text text-anchor="middle" x="751.73" y="-3029.8" font-family="Times,serif" font-size="14.00" fill="blue">RampElectionIntake#detail</text>
+<path fill="none" stroke="#0000ff" d="M606.18,-3032.38C679.9,-3023.48 802.39,-3008.68 885.49,-2998.65"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="885.92,-3002.12 895.42,-2997.45 885.08,-2995.17 885.92,-3002.12"/>
+<text text-anchor="middle" x="751.73" y="-3029.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">RampElectionIntake#detail</text>
 </g>
 <!-- RampRefilingIntake -->
 <g id="node96" class="node">
@@ -1518,9 +1518,9 @@
 <!-- RampRefilingIntake&#45;&gt;RampRefiling -->
 <g id="edge102" class="edge">
 <title>RampRefilingIntake&#45;&gt;RampRefiling</title>
-<path fill="none" stroke="blue" d="M605.72,-2845.27C679.33,-2853.82 802.02,-2868.07 885.29,-2877.74"/>
-<polygon fill="blue" stroke="blue" points="884.91,-2881.22 895.24,-2878.9 885.72,-2874.27 884.91,-2881.22"/>
-<text text-anchor="middle" x="751.73" y="-2875.8" font-family="Times,serif" font-size="14.00" fill="blue">RampRefilingIntake#detail</text>
+<path fill="none" stroke="#0000ff" d="M605.72,-2845.27C679.33,-2853.82 802.02,-2868.07 885.29,-2877.74"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="884.91,-2881.22 895.24,-2878.9 885.72,-2874.27 884.91,-2881.22"/>
+<text text-anchor="middle" x="751.73" y="-2875.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">RampRefilingIntake#detail</text>
 </g>
 <!-- AppealIntake -->
 <g id="node97" class="node">
@@ -1532,9 +1532,9 @@
 <!-- AppealIntake&#45;&gt;Appeal -->
 <g id="edge100" class="edge">
 <title>AppealIntake&#45;&gt;Appeal</title>
-<path fill="none" stroke="blue" d="M1034.29,-1639.75C1124.68,-1654.77 1296.01,-1683.25 1376.71,-1696.66"/>
-<polygon fill="blue" stroke="blue" points="1376.58,-1700.19 1387.01,-1698.38 1377.72,-1693.28 1376.58,-1700.19"/>
-<text text-anchor="middle" x="1198.51" y="-1683.8" font-family="Times,serif" font-size="14.00" fill="blue">AppealIntake#detail</text>
+<path fill="none" stroke="#0000ff" d="M1034.29,-1639.75C1124.68,-1654.77 1296.01,-1683.25 1376.71,-1696.66"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="1376.58,-1700.19 1387.01,-1698.38 1377.72,-1693.28 1376.58,-1700.19"/>
+<text text-anchor="middle" x="1198.51" y="-1683.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">AppealIntake#detail</text>
 </g>
 <!-- ClaimReviewIntake -->
 <g id="node98" class="node">
@@ -1546,18 +1546,18 @@
 <!-- ClaimReview -->
 <g id="node107" class="node">
 <title>ClaimReview</title>
-<polygon fill="yellow" stroke="blue" points="477.62,-3319.5 477.62,-3380.5 606.62,-3380.5 606.62,-3319.5 477.62,-3319.5"/>
-<text text-anchor="middle" x="542.12" y="-3365.3" font-family="Times,serif" font-size="14.00" fill="blue">ClaimReview</text>
-<polyline fill="none" stroke="blue" points="477.62,-3357.5 606.62,-3357.5 "/>
-<text text-anchor="middle" x="542.12" y="-3342.3" font-family="Times,serif" font-size="14.00" fill="blue">HigherLevelReview,</text>
-<text text-anchor="middle" x="542.12" y="-3327.3" font-family="Times,serif" font-size="14.00" fill="blue">SupplementalClaim</text>
+<polygon fill="#ffff00" stroke="#0000ff" points="477.62,-3319.5 477.62,-3380.5 606.62,-3380.5 606.62,-3319.5 477.62,-3319.5"/>
+<text text-anchor="middle" x="542.12" y="-3365.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">ClaimReview</text>
+<polyline fill="none" stroke="#0000ff" points="477.62,-3357.5 606.62,-3357.5 "/>
+<text text-anchor="middle" x="542.12" y="-3342.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">HigherLevelReview,</text>
+<text text-anchor="middle" x="542.12" y="-3327.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">SupplementalClaim</text>
 </g>
 <!-- ClaimReviewIntake&#45;&gt;ClaimReview -->
 <g id="edge106" class="edge">
 <title>ClaimReviewIntake&#45;&gt;ClaimReview</title>
-<path fill="none" stroke="blue" d="M185.12,-3350C260.3,-3350 387.26,-3350 467.5,-3350"/>
-<polygon fill="blue" stroke="blue" points="467.53,-3353.5 477.53,-3350 467.53,-3346.5 467.53,-3353.5"/>
-<text text-anchor="middle" x="343" y="-3353.8" font-family="Times,serif" font-size="14.00" fill="blue">ClaimReviewIntake#detail</text>
+<path fill="none" stroke="#0000ff" d="M185.12,-3350C260.3,-3350 387.26,-3350 467.5,-3350"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="467.53,-3353.5 477.53,-3350 467.53,-3346.5 467.53,-3353.5"/>
+<text text-anchor="middle" x="343" y="-3353.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">ClaimReviewIntake#detail</text>
 </g>
 <!-- HigherLevelReviewIntake -->
 <g id="node99" class="node">
@@ -1569,9 +1569,9 @@
 <!-- HigherLevelReviewIntake&#45;&gt;HigherLevelReview -->
 <g id="edge103" class="edge">
 <title>HigherLevelReviewIntake&#45;&gt;HigherLevelReview</title>
-<path fill="none" stroke="blue" d="M622.33,-225.38C698.91,-234.46 814.42,-248.14 891.85,-257.31"/>
-<polygon fill="blue" stroke="blue" points="891.7,-260.82 902.04,-258.52 892.52,-253.87 891.7,-260.82"/>
-<text text-anchor="middle" x="751.73" y="-251.8" font-family="Times,serif" font-size="14.00" fill="blue">HigherLevelReviewIntake#detail</text>
+<path fill="none" stroke="#0000ff" d="M622.33,-225.38C698.91,-234.46 814.42,-248.14 891.85,-257.31"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="891.7,-260.82 902.04,-258.52 892.52,-253.87 891.7,-260.82"/>
+<text text-anchor="middle" x="751.73" y="-251.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">HigherLevelReviewIntake#detail</text>
 </g>
 <!-- SupplementalClaimIntake -->
 <g id="node100" class="node">
@@ -1583,19 +1583,19 @@
 <!-- SupplementalClaimIntake&#45;&gt;SupplementalClaim -->
 <g id="edge104" class="edge">
 <title>SupplementalClaimIntake&#45;&gt;SupplementalClaim</title>
-<path fill="none" stroke="blue" d="M622.08,-36.37C700.02,-47.6 818.46,-64.65 895.95,-75.81"/>
-<polygon fill="blue" stroke="blue" points="895.73,-79.32 906.13,-77.28 896.73,-72.39 895.73,-79.32"/>
-<text text-anchor="middle" x="751.73" y="-70.8" font-family="Times,serif" font-size="14.00" fill="blue">SupplementalClaimIntake#detail</text>
+<path fill="none" stroke="#0000ff" d="M622.08,-36.37C700.02,-47.6 818.46,-64.65 895.95,-75.81"/>
+<polygon fill="#0000ff" stroke="#0000ff" points="895.73,-79.32 906.13,-77.28 896.73,-72.39 895.73,-79.32"/>
+<text text-anchor="middle" x="751.73" y="-70.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">SupplementalClaimIntake#detail</text>
 </g>
 <!-- decision_review_remanded_type -->
 <g id="node101" class="node">
 <title>decision_review_remanded_type</title>
-<polygon fill="yellow" stroke="blue" points="1323.86,-55 1323.86,-131 1519.86,-131 1519.86,-55 1323.86,-55"/>
-<text text-anchor="middle" x="1421.86" y="-115.8" font-family="Times,serif" font-size="14.00" fill="blue">decision_review_remanded_type</text>
-<polyline fill="none" stroke="blue" points="1323.86,-108 1519.86,-108 "/>
-<text text-anchor="middle" x="1421.86" y="-92.8" font-family="Times,serif" font-size="14.00" fill="blue">Appeal,</text>
-<text text-anchor="middle" x="1421.86" y="-77.8" font-family="Times,serif" font-size="14.00" fill="blue">SupplementalClaim,</text>
-<text text-anchor="middle" x="1421.86" y="-62.8" font-family="Times,serif" font-size="14.00" fill="blue">HigherLevelReview</text>
+<polygon fill="#ffff00" stroke="#0000ff" points="1323.86,-55 1323.86,-131 1519.86,-131 1519.86,-55 1323.86,-55"/>
+<text text-anchor="middle" x="1421.86" y="-115.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">decision_review_remanded_type</text>
+<polyline fill="none" stroke="#0000ff" points="1323.86,-108 1519.86,-108 "/>
+<text text-anchor="middle" x="1421.86" y="-92.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">Appeal,</text>
+<text text-anchor="middle" x="1421.86" y="-77.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">SupplementalClaim,</text>
+<text text-anchor="middle" x="1421.86" y="-62.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">HigherLevelReview</text>
 </g>
 <!-- decision_review_remanded_type&#45;&gt;decision_review_type -->
 <g id="edge113" class="edge">
