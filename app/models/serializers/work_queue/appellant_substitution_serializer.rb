@@ -27,9 +27,9 @@ class WorkQueue::AppellantSubstitutionSerializer
   # attribute :source_appeal_uuid do |object|
   #   object.source_appeal&.uuid
   # end
-  # attribute :target_appeal_uuid do |object|
-  #   object.target_appeal&.uuid
-  # end
+  attribute :target_appeal_uuid do |object|
+    object.target_appeal&.uuid
+  end
 
   # attribute :source_decision_issues do |object|
   #   object.source_appeal&.decision_issues

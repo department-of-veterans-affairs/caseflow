@@ -787,6 +787,7 @@
   "SUBSTITUTE_APPELLANT_REVIEW_SUBHEAD": "Review the details below to make sure the information is correct before submitting. If you need to make changes, please go back to the associated section.",
   "SUBSTITUTE_APPELLANT_SUCCESS_TITLE": "You have successfully added a substitute appellant",
   "SUBSTITUTE_APPELLANT_SUCCESS_DETAIL": "Any necessary tasks have been created and assigned for further processing.",
+  "SUBSTITUTE_APPELLANT_INFO_BANNER_DETAILS": "This appeal has been reactivated for a substitute appellant. See the new ",
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
   "CORRECT_REQUEST_ISSUES_WITHDRAW": "Withdraw",
