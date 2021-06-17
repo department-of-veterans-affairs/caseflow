@@ -316,6 +316,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
         day_counts.each do |ro|
           summary = {}
           types = ["R", "V", "C"]
+          summary["date_total"] = {}
 
           types.each do |type|
             min_label = "min_#{type}"
@@ -327,8 +328,8 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
             counts_label = "counts_#{type}"
             summary[counts_label] = []
 
-            ro[1].each do |date|
-              count = date[1][type]
+            ro[1].each do |date, types|
+              count = types[type]
               next if count.nil?
 
               summary[min_label] = count if summary[min_label].nil?
@@ -336,6 +337,9 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
   
               summary[max_label] = count if summary[max_label].nil?
               summary[max_label] = count if count > summary[max_label]
+
+              summary["date_total"][date] = 0 if summary["date_total"][date].nil?
+              summary["date_total"][date] += count
 
               summary[counts_label].push(count)
             end
@@ -348,10 +352,17 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
               average = sum / total
               summary[avg_label] = average
             end
+
             summary.delete(counts_label)
           end
           day_counts[ro[0]]["summary_statistics"] = summary
         end
+      end
+
+      def for_each_ro_virtual_and_video_days_per_date_even(day_counts_and_summary)
+      end
+
+      def across_ros_hearing_days_per_date_even(summary_statistics, allowable_variation)
       end
 
       # Get the list of generated hearing days
@@ -394,7 +405,10 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
       it "allocates virtual days evenly across available dates for each ro" do
         displayed_hearing_days = ro_schedule_period.algorithm_assignments
         day_counts_and_summary = format_hearing_days(displayed_hearing_days)
+
         binding.pry
+        #expect(for_each_ro_virtual_and_video_days_per_date_even(day_counts_and_summary))
+        #expect(across_ros_hearing_days_per_date_even(day_counts_and_summary, 5))
       end
 
       it "allocates video days evenly across available dates for each ro" do
