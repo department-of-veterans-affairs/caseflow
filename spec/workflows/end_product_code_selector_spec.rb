@@ -133,6 +133,37 @@ describe "Request Issue Correction Cleaner", :postgres do
       end
     end
 
+    context "040SCRGTY EP Code supplemental_claim" do
+      before { FeatureToggle.enable!(:itf_supplemental_claims) }
+      after { FeatureToggle.disable!(:itf_supplemental_claims) }
+
+      let(:benefit_type) { "compensation" }
+      let(:receipt_date) { Time.zone.today - 1.year }
+      let(:decision_review) { supplemental_claim }
+      let(:decision_date) { "2018-10-1" }
+      let!(:supplemental_claim) do
+        create(:supplemental_claim,
+               benefit_type: benefit_type,
+               receipt_date: receipt_date)
+      end
+
+      let(:request_issue) do
+        create(
+          :request_issue,
+          :rating,
+          contested_rating_issue_reference_id: "def456",
+          decision_review: decision_review,
+          benefit_type: decision_review.benefit_type,
+          contested_issue_description: "PTSD denied",
+          decision_date: decision_date
+        )
+      end
+
+      it "returns a itf_rating EP code" do
+        expect(subject).to eq("040SCRGTY")
+      end
+    end
+
     EP_CODES.each do |ep_code|
       context "given attributes for EP code #{ep_code}" do
         subject { EndProductCodeSelector.new(request_issue).call }
