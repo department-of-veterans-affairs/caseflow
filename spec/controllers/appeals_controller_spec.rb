@@ -608,7 +608,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
     let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
     let(:get_params) { { appeal_id: appeal.vacols_id } }
-    let(:patch_params) { { appeal_id: appeal.vacols_id, poaId: appeal.power_of_attorney.id } }
+    let(:patch_params) { { appeal_id: appeal.vacols_id, poaId: appeal.power_of_attorney&.bgs_id } }
     let!(:poa) do
       create(
         :bgs_power_of_attorney,
