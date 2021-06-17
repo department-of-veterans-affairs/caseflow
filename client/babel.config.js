@@ -6,7 +6,7 @@ module.exports = function(api) {
     [
       '@babel/preset-env',
       {
-        modules: false,
+        modules: false
       }
     ],
     '@babel/preset-react'
@@ -54,9 +54,8 @@ module.exports = function(api) {
           [
             '@babel/preset-env',
             {
-              modules: false,
               useBuiltIns: 'usage',
-              corejs: 2,
+              corejs: 3,
               targets: '> 0.25%, not dead'
             }
           ],
