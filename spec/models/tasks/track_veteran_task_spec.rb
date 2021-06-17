@@ -77,6 +77,16 @@ describe TrackVeteranTask, :postgres do
         expect(subject).to eq([1, 2])
         expect(new_vso.tasks.count).to eq(2)
       end
+
+      context "When there's an open Distribution Task" do
+        let!(:dist_task) { create(:distribution_task, appeal: appeal) }
+        fit "IHP Task is a child of the Distribution Task" do
+          subject
+          new_ihp_task = InformalHearingPresentationTask.find_by(assigned_to: new_vso)
+          expect(dist_task.status).to eq("on_hold")
+          expect(new_ihp_task.parent).to eq(dist_task)
+        end
+      end
     end
     context "when the appeal has no VSOs" do
       before { allow_any_instance_of(Appeal).to receive(:representatives).and_return([]) }
