@@ -27,6 +27,13 @@
      "family": "040",
      "official_label": "Supplemental Claim Non-Rating"
    },
+   "040SCRGTY": {
+     "review_type": "supplemental_claim",
+     "benefit_type": "compensation",
+     "family": "040",
+     "issue_type": "rating",
+     "official_label": "Supplemental Claim Rating > Year"
+   },
    "030HLRR": {
      "review_type": "higher_level_review",
      "issue_type": "rating",
