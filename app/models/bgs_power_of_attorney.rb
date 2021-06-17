@@ -33,7 +33,11 @@ class BgsPowerOfAttorney < CaseflowRecord
     # Since this is a cache we only want to mirror what BGS has and leave the
     # data integrity to them.
     def find_or_create_by_file_number(file_number)
-      find_or_create_by!(file_number: file_number)
+      poa = find_or_create_by!(file_number: file_number)
+      if FeatureToggle.enabled?(:poa_auto_refresh)
+        poa.save_with_updated_bgs_record! if poa&.expired?
+      end
+      poa
     rescue ActiveRecord::RecordNotUnique
       # We've noticed that this error is thrown because of a race-condition
       # where multiple processes are trying to create the same object.
@@ -43,7 +47,11 @@ class BgsPowerOfAttorney < CaseflowRecord
     end
 
     def find_or_create_by_claimant_participant_id(claimant_participant_id)
-      find_or_create_by!(claimant_participant_id: claimant_participant_id)
+      poa = find_or_create_by!(claimant_participant_id: claimant_participant_id)
+      if FeatureToggle.enabled?(:poa_auto_refresh)
+        poa.save_with_updated_bgs_record! if poa&.expired?
+      end
+      poa
     rescue ActiveRecord::RecordNotUnique
       # Handle race conditions similarly to find_or_create_by_file_number.
       # For an example of this in the wild, see Sentry event 17c302faae0b48bcb0e1816a58e8b7f5.
@@ -145,9 +153,8 @@ class BgsPowerOfAttorney < CaseflowRecord
   end
 
   def update_ihp_task
-    appeals = Appeal.where(veteran_file_number: file_number, poa_participant_id: poa_participant_id)
-    appeals.each do |appeal|
-      InformalHearingPresentationTask.update_to_new_poa(appeal)
+    related_appeals.each do |appeal|
+      InformalHearingPresentationTask.update_to_new_poa(appeal) if appeal.active?
     end
   end
 
@@ -157,17 +164,22 @@ class BgsPowerOfAttorney < CaseflowRecord
     bgs_record.keys.any?
   end
 
-  def update_or_delete(claimant = nil)
+  def expired?
+    last_synced_at && last_synced_at < 16.hours.ago
+  end
+
+  def update_or_delete(claimant)
+    # If the BGS Power of Attorney record is not found, destroy it.
     if bgs_record == :not_found
-      if claimant && !claimant.is_a?(Hash) && claimant.should_delete_power_of_attorney?
-        claimant_poa.destroy
-      else
-        destroy
+      destroy!
+      # If the claimaint's power of attorney record is also not found, destroy it.
+      if !claimant.is_a?(Hash) && claimant.power_of_attorney&.bgs_record == :not_found
+        claimant.power_of_attorney.destroy!
       end
-      "Successfully refreshed. No power of attorney information was found at this time."
+      ["Successfully refreshed. No power of attorney information was found at this time.", "deleted"]
     else
       save_with_updated_bgs_record!
-      "POA Updated Successfully"
+      ["POA Updated Successfully", "updated"]
     end
   end
 
@@ -177,6 +189,15 @@ class BgsPowerOfAttorney < CaseflowRecord
     return if poa_participant_id.blank?
 
     @person ||= Person.find_or_create_by_participant_id(poa_participant_id)
+  end
+
+  def related_appeals
+    returned_appeals = []
+    appeal_claimants = claimants.select { |appeal_claimant| appeal_claimant.decision_review_type == "Appeal" }
+    appeal_claimants.each do |matching_claimant|
+      returned_appeals << Appeal.where(id: matching_claimant.decision_review_id)
+    end
+    returned_appeals
   end
 
   def fetch_bgs_record

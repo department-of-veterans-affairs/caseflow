@@ -6,7 +6,7 @@ import OvertimeBadge from 'app/queue/components/OvertimeBadge';
 import { Provider } from 'react-redux';
 import { setCanViewOvertimeStatus } from 'app/queue/uiReducer/uiActions';
 import { axe } from 'jest-axe';
-import { render } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 
 describe('OvertimeBadge', () => {
 
@@ -15,21 +15,23 @@ describe('OvertimeBadge', () => {
   const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
 
   const setupOvertimeBadge = (store, appeal) => render(
-      <Provider store={store}>
-        <OvertimeBadge appeal={appeal} />
-      </Provider>
-  ); 
+    <Provider store={store}>
+      <OvertimeBadge appeal={appeal} />
+    </Provider>
+  );
 
   it('renders correctly', () => {
     const store = getStore();
+
     store.dispatch(setCanViewOvertimeStatus(true));
-    const {container} = setupOvertimeBadge(store, { overtime: true });
+    const { container } = setupOvertimeBadge(store, { overtime: true });
 
     expect(container).toMatchSnapshot();
   });
 
   it('doesn\'t show if the appeal is not marked as overtime', () => {
     const store = getStore();
+
     store.dispatch(setCanViewOvertimeStatus(true));
     const component = setupOvertimeBadge(store, { overtime: false });
 
@@ -38,22 +40,27 @@ describe('OvertimeBadge', () => {
 
   it('doesn\'t show if the user cannot view overtime badges', () => {
     const store = getStore();
+
     store.dispatch(setCanViewOvertimeStatus(false));
     const component = setupOvertimeBadge(store, { overtime: true });
 
     expect(component.queryByRole('tooltip')).toBeNull;
   });
 
-  it('does show if the appeal is marked as overtime and the user can view overtime badges', () => {
+  it('does show if the appeal is marked as overtime and the user can view overtime badges', async () => {
     const store = getStore();
-    store.dispatch(setCanViewOvertimeStatus(true));
-    const component = setupOvertimeBadge(store, { overtime: true });
 
-    expect(component.queryByRole('tooltip')).toHaveTextContent(tooltipText);
+    store.dispatch(setCanViewOvertimeStatus(true));
+    setupOvertimeBadge(store, { overtime: true });
+
+    await waitFor(() => {
+      expect(screen.getByText(tooltipText)).toBeInTheDocument();
+    });
   });
 
   it('passes a11y', async () => {
     const store = getStore();
+
     store.dispatch(setCanViewOvertimeStatus(true));
     const { container } = setupOvertimeBadge(store, { overtime: true });
 

@@ -108,6 +108,7 @@ const taskAttributesFromRawTask = (task) => {
     cancelledBy: {
       cssId: task.attributes.cancelled_by.css_id,
     },
+    cancelReason: task.attributes.cancellation_reason,
     convertedBy: {
       cssId: task.attributes.converted_by.css_id,
     },
@@ -399,9 +400,9 @@ export const prepareAppealForStore = (appeals) => {
       appellantIsNotVeteran: appeal.attributes.appellant_is_not_veteran,
       appellantFullName: appeal.attributes.appellant_full_name,
       appellantAddress: appeal.attributes.appellant_address,
+      appellantType: appeal.attributes.appellant_type,
       appellantTz: appeal.attributes.appellant_tz,
       appellantRelationship: appeal.attributes.appellant_relationship,
-      appellantSubstitution: appeal.attributes.appellant_substitution,
       assignedToLocation: appeal.attributes.assigned_to_location,
       veteranDateOfBirth: appeal.attributes.veteran_date_of_birth,
       veteranDateOfDeath: appeal.attributes.veteran_death_date,

@@ -158,7 +158,7 @@ describe('ColocatedTaskListView', () => {
 
       expect(within(numberDaysOnHold).getByText('31 days')).toBeInTheDocument();
 
-      expect(numberDaysOnHold.lastChild).toHaveClass(
+      expect(numberDaysOnHold.lastChild.lastChild).toHaveClass(
         'cf-continuous-progress-bar'
       );
     });

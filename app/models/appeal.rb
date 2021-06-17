@@ -299,32 +299,8 @@ class Appeal < DecisionReview
            :state,
            :email_address, to: :appellant, prefix: true, allow_nil: true
 
-  def appellant_tz
-    return if address.blank?
-
-    # Use an address object if this is a hash
-    appellant_address = address.is_a?(Hash) ? Address.new(address) : address
-
-    begin
-      TimezoneService.address_to_timezone(appellant_address).identifier
-    rescue StandardError => error
-      Raven.capture_exception(error)
-      nil
-    end
-  end
-
-  def representative_tz
-    return if representative_address.blank?
-
-    # Use an address object if this is a hash
-    rep_address = representative_address.is_a?(Hash) ? Address.new(representative_address) : representative_address
-
-    begin
-      TimezoneService.address_to_timezone(rep_address).identifier
-    rescue StandardError => error
-      Raven.capture_exception(error)
-      nil
-    end
+  def appellant_address
+    appellant&.address
   end
 
   def appellant_middle_initial
@@ -429,6 +405,9 @@ class Appeal < DecisionReview
 
   def representatives
     vso_participant_ids = power_of_attorneys.map(&:participant_id).compact.uniq
+    # Representatives are returned for Vso or PrivateBar POAs (i.e., subclasses of Representative)
+    # and typically not for POAs with `BgsPowerOfAttorney.representative_type` = 'Agent' or 'Attorney'.
+    # To get all POAs, call `power_of_attorneys`.
     Representative.where(participant_id: vso_participant_ids)
   end
 

@@ -63,16 +63,13 @@ const PowerOfAttorneyDetailWrapper = (WrappedComponent) => {
       return null;
     }
 
-    const hasPowerOfAttorneyDetails = powerOfAttorney.representative_type && powerOfAttorney.representative_name;
-
-    return hasPowerOfAttorneyDetails ?
-      <WrappedComponent powerOfAttorney={powerOfAttorney} appealId={appealId} poaAlert={poaAlert} /> :
-      <p><em>{COPY.CASE_DETAILS_NO_POA}</em></p>;
+    return <WrappedComponent powerOfAttorney={powerOfAttorney} appealId={appealId} poaAlert={poaAlert} />;
   };
 
   wrappedComponent.propTypes = {
     appealId: PropTypes.string,
     getAppealValue: PropTypes.func,
+    appellantType: PropTypes.string,
     poaAlert: PropTypes.shape({
       alertType: PropTypes.string,
       message: PropTypes.string,
@@ -93,7 +90,7 @@ export const PowerOfAttorneyNameUnconnected = ({ powerOfAttorney }) => (
 /**
  * Component that displays details about the power of attorney.
  */
-export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, poaAlert }) => {
+export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, poaAlert, appellantType }) => {
   let poa = powerOfAttorney;
 
   if (poaAlert.powerOfAttorney) {
@@ -121,20 +118,32 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
   }
 
   const showPoaDetails = poa.representative_type && poa.representative_name;
+  const bottomMessage = (showPoaDetails || poaAlert.powerOfAttorney) ? COPY.CASE_DETAILS_POA_EXPLAINER :
+    COPY.CASE_DETAILS_NO_POA;
+
+  const renderPoaLogic = () => {
+    const unrecognizedAppellant = 'OtherClaimant';
+    const unrecognizedPoa = 'Unrecognized representative';
+    const recognizedAppellant = appellantType !== unrecognizedAppellant;
+    const recognizedPoa = poa.representative_type !== unrecognizedPoa;
+
+    if (recognizedAppellant && recognizedPoa) {
+      return <PoaRefresh powerOfAttorney={poa} appealId={appealId} {...detailListStyling} />;
+    } else if (unrecognizedPoa) {
+      return <em>{ COPY.CASE_DETAILS_UNRECOGNIZED_POA }</em>;
+    }
+  };
 
   return (
     <React.Fragment>
       <div>
-        <p>{ poa.representative_type === 'Unrecognized representative' ?
-          <em>{ COPY.CASE_DETAILS_UNRECOGNIZED_POA }</em> :
-          <PoaRefresh powerOfAttorney={poa} appealId={appealId} {...detailListStyling} />}
-        </p>
+        { renderPoaLogic() }
         { showPoaDetails && (
           <ul {...detailListStyling}>
             <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
           </ul>
         )}
-        <p><em>{ COPY.CASE_DETAILS_POA_EXPLAINER }</em></p>
+        <p><em>{ bottomMessage }</em></p>
         { poaAlert.message && poaAlert.alertType && (
           <div>
             <Alert type={poaAlert.alertType} message={poaAlert.message} scrollOnAlert={false} />
@@ -158,7 +167,8 @@ PowerOfAttorneyNameUnconnected.propTypes = PowerOfAttorneyDetailUnconnected.prop
     alertType: PropTypes.string,
     powerOfAttorney: PropTypes.object
   }),
-  appealId: PropTypes.number
+  appealId: PropTypes.string,
+  appellantType: PropTypes.string
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators(

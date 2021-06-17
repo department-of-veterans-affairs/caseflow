@@ -8,9 +8,10 @@ import { sampleTasksForEvidenceSubmissionDocket } from 'test/data/queue/substitu
 import { prepTaskDataForUi } from 'app/queue/substituteAppellant/tasks/utils';
 
 const allEvidenceSubmissionWindowTasks = sampleTasksForEvidenceSubmissionDocket();
+const poaType = 'Attorney';
 
 const filteredEvidenceSubmissionTasks = prepTaskDataForUi(
-  allEvidenceSubmissionWindowTasks
+  allEvidenceSubmissionWindowTasks, poaType
 );
 
 export default {

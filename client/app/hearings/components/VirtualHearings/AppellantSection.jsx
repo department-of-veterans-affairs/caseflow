@@ -79,7 +79,8 @@ export const AppellantSection = ({
               required
               value={virtualHearing?.appellantTz}
               onChange={(appellantTz) => update('virtualHearing', { appellantTz })}
-              time={hearing.scheduledTimeString}
+              time={hearing?.scheduledTimeString}
+              roTimezone={hearing?.regionalOfficeTimezone}
               label={`${appellantTitle} Timezone`}
               name="appellantTz"
               errorMessage={errors?.appellantTz}

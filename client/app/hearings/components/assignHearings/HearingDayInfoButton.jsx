@@ -50,7 +50,7 @@ export const HearingDayInfoButton = ({ id, hearingDay, selected, onSelectedHeari
           </div>
           <div {...typeAndJudgeStyle}>
             <Tooltip id={`hearing-day-${id}`} text={judgeOrRoom} position="bottom" tabIndex={-1}>
-              {`${formattedHearingType} ${separator} ${judgeOrRoom}`}
+              <span>{`${formattedHearingType} ${separator} ${judgeOrRoom}`}</span>
             </Tooltip>
           </div>
         </div>

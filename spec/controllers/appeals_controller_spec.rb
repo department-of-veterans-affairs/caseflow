@@ -603,12 +603,12 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
     end
   end
 
-  describe "Get appeal Power of Attorney" do
+  describe "Get legacy appeal Power of Attorney" do
     let!(:user) { User.authenticate!(roles: ["System Admin"]) }
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
     let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
     let(:get_params) { { appeal_id: appeal.vacols_id } }
-    let(:patch_params) { { appeal_id: appeal.id, poaId: appeal.power_of_attorney.vacols_id } }
+    let(:patch_params) { { appeal_id: appeal.vacols_id, poaId: appeal.power_of_attorney.id } }
     let!(:poa) do
       create(
         :bgs_power_of_attorney,
@@ -631,6 +631,58 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         expect(JSON.parse(subject.body)["representative_email_address"]).to eq "clarence.darrow@caseflow.gov"
         expect(JSON.parse(subject.body)["representative_tz"]).to eq "America/Los_Angeles"
         expect(JSON.parse(subject.body)["representative_id"]).to eq appeal.power_of_attorney.bgs_id
+      end
+    end
+
+    context do
+      subject do
+        participant_id = appeal.claimant&.dig(:representative, :participant_id)
+        Rails.cache.write("bgs-participant-poa-not-found-#{participant_id}", true)
+        patch :update_power_of_attorney, params: patch_params
+      end
+
+      it "clears not_found cache when claimant is a hash" do
+        expect(appeal.power_of_attorney).to_not eq(nil)
+        expect(appeal.claimant.is_a?(Hash)).to eq(true)
+        participant_id = appeal.claimant&.dig(:representative, :participant_id)
+        expect(Rails.cache.read("bgs-participant-poa-not-found-#{participant_id}")).to eq(nil)
+      end
+    end
+  end
+
+  describe "Get AMA appeal Power of Attorney" do
+    let!(:user) { User.authenticate!(roles: ["System Admin"]) }
+    let!(:appeal) do
+      create(
+        :appeal,
+        veteran_file_number: "500000102",
+        receipt_date: 6.months.ago.to_date.mdY
+      )
+    end
+    let(:patch_params) { { appeal_id: appeal.uuid, poaId: appeal.power_of_attorney.id } }
+    let!(:poa) do
+      create(
+        :bgs_power_of_attorney,
+        :with_name_cached,
+        appeal: appeal
+      )
+    end
+
+    context "get the appeals POA information" do
+      subject do
+        patch :update_power_of_attorney, params: patch_params
+      end
+
+      it "returns a successful response" do
+        subject
+
+        assert_response(:success)
+        expect(JSON.parse(subject.body)["power_of_attorney"]["representative_type"]).to eq "Attorney"
+        expect(JSON.parse(subject.body)["power_of_attorney"]["representative_name"]).to eq "Clarence Darrow"
+        expected_email = "tom.brady@caseflow.gov"
+        expect(JSON.parse(subject.body)["power_of_attorney"]["representative_email_address"]).to eq expected_email
+        expect(JSON.parse(subject.body)["power_of_attorney"]["representative_tz"]).to eq "America/Los_Angeles"
+        expect(JSON.parse(subject.body)["power_of_attorney"]["representative_id"]).to eq appeal.power_of_attorney.id
       end
     end
   end
