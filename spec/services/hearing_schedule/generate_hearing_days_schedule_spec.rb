@@ -290,6 +290,8 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
     end
 
     # Travel board days don't have hearing days they are blackout dates
+    # TODO remove this after refactor
+    # rubocop:disable all
     context "combined allocation (video, virtual, central)" do
       def format_hearing_days(hearing_days)
         # Generate day_counts for each date/type from the hearing_days
@@ -313,32 +315,43 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
         # Generate summary_stats from day_counts
         day_counts.each do |ro|
           summary = {}
-          summary[:min_virtual_days_per_date] = nil
-          summary[:min_virtual_days_per_date] = nil
-          summary[:counts_virtual_days_per_date] = []
+          types = ["R", "V", "C"]
 
-          ro[1].each do |date|
-            type = "R"
-            count = date[1][type]
-            next if count.nil?
+          types.each do |type|
+            min_label = "min_#{type}"
+            max_label = "max_#{type}"
+            avg_label = "avg_#{type}"
+            total_label = "total_#{type}"
+            sum_label = "sum_#{type}"
+            count_label = "count_#{type}"
+            counts_label = "counts_#{type}"
+            summary[counts_label] = []
 
-            summary[:min_virtual_days_per_date] = count if summary[:min_virtual_days_per_date].nil?
-            summary[:min_virtual_days_per_date] = count if count < summary[:min_virtual_days_per_date]
+            ro[1].each do |date|
+              count = date[1][type]
+              next if count.nil?
 
-            summary[:max_virtual_days_per_date] = count if summary[:max_virtual_days_per_date].nil?
-            summary[:max_virtual_days_per_date] = count if count > summary[:max_virtual_days_per_date]
+              summary[min_label] = count if summary[min_label].nil?
+              summary[min_label] = count if count < summary[min_label]
+  
+              summary[max_label] = count if summary[max_label].nil?
+              summary[max_label] = count if count > summary[max_label]
 
-            summary[:counts_virtual_days_per_date].push(count)
+              summary[counts_label].push(count)
+            end
+
+            if summary[counts_label].count > 0
+              total = summary[counts_label].size
+              summary[total_label] = total
+              sum = summary[counts_label].sum(0.0)
+              summary[sum_label] = sum
+              average = sum / total
+              summary[avg_label] = average
+            end
+            summary.delete(counts_label)
           end
-
-          if summary[:counts_virtual_days_per_date].count > 0
-            summary[:avg_virtual_days_per_date] = summary[:counts_virtual_days_per_date].sum(0.0) / summary[:counts_virtual_days_per_date].size
-          end
-
-          summary.delete(:counts_virtual_days_per_date)
-          day_counts[ro[0]][:summary_statistics] = summary
+          day_counts[ro[0]]["summary_statistics"] = summary
         end
-        binding.pry
       end
 
       # Get the list of generated hearing days
@@ -380,7 +393,8 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
       let(:ro_schedule_period) { create(:real_ro_schedule_period) }
       it "allocates virtual days evenly across available dates for each ro" do
         displayed_hearing_days = ro_schedule_period.algorithm_assignments
-        summary_and_day_counts = format_hearing_days(displayed_hearing_days)
+        day_counts_and_summary = format_hearing_days(displayed_hearing_days)
+        binding.pry
       end
 
       it "allocates video days evenly across available dates for each ro" do
