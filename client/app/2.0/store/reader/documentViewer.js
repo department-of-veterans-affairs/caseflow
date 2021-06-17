@@ -427,6 +427,14 @@ const documentViewerSlice = createSlice({
       addCase(showPdf.pending, (state) => {
         state.loading = true;
       }).
+      addCase(showPdf.fulfilled, (state, action) => {
+        // Add the PDF data to the store
+        state.selected = action.payload.currentDocument;
+
+        // Add the PDF data to the store
+        state.scale = action.payload.scale;
+        state.viewport = action.payload.viewport;
+      }).
       addCase(searchText.fulfilled, (state, action) => {
         // Update the Search Term
         state.search.searchTerm = action.payload.searchTerm;
@@ -438,14 +446,6 @@ const documentViewerSlice = createSlice({
         state.search.matchIndex = action.payload.matchIndex || 0;
 
         state.search.scrollPosition = action.payload.scrollPosition;
-      }).
-      addCase(showPdf.fulfilled, (state, action) => {
-        // Add the PDF data to the store
-        state.selected = action.payload.currentDocument;
-
-        // Add the PDF data to the store
-        state.scale = action.payload.scale;
-        state.viewport = action.payload.viewport;
       }).
       addCase(saveDescription.rejected, (state, action) => {
         // Set the error state
