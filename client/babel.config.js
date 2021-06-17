@@ -55,9 +55,9 @@ module.exports = function(api) {
             '@babel/preset-env',
             {
               modules: false,
-              useBuiltIns: 'usage',
-              corejs: 3,
-              targets: '> 0.25%, not dead'
+              // useBuiltIns: 'usage',
+              // corejs: 3,
+              // targets: '> 0.25%, not dead'
             }
           ],
           ['@babel/preset-react', { development: true }]
