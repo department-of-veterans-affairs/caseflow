@@ -168,6 +168,7 @@ export const calculateEvidenceSubmissionEndDate = ({
 
   let remainingTime = timerEndsAtDate.getTime() - veteranDateOfDeath.getTime();
 
+  // Convert days to milliseconds
   const maxEvidenceSubmissionWindow = 90 * 86400000;
 
   if (remainingTime > maxEvidenceSubmissionWindow) {
