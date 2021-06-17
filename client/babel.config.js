@@ -6,7 +6,7 @@ module.exports = function(api) {
     [
       '@babel/preset-env',
       {
-        modules: false
+        modules: false,
       }
     ],
     '@babel/preset-react'
@@ -49,19 +49,20 @@ module.exports = function(api) {
       development: {
         plugins: ['react-docgen']
       },
-      // test: {
-      //   presets: [
-      //     [
-      //       '@babel/preset-env',
-      //       {
-      //         useBuiltIns: 'usage',
-      //         corejs: 3,
-      //         targets: '> 0.25%, not dead'
-      //       }
-      //     ],
-      //     ['@babel/preset-react', { development: true }]
-      //   ]
-      // }
+      test: {
+        presets: [
+          [
+            '@babel/preset-env',
+            {
+              modules: false,
+              useBuiltIns: 'usage',
+              corejs: 3,
+              targets: '> 0.25%, not dead'
+            }
+          ],
+          ['@babel/preset-react', { development: true }]
+        ]
+      }
     }
   };
 };
