@@ -297,7 +297,7 @@ class EndProductCodeSelector
   end
 
   def compensation_sc_rating_ep_code
-    rating? ? END_PRODUCT_CODES[:primary][:original][:compensation][review_type][issue_type] : nil
+    END_PRODUCT_CODES[:primary][:original][:compensation][:supplemental_claim][:rating]
   end
 
   def choose_code(end_product_codes)
