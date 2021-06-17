@@ -49,19 +49,19 @@ module.exports = function(api) {
       development: {
         plugins: ['react-docgen']
       },
-      test: {
-        presets: [
-          [
-            '@babel/preset-env',
-            {
-              useBuiltIns: 'usage',
-              corejs: 3,
-              targets: '> 0.25%, not dead'
-            }
-          ],
-          ['@babel/preset-react', { development: true }]
-        ]
-      }
+      // test: {
+      //   presets: [
+      //     [
+      //       '@babel/preset-env',
+      //       {
+      //         useBuiltIns: 'usage',
+      //         corejs: 3,
+      //         targets: '> 0.25%, not dead'
+      //       }
+      //     ],
+      //     ['@babel/preset-react', { development: true }]
+      //   ]
+      // }
     }
   };
 };
