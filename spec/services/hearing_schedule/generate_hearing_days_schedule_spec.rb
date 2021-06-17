@@ -288,5 +288,109 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
         expect(subject.count).to eq(22)
       end
     end
+
+    # Travel board days don't have hearing days they are blackout dates
+    context "combined allocation (video, virtual, central)" do
+      def format_hearing_days(hearing_days)
+        # Generate day_counts for each date/type from the hearing_days
+        day_counts = {}
+        hearing_days.each do |hearing_day|
+          # Extract the keys we will use to create neste hashes
+          scheduled_for = hearing_day[:scheduled_for]
+          type = hearing_day[:request_type]
+          # Deal with central hearings by creating "C" as an RO (which it's not really)
+          ro = (hearing_day[:request_type] == "C") ? "C" : hearing_day[:regional_office]
+
+          # Create the hashes/keys if they don't exist
+          day_counts[ro] = {} unless day_counts.key?(ro)
+          day_counts[ro][scheduled_for] = {} unless day_counts[ro].key?(scheduled_for)
+          day_counts[ro][scheduled_for][type] = 0 unless day_counts[ro][scheduled_for].key?(type)
+
+          # Update the count for this ro, date, type combo
+          day_counts[ro][scheduled_for][type] += 1
+        end
+
+        # Generate summary_stats from day_counts
+        day_counts.each do |ro|
+          summary = {}
+          summary[:min_virtual_days_per_date] = nil
+          summary[:min_virtual_days_per_date] = nil
+          summary[:counts_virtual_days_per_date] = []
+
+          ro[1].each do |date|
+            type = "R"
+            count = date[1][type]
+            next if count.nil?
+
+            summary[:min_virtual_days_per_date] = count if summary[:min_virtual_days_per_date].nil?
+            summary[:min_virtual_days_per_date] = count if count < summary[:min_virtual_days_per_date]
+
+            summary[:max_virtual_days_per_date] = count if summary[:max_virtual_days_per_date].nil?
+            summary[:max_virtual_days_per_date] = count if count > summary[:max_virtual_days_per_date]
+
+            summary[:counts_virtual_days_per_date].push(count)
+          end
+
+          if summary[:counts_virtual_days_per_date].count > 0
+            summary[:avg_virtual_days_per_date] = summary[:counts_virtual_days_per_date].sum(0.0) / summary[:counts_virtual_days_per_date].size
+          end
+
+          summary.delete(:counts_virtual_days_per_date)
+          day_counts[ro[0]][:summary_statistics] = summary
+        end
+        binding.pry
+      end
+
+      # Get the list of generated hearing days
+      # [
+      #  {:request_type=>"V",
+      #    :scheduled_for=>Wed, 03 Jan 2018,
+      #    :regional_office=>"RO77",
+      #    :number_of_slots=>nil,
+      #    :slot_length_minutes=>nil,
+      #    :first_slot_time=>nil},
+      # ]
+      # These are the hearing days as displayed in the UI preview of the schedule
+      #displayed_hearing_days = ro_schedule_period.algorithm_assignments
+      # Create a summary of the data to make testing possible
+      # {"RO39" => {
+      #   "summary" => {
+      #     "avg_video_days_per_date" => "2",
+      #     "min_video_days_per_date" => "2",
+      #     "max_video_days_per_date" => "2",
+      #
+      #     "avg_virtual_days_per_date" => "6",
+      #     "min_virtual_days_per_date" => "1",
+      #     "max_virtual_days_per_date" => "14",
+      #
+      #     "avg_combined_days_per_date" => "7",
+      #     "min_combined_days_per_date" => "1",
+      #     "max_combined_days_per_date" => "14"
+      #   },
+      #   "day_counts" => {
+      #     "08-18-2021" => {
+      #       "video" => 12,
+      #       "virtual" => 41,
+      #       "central" => 1}
+      #     }
+      #   }
+      # }
+      #summary_and_day_counts = format_hearing_days(displayed_hearing_days)
+
+      let(:ro_schedule_period) { create(:real_ro_schedule_period) }
+      it "allocates virtual days evenly across available dates for each ro" do
+        displayed_hearing_days = ro_schedule_period.algorithm_assignments
+        summary_and_day_counts = format_hearing_days(displayed_hearing_days)
+      end
+
+      it "allocates video days evenly across available dates for each ro" do
+      end
+
+      it "evenly distributes hearing days for each ro regardless of type", skip: "the algorithm does not do this yet" do
+      end
+
+      it "has one central day per week" do
+      end
+    end
   end
 end
