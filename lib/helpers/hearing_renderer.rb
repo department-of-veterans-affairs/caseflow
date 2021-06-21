@@ -74,10 +74,14 @@ class HearingRenderer
 
   def readable_date(date, include_time = true)
     if include_time
-      date.strftime("%m-%d-%Y %I:%M%p %Z")
+      date.strftime("%m-%d-%Y %-I:%M%p %Z")
     else
       date.strftime("%m-%d-%Y")
     end
+  end
+
+  def readable_time(datetime)
+    datetime.strftime("%-I:%M%p %Z")
   end
 
   def veteran_children(veteran)
@@ -221,7 +225,7 @@ class HearingRenderer
     scheduled_label = "Scheduled for: #{readable_date(time_in_eastern)}"
 
     if time_in_ro_zone.zone != time_in_eastern.zone
-      scheduled_label = "#{scheduled_label} AKA #{readable_date(time_in_ro_zone)} (RO time)"
+      scheduled_label = "#{scheduled_label} AKA #{readable_time(time_in_ro_zone)} (RO time)"
     end
 
     scheduled_label
