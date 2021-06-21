@@ -156,6 +156,13 @@ class HearingRenderer
     end
   end
 
+  def notes_or_include_pii_info(notes)
+    return unless notes.present?
+    return notes if show_pii
+
+    "pass 'show_pii: true' to see notes"
+  end
+
   def unscheduled_hearings(appeal)
     open_schedule_hearing_tasks = appeal.tasks.open.of_type(:ScheduleHearingTask)
     return [] if open_schedule_hearing_tasks.empty?
@@ -166,14 +173,12 @@ class HearingRenderer
       unscheduled_hearing_label = "Unscheduled Hearing (SCH Task ID: #{sh_task.id}, RO queue: #{ro_label})"
       instructions = sh_task.parent&.instructions
 
-      if show_pii
-        unscheduled_note = instructions
+      unscheduled_notes = notes_or_include_pii_info(instructions)
+      if unscheduled_notes.present?
+        { unscheduled_hearing_label => ["Notes: #{unscheduled_notes}"] }
+      else
+        unscheduled_hearing_label
       end
-      if !show_pii
-        unscheduled_note = instructions.present? ? "Show PII to see notes" : "none"
-      end
-
-      { unscheduled_hearing_label => ["Notes: #{print_nil(unscheduled_note)}"] }
     end
 
     unscheduled_hearings
@@ -272,7 +277,8 @@ class HearingRenderer
       virtual_hearings.map { |vh| structure(vh) }
     ].flatten
 
-    children.unshift("Notes: #{print_nil(hearing.notes)}") if show_pii
+    hearing_notes = notes_or_include_pii_info(hearing.notes)
+    children.unshift("Notes: #{hearing_notes}") unless hearing_notes.nil?
 
     if hearing.email_events.present?
       children << {
@@ -311,7 +317,9 @@ class HearingRenderer
 
   def hearing_task_children(hearing_task)
     children = []
-    children << "instr: #{print_nil(hearing_task.instructions)}" if show_pii
+    instructions = notes_or_include_pii_info(hearing_task.instructions)
+    children << "Instr: #{instructions}" unless instructions.nil?
+
     children += hearing_task.children.map do |ct|
       if ct.is_a?(ScheduleHearingTask) || ct.is_a?(AssignHearingDispositionTask)
         "#{ct.class.name} #{ct.id} (#{ct.status}, ca: #{readable_date(ct.created_at)})"
