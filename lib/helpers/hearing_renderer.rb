@@ -157,7 +157,7 @@ class HearingRenderer
   end
 
   def notes_or_include_pii_info(notes)
-    return unless notes.present?
+    return if notes.blank?
     return notes if show_pii
 
     "pass 'show_pii: true' to see notes"
@@ -257,7 +257,7 @@ class HearingRenderer
     formatted_text = "HearingDay #{hearing_day.id}"
     formatted_text += " (#{ro_label(hearing_day.regional_office, hearing_day.request_type)}"
     formatted_text += ", VLJ #{hearing_day.judge&.full_name&.split(' ')&.last}" if hearing_day.judge.present?
-    formatted_text += ")"
+    formatted_text + ")"
   end
 
   def format_hearing_label(hearing)
