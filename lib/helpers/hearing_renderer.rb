@@ -244,10 +244,11 @@ class HearingRenderer
 
   def format_hearing_day_label(hearing_day)
     return "No hearing day" if hearing_day.nil?
-  
+
     formatted_text = "HearingDay #{hearing_day.id}"
-    formatted_text += " (#{ro_label(hearing_day.regional_office, hearing_day.request_type)}) "
-    formatted_text
+    formatted_text += " (#{ro_label(hearing_day.regional_office, hearing_day.request_type)}"
+    formatted_text += ", VLJ #{hearing_day.judge&.full_name&.split(' ')&.last}" if hearing_day.judge.present?
+    formatted_text += ")"
   end
 
   def format_hearing_label(hearing)
