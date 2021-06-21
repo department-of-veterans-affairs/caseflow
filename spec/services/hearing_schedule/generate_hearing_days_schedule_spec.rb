@@ -356,6 +356,14 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
 
         [new_min, new_max, new_total]
       end
+      
+      def per_ro_summarization(counts, type)
+        total = counts.size
+        sum = counts.sum(0.0)
+        average = sum / total
+
+        return [total, sum, average]
+      end
 
       # Take the condensed list of hearing_days and generate summary statistics
       # Some summary stats are per date, some are for every date the ro has
@@ -376,10 +384,19 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
           summary = {}
           types = ["R", "V", "C"]
           summary["date_total"] = {}
+          all_type_min_label = "min_days_on_date_all_types"
+          all_type_max_label = "max_days_on_date_all_types"
+          all_type_total_label = "date_total"
 
           # Each type of hearing
           types.each do |type|
+            min_label = "min_#{type}"
+            max_label = "max_#{type}"
             counts_label = "counts_#{type}"
+            total_label = "total_#{type}"
+            sum_label = "sum_#{type}"
+            avg_label = "avg_#{type}"
+
             summary[counts_label] = []
 
             # Each date that has hearing_days
@@ -388,8 +405,6 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
               next if count.nil?
 
               # For each ro, update min and max days per date
-              min_label = "min_#{type}"
-              max_label = "max_#{type}"
               new_min, new_max = update_min_max(count, summary[min_label], summary[max_label])
               summary[min_label] = new_min
               summary[max_label] = new_max
@@ -397,34 +412,27 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
               # Store the count for later per_ro_summarization
               summary[counts_label].push(count)
 
-              # Across all ros
-              new_all_ro_min, new_all_ro_max, new_all_ro_total = update_total_min_max(
+              # Across all hearing_day types for this ro
+              new_all_type_min, new_all_type_max, new_all_type_total = update_total_min_max(
                 count,
-                summary["date_total"][date],
-                summary["min_days_on_any_date"],
-                summary["max_days_on_any_date"]
+                summary[all_type_total_label][date],
+                summary[all_type_min_label],
+                summary[all_type_max_label]
               )
-              summary["min_days_on_any_date"] = new_all_ro_min
-              summary["max_days_on_any_date"] = new_all_ro_max
-              summary["date_total"][date] = new_all_ro_total
+              summary[all_type_min_label] = new_all_type_min
+              summary[all_type_max_label] = new_all_type_max
+              summary[all_type_total_label][date] = new_all_type_total
             end
-
+            
             # Take the array of hearing_day_counts per type and generate summary stats
             # per_ro_summary_stats(hearing_day_counts)
             if summary[counts_label].count > 0
-              total_label = "total_#{type}"
-              total = summary[counts_label].size
+              total, sum, average = per_ro_summarization(summary[counts_label], type)
               summary[total_label] = total
-
-              sum_label = "sum_#{type}"
-              sum = summary[counts_label].sum(0.0)
               summary[sum_label] = sum
-
-              avg_label = "avg_#{type}"
-              average = sum / total
               summary[avg_label] = average
             end
-
+            # Clean up the intermediate array of counts
             summary.delete(counts_label)
           end
           condensed_hearing_days[ro]["summary_statistics"] = summary
@@ -468,8 +476,8 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
         #  - 10/24/2021: 10 hearing_days
         #  - 10/25/2021: 17 hearing_days
         day_counts_and_summary_per_ro.each do |ro_key, info|
-          min_days_per_date = info["summary_statistics"]["min_days_on_any_date"]
-          max_days_per_date = info["summary_statistics"]["max_days_on_any_date"]
+          min_days_per_date = info["summary_statistics"]["min_days_on_date_all_types"]
+          max_days_per_date = info["summary_statistics"]["max_days_on_date_all_types"]
           expect(max_days_per_date - min_days_per_date).to be <= 5
         end
       end
