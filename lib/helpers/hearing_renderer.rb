@@ -277,8 +277,8 @@ class HearingRenderer
     if hearing.email_events.present?
       children << {
         "Email events": hearing.email_events.map do |ev|
-          "#{ev.recipient_role}, #{ev.email_type}, "\
-            "#{readable_date(ev.sent_at, false)}"
+          "#{readable_date(ev.sent_at, false)}, "\
+            "#{ev.email_type}, #{ev.recipient_role}"
         end
       }
     end
