@@ -44,7 +44,6 @@ class HearingSchedule::GenerateHearingDaysSchedule
   #   :allocated_days=>0.0,
   #   :allocated_days_without_room=>53.0,
   #   :available_days=>["Thu, 01 Apr 2021", "Fri, 02 Apr 2021"],
-  #   :num_of_rooms=>1,
   #   :allocated_dates=>{[4, 2021]=>{Thu, 01 Apr 2021=>[{:room_num=>nil}]}, [5, 2021]=>{}, [6, 2021]=>{}}}}
   def allocation_results
     # Return the list of ROs containing the hearing days per date
@@ -220,7 +219,6 @@ class HearingSchedule::GenerateHearingDaysSchedule
   #    :facility_locator_id=>"vba_349", :alternate_locations=>["vba_349i"],
   #    :allocated_days=>57.0,
   #    :available_days=> [Tue, 05 Jan 2021, Wed, 06 Jan 2021...],
-  #    :num_of_rooms => 1
   #  },
   #  "RO03"=> ...
   # }
@@ -296,7 +294,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     dates.group_by { |date| [date.month, date.year] }
   end
 
-  # Initialize allocated_days, available_days, and num_of_rooms for each RO
+  # Initialize allocated_days, available_days for each RO
   def assign_ro_hearing_day_allocations(ro_cities, ro_allocations)
     @ros = ro_allocations.reduce({}) do |acc, allocation|
       ro_key = (allocation.regional_office == "NVHQ") ? HearingDay::REQUEST_TYPES[:virtual] : allocation.regional_office
