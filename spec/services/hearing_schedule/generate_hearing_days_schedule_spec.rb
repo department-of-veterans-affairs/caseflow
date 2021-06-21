@@ -293,7 +293,18 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
     # TODO remove this after refactor
     # rubocop:disable all
     context "combined allocation (video, virtual, central)" do
-      def format_hearing_days(hearing_days)
+      # Take a list of hearing_days and condense them per ro, date, and type,
+      # results look like this.
+      # {"RO39" => {
+      #   "day_counts" => {
+      #     "08-18-2021" => {
+      #       "video" => 12,
+      #       "virtual" => 41,
+      #       "central" => 1}
+      #     }
+      #   }
+      # }
+      def condense_hearing_days(hearing_days)
         # Generate day_counts for each date/type from the hearing_days
         day_counts = {}
         hearing_days.each do |hearing_day|
@@ -311,78 +322,116 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
           # Update the count for this ro, date, type combo
           day_counts[ro][scheduled_for][type] += 1
         end
+        day_counts
+      end
 
-        # Each ro
-        day_counts.each do |ro|
+      # If count < min then update min, if count > max update max
+      # If max is nil, set it to count
+      # if min is nil, set it to count
+      def update_min_max(count, current_min, current_max)
+        # If count is nil, update nothing.
+        if count.nil?
+          return [current_min, current_max]
+        end
+        # If current min or max are nil, set them to count
+        if current_min.nil?
+          current_min = count
+        end
+        if current_max.nil?
+          current_max = count
+        end
+
+        # Compare count and new min/max, return appropriate value
+        new_min = count < current_min ? count : current_min
+        new_max = count > current_max ? count : current_max
+
+        return [new_min, new_max]
+      end
+
+      def update_total_min_max(count, current_total, current_min, current_max)
+        current_total = 0 if current_total.nil?
+        new_total = count.present? ? current_total + count : current_total
+
+        new_min, new_max = update_min_max(count, current_min, current_max)
+
+        [new_min, new_max, new_total]
+      end
+
+      # Take the condensed list of hearing_days and generate summary statistics
+      # Some summary stats are per date, some are for every date the ro has
+      # {"RO39" => {
+      #   "summary" => {
+      #     # Video days
+      #     "avg_V" => "2",
+      #     "min_V" => "2",
+      #     "max_V" => "2",
+      #
+      #     # Virtual days
+      #     "avg_R" => "6",
+      #     "min_R" => "1",
+      #     "max_R" => "14",
+      #   },
+      def summarize_condensed_hearing_days(condensed_hearing_days)
+        condensed_hearing_days.each do |ro, hearing_days|
           summary = {}
           types = ["R", "V", "C"]
           summary["date_total"] = {}
 
           # Each type of hearing
           types.each do |type|
-            min_label = "min_#{type}"
-            max_label = "max_#{type}"
-            avg_label = "avg_#{type}"
-            total_label = "total_#{type}"
-            sum_label = "sum_#{type}"
-            count_label = "count_#{type}"
             counts_label = "counts_#{type}"
             summary[counts_label] = []
 
             # Each date that has hearing_days
-            ro[1].each do |date, types|
+            hearing_days.each do |date, types|
               count = types[type]
               next if count.nil?
 
-              summary[min_label] = count if summary[min_label].nil?
-              summary[min_label] = count if count < summary[min_label]
-  
-              summary[max_label] = count if summary[max_label].nil?
-              summary[max_label] = count if count > summary[max_label]
+              # For each ro, update min and max days per date
+              min_label = "min_#{type}"
+              max_label = "max_#{type}"
+              new_min, new_max = update_min_max(count, summary[min_label], summary[max_label])
+              summary[min_label] = new_min
+              summary[max_label] = new_max
 
-              summary["date_total"][date] = 0 if summary["date_total"][date].nil?
-              summary["date_total"][date] += count
-
-              if summary["min_days_on_any_date"].nil? || summary["date_total"][date] < summary["min_days_on_any_date"]
-                summary["min_days_on_any_date"] = summary["date_total"][date]
-              end
-              if summary["max_days_on_any_date"].nil? || summary["date_total"][date] > summary["max_days_on_any_date"]
-                summary["max_days_on_any_date"] = summary["date_total"][date]
-              end
-
+              # Store the count for later per_ro_summarization
               summary[counts_label].push(count)
+
+              # Across all ros
+              new_all_ro_min, new_all_ro_max, new_all_ro_total = update_total_min_max(
+                count,
+                summary["date_total"][date],
+                summary["min_days_on_any_date"],
+                summary["max_days_on_any_date"]
+              )
+              summary["min_days_on_any_date"] = new_all_ro_min
+              summary["max_days_on_any_date"] = new_all_ro_max
+              summary["date_total"][date] = new_all_ro_total
             end
 
+            # Take the array of hearing_day_counts per type and generate summary stats
+            # per_ro_summary_stats(hearing_day_counts)
             if summary[counts_label].count > 0
+              total_label = "total_#{type}"
               total = summary[counts_label].size
               summary[total_label] = total
+
+              sum_label = "sum_#{type}"
               sum = summary[counts_label].sum(0.0)
               summary[sum_label] = sum
+
+              avg_label = "avg_#{type}"
               average = sum / total
               summary[avg_label] = average
             end
 
             summary.delete(counts_label)
           end
-          day_counts[ro[0]]["summary_statistics"] = summary
+          condensed_hearing_days[ro]["summary_statistics"] = summary
         end
+        condensed_hearing_days
       end
 
-      def for_each_ro_virtual_and_video_days_per_date_even(day_counts_and_summary)
-      end
-
-      def across_ros_hearing_days_per_date_even(summary_statistics, allowable_variation)
-      end
-
-      # Get the list of generated hearing days
-      # [
-      #  {:request_type=>"V",
-      #    :scheduled_for=>Wed, 03 Jan 2018,
-      #    :regional_office=>"RO77",
-      #    :number_of_slots=>nil,
-      #    :slot_length_minutes=>nil,
-      #    :first_slot_time=>nil},
-      # ]
       # These are the hearing days as displayed in the UI preview of the schedule
       #displayed_hearing_days = ro_schedule_period.algorithm_assignments
       # Create a summary of the data to make testing possible
@@ -395,10 +444,6 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
       #     "avg_virtual_days_per_date" => "6",
       #     "min_virtual_days_per_date" => "1",
       #     "max_virtual_days_per_date" => "14",
-      #
-      #     "avg_combined_days_per_date" => "7",
-      #     "min_combined_days_per_date" => "1",
-      #     "max_combined_days_per_date" => "14"
       #   },
       #   "day_counts" => {
       #     "08-18-2021" => {
@@ -413,7 +458,8 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
       let(:ro_schedule_period) { create(:real_ro_schedule_period) }
       let :day_counts_and_summary_per_ro do
         displayed_hearing_days = ro_schedule_period.algorithm_assignments
-        format_hearing_days(displayed_hearing_days)
+        condensed_hearing_days = condense_hearing_days(displayed_hearing_days)
+        summarize_condensed_hearing_days(condensed_hearing_days)
       end
 
       it "allocates all days evenly across available dates for each ro" do
@@ -421,17 +467,14 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
         # Something like this is NOT okay:
         #  - 10/24/2021: 10 hearing_days
         #  - 10/25/2021: 17 hearing_days
-        ALLOWABLE_SPREAD_PER_DATE = 5 
-
         day_counts_and_summary_per_ro.each do |ro_key, info|
           min_days_per_date = info["summary_statistics"]["min_days_on_any_date"]
           max_days_per_date = info["summary_statistics"]["max_days_on_any_date"]
-          expect(max_days_per_date - min_days_per_date).to be <= ALLOWABLE_SPREAD_PER_DATE
+          expect(max_days_per_date - min_days_per_date).to be <= 5
         end
       end
 
       it "allocates each type of days evenly across available dates for each ro" do
-        ALLOWABLE_SPREAD_PER_DATE = 5 
         day_counts_and_summary_per_ro.each do |ro_key, info|
           types = ["R", "V", "C"]
           types.each do |type|
@@ -441,7 +484,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
             max = info["summary_statistics"][max_label]
 
             ro_has_days_of_type = max.present? || min.present?
-            expect(max - min).to be <= ALLOWABLE_SPREAD_PER_DATE if ro_has_days_of_type
+            expect(max - min).to be <= 5 if ro_has_days_of_type
           end
         end
       end
