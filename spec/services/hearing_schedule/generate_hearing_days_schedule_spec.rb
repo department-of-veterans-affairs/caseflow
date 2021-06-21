@@ -297,7 +297,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
         # Generate day_counts for each date/type from the hearing_days
         day_counts = {}
         hearing_days.each do |hearing_day|
-          # Extract the keys we will use to create neste hashes
+          # Extract the keys we will use to create nested hashes
           scheduled_for = hearing_day[:scheduled_for]
           type = hearing_day[:request_type]
           # Deal with central hearings by creating "C" as an RO (which it's not really)
@@ -312,12 +312,13 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
           day_counts[ro][scheduled_for][type] += 1
         end
 
-        # Generate summary_stats from day_counts
+        # Each ro
         day_counts.each do |ro|
           summary = {}
           types = ["R", "V", "C"]
           summary["date_total"] = {}
 
+          # Each type of hearing
           types.each do |type|
             min_label = "min_#{type}"
             max_label = "max_#{type}"
@@ -328,6 +329,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
             counts_label = "counts_#{type}"
             summary[counts_label] = []
 
+            # Each date that has hearing_days
             ro[1].each do |date, types|
               count = types[type]
               next if count.nil?
@@ -340,6 +342,13 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
 
               summary["date_total"][date] = 0 if summary["date_total"][date].nil?
               summary["date_total"][date] += count
+
+              if summary["min_days_on_any_date"].nil? || summary["date_total"][date] < summary["min_days_on_any_date"]
+                summary["min_days_on_any_date"] = summary["date_total"][date]
+              end
+              if summary["max_days_on_any_date"].nil? || summary["date_total"][date] > summary["max_days_on_any_date"]
+                summary["max_days_on_any_date"] = summary["date_total"][date]
+              end
 
               summary[counts_label].push(count)
             end
@@ -402,22 +411,50 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
       #summary_and_day_counts = format_hearing_days(displayed_hearing_days)
 
       let(:ro_schedule_period) { create(:real_ro_schedule_period) }
-      it "allocates virtual days evenly across available dates for each ro" do
+      let :day_counts_and_summary_per_ro do
         displayed_hearing_days = ro_schedule_period.algorithm_assignments
-        day_counts_and_summary = format_hearing_days(displayed_hearing_days)
-
-        binding.pry
-        #expect(for_each_ro_virtual_and_video_days_per_date_even(day_counts_and_summary))
-        #expect(across_ros_hearing_days_per_date_even(day_counts_and_summary, 5))
+        format_hearing_days(displayed_hearing_days)
       end
 
-      it "allocates video days evenly across available dates for each ro" do
+      it "allocates all days evenly across available dates for each ro" do
+        # It's okay for different dates at the same RO to have this difference.
+        # Something like this is NOT okay:
+        #  - 10/24/2021: 10 hearing_days
+        #  - 10/25/2021: 17 hearing_days
+        ALLOWABLE_SPREAD_PER_DATE = 5 
+
+        day_counts_and_summary_per_ro.each do |ro_key, info|
+          min_days_per_date = info["summary_statistics"]["min_days_on_any_date"]
+          max_days_per_date = info["summary_statistics"]["max_days_on_any_date"]
+          expect(max_days_per_date - min_days_per_date).to be <= ALLOWABLE_SPREAD_PER_DATE
+        end
       end
 
-      it "evenly distributes hearing days for each ro regardless of type", skip: "the algorithm does not do this yet" do
+      it "allocates each type of days evenly across available dates for each ro" do
+        ALLOWABLE_SPREAD_PER_DATE = 5 
+        day_counts_and_summary_per_ro.each do |ro_key, info|
+          types = ["R", "V", "C"]
+          types.each do |type|
+            min_label = "min_#{type}"
+            max_label = "max_#{type}"
+            min = info["summary_statistics"][min_label]
+            max = info["summary_statistics"][max_label]
+
+            ro_has_days_of_type = max.present? || min.present?
+            expect(max - min).to be <= ALLOWABLE_SPREAD_PER_DATE if ro_has_days_of_type
+          end
+        end
       end
 
-      it "has one central day per week" do
+      it "allocates central days exactly a week apart" do
+        central_dates = day_counts_and_summary_per_ro["C"]["summary_statistics"]["date_total"].to_a
+        central_dates.each_with_index do |current_date, index|
+          # Dont compare the last date to 'nil', dont run off the end
+          if index < central_dates.count - 2 
+            next_date = central_dates[index + 1][0]
+            expect(next_date).to eq(current_date[0].advance(days: 7))
+          end
+        end
       end
     end
   end
