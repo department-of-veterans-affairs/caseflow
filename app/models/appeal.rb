@@ -403,12 +403,19 @@ class Appeal < DecisionReview
     claimants.map(&:power_of_attorney).compact
   end
 
-  def representatives
-    vso_participant_ids = power_of_attorneys.map(&:participant_id).compact.uniq
+  def representative_participant_ids
+    power_of_attorneys.map(&:participant_id).compact.uniq
+  end
+
+  def representative_organizations
     # Representatives are returned for Vso or PrivateBar POAs (i.e., subclasses of Representative)
     # and typically not for POAs with `BgsPowerOfAttorney.representative_type` = 'Agent' or 'Attorney'.
     # To get all POAs, call `power_of_attorneys`.
-    Representative.where(participant_id: vso_participant_ids)
+    Representative.where(participant_id: representative_participant_ids)
+  end
+
+  def representative_users
+    representative_organizations.map(&:users) + User.where(participant_id: representative_participant_ids)
   end
 
   def external_id
