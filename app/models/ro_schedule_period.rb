@@ -47,8 +47,6 @@ class RoSchedulePeriod < SchedulePeriod
 
   private
 
-  # Disabling rubocop/reek to allow minimal changes for bug fix
-  # :reek:RepeatedConditionals
   # Validate fields for each video or virtual hearing day
   def format_ro_hearing_data(ro_allocations)
     ro_allocations.reduce([]) do |acc, (ro_key, ro_info)|
