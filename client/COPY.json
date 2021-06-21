@@ -366,7 +366,7 @@
   "ASSIGN_WIDGET_NO_TASK_DETAIL": "Please select a task.",
   "ASSIGN_WIDGET_SUCCESS": "%(verb)s %(numCases)s %(casePlural)s to %(assignee)s",
   "ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE": "Error assigning tasks",
-  "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL": "Timeout Error while assigning tasks, please reload the page before proceeding.",
+  "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL": "Timeout Error while assigning tasks; please reload the page before proceeding.",
   "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL_LINK": "Please assign tasks to an attorney from your assign page.",
   "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL": " Reassign tasks to a judge in the action dropdown",
   "ASSIGN_WIDGET_LOADING": "Loading...",
