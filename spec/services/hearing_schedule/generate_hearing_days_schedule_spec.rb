@@ -290,8 +290,6 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
     end
 
     # Travel board days don't have hearing days they are blackout dates
-    # TODO remove this after refactor
-    # rubocop:disable all
     context "combined allocation (video, virtual, central)" do
       # Take a list of hearing_days and condense them per ro, date, and type,
       # results look like this.
@@ -333,6 +331,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
         if count.nil?
           return [current_min, current_max]
         end
+
         # If current min or max are nil, set them to count
         if current_min.nil?
           current_min = count
@@ -342,10 +341,10 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
         end
 
         # Compare count and new min/max, return appropriate value
-        new_min = count < current_min ? count : current_min
-        new_max = count > current_max ? count : current_max
+        new_min = (count < current_min) ? count : current_min
+        new_max = (count > current_max) ? count : current_max
 
-        return [new_min, new_max]
+        [new_min, new_max]
       end
 
       def update_total_min_max(count, current_total, current_min, current_max)
@@ -356,13 +355,13 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
 
         [new_min, new_max, new_total]
       end
-      
-      def per_ro_summarization(counts, type)
+
+      def per_ro_summarization(counts)
         total = counts.size
         sum = counts.sum(0.0)
         average = sum / total
 
-        return [total, sum, average]
+        [total, sum, average]
       end
 
       # Take the condensed list of hearing_days and generate summary statistics
@@ -379,10 +378,11 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
       #     "min_R" => "1",
       #     "max_R" => "14",
       #   },
+      # rubocop:disable Metrics/AbcSize
       def summarize_condensed_hearing_days(condensed_hearing_days)
         condensed_hearing_days.each do |ro, hearing_days|
           summary = {}
-          types = ["R", "V", "C"]
+          types = %w[R V C]
           summary["date_total"] = {}
           all_type_min_label = "min_days_on_date_all_types"
           all_type_max_label = "max_days_on_date_all_types"
@@ -400,8 +400,8 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
             summary[counts_label] = []
 
             # Each date that has hearing_days
-            hearing_days.each do |date, types|
-              count = types[type]
+            hearing_days.each do |date, type_info|
+              count = type_info[type]
               next if count.nil?
 
               # For each ro, update min and max days per date
@@ -423,11 +423,11 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
               summary[all_type_max_label] = new_all_type_max
               summary[all_type_total_label][date] = new_all_type_total
             end
-            
+
             # Take the array of hearing_day_counts per type and generate summary stats
             # per_ro_summary_stats(hearing_day_counts)
             if summary[counts_label].count > 0
-              total, sum, average = per_ro_summarization(summary[counts_label], type)
+              total, sum, average = per_ro_summarization(summary[counts_label])
               summary[total_label] = total
               summary[sum_label] = sum
               summary[avg_label] = average
@@ -439,29 +439,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
         end
         condensed_hearing_days
       end
-
-      # These are the hearing days as displayed in the UI preview of the schedule
-      #displayed_hearing_days = ro_schedule_period.algorithm_assignments
-      # Create a summary of the data to make testing possible
-      # {"RO39" => {
-      #   "summary" => {
-      #     "avg_video_days_per_date" => "2",
-      #     "min_video_days_per_date" => "2",
-      #     "max_video_days_per_date" => "2",
-      #
-      #     "avg_virtual_days_per_date" => "6",
-      #     "min_virtual_days_per_date" => "1",
-      #     "max_virtual_days_per_date" => "14",
-      #   },
-      #   "day_counts" => {
-      #     "08-18-2021" => {
-      #       "video" => 12,
-      #       "virtual" => 41,
-      #       "central" => 1}
-      #     }
-      #   }
-      # }
-      #summary_and_day_counts = format_hearing_days(displayed_hearing_days)
+      # rubocop:enable Metrics/AbcSize
 
       let(:ro_schedule_period) { create(:real_ro_schedule_period) }
       let :day_counts_and_summary_per_ro do
@@ -475,7 +453,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
         # Something like this is NOT okay:
         #  - 10/24/2021: 10 hearing_days
         #  - 10/25/2021: 17 hearing_days
-        day_counts_and_summary_per_ro.each do |ro_key, info|
+        day_counts_and_summary_per_ro.each do |_ro_key, info|
           min_days_per_date = info["summary_statistics"]["min_days_on_date_all_types"]
           max_days_per_date = info["summary_statistics"]["max_days_on_date_all_types"]
           expect(max_days_per_date - min_days_per_date).to be <= 5
@@ -483,8 +461,8 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
       end
 
       it "allocates each type of days evenly across available dates for each ro" do
-        day_counts_and_summary_per_ro.each do |ro_key, info|
-          types = ["R", "V", "C"]
+        day_counts_and_summary_per_ro.each do |_ro_key, info|
+          types = %w[R V C]
           types.each do |type|
             min_label = "min_#{type}"
             max_label = "max_#{type}"
@@ -501,7 +479,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
         central_dates = day_counts_and_summary_per_ro["C"]["summary_statistics"]["date_total"].to_a
         central_dates.each_with_index do |current_date, index|
           # Dont compare the last date to 'nil', dont run off the end
-          if index < central_dates.count - 2 
+          if index < central_dates.count - 2
             next_date = central_dates[index + 1][0]
             expect(next_date).to eq(current_date[0].advance(days: 7))
           end
