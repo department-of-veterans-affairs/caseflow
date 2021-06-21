@@ -20,7 +20,7 @@ feature "duplicate JudgeAssignTask investigation" do
       sji.import
       appeal = sji.imported_records[Appeal.table_name].first
 
-      judge=User.find_by_css_id("PETERSBVAM")
+      judge = User.find_by_css_id("PETERSBVAM")
       Functions.grant!("System Admin", users: [judge.css_id]) # enable access to `export` endpoint
       create(:staff, :judge_role, user: judge)
 
@@ -36,8 +36,8 @@ feature "duplicate JudgeAssignTask investigation" do
 
       # Delete tasks created on or after 2021-06-13 so we can recreate the problem
       appeal.tasks.where("created_at >= ?", "2021-06-13").delete_all
-      Task.find(2001437274).assigned!
-      Task.find(2001437273).on_hold!
+      Task.find(2_001_437_274).assigned!
+      Task.find(2_001_437_273).on_hold!
 
       # In first window
       visit "/queue/appeals/#{appeal.uuid}"
