@@ -48,6 +48,7 @@ class RoSchedulePeriod < SchedulePeriod
   private
 
   # Validate fields for each video or virtual hearing day
+  # :reek:RepeatedConditionals
   def format_ro_hearing_data(ro_allocations)
     ro_allocations.reduce([]) do |acc, (ro_key, ro_info)|
       ro_info[:allocated_dates].each_value do |dates|
