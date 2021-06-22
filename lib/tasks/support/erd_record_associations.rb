@@ -5,6 +5,7 @@
 # Relies on `record_classes` being defined elsewhere.
 
 # rubocop:disable Metrics/ModuleLength
+# :reek:TooManyConstants
 module ErdRecordAssociations
   def add_subclass_edges(graph, classes)
     classes.each { |klass| add_subclass_edges_for(graph, klass) }
@@ -28,17 +29,15 @@ module ErdRecordAssociations
     end
   end
 
-  POLYMORPHIC_NODES_SEPARATOR = ",\n"
-  SUBCLASS_LISTING_LIMIT = 5
   POLYMORPHIC_COLOR = "#0000ff" # blue
 
   #:reek:UtilityFunction
   def add_polymorphic_node(graph, node_name, subclasses)
     # To avoid clutter, don't list all the subclasses if there are too many (e.g., Task subclasses)
-    subclasses_string = if subclasses.size > SUBCLASS_LISTING_LIMIT
+    subclasses_string = if subclasses.size > 5
                           "(#{subclasses.size} #{node_name.downcase.pluralize})"
                         else
-                          subclasses.join(POLYMORPHIC_NODES_SEPARATOR)
+                          subclasses.join(",\n")
                         end
 
     graph.add_node(node_name, label: "#{node_name}|#{subclasses_string}",
