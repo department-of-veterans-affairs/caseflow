@@ -25,7 +25,7 @@ const schema = yup.object().shape({
     mixed().
     oneOf(Object.keys(DISPOSITIONS)).
     required(),
-  context: yup.string().required(),
+  context: yup.string(),
   attorney: yup.
     object().
     shape({ label: yup.string().required(), value: yup.number().required() }).

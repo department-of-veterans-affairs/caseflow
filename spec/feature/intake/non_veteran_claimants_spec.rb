@@ -63,11 +63,12 @@ feature "Non-veteran claimants", :postgres do
       expect(page).to have_content("Claimant's address")
       expect(page).to have_content(attorney.name)
       expect(page).to have_content(attorney.address_line_1.titleize)
+
       expect(page).to have_button("Continue to next step", disabled: false)
 
       # Verify that this can be removed
       find(".cf-select__clear-indicator").click
-      expect(page).to_not have_content(attorney.name)
+      expect(page).to_not have_selector("option", text: attorney.name)
       expect(page).to_not have_content("Claimant's address")
       expect(page).to have_button("Continue to next step", disabled: true)
       expect(page).to have_content("Type to search...")
@@ -167,16 +168,17 @@ feature "Non-veteran claimants", :postgres do
       click_button "Continue to next step"
       expect(page).to have_current_path("/intake/add_power_of_attorney")
       expect(page).to have_content("Add Claimant's POA")
+      expect(page).to have_button("Continue to next step", disabled: true)
 
       # add poa
       add_existing_poa(attorney)
       expect(page).to have_content("Representative's address")
       find(".cf-select__clear-indicator").click
 
-      expect(page).to_not have_content(attorney.name)
+      expect(page).to_not have_selector("option", text: attorney.name)
       expect(page).to_not have_content("Representative's address")
       expect(page).to have_content("Type to search...")
-
+      expect(page).to have_button("Continue to next step", disabled: true)
       # Fill in Name not listed
       safe_click ".dropdown-listedAttorney"
       fill_in("Representative's name", with: "Name not listed")
@@ -369,6 +371,28 @@ feature "Non-veteran claimants", :postgres do
 
       # Re-routes back to Review page
       expect(page).to have_current_path("/intake/review_request")
+    end
+
+    context "when the veteran has no dependent relations" do
+      it "allows selecting claimant not listed" do
+        allow_any_instance_of(Veteran).to receive(:relationships).and_return([])
+        start_appeal(veteran)
+        visit "/intake"
+
+        expect(page).to have_current_path("/intake/review_request")
+
+        within_fieldset("Is the claimant someone other than the Veteran?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+
+        expect(page).to have_selector("label[for=claimant-options_claimant_not_listed]")
+
+        within_fieldset(COPY::SELECT_CLAIMANT_LABEL) do
+          find("label", text: "Claimant not listed", match: :prefer_exact).click
+        end
+
+        expect(page).to have_button("Continue to next step", disabled: false)
+      end
     end
   end
 

@@ -21,7 +21,8 @@ export const COLORS = {
   BASE: '#212121',
   RED: '#E31C3D',
   RED_DARK: '#cd2026',
-  BLUE_DARKEST: '#122E51'
+  BLUE_DARKEST: '#122E51',
+  FOCUS_OUTLINE: '#2491ff'
 };
 
 export const LOGO_COLORS = {
@@ -130,4 +131,5 @@ export const STATES = [
   { label: 'WI', value: 'Wisconsin' },
   { label: 'WV', value: 'West Virginia' },
   { label: 'WY', value: 'Wyoming' },
+  { label: 'Other', value: 'Other' },
 ];

@@ -228,34 +228,6 @@ class LegacyAppeal < CaseflowRecord
     (decision_date + 120.days).to_date
   end
 
-  def appellant_tz
-    return if appellant_address.blank?
-
-    # Use an address object if this is a hash
-    address = appellant_address.is_a?(Hash) ? Address.new(appellant_address) : appellant_address
-
-    begin
-      TimezoneService.address_to_timezone(address).identifier
-    rescue StandardError => error
-      Raven.capture_exception(error)
-      nil
-    end
-  end
-
-  def representative_tz
-    return if representative_address.blank?
-
-    # Use an address object if this is a hash
-    address = representative_address.is_a?(Hash) ? Address.new(representative_address) : representative_address
-
-    begin
-      TimezoneService.address_to_timezone(address).identifier
-    rescue StandardError => error
-      Raven.capture_exception(error)
-      nil
-    end
-  end
-
   def appellant_address
     appellant_address_from_bgs = bgs_address_service&.address
 
@@ -340,10 +312,15 @@ class LegacyAppeal < CaseflowRecord
            :representative_is_organization?,
            :representative_is_vso?,
            :representative_is_colocated_vso?,
+           :fetch_bgs_record,
            to: :legacy_appeal_representative
 
   def representative_email_address
     power_of_attorney.bgs_representative_email_address
+  end
+
+  def representative_id
+    power_of_attorney.vacols_id
   end
 
   def poa_last_synced_at
@@ -921,6 +898,10 @@ class LegacyAppeal < CaseflowRecord
     vacols_case_review.valid_document_id?
   end
 
+  def claimant_participant_id
+    veteran_is_not_claimant ? person_for_appellant&.participant_id : veteran&.participant_id
+  end
+
   private
 
   def soc_eligible_for_opt_in?(receipt_date:, covid_flag: false)
@@ -1002,10 +983,6 @@ class LegacyAppeal < CaseflowRecord
       claimant_participant_id: claimant_participant_id,
       vacols_id: vacols_id
     )
-  end
-
-  def claimant_participant_id
-    person_for_appellant&.participant_id
   end
 
   class << self

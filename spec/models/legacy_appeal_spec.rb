@@ -1891,7 +1891,7 @@ describe LegacyAppeal, :all_dbs do
       let(:vacols_case) { create(:case, :representative_american_legion, correspondent: correspondent) }
       let(:appellant_ssn) { "666001234" }
       let(:appellant_pid) { "1234" }
-      let(:poa_pid) { "1234567" } # defined in Fakes::BGSService
+      let(:poa_pid) { "600153863" } # defined in Fakes::BGSService
       let(:correspondent) do
         create(
           :correspondent,

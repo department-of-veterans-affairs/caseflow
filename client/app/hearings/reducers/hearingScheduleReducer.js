@@ -226,6 +226,12 @@ export const hearingScheduleReducer = (state = {}, action = {}) => {
         $set: action.payload.roomRequired
       }
     });
+  case ACTIONS.SUCCESSFUL_HEARING_DAY_CREATE:
+    return update(state, {
+      successfulHearingDayCreate: {
+        $set: action.payload.date
+      }
+    });
   case ACTIONS.SUCCESSFUL_HEARING_DAY_DELETE:
     return update(state, {
       successfulHearingDayDelete: {
@@ -234,7 +240,7 @@ export const hearingScheduleReducer = (state = {}, action = {}) => {
     });
   case ACTIONS.RESET_DELETE_SUCCESSFUL:
     return update(state, {
-      $unset: ['successfulHearingDayDelete']
+      $unset: ['successfulHearingDayDelete', 'successfulHearingDayCreate']
     });
   case ACTIONS.SET_NOTES:
     return update(state, {

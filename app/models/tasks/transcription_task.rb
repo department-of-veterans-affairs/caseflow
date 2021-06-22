@@ -44,7 +44,7 @@ class TranscriptionTask < Task
       verify_user_can_update!(current_user)
 
       if params[:status] == Constants.TASK_STATUSES.cancelled
-        recreate_hearing
+        create_new_hearing_task_tree
       else
         super(params, current_user)
       end
@@ -53,17 +53,28 @@ class TranscriptionTask < Task
     [self]
   end
 
-  def hearing_task
-    parent.parent
-  end
-
   private
 
-  def recreate_hearing
-    # We need to close the parent task and all the sibling tasks as well as open up a new
-    # ScheduleHearingTask assigned to the Bva organization
-    hearing_task.cancel_task_and_child_subtasks
+  def create_new_hearing_task_tree
+    hearing_task_ancestor = ancestor_task_of_type(HearingTask)
+    open_hearing_task_count = appeal.tasks.open.count { |task| task.type == HearingTask.name }
 
-    ScheduleHearingTask.create!(appeal: appeal, parent: hearing_task.parent)
+    # don't allow multiple open hearing tasks
+    if hearing_task_ancestor.nil? && open_hearing_task_count > 0
+      fail HearingTask::ExistingOpenHearingTaskOnAppeal, message: COPY::OPEN_HEARING_TASK_EXISTS_ON_APPEAL_MESSAGE
+    end
+
+    # create a new hearing task tree
+    new_hearing_task_parent = hearing_task_ancestor&.parent || appeal.root_task
+    # ScheduleHearingTask will create its own HearingTask parent in before_create hook
+    ScheduleHearingTask.create!(appeal: appeal, parent: new_hearing_task_parent)
+
+    # cancel the old hearing task, or myself if there isn't one
+    if hearing_task_ancestor.present?
+      # close the parent HearingTask and sibling tasks including myself
+      hearing_task_ancestor&.cancel_task_and_child_subtasks
+    else
+      cancelled!
+    end
   end
 end

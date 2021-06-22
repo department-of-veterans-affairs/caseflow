@@ -2,8 +2,14 @@
 import React from 'react';
 import _, { capitalize, escapeRegExp } from 'lodash';
 import moment from 'moment';
+import { compareDesc, isValid } from 'date-fns';
 import StringUtil from '../util/StringUtil';
-import { redText, ISSUE_DISPOSITIONS, VACOLS_DISPOSITIONS, LEGACY_APPEAL_TYPES } from './constants';
+import {
+  redText,
+  ISSUE_DISPOSITIONS,
+  VACOLS_DISPOSITIONS,
+  LEGACY_APPEAL_TYPES,
+} from './constants';
 import { css } from 'glamor';
 
 import ISSUE_INFO from '../../constants/ISSUE_INFO';
@@ -32,7 +38,10 @@ export const getUndecidedIssues = (issues) =>
       return true;
     }
 
-    if (issue.disposition && issue.disposition in UNDECIDED_VACOLS_DISPOSITIONS_BY_ID) {
+    if (
+      issue.disposition &&
+      issue.disposition in UNDECIDED_VACOLS_DISPOSITIONS_BY_ID
+    ) {
       return true;
     }
   });
@@ -56,8 +65,8 @@ export const prepareMostRecentlyHeldHearingForStore = (appealId, hearing) => {
       externalId: hearing.external_id,
       disposition: hearing.disposition,
       isVirtual: hearing.is_virtual,
-      scheduledForIsPast: hearing.scheduled_for_is_past
-    }
+      scheduledForIsPast: hearing.scheduled_for_is_past,
+    },
   };
 };
 
@@ -65,7 +74,7 @@ const taskAttributesFromRawTask = (task) => {
   const decisionPreparedBy = task.attributes.decision_prepared_by?.first_name ?
     {
       firstName: task.attributes.decision_prepared_by.first_name,
-      lastName: task.attributes.decision_prepared_by.last_name
+      lastName: task.attributes.decision_prepared_by.last_name,
     } :
     null;
 
@@ -88,17 +97,18 @@ const taskAttributesFromRawTask = (task) => {
       name: task.attributes.assigned_to.name,
       id: task.attributes.assigned_to.id,
       isOrganization: task.attributes.assigned_to.is_organization,
-      type: task.attributes.assigned_to.type
+      type: task.attributes.assigned_to.type,
     },
     assignedBy: {
       firstName: task.attributes.assigned_by.first_name,
       lastName: task.attributes.assigned_by.last_name,
       cssId: task.attributes.assigned_by.css_id,
-      pgId: task.attributes.assigned_by.pg_id
+      pgId: task.attributes.assigned_by.pg_id,
     },
     cancelledBy: {
       cssId: task.attributes.cancelled_by.css_id,
     },
+    cancelReason: task.attributes.cancellation_reason,
     convertedBy: {
       cssId: task.attributes.converted_by.css_id,
     },
@@ -131,10 +141,18 @@ const taskAttributesFromRawTask = (task) => {
     hearingRequestType: task.attributes.hearing_request_type,
     isFormerTravel: task.attributes.former_travel,
     latestInformalHearingPresentationTask: {
-      requestedAt: task.attributes.latest_informal_hearing_presentation_task?.requested_at,
-      receivedAt: task.attributes.latest_informal_hearing_presentation_task?.received_at
+      requestedAt:
+        task.attributes.latest_informal_hearing_presentation_task?.requested_at,
+      receivedAt:
+        task.attributes.latest_informal_hearing_presentation_task?.received_at,
     },
-    canMoveOnDocketSwitch: task.attributes.can_move_on_docket_switch
+    canMoveOnDocketSwitch: task.attributes.can_move_on_docket_switch,
+    timerEndsAt: task.attributes.timer_ends_at,
+    unscheduledHearingNotes: {
+      updatedAt: task.attributes.unscheduled_hearing_notes?.updated_at,
+      updatedByCssId: task.attributes.unscheduled_hearing_notes?.updated_by_css_id,
+      notes: task.attributes.unscheduled_hearing_notes?.notes
+    }
   };
 };
 
@@ -160,13 +178,15 @@ const appealAttributesFromRawTask = (task) => ({
   docketNumber: task.attributes.docket_number,
   veteranFullName: task.attributes.veteran_full_name,
   veteranFileNumber: task.attributes.veteran_file_number,
-  isPaperCase: task.attributes.paper_case
+  isPaperCase: task.attributes.paper_case,
 });
 
 const extractAppealsFromTasks = (tasks) => {
   return tasks.reduce((accumulator, task) => {
     if (!accumulator[task.attributes.external_appeal_id]) {
-      accumulator[task.attributes.external_appeal_id] = appealAttributesFromRawTask(task);
+      accumulator[
+        task.attributes.external_appeal_id
+      ] = appealAttributesFromRawTask(task);
     }
 
     return accumulator;
@@ -176,13 +196,13 @@ const extractAppealsFromTasks = (tasks) => {
 export const extractAppealsAndAmaTasks = (tasks) => ({
   tasks: {},
   appeals: extractAppealsFromTasks(tasks),
-  amaTasks: prepareTasksForStore(tasks)
+  amaTasks: prepareTasksForStore(tasks),
 });
 
 export const tasksWithAppealsFromRawTasks = (tasks) =>
   tasks.map((task) => ({
     ...taskAttributesFromRawTask(task),
-    appeal: appealAttributesFromRawTask(task)
+    appeal: appealAttributesFromRawTask(task),
   }));
 
 export const prepareLegacyTasksForStore = (tasks) => {
@@ -203,13 +223,13 @@ export const prepareLegacyTasksForStore = (tasks) => {
         isOrganization: task.attributes.assigned_to.is_organization,
         id: task.attributes.assigned_to.id,
         type: task.attributes.assigned_to.type,
-        name: task.attributes.assigned_to.name
+        name: task.attributes.assigned_to.name,
       },
       assignedBy: {
         firstName: task.attributes.assigned_by.first_name,
         lastName: task.attributes.assigned_by.last_name,
         cssId: task.attributes.assigned_by.css_id,
-        pgId: task.attributes.assigned_by.pg_id
+        pgId: task.attributes.assigned_by.pg_id,
       },
       addedByName: task.attributes.added_by_name,
       addedByCssId: task.attributes.added_by_css_id,
@@ -226,13 +246,20 @@ export const prepareLegacyTasksForStore = (tasks) => {
       hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
       hideFromCaseTimeline: task.attributes.hide_from_case_timeline,
       latestInformalHearingPresentationTask: {
-        requestedAt: task.attributes.latest_informal_hearing_presentation_task?.requested_at,
-        receivedAt: task.attributes.latest_informal_hearing_presentation_task?.received_at
-      }
+        requestedAt:
+          task.attributes.latest_informal_hearing_presentation_task
+            ?.requested_at,
+        receivedAt:
+          task.attributes.latest_informal_hearing_presentation_task
+            ?.received_at,
+      },
     };
   });
 
-  return _.pickBy(_.keyBy(mappedLegacyTasks, (task) => task.uniqueId), (task) => task);
+  return _.pickBy(
+    _.keyBy(mappedLegacyTasks, (task) => task.uniqueId),
+    (task) => task
+  );
 };
 
 export const prepareAllTasksForStore = (tasks) => {
@@ -245,18 +272,18 @@ export const prepareAllTasksForStore = (tasks) => {
 
   return {
     amaTasks: prepareTasksForStore(amaTasks),
-    tasks: prepareLegacyTasksForStore(legacyTasks)
+    tasks: prepareLegacyTasksForStore(legacyTasks),
   };
 };
 
 export const associateTasksWithAppeals = (serverData) => {
   const {
-    tasks: { data: tasks }
+    tasks: { data: tasks },
   } = serverData;
 
   return {
     tasks: prepareLegacyTasksForStore(tasks),
-    appeals: extractAppealsFromTasks(tasks)
+    appeals: extractAppealsFromTasks(tasks),
   };
 };
 
@@ -268,7 +295,7 @@ export const prepareAppealIssuesForStore = (appeal) => {
   if (appeal.attributes.docket_name === 'legacy') {
     issues = issues.map((issue) => ({
       id: issue.vacols_sequence_id,
-      ...issue
+      ...issue,
     }));
   }
 
@@ -284,7 +311,8 @@ export const prepareAppealHearingsForStore = (appeal) =>
     externalId: hearing.external_id,
     disposition: hearing.disposition,
     isVirtual: hearing.is_virtual,
-    notes: hearing.notes
+    notes: hearing.notes,
+    createdAt: hearing.created_at
   }));
 
 const prepareAppealAvailableHearingLocationsForStore = (appeal) =>
@@ -297,22 +325,26 @@ const prepareAppealAvailableHearingLocationsForStore = (appeal) =>
     facilityId: ahl.facility_id,
     facilityType: ahl.facility_type,
     classification: ahl.classification,
-    zipCode: ahl.zip_code
+    zipCode: ahl.zip_code,
   }));
 
 const prepareNodDateUpdatesForStore = (appeal) => {
   let nodDateUpdates = [];
 
   if (appeal.attributes.nod_date_updates) {
-    nodDateUpdates = appeal.attributes.nod_date_updates.map((nodDateUpdate) => ({
-      appealId: appeal.id,
-      changeReason: nodDateUpdate.change_reason,
-      newDate: nodDateUpdate.new_date,
-      oldDate: nodDateUpdate.old_date,
-      updatedAt: nodDateUpdate.updated_at,
-      userFirstName: nodDateUpdate.updated_by.split(' ')[0],
-      userLastName: nodDateUpdate.updated_by.split(' ')[nodDateUpdate.updated_by.split(' ').length - 1]
-    }));
+    nodDateUpdates = appeal.attributes.nod_date_updates.map(
+      (nodDateUpdate) => ({
+        appealId: appeal.id,
+        changeReason: nodDateUpdate.change_reason,
+        newDate: nodDateUpdate.new_date,
+        oldDate: nodDateUpdate.old_date,
+        updatedAt: nodDateUpdate.updated_at,
+        userFirstName: nodDateUpdate.updated_by.split(' ')[0],
+        userLastName: nodDateUpdate.updated_by.split(' ')[
+          nodDateUpdate.updated_by.split(' ').length - 1
+        ],
+      })
+    );
   }
 
   return nodDateUpdates;
@@ -321,7 +353,7 @@ const prepareNodDateUpdatesForStore = (appeal) => {
 export const prepareAppealForStore = (appeals) => {
   const appealHash = appeals.reduce((accumulator, appeal) => {
     const {
-      attributes: { issues }
+      attributes: { issues },
     } = appeal;
 
     accumulator[appeal.attributes.external_id] = {
@@ -336,16 +368,21 @@ export const prepareAppealForStore = (appeals) => {
       isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
       caseType: appeal.attributes.type,
       isAdvancedOnDocket: appeal.attributes.aod,
-      issueCount: (appeal.attributes.docket_name === 'legacy' ? getUndecidedIssues(issues) : issues).length,
+      issueCount: (appeal.attributes.docket_name === 'legacy' ?
+        getUndecidedIssues(issues) :
+        issues
+      ).length,
       docketNumber: appeal.attributes.docket_number,
       assignedAttorney: appeal.attributes.assigned_attorney,
       assignedJudge: appeal.attributes.assigned_judge,
       veteranFullName: appeal.attributes.veteran_full_name,
       veteranFileNumber: appeal.attributes.veteran_file_number,
       isPaperCase: appeal.attributes.paper_case,
-      readableHearingRequestType: appeal.attributes.readable_hearing_request_type,
-      readableOriginalHearingRequestType: appeal.attributes.readable_original_hearing_request_type,
-      vacateType: appeal.attributes.vacate_type
+      readableHearingRequestType:
+        appeal.attributes.readable_hearing_request_type,
+      readableOriginalHearingRequestType:
+        appeal.attributes.readable_original_hearing_request_type,
+      vacateType: appeal.attributes.vacate_type,
     };
 
     return accumulator;
@@ -354,7 +391,8 @@ export const prepareAppealForStore = (appeals) => {
   const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
     accumulator[appeal.attributes.external_id] = {
       hearings: prepareAppealHearingsForStore(appeal),
-      completedHearingOnPreviousAppeal: appeal.attributes['completed_hearing_on_previous_appeal?'],
+      completedHearingOnPreviousAppeal:
+        appeal.attributes['completed_hearing_on_previous_appeal?'],
       issues: prepareAppealIssuesForStore(appeal),
       decisionIssues: appeal.attributes.decision_issues,
       canEditRequestIssues: appeal.attributes.can_edit_request_issues,
@@ -362,6 +400,7 @@ export const prepareAppealForStore = (appeals) => {
       appellantIsNotVeteran: appeal.attributes.appellant_is_not_veteran,
       appellantFullName: appeal.attributes.appellant_full_name,
       appellantAddress: appeal.attributes.appellant_address,
+      appellantType: appeal.attributes.appellant_type,
       appellantTz: appeal.attributes.appellant_tz,
       appellantRelationship: appeal.attributes.appellant_relationship,
       assignedToLocation: appeal.attributes.assigned_to_location,
@@ -370,8 +409,11 @@ export const prepareAppealForStore = (appeals) => {
       veteranGender: appeal.attributes.veteran_gender,
       veteranAddress: appeal.attributes.veteran_address,
       closestRegionalOffice: appeal.attributes.closest_regional_office,
-      closestRegionalOfficeLabel: appeal.attributes.closest_regional_office_label,
-      availableHearingLocations: prepareAppealAvailableHearingLocationsForStore(appeal),
+      closestRegionalOfficeLabel:
+        appeal.attributes.closest_regional_office_label,
+      availableHearingLocations: prepareAppealAvailableHearingLocationsForStore(
+        appeal
+      ),
       externalId: appeal.attributes.external_id,
       status: appeal.attributes.status,
       decisionDate: appeal.attributes.decision_date,
@@ -386,11 +428,13 @@ export const prepareAppealForStore = (appeals) => {
       documentID: appeal.attributes.document_id,
       caseReviewId: appeal.attributes.attorney_case_review_id,
       canEditDocumentId: appeal.attributes.can_edit_document_id,
-      attorneyCaseRewriteDetails: appeal.attributes.attorney_case_rewrite_details,
+      attorneyCaseRewriteDetails:
+        appeal.attributes.attorney_case_rewrite_details,
       docketSwitch: appeal.attributes.docket_switch,
       switchedDockets: appeal.attributes.switched_dockets,
+      appellantSubstitution: appeal.attributes.appellant_substitution,
       remandSourceAppealId: appeal.attributes.remand_source_appeal_id,
-      remandJudgeName: appeal.attributes.remand_judge_name
+      remandJudgeName: appeal.attributes.remand_judge_name,
     };
 
     return accumulator;
@@ -398,7 +442,7 @@ export const prepareAppealForStore = (appeals) => {
 
   return {
     appeals: appealHash,
-    appealDetails: appealDetailsHash
+    appealDetails: appealDetailsHash,
   };
 };
 
@@ -416,14 +460,14 @@ export const prepareClaimReviewForStore = (claimReviews) => {
       receiptDate: claimReview.receipt_date,
       veteranFileNumber: claimReview.veteran_file_number,
       veteranFullName: claimReview.veteran_full_name,
-      editIssuesUrl: claimReview.caseflow_only_edit_issues_url
+      editIssuesUrl: claimReview.caseflow_only_edit_issues_url,
     };
 
     return accumulator;
   }, {});
 
   return {
-    claimReviews: claimReviewHash
+    claimReviews: claimReviewHash,
   };
 };
 
@@ -492,14 +536,22 @@ export const getIssueDiagnosticCodeLabel = (code) => {
 };
 
 // Build case review payloads for attorney decision draft submissions as well as judge decision evaluations.
-export const buildCaseReviewPayload = (checkoutFlow, decision, draftDecisionSubmission, issues, args = {}) => {
+export const buildCaseReviewPayload = (
+  checkoutFlow,
+  decision,
+  draftDecisionSubmission,
+  issues,
+  args = {}
+) => {
   const payload = {
     data: {
       tasks: {
-        type: draftDecisionSubmission ? 'AttorneyCaseReview' : 'JudgeCaseReview',
-        ...decision.opts
-      }
-    }
+        type: draftDecisionSubmission ?
+          'AttorneyCaseReview' :
+          'JudgeCaseReview',
+        ...decision.opts,
+      },
+    },
   };
   let isLegacyAppeal = false;
 
@@ -527,7 +579,7 @@ export const buildCaseReviewPayload = (checkoutFlow, decision, draftDecisionSubm
       }
 
       return _.extend({}, _.pick(issue, issueAttrs), {
-        disposition: _.capitalize(issue.disposition)
+        disposition: _.capitalize(issue.disposition),
       });
     });
   } else {
@@ -559,7 +611,7 @@ export const buildCaseReviewPayload = (checkoutFlow, decision, draftDecisionSubm
  */
 export const validateWorkProductTypeAndId = (decision) => {
   const {
-    opts: { document_id: documentId, work_product: workProduct }
+    opts: { document_id: documentId, work_product: workProduct },
   } = decision;
   const newFormat = new RegExp(/^\d{5}-\d{8}$/);
 
@@ -575,7 +627,10 @@ export const validateWorkProductTypeAndId = (decision) => {
 };
 
 export const taskHasNewDocuments = (task, newDocsForAppeal) => {
-  if (!newDocsForAppeal[task.externalAppealId] || !newDocsForAppeal[task.externalAppealId].docs) {
+  if (
+    !newDocsForAppeal[task.externalAppealId] ||
+    !newDocsForAppeal[task.externalAppealId].docs
+  ) {
     return false;
   }
 
@@ -598,7 +653,8 @@ export const taskHasCompletedHold = (task) => {
   return false;
 };
 
-export const taskIsActive = (task) => ![TASK_STATUSES.completed, TASK_STATUSES.cancelled].includes(task.status);
+export const taskIsActive = (task) =>
+  ![TASK_STATUSES.completed, TASK_STATUSES.cancelled].includes(task.status);
 
 export const taskActionData = ({ task, match }) => {
   if (!task) {
@@ -614,13 +670,24 @@ export const taskActionData = ({ task, match }) => {
     return pattern.test(str);
   };
 
-  const relevantAction = task.availableActions.find((action) => endsWith(action.value, path));
+  const relevantAction = task.availableActions.find((action) =>
+    endsWith(action.value, path)
+  );
 
   if (relevantAction && relevantAction.data) {
     return relevantAction.data;
   }
 
   return null;
+};
+
+export const parentTasks = (childrenTasks, allTasks) => {
+  const parentTaskIds = _.map(childrenTasks, 'parentId');
+  const parentTasks = parentTaskIds.map((parentId) => {
+    return _.find(allTasks, ['taskId', parentId?.toString()]);
+  });
+
+  return parentTasks;
 };
 
 export const nullToFalse = (key, obj) => {
@@ -631,14 +698,63 @@ export const nullToFalse = (key, obj) => {
   return obj;
 };
 
-export const sortCaseTimelineEvents = (taskList, nodDateUpdates) => {
-  const timelineEvents = [...(taskList ?? []), ...(nodDateUpdates ?? [])];
+export const timelineEventsFromAppeal = ({ appeal }) => {
+  const timelineEvents = [];
 
-  const sortedTimelineEvents = timelineEvents.sort((prev, next) => {
-    return new Date(next.closedAt || next.createdAt || next.updatedAt).getTime() -
-           new Date(prev.closedAt || prev.createdAt || prev.updatedAt).getTime();
+  // Always want the decision date
+  timelineEvents.push({
+    type: 'decisionDate',
+    createdAt: appeal.decisionDate || null,
   });
 
+  // Possibly add appellant substitution
+  if (appeal.appellantSubstitution) {
+    timelineEvents.push({
+      type: 'substitutionDate',
+      createdAt: appeal.appellantSubstitution.substitution_date,
+    });
+
+    timelineEvents.push({
+      type: 'substitutionProcessed',
+      createdAt: appeal.appellantSubstitution.created_at,
+      createdBy: appeal.appellantSubstitution.created_by,
+      originalAppellantFullName: appeal.appellantSubstitution.original_appellant_full_name,
+      substituteFullName: appeal.appellantSubstitution.substitute_full_name
+    });
+  }
+
+  // Add any edits of NOD date
+  if (appeal.nodDateUpdates) {
+    timelineEvents.push(...(appeal.nodDateUpdates.map((item) => ({
+      ...item,
+      type: 'nodDateUpdate'
+    }))));
+  }
+
+  return timelineEvents;
+};
+
+export const sortCaseTimelineEvents = (...eventArrays) => {
+  // Combine disparate sets of timeline events into a single array
+  const timelineEvents = [].concat(...eventArrays);
+
+  // We want items with undefined dates (such as pending decision date) to sort to the beginning
+  const sortedTimelineEvents = timelineEvents.sort((prev, next) => {
+    const d1 = prev.closedAt || prev.createdAt || prev.updatedAt;
+    const d2 = next.closedAt || next.createdAt || next.updatedAt;
+
+    // In cases of null/undefined dates, we sort to the front
+    if (!d1) {
+      return -1;
+    } else if (!d2) {
+      return 1;
+    }
+
+    return compareDesc(new Date(d1), new Date(d2));
+  });
+
+  // Reverse the array for the order we actually want
+  // return sortedTimelineEvents.reverse();
   return sortedTimelineEvents;
 };
 
@@ -657,10 +773,13 @@ export const cityForRegionalOfficeCode = (code) => {
 };
 
 export const hasDASRecord = (task, requireDasRecord) => {
-  return task.appeal.isLegacyAppeal && requireDasRecord ? Boolean(task.taskId) : true;
+  return task.appeal.isLegacyAppeal && requireDasRecord ?
+    Boolean(task.taskId) :
+    true;
 };
 
-export const collapseColumn = (requireDasRecord) => (task) => (hasDASRecord(task, requireDasRecord) ? 1 : 0);
+export const collapseColumn = (requireDasRecord) => (task) =>
+  hasDASRecord(task, requireDasRecord) ? 1 : 0;
 
 /**
  * Method to determine whether to apply styling to the Current Assignee (location)
@@ -670,19 +789,24 @@ export const collapseColumn = (requireDasRecord) => (task) => (hasDASRecord(task
  */
 export const labelForLocation = (appeal, userId) => {
   // If there is no location or the appeal is cancelled, don't show a location
-  if (!appeal.assignedToLocation || ['cancelled', 'docket_switched'].includes(appeal.status)) {
+  if (
+    !appeal.assignedToLocation ||
+    ['cancelled', 'docket_switched'].includes(appeal.status)
+  ) {
     return '';
   }
 
   // REGEX to determine the current user
-  const regex = new RegExp(`\\b(?:BVA|VACO|VHAISA)?${appeal.assignedToLocation}\\b`);
+  const regex = new RegExp(
+    `\\b(?:BVA|VACO|VHAISA)?${appeal.assignedToLocation}\\b`
+  );
 
   // Override label and apply styling to the current user
   if (userId.match(regex) !== null) {
     return (
       <span
         {...css({
-          color: COLORS.GREEN
+          color: COLORS.GREEN,
         })}
       >
         {COPY.CASE_LIST_TABLE_ASSIGNEE_IS_CURRENT_USER_LABEL}
@@ -700,14 +824,18 @@ export const labelForLocation = (appeal, userId) => {
  * @returns {string} -- The value of the current location either as a string or JSX
  */
 export const statusLabel = (appeal) => {
-  switch(appeal.status) {
-    case 'cancelled':
-      return <span {...css({ color: COLORS.RED })}>{capitalize(appeal.status)}</span>;
-      break;
-    case 'docket_switched':
-      return COPY.CASE_LIST_TABLE_DOCKET_SWITCH_LABEL;
-      break;
-    default:
-      return appeal.status ? StringUtil.snakeCaseToCapitalized(appeal.status) : '';
-  };
+  switch (appeal.status) {
+  case 'cancelled':
+    return (
+      <span {...css({ color: COLORS.RED })}>{capitalize(appeal.status)}</span>
+    );
+    break;
+  case 'docket_switched':
+    return COPY.CASE_LIST_TABLE_DOCKET_SWITCH_LABEL;
+    break;
+  default:
+    return appeal.status ?
+      StringUtil.snakeCaseToCapitalized(appeal.status) :
+      '';
+  }
 };

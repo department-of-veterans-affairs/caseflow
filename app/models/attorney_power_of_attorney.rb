@@ -22,6 +22,18 @@ class AttorneyPowerOfAttorney
     bgs_attorney.record_type.delete_prefix("POA ")
   end
 
+  def representative_email_address
+    nil
+  end
+
+  def poa_last_synced_at
+    nil
+  end
+
+  def stale_attributes?
+    nil
+  end
+
   def bgs_attorney
     @bgs_attorney ||= begin
       BgsAttorney.find_by_participant_id(participant_id)

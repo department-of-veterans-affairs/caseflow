@@ -18,7 +18,7 @@ class HearingDayRange
               )
             elsif [HearingDay::REQUEST_TYPES[:central], HearingDay::REQUEST_TYPES[:virtual]].include?(regional_office)
               HearingDay.where(
-                "request_type = ? and DATE(scheduled_for) between ? and ?",
+                "request_type = ? and DATE(scheduled_for) between ? and ? and regional_office IS NULL",
                 regional_office, # regional_office stores the hearing request type in this case
                 start_date,
                 end_date
