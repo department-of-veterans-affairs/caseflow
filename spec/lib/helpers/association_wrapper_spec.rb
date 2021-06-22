@@ -11,8 +11,6 @@ describe "AssocationWrapper" do
         expect(subject.having_type_field.fieldnames).to match_array %w[assigned_to_id appeal_id]
       end
       it "returns associations with other tables" do
-        # at=subject.associations.select{|a| a.class_name == "AssignedTo"}.first
-        # binding.pry
         expect(subject.select_associations.map do |assoc|
                  [assoc.name, assoc.class_name, assoc.options[:class_name], assoc.polymorphic?, assoc.foreign_type]
                end).to match_array [

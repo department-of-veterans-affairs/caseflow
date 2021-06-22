@@ -10,6 +10,7 @@ module ErdRecordAssociations
     classes.each { |klass| add_subclass_edges_for(graph, klass) }
   end
 
+  # These associations typically indicate foreign keys
   def add_association_edges(graph, node_classes)
     node_classes.map do |klass|
       exclude_verbose_associations(belongs_to_associations(klass)).each do |assoc|
@@ -21,33 +22,37 @@ module ErdRecordAssociations
     end
   end
 
-  POLYMORPHIC_NODES_SEPARATOR = ",\n"
-
   def add_polymorphic_nodes(graph)
     polymorphic_nodes_config.each do |node_name, subclasses|
       add_polymorphic_node(graph, node_name, subclasses)
     end
   end
 
+  POLYMORPHIC_NODES_SEPARATOR = ",\n"
   SUBCLASS_LISTING_LIMIT = 5
+  POLYMORPHIC_COLOR = "#0000ff" # blue
 
   #:reek:UtilityFunction
   def add_polymorphic_node(graph, node_name, subclasses)
+    # To avoid clutter, don't list all the subclasses if there are too many (e.g., Task subclasses)
     subclasses_string = if subclasses.size > SUBCLASS_LISTING_LIMIT
                           "(#{subclasses.size} #{node_name.downcase.pluralize})"
                         else
                           subclasses.join(POLYMORPHIC_NODES_SEPARATOR)
                         end
 
-    graph.add_node(node_name, label: "#{node_name}|#{subclasses_string}", shape: "record", style: "dotted",
-                              color: POLYMORPHIC_COLOR, fontcolor: POLYMORPHIC_COLOR)
+    graph.add_node(node_name, label: "#{node_name}|#{subclasses_string}",
+                              shape: "record", style: "dotted",
+                              color: POLYMORPHIC_COLOR,
+                              fontcolor: POLYMORPHIC_COLOR)
   end
 
   def add_polymorphic_edges(graph)
     polymorphic_edges_config.each do |association_name, edge_list|
       edge_list.each do |from_class, to_class|
         graph.add_edges(from_class.name, to_class.name, label: association_name,
-                                                        color: POLYMORPHIC_COLOR, fontcolor: POLYMORPHIC_COLOR)
+                                                        color: POLYMORPHIC_COLOR,
+                                                        fontcolor: POLYMORPHIC_COLOR)
       end
     end
 
@@ -56,19 +61,19 @@ module ErdRecordAssociations
 
   private
 
-  POLYMORPHIC_COLOR = "#0000ff" # blue
+  SUBCLASS_COLOR = "#000099" # dark blue
 
   def add_subclass_edges_for(graph, klass)
     (klass.subclasses & record_classes).each do |subclass|
       parent_node = graph.add_nodes(klass.name, shape: "record", style: "dashed",
-                                                color: POLYMORPHIC_COLOR, fontcolor: POLYMORPHIC_COLOR)
-      # subclasses = klass.descendants.map(&:name)
-      # parent_node = add_polymorphic_node(graph, klass.name, subclasses)
+                                                color: SUBCLASS_COLOR,
+                                                fontcolor: SUBCLASS_COLOR)
 
       # skip if edge already exists
       next if parent_node.neighbors.find { |target_node| target_node.id == subclass.name }
 
-      graph.add_edges(parent_node, subclass.name, style: "dotted", color: POLYMORPHIC_COLOR)
+      graph.add_edges(parent_node, subclass.name, style: "dotted",
+                                                  color: SUBCLASS_COLOR)
     end
   end
 
@@ -193,7 +198,10 @@ module ErdRecordAssociations
   end
 
   # for custom edges
-  CUSTOM_EDGE_COLOR = "#6600cc"
+  CUSTOM_POLYMORPHIC_EDGE_COLORS = {
+    color: "#6600cc",
+    fontcolor: "#6600cc"
+  }.freeze
 
   # Add custom edges to connect related polymorphic-type nodes
   def add_custom_polymorphic_edges(graph)
@@ -205,26 +213,23 @@ module ErdRecordAssociations
     polymorphic_nodes_config.each do |node_name, subclasses|
       next unless subclasses == DECISION_REVIEW_TYPES
 
-      if node_name != "decision_review_type"
-        graph.add_edges(node_name, "decision_review_type", label: "a.k.a.", style: "dotted",
-                                                           color: CUSTOM_EDGE_COLOR, fontcolor: CUSTOM_EDGE_COLOR)
-      end
+      next unless node_name != "decision_review_type"
+
+      graph.add_edges(node_name, "decision_review_type",
+                      label: "a.k.a.", style: "dotted", **CUSTOM_POLYMORPHIC_EDGE_COLORS)
     end
     # RecordSyncedByJob#record_type may later include other decision_review_types
     # For now, create a 'subset of' association
-    graph.add_edges("record_type", "decision_review_type", label: "(subset of)",
-                                                           color: CUSTOM_EDGE_COLOR, fontcolor: CUSTOM_EDGE_COLOR)
+    graph.add_edges("record_type", "decision_review_type", label: "(subset of)", **CUSTOM_POLYMORPHIC_EDGE_COLORS)
 
     ## Custom edges for RampReview
-    graph.add_edges(RampIssue.name, RampReview.name, label: "(ramp_)review",
-                                                     color: CUSTOM_EDGE_COLOR, fontcolor: CUSTOM_EDGE_COLOR)
+    graph.add_edges(RampIssue.name, RampReview.name, label: "(ramp_)review", **CUSTOM_POLYMORPHIC_EDGE_COLORS)
 
     ## Custom edges for Task
     graph.each_node do |node_name, _node|
-      if node_name.ends_with?("Task") && node_name.constantize.ancestors.include?(Task)
-        graph.add_edges(Task.name, node_name, style: "dotted",
-                                              color: CUSTOM_EDGE_COLOR, fontcolor: CUSTOM_EDGE_COLOR)
-      end
+      next unless node_name.ends_with?("Task") && node_name.constantize.ancestors.include?(Task)
+
+      graph.add_edges(Task.name, node_name, style: "dotted", **CUSTOM_POLYMORPHIC_EDGE_COLORS)
     end
   end
 end

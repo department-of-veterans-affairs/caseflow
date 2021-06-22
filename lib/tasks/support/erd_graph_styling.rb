@@ -1,10 +1,27 @@
 # frozen_string_literal: true
 
 ##
-# Class to help create an ERD (entity relationship diagram) documentation using GraphViz.
+# Class to help style an ERD (entity relationship diagram) documentation using GraphViz.
 
 # rubocop:disable Metrics/ModuleLength
 module ErdGraphStyling
+  # :reek:NestedIterator
+  def style_nodes(graph)
+    # Set node shape and border style (and occasionally color)
+    NODE_STYLES.values.each do |styling|
+      styling[:node_names].each do |node_name|
+        graph.get_node(node_name) do |node|
+          styling[:attribs].each { |key, value| node[key] = value }
+        end
+      end
+    end
+
+    # Add color to most nodes
+    style_nodes_by_category(graph)
+  end
+
+  private
+
   DECISION_REVIEW_POLYTYPES = %w[
     decision_review_type review_type decision_review_remanded_type
     appeal_type
@@ -60,21 +77,6 @@ module ErdGraphStyling
     }
   }.freeze
 
-  # :reek:NestedIterator
-  def style_nodes(graph)
-    NODE_STYLES.values.each do |styling|
-      styling[:node_names].each do |node_name|
-        graph.get_node(node_name) do |node|
-          styling[:attribs].each { |key, value| node[key] = value }
-        end
-      end
-    end
-
-    style_nodes_by_category(graph)
-  end
-
-  private
-
   # Records that indicate completion of a significant step
   COMPLETION_RECORDS = %w[
     JudgeCaseReview AttorneyCaseReview
@@ -84,6 +86,7 @@ module ErdGraphStyling
     BoardGrantEffectuation
   ].freeze
 
+  # Set node styling based roughly on Caseflow product to visually relate nodes
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def style_nodes_by_category(graph)
     graph.each_node do |name, node|

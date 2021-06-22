@@ -68,9 +68,9 @@
 <!-- SchedulePeriod -->
 <g id="node6" class="node">
 <title>SchedulePeriod</title>
-<polygon fill="#00ffff" stroke="#0000ff" points="484.12,-2317 484.12,-2355 600.12,-2355 600.12,-2317 484.12,-2317"/>
-<text text-anchor="middle" x="542.12" y="-2339.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">SchedulePeriod</text>
-<text text-anchor="middle" x="542.12" y="-2324.8" font-family="Times,serif" font-size="14.00" fill="#0000ff"> (assoc with User)</text>
+<polygon fill="#00ffff" stroke="#000099" points="484.12,-2317 484.12,-2355 600.12,-2355 600.12,-2317 484.12,-2317"/>
+<text text-anchor="middle" x="542.12" y="-2339.8" font-family="Times,serif" font-size="14.00" fill="#000099">SchedulePeriod</text>
+<text text-anchor="middle" x="542.12" y="-2324.8" font-family="Times,serif" font-size="14.00" fill="#000099"> (assoc with User)</text>
 </g>
 <!-- JudgeSchedulePeriod -->
 <g id="node103" class="node">
@@ -82,8 +82,8 @@
 <!-- SchedulePeriod&#45;&gt;JudgeSchedulePeriod -->
 <g id="edge109" class="edge">
 <title>SchedulePeriod&#45;&gt;JudgeSchedulePeriod</title>
-<path fill="none" stroke="#0000ff" stroke-dasharray="1,5" d="M600.28,-2340.78C669.96,-2346.61 788.88,-2356.55 873.78,-2363.65"/>
-<polygon fill="#0000ff" stroke="#0000ff" points="873.7,-2367.16 883.96,-2364.5 874.29,-2360.18 873.7,-2367.16"/>
+<path fill="none" stroke="#000099" stroke-dasharray="1,5" d="M600.28,-2340.78C669.96,-2346.61 788.88,-2356.55 873.78,-2363.65"/>
+<polygon fill="#000099" stroke="#000099" points="873.7,-2367.16 883.96,-2364.5 874.29,-2360.18 873.7,-2367.16"/>
 </g>
 <!-- RoSchedulePeriod -->
 <g id="node104" class="node">
@@ -95,8 +95,8 @@
 <!-- SchedulePeriod&#45;&gt;RoSchedulePeriod -->
 <g id="edge110" class="edge">
 <title>SchedulePeriod&#45;&gt;RoSchedulePeriod</title>
-<path fill="none" stroke="#0000ff" stroke-dasharray="1,5" d="M600.28,-2331.22C672.48,-2325.18 797.57,-2314.72 882.88,-2307.59"/>
-<polygon fill="#0000ff" stroke="#0000ff" points="883.41,-2311.06 893.08,-2306.73 882.83,-2304.08 883.41,-2311.06"/>
+<path fill="none" stroke="#000099" stroke-dasharray="1,5" d="M600.28,-2331.22C672.48,-2325.18 797.57,-2314.72 882.88,-2307.59"/>
+<polygon fill="#000099" stroke="#000099" points="883.41,-2311.06 893.08,-2306.73 882.83,-2304.08 883.41,-2311.06"/>
 </g>
 <!-- NonAvailability -->
 <g id="node7" class="node">
@@ -1148,17 +1148,17 @@
 <!-- RampReview -->
 <g id="node73" class="node">
 <title>RampReview</title>
-<polygon fill="#cc99ff" stroke="#0000ff" points="493.12,-2881.5 493.12,-2942.5 591.12,-2942.5 591.12,-2881.5 493.12,-2881.5"/>
-<text text-anchor="middle" x="542.12" y="-2927.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">RampReview</text>
-<polyline fill="none" stroke="#0000ff" points="493.12,-2919.5 591.12,-2919.5 "/>
-<text text-anchor="middle" x="542.12" y="-2904.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">RampElection,</text>
-<text text-anchor="middle" x="542.12" y="-2889.3" font-family="Times,serif" font-size="14.00" fill="#0000ff">RampRefiling</text>
+<polygon fill="#cc99ff" stroke="#000099" points="493.12,-2881.5 493.12,-2942.5 591.12,-2942.5 591.12,-2881.5 493.12,-2881.5"/>
+<text text-anchor="middle" x="542.12" y="-2927.3" font-family="Times,serif" font-size="14.00" fill="#000099">RampReview</text>
+<polyline fill="none" stroke="#000099" points="493.12,-2919.5 591.12,-2919.5 "/>
+<text text-anchor="middle" x="542.12" y="-2904.3" font-family="Times,serif" font-size="14.00" fill="#000099">RampElection,</text>
+<text text-anchor="middle" x="542.12" y="-2889.3" font-family="Times,serif" font-size="14.00" fill="#000099">RampRefiling</text>
 </g>
 <!-- RampReview&#45;&gt;RampElection -->
 <g id="edge111" class="edge">
 <title>RampReview&#45;&gt;RampElection</title>
-<path fill="none" stroke="#0000ff" stroke-dasharray="1,5" d="M591.25,-2920.5C663.71,-2933.29 801.8,-2957.67 890.69,-2973.36"/>
-<polygon fill="#0000ff" stroke="#0000ff" points="890.29,-2976.84 900.74,-2975.13 891.5,-2969.95 890.29,-2976.84"/>
+<path fill="none" stroke="#000099" stroke-dasharray="1,5" d="M591.25,-2920.5C663.71,-2933.29 801.8,-2957.67 890.69,-2973.36"/>
+<polygon fill="#000099" stroke="#000099" points="890.29,-2976.84 900.74,-2975.13 891.5,-2969.95 890.29,-2976.84"/>
 </g>
 <!-- RampRefiling -->
 <g id="node105" class="node">
@@ -1170,8 +1170,8 @@
 <!-- RampReview&#45;&gt;RampRefiling -->
 <g id="edge112" class="edge">
 <title>RampReview&#45;&gt;RampRefiling</title>
-<path fill="none" stroke="#0000ff" stroke-dasharray="1,5" d="M591.25,-2909.32C661.28,-2905.41 792.61,-2898.09 881.59,-2893.13"/>
-<polygon fill="#0000ff" stroke="#0000ff" points="881.89,-2896.62 891.68,-2892.57 881.5,-2889.63 881.89,-2896.62"/>
+<path fill="none" stroke="#000099" stroke-dasharray="1,5" d="M591.25,-2909.32C661.28,-2905.41 792.61,-2898.09 881.59,-2893.13"/>
+<polygon fill="#000099" stroke="#000099" points="881.89,-2896.62 891.68,-2892.57 881.5,-2889.63 881.89,-2896.62"/>
 </g>
 <!-- RampElectionRollback -->
 <g id="node74" class="node">

@@ -126,24 +126,27 @@ namespace :doc do
 
     def exclude_verbose_classes(record_classes)
       # To-do: create edges for subclass `belongs_to` relationships because
-      # some Task subclasses may have additional `belongs_to`
+      # some Task and Claimant subclasses may have additional `belongs_to`.
+      # For now, we're ignoring relationships for those subclasses.
       record_classes - Task.descendants - [Intake] - Claimant.descendants - RequestIssue.descendants
     end
 
-    def save_dot_file(graph, file)
+    def save_dot_file(graph, file_path)
       output_string = graph.output(dot: String)
-      File.open(file, "w") do |h|
-        # To easily see file differences, remove attributes calculated by graphviz
+      File.open(file_path, "w") do |file|
+        # To easily see file differences, remove attributes calculated by graphviz:
         # remove 'pos', 'lp' (label position), and 'rects' attributes
         output_string.gsub!(/(pos|lp|rects)="[^"]*"/m, "")
         # remove 'width' and 'height' attributes
         output_string.gsub!(/(width|height)=[0-9\.]*/m, "")
-        h.write output_string.gsub(/^\t*,\n/, "").gsub(/\[,/, "[").force_encoding("UTF-8")
+        # And also remove extraneous commas resulting from attribute removal
+        output_string.gsub!(/^\t*,\n/, "").gsub(/\[,/, "[")
+        file.write output_string.force_encoding("UTF-8")
       end
     end
 
     def save_graph_files(graph, graph_filename)
-      schema_name = ENV.fetch("SCHEMA") # die if not set
+      schema_name = ENV.fetch("SCHEMA") # fails if not set
       target_dir = Rails.root.join("docs/schema/")
 
       save_dot_file(graph, target_dir.join("#{schema_name}-#{graph_filename}.dot"))
@@ -155,9 +158,9 @@ namespace :doc do
 
     desc "Generate belongs_to ERD"
     task erd: :prepare do
-      $VERBOSE = nil # turn off warnings about already initialized constants
       node_classes = exclude_verbose_classes(record_classes)
 
+      # Subclasses ERD
       GraphViz.new(:subclasses, type: :digraph, rankdir: "LR", splines: "line") do |graph|
         add_subclass_edges(graph, record_classes - [CaseflowRecord, VACOLS::Record, ETL::Record])
 
@@ -165,6 +168,7 @@ namespace :doc do
         save_graph_files(graph, "subclasses")
       end
 
+      # Belongs_to ERD
       GraphViz.new(:belongs_to_erd, type: :digraph, rankdir: "LR", splines: "line") do |graph|
         add_association_edges(graph, node_classes)
         add_polymorphic_nodes(graph)
@@ -174,11 +178,13 @@ namespace :doc do
         save_graph_files(graph, "belongs_to_erd")
       end
 
+      # Belongs_to ERD combined with Subclasses ERD
       GraphViz.new(:belongs_to_erd_subclasses, type: :digraph, rankdir: "LR", splines: "line") do |graph|
         add_association_edges(graph, node_classes)
         add_polymorphic_nodes(graph)
         add_polymorphic_edges(graph)
 
+        # To avoid clutter, don't show the numerous Task subclasses
         relevant_classes = record_classes - Task.descendants - [Task, CaseflowRecord, VACOLS::Record, ETL::Record]
         add_subclass_edges(graph, relevant_classes)
 
@@ -191,7 +197,7 @@ namespace :doc do
   namespace :participant_id do
     desc "Generate ERD for records with participant_id fields"
     task erd: :prepare do
-      # To-do: create graph using participant_ids
+      # To-do: create ERD for relationships involving participant_ids
     end
   end
 
