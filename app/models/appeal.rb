@@ -339,7 +339,7 @@ class Appeal < DecisionReview
 
   # This method allows the source appeal stream to access the appellant_substitution objects
   def substitutions
-    AppellantSubstitution.where(source_appeal_id: self.id)
+    AppellantSubstitution.where(source_appeal_id: id)
   end
 
   def status
