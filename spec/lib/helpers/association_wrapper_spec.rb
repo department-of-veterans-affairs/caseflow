@@ -3,11 +3,11 @@
 require "helpers/association_wrapper.rb"
 require "tasks/support/erd_record_associations.rb"
 require "tasks/support/erd_graph_styling.rb"
-require 'ruby-graphviz'
+require "ruby-graphviz"
 
 describe "AssocationWrapper" do
-  describe "AssocationWrapper#untyped_associations_with User records" do
-    subject { AssocationWrapper.new(target_class).untyped_associations_with(User).fieldnames }
+  describe "AssocationWrapper#fieldnames_of_untyped_associations_with User records" do
+    subject { AssocationWrapper.new(target_class).fieldnames_of_untyped_associations_with(User) }
     context "for Task class" do
       let(:target_class) { Task }
       it "returns fieldname associated with User records" do
@@ -27,7 +27,7 @@ describe "AssocationWrapper" do
       end
     end
   end
-  describe "#associations" do
+  describe "#select_associations" do
     subject { AssocationWrapper.new(target_class) }
     context "for Task class" do
       let(:target_class) { Task }
@@ -37,21 +37,21 @@ describe "AssocationWrapper" do
       it "returns associations with other tables" do
         # at=subject.associations.select{|a| a.class_name == "AssignedTo"}.first
         # binding.pry
-        expect(subject.associations.map do |assoc|
+        expect(subject.select_associations.map do |assoc|
                  [assoc.name, assoc.class_name, assoc.options[:class_name], assoc.polymorphic?, assoc.foreign_type]
                end).to match_array [
-                [:versions, "PaperTrail::Version", "PaperTrail::Version", nil, nil],
-                [:parent, "Task", "Task", nil, nil],
-                [:children, "Task", "Task", nil, nil],
-                [:assigned_to, "AssignedTo", nil, true, "assigned_to_type"],
-                [:assigned_by, "User", "User", nil, nil],
-                [:cancelled_by, "User", "User", nil, nil],
-                [:appeal, "Appeal", nil, true, "appeal_type"],
-                [:attorney_case_reviews, "AttorneyCaseReview", nil, nil, nil],
-                [:task_timers, "TaskTimer", nil, nil, nil],
-                [:cached_appeal, "CachedAppeal", nil, nil, nil]
+                 [:versions, "PaperTrail::Version", "PaperTrail::Version", nil, nil],
+                 [:parent, "Task", "Task", nil, nil],
+                 [:children, "Task", "Task", nil, nil],
+                 [:assigned_to, "AssignedTo", nil, true, "assigned_to_type"],
+                 [:assigned_by, "User", "User", nil, nil],
+                 [:cancelled_by, "User", "User", nil, nil],
+                 [:appeal, "Appeal", nil, true, "appeal_type"],
+                 [:attorney_case_reviews, "AttorneyCaseReview", nil, nil, nil],
+                 [:task_timers, "TaskTimer", nil, nil, nil],
+                 [:cached_appeal, "CachedAppeal", nil, nil, nil]
                ]
-        expect(subject.associations.map { |assoc| [assoc.name, assoc.options[:primary_key]] }).to match_array [
+        expect(subject.select_associations.map { |assoc| [assoc.name, assoc.options[:primary_key]] }).to match_array [
           [:versions, nil],
           [:parent, "id"],
           [:children, "id"],
@@ -63,7 +63,7 @@ describe "AssocationWrapper" do
           [:task_timers, nil],
           [:cached_appeal, nil]
         ]
-        expect(subject.associations.map { |assoc| [assoc.name, assoc.options[:foreign_key]] }).to match_array [
+        expect(subject.select_associations.map { |assoc| [assoc.name, assoc.options[:foreign_key]] }).to match_array [
           [:versions, nil],
           [:parent, "parent_id"],
           [:children, "parent_id"],
@@ -80,7 +80,7 @@ describe "AssocationWrapper" do
           [assoc.name, assoc.belongs_to?, assoc.has_one?,
            assoc.foreign_key, assoc.association_foreign_key, assoc.foreign_type]
         }
-        expect(subject.associations.map(&map_foreign_keys)).to match_array [
+        expect(subject.select_associations.map(&map_foreign_keys)).to match_array [
           # has_paper_trail declared in Task
           [:versions, false, false, "item_id", "version_id", nil],
           # acts_as_tree declared in Task
@@ -98,80 +98,6 @@ describe "AssocationWrapper" do
           # has_one declared in Task
           [:cached_appeal, false, true, :appeal_id, "cached_appeal_id", nil]
         ]
-      end
-
-      it "creates graphviz" do
-        # klasses = SanitizedJsonConfiguration.new.configuration.keys
-        klasses=[
-          LegacyAppeal, LegacyHearing,
-          # Task, OrganizationsUser, User, Appeal
-          Appeal,
-          Veteran,
-          AppealIntake,
-          JudgeCaseReview,
-          AttorneyCaseReview,
-          DecisionDocument,
-          Claimant,
-          Task,
-          TaskTimer,
-          RequestIssue,
-          DecisionIssue,
-          RequestDecisionIssue,
-          CavcRemand,
-          Hearing,
-          HearingDay,
-          VirtualHearing,
-          HearingTaskAssociation,
-          User,
-          Organization,
-          OrganizationsUser,
-          Person,
-        ]
-        Rails.application.eager_load!
-        klasses = ApplicationRecord.descendants
-        node_classes = []
-
-        g = GraphViz.new( :G, :type => :digraph, :rankdir => "LR" )
-
-        puts klasses.map { |klass|
-          next if klass != Task && klass.ancestors.include?(Task) # TODO: some Task subclasses may be different belongs_to
-
-          next if klass != Claimant && klass.ancestors.include?(Claimant) # TODO: some Claimant subclasses may be different belongs_to
-
-          aw=AssocationWrapper.new(klass)
-          node_classes << klass
-          edges = aw.belongs_to.associations!.associations.map {|assoc|
-
-            next if [:created_by, :updated_by].include?(assoc.name)
-
-            to_node = assoc.polymorphic? ? "#{assoc.class_name} (#{assoc.foreign_type})" : assoc.class_name
-            
-            next if to_node == "User" # TODO: display in node
-
-            if to_node == "User" && assoc.name != :user
-              to_node = "#{assoc.name} User"
-            end
-            
-            from = g.add_nodes( klass.name )
-            to = g.add_nodes( to_node.to_s )
-            from << to
-
-            "\"#{klass.name}\" -> \"#{to_node}\" [label=\"#{assoc.name}\"]"
-          }.compact.presence&.join("\n")
-        }.compact.join("\n\n")
-
-        puts (node_classes - [Task, CaseflowRecord, VACOLS::Record, ETL::Record]).map { |klass|
-          subclass_edges = (klass.subclasses & klasses).map {|subclass|
-            from = g.add_nodes( klass.name )
-            to = g.add_nodes( subclass.name )
-            g.add_edges(from, to, style: "dotted")
-            "\"#{klass.name}\" -> \"#{subclass.name}\" [style=dotted]"
-          }.compact.presence&.join("\n")
-        }.compact.join("\n\n")
-
-        # puts g.output( :canon => String )
-        # g.output( :png => "belongs_to_erd_all.png" )
-        # g.output( :dot => "belongs_to_erd_all.dot" )
       end
     end
   end
