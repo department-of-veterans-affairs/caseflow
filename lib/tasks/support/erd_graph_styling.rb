@@ -60,6 +60,7 @@ module ErdGraphStyling
     }
   }.freeze
 
+  # :reek:NestedIterator
   def style_nodes(graph)
     NODE_STYLES.values.each do |styling|
       styling[:node_names].each do |node_name|

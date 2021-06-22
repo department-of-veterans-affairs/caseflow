@@ -2,6 +2,8 @@
 
 require "rails_erd/domain"
 require "csv"
+
+# required for ERD diagrams
 require "ruby-graphviz"
 require "tasks/support/erd_record_associations.rb"
 require "tasks/support/erd_graph_styling.rb"
@@ -117,7 +119,6 @@ namespace :doc do
     def record_classes
       return @record_classes if @record_classes
 
-      Rails.application.eager_load!
       base_class = ENV.fetch("ERD_BASE", "ApplicationRecord").constantize
       # The ordering of this array affects the graph layout
       @record_classes = [LegacyAppeal, Appeal] | base_class.descendants

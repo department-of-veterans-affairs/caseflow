@@ -1008,7 +1008,7 @@
 <!-- Transcription -->
 <g id="node58" class="node">
 <title>Transcription</title>
-<ellipse fill="none" stroke="black" cx="1243.86" cy="-1575.87" rx="57.69" ry="18"/>
+<ellipse fill="#66ccff" stroke="black" cx="1243.86" cy="-1575.87" rx="57.69" ry="18"/>
 <text text-anchor="middle" x="1243.86" y="-1572.17" font-family="Times,serif" font-size="14.00">Transcription</text>
 </g>
 <!-- Transcription&#45;&gt;Hearing -->
@@ -1772,7 +1772,7 @@
 <!-- WorksheetIssue -->
 <g id="node89" class="node">
 <title>WorksheetIssue</title>
-<ellipse fill="none" stroke="black" cx="1243.86" cy="-1837.87" rx="66.89" ry="18"/>
+<ellipse fill="#66ccff" stroke="black" cx="1243.86" cy="-1837.87" rx="66.89" ry="18"/>
 <text text-anchor="middle" x="1243.86" y="-1834.17" font-family="Times,serif" font-size="14.00">WorksheetIssue</text>
 </g>
 <!-- WorksheetIssue&#45;&gt;LegacyAppeal -->

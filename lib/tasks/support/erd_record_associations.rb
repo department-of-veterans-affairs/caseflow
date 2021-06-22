@@ -31,6 +31,7 @@ module ErdRecordAssociations
 
   SUBCLASS_LISTING_LIMIT = 5
 
+  #:reek:UtilityFunction
   def add_polymorphic_node(graph, node_name, subclasses)
     subclasses_string = if subclasses.size > SUBCLASS_LISTING_LIMIT
                           "(#{subclasses.size} #{node_name.downcase.pluralize})"
