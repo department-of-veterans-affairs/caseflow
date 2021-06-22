@@ -12,6 +12,9 @@ class HearingRenderer
     VirtualHearing
   ].freeze
 
+  # use these characters instead of '/', which TTY:Tree can't render
+  SLASH_CHARACTERS = "|"
+
   class << self
     def render(obj, show_pii: false)
       renderer = HearingRenderer.new(show_pii: show_pii)
@@ -230,7 +233,7 @@ class HearingRenderer
     scheduled_label = "Scheduled for: #{readable_date(time_in_eastern)}"
 
     if time_in_ro_zone.zone != time_in_eastern.zone
-      scheduled_label = "#{scheduled_label} AKA #{readable_time(time_in_ro_zone)} (RO time)"
+      scheduled_label = "#{scheduled_label} #{SLASH_CHARACTERS} #{readable_time(time_in_ro_zone)} (RO time)"
     end
 
     scheduled_label
