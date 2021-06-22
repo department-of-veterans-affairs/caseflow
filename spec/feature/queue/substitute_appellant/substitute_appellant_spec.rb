@@ -25,12 +25,16 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
         let(:docket_type) { "evidence_submission" }
 
         it_should_behave_like "fill substitution form"
+
+        it_should_behave_like "verify items after substitution"
       end
 
       context "with direct review docket" do
         let(:docket_type) { "direct_review" }
 
         it_should_behave_like "fill substitution form"
+
+        it_should_behave_like "verify items after substitution"
       end
     end
   end

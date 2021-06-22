@@ -156,3 +156,11 @@ RSpec.shared_examples("fill substitution form") do
     end
   end
 end
+
+RSpec.shared_examples("verify items after substitution") do
+  it "prevents multiple substitutions" do
+    visit "/queue/appeals/#{appeal.uuid}"
+
+    expect(page).to_not have_content "+ Add Substitute"
+  end
+end
