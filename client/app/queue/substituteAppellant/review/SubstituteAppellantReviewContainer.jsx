@@ -10,7 +10,6 @@ import { cancel, stepBack, completeSubstituteAppellant } from '../substituteAppe
 import { getAllTasksForAppeal, appealWithDetailSelector } from 'app/queue/selectors';
 
 import COPY from 'app/../COPY';
-import { format } from 'date-fns';
 
 export const SubstituteAppellantReviewContainer = () => {
   const { appealId } = useParams();
@@ -48,10 +47,6 @@ export const SubstituteAppellantReviewContainer = () => {
       veteranDateOfDeath: appeal.veteranDateOfDeath,
       selectedTasks });
 
-  const formatSubmissionEndDateToBackend = (endDate) => {
-    return evidenceSubmissionEndDate ? format(endDate, 'yyyy-MM-dd') : null;
-  };
-
   const handleBack = () => {
     dispatch(stepBack());
     history.goBack();
@@ -73,7 +68,7 @@ export const SubstituteAppellantReviewContainer = () => {
 
     if (evidenceSubmissionTask) {
       taskParams[evidenceSubmissionTask.uniqueId] = {
-        hold_end_date: formatSubmissionEndDateToBackend(evidenceSubmissionEndDate)
+        hold_end_date: evidenceSubmissionEndDate
       };
     }
 
