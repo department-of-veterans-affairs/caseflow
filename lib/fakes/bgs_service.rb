@@ -374,7 +374,7 @@ class Fakes::BGSService
                   legacy_poa_cd: "100",
                   nm: "Clarence Darrow",
                   org_type_nm: "POA Attorney",
-                  ptcpnt_id: "1234567"
+                  ptcpnt_id: "600153863"
                 }
               end
 

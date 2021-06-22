@@ -63,6 +63,7 @@ class AppealsController < ApplicationController
 
   # rubocop:disable Metrics/MethodLength
   def update_power_of_attorney
+    clear_poa_not_found_cache
     if params[:poaId].nil?
       render json: {
         status: "info",
@@ -71,7 +72,7 @@ class AppealsController < ApplicationController
       }
       return
     end
-    handle_appellants_without_poa(params[:poaId])
+
     if cooldown_period_remaining > 0
       message = "Information is current at this time. Please try again in #{cooldown_period_remaining} minutes"
       render json: {
@@ -82,7 +83,6 @@ class AppealsController < ApplicationController
       return
     end
 
-    clear_poa_not_found_cache
     if appeal.is_a?(Appeal)
       poa = BgsPowerOfAttorney.find(params[:poaId])
       render json: update_ama_poa(poa)
@@ -322,12 +322,8 @@ class AppealsController < ApplicationController
   end
 
   def clear_poa_not_found_cache
-    Rails.cache.delete("bgs-participant-poa-not-found-#{appeal.veteran.file_number}") if appeal.veteran&.file_number
-    if appeal.claimant&.participant_id
-      Rails.cache.delete("bgs-participant-poa-not-found-#{appeal.claimant&.participant_id}")
-    elsif claimant.is_a?(Hash)
-      Rails.cache.delete("bgs-participant-poa-not-found-#{appeal.claimant&.dig(:representative, :participant_id)}")
-    end
+    Rails.cache.delete("bgs-participant-poa-not-found-#{appeal&.veteran&.file_number}")
+    Rails.cache.delete("bgs-participant-poa-not-found-#{appeal&.claimant_participant_id}")
   end
 
   def cooldown_period_remaining
