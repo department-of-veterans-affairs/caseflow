@@ -84,8 +84,10 @@ class ClaimReview < DecisionReview
 
   # Save issues and assign it the appropriate end product establishment.
   # Create that end product establishment if it doesn't exist.
-  def create_issues!(new_issues)
-    new_issues.each(&:create_for_claim_review!)
+  def create_issues!(new_issues, request_issues_update = nil)
+    new_issues.each do |issue|
+      issue.create_for_claim_review!(request_issues_update)
+    end
     request_issues.reload
   end
 
@@ -238,14 +240,14 @@ class ClaimReview < DecisionReview
     ClaimReviewActiveTaskCancellation.new(self).call
   end
 
-  def end_product_establishment_for_issue(issue)
+  def end_product_establishment_for_issue(issue, request_issues_update = nil)
     return unless issue.eligible? && processed_in_vbms?
 
     end_product_establishments.find_by(
       "(code = ?) AND (synced_status IS NULL OR synced_status NOT IN (?))",
       issue.end_product_code,
       EndProduct::INACTIVE_STATUSES
-    ) || new_end_product_establishment(issue)
+    ) || new_end_product_establishment(issue, request_issues_update)
   end
 
   def cancel_establishment!

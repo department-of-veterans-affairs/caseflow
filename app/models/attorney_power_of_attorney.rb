@@ -17,7 +17,21 @@ class AttorneyPowerOfAttorney
   end
 
   def representative_type
-    "Attorney"
+    # See the BgsAttorney factory for record_type values as seen in the wild.
+    # We remove "POA" prefix to be consistent with BgsPowerOfAttorney#representative_type
+    bgs_attorney.record_type.delete_prefix("POA ")
+  end
+
+  def representative_email_address
+    nil
+  end
+
+  def poa_last_synced_at
+    nil
+  end
+
+  def stale_attributes?
+    nil
   end
 
   def bgs_attorney

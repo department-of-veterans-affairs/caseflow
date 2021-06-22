@@ -118,11 +118,14 @@ Rails.application.routes.draw do
     end
   end
 
+  put '/claimants/:participant_id/poa', to: 'claimants#refresh_claimant_poa'
+
   resources :appeals, param: :appeal_id, only: [:index, :show, :edit] do
     member do
       get :document_count
       get :veteran
       get :power_of_attorney
+      patch :update_power_of_attorney
       get 'hearings', to: "appeals#most_recent_hearing"
       resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
       resources :special_issues, only: [:create, :index]
@@ -139,6 +142,8 @@ Rails.application.routes.draw do
   match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
 
   get '/task_tree/:appeal_type/:appeal_id' => 'task_tree#show'
+
+  get '/explain/appeals/:appeal_id' => 'explain#show'
 
   resources :regional_offices, only: [:index]
   get '/regional_offices/:regional_office/hearing_dates', to: "regional_offices#hearing_dates"
@@ -157,6 +162,7 @@ Rails.application.routes.draw do
   end
   get '/hearings/dockets', to: redirect("/hearings/schedule")
   get 'hearings/schedule', to: "hearings/hearing_day#index"
+  get 'hearings/schedule/add_hearing_day', to: "hearings/hearing_day#index"
   get 'hearings/:hearing_id/details', to: "hearings_application#show_hearing_index"
   get 'hearings/:hearing_id/worksheet', to: "hearings_application#show_hearing_index"
   get 'hearings/:id/virtual_hearing_job_status', to: 'hearings#virtual_hearing_job_status'

@@ -19,15 +19,30 @@ export const fetchRelationships = createAsyncThunk(
   }
 );
 
+export const refreshAppellantPoa = createAsyncThunk(
+  'substituteAppellant/refreshAppellantPoa',
+  async ({ participantId }) => {
+    try {
+      const res = await ApiUtil.put(`/claimants/${participantId}/poa`);
+
+      return res?.body?.poa;
+    } catch (error) {
+      console.error('Error fetching appellant poa', error);
+      throw error;
+    }
+  }
+);
+
 const initialState = {
   step: 0,
 
   /**
-   * This will hold substitution date, participantId, etc
+   * This will hold substitution date, participantId, taskIds, etc
    */
   formData: {
     substitutionDate: null,
     participantId: null,
+    taskIds: [],
   },
 
   /**
@@ -36,6 +51,9 @@ const initialState = {
    */
   relationships: null,
   loadingRelationships: false,
+
+  // Substitute's POA
+  poa: null
 };
 
 const substituteAppellantSlice = createSlice({
@@ -68,7 +86,15 @@ const substituteAppellantSlice = createSlice({
     [fetchRelationships.rejected]: (state) => {
       // In case of error, empty relationships array (will display message re no relationships found)
       state.relationships = null;
+      state.loadingRelationships = false;
     },
+    [refreshAppellantPoa.fulfilled]: (state, action) => {
+      state.poa = action.payload;
+    },
+    [refreshAppellantPoa.rejected]: (state, action) => {
+      state.poa = null;
+      console.error('To-do: let user know there was a problem', action);
+    }
   },
 });
 

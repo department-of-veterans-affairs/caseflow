@@ -197,8 +197,11 @@ describe "SanitizedJsonExporter/Importer" do
 
         offset_id_fields = {
           DecisionReview => [],
-          AppealIntake => [],
           # Veteran => [],
+          AppealIntake => [],
+          JudgeCaseReview => ["task_id"],
+          AttorneyCaseReview => ["task_id"],
+          DecisionDocument => [],
           Claimant => ["decision_review_id"],
           Task => %w[parent_id],
           TaskTimer => ["task_id"],
@@ -223,7 +226,8 @@ describe "SanitizedJsonExporter/Importer" do
 
         reassociate_fields_for_polymorphics = {
           Task => %w[assigned_to_id appeal_id],
-          AppealIntake => ["detail_id"]
+          AppealIntake => ["detail_id"],
+          DecisionDocument => ["appeal_id"]
         }
         expect(configuration.reassociate_fields[:type]).to eq(reassociate_fields_for_polymorphics)
 
@@ -235,6 +239,8 @@ describe "SanitizedJsonExporter/Importer" do
 
         reassociate_fields_for_user = {
           AppealIntake => ["user_id"],
+          JudgeCaseReview => %w[judge_id attorney_id],
+          AttorneyCaseReview => %w[reviewing_judge_id attorney_id],
           Task => %w[assigned_by_id cancelled_by_id],
           CavcRemand => %w[updated_by_id created_by_id],
           Hearing => %w[updated_by_id judge_id created_by_id],
@@ -287,6 +293,22 @@ describe "SanitizedJsonExporter/Importer" do
         expect { subject }.to output(/WARNING: Don't know how to map value/).to_stdout
         expect(subject).to eq []
       end
+    end
+  end
+
+  describe "SanitizedJsonConfiguration.select_sanitize_fields" do
+    let(:sjconfiguration) { SanitizedJsonConfiguration.new }
+    it "returns columns with 'PII' in its column comment" do
+      vets_sanitized_fields = %w[file_number first_name last_name middle_name ssn]
+      expect(SanitizedJsonConfiguration.select_sanitize_fields(Veteran)).to match_array vets_sanitized_fields
+      expect(sjconfiguration.configuration[Veteran][:sanitize_fields]).to match_array vets_sanitized_fields
+
+      people_sanitized_fields = %w[date_of_birth email_address first_name last_name middle_name name_suffix ssn]
+      expect(SanitizedJsonConfiguration.select_sanitize_fields(Person)).to match_array people_sanitized_fields
+      expect(sjconfiguration.configuration[Person][:sanitize_fields]).to match_array people_sanitized_fields
+    end
+    it "doesn't override manually set sanitize_fields for Task" do
+      expect(sjconfiguration.configuration[Task][:sanitize_fields]).to match_array %w[instructions]
     end
   end
 
@@ -540,7 +562,7 @@ describe "SanitizedJsonExporter/Importer" do
         create(:hearing, appeal: appeal, hearing_day: hearing_day).tap do |hearing|
           create(:hearing_task_association,
                  hearing: hearing,
-                 hearing_task: appeal.tasks.where(type: :HearingTask).last)
+                 hearing_task: appeal.tasks.of_type(:HearingTask).last)
           create(:assign_hearing_disposition_task,
                  parent: hearing.hearing_task_association.hearing_task,
                  appeal: hearing.appeal)
@@ -562,6 +584,9 @@ describe "SanitizedJsonExporter/Importer" do
                           "veterans" => 1,
                           "claimants" => 2,
                           "people" => 0,
+                          "judge_case_reviews" => 0,
+                          "attorney_case_reviews" => 0,
+                          "decision_documents" => 0,
                           "tasks" => 6,
                           "task_timers" => 1,
                           "organizations_users" => 0,
@@ -588,11 +613,11 @@ describe "SanitizedJsonExporter/Importer" do
       let!(:org_admin) { create(:user) { |u| OrganizationsUser.make_user_admin(u, CavcLitigationSupport.singleton) } }
       let(:org_nonadmin) { create(:user) { |u| CavcLitigationSupport.singleton.add_user(u) } }
       let(:window_task) do
-        send_task = cavc_appeal.tasks.open.where(type: :SendCavcRemandProcessedLetterTask).last
+        send_task = cavc_appeal.tasks.open.of_type(:SendCavcRemandProcessedLetterTask).last
         child_send_task = create(:send_cavc_remand_processed_letter_task, parent: send_task, assigned_to: org_nonadmin)
         child_send_task.update_from_params({ status: Constants.TASK_STATUSES.completed }, org_nonadmin)
 
-        cavc_appeal.tasks.where(type: CavcRemandProcessedLetterResponseWindowTask.name).first
+        cavc_appeal.tasks.of_type(:CavcRemandProcessedLetterResponseWindowTask).first
       end
 
       let!(:sje) do
@@ -609,6 +634,7 @@ describe "SanitizedJsonExporter/Importer" do
         expect(Claimant.count).to eq 2
         expect(Organization.count).to eq 8
         expect(User.count).to eq 6
+        expect(DecisionDocument.count).to eq 1
         expect(Task.count).to eq 16
         expect(TaskTimer.count).to eq 2
 
@@ -620,6 +646,7 @@ describe "SanitizedJsonExporter/Importer" do
           "users" => 6,
           "organizations" => 0,
           "organizations_users" => 0,
+          "decision_documents" => 1,
           "tasks" => 16,
           "task_timers" => 2,
           "cavc_remands" => 1,

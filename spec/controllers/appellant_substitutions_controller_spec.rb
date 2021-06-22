@@ -38,7 +38,9 @@ RSpec.describe AppellantSubstitutionsController, type: :controller do
         substitution_date: substitution_date,
         claimant_type: DependentClaimant.name,
         substitute_participant_id: substitute_participant_id,
-        poa_participant_id: poa_participant_id
+        poa_participant_id: poa_participant_id,
+        selected_task_ids: [],
+        task_params: {}
       }
     end
 
@@ -47,7 +49,6 @@ RSpec.describe AppellantSubstitutionsController, type: :controller do
     shared_examples "creates Appellant Substitution" do
       it "creates the Appellant Substitution and new appeal" do
         substitution_count = AppellantSubstitution.count
-        substitution_appeals_count = Appeal.substitution.count
         subject
 
         expect(response.status).to eq(201)
@@ -59,8 +60,7 @@ RSpec.describe AppellantSubstitutionsController, type: :controller do
         expect(response_body["targetAppeal"]["id"])
           .to eq(AppellantSubstitution.find(response_body["substitution"]["id"]).target_appeal_id)
         expect(response_body["targetAppeal"]["stream_docket_number"]).to eq(source_appeal.docket_number)
-        expect(response_body["targetAppeal"]["stream_type"]).to eq(Appeal.stream_types["substitution"])
-        expect(Appeal.substitution.count).to eq(substitution_appeals_count + 1)
+        expect(response_body["targetAppeal"]["stream_type"]).to eq(source_appeal.stream_type)
       end
     end
 

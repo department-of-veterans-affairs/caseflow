@@ -12,14 +12,16 @@ describe BvaDispatchTask, :all_dbs do
       end
     end
 
+    let(:root_task) { create(:root_task) }
+    subject { BvaDispatchTask.create_from_root_task(root_task) }
+
     context "when valid root_task passed as argument" do
-      let(:root_task) { create(:root_task) }
       before do
         BvaDispatch.singleton.add_user(create(:user))
       end
 
       it "should create a BvaDispatchTask assigned to a User with a parent task assigned to the BvaDispatch org" do
-        parent_task = BvaDispatchTask.create_from_root_task(root_task)
+        parent_task = subject
         expect(parent_task.assigned_to.class).to eq(BvaDispatch)
         expect(parent_task.status).to eq(Constants.TASK_STATUSES.on_hold)
         expect(parent_task.children.count).to eq 1
@@ -30,14 +32,38 @@ describe BvaDispatchTask, :all_dbs do
     end
 
     context "when organization-level BvaDispatchTask already exists" do
-      let(:root_task) { create(:root_task) }
       before do
         BvaDispatch.singleton.add_user(create(:user))
         BvaDispatchTask.create_from_root_task(root_task)
       end
 
       it "should raise an error" do
-        expect { BvaDispatchTask.create_from_root_task(root_task) }.to raise_error(Caseflow::Error::DuplicateOrgTask)
+        expect { subject }.to raise_error(Caseflow::Error::DuplicateOrgTask)
+      end
+    end
+
+    context "when an open QualityReviewTask exists" do
+      before do
+        BvaDispatch.singleton.add_user(create(:user))
+        create(:quality_review_task, parent: root_task)
+      end
+
+      it "should not create BvaDispatchTask" do
+        expect(subject).to be_nil
+      end
+    end
+
+    context "when case belongs to an unrecognized appellant" do
+      let(:claimant) { create(:claimant, :with_unrecognized_appellant_detail, type: "OtherClaimant") }
+      let(:appeal) { create(:appeal, claimants: [claimant]) }
+      let(:root_task) { create(:root_task, appeal: appeal) }
+
+      before do
+        BvaDispatch.singleton.add_user(create(:user))
+      end
+
+      it "should raise an error" do
+        expect { subject }.to raise_error(NotImplementedError)
       end
     end
   end

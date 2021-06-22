@@ -19,7 +19,7 @@ RSpec.feature "List Schedule for System Admin", :all_dbs do
       expect(page).to have_content(COPY::HEARING_SCHEDULE_JUDGE_DEFAULT_VIEW_PAGE_HEADER)
       expect(page).to have_content("Schedule Veterans")
       expect(page).to have_content("Build Schedule")
-      expect(page).to have_content("Add Hearing Date")
+      expect(page).to have_content("Add Hearing Day")
     end
   end
 end

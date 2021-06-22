@@ -9,13 +9,19 @@ import _ from 'lodash';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
-import { appealWithDetailSelector, getAllTasksForAppeal } from './selectors';
+import {
+  appealWithDetailSelector,
+  getAllTasksForAppeal,
+  openScheduleHearingTasksForAppeal,
+  allHearingTasksForAppeal
+} from './selectors';
 import {
   stopPollingHearing,
   transitionAlert,
   clearAlerts,
 } from '../components/common/actions';
 import { getQueryParams } from '../util/QueryParamsUtil';
+import { parentTasks } from './utils';
 import { needsPulacCerulloAlert } from './pulacCerullo';
 import {
   resetErrorMessages,
@@ -24,7 +30,7 @@ import {
 } from './uiReducer/uiActions';
 import Alert from '../components/Alert';
 import AppellantDetail from './AppellantDetail';
-import COPY from '../../COPY';
+import COPY, { CASE_DETAILS_POA_SUBSTITUTE } from 'app/../COPY';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import CaseHearingsDetail from './CaseHearingsDetail';
 import { CaseTimeline } from './CaseTimeline';
@@ -69,6 +75,9 @@ export const CaseDetailsView = (props) => {
   );
   const canEditCavcRemands = useSelector(
     (state) => state.ui.canEditCavcRemands
+  );
+  const userIsCobAdmin = useSelector(
+    (state) => state.ui.userIsCobAdmin
   );
   const success = useSelector((state) => state.ui.messages.success);
   const error = useSelector((state) => state.ui.messages.error);
@@ -128,14 +137,34 @@ export const CaseDetailsView = (props) => {
     [appeal, tasks]
   );
 
-  const appealIsDispached = appeal.status === 'dispatched';
+  const appealIsDispatched = appeal.status === 'dispatched';
+
   const supportCavcRemand =
-    currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand;
+    currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand && !appeal.isLegacyAppeal;
+
+  const decisionHasDismissedDeathDisposition = (decisionIssue) =>
+    decisionIssue.disposition === 'dismissed_death';
+
   const supportSubstituteAppellant =
     currentUserOnClerkOfTheBoard &&
-    props.featureToggles.recognized_granted_substitution_after_dd;
+    !appeal.appellantIsNotVeteran &&
+    props.featureToggles.recognized_granted_substitution_after_dd &&
+    appeal.caseType === 'Original' &&
+    // Substitute appellants for hearings will be supported later, but aren't yet:
+    appeal.docketName !== 'hearing' &&
+    (userIsCobAdmin || appeal.decisionIssues.some(decisionHasDismissedDeathDisposition)) &&
+    !appeal.isLegacyAppeal;
+
   const showPostDispatch =
-    appealIsDispached && (supportCavcRemand || supportSubstituteAppellant);
+    appealIsDispatched && (supportCavcRemand || supportSubstituteAppellant);
+
+  const openScheduledHearingTasks = useSelector(
+    (state) => openScheduleHearingTasksForAppeal(state, { appealId: appeal.externalId })
+  );
+  const allHearingTasks = useSelector(
+    (state) => allHearingTasksForAppeal(state, { appealId: appeal.externalId })
+  );
+  const parentHearingTasks = parentTasks(openScheduledHearingTasks, allHearingTasks);
 
   return (
     <React.Fragment>
@@ -199,18 +228,22 @@ export const CaseDetailsView = (props) => {
             decisionIssues={appeal.decisionIssues}
           />
           <PowerOfAttorneyDetail
-            title="Appellant's Power of Attorney"
+            title={CASE_DETAILS_POA_SUBSTITUTE}
             appealId={appealId}
           />
           {(appeal.hearings.length ||
-            appeal.completedHearingOnPreviousAppeal) && (
-            <CaseHearingsDetail title="Hearings" appeal={appeal} />
+            appeal.completedHearingOnPreviousAppeal ||
+            openScheduledHearingTasks.length) && (
+            <CaseHearingsDetail title="Hearings" appeal={appeal} hearingTasks={parentHearingTasks} />
           )}
           <VeteranDetail title="About the Veteran" appealId={appealId} />
-          {!_.isNull(appeal.appellantFullName) &&
-            appeal.appellantIsNotVeteran && (
-            <AppellantDetail title="About the Appellant" appeal={appeal} />
-          )}
+          {appeal.appellantIsNotVeteran && !_.isNull(appeal.appellantFullName) && (
+            <AppellantDetail
+              title="About the Appellant"
+              appeal={appeal}
+              substitutionDate={appeal.appellantSubstitution && appeal.appellantSubstitution.substitution_date}
+            />
+          ) }
 
           {!_.isNull(appeal.cavcRemand) && appeal.cavcRemand && (
             <CavcDetail
@@ -252,12 +285,14 @@ CaseDetailsView.propTypes = {
   scheduledHearingId: PropTypes.string,
   pollHearing: PropTypes.bool,
   stopPollingHearing: PropTypes.func,
+  substituteAppellant: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({
   scheduledHearingId: state.components.scheduledHearing.externalId,
   pollHearing: state.components.scheduledHearing.polling,
   featureToggles: state.ui.featureToggles,
+  substituteAppellant: state.substituteAppellant,
 });
 
 const mapDispatchToProps = (dispatch) =>

@@ -5,6 +5,8 @@
 # This indicates that an appeal is decided and the appellant is about to be notified of the decision.
 
 class BvaDispatchTask < Task
+  before_create :prevent_dispatch_task_creation_for_unrecognized_appellants
+
   def available_actions(user)
     return [] unless user
 
@@ -24,7 +26,17 @@ class BvaDispatchTask < Task
 
   class << self
     def create_from_root_task(root_task)
+      return unless ready_for_dispatch?(root_task.appeal)
+
       create!(assigned_to: BvaDispatch.singleton, parent_id: root_task.id, appeal: root_task.appeal)
+    end
+
+    TASK_TYPES_BLOCKING_DISPATCH = [:QualityReviewTask].freeze
+
+    def ready_for_dispatch?(appeal)
+      return false if appeal.tasks.open.where(type: TASK_TYPES_BLOCKING_DISPATCH).any?
+
+      true
     end
 
     def outcode(appeal, params, user)
@@ -34,5 +46,11 @@ class BvaDispatchTask < Task
         LegacyAppealDispatch.new(appeal: appeal, params: params).call
       end
     end
+  end
+
+  private
+
+  def prevent_dispatch_task_creation_for_unrecognized_appellants
+    fail NotImplementedError if appeal.claimant.is_a?(OtherClaimant)
   end
 end

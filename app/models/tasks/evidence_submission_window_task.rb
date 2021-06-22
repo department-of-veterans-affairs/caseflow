@@ -11,14 +11,26 @@ class EvidenceSubmissionWindowTask < Task
 
   before_validation :set_assignee
 
+  def initialize(args)
+    @end_date = args&.fetch(:end_date, nil)
+    super(args&.except(:end_date))
+  end
+
   # also called when EvidenceSubmissionWindowTask is manually closed by the user
   def when_timer_ends
     IhpTasksFactory.new(parent).create_ihp_tasks!
     update!(status: :completed)
   end
 
-  # Determines when the ESW task should be expired
+  # Determines when the ESW task should be expired.
   def timer_ends_at
+    # During task initialization, this is called by TimeableTask to schedule the TaskTimer.
+    return @end_date if @end_date
+
+    # Check for last existing associated TaskTimer
+    task_timer = TaskTimer.where(task: self).order(:id).last
+    return task_timer.submitted_at if task_timer
+
     # from_date should be appeal receipt date if the appeal is in the ESW docket
     from_date = appeal.receipt_date if appeal.evidence_submission_docket?
 

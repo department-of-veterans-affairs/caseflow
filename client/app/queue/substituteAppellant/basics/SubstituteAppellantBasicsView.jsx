@@ -3,6 +3,7 @@ import { useHistory, useParams } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns';
 
+import { appealWithDetailSelector } from 'app/queue/selectors';
 import { SubstituteAppellantBasicsForm } from './SubstituteAppellantBasicsForm';
 
 import {
@@ -10,12 +11,17 @@ import {
   stepForward,
   fetchRelationships,
   cancel,
+  refreshAppellantPoa,
 } from '../substituteAppellant.slice';
 
 export const SubstituteAppellantBasicsView = () => {
   const { appealId } = useParams();
   const dispatch = useDispatch();
   const history = useHistory();
+
+  const appeal = useSelector((state) =>
+    appealWithDetailSelector(state, { appealId })
+  );
 
   const {
     formData: existingValues,
@@ -46,6 +52,12 @@ export const SubstituteAppellantBasicsView = () => {
       })
     );
 
+    const { participantId } = formData;
+
+    dispatch(
+      refreshAppellantPoa({ participantId })
+    );
+
     // Advance progressbar
     dispatch(stepForward());
 
@@ -63,6 +75,8 @@ export const SubstituteAppellantBasicsView = () => {
       onCancel={handleCancel}
       onSubmit={handleSubmit}
       relationships={relationships}
+      nodDate={appeal.nodDate}
+      dateOfDeath={appeal.veteranDateOfDeath}
       loadingRelationships={loadingRelationships}
     />
   );

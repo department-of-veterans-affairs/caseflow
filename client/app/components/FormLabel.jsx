@@ -10,7 +10,7 @@ export const FormLabel = ({ label, name, required, optional }) => (
 );
 
 FormLabel.propTypes = {
-  label: PropTypes.string,
+  label: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
   name: PropTypes.string,
   optional: PropTypes.bool,
   required: PropTypes.bool,

@@ -82,7 +82,7 @@ module Seeds
       create_judge_teams
       create_dvc_teams
       create_hearings_user
-      create_build_and_edit_hearings_user
+      create_build_and_edit_hearings_users
       create_non_admin_hearing_coordinator_user
     end
 
@@ -200,15 +200,17 @@ module Seeds
       HearingAdmin.singleton.add_user(hearings_member)
     end
 
-    def create_build_and_edit_hearings_user
-      hearings_user = User.create(
-        css_id: "BVASYELLOW",
-        station_id: 101,
-        full_name: "Stacy BuildAndEditHearingSchedule Yellow",
-        roles: ["Edit HearSched", "Build HearSched"]
-      )
-      HearingsManagement.singleton.add_user(hearings_user)
-      HearingAdmin.singleton.add_user(hearings_user)
+    def create_build_and_edit_hearings_users
+      roles = ["Edit HearSched", "Build HearSched"]
+      user_params = [
+        { css_id: "BVASYELLOW", station_id: 101, full_name: "Stacy BuildAndEditHearingSchedule Yellow", roles: roles },
+        { css_id: "BVASORANGE", station_id: 343, full_name: "Felicia BuildAndEditHearingSchedule Orange", roles: roles }
+      ]
+      user_params.each do |params|
+        user = User.create(**params)
+        HearingsManagement.singleton.add_user(user)
+        HearingAdmin.singleton.add_user(user)
+      end
     end
 
     def create_non_admin_hearing_coordinator_user
@@ -356,9 +358,14 @@ module Seeds
         full_name: "Clark ClerkOfTheBoardUser Bard"
       )
       ClerkOfTheBoard.singleton.add_user(atty)
+
       judge = create(:user, full_name: "Judith COTB Judge", css_id: "BVACOTBJUDGE")
       create(:staff, :judge_role, sdomainid: judge.css_id)
       ClerkOfTheBoard.singleton.add_user(judge)
+
+      admin = create(:user, full_name: "Ty ClerkOfTheBoardAdmin Cobb", css_id: "BVATCOBB")
+      ClerkOfTheBoard.singleton.add_user(admin)
+      OrganizationsUser.make_user_admin(admin, ClerkOfTheBoard.singleton)
     end
 
     def create_case_search_only_user

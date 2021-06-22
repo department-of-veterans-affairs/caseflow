@@ -8,7 +8,7 @@ exports[`EditNodDateModal renders correctly 1`] = `
     aria-modal="true"
     class="cf-modal active "
     id="modal_id"
-    role="alertdialog"
+    role="dialog"
   >
     <div
       class="cf-modal-body"
@@ -93,6 +93,7 @@ exports[`EditNodDateModal renders correctly 1`] = `
                     <label
                       class="question-label"
                       for="reason"
+                      id="reason-label"
                     >
                       <strong>
                         <span>
@@ -126,10 +127,15 @@ exports[`EditNodDateModal renders correctly 1`] = `
                               >
                                 <input
                                   aria-autocomplete="list"
+                                  aria-expanded="false"
+                                  aria-haspopup="true"
+                                  aria-labelledby="reason-label"
+                                  aria-owns="reason-listbox"
                                   autocapitalize="none"
                                   autocomplete="off"
                                   autocorrect="off"
                                   id="reason"
+                                  role="combobox"
                                   spellcheck="false"
                                   style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                                   tabindex="0"
@@ -167,6 +173,11 @@ exports[`EditNodDateModal renders correctly 1`] = `
                             </div>
                           </div>
                         </div>
+                        <input
+                          name="reason"
+                          type="hidden"
+                          value=""
+                        />
                       </div>
                     </div>
                   </div>

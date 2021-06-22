@@ -408,7 +408,7 @@ exports[`CancelTaskModal for cancel change hearing request type action 1`] = `
                   aria-modal="true"
                   className="cf-modal active "
                   id="modal_id"
-                  role="alertdialog"
+                  role="dialog"
                 >
                   <TouchProvider>
                     <ScrollLock

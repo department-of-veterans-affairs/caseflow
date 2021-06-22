@@ -3,12 +3,12 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 // Local Dependencies
-import { setTimeSlots } from '../../utils';
+import { setTimeSlots, TIMEZONES_WITH_LUNCHBREAK, regionalOfficeDetails } from '../../utils';
 import { TimeSlotButton } from './TimeSlotButton';
 import Button from '../../../components/Button';
 import SmallLoader from '../../../components/SmallLoader';
-import { HearingTime } from '../modalForms/HearingTime';
 import { LOGO_COLORS } from '../../../constants/AppConstants';
+import { TimeModal } from '../modalForms/TimeModal';
 
 export const TimeSlot = ({
   scheduledHearingsList,
@@ -16,24 +16,49 @@ export const TimeSlot = ({
   onChange,
   hearing,
   fetchingHearings,
-  ro
+  ro,
+  disableToggle,
+  preview,
+  slotStartTime,
+  slotLength,
+  slotCount,
+  hearingDate,
+  label
 }) => {
   // Create local state to hold the selected time before saving
   const [selected, setSelected] = useState('');
+  const [isCustomTime, setIsCustomTime] = useState(false);
 
-  // Create a local state to switch between the dropdown for custom times
-  const [custom, setCustom] = useState(false);
+  // Manage the modal for time entry
+  const [timeModal, setTimeModal] = useState(false);
+  const toggleTimeModal = () => setTimeModal((val) => !val);
 
-  // Filter the available time slots to fill in the hearings
-  const slots = setTimeSlots(scheduledHearingsList, ro, roTimezone);
+  // Extract the necessary values for timeslot calculation from state
+  const beginsAt = hearing?.hearingDay?.beginsAt || slotStartTime;
+  const numberOfSlots = hearing?.hearingDay?.totalSlots || slotCount;
+  const slotLengthMinutes = hearing?.hearingDay?.slotLengthMinutes || slotLength;
+  // If there is a lunchbreak it's hardcoded to 12:30pm roTimezone and 30 minutes long
+  const lunchBreak = TIMEZONES_WITH_LUNCHBREAK.includes(roTimezone);
+  const hearingDayDate = hearing?.hearingDay?.scheduledFor || hearingDate;
+
+  // Get the timeslots
+  const slots = setTimeSlots({
+    scheduledHearingsList,
+    ro,
+    roTimezone,
+    beginsAt,
+    numberOfSlots,
+    slotLengthMinutes,
+    lunchBreak,
+    selected,
+    hearingDayDate
+  });
 
   // Setup the click handler for each time slot
-  const handleClick = (time) => {
-    // Set the selected time slot
+  const handleChange = (time, custom = false) => {
     setSelected(time);
-
-    // Use the onChange callback to set the hearing time
-    onChange('scheduledTimeString', time);
+    setIsCustomTime(custom);
+    onChange('scheduledTimeString', time.tz(roTimezone).format('HH:mm'));
   };
 
   // Create a hearing Time ID to associate the label with the appropriate form element
@@ -42,60 +67,64 @@ export const TimeSlot = ({
   // Determine the column length to evenly distribute the time slots
   const columnLength = Math.ceil(slots.length / 2);
 
+  // Custom button shows different text depending on if a custom time is in use
+  const customText = isCustomTime ? 'Change your custom time' : 'Choose a custom time';
+
   return (
     <React.Fragment>
       <label className="time-slot-label" htmlFor={hearingTimeId}>
-         Hearing Time
+        {label}
       </label>
       {fetchingHearings ? (
         <SmallLoader spinnerColor={LOGO_COLORS.QUEUE.ACCENT} message="Loading Hearing Times" />
       ) : (
         <React.Fragment>
-          <div>
+          {!disableToggle && <div>
             <Button
               linkStyling
-              onClick={() => setCustom(!custom)}
+              onClick={() => toggleTimeModal()}
               classNames={['time-slot-button-toggle']}
-            >
-                 Choose a {custom ? 'time slot' : 'custom time'}
-            </Button>
-          </div>
-          {custom ? (
-            <HearingTime
-              hideLabel
-              enableZone
-              disableRadioOptions
-              id={hearingTimeId}
-              localZone={roTimezone}
-              onChange={(scheduledTimeString) => onChange('scheduledTimeString', scheduledTimeString)}
-              value={hearing?.scheduledTimeString}
-            />
-          ) : (
-            <div className="time-slot-button-container">
-              <div className="time-slot-container" >
-                {slots.slice(0, columnLength).map((slot) => (
-                  <TimeSlotButton
-                    {...slot}
-                    key={slot.key}
-                    roTimezone={roTimezone}
-                    selected={selected === slot.hearingTime}
-                    onClick={() => handleClick(slot.hearingTime)}
-                  />
-                ))}
-              </div>
-              <div className="time-slot-container">
-                {slots.slice(columnLength, slots.length).map((slot) => (
-                  <TimeSlotButton
-                    {...slot}
-                    key={slot.key}
-                    roTimezone={roTimezone}
-                    selected={selected === slot.hearingTime}
-                    onClick={() => handleClick(slot.hearingTime)}
-                  />
-                ))}
-              </div>
+            >{customText}</Button>
+          </div>}
+          <div className="time-slot-button-container">
+            <div className="time-slot-container" >
+              {slots.slice(0, columnLength).map((slot) => (
+                <TimeSlotButton
+                  {...slot}
+                  full={preview || slot?.full}
+                  key={slot.key}
+                  roTimezone={roTimezone}
+                  selected={slot.time.isSame(selected)}
+                  onClick={() => handleChange(slot.time)}
+                />
+              ))}
             </div>
-          )}
+            <div className="time-slot-container">
+              {slots.slice(columnLength, slots.length).map((slot) => (
+                <TimeSlotButton
+                  {...slot}
+                  full={preview || slot?.full}
+                  key={slot.key}
+                  roTimezone={roTimezone}
+                  selected={slot.time.isSame(selected)}
+                  onClick={() => handleChange(slot.time)}
+                />
+              ))}
+            </div>
+          </div>
+          {timeModal && <TimeModal
+            onCancel={toggleTimeModal}
+            onConfirm={(time) => {
+              handleChange(time, true);
+              toggleTimeModal();
+            }}
+            ro={{
+              city: regionalOfficeDetails(ro) ? regionalOfficeDetails(ro).city : '',
+              timezone: roTimezone
+            }}
+            title={customText}
+            hearingDayDate={hearingDayDate}
+          />}
         </React.Fragment>
       )}
     </React.Fragment>
@@ -103,10 +132,21 @@ export const TimeSlot = ({
 };
 
 TimeSlot.propTypes = {
+  label: PropTypes.string,
+  disableToggle: PropTypes.bool,
+  preview: PropTypes.bool,
   fetchingHearings: PropTypes.bool,
   hearing: PropTypes.object,
   onChange: PropTypes.func,
   scheduledHearingsList: PropTypes.array,
   roTimezone: PropTypes.string,
   ro: PropTypes.string,
+  slotStartTime: PropTypes.string,
+  slotLength: PropTypes.number,
+  slotCount: PropTypes.number,
+  hearingDate: PropTypes.string,
+};
+
+TimeSlot.defaultProps = {
+  label: 'Hearing Time'
 };

@@ -16,10 +16,11 @@ export default class LegacyOptInApproved extends React.PureComponent {
     const {
       value,
       errorMessage,
-      onChange
+      onChange,
+      register
     } = this.props;
 
-    return <div className="cf-legacy-opt-in">
+    return <div className="cf-legacy-opt-in" style={{ marginTop: '10px' }}>
       <RadioField
         name="legacy-opt-in"
         label={INTAKE_LEGACY_OPT_IN_MESSAGE}
@@ -31,6 +32,7 @@ export default class LegacyOptInApproved extends React.PureComponent {
         }}
         errorMessage={errorMessage}
         value={value === null ? null : value?.toString()}
+        inputRef={register}
       />
     </div>;
   }
@@ -39,5 +41,6 @@ export default class LegacyOptInApproved extends React.PureComponent {
 LegacyOptInApproved.propTypes = {
   errorMessage: PropTypes.string,
   onChange: PropTypes.func,
-  value: PropTypes.bool
+  value: PropTypes.bool,
+  register: PropTypes.func
 };
