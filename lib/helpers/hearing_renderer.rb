@@ -161,7 +161,7 @@ class HearingRenderer
 
   def notes_or_include_pii_info(notes)
     return if notes.blank?
-    return notes if show_pii
+    return [notes].flatten.join(" ").gsub("/", SLASH_CHARACTERS) if show_pii
 
     "pass 'show_pii: true' to see notes"
   end
