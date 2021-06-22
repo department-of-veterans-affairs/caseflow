@@ -38,7 +38,6 @@ feature "CaseMovementTeam task actions" do
       # (and an error message in the DevTools console).
       click_on "Submit"
       expect(page).to have_content("Error assigning tasks")
-      # binding.pry # Uncomment this line to see error message
     end
   end
 end
