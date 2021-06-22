@@ -898,6 +898,10 @@ class LegacyAppeal < CaseflowRecord
     vacols_case_review.valid_document_id?
   end
 
+  def claimant_participant_id
+    veteran_is_not_claimant ? person_for_appellant&.participant_id : veteran&.participant_id
+  end
+
   private
 
   def soc_eligible_for_opt_in?(receipt_date:, covid_flag: false)
@@ -979,10 +983,6 @@ class LegacyAppeal < CaseflowRecord
       claimant_participant_id: claimant_participant_id,
       vacols_id: vacols_id
     )
-  end
-
-  def claimant_participant_id
-    person_for_appellant&.participant_id
   end
 
   class << self
