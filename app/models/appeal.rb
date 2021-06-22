@@ -337,6 +337,11 @@ class Appeal < DecisionReview
     !!appellant_substitution
   end
 
+  # This method allows the source appeal stream to access the appellant_substitution objects
+  def substitutions
+    AppellantSubstitution.where(source_appeal_id: self.id)
+  end
+
   def status
     @status ||= BVAAppealStatus.new(appeal: self)
   end
