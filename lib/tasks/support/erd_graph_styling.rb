@@ -38,7 +38,7 @@ module ErdGraphStyling
       node_names: DECISION_REVIEW_POLYTYPES +
                   %w[Appeal SupplementalClaim HigherLevelReview LegacyAppeal DecisionReview ClaimReview],
       attribs: {
-        fillcolor: "#ffff00",  # yellow
+        fillcolor: "#ffff00", # yellow
         style: "filled"
       }
     },

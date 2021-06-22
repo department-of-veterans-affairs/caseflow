@@ -1,33 +1,9 @@
 # frozen_string_literal: true
 
 require "helpers/association_wrapper.rb"
-require "tasks/support/erd_record_associations.rb"
-require "tasks/support/erd_graph_styling.rb"
-require "ruby-graphviz"
 
 describe "AssocationWrapper" do
-  describe "AssocationWrapper#fieldnames_of_untyped_associations_with User records" do
-    subject { AssocationWrapper.new(target_class).fieldnames_of_untyped_associations_with(User) }
-    context "for Task class" do
-      let(:target_class) { Task }
-      it "returns fieldname associated with User records" do
-        expect(subject).to match_array %w[assigned_by_id cancelled_by_id]
-      end
-    end
-    context "for Hearing class" do
-      let(:target_class) { Hearing }
-      it "returns fieldname associated with User records" do
-        expect(subject).to match_array %w[created_by_id judge_id updated_by_id]
-      end
-    end
-    context "for AppealIntake class" do
-      let(:target_class) { AppealIntake }
-      it "returns fieldname associated with User records" do
-        expect(subject).to match_array %w[user_id]
-      end
-    end
-  end
-  describe "#select_associations" do
+  describe "#fieldnames and #select_associations}" do
     subject { AssocationWrapper.new(target_class) }
     context "for Task class" do
       let(:target_class) { Task }
@@ -98,6 +74,27 @@ describe "AssocationWrapper" do
           # has_one declared in Task
           [:cached_appeal, false, true, :appeal_id, "cached_appeal_id", nil]
         ]
+      end
+    end
+  end
+  describe "AssocationWrapper#fieldnames_of_untyped_associations_with User records" do
+    subject { AssocationWrapper.new(target_class).fieldnames_of_untyped_associations_with(User) }
+    context "for Task class" do
+      let(:target_class) { Task }
+      it "returns fieldnames associated with User records" do
+        expect(subject).to match_array %w[assigned_by_id cancelled_by_id]
+      end
+    end
+    context "for Hearing class" do
+      let(:target_class) { Hearing }
+      it "returns fieldnames associated with User records" do
+        expect(subject).to match_array %w[created_by_id judge_id updated_by_id]
+      end
+    end
+    context "for AppealIntake class" do
+      let(:target_class) { AppealIntake }
+      it "returns fieldnames associated with User records" do
+        expect(subject).to match_array %w[user_id]
       end
     end
   end
