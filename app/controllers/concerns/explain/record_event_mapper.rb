@@ -119,7 +119,6 @@ class Explain::RecordEventMapper
 
       0
     rescue StandardError => error
-      # binding.pry
       raise "#{error}:\n #{inspect}\n #{other.inspect}"
     end
     # rubocop:enable Metrics/CyclomaticComplexity, Metrics/AbcSize

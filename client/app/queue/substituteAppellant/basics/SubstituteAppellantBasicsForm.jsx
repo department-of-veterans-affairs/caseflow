@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { isDate, max, parseISO } from 'date-fns';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import {
@@ -14,12 +15,20 @@ import DateSelector from 'app/components/DateSelector';
 import RadioField from 'app/components/RadioField';
 import { pageHeader } from '../styles';
 
+export const subDateMinErrorMsg =
+  "Date cannot be earlier than the NOD date or the Veteran's date of death";
+
 const schema = yup.object().shape({
   substitutionDate: yup.
     date().
     required('Substitution Date is required').
     nullable().
     max(new Date(), 'Date cannot be in the future').
+    when(['$nodDate', '$dateOfDeath'], (date1, date2, currentSchema) => {
+      const dates = [date1, date2].map((d) => (isDate(d) ? d : parseISO(d))); // eslint-disable-line id-length
+
+      return currentSchema.min(max(dates), subDateMinErrorMsg);
+    }).
     transform((value, originalValue) => (originalValue === '' ? null : value)),
   participantId: yup.string().required('You must select a claimant'),
 });
@@ -28,6 +37,8 @@ export const SubstituteAppellantBasicsForm = ({
   existingValues,
   onCancel,
   onSubmit,
+  dateOfDeath,
+  nodDate,
   relationships = [],
   loadingRelationships = false,
 }) => {
@@ -35,6 +46,8 @@ export const SubstituteAppellantBasicsForm = ({
     // Use this for repopulating form from redux when user navigates back
     defaultValues: { ...existingValues },
     resolver: yupResolver(schema),
+    context: { nodDate, dateOfDeath },
+    reValidateMode: 'onChange',
   });
 
   return (
@@ -96,6 +109,11 @@ SubstituteAppellantBasicsForm.propTypes = {
   }),
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
+  nodDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
+  dateOfDeath: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.instanceOf(Date),
+  ]),
   relationships: PropTypes.arrayOf(
     PropTypes.shape({
       value: PropTypes.string,

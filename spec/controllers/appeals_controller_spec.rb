@@ -608,7 +608,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
     let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
     let(:get_params) { { appeal_id: appeal.vacols_id } }
-    let(:patch_params) { { appeal_id: appeal.vacols_id, poaId: appeal.power_of_attorney.id } }
+    let(:patch_params) { { appeal_id: appeal.vacols_id, poaId: appeal.power_of_attorney&.bgs_id } }
     let!(:poa) do
       create(
         :bgs_power_of_attorney,
@@ -679,7 +679,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         assert_response(:success)
         expect(JSON.parse(subject.body)["power_of_attorney"]["representative_type"]).to eq "Attorney"
         expect(JSON.parse(subject.body)["power_of_attorney"]["representative_name"]).to eq "Clarence Darrow"
-        expected_email = "tom.brady@caseflow.gov"
+        expected_email = "clarence.darrow@caseflow.gov"
         expect(JSON.parse(subject.body)["power_of_attorney"]["representative_email_address"]).to eq expected_email
         expect(JSON.parse(subject.body)["power_of_attorney"]["representative_tz"]).to eq "America/Los_Angeles"
         expect(JSON.parse(subject.body)["power_of_attorney"]["representative_id"]).to eq appeal.power_of_attorney.id
