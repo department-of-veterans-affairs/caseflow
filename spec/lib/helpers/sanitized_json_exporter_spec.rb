@@ -274,6 +274,22 @@ describe "SanitizedJsonExporter/Importer" do
     end
   end
 
+  describe "SanitizedJsonConfiguration.select_sanitize_fields" do
+    let(:sjconfiguration) { SanitizedJsonConfiguration.new }
+    it "returns columns with 'PII' in its column comment" do
+      vets_sanitized_fields = %w[file_number first_name last_name middle_name ssn]
+      expect(SanitizedJsonConfiguration.select_sanitize_fields(Veteran)).to match_array vets_sanitized_fields
+      expect(sjconfiguration.configuration[Veteran][:sanitize_fields]).to match_array vets_sanitized_fields
+
+      people_sanitized_fields = %w[date_of_birth email_address first_name last_name middle_name name_suffix ssn]
+      expect(SanitizedJsonConfiguration.select_sanitize_fields(Person)).to match_array people_sanitized_fields
+      expect(sjconfiguration.configuration[Person][:sanitize_fields]).to match_array people_sanitized_fields
+    end
+    it "doesn't override manually set sanitize_fields for Task" do
+      expect(sjconfiguration.configuration[Task][:sanitize_fields]).to match_array %w[instructions]
+    end
+  end
+
   let(:veteran) { create(:veteran, file_number: "111447777", middle_name: "Middle") }
   let(:appeal) do
     create(:appeal,
