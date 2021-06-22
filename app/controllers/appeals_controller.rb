@@ -71,7 +71,6 @@ class AppealsController < ApplicationController
       }
       return
     end
-    handle_appellants_without_poa(params[:poaId])
     if cooldown_period_remaining > 0
       message = "Information is current at this time. Please try again in #{cooldown_period_remaining} minutes"
       render json: {
