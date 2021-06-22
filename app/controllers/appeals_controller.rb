@@ -61,7 +61,17 @@ class AppealsController < ApplicationController
     render json: power_of_attorney_data
   end
 
+  # rubocop:disable Metrics/MethodLength
   def update_power_of_attorney
+    if params[:poaId].nil?
+      render json: {
+        status: "info",
+        message: "There is no power of attorney.",
+        power_of_attorney: nil
+      }
+      return
+    end
+    handle_appellants_without_poa(params[:poaId])
     if cooldown_period_remaining > 0
       message = "Information is current at this time. Please try again in #{cooldown_period_remaining} minutes"
       render json: {
@@ -81,6 +91,7 @@ class AppealsController < ApplicationController
       render json: update_legacy_poa(poa)
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def most_recent_hearing
     most_recently_held_hearing = HearingsForAppeal.new(url_appeal_uuid)
