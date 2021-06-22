@@ -68,7 +68,6 @@ RSpec.describe AppellantSubstitutionsController, type: :controller do
       let(:poa_participant_id) { nil }
       it "creates the Appellant Substitution and a new appeal" do
         substitution_count = AppellantSubstitution.count
-        appeal_count = Appeal.count
         subject
 
         expect(response.status).to eq(201)
@@ -77,8 +76,6 @@ RSpec.describe AppellantSubstitutionsController, type: :controller do
         expect(response_body["substitution"]["source_appeal_id"]).to eq(source_appeal.id)
         expect(AppellantSubstitution.count).to eq(substitution_count + 1)
 
-        expect(AppellantSubstitution.count).to eq(substitution_count + 1)
-        expect(Appeal.count).to eq(appeal_count + 1)
         expect(response_body["targetAppeal"]["id"])
           .to eq(AppellantSubstitution.find(response_body["substitution"]["id"]).target_appeal_id)
         expect(response_body["targetAppeal"]["stream_docket_number"]).to eq(source_appeal.docket_number)

@@ -661,7 +661,7 @@ class Fakes::BGSService
         middle_name: nil,
         poa: nil,
         proof_of_dependecy_ind: nil,
-        ptcpnt_id: "1129318555",
+        ptcpnt_id: "no-such-pid",
         relationship_begin_date: "09121999",
         relationship_end_date: nil,
         relationship_type: "Child",
