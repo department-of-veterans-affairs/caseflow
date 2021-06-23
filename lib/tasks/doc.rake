@@ -136,11 +136,11 @@ namespace :doc do
       File.open(file_path, "w") do |file|
         # To easily see file differences, remove attributes calculated by graphviz:
         # remove 'pos', 'lp' (label position), and 'rects' attributes
-        output_string.gsub!(/(pos|lp|rects)="[^"]*"/m, "")
+        output_string.gsub!(/\b(pos|head_lp|lp|rects)="[^"]*"/m, "")
         # remove 'width' and 'height' attributes
-        output_string.gsub!(/(width|height)=[0-9\.]*/m, "")
+        output_string.gsub!(/\b(width|height)=[0-9\.]*/m, "")
         # And also remove extraneous commas resulting from attribute removal
-        output_string.gsub!(/^\t*,\n/, "").gsub(/\[,/, "[")
+        output_string.gsub!(/^\t*,\n/, "").gsub!(/\[,/, "[")
         file.write output_string.force_encoding("UTF-8")
       end
     end
@@ -169,7 +169,7 @@ namespace :doc do
       end
 
       # Belongs_to ERD
-      GraphViz.new(:belongs_to_erd, type: :digraph, rankdir: "LR", splines: "line") do |graph|
+      GraphViz.new(:belongs_to_erd, type: :digraph, rankdir: "LR") do |graph|
         add_association_edges(graph, node_classes)
         add_polymorphic_nodes(graph)
         add_polymorphic_edges(graph)
@@ -179,7 +179,7 @@ namespace :doc do
       end
 
       # Belongs_to ERD combined with Subclasses ERD
-      GraphViz.new(:belongs_to_erd_subclasses, type: :digraph, rankdir: "LR", splines: "line") do |graph|
+      GraphViz.new(:belongs_to_erd_subclasses, type: :digraph, rankdir: "LR") do |graph|
         add_association_edges(graph, node_classes)
         add_polymorphic_nodes(graph)
         add_polymorphic_edges(graph)
