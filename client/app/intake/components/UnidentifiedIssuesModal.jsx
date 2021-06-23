@@ -152,8 +152,7 @@ class UnidentifiedIssuesModal extends React.Component {
   }
 
   render() {
-    const { intakeData, onCancel, featureToggles, editPage } = this.props;
-    const { verifyUnidentifiedIssue } = featureToggles;
+    const { intakeData, onCancel, editPage } = this.props;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
 
@@ -173,7 +172,7 @@ class UnidentifiedIssuesModal extends React.Component {
             strongLabel
             value={this.state.notes}
             onChange={this.onNotesChange} />
-          {editPage && verifyUnidentifiedIssue && this.getCheckbox()}
+          {editPage && this.getCheckbox()}
         </Modal>
       </div>
     );

@@ -11,9 +11,6 @@ const updateFromServerFeatures = (state, featureToggles) => {
     covidTimelinessExemption: {
       $set: Boolean(featureToggles.covidTimelinessExemption)
     },
-    verifyUnidentifiedIssue: {
-      $set: Boolean(featureToggles.verifyUnidentifiedIssue)
-    },
     restrictAppealIntakes: {
       $set: Boolean(featureToggles.restrictAppealIntakes)
     },
@@ -40,7 +37,6 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
     {
       useAmaActivationDate: false,
       correctClaimReviews: false,
-      verifyUnidentifiedIssue: false,
       restrictAppealIntakes: false,
       establishFiduciaryEps: false,
       editEpClaimLabels: false,
