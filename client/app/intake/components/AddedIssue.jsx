@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { filter, find } from 'lodash';
 
 import INELIGIBLE_REQUEST_ISSUES from '../../../constants/INELIGIBLE_REQUEST_ISSUES';
+import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
 import COPY from '../../../COPY';
 
 import { legacyIssue } from '../util/issues';
@@ -82,6 +83,7 @@ class AddedIssue extends React.PureComponent {
 
   render() {
     const { issue, issueIdx, legacyAppeals } = this.props;
+
     let eligibleState = {
       errorMsg: '',
       cssKlasses: ['issue-desc']
@@ -114,6 +116,7 @@ class AddedIssue extends React.PureComponent {
             <em>(Originally: {issue.text})</em>
           </div>
         )}
+        {issue.benefitType && <span className="issue-date">Benefit type: {BENEFIT_TYPES[issue.benefitType]}</span>}
         {issue.date && <span className="issue-date">Decision date: {formatDateStr(issue.date)}</span>}
         {issue.notes && <span className="issue-notes">Notes:&nbsp;{issue.notes}</span>}
         {issue.untimelyExemptionNotes && (
@@ -141,6 +144,7 @@ AddedIssue.propTypes = {
   formType: PropTypes.string.isRequired,
   issue: PropTypes.shape({
     beforeAma: PropTypes.bool,
+    benefitType: PropTypes.string,
     correctionType: PropTypes.string,
     date: PropTypes.string,
     decisionReviewTitle: PropTypes.string,

@@ -3,7 +3,11 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
 
-import { SubstituteAppellantBasicsForm } from 'app/queue/substituteAppellant/basics/SubstituteAppellantBasicsForm';
+import {
+  SubstituteAppellantBasicsForm,
+  subDateMinErrorMsg,
+} from 'app/queue/substituteAppellant/basics/SubstituteAppellantBasicsForm';
+import { add, format, parseISO, sub } from 'date-fns';
 
 const relationships = [
   { value: '123456', displayText: 'John Doe, Spouse' },
@@ -18,6 +22,8 @@ describe('SubstituteAppellantBasicsForm', () => {
     onCancel,
     onSubmit,
     relationships,
+    nodDate: '2021-05-15',
+    dateOfDeath: '2021-06-01',
   };
 
   const setup = (props) =>
@@ -68,6 +74,54 @@ describe('SubstituteAppellantBasicsForm', () => {
         });
       });
 
+      it('requires substitution date to be after NOD date', async () => {
+        setup();
+
+        const subDateInput = screen.getByLabelText(
+          /when was substitution granted/i
+        );
+        const invalidDate = format(add(parseISO(defaults.nodDate), { days: 5 }), 'yyyy-MM-dd');
+
+        // Enter date
+        fireEvent.change(subDateInput, { target: { value: invalidDate } });
+
+        const submit = screen.getByRole('button', { name: /continue/i });
+
+        // Submit to trigger validation
+        await userEvent.click(submit);
+
+        expect(onSubmit).not.toHaveBeenCalled();
+
+        await waitFor(() => {
+          expect(screen.getByText(subDateMinErrorMsg)).toBeInTheDocument();
+        });
+      });
+
+      it('requires substitution date to be after date of death', async () => {
+        const earlierDateOfDeath = format(sub(parseISO(defaults.nodDate), { days: 10 }), 'yyyy-MM-dd');
+
+        setup({ dateOfDeath: earlierDateOfDeath });
+
+        const subDateInput = screen.getByLabelText(
+          /when was substitution granted/i
+        );
+        const invalidDate = format(add(parseISO(earlierDateOfDeath), { days: 5 }), 'yyyy-MM-dd');
+
+        // Enter date
+        fireEvent.change(subDateInput, { target: { value: invalidDate } });
+
+        const submit = screen.getByRole('button', { name: /continue/i });
+
+        // Submit to trigger validation
+        await userEvent.click(submit);
+
+        expect(onSubmit).not.toHaveBeenCalled();
+
+        await waitFor(() => {
+          expect(screen.getByText(subDateMinErrorMsg)).toBeInTheDocument();
+        });
+      });
+
       it('requires selection of existing relationship', async () => {
         setup();
 
@@ -88,7 +142,7 @@ describe('SubstituteAppellantBasicsForm', () => {
 
   describe('with existing form data', () => {
     const existingValues = {
-      substitutionDate: '2021-02-15',
+      substitutionDate: '2021-06-15',
       participantId: relationships[1].value,
     };
 

@@ -21,7 +21,6 @@ class ExplainController < ApplicationController
         format.json { render json: sanitized_json }
       end
     rescue StandardError => error
-      # binding.pry
       raise error.full_message
     end
   end
@@ -35,6 +34,10 @@ class ExplainController < ApplicationController
                 :event_table_data, :appeal_object_id,
                 :timeline_data,
                 :sje
+
+  def appeal_object_id
+    @appeal_object_id ||= "#{appeal.class.name}_#{appeal.id}"
+  end
 
   def explain_as_text
     [

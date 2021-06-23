@@ -85,7 +85,11 @@ class Docket
   private
 
   def docket_appeals
-    Appeal.where(docket_type: docket_type).extending(Scopes)
+    Appeal.joins(:claimants)
+      .joins("left join unrecognized_appellants on claimants.id = unrecognized_appellants.claimant_id")
+      .where(docket_type: docket_type)
+      .where("unrecognized_appellants.id is null")
+      .extending(Scopes)
   end
 
   def assign_judge_tasks_for_appeals(appeals, judge)

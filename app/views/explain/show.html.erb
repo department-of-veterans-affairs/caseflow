@@ -5,8 +5,8 @@
 <div style="font-size:0.875em; padding:10px">
   <h2>Appeal Narrative</h2>
   <details>
-    <summary style="color: purple">Narrative table</summary>
-    <table style="width: 100%;">
+    <summary id="narrative_table" style="color: purple">Narrative table</summary>
+    <table id="events_table" style="width: 100%;">
       <tr>
         <th>timestamp</th>
         <th>category</th>
@@ -17,22 +17,22 @@
       </tr>
       <% event_table_data.each do |event| %>
         <tr class="<%=event["category"]+'_'+event['event_type']%> <%=event["category"]%>">
-          <td style="padding: 2px"><%=
+          <td style="padding: 2px" class="timestamp"><%=
             if event["category"] == "clock"
               event["timestamp"]
             else
-              DateTime.parse(event["timestamp"]).strftime("%F %T") rescue event["timestamp"]
+              DateTime.parse(event["timestamp"]).strftime("%F %T.%L") rescue event["timestamp"]
             end
           %></td>
-          <td style="padding: 2px"><%= event["category"] %></td>
-          <td style="padding: 2px"><%= event["event_type"] %></td>
-          <td style="padding: 2px">
+          <td style="padding: 2px" class="category"><%= event["category"] %></td>
+          <td style="padding: 2px" class="event_type"><%= event["event_type"] %></td>
+          <td style="padding: 2px" class="narrative">
             <% if event["comment"] %>
               <%= event["comment"] %><br/>
             <% end %>
             <i>(<%= event["object_id"] %>)</i>
           </td>
-          <td style="padding: 2px; font-size:0.8em">
+          <td style="padding: 2px; font-size:0.8em" class="rel_data">
             <% if event["context_id"] != appeal_object_id && event["category"] != "clock" %>
               <i>context: <%= event["context_id"] %></i>
             <% end %>
@@ -42,7 +42,7 @@
               %></pre>
             <% end %>
           </td>
-          <td style="padding: 2px"><%= event["details"]&.size %></td>
+          <td style="padding: 2px" class="details"><%= event["details"]&.size %></td>
         </tr>
       <% end %>
     </table>

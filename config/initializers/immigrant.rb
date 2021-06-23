@@ -27,10 +27,6 @@ Immigrant.ignore_keys = [
   { from_table: "remand_reasons", column: "decision_issue_id" },
   { from_table: "certification_cancellations", column: "certification_id" },
 
-  # Asked Tango: https://dsva.slack.com/archives/C3EAF3Q15/p1619720929484500
-  { from_table: "hearing_appeal_stream_snapshots", column: "appeal_id" },
-  { from_table: "hearing_appeal_stream_snapshots", column: "hearing_id" },
-
   # The documents table is extremely large -- investigate these later
   { from_table: "annotations", column: "document_id" },
   { from_table: "document_views", column: "document_id" },
