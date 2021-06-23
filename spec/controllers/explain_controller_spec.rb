@@ -88,7 +88,7 @@ describe ExplainController, :all_dbs, type: :controller do
 
         # hearing render output
         sched_hearing_task_id = appeal.tasks.of_type(:ScheduleHearingTask).first.id
-        expect(response.body).to include "Unscheduled Hearing  (SCH Task ID: #{sched_hearing_task_id}"
+        expect(response.body).to include "Unscheduled Hearing (SCH Task ID: #{sched_hearing_task_id}"
       end
     end
 
