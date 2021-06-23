@@ -194,13 +194,6 @@ namespace :doc do
     end
   end
 
-  namespace :participant_id do
-    desc "Generate ERD for records with participant_id fields"
-    task erd: :prepare do
-      # To-do: create ERD for relationships involving participant_ids
-    end
-  end
-
   desc "Generate documentation for db schema"
-  task schema: ["csv:schema", "belongs_to:erd", "participant_id:erd"]
+  task schema: ["csv:schema", "belongs_to:erd"]
 end
