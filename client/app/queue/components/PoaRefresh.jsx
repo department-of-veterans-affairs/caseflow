@@ -41,7 +41,7 @@ export const PoaRefresh = ({ powerOfAttorney, appealId }) => {
         {poaSyncInfo.poaSyncDate &&
           <em>{lastSyncedCopy}</em>
         }
-        <PoaRefreshButton appealId={appealId}} />
+        <PoaRefreshButton appealId={appealId} />
       </div>
     </div>
     }
