@@ -87,7 +87,6 @@ export const SelectClaimant = (props) => {
 
   const {
     attorneyFees,
-    establishFiduciaryEps,
     deceasedAppellants,
     nonVeteranClaimants,
   } = featureToggles;
@@ -116,18 +115,14 @@ export const SelectClaimant = (props) => {
     ];
   }, [newClaimant, relationships, enableAddClaimant]);
 
-  const allowFiduciary = useMemo(
-    () => establishFiduciaryEps && benefitType === 'fiduciary',
-    [benefitType, establishFiduciaryEps]
-  );
   const shouldShowPayeeCode = useMemo(() => {
     return (
       !isAppeal &&
       (benefitType === 'compensation' ||
         benefitType === 'pension' ||
-        allowFiduciary)
+        benefitType === 'fiduciary')
     );
-  }, [formType, benefitType, allowFiduciary]);
+  }, [formType, benefitType]);
 
   const handleVeteranIsNotClaimantChange = (value) => {
     const boolValue = convertStringToBoolean(value);
@@ -339,7 +334,6 @@ SelectClaimant.propTypes = {
   benefitType: PropTypes.string,
   featureToggles: PropTypes.shape({
     attorneyFees: PropTypes.bool,
-    establishFiduciaryEps: PropTypes.bool,
     deceasedAppellants: PropTypes.bool,
     nonVeteranClaimants: PropTypes.bool,
   }),
