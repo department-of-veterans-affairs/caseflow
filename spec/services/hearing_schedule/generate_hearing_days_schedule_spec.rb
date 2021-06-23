@@ -447,6 +447,16 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
 
       let(:ro_schedule_period) { create(:real_ro_schedule_period) }
       let(:day_counts_and_summary_per_ro) do
+        create(:travel_board_schedule,
+               tbyear: "2021",
+               tbro: "RO17",
+               tbstdate: Date.parse("2021-06-01"),
+               tbenddate: Date.parse("2021-06-02"))
+        create(:travel_board_schedule,
+               tbyear: "2021",
+               tbro: "RO17",
+               tbstdate: Date.parse("2021-05-26"),
+               tbenddate: Date.parse("2021-05-27"))
         displayed_hearing_days = ro_schedule_period.algorithm_assignments
         condensed_hearing_days = condense_hearing_days(displayed_hearing_days)
         summarize_condensed_hearing_days(condensed_hearing_days)[0]
