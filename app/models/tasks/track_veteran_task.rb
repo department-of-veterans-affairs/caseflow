@@ -57,14 +57,14 @@ class TrackVeteranTask < Task
     fresh_representatives = appeal.representatives
     new_representatives = fresh_representatives - cached_representatives
 
-    dist_task = appeal.tasks.open.find_by(type: :DistributionTask)
-
     # Create a TrackVeteranTask for each VSO that does not already have one.
     new_representatives.each do |new_vso|
       TrackVeteranTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: new_vso)
       new_task_count += 1
 
       next unless appeal.is_a?(Appeal) && new_vso.should_write_ihp?(appeal)
+      # If there's an open Distribution task, that should be the first choice since the case hasn't been distributed yet.
+      dist_task = appeal.tasks.open.find_by(type: :DistributionTask)
 
       InformalHearingPresentationTask.create!(
         appeal: appeal, parent: dist_task || appeal.root_task, assigned_to: new_vso
