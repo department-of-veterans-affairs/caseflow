@@ -12,9 +12,7 @@ describe JudgeTask, :all_dbs do
   end
 
   describe "no_multiples_of_open_task_type" do
-    let(:user) { judge }
-    let(:stream_type) { Constants.AMA_STREAM_TYPES.original }
-    let(:appeal) { create(:appeal, stream_type: stream_type) }
+    let(:appeal) { create(:appeal) }
     let!(:first_assign_task) do
       create(:ama_judge_assign_task, assigned_to: judge, appeal: appeal)
     end

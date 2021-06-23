@@ -927,6 +927,7 @@ describe Appeal, :all_dbs do
     context ".assigned_judge" do
       let(:judge) { create(:user) }
       let(:judge2) { create(:user) }
+      let(:judge3) { create(:user) }
       let(:appeal) { create(:appeal) }
       let!(:task) do
         create(:ama_judge_assign_task, :cancelled, assigned_to: judge,
@@ -936,19 +937,17 @@ describe Appeal, :all_dbs do
       subject { appeal.assigned_judge }
 
       context "with one cancelled task" do
-        it "returns the assigned judge for the most recent non-cancelled JudgeTask" do
+        it "returns the assigned judge for the most recent open JudgeTask" do
           expect(subject).to eq judge2
         end
       end
 
       context "with multiple cancelled tasks" do
-        before(:each) do
-          task2.update(status: Constants.TASK_STATUSES.cancelled)
-        end
-        let!(:task3) { create(:ama_judge_assign_task, assigned_to: judge2, appeal: appeal, created_at: 1.day.ago) }
+        before { task2.cancelled! }
+        let!(:task3) { create(:ama_judge_assign_task, assigned_to: judge3, appeal: appeal, created_at: 1.day.ago) }
 
-        it "should know the right assigned judge" do
-          expect(subject).to eq judge2
+        it "should return the assigned judge for the open task" do
+          expect(subject).to eq judge3
         end
       end
     end

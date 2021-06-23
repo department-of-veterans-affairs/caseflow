@@ -557,7 +557,7 @@ class Task < CaseflowRecord
   # rubocop:disable Metrics/AbcSize
   def reassign(reassign_params, current_user)
     # We do not validate the number of tasks in this scenario because when a
-    # JudgeAssignTask is reassigned, more than one task must exist at the same time.
+    # task is reassigned, more than one open task of the same type must exist during the reassignment.
     Thread.current.thread_variable_set(:skip_duplicate_validation, true)
     replacement = dup.tap do |task|
       begin
