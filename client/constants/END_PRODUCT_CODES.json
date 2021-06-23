@@ -22,6 +22,7 @@
   "040SCNR": "Supplemental Claim Nonrating",
   "040SCNRPMC": "PMC Supplemental Claim Non-Rating",
   "040SCR": "Supplemental Claim Rating",
+  "040SCRGTY": "Supplemental Claim Rating > Year",
   "040SCRPMC": "PMC Supplemental Claim Rating",
   "030HLRFID": "FID-Higher Level Review",
   "040SCRFID": "FID-Supplemental Claim Review",
