@@ -1,5 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
+import { getByText } from '@testing-library/dom';
 import { axe } from 'jest-axe';
 
 import AutoSave from 'app/components/AutoSave';
@@ -30,6 +31,32 @@ describe('AutoSave', () => {
       const results = await axe(container);
 
       expect(results).toHaveNoViolations();
+    });
+
+    it('shows the saving text', () => {
+      const { container } = setup();
+
+      const text = getByText(container, 'Saving...');
+
+      expect(text).toBeTruthy();
+    });
+
+    it('shows failure and retry button', () => {
+      const { container } = setup({ isSaving: false, saveFailed: true });
+
+      const text = getByText(container, 'Unable to save.', { exact: false });
+      const retryButton = getByText(container, 'RETRY');
+
+      expect(text).toBeTruthy();
+      expect(retryButton).toBeTruthy();
+    });
+
+    it('shows success message', () => {
+      const { container } = setup({ isSaving: false, saveFailed: false });
+
+      const text = getByText(container, 'Last saved at', { exact: false });
+
+      expect(text).toBeTruthy();
     });
   });
 
