@@ -296,7 +296,7 @@ describe Claimant, :postgres do
         let(:benefit_type) { "fiduciary" }
 
         it "allows blank value" do
-          expect(subject).to be_valid
+          expect(subject).to_not be_valid
           expect(subject.errors.messages[:payee_code]).to eq []
         end
       end
