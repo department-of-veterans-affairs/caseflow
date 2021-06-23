@@ -62,24 +62,28 @@ class AppealsController < ApplicationController
   end
 
   def update_power_of_attorney
-    clear_poa_not_found_cache
-
-    if cooldown_period_remaining > 0
-      message = "Information is current at this time. Please try again in #{cooldown_period_remaining} minutes"
+    begin
+      clear_poa_not_found_cache
+      if cooldown_period_remaining > 0
+        render json: {
+          alert_type: "info",
+          message: "Information is current at this time. Please try again in #{cooldown_period_remaining} minutes",
+          power_of_attorney: power_of_attorney_data
+        }
+      else
+        message, result = appeal.bgs_power_of_attorney&.update_or_delete!
+        render json: {
+          alert_type: message,
+          message: result,
+          power_of_attorney: power_of_attorney_data
+        }
+      end
+    rescue StandardError => error
+      Raven.capture_exception(error, extra: { appeal_type: appeal.type, appeal_id: appeal.id })
       render json: {
-        status: "info",
-        message: message,
-        power_of_attorney: power_of_attorney_data
-      }
-      return
-    end
-
-    if appeal.is_a?(Appeal)
-      poa = BgsPowerOfAttorney.find(params[:poaId])
-      render json: update_ama_poa(poa)
-    else
-      poa = appeal.power_of_attorney
-      render json: update_legacy_poa(poa)
+        alert_type: "error",
+        message: "Something went wrong"
+      }, status: :unprocessable_entity
     end
   end
 
@@ -270,45 +274,6 @@ class AppealsController < ApplicationController
       poa_data[:representative_id] = appeal.power_of_attorney&.bgs_id if appeal.is_a?(LegacyAppeal)
     end
     poa_data
-  end
-
-  def update_ama_poa(poa)
-    begin
-      claimant = if appeal.claimant.is_a?(Hash)
-                   BgsPowerOfAttorney.find_or_fetch_by(participant_id: claimant.dig(:representative, :participant_id))
-                 else
-                   appeal.claimant
-                 end
-      message, result = poa.update_or_delete(claimant)
-      {
-        status: "success",
-        message: message,
-        power_of_attorney: (result == "updated") ? power_of_attorney_data : {}
-      }
-    rescue ActiveRecord::RecordNotUnique
-      {
-        status: "error",
-        message: "Something went wrong"
-      }
-    end
-  end
-
-  def update_legacy_poa(poa)
-    begin
-      bgs_poa = BgsPowerOfAttorney.find_or_create_by_file_number(poa.file_number)
-      message, result = bgs_poa.update_or_delete(appeal.claimant)
-      appeal.power_of_attorney.clear_bgs_power_of_attorney!
-      {
-        status: "success",
-        message: message,
-        power_of_attorney: (result == "updated") ? power_of_attorney_data : {}
-      }
-    rescue ActiveRecord::RecordNotUnique
-      {
-        status: "error",
-        message: "Something went wrong"
-      }
-    end
   end
 
   def clear_poa_not_found_cache

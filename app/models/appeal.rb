@@ -390,6 +390,10 @@ class Appeal < DecisionReview
     claimant&.power_of_attorney
   end
 
+  def bgs_power_of_attorney
+    return if 
+  end
+
   delegate :representative_name,
            :representative_type,
            :representative_address,

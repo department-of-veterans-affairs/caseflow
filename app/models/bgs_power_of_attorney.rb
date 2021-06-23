@@ -7,6 +7,7 @@ class BgsPowerOfAttorney < CaseflowRecord
   class BgsPOANotFound < StandardError; end
 
   has_many :claimants, primary_key: :claimant_participant_id, foreign_key: :participant_id
+  has_one :representative, primary_key: :poa_participant_id, foreign_key: :participant_id
 
   CACHED_BGS_ATTRIBUTES = [
     :representative_name,
@@ -15,8 +16,8 @@ class BgsPowerOfAttorney < CaseflowRecord
     :authzn_poa_access_ind,
     :legacy_poa_cd,
     :poa_participant_id,
-    :claimant_participant_id,
-    :file_number
+    :claimant_participant_id, # Should this be included the cached attributes?
+    :file_number # Should this be included the cached attributes?
   ].freeze
 
   validates :claimant_participant_id,
@@ -121,10 +122,12 @@ class BgsPowerOfAttorney < CaseflowRecord
 
   alias participant_id poa_participant_id
 
+  # How does it work that this is both an attribute and a method?
   def claimant_participant_id
     cached_or_fetched_from_bgs(attr_name: :claimant_participant_id)
   end
 
+  # How does it work that this is both an attribute and a method?
   def file_number
     cached_or_fetched_from_bgs(attr_name: :file_number)
   end
@@ -168,14 +171,9 @@ class BgsPowerOfAttorney < CaseflowRecord
     last_synced_at && last_synced_at < 16.hours.ago
   end
 
-  def update_or_delete(claimant)
-    # If the BGS Power of Attorney record is not found, destroy it.
+  def update_or_delete!
     if bgs_record == :not_found
       destroy!
-      # If the claimaint's power of attorney record is also not found, destroy it.
-      if !claimant.is_a?(Hash) && claimant.power_of_attorney&.bgs_record == :not_found
-        claimant.power_of_attorney.destroy!
-      end
       ["Successfully refreshed. No power of attorney information was found at this time.", "deleted"]
     else
       save_with_updated_bgs_record!

@@ -55,6 +55,10 @@ class Claimant < CaseflowRecord
     @power_of_attorney ||= find_power_of_attorney
   end
 
+  def bgs_power_of_attorney
+    # noop except on BgsRelatedClaimants
+  end
+
   def should_delete_power_of_attorney?
     return true if power_of_attorney && power_of_attorney.bgs_record == :not_found
 
@@ -69,12 +73,11 @@ class Claimant < CaseflowRecord
     @person ||= Person.find_or_create_by_participant_id(participant_id)
   end
 
-  private
-
-  # to be overridden by any subclasses if a different approach is preferable
   def find_power_of_attorney
-    BgsPowerOfAttorney.find_or_fetch_by(participant_id: participant_id)
+    # noop except on BgsRelatedClaimants
   end
+
+  private
 
   def bgs_address_service
     @bgs_address_service ||= BgsAddressService.new(participant_id: participant_id)

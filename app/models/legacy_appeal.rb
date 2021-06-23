@@ -347,6 +347,10 @@ class LegacyAppeal < CaseflowRecord
     end
   end
 
+  def bgs_power_of_attorney
+    power_of_attorney&.bgs_power_of_attorney
+  end
+
   ## BEGIN Hearing specific attributes and methods
 
   attr_writer :hearings
