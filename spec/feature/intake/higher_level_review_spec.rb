@@ -120,7 +120,8 @@ feature "Higher-Level Review", :all_dbs do
     expect(page).to have_content("Please select the claimant listed on the form.")
 
     # We do not need to select payee codes for fiduciaries
-    expect(page).to_not have_content("What is the payee code for this claimant?")
+    # expect(page).to_not have_content("What is the payee code for this claimant?")
+    # This test was written 3 years ago, before Fiduciary Claim Reviews got an EP established in VBMS
 
     # Switch the benefit type to compensation to test choosing the payee code.
     within_fieldset("What is the Benefit Type?") do
