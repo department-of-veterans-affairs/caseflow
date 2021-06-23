@@ -86,9 +86,8 @@ class LegacyAppeal < CaseflowRecord
            :email_address, to: :veteran, prefix: true, allow_nil: true
 
   # NOTE: we cannot currently match end products to a specific appeal.
-  delegate :end_products,
-           to: :veteran,
-           allow_nil: true
+  delegate :end_products, to: :veteran, allow_nil: true
+  delegate :bgs_power_of_attorney, to: :power_of_attorney, allow_nil: true
 
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
@@ -341,10 +340,6 @@ class LegacyAppeal < CaseflowRecord
         representative: VACOLS::Representative.appellant_representative(vacols_id)
       )
     end
-  end
-
-  def bgs_power_of_attorney
-    power_of_attorney&.bgs_power_of_attorney
   end
 
   ## BEGIN Hearing specific attributes and methods

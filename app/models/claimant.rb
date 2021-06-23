@@ -55,10 +55,6 @@ class Claimant < CaseflowRecord
     @power_of_attorney ||= find_power_of_attorney
   end
 
-  def bgs_power_of_attorney
-    # noop except on BgsRelatedClaimants
-  end
-
   def should_delete_power_of_attorney?
     return true if power_of_attorney && power_of_attorney.bgs_record == :not_found
 

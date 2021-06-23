@@ -60,7 +60,6 @@ class Appeal < DecisionReview
            :representative_email_address,
            :poa_last_synced_at,
            :update_cached_attributes!,
-           :bgs_power_of_attorney,
            :save_with_updated_bgs_record!,
            to: :power_of_attorney, allow_nil: true
 
@@ -391,6 +390,10 @@ class Appeal < DecisionReview
     }
 
     issues_report
+  end
+
+  def bgs_power_of_attorney
+    claimant&.is_a?(BgsRelatedClaimant) ? power_of_attorney : nil
   end
 
   # Note: Currently Caseflow only supports one claimant per decision review

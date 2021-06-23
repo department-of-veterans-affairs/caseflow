@@ -22,10 +22,6 @@ class BgsRelatedClaimant < Claimant
     @bgs_record ||= try_and_retry_bgs_record
   end
 
-  def bgs_power_of_attorney
-    power_of_attorney
-  end
-
   def find_power_of_attorney
     BgsPowerOfAttorney.find_or_fetch_by(participant_id: participant_id)
   end
