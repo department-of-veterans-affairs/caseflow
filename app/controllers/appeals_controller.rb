@@ -73,17 +73,13 @@ class AppealsController < ApplicationController
       else
         message, result = update_or_delete_power_of_attorney!
         render json: {
-          alert_type: message,
-          message: result,
+          alert_type: result,
+          message: message,
           power_of_attorney: power_of_attorney_data
         }
       end
     rescue StandardError => error
-      Raven.capture_exception(error, extra: { appeal_type: appeal.type, appeal_id: appeal.id })
-      render json: {
-        alert_type: "error",
-        message: "Something went wrong"
-      }, status: :unprocessable_entity
+      render_error(error)
     end
   end
 
@@ -263,7 +259,7 @@ class AppealsController < ApplicationController
   def update_or_delete_power_of_attorney!
     poa = appeal.bgs_power_of_attorney
 
-    if poa.empty?
+    if poa.blank?
       ["Successfully refreshed. No power of attorney information was found at this time.", "not found"]
     elsif poa&.bgs_record == :not_found
       poa.destroy!
@@ -297,5 +293,15 @@ class AppealsController < ApplicationController
     end
 
     0
+  end
+
+  def render_error(error)
+    Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
+    Raven.capture_exception(error, extra: { error_uuid: error_uuid })
+    Raven.capture_exception(error, extra: { appeal_type: appeal.type, appeal_id: appeal.id })
+    render json: {
+      alert_type: "error",
+      message: "Something went wrong"
+    }, status: :unprocessable_entity
   end
 end
