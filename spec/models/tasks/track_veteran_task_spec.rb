@@ -80,7 +80,7 @@ describe TrackVeteranTask, :postgres do
 
       context "When there's an open Distribution Task" do
         let!(:dist_task) { create(:distribution_task, appeal: appeal) }
-        fit "IHP Task is a child of the Distribution Task" do
+        it "IHP Task is a child of the Distribution Task" do
           subject
           new_ihp_task = InformalHearingPresentationTask.find_by(assigned_to: new_vso)
           expect(dist_task.status).to eq("on_hold")

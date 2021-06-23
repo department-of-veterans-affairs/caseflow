@@ -75,7 +75,7 @@ describe InformalHearingPresentationTask, :postgres do
   end
 
   describe ".when poa is updated" do
-    let(:old_poa) { create(:vso, name: "Old POA") } 
+    let(:old_poa) { create(:vso, name: "Old POA") }
     let(:appeal) do
       create(:appeal, veteran: create(:veteran)) do |appeal|
         create(
