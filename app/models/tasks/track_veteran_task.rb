@@ -57,7 +57,7 @@ class TrackVeteranTask < Task
     fresh_representatives = appeal.representatives
     new_representatives = fresh_representatives - cached_representatives
 
-    dist_task = appeal.tasks.open.where(type: :DistributionTask).first
+    dist_task = appeal.tasks.open.find_by(type: :DistributionTask)
 
     # Create a TrackVeteranTask for each VSO that does not already have one.
     new_representatives.each do |new_vso|
