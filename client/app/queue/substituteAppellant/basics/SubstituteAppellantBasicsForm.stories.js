@@ -1,4 +1,5 @@
 import React from 'react';
+import { format, sub } from 'date-fns';
 
 import { SubstituteAppellantBasicsForm } from './SubstituteAppellantBasicsForm';
 
@@ -14,6 +15,8 @@ export default {
   parameters: {},
   args: {
     relationships,
+    nodDate: format(sub(new Date(), { months: 1 }), 'yyyy-MM-dd'),
+    dateOfDeath: format(sub(new Date(), { days: 15 }), 'yyyy-MM-dd'),
   },
   argTypes: {
     onCancel: { action: 'cancel' },
