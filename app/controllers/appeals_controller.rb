@@ -297,7 +297,6 @@ class AppealsController < ApplicationController
 
   def render_error(error)
     Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
-    Raven.capture_exception(error, extra: { error_uuid: error_uuid })
     Raven.capture_exception(error, extra: { appeal_type: appeal.type, appeal_id: appeal.id })
     render json: {
       alert_type: "error",
