@@ -63,7 +63,9 @@ class TrackVeteranTask < Task
       new_task_count += 1
 
       next unless appeal.is_a?(Appeal) && new_vso.should_write_ihp?(appeal)
-      # If there's an open Distribution task, that should be the first choice since the case hasn't been distributed yet.
+
+      # If there's an open Distribution task:
+      # That should be the first choice since the case hasn't been distributed yet.
       dist_task = appeal.tasks.open.find_by(type: :DistributionTask)
 
       InformalHearingPresentationTask.create!(
