@@ -2,6 +2,7 @@
 
 require "helpers/sanitized_json_configuration.rb"
 require "helpers/sanitized_json_exporter.rb"
+require "helpers/sanitized_json_importer.rb"
 require "helpers/intake_renderer.rb"
 
 RSpec.feature "Explain JSON" do
@@ -23,6 +24,7 @@ RSpec.feature "Explain JSON" do
       user: create(:user),
       detail: appeal,
       veteran_file_number: veteran.file_number,
+      started_at: 2.days.ago,
       completed_at: 1.day.ago
     )
   end
@@ -84,5 +86,20 @@ RSpec.feature "Explain JSON" do
   scenario "admin visits explain page for appellant_substitution CAVC-remanded appeal" do
     visit "explain/appeals/#{appellant_substitution.target_appeal.uuid}"
     expect(page).to have_content("Appeal.find(#{appellant_substitution.target_appeal.id})")
+  end
+
+  context "for a realistic appeal" do
+    let(:json_filename) { "appeal-21430.json" }
+    let(:real_appeal) do
+      sji = SanitizedJsonImporter.from_file("spec/records/#{json_filename}", verbosity: 0)
+      sji.import
+      sji.imported_records[Appeal.table_name].first
+    end
+    it "present realistic appeal events" do
+      visit "explain/appeals/#{real_appeal.uuid}"
+      page.find("#narrative_table").click
+      task = real_appeal.tasks.sample
+      expect(page).to have_content("#{task.type}_#{task.id}")
+    end
   end
 end

@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
+import { reject, map } from 'lodash';
 import RadioField from '../../components/RadioField';
 import ReceiptDateInput from './receiptDateInput';
 import { setDocketType } from '../actions/appeal';
-import { setReceiptDate } from '../actions/intake';
+import { setReceiptDate, setOptionSelected } from '../actions/intake';
+import { setAppealDocket, confirmIneligibleForm } from '../actions/rampRefiling';
+import { toggleIneligibleError, convertStringToBoolean } from '../util';
 import LegacyOptInApproved from '../components/LegacyOptInApproved';
 import {
   setVeteranIsNotClaimant,
@@ -19,9 +22,12 @@ import { bindActionCreators } from 'redux';
 import { getIntakeStatus } from '../selectors';
 import SelectClaimant from '../components/SelectClaimant';
 import BenefitType from '../components/BenefitType';
-import { BOOLEAN_RADIO_OPTIONS, INTAKE_STATES, PAGE_PATHS, VBMS_BENEFIT_TYPES } from '../constants';
-import { convertStringToBoolean } from '../util';
+import { BOOLEAN_RADIO_OPTIONS, FORM_TYPES, INTAKE_STATES, PAGE_PATHS,
+  REQUEST_STATE, REVIEW_OPTIONS, VBMS_BENEFIT_TYPES } from '../constants';
 import ErrorAlert from '../components/ErrorAlert';
+import COPY from '../../../COPY';
+import Alert from '../../components/Alert';
+import Button from '../../components/Button';
 
 const docketTypeRadioOptions = [
   { value: 'direct_review',
@@ -31,6 +37,18 @@ const docketTypeRadioOptions = [
   { value: 'hearing',
     displayText: 'Hearing' }
 ];
+
+const rampElectionReviewOptions = reject(REVIEW_OPTIONS, REVIEW_OPTIONS.APPEAL);
+
+const rampRefilingRadioOptions = map(REVIEW_OPTIONS, (option) => ({
+  value: option.key,
+  displayText: option.name
+}));
+
+const rampElectionRadioOptions = map(rampElectionReviewOptions, (option) => ({
+  value: option.key,
+  displayText: option.name
+}));
 
 const formFieldMapping = (props) => {
   return ({
@@ -91,7 +109,32 @@ const formFieldMapping = (props) => {
       // eslint-disable-next-line no-undefined
       value={props.sameOffice === null || props.sameOffice === undefined ? null : props.sameOffice.toString()}
       inputRef={props.register}
-    />
+    />,
+    'opt-in-election': <Fragment>
+      <RadioField
+        name="opt-in-election"
+        label="Which review lane did the Veteran select?"
+        strongLabel
+        options={props.formName === FORM_TYPES.RAMP_REFILING.formName ?
+          rampRefilingRadioOptions : rampElectionRadioOptions}
+        onChange={props.setOptionSelected}
+        errorMessage={props.optionSelectedError || props.errors?.['opt-in-election']?.message}
+        value={props.optionSelected}
+        inputRef={props.register}
+      />
+      { props.optionSelected === REVIEW_OPTIONS.APPEAL.key &&
+        <RadioField
+          name="appeal-docket"
+          label="Which type of appeal did the Veteran request?"
+          strongLabel
+          options={docketTypeRadioOptions}
+          onChange={props.setAppealDocket}
+          errorMessage={props.appealDocketError || props.errors?.['appeal-docket']?.message}
+          value={props.appealDocket}
+          inputRef={props.register}
+        />
+      }
+    </Fragment>
   });
 };
 
@@ -104,6 +147,10 @@ const FormGenerator = (props) => {
   default:
   }
 
+  const beginNextIntake = () => {
+    props.confirmIneligibleForm(props.intakeId);
+  };
+
   const showInvalidVeteranError = !props.veteranValid && VBMS_BENEFIT_TYPES.includes(props.benefitType);
 
   return (
@@ -111,6 +158,20 @@ const FormGenerator = (props) => {
       <h1>
         {props.formHeader(props.veteranName)}
       </h1>
+
+      { toggleIneligibleError(props.hasInvalidOption, props.optionSelected) &&
+        <Alert title="Ineligible for Higher-Level Review" type="error" >
+          {COPY.INELIGIBLE_HIGHER_LEVEL_REVIEW_ALERT} <br />
+          <Button
+            name="begin-next-intake"
+            onClick={beginNextIntake}
+            loading={props.requestState === REQUEST_STATE.IN_PROGRESS}
+            type="button"
+          >
+            Begin next intake
+          </Button>
+        </Alert>
+      }
 
       { props.reviewIntakeError && <ErrorAlert {...props.reviewIntakeError} /> }
       { showInvalidVeteranError && <ErrorAlert errorCode="veteran_not_valid" errorData={props.veteranInvalidFields} /> }
@@ -164,29 +225,41 @@ FormGenerator.propTypes = {
   veteranValid: PropTypes.bool,
   veteranInvalidFields: PropTypes.object,
   benefitType: PropTypes.string,
+  confirmIneligibleForm: PropTypes.string,
+  hasInvalidOption: PropTypes.string,
+  optionSelected: PropTypes.string,
+  requestState: PropTypes.string,
   register: PropTypes.func,
-  errors: PropTypes.array
+  errors: PropTypes.array,
+  intakeId: PropTypes.string
 };
 
 export default connect(
   (state, props) => ({
     veteranName: state.intake.veteran.name,
+    intakeId: state.intake.id,
     intakeStatus: getIntakeStatus(state),
     receiptDate: state[props.formName].receiptDate,
     receiptDateError: state[props.formName].receiptDateError,
     docketType: state[props.formName].docketType,
     docketTypeError: state[props.formName].docketTypeError,
     legacyOptInApproved: state[props.formName].legacyOptInApproved,
+    legacyOptInApprovedError: state[props.formName].legacyOptInApprovedError,
     benefitType: state[props.formName].benefitType,
     benefitTypeError: state[props.formName].benefitTypeError,
-    legacyOptInApprovedError: state[props.formName].legacyOptInApprovedError,
     informalConference: state[props.formName].informalConference,
     informalConferenceError: state[props.formName].informalConferenceError,
+    optionSelected: state[props.formName].optionSelected,
+    optionSelectedError: state[props.formName].optionSelectedError,
     sameOffice: state[props.formName].sameOffice,
     sameOfficeError: state[props.formName].sameOfficeError,
+    appealDocket: state[props.formName].appealDocket,
+    appealDocketError: state[props.formName].appealDocketError,
     reviewIntakeError: state[props.formName].requestStatus.reviewIntakeError,
     veteranValid: state[props.formName].veteranValid,
-    veteranInvalidFields: state[props.formName].veteranInvalidFields
+    veteranInvalidFields: state[props.formName].veteranInvalidFields,
+    hasInvalidOption: state[props.formName].hasInvalidOption,
+    confirmIneligibleForm: state[props.formName].confirmIneligibleForm
   }),
   (dispatch) => bindActionCreators({
     setDocketType,
@@ -195,5 +268,8 @@ export default connect(
     setInformalConference,
     setSameOffice,
     setBenefitType,
+    setAppealDocket,
+    confirmIneligibleForm,
+    setOptionSelected
   }, dispatch)
 )(FormGenerator);
