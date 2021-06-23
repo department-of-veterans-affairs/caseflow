@@ -61,7 +61,6 @@ class TrackVeteranTask < Task
 
     # Create a TrackVeteranTask for each VSO that does not already have one.
     new_representatives.each do |new_vso|
-      params = { appeal: appeal, parent: dist_task || appeal.root_task, assigned_to: new_vso }
       TrackVeteranTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: new_vso)
       new_task_count += 1
 
