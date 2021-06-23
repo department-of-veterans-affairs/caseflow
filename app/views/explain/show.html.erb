@@ -21,7 +21,7 @@
             if event["category"] == "clock"
               event["timestamp"]
             else
-              DateTime.parse(event["timestamp"]).strftime("%F %T") rescue event["timestamp"]
+              DateTime.parse(event["timestamp"]).strftime("%F %T.%L") rescue event["timestamp"]
             end
           %></td>
           <td style="padding: 2px" class="category"><%= event["category"] %></td>
