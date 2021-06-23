@@ -5,6 +5,12 @@ module Api
     module DecisionReviews
       module Appeals
         class ContestableIssuesController < BaseContestableIssuesController
+          include ApiV3FeatureToggleConcern
+
+          before_action only: [:index] do
+            api_released?(:api_v3_appeals_contestable_issues)
+          end
+
           private
 
           def standin_decision_review

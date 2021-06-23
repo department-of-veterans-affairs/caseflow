@@ -19,6 +19,8 @@ class VACOLS::CaseHearing < VACOLS::Record
   has_one :folder, foreign_key: :ticknum, primary_key: :folder_nr
   has_one :corres, foreign_key: :stafkey, primary_key: :bfcorkey, class_name: "Correspondent"
 
+  scope :by_dispositions, ->(dispositions) { where(hearing_disp: dispositions) }
+
   HEARING_TYPE_LOOKUP = {
     central: "C",
     travel: "T",
@@ -29,11 +31,17 @@ class VACOLS::CaseHearing < VACOLS::Record
   HEARING_TYPES = HEARING_TYPE_LOOKUP.values.freeze
 
   HEARING_DISPOSITIONS = {
-    H: Constants.HEARING_DISPOSITION_TYPES.held,
     C: Constants.HEARING_DISPOSITION_TYPES.cancelled,
+    H: Constants.HEARING_DISPOSITION_TYPES.held,
+    N: Constants.HEARING_DISPOSITION_TYPES.no_show,
     P: Constants.HEARING_DISPOSITION_TYPES.postponed,
-    N: Constants.HEARING_DISPOSITION_TYPES.no_show
+    E: Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
   }.freeze
+
+  # flip {:H => "held", ...} to {:held => "H", ...}
+  HEARING_DISPOSITION_CODES = HEARING_DISPOSITIONS.each_with_object({}) do |(key, value), obj|
+    obj[value.to_sym] = key.to_s
+  end
 
   HEARING_AODS = {
     G: :granted,
@@ -78,6 +86,7 @@ class VACOLS::CaseHearing < VACOLS::Record
         .where(vdkey: hearing_day_ids)
         .where("hearing_date > ?", Date.new(2019, 1, 1))
         .where.not(folder_nr: nil)
+        .where("hearing_disp != ? or hearing_disp is null", HEARING_DISPOSITION_CODES[:scheduled_in_error])
     end
 
     # Finds all hearings for specific days that are assigned to a judge.
@@ -91,6 +100,7 @@ class VACOLS::CaseHearing < VACOLS::Record
         .where("hearing_date > ?", Date.new(2019, 1, 1))
         .where("staff.sdomainid = #{id}")
         .where.not(folder_nr: nil)
+        .where("hearing_disp != ? or hearing_disp is null", HEARING_DISPOSITION_CODES[:scheduled_in_error])
     end
 
     # Finds all hearings for an appeal.

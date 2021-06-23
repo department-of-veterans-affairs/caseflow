@@ -43,7 +43,6 @@ class DocumentListHeader extends React.Component {
             placeholder="Type to search..."
             value={props.docFilterCriteria.searchQuery}
             size="small"
-            analyticsCategory="Claims Folder"
           />
           <div className="num-of-documents">
             {props.numberOfDocuments} Documents

@@ -4,23 +4,25 @@ import _ from 'lodash';
 
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
 
-export const HearingAppellantName = ({ hearing }) => {
+export const HearingAppellantName = ({ hearing, spacingCharacter }) => {
   let { appellantFirstName, appellantLastName, veteranFirstName, veteranLastName, veteranFileNumber } = hearing;
 
-  let appellantName;
+  const appellantName = appellantFirstName && appellantLastName && `${appellantFirstName} ${appellantLastName}`;
+  const veteranName = veteranFirstName && veteranLastName && `${veteranFirstName} ${veteranLastName}`;
+  const spacer = (appellantName || veteranName) && spacingCharacter;
 
-  if (appellantFirstName && appellantLastName) {
-    appellantName = `${appellantFirstName} ${appellantLastName} | ${veteranFileNumber}`;
-  } else if (veteranFirstName && veteranLastName) {
-    appellantName = `${veteranFirstName} ${veteranLastName} | ${veteranFileNumber}`;
-  } else {
-    appellantName = veteranFileNumber;
-  }
+  return <React.Fragment>{appellantName || veteranName || ''} {spacer} {veteranFileNumber}</React.Fragment>;
+};
 
-  return <React.Fragment>{appellantName}</React.Fragment>;
+HearingAppellantName.defaultProps = {
+  spacingCharacter: '|'
 };
 
 HearingAppellantName.propTypes = {
+  spacingCharacter: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]),
   hearing: PropTypes.shape({
     appellantFirstName: PropTypes.string,
     appellantLastName: PropTypes.string,

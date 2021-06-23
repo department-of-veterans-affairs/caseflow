@@ -1,0 +1,85 @@
+import { Meta, Story, ArgsTable } from '@storybook/addon-docs/blocks';
+
+import * as SearchBarStories from './SearchBar.stories';
+
+import SearchBar from './SearchBar';
+
+<Meta
+  title='Commons/Components/SearchBar'
+  component={SearchBar}
+  parameters={{
+    controls: { expanded: true }
+  }}
+  args={{
+    placeholder: 'Type to search...',
+    size: 'big',
+    spinnerColor: '#fff',
+    submitUsingEnterKey: true
+  }}
+  argTypes={{
+      internalText: { control: 'text' },
+      isSearchAhead: { control: 'boolean' },
+      loading: { control: 'boolean' },
+      placeholder: { control: 'text' },
+      searchDisabled: { control: 'boolean' },
+      size: { control: { type: 'select', options: ['big', 'small'] } },
+      spinnerColor: { control: 'color' },
+      submitUsingEnterKey: { control: 'boolean' },
+      title: { control: 'text' },
+      value: { control: 'text' }
+  }}
+/>
+
+# Search Bar
+
+Search bars are a block that allows users to search for specific content if they know what search terms to use or can’t
+find desired content in the main navigation. In Caseflow they serve as a vital UI component that allows users to find
+information necessary in completing their tasks.
+
+Based on the app there are two sizes: big and small. There is also a unique Caseflow search behavior that displays a
+spinning logo to indicate load times.
+
+## Big
+
+<Story story={SearchBarStories.Big} />
+
+## Small
+
+<Story story={SearchBarStories.Small} />
+
+## Label
+
+Labels can be set with the `title` property.
+
+<Story story={SearchBarStories.Label} />
+
+## Internal Text
+
+Text can be set and shown inside of the search bar with the `internalText` property. This can be used to show extra
+information about the search. Check out [`DocumentSearch#getInternalText`](https://github.com/department-of-veterans-affairs/caseflow/blob/master/client%2Fapp%2Freader%2FDocumentSearch.jsx#L118)
+to see how we change this field dynamically as the user types to display the number of results.
+
+<Story story={SearchBarStories.Internal} />
+
+## Loading
+
+When waiting for async results, it's best practices to display to the user that their request is processing.
+
+<Story story={SearchBarStories.Loading} />
+
+## Search Ahead
+
+For any search ahead search bars, the class `cf-search-ahead-parent` must be applied to the parent element.
+
+<Story story={SearchBarStories.SearchAhead} />
+
+## Callbacks
+
+This example shows best practices for the search button with loading state. Press search to see how the button is
+disabled and shows a loading icon while waiting for results.
+
+<Story story={SearchBarStories.Callbacks} />
+
+## Args
+
+<ArgsTable of={SearchBar} />

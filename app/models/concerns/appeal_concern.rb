@@ -60,11 +60,68 @@ module AppealConcern
     end
   end
 
+  def appellant_tz
+    timezone_identifier_for_address(appellant_address)
+  end
+
+  def representative_tz
+    timezone_identifier_for_address(representative_address)
+  end
+
+  #
+  # This section was added to deal with displaying FNOD information in various places.
+  # Currently, the FNOD information is used by both queue and hearings in:
+  # - FnodBanner.jsx
+  # - FnodBadge.jsx
+  #
+  # veteran_is_not_claimant is implemented differently in Appeal and LegacyAppeal
+  # - Appeal: The result depends on 'veteran_is_not_claimant' field in the caseflow DB
+  # - LegacyAppeal: The result depends on if 'appellant_first_name' exists in VACOLS
+
+  def appellant_is_veteran
+    !veteran_is_not_claimant
+  end
+
+  def veteran_is_deceased
+    veteran_death_date.present?
+  end
+
+  def veteran_appellant_deceased?
+    veteran_is_deceased && appellant_is_veteran
+  end
+
+  def veteran_death_date
+    veteran&.date_of_death
+  end
+
+  def veteran_death_date_reported_at
+    veteran&.date_of_death_reported_at
+  end
+
+  # End FNOD section
+
   private
 
   # TODO: this is named "veteran_name_object" to avoid name collision, refactor
   # the naming of the helper methods.
   def veteran_name_object
     FullName.new(veteran_first_name, veteran_middle_initial, veteran_last_name)
+  end
+
+  def timezone_identifier_for_address(addr)
+    return if addr.blank?
+
+    # Use an address object if this is a hash
+    address_obj = addr.is_a?(Hash) ? Address.new(addr) : addr
+
+    # APO/FPO/DPO addresses do not have time zones so we don't attempt to fetch them.
+    return if address_obj.military_or_diplomatic_address?
+
+    begin
+      TimezoneService.address_to_timezone(address_obj).identifier
+    rescue StandardError => error
+      Raven.capture_exception(error)
+      nil
+    end
   end
 end

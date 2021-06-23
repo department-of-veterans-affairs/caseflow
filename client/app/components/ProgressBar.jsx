@@ -1,35 +1,36 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import ProgressBarSection from './ProgressBarSection';
 
 export default class ProgressBar extends React.Component {
   render() {
-    let {
-      sections
-    } = this.props;
+    const { sections } = this.props;
 
-    let currentSectionIndex = this.props.sections.findIndex(
+    const currentSectionIndex = this.props.sections.findIndex(
       (section) => section.current === true
     );
 
-    return <AppSegment>
-      <div className="cf-progress-bar">
-        {sections.map((section, i) => {
-          if (i <= currentSectionIndex) {
-            section.activated = true;
-          } else {
-            section.activated = false;
-          }
+    return (
+      <div className="cf-app-segment">
+        <div className="cf-progress-bar" role="list">
+          {sections.map((section, i) => {
+            if (i <= currentSectionIndex) {
+              section.activated = true;
+            } else {
+              section.activated = false;
+            }
 
-          return <ProgressBarSection
-            activated={section.activated}
-            key={i}
-            title={section.title}
-          />;
-        })}
+            return (
+              <ProgressBarSection
+                activated={section.activated}
+                key={i}
+                title={section.title}
+              />
+            );
+          })}
+        </div>
       </div>
-    </AppSegment>;
+    );
   }
 }
 
@@ -37,7 +38,7 @@ ProgressBar.propTypes = {
   sections: PropTypes.arrayOf(
     PropTypes.shape({
       activated: PropTypes.bool,
-      title: PropTypes.string
+      title: PropTypes.string,
     })
-  )
+  ),
 };

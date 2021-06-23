@@ -73,7 +73,7 @@ class IntakesController < ApplicationController
 
   def attorneys
     results = AttorneySearch.new(params[:query]).fetch_attorneys.map do |attorney|
-      attorney.as_json.extract!("name", "participant_id")
+      attorney.as_json.extract!("name", "participant_id").merge("address": attorney.address.as_json)
     end
     render json: results
   end
@@ -106,12 +106,14 @@ class IntakesController < ApplicationController
         useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
         rampIntake: FeatureToggle.enabled?(:ramp_intake, user: current_user),
         restrictAppealIntakes: FeatureToggle.enabled?(:restrict_appeal_intakes, user: current_user),
-        editContentionText: FeatureToggle.enabled?(:edit_contention_text, user: current_user),
         unidentifiedIssueDecisionDate: FeatureToggle.enabled?(:unidentified_issue_decision_date, user: current_user),
         covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
         verifyUnidentifiedIssue: FeatureToggle.enabled?(:verify_unidentified_issue, user: current_user),
         attorneyFees: FeatureToggle.enabled?(:attorney_fees, user: current_user),
-        establishFiduciaryEps: FeatureToggle.enabled?(:establish_fiduciary_eps, user: current_user)
+        establishFiduciaryEps: FeatureToggle.enabled?(:establish_fiduciary_eps, user: current_user),
+        editEpClaimLabels: FeatureToggle.enabled?(:edit_ep_claim_labels, user: current_user),
+        deceasedAppellants: FeatureToggle.enabled?(:deceased_appellants, user: current_user),
+        nonVeteranClaimants: FeatureToggle.enabled?(:non_veteran_claimants, user: current_user)
       }
     }
   rescue StandardError => error
@@ -128,7 +130,11 @@ class IntakesController < ApplicationController
   end
 
   def verify_access
-    verify_authorized_roles("Mail Intake", "Admin Intake")
+    if !current_user.can_intake_decision_reviews?
+      redirect_to "/unauthorized"
+    else
+      verify_authorized_roles("Mail Intake", "Admin Intake")
+    end
   end
 
   def check_intake_out_of_service

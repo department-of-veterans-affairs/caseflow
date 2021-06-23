@@ -53,10 +53,6 @@ class RequestIssuesUpdate < CaseflowRecord
   def establish!
     attempted!
 
-    # re-assign user to whomever edited the Claim.
-    # this works around issue when original user is no longer authorized for VBMS.
-    review.end_product_establishments.each { |epe| epe.user = user } if review.processed_in_vbms?
-
     review.establish!
     edited_issues.each { |issue| RequestIssueContention.new(issue).update_text! }
     potential_end_products_to_remove = []
@@ -101,8 +97,7 @@ class RequestIssuesUpdate < CaseflowRecord
   private
 
   def changes?
-    review.request_issues.active_or_ineligible.count != @request_issues_data.count || !added_issues.empty? ||
-      withdrawn_issues.any? || edited_issues.any? || corrected_issues.any?
+    (all_updated_issues + corrected_issues).any?
   end
 
   def calculate_after_issues
@@ -133,7 +128,7 @@ class RequestIssuesUpdate < CaseflowRecord
   def validate_before_perform
     if !changes?
       @error_code = :no_changes
-    elsif RequestIssuesUpdate.where(review: review).processable.exists?
+    elsif RequestIssuesUpdate.where(review: review).where.not(id: id).processable.exists?
       @error_code = :previous_update_not_done_processing
     end
 
@@ -153,7 +148,7 @@ class RequestIssuesUpdate < CaseflowRecord
   end
 
   def process_issues!
-    review.create_issues!(added_issues)
+    review.create_issues!(added_issues, self)
     process_removed_issues!
     process_legacy_issues!
     process_withdrawn_issues!

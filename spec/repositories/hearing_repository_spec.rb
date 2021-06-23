@@ -44,7 +44,11 @@ describe HearingRepository, :all_dbs do
     end
 
     it "slots hearing at correct time" do
-      HearingRepository.slot_new_hearing(hearing_day.id, scheduled_time_string: "09:00", appeal: legacy_appeal)
+      HearingRepository.slot_new_hearing(
+        hearing_day_id: hearing_day.id,
+        scheduled_time_string: "09:00",
+        appeal: legacy_appeal
+      )
 
       expect(VACOLS::CaseHearing.find_by(vdkey: hearing_day.id)
         .hearing_date.to_datetime.in_time_zone("UTC").hour).to eq(9)
@@ -68,7 +72,7 @@ describe HearingRepository, :all_dbs do
       it "throws a hearing day full error" do
         expect do
           HearingRepository.slot_new_hearing(
-            hearing_day.id,
+            hearing_day_id: hearing_day.id,
             scheduled_time_string: "9:30",
             appeal: legacy_appeal
           )
@@ -78,9 +82,11 @@ describe HearingRepository, :all_dbs do
       it "does not throw an error if the override flag is set" do
         expect do
           HearingRepository.slot_new_hearing(
-            hearing_day.id,
-            scheduled_time_string: "9:30",
-            appeal: legacy_appeal,
+            {
+              hearing_day_id: hearing_day.id,
+              scheduled_time_string: "9:30",
+              appeal: legacy_appeal
+            },
             override_full_hearing_day_validation: true
           )
         end.not_to raise_error
@@ -99,7 +105,7 @@ describe HearingRepository, :all_dbs do
         hearing_date: date,
         hearing_type: HearingDay::REQUEST_TYPES[:video],
         hearing_pkseq: "12345678",
-        hearing_disp: "N",
+        hearing_disp: VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:no_show],
         aod: "Y",
         tranreq: nil,
         holddays: 90,

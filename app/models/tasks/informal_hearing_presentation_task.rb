@@ -35,17 +35,12 @@ class InformalHearingPresentationTask < Task
   ].freeze
 
   def available_actions(user)
-    if assigned_to == user
-      return USER_ACTIONS
-    end
+    return USER_ACTIONS if assigned_to == user
 
-    if task_is_assigned_to_user_within_organization?(user) && parent.assigned_to.user_is_admin?(user)
-      return ADMIN_ACTIONS
-    end
+    return ADMIN_ACTIONS if task_is_assigned_to_user_within_organization?(user) &&
+                            parent.assigned_to.user_is_admin?(user)
 
-    if task_is_assigned_to_users_organization?(user)
-      return ORG_ACTIONS
-    end
+    return ORG_ACTIONS if task_is_assigned_to_users_organization?(user)
 
     []
   end
@@ -63,6 +58,15 @@ class InformalHearingPresentationTask < Task
       end
 
       super(params, user)
+    end
+  end
+
+  def self.update_to_new_poa(appeal)
+    begin
+      TrackVeteranTask.sync_tracking_tasks(appeal)
+    rescue StandardError => error
+      Raven.capture_exception(error)
+      nil
     end
   end
 end

@@ -43,7 +43,7 @@ FactoryBot.define do
           decision_review: appeal,
           type: claimant_class_name
         )
-      else
+      elsif !Claimant.exists?(participant_id: appeal.veteran.participant_id, decision_review: appeal)
         create(
           :claimant,
           participant_id: appeal.veteran.participant_id,
@@ -92,11 +92,32 @@ FactoryBot.define do
 
     transient do
       number_of_claimants { nil }
+      issue_count { nil }
     end
 
     transient do
       veteran do
         Veteran.find_by(file_number: veteran_file_number) || create(:veteran, file_number: veteran_file_number)
+      end
+    end
+
+    transient do
+      disposition { "allowed" }
+    end
+
+    trait :type_cavc_remand do
+      stream_type { Constants.AMA_STREAM_TYPES.court_remand }
+      transient do
+        remand_subtype { Constants.CAVC_REMAND_SUBTYPES.jmpr }
+      end
+      initialize_with do
+        cavc_remand = create(:cavc_remand,
+                             remand_subtype: remand_subtype,
+                             veteran: veteran,
+                             # pass docket type so that the created source appeal is the same docket type
+                             docket_type: attributes[:docket_type])
+        # cavc_remand creation triggers creation of a remand_appeal having appropriate tasks depending on remand_subtype
+        cavc_remand.remand_appeal
       end
     end
 
@@ -149,8 +170,13 @@ FactoryBot.define do
     end
 
     trait :advanced_on_docket_due_to_age do
-      after(:create) do |appeal, _evaluator|
-        appeal.claimants = [create(:claimant, :advanced_on_docket_due_to_age, decision_review: appeal)]
+      # set claimant.decision_review to nil so that it isn't created by the Claimant factorybot
+      claimants { [create(:claimant, :advanced_on_docket_due_to_age, decision_review: nil)] }
+    end
+
+    trait :active do
+      before(:create) do |appeal, _evaluator|
+        RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
       end
     end
 
@@ -219,9 +245,37 @@ FactoryBot.define do
     ## The appeal is ready for distribution by the ACD
     trait :ready_for_distribution do
       with_post_intake_tasks
+      completed_distribution_task
+    end
+
+    trait :cavc_ready_for_distribution do
+      completed_distribution_task
+    end
+
+    trait :completed_distribution_task do
       after(:create) do |appeal, _evaluator|
         distribution_tasks = appeal.tasks.select { |task| task.is_a?(DistributionTask) }
         (distribution_tasks.flat_map(&:descendants) - distribution_tasks).each(&:completed!)
+      end
+    end
+
+    ## Appeal with a realistic task tree
+    ## The appeal is waiting for CAVC Response
+    trait :cavc_response_window_open do
+      type_cavc_remand
+      after(:create) do |appeal, _evaluator|
+        send_letter_task = appeal.tasks.find { |task| task.is_a?(SendCavcRemandProcessedLetterTask) }
+        send_letter_task.update_from_params({ status: "completed" }, CavcLitigationSupport.singleton.admins.first)
+      end
+    end
+
+    ## Appeal with a realistic task tree
+    ## The appeal has finished waiting for a CAVC Response
+    trait :cavc_response_window_complete do
+      cavc_response_window_open
+      after(:create) do |appeal, _evaluator|
+        timed_hold_task = appeal.reload.tasks.find { |task| task.is_a?(TimedHoldTask) }
+        timed_hold_task.completed!
       end
     end
 
@@ -245,11 +299,12 @@ FactoryBot.define do
     trait :assigned_to_judge do
       ready_for_distribution
       after(:create) do |appeal, evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
         JudgeAssignTask.create!(appeal: appeal,
-                                parent: appeal.root_task,
+                                parent: root_task,
                                 assigned_at: evaluator.active_task_assigned_at,
                                 assigned_to: evaluator.associated_judge)
-        appeal.tasks.where(type: DistributionTask.name).update(status: :completed)
+        appeal.tasks.of_type(:DistributionTask).update(status: :completed)
       end
     end
 
@@ -259,7 +314,7 @@ FactoryBot.define do
     trait :at_attorney_drafting do
       assigned_to_judge
       after(:create) do |appeal, evaluator|
-        judge_assign_task = appeal.tasks.where(type: JudgeAssignTask.name).first
+        judge_assign_task = appeal.tasks.of_type(:JudgeAssignTask).first
         AttorneyTaskCreator.new(
           judge_assign_task,
           appeal: judge_assign_task.appeal,
@@ -274,13 +329,47 @@ FactoryBot.define do
     ## Strongly suggest you provide a judge and attorney.
     trait :at_judge_review do
       at_attorney_drafting
+      after(:create) do |appeal, _evaluator|
+        # MISSING: AttorneyCaseReview
+        appeal.tasks.of_type(:AttorneyTask).first.completed!
+      end
+    end
+
+    ## Appeal with a realistic task tree
+    ## The appeal is assigned to a judge at decision review
+    ## Strongly suggest you provide a judge and attorney.
+    trait :at_bva_dispatch do
+      at_judge_review
       after(:create) do |appeal|
-        create(:decision_document, appeal: appeal)
-        appeal.tasks.where(type: AttorneyTask.name).first.completed!
+        # MISSING: JudgeCaseReview
+        # BvaDispatchTask.create_from_root_task will autoassign, so need to have a non-empty BvaDispatch org
+        BvaDispatch.singleton.add_user(create(:user)) if BvaDispatch.singleton.users.empty?
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        BvaDispatchTask.create_from_root_task(root_task)
+        appeal.tasks.of_type(:JudgeDecisionReviewTask).first.completed!
+      end
+    end
+
+    ## Appeal with a realistic task tree
+    ## The appeal is assigned to a judge at decision review
+    ## Strongly suggest you provide a judge and attorney.
+    trait :dispatched do
+      at_bva_dispatch
+      after(:create) do |appeal|
+        create(:decision_document,
+               :processed,
+               appeal: appeal,
+               citation_number: "A882#{(appeal.id % 100_000).to_s.rjust(5, '0')}")
+        dispatch = AmaAppealDispatch.new(appeal: appeal, params: { bar: "foo" }, user: User.first)
+        appeal.tasks.of_type(:BvaDispatchTask).assigned_to_any_user.first.completed!
+        appeal.root_task.completed!
+        dispatch.send(:close_request_issues_as_decided!)
+        dispatch.send(:store_poa_participant_id)
       end
     end
 
     trait :with_straight_vacate_stream do
+      dispatched
       after(:create) do |appeal, evaluator|
         mail_task = create(
           :vacate_motion_mail_task,
@@ -301,6 +390,46 @@ FactoryBot.define do
           assigned_to_id: evaluator.associated_attorney.id
         }
         PostDecisionMotionUpdater.new(addr_task, params).process
+        mail_task.completed!
+      end
+    end
+
+    trait :with_request_issues do
+      description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
+      notes = "Pain disorder with 100\% evaluation per examination"
+
+      after(:create) do |appeal, evaluator|
+        FactoryBot.create_list(
+          :request_issue,
+          evaluator.issue_count || Random.rand(1..10),
+          :rating,
+          decision_review: appeal,
+          contested_issue_description: description,
+          notes: notes
+        )
+      end
+    end
+
+    trait :dispatched_with_decision_issue do
+      dispatched
+
+      description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
+      notes = "Pain disorder with 100\% evaluation per examination"
+      after(:create) do |appeal, evaluator|
+        request_issue = create(:request_issue,
+                               :rating,
+                               :with_rating_decision_issue,
+                               decision_review: appeal,
+                               veteran_participant_id: appeal.veteran.participant_id,
+                               contested_issue_description: description,
+                               notes: notes)
+        decision_issue = create(:decision_issue,
+                                :rating,
+                                decision_review: appeal,
+                                disposition: evaluator.disposition,
+                                description: "Issue description",
+                                decision_text: "Decision text")
+        request_issue.decision_issues << decision_issue
       end
     end
   end

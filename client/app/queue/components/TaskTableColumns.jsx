@@ -1,7 +1,8 @@
 import * as React from 'react';
 import moment from 'moment';
 import pluralize from 'pluralize';
-import _ from 'lodash';
+import { isEmpty } from 'lodash';
+import { css } from 'glamor';
 
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import BadgeArea from './BadgeArea';
@@ -9,6 +10,7 @@ import CaseDetailsLink from '../CaseDetailsLink';
 import ReaderLink from '../ReaderLink';
 import ContinuousProgressBar from '../../components/ContinuousProgressBar';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
+import IhpDaysWaitingTooltip from './IhpDaysWaitingTooltip';
 
 import { taskHasCompletedHold, hasDASRecord, collapseColumn, regionalOfficeCity, renderAppealType } from '../utils';
 import { DateString } from '../../util/DateUtil';
@@ -69,6 +71,10 @@ export const documentIdColumn = () => {
 
       const nameAbbrev = `${preparer.firstName.substring(0, 1)}. ${preparer.lastName}`;
 
+      if ((!task.documentId) || (isEmpty(task.documentId))) {
+        return;
+      }
+
       return <React.Fragment>
         {task.documentId}<br />from {nameAbbrev}
       </React.Fragment>;
@@ -98,7 +104,7 @@ export const detailsColumn = (tasks, requireDasRecord, userRole) => {
       const vetName = task.appeal.veteranFullName.split(' ');
       // only take last, first names. ignore middle names/initials
 
-      return `${_.last(vetName)} ${vetName[0]}`;
+      return `${vetName[vetName.length - 1]} ${vetName[0]}`;
     }
   };
 };
@@ -216,6 +222,8 @@ export const readerLinkColumn = (requireDasRecord, includeNewDocsIcon) => {
 export const readerLinkColumnWithNewDocsIcon = (requireDasRecord) => readerLinkColumn(requireDasRecord, true);
 
 export const daysWaitingColumn = (requireDasRecord) => {
+  const daysWaitingStyle = css({ display: 'inline-block' });
+
   return {
     header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
     name: QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
@@ -228,13 +236,15 @@ export const daysWaitingColumn = (requireDasRecord) => {
         daysSincePlacedOnHold = moment().startOf('day').
           diff(task.placedOnHoldAt, 'days');
 
-      return <React.Fragment>
-        <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>
-          {daysSinceAssigned} {pluralize('day', daysSinceAssigned)}
-        </span>
-        { taskHasCompletedHold(task) &&
+      return <IhpDaysWaitingTooltip {...task.latestInformalHearingPresentationTask}>
+        <div className={daysWaitingStyle}>
+          <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>
+            {daysSinceAssigned} {pluralize('day', daysSinceAssigned)}
+          </span>
+          { taskHasCompletedHold(task) &&
           <ContinuousProgressBar level={daysSincePlacedOnHold} limit={task.onHoldDuration} warning /> }
-      </React.Fragment>;
+        </div>
+      </IhpDaysWaitingTooltip>;
     },
     backendCanSort: true,
     getSortValue: (task) => moment().startOf('day').

@@ -1,0 +1,101 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConfirmClaimLabelModal renders correctly 1`] = `
+<div>
+  <section
+    aria-describedby="modal_id-desc"
+    aria-labelledby="modal_id-title"
+    aria-modal="true"
+    class="cf-modal active "
+    id="modal_id"
+    role="dialog"
+  >
+    <div
+      class="cf-modal-body"
+      id="confirm-claim-label-modal"
+    >
+      <button
+        class="cf-modal-close"
+        id="Confirm-new-claim-label-button-id-close"
+        type="button"
+      >
+        <span
+          class="usa-sr-only"
+        >
+          Close
+        </span>
+        <svg
+          class="cf-icon-close"
+          height="55"
+          viewBox="0 0 55 55"
+          width="55"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <title>
+            close
+          </title>
+          <path
+            d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
+          />
+        </svg>
+      </button>
+      <div
+        style="display: flex;"
+      >
+        <div
+          data-css-1gs0ko2=""
+        >
+          <h1
+            id="modal_id-title"
+          >
+            Confirm new claim label
+          </h1>
+          <div
+            data-css-o98ubo=""
+          >
+            <div
+              style="margin-bottom: 24px;"
+            >
+              <strong>
+                Previous label: 
+                Higher-Level Review Rating
+                <br />
+                New label: 
+                Higher-Level Review Non-Rating
+              </strong>
+            </div>
+            <p>
+              Select "confirm" to save and complete editing this claim label. If the claim label is not updated in VBMS in 24 hours, please submit a YourIT ticket.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div
+        class="cf-modal-divider"
+      />
+      <div
+        class="cf-modal-controls"
+      >
+        <span>
+          <button
+            class="cf-modal-link cf-btn-link cf-push-left usa-button"
+            id="Confirm-new-claim-label-button-id-0"
+            type="button"
+          >
+            Cancel
+          </button>
+        </span>
+        <span>
+          <button
+            class="usa-button usa-button-primary cf-push-right usa-button"
+            id="Confirm-new-claim-label-button-id-1"
+            type="button"
+          >
+            Confirm
+          </button>
+        </span>
+      </div>
+    </div>
+  </section>
+</div>
+`;

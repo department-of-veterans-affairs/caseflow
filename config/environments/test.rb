@@ -85,4 +85,7 @@ Rails.application.configure do
   ENV["PARTIAL_AND_REMAND_IDS"] = "VACOLS321,VACOLS432,VACOLS543,VACOLS654"
 
   config.active_job.queue_adapter = :test
+
+  # Disable SqlTracker from creating tmp/sql_tracker-*.json files -- https://github.com/steventen/sql_tracker/pull/10
+  SqlTracker::Config.enabled = false
 end

@@ -17,6 +17,10 @@ class HigherLevelReview < ClaimReview
     Intake::HigherLevelReviewSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
+  def stream_attributes
+    super.merge(informal_conference: informal_conference, same_office: same_office)
+  end
+
   def on_decision_issues_sync_processed
     create_remand_supplemental_claims!
   end
@@ -118,16 +122,16 @@ class HigherLevelReview < ClaimReview
 
   private
 
-  def new_end_product_establishment(issue)
+  def new_end_product_establishment(issue, request_issues_update = nil)
     end_product_establishments.build(
       veteran_file_number: veteran_file_number,
       claim_date: receipt_date,
       payee_code: payee_code || EndProduct::DEFAULT_PAYEE_CODE,
       code: issue.end_product_code,
       claimant_participant_id: claimant_participant_id,
-      station: end_product_station,
+      station: request_issues_update ? request_issues_update.user.station_id : end_product_station,
       benefit_type_code: veteran.benefit_type_code,
-      user: intake_processed_by
+      user: request_issues_update ? request_issues_update.user : intake_processed_by
     )
   end
 

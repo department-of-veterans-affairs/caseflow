@@ -334,19 +334,23 @@ feature "Higher Level Review Edit issues", :all_dbs do
       ).reference_id
     end
 
+    let!(:starting_request_issues) do
+      [
+        eligible_request_issue,
+        untimely_request_issue,
+        ri_with_active_previous_review,
+        ri_with_previous_hlr,
+        ri_before_ama,
+        eligible_ri_before_ama,
+        ri_legacy_issue_not_withdrawn,
+        ri_legacy_issue_ineligible
+      ]
+    end
+
     before do
       setup_legacy_opt_in_appeals(veteran.file_number)
       another_higher_level_review.create_issues!([ri_in_review])
-      higher_level_review.create_issues!([
-                                           eligible_request_issue,
-                                           untimely_request_issue,
-                                           ri_with_active_previous_review,
-                                           ri_with_previous_hlr,
-                                           ri_before_ama,
-                                           eligible_ri_before_ama,
-                                           ri_legacy_issue_not_withdrawn,
-                                           ri_legacy_issue_ineligible
-                                         ])
+      higher_level_review.create_issues!(starting_request_issues)
       higher_level_review.establish!
     end
 
@@ -364,11 +368,24 @@ feature "Higher Level Review Edit issues", :all_dbs do
           vacols_sequence_id: "2"
         )
       end
-
+      let!(:starting_request_issues) do
+        [
+          eligible_request_issue,
+          untimely_request_issue,
+          ri_with_active_previous_review,
+          ri_with_previous_hlr,
+          ri_before_ama,
+          eligible_ri_before_ama,
+          ri_legacy_issue_not_withdrawn,
+          ri_legacy_issue_ineligible,
+          ri_legacy_issue_eligible
+        ]
+      end
       let(:legacy_opt_in_approved) { true }
 
       it "shows the Higher-Level Review Edit page with ineligibility messages" do
         visit "higher_level_reviews/#{ep_claim_id}/edit"
+
         expect(page).to have_content(
           "#{ri_with_previous_hlr.contention_text} #{ineligible.higher_level_review_to_higher_level_review}"
         )
@@ -537,12 +554,11 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
       click_edit_submit_and_confirm
 
-      expect(page).to have_current_path(
-        "/higher_level_reviews/#{higher_level_review.uuid}/edit/confirmation"
-      )
+      expect(page).to have_current_path("/higher_level_reviews/#{higher_level_review.uuid}/edit/confirmation")
 
-      visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+      click_on "correct the issues"
 
+      expect(page).to have_current_path("/higher_level_reviews/#{higher_level_review.uuid}/edit")
       expect(page).to have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED_EDIT)
     end
   end
@@ -1562,14 +1578,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
     end
 
     context "when a rating decision text is edited" do
-      before do
-        FeatureToggle.enable!(:edit_contention_text, users: [current_user.css_id])
-      end
-
-      after do
-        FeatureToggle.disable!(:edit_contention_text, users: [current_user.css_id])
-      end
-
       let!(:issue) do
         create(:request_issue, :rating, decision_review: higher_level_review, contested_issue_description: "PTSD")
       end

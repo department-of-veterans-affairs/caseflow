@@ -171,11 +171,11 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                           >
                             <path
                               d="M12.2767813,8.17242825 L11.7057188,8.17242825 C11.6223125,8.17242825 11.553875,8.19969476 11.500625,8.25448292 C11.4469375,8.30895216 11.4202188,8.37876082 11.4202188,8.46378132 L11.4202188,11.377344 C11.4202188,11.7779863 11.2805313,12.1208747 11.001,12.4062005 C10.7214688,12.6914624 10.3853438,12.8339818 9.99275,12.8339818 L2.5695,12.8339818 C2.1769375,12.8339818 1.84084375,12.6914624 1.56125,12.4062005 C1.28171875,12.1209066 1.14196875,11.7780182 1.14196875,11.377344 L1.14196875,3.80200456 C1.14196875,3.40139408 1.2816875,3.05853759 1.56125,2.77324374 C1.84084375,2.487918 2.1769375,2.34533485 2.5695,2.34533485 L8.8505625,2.34533485 C8.93396875,2.34533485 9.00240625,2.31794077 9.055875,2.26337585 C9.10934375,2.20874715 9.1360625,2.13900228 9.1360625,2.05394989 L9.1360625,1.47114806 C9.1360625,1.38625513 9.10934375,1.31638269 9.055875,1.26184966 C9.00240625,1.20722096 8.93396875,1.17995444 8.8505625,1.17995444 L2.5695,1.17995444 C1.86175,1.17995444 1.2565,1.43641913 0.7538125,1.94931663 C0.2513125,2.46218223 0,3.07984055 0,3.80210023 L0,11.3774715 C0,12.0996993 0.2513125,12.7174533 0.75384375,13.2301595 C1.25653125,13.7430888 1.86178125,13.9996811 2.56953125,13.9996811 L9.99275,13.9996811 C10.7004688,13.9996811 11.3057813,13.7430888 11.8084063,13.2301595 C12.3110625,12.7174533 12.562375,12.0997312 12.562375,11.3774715 L12.562375,8.46400456 C12.562375,8.37888838 12.535625,8.30904784 12.4819375,8.25448292 C12.4284063,8.19969476 12.3599688,8.17242825 12.2767813,8.17242825 Z"
-                              id="Shape"
+                              id="external-link-outline-box"
                             />
                             <path
                               d="M15.8009687,0.172974943 C15.6879375,0.0576264237 15.5539375,0 15.3994062,0 L10.8313437,0 C10.6767187,0 10.5428125,0.0576264237 10.429875,0.172974943 C10.3168438,0.288259681 10.26025,0.42484738 10.26025,0.58267426 C10.26025,0.740501139 10.3168438,0.877120729 10.429875,0.992469248 L12.0000938,2.59491116 L6.183,8.53138952 C6.1234375,8.59207745 6.09375,8.661918 6.09375,8.74068793 C6.09375,8.81974487 6.12353125,8.88955353 6.183,8.95024146 L7.200125,9.98809112 C7.25959375,10.048779 7.32803125,10.0790433 7.40534375,10.0790433 C7.48265625,10.0790433 7.551125,10.0488109 7.6105625,9.98809112 L13.4276875,4.05170843 L14.9980313,5.65415034 C15.1109687,5.76949886 15.2448438,5.82718907 15.3995,5.82718907 C15.5541562,5.82718907 15.6880312,5.76949886 15.8010937,5.65415034 C15.914125,5.53883371 15.9705937,5.4022779 15.9705937,5.24445103 L15.9705937,0.58267426 C15.9705625,0.424751708 15.9139063,0.288259681 15.8009687,0.172974943 Z"
-                              id="Shape"
+                              id="external-link-outline-arrow"
                             />
                           </g>
                         </g>
@@ -213,44 +213,46 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
               position="bottom"
               text="Click to copy"
             >
-              <span
+              <CopyToClipboard
                 aria-describedby="tooltip-Copy VLJ Link"
                 data-event="focus mouseenter"
-                data-event-off="keydown mouseleave"
+                data-event-off="mouseleave keydown"
                 data-for="tooltip-Copy VLJ Link"
                 data-tip={true}
-                role="tooltip"
                 tabIndex={0}
+                text="Copy VLJ Link"
               >
-                <CopyToClipboard
-                  text="Copy VLJ Link"
+                <button
+                  aria-describedby="tooltip-Copy VLJ Link"
+                  aria-label="Copy  Copy VLJ Link"
+                  className="cf-apppeal-id"
+                  data-css-cjlnsd=""
+                  data-event="focus mouseenter"
+                  data-event-off="mouseleave keydown"
+                  data-for="tooltip-Copy VLJ Link"
+                  data-tip={true}
+                  onClick={[Function]}
+                  tabIndex={0}
+                  type="submit"
                 >
-                  <button
-                    aria-label="Copy  Copy VLJ Link"
-                    className="cf-apppeal-id"
-                    data-css-cjlnsd=""
-                    onClick={[Function]}
-                    type="submit"
-                  >
-                    Copy VLJ Link
-                     
-                    <ClipboardIcon>
-                      <svg
-                        height="16"
-                        viewBox="0 0 21 21"
-                        width="16"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M13.346 2.578h-2.664v-1.29C10.682.585 10.08 0 9.35 0H6.66c-.728 0-1.33.584-1.33 1.29v1.288H2.663v2.577h10.682V2.578zm-4.02 0H6.66v-1.29h2.665v1.29zm6.685 3.89V3.234a.665.665 0 0 0-.678-.656H14v1.29h.68v2.576H6.66v9.046H1.333V3.867h.68v-1.29H.678a.665.665 0 0 0-.68.657v12.913c0 .365.302.656.68.656h6.006v3.867h9.35l3.996-3.867V6.468h-4.02zm0 12.378v-2.043h2.112l-2.11 2.043zm2.665-3.356H14.68v3.867H7.992v-11.6h10.682v7.733z"
-                          fill="#5B616B"
-                          fillRule="evenodd"
-                        />
-                      </svg>
-                    </ClipboardIcon>
-                  </button>
-                </CopyToClipboard>
-              </span>
+                  Copy VLJ Link
+                   
+                  <ClipboardIcon>
+                    <svg
+                      height="16"
+                      viewBox="0 0 21 21"
+                      width="16"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M13.346 2.578h-2.664v-1.29C10.682.585 10.08 0 9.35 0H6.66c-.728 0-1.33.584-1.33 1.29v1.288H2.663v2.577h10.682V2.578zm-4.02 0H6.66v-1.29h2.665v1.29zm6.685 3.89V3.234a.665.665 0 0 0-.678-.656H14v1.29h.68v2.576H6.66v9.046H1.333V3.867h.68v-1.29H.678a.665.665 0 0 0-.68.657v12.913c0 .365.302.656.68.656h6.006v3.867h9.35l3.996-3.867V6.468h-4.02zm0 12.378v-2.043h2.112l-2.11 2.043zm2.665-3.356H14.68v3.867H7.992v-11.6h10.682v7.733z"
+                        fill="#5B616B"
+                        fillRule="evenodd"
+                      />
+                    </svg>
+                  </ClipboardIcon>
+                </button>
+              </CopyToClipboard>
               <span
                 data-css-15opktr=""
               >
@@ -263,13 +265,96 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                   offset={Object {}}
                   place="bottom"
                   resizeHide={true}
+                  role="tooltip"
                   wrapper="div"
                 >
                   <div
-                    className="__react_component_tooltip place-bottom type-dark "
+                    className="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                     data-id="tooltip"
                     id="tooltip-Copy VLJ Link"
+                    role="tooltip"
                   >
+                    <style
+                      dangerouslySetInnerHTML={
+                        Object {
+                          "__html": "
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  ",
+                        }
+                      }
+                    />
                     Click to copy
                   </div>
                 </ReactTooltip>
@@ -418,11 +503,11 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                           >
                             <path
                               d="M12.2767813,8.17242825 L11.7057188,8.17242825 C11.6223125,8.17242825 11.553875,8.19969476 11.500625,8.25448292 C11.4469375,8.30895216 11.4202188,8.37876082 11.4202188,8.46378132 L11.4202188,11.377344 C11.4202188,11.7779863 11.2805313,12.1208747 11.001,12.4062005 C10.7214688,12.6914624 10.3853438,12.8339818 9.99275,12.8339818 L2.5695,12.8339818 C2.1769375,12.8339818 1.84084375,12.6914624 1.56125,12.4062005 C1.28171875,12.1209066 1.14196875,11.7780182 1.14196875,11.377344 L1.14196875,3.80200456 C1.14196875,3.40139408 1.2816875,3.05853759 1.56125,2.77324374 C1.84084375,2.487918 2.1769375,2.34533485 2.5695,2.34533485 L8.8505625,2.34533485 C8.93396875,2.34533485 9.00240625,2.31794077 9.055875,2.26337585 C9.10934375,2.20874715 9.1360625,2.13900228 9.1360625,2.05394989 L9.1360625,1.47114806 C9.1360625,1.38625513 9.10934375,1.31638269 9.055875,1.26184966 C9.00240625,1.20722096 8.93396875,1.17995444 8.8505625,1.17995444 L2.5695,1.17995444 C1.86175,1.17995444 1.2565,1.43641913 0.7538125,1.94931663 C0.2513125,2.46218223 0,3.07984055 0,3.80210023 L0,11.3774715 C0,12.0996993 0.2513125,12.7174533 0.75384375,13.2301595 C1.25653125,13.7430888 1.86178125,13.9996811 2.56953125,13.9996811 L9.99275,13.9996811 C10.7004688,13.9996811 11.3057813,13.7430888 11.8084063,13.2301595 C12.3110625,12.7174533 12.562375,12.0997312 12.562375,11.3774715 L12.562375,8.46400456 C12.562375,8.37888838 12.535625,8.30904784 12.4819375,8.25448292 C12.4284063,8.19969476 12.3599688,8.17242825 12.2767813,8.17242825 Z"
-                              id="Shape"
+                              id="external-link-outline-box"
                             />
                             <path
                               d="M15.8009687,0.172974943 C15.6879375,0.0576264237 15.5539375,0 15.3994062,0 L10.8313437,0 C10.6767187,0 10.5428125,0.0576264237 10.429875,0.172974943 C10.3168438,0.288259681 10.26025,0.42484738 10.26025,0.58267426 C10.26025,0.740501139 10.3168438,0.877120729 10.429875,0.992469248 L12.0000938,2.59491116 L6.183,8.53138952 C6.1234375,8.59207745 6.09375,8.661918 6.09375,8.74068793 C6.09375,8.81974487 6.12353125,8.88955353 6.183,8.95024146 L7.200125,9.98809112 C7.25959375,10.048779 7.32803125,10.0790433 7.40534375,10.0790433 C7.48265625,10.0790433 7.551125,10.0488109 7.6105625,9.98809112 L13.4276875,4.05170843 L14.9980313,5.65415034 C15.1109687,5.76949886 15.2448438,5.82718907 15.3995,5.82718907 C15.5541562,5.82718907 15.6880312,5.76949886 15.8010937,5.65415034 C15.914125,5.53883371 15.9705937,5.4022779 15.9705937,5.24445103 L15.9705937,0.58267426 C15.9705625,0.424751708 15.9139063,0.288259681 15.8009687,0.172974943 Z"
-                              id="Shape"
+                              id="external-link-outline-arrow"
                             />
                           </g>
                         </g>
@@ -460,44 +545,46 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
               position="bottom"
               text="Click to copy"
             >
-              <span
+              <CopyToClipboard
                 aria-describedby="tooltip-Copy Guest Link"
                 data-event="focus mouseenter"
-                data-event-off="keydown mouseleave"
+                data-event-off="mouseleave keydown"
                 data-for="tooltip-Copy Guest Link"
                 data-tip={true}
-                role="tooltip"
                 tabIndex={0}
+                text="Copy Guest Link"
               >
-                <CopyToClipboard
-                  text="Copy Guest Link"
+                <button
+                  aria-describedby="tooltip-Copy Guest Link"
+                  aria-label="Copy  Copy Guest Link"
+                  className="cf-apppeal-id"
+                  data-css-cjlnsd=""
+                  data-event="focus mouseenter"
+                  data-event-off="mouseleave keydown"
+                  data-for="tooltip-Copy Guest Link"
+                  data-tip={true}
+                  onClick={[Function]}
+                  tabIndex={0}
+                  type="submit"
                 >
-                  <button
-                    aria-label="Copy  Copy Guest Link"
-                    className="cf-apppeal-id"
-                    data-css-cjlnsd=""
-                    onClick={[Function]}
-                    type="submit"
-                  >
-                    Copy Guest Link
-                     
-                    <ClipboardIcon>
-                      <svg
-                        height="16"
-                        viewBox="0 0 21 21"
-                        width="16"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M13.346 2.578h-2.664v-1.29C10.682.585 10.08 0 9.35 0H6.66c-.728 0-1.33.584-1.33 1.29v1.288H2.663v2.577h10.682V2.578zm-4.02 0H6.66v-1.29h2.665v1.29zm6.685 3.89V3.234a.665.665 0 0 0-.678-.656H14v1.29h.68v2.576H6.66v9.046H1.333V3.867h.68v-1.29H.678a.665.665 0 0 0-.68.657v12.913c0 .365.302.656.68.656h6.006v3.867h9.35l3.996-3.867V6.468h-4.02zm0 12.378v-2.043h2.112l-2.11 2.043zm2.665-3.356H14.68v3.867H7.992v-11.6h10.682v7.733z"
-                          fill="#5B616B"
-                          fillRule="evenodd"
-                        />
-                      </svg>
-                    </ClipboardIcon>
-                  </button>
-                </CopyToClipboard>
-              </span>
+                  Copy Guest Link
+                   
+                  <ClipboardIcon>
+                    <svg
+                      height="16"
+                      viewBox="0 0 21 21"
+                      width="16"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M13.346 2.578h-2.664v-1.29C10.682.585 10.08 0 9.35 0H6.66c-.728 0-1.33.584-1.33 1.29v1.288H2.663v2.577h10.682V2.578zm-4.02 0H6.66v-1.29h2.665v1.29zm6.685 3.89V3.234a.665.665 0 0 0-.678-.656H14v1.29h.68v2.576H6.66v9.046H1.333V3.867h.68v-1.29H.678a.665.665 0 0 0-.68.657v12.913c0 .365.302.656.68.656h6.006v3.867h9.35l3.996-3.867V6.468h-4.02zm0 12.378v-2.043h2.112l-2.11 2.043zm2.665-3.356H14.68v3.867H7.992v-11.6h10.682v7.733z"
+                        fill="#5B616B"
+                        fillRule="evenodd"
+                      />
+                    </svg>
+                  </ClipboardIcon>
+                </button>
+              </CopyToClipboard>
               <span
                 data-css-4jj7wk=""
               >
@@ -510,13 +597,96 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                   offset={Object {}}
                   place="bottom"
                   resizeHide={true}
+                  role="tooltip"
                   wrapper="div"
                 >
                   <div
-                    className="__react_component_tooltip place-bottom type-dark "
+                    className="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
                     data-id="tooltip"
                     id="tooltip-Copy Guest Link"
+                    role="tooltip"
                   >
+                    <style
+                      dangerouslySetInnerHTML={
+                        Object {
+                          "__html": "
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  ",
+                        }
+                      }
+                    />
                     Click to copy
                   </div>
                 </ReactTooltip>
@@ -751,3 +921,849 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
 `;
 
 exports[`HearingLinks Matches snapshot with default props when passed in 1`] = `<HearingLinks />`;
+
+exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
+<HearingLinks
+  hearing={
+    Object {
+      "advanceOnDocketMotion": null,
+      "aod": false,
+      "appealExternalId": "005334f7-b5c6-490c-a310-7dc5db22c8c3",
+      "appealId": 4,
+      "appellantAddressLine1": "9999 MISSION ST",
+      "appellantCity": "SAN FRANCISCO",
+      "appellantEmailAddress": "tom.brady@caseflow.gov",
+      "appellantFirstName": "Bob",
+      "appellantIsNotVeteran": false,
+      "appellantLastName": "Smith",
+      "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
+      "appellantZip": "94103",
+      "availableHearingLocations": Object {},
+      "bvaPoc": null,
+      "caseType": "Original",
+      "centralOfficeTimeString": "03:30",
+      "claimantId": 4,
+      "closestRegionalOffice": null,
+      "currentIssueCount": 1,
+      "disposition": null,
+      "dispositionEditable": true,
+      "docketName": "hearing",
+      "docketNumber": "200628-4",
+      "emailEvents": Array [
+        Object {
+          "emailAddress": "tom.brady@caseflow.gov",
+          "emailType": "confirmation",
+          "sentAt": "2020-06-29T14:55:12.620-04:00",
+          "sentBy": "BVASYELLOW",
+          "sentTo": "POA/Representative Email",
+        },
+        Object {
+          "emailAddress": "Bob.Smith@test.com",
+          "emailType": "confirmation",
+          "sentAt": "2020-06-29T14:55:12.501-04:00",
+          "sentBy": "BVASYELLOW",
+          "sentTo": "Appellant Email",
+        },
+      ],
+      "evidenceWindowWaived": false,
+      "externalId": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+      "hearingDayId": 4,
+      "id": 4,
+      "isVirtual": true,
+      "judge": Object {
+        "createdAt": "2020-06-25T11:00:43.257-04:00",
+        "cssId": "BVAAABSHIRE",
+        "displayName": "BVAAABSHIRE (VACO)",
+        "efolderDocumentsFetchedAt": null,
+        "email": null,
+        "fullName": "Aaron Judge_HearingsAndCases Abshire",
+        "id": 3,
+        "lastLoginAt": null,
+        "roles": Object {},
+        "selectedRegionalOffice": null,
+        "stationId": "101",
+        "status": "active",
+        "statusUpdatedAt": null,
+        "updatedAt": "2020-06-25T11:00:43.257-04:00",
+      },
+      "judgeId": 3,
+      "location": null,
+      "militaryService": "",
+      "notes": null,
+      "paperCase": false,
+      "poaName": "AMERICAN LEGION",
+      "prepped": null,
+      "readableLocation": "Washington, DC",
+      "readableRequestType": "Central",
+      "regionalOfficeKey": "C",
+      "regionalOfficeName": "Central",
+      "regionalOfficeTimezone": "America/New_York",
+      "representative": "Clarence Darrow",
+      "representativeEmailAddress": "tom.brady@caseflow.gov",
+      "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeTz": "America/Denver",
+      "room": "2",
+      "scheduledFor": "2020-07-06T06:00:00.000-04:00",
+      "scheduledForIsPast": false,
+      "scheduledTime": "2000-01-01T03:30:00.000-05:00",
+      "scheduledTimeString": "03:30",
+      "summary": null,
+      "transcriptRequested": null,
+      "transcription": Object {},
+      "uuid": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+      "veteranAge": 85,
+      "veteranEmailAddress": "Bob.Smith@test.com",
+      "veteranFileNumber": "500000003",
+      "veteranFirstName": "Bob",
+      "veteranGender": "M",
+      "veteranLastName": "Smith",
+      "virtualHearing": Object {
+        "aliasWithHost": "BVA0000009@care.evn.va.gov",
+        "appellantEmail": "Bob.Smith@test.com",
+        "appellantTz": "America/Denver",
+        "clientHost": "care.evn.va.gov",
+        "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+        "guestPin": "2684353125#",
+        "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+        "hostPin": "8600030#",
+        "jobCompleted": true,
+        "representativeEmail": "tom.brady@caseflow.gov",
+        "representativeTz": "America/Los_Angeles",
+        "requestCancelled": false,
+        "status": "active",
+      },
+      "wasVirtual": false,
+      "witness": null,
+      "worksheetIssues": Object {},
+    }
+  }
+  isVirtual={true}
+  user={
+    Object {
+      "addressCity": "Washington",
+      "addressLine1": "123 Fake St.",
+      "addressState": "DC",
+      "addressZip": "20001",
+      "name": "John Smith",
+      "userCanAssignHearingSchedule": false,
+      "userCanVsoHearingSchedule": true,
+    }
+  }
+  virtualHearing={
+    Object {
+      "aliasWithHost": "BVA0000009@care.evn.va.gov",
+      "appellantEmail": "Bob.Smith@test.com",
+      "appellantTz": "America/Denver",
+      "clientHost": "care.evn.va.gov",
+      "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+      "guestPin": "2684353125#",
+      "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+      "hostPin": "8600030#",
+      "jobCompleted": true,
+      "representativeEmail": "tom.brady@caseflow.gov",
+      "representativeTz": "America/Los_Angeles",
+      "requestCancelled": false,
+      "status": "active",
+    }
+  }
+>
+  <div
+    data-css-19plkw7=""
+    data-css-1fmltfu=""
+  >
+    <LinkContainer
+      hearing={
+        Object {
+          "advanceOnDocketMotion": null,
+          "aod": false,
+          "appealExternalId": "005334f7-b5c6-490c-a310-7dc5db22c8c3",
+          "appealId": 4,
+          "appellantAddressLine1": "9999 MISSION ST",
+          "appellantCity": "SAN FRANCISCO",
+          "appellantEmailAddress": "tom.brady@caseflow.gov",
+          "appellantFirstName": "Bob",
+          "appellantIsNotVeteran": false,
+          "appellantLastName": "Smith",
+          "appellantState": "CA",
+          "appellantTz": "America/Los_Angeles",
+          "appellantZip": "94103",
+          "availableHearingLocations": Object {},
+          "bvaPoc": null,
+          "caseType": "Original",
+          "centralOfficeTimeString": "03:30",
+          "claimantId": 4,
+          "closestRegionalOffice": null,
+          "currentIssueCount": 1,
+          "disposition": null,
+          "dispositionEditable": true,
+          "docketName": "hearing",
+          "docketNumber": "200628-4",
+          "emailEvents": Array [
+            Object {
+              "emailAddress": "tom.brady@caseflow.gov",
+              "emailType": "confirmation",
+              "sentAt": "2020-06-29T14:55:12.620-04:00",
+              "sentBy": "BVASYELLOW",
+              "sentTo": "POA/Representative Email",
+            },
+            Object {
+              "emailAddress": "Bob.Smith@test.com",
+              "emailType": "confirmation",
+              "sentAt": "2020-06-29T14:55:12.501-04:00",
+              "sentBy": "BVASYELLOW",
+              "sentTo": "Appellant Email",
+            },
+          ],
+          "evidenceWindowWaived": false,
+          "externalId": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+          "hearingDayId": 4,
+          "id": 4,
+          "isVirtual": true,
+          "judge": Object {
+            "createdAt": "2020-06-25T11:00:43.257-04:00",
+            "cssId": "BVAAABSHIRE",
+            "displayName": "BVAAABSHIRE (VACO)",
+            "efolderDocumentsFetchedAt": null,
+            "email": null,
+            "fullName": "Aaron Judge_HearingsAndCases Abshire",
+            "id": 3,
+            "lastLoginAt": null,
+            "roles": Object {},
+            "selectedRegionalOffice": null,
+            "stationId": "101",
+            "status": "active",
+            "statusUpdatedAt": null,
+            "updatedAt": "2020-06-25T11:00:43.257-04:00",
+          },
+          "judgeId": 3,
+          "location": null,
+          "militaryService": "",
+          "notes": null,
+          "paperCase": false,
+          "poaName": "AMERICAN LEGION",
+          "prepped": null,
+          "readableLocation": "Washington, DC",
+          "readableRequestType": "Central",
+          "regionalOfficeKey": "C",
+          "regionalOfficeName": "Central",
+          "regionalOfficeTimezone": "America/New_York",
+          "representative": "Clarence Darrow",
+          "representativeEmailAddress": "tom.brady@caseflow.gov",
+          "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
+          "representativeTz": "America/Denver",
+          "room": "2",
+          "scheduledFor": "2020-07-06T06:00:00.000-04:00",
+          "scheduledForIsPast": false,
+          "scheduledTime": "2000-01-01T03:30:00.000-05:00",
+          "scheduledTimeString": "03:30",
+          "summary": null,
+          "transcriptRequested": null,
+          "transcription": Object {},
+          "uuid": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+          "veteranAge": 85,
+          "veteranEmailAddress": "Bob.Smith@test.com",
+          "veteranFileNumber": "500000003",
+          "veteranFirstName": "Bob",
+          "veteranGender": "M",
+          "veteranLastName": "Smith",
+          "virtualHearing": Object {
+            "aliasWithHost": "BVA0000009@care.evn.va.gov",
+            "appellantEmail": "Bob.Smith@test.com",
+            "appellantTz": "America/Denver",
+            "clientHost": "care.evn.va.gov",
+            "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+            "guestPin": "2684353125#",
+            "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+            "hostPin": "8600030#",
+            "jobCompleted": true,
+            "representativeEmail": "tom.brady@caseflow.gov",
+            "representativeTz": "America/Los_Angeles",
+            "requestCancelled": false,
+            "status": "active",
+          },
+          "wasVirtual": false,
+          "witness": null,
+          "worksheetIssues": Object {},
+        }
+      }
+      isVirtual={true}
+      label="Guest Link"
+      link="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
+      linkText="Join Virtual Hearing"
+      role="Guest"
+      user={
+        Object {
+          "addressCity": "Washington",
+          "addressLine1": "123 Fake St.",
+          "addressState": "DC",
+          "addressZip": "20001",
+          "name": "John Smith",
+          "userCanAssignHearingSchedule": false,
+          "userCanVsoHearingSchedule": true,
+        }
+      }
+      virtualHearing={
+        Object {
+          "aliasWithHost": "BVA0000009@care.evn.va.gov",
+          "appellantEmail": "Bob.Smith@test.com",
+          "appellantTz": "America/Denver",
+          "clientHost": "care.evn.va.gov",
+          "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+          "guestPin": "2684353125#",
+          "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+          "hostPin": "8600030#",
+          "jobCompleted": true,
+          "representativeEmail": "tom.brady@caseflow.gov",
+          "representativeTz": "America/Los_Angeles",
+          "requestCancelled": false,
+          "status": "active",
+        }
+      }
+    >
+      <div
+        data-css-tx10g=""
+        id="guest-hearings-link"
+      >
+        <strong>
+          Guest Link
+          : 
+        </strong>
+        <VirtualHearingLinkDetails
+          aliasWithHost="BVA0000009@care.evn.va.gov"
+          hearing={
+            Object {
+              "advanceOnDocketMotion": null,
+              "aod": false,
+              "appealExternalId": "005334f7-b5c6-490c-a310-7dc5db22c8c3",
+              "appealId": 4,
+              "appellantAddressLine1": "9999 MISSION ST",
+              "appellantCity": "SAN FRANCISCO",
+              "appellantEmailAddress": "tom.brady@caseflow.gov",
+              "appellantFirstName": "Bob",
+              "appellantIsNotVeteran": false,
+              "appellantLastName": "Smith",
+              "appellantState": "CA",
+              "appellantTz": "America/Los_Angeles",
+              "appellantZip": "94103",
+              "availableHearingLocations": Object {},
+              "bvaPoc": null,
+              "caseType": "Original",
+              "centralOfficeTimeString": "03:30",
+              "claimantId": 4,
+              "closestRegionalOffice": null,
+              "currentIssueCount": 1,
+              "disposition": null,
+              "dispositionEditable": true,
+              "docketName": "hearing",
+              "docketNumber": "200628-4",
+              "emailEvents": Array [
+                Object {
+                  "emailAddress": "tom.brady@caseflow.gov",
+                  "emailType": "confirmation",
+                  "sentAt": "2020-06-29T14:55:12.620-04:00",
+                  "sentBy": "BVASYELLOW",
+                  "sentTo": "POA/Representative Email",
+                },
+                Object {
+                  "emailAddress": "Bob.Smith@test.com",
+                  "emailType": "confirmation",
+                  "sentAt": "2020-06-29T14:55:12.501-04:00",
+                  "sentBy": "BVASYELLOW",
+                  "sentTo": "Appellant Email",
+                },
+              ],
+              "evidenceWindowWaived": false,
+              "externalId": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+              "hearingDayId": 4,
+              "id": 4,
+              "isVirtual": true,
+              "judge": Object {
+                "createdAt": "2020-06-25T11:00:43.257-04:00",
+                "cssId": "BVAAABSHIRE",
+                "displayName": "BVAAABSHIRE (VACO)",
+                "efolderDocumentsFetchedAt": null,
+                "email": null,
+                "fullName": "Aaron Judge_HearingsAndCases Abshire",
+                "id": 3,
+                "lastLoginAt": null,
+                "roles": Object {},
+                "selectedRegionalOffice": null,
+                "stationId": "101",
+                "status": "active",
+                "statusUpdatedAt": null,
+                "updatedAt": "2020-06-25T11:00:43.257-04:00",
+              },
+              "judgeId": 3,
+              "location": null,
+              "militaryService": "",
+              "notes": null,
+              "paperCase": false,
+              "poaName": "AMERICAN LEGION",
+              "prepped": null,
+              "readableLocation": "Washington, DC",
+              "readableRequestType": "Central",
+              "regionalOfficeKey": "C",
+              "regionalOfficeName": "Central",
+              "regionalOfficeTimezone": "America/New_York",
+              "representative": "Clarence Darrow",
+              "representativeEmailAddress": "tom.brady@caseflow.gov",
+              "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
+              "representativeTz": "America/Denver",
+              "room": "2",
+              "scheduledFor": "2020-07-06T06:00:00.000-04:00",
+              "scheduledForIsPast": false,
+              "scheduledTime": "2000-01-01T03:30:00.000-05:00",
+              "scheduledTimeString": "03:30",
+              "summary": null,
+              "transcriptRequested": null,
+              "transcription": Object {},
+              "uuid": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+              "veteranAge": 85,
+              "veteranEmailAddress": "Bob.Smith@test.com",
+              "veteranFileNumber": "500000003",
+              "veteranFirstName": "Bob",
+              "veteranGender": "M",
+              "veteranLastName": "Smith",
+              "virtualHearing": Object {
+                "aliasWithHost": "BVA0000009@care.evn.va.gov",
+                "appellantEmail": "Bob.Smith@test.com",
+                "appellantTz": "America/Denver",
+                "clientHost": "care.evn.va.gov",
+                "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+                "guestPin": "2684353125#",
+                "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+                "hostPin": "8600030#",
+                "jobCompleted": true,
+                "representativeEmail": "tom.brady@caseflow.gov",
+                "representativeTz": "America/Los_Angeles",
+                "requestCancelled": false,
+                "status": "active",
+              },
+              "wasVirtual": false,
+              "witness": null,
+              "worksheetIssues": Object {},
+            }
+          }
+          isVirtual={true}
+          label="Join Virtual Hearing"
+          link="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
+          pin="2684353125#"
+          role="Guest"
+          user={
+            Object {
+              "addressCity": "Washington",
+              "addressLine1": "123 Fake St.",
+              "addressState": "DC",
+              "addressZip": "20001",
+              "name": "John Smith",
+              "userCanAssignHearingSchedule": false,
+              "userCanVsoHearingSchedule": true,
+            }
+          }
+          virtualHearing={
+            Object {
+              "aliasWithHost": "BVA0000009@care.evn.va.gov",
+              "appellantEmail": "Bob.Smith@test.com",
+              "appellantTz": "America/Denver",
+              "clientHost": "care.evn.va.gov",
+              "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+              "guestPin": "2684353125#",
+              "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+              "hostPin": "8600030#",
+              "jobCompleted": true,
+              "representativeEmail": "tom.brady@caseflow.gov",
+              "representativeTz": "America/Los_Angeles",
+              "requestCancelled": false,
+              "status": "active",
+            }
+          }
+        >
+          <VirtualHearingLink
+            hearing={
+              Object {
+                "advanceOnDocketMotion": null,
+                "aod": false,
+                "appealExternalId": "005334f7-b5c6-490c-a310-7dc5db22c8c3",
+                "appealId": 4,
+                "appellantAddressLine1": "9999 MISSION ST",
+                "appellantCity": "SAN FRANCISCO",
+                "appellantEmailAddress": "tom.brady@caseflow.gov",
+                "appellantFirstName": "Bob",
+                "appellantIsNotVeteran": false,
+                "appellantLastName": "Smith",
+                "appellantState": "CA",
+                "appellantTz": "America/Los_Angeles",
+                "appellantZip": "94103",
+                "availableHearingLocations": Object {},
+                "bvaPoc": null,
+                "caseType": "Original",
+                "centralOfficeTimeString": "03:30",
+                "claimantId": 4,
+                "closestRegionalOffice": null,
+                "currentIssueCount": 1,
+                "disposition": null,
+                "dispositionEditable": true,
+                "docketName": "hearing",
+                "docketNumber": "200628-4",
+                "emailEvents": Array [
+                  Object {
+                    "emailAddress": "tom.brady@caseflow.gov",
+                    "emailType": "confirmation",
+                    "sentAt": "2020-06-29T14:55:12.620-04:00",
+                    "sentBy": "BVASYELLOW",
+                    "sentTo": "POA/Representative Email",
+                  },
+                  Object {
+                    "emailAddress": "Bob.Smith@test.com",
+                    "emailType": "confirmation",
+                    "sentAt": "2020-06-29T14:55:12.501-04:00",
+                    "sentBy": "BVASYELLOW",
+                    "sentTo": "Appellant Email",
+                  },
+                ],
+                "evidenceWindowWaived": false,
+                "externalId": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+                "hearingDayId": 4,
+                "id": 4,
+                "isVirtual": true,
+                "judge": Object {
+                  "createdAt": "2020-06-25T11:00:43.257-04:00",
+                  "cssId": "BVAAABSHIRE",
+                  "displayName": "BVAAABSHIRE (VACO)",
+                  "efolderDocumentsFetchedAt": null,
+                  "email": null,
+                  "fullName": "Aaron Judge_HearingsAndCases Abshire",
+                  "id": 3,
+                  "lastLoginAt": null,
+                  "roles": Object {},
+                  "selectedRegionalOffice": null,
+                  "stationId": "101",
+                  "status": "active",
+                  "statusUpdatedAt": null,
+                  "updatedAt": "2020-06-25T11:00:43.257-04:00",
+                },
+                "judgeId": 3,
+                "location": null,
+                "militaryService": "",
+                "notes": null,
+                "paperCase": false,
+                "poaName": "AMERICAN LEGION",
+                "prepped": null,
+                "readableLocation": "Washington, DC",
+                "readableRequestType": "Central",
+                "regionalOfficeKey": "C",
+                "regionalOfficeName": "Central",
+                "regionalOfficeTimezone": "America/New_York",
+                "representative": "Clarence Darrow",
+                "representativeEmailAddress": "tom.brady@caseflow.gov",
+                "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
+                "representativeTz": "America/Denver",
+                "room": "2",
+                "scheduledFor": "2020-07-06T06:00:00.000-04:00",
+                "scheduledForIsPast": false,
+                "scheduledTime": "2000-01-01T03:30:00.000-05:00",
+                "scheduledTimeString": "03:30",
+                "summary": null,
+                "transcriptRequested": null,
+                "transcription": Object {},
+                "uuid": "9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a",
+                "veteranAge": 85,
+                "veteranEmailAddress": "Bob.Smith@test.com",
+                "veteranFileNumber": "500000003",
+                "veteranFirstName": "Bob",
+                "veteranGender": "M",
+                "veteranLastName": "Smith",
+                "virtualHearing": Object {
+                  "aliasWithHost": "BVA0000009@care.evn.va.gov",
+                  "appellantEmail": "Bob.Smith@test.com",
+                  "appellantTz": "America/Denver",
+                  "clientHost": "care.evn.va.gov",
+                  "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+                  "guestPin": "2684353125#",
+                  "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+                  "hostPin": "8600030#",
+                  "jobCompleted": true,
+                  "representativeEmail": "tom.brady@caseflow.gov",
+                  "representativeTz": "America/Los_Angeles",
+                  "requestCancelled": false,
+                  "status": "active",
+                },
+                "wasVirtual": false,
+                "witness": null,
+                "worksheetIssues": Object {},
+              }
+            }
+            isVirtual={true}
+            label="Join Virtual Hearing"
+            link="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
+            newWindow={true}
+            showFullLink={false}
+            user={
+              Object {
+                "addressCity": "Washington",
+                "addressLine1": "123 Fake St.",
+                "addressState": "DC",
+                "addressZip": "20001",
+                "name": "John Smith",
+                "userCanAssignHearingSchedule": false,
+                "userCanVsoHearingSchedule": true,
+              }
+            }
+            virtualHearing={
+              Object {
+                "aliasWithHost": "BVA0000009@care.evn.va.gov",
+                "appellantEmail": "Bob.Smith@test.com",
+                "appellantTz": "America/Denver",
+                "clientHost": "care.evn.va.gov",
+                "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+                "guestPin": "2684353125#",
+                "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+                "hostPin": "8600030#",
+                "jobCompleted": true,
+                "representativeEmail": "tom.brady@caseflow.gov",
+                "representativeTz": "America/Los_Angeles",
+                "requestCancelled": false,
+                "status": "active",
+              }
+            }
+          >
+            <Link
+              disabled={false}
+              href="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
+              target="_blank"
+            >
+              <a
+                href="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
+                target="_blank"
+                type={null}
+              >
+                <strong>
+                  Join Virtual Hearing
+                </strong>
+                <span
+                  data-css-32srrr=""
+                >
+                   
+                  <ExternalLink
+                    fill="#0071bc"
+                  >
+                    <svg
+                      height="16px"
+                      version="1.1"
+                      viewBox="0 0 18 16"
+                      width="18px"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g
+                        fill="none"
+                        fillRule="evenodd"
+                        stroke="none"
+                        strokeWidth="1"
+                      >
+                        <g
+                          fill="#0071bc"
+                          fillRule="nonzero"
+                        >
+                          <g
+                            transform="translate(1.000000, 1.000000)"
+                          >
+                            <path
+                              d="M12.2767813,8.17242825 L11.7057188,8.17242825 C11.6223125,8.17242825 11.553875,8.19969476 11.500625,8.25448292 C11.4469375,8.30895216 11.4202188,8.37876082 11.4202188,8.46378132 L11.4202188,11.377344 C11.4202188,11.7779863 11.2805313,12.1208747 11.001,12.4062005 C10.7214688,12.6914624 10.3853438,12.8339818 9.99275,12.8339818 L2.5695,12.8339818 C2.1769375,12.8339818 1.84084375,12.6914624 1.56125,12.4062005 C1.28171875,12.1209066 1.14196875,11.7780182 1.14196875,11.377344 L1.14196875,3.80200456 C1.14196875,3.40139408 1.2816875,3.05853759 1.56125,2.77324374 C1.84084375,2.487918 2.1769375,2.34533485 2.5695,2.34533485 L8.8505625,2.34533485 C8.93396875,2.34533485 9.00240625,2.31794077 9.055875,2.26337585 C9.10934375,2.20874715 9.1360625,2.13900228 9.1360625,2.05394989 L9.1360625,1.47114806 C9.1360625,1.38625513 9.10934375,1.31638269 9.055875,1.26184966 C9.00240625,1.20722096 8.93396875,1.17995444 8.8505625,1.17995444 L2.5695,1.17995444 C1.86175,1.17995444 1.2565,1.43641913 0.7538125,1.94931663 C0.2513125,2.46218223 0,3.07984055 0,3.80210023 L0,11.3774715 C0,12.0996993 0.2513125,12.7174533 0.75384375,13.2301595 C1.25653125,13.7430888 1.86178125,13.9996811 2.56953125,13.9996811 L9.99275,13.9996811 C10.7004688,13.9996811 11.3057813,13.7430888 11.8084063,13.2301595 C12.3110625,12.7174533 12.562375,12.0997312 12.562375,11.3774715 L12.562375,8.46400456 C12.562375,8.37888838 12.535625,8.30904784 12.4819375,8.25448292 C12.4284063,8.19969476 12.3599688,8.17242825 12.2767813,8.17242825 Z"
+                              id="external-link-outline-box"
+                            />
+                            <path
+                              d="M15.8009687,0.172974943 C15.6879375,0.0576264237 15.5539375,0 15.3994062,0 L10.8313437,0 C10.6767187,0 10.5428125,0.0576264237 10.429875,0.172974943 C10.3168438,0.288259681 10.26025,0.42484738 10.26025,0.58267426 C10.26025,0.740501139 10.3168438,0.877120729 10.429875,0.992469248 L12.0000938,2.59491116 L6.183,8.53138952 C6.1234375,8.59207745 6.09375,8.661918 6.09375,8.74068793 C6.09375,8.81974487 6.12353125,8.88955353 6.183,8.95024146 L7.200125,9.98809112 C7.25959375,10.048779 7.32803125,10.0790433 7.40534375,10.0790433 C7.48265625,10.0790433 7.551125,10.0488109 7.6105625,9.98809112 L13.4276875,4.05170843 L14.9980313,5.65415034 C15.1109687,5.76949886 15.2448438,5.82718907 15.3995,5.82718907 C15.5541562,5.82718907 15.6880312,5.76949886 15.8010937,5.65415034 C15.914125,5.53883371 15.9705937,5.4022779 15.9705937,5.24445103 L15.9705937,0.58267426 C15.9705625,0.424751708 15.9139063,0.288259681 15.8009687,0.172974943 Z"
+                              id="external-link-outline-arrow"
+                            />
+                          </g>
+                        </g>
+                      </g>
+                    </svg>
+                  </ExternalLink>
+                </span>
+              </a>
+            </Link>
+          </VirtualHearingLink>
+          <div
+            data-css-1abghdv=""
+          >
+            <strong>
+              Conference Room: 
+            </strong>
+            BVA0000009@care.evn.va.gov
+          </div>
+          <div
+            data-css-6aejb2=""
+          >
+            <strong>
+              PIN: 
+            </strong>
+            2684353125#
+          </div>
+          <CopyTextButton
+            label=""
+            styling={Object {}}
+            text="Copy Guest Link"
+            textToCopy="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
+          >
+            <Tooltip
+              id="tooltip-Copy Guest Link"
+              position="bottom"
+              text="Click to copy"
+            >
+              <CopyToClipboard
+                aria-describedby="tooltip-Copy Guest Link"
+                data-event="focus mouseenter"
+                data-event-off="mouseleave keydown"
+                data-for="tooltip-Copy Guest Link"
+                data-tip={true}
+                tabIndex={0}
+                text="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
+              >
+                <button
+                  aria-describedby="tooltip-Copy Guest Link"
+                  aria-label="Copy  Copy Guest Link"
+                  className="cf-apppeal-id"
+                  data-css-cjlnsd=""
+                  data-event="focus mouseenter"
+                  data-event-off="mouseleave keydown"
+                  data-for="tooltip-Copy Guest Link"
+                  data-tip={true}
+                  onClick={[Function]}
+                  tabIndex={0}
+                  type="submit"
+                >
+                  Copy Guest Link
+                   
+                  <ClipboardIcon>
+                    <svg
+                      height="16"
+                      viewBox="0 0 21 21"
+                      width="16"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M13.346 2.578h-2.664v-1.29C10.682.585 10.08 0 9.35 0H6.66c-.728 0-1.33.584-1.33 1.29v1.288H2.663v2.577h10.682V2.578zm-4.02 0H6.66v-1.29h2.665v1.29zm6.685 3.89V3.234a.665.665 0 0 0-.678-.656H14v1.29h.68v2.576H6.66v9.046H1.333V3.867h.68v-1.29H.678a.665.665 0 0 0-.68.657v12.913c0 .365.302.656.68.656h6.006v3.867h9.35l3.996-3.867V6.468h-4.02zm0 12.378v-2.043h2.112l-2.11 2.043zm2.665-3.356H14.68v3.867H7.992v-11.6h10.682v7.733z"
+                        fill="#5B616B"
+                        fillRule="evenodd"
+                      />
+                    </svg>
+                  </ClipboardIcon>
+                </button>
+              </CopyToClipboard>
+              <span
+                data-css-4jj7wk=""
+              >
+                <ReactTooltip
+                  clickable={false}
+                  effect="solid"
+                  id="tooltip-Copy Guest Link"
+                  insecure={true}
+                  multiline={true}
+                  offset={Object {}}
+                  place="bottom"
+                  resizeHide={true}
+                  role="tooltip"
+                  wrapper="div"
+                >
+                  <div
+                    className="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+                    data-id="tooltip"
+                    id="tooltip-Copy Guest Link"
+                    role="tooltip"
+                  >
+                    <style
+                      dangerouslySetInnerHTML={
+                        Object {
+                          "__html": "
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  ",
+                        }
+                      }
+                    />
+                    Click to copy
+                  </div>
+                </ReactTooltip>
+              </span>
+            </Tooltip>
+          </CopyTextButton>
+        </VirtualHearingLinkDetails>
+      </div>
+    </LinkContainer>
+    <div />
+  </div>
+</HearingLinks>
+`;

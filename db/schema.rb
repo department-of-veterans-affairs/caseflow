@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_20_135542) do
+ActiveRecord::Schema.define(version: 2021_06_15_221829) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,12 +31,16 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.index ["user_id"], name: "index_advance_on_docket_motions_on_user_id"
   end
 
-  create_table "allocations", force: :cascade do |t|
-    t.float "allocated_days", null: false
-    t.datetime "created_at", null: false
-    t.string "regional_office", null: false
-    t.bigint "schedule_period_id", null: false
-    t.datetime "updated_at", null: false
+  create_table "allocations", comment: "Hearing Day Requests for each Regional Office used for calculation and confirmation of the Build Hearings Schedule Algorithm", force: :cascade do |t|
+    t.float "allocated_days", null: false, comment: "Number of Video or Central Hearing Days Requested by the Regional Office"
+    t.float "allocated_days_without_room", comment: "Number of Hearing Days Allocated with no Rooms"
+    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.string "first_slot_time", limit: 5, comment: "The first time slot available for this allocation; interpreted as the local time at Central office or the RO"
+    t.integer "number_of_slots", comment: "The number of time slots possible for this allocation"
+    t.string "regional_office", null: false, comment: "Key of the Regional Office Requesting Hearing Days"
+    t.bigint "schedule_period_id", null: false, comment: "Hearings Schedule Period to which this request belongs"
+    t.integer "slot_length_minutes", comment: "The length in minutes of each time slot for this allocation"
+    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.index ["schedule_period_id"], name: "index_allocations_on_schedule_period_id"
     t.index ["updated_at"], name: "index_allocations_on_updated_at"
   end
@@ -93,6 +97,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
 
   create_table "appeals", comment: "Decision reviews intaken for AMA appeals to the board (also known as a notice of disagreement).", force: :cascade do |t|
     t.boolean "aod_based_on_age", comment: "If true, appeal is advance-on-docket due to claimant's age."
+    t.string "changed_hearing_request_type", comment: "The new hearing type preference for an appellant that needs a hearing scheduled"
     t.string "closest_regional_office", comment: "The code for the regional office closest to the Veteran on the appeal."
     t.datetime "created_at"
     t.date "docket_range_date", comment: "Date that appeal was added to hearing docket range."
@@ -105,6 +110,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.datetime "establishment_processed_at", comment: "Timestamp for when the establishment has succeeded in processing."
     t.datetime "establishment_submitted_at", comment: "Timestamp for when the the intake was submitted for asynchronous processing."
     t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review."
+    t.string "original_hearing_request_type", comment: "The hearing type preference for an appellant before any changes were made in Caseflow"
     t.string "poa_participant_id", comment: "Used to identify the power of attorney (POA) at the time the appeal was dispatched to BVA. Sometimes the POA changes in BGS after the fact, and BGS only returns the current representative."
     t.date "receipt_date", comment: "Receipt date of the appeal form. Used to determine which issues are within the timeliness window to be appealed. Only issues decided prior to the receipt date will show up as contestable issues."
     t.string "stream_docket_number", comment: "Multiple appeals with the same docket number indicate separate appeal streams, mimicking the structure of legacy appeals."
@@ -112,7 +118,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.date "target_decision_date", comment: "If the appeal docket is direct review, this sets the target decision date for the appeal, which is one year after the receipt date."
     t.datetime "updated_at"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "The universally unique identifier for the appeal, which can be used to navigate to appeals/appeal_uuid. This allows a single ID to determine an appeal whether it is a legacy appeal or an AMA appeal."
-    t.string "veteran_file_number", null: false, comment: "The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
+    t.string "veteran_file_number", null: false, comment: "PII. The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
     t.boolean "veteran_is_not_claimant", comment: "Selected by the user during intake, indicates whether the Veteran is the claimant, or if the claimant is someone else such as a dependent. Must be TRUE if Veteran is deceased."
     t.index ["aod_based_on_age"], name: "index_appeals_on_aod_based_on_age"
     t.index ["docket_type"], name: "index_appeals_on_docket_type"
@@ -120,6 +126,22 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.index ["updated_at"], name: "index_appeals_on_updated_at"
     t.index ["uuid"], name: "index_appeals_on_uuid"
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
+  end
+
+  create_table "appellant_substitutions", comment: "Store appellant substitution form data", force: :cascade do |t|
+    t.string "claimant_type", null: false, comment: "Claimant type of substitute; needed to create Claimant record"
+    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.bigint "created_by_id", null: false, comment: "User that created this record"
+    t.string "poa_participant_id", null: false, comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id"
+    t.bigint "selected_task_ids", default: [], null: false, comment: "User-selected task ids from source appeal", array: true
+    t.bigint "source_appeal_id", null: false, comment: "The relevant source appeal for this substitution"
+    t.string "substitute_participant_id", null: false, comment: "Participant ID of substitute appellant"
+    t.date "substitution_date", null: false, comment: "Date of substitution"
+    t.bigint "target_appeal_id", null: false, comment: "The new appeal resulting from this substitution"
+    t.jsonb "task_params", default: "{}", null: false, comment: "JSON hash to hold parameters for new tasks, such as an EvidenceSubmissionWindowTask's end-hold date, with keys from selected_task_ids"
+    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.index ["source_appeal_id"], name: "index_appellant_substitutions_on_source_appeal_id"
+    t.index ["target_appeal_id"], name: "index_appellant_substitutions_on_target_appeal_id"
   end
 
   create_table "attorney_case_reviews", id: :serial, force: :cascade do |t|
@@ -151,7 +173,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.string "name", comment: "Name of location; i.e 'Chicago Regional Benefit Office', 'Jennings VA Clinic', etc"
     t.string "state", comment: "State in abbreviated form; i.e 'NY', 'CA', etc"
     t.datetime "updated_at", null: false, comment: "Automatic timestamp of when hearing location was updated"
-    t.string "veteran_file_number", comment: "The VBA corporate file number of the Veteran for the appeal"
+    t.string "veteran_file_number", comment: "PII. The VBA corporate file number of the Veteran for the appeal"
     t.string "zip_code"
     t.index ["appeal_id", "appeal_type"], name: "index_available_hearing_locations_on_appeal_id_and_appeal_type"
     t.index ["updated_at"], name: "index_available_hearing_locations_on_updated_at"
@@ -177,7 +199,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.string "authzn_poa_access_ind", comment: "Authorization for POA access"
     t.string "claimant_participant_id", null: false, comment: "Claimant participant ID -- use as FK to claimants"
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
-    t.string "file_number", comment: "Claimant file number"
+    t.string "file_number", comment: "PII. Claimant file number"
     t.datetime "last_synced_at", comment: "The last time BGS was checked"
     t.string "legacy_poa_cd", comment: "Legacy POA code"
     t.string "poa_participant_id", null: false, comment: "POA participant ID -- use as FK to people"
@@ -266,7 +288,6 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
   end
 
   create_table "cavc_remands", force: :cascade do |t|
-    t.bigint "appeal_id", null: false, comment: "Appeal that CAVC has remanded"
     t.string "cavc_decision_type", null: false, comment: "CAVC decision type. Expecting 'remand', 'straight_reversal', or 'death_dismissal'"
     t.string "cavc_docket_number", null: false, comment: "Docket number of the CAVC judgement"
     t.string "cavc_judge_full_name", null: false, comment: "CAVC judge that passed the judgement on the remand"
@@ -274,14 +295,18 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.bigint "created_by_id", null: false, comment: "User that created this record"
     t.date "decision_date", null: false, comment: "Date CAVC issued a decision, according to the CAVC"
     t.bigint "decision_issue_ids", default: [], comment: "Decision issues being remanded; IDs refer to decision_issues table. For a JMR, all decision issues on the previous appeal will be remanded. For a JMPR, only some", array: true
+    t.boolean "federal_circuit", comment: "Whether the case has been appealed to the US Court of Appeals for the Federal Circuit"
     t.string "instructions", null: false, comment: "Instructions and context provided upon creation of the remand record"
     t.date "judgement_date", comment: "Date CAVC issued a judgement, according to the CAVC"
     t.date "mandate_date", comment: "Date that CAVC reported the mandate was given"
+    t.bigint "remand_appeal_id", comment: "Appeal created by this CAVC Remand"
     t.string "remand_subtype", comment: "Type of remand. If the cavc_decision_type is 'remand', expecting one of 'jmp', 'jmpr', or 'mdr'. Otherwise, this can be null."
     t.boolean "represented_by_attorney", null: false, comment: "Whether or not the appellant was represented by an attorney"
+    t.bigint "source_appeal_id", null: false, comment: "Appeal that CAVC has remanded"
     t.datetime "updated_at", null: false, comment: "Default timestamps"
     t.bigint "updated_by_id", comment: "User that updated this record. For MDR remands, judgement and mandate dates will be added after the record is first created."
-    t.index ["appeal_id"], name: "index_cavc_remands_on_appeal_id"
+    t.index ["remand_appeal_id"], name: "index_cavc_remands_on_remand_appeal_id"
+    t.index ["source_appeal_id"], name: "index_cavc_remands_on_source_appeal_id"
   end
 
   create_table "certification_cancellations", id: :serial, force: :cascade do |t|
@@ -413,7 +438,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.date "end_product_last_action_date", comment: "After an end product gets synced with a status of CLR (cleared), the end product's last_action_date is saved on any decision issues that are created as a result. This is used as a proxy for decision date for non-rating issues that are processed in VBMS because they don't have a rating profile date, and the exact decision date is not available."
     t.string "participant_id", null: false, comment: "The Veteran's participant id."
     t.string "percent_number", comment: "percent_number from RatingIssue (prcntNo from Rating Profile)"
-    t.string "rating_issue_reference_id", comment: "Identifies the specific issue on the rating that resulted from the decision issue (a rating can have multiple issues). This is unique per rating issue."
+    t.string "rating_issue_reference_id", comment: "Identifies the specific issue on the rating that resulted from the decision issue (a rating issue can be connected to multiple contentions)."
     t.datetime "rating_profile_date", comment: "The profile date of the rating that a decision issue resulted in (if applicable). The profile_date is used as an identifier for the rating, and is the date that most closely maps to what the Veteran writes down as the decision date."
     t.datetime "rating_promulgation_date", comment: "The promulgation date of the rating that a decision issue resulted in (if applicable). It is used for calculating whether a decision issue is within the timeliness window to be appealed or get a higher level review."
     t.text "subject_text", comment: "subject_text from RatingIssue (subjctTxt from Rating Profile)"
@@ -421,7 +446,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.index ["decision_review_id", "decision_review_type"], name: "index_decision_issues_decision_review"
     t.index ["deleted_at"], name: "index_decision_issues_on_deleted_at"
     t.index ["disposition"], name: "index_decision_issues_on_disposition"
-    t.index ["rating_issue_reference_id", "disposition", "participant_id"], name: "decision_issues_uniq_by_disposition_and_ref_id", unique: true
+    t.index ["rating_issue_reference_id"], name: "index_decision_issues_on_rating_issue_reference_id"
     t.index ["updated_at"], name: "index_decision_issues_on_updated_at"
   end
 
@@ -473,28 +498,28 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.index ["updated_at"], name: "index_distributions_on_updated_at"
   end
 
-  create_table "docket_changes", comment: "Stores the disposition and associated data for Docket Change motions", force: :cascade do |t|
-    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
-    t.string "disposition", comment: "Possible options are granted, partially_granted, and denied"
-    t.string "docket_type", comment: "The new docket"
-    t.integer "granted_request_issue_ids", comment: "When a docket change is partially granted, this includes an array of the appeal's request issue IDs that were selected for the new docket. For full grant, this includes all prior request issue IDs.", array: true
-    t.bigint "new_docket_stream_id", comment: "References the new appeal stream with the updated docket; initially null until created by workflow"
-    t.bigint "old_docket_stream_id", null: false, comment: "References the original appeal stream with old docket"
-    t.datetime "receipt_date", null: false
-    t.bigint "task_id", null: false, comment: "The task that triggered the switch"
-    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
-    t.index ["created_at"], name: "index_docket_changes_on_created_at"
-    t.index ["new_docket_stream_id"], name: "index_docket_changes_on_new_docket_stream_id"
-    t.index ["old_docket_stream_id"], name: "index_docket_changes_on_old_docket_stream_id"
-    t.index ["task_id"], name: "index_docket_changes_on_task_id"
-  end
-
   create_table "docket_snapshots", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
     t.integer "docket_count"
     t.date "latest_docket_month"
     t.datetime "updated_at"
     t.index ["updated_at"], name: "index_docket_snapshots_on_updated_at"
+  end
+
+  create_table "docket_switches", comment: "Stores the disposition and associated data for Docket Switch motions.", force: :cascade do |t|
+    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.string "disposition", comment: "Possible options are granted, partially_granted, and denied"
+    t.string "docket_type", comment: "The new docket"
+    t.integer "granted_request_issue_ids", comment: "When a docket switch is partially granted, this includes an array of the appeal's request issue IDs that were selected for the new docket. For full grant, this includes all prior request issue IDs.", array: true
+    t.bigint "new_docket_stream_id", comment: "References the new appeal stream with the updated docket; initially null until created by workflow"
+    t.bigint "old_docket_stream_id", null: false, comment: "References the original appeal stream with old docket"
+    t.datetime "receipt_date", null: false, comment: "Date the board receives the NOD with request for docket switch; entered by user performing docket switch"
+    t.bigint "task_id", null: false, comment: "The task that triggered the switch"
+    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.index ["created_at"], name: "index_docket_switches_on_created_at"
+    t.index ["new_docket_stream_id"], name: "index_docket_switches_on_new_docket_stream_id"
+    t.index ["old_docket_stream_id"], name: "index_docket_switches_on_old_docket_stream_id"
+    t.index ["task_id"], name: "index_docket_switches_on_task_id"
   end
 
   create_table "docket_tracers", id: :serial, force: :cascade do |t|
@@ -524,7 +549,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.boolean "category_procedural"
     t.datetime "created_at"
     t.string "description"
-    t.string "file_number"
+    t.string "file_number", comment: "PII"
     t.integer "previous_document_version_id"
     t.date "received_at"
     t.string "series_id"
@@ -576,7 +601,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.string "synced_status", comment: "The status of the end product, which is synced by a job. Once and end product is cleared (CLR) or canceled (CAN) the status is final and the end product will not continue being synced."
     t.datetime "updated_at"
     t.integer "user_id", comment: "The ID of the user who performed the decision review intake."
-    t.string "veteran_file_number", null: false, comment: "The file number of the Veteran submitted when establishing the end product."
+    t.string "veteran_file_number", null: false, comment: "PII. The file number of the Veteran submitted when establishing the end product."
     t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
     t.index ["updated_at"], name: "index_end_product_establishments_on_updated_at"
     t.index ["user_id"], name: "index_end_product_establishments_on_user_id"
@@ -626,7 +651,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.string "contested_claims_procedures_applicable"
     t.string "contested_claims_requirements_followed"
     t.datetime "created_at", null: false
-    t.string "file_number"
+    t.string "file_number", comment: "PII"
     t.date "form9_date"
     t.string "form_646_not_of_record_explanation"
     t.string "form_646_of_record"
@@ -699,13 +724,16 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.datetime "created_at", null: false, comment: "Automatic timestamp of when hearing day was created"
     t.bigint "created_by_id", null: false, comment: "The ID of the user who created the Hearing Day"
     t.datetime "deleted_at", comment: "Automatic timestamp of when hearing day was deleted"
+    t.string "first_slot_time", limit: 5, comment: "The first time slot available; interpreted as the local time at Central office or the RO"
     t.integer "judge_id", comment: "User ID of judge who is assigned to the hearing day"
     t.boolean "lock", comment: "Determines if the hearing day is locked and can't be edited"
     t.text "notes", comment: "Any notes about hearing day"
+    t.integer "number_of_slots", comment: "The number of time slots possible for this day"
     t.string "regional_office", comment: "Regional office key associated with hearing day"
     t.string "request_type", null: false, comment: "Hearing request types for all associated hearings; can be one of: 'T', 'C' or 'V'"
     t.string "room", comment: "The room at BVA where the hearing will take place"
     t.date "scheduled_for", null: false, comment: "The date when all associated hearings will take place"
+    t.integer "slot_length_minutes", comment: "The length in minutes of each time slot for this day"
     t.datetime "updated_at", null: false, comment: "Automatic timestamp of when hearing day was updated"
     t.bigint "updated_by_id", null: false, comment: "The ID of the user who most recently updated the Hearing Day"
     t.index ["created_by_id"], name: "index_hearing_days_on_created_by_id"
@@ -812,7 +840,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.boolean "same_office", comment: "Whether the Veteran wants their issues to be reviewed by the same office where they were previously reviewed. This creates a special issue on all of the contentions created on this Higher Level Review."
     t.datetime "updated_at"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "The universally unique identifier for the Higher Level Review. Can be used to link to the claim after it is completed."
-    t.string "veteran_file_number", null: false, comment: "The file number of the Veteran that the Higher Level Review is for."
+    t.string "veteran_file_number", null: false, comment: "PII. The file number of the Veteran that the Higher Level Review is for."
     t.boolean "veteran_is_not_claimant", comment: "Indicates whether the Veteran is the claimant on the Higher Level Review form, or if the claimant is someone else like a spouse or a child. Must be TRUE if the Veteran is deceased."
     t.index ["updated_at"], name: "index_higher_level_reviews_on_updated_at"
     t.index ["uuid"], name: "index_higher_level_reviews_on_uuid"
@@ -843,7 +871,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.string "type", comment: "The class name of the intake."
     t.datetime "updated_at"
     t.integer "user_id", null: false, comment: "The ID of the user who created the intake."
-    t.string "veteran_file_number", comment: "The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
+    t.string "veteran_file_number", comment: "PII. The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
     t.index ["detail_type", "detail_id"], name: "index_intakes_on_detail_type_and_detail_id"
     t.index ["type", "veteran_file_number"], name: "unique_index_to_avoid_duplicate_intakes", unique: true, where: "(completed_at IS NULL)"
     t.index ["type"], name: "index_intakes_on_type"
@@ -894,7 +922,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
 
   create_table "legacy_appeals", force: :cascade do |t|
     t.bigint "appeal_series_id"
-    t.string "changed_request_type", comment: "The new hearing type preference for an appellant that had previously requested a travel board hearing"
+    t.string "changed_hearing_request_type", comment: "The new hearing type preference for an appellant that needs a hearing scheduled"
     t.string "closest_regional_office"
     t.boolean "contaminated_water_at_camp_lejeune", default: false
     t.datetime "created_at"
@@ -913,6 +941,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.boolean "mustard_gas", default: false
     t.boolean "national_cemetery_administration", default: false
     t.boolean "nonrating_issue", default: false
+    t.string "original_hearing_request_type", comment: "The hearing type preference for an appellant before any changes were made in Caseflow"
     t.boolean "pension_united_states", default: false
     t.boolean "private_attorney_or_agent", default: false
     t.boolean "radiation", default: false
@@ -995,6 +1024,18 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.index ["updated_at"], name: "index_messages_on_updated_at"
   end
 
+  create_table "nod_date_updates", comment: "Tracks changes to an AMA appeal's receipt date (aka, NOD date)", force: :cascade do |t|
+    t.bigint "appeal_id", null: false, comment: "Appeal for which the NOD date is being edited"
+    t.string "change_reason", null: false, comment: "Reason for change: entry_error or new_info"
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at timestamps"
+    t.date "new_date", null: false, comment: "Date after update"
+    t.date "old_date", null: false, comment: "Date before update"
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at timestamps"
+    t.bigint "user_id", null: false, comment: "User that updated the NOD date"
+    t.index ["appeal_id"], name: "index_nod_date_updates_on_appeal_id"
+    t.index ["user_id"], name: "index_nod_date_updates_on_user_id"
+  end
+
   create_table "non_availabilities", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date"
@@ -1036,14 +1077,14 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
 
   create_table "people", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.date "date_of_birth"
-    t.string "email_address", comment: "Person email address, cached from BGS"
-    t.string "first_name", comment: "Person first name, cached from BGS"
-    t.string "last_name", comment: "Person last name, cached from BGS"
-    t.string "middle_name", comment: "Person middle name, cached from BGS"
-    t.string "name_suffix", comment: "Person name suffix, cached from BGS"
+    t.date "date_of_birth", comment: "PII"
+    t.string "email_address", comment: "PII. Person email address, cached from BGS"
+    t.string "first_name", comment: "PII. Person first name, cached from BGS"
+    t.string "last_name", comment: "PII. Person last name, cached from BGS"
+    t.string "middle_name", comment: "PII. Person middle name, cached from BGS"
+    t.string "name_suffix", comment: "PII. Person name suffix, cached from BGS"
     t.string "participant_id", null: false
-    t.string "ssn", comment: "Person Social Security Number, cached from BGS"
+    t.string "ssn", comment: "PII. Person Social Security Number, cached from BGS"
     t.datetime "updated_at", null: false
     t.index ["participant_id"], name: "index_people_on_participant_id", unique: true
     t.index ["ssn"], name: "index_people_on_ssn"
@@ -1092,7 +1133,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.string "option_selected", comment: "Indicates whether the Veteran selected for their RAMP election to be processed as a higher level review (with or without a hearing), a supplemental claim, or a board appeal."
     t.date "receipt_date", comment: "The date that the RAMP form was received by central mail."
     t.datetime "updated_at"
-    t.string "veteran_file_number", null: false, comment: "The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
+    t.string "veteran_file_number", null: false, comment: "PII. The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
     t.index ["updated_at"], name: "index_ramp_elections_on_updated_at"
     t.index ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number"
   end
@@ -1119,7 +1160,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.string "option_selected", comment: "Which lane the RAMP refiling is for, between appeal, higher level review, and supplemental claim."
     t.date "receipt_date", comment: "Receipt date of the RAMP form."
     t.datetime "updated_at"
-    t.string "veteran_file_number", null: false, comment: "The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
+    t.string "veteran_file_number", null: false, comment: "PII. The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
     t.index ["updated_at"], name: "index_ramp_refilings_on_updated_at"
     t.index ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number"
   end
@@ -1211,6 +1252,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
     t.index ["ineligible_reason"], name: "index_request_issues_on_ineligible_reason"
     t.index ["updated_at"], name: "index_request_issues_on_updated_at"
+    t.index ["veteran_participant_id"], name: "index_veteran_participant_id"
   end
 
   create_table "request_issues_updates", comment: "Keeps track of edits to request issues on a decision review that happen after the initial intake, such as removing and adding issues.  When the decision review is processed in VBMS, this also tracks whether adding or removing contentions in VBMS for the update has succeeded.", force: :cascade do |t|
@@ -1315,7 +1357,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.date "receipt_date", comment: "The date that the Supplemental Claim form was received by central mail. Only issues decided prior to the receipt date will show up as contestable issues.  It is also the claim date for any associated end products that are established. Supplemental Claims do not have the same timeliness restriction on contestable issues as Appeals and Higher Level Reviews."
     t.datetime "updated_at"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "The universally unique identifier for the Supplemental Claim. Can be used to link to the claim after it is completed."
-    t.string "veteran_file_number", null: false, comment: "The file number of the Veteran that the Supplemental Claim is for."
+    t.string "veteran_file_number", null: false, comment: "PII. The file number of the Veteran that the Supplemental Claim is for."
     t.boolean "veteran_is_not_claimant", comment: "Indicates whether the Veteran is the claimant on the Supplemental Claim form, or if the claimant is someone else like a spouse or a child. Must be TRUE if the Veteran is deceased."
     t.index ["decision_review_remanded_type", "decision_review_remanded_id"], name: "index_decision_issues_on_decision_review_remanded"
     t.index ["updated_at"], name: "index_supplemental_claims_on_updated_at"
@@ -1352,6 +1394,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.integer "assigned_by_id"
     t.integer "assigned_to_id", null: false
     t.string "assigned_to_type", null: false
+    t.string "cancellation_reason", comment: "Reason for latest cancellation status"
     t.integer "cancelled_by_id", comment: "ID of user that cancelled the task. Backfilled from versions table. Can be nil if task was cancelled before this column was added or if there is no user logged in when the task is cancelled"
     t.datetime "closed_at"
     t.datetime "created_at", null: false
@@ -1364,6 +1407,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.datetime "updated_at", null: false
     t.index ["appeal_type", "appeal_id"], name: "index_tasks_on_appeal_type_and_appeal_id"
     t.index ["assigned_to_type", "assigned_to_id"], name: "index_tasks_on_assigned_to_type_and_assigned_to_id"
+    t.index ["cancellation_reason"], name: "index_tasks_on_cancellation_reason"
     t.index ["parent_id"], name: "index_tasks_on_parent_id"
     t.index ["status"], name: "index_tasks_on_status"
     t.index ["type"], name: "index_tasks_on_type"
@@ -1396,6 +1440,38 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.index ["updated_at"], name: "index_transcriptions_on_updated_at"
   end
 
+  create_table "unrecognized_appellants", comment: "Unrecognized non-veteran appellants", force: :cascade do |t|
+    t.bigint "claimant_id", null: false, comment: "The OtherClaimant record associating this appellant to a DecisionReview"
+    t.datetime "created_at", null: false
+    t.string "poa_participant_id", comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id"
+    t.string "relationship", null: false, comment: "Relationship to veteran. Allowed values: attorney, child, spouse, other"
+    t.bigint "unrecognized_party_detail_id", comment: "Contact details"
+    t.bigint "unrecognized_power_of_attorney_id", comment: "Appellant's POA, if they aren't in CorpDB."
+    t.datetime "updated_at", null: false
+    t.index ["claimant_id"], name: "index_unrecognized_appellants_on_claimant_id"
+    t.index ["unrecognized_party_detail_id"], name: "index_unrecognized_appellants_on_unrecognized_party_detail_id"
+    t.index ["unrecognized_power_of_attorney_id"], name: "index_unrecognized_appellants_on_power_of_attorney_id"
+  end
+
+  create_table "unrecognized_party_details", comment: "For an appellant or POA, name and contact details for an unrecognized person or organization", force: :cascade do |t|
+    t.string "address_line_1", null: false
+    t.string "address_line_2"
+    t.string "address_line_3"
+    t.string "city", null: false
+    t.string "country", null: false
+    t.datetime "created_at", null: false
+    t.string "email_address"
+    t.string "last_name"
+    t.string "middle_name"
+    t.string "name", null: false, comment: "Name of organization, or first name or mononym of person"
+    t.string "party_type", null: false, comment: "The type of this party. Allowed values: individual, organization"
+    t.string "phone_number"
+    t.string "state", null: false
+    t.string "suffix"
+    t.datetime "updated_at", null: false
+    t.string "zip", null: false
+  end
+
   create_table "user_quotas", id: :serial, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "locked_task_count"
@@ -1406,13 +1482,13 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.index ["updated_at"], name: "index_user_quotas_on_updated_at"
   end
 
-  create_table "users", id: :serial, force: :cascade do |t|
+  create_table "users", id: :serial, comment: "Authenticated Caseflow users", force: :cascade do |t|
     t.datetime "created_at"
     t.string "css_id", null: false
     t.datetime "efolder_documents_fetched_at", comment: "Date when efolder documents were cached in s3 for this user"
     t.string "email"
     t.string "full_name"
-    t.datetime "last_login_at"
+    t.datetime "last_login_at", comment: "The last time the user-agent (browser) provided session credentials; see User.from_session for precision"
     t.string "roles", array: true
     t.string "selected_regional_office"
     t.string "station_id", null: false
@@ -1456,16 +1532,18 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
   end
 
   create_table "veterans", force: :cascade do |t|
+    t.datetime "bgs_last_synced_at", comment: "The last time cached BGS attributes were synced"
     t.string "closest_regional_office"
     t.datetime "created_at"
     t.date "date_of_death", comment: "Date of Death reported by BGS, cached locally"
-    t.string "file_number", null: false
-    t.string "first_name"
-    t.string "last_name"
-    t.string "middle_name"
+    t.datetime "date_of_death_reported_at", comment: "The datetime that date_of_death last changed for veteran."
+    t.string "file_number", null: false, comment: "PII. Veteran's file_number"
+    t.string "first_name", comment: "PII. Veteran's first name"
+    t.string "last_name", comment: "PII. Veteran's last name"
+    t.string "middle_name", comment: "PII. Veteran's middle name"
     t.string "name_suffix"
     t.string "participant_id"
-    t.string "ssn", comment: "The cached Social Security Number"
+    t.string "ssn", comment: "PII. The cached Social Security Number"
     t.datetime "updated_at"
     t.index ["file_number"], name: "index_veterans_on_file_number", unique: true
     t.index ["participant_id"], name: "index_veterans_on_participant_id"
@@ -1491,21 +1569,25 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.string "alias_with_host", comment: "Alias for conference in pexip with client_host"
     t.string "appellant_email", comment: "Appellant's email address"
     t.boolean "appellant_email_sent", default: false, null: false, comment: "Determines whether or not a notification email was sent to the appellant"
+    t.datetime "appellant_reminder_sent_at", comment: "The datetime the last reminder email was sent to the appellant."
     t.string "appellant_tz", limit: 50, comment: "Stores appellant timezone"
     t.boolean "conference_deleted", default: false, null: false, comment: "Whether or not the conference was deleted from Pexip"
     t.integer "conference_id", comment: "ID of conference from Pexip"
     t.datetime "created_at", null: false, comment: "Automatic timestamp of when virtual hearing was created"
     t.bigint "created_by_id", null: false, comment: "User who created the virtual hearing"
+    t.string "guest_hearing_link", comment: "Link used by appellants and/or representatives to join virtual hearing conference"
     t.integer "guest_pin", comment: "PIN number for guests of Pexip conference"
     t.string "guest_pin_long", limit: 11, comment: "Change the guest pin to store a longer pin with the # sign trailing"
     t.bigint "hearing_id", comment: "Associated hearing"
     t.string "hearing_type", comment: "'Hearing' or 'LegacyHearing'"
+    t.string "host_hearing_link", comment: "Link used by judges to join virtual hearing conference"
     t.integer "host_pin", comment: "PIN number for host of Pexip conference"
     t.string "host_pin_long", limit: 8, comment: "Change the host pin to store a longer pin with the # sign trailing"
     t.string "judge_email", comment: "Judge's email address"
     t.boolean "judge_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the judge"
     t.string "representative_email", comment: "Veteran's representative's email address"
     t.boolean "representative_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran's representative"
+    t.datetime "representative_reminder_sent_at", comment: "The datetime the last reminder email was sent to the representative."
     t.string "representative_tz", limit: 50, comment: "Stores representative timezone"
     t.boolean "request_cancelled", default: false, comment: "Determines whether the user has cancelled the virtual hearing request"
     t.datetime "updated_at", null: false, comment: "Automatic timestamp of when virtual hearing was updated"
@@ -1558,38 +1640,93 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
   end
 
   add_foreign_key "advance_on_docket_motions", "users"
+  add_foreign_key "allocations", "schedule_periods"
   add_foreign_key "annotations", "users"
   add_foreign_key "api_views", "api_keys"
   add_foreign_key "appeal_views", "users"
+  add_foreign_key "appellant_substitutions", "appeals", column: "source_appeal_id"
+  add_foreign_key "appellant_substitutions", "appeals", column: "target_appeal_id"
+  add_foreign_key "appellant_substitutions", "users", column: "created_by_id"
+  add_foreign_key "cavc_remands", "appeals", column: "remand_appeal_id"
+  add_foreign_key "cavc_remands", "appeals", column: "source_appeal_id"
+  add_foreign_key "cavc_remands", "users", column: "created_by_id"
+  add_foreign_key "cavc_remands", "users", column: "updated_by_id"
   add_foreign_key "certifications", "users"
   add_foreign_key "claims_folder_searches", "users"
+  add_foreign_key "dispatch_tasks", "legacy_appeals", column: "appeal_id"
   add_foreign_key "dispatch_tasks", "users"
-  add_foreign_key "docket_changes", "appeals", column: "new_docket_stream_id"
-  add_foreign_key "docket_changes", "appeals", column: "old_docket_stream_id"
-  add_foreign_key "docket_changes", "tasks"
+  add_foreign_key "distributed_cases", "distributions"
+  add_foreign_key "distributed_cases", "tasks"
+  add_foreign_key "distributions", "users", column: "judge_id"
+  add_foreign_key "docket_switches", "appeals", column: "new_docket_stream_id"
+  add_foreign_key "docket_switches", "appeals", column: "old_docket_stream_id"
+  add_foreign_key "docket_switches", "tasks"
+  add_foreign_key "docket_tracers", "docket_snapshots"
   add_foreign_key "document_views", "users"
+  add_foreign_key "end_product_code_updates", "end_product_establishments"
   add_foreign_key "end_product_establishments", "users"
   add_foreign_key "end_product_updates", "end_product_establishments"
   add_foreign_key "end_product_updates", "users"
+  add_foreign_key "hearing_appeal_stream_snapshots", "legacy_appeals", column: "appeal_id"
+  add_foreign_key "hearing_appeal_stream_snapshots", "legacy_hearings", column: "hearing_id"
   add_foreign_key "hearing_days", "users", column: "created_by_id"
+  add_foreign_key "hearing_days", "users", column: "judge_id"
   add_foreign_key "hearing_days", "users", column: "updated_by_id"
+  add_foreign_key "hearing_issue_notes", "hearings"
+  add_foreign_key "hearing_issue_notes", "request_issues"
+  add_foreign_key "hearing_task_associations", "tasks", column: "hearing_task_id"
   add_foreign_key "hearing_views", "users"
+  add_foreign_key "hearings", "appeals"
+  add_foreign_key "hearings", "hearing_days"
   add_foreign_key "hearings", "users", column: "created_by_id"
+  add_foreign_key "hearings", "users", column: "judge_id"
   add_foreign_key "hearings", "users", column: "updated_by_id"
+  add_foreign_key "ihp_drafts", "organizations"
   add_foreign_key "intakes", "users"
+  add_foreign_key "job_notes", "users"
+  add_foreign_key "judge_case_reviews", "users", column: "attorney_id"
+  add_foreign_key "judge_case_reviews", "users", column: "judge_id"
   add_foreign_key "legacy_appeals", "appeal_series"
   add_foreign_key "legacy_hearings", "hearing_days"
+  add_foreign_key "legacy_hearings", "legacy_appeals", column: "appeal_id"
   add_foreign_key "legacy_hearings", "users"
   add_foreign_key "legacy_hearings", "users", column: "created_by_id"
   add_foreign_key "legacy_hearings", "users", column: "updated_by_id"
   add_foreign_key "legacy_issue_optins", "legacy_issues"
+  add_foreign_key "legacy_issue_optins", "request_issues"
+  add_foreign_key "legacy_issues", "request_issues"
+  add_foreign_key "messages", "users"
+  add_foreign_key "nod_date_updates", "appeals"
+  add_foreign_key "nod_date_updates", "users"
+  add_foreign_key "non_availabilities", "schedule_periods"
+  add_foreign_key "organizations_users", "organizations"
   add_foreign_key "organizations_users", "users"
   add_foreign_key "post_decision_motions", "appeals"
   add_foreign_key "post_decision_motions", "tasks"
   add_foreign_key "ramp_closed_appeals", "ramp_elections"
+  add_foreign_key "ramp_election_rollbacks", "ramp_elections"
   add_foreign_key "ramp_election_rollbacks", "users"
+  add_foreign_key "request_decision_issues", "decision_issues"
+  add_foreign_key "request_decision_issues", "request_issues"
+  add_foreign_key "request_issues", "decision_issues", column: "contested_decision_issue_id"
+  add_foreign_key "request_issues", "end_product_establishments"
+  add_foreign_key "request_issues", "request_issues", column: "corrected_by_request_issue_id"
+  add_foreign_key "request_issues", "request_issues", column: "ineligible_due_to_id"
   add_foreign_key "request_issues_updates", "users"
   add_foreign_key "schedule_periods", "users"
+  add_foreign_key "sent_hearing_email_events", "users", column: "sent_by_id"
+  add_foreign_key "task_timers", "tasks"
+  add_foreign_key "tasks", "tasks", column: "parent_id"
+  add_foreign_key "tasks", "users", column: "assigned_by_id"
+  add_foreign_key "tasks", "users", column: "cancelled_by_id"
+  add_foreign_key "transcriptions", "hearings"
+  add_foreign_key "unrecognized_appellants", "claimants"
+  add_foreign_key "unrecognized_appellants", "unrecognized_party_details"
+  add_foreign_key "unrecognized_appellants", "unrecognized_party_details", column: "unrecognized_power_of_attorney_id"
+  add_foreign_key "user_quotas", "team_quotas"
   add_foreign_key "user_quotas", "users"
+  add_foreign_key "virtual_hearing_establishments", "virtual_hearings"
+  add_foreign_key "virtual_hearings", "users", column: "created_by_id"
   add_foreign_key "virtual_hearings", "users", column: "updated_by_id"
+  add_foreign_key "vso_configs", "organizations"
 end

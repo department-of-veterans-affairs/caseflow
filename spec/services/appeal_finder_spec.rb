@@ -7,31 +7,37 @@ describe AppealFinder, :all_dbs do
   let(:invalid_veteran_id) { "obviouslyinvalidveteranid" }
   let(:invalid_docket_number) { "invaliddocket-number" }
   let!(:legacy_appeal) { create(:legacy_appeal, :with_veteran, vacols_case: create(:case)) }
+  let(:second_appeal) { create(:appeal, veteran: veteran, stream_docket_number: appeal.stream_docket_number) }
 
-  describe ".find_appeal_by_docket_number" do
-    subject { described_class.find_appeal_by_docket_number(docket_number) }
+  describe ".find_appeals_by_docket_number" do
+    subject { described_class.find_appeals_by_docket_number(docket_number) }
 
     context "valid docket number" do
       let(:docket_number) { appeal.docket_number }
 
-      it "returns results upon valid input" do
-        expect(subject.id).to eq(appeal.id)
-      end
-    end
-
-    context "docket number is invalid format" do
-      let(:docket_number) { invalid_docket_number }
-
-      it "returns nil" do
-        expect(subject).to be_nil
+      it "returns only the matching appeal" do
+        expect(subject.count).to eq(1)
+        expect(subject.first.id).to eq(appeal.id)
       end
     end
 
     context "docket number cannot be found" do
       let(:docket_number) { unknown_docket_number }
 
-      it "returns nil" do
-        expect(subject).to be_nil
+      it "returns an empty array" do
+        expect(subject).to eq([])
+      end
+    end
+
+    context "stream docket number matches two appeals" do
+      let(:docket_number) { second_appeal.stream_docket_number }
+
+      it "returns two appeals" do
+        expect(subject.count).to eq(2)
+        expect(subject.first.id).to eq(appeal.id)
+        expect(subject.second.id).to eq(second_appeal.id)
+        expect(subject.first.id).to_not eq(subject.second.id)
+        expect(subject.second.stream_docket_number).to eq(subject.first.stream_docket_number)
       end
     end
   end

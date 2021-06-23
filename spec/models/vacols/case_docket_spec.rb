@@ -565,9 +565,9 @@ describe VACOLS::CaseDocket, :all_dbs do
       let(:original_docket_number) { aod_ready_case_docket_number }
       let(:genpop) { "not_genpop" }
 
-      it "distributes the case" do
+      it "does not distribute the case" do
         subject
-        expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+        expect(aod_ready_case.reload.bfcurloc).to eq("81")
       end
 
       context "when a different judge decided the case" do

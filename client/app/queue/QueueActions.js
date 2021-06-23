@@ -206,11 +206,26 @@ export const resetDecisionOptions = () => ({
   type: ACTIONS.RESET_DECISION_OPTIONS
 });
 
-const editAppeal = (appealId, attributes) => ({
+export const editAppeal = (appealId, attributes) => ({
   type: ACTIONS.EDIT_APPEAL,
   payload: {
     appealId,
     attributes
+  }
+});
+
+export const editNodDateUpdates = (appealId, nodDateUpdate) => ({
+  type: ACTIONS.EDIT_NOD_DATE_UPDATES,
+  payload: {
+    appealId,
+    nodDateUpdate
+  }
+});
+
+export const clearAppealDetails = (appealId) => ({
+  type: ACTIONS.CLEAR_APPEAL,
+  payload: {
+    appealId
   }
 });
 
@@ -557,7 +572,7 @@ const refreshTasks = (dispatch, userId, userRole, type = null) => {
   let url = `/tasks?user_id=${userId}&role=${userRole}`;
 
   if (type) {
-    url = url.concat(`&type=${type}`)
+    url = url.concat(`&type=${type}`);
   }
 
   return Promise.all([
@@ -647,7 +662,7 @@ export const fetchAmaTasksOfUser = (userId, userRole, type = null) => (dispatch)
   let url = `/tasks?user_id=${userId}&role=${userRole}`;
 
   if (type) {
-    url = url.concat(`&type=${type}`)
+    url = url.concat(`&type=${type}`);
   }
 
   return ApiUtil.get(url).

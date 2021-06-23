@@ -1,5 +1,8 @@
 /* eslint-disable max-lines */
+import { times } from 'lodash';
 import { scheduleHearingTask } from './tasks';
+import moment from 'moment';
+import regionalOfficesJsonResponse from './regionalOfficesJsonResponse';
 
 export const virtualHearingEmails = {
   emailEvents: [
@@ -25,9 +28,7 @@ export const virtualHearing = {
     appellantTz: 'America/Denver',
     representativeTz: 'America/Los_Angeles',
     appellantEmail: 'Bob.Smith@test.com',
-    appellantTz: null,
     representativeEmail: 'tom.brady@caseflow.gov',
-    representativeTz: null,
     status: 'active',
     requestCancelled: false,
     clientHost: 'care.evn.va.gov',
@@ -43,6 +44,9 @@ export const virtualHearing = {
 };
 
 export const amaHearing = {
+  poaName: 'AMERICAN LEGION',
+  currentIssueCount: 1,
+  caseType: 'Original',
   aod: false,
   advanceOnDocketMotion: null,
   appealExternalId: '005334f7-b5c6-490c-a310-7dc5db22c8c3',
@@ -61,7 +65,6 @@ export const amaHearing = {
   centralOfficeTimeString: '03:30',
   claimantId: 4,
   closestRegionalOffice: null,
-  currentIssueCount: 0,
   disposition: null,
   dispositionEditable: true,
   docketName: 'hearing',
@@ -70,7 +73,23 @@ export const amaHearing = {
   externalId: '9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a',
   hearingDayId: 4,
   id: 4,
-  judgeId: '3',
+  judgeId: 3,
+  judge: {
+    id: 3,
+    createdAt: '2020-06-25T11:00:43.257-04:00',
+    cssId: 'BVAAABSHIRE',
+    efolderDocumentsFetchedAt: null,
+    email: null,
+    fullName: 'Aaron Judge_HearingsAndCases Abshire',
+    lastLoginAt: null,
+    roles: {},
+    selectedRegionalOffice: null,
+    stationId: '101',
+    status: 'active',
+    statusUpdatedAt: null,
+    updatedAt: '2020-06-25T11:00:43.257-04:00',
+    displayName: 'BVAAABSHIRE (VACO)',
+  },
   location: null,
   militaryService: '',
   notes: null,
@@ -81,7 +100,7 @@ export const amaHearing = {
   regionalOfficeKey: 'C',
   regionalOfficeName: 'Central',
   regionalOfficeTimezone: 'America/New_York',
-  representative: 'Attorney McAttorneyFace',
+  representative: 'Clarence Darrow',
   representativeName: 'PARALYZED VETERANS OF AMERICA, INC.',
   representativeEmailAddress: 'tom.brady@caseflow.gov',
   representativeTz: 'America/Denver',
@@ -109,6 +128,9 @@ export const amaHearing = {
 };
 
 export const legacyHearing = {
+  poaName: 'AMERICAN LEGION',
+  currentIssueCount: 1,
+  caseType: 'Original',
   aod: false,
   advanceOnDocketMotion: null,
   appealExternalId: '0bf0263c-d863-4405-9b2e-f55cff77c6c3',
@@ -126,7 +148,6 @@ export const legacyHearing = {
   centralOfficeTimeString: '04:00',
   claimantId: 604,
   closestRegionalOffice: null,
-  currentIssueCount: 0,
   disposition: null,
   dispositionEditable: true,
   docketName: 'legacy',
@@ -187,6 +208,8 @@ export const legacyHearing = {
 };
 
 export const defaultHearing = {
+  caseType: 'Original',
+  poaName: 'AMERICAN LEGION',
   aod: false,
   advanceOnDocketMotion: null,
   appealExternalId: '0bf0263c-d863-4405-9b2e-f55cff77c6c4',
@@ -195,7 +218,8 @@ export const defaultHearing = {
   appellantCity: 'SAN FRANCISCO',
   appellantEmailAddress: 'tom.brady@caseflow.gov',
   appellantFirstName: 'Tom',
-  appellantIsNotVeteran: true,
+  appellantIsNotVeteran: false,
+  appellantRelationship: 'Spouse',
   appellantLastName: 'Brady',
   appellantState: 'CA',
   appellantZip: '94103',
@@ -351,6 +375,19 @@ export const centralHearing = {
   worksheetIssues: {},
 };
 
+export const defaultHearingDay = {
+  hearingId: 36,
+  regionalOffice: 'RO17',
+  timezone: 'America/New_York',
+  scheduledFor: '2020-08-15',
+  requestType: 'V',
+  room: '001',
+  roomLabel: '',
+  filledSlots: 0,
+  totalSlots: 12,
+  hearingDate: '2020-08-15'
+};
+
 export const hearingDateOptions = [
   {
     label: ' ',
@@ -361,18 +398,7 @@ export const hearingDateOptions = [
   },
   {
     label: '08/15/2020 (0/12)  ',
-    value: {
-      hearingId: 36,
-      regionalOffice: 'RO17',
-      timezone: 'America/New_York',
-      scheduledFor: '2020-08-15',
-      requestType: 'V',
-      room: '001',
-      roomLabel: '',
-      filledSlots: 0,
-      totalSlots: 12,
-      hearingDate: '2020-08-15'
-    }
+    value: defaultHearingDay
   },
   {
     label: '08/21/2020 (2/12) 1 (1W200A) ',
@@ -456,6 +482,7 @@ export const scheduledHearing = {
   disposition: null,
   externalId: '3afefa82-5736-47c8-a977-0b4b8586f73e',
   polling: false,
+  action: 'schedule'
 };
 
 export const scheduleVeteranResponse = {
@@ -465,5 +492,44 @@ export const scheduleVeteranResponse = {
     }
   }
 };
+export const getHearingType = (hearing) => {
+  const lastRowLabel = `${hearing.caseType} · ${hearing.readableRequestType} · View Case Details`;
+
+  return lastRowLabel;
+};
+
+export const getHearingDetails = (hearing, showNumber) => {
+  const docketNumber = showNumber && ` ${hearing.docketNumber}`;
+  const issues = `${hearing.currentIssueCount} issues`;
+  const docket = `${hearing.docketName.toUpperCase().charAt(0)}Hearing Request${docketNumber}`;
+  const secondRowLabel = `${issues} · ${docket} · ${hearing.poaName}`;
+
+  return secondRowLabel;
+};
+
+export const getHearingDetailsArray = (hearing, showNumber) => {
+  const docketNumber = showNumber && ` ${hearing.docketNumber}`;
+  const issues = `${hearing.currentIssueCount} issues`;
+  const docket = `${hearing.docketName.toUpperCase().charAt(0)} Hearing Request${docketNumber}`;
+  const secondRowLabel = `${issues} · ${docket} · ${hearing.poaName}`;
+
+  return secondRowLabel.split(' ');
+};
+
+export const generateHearingDays = (regionalOffice, count) =>
+  Object.assign({}, times(count).map((index) => ({
+    regionalOffice,
+    id: index,
+    readableRequestType: regionalOffice === 'C' ? 'Central' : 'Video',
+    hearingId: index,
+    timezone: regionalOfficesJsonResponse.regional_offices[regionalOffice].timezone,
+    scheduledFor: moment().add(index, 'days').
+      format('MM-DD-YYYY'),
+    requestType: regionalOffice === 'C' ? 'C' : 'V',
+    room: '1',
+    roomLabel: '1 (1W200A)',
+    filledSlots: 2,
+    totalSlots: 12,
+  })));
 
 /* eslint-enable max-lines */

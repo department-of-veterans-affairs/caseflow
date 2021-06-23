@@ -45,7 +45,7 @@ class RedistributedCase
   end
 
   def rename_existing_distributed_case!
-    existing_distributed_case.redistribute!
+    existing_distributed_case.rename_for_redistribution!
   end
 
   def alert_case_not_found

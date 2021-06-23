@@ -55,7 +55,8 @@ class RequestIssue < CaseflowRecord
     dismissed_matter_of_law: "dismissed_matter_of_law",
     stayed: "stayed",
     ineligible: "ineligible",
-    no_decision: "no_decision"
+    no_decision: "no_decision",
+    docket_switch: "docket_switch"
   }
 
   enum correction_type: {
@@ -208,12 +209,12 @@ class RequestIssue < CaseflowRecord
 
   delegate :veteran, to: :decision_review
 
-  def create_for_claim_review!
+  def create_for_claim_review!(request_issues_update = nil)
     return unless decision_review.is_a?(ClaimReview)
 
     update!(benefit_type: decision_review.benefit_type, veteran_participant_id: veteran.participant_id)
 
-    epe = decision_review.end_product_establishment_for_issue(self)
+    epe = decision_review.end_product_establishment_for_issue(self, request_issues_update)
     update!(end_product_establishment: epe) if epe
 
     RequestIssueCorrectionCleaner.new(self).remove_dta_request_issue! if correction?
@@ -470,6 +471,17 @@ class RequestIssue < CaseflowRecord
     end
   end
 
+  def move_stream!(new_appeal_stream:, closed_status:)
+    return unless decision_review.is_a?(Appeal)
+
+    transaction do
+      new_issue_attributes = attributes.reject { |attr| %w[id created_at updated_at].include?(attr) }
+      new_issue_attributes["decision_review_id"] = new_appeal_stream.id
+      self.class.create!(new_issue_attributes)
+      close!(status: closed_status)
+    end
+  end
+
   def create_decision_issue_from_params(decision_issue_param)
     decision_issues.create!(
       participant_id: decision_review.veteran.participant_id,
@@ -609,6 +621,14 @@ class RequestIssue < CaseflowRecord
   def handle_legacy_issues!
     create_legacy_issue!
     create_legacy_issue_optin!
+  end
+
+  def timely_issue?(receipt_date)
+    return true unless receipt_date && decision_date
+    return false if receipt_date < decision_date
+    return true if untimely_exemption
+
+    decision_date >= (receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
   end
 
   private

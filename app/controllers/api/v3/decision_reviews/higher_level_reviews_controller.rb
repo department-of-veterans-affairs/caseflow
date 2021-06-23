@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 class Api::V3::DecisionReviews::HigherLevelReviewsController < Api::V3::BaseController
+  include ApiV3FeatureToggleConcern
+
+  before_action do
+    api_released?(:api_v3_higher_level_reviews)
+  end
+
   SUCCESSFUL_CREATION_HTTP_STATUS = 202
 
   def create
@@ -33,7 +39,10 @@ class Api::V3::DecisionReviews::HigherLevelReviewsController < Api::V3::BaseCont
   private
 
   def processor
-    @processor ||= Api::V3::DecisionReviews::HigherLevelReviewIntakeProcessor.new(params, User.api_user)
+    @processor ||= Api::V3::DecisionReviews::HigherLevelReviewIntakeProcessor.new(
+      params.except(:controller, :action),
+      User.api_user
+    )
   end
 
   def intake_status

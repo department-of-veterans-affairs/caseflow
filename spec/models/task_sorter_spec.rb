@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "tasks/task_shared_examples.rb"
+
 describe TaskSorter, :all_dbs do
   describe ".new" do
     subject { TaskSorter.new(args) }
@@ -157,6 +159,13 @@ describe TaskSorter, :all_dbs do
         before do
           Colocated.singleton.add_user(create(:user))
           tasks.each_with_index { |task, index| task.update!(type: task_types[index].name) }
+
+          # Used to ensure sort by label still works when a task name contain another task name as a substring
+          class TestAttorneyTask < AttorneyTask
+            def self.label
+              "Alphabetically superior to Draft decision (label for Attorney Task)"
+            end
+          end
         end
 
         it "sorts ColocatedTasks by label" do
@@ -263,8 +272,8 @@ describe TaskSorter, :all_dbs do
 
         before do
           tasks.each do |task|
-            first_name = fake_names.shuffle
-            last_name = "#{fake_names.shuffle} #{fake_names.shuffle}"
+            first_name = fake_names.sample
+            last_name = "#{fake_names.sample} #{fake_names.sample}"
             task.appeal.veteran.update!(first_name: first_name, last_name: last_name)
             create(
               :cached_appeal,
@@ -280,47 +289,18 @@ describe TaskSorter, :all_dbs do
             first_name = task.appeal.veteran_first_name.split(" ").first.upcase
             "#{last_name}, #{first_name}"
           end
-          expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+          # To help diagnose flaky test, print veteran names on failure
+          ordered_vets = expected_order.map(&:appeal).map(&:veteran)
+            .map { |v| "#{v.last_name.split(' ').last} (#{v.last_name}), #{v.first_name}" }
+          expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id)), ordered_vets.to_s
         end
       end
 
       context "when sorting by Appeal Type column" do
         let(:column_name) { Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name }
-        let(:tasks) { Task.where(assigned_to: org) }
+        let(:tasks) { Task.where(assigned_to: assignee) }
 
-        let(:org) { create(:organization) }
-
-        before do
-          Colocated.singleton.add_user(create(:user))
-
-          vacols_case_types = [:type_original, :type_post_remand, :type_cavc_remand]
-          vacols_case_types.each do |case_type|
-            appeal = create(:legacy_appeal, vacols_case: create(:case, case_type))
-            create(:colocated_task, appeal: appeal, assigned_to: org)
-            create(:cached_appeal,
-                   appeal_id: appeal.id,
-                   appeal_type: LegacyAppeal.name,
-                   case_type: appeal.type)
-          end
-
-          appeals = [create(:appeal, :advanced_on_docket_due_to_motion), create(:appeal)]
-          appeals.each do |appeal|
-            create(:ama_colocated_task, appeal: appeal, assigned_to: org)
-            create(:cached_appeal,
-                   appeal_id: appeal.id,
-                   appeal_type: Appeal.name,
-                   case_type: appeal.type,
-                   is_aod: appeal.aod)
-          end
-        end
-
-        it "sorts by AOD status, case type, and docket number" do
-          # postgres ascending sort sorts booleans [true, false] as [false, true]. We want is_aod appeals to show up
-          # first so we sort descending on is_aod
-          expected_order = CachedAppeal.order(is_aod: :desc, case_type: :asc, docket_number: :asc)
-          expect(expected_order.first.is_aod).to eq true
-          expect(subject.map(&:appeal_id)).to eq(expected_order.pluck(:appeal_id))
-        end
+        it_behaves_like "sort by Appeal Type column"
       end
     end
   end

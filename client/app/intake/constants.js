@@ -41,6 +41,8 @@ export const PAGE_PATHS = {
   BEGIN: '/',
   SEARCH: '/search',
   REVIEW: '/review_request',
+  ADD_CLAIMANT: '/add_claimant',
+  ADD_POWER_OF_ATTORNEY: '/add_power_of_attorney',
   FINISH: '/finish',
   ADD_ISSUES: '/add_issues',
   COMPLETED: '/completed',
@@ -48,7 +50,14 @@ export const PAGE_PATHS = {
   CANCEL_ISSUES: '/cancel',
   CONFIRMATION: '/confirmation',
   CLEARED_EPS: '/cleared_eps',
-  OUTCODED: '/outcoded'
+  OUTCODED: '/outcoded',
+};
+
+export const INTAKE_STATES = {
+  NONE: 'NONE',
+  STARTED: 'STARTED',
+  REVIEWED: 'REVIEWED',
+  COMPLETED: 'COMPLETED'
 };
 
 export const BOOLEAN_RADIO_OPTIONS = [
@@ -95,6 +104,7 @@ export const ACTIONS = {
   SET_SAME_OFFICE: 'SET_SAME_OFFICE',
   SET_BENEFIT_TYPE: 'SET_BENEFIT_TYPE',
   SET_RECEIPT_DATE: 'SET_RECEIPT_DATE',
+  SET_RECEIPT_DATE_ERROR: 'SET_RECEIPT_DATE_ERROR',
   SET_VETERAN_IS_NOT_CLAIMANT: 'SET_VETERAN_IS_NOT_CLAIMANT',
   SET_CLAIMANT: 'SET_CLAIMANT',
   SET_PAYEE_CODE: 'SET_PAYEE_CODE',
@@ -144,13 +154,6 @@ export const ACTIONS = {
   SET_EDIT_CONTENTION_TEXT: 'SET_EDIT_CONTENTION_TEXT'
 };
 
-export const INTAKE_STATES = {
-  NONE: 'NONE',
-  STARTED: 'STARTED',
-  REVIEWED: 'REVIEWED',
-  COMPLETED: 'COMPLETED'
-};
-
 export const REVIEW_OPTIONS = {
   SUPPLEMENTAL_CLAIM: {
     key: 'supplemental_claim',
@@ -175,6 +178,8 @@ export const REVIEW_DATA_FIELDS = {
     docket_type: { key: 'docketType', required: true },
     receipt_date: { key: 'receiptDate', required: true },
     claimant: { key: 'claimant' },
+    unlisted_claimant: { key: 'unlistedClaimant' },
+    poa: { key: 'poa' },
     claimant_notes: { key: 'claimantNotes' },
     claimant_type: { key: 'claimantType', required: true },
     payee_code: { key: 'payeeCode' },
@@ -199,6 +204,15 @@ export const REVIEW_DATA_FIELDS = {
     legacy_opt_in_approved: { key: 'legacyOptInApproved', required: true },
   },
 };
+
+export const GENERIC_FORM_ERRORS = {
+  blank: 'Please select an option.'
+}
+
+export const RECEIPT_DATE_ERRORS = {
+  invalid: 'Please enter a valid receipt date.',
+  in_future: 'Receipt date cannot be in the future.'
+}
 
 export const CLAIMANT_ERRORS = {
   blank: 'Please select an option.',

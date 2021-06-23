@@ -12,6 +12,7 @@ class Generators::EndProduct
           claim_receive_date: 10.days.ago.to_formatted_s(:short_date),
           claim_type_code: "070BVAGR",
           end_product_type_code: "070",
+          payee_type_code: "00",
           status_type_code: "PEND"
         }
       }

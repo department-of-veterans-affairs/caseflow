@@ -16,6 +16,7 @@ class LegacyAppeal < CaseflowRecord
   include PrintsTaskTree
   include HasTaskHistory
   include AppealAvailableHearingLocations
+  include HearingRequestTypeConcern
 
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
@@ -31,22 +32,13 @@ class LegacyAppeal < CaseflowRecord
   has_many :claimants, -> { Claimant.none }
   has_one :cached_vacols_case, class_name: "CachedAppeal", foreign_key: :vacols_id, primary_key: :vacols_id
   has_one :work_mode, as: :appeal
+  has_one :latest_informal_hearing_presentation_task, lambda {
+    not_cancelled
+      .order(closed_at: :desc, assigned_at: :desc)
+      .where(type: [InformalHearingPresentationTask.name, IhpColocatedTask.name], appeal_type: LegacyAppeal.name)
+  }, class_name: "Task", foreign_key: :appeal_id
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
-  # Add Paper Trail configuration
-  has_paper_trail only: [:changed_request_type], on: [:update]
-
-  validates :changed_request_type,
-            inclusion: {
-              in: [
-                HearingDay::REQUEST_TYPES[:video],
-                HearingDay::REQUEST_TYPES[:virtual]
-              ],
-              message: "changed request type (%<value>s) is invalid"
-            },
-            allow_nil: true
-
-  class InvalidChangedRequestType < StandardError; end
   class UnknownLocationError < StandardError; end
 
   # When these instance variable getters are called, first check if we've
@@ -174,6 +166,7 @@ class LegacyAppeal < CaseflowRecord
   READABLE_HEARING_REQUEST_TYPES = {
     central_board: "Central", # Equivalent to :central_office
     central_office: "Central",
+    central: "Central",
     travel_board: "Travel",
     video: "Video",
     virtual: "Virtual"
@@ -235,34 +228,6 @@ class LegacyAppeal < CaseflowRecord
     (decision_date + 120.days).to_date
   end
 
-  def appellant_tz
-    return if appellant_address.blank?
-
-    # Use an address object if this is a hash
-    address = appellant_address.is_a?(Hash) ? Address.new(appellant_address) : appellant_address
-
-    begin
-      TimezoneService.address_to_timezone(address).identifier
-    rescue StandardError => error
-      Raven.capture_exception(error)
-      nil
-    end
-  end
-
-  def representative_tz
-    return if representative_address.blank?
-
-    # Use an address object if this is a hash
-    address = representative_address.is_a?(Hash) ? Address.new(representative_address) : representative_address
-
-    begin
-      TimezoneService.address_to_timezone(address).identifier
-    rescue StandardError => error
-      Raven.capture_exception(error)
-      nil
-    end
-  end
-
   def appellant_address
     appellant_address_from_bgs = bgs_address_service&.address
 
@@ -305,6 +270,9 @@ class LegacyAppeal < CaseflowRecord
     !!appellant_first_name
   end
 
+  # This seems to be valid based on definition of the claimant method in this file
+  alias veteran_is_not_claimant appellant_is_not_veteran
+
   def appellant_email_address
     person_for_appellant&.email_address
   end
@@ -313,10 +281,6 @@ class LegacyAppeal < CaseflowRecord
     return nil if appellant_ssn.blank?
 
     Person.find_or_create_by_ssn(appellant_ssn)
-  end
-
-  def veteran_if_exists
-    @veteran_if_exists ||= Veteran.find_by_file_number(veteran_file_number)
   end
 
   def veteran
@@ -344,10 +308,23 @@ class LegacyAppeal < CaseflowRecord
            :representative_to_hash,
            :representative_participant_id,
            :vacols_representatives,
+           :representative_is_agent?,
+           :representative_is_organization?,
+           :representative_is_vso?,
+           :representative_is_colocated_vso?,
+           :fetch_bgs_record,
            to: :legacy_appeal_representative
 
   def representative_email_address
     power_of_attorney.bgs_representative_email_address
+  end
+
+  def representative_id
+    power_of_attorney.vacols_id
+  end
+
+  def poa_last_synced_at
+    power_of_attorney.bgs_poa_last_synced_at
   end
 
   def legacy_appeal_representative
@@ -385,6 +362,10 @@ class LegacyAppeal < CaseflowRecord
     scheduled_hearings.any?
   end
 
+  def any_held_hearings?
+    hearings.any?(&:held?)
+  end
+
   def completed_hearing_on_previous_appeal?
     vacols_ids = VACOLS::Case.where(bfcorlid: vbms_id).pluck(:bfkey)
     hearings = HearingRepository.hearings_for_appeals(vacols_ids)
@@ -401,73 +382,7 @@ class LegacyAppeal < CaseflowRecord
     hearings.select(&:scheduled_pending?)
   end
 
-  # Currently changed_request_type can only be stored as 'R' or 'V' because
-  # you can convert a hearing request type to Video or Virtual.
-  # This method returns the sanitized versions of those where 'R' => :virtual and 'V' => :video
-  def sanitized_changed_request_type(changed_request_type)
-    case changed_request_type
-    when HearingDay::REQUEST_TYPES[:video]
-      :video
-    when HearingDay::REQUEST_TYPES[:virtual]
-      :virtual
-    else
-      fail InvalidChangedRequestType, "\"#{changed_request_type}\" is not a valid request type."
-    end
-  end
-
-  # `hearing_request_type` is a direct mapping from VACOLS and has some unused
-  # values. Also, `hearing_request_type` alone can't disambiguate a video hearing
-  # from a travel board hearing
-  # This method cleans all of these issues up to return a sanitized version of the original type requested by Appellant.
-  def original_hearing_request_type(readable: false)
-    original_hearing_request_type = case hearing_request_type
-                                    when :central_office
-                                      :central_office
-                                    when :travel_board
-                                      video_hearing_requested ? :video : :travel_board
-                                    end
-    readable ? READABLE_HEARING_REQUEST_TYPES[original_hearing_request_type] : original_hearing_request_type
-  end
-
-  # [Sept. 2020]:
-  #   In response to COVID, the appellant has the option of changing their hearing
-  #   preference if they were scheduled for a travel board hearing.
-  #   This method captures if a travel board hearing request type was overridden in Caseflow.
-  # In general, this method returns the current hearing request type which could be dervied
-  # from `change_request_type` or VACOLS `hearing_request_type`
-  def current_hearing_request_type(readable: false)
-    current_hearing_request_type = if changed_request_type.present?
-                                     sanitized_changed_request_type(changed_request_type)
-                                   else
-                                     original_hearing_request_type
-                                   end
-    readable ? READABLE_HEARING_REQUEST_TYPES[current_hearing_request_type] : current_hearing_request_type
-  end
-
-  # if `change_hearing_request` is populated meaning the hearing request type was changed, then return what the
-  # previous hearing request type was. Use paper trail event to derive previous type in the case the type was changed
-  # multple times.
-  def previous_hearing_request_type(readable: false)
-    diff = latest_appeal_event&.diff || {} # Example of diff: {"changed_request_type"=>[nil, "R"]}
-    previous_unsanitized_type = diff["changed_request_type"]&.first
-
-    previous_hearing_request_type = if previous_unsanitized_type.present?
-                                      sanitized_changed_request_type(previous_unsanitized_type)
-                                    else
-                                      original_hearing_request_type
-                                    end
-    readable ? READABLE_HEARING_REQUEST_TYPES[previous_hearing_request_type] : previous_hearing_request_type
-  end
-
   ## END Hearing specific attributes and methods
-
-  def veteran_is_deceased
-    veteran_death_date.present?
-  end
-
-  def veteran_death_date
-    veteran&.date_of_death
-  end
 
   attr_writer :cavc_decisions
   def cavc_decisions
@@ -847,6 +762,10 @@ class LegacyAppeal < CaseflowRecord
     type == "Court Remand"
   end
 
+  def original?
+    type_code == "original"
+  end
+
   alias cavc? cavc
 
   # Adding anything to this to_hash can trigger a lazy load which slows down
@@ -919,14 +838,16 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def attorney_case_review
-    # # Created at date will be nil if there is no decass record created for this appeal yet
+    # Created at date will be nil if there is no decass record created for this appeal yet
     return unless vacols_case_review&.created_at
 
-    AttorneyCaseReview.find_by(task_id: "#{vacols_id}-#{VacolsHelper.day_only_str(vacols_case_review.created_at)}")
+    task_id = "#{vacols_id}-#{VacolsHelper.day_only_str(vacols_case_review.created_at)}"
+
+    @attorney_case_review ||= AttorneyCaseReview.find_by(task_id: task_id)
   end
 
   def vacols_case_review
-    VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
+    @vacols_case_review ||= VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
   end
 
   def death_dismissal!
@@ -961,9 +882,24 @@ class LegacyAppeal < CaseflowRecord
     false
   end
 
-  # uses the paper_trail version on LegacyAppeal
-  def latest_appeal_event
-    TaskEvent.new(version: versions.last) if versions.any?
+  # Hacky logic to determine if an acting judge should see judge actions or attorney actions on a case assigned to them
+  # See https://github.com/department-of-veterans-affairs/caseflow/issues/14886  for details
+  def assigned_to_acting_judge_as_judge?(acting_judge)
+    # First try to determine role on the case by inspecting the attorney_case_review, if there is one present.
+    if attorney_case_review.present?
+      return false if attorney_case_review.attorney_id == acting_judge.id
+
+      return true if attorney_case_review.reviewing_judge_id == acting_judge.id
+    end
+
+    # In case an attorney case review does not exist in caseflow or if this acting judge was neither the judge or
+    # attorney listed in the review, check to see if a decision has already been written for the appeal. If so, assume
+    # this appeal is assigned to the acting judge as a judge task as a best guess
+    vacols_case_review.valid_document_id?
+  end
+
+  def claimant_participant_id
+    veteran_is_not_claimant ? person_for_appellant&.participant_id : veteran&.participant_id
   end
 
   private
@@ -1047,10 +983,6 @@ class LegacyAppeal < CaseflowRecord
       claimant_participant_id: claimant_participant_id,
       vacols_id: vacols_id
     )
-  end
-
-  def claimant_participant_id
-    person_for_appellant&.participant_id
   end
 
   class << self

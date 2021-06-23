@@ -45,6 +45,7 @@ module Seeds
       create_ama_hearing_genpop_cases
       create_direct_review_genpop_cases
       create_evidence_submission_genpop_cases
+      create_cavc_genpop_cases
     end
 
     def create_errorable_cases
@@ -85,6 +86,12 @@ module Seeds
       create_evidence_submission_ready_priority_genpop_cases
       create_evidence_submission_ready_nonpriority_genpop_cases
       create_evidence_submission_nonready_priority_genpop_cases
+    end
+
+    def create_cavc_genpop_cases
+      create_ready_cavc_genpop_cases
+      create_ready_cavc_aod_genpop_cases
+      create_nonready_cavc_genpop_cases
     end
 
     def create_priority_distribution_this_month(judge)
@@ -301,7 +308,7 @@ module Seeds
 
     def create_evidence_submission_ready_priority_genpop_cases
       rand(10).times do
-        FactoryBot.create(
+        create(
           :appeal,
           :evidence_submission_docket,
           :ready_for_distribution,
@@ -327,6 +334,36 @@ module Seeds
           :appeal,
           :evidence_submission_docket,
           :ready_for_distribution
+        )
+      end
+    end
+
+    def create_ready_cavc_genpop_cases
+      rand(10).times do
+        create(
+          :appeal,
+          :type_cavc_remand,
+          :cavc_ready_for_distribution
+        )
+      end
+    end
+
+    def create_ready_cavc_aod_genpop_cases
+      rand(10).times do
+        create(
+          :appeal,
+          :type_cavc_remand,
+          :cavc_ready_for_distribution,
+          :advanced_on_docket_due_to_age
+        )
+      end
+    end
+
+    def create_nonready_cavc_genpop_cases
+      rand(50).times do
+        create(
+          :appeal,
+          :type_cavc_remand
         )
       end
     end

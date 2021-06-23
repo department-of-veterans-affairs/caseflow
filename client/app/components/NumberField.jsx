@@ -38,13 +38,12 @@ NumberField.propTypes = {
   ]),
   name: PropTypes.string.isRequired,
   onChange(props) {
-    if (!props.readOnly) {
-      if (typeof props.onChange !== 'function') {
-        return new Error('If NumberField is not ReadOnly, then onChange must be defined');
-      }
+    if (!props.readOnly && typeof props.onChange !== 'function') {
+      return new Error('If NumberField is not ReadOnly, then onChange must be defined');
     }
   },
   placeholder: PropTypes.string,
+  isInteger: PropTypes.bool,
   readOnly: PropTypes.bool,
   required: PropTypes.bool.isRequired,
   type: PropTypes.string,

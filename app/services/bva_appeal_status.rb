@@ -14,11 +14,12 @@ class BVAAppealStatus
     ready_for_signature: 6,
     signed: 7,
     dispatched: 8,
+    on_hold: 9,
     cancelled: 10,
     misc: 11,
-    on_hold: 9,
     unknown: 12,
-    post_dispatch: 13
+    post_dispatch: 13,
+    docket_switched: 14
   }.freeze
 
   DEFINITIONS = {
@@ -34,7 +35,8 @@ class BVAAppealStatus
     misc: "MISC",
     on_hold: "ON HOLD",
     unknown: "UNKNOWN",
-    post_dispatch: "9. Post dispatch tasks"
+    post_dispatch: "9. Post dispatch tasks",
+    docket_switched: "10. Docket Switch (Inactive)"
   }.freeze
 
   MISC_TASK_NAMES = %w[
@@ -112,6 +114,8 @@ class BVAAppealStatus
       :dispatched
     elsif completed_dispatch_task?
       :post_dispatch
+    elsif docket_switched?
+      :docket_switched
     elsif cancelled_root_task?
       :cancelled
     elsif misc_task?
@@ -184,6 +188,11 @@ class BVAAppealStatus
 
   def completed_dispatch_task?
     completed_tasks.any? { |task| task.is_a?(BvaDispatchTask) }
+  end
+
+  def docket_switched?
+    # TODO: this should be updated to check that there are no active tasks once the task handling is implemented
+    completed_tasks.any? { |task| task.is_a?(DocketSwitchGrantedTask) }
   end
 
   def cancelled_root_task?

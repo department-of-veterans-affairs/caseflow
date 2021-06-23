@@ -1,9 +1,10 @@
+/* eslint-disable max-lines */
 /* eslint-disable camelcase */
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Redirect } from 'react-router-dom';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../components/Button';
 import { sprintf } from 'sprintf-js';
@@ -11,27 +12,33 @@ import { isNil, maxBy, omit, find, get } from 'lodash';
 
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import COPY from '../../../COPY';
+import HEARING_DISPOSITION_TYPES from '../../../constants/HEARING_DISPOSITION_TYPES';
 import { CENTRAL_OFFICE_HEARING_LABEL, VIDEO_HEARING_LABEL, VIRTUAL_HEARING_LABEL } from '../constants';
-import { appealWithDetailSelector, scheduleHearingTasksForAppeal } from '../../queue/selectors';
+import {
+  appealWithDetailSelector,
+  getAllTasksForAppeal,
+  allHearingTasksForAppeal
+} from '../../queue/selectors';
 import { showSuccessMessage, showErrorMessage, requestPatch } from '../../queue/uiReducer/uiActions';
 import { onReceiveAppealDetails } from '../../queue/QueueActions';
 import { formatDateStr } from '../../util/DateUtil';
 import Alert from '../../components/Alert';
 import { setMargin, marginTop, regionalOfficeSection, saveButton, cancelButton } from './details/style';
 import { getAppellantTitle, processAlerts, parseVirtualHearingErrors } from '../utils';
+import { parentTasks } from '../../queue/utils';
 import {
   onChangeFormData,
   onReceiveAlerts,
   onReceiveTransitioningAlert,
   transitionAlert,
   startPollingHearing,
+  setScheduledHearing,
 } from '../../components/common/actions';
 import { ScheduleVeteranForm } from './ScheduleVeteranForm';
 import ApiUtil from '../../util/ApiUtil';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 export const ScheduleVeteran = ({
-  scheduleHearingTask,
   history,
   error,
   assignHearingForm,
@@ -39,6 +46,12 @@ export const ScheduleVeteran = ({
   openHearing,
   appeal,
   scheduledHearing,
+  scheduleHearingOrAssignDispositionTask,
+  taskId,
+  userCanViewTimeSlots,
+  allHearingTasks,
+  fetchingHearings,
+  scheduledHearingsList,
   ...props
 }) => {
   // Create and manage the loading state
@@ -48,7 +61,7 @@ export const ScheduleVeteran = ({
   const [errors, setErrors] = useState({});
 
   // Get the appellant title ('Veteran' or 'Appellant')
-  const appellantTitle = getAppellantTitle(appeal?.apppellantIsNotVeteran);
+  const appellantTitle = getAppellantTitle(appeal?.appellantIsNotVeteran);
 
   // Get the selected hearing day
   const selectedHearingDay = assignHearingForm?.hearingDay || hearingDay;
@@ -72,10 +85,10 @@ export const ScheduleVeteran = ({
     VIDEO_HEARING_LABEL;
 
   // Determine whether we are rescheduling
-  const reschedule = scheduledHearing?.disposition === 'reschedule';
+  const reschedule = scheduledHearing?.action === 'reschedule' || props.params?.action === 'reschedule';
 
-  // Set the task ID
-  const taskId = scheduleHearingTask ? scheduleHearingTask.taskId : scheduledHearing?.taskId;
+  // Determine what disposition to assign for previous hearing
+  const prevHearingDisposition = scheduledHearing?.disposition;
 
   // Create a hearing object for the form
   const hearing = {
@@ -95,8 +108,16 @@ export const ScheduleVeteran = ({
     appellantCity: appeal?.appellantAddress?.city,
     appellantState: appeal?.appellantAddress?.state,
     appellantZip: appeal?.appellantAddress?.zip,
-    veteranFullName: appeal?.veteranFullName,
+    appellantRelationship: appeal?.appellantRelationship,
+    appellantIsNotVeteran: appeal?.appellantIsNotVeteran,
+    veteranFullName: appeal?.veteranFullName
   };
+
+  // Get parent hearing task of this task which could be
+  // Schedule Hearing Task or Assign Hearing Disposition Task
+  const parentHearingTask = parentTasks(
+    [scheduleHearingOrAssignDispositionTask], allHearingTasks
+  )[0];
 
   // Reset the component state
   const reset = () => {
@@ -110,8 +131,31 @@ export const ScheduleVeteran = ({
   // Reset the state on unmount
   useEffect(() => {
     if (appeal?.readableHearingRequestType === VIRTUAL_HEARING_LABEL) {
-      props.onChangeFormData('assignHearing', { virtualHearing: { status: 'pending' } });
+      props.onChangeFormData(
+        'assignHearing',
+        {
+          virtualHearing: {
+            status: 'pending',
+            appellantTz: appeal?.appellantTz,
+            representativeTz: appeal?.powerOfAttorney?.representative_tz || appeal?.appellantTz
+          }
+        }
+      );
     }
+
+    if (props.params?.action && props.params?.disposition) {
+      props.setScheduledHearing({
+        action: props.params.action,
+        disposition: props.params.disposition,
+        taskId
+      });
+    } else {
+      props.setScheduledHearing({
+        taskId
+      });
+    }
+
+    props.onChangeFormData('assignHearing', { notes: parentHearingTask?.unscheduledHearingNotes?.notes });
 
     return reset;
   }, []);
@@ -160,6 +204,7 @@ export const ScheduleVeteran = ({
       hearing_day_id: hearing.hearingDay.hearingId,
       hearing_location: hearing.hearingLocation ? ApiUtil.convertToSnakeCase(hearing.hearingLocation) : null,
       virtual_hearing_attributes: virtualHearing ? ApiUtil.convertToSnakeCase(virtualHearing) : null,
+      notes: hearing.notes
     };
 
     // Determine whether to send the reschedule payload
@@ -167,11 +212,14 @@ export const ScheduleVeteran = ({
       status: TASK_STATUSES.cancelled,
       business_payloads: {
         values: {
-          disposition: 'postponed',
+          disposition: prevHearingDisposition,
           after_disposition_update: {
             action: 'reschedule',
             new_hearing_attrs: hearingValues,
-          }
+          },
+          ...(prevHearingDisposition === HEARING_DISPOSITION_TYPES.scheduled_in_error && {
+            hearing_notes: scheduledHearing?.notes
+          })
         }
       }
     } : {
@@ -202,6 +250,21 @@ export const ScheduleVeteran = ({
         regionalOffice: hearing.regionalOffice || hearing.virtualHearing ? null : 'Please select a Regional Office '
       };
 
+      const noAppellantEmail = !hearing.virtualHearing?.appellantEmail;
+      const noAppellantTimezone = !hearing.virtualHearing?.appellantTz;
+      const noRepTimezone = !hearing.virtualHearing?.representativeTz && hearing.virtualHearing?.representativeEmail;
+      const emailOrTzErrors = hearing?.virtualHearing && (noAppellantEmail || noAppellantTimezone || noRepTimezone);
+
+      if (emailOrTzErrors) {
+        document.getElementById('email-section').scrollIntoView();
+
+        return setErrors({
+          [noAppellantEmail && 'appellantEmail']: `${appellantTitle} email is required`,
+          [noAppellantTimezone && 'appellantTz']: COPY.VIRTUAL_HEARING_TIMEZONE_REQUIRED,
+          [noRepTimezone && 'representativeTz']: COPY.VIRTUAL_HEARING_TIMEZONE_REQUIRED
+        });
+      }
+
       // First validate the form
       if ((openHearing && !reschedule) || Object.values(formErrors).filter((err) => err !== null).length > 0) {
         return setErrors(formErrors);
@@ -216,6 +279,11 @@ export const ScheduleVeteran = ({
       // Patch the hearing task with the form data
       const { body } = await ApiUtil.patch(`/tasks/${taskId}`, payload);
 
+      window.analyticsEvent('Hearings', 'Schedule Veteran - Schedule');
+
+      if (hearing?.notes !== parentHearingTask?.unscheduledHearingNotes?.notes) {
+        window.analyticsEvent('Hearings', 'Add/edit notes', 'Schedule Veteran');
+      }
       // Find the most recently created AssignHearingDispositionTask. This task will have the ID of the
       // most recently created hearing.
       const mostRecentTask = maxBy(
@@ -287,21 +355,30 @@ export const ScheduleVeteran = ({
     }
 
     return props.onChangeFormData('assignHearing', {
-      virtualHearing: { status: 'pending' }
+      virtualHearing: {
+        status: 'pending',
+        appellantTz: appeal.appellantTz,
+        representativeTz: appeal?.powerOfAttorney?.representative_tz || appeal.appellantTz
+      }
     });
   };
 
   // Create the header styling based on video/virtual type
   const headerStyle = virtual ? setMargin('0 0 0.75rem 0') : setMargin(0);
   const helperTextStyle = virtual ? setMargin('0 0 2rem 0') : setMargin(0);
+  const recipients = hearing?.representative ? `${appellantTitle}, power of attorney,` : `${appellantTitle}`;
+  const helperLabel = sprintf(COPY.SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL, recipients);
 
-  return (
+  // This protects against users navigating directly to this page without the correct data in the store
+  return scheduledHearing?.taskId && !scheduledHearing?.action ? (
+    <Redirect to={`/queue/appeals/${props.appealId}`} />
+  ) : (
     <div {...regionalOfficeSection}>
-      <AppSegment filledBackground >
-        <h1 {...headerStyle}>{header}</h1>
+      <AppSegment filledBackground extraClassNames="schedule-veteran-page">
+        <h1 {...headerStyle} >{header}</h1>
         {error && <Alert title={error.title} type="error">{error.detail}</Alert>}
         {virtual ?
-          <div {...helperTextStyle}>{COPY.SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL}</div> :
+          <div {...helperTextStyle}>{helperLabel}</div> :
           !fullHearingDay && <div {...marginTop(45)} />}
 
         {fullHearingDay && (
@@ -314,6 +391,9 @@ export const ScheduleVeteran = ({
         )}
         {openHearing && !reschedule ? <Alert title="Open Hearing" type="error">{openHearingDayError}</Alert> : (
           <ScheduleVeteranForm
+            scheduledHearingsList={scheduledHearingsList}
+            fetchingHearings={fetchingHearings}
+            userCanViewTimeSlots={userCanViewTimeSlots}
             initialHearingDate={selectedHearingDay?.hearingDate}
             initialRegionalOffice={initialRegionalOffice}
             errors={errors}
@@ -323,6 +403,7 @@ export const ScheduleVeteran = ({
             appellantTitle={appellantTitle}
             onChange={(key, value) => props.onChangeFormData('assignHearing', { [key]: value })}
             convertToVirtual={convertToVirtual}
+            hearingTask={parentHearingTask}
           />
         )}
 
@@ -330,7 +411,10 @@ export const ScheduleVeteran = ({
       <Button
         name="Cancel"
         linkStyling
-        onClick={() => history.goBack()}
+        onClick={() => {
+          window.analyticsEvent('Hearings', 'Schedule Veteran - Cancel');
+          history.goBack();
+        }}
         styling={cancelButton}
       >
           Cancel
@@ -351,7 +435,13 @@ export const ScheduleVeteran = ({
 };
 
 ScheduleVeteran.propTypes = {
+  scheduledHearingsList: PropTypes.array,
+  fetchingHearings: PropTypes.bool,
+  setScheduledHearing: PropTypes.func,
+  taskId: PropTypes.string,
+  action: PropTypes.string,
   appeals: PropTypes.object,
+  params: PropTypes.object,
   // Router inherited props
   history: PropTypes.object,
   appealId: PropTypes.string,
@@ -366,6 +456,7 @@ ScheduleVeteran.propTypes = {
     regionalOffice: PropTypes.object,
     powerOfAttorney: PropTypes.object,
     appellantFullName: PropTypes.string,
+    appellantTz: PropTypes.string
   }),
   assignHearingForm: PropTypes.shape({
     apiFormattedValues: PropTypes.object,
@@ -381,9 +472,7 @@ ScheduleVeteran.propTypes = {
     hearingDate: PropTypes.string,
     regionalOffice: PropTypes.string,
   }),
-  scheduleHearingTask: PropTypes.shape({
-    taskId: PropTypes.string,
-  }),
+  scheduleHearingOrAssignDispositionTask: PropTypes.object,
   onReceiveAppealDetails: PropTypes.func,
   startPollingHearing: PropTypes.func,
   requestPatch: PropTypes.func,
@@ -393,23 +482,29 @@ ScheduleVeteran.propTypes = {
   selectedRegionalOffice: PropTypes.object,
   error: PropTypes.object,
   scheduledHearing: PropTypes.object,
+  userCanViewTimeSlots: PropTypes.bool,
+  allHearingTasks: PropTypes.array
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  scheduledHearing: state.components.scheduledHearing,
-  scheduleHearingTask: scheduleHearingTasksForAppeal(state, {
-    appealId: ownProps.appealId,
-  })[0],
-  openHearing: find(
-    appealWithDetailSelector(state, ownProps).hearings,
-    (hearing) => hearing.disposition === null
-  ),
-  assignHearingForm: state.components.forms.assignHearing,
-  appeal: appealWithDetailSelector(state, ownProps),
-  selectedRegionalOffice: state.components.selectedRegionalOffice,
-  hearingDay: state.ui.hearingDay,
-  error: state.ui.messages.error
-});
+const mapStateToProps = (state, ownProps) => {
+  const appeal = appealWithDetailSelector(state, ownProps);
+
+  return {
+    scheduledHearingsList: state.components.scheduledHearingsList,
+    fetchingHearings: state.components.fetchingHearings,
+    scheduledHearing: state.components.scheduledHearing,
+    scheduleHearingOrAssignDispositionTask: getAllTasksForAppeal(state, {
+      appealId: appeal?.externalId,
+    }).find((task) => task?.taskId === ownProps.taskId),
+    allHearingTasks: allHearingTasksForAppeal(state, { appealId: appeal?.externalId }),
+    openHearing: find(appeal?.hearings, (hearing) => hearing.disposition === null),
+    assignHearingForm: state.components.forms.assignHearing,
+    appeal,
+    selectedRegionalOffice: state.components.selectedRegionalOffice,
+    hearingDay: state.ui.hearingDay,
+    error: state.ui.messages.error
+  };
+};
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
@@ -423,6 +518,7 @@ const mapDispatchToProps = (dispatch) =>
       requestPatch,
       startPollingHearing,
       onReceiveAppealDetails,
+      setScheduledHearing
     },
     dispatch
   );
@@ -435,3 +531,4 @@ export default withRouter(
 );
 
 /* eslint-enable camelcase */
+/* eslint-enable max-lines */

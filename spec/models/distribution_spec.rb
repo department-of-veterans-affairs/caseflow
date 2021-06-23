@@ -8,6 +8,8 @@ describe Distribution, :all_dbs do
   let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge.css_id) }
   let(:today) { Time.utc(2019, 1, 1, 12, 0, 0) }
   let(:original_distributed_case_id) { "#{case_id}-redistributed-#{today.strftime('%F')}" }
+  let(:min_legacy_proportion) { DocketCoordinator::MINIMUM_LEGACY_PROPORTION }
+  let(:max_direct_review_proportion) { DocketCoordinator::MAXIMUM_DIRECT_REVIEW_PROPORTION }
 
   before do
     FeatureToggle.enable!(:test_facols)
@@ -146,43 +148,50 @@ describe Distribution, :all_dbs do
         end
       end
 
-      it "correctly distributes cases" do
-        evidence_submission_cases[0...2].each do |appeal|
-          appeal.tasks
-            .find_by(type: EvidenceSubmissionWindowTask.name)
-            .update!(status: :completed)
+      context "when min legacy proportion and max direct review proportion are set and used" do
+        # Proportion for hearings and evidence submission dockets
+        let(:other_dockets_proportion) { (1 - min_legacy_proportion - max_direct_review_proportion) / 2 }
+
+        it "correctly distributes cases" do
+          evidence_submission_cases[0...2].each do |appeal|
+            appeal.tasks
+              .find_by(type: EvidenceSubmissionWindowTask.name)
+              .update!(status: :completed)
+          end
+
+          subject.distribute!
+          expect(subject.valid?).to eq(true)
+          expect(subject.priority_push).to eq(false)
+          expect(subject.status).to eq("completed")
+          expect(subject.started_at).to eq(Time.zone.now) # time is frozen so appears zero time elapsed
+          expect(subject.errored_at).to be_nil
+          expect(subject.completed_at).to eq(Time.zone.now)
+          expect(subject.statistics["batch_size"]).to eq(15)
+          expect(subject.statistics["total_batch_size"]).to eq(45)
+          expect(subject.statistics["priority_count"]).to eq(legacy_priority_count + 1)
+          expect(subject.statistics["legacy_proportion"]).to eq(min_legacy_proportion)
+          expect(subject.statistics["legacy_hearing_backlog_count"]).to be <= 3
+          expect(subject.statistics["direct_review_proportion"]).to eq(max_direct_review_proportion)
+          expect(subject.statistics["evidence_submission_proportion"]).to be_within(0.01).of(other_dockets_proportion)
+          expect(subject.statistics["hearing_proportion"]).to be_within(0.01).of(other_dockets_proportion)
+          expect(subject.statistics["nonpriority_iterations"]).to be_between(1, 3)
+          expect(subject.distributed_cases.count).to eq(15)
+          expect(subject.distributed_cases.first.docket).to eq("legacy")
+          expect(subject.distributed_cases.first.ready_at).to eq(2.days.ago.beginning_of_day)
+          expect(subject.distributed_cases.where(priority: true).count).to eq(5)
+          expect(subject.distributed_cases.where(genpop: true).count).to be_within(1).of(7)
+          expect(subject.distributed_cases.where(priority: true, genpop: false).count).to eq(2)
+          expect(subject.distributed_cases.where(priority: false, genpop_query: "not_genpop").count).to eq(0)
+          expect(subject.distributed_cases.where(priority: false,
+                                                 genpop_query: "any").map(&:docket_index).max).to eq(35)
+          expect(subject.distributed_cases.where(priority: true,
+                                                 docket: Constants.AMA_DOCKETS.direct_review).count).to eq(1)
+          expect(subject.distributed_cases.where(docket: "legacy").count).to be >= 8
+          expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.direct_review).count)
+            .to be_within(1).of(1)
+          expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.evidence_submission).count)
+            .to be_within(1).of(0)
         end
-        subject.distribute!
-        expect(subject.valid?).to eq(true)
-        expect(subject.priority_push).to eq(false)
-        expect(subject.status).to eq("completed")
-        expect(subject.started_at).to eq(Time.zone.now) # time is frozen so appears zero time elapsed
-        expect(subject.errored_at).to be_nil
-        expect(subject.completed_at).to eq(Time.zone.now)
-        expect(subject.statistics["batch_size"]).to eq(15)
-        expect(subject.statistics["total_batch_size"]).to eq(45)
-        expect(subject.statistics["priority_count"]).to eq(legacy_priority_count + 1)
-        expect(subject.statistics["legacy_proportion"]).to eq(0.4)
-        expect(subject.statistics["legacy_hearing_backlog_count"]).to be <= 3
-        expect(subject.statistics["direct_review_proportion"]).to eq(0.2)
-        expect(subject.statistics["evidence_submission_proportion"]).to eq(0.2)
-        expect(subject.statistics["hearing_proportion"]).to eq(0.2)
-        expect(subject.statistics["pacesetting_direct_review_proportion"]).to eq(0.1)
-        expect(subject.statistics["interpolated_minimum_direct_review_proportion"]).to eq(0.067)
-        expect(subject.statistics["nonpriority_iterations"]).to be_between(2, 3)
-        expect(subject.distributed_cases.count).to eq(15)
-        expect(subject.distributed_cases.first.docket).to eq("legacy")
-        expect(subject.distributed_cases.first.ready_at).to eq(2.days.ago.beginning_of_day)
-        expect(subject.distributed_cases.where(priority: true).count).to eq(5)
-        expect(subject.distributed_cases.where(genpop: true).count).to eq(5)
-        expect(subject.distributed_cases.where(priority: true, genpop: false).count).to eq(2)
-        expect(subject.distributed_cases.where(priority: false, genpop_query: "not_genpop").count).to eq(0)
-        expect(subject.distributed_cases.where(priority: false, genpop_query: "any").map(&:docket_index).max).to eq(30)
-        expect(subject.distributed_cases.where(priority: true,
-                                               docket: Constants.AMA_DOCKETS.direct_review).count).to eq(1)
-        expect(subject.distributed_cases.where(docket: "legacy").count).to be >= 8
-        expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.direct_review).count).to be >= 3
-        expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.evidence_submission).count).to eq(2)
       end
 
       context "with priority_acd on" do
@@ -203,9 +212,9 @@ describe Distribution, :all_dbs do
             expect(VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge))
               .to eq total_tied_nonpriority_hearings
             subject.distribute!
-
             expect(subject.valid?).to eq(true)
-            expect(subject.statistics["legacy_hearing_backlog_count"]).to eq(BACKLOG_LIMIT)
+            # This may be less than BACKLOG_LIMIT when MINIMUM_LEGACY_PROPORTION is very large
+            expect(subject.statistics["legacy_hearing_backlog_count"]).to be <= BACKLOG_LIMIT
             dcs_legacy = subject.distributed_cases.where(docket: "legacy")
 
             # distributions reliant on BACKLOG_LIMIT
@@ -412,6 +421,8 @@ describe Distribution, :all_dbs do
         let!(:legacy_nonpriority_cases) { [] }
         let!(:same_judge_nonpriority_hearings) { [] }
         let!(:other_judge_hearings) { [] }
+        # Proportion for hearings and evidence submission dockets
+        let(:other_dockets_proportion) { (1 - max_direct_review_proportion) / 2 }
 
         it "fills the AMA dockets" do
           evidence_submission_cases[0...2].each do |appeal|
@@ -426,11 +437,9 @@ describe Distribution, :all_dbs do
           expect(subject.statistics["total_batch_size"]).to eq(45)
           expect(subject.statistics["priority_count"]).to eq(1)
           expect(subject.statistics["legacy_proportion"]).to eq(0.0)
-          expect(subject.statistics["direct_review_proportion"]).to be_within(0.01).of(0.13)
-          expect(subject.statistics["evidence_submission_proportion"]).to be_within(0.01).of(0.43)
-          expect(subject.statistics["hearing_proportion"]).to be_within(0.01).of(0.43)
-          expect(subject.statistics["pacesetting_direct_review_proportion"]).to eq(0.1)
-          expect(subject.statistics["interpolated_minimum_direct_review_proportion"]).to eq(0.067)
+          expect(subject.statistics["direct_review_proportion"]).to eq(max_direct_review_proportion)
+          expect(subject.statistics["evidence_submission_proportion"]).to be_within(0.01).of(other_dockets_proportion)
+          expect(subject.statistics["hearing_proportion"]).to be_within(0.01).of(other_dockets_proportion)
           expect(subject.statistics["nonpriority_iterations"]).to be_between(2, 3)
           expect(subject.distributed_cases.count).to eq(15)
         end

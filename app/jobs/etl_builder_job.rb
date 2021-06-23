@@ -6,8 +6,6 @@ class ETLBuilderJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :etl
 
-  SLACK_CHANNEL = "#appeals-delta"
-
   def perform
     RequestStore.store[:current_user] = User.system_user
 
@@ -26,7 +24,7 @@ class ETLBuilderJob < CaseflowJob
     return unless swept > 20 # big enough to warrant reality check
 
     msg = "[INFO] ETL swept up #{swept} deleted records -- see logs for details"
-    slack_service.send_notification(msg, "ETL::Sweeper", SLACK_CHANNEL)
+    slack_service.send_notification(msg, "ETL::Sweeper")
   end
 
   def build_etl
@@ -37,6 +35,6 @@ class ETLBuilderJob < CaseflowJob
     return unless etl_build.built == 0
 
     msg = "[WARN] ETL failed to sync any records"
-    slack_service.send_notification(msg, self.class.to_s, SLACK_CHANNEL)
+    slack_service.send_notification(msg, self.class.to_s)
   end
 end

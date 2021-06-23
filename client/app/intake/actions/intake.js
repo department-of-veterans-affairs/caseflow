@@ -84,6 +84,13 @@ export const setReceiptDate = (receiptDate) => ({
   }
 });
 
+export const setReceiptDateError = (receiptDateError) => ({
+  type: ACTIONS.SET_RECEIPT_DATE_ERROR,
+  payload: {
+    receiptDateError
+  }
+});
+
 export const setOptionSelected = (optionSelected) => ({
   type: ACTIONS.SET_OPTION_SELECTED,
   payload: {

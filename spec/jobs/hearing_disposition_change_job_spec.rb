@@ -283,7 +283,8 @@ describe HearingDispositionChangeJob, :all_dbs do
           Constants.HEARING_DISPOSITION_TYPES.held.to_sym => 8,
           Constants.HEARING_DISPOSITION_TYPES.cancelled.to_sym => 2,
           Constants.HEARING_DISPOSITION_TYPES.postponed.to_sym => 3,
-          Constants.HEARING_DISPOSITION_TYPES.no_show.to_sym => 5
+          Constants.HEARING_DISPOSITION_TYPES.no_show.to_sym => 5,
+          Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error.to_sym => 0
         }
       end
       let(:task_count_for_others) do
@@ -373,6 +374,7 @@ describe HearingDispositionChangeJob, :all_dbs do
           Constants.HEARING_DISPOSITION_TYPES.cancelled.to_sym => 0,
           Constants.HEARING_DISPOSITION_TYPES.postponed.to_sym => 0,
           Constants.HEARING_DISPOSITION_TYPES.no_show.to_sym => 0,
+          Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error.to_sym => 0,
           between_one_and_two_days_old: 0,
           stale: 0,
           unknown_disposition: 0

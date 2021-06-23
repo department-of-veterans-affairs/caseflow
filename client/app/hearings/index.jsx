@@ -1,4 +1,3 @@
-import { hot } from 'react-hot-loader/root';
 
 import React from 'react';
 import ReduxBase from '../components/ReduxBase';
@@ -9,4 +8,4 @@ const Hearings = (props) => <ReduxBase store={{}} reducer={reducers}>
   <HearingsApp {...props} />
 </ReduxBase>;
 
-export default hot(Hearings);
+export default Hearings;

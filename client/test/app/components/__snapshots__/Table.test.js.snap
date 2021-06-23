@@ -1,0 +1,138 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Table renders correctly 1`] = `
+<div>
+  <table
+    class="usa-table-borderless "
+    summary="Test minimal table"
+  >
+    <thead
+      class=""
+    >
+      <tr>
+        <th
+          class=""
+          scope="col"
+        >
+          <span>
+            Task
+          </span>
+        </th>
+        <th
+          class=""
+          scope="col"
+        >
+          <span>
+            Submitted
+          </span>
+        </th>
+        <th
+          class=""
+          scope="col"
+        >
+          <span>
+            User
+          </span>
+        </th>
+      </tr>
+    </thead>
+    <tbody
+      class=""
+    >
+      <tr
+        class=""
+        id="table-row-0"
+      >
+        <td
+          class=""
+          colspan="1"
+        >
+          Task 1
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          01/07/20
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          J. Doe
+        </td>
+      </tr>
+      <tr
+        class=""
+        id="table-row-1"
+      >
+        <td
+          class=""
+          colspan="1"
+        >
+          Task 2
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          02/17/20
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          S. Doe
+        </td>
+      </tr>
+      <tr
+        class=""
+        id="table-row-2"
+      >
+        <td
+          class=""
+          colspan="1"
+        >
+          Task 3
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          03/04/20
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          B. Doe
+        </td>
+      </tr>
+      <tr
+        class=""
+        id="table-row-3"
+      >
+        <td
+          class=""
+          colspan="1"
+        >
+          Task 4
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          03/10/20
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          V. Doe
+        </td>
+      </tr>
+    </tbody>
+    <tfoot />
+  </table>
+</div>
+`;

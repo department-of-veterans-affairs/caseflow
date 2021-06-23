@@ -16,19 +16,23 @@ FactoryBot.define do
     end
 
     trait :disposition_held do
-      hearing_disp { "H" }
+      hearing_disp { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:held] }
     end
 
     trait :disposition_cancelled do
-      hearing_disp { "C" }
+      hearing_disp { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:cancelled] }
     end
 
     trait :disposition_postponed do
-      hearing_disp { "P" }
+      hearing_disp { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:postponed] }
     end
 
     trait :disposition_no_show do
-      hearing_disp { "N" }
+      hearing_disp { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:no_show] }
+    end
+
+    trait :disposition_scheduled_in_error do
+      hearing_disp { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:scheduled_in_error] }
     end
 
     after(:build) do |hearing, evaluator|

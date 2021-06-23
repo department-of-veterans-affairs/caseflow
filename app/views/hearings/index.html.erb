@@ -17,12 +17,14 @@
   userUseFullPageVideoToVirtual: FeatureToggle.enabled?(:full_page_video_to_virtual, user: current_user),
   userCanScheduleVirtualHearings: FeatureToggle.enabled?(:schedule_virtual_hearings, user: current_user),
   userCanConvertCentralHearings: FeatureToggle.enabled?(:schedule_virtual_hearings_for_central, user: current_user),
+  userCanAddVirtualHearingDays: FeatureToggle.enabled?(:national_vh_queue, user: current_user),
   userCanAssignHearingSchedule: current_user.can_assign_hearing_schedule?,
   userCanBuildHearingSchedule: current_user.can?('Build HearSched'),
   userCanViewHearingSchedule: current_user.can_view_hearing_schedule?,
   userCanVsoHearingSchedule: current_user.can_vso_hearing_schedule?,
   userHasHearingPrepRole: current_user.can?('Hearing Prep'),
   userInHearingOrTranscriptionOrganization: current_user.in_hearing_or_transcription_organization?,
+  userCanViewFnodBadgeInHearings: FeatureToggle.enabled?(:view_fnod_badge_in_hearings, user: current_user),
   userId: current_user.id,
   userCssId: current_user.css_id
 }) %>

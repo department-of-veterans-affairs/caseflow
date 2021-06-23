@@ -6,7 +6,11 @@ import _ from 'lodash';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Alert from '../../../components/Alert';
-import { LockModal, RemoveHearingModal, DispositionModal } from './DailyDocketModals';
+import {
+  LockModal,
+  RemoveHearingModal,
+  DispositionModal,
+} from './DailyDocketModals';
 import Button from '../../../components/Button';
 import StatusMessage from '../../../components/StatusMessage';
 import DailyDocketRows from './DailyDocketRows';
@@ -16,12 +20,19 @@ import { navigateToPrintPage } from '../../../util/PrintUtil';
 import { encodeQueryParams } from '../../../util/QueryParamsUtil';
 import COPY from '../../../../COPY';
 import UserAlerts from '../../../components/UserAlerts';
+import HEARING_DISPOSITION_TYPES from '../../../../constants/HEARING_DISPOSITION_TYPES';
+import { ScheduledInErrorModal } from '../ScheduledInErrorModal';
 
 const alertStyling = css({
-  marginBottom: '30px'
+  marginBottom: '30px',
 });
 
-const Alerts = ({ displayLockSuccessMessage, onErrorHearingDayLock, dailyDocket, dailyDocketServerError }) => (
+const Alerts = ({
+  displayLockSuccessMessage,
+  onErrorHearingDayLock,
+  dailyDocket,
+  dailyDocketServerError,
+}) => (
   <React.Fragment>
     <UserAlerts />
     {displayLockSuccessMessage && (
@@ -54,7 +65,9 @@ const Alerts = ({ displayLockSuccessMessage, onErrorHearingDayLock, dailyDocket,
       <Alert
         type="error"
         styling={alertStyling}
-        title={`VACOLS Hearing Day ${moment(dailyDocket.scheduledFor).format('M/DD/YYYY')}
+        title={`VACOLS Hearing Day ${moment(dailyDocket.scheduledFor).format(
+          'M/DD/YYYY'
+        )}
            cannot be locked in Caseflow.`}
         message="VACOLS Hearing Day cannot be locked"
       />
@@ -65,12 +78,12 @@ const Alerts = ({ displayLockSuccessMessage, onErrorHearingDayLock, dailyDocket,
 Alerts.propTypes = {
   dailyDocket: PropTypes.shape({
     lock: PropTypes.bool,
-    scheduledFor: PropTypes.string
+    scheduledFor: PropTypes.string,
   }),
   dailyDocketServerError: PropTypes.bool,
   displayLockSuccessMessage: PropTypes.bool,
   onErrorHearingDayLock: PropTypes.bool,
-  saveSuccessful: PropTypes.object
+  saveSuccessful: PropTypes.object,
 };
 
 export default class DailyDocket extends React.Component {
@@ -78,7 +91,8 @@ export default class DailyDocket extends React.Component {
     super(props);
 
     this.state = {
-      editedDispositionModalProps: null
+      editedDispositionModalProps: null,
+      scheduledInErrorModalProps: null,
     };
   }
 
@@ -87,7 +101,15 @@ export default class DailyDocket extends React.Component {
   };
 
   dailyDocketHearings = () => {
-    return _.filter(this.props.hearings, _.negate(isPreviouslyScheduledHearing));
+    const hearings = _.filter(
+      this.props.hearings,
+      _.negate(isPreviouslyScheduledHearing)
+    ).filter(
+      (hearing) =>
+        hearing.disposition !== HEARING_DISPOSITION_TYPES.scheduled_in_error
+    );
+
+    return hearings;
   };
 
   getRegionalOffice = () => {
@@ -98,33 +120,58 @@ export default class DailyDocket extends React.Component {
     return dailyDocket.requestType === 'C' ? 'C' : dailyDocket.regionalOfficeKey;
   };
 
-  openDispositionModal = ({ hearing, fromDisposition, toDisposition, onConfirm, onCancel }) => {
-    this.setState({
-      editedDispositionModalProps: {
-        hearing,
-        fromDisposition,
-        toDisposition,
-        onCancel: () => {
-          onCancel();
-          this.closeDispositionModal();
+  openDispositionModal = ({
+    update,
+    hearing,
+    fromDisposition,
+    toDisposition,
+    onConfirm,
+    onCancel,
+  }) => {
+    // Wrap the cancel function to close the modal and reset the disposition
+    const cancelHandler = () => {
+      onCancel();
+      this.closeDispositionModal();
+    };
+
+    if (toDisposition === HEARING_DISPOSITION_TYPES.scheduled_in_error) {
+      this.setState({
+        scheduledInErrorModalProps: {
+          update,
+          hearing,
+          cancelHandler: this.closeDispositionModal,
+          saveHearing: this.props.saveHearing,
+          disposition: toDisposition,
         },
-        onConfirm: () => {
-          onConfirm(toDisposition);
-          this.closeDispositionModal();
-        }
-      }
-    });
+      });
+    } else {
+      this.setState({
+        editedDispositionModalProps: {
+          hearing,
+          fromDisposition,
+          toDisposition,
+          onCancel: cancelHandler,
+          onConfirm: () => {
+            onConfirm(toDisposition);
+            this.closeDispositionModal();
+          },
+        },
+      });
+    }
   };
 
   closeDispositionModal = () => {
-    this.setState({ editedDispositionModalProps: null });
+    this.setState({
+      editedDispositionModalProps: null,
+      scheduledInErrorModalProps: null,
+    });
   };
 
   navigateToPrintAllPage = () => {
     const hearingIds = this.dailyDocketHearings().map((hearing) => hearing.externalId);
     const queryString = encodeQueryParams({
       hearing_ids: hearingIds.join(','),
-      keep_open: true
+      keep_open: true,
     });
 
     navigateToPrintPage(`/hearings/worksheet/print${queryString}`);
@@ -148,14 +195,28 @@ export default class DailyDocket extends React.Component {
       deleteHearingDay,
       updateLockHearingDay,
       onCancelDisplayLockModal,
-      user
+      user,
+      history,
     } = this.props;
 
-    const { editedDispositionModalProps } = this.state;
+    const { editedDispositionModalProps, scheduledInErrorModalProps } = this.state;
 
     return (
       <AppSegment filledBackground>
-        {editedDispositionModalProps && <DispositionModal {...this.state.editedDispositionModalProps} />}
+        {editedDispositionModalProps && (
+          <DispositionModal {...this.state.editedDispositionModalProps} />
+        )}
+        {scheduledInErrorModalProps && (
+          <ScheduledInErrorModal
+            {...this.state.scheduledInErrorModalProps}
+            history={history}
+            hearing={
+              this.props.hearings[
+                this.state.scheduledInErrorModalProps.hearing.externalId
+              ]
+            }
+          />
+        )}
 
         {displayRemoveHearingDayModal && (
           <RemoveHearingModal
@@ -205,7 +266,9 @@ export default class DailyDocket extends React.Component {
 
         <div className="cf-app-segment">
           <div className="cf-push-left">
-            <Button onClick={() => navigateToPrintPage()}>Download & Print Page</Button>
+            <Button onClick={() => navigateToPrintPage()}>
+              Download & Print Page
+            </Button>
           </div>
           <div className="cf-push-right">
             {user.userHasHearingPrepRole && (
@@ -223,7 +286,9 @@ export default class DailyDocket extends React.Component {
         <DailyDocketRows
           hearings={this.props.hearings}
           hidePreviouslyScheduled
-          readOnly={user.userCanViewHearingSchedule || user.userCanVsoHearingSchedule}
+          readOnly={
+            user.userCanViewHearingSchedule || user.userCanVsoHearingSchedule
+          }
           saveHearing={this.props.saveHearing}
           openDispositionModal={this.openDispositionModal}
           regionalOffice={regionalOffice}
@@ -277,5 +342,8 @@ DailyDocket.propTypes = {
   updateLockHearingDay: PropTypes.func.isRequired,
   displayLockSuccessMessage: PropTypes.bool,
   dailyDocketServerError: PropTypes.bool,
-  onErrorHearingDayLock: PropTypes.bool
+  onErrorHearingDayLock: PropTypes.bool,
+  history: PropTypes.shape({
+    push: PropTypes.func,
+  }),
 };

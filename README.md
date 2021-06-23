@@ -1,5 +1,5 @@
 # Caseflow
-[![CircleCI](https://circleci.com/gh/department-of-veterans-affairs/caseflow/tree/master.svg?style=svg)](https://circleci.com/gh/department-of-veterans-affairs/caseflow/tree/master)
+[![CircleCI](https://circleci.com/gh/department-of-veterans-affairs/caseflow/tree/master.svg?style=svg)](https://circleci.com/gh/department-of-veterans-affairs/caseflow/tree/master) [![Knapsack Pro Parallel CI builds for Caseflow RSpec Tests](https://img.shields.io/badge/Knapsack%20Pro-Parallel%20%2F%20Caseflow%20RSpec%20Tests-%230074ff)](https://knapsackpro.com/dashboard/organizations/1654/projects/1260/test_suites/1783/builds?utm_campaign=organization-id-1654&utm_content=test-suite-id-1783&utm_medium=readme&utm_source=knapsack-pro-badge&utm_term=project-id-1260)
 
 Caseflow is a suite of web-based tools to manage VA appeals. It's currently in development by the Appeals Modernization team (est. 2016). It will replace the current system of record for appeals, the Veterans Appeals Control and Location System (VACOLS), which was created in 1979 on now-outdated infrastructure. Additionally, Caseflow will allow the Board of Veterans' Appeals to process appeals under the new guidelines created by the Veterans Appeals Improvement and Modernization Act of 2017, which goes into effect February 14th, 2019.
 
@@ -133,13 +133,13 @@ brew install rbenv nodenv yarn
 brew tap ouchxp/nodenv
 brew install nodenv-nvmrc
 brew tap caskroom/cask
-brew cask install chromedriver
+brew install --cask chromedriver
 ```
 **Linux**
 
-[Install rbenv](https://github.com/rbenv/rbenv-installer#rbenv-installer`)
-[Install nodenv](https://github.com/nodenv/nodenv-installer#nodenv-installer)
-[Install yarn](https://yarnpkg.com/lang/en/docs/install)
+* [Install rbenv](https://github.com/rbenv/rbenv-installer#rbenv-installer)
+* [Install nodenv](https://github.com/nodenv/nodenv-installer#nodenv-installer)
+* [Install yarn](https://yarnpkg.com/lang/en/docs/install)
 
 Ubuntu specific
 ```
@@ -245,7 +245,7 @@ You probably have to create an Oracle account to download these.
 Install Docker on your machine via Homebrew:
 
 ```
-    brew cask install docker
+    brew install --cask docker
 ```
 
 Once Docker's installed, run the application and go into advanced preferences to limit Docker's resources in order to keep FACOLS from consuming your Macbook.  Recommended settings are 4 CPUs, 8 GiB of internal memory, and 512 MiB of swap.
@@ -289,7 +289,7 @@ Allows the feature tests to run locally.
 
 **Mac**
 ```
-brew cask install chromedriver
+brew install --cask chromedriver
 chromedriver --version
 ```
 

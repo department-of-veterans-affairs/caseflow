@@ -36,9 +36,13 @@ class SlackService
   end
 
   def pick_color(title, msg)
-    if title =~ /error/i || msg =~ /error/i
+    if /error/i.match?(title)
       COLORS[:error]
-    elsif title =~ /warn/i || msg =~ /warn/i
+    elsif /warn/i.match?(title)
+      COLORS[:warn]
+    elsif /error/i.match?(msg)
+      COLORS[:error]
+    elsif /warn/i.match?(msg)
       COLORS[:warn]
     else
       COLORS[:info]

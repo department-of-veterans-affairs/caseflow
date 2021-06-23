@@ -11,6 +11,8 @@ class HearingTask < Task
   delegate :hearing, to: :hearing_task_association, allow_nil: true
   before_validation :set_assignee
 
+  class ExistingOpenHearingTaskOnAppeal < StandardError; end
+
   def self.label
     "All hearing-related tasks"
   end
@@ -44,21 +46,9 @@ class HearingTask < Task
 
     if appeal.is_a?(LegacyAppeal)
       update_legacy_appeal_location
-    else
-      IhpTasksFactory.new(parent).create_ihp_tasks!
+    elsif appeal.is_a?(Appeal)
+      create_evidence_or_ihp_task
     end
-  end
-
-  def update_legacy_appeal_location
-    location = if hearing&.held?
-                 LegacyAppeal::LOCATION_CODES[:transcription]
-               elsif appeal.representatives.empty?
-                 LegacyAppeal::LOCATION_CODES[:case_storage]
-               else
-                 LegacyAppeal::LOCATION_CODES[:service_organization]
-               end
-
-    AppealRepository.update_location!(appeal, location)
   end
 
   def create_change_hearing_disposition_task(instructions = nil)
@@ -79,7 +69,66 @@ class HearingTask < Task
     children.open.detect { |child| child.type == AssignHearingDispositionTask.name }
   end
 
+  def unscheduled_hearing_notes
+    last_version =
+      versions.sort_by(&:created_at).reverse.detect do |version|
+        version&.changeset&.keys&.include?("instructions")
+      end
+
+    {
+      updated_at: last_version&.created_at,
+      updated_by_css_id: User.find_by(id: last_version&.whodunnit)&.css_id,
+      notes: instructions&.first
+    }
+  end
+
+  def update_notes_as_instructions(notes)
+    update!(instructions: [notes])
+  end
+
+  def update_from_params(params, current_user)
+    payload_values = params.delete(:business_payloads)&.dig(:values)
+
+    if payload_values&.include?(:notes)
+      update_notes_as_instructions(payload_values&.[](:notes))
+
+      [self] + children
+    else
+      super(params, current_user)
+    end
+  end
+
   private
+
+  def update_legacy_appeal_location
+    location = if hearing&.held?
+                 LegacyAppeal::LOCATION_CODES[:transcription]
+               elsif appeal.representative_is_colocated_vso?
+                 LegacyAppeal::LOCATION_CODES[:service_organization]
+               else
+                 LegacyAppeal::LOCATION_CODES[:case_storage]
+               end
+
+    AppealRepository.update_location!(appeal, location)
+  end
+
+  def create_evidence_or_ihp_task
+    if hearing&.no_show?
+      # if there was already a completed ESWT, set the appeal ready for distribution
+      # More info in slack: https://dsva.slack.com/archives/C3EAF3Q15/p1617048776125000
+      if children.closed.where(type: EvidenceSubmissionWindowTask.name).present?
+        update!(status: Constants.TASK_STATUSES.completed)
+      else
+        EvidenceSubmissionWindowTask.create!(
+          appeal: appeal,
+          parent: self,
+          assigned_to: MailTeam.singleton
+        )
+      end
+    else
+      IhpTasksFactory.new(parent).create_ihp_tasks!
+    end
+  end
 
   def cascade_closure_from_child_task?(_child_task)
     true

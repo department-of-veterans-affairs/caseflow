@@ -16,11 +16,11 @@ export const RepresentativeSection = ({
   virtualHearing,
   errors,
   type,
-  virtual,
-  video,
   readOnly,
   update,
-  appellantTitle
+  appellantTitle,
+  showTimezoneField,
+  schedulingToVirtual
 }) => (
   <VirtualHearingSection label="Power of Attorney">
     {hearing?.representative ? (
@@ -37,7 +37,7 @@ export const RepresentativeSection = ({
     ) : (
       <ReadOnly text={`The ${appellantTitle} does not have a representative recorded in VBMS`} />
     )}
-    {virtual && !video && (
+    {showTimezoneField && schedulingToVirtual && (
       <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
         <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })}>
           <Timezone
@@ -48,6 +48,7 @@ export const RepresentativeSection = ({
               update('virtualHearing', { representativeTz })
             }
             time={hearing.scheduledTimeString}
+            roTimezone={hearing?.regionalOfficeTimezone}
             label="POA/Representative Timezone"
             name="representativeTz"
           />
@@ -61,7 +62,7 @@ export const RepresentativeSection = ({
           readOnly={readOnly}
           emailType="representativeEmail"
           label="POA/Representative Email"
-          email={virtual ? virtualHearing?.representativeEmail : virtualHearing?.representativeEmail}
+          email={virtualHearing?.representativeEmail}
           error={errors?.representativeEmail}
           type={type}
           update={update}
@@ -71,14 +72,18 @@ export const RepresentativeSection = ({
   </VirtualHearingSection>
 );
 
+RepresentativeSection.defaultProps = {
+  schedulingToVirtual: true
+};
+
 RepresentativeSection.propTypes = {
   hearing: PropTypes.object,
   virtualHearing: PropTypes.object,
   errors: PropTypes.object,
   type: PropTypes.string,
   update: PropTypes.func,
-  virtual: PropTypes.bool,
-  video: PropTypes.bool,
   readOnly: PropTypes.bool,
-  appellantTitle: PropTypes.string
+  appellantTitle: PropTypes.string,
+  showTimezoneField: PropTypes.bool,
+  schedulingToVirtual: PropTypes.bool
 };

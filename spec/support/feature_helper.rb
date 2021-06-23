@@ -25,7 +25,7 @@ module FeatureHelper
     selector = ""
     keyword_args = {}
 
-    dropdown_choices = dropdown_options dropdown
+    dropdown_options = dropdown_click_and_get_options(dropdown)
     yield if block_given?
 
     keyword_args[:wait] = options[:wait] if options[:wait].present? && options[:wait] > 0
@@ -37,9 +37,9 @@ module FeatureHelper
       selector = "div[id$='-option-#{options[:index]}']"
     end
 
-    try_clicking_dropdown_menu_item(dropdown, selector, keyword_args)
+    click_dropdown_menu_item(dropdown, selector, keyword_args)
 
-    dropdown_choices
+    dropdown_options
   end
 
   def dropdown_selected_value(container = page)
@@ -100,7 +100,7 @@ module FeatureHelper
 
   private
 
-  def dropdown_options(dropdown)
+  def dropdown_click_and_get_options(dropdown)
     dropdown.click unless dropdown_menu_visible?(dropdown)
     dropdown.sibling(".cf-select__menu")&.text&.split("\n") || []
   end
@@ -120,19 +120,8 @@ module FeatureHelper
     container.find(selector, **keyword_args)
   end
 
-  # sometimes the dropdown menu hasn't appeared after the first click
-  def try_clicking_dropdown_menu_item(dropdown, selector, keyword_args)
-    tries = 3
-    until dropdown_menu_visible?(dropdown) || tries <= 0
-      dropdown.click
-      tries -= 1
-    end
-
-    click_dropdown_menu_item(dropdown, selector, keyword_args)
-  end
-
   def dropdown_menu_visible?(dropdown)
-    dropdown.sibling(".cf-select__menu")
+    dropdown.sibling(".cf-select__menu", wait: false)
   rescue Capybara::ElementNotFound
     false
   else

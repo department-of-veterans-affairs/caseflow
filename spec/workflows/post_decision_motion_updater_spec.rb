@@ -227,7 +227,7 @@ describe PostDecisionMotionUpdater, :all_dbs do
   end
 
   def vacate_stream
-    Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "vacate")
+    Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: Constants.AMA_STREAM_TYPES.vacate)
   end
 
   def verify_vacate_stream

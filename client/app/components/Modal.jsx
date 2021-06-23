@@ -30,7 +30,7 @@ export default class Modal extends React.Component {
     this.buttonIdPrefix = `${this.props.title.replace(/\s/g, '-')}-button-id-`;
   }
   handleTab = (event) => {
-    let buttonsList = document.querySelectorAll('.cf-modal-controls button');
+    let buttonsList = document.querySelectorAll('.cf-modal-controls button:not([disabled])');
     let firstButton = document.getElementById(`${this.buttonIdPrefix}close`);
     // a more general selector for the last button in the modall
     let endButton = buttonsList[buttonsList.length - 1];
@@ -47,11 +47,11 @@ export default class Modal extends React.Component {
   };
 
   keyHandler = (event) => {
-    if (event.key === 'Escape') {
+    if (event.key === 'Escape' || event.keyCode === 27) {
       this.props.closeHandler();
     }
 
-    if (event.key === 'Tab') {
+    if (event.key === 'Tab' || event.keyCode === 9) {
       this.handleTab(event);
     }
   };
@@ -130,7 +130,7 @@ export default class Modal extends React.Component {
       <section
         className={`cf-modal active ${className}`}
         id="modal_id"
-        role="alertdialog"
+        role="dialog"
         aria-labelledby="modal_id-title"
         aria-describedby="modal_id-desc"
         aria-modal="true"
@@ -144,6 +144,7 @@ export default class Modal extends React.Component {
             onClick={closeHandler}
             ref={this.modalCloseFocus}
           >
+            <span className="usa-sr-only">Close</span>
             {closeSymbolHtml()}
           </button>
           <div style={{ display: 'flex' }}>

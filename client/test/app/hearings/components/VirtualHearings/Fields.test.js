@@ -8,17 +8,7 @@ import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
 import { VirtualHearingEmail } from 'app/hearings/components/VirtualHearings/Emails';
 
 describe('Fields', () => {
-  test('Matches snapshot with default props', () => {
-    // Run the test
-    const fields = mount(
-      <VirtualHearingFields
-        appellantTitle="Veteran"
-        time={HEARING_TIME_OPTIONS[0].value}
-        requestType="Central"
-        virtualHearing={virtualHearing.virtualHearing}
-      />
-    );
-
+  const expectations = (fields) => {
     // Emails
     expect(fields.find(VirtualHearingEmail)).toHaveLength(2);
     expect(fields.find(VirtualHearingEmail).first().
@@ -38,9 +28,23 @@ describe('Fields', () => {
     // Other components
     expect(fields.find('.cf-help-divider')).toHaveLength(1);
     expect(fields).toMatchSnapshot();
+  }
+
+  test('Display timezone and divider for Central', () => {
+    // Run the test
+    const fields = mount(
+      <VirtualHearingFields
+        appellantTitle="Veteran"
+        time={HEARING_TIME_OPTIONS[0].value}
+        requestType="Central"
+        virtualHearing={virtualHearing.virtualHearing}
+      />
+    );
+
+    expectations(fields)
   });
 
-  test('Does not display timezone or divider for Video hearings', () => {
+  test('Display timezone and divider for Video', () => {
     // Run the test
     const fields = mount(
       <VirtualHearingFields
@@ -51,21 +55,7 @@ describe('Fields', () => {
       />
     );
 
-    // Emails
-    expect(fields.find(VirtualHearingEmail)).toHaveLength(2);
-    expect(fields.find(VirtualHearingEmail).first().
-      prop('email')).toEqual(virtualHearing.virtualHearing.appellantEmail);
-    expect(fields.find(VirtualHearingEmail).first().
-      prop('label')).toEqual('Veteran Email');
-    expect(fields.find(VirtualHearingEmail).at(1).
-      prop('email')).toEqual(virtualHearing.virtualHearing.representativeEmail);
-
-    // Timezones
-    expect(fields.find(Timezone)).toHaveLength(0);
-
-    // Other components
-    expect(fields.find('.cf-help-divider')).toHaveLength(0);
-    expect(fields).toMatchSnapshot();
+    expectations(fields)
   });
 })
 ;

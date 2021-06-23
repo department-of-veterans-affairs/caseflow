@@ -1,0 +1,45 @@
+import { Meta, Story, Preview } from "@storybook/addon-docs/blocks";
+import { boolean, text, select } from "@storybook/addon-knobs";
+
+import CavcDetail from "./CavcDetail";
+
+export const argTypes = {
+  cavc_docket_number: { control: "text" },
+  represented_by_attorney: { control: "boolean" },
+  cavc_judge_full_name: { control: "text" },
+  cavc_decision_type: { control: { type: "select", options:  ["remand", "straight_reversal", "death_dismissal"] } },
+  remand_subtype: { control: { type: "select", options: ["jmr", "jmpr", "mdr"] } },
+  decision_date: { control: "text" },
+  judgement_date: { control: "text" },
+  mandate_date: { control: "text" },
+  instructions: { control: "text" },
+};
+export const args = {
+  cavc_docket_number: "9008",
+  represented_by_attorney: false,
+  cavc_judge_full_name: "Margaret Bartley",
+  cavc_decision_type: "remand",
+  remand_subtype: "jmr",
+  decision_date: "2020-09-30",
+  judgement_date: "2020-09-30",
+  mandate_date: "2020-09-30",
+  instructions: "Some instructions",
+};
+
+<Meta title="Queue/Components/CavcDetail" component={CavcDetail} argTypes={argTypes} args={args} />
+
+# CavcDetail component
+
+Component which renders details related to CAVC Remand appeals on the case details page
+
+### Default View
+
+export const Template = (args) => <CavcDetail {...args} />;
+Template.args = { ...args };
+Template.argTypes = { ...argTypes };
+
+<Preview>
+  <Story name="Default">
+    {Template.bind({})}
+  </Story>
+</Preview>

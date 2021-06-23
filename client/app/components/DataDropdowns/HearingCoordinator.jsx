@@ -8,6 +8,7 @@ import _ from 'lodash';
 import LoadingLabel from './LoadingLabel';
 
 import SearchableDropdown from '../SearchableDropdown';
+import COPY from '../../../COPY';
 
 class HearingCoordinatorDropdown extends React.Component {
 
@@ -48,12 +49,13 @@ class HearingCoordinatorDropdown extends React.Component {
 
   render() {
     const {
-      name, label, onChange, readOnly, errorMessage, placeholder,
+      optional, name, label, onChange, readOnly, errorMessage, placeholder,
       hearingCoordinators: { isFetching }
     } = this.props;
 
     return (
       <SearchableDropdown
+        optional={optional}
         name={name}
         label={isFetching ? <LoadingLabel text="Loading hearing coordinators..." /> : label}
         strongLabel
@@ -68,10 +70,17 @@ class HearingCoordinatorDropdown extends React.Component {
 }
 
 HearingCoordinatorDropdown.propTypes = {
+  optional: PropTypes.bool,
   name: PropTypes.string,
   label: PropTypes.string,
   value: PropTypes.string,
   onChange: PropTypes.func.isRequired,
+  onFetchDropdownData: PropTypes.func,
+  onReceiveDropdownData: PropTypes.func.isRequired,
+  hearingCoordinators: PropTypes.shape({
+    options: PropTypes.arrayOf(PropTypes.object),
+    isFetching: PropTypes.bool
+  }),
   readOnly: PropTypes.bool,
   placeholder: PropTypes.string,
   errorMessage: PropTypes.string
@@ -79,7 +88,7 @@ HearingCoordinatorDropdown.propTypes = {
 
 HearingCoordinatorDropdown.defaultProps = {
   name: 'coordinator',
-  label: 'Hearing Coordinator'
+  label: COPY.DROPDOWN_LABEL_HEARING_COORDINATOR
 };
 
 const mapStateToProps = (state) => ({

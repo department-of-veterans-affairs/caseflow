@@ -15,7 +15,11 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   has_many :messages
   has_one :vacols_user, class_name: "CachedUser", foreign_key: :sdomainid, primary_key: :css_id
 
+  # Alternative: where("roles @> ARRAY[?]::varchar[]", role)
+  scope :with_role, ->(role) { where("? = ANY(roles)", role) }
+
   BOARD_STATION_ID = "101"
+  LAST_LOGIN_PRECISION = 5.minutes
 
   # Ephemeral values obtained from CSS on auth. Stored in user's session
   attr_writer :regional_office
@@ -62,6 +66,12 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     vacols_roles.include?("attorney")
   end
 
+  # Using "pure_judge" terminology from VACOLS::Staff
+  # This implementation relies on UserRepository#roles_based_on_staff_fields return values
+  def pure_judge_in_vacols?
+    vacols_roles.first == "judge"
+  end
+
   def judge_in_vacols?
     vacols_roles.include?("judge")
   end
@@ -90,6 +100,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     can?("RO ViewHearSched") && !can?("Build HearSched") && !can?("Edit HearSched")
   end
 
+  def can_view_edit_nod_date?
+    ClerkOfTheBoard.singleton.users.include?(self) && FeatureToggle.enabled?(:edit_nod_date, user: self)
+  end
+
   def can_vso_hearing_schedule?
     can?("VSO") && !can?("RO ViewHearSched") && !can?("Build HearSched") && !can?("Edit HearSched")
   end
@@ -106,6 +120,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     CaseReview.singleton.users.include?(self) || can_intake_appeals?
   end
 
+  def can_edit_cavc_remands?
+    CavcLitigationSupport.singleton.admins.include?(self)
+  end
+
   def can_intake_appeals?
     BvaIntake.singleton.users.include?(self)
   end
@@ -119,8 +137,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_change_hearing_request_type?
-    (can?("Admin Intake") || can?("Build HearSched") || can?("Edit HearSched")) &&
-      FeatureToggle.enabled?(:convert_travel_board_to_video_or_virtual, user: self)
+    can?("Build HearSched") || can?("Edit HearSched")
   end
 
   def vacols_uniq_id
@@ -278,6 +295,23 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     organizations_users.non_admin.where(organization: JudgeTeam.all)
   end
 
+  def security_profile
+    BGSService.new.get_security_profile(
+      username: css_id,
+      station_id: station_id
+    )
+  rescue BGS::ShareError, BGS::PublicError
+    {}
+  end
+
+  def job_title
+    security_profile.dig(:job_title)
+  end
+
+  def can_intake_decision_reviews?
+    !job_title.include?("Senior Veterans Service Representative")
+  end
+
   def user_info_for_idt
     self.class.user_repository.user_info_for_idt(css_id)
   end
@@ -326,13 +360,16 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def queue_tabs
-    return [assigned_tasks_tab] if judge_in_vacols? && !attorney_in_vacols?
-
-    [
-      assigned_tasks_tab,
-      on_hold_tasks_tab,
-      completed_tasks_tab
-    ]
+    # acting VLJs are both judge_in_vacols and attorney_in_vacols and should see the attorney columns
+    if (judge_in_vacols? && !attorney_in_vacols?) && !FeatureToggle.enabled?(:judge_queue_tabs, user: self)
+      [assigned_tasks_tab]
+    else
+      [
+        assigned_tasks_tab,
+        on_hold_tasks_tab,
+        completed_tasks_tab
+      ]
+    end
   end
 
   def self.default_active_tab
@@ -411,17 +448,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     @user_info ||= self.class.user_repository.user_info_from_vacols(css_id)
   end
 
-  def get_appeal_stream_hearings(appeal_streams)
-    appeal_streams.reduce({}) do |acc, (appeal_id, appeals)|
-      acc[appeal_id] = appeal_hearings(appeals.map(&:id))
-      acc
-    end
-  end
-
-  def appeal_hearings(appeal_ids)
-    LegacyHearing.where(appeal_id: appeal_ids)
-  end
-
   class << self
     attr_writer :authentication_service
     delegate :authenticate_vacols, to: :authentication_service
@@ -471,7 +497,9 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
       attrs = attrs_from_session(session, user_session)
 
       user ||= create!(attrs.merge(css_id: css_id.upcase))
-      user.update!(attrs.merge(last_login_at: Time.zone.now))
+      now = Time.zone.now
+      attrs[:last_login_at] = now if !user.last_login_at || now - user.last_login_at > LAST_LOGIN_PRECISION
+      user.update!(attrs)
       user_session["pg_user_id"] = user.id
       user
     end
@@ -497,6 +525,8 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
     # case-insensitive search
     def find_by_css_id(css_id)
+      # this query uses the index_users_unique_css_id
+      # find_by(css_id: css_id) does a slower seq scan
       find_by("UPPER(css_id)=UPPER(?)", css_id)
     end
 

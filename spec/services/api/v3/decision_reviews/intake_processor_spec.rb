@@ -45,7 +45,7 @@ describe Api::V3::DecisionReviews::IntakeProcessor, :all_dbs do
   end
 
   let(:receipt_date) { Time.zone.today - 6.days }
-  let(:informal_conference) { true }
+  let(:informal_conference) { false }
   let(:same_office) { false }
   let(:legacy_opt_in_approved) { true }
   let(:benefit_type) { "compensation" }
@@ -59,9 +59,9 @@ describe Api::V3::DecisionReviews::IntakeProcessor, :all_dbs do
     {
       type: "ContestableIssue",
       attributes: {
-        ratingIssueId: rating_issue_id,
-        decisionIssueId: decision_issue_id,
-        ratingDecisionIssueId: rating_decision_issue_id
+        issue: "Right Knee",
+        decisionDate: "2020-04-01",
+        ratingIssueReferenceId: rating_issue_id
       }
     }
   end

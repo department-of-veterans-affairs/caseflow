@@ -2,6 +2,7 @@
 
 exports[`TextareaField Can accept input 1`] = `
 <TextareaField
+  characterLimitTopRight={false}
   disabled={false}
   name="Test Field"
   onChange={
@@ -51,6 +52,7 @@ exports[`TextareaField Can accept input 1`] = `
 
 exports[`TextareaField Displays a bold label when strongLabel prop is true 1`] = `
 <TextareaField
+  characterLimitTopRight={false}
   disabled={false}
   name="Test Field"
   onChange={
@@ -103,6 +105,7 @@ exports[`TextareaField Displays a bold label when strongLabel prop is true 1`] =
 
 exports[`TextareaField Displays character count when maxlength and value are present 1`] = `
 <TextareaField
+  characterLimitTopRight={false}
   disabled={false}
   maxlength={10}
   name="Test Field"
@@ -150,7 +153,9 @@ exports[`TextareaField Displays character count when maxlength and value are pre
       onChange={[Function]}
       value="hello"
     />
-    <p>
+    <p
+      style={Object {}}
+    >
       <i>
         5
          
@@ -165,6 +170,7 @@ exports[`TextareaField Displays character count when maxlength and value are pre
 
 exports[`TextareaField Displays error message when present 1`] = `
 <TextareaField
+  characterLimitTopRight={false}
   disabled={false}
   errorMessage="Something went wrong"
   name="Test Field"
@@ -220,6 +226,7 @@ exports[`TextareaField Displays error message when present 1`] = `
 
 exports[`TextareaField Displays screen-reader only label when hideLabel prop is true 1`] = `
 <TextareaField
+  characterLimitTopRight={false}
   disabled={false}
   hideLabel={true}
   name="Test Field"
@@ -270,6 +277,7 @@ exports[`TextareaField Displays screen-reader only label when hideLabel prop is 
 
 exports[`TextareaField Does not display character count when maxlength is present, but value is not present 1`] = `
 <TextareaField
+  characterLimitTopRight={false}
   disabled={false}
   maxlength={10}
   name="Test Field"
@@ -321,6 +329,7 @@ exports[`TextareaField Does not display character count when maxlength is presen
 
 exports[`TextareaField Emojis consume 2 characters 1`] = `
 <TextareaField
+  characterLimitTopRight={false}
   disabled={false}
   maxlength={2}
   name="Test Field"
@@ -368,7 +377,9 @@ exports[`TextareaField Emojis consume 2 characters 1`] = `
       onChange={[Function]}
       value="😀"
     />
-    <p>
+    <p
+      style={Object {}}
+    >
       <i>
         0
          
@@ -383,6 +394,7 @@ exports[`TextareaField Emojis consume 2 characters 1`] = `
 
 exports[`TextareaField Matches snapshot with default props 1`] = `
 <TextareaField
+  characterLimitTopRight={false}
   disabled={false}
   name="Test Field"
   onChange={[MockFunction]}
@@ -416,8 +428,80 @@ exports[`TextareaField Matches snapshot with default props 1`] = `
 </TextareaField>
 `;
 
+exports[`TextareaField Respects characterLimitTopRight prop on the textarea field 1`] = `
+<TextareaField
+  characterLimitTopRight={true}
+  disabled={false}
+  maxlength={10}
+  name="Test Field"
+  onChange={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "hello",
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
+  optional={false}
+  required={false}
+  value="Notes"
+>
+  <div
+    className="cf-form-textarea"
+  >
+    <label
+      className="question-label"
+      htmlFor="Test Field"
+    >
+      <FormLabel
+        name="Test Field"
+        optional={false}
+        required={false}
+      >
+        <span>
+          Test Field
+        </span>
+      </FormLabel>
+    </label>
+    <p
+      style={
+        Object {
+          "float": "right",
+          "lineHeight": "inherit",
+          "marginBottom": 0,
+        }
+      }
+    >
+      <i>
+        5
+         
+        characters
+         
+        left
+      </i>
+    </p>
+    <textarea
+      disabled={false}
+      id="Test Field"
+      maxLength={10}
+      name="Test Field"
+      onChange={[Function]}
+      value="Notes"
+    />
+  </div>
+</TextareaField>
+`;
+
 exports[`TextareaField Respects disabled prop on the textarea field 1`] = `
 <TextareaField
+  characterLimitTopRight={false}
   disabled={true}
   name="Test Field"
   onChange={
@@ -467,6 +551,7 @@ exports[`TextareaField Respects disabled prop on the textarea field 1`] = `
 
 exports[`TextareaField Respects optional prop on the textarea field 1`] = `
 <TextareaField
+  characterLimitTopRight={false}
   disabled={false}
   name="Test Field"
   onChange={
@@ -521,6 +606,7 @@ exports[`TextareaField Respects optional prop on the textarea field 1`] = `
 
 exports[`TextareaField Respects required prop on the textarea field 1`] = `
 <TextareaField
+  characterLimitTopRight={false}
   disabled={false}
   name="Test Field"
   onChange={

@@ -18,21 +18,20 @@ export const AppellantSection = ({
   virtualHearing,
   errors,
   type,
-  virtual,
-  video,
   readOnly,
   showDivider,
   update,
   appellantTitle,
   showOnlyAppellantName,
-  showMissingEmailAlert
+  showMissingEmailAlert,
+  showTimezoneField,
+  schedulingToVirtual
 }) => {
   // Depending on where this component is used, the *FullName fields will be available.
   // If they aren't, the *FirstName/*LastName fields should be available.
   const appellantName = hearing?.appellantIsNotVeteran ?
     (hearing?.appellantFullName || `${hearing?.appellantFirstName} ${hearing?.appellantLastName}`) :
     (hearing?.veteranFullName || `${hearing?.veteranFirstName} ${hearing?.veteranLastName}`);
-  const showTimezoneField = virtual && !video;
 
   // determine whether to show a missing email underneath readonly email
   const showMissingAlert = readOnly && showMissingEmailAlert && !virtualHearing?.appellantEmail;
@@ -49,25 +48,39 @@ export const AppellantSection = ({
         />
       ) :
         (
-          <AddressLine
-            name={appellantName}
-            addressLine1={hearing?.appellantAddressLine1}
-            addressState={hearing?.appellantState}
-            addressCity={hearing?.appellantCity}
-            addressZip={hearing?.appellantZip}
-          />
+          <React.Fragment>
+            <ReadOnly
+              label={`${appellantTitle} Name`}
+              text={appellantName}
+            />
+            {hearing?.appellantIsNotVeteran && hearing?.appellantRelationship && (
+              <ReadOnly
+                label="Relation to Veteran"
+                text={hearing?.appellantRelationship}
+              />
+            )}
+            <AddressLine
+              label={`${appellantTitle} Mailing Address`}
+              name={appellantName}
+              addressLine1={hearing?.appellantAddressLine1}
+              addressState={hearing?.appellantState}
+              addressCity={hearing?.appellantCity}
+              addressZip={hearing?.appellantZip}
+            />
+          </React.Fragment>
         )}
       {/*
         * Timezone fields
         */}
-      {showTimezoneField && (
+      {showTimezoneField && schedulingToVirtual && (
         <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
           <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
             <Timezone
               required
               value={virtualHearing?.appellantTz}
               onChange={(appellantTz) => update('virtualHearing', { appellantTz })}
-              time={hearing.scheduledTimeString}
+              time={hearing?.scheduledTimeString}
+              roTimezone={hearing?.regionalOfficeTimezone}
               label={`${appellantTitle} Timezone`}
               name="appellantTz"
               errorMessage={errors?.appellantTz}
@@ -106,17 +119,21 @@ export const AppellantSection = ({
   );
 };
 
+AppellantSection.defaultProps = {
+  schedulingToVirtual: true
+};
+
 AppellantSection.propTypes = {
   hearing: PropTypes.object,
   virtualHearing: PropTypes.object,
   errors: PropTypes.object,
   type: PropTypes.string,
   update: PropTypes.func,
-  virtual: PropTypes.bool,
-  video: PropTypes.bool,
   readOnly: PropTypes.bool,
   appellantTitle: PropTypes.string,
   showOnlyAppellantName: PropTypes.bool,
   showDivider: PropTypes.bool,
-  showMissingEmailAlert: PropTypes.bool
+  showMissingEmailAlert: PropTypes.bool,
+  showTimezoneField: PropTypes.bool,
+  schedulingToVirtual: PropTypes.bool
 };

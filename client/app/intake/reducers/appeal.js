@@ -42,8 +42,10 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     claimantError: null,
     payeeCode: null,
     claimantName: null,
+    claimantRelationship: null,
     claimantNotes: null,
     claimantType: null,
+    powerOfAttorneyName: null,
     legacyOptInApproved: null,
     legacyOptInApprovedError: null,
     legacyAppeals: [],
@@ -100,6 +102,12 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
     return update(state, {
       receiptDate: {
         $set: action.payload.receiptDate
+      }
+    });
+  case ACTIONS.SET_RECEIPT_DATE_ERROR:
+    return update(state, {
+      receiptDateError: {
+        $set: action.payload.receiptDateError
       }
     });
   case ACTIONS.SET_VETERAN_IS_NOT_CLAIMANT:

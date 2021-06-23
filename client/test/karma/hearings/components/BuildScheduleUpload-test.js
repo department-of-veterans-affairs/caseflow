@@ -25,7 +25,7 @@ describe('BuildScheduleUpload', () => {
   it('displays errors when set', () => {
     const wrapper = mount(<MemoryRouter><BuildScheduleUpload
       fileType={SPREADSHEET_TYPES.JudgeSchedulePeriod.value}
-      uploadJudgeFormErrors="Validation failed: The template was not followed."
+      uploadJudgeFormErrors={['Validation failed: The template was not followed.']}
     /></MemoryRouter>);
 
     expect(wrapper.text()).to.include('The template was not followed.');

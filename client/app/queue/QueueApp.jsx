@@ -1,7 +1,5 @@
 /* eslint-disable max-lines */
 
-import { hot } from 'react-hot-loader/root';
-
 import querystring from 'querystring';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -12,7 +10,10 @@ import StringUtil from '../util/StringUtil';
 
 import {
   setCanEditAod,
+  setCanEditNodDate,
+  setUserIsCobAdmin,
   setCanViewOvertimeStatus,
+  setCanEditCavcRemands,
   setFeatureToggles,
   setUserRole,
   setUserCssId,
@@ -36,11 +37,14 @@ import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 import EvaluateDecisionView from './caseEvaluation/EvaluateDecisionView';
 import AddColocatedTaskView from './colocatedTasks/AddColocatedTaskView';
 import BlockedAdvanceToJudgeView from './BlockedAdvanceToJudgeView';
+import AddCavcRemandView from './AddCavcRemandView';
+import AddCavcDatesModal from './AddCavcDatesModal';
 import CompleteTaskModal from './components/CompleteTaskModal';
 import UpdateTaskStatusAssignRegionalOfficeModal from './components/UpdateTaskStatusAssignRegionalOfficeModal';
 import CancelTaskModal from './components/CancelTaskModal';
 import AssignHearingModal from './components/AssignHearingModal';
 import PostponeHearingModal from './components/PostponeHearingModal';
+import HearingScheduledInErrorModal from './components/HearingScheduledInErrorModal';
 import ChangeHearingDispositionModal from './ChangeHearingDispositionModal';
 import CreateChangeHearingDispositionTaskModal from './CreateChangeHearingDispositionTaskModal';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
@@ -85,12 +89,20 @@ import { FlashAlerts } from '../nonComp/components/Alerts';
 import { PulacCerulloReminderModal } from './pulacCerullo/PulacCerulloReminderModal';
 import { motionToVacateRoutes } from './mtv/motionToVacateRoutes';
 import { docketSwitchRoutes } from './docketSwitch/docketSwitchRoutes';
+import { substituteAppellantRoutes } from './substituteAppellant/routes';
 import ScheduleVeteran from '../hearings/components/ScheduleVeteran';
 import HearingTypeConversion from '../hearings/components/HearingTypeConversion';
+import HearingTypeConversionModal from '../hearings/components/HearingTypeConversionModal';
+import CavcReviewExtensionRequestModal from './components/CavcReviewExtensionRequestModal';
+import { PrivateRoute } from '../components/PrivateRoute';
+import { EditCavcRemandView } from './cavc/EditCavcRemandView';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setCanEditAod(this.props.canEditAod);
+    this.props.setCanEditNodDate(this.props.userCanViewEditNodDate);
+    this.props.setUserIsCobAdmin(this.props.userIsCobAdmin);
+    this.props.setCanEditCavcRemands(this.props.canEditCavcRemands);
     this.props.setCanViewOvertimeStatus(this.props.userCanViewOvertimeStatus);
     this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserRole(this.props.userRole);
@@ -241,6 +253,12 @@ class QueueApp extends React.PureComponent {
     <BlockedAdvanceToJudgeView {...props.match.params} />
   );
 
+  routedAddCavcRemand = (props) => (
+    <AddCavcRemandView {...props.match.params} />
+  );
+
+  routedEditCavcRemand = () => <EditCavcRemandView />;
+
   routedAdvancedOnDocketMotion = (props) => (
     <AdvancedOnDocketMotionView {...props.match.params} />
   );
@@ -314,9 +332,42 @@ class QueueApp extends React.PureComponent {
     />
   );
 
-  routedScheduleVeteran = (props) => (
-    <ScheduleVeteran userId={this.props.userId} {...props.match.params} />
-  );
+  routedScheduleVeteran = (props) => {
+    const params = querystring.parse(props.location.search.replace(/^\?/, ''));
+
+    return (
+      <PrivateRoute
+        authorized={this.props.userCanAssignHearingSchedule}
+        redirectTo={`/queue/appeals/${props.match.params.appealId}`}
+      >
+        {params.action === 'reschedule' ? (
+          <CaseDetailsLoadingScreen
+            {...this.propsForQueueLoadingScreen()}
+            preventReset
+            appealId={props.match.params.appealId}
+          >
+            <ScheduleVeteran
+              userCanViewTimeSlots={
+                this.props.featureToggles.enable_hearing_time_slots
+              }
+              params={params}
+              userId={this.props.userId}
+              {...props.match.params}
+            />
+          </CaseDetailsLoadingScreen>
+        ) : (
+          <ScheduleVeteran
+            userCanViewTimeSlots={
+              this.props.featureToggles.enable_hearing_time_slots
+            }
+            params={params}
+            userId={this.props.userId}
+            {...props.match.params}
+          />
+        )}
+      </PrivateRoute>
+    );
+  };
 
   routedAssignHearingModal = (props) => (
     <AssignHearingModal userId={this.props.userId} {...props.match.params} />
@@ -332,12 +383,26 @@ class QueueApp extends React.PureComponent {
     />
   );
 
+  routedHearingScheduledInError = (props) => (
+    <HearingScheduledInErrorModal
+      userId={this.props.userId}
+      {...props.match.params}
+    />
+  );
+
   routedChangeTaskTypeModal = (props) => (
     <ChangeTaskTypeModal {...props.match.params} />
   );
 
   routedChangeHearingRequestTypeToVirtual = (props) => (
     <HearingTypeConversion type="Virtual" {...props.match.params} />
+  );
+
+  routedChangeHearingRequestTypeModal = (props) => (
+    <HearingTypeConversionModal
+      hearingType={props.hearingType}
+      {...props.match.params}
+    />
   );
 
   routedSetOvertimeStatusModal = (props) => (
@@ -414,6 +479,17 @@ class QueueApp extends React.PureComponent {
   routedStartHoldModal = (props) => <StartHoldModal {...props.match.params} />;
 
   routedEndHoldModal = (props) => <EndHoldModal {...props.match.params} />;
+
+  routedCavcExtensionRequest = (props) => (
+    <CavcReviewExtensionRequestModal
+      {...props.match.params}
+      closeModal={() => props.history.goBack()}
+    />
+  );
+
+  routedCavcRemandReceived = (props) => (
+    <AddCavcDatesModal {...props.match.params} />
+  );
 
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
@@ -503,7 +579,7 @@ class QueueApp extends React.PureComponent {
               exact
               path={
                 '/queue/appeals/:appealId/tasks/:taskId/' +
-                ':checkoutFlow(draft_decision|dispatch_decision|omo_request)/submit'
+                  ':checkoutFlow(draft_decision|dispatch_decision|omo_request)/submit'
               }
               title={(props) => {
                 let reviewActionType = props.match.params.checkoutFlow;
@@ -529,12 +605,12 @@ class QueueApp extends React.PureComponent {
               exact
               path={
                 '/queue/appeals/:appealId/tasks/:taskId/:checkoutFlow(draft_decision|dispatch_decision)/' +
-                'dispositions/:action(add|edit)/:issueId?'
+                  'dispositions/:action(add|edit)/:issueId?'
               }
               title={(props) =>
-                `Draft Decision | ${StringUtil.titleCase(
-                  props.match.params.action
-                )} Issue`
+                  `Draft Decision | ${StringUtil.titleCase(
+                    props.match.params.action
+                  )} Issue`
               }
               render={this.routedAddEditIssue}
             />
@@ -542,8 +618,8 @@ class QueueApp extends React.PureComponent {
               exact
               path="/queue/appeals/:appealId/tasks/:taskId/:checkoutFlow(draft_decision|dispatch_decision)/remands"
               title={`Draft Decision | ${
-                PAGE_TITLES.REMANDS[this.props.userRole.toUpperCase()]
-              }`}
+                  PAGE_TITLES.REMANDS[this.props.userRole.toUpperCase()]
+                }`}
               render={this.routedSetIssueRemandReasons}
             />
             <PageRoute
@@ -553,8 +629,8 @@ class QueueApp extends React.PureComponent {
                 ':checkoutFlow(draft_decision|dispatch_decision)/dispositions',
               ].join('/')}
               title={`Draft Decision | ${
-                PAGE_TITLES.DISPOSITIONS[this.props.userRole.toUpperCase()]
-              }`}
+                  PAGE_TITLES.DISPOSITIONS[this.props.userRole.toUpperCase()]
+                }`}
               render={this.routedSelectDispositions}
             />
             <PageRoute
@@ -581,11 +657,23 @@ class QueueApp extends React.PureComponent {
             <Route
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT.value
-              }`}
+                  TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT.value
+                }`}
               render={this.routedBlockedCaseMovement}
             />
 
+            <PageRoute
+              exact
+              path="/queue/appeals/:appealId/add_cavc_remand"
+              title="Add Cavc Remand | Caseflow"
+              render={this.routedAddCavcRemand}
+            />
+            <PageRoute
+              exact
+              path="/queue/appeals/:appealId/edit_cavc_remand"
+              title="Edit Cavc Remand | Caseflow"
+              render={this.routedEditCavcRemand}
+            />
             <PageRoute
               exact
               path="/organizations/:organization/users"
@@ -612,6 +700,8 @@ class QueueApp extends React.PureComponent {
             {motionToVacateRoutes.page}
 
             {docketSwitchRoutes.page}
+
+            {substituteAppellantRoutes.page}
           </Switch>
 
           {/* Modal routes are in their own Switch so they will display above the base routes */}
@@ -626,123 +716,165 @@ class QueueApp extends React.PureComponent {
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.ASSIGN_TO_ATTORNEY.value
-              }`}
+                  TASK_ACTIONS.ASSIGN_TO_ATTORNEY.value
+                }`}
               render={this.routedAssignToAttorney}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.ASSIGN_TO_HEARING_ADMIN_MEMBER.value
-              }`}
+                  TASK_ACTIONS.ASSIGN_TO_HEARING_ADMIN_MEMBER.value
+                }`}
               render={this.routedReassignToUser}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.value
-              }`}
+                  TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.value
+                }`}
               render={this.routedAssignToUser}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.ASSIGN_TO_PERSON.value
-              }`}
+                  TASK_ACTIONS.ASSIGN_TO_PERSON.value
+                }`}
               render={this.routedAssignToUser}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.value
-              }`}
+                  TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.value
+                }`}
               render={this.routedAssignToSingleTeam}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.SEND_TO_TRANSLATION.value
-              }`}
+                  TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.value
+                }`}
               render={this.routedAssignToSingleTeam}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.RESCHEDULE_NO_SHOW_HEARING.value
-              }`}
+                  TASK_ACTIONS.SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION.value
+                }`}
+              render={this.routedAssignToSingleTeam}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION.value
+                }`}
+              render={this.routedAssignToSingleTeam}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.SEND_TO_HEARINGS_BLOCKING_DISTRIBUTION.value
+                }`}
+              render={this.routedAssignToSingleTeam}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CLARIFY_POA_BLOCKING_CAVC.value
+                }`}
+              render={this.routedAssignToSingleTeam}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.RESCHEDULE_NO_SHOW_HEARING.value
+                }`}
               render={this.routedPostponeHearingTaskModal}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.ASSIGN_TO_TEAM.value
-              }`}
+                  TASK_ACTIONS.ASSIGN_TO_TEAM.value
+                }`}
               render={this.routedAssignToTeam}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.CREATE_MAIL_TASK.value
-              }`}
+                  TASK_ACTIONS.CREATE_MAIL_TASK.value
+                }`}
               render={this.routedCreateMailTask}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.REASSIGN_TO_JUDGE.value
-              }`}
+                  TASK_ACTIONS.REASSIGN_TO_JUDGE.value
+                }`}
               render={this.routedReassignToUser}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.REASSIGN_TO_PERSON.value
-              }`}
+                  TASK_ACTIONS.REASSIGN_TO_PERSON.value
+                }`}
               render={this.routedReassignToUser}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.QR_RETURN_TO_JUDGE.value
-              }`}
+                  TASK_ACTIONS.QR_RETURN_TO_JUDGE.value
+                }`}
               render={this.routedAssignToUser}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.JUDGE_QR_RETURN_TO_ATTORNEY.value
-              }`}
+                  TASK_ACTIONS.JUDGE_QR_RETURN_TO_ATTORNEY.value
+                }`}
               render={this.routedAssignToUser}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.DISPATCH_RETURN_TO_JUDGE.value
-              }`}
+                  TASK_ACTIONS.DISPATCH_RETURN_TO_JUDGE.value
+                }`}
               render={this.routedAssignToUser}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.JUDGE_DISPATCH_RETURN_TO_ATTORNEY.value
-              }`}
+                  TASK_ACTIONS.JUDGE_DISPATCH_RETURN_TO_ATTORNEY.value
+                }`}
               render={this.routedAssignToUser}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.CHANGE_HEARING_DISPOSITION.value
-              }`}
+                  TASK_ACTIONS.CHANGE_HEARING_DISPOSITION.value
+                }`}
               render={this.routedChangeHearingDisposition}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.value
-              }`}
+                  TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.value
+                }`}
               render={this.routedCreateChangeHearingDispositionTask}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.PLACE_TIMED_HOLD.value
-              }`}
+                  TASK_ACTIONS.PLACE_TIMED_HOLD.value
+                }`}
               render={this.routedStartHoldModal}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.END_TIMED_HOLD.value
-              }`}
+                  TASK_ACTIONS.END_TIMED_HOLD.value
+                }`}
               render={this.routedEndHoldModal}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.SPECIAL_CASE_MOVEMENT.value
-              }`}
+                  TASK_ACTIONS.SPECIAL_CASE_MOVEMENT.value
+                }`}
               render={this.routedAssignToUser}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CAVC_EXTENSION_REQUEST.value
+                }`}
+              render={this.routedCavcExtensionRequest}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CAVC_REMAND_RECEIVED_MDR.value
+                }`}
+              render={this.routedCavcRemandReceived}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CAVC_REMAND_RECEIVED_VLJ.value
+                }`}
+              render={this.routedCavcRemandReceived}
             />
 
             <PageRoute
@@ -754,32 +886,32 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.MARK_COMPLETE.value
-              }`}
+                  TASK_ACTIONS.MARK_COMPLETE.value
+                }`}
               title="Mark Task Complete | Caseflow"
               render={this.routedCompleteTaskModal}
             />
             <PageRoute
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.value
-              }`}
+                  TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.value
+                }`}
               title="Assign to Pulac-Cerullo | Caseflow"
               render={this.routedAssignToPulacCerullo}
             />
             <PageRoute
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.JUDGE_CHECKOUT_PULAC_CERULLO_REMINDER.value
-              }`}
+                  TASK_ACTIONS.JUDGE_CHECKOUT_PULAC_CERULLO_REMINDER.value
+                }`}
               title="Assign to Pulac-Cerullo | Caseflow"
               render={this.routedPulacCerulloReminder}
             />
             <PageRoute
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.
-                  CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE.value
-              }`}
+                  TASK_ACTIONS.
+                    CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE.value
+                }`}
               title="Cancel Task and Assign Regional Office | Caseflow"
               render={this.routedUpdateTaskAndAssignRegionalOfficeModal(
                 TASK_STATUSES.cancelled
@@ -787,8 +919,8 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.SEND_TO_SCHEDULE_VETERAN_LIST.value
-              }`}
+                  TASK_ACTIONS.SEND_TO_SCHEDULE_VETERAN_LIST.value
+                }`}
               title="Send to Schedule Veteran List | Caseflow"
               render={this.routedUpdateTaskAndAssignRegionalOfficeModal(
                 TASK_STATUSES.completed
@@ -798,9 +930,9 @@ class QueueApp extends React.PureComponent {
               exact
               path={
                 '/queue/appeals/:appealId/tasks/:taskId/' +
-                `(${TASK_ACTIONS.WITHDRAW_HEARING.value}|${
-                  TASK_ACTIONS.CANCEL_TASK.value
-                })`
+                  `(${TASK_ACTIONS.WITHDRAW_HEARING.value}|${
+                    TASK_ACTIONS.CANCEL_TASK.value
+                  })`
               }
               title="Cancel Task | Caseflow"
               render={this.routedCancelTaskModal}
@@ -808,24 +940,32 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.value
-              }`}
+                  TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.value
+                }`}
               title="Assign Hearing | Caseflow"
               render={this.routedScheduleVeteran}
             />
             <PageRoute
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.SCHEDULE_VETERAN.value
-              }`}
+                  TASK_ACTIONS.SCHEDULE_VETERAN.value
+                }`}
               title="Assign Hearing | Caseflow"
               render={this.routedAssignHearingModal}
             />
             <PageRoute
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.POSTPONE_HEARING.value
-              }`}
+                  TASK_ACTIONS.REMOVE_HEARING_SCHEDULED_IN_ERROR.value
+                }`}
+              title="Remove hearing to correct a scheduling error | Caseflow"
+              render={this.routedHearingScheduledInError}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.POSTPONE_HEARING.value
+                }`}
               title="Postpone Hearing | Caseflow"
               render={this.routedPostponeHearingModal}
             />
@@ -844,10 +984,36 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value
-              }`}
+                  TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value
+                }`}
               title="Change Hearing Request Type to Virtual | Caseflow"
               render={this.routedChangeHearingRequestTypeToVirtual}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO.value
+                }`}
+              title="Change Hearing Request Type to Video | Caseflow"
+              render={(props) =>
+                this.routedChangeHearingRequestTypeModal({
+                  ...props,
+                  hearingType: 'Video',
+                })
+              }
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_CENTRAL.value
+                }`}
+              title="Change Hearing Request Type to Central | Caseflow"
+              render={(props) =>
+                this.routedChangeHearingRequestTypeModal({
+                  ...props,
+                  hearingType: 'Central',
+                })
+              }
             />
 
             <Route
@@ -900,6 +1066,9 @@ QueueApp.propTypes = {
   buildDate: PropTypes.string,
   setCanEditAod: PropTypes.func,
   setCanViewOvertimeStatus: PropTypes.func,
+  setCanEditNodDate: PropTypes.func,
+  setUserIsCobAdmin: PropTypes.func,
+  setCanEditCavcRemands: PropTypes.func,
   canEditAod: PropTypes.bool,
   setFeatureToggles: PropTypes.func,
   featureToggles: PropTypes.object,
@@ -917,6 +1086,10 @@ QueueApp.propTypes = {
   reviewActionType: PropTypes.string,
   userCanViewHearingSchedule: PropTypes.bool,
   userCanViewOvertimeStatus: PropTypes.bool,
+  userCanViewEditNodDate: PropTypes.bool,
+  userCanAssignHearingSchedule: PropTypes.bool,
+  canEditCavcRemands: PropTypes.bool,
+  userIsCobAdmin: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({
@@ -927,6 +1100,9 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       setCanEditAod,
+      setCanEditNodDate,
+      setUserIsCobAdmin,
+      setCanEditCavcRemands,
       setCanViewOvertimeStatus,
       setFeatureToggles,
       setUserRole,
@@ -938,9 +1114,7 @@ const mapDispatchToProps = (dispatch) =>
     dispatch
   );
 
-export default hot(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(QueueApp)
-);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(QueueApp);

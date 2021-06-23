@@ -12,7 +12,7 @@ describe Appeal, :all_dbs do
   let!(:appeal) { create(:appeal) } # must be *after* Timecop.freeze
 
   context "#create_stream" do
-    let(:stream_type) { "vacate" }
+    let(:stream_type) { Constants.AMA_STREAM_TYPES.vacate }
     let!(:appeal) { create(:appeal, number_of_claimants: 1) }
 
     subject { appeal.create_stream(stream_type) }
@@ -34,7 +34,7 @@ describe Appeal, :all_dbs do
     end
 
     context "for de_novo appeal stream" do
-      let(:stream_type) { "de_novo" }
+      let(:stream_type) { Constants.AMA_STREAM_TYPES.de_novo }
 
       it "creates a de_novo appeal stream with data from the original appeal" do
         expect(subject).to have_attributes(
@@ -427,6 +427,23 @@ describe Appeal, :all_dbs do
 
       it "returns Missing Docket Number" do
         expect(appeal.docket_number).to eq("Missing Docket Number")
+      end
+    end
+  end
+
+  context "#update_receipt_date!" do
+    context "when receipt_date is defined" do
+      let(:appeal) do
+        create(:appeal, receipt_date: Date.new(2020, 11, 11))
+      end
+
+      it "returns a stream docket number if id and receipt_date are defined" do
+        expect(appeal.stream_docket_number).to eq("201111-#{appeal.id}")
+      end
+
+      it "updates the stream docket number if receipt_date changes" do
+        appeal.update_receipt_date!(receipt_date: Date.new(2020, 11, 12))
+        expect(appeal.stream_docket_number).to eq("201112-#{appeal.id}")
       end
     end
   end
@@ -963,6 +980,44 @@ describe Appeal, :all_dbs do
     end
   end
 
+  context "#cavc?" do
+    subject { appeal.cavc? }
+
+    context "for original appeal" do
+      it "returns false" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "for cavc stream" do
+      let(:appeal) { create(:appeal, stream_type: Constants.AMA_STREAM_TYPES.court_remand) }
+
+      it "returns true" do
+        expect(subject).to eq(true)
+      end
+    end
+  end
+
+  describe "#cavc_remand" do
+    subject { appeal.cavc_remand }
+
+    context "an original appeal" do
+      let(:appeal) { create(:appeal) }
+      it "returns nil" do
+        expect(subject).to be_nil
+      end
+    end
+
+    context "a remand appeal" do
+      let(:cavc_remand) { create(:cavc_remand) }
+      let(:appeal) { cavc_remand.remand_appeal }
+
+      it "returns the CavcRemand" do
+        expect(subject).to eq(cavc_remand)
+      end
+    end
+  end
+
   describe "#status" do
     it "returns BVAAppealStatus object" do
       expect(appeal.status).to be_a(BVAAppealStatus)
@@ -1163,52 +1218,55 @@ describe Appeal, :all_dbs do
     end
   end
 
-  describe "#current_hearing_request_type" do
-    let(:appeal) { create(:appeal, closest_regional_office: closest_regional_office) }
+  describe "#latest_informal_hearing_presentation_task" do
+    let(:appeal) { create(:appeal) }
 
-    subject { appeal.current_hearing_request_type }
-
-    context "closest_regional_office is 'C'" do
-      let(:closest_regional_office) { "C" }
-
-      it { expect(subject).to eq(:central) }
-    end
-
-    context "closest_regional_office is a RO" do
-      let(:closest_regional_office) { "RO39" }
-
-      it { expect(subject).to eq(:video) }
-    end
-
-    context "closest_regional_office is a nil" do
-      let(:closest_regional_office) { nil }
-
-      it { expect(subject).to eq(nil) }
-    end
+    it_behaves_like "latest informal hearing presentation task"
   end
 
-  describe "readable current_hearing_request_type" do
-    subject { appeal.current_hearing_request_type(readable: true) }
+  describe "validate issue timeliness" do
+    subject { appeal.untimely_issues_report(receipt_date) }
 
-    context "no hearings have been scheduled" do
-      let(:appeal) { create(:appeal, closest_regional_office: closest_regional_office) }
+    let(:appeal) { create(:appeal, request_issues: request_issues) }
+    let(:receipt_date) { 7.days.ago }
+    let(:request_issues) { [timely_request_issue] }
+    let(:timely_request_issue) { create(:request_issue, decision_date: receipt_date - 365.days) }
+    let(:untimely_request_issue) { create(:request_issue, decision_date: 2.years.ago) }
+    let(:inactive_untimely_request_issue) { create(:request_issue, :removed, decision_date: 2.years.ago) }
+    let(:untimely_request_issue_with_exemption) do
+      create(:request_issue,
+             decision_date: 2.years.ago,
+             untimely_exemption: true)
+    end
 
-      context "closest_regional_office is 'C'" do
-        let(:closest_regional_office) { "C" }
+    context "appeal only has issues that are timely with the new date" do
+      let(:request_issues) { [timely_request_issue, untimely_request_issue_with_exemption] }
 
-        it { expect(subject).to eq("Central") }
+      it { is_expected.to be nil }
+
+      context "The receipt date is before the decision date" do
+        let(:receipt_date) { 3.years.ago }
+        let(:timely_request_issue) { create(:request_issue, decision_date: 365.days.ago) }
+
+        it "considers the issues untimely" do
+          expect(subject[:affected_issues].count).to eq(request_issues.count)
+          expect(subject[:unaffected_issues].count).to eq(0)
+        end
+      end
+    end
+
+    context "appeal has an issue that would be untimely with the new date" do
+      let(:request_issues) { [timely_request_issue, untimely_request_issue] }
+
+      it "reflects the untimely issue" do
+        expect(subject[:affected_issues].first.id).to eq(untimely_request_issue.id)
+        expect(subject[:unaffected_issues].first.id).to eq(timely_request_issue.id)
       end
 
-      context "closest_regional_office is a RO" do
-        let(:closest_regional_office) { "RO39" }
+      context "the untimely issue is closed" do
+        let(:request_issues) { [timely_request_issue, inactive_untimely_request_issue] }
 
-        it { expect(subject).to eq("Video") }
-      end
-
-      context "closest_regional_office is a nil" do
-        let(:closest_regional_office) { nil }
-
-        it { expect(subject).to eq(nil) }
+        it { is_expected.to be nil }
       end
     end
   end

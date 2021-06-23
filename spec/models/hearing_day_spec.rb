@@ -236,49 +236,195 @@ describe HearingDay, :all_dbs do
     end
   end
 
-  context ".total_slots" do
-    subject { hearing_day.total_slots }
+  # One ro from each timezone in the continental US
+  selected_ro_ids = [
+    "RO58", # Manila, "Asia/Manila"
+    "RO01", # Boston, "America/New_York"
+    "RO20", # Nashville, "America/Chicago"
+    "RO39", # Denver, "America/Denver"
+    "RO45", # Phoenix, "America/Phoenix"
+    "RO46"  # Seattle, "America/Los_Angeles"
+  ]
 
-    context "for a video day" do
-      let(:room) { "1" }
+  context "total_slots" do
+    context "with no db value for number_of_slots" do
+      subject { hearing_day.total_slots }
       let(:hearing_day) do
         create(
           :hearing_day,
-          request_type: HearingDay::REQUEST_TYPES[:video],
-          regional_office: regional_office_key,
-          room: room
+          request_type: request_type,
+          regional_office: regional_office_key
         )
       end
 
-      RegionalOffice.all.each do |ro|
-        context "at RO (#{ro.key})" do
-          let(:regional_office_key) { ro.key }
+      context "a virtual day" do
+        let(:request_type) { HearingDay::REQUEST_TYPES[:virtual] }
+        let(:regional_office_key) { nil }
+        it "has 8 slots" do
+          expect(subject).to be(8)
+        end
+      end
 
+      context "a central day" do
+        let(:regional_office_key) { nil }
+        let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
+        it "has 10 slots" do
+          expect(subject).to be(10)
+        end
+      end
+
+      selected_ro_ids.each do |ro|
+        context "a video day at RO (#{ro})" do
+          let(:regional_office_key) { ro }
+          let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
           it "has 12 slots" do
             expect(subject).to be(12)
-          end
-
-          context "with no room" do
-            let(:room) { nil }
-
-            it "has 12 slots" do
-              expect(subject).to be(12)
-            end
           end
         end
       end
     end
 
-    context "for a central day" do
+    context "with number_of_slots set to 13" do
+      subject { hearing_day.total_slots }
+      let(:number_of_slots) { 13 }
       let(:hearing_day) do
         create(
           :hearing_day,
-          request_type: HearingDay::REQUEST_TYPES[:central]
+          request_type: request_type,
+          regional_office: regional_office_key,
+          number_of_slots: number_of_slots
         )
       end
 
-      it "has 10 slots" do
-        expect(subject).to be(10)
+      context "a virtual day" do
+        let(:request_type) { HearingDay::REQUEST_TYPES[:virtual] }
+        let(:regional_office_key) { nil }
+        it "has 13 slots" do
+          expect(subject).to be(13)
+        end
+      end
+      context "a central day" do
+        let(:regional_office_key) { nil }
+        let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
+        it "has 13 slots" do
+          expect(subject).to be(13)
+        end
+      end
+      context "a video day at RO (RO20)" do
+        let(:regional_office_key) { "RO20" }
+        let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
+        it "has 13 slots" do
+          expect(subject).to be(13)
+        end
+      end
+    end
+  end
+
+  context "begins_at" do
+    context "no db value for begins_at" do
+      subject { hearing_day.begins_at }
+      let(:first_slot_time) { nil }
+      let(:scheduled_for) { Date.tomorrow } # Same as default, but need it for expects
+      let(:hearing_day) do
+        create(
+          :hearing_day,
+          request_type: request_type,
+          regional_office: regional_office_key,
+          first_slot_time: first_slot_time,
+          scheduled_for: scheduled_for
+        )
+      end
+      context "a virtual day" do
+        let(:request_type) { HearingDay::REQUEST_TYPES[:virtual] }
+        let(:regional_office_key) { nil }
+        it "begins_at 8:30 eastern" do
+          expected_begins_at = scheduled_for.in_time_zone("America/New_York").change(hour: 8, min: 30)
+          expect(Time.zone.parse(subject)).to eq(expected_begins_at)
+        end
+      end
+      context "a central day" do
+        let(:regional_office_key) { nil }
+        let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
+        it "begins_at 9:00 eastern" do
+          expected_begins_at = scheduled_for.in_time_zone("America/New_York").change(hour: 9, min: 0)
+          expect(Time.zone.parse(subject)).to eq(expected_begins_at)
+        end
+      end
+      selected_ro_ids.each do |ro|
+        context "a video day at RO (#{ro})" do
+          let(:regional_office_key) { ro }
+          let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
+
+          regional_office_info = RegionalOffice::CITIES[ro]
+          regional_office_timezone = regional_office_info[:timezone]
+
+          it "begins_at 08:30 ro timezone" do
+            expected_begins_at = scheduled_for.in_time_zone(regional_office_timezone).change(hour: 8, min: 30)
+            expect(Time.zone.parse(subject)).to eq(expected_begins_at)
+          end
+        end
+      end
+    end
+
+    context "with a db value for begins_at" do
+      subject { hearing_day.begins_at }
+      let(:first_slot_time) { "13:38" }
+      let(:scheduled_for) { Date.tomorrow } # Same as default, but need it for expects
+      let(:hearing_day) do
+        create(
+          :hearing_day,
+          request_type: request_type,
+          regional_office: regional_office_key,
+          first_slot_time: first_slot_time,
+          scheduled_for: scheduled_for
+        )
+      end
+
+      def format_begins_at_from_db(time_string, scheduled_for)
+        db_hour, db_minute = time_string.split(":")
+
+        scheduled_for.in_time_zone("America/New_York").change(hour: db_hour, min: db_minute)
+      end
+
+      context "a virtual day" do
+        let(:request_type) { HearingDay::REQUEST_TYPES[:virtual] }
+        let(:regional_office_key) { nil }
+        it "begins_at db value" do
+          expect(Time.zone.parse(subject)).to eq(format_begins_at_from_db(first_slot_time, scheduled_for))
+        end
+      end
+      context "a central day" do
+        let(:regional_office_key) { nil }
+        let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
+        it "begins_at db value" do
+          expect(Time.zone.parse(subject)).to eq(format_begins_at_from_db(first_slot_time, scheduled_for))
+        end
+      end
+      selected_ro_ids.each do |ro|
+        context "a video day at RO (#{ro})" do
+          let(:regional_office_key) { ro }
+          let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
+          it "begins_at db value" do
+            expect(Time.zone.parse(subject)).to eq(format_begins_at_from_db(first_slot_time, scheduled_for))
+          end
+        end
+      end
+    end
+  end
+
+  context "slot_length_minutes" do
+    context "no db value for slot_length_minutes" do
+      subject { hearing_day.slot_length_minutes }
+      let(:hearing_day) { create(:hearing_day) }
+      it "uses default value of 60" do
+        expect(subject).to eq(60)
+      end
+    end
+    context "with a db value for slot_length_minutes" do
+      subject { hearing_day.slot_length_minutes }
+      let(:hearing_day) { create(:hearing_day, slot_length_minutes: 45) }
+      it "uses db value for slot_length_minutes" do
+        expect(subject).to eq(45)
       end
     end
   end
@@ -307,7 +453,11 @@ describe HearingDay, :all_dbs do
       before do
         5.times do
           create(:hearing, hearing_day: hearing_day, disposition: "postponed")
-          create(:case_hearing, vdkey: hearing_day.id, hearing_disp: "C")
+          create(
+            :case_hearing,
+            vdkey: hearing_day.id,
+            hearing_disp: VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:cancelled]
+          )
         end
       end
 
@@ -344,7 +494,7 @@ describe HearingDay, :all_dbs do
       subject { HearingDayRange.new(schedule_period.start_date, schedule_period.end_date).load_days }
 
       it do
-        expect(subject.size).to eql(427)
+        expect(subject.size).to eql(970)
       end
     end
   end

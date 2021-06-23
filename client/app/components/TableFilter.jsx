@@ -185,6 +185,7 @@ class TableFilter extends React.PureComponent {
     return (
       <span {...iconStyle}>
         <FilterIcon
+          aria-label={this.filterIconAriaLabel()}
           label={this.filterIconAriaLabel()}
           getRef={this.props.getFilterIconRef}
           selected={this.isFilterOpen()}

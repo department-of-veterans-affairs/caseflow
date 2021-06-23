@@ -90,32 +90,17 @@ class VACOLS::CaseDocket < VACOLS::Record
         and (VLJ_HEARINGS.TINUM is null or VLJ_HEARINGS.TINUM = BRIEFF.TINUM)
   "
 
-  JOIN_ASSOCIATED_VLJS_BY_PRIOR_DECISIONS = "
-    left join (
-      select distinct TITRNUM, TINUM,
-        first_value(BFMEMID) over (partition by TITRNUM, TINUM order by BFDDEC desc) VLJ
-      from BRIEFF
-      inner join FOLDER on FOLDER.TICKNUM = BRIEFF.BFKEY
-      where BFATTID is not null and BFMEMID not in ('000', '888', '999')
-    ) VLJ_PRIORDEC
-      on BRIEFF.AOD = 1
-        and VLJ_HEARINGS.VLJ is null
-        and VLJ_PRIORDEC.TITRNUM = BRIEFF.TITRNUM
-        and (VLJ_PRIORDEC.TINUM is null or VLJ_PRIORDEC.TINUM = BRIEFF.TINUM)
-  "
-
   SELECT_PRIORITY_APPEALS = "
     select BFKEY, BFDLOOUT, VLJ
       from (
         select BFKEY, BFDLOOUT,
-          case when BFHINES is null or BFHINES <> 'GP' then nvl(VLJ_HEARINGS.VLJ, VLJ_PRIORDEC.VLJ) end VLJ
+          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
         from (
           #{SELECT_READY_APPEALS}
             and (BFAC = '7' or AOD = '1')
           order by BFDLOOUT
         ) BRIEFF
         #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
-        #{JOIN_ASSOCIATED_VLJS_BY_PRIOR_DECISIONS}
       )
   "
 
@@ -266,7 +251,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     fmtd_query = sanitize_sql_array([query, 1])
 
-    connection.exec_query(fmtd_query).to_hash.first["bfdloout"]
+    connection.exec_query(fmtd_query).to_hash.first&.fetch("bfdloout")
   end
 
   def self.nonpriority_decisions_per_year

@@ -23,7 +23,11 @@ client/junit.xml
 /tmp
 /coverage
 /reports/*
+!/reports/sql_queries
 !/reports/.keep
+credstash.log
+# Ignore MS Office temp files
+~$*
 
 # Ignore vim swap and tag files
 *.swp
@@ -43,7 +47,7 @@ npm-debug.log*
 node_modules
 
 # Generated js bundles
-/app/assets/javascripts/*
+/app/assets/javascripts/*webpack-bundle.js*
 
 # Storybook
 /public/storybook/*

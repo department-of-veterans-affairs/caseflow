@@ -30,21 +30,21 @@ class SetAppealAgeAodJob < CaseflowJob
 
   def log_success(details)
     duration = time_ago_in_words(start_time)
-    msg = "#{self.class.name} completed after running for #{duration}.\n#{details}"
-    Rails.logger.info(msg)
+    msg_title = "[INFO] #{self.class.name} completed after running for #{duration}."
+    Rails.logger.info("#{msg_title}\n#{details}")
 
-    slack_service.send_notification("[INFO] #{msg}")
+    slack_service.send_notification(details, msg_title)
   end
 
   def log_error(collector_name, err, details)
     duration = time_ago_in_words(start_time)
-    msg = "#{collector_name} failed after running for #{duration}. Fatal error: #{err.message}.\n#{details}"
-    Rails.logger.info(msg)
+    msg_title = "[ERROR] #{collector_name} failed after running for #{duration}. Fatal error: #{err.message}."
+    Rails.logger.info("#{msg_title}\n#{details}")
     Rails.logger.info(err.backtrace.join("\n"))
 
     Raven.capture_exception(err, extra: { stats_collector_name: collector_name })
 
-    slack_service.send_notification("[ERROR] #{msg}")
+    slack_service.send_notification(details, msg_title)
   end
 
   private

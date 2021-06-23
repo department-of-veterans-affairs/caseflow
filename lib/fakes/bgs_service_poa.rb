@@ -52,6 +52,28 @@ class Fakes::BGSServicePOA
       }
     end
 
+    def fake_poa
+      {
+        file_number: "073-claimant-appeal-file-number",
+        ptcpnt_id: "073-claimant-participant-id",
+        power_of_attorney: {
+          legacy_poa_cd: "073",
+          nm: Faker::Name.name,
+          org_type_nm: ["POA Attorney", "POA Agent"].sample,
+          ptcpnt_id: "073"
+        }
+      }
+    end
+
+    def random_poa_org
+      [
+        vietnam_veterans_vso,
+        paralyzed_veterans_vso,
+        american_legion_vso,
+        fake_poa
+      ].sample
+    end
+
     def vietnam_veterans_vso_mapped
       get_claimant_poa_from_bgs_poa(vietnam_veterans_vso)
     end

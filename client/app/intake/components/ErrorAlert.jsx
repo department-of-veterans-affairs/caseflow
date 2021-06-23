@@ -119,6 +119,14 @@ export default class ErrorAlert extends React.PureComponent {
       veteran_not_valid: {
         title: 'Check the Veteran\'s profile for invalid information',
         body: invalidVeteranInstructions(this.props.errorData)
+      },
+      unable_to_edit_ep: {
+        body: (
+          <Fragment>
+           We were unable to edit the claim label. Please try again and if this error persists,
+            <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer"> submit a YourIT ticket</a>.
+          </Fragment>
+        )
       }
     }[this.props.errorCode || 'default'];
 

@@ -54,6 +54,10 @@ class CaseListTable extends React.PureComponent {
       }
     ];
 
+    const anyAppealsHaveFnod = Boolean(
+      _.find(this.props.appeals, (appeal) => appeal.veteranAppellantDeceased)
+    );
+
     const anyAppealsHaveHeldHearings = Boolean(
       _.find(this.props.appeals, (appeal) => mostRecentHeldHearingForAppeal(appeal))
     );
@@ -66,7 +70,7 @@ class CaseListTable extends React.PureComponent {
       valueFunction: (appeal) => <BadgeArea appeal={appeal} />
     };
 
-    if (anyAppealsHaveHeldHearings || anyAppealsHaveOvertimeStatus) {
+    if (anyAppealsHaveHeldHearings || anyAppealsHaveOvertimeStatus || anyAppealsHaveFnod) {
       columns.unshift(badgeColumn);
     }
 

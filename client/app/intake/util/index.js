@@ -67,6 +67,8 @@ export const formatRelationships = (relationships) => {
 
     return {
       value: relationship.participant_id,
+      fullName: `${first} ${last}`,
+      relationshipType: type,
       displayText: `${first} ${last}, ${type}`,
       defaultPayeeCode: relationship.default_payee_code
     };
@@ -112,11 +114,36 @@ export const validateReviewData = (intakeData, intakeType) => {
   return (Object.keys(errorCodes).length ? errorCodes : null);
 };
 
+
+  // Converts all object and nested keys to snake case
+const keysToSnakeCase = (object) => {
+  let snakeCaseObject = _.cloneDeep(object);
+
+  // Convert keys to snake case
+  snakeCaseObject = _.mapKeys(snakeCaseObject, (value, key) => {
+    return _.snakeCase(key);
+  });
+
+  // Recursively apply throughout object
+  return _.mapValues(
+    snakeCaseObject,
+    value => {
+      if (_.isPlainObject(value)) {
+        return keysToSnakeCase(value);
+      } else if (_.isArray(value)) {
+        return _.map(value, keysToSnakeCase);
+      } else {
+        return value;
+      }
+    }
+  );
+};
+
 export const prepareReviewData = (intakeData, intakeType) => {
   const fields = REVIEW_DATA_FIELDS[intakeType];
   const result = {};
   for (let fieldName in fields) {
     result[fieldName] = intakeData[fields[fieldName].key];
   }
-  return result;
+  return keysToSnakeCase(result);
 };

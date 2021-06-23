@@ -18,7 +18,7 @@ class TaskActionRepository
     end
 
     def mail_assign_to_organization_data(task, user = nil)
-      options = MailTask.subclass_routing_options(user)
+      options = MailTask.subclass_routing_options(user: user, appeal: task.appeal)
       valid_options = task.appeal.outcoded? ? options : options.reject { |opt| opt[:value] == "VacateMotionMailTask" }
       { options: valid_options }
     end
@@ -75,12 +75,13 @@ class TaskActionRepository
 
     def assign_to_user_data(task, user = nil)
       users = potential_task_assignees(task)
-
       extras = if task.is_a?(HearingAdminActionTask)
                  {
                    redirect_after: "/organizations/#{HearingsManagement.singleton.url}",
                    message_detail: COPY::HEARING_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL
                  }
+               elsif task.is_a?(SendCavcRemandProcessedLetterTask) && task.assigned_to_type == "Organization"
+                 { redirect_after: "/organizations/#{CavcLitigationSupport.singleton.url}" }
                else
                  {}
                end
@@ -174,14 +175,71 @@ class TaskActionRepository
       {}
     end
 
-    def assign_to_translation_team_data(_task, _user = nil)
-      org = Translation.singleton
+    def docket_switch_send_to_judge_data(_task, _user = nil)
+      {
+        type: DocketSwitchRulingTask.name
+      }
+    end
 
+    def docket_switch_ruling_data(task, _user = nil)
+      {
+        selected: task.assigned_by&.id,
+        options: ClerkOfTheBoard.singleton.users.select(&:attorney?).map do |user|
+          { value: user.id, label: user.full_name }
+        end
+      }
+    end
+
+    def docket_switch_denied_data(_task, _user = nil)
+      {
+        type: DocketSwitchDeniedTask.name
+      }
+    end
+
+    def docket_switch_granted_data(_task, _user = nil)
+      {
+        type: DocketSwitchGrantedTask.name
+      }
+    end
+
+    def cavc_add_blocking_distrbution_admin_action_data(task, org, task_type)
       {
         selected: org,
         options: [{ label: org.name, value: org.id }],
-        type: TranslationTask.name
+        type: task_type.name,
+        parent_id: DistributionTask.open.find_by(appeal: task.appeal)&.id,
+        modal_body: format(COPY::CAVC_SEND_TO_TEAM_BLOCKING_DISTRIBUTION_DETAIL, task_type.label, org.name),
+        redirect_after: "/queue/appeals/#{task.appeal.external_id}"
       }
+    end
+
+    def assign_to_translation_team_blocking_distribution_data(task, _user = nil)
+      cavc_add_blocking_distrbution_admin_action_data(task, Translation.singleton, TranslationTask)
+    end
+
+    def assign_to_transciption_team_blocking_distribution_data(task, _user = nil)
+      cavc_add_blocking_distrbution_admin_action_data(task, TranscriptionTeam.singleton, TranscriptionTask)
+    end
+
+    def assign_to_privacy_team_blocking_distribution_data(task, _user = nil)
+      cavc_add_blocking_distrbution_admin_action_data(task, PrivacyTeam.singleton, PrivacyActTask)
+    end
+
+    def assign_ihp_to_colocated_blocking_distribution_data(task, _user = nil)
+      cavc_add_blocking_distrbution_admin_action_data(task, Colocated.singleton, IhpColocatedTask)
+    end
+
+    def assign_schedule_hearing_to_hearings_blocking_distribution_data(task, _user = nil)
+      cavc_add_blocking_distrbution_admin_action_data(task, Bva.singleton, ScheduleHearingTask)
+    end
+
+    def assign_poa_to_cavc_blocking_cavc_data(task, _user = nil)
+      org = CavcLitigationSupport.singleton
+      task_type = CavcPoaClarificationTask
+      cavc_add_blocking_distrbution_admin_action_data(task, org, task_type).merge(
+        modal_body: format(COPY::CAVC_SEND_TO_TEAM_BLOCKING_CAVC_DETAIL, task_type.label, org.name),
+        parent_id: task.id
+      )
     end
 
     def add_admin_action_data(task, user = nil)
@@ -216,8 +274,18 @@ class TaskActionRepository
       }
     end
 
+    def cancel_convert_hearing_request_type_data(task, _user = nil)
+      {
+        redirect_after: "/queue/appeals/#{task.appeal.external_id}",
+        modal_title: COPY::CANCEL_CONVERT_HEARING_TYPE_TO_VIRTUAL_MODAL_TITLE,
+        message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
+        message_detail: COPY::CANCEL_CONVERT_HEARING_TYPE_TO_VIRTUAL_SUCCESS_DETAIL,
+        show_instructions: false
+      }
+    end
+
     def change_hearing_request_type_data(_task, _user = nil)
-      {} # Placeholder function that will be implemented in #15159
+      {}
     end
 
     def change_task_type_data(task, user = nil)
@@ -228,15 +296,16 @@ class TaskActionRepository
       end
     end
 
+    COMPLETE_TASK_MODAL_BODY_HASH = {
+      NoShowHearingTask: COPY::NO_SHOW_HEARING_TASK_COMPLETE_MODAL_BODY,
+      HearingAdminActionTask: COPY::HEARING_SCHEDULE_COMPLETE_ADMIN_MODAL,
+      SendCavcRemandProcessedLetterTask: COPY::SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_COMPLETE_MODAL_BODY,
+      CavcRemandProcessedLetterResponseWindowTask: COPY::CAVC_REMAND_LETTER_RESPONSE_TASK_COMPLETE_MODAL_BODY
+    }.freeze
+
     def complete_data(task, _user = nil)
-      params = {}
-      params[:modal_body] = if task.is_a? NoShowHearingTask
-                              COPY::NO_SHOW_HEARING_TASK_COMPLETE_MODAL_BODY
-                            elsif task.is_a? HearingAdminActionTask
-                              COPY::HEARING_SCHEDULE_COMPLETE_ADMIN_MODAL
-                            else
-                              COPY::MARK_TASK_COMPLETE_COPY
-                            end
+      params = { modal_body: COMPLETE_TASK_MODAL_BODY_HASH[task.type.to_sym] }
+      params[:modal_body] = COPY::MARK_TASK_COMPLETE_COPY if params[:modal_body].nil?
 
       if defined? task.completion_contact
         params[:contact] = task.completion_contact
@@ -286,14 +355,33 @@ class TaskActionRepository
       }
     end
 
+    # Cancel the underlying task, and cancels the hearing or hearing request.
+    #
+    # @note This task action can be called for either the AssignHearingDispositionTask or the ScheduleHearingTask.
+    #   The main difference between those contexts is that a hearing will exist for an AssignHearingDispositionTask,
+    #   but not for a ScheduleHearingTask.
     def withdraw_hearing_data(task, _user)
+      copy = select_withdraw_hearing_copy(task.appeal)
+      is_an_assign_hearing_disposition_task = task.is_a?(AssignHearingDispositionTask)
+
       {
         redirect_after: "/queue/appeals/#{task.appeal.external_id}",
         modal_title: COPY::WITHDRAW_HEARING_MODAL_TITLE,
-        modal_body: COPY::WITHDRAW_HEARING_MODAL_BODY,
+        modal_body: copy["MODAL_BODY"],
         message_title: format(COPY::WITHDRAW_HEARING_SUCCESS_MESSAGE_TITLE, task.appeal.veteran_full_name),
-        message_detail: format(COPY::WITHDRAW_HEARING_SUCCESS_MESSAGE_BODY, task.appeal.veteran_full_name),
-        back_to_hearing_schedule: true
+        message_detail: format(copy["SUCCESS_MESSAGE"], task.appeal.veteran_full_name),
+        # If a hearing has already been scheduled, the cancel task should also cancel the hearing. To do that
+        # it will need to provide the cancelled disposition and action to the API.
+        business_payloads: if is_an_assign_hearing_disposition_task
+                             {
+                               values: {
+                                 disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled
+                               }
+                             }
+                           end,
+        # If a hearing was already scheduled and is being withdrawn, it doesn't make sense to
+        # return back to the hearing schedule, so don't show the link in that case.
+        back_to_hearing_schedule: is_an_assign_hearing_disposition_task ? false : true
       }
     end
 
@@ -367,6 +455,22 @@ class TaskActionRepository
       end
 
       Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h
+    end
+
+    def select_withdraw_hearing_copy(appeal)
+      if appeal.is_a?(Appeal)
+        COPY::WITHDRAW_HEARING["AMA"]
+      elsif appeal.representative_is_colocated_vso? # a colocated vso is also part of `Service Organization`
+        COPY::WITHDRAW_HEARING["LEGACY_COLOCATED_POA"]
+      elsif appeal.representative_is_organization?
+        COPY::WITHDRAW_HEARING["LEGACY_NON_COLOCATED_ORGANIZATION"]
+      elsif appeal.representative_is_agent?
+        COPY::WITHDRAW_HEARING["LEGACY_NON_COLOCATED_PRIVATE_ATTORNEY"]
+      else
+        # Assumption: the above Legacy POA cases are comprehensive meaning the catch-all
+        #             case will only happen if there is no POA.
+        COPY::WITHDRAW_HEARING["LEGACY_NO_POA"]
+      end
     end
 
     def task_assigner_name(task)

@@ -315,7 +315,7 @@ class EndProductEstablishment < CaseflowRecord
     ep_code = Constants::EP_CLAIM_TYPES[code]
     if committed?
       {
-        ep_code: "#{modifier} #{ep_code ? ep_code['offical_label'] : 'Unknown'}",
+        ep_code: "#{modifier} #{ep_code ? ep_code['official_label'] : 'Unknown'}",
         ep_status: [status_type, sync_status].compact.join(", ")
       }
     else
@@ -364,9 +364,9 @@ class EndProductEstablishment < CaseflowRecord
   end
 
   def sync_status
-    if request_issues.all.any?(&:decision_sync_error)
+    if request_issues.any?(&:decision_sync_error)
       COPY::OTHER_REVIEWS_TABLE_SYNCING_DECISIONS_ERROR
-    elsif request_issues.all.any?(&:submitted_not_processed?)
+    elsif request_issues.any?(&:submitted_not_processed?) && request_issues.any?(&:open?)
       COPY::OTHER_REVIEWS_TABLE_SYNCING_DECISIONS
     end
   end

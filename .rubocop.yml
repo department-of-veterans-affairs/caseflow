@@ -92,6 +92,7 @@ Rails/Present:
 Metrics/MethodLength:
   Max: 20
   Exclude:
+    - app/jobs/middleware/job_sentry_scope_middleware.rb
     - "spec/**/*"
 
 Metrics/ClassLength:
@@ -157,6 +158,10 @@ Lint/UriEscapeUnescape:
 Lint/SuppressedException:
   Enabled: true
   AllowComments: true
+
+Lint/UnusedMethodArgument:
+  Exclude:
+    - 'lib/fakes/*.rb'
 
 Layout/LineLength:
   Max: 120

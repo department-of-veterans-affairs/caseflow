@@ -21,7 +21,11 @@ module ValidationConcern
 
   # :nocov:
   def validate_schema
-    schema = self.class.validation_schemas[action_name.to_sym]
+    # search current class and all relevant superclasses for schemas
+    schema = self.class.ancestors
+      .select { |cls| cls < ValidationConcern }
+      .map { |cls| cls.validation_schemas[action_name.to_sym] }
+      .find(&:present?)
     return if schema.nil?
 
     schema.remove_unknown_keys(params, request.path_parameters)

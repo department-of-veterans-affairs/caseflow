@@ -231,7 +231,7 @@ describe HearingRequestDocket, :all_dbs do
         HearingRequestDocket.new.distribute_appeals(distribution, priority: false, limit: 10, genpop: "any")
       end
 
-      it "does not fail and distributes the legitimate tasks" do
+      it "does not fail, renames conflicting already distributed appeals, and distributes the legitimate appeals" do
         number_of_already_distributed_appeals = 1
         total_number_of_appeals = 10
         total_number_of_appeals.times { create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge }
@@ -248,17 +248,19 @@ describe HearingRequestDocket, :all_dbs do
           DistributionTask.create!(appeal: distributed_appeal, parent: distributed_appeal.root_task)
         end
 
-        expect(Raven).to receive(:capture_exception).once
+        expect(Raven).to receive(:capture_message).once
 
         subject
 
-        expect(DistributionTask.open.count).to eq(number_of_already_distributed_appeals)
-        expect(DistributionTask.closed.where.not(appeal_id: distributed_appeals.map(&:id)).count).to eq(
-          total_number_of_appeals - number_of_already_distributed_appeals
-        )
+        expect(DistributionTask.open.count).to eq(0)
         distributed_cases = DistributedCase.where(distribution: distribution)
-        expect(distributed_cases.count).to eq(total_number_of_appeals - number_of_already_distributed_appeals)
-        expect(distributed_cases.where(case_id: distributed_appeals.map(&:uuid)).count).to eq(0)
+        expect(distributed_cases.count).to eq(total_number_of_appeals)
+        expect(
+          distributed_cases.where(case_id: distributed_appeals.map(&:uuid)).count
+        ).to eq(number_of_already_distributed_appeals)
+        expect(
+          DistributedCase.where("case_id LIKE ?", "#{distributed_appeals.first.uuid}-redistributed-%").count
+        ).to eq 1
       end
     end
   end

@@ -8,8 +8,6 @@ class WorksheetIssue < CaseflowRecord
   belongs_to :appeal, class_name: "LegacyAppeal"
   belongs_to :hearing, foreign_key: :appeal_id, primary_key: :appeal_id
 
-  scope :issues_for_appeals, ->(appeal_ids) { where(appeal: appeal_ids) }
-
   validates :appeal, :vacols_sequence_id, presence: true
 
   class << self

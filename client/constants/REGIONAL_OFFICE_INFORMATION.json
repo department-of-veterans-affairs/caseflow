@@ -924,5 +924,14 @@
     "hold_hearings": false,
     "facility_locator_id": null,
     "alternate_locations": null
+  },
+  "R": {
+    "label": "Virtual Hearings",
+    "city": null,
+    "state": null,
+    "timezone": "America/New_York",
+    "hold_hearings": true,
+    "facility_locator_id": null,
+    "alternate_locations": null
   }
 }

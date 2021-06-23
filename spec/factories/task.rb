@@ -2,9 +2,9 @@
 
 FactoryBot.define do
   module FactoryBotHelper
-    def self.find_first_task_or_create(appeal, task_type)
-      (appeal.tasks.open.where(type: task_type.name).first if appeal) ||
-        FactoryBot.create(task_type.name.underscore.to_sym, appeal: appeal)
+    def self.find_first_task_or_create(appeal, task_type, **kwargs)
+      (appeal.tasks.open.of_type(task_type.name).first if appeal) ||
+        FactoryBot.create(task_type.name.underscore.to_sym, appeal: appeal, **kwargs) { |t| yield(t) if block_given? }
     end
   end
 
@@ -334,7 +334,7 @@ FactoryBot.define do
         assigned_to { HearingAdmin.singleton }
       end
 
-      factory :changed_hearing_request_type, class: ChangeHearingRequestTypeTask do
+      factory :change_hearing_request_type_task, class: ChangeHearingRequestTypeTask do
         assigned_to { Bva.singleton }
         parent { create(:schedule_hearing_task, parent: create(:hearing_task, appeal: appeal)) }
       end
@@ -357,6 +357,21 @@ FactoryBot.define do
 
       factory :cavc_task, class: CavcTask do
         parent { FactoryBotHelper.find_first_task_or_create(appeal, DistributionTask) }
+      end
+
+      factory :send_cavc_remand_processed_letter_task, class: SendCavcRemandProcessedLetterTask do
+        assigned_to { CavcLitigationSupport.singleton }
+        parent { FactoryBotHelper.find_first_task_or_create(appeal, CavcTask) }
+      end
+
+      factory :cavc_poa_clarification_task, class: CavcPoaClarificationTask do
+        assigned_to { CavcLitigationSupport.singleton }
+        parent { FactoryBotHelper.find_first_task_or_create(appeal, SendCavcRemandProcessedLetterTask) }
+      end
+
+      factory :cavc_remand_processed_letter_response_window_task, class: CavcRemandProcessedLetterResponseWindowTask do
+        assigned_to { CavcLitigationSupport.singleton }
+        parent { FactoryBotHelper.find_first_task_or_create(appeal, CavcTask) }
       end
 
       factory :hearing_task, class: HearingTask do
@@ -416,7 +431,7 @@ FactoryBot.define do
         parent { create(:ama_judge_decision_review_task, appeal: appeal) }
       end
 
-      factory :ama_judge_dispatch_return_to_attorney_task, class: AttorneyDispatchReturnTask do
+      factory :ama_attorney_dispatch_return_task, class: AttorneyDispatchReturnTask do
         parent { create(:ama_judge_decision_review_task, appeal: appeal) }
       end
 
@@ -431,6 +446,11 @@ FactoryBot.define do
 
       factory :qr_task, class: QualityReviewTask do
         parent { create(:root_task, appeal: appeal) }
+        assigned_by { nil }
+        assigned_to { QualityReview.singleton }
+      end
+
+      factory :qr_task_no_parent, class: QualityReviewTask do
         assigned_by { nil }
         assigned_to { QualityReview.singleton }
       end
@@ -486,8 +506,19 @@ FactoryBot.define do
       end
 
       factory :docket_switch_mail_task, class: DocketSwitchMailTask do
-        parent { create(:root_task, appeal: appeal) }
         assigned_to { ClerkOfTheBoard.singleton }
+      end
+
+      factory :docket_switch_ruling_task, class: DocketSwitchRulingTask do
+        parent { create(:docket_switch_mail_task, appeal: appeal) }
+      end
+
+      factory :docket_switch_denied_task, class: DocketSwitchDeniedTask do
+        parent { create(:docket_switch_ruling_task, appeal: appeal) }
+      end
+
+      factory :docket_switch_granted_task, class: DocketSwitchGrantedTask do
+        parent { create(:docket_switch_ruling_task, appeal: appeal) }
       end
 
       factory :congressional_interest_mail_task, class: CongressionalInterestMailTask do

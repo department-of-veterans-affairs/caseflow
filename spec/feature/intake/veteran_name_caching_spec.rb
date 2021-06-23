@@ -12,7 +12,7 @@ feature "Higher-Level Review", :postgres do
     allow(bgs).to receive(:fetch_veteran_info).and_call_original
   end
 
-  let(:veteran) { create(:veteran) }
+  let(:veteran) { create(:veteran, last_name: "Smith") }
   let(:bgs) { BGSService.new }
 
   scenario "Caseflow creates End Products with current upstream Veteran name" do

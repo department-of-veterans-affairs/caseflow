@@ -76,6 +76,10 @@ describe Veteran, :all_dbs do
           expect(subject.accessible?).to eq(true)
           expect(subject.first_name).to be_nil
         end
+
+        it "returns nil when accessing zip_code" do
+          expect(subject.zip_code).to be_nil
+        end
       end
     end
 
@@ -117,7 +121,7 @@ describe Veteran, :all_dbs do
     end
 
     context "exists in BGS with different name than in Caseflow" do
-      let!(:veteran) { create(:veteran, file_number: file_number) }
+      let!(:veteran) { create(:veteran, last_name: "Smith", file_number: file_number) }
 
       before do
         Fakes::BGSService.edit_veteran_record(file_number, :last_name, "Changed")
@@ -235,7 +239,7 @@ describe Veteran, :all_dbs do
         state: "CA",
         country: "USA",
         date_of_birth: "12/21/1989",
-        date_of_death: date_of_death,
+        date_of_death: Date.new(2019, 12, 31),
         zip_code: "94117",
         military_post_office_type_code: "DPO",
         military_postal_type_code: "AE"
@@ -617,7 +621,7 @@ describe Veteran, :all_dbs do
   describe ".find_by_file_number_or_ssn" do
     let(:file_number) { "123456789" }
     let(:ssn) { "666660000" }
-    let!(:veteran) { create(:veteran, file_number: file_number, ssn: ssn) }
+    let!(:veteran) { create(:veteran, last_name: "Smith", file_number: file_number, ssn: ssn) }
 
     it "fetches based on file_number" do
       expect(described_class.find_by_file_number_or_ssn(file_number)).to eq(veteran)
@@ -739,7 +743,7 @@ describe Veteran, :all_dbs do
     end
 
     context "exists in BGS with different name than in Caseflow" do
-      let!(:veteran) { create(:veteran, file_number: file_number, ssn: ssn) }
+      let!(:veteran) { create(:veteran, last_name: "Smith", file_number: file_number, ssn: ssn) }
 
       before do
         Fakes::BGSService.edit_veteran_record(veteran.file_number, :last_name, "Changed")
@@ -848,6 +852,10 @@ describe Veteran, :all_dbs do
       it "is true" do
         is_expected.to eq(true)
       end
+
+      it "updates date_of_death_death_reported_at" do
+        expect(veteran.date_of_death_reported_at).to eq(Time.zone.now)
+      end
     end
 
     context "first_name is nil" do
@@ -903,5 +911,41 @@ describe Veteran, :all_dbs do
     end
 
     it { is_expected.to eq("94117") }
+  end
+
+  describe "#date_of_death" do
+    context "when nil is cached and BGS returns a date of death" do
+      let(:date_of_death) { nil }
+      let(:new_date_of_death) { Date.new(2021, 3, 8) }
+      let(:bgs_date_of_death) { "03/08/2021" }
+      before do
+        allow(veteran).to receive(:fetch_bgs_record).and_return(date_of_death: bgs_date_of_death)
+      end
+
+      subject { veteran.date_of_death }
+      it "saves the non-nil value to Caseflow DB" do
+        expect(subject).to eq(new_date_of_death)
+        expect(veteran[:date_of_death]).to eq(new_date_of_death)
+      end
+    end
+  end
+
+  describe "#update_cached_attributes!" do
+    let(:new_date_of_death) { Date.new(2021, 3, 8) }
+    let(:bgs_date_of_death) { "03/08/2021" }
+    before do
+      allow(veteran).to receive(:fetch_bgs_record).and_return(date_of_death: bgs_date_of_death)
+    end
+
+    subject { veteran.update_cached_attributes! }
+
+    context "when date of death is present" do
+      it "saves date of death in the correct date format" do
+        expect(veteran.bgs_last_synced_at).to be_nil
+        subject
+        expect(veteran[:date_of_death]).to eq(new_date_of_death)
+        expect(veteran.bgs_last_synced_at).to eq(Time.zone.now)
+      end
+    end
   end
 end

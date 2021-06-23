@@ -13,14 +13,12 @@ feature "Appeal Intake", :all_dbs do
 
   let(:veteran_file_number) { "223344555" }
 
-  let(:date_of_death) { nil }
   let!(:veteran) do
     Generators::Veteran.build(
       file_number: veteran_file_number,
       first_name: "Ed",
       last_name: "Merica",
-      participant_id: "55443322",
-      date_of_death: date_of_death
+      participant_id: "55443322"
     )
   end
 
@@ -46,17 +44,6 @@ feature "Appeal Intake", :all_dbs do
   let!(:before_ama_rating) { generate_pre_ama_rating(veteran) }
 
   let(:no_ratings_err) { Rating::NilRatingProfileListError.new("none!") }
-
-  context "veteran is deceased" do
-    let(:date_of_death) { Time.zone.today - 1.day }
-
-    scenario "veteran cannot be claimant" do
-      # save the veteran first, otherwise creating an appeal will create a new veteran
-      veteran.save!
-      create(:appeal, veteran_file_number: veteran.file_number)
-      check_deceased_veteran_claimant(AppealIntake.new(veteran_file_number: veteran.file_number, user: current_user))
-    end
-  end
 
   it "cancels an intake in progress when there is a NilRatingProfileListError" do
     allow_any_instance_of(Fakes::BGSService).to receive(:fetch_ratings_in_range).and_raise(no_ratings_err)
@@ -349,7 +336,7 @@ feature "Appeal Intake", :all_dbs do
 
     expect(page).to have_content("Add / Remove Issues")
     check_row("Review option", "Evidence Submission")
-    check_row("Claimant", "Ed Merica")
+    check_row("Claimant", "Ed Merica, Veteran")
     check_row("SOC/SSOC Opt-in", "No")
 
     # clicking the add issues button should bring up the modal

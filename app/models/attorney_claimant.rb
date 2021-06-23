@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 ##
-# An attorney can be a claimant when contesting attorney fees.
+# An attorney can be a claimant when contesting attorney fees. Note that this class represents only
+# attorneys with participant IDs in CorpDB, whereas a non-CorpDB attorney is an OtherClaimant.
 
 class AttorneyClaimant < Claimant
   validate { |claimant| ClaimantValidator.new(claimant).validate }
@@ -25,10 +26,6 @@ class AttorneyClaimant < Claimant
   end
 
   private
-
-  def find_power_of_attorney
-    find_power_of_attorney_by_pid
-  end
 
   def bgs_attorney
     @bgs_attorney ||= begin

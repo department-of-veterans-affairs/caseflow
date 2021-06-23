@@ -5,9 +5,6 @@ const updateFromServerFeatures = (state, featureToggles) => {
     useAmaActivationDate: {
       $set: Boolean(featureToggles.useAmaActivationDate)
     },
-    editContentionText: {
-      $set: Boolean(featureToggles.editContentionText)
-    },
     correctClaimReviews: {
       $set: Boolean(featureToggles.correctClaimReviews)
     },
@@ -26,9 +23,18 @@ const updateFromServerFeatures = (state, featureToggles) => {
     attorneyFees: {
       $set: Boolean(featureToggles.attorneyFees)
     },
+    nonVeteranClaimants: {
+      $set: Boolean(featureToggles.nonVeteranClaimants)
+    },
     establishFiduciaryEps: {
       $set: Boolean(featureToggles.establishFiduciaryEps)
-    }
+    },
+    deceasedAppellants: {
+      $set: Boolean(featureToggles.deceasedAppellants)
+    },
+    editEpClaimLabels: {
+      $set: Boolean(featureToggles.editEpClaimLabels)
+    },
   });
 };
 
@@ -36,12 +42,13 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
   updateFromServerFeatures(
     {
       useAmaActivationDate: false,
-      editContentionText: false,
       correctClaimReviews: false,
       unidentifiedIssueDecisionDate: false,
       verifyUnidentifiedIssue: false,
       restrictAppealIntakes: false,
-      establishFiduciaryEps: false
+      establishFiduciaryEps: false,
+      editEpClaimLabels: false,
+      deceasedAppellants: false
     },
     data.featureToggles
   );

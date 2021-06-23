@@ -22,7 +22,7 @@ describe AttorneyQualityReviewTask, :all_dbs do
     let!(:judge_staff) { create(:staff, :judge_role, sdomainid: judge.css_id) }
     let(:parent) { create(:ama_judge_dispatch_return_task) }
     let!(:task) do
-      create(:ama_judge_dispatch_return_to_attorney_task, assigned_by: judge, assigned_to: atty, parent: parent)
+      create(:ama_attorney_dispatch_return_task, assigned_by: judge, assigned_to: atty, parent: parent)
     end
 
     subject { task.update!(status: Constants.TASK_STATUSES.cancelled) }

@@ -1,8 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
-import _ from 'lodash';
 import ApiUtil from '../../util/ApiUtil';
 import { SPREADSHEET_TYPES } from '../constants';
 import {
@@ -29,12 +29,12 @@ export class BuildScheduleUploadContainer extends React.Component {
 
   validateDatesAndFile = (onFailure, startDate, endDate, file) => {
     if (!(startDate && endDate && file)) {
-      onFailure('Please make sure all required fields are filled in.');
+      onFailure(['Please make sure all required fields are filled in.']);
 
       return false;
     }
     if (endDate < startDate) {
-      onFailure('The end date must be after the start date.');
+      onFailure(['The end date must be after the start date.']);
 
       return false;
     }
@@ -101,26 +101,23 @@ export class BuildScheduleUploadContainer extends React.Component {
 
     ApiUtil.post('/hearings/schedule_periods', { data: { schedule_period: data } }).
       then((response) => {
-        if (_.has(response.body, 'error')) {
-          if (this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
-            this.props.updateRoCoUploadFormErrors(response.body.error);
-          }
-          if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
-            this.props.updateJudgeUploadFormErrors(response.body.error);
-          }
-          this.props.toggleUploadContinueLoading();
-
-          return;
-        }
         this.props.toggleUploadContinueLoading();
         this.props.history.push(`/schedule/build/upload/${response.body.id}`);
-      }, () => {
+      }).
+      catch(({ response }) => {
+        // Map unspecified errors
+        const errors = Array.isArray(response.body?.errors) ?
+          response.body.errors.map((error) => error.details) :
+          ['ValidationError::UnspecifiedError'];
+
+        // Display the errors based on the spreadsheet type
         if (this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
-          this.props.updateRoCoUploadFormErrors('ValidationError::UnspecifiedError');
+          this.props.updateRoCoUploadFormErrors(errors);
+        } else if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
+          this.props.updateJudgeUploadFormErrors(errors);
         }
-        if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
-          this.props.updateJudgeUploadFormErrors('ValidationError::UnspecifiedError');
-        }
+
+        // Toggle the continue upload
         this.props.toggleUploadContinueLoading();
       });
   };
@@ -149,6 +146,46 @@ export class BuildScheduleUploadContainer extends React.Component {
     />;
   }
 }
+
+BuildScheduleUploadContainer.propTypes = {
+
+  /**
+   * Required Props
+   */
+  history: PropTypes.object,
+
+  /**
+   * Optional Props
+   */
+  fileType: PropTypes.string,
+  uploadContinueLoading: PropTypes.bool,
+  roCoStartDate: PropTypes.string,
+  roCoEndDate: PropTypes.string,
+  judgeStartDate: PropTypes.string,
+  judgeEndDate: PropTypes.string,
+  uploadFormErrors: PropTypes.string,
+  judgeFileUpload: PropTypes.object,
+  roCoFileUpload: PropTypes.object,
+  uploadRoCoFormErrors: PropTypes.array,
+  uploadJudgeFormErrors: PropTypes.array,
+
+  /**
+   * Functions
+   */
+  updateUploadFormErrors: PropTypes.func,
+  onRoCoFileUpload: PropTypes.func,
+  onJudgeFileUpload: PropTypes.func,
+  updateJudgeUploadFormErrors: PropTypes.func,
+  updateRoCoUploadFormErrors: PropTypes.func,
+  toggleUploadContinueLoading: PropTypes.func,
+  unsetUploadErrors: PropTypes.func,
+  onFileTypeChange: PropTypes.func,
+  onRoCoStartDateChange: PropTypes.func,
+  onRoCoEndDateChange: PropTypes.func,
+  onJudgeStartDateChange: PropTypes.func,
+  onJudgeEndDateChange: PropTypes.func,
+
+};
 
 const mapStateToProps = (state) => ({
   fileType: state.hearingSchedule.fileType,

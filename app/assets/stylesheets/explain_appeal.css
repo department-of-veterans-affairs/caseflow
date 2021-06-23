@@ -1,0 +1,57 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ */
+
+#events_table tr.clock {
+  color: rgb(173, 173, 173);
+  font-size: 0.7em;
+}
+
+#events_table tr.milestone {
+  border-style: outset;
+}
+
+#events_table tr.issue {
+  border-style: dotted;
+}
+
+#events_table tr.document {
+  border-style: dotted;
+}
+
+#events_table tr.hearing {
+  border-style: dashed;
+}
+
+#events_table .milestone .event_type,
+#events_table .milestone .category,
+#events_table .milestone .narrative {
+  color: blue;
+}
+
+#events_table .task_assigned .event_type,
+#events_table .task_assigned .category,
+#events_table .task_assigned .narrative {
+  color: rgb(134, 132, 1)
+}
+
+#events_table .task_cancelled .event_type,
+#events_table .task_cancelled .category,
+#events_table .task_cancelled .narrative {
+  color: rgb(143, 80, 80)
+}
+
+#events_table .task_completed .event_type,
+#events_table .task_completed .category,
+#events_table .task_completed .narrative {
+  color: rgb(0, 90, 0)
+}

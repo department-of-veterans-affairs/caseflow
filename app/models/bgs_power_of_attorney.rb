@@ -25,6 +25,7 @@ class BgsPowerOfAttorney < CaseflowRecord
             :representative_type, presence: true
 
   before_save :update_cached_attributes!
+  after_save :update_ihp_task, if: :update_ihp_enabled?
 
   class << self
     # Neither file_number nor claimant_participant_id is unique by itself,
@@ -32,7 +33,11 @@ class BgsPowerOfAttorney < CaseflowRecord
     # Since this is a cache we only want to mirror what BGS has and leave the
     # data integrity to them.
     def find_or_create_by_file_number(file_number)
-      find_or_create_by!(file_number: file_number)
+      poa = find_or_create_by!(file_number: file_number)
+      if FeatureToggle.enabled?(:poa_auto_refresh)
+        poa.save_with_updated_bgs_record! if poa&.expired?
+      end
+      poa
     rescue ActiveRecord::RecordNotUnique
       # We've noticed that this error is thrown because of a race-condition
       # where multiple processes are trying to create the same object.
@@ -42,7 +47,15 @@ class BgsPowerOfAttorney < CaseflowRecord
     end
 
     def find_or_create_by_claimant_participant_id(claimant_participant_id)
-      find_or_create_by!(claimant_participant_id: claimant_participant_id)
+      poa = find_or_create_by!(claimant_participant_id: claimant_participant_id)
+      if FeatureToggle.enabled?(:poa_auto_refresh)
+        poa.save_with_updated_bgs_record! if poa&.expired?
+      end
+      poa
+    rescue ActiveRecord::RecordNotUnique
+      # Handle race conditions similarly to find_or_create_by_file_number.
+      # For an example of this in the wild, see Sentry event 17c302faae0b48bcb0e1816a58e8b7f5.
+      find_by(claimant_participant_id: claimant_participant_id)
     end
 
     def find_or_load_by_file_number(file_number)
@@ -51,6 +64,26 @@ class BgsPowerOfAttorney < CaseflowRecord
 
     def fetch_bgs_poa_by_participant_id(pid)
       bgs.fetch_poas_by_participant_ids([pid])[pid.to_s]
+    end
+
+    # Use participant_id and/or veteran_file_number to fetch a BgsPowerOfAttorney record that's
+    # cached in Caseflow, hitting BGS if necessary. If neither Caseflow record nor BGS record is
+    # found, return nil.
+    def find_or_fetch_by(participant_id: nil, veteran_file_number: nil)
+      if participant_id.present?
+        begin
+          return find_or_create_by_claimant_participant_id(participant_id)
+        rescue ActiveRecord::RecordInvalid
+          # not found in BGS
+        end
+      end
+      if veteran_file_number.present?
+        begin
+          find_or_create_by_file_number(veteran_file_number)
+        rescue ActiveRecord::RecordInvalid
+          # not found in BGS
+        end
+      end
     end
   end
 
@@ -107,6 +140,8 @@ class BgsPowerOfAttorney < CaseflowRecord
     self.last_synced_at = Time.zone.now
   end
 
+  alias_attribute :poa_last_synced_at, :last_synced_at
+
   def save_with_updated_bgs_record!
     return save! unless found?
 
@@ -117,10 +152,35 @@ class BgsPowerOfAttorney < CaseflowRecord
     save!
   end
 
+  def update_ihp_task
+    related_appeals.each do |appeal|
+      InformalHearingPresentationTask.update_to_new_poa(appeal) if appeal.active?
+    end
+  end
+
   def found?
     return false if not_found?
 
     bgs_record.keys.any?
+  end
+
+  def expired?
+    last_synced_at && last_synced_at < 16.hours.ago
+  end
+
+  def update_or_delete(claimant)
+    # If the BGS Power of Attorney record is not found, destroy it.
+    if bgs_record == :not_found
+      destroy!
+      # If the claimaint's power of attorney record is also not found, destroy it.
+      if !claimant.is_a?(Hash) && claimant.power_of_attorney&.bgs_record == :not_found
+        claimant.power_of_attorney.destroy!
+      end
+      ["Successfully refreshed. No power of attorney information was found at this time.", "deleted"]
+    else
+      save_with_updated_bgs_record!
+      ["POA Updated Successfully", "updated"]
+    end
   end
 
   private
@@ -129,6 +189,15 @@ class BgsPowerOfAttorney < CaseflowRecord
     return if poa_participant_id.blank?
 
     @person ||= Person.find_or_create_by_participant_id(poa_participant_id)
+  end
+
+  def related_appeals
+    returned_appeals = []
+    appeal_claimants = claimants.select { |appeal_claimant| appeal_claimant.decision_review_type == "Appeal" }
+    appeal_claimants.each do |matching_claimant|
+      returned_appeals << Appeal.find_by(id: matching_claimant.decision_review_id)
+    end
+    returned_appeals
   end
 
   def fetch_bgs_record
@@ -179,5 +248,10 @@ class BgsPowerOfAttorney < CaseflowRecord
     return nil if !participant_id
 
     BgsAddressService.new(participant_id: poa_participant_id).address
+  end
+
+  def update_ihp_enabled?
+    FeatureToggle.enabled?(:poa_auto_ihp_update, user: RequestStore.store[:current_user]) &&
+      saved_change_to_poa_participant_id?
   end
 end
