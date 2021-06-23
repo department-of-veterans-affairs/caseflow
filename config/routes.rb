@@ -143,6 +143,8 @@ Rails.application.routes.draw do
 
   get '/task_tree/:appeal_type/:appeal_id' => 'task_tree#show'
 
+  get '/explain/appeals/:appeal_id' => 'explain#show'
+
   resources :regional_offices, only: [:index]
   get '/regional_offices/:regional_office/hearing_dates', to: "regional_offices#hearing_dates"
 

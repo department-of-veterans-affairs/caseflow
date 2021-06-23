@@ -934,4 +934,19 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       expect(subject.first).to eq recent_completed_priority_distribution
     end
   end
+
+  context "when the entire job fails" do
+    let(:error_msg) { "Some dummy error" }
+
+    it "sends a message to Slack that includes the error" do
+      slack_msg = ""
+      allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+
+      allow_any_instance_of(described_class).to receive(:distribute_non_genpop_priority_appeals).and_raise(error_msg)
+      described_class.perform_now
+
+      expected_msg = ".ERROR. after running for .*: #{error_msg}"
+      expect(slack_msg).to match(/^#{expected_msg}/)
+    end
+  end
 end
