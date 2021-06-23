@@ -11,15 +11,14 @@ export const spacingStyling = css({
   marginTop: '8px'
 });
 
-export const PoaRefreshButton = ({ appealId, poaId }) => {
+export const PoaRefreshButton = ({ appealId }) => {
   const dispatch = useDispatch();
   const [buttonText, setButtonText] = useState('Refresh POA');
   const viewPoaRefreshButton = useSelector((state) => state.ui.featureToggles.poa_button_refresh);
 
   const updatePOA = () => {
     setButtonText(<SmallLoader message="Refresh POA" spinnerColor="#417505" />);
-    ApiUtil.patch(`/appeals/${appealId}/update_power_of_attorney`,
-      { data: { poaId } }).then((data) => {
+    ApiUtil.patch(`/appeals/${appealId}/update_power_of_attorney`).then((data) => {
       dispatch(setPoaRefreshAlert(data.body.status, data.body.message, data.body.power_of_attorney));
       setButtonText('Refresh POA');
     });
@@ -41,6 +40,5 @@ export const PoaRefreshButton = ({ appealId, poaId }) => {
 };
 
 PoaRefreshButton.propTypes = {
-  appealId: PropTypes.string,
-  poaId: PropTypes.number
+  appealId: PropTypes.string
 };

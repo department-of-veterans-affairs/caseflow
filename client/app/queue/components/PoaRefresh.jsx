@@ -41,7 +41,7 @@ export const PoaRefresh = ({ powerOfAttorney, appealId }) => {
         {poaSyncInfo.poaSyncDate &&
           <em>{lastSyncedCopy}</em>
         }
-        <PoaRefreshButton appealId={appealId} poaId={powerOfAttorney.representative_id} />
+        <PoaRefreshButton appealId={appealId}} />
       </div>
     </div>
     }
@@ -50,8 +50,7 @@ export const PoaRefresh = ({ powerOfAttorney, appealId }) => {
 
 PoaRefresh.propTypes = {
   powerOfAttorney: PropTypes.shape({
-    poa_last_synced_at: PropTypes.string,
-    representative_id: PropTypes.number
+    poa_last_synced_at: PropTypes.string
   }),
   appealId: PropTypes.string
 };

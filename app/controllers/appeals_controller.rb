@@ -71,7 +71,7 @@ class AppealsController < ApplicationController
           power_of_attorney: power_of_attorney_data
         }
       else
-        message, result = appeal.bgs_power_of_attorney&.update_or_delete!
+        message, result = update_or_delete_power_of_attorney!
         render json: {
           alert_type: message,
           message: result,
@@ -260,8 +260,22 @@ class AppealsController < ApplicationController
     !search.nil? && search.match?(/\d{6}-{1}\d+$/)
   end
 
+  def update_or_delete_power_of_attorney!
+    poa = appeal.bgs_power_of_attorney
+
+    if poa.empty?
+      ["Successfully refreshed. No power of attorney information was found at this time.", "not found"]
+    elsif poa&.bgs_record == :not_found
+      poa.destroy!
+      ["Successfully refreshed. No power of attorney information was found at this time.", "deleted"]
+    else
+      poa.save_with_updated_bgs_record!
+      ["POA Updated Successfully", "updated"]
+    end
+  end
+
   def power_of_attorney_data
-    poa_data = {
+    {
       representative_type: appeal.representative_type,
       representative_name: appeal.representative_name,
       representative_address: appeal.representative_address,
@@ -269,11 +283,6 @@ class AppealsController < ApplicationController
       representative_tz: appeal.representative_tz,
       poa_last_synced_at: appeal.poa_last_synced_at
     }
-    unless appeal.claimant.is_a?(OtherClaimant)
-      poa_data[:representative_id] = appeal.power_of_attorney&.id if appeal.is_a?(Appeal)
-      poa_data[:representative_id] = appeal.power_of_attorney&.bgs_id if appeal.is_a?(LegacyAppeal)
-    end
-    poa_data
   end
 
   def clear_poa_not_found_cache

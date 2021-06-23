@@ -171,16 +171,6 @@ class BgsPowerOfAttorney < CaseflowRecord
     last_synced_at && last_synced_at < 16.hours.ago
   end
 
-  def update_or_delete!
-    if bgs_record == :not_found
-      destroy!
-      ["Successfully refreshed. No power of attorney information was found at this time.", "deleted"]
-    else
-      save_with_updated_bgs_record!
-      ["POA Updated Successfully", "updated"]
-    end
-  end
-
   private
 
   def person

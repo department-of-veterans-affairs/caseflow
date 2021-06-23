@@ -159,8 +159,7 @@ PowerOfAttorneyNameUnconnected.propTypes = PowerOfAttorneyDetailUnconnected.prop
     representative_type: PropTypes.string,
     representative_name: PropTypes.string,
     representative_address: PropTypes.object,
-    representative_email_address: PropTypes.string,
-    representative_id: PropTypes.number
+    representative_email_address: PropTypes.string
   }),
   poaAlert: PropTypes.shape({
     message: PropTypes.string,
