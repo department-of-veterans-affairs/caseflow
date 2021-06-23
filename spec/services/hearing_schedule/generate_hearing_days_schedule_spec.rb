@@ -380,6 +380,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
       #   },
       # rubocop:disable Metrics/AbcSize
       def summarize_condensed_hearing_days(condensed_hearing_days)
+        all_ros_all_types = {}
         condensed_hearing_days.each do |ro, hearing_days|
           summary = {}
           types = %w[R V C]
@@ -403,6 +404,9 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
             hearing_days.each do |date, type_info|
               count = type_info[type]
               next if count.nil?
+
+              all_ros_all_types[date] = 0 if all_ros_all_types[date].nil?
+              all_ros_all_types[date] += count
 
               # For each ro, update min and max days per date
               new_min, new_max = update_min_max(count, summary[min_label], summary[max_label])
@@ -437,27 +441,33 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
           end
           condensed_hearing_days[ro]["summary_statistics"] = summary
         end
-        condensed_hearing_days
+        [condensed_hearing_days, all_ros_all_types]
       end
       # rubocop:enable Metrics/AbcSize
 
       let(:ro_schedule_period) { create(:real_ro_schedule_period) }
-      let :day_counts_and_summary_per_ro do
+      let(:day_counts_and_summary_per_ro) do
         displayed_hearing_days = ro_schedule_period.algorithm_assignments
         condensed_hearing_days = condense_hearing_days(displayed_hearing_days)
-        summarize_condensed_hearing_days(condensed_hearing_days)
+        summarize_condensed_hearing_days(condensed_hearing_days)[0]
+      end
+      let(:all_ros_all_types) do
+        displayed_hearing_days = ro_schedule_period.algorithm_assignments
+        condensed_hearing_days = condense_hearing_days(displayed_hearing_days)
+        summarize_condensed_hearing_days(condensed_hearing_days)[1]
       end
 
-      it "allocates all days evenly across available dates for each ro" do
-        # It's okay for different dates at the same RO to have this difference.
-        # Something like this is NOT okay:
-        #  - 10/24/2021: 10 hearing_days
-        #  - 10/25/2021: 17 hearing_days
-        day_counts_and_summary_per_ro.each do |_ro_key, info|
-          min_days_per_date = info["summary_statistics"]["min_days_on_date_all_types"]
-          max_days_per_date = info["summary_statistics"]["max_days_on_date_all_types"]
-          expect(max_days_per_date - min_days_per_date).to be <= 5
+      it "creates an even distribution across all ros and all dates" do
+        min = nil
+        max = nil
+        all_ros_all_types.each do |_date, count|
+          min = count if min.nil?
+          max = count if max.nil?
+
+          min = count if count < min
+          max = count if count > max
         end
+        expect(max - min).to be <= 5
       end
 
       it "allocates each type of days evenly across available dates for each ro" do
@@ -470,7 +480,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
             max = info["summary_statistics"][max_label]
 
             ro_has_days_of_type = max.present? || min.present?
-            expect(max - min).to be <= 5 if ro_has_days_of_type
+            expect(max - min).to be <= 3 if ro_has_days_of_type
           end
         end
       end
