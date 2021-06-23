@@ -13,7 +13,7 @@
         <th>event type</th>
         <th style="width: 60%;">narrative</th>
         <th style="width: 20%;">relevant data</th>
-        <th>attribute count</th>
+        <th>details</th>
       </tr>
       <% event_table_data.each do |event| %>
         <tr class="<%=event["category"]+'_'+event['event_type']%> <%=event["category"]%>">
@@ -42,7 +42,16 @@
               %></pre>
             <% end %>
           </td>
-          <td style="padding: 2px" class="details"><%= event["details"]&.size %></td>
+          <td style="padding: 2px; font-size:0.8em" class="details">
+            <% if event["details"] %>
+              <details>
+                <summary>(<%= event["details"]&.size %>)</summary>
+                <pre style="margin: 0px; width: 300px;"><%=
+                  JSON.pretty_generate(event["details"]).sub("{\n","").sub("\n}","").gsub(/^  /,"")
+                %></pre>
+              </details>
+            <% end %>
+          </td>
         </tr>
       <% end %>
     </table>
