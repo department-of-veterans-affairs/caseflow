@@ -100,7 +100,7 @@ feature "Higher-Level Review", :all_dbs do
     )
 
     within_fieldset("What is the Benefit Type?") do
-      find("label", text: "Fiduciary", match: :prefer_exact).click
+      find("label", text: "Insurance", match: :prefer_exact).click
     end
 
     within_fieldset("Was an informal conference requested?") do
@@ -119,9 +119,8 @@ feature "Higher-Level Review", :all_dbs do
 
     expect(page).to have_content("Please select the claimant listed on the form.")
 
-    # We do not need to select payee codes for fiduciaries
-    # expect(page).to_not have_content("What is the payee code for this claimant?")
-    # This test was written 3 years ago, before Fiduciary Claim Reviews got an EP established in VBMS
+    # We do not need to select payee codes for non-VBMS business lines
+    expect(page).to_not have_content("What is the payee code for this claimant?")
 
     # Switch the benefit type to compensation to test choosing the payee code.
     within_fieldset("What is the Benefit Type?") do
