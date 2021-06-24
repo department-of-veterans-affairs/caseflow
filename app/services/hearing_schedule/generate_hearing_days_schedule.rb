@@ -180,7 +180,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   end
 
   def check_even_distribution(ro_info)
-    get_all_days_for_ro(ro_info).map { |day| day.select { |room| room[:room_num].nil? } }.map(&:count).uniq
+    get_all_days_for_ro(ro_info).map(&:count).uniq
   end
 
   def check_total_allocations(ro_info)
@@ -188,7 +188,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   end
 
   def allocated_for_hearing_day?(ro_info, hearing_day)
-    allocations = ro_info[:allocated_dates].values.inject(&:merge)[hearing_day].select { |room| room[:room_num].nil? }
+    allocations = ro_info[:allocated_dates].values.inject(&:merge)[hearing_day]
     allocations.count
   end
 
