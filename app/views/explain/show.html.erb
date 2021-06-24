@@ -99,10 +99,18 @@
 
   <h3>Intake</h3>
   <code style="color: green">
-    puts IntakeRenderer.render(Appeal.find(<%= appeal.id %>), 
+    puts IntakeRenderer.render(Appeal.find(<%= appeal.id %>),
       show_pii: <%= show_pii_query_param ? "true" : "false" %>)
   </code>
-  <pre style="font-size:0.84em; padding:10px"><code><%= intake_as_text %></code></pre>
+  <pre style="font-size:0.9em; padding:10px"><code><%= intake_as_text %></code></pre>
+  <hr/>
+
+  <h3>Hearing</h3>
+  <code style="color: green">
+    puts HearingRenderer.render(Appeal.find(<%= appeal.id %>),
+      show_pii: <%= show_pii_query_param ? "true" : "false" %>)
+  </code>
+  <pre style="font-size:0.9em; padding:10px"><code><%= hearing_as_text %></code></pre>
   <hr/>
 
   <%= javascript_include_tag 'explain-appeal' %>
