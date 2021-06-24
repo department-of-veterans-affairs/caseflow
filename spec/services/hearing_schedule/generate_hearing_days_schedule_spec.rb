@@ -294,12 +294,10 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
       # Take a list of hearing_days and condense them per ro, date, and type,
       # results look like this.
       # {"RO39" => {
-      #   "day_counts" => {
-      #     "08-18-2021" => {
-      #       "video" => 12,
-      #       "virtual" => 41,
-      #       "central" => 1}
-      #     }
+      #   "08-18-2021" => {
+      #     "V" => 3,
+      #     "R" => 8,
+      #     "C" => 0}
       #   }
       # }
       def condense_hearing_days(hearing_days)
@@ -405,8 +403,12 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
               count = type_info[type]
               next if count.nil?
 
-              all_ros_all_types[date] = 0 if all_ros_all_types[date].nil?
-              all_ros_all_types[date] += count
+              if type != "C"
+                all_ros_all_types[date] = 0 if all_ros_all_types[date].nil?
+                all_ros_all_types[date] += count
+                all_ros_all_types["total"] = 0 if all_ros_all_types["total"].nil?
+                all_ros_all_types["total"] += count
+              end
 
               # For each ro, update min and max days per date
               new_min, new_max = update_min_max(count, summary[min_label], summary[max_label])
@@ -464,22 +466,25 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
         summarize_condensed_hearing_days(condensed_hearing_days)[1]
       end
 
+      # Test that the sum of all dockets on a given date, for all ros, is within 5 of the average
       it "creates an even distribution across all ros and all dates" do
-        min = nil
-        max = nil
+        # Pop the total out of the hash
+        total = all_ros_all_types["total"]
+        all_ros_all_types.delete("total")
+        # Calculate the average
+        number_of_days = all_ros_all_types.count
+        average = total / number_of_days
+        # For each ro
         all_ros_all_types.each do |_date, count|
-          min = count if min.nil?
-          max = count if max.nil?
-
-          min = count if count < min
-          max = count if count > max
+          expect(count).to be_within(5).of(average)
         end
-        expect(max - min).to be <= 5
       end
 
+      # Test each type Vi(R)tual and (V)ideo and see that for each RO the docket allocation
+      # on each date is fairly even (min - max is within three)
       it "allocates each type of days evenly across available dates for each ro" do
         day_counts_and_summary_per_ro.each do |_ro_key, info|
-          types = %w[R V C]
+          types = %w[R V]
           types.each do |type|
             min_label = "min_#{type}"
             max_label = "max_#{type}"
