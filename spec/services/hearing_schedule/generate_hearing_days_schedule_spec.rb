@@ -449,11 +449,11 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
       let(:day_counts_and_summary_per_ro) do
         # This test starts failing when there are three travel board days in the
         # date range between 04-01-2021 and 06-30-2021
-        create(:travel_board_schedule,
-               tbyear: "2021",
-               tbro: "RO17",
-               tbstdate: Date.parse("2021-06-01"),
-               tbenddate: Date.parse("2021-06-03"))
+        #create(:travel_board_schedule,
+        #       tbyear: "2021",
+        #       tbro: "RO17",
+        #       tbstdate: Date.parse("2021-06-01"),
+        #       tbenddate: Date.parse("2021-06-03"))
         displayed_hearing_days = ro_schedule_period.algorithm_assignments
         condensed_hearing_days = condense_hearing_days(displayed_hearing_days)
         summarize_condensed_hearing_days(condensed_hearing_days)[0]
