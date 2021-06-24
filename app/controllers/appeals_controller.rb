@@ -259,13 +259,13 @@ class AppealsController < ApplicationController
     poa = appeal.bgs_power_of_attorney
 
     if poa.blank?
-      ["Successfully refreshed. No power of attorney information was found at this time.", "not found"]
+      ["Successfully refreshed. No power of attorney information was found at this time.", "success"]
     elsif poa.bgs_record == :not_found
       poa.destroy!
-      ["Successfully refreshed. No power of attorney information was found at this time.", "deleted"]
+      ["Successfully refreshed. No power of attorney information was found at this time.", "success"]
     else
       poa.save_with_updated_bgs_record!
-      ["POA Updated Successfully", "updated"]
+      ["POA Updated Successfully", "success"]
     end
   end
 
