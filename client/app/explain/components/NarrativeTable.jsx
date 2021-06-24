@@ -6,7 +6,7 @@ import {
   objectTypeColumn,
   eventTypeColumn,
   commentColumn,
-  relevanttDataColumn,
+  relevantDataColumn,
   detailsColumn
 } from './ColumnBuilder';
 import Modal from '../../components/Modal';
@@ -20,7 +20,8 @@ class NarrativeTable extends React.PureComponent {
 
     this.state = {
       modal: false,
-      details: {}
+      details: {},
+      narratives: this.props.eventData
     };
   }
 
@@ -43,16 +44,18 @@ class NarrativeTable extends React.PureComponent {
       ),
       [EXPLAIN_CONFIG.COLUMNS.OBJECT_TYPE.name]: objectTypeColumn(
         column,
-        filterOptions
+        filterOptions,
+        this.state.narratives
       ),
       [EXPLAIN_CONFIG.COLUMNS.EVENT_TYPE.name]: eventTypeColumn(
         column,
-        filterOptions
+        filterOptions,
+        this.state.narratives
       ),
       [EXPLAIN_CONFIG.COLUMNS.COMMENT.name]: commentColumn(
         column
       ),
-      [EXPLAIN_CONFIG.COLUMNS.RELEVANT_DATA.name]: relevanttDataColumn(
+      [EXPLAIN_CONFIG.COLUMNS.RELEVANT_DATA.name]: relevantDataColumn(
         column
       ),
       [EXPLAIN_CONFIG.COLUMNS.DETAILS.name]: detailsColumn(
@@ -82,7 +85,6 @@ class NarrativeTable extends React.PureComponent {
 
   render = () => {
     const showModal = this.state.modal;
-    const narratives = this.props.eventData;
     const textAreaStyling = css({
       wideth: '100%',
       fontSize: '10pt'
@@ -92,9 +94,9 @@ class NarrativeTable extends React.PureComponent {
       <React.Fragment>
         <QueueTable
           id="events_table"
-          columns={this.columnsFromConfig(EXPLAIN_CONFIG.COLUMNS, narratives)}
+          columns={this.columnsFromConfig(EXPLAIN_CONFIG.COLUMNS, this.state.narratives)}
           rowClassNames={(event) => event.category}
-          rowObjects={narratives}
+          rowObjects={this.state.narratives}
           summary="test table" slowReRendersAreOk />
         {showModal && <React.Fragment>
           <Modal
