@@ -11,9 +11,20 @@
  * file per style scope.
  */
 
-#events_table tr.clock,
-#events_table [role="cell"] span.clock {
+ #events_table {
+  margin: 5px;
+}
+
+#events_table [role="cell"] {
+  /* font-size: 0.775em; */
+}
+
+/* Table rows */
+
+#events_table tr.clock {
   color: rgb(173, 173, 173);
+  font-size: 0.7em;
+  border-style: none;
 }
 
 #events_table tr.milestone {
@@ -31,6 +42,26 @@
 #events_table tr.hearing {
   border-style: dashed;
 }
+
+#events_table .rel_data,
+#events_table .narrative {
+  max-width: 300px;
+  word-wrap: break-word;
+}
+
+#events_table [role="cell"] .rel_data {
+  font-size: 0.8em;
+  margin: 0px; /* doesn't work */
+  white-space: pre; /* doesn't work */
+}
+
+/* Table columns */
+
+#events_table .category {
+
+}
+
+/* Table cells */
 
 #events_table .milestone .event_type,
 #events_table .milestone .category,
@@ -58,23 +89,5 @@
 #events_table .task_completed .narrative,
 #events_table [role="cell"] span.task_completed {
   color: rgb(0, 90, 0)
-}
-
-#events_table {
-  margin: 5px;
-}
-
-#events_table [role="cell"] {
-  font-size: 0.775em;
-}
-
-#events_table .rel_data,
-#events_table .narrative {
-  max-width: 300px;
-  word-wrap: break-word;
-}
-
-#events_table [role="cell"] span.task-assigned {
-  font-size: 0.775em;
 }
 

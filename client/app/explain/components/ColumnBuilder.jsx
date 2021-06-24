@@ -113,7 +113,11 @@ export const relevanttDataColumn = (column) => {
     cellClass: column.class,
     valueFunction: (rowData) => {
       if (rowData[column.name]) {
-        return JSON.stringify(rowData[column.name]);
+        let jsonString = JSON.stringify(rowData[column.name], null, ' ');
+
+        jsonString = jsonString.replace('{\n', '').replace('\n}', '');
+
+        return <pre>{jsonString}</pre>;
       }
 
       return '';

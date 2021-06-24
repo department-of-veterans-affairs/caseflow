@@ -73,6 +73,13 @@ class NarrativeTable extends React.PureComponent {
 
     return builtColumns;
   }
+
+  detailsModalContent = (details) => {
+    let jsonString = JSON.stringify(details, null, ' ');
+
+    return jsonString.replace('{\n', '').replace('\n}', '');
+  }
+
   render = () => {
     const showModal = this.state.modal;
     const narratives = this.props.eventData;
@@ -86,6 +93,7 @@ class NarrativeTable extends React.PureComponent {
         <QueueTable
           id="events_table"
           columns={this.columnsFromConfig(EXPLAIN_CONFIG.COLUMNS, narratives)}
+          rowClassNames={(event) => event.category}
           rowObjects={narratives}
           summary="test table" slowReRendersAreOk />
         {showModal && <React.Fragment>
@@ -100,7 +108,7 @@ class NarrativeTable extends React.PureComponent {
             ]}
             closeHandler={this.handleModalClose}
           >
-            <textarea {...textAreaStyling} value={JSON.stringify(this.state.details)} />
+            <textarea readOnly {...textAreaStyling} value={this.detailsModalContent(this.state.details)} />
           </Modal>
         </React.Fragment>}
       </React.Fragment>

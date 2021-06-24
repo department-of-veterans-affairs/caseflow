@@ -12,7 +12,7 @@
       "class": "category"
     },
     "EVENT_TYPE": {
-      "header": "Event Type",
+      "header": "Type",
       "name": "event_type",
       "filterable": true,
       "class": "event_type"
@@ -28,7 +28,7 @@
       "class": "rel_data"
     },
     "DETAILS": {
-      "header": "Attribute Count",
+      "header": "Details",
       "name": "details",
       "class": "details"
     }

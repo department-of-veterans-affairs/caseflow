@@ -1,14 +1,18 @@
 <% content_for :head do %>
 <%= stylesheet_link_tag 'explain_appeal' %>
 <% end %>
-<%= react_component("Explain", props: {
-  eventData: event_table_data
-}) %>
 
 <div style="font-size:0.875em; padding:10px">
   <h2>Appeal Narrative</h2>
-  <details>
+  <details open>
     <summary id="narrative_table" style="color: purple">Narrative table</summary>
+    <%= react_component("Explain", props: {
+      eventData: event_table_data
+    }) %>
+  </details>
+
+  <details>
+    <summary id="narrative_table_proto" style="color: purple">Narrative table prototype</summary>
     <table id="events_table" style="width: 100%;">
       <tr>
         <th>timestamp</th>
