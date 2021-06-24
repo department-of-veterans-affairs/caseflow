@@ -27,19 +27,21 @@ export const timestampColumn = (column) => {
   };
 };
 
-export const contextColumn = (column) => {
+export const contextColumn = (column, filterOptions, narratives) => {
   return {
     header: column.header,
     name: column.name,
     cellClass: column.class,
     valueFunction: (rowData) => rowData[column.name],
     backendCanSort: true,
+    filterOptions,
+    tableData: narratives,
     label: 'Sort by context',
     getSortValue: (rowData) => rowData[column.name]
   };
 };
 
-export const objectTypeColumn = (column) => {
+export const objectTypeColumn = (column, filterOptions, narratives) => {
   return {
     header: column.header,
     name: column.name,
@@ -50,6 +52,8 @@ export const objectTypeColumn = (column) => {
       </span>;
     },
     backendCanSort: true,
+    filterOptions,
+    tableData: narratives,
     columnName: 'category',
     enableFilter: true,
     anyFiltersAreSet: true,
