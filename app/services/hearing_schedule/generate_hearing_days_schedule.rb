@@ -53,7 +53,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   def allocate_hearing_days_to_ros(request_type_allocations = :allocated_days)
     @request_type_allocations = request_type_allocations
 
-    # Add up all the hearing days we need to distribute
+    # Add up all the hearing days we need to distribute for the request type
     days_to_allocate = @ros.values.pluck(@request_type_allocations).sum.to_i
 
     # Create a lookup table of available days to track the number of allocations per date
