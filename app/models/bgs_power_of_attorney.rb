@@ -4,21 +4,10 @@ class BgsPowerOfAttorney < CaseflowRecord
   include AssociatedBgsRecord
   include BgsService
 
-  class BgsPOANotFound < StandardError; end
-
   has_many :claimants, primary_key: :claimant_participant_id, foreign_key: :participant_id
   has_one :representative, primary_key: :poa_participant_id, foreign_key: :participant_id
 
-  CACHED_BGS_ATTRIBUTES = [
-    :representative_name,
-    :representative_type,
-    :authzn_change_clmant_addrs_ind,
-    :authzn_poa_access_ind,
-    :legacy_poa_cd,
-    :poa_participant_id,
-    :claimant_participant_id, # Should this be included the cached attributes?
-    :file_number # Should this be included the cached attributes?
-  ].freeze
+  delegate :email_address, to: :person, prefix: :representative, allow_nil: true
 
   validates :claimant_participant_id,
             :poa_participant_id,
@@ -27,6 +16,19 @@ class BgsPowerOfAttorney < CaseflowRecord
 
   before_save :update_cached_attributes!
   after_save :update_ihp_task, if: :update_ihp_enabled?
+
+  CACHED_BGS_ATTRIBUTES = [
+    :representative_name,
+    :representative_type,
+    :authzn_change_clmant_addrs_ind,
+    :authzn_poa_access_ind,
+    :legacy_poa_cd,
+    :poa_participant_id,
+    :claimant_participant_id,
+    :file_number
+  ].freeze
+
+  class BgsPOANotFound < StandardError; end
 
   class << self
     # Neither file_number nor claimant_participant_id is unique by itself,
@@ -88,10 +90,6 @@ class BgsPowerOfAttorney < CaseflowRecord
     end
   end
 
-  def representative_email_address
-    person&.email_address
-  end
-
   def representative_name
     cached_or_fetched_from_bgs(attr_name: :representative_name)
   end
@@ -122,12 +120,10 @@ class BgsPowerOfAttorney < CaseflowRecord
 
   alias participant_id poa_participant_id
 
-  # How does it work that this is both an attribute and a method?
   def claimant_participant_id
     cached_or_fetched_from_bgs(attr_name: :claimant_participant_id)
   end
 
-  # How does it work that this is both an attribute and a method?
   def file_number
     cached_or_fetched_from_bgs(attr_name: :file_number)
   end
