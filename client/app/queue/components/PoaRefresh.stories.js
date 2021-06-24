@@ -25,7 +25,7 @@ const Template = ({ poaSyncDateFeature, ...componentArgs }) => {
   const storeArgs = {
     ui: {
       featureToggles: {
-        poa_sync_date: poaSyncDateFeature
+        poa_button_refresh: poaSyncDateFeature
       }
     }
   };

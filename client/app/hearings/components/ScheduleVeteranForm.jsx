@@ -23,6 +23,7 @@ import { TimeSlot } from './scheduleHearing/TimeSlot';
 import { useDispatch } from 'react-redux';
 import { fetchScheduledHearings } from '../../components/common/actions';
 import { AppealInformation } from './scheduleHearing/AppealInformation';
+import { UnscheduledNotes } from './UnscheduledNotes';
 
 export const ScheduleVeteranForm = ({
   virtual,
@@ -34,6 +35,7 @@ export const ScheduleVeteranForm = ({
   initialHearingDate,
   convertToVirtual,
   userCanViewTimeSlots,
+  hearingTask,
   ...props
 }) => {
   const dispatch = useDispatch();
@@ -47,6 +49,9 @@ export const ScheduleVeteranForm = ({
   const dynamic =
     ro !== appeal?.closestRegionalOffice ||
     isEmpty(appeal?.availableHearingLocations);
+
+  const unscheduledNotes = hearing?.notes;
+  const hearingDayIsVirtual = hearing?.hearingDay?.requestType === 'R';
 
   const getOriginalRequestType = () => {
     if (
@@ -84,6 +89,14 @@ export const ScheduleVeteranForm = ({
         <AppealInformation appeal={appeal} />
       </div>
       <div className="usa-width-one-half">
+        <UnscheduledNotes
+          onChange={(notes) => props.onChange('notes', notes)}
+          unscheduledNotes={unscheduledNotes}
+          updatedAt={hearingTask?.unscheduledHearingNotes?.updatedAt}
+          updatedByCssId={hearingTask?.unscheduledHearingNotes?.updatedByCssId}
+          uniqueId={hearingTask?.taskId}
+        />
+        <div className="cf-help-divider usa-width-two-thirds" />
         <div className="usa-width-one-whole">
           <HearingTypeDropdown
             enableFullPageConversion
@@ -114,7 +127,7 @@ export const ScheduleVeteranForm = ({
           )}
           <RegionalOfficeDropdown
             errorMessage={errors?.regionalOffice}
-            excludeVirtualHearingsOption
+            excludeVirtualHearingsOption={!virtual}
             onChange={(regionalOffice) =>
               props.onChange('regionalOffice', regionalOffice)
             }
@@ -151,7 +164,7 @@ export const ScheduleVeteranForm = ({
               />
               {hearing.hearingDay?.hearingId && (
                 <React.Fragment>
-                  {virtual && userCanViewTimeSlots ? (
+                  {hearingDayIsVirtual && userCanViewTimeSlots ? (
                     <TimeSlot
                       {...props}
                       ro={ro}
@@ -175,6 +188,7 @@ export const ScheduleVeteranForm = ({
                   )}
                 </React.Fragment>
               )}
+
             </React.Fragment>
           )}
         </div>
@@ -202,6 +216,7 @@ ScheduleVeteranForm.propTypes = {
   convertToVirtual: PropTypes.func,
   fetchScheduledHearings: PropTypes.func,
   userCanViewTimeSlots: PropTypes.bool,
+  hearingTask: PropTypes.object
 };
 
 /* eslint-enable camelcase */

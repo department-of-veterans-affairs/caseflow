@@ -107,9 +107,9 @@ DateSelector.propTypes = {
   ]),
 
   /**
-   * Text to display in a `label` element
+   * Text or element to display in a `label` element
    */
-  label: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+  label: PropTypes.oneOfType([PropTypes.string, PropTypes.bool, PropTypes.element]),
 
   /**
    * String to be applied to the `name` attribute of the `input` element

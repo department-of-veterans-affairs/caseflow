@@ -29,6 +29,12 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
       subject
 
       expect(CachedAppeal.all.count).to eq(open_appeals.length)
+
+      expect(CachedAppeal.ama_appeal.count).to eq(appeals.size)
+      expect(CachedAppeal.docket(:evidence_submission).count).to eq(appeals.size)
+
+      expect(CachedAppeal.legacy_appeal.count).to eq(legacy_appeals.size)
+      expect(CachedAppeal.docket(:legacy).count).to eq(legacy_appeals.size)
     end
 
     it "does not cache appeals when all appeal tasks are closed" do

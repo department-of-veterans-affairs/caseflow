@@ -18,6 +18,7 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
         <label
           class="question-label"
           for="relationship"
+          id="relationship-label"
         >
           <strong>
             <span>
@@ -51,10 +52,15 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
                   >
                     <input
                       aria-autocomplete="list"
+                      aria-expanded="false"
+                      aria-haspopup="true"
+                      aria-labelledby="relationship-label"
+                      aria-owns="relationship-listbox"
                       autocapitalize="none"
                       autocomplete="off"
                       autocorrect="off"
                       id="relationship"
+                      role="combobox"
                       spellcheck="false"
                       style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                       tabindex="0"
@@ -92,6 +98,11 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
                 </div>
               </div>
             </div>
+            <input
+              name="relationship"
+              type="hidden"
+              value="other"
+            />
           </div>
         </div>
       </div>
@@ -313,7 +324,7 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
       </div>
     </div>
     <div
-      class="sc-bdfBwQ flQqHu"
+      class="sc-bdfBwQ eMrOcK"
     >
       <div
         class="cf-form-textinput   "
@@ -344,6 +355,7 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
           <label
             class="question-label"
             for="state"
+            id="state-label"
           >
             <strong>
               <span>
@@ -377,10 +389,15 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
                     >
                       <input
                         aria-autocomplete="list"
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                        aria-labelledby="state-label"
+                        aria-owns="state-listbox"
                         autocapitalize="none"
                         autocomplete="off"
                         autocorrect="off"
                         id="state"
+                        role="combobox"
                         spellcheck="false"
                         style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                         tabindex="0"
@@ -435,6 +452,11 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
                   </div>
                 </div>
               </div>
+              <input
+                name="state"
+                type="hidden"
+                value="California"
+              />
             </div>
           </div>
         </div>
@@ -452,6 +474,11 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
           <strong>
             <span>
               Zip
+              <span
+                class="cf-optional"
+              >
+                Optional
+              </span>
             </span>
           </strong>
         </label>
@@ -614,6 +641,7 @@ exports[`AddClaimantForm renders default state correctly 1`] = `
         <label
           class="question-label"
           for="relationship"
+          id="relationship-label"
         >
           <strong>
             <span>
@@ -647,10 +675,15 @@ exports[`AddClaimantForm renders default state correctly 1`] = `
                   >
                     <input
                       aria-autocomplete="list"
+                      aria-expanded="false"
+                      aria-haspopup="true"
+                      aria-labelledby="relationship-label"
+                      aria-owns="relationship-listbox"
                       autocapitalize="none"
                       autocomplete="off"
                       autocorrect="off"
                       id="relationship"
+                      role="combobox"
                       spellcheck="false"
                       style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                       tabindex="0"
@@ -688,6 +721,11 @@ exports[`AddClaimantForm renders default state correctly 1`] = `
                 </div>
               </div>
             </div>
+            <input
+              name="relationship"
+              type="hidden"
+              value=""
+            />
           </div>
         </div>
       </div>

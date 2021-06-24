@@ -507,6 +507,15 @@ export const getHearingDetails = (hearing, showNumber) => {
   return secondRowLabel;
 };
 
+export const getHearingDetailsArray = (hearing, showNumber) => {
+  const docketNumber = showNumber && ` ${hearing.docketNumber}`;
+  const issues = `${hearing.currentIssueCount} issues`;
+  const docket = `${hearing.docketName.toUpperCase().charAt(0)} Hearing Request${docketNumber}`;
+  const secondRowLabel = `${issues} · ${docket} · ${hearing.poaName}`;
+
+  return secondRowLabel.split(' ');
+};
+
 export const generateHearingDays = (regionalOffice, count) =>
   Object.assign({}, times(count).map((index) => ({
     regionalOffice,

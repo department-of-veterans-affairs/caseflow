@@ -4,7 +4,7 @@ import React from 'react';
 import moment from 'moment';
 
 const LinkToAppeal = ({ appealExternalId, hearingDay, regionalOffice, children }) => {
-  const date = moment(hearingDay.scheduledFor).format('YYYY-MM-DD');
+  const date = moment(hearingDay?.scheduledFor).format('YYYY-MM-DD');
   const qs = `?hearingDate=${date}&regionalOffice=${regionalOffice}`;
 
   return (

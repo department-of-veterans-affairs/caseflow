@@ -54,7 +54,8 @@ class EndProduct
     "040SCR" => "Supplemental Claim Rating",
     "040SCNR" => "Supplemental Claim Nonrating",
     "040SCRPMC" => "PMC Supplemental Claim Rating",
-    "040SCNRPMC" => "PMC Supplemental Claim Non-Rating"
+    "040SCNRPMC" => "PMC Supplemental Claim Non-Rating",
+    "040SCRGTY" => "Supplemental Claim Rating > Year"
   }.freeze
 
   EFFECTUATION_CODES = {

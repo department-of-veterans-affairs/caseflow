@@ -104,6 +104,7 @@ export const ACTIONS = {
   SET_SAME_OFFICE: 'SET_SAME_OFFICE',
   SET_BENEFIT_TYPE: 'SET_BENEFIT_TYPE',
   SET_RECEIPT_DATE: 'SET_RECEIPT_DATE',
+  SET_RECEIPT_DATE_ERROR: 'SET_RECEIPT_DATE_ERROR',
   SET_VETERAN_IS_NOT_CLAIMANT: 'SET_VETERAN_IS_NOT_CLAIMANT',
   SET_CLAIMANT: 'SET_CLAIMANT',
   SET_PAYEE_CODE: 'SET_PAYEE_CODE',
@@ -203,6 +204,15 @@ export const REVIEW_DATA_FIELDS = {
     legacy_opt_in_approved: { key: 'legacyOptInApproved', required: true },
   },
 };
+
+export const GENERIC_FORM_ERRORS = {
+  blank: 'Please select an option.'
+}
+
+export const RECEIPT_DATE_ERRORS = {
+  invalid: 'Please enter a valid receipt date.',
+  in_future: 'Receipt date cannot be in the future.'
+}
 
 export const CLAIMANT_ERRORS = {
   blank: 'Please select an option.',

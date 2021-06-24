@@ -26,6 +26,10 @@ class UnrecognizedPowerOfAttorney
     nil
   end
 
+  def stale_attributes?
+    nil
+  end
+
   def poa_last_synced_at
     unrecognized_party_detail.updated_at
   end
