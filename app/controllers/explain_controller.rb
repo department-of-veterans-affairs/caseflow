@@ -20,7 +20,6 @@ class ExplainController < ApplicationController
         format.json { render json: sanitized_json }
       end
     rescue StandardError => error
-      # binding.pry
       raise error.full_message
     end
   end
@@ -30,7 +29,7 @@ class ExplainController < ApplicationController
   helper_method :legacy_appeal?, :appeal, :appeal_status,
                 :show_pii_query_param, :treee_fields,
                 :available_fields,
-                :task_tree_as_text, :intake_as_text,
+                :task_tree_as_text, :intake_as_text, :hearing_as_text,
                 :event_table_data, :appeal_object_id,
                 :sje
 
@@ -41,7 +40,8 @@ class ExplainController < ApplicationController
   def explain_as_text
     [
       task_tree_as_text,
-      intake_as_text
+      intake_as_text,
+      hearing_as_text
     ].join("\n\n")
   end
 
@@ -89,6 +89,10 @@ class ExplainController < ApplicationController
 
   def intake_as_text
     IntakeRenderer.render(appeal, show_pii: show_pii_query_param)
+  end
+
+  def hearing_as_text
+    HearingRenderer.render(appeal, show_pii: show_pii_query_param)
   end
 
   def sanitized_json

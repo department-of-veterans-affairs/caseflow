@@ -152,6 +152,8 @@ export const CaseDetailsView = (props) => {
     appeal.caseType === 'Original' &&
     // Substitute appellants for hearings will be supported later, but aren't yet:
     appeal.docketName !== 'hearing' &&
+    // For now, only allow a single substitution from a given appeal
+    !appeal.substitutions?.length &&
     (userIsCobAdmin || appeal.decisionIssues.some(decisionHasDismissedDeathDisposition)) &&
     !appeal.isLegacyAppeal;
 

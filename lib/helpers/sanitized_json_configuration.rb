@@ -7,6 +7,10 @@ require "helpers/sanitation_transforms.rb"
 # Needed by SanitizedJsonExporter and SanitizedJsonImporter.
 
 class SanitizedJsonConfiguration
+  def self.select_sanitize_fields(clazz)
+    clazz.columns.select { |column| column.comment&.starts_with?("PII") }.map(&:name)
+  end
+
   # For exporting, the :retrieval lambda is run according to the ordering in this hash.
   # Results of running each lambda are added to the `records` hash for use by later retrieval lambdas.
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
@@ -17,7 +21,6 @@ class SanitizedJsonConfiguration
         # i.e., DecisionReview has no table_name and hence cannot be used
         # when reassociating using polymorphic associations.
         track_imported_ids: true,
-        sanitize_fields: %w[veteran_file_number],
         retrieval: lambda do |records|
           (records[Appeal] +
             records[Appeal].map { |appeal| self.class.appeals_associated_with(appeal) }.flatten.uniq.compact
@@ -26,11 +29,9 @@ class SanitizedJsonConfiguration
       },
       Veteran => {
         track_imported_ids: true,
-        sanitize_fields: %w[file_number first_name last_name middle_name ssn],
         retrieval: ->(records) { records[Appeal].map(&:veteran).sort_by(&:id) }
       },
       AppealIntake => {
-        sanitize_fields: %w[veteran_file_number],
         retrieval: ->(records) { records[Appeal].map(&:intake).compact.sort_by(&:id) }
       },
       DecisionDocument => {
@@ -137,10 +138,13 @@ class SanitizedJsonConfiguration
       },
       Person => {
         track_imported_ids: true,
-        sanitize_fields: %w[date_of_birth email_address first_name last_name middle_name ssn],
         retrieval: ->(records) { (records[Veteran] + records[Claimant]).map(&:person).uniq.compact }
       }
-    }
+    }.each do |clazz, class_configuration|
+      class_configuration[:sanitize_fields] ||= self.class.select_sanitize_fields(clazz).tap do |fields|
+        puts "  Inferring #{clazz} sanitize_fields: #{fields}" unless fields.blank?
+      end
+    end
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
