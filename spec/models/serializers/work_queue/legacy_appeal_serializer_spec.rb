@@ -23,16 +23,16 @@ describe WorkQueue::LegacyAppealSerializer, :all_dbs do
 
     context "When all properties of the appellant_address are nil" do
       let(:address) do
-          {
-            addrs_one_txt: nil,
-            addrs_two_txt: nil,
-            addrs_three_txt: nil,
-            city_nm: nil,
-            cntry_nm: nil,
-            postal_cd: nil,
-            zip_prefix_nbr: nil,
-            ptcpnt_addrs_type_nm: nil,
-          }
+        {
+          addrs_one_txt: nil,
+          addrs_two_txt: nil,
+          addrs_three_txt: nil,
+          city_nm: nil,
+          cntry_nm: nil,
+          postal_cd: nil,
+          zip_prefix_nbr: nil,
+          ptcpnt_addrs_type_nm: nil,
+        }
       end
       let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case), veteran_address: address) }
 
@@ -52,7 +52,7 @@ describe WorkQueue::LegacyAppealSerializer, :all_dbs do
           cntry_nm: nil,
           postal_cd: FakeConstants.BGS_SERVICE.DEFAULT_STATE,
           zip_prefix_nbr: FakeConstants.BGS_SERVICE.DEFAULT_ZIP,
-          ptcpnt_addrs_type_nm: "Mailing"
+          ptcpnt_addrs_type_nm: "Mailing",
         }
       end
       let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case), veteran_address: address) }
