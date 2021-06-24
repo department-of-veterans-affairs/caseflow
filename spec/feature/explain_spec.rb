@@ -4,6 +4,7 @@ require "helpers/sanitized_json_configuration.rb"
 require "helpers/sanitized_json_exporter.rb"
 require "helpers/sanitized_json_importer.rb"
 require "helpers/intake_renderer.rb"
+require "helpers/hearing_renderer.rb"
 
 RSpec.feature "Explain JSON" do
   let(:user_roles) { ["System Admin"] }
