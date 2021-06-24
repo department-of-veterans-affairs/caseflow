@@ -104,6 +104,14 @@ module Caseflow::Error
     end
   end
 
+  class InvalidMultipleOpenTasksOfSameType < SerializableError
+    def initialize(args)
+      @task_type = args[:task_type]
+      @code = args[:code] || 400
+      @message = args[:message] || "Appeal cannot have more than one open task of type #{@task_type}"
+    end
+  end
+
   class InvalidUserId < SerializableError
     def initialize(args)
       @user_id = args[:user_id]

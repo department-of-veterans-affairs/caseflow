@@ -836,7 +836,7 @@ class Task < CaseflowRecord
 
   def only_open_task_of_type
     if appeal.reload.tasks.open.of_type(type).count >= 1
-      errors.add(:type, COPY::INVALID_MULTIPLE_TASKS)
+      fail Caseflow::Error::InvalidMultipleOpenTasksOfSameType, task_type: type
     end
   end
 
