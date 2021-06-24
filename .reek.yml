@@ -81,6 +81,8 @@ detectors:
       - ClaimReviewAsyncStatsReporter#as_csv
       - DataIntegrityChecksJob
       - DecisionIssueSyncJob
+      - ErdRecordAssociations
+      - ErdGraphStyling
       - VirtualHearings::CreateConferenceJob#log_virtual_hearing_state
       - VirtualHearings::DeleteConferencesJob#delete_conference
       - VirtualHearings::DeleteConferencesJob#log_virtual_hearing_state
