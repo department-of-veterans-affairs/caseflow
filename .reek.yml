@@ -98,6 +98,7 @@ detectors:
       - HearingSerializerBase
       - HearingSchedule::GenerateHearingDaysSchedule#generate_co_hearing_days_schedule
       - HearingSchedule::GenerateHearingDaysSchedule#get_fallback_date_for_co
+      - HearingSchedule::ValidateRoSpreadsheet#filter_invalid_range
       - HearingRenderer
       - LegacyDocket#count
       - RedistributedCase#legacy_appeal_relevant_tasks
