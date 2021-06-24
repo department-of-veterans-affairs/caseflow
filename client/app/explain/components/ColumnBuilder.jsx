@@ -19,11 +19,7 @@ export const timestampColumn = (column) => {
       }
 
       return date.toLocaleString('en-US', { hour12: false });
-
     },
-    backendCanSort: true,
-    label: 'Sort by timestamp',
-    getSortValue: (rowData) => rowData[column.name]
   };
 };
 
@@ -33,11 +29,8 @@ export const contextColumn = (column, filterOptions, narratives) => {
     name: column.name,
     cellClass: column.class,
     valueFunction: (rowData) => rowData[column.name],
-    backendCanSort: true,
     filterOptions,
     tableData: narratives,
-    label: 'Sort by context',
-    getSortValue: (rowData) => rowData[column.name]
   };
 };
 
@@ -51,18 +44,15 @@ export const objectTypeColumn = (column, filterOptions, narratives) => {
         {rowData[column.name]}
       </span>;
     },
-    backendCanSort: true,
     filterOptions,
     tableData: narratives,
     columnName: 'category',
     enableFilter: true,
     anyFiltersAreSet: true,
-    label: 'Sort by category',
-    getSortValue: (rowData) => rowData[column.name]
   };
 };
 
-export const eventTypeColumn = (column) => {
+export const eventTypeColumn = (column, filterOptions, narratives) => {
   return {
     header: column.header,
     name: column.name,
@@ -72,12 +62,11 @@ export const eventTypeColumn = (column) => {
         {rowData[column.name]}
       </span>;
     },
-    backendCanSort: true,
+    filterOptions,
+    tableData: narratives,
     columnName: 'event_type',
     enableFilter: true,
     anyFiltersAreSet: true,
-    label: 'Sort by event type',
-    getSortValue: (rowData) => rowData[column.name]
   };
 };
 
@@ -87,9 +76,6 @@ export const objectIdColumn = (column) => {
     name: column.name,
     cellClass: column.class,
     valueFunction: (rowData) => rowData[column.name],
-    backendCanSort: true,
-    label: 'Sort by object id',
-    getSortValue: (rowData) => rowData[column.name]
   };
 };
 
@@ -103,9 +89,6 @@ export const commentColumn = (column) => {
         {rowData[column.name]} ({rowData.object_id})
       </span>;
     },
-    backendCanSort: true,
-    label: 'Sort by comment',
-    getSortValue: (rowData) => rowData[column.name]
   };
 };
 

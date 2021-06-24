@@ -97,7 +97,7 @@ class NarrativeTable extends React.PureComponent {
           columns={this.columnsFromConfig(EXPLAIN_CONFIG.COLUMNS, this.state.narratives)}
           rowClassNames={(event) => event.category}
           rowObjects={this.state.narratives}
-          summary="test table" slowReRendersAreOk />
+          summary="Appeal events table" slowReRendersAreOk />
         {showModal && <React.Fragment>
           <Modal
             title="Details"
