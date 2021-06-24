@@ -324,7 +324,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
       # If count < min then update min, if count > max update max
       # If max is nil, set it to count
       # if min is nil, set it to count
-      def update_min_max(count, current_min, current_max)
+      def calculate_min_max(count, current_min, current_max)
         # If count is nil, return nothing.
         if count.nil?
           return [current_min, current_max]
@@ -345,11 +345,11 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
         [new_min, new_max]
       end
 
-      def update_total_min_max(count, current_total, current_min, current_max)
+      def calculate_total_min_max(count, current_total, current_min, current_max)
         current_total = 0 if current_total.nil?
         new_total = count.present? ? current_total + count : current_total
 
-        new_min, new_max = update_min_max(count, current_min, current_max)
+        new_min, new_max = calculate_min_max(count, current_min, current_max)
 
         [new_min, new_max, new_total]
       end
@@ -411,7 +411,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
               end
 
               # For each ro, update min and max days per date
-              new_min, new_max = update_min_max(count, summary[min_label], summary[max_label])
+              new_min, new_max = calculate_min_max(count, summary[min_label], summary[max_label])
               summary[min_label] = new_min
               summary[max_label] = new_max
 
@@ -419,7 +419,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
               summary[counts_label].push(count)
 
               # Across all hearing_day types for this ro
-              new_all_type_min, new_all_type_max, new_all_type_total = update_total_min_max(
+              new_all_type_min, new_all_type_max, new_all_type_total = calculate_total_min_max(
                 count,
                 summary[all_type_total_label][date],
                 summary[all_type_min_label],
