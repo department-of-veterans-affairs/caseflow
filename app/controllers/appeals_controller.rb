@@ -62,25 +62,23 @@ class AppealsController < ApplicationController
   end
 
   def update_power_of_attorney
-    begin
-      clear_poa_not_found_cache
-      if cooldown_period_remaining > 0
-        render json: {
-          alert_type: "info",
-          message: "Information is current at this time. Please try again in #{cooldown_period_remaining} minutes",
-          power_of_attorney: power_of_attorney_data
-        }
-      else
-        message, result = update_or_delete_power_of_attorney!
-        render json: {
-          alert_type: result,
-          message: message,
-          power_of_attorney: power_of_attorney_data
-        }
-      end
-    rescue StandardError => error
-      render_error(error)
+    clear_poa_not_found_cache
+    if cooldown_period_remaining > 0
+      render json: {
+        alert_type: "info",
+        message: "Information is current at this time. Please try again in #{cooldown_period_remaining} minutes",
+        power_of_attorney: power_of_attorney_data
+      }
+    else
+      message, result = update_or_delete_power_of_attorney!
+      render json: {
+        alert_type: result,
+        message: message,
+        power_of_attorney: power_of_attorney_data
+      }
     end
+  rescue StandardError => error
+    render_error(error)
   end
 
   def most_recent_hearing
