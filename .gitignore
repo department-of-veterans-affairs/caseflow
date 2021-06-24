@@ -72,4 +72,9 @@ local/vacols/build_facols/*
 Makefile
 
 # ERD diagrams are not checked in
-*-erd.pdf
+docs/schema/*-erd.pdf
+docs/schema/*_erd-*
+docs/schema/*_erd.*
+docs/schema/*-subclasses.*
+# Check in caseflow svg files
+!docs/schema/caseflow-*.svg
