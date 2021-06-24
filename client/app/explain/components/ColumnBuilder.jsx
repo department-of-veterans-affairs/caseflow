@@ -58,7 +58,6 @@ export const objectTypeColumn = (column, filterOptions, narratives) => {
     enableFilter: true,
     anyFiltersAreSet: true,
     label: 'Sort by category',
-    bodyClassName: 'closestRegionalOffice.location_hash.city',
     getSortValue: (rowData) => rowData[column.name]
   };
 };
@@ -157,4 +156,3 @@ export const detailsColumn = (column, handleModalOpen) => {
     }
   };
 };
-
