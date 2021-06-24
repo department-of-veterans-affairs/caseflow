@@ -63,10 +63,6 @@ class Claimant < CaseflowRecord
     false
   end
 
-  # def representative_participant_id
-  #   power_of_attorney&.participant_id
-  # end
-
   def person
     @person ||= Person.find_or_create_by_participant_id(participant_id)
   end

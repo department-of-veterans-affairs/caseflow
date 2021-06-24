@@ -257,6 +257,7 @@ class AppealsController < ApplicationController
   end
 
   def update_or_delete_power_of_attorney!
+    appeal.power_of_attorney&.try(:clear_bgs_power_of_attorney!) # clear memoization on legacy appeals
     poa = appeal.bgs_power_of_attorney
 
     if poa.blank?
