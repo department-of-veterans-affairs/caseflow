@@ -289,7 +289,6 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
       end
     end
 
-    # Travel board days don't have hearing days they are blackout dates
     context "combined allocation (video, virtual, central)" do
       # Take a list of hearing_days and condense them per ro, date, and type,
       # results look like this.
