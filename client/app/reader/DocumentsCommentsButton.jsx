@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import ToggleButton from '../components/ToggleButton';
 import Button from '../components/Button';
@@ -15,11 +16,11 @@ class DocumentsCommentsButton extends PureComponent {
         onClick={this.props.setViewingDocumentsOrComments}
       >
         <Button
-          id="show-documents-view"
+          id="button-documents"
           ariaLabel={DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS}
           name={DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS}
           styling={{
-            'aria-labelledby': 'toggle-label show-documents-view',
+            'aria-labelledby': 'toggle-label button-documents',
             'aria-selected':
               this.props.viewingDocumentsOrComments ===
               DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
@@ -28,11 +29,11 @@ class DocumentsCommentsButton extends PureComponent {
           Documents
         </Button>
         <Button
-          id="show-comments-view"
+          id="button-comments"
           ariaLabel={DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS}
           name={DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS}
           styling={{
-            'aria-labelledby': 'toggle-label show-comments-view',
+            'aria-labelledby': 'toggle-label button-comments',
             'aria-selected':
               this.props.viewingDocumentsOrComments ===
               DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS,
@@ -57,3 +58,8 @@ export default connect(
       dispatch
     )
 )(DocumentsCommentsButton);
+
+DocumentsCommentsButton.propTypes = {
+  setViewingDocumentsOrComments: PropTypes.func.isRequired,
+  viewingDocumentsOrComments: PropTypes.string
+};

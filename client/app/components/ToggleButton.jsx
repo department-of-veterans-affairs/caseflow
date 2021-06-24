@@ -29,6 +29,7 @@ export default class ToggleButton extends React.Component {
 }
 
 ToggleButton.propTypes = {
+  onClick: PropTypes.func,
   active: PropTypes.string,
   children: PropTypes.node
 };
