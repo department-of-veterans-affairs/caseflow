@@ -4,6 +4,7 @@ require "helpers/sanitized_json_configuration.rb"
 require "helpers/sanitized_json_exporter.rb"
 require "helpers/sanitized_json_importer.rb"
 require "helpers/intake_renderer.rb"
+require "helpers/hearing_renderer.rb"
 
 RSpec.feature "Explain JSON" do
   let(:user_roles) { ["System Admin"] }
@@ -97,7 +98,7 @@ RSpec.feature "Explain JSON" do
     end
     it "present realistic appeal events" do
       visit "explain/appeals/#{real_appeal.uuid}"
-      # binding.pry
+      page.find("#narrative_table").click
       task = real_appeal.tasks.sample
       expect(page).to have_content("#{task.type}_#{task.id}")
     end
