@@ -126,7 +126,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   # :reek:FeatureEnvy
   def sort_ro_list(ro_list, ro_info = {})
-    # Remove any ROs that don't have any allocated hearing days without rooms left
+    # Remove any ROs that don't have any allocation requested
     ros_with_request = ro_list.reject { |ro| ro[@request_type_allocations].to_i == 0 }
 
     # If we are shuffling the list, move the first element to the last
