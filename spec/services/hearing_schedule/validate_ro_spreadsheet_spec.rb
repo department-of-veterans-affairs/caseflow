@@ -183,6 +183,7 @@ describe HearingSchedule::ValidateRoSpreadsheet do
 
       expect(subject.first.message).to include("RO01")
       expect(subject.first.message).to include("RO50")
+      # RO02 has 0 for virtual allocation so it does not fail
       expect(subject.first.message).not_to include("RO02")
     end
   end
