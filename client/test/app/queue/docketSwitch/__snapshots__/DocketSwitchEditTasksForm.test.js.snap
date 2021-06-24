@@ -177,18 +177,18 @@ exports[`DocketSwitchEditTasksForm default values populates with default values 
                     aria-live="polite"
                     class="css-1laao21-a11yText"
                   >
-                    <span
+                    <p
                       id="aria-selection-event"
                     >
                        
                       
-                    </span>
-                    <span
+                    </p>
+                    <p
                       id="aria-context"
                     >
                        
                         0 results available. Select is focused ,type to refine list, press Down to open the menu, 
-                    </span>
+                    </p>
                   </span>
                   <div
                     class="cf-select__control cf-select__control--is-focused css-1pahdxg-control"

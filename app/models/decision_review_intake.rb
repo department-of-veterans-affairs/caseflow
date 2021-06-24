@@ -50,7 +50,7 @@ class DecisionReviewIntake < Intake
       notes: request_params[:claimant_notes]
     )
 
-    if FeatureToggle.enabled?(:non_veteran_claimants, user: user) && claimant.is_a?(OtherClaimant)
+    if claimant.is_a?(OtherClaimant)
       claimant.save_unrecognized_details!(
         request_params[:unlisted_claimant],
         request_params[:poa]

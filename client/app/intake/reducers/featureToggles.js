@@ -17,12 +17,6 @@ const updateFromServerFeatures = (state, featureToggles) => {
     restrictAppealIntakes: {
       $set: Boolean(featureToggles.restrictAppealIntakes)
     },
-    attorneyFees: {
-      $set: Boolean(featureToggles.attorneyFees)
-    },
-    nonVeteranClaimants: {
-      $set: Boolean(featureToggles.nonVeteranClaimants)
-    },
     establishFiduciaryEps: {
       $set: Boolean(featureToggles.establishFiduciaryEps)
     },

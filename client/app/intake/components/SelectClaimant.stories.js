@@ -9,9 +9,7 @@ const relationships = [
 ];
 
 const featureToggles = {
-  attorneyFees: false,
-  establishFiduciaryEps: false,
-  nonVeteranClaimants: false,
+  establishFiduciaryEps: false
 };
 const defaultArgs = {
   appellantName: 'Jane Doe',
@@ -35,7 +33,7 @@ export default {
 };
 
 const Template = (args) => {
-  const [_args, updateArgs] = useArgs();
+  const [updateArgs] = useArgs();
   const handleSetClaimant = ({ claimant, claimantType }) =>
     updateArgs({ claimant, claimantType });
 
@@ -57,21 +55,5 @@ Basic.parameters = {
   docs: {
     storyDescription:
       'Used during intake process to select a claimant with some sort of relationship to the veteran',
-  },
-};
-
-export const WithAttorneyFees = Template.bind({});
-WithAttorneyFees.args = {
-  ...defaultArgs,
-  featureToggles: {
-    attorneyFees: true,
-  },
-};
-
-export const WithNonVeteranClaimants = Template.bind({});
-WithNonVeteranClaimants.args = {
-  ...defaultArgs,
-  featureToggles: {
-    nonVeteranClaimants: true,
   },
 };

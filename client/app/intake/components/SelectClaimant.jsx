@@ -15,7 +15,6 @@ import { convertStringToBoolean } from '../util';
 import {
   ADD_CLAIMANT_TEXT,
   ADD_RELATIONSHIPS,
-  CLAIMANT_NOT_FOUND_START,
   CLAIMANT_NOT_FOUND_END,
   DECEASED_CLAIMANT_TITLE,
   DECEASED_CLAIMANT_MESSAGE,
@@ -86,25 +85,16 @@ export const SelectClaimant = (props) => {
   } = props;
 
   const {
-    attorneyFees,
     establishFiduciaryEps,
-    deceasedAppellants,
-    nonVeteranClaimants,
+    deceasedAppellants
   } = featureToggles;
 
-  const [showClaimantModal, setShowClaimantModal] = useState(false);
-  const [newClaimant, setNewClaimant] = useState(null);
-  const openAddClaimantModal = () => setShowClaimantModal(true);
+  const [newClaimant] = useState(null);
   const isAppeal = (formType === 'appeal');
 
-  const enableAddClaimantModal = useMemo(
-    () => isAppeal && attorneyFees && veteranIsNotClaimant && !nonVeteranClaimants,
-    [isAppeal, veteranIsNotClaimant, attorneyFees, nonVeteranClaimants]
-  );
-
   const enableAddClaimant = useMemo(
-    () => isAppeal && nonVeteranClaimants && veteranIsNotClaimant,
-    [isAppeal, veteranIsNotClaimant, nonVeteranClaimants]
+    () => isAppeal && veteranIsNotClaimant,
+    [isAppeal, veteranIsNotClaimant]
   );
 
   const radioOpts = useMemo(() => {
@@ -138,14 +128,6 @@ export const SelectClaimant = (props) => {
       claimantType: boolValue ? 'dependent' : 'veteran',
     });
   };
-  const handleRemove = () => {
-    setNewClaimant(null);
-    setClaimant({
-      claimant: null,
-      claimantType: 'dependent',
-      claimantNotes: null,
-    });
-  };
   const handleSelectNonVeteran = (value) => {
     const claimantType = value === 'claimant_not_listed' ? 'other' : 'dependent';
 
@@ -161,57 +143,23 @@ export const SelectClaimant = (props) => {
         claimantType });
     }
   };
-  const handleAddClaimant = ({
-    name,
-    participantId,
-    claimantType,
-    claimantNotes,
-  }) => {
-    setNewClaimant({
-      displayElem: (
-        <RemovableRadioLabel
-          text={`${name || 'Claimant not listed'}, Attorney`}
-          onRemove={handleRemove}
-          notes={claimantNotes}
-        />
-      ),
-      value: participantId ?? '',
-      defaultPayeeCode: '',
-      claimantName: name,
-      claimantNotes,
-      claimantType,
-    });
-    setClaimant({
-      claimant: participantId ?? null,
-      claimantType,
-      claimantNotes,
-      claimantName: name,
-    });
-    setShowClaimantModal(false);
-  };
   const handlePayeeCodeChange = (event) =>
     setPayeeCode(event ? event.value : null);
 
   const hasRelationships = relationships.length > 0;
+  // ASK YANG
   const showClaimants = ['true', true].includes(veteranIsNotClaimant);
 
   const claimantLabel = () => {
-    let claimantNotes = props.claimantNotes;
-
     return (
       <p
         id="claimantLabel"
         style={{ marginTop: '8.95px', marginBottom: '-25px' }}
       >
-        {nonVeteranClaimants ?
-          SELECT_CLAIMANT_LABEL :
-          [CLAIMANT_NOT_FOUND_START, email, CLAIMANT_NOT_FOUND_END]}
+        {SELECT_CLAIMANT_LABEL}
 
         <br />
         <br />
-        {enableAddClaimantModal && !(claimant || claimantNotes) ?
-          ADD_CLAIMANT_TEXT :
-          ''}
       </p>
     );
   };
@@ -225,7 +173,6 @@ export const SelectClaimant = (props) => {
         {CLAIMANT_NOT_FOUND_END}
         <br />
         <br />
-        {enableAddClaimantModal ? ADD_CLAIMANT_TEXT : ''}
       </p>
     );
   };
@@ -313,24 +260,6 @@ export const SelectClaimant = (props) => {
           claimantOptions() :
           noClaimantsCopy()
       )}
-
-      {enableAddClaimantModal && !newClaimant && (
-        <>
-          <Button
-            classNames={['usa-button-secondary', classes.button]}
-            name="+ Add Claimant"
-            id="button-addClaimant"
-            onClick={openAddClaimantModal}
-          />
-
-          {showClaimantModal && (
-            <AddClaimantModal
-              onCancel={() => setShowClaimantModal(false)}
-              onSubmit={handleAddClaimant}
-            />
-          )}
-        </>
-      )}
     </div>
   );
 };
@@ -338,10 +267,8 @@ export const SelectClaimant = (props) => {
 SelectClaimant.propTypes = {
   benefitType: PropTypes.string,
   featureToggles: PropTypes.shape({
-    attorneyFees: PropTypes.bool,
     establishFiduciaryEps: PropTypes.bool,
     deceasedAppellants: PropTypes.bool,
-    nonVeteranClaimants: PropTypes.bool,
   }),
   formType: PropTypes.string,
   isVeteranDeceased: PropTypes.bool,
