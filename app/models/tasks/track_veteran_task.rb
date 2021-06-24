@@ -64,20 +64,11 @@ class TrackVeteranTask < Task
 
       next unless appeal.is_a?(Appeal) && new_vso.should_write_ihp?(appeal)
 
-      # If there's an open Distribution task:
-      # That should be the first choice since the case hasn't been distributed yet.
+      previous_ihp_task = tasks_to_sync.find{ |task| task.is_a?(InformalHearingPresentationTask) }
+
       dist_task = appeal.tasks.open.find_by(type: :DistributionTask)
 
-      # Otherwise, look for the previously active IHP task's parent,
-      # it shouldn't be closed yet since that happens later in this method.
-      # IHP tasks get created on the parent of HearingTask, which I believe is usually the Distribution Task,
-      # but it looks like it can be the Root Task for Legacy Appeals.
-      # This also handles the creation of these on the parent of EvidenceSubmissionWindowTasks,
-      # which can be a child of Distribution, Hearing, AssignHearingDisposition, and maybe other tasks.
-      previous_ihp_task = tasks_to_sync.select{ |task| task.is_a?(InformalHearingPresentationTask) }
-
-      # follow the above loading order, and if none of those match then fall back to the root_task
-      parent_task = dist_task || previous_ihp_task&.parent || appeal.root_task
+      parent_task = previous_ihp_task&.parent || dist_task || appeal.root_task
 
       InformalHearingPresentationTask.create!(
         appeal: appeal, parent: parent_task, assigned_to: new_vso

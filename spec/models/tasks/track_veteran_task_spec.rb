@@ -77,16 +77,6 @@ describe TrackVeteranTask, :postgres do
         expect(subject).to eq([1, 2])
         expect(new_vso.tasks.count).to eq(2)
       end
-
-      context "When there's an open Distribution Task" do
-        let!(:dist_task) { create(:distribution_task, appeal: appeal) }
-        it "IHP Task is a child of the Distribution Task" do
-          subject
-          new_ihp_task = InformalHearingPresentationTask.find_by(assigned_to: new_vso)
-          expect(dist_task.status).to eq("on_hold")
-          expect(new_ihp_task.parent).to eq(dist_task)
-        end
-      end
     end
     context "when the appeal has no VSOs" do
       before { allow_any_instance_of(Appeal).to receive(:representatives).and_return([]) }
@@ -186,6 +176,25 @@ describe TrackVeteranTask, :postgres do
           expect(individual_ihp_task.status).to eq(Constants.TASK_STATUSES.assigned)
           subject
           expect(individual_ihp_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        end
+      end
+    end
+
+    context "When previously there was no POA" do
+      let(:old_vso) {nil}
+      let(:tracking_task) {nil}
+      let(:ihp_org_task) {nil}
+
+      before { allow_any_instance_of(Appeal).to receive(:representatives).and_return([new_vso]) }
+
+      context "When there's a POA is added" do
+        let!(:dist_task) { create(:distribution_task, appeal: appeal) }
+        let(:new_vso) { create(:vso) }
+        it "IHP Task is a child of the Distribution Task" do
+          subject
+          new_ihp_task = InformalHearingPresentationTask.find_by(assigned_to: new_vso)
+          expect(dist_task.status).to eq("on_hold")
+          expect(new_ihp_task.parent).to eq(dist_task)
         end
       end
     end
