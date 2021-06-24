@@ -24,9 +24,7 @@ class Appeal < DecisionReview
   has_many :decision_documents, as: :appeal
   has_many :vbms_uploaded_documents
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
-
   has_many :nod_date_updates
-
   has_one :special_issue_list
   has_one :post_decision_motion
 
@@ -34,7 +32,6 @@ class Appeal < DecisionReview
   has_one :docket_switch, class_name: "DocketSwitch", foreign_key: :new_docket_stream_id
 
   has_one :appellant_substitution, foreign_key: :target_appeal_id
-
   has_many :record_synced_by_job, as: :record
   has_one :work_mode, as: :appeal
   has_one :latest_informal_hearing_presentation_task, lambda {
@@ -42,6 +39,29 @@ class Appeal < DecisionReview
       .order(closed_at: :desc, assigned_at: :desc)
       .where(type: [InformalHearingPresentationTask.name, IhpColocatedTask.name], appeal_type: Appeal.name)
   }, class_name: "Task", foreign_key: :appeal_id
+
+  delegate :address_line_1,
+           :address_line_2,
+           :address_line_3,
+           :city,
+           :state,
+           :zip,
+           :gender,
+           :date_of_birth,
+           :age,
+           :available_hearing_locations,
+           :email_address,
+           :country, to: :veteran, prefix: true
+
+  delegate :power_of_attorney, to: :claimant
+  delegate :representative_name,
+           :representative_type,
+           :representative_address,
+           :representative_email_address,
+           :poa_last_synced_at,
+           :update_cached_attributes!,
+           :save_with_updated_bgs_record!,
+           to: :power_of_attorney, allow_nil: true
 
   enum stream_type: {
     Constants.AMA_STREAM_TYPES.original.to_sym => Constants.AMA_STREAM_TYPES.original,
@@ -247,19 +267,6 @@ class Appeal < DecisionReview
     tasks.select { |t| t.type == "DistributionTask" }.map(&:assigned_at).max
   end
 
-  delegate :address_line_1,
-           :address_line_2,
-           :address_line_3,
-           :city,
-           :state,
-           :zip,
-           :gender,
-           :date_of_birth,
-           :age,
-           :available_hearing_locations,
-           :email_address,
-           :country, to: :veteran, prefix: true
-
   def regional_office_key
     nil
   end
@@ -390,20 +397,11 @@ class Appeal < DecisionReview
     issues_report
   end
 
-  # Currently AMA only supports one claimant per decision review
-  def power_of_attorney
-    claimant&.power_of_attorney
+  def bgs_power_of_attorney
+    claimant&.is_a?(BgsRelatedClaimant) ? power_of_attorney : nil
   end
 
-  delegate :representative_name,
-           :representative_type,
-           :representative_address,
-           :representative_email_address,
-           :poa_last_synced_at,
-           :update_cached_attributes!,
-           :save_with_updated_bgs_record!,
-           to: :power_of_attorney, allow_nil: true
-
+  # Note: Currently Caseflow only supports one claimant per decision review
   def power_of_attorneys
     claimants.map(&:power_of_attorney).compact
   end
