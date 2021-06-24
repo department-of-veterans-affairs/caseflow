@@ -6,6 +6,7 @@ require "helpers/sanitized_json_importer.rb"
 # required to load `explain` endpoint in an RSpec
 require "helpers/sanitized_json_exporter.rb"
 require "helpers/intake_renderer.rb"
+require "helpers/hearing_renderer.rb"
 
 feature "duplicate JudgeAssignTask investigation" do
   before do

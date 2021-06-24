@@ -13,6 +13,7 @@ detectors:
     exclude:
       - AsyncableJobsReporter#initialize
       - HearingRepository#slot_new_hearing
+      - HearingRenderer
       - LegacyDocket#distribute_appeals
       - Veteran
       - ControllerSchema#respond_to_missing?
@@ -23,6 +24,7 @@ detectors:
       - Fakes::BGSService
       - Hearings::GeomatchAndCacheAppealJob#perform
       - HearingRepository#slot_new_hearing
+      - HearingRenderer
       - LegacyDocket#distribute_appeals
       - SanitizedJsonDifference
       - SanitizedJsonConfiguration
@@ -96,6 +98,8 @@ detectors:
       - HearingSerializerBase
       - HearingSchedule::GenerateHearingDaysSchedule#generate_co_hearing_days_schedule
       - HearingSchedule::GenerateHearingDaysSchedule#get_fallback_date_for_co
+      - HearingSchedule::ValidateRoSpreadsheet#filter_invalid_range
+      - HearingRenderer
       - LegacyDocket#count
       - RedistributedCase#legacy_appeal_relevant_tasks
       - LegacyAppeal#cancel_open_caseflow_tasks!
@@ -173,6 +177,7 @@ detectors:
       - BulkTaskReassignment
       - ExplainController
       - HearingLocation
+      - HearingRenderer
       - LegacyAppeal
       - Person
       - QueueConfig
@@ -219,6 +224,7 @@ detectors:
       - HearingDispositionChangeJob
       - Helpers::AppealHearingHelper#available_hearing_locations
       - Helpers::AppealHearingHelper#hearings
+      - HearingRenderer
       - JudgeLegacyDecisionReviewTask#review_action
       - LatestRatingDisabilityEvaluation#latest_disability_evaluation
       - LegacyDocket#age_of_n_oldest_genpop_priority_appeals
