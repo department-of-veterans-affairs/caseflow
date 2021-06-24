@@ -186,7 +186,6 @@ UnidentifiedIssuesModal.propTypes = {
   cancelText: PropTypes.string,
   onSkip: PropTypes.func,
   skipText: PropTypes.string,
-  featureToggles: PropTypes.object,
   intakeData: PropTypes.object,
   formType: PropTypes.string,
   editPage: PropTypes.bool
