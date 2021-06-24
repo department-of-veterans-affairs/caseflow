@@ -98,7 +98,8 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
         './queue/index',
         './intakeManager/index',
         './intakeEdit/index',
-        './nonComp/index'
+        './nonComp/index',
+        './explain/index'
       ],
       () => renderApp(component)
     );
