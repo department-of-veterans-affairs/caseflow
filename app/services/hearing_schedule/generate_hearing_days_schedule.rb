@@ -53,7 +53,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   def allocate_hearing_days_to_ros(request_type_allocations = :allocated_days)
     @request_type_allocations = request_type_allocations
 
-    # Add up all the hearing days we need to distribute
+    # Add up all the hearing days we need to distribute for the request type
     days_to_allocate = @ros.values.pluck(@request_type_allocations).sum.to_i
 
     # Create a lookup table of available days to track the number of allocations per date
@@ -126,7 +126,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   # :reek:FeatureEnvy
   def sort_ro_list(ro_list, ro_info = {})
-    # Remove any ROs that don't have any allocated hearing days without rooms left
+    # Remove any ROs that don't have any allocation requested
     ros_with_request = ro_list.reject { |ro| ro[@request_type_allocations].to_i == 0 }
 
     # If we are shuffling the list, move the first element to the last

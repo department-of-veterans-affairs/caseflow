@@ -325,7 +325,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
       # If max is nil, set it to count
       # if min is nil, set it to count
       def update_min_max(count, current_min, current_max)
-        # If count is nil, update nothing.
+        # If count is nil, return nothing.
         if count.nil?
           return [current_min, current_max]
         end
