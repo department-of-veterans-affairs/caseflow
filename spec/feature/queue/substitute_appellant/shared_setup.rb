@@ -154,5 +154,11 @@ RSpec.shared_examples("fill substitution form") do
       expect(page).to have_content COPY::CASE_TIMELINE_APPELLANT_SUBSTITUTION
       expect(page).to have_content COPY::CASE_TIMELINE_APPELLANT_SUBSTITUTION_PROCESSED
     end
+
+    step "verify items on original appeal" do
+      visit "/queue/appeals/#{appeal.uuid}"
+
+      expect(page).to_not have_content "+ Add Substitute"
+    end
   end
 end
