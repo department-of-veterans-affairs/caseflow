@@ -22,14 +22,30 @@
 /* Table columns */
 
 #events_table .timestamp {
-  max-width: 100px;
+  column-width: 120px;
 }
 
 #events_table .timestamp,
 #events_table .category,
 #events_table .event_type {
-  padding-right: 0px;
-  padding-left: 0px;
+  padding-right: 2px;
+  padding-left: 1px;
+}
+
+#events_table td.category {
+  text-align: right;
+}
+
+#events_table .rel_data,
+#events_table .narrative {
+  max-width: 300px;
+  word-wrap: break-word;
+}
+
+#events_table td.rel_data {
+  margin: 0px;
+  font-size: 0.8em;
+  white-space: pre-line;
 }
 
 /* Table rows */
@@ -59,18 +75,6 @@
 
 #events_table tr.hearing {
   border-style: dashed;
-}
-
-#events_table .rel_data,
-#events_table .narrative {
-  max-width: 300px;
-  word-wrap: break-word;
-}
-
-#events_table .rel_data pre {
-  margin: 0px;
-  font-size: 0.8em;
-  white-space: pre; /* doesn't work */
 }
 
 /* Table cells */

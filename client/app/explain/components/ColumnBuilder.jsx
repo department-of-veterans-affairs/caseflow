@@ -89,7 +89,8 @@ export const commentColumn = (column) => {
     cellClass: column.class,
     valueFunction: (rowData) => {
       return <span className={className(rowData)}>
-        {rowData[column.name]} ({rowData.object_id})
+        {rowData[column.name] && <div>{rowData[column.name]}<br /></div>}
+        ({rowData.object_id})
       </span>;
     },
   };
@@ -104,13 +105,10 @@ export const relevantDataColumn = (column) => {
       if (rowData[column.name]) {
         let jsonString = JSON.stringify(rowData[column.name], null, ' ');
 
-        jsonString = jsonString.replace('{\n', '').replace('\n}', '');
-
-        return <pre>{jsonString}</pre>;
+        return jsonString.replace('{\n', '').replace('\n}', '');
       }
 
       return '';
-
     }
   };
 };
