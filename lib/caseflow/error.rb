@@ -109,7 +109,8 @@ module Caseflow::Error
       @task_type = args[:task_type]
       @code = args[:code] || 400
       @title = "Error assigning tasks"
-      @message = args[:message] || "This appeal cannot have more than one open task of type #{@task_type}.  Please return to the case details page."
+      @message = args[:message] || "This appeal cannot have more than one open task of type #{@task_type}."\
+      "Please return to the case details page."
     end
   end
 
