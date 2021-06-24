@@ -64,7 +64,7 @@ class TrackVeteranTask < Task
 
       next unless appeal.is_a?(Appeal) && new_vso.should_write_ihp?(appeal)
 
-      previous_ihp_task = tasks_to_sync.find{ |task| task.is_a?(InformalHearingPresentationTask) }
+      previous_ihp_task = tasks_to_sync.find { |task| task.is_a?(InformalHearingPresentationTask) }
 
       dist_task = appeal.tasks.open.find_by(type: :DistributionTask)
 

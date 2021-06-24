@@ -181,9 +181,9 @@ describe TrackVeteranTask, :postgres do
     end
 
     context "When previously there was no POA" do
-      let(:old_vso) {nil}
-      let(:tracking_task) {nil}
-      let(:ihp_org_task) {nil}
+      let(:old_vso) { nil }
+      let(:tracking_task) { nil }
+      let(:ihp_org_task) { nil }
 
       before { allow_any_instance_of(Appeal).to receive(:representatives).and_return([new_vso]) }
 
