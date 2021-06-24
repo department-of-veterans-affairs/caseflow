@@ -16,16 +16,11 @@ describe JudgeTask, :all_dbs do
     let!(:first_assign_task) do
       create(:ama_judge_assign_task, assigned_to: judge, appeal: appeal)
     end
-    let(:second_assign_task) do
-      create(:ama_judge_assign_task, assigned_to: judge, appeal: appeal)
-    end
 
-    subject { second_assign_task }
-
-    context "only one judge assign task can be created for an appeal" do
+    context "when one judge assign task is open for an appeal" do
       it "throws an error when a second task is created" do
-        expect { subject }.to raise_error do |error|
-          expect(error).to be_a(ActiveRecord::RecordInvalid)
+        expect { create(:ama_judge_assign_task, assigned_to: judge, appeal: appeal) }.to raise_error do |error|
+          expect(error).to be_a(Caseflow::Error::MultipleOpenTasksOfSameTypeError)
         end
       end
     end

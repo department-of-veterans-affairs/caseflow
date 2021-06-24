@@ -104,7 +104,7 @@ module Caseflow::Error
     end
   end
 
-  class InvalidMultipleOpenTasksOfSameType < SerializableError
+  class MultipleOpenTasksOfSameTypeError < SerializableError
     def initialize(args)
       @task_type = args[:task_type]
       @code = args[:code] || 400
