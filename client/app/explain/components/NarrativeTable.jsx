@@ -42,16 +42,19 @@ class NarrativeTable extends React.PureComponent {
       [EXPLAIN_CONFIG.COLUMNS.TIMESTAMP.name]: timestampColumn(
         column
       ),
+      // a.k.a. Category column
       [EXPLAIN_CONFIG.COLUMNS.OBJECT_TYPE.name]: objectTypeColumn(
         column,
         filterOptions,
         this.state.narratives
       ),
+      // a.k.a. Type column
       [EXPLAIN_CONFIG.COLUMNS.EVENT_TYPE.name]: eventTypeColumn(
         column,
         filterOptions,
         this.state.narratives
       ),
+      // a.k.a. Narrative column
       [EXPLAIN_CONFIG.COLUMNS.COMMENT.name]: commentColumn(
         column
       ),

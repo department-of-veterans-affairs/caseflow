@@ -34,6 +34,7 @@ export const contextColumn = (column, filterOptions, narratives) => {
   };
 };
 
+// a.k.a. Category column
 export const objectTypeColumn = (column, filterOptions, narratives) => {
   return {
     header: column.header,
@@ -52,6 +53,7 @@ export const objectTypeColumn = (column, filterOptions, narratives) => {
   };
 };
 
+// a.k.a. Type column
 export const eventTypeColumn = (column, filterOptions, narratives) => {
   return {
     header: column.header,
@@ -79,6 +81,7 @@ export const objectIdColumn = (column) => {
   };
 };
 
+// a.k.a. Narrative column
 export const commentColumn = (column) => {
   return {
     header: column.header,
