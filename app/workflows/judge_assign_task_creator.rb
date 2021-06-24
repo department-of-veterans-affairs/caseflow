@@ -31,7 +31,6 @@ class JudgeAssignTaskCreator
                                                                         assigned_to_id: @judge.id,
                                                                         appeal: appeal
                                                                       }, current_user)
-    @task
   end
 
   def task
