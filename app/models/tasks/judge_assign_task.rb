@@ -14,8 +14,8 @@
 # Historically, it can have AttorneyTask children, but AttorneyTasks should now be under JudgeDecisionReviewTasks.
 
 class JudgeAssignTask < JudgeTask
-  validate :no_multiples_of_open_task_type, on: :create,
-                                            if: :open_task_count_validation_required?
+  validate :only_open_task_of_type, on: :create,
+                                    unless: :skip_check_for_only_open_task_of_type?
 
   def additional_available_actions(_user)
     [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]

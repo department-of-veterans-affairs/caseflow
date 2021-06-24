@@ -558,7 +558,7 @@ class Task < CaseflowRecord
   def reassign(reassign_params, current_user)
     # We do not validate the number of tasks in this scenario because when a
     # task is reassigned, more than one open task of the same type must exist during the reassignment.
-    Thread.current.thread_variable_set(:skip_duplicate_validation, true)
+    Thread.current.thread_variable_set(:skip_check_for_only_open_task_of_type, true)
     replacement = dup.tap do |task|
       begin
         ActiveRecord::Base.transaction do
@@ -569,10 +569,10 @@ class Task < CaseflowRecord
 
           task.save!
         end
-      # The ensure block guarantees that the thread-local variable skip_duplicate_validation
+      # The ensure block guarantees that the thread-local variable check_for_open_task_type
       # does not leak outside of this method
       ensure
-        Thread.current.thread_variable_set(:skip_duplicate_validation, nil)
+        Thread.current.thread_variable_set(:skip_check_for_only_open_task_of_type, nil)
       end
     end
 
@@ -830,11 +830,11 @@ class Task < CaseflowRecord
     true
   end
 
-  def open_task_count_validation_required?
-    !Thread.current.thread_variable_get(:skip_duplicate_validation)
+  def skip_check_for_only_open_task_of_type?
+    Thread.current.thread_variable_get(:skip_check_for_only_open_task_of_type)
   end
 
-  def no_multiples_of_open_task_type
+  def only_open_task_of_type
     if appeal.reload.tasks.open.of_type(type).count >= 1
       errors.add(:type, COPY::INVALID_MULTIPLE_TASKS)
     end
