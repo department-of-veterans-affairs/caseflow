@@ -110,7 +110,7 @@ export const commentColumn = (column) => {
   };
 };
 
-export const relevanttDataColumn = (column) => {
+export const relevantDataColumn = (column) => {
   return {
     header: column.header,
     name: column.name,
