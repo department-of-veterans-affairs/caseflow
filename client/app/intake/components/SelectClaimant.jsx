@@ -13,7 +13,6 @@ import {
 } from '../constants';
 import { convertStringToBoolean } from '../util';
 import {
-  ADD_CLAIMANT_TEXT,
   ADD_RELATIONSHIPS,
   CLAIMANT_NOT_FOUND_END,
   DECEASED_CLAIMANT_TITLE,
@@ -23,8 +22,6 @@ import {
 } from 'app/../COPY';
 import Alert from 'app/components/Alert';
 import Button from 'app/components/Button';
-import classes from './SelectClaimant.module.scss';
-import { AddClaimantModal } from './AddClaimantModal';
 
 const email = React.createElement(
   'a',
@@ -147,7 +144,6 @@ export const SelectClaimant = (props) => {
     setPayeeCode(event ? event.value : null);
 
   const hasRelationships = relationships.length > 0;
-  // ASK YANG
   const showClaimants = ['true', true].includes(veteranIsNotClaimant);
 
   const claimantLabel = () => {

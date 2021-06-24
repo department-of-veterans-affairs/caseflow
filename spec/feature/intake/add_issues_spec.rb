@@ -603,44 +603,20 @@ feature "Intake Add Issues Page", :all_dbs do
       end
     end
 
-    context "when attorney_fees featureToggle is enabled" do
-      let(:veteran_no_ratings) do
-        Generators::Veteran.build(file_number: "55555555",
-                                  first_name: "Nora",
-                                  last_name: "Attings",
-                                  participant_id: "44444444")
-      end
+    context "when attorney_fees featureToggle is permanently disabled" do
+      scenario "checks that attorney categories do not exist on compensation" do
+        start_higher_level_review(veteran_no_ratings)
+        visit "/intake"
+        click_intake_continue
+        expect(page).to have_current_path("/intake/add_issues")
 
-      context "when attorney_fees featureToggle is enabled" do
-        before { FeatureToggle.enable!(:attorney_fees) }
-        after { FeatureToggle.disable!(:attorney_fees) }
-        scenario "checks for all Compensation categories" do
-          start_higher_level_review(veteran_no_ratings)
-          visit "/intake"
-          click_intake_continue
-          expect(page).to have_current_path("/intake/add_issues")
-
-          click_intake_add_issue
-          expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
-          find(".cf-select__control").click
-          expect(page).to have_content("Contested Claims - Attorney fees")
-        end
-      end
-
-      context "when attorney_fees featureToggle is not enabled" do
-        scenario "checks that attorney categories do not exist on compensation" do
-          start_higher_level_review(veteran_no_ratings)
-          visit "/intake"
-          click_intake_continue
-          expect(page).to have_current_path("/intake/add_issues")
-
-          click_intake_add_issue
-          expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
-          find(".cf-select__control").click
-          expect(page).to_not have_content("Contested Claims - Attorney fees")
-          expect(page).to have_content("Active Duty Adjustments")
-        end
+        click_intake_add_issue
+        expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
+        find(".cf-select__control").click
+        expect(page).to_not have_content("Contested Claims - Attorney fees")
+        expect(page).to have_content("Active Duty Adjustments")
       end
     end
+
   end
 end

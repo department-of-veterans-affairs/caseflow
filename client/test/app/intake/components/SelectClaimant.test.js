@@ -145,7 +145,6 @@ describe('SelectClaimant', () => {
     describe('nonVeteranClaimants enabled', () => {
       const featureToggles = {
         ...defaultFeatureToggles,
-        nonVeteranClaimants: true,
       };
 
       it('renders correctly', async () => {
