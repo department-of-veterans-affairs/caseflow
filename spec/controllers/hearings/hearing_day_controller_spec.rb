@@ -107,7 +107,7 @@ describe Hearings::HearingDayController, :all_dbs do
 
     context "vso user" do
       let(:station_id) { "301" }
-      let(:user) { create(:user, roles: ["VSO"], station_id: station_id, regional_office: "RO02")}
+      let(:user) { create(:user, roles: ["VSO"], station_id: station_id, regional_office: "RO02") }
       let(:hearing_day_in_range1) do
         create(:hearing_day, scheduled_for: Time.zone.now.to_date + 1.day)
       end
@@ -116,7 +116,7 @@ describe Hearings::HearingDayController, :all_dbs do
           :hearing_day,
           regional_office: "RO19",
           request_type: HearingDay::REQUEST_TYPES[:video],
-          scheduled_for: Time.zone.now.to_date + 2.day
+          scheduled_for: Time.zone.now.to_date + 2.days
         )
       end
       let(:hearing_day_out_of_range) do
@@ -158,7 +158,7 @@ describe Hearings::HearingDayController, :all_dbs do
           expect(subject.status).to eq 200
           hearing_days = JSON.parse(subject.body)
           expect(hearing_days["hearings"].size).to eq 2
-          expect( hearing_days["hearings"].pluck("id")).to eq(result)
+          expect(hearing_days["hearings"].pluck("id")).to eq(result)
         end
       end
 

@@ -104,11 +104,11 @@ class Hearings::HearingDayController < HearingsApplicationController
   def default_range_end_date
     default = Time.zone.today.beginning_of_day
     # if vso users visit hearings/schedule page, only show hearings 2 months out by default
-    default += if params[:action] == "index"
-                 current_user&.vso_employee? ? 60.days : 365.days
-               else
-                 182.days
-               end
+    default + if params[:action] == "index"
+                current_user&.vso_employee? ? 60.days : 365.days
+              else
+                182.days
+              end
   end
 
   def range_end_date
