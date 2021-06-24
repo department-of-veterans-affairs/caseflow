@@ -240,7 +240,7 @@ class SanitizedJsonConfiguration
     [
       appeal.cavc_remand&.source_appeal,
       appeal.appellant_substitution&.source_appeal,
-      appeal.request_issues.map { |rqi| rqi.contested_decision_issue&.decision_review }
+      appeal.request_issues.includes(:contested_decision_issue).map { |rqi| rqi.contested_decision_issue&.decision_review }
     ].flatten.compact
   end
 
