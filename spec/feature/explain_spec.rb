@@ -116,7 +116,7 @@ RSpec.feature "Explain JSON" do
       expect(page).to have_content("show_pii: false")
       expect(page).to have_content("Appeal Narrative (contains PII)")
 
-      click_link('toggle show_pii')
+      click_link("toggle show_pii")
       expect(page).to have_content("show_pii = true")
       expect(page).to have_content("Intake (showing PII)")
       expect(page).to have_content("Hearing (showing PII)")
