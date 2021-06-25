@@ -52,8 +52,9 @@ class ExplainController < ApplicationController
   end
 
   def task_tree_as_text
-    [appeal.tree(*treee_fields),
-     legacy_task_tree_as_text
+    [
+      appeal.tree(*treee_fields),
+      legacy_task_tree_as_text
     ].compact.join("\n\n")
   end
 
