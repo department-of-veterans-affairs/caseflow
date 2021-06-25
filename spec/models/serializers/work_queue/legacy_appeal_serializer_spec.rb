@@ -45,10 +45,10 @@ describe WorkQueue::LegacyAppealSerializer, :all_dbs do
     context "When appellant_address country is nil" do
       let(:address) do
         {
-          addrs_one_txt: FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_1,
-          addrs_two_txt: FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_2,
-          addrs_three_txt: FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_3,
-          city_nm: FakeConstants.BGS_SERVICE.DEFAULT_CITY,
+          addrs_one_txt: [nil, FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_1].sample,
+          addrs_two_txt: [nil, FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_2].sample,
+          addrs_three_txt: [nil, FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_3].sample,
+          city_nm: [nil, FakeConstants.BGS_SERVICE.DEFAULT_CITY].sample,
           cntry_nm: nil,
           postal_cd: FakeConstants.BGS_SERVICE.DEFAULT_STATE,
           zip_prefix_nbr: FakeConstants.BGS_SERVICE.DEFAULT_ZIP,
