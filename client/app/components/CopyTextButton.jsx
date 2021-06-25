@@ -19,7 +19,7 @@ export const clipboardButtonStyling = (defaults) =>
 
 export default class CopyTextButton extends React.PureComponent {
   render = () => {
-    const { text, textToCopy, label, styling } = this.props;
+    const { text, textToCopy, label, styling, ariaLabel } = this.props;
     const buttonStyles = isEmpty(styling) ?
       {
         borderColor: COLORS.GREY_LIGHT,
@@ -42,7 +42,7 @@ export default class CopyTextButton extends React.PureComponent {
           <button
             type="submit"
             className="cf-apppeal-id"
-            aria-label={`Copy ${label} ${text}`}
+            aria-label={ariaLabel || `Copy ${label} ${text}`}
             {...clipboardButtonStyling(buttonStyles)}
           >
             {text}&nbsp;
@@ -69,7 +69,12 @@ CopyTextButton.propTypes = {
   textToCopy: PropTypes.string,
 
   /**
-   * Populates into the aria-label as `Copy ${label} ${text}`
+   * If set, this will be the aria-label
+   */
+  ariaLabel: PropTypes.string,
+
+  /**
+   * If ariaLabel not set, populates the aria-label as `Copy ${label} ${text}`
    */
   label: PropTypes.string,
   styling: PropTypes.object

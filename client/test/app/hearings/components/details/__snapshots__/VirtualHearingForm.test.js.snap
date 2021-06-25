@@ -923,6 +923,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                     2684353125#
                   </div>
                   <CopyTextButton
+                    ariaLabel="Copy Guest Link"
                     label=""
                     styling={Object {}}
                     text="Copy Guest Link"
@@ -944,7 +945,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                       >
                         <button
                           aria-describedby="tooltip-Copy Guest Link"
-                          aria-label="Copy  Copy Guest Link"
+                          aria-label="Copy Guest Link"
                           className="cf-apppeal-id"
                           data-css-cjlnsd=""
                           data-event="focus mouseenter"
