@@ -6,6 +6,8 @@ FactoryBot.define do
                          "spec/support/validRoSpreadsheet.xlsx", :filepath)
     S3Service.store_file(SchedulePeriod::S3_SUB_BUCKET + "/" + "blankRoSpreadsheet.xlsx",
                          "spec/support/blankRoSpreadsheet.xlsx", :filepath)
+    S3Service.store_file(SchedulePeriod::S3_SUB_BUCKET + "/" + "q3fy21RealExampleRoSpreadsheet.xlsx",
+                         "spec/support/q3fy21RealExampleRoSpreadsheet.xlsx", :filepath)
   end
 
   factory :ro_schedule_period do
@@ -19,6 +21,12 @@ FactoryBot.define do
       end_date { Date.parse("2018-06-01") }
       file_name { "blankRoSpreadsheet.xlsx" }
       user
+    end
+
+    factory :real_ro_schedule_period do
+      start_date { Date.parse("2021-04-01") }
+      end_date { Date.parse("2021-06-30") }
+      file_name { "q3fy21RealExampleRoSpreadsheet.xlsx" }
     end
   end
 end

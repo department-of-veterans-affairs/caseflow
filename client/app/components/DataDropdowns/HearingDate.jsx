@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import React, { useEffect } from 'react';
 import { values, find } from 'lodash';
 
+import { Dot } from '../Dot';
 import { formatDateStr, getMinutesToMilliseconds } from '../../util/DateUtil';
 import {
   onReceiveDropdownData,
@@ -14,6 +15,31 @@ import ApiUtil from '../../util/ApiUtil';
 import COPY from '../../../COPY';
 import LoadingLabel from './LoadingLabel';
 import SearchableDropdown from '../SearchableDropdown';
+
+export const HearingDateLabel = ({ date, requestType, scheduled, detail }) => {
+  return (
+    <React.Fragment>
+      <strong>{date}</strong>
+      <Dot spacing={5} />{' '}
+      {requestType}
+      <Dot spacing={5} />{' '}
+      {scheduled}
+      {detail && (
+        <React.Fragment>
+          <Dot spacing={5} />{' '}
+          {detail}
+        </React.Fragment>
+      )}
+    </React.Fragment>
+  );
+};
+
+HearingDateLabel.propTypes = {
+  scheduled: PropTypes.string.isRequired,
+  requestType: PropTypes.string,
+  date: PropTypes.string,
+  detail: PropTypes.string,
+};
 
 export const HearingDateDropdown = (props) => {
   const {
@@ -37,6 +63,26 @@ export const HearingDateDropdown = (props) => {
       get(xhrUrl, { timeout: { response: getMinutesToMilliseconds(5) } });
   };
 
+  // Map over the hearing dates to attach the formatted label to each option
+  const formatHearingDays = (hearingDays) => hearingDays.map((hearingDate) => ({
+    label: (
+      <HearingDateLabel
+        requestType={hearingDate.readableRequestType}
+        date={formatDateStr(hearingDate.scheduledFor, 'YYYY-MM-DD', 'ddd MMM D')}
+        scheduled={`${hearingDate.filledSlots} of ${ hearingDate.totalSlots } scheduled`}
+        detail={hearingDate.vlj || hearingDate.roomLabel}
+      />
+    ),
+    value: {
+      ...hearingDate,
+      hearingDate: formatDateStr(
+        hearingDate.scheduledFor,
+        'YYYY-MM-DD',
+        'YYYY-MM-DD'
+      ),
+    },
+  }));
+
   // fetch hearing dates for RO and format
   const getHearingDates = () => {
     // ex `hearingDatesForRO17`
@@ -53,18 +99,7 @@ export const HearingDateDropdown = (props) => {
       then((resp) => {
         // format data
         const jsonResponse = ApiUtil.convertToCamelCase(resp.body);
-        const dateOptionsForRO = values(jsonResponse.hearingDays).
-          map((hearingDate) => {
-            const scheduled = formatDateStr(hearingDate.scheduledFor);
-
-            return {
-              label: `${scheduled} (${hearingDate.filledSlots}/${hearingDate.totalSlots}) ${hearingDate.roomLabel} `,
-              value: {
-                ...hearingDate,
-                hearingDate: formatDateStr(hearingDate.scheduledFor, 'YYYY-MM-DD', 'YYYY-MM-DD')
-              }
-            };
-          });
+        const dateOptionsForRO = formatHearingDays(values(jsonResponse.hearingDays));
 
         // sort dates in ascending order
         dateOptionsForRO?.sort((d1, d2) => new Date(d1.value.hearingDate) - new Date(d2.value.hearingDate));

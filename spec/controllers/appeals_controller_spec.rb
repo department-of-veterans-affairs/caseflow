@@ -630,7 +630,6 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         expect(JSON.parse(subject.body)["representative_name"]).to eq "Clarence Darrow"
         expect(JSON.parse(subject.body)["representative_email_address"]).to eq "clarence.darrow@caseflow.gov"
         expect(JSON.parse(subject.body)["representative_tz"]).to eq "America/Los_Angeles"
-        expect(JSON.parse(subject.body)["representative_id"]).to eq appeal.power_of_attorney.bgs_id
       end
     end
 
@@ -682,7 +681,6 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         expected_email = "clarence.darrow@caseflow.gov"
         expect(JSON.parse(subject.body)["power_of_attorney"]["representative_email_address"]).to eq expected_email
         expect(JSON.parse(subject.body)["power_of_attorney"]["representative_tz"]).to eq "America/Los_Angeles"
-        expect(JSON.parse(subject.body)["power_of_attorney"]["representative_id"]).to eq appeal.power_of_attorney.id
       end
     end
   end

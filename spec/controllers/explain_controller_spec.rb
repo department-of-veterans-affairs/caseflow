@@ -3,6 +3,7 @@
 require "helpers/sanitized_json_configuration.rb"
 require "helpers/sanitized_json_exporter.rb"
 require "helpers/intake_renderer.rb"
+require "helpers/hearing_renderer.rb"
 
 describe ExplainController, :all_dbs, type: :controller do
   include TaskHelpers
@@ -84,6 +85,10 @@ describe ExplainController, :all_dbs, type: :controller do
         expect(response.body).to include "VeteranClaimant"
         expect(response.body).to include "breadcrumbs:"
         expect(response.body).to include "Veteran #{appeal.veteran.id}"
+
+        # hearing render output
+        sched_hearing_task_id = appeal.tasks.of_type(:ScheduleHearingTask).first.id
+        expect(response.body).to include "Unscheduled Hearing (SCH Task ID: #{sched_hearing_task_id}"
       end
     end
 
