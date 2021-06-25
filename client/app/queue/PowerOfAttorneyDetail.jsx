@@ -129,7 +129,7 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
 
     if (recognizedAppellant && recognizedPoa) {
       return <PoaRefresh powerOfAttorney={poa} appealId={appealId} {...detailListStyling} />;
-    } else if (unrecognizedPoa) {
+    } else if (poa.representative_type === unrecognizedPoa) {
       return <em>{ COPY.CASE_DETAILS_UNRECOGNIZED_POA }</em>;
     }
   };
