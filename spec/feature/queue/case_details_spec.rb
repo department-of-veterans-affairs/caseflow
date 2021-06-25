@@ -466,7 +466,6 @@ RSpec.feature "Case details", :all_dbs do
       let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
 
       before { FeatureToggle.disable!(:poa_button_refresh) }
-      after { FeatureToggle.enable!(:poa_button_refresh) }
 
       scenario "text isn't on the page" do
         visit "/queue/appeals/#{appeal.vacols_id}"
