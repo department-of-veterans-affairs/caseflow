@@ -6,7 +6,7 @@
 <% end %>
 
 <div style="font-size:0.875em; padding:10px">
-  Currently, <code>show_pii = <%= show_pii_query_param %></code>.
+  <code class="show_pii_<%=show_pii_query_param%>">show_pii = <%= show_pii_query_param %></code>.
   To toggle PII, click <%= link_to('toggle show_pii', {action: 'show', show_pii: !show_pii_query_param}) %>.
   (Other formats:
   <%= link_to((show_pii_query_param ? "text showing PII" : "sanitized text"),
@@ -56,7 +56,7 @@
   </details>
   <hr/>
 
-  <h3>Intake (<%= show_pii_query_param ? "showing PII" : "no PII" %>)</h3>
+  <h3>Intake (<span class="show_pii_<%=show_pii_query_param%>"><%= show_pii_query_param ? "showing PII" : "no PII" %></span>)</h3>
   <code style="color: green">
     puts IntakeRenderer.render(Appeal.find(<%= appeal.id %>),
       show_pii: <%= show_pii_query_param ? "true" : "false" %>)
@@ -64,7 +64,7 @@
   <pre style="font-size:0.9em; padding:10px"><code><%= intake_as_text %></code></pre>
   <hr/>
 
-  <h3>Hearing (<%= show_pii_query_param ? "showing PII" : "no PII" %>)</h3>
+  <h3>Hearing (<span class="show_pii_<%=show_pii_query_param%>"><%= show_pii_query_param ? "showing PII" : "no PII" %></span>)</h3>
   <code style="color: green">
     puts HearingRenderer.render(Appeal.find(<%= appeal.id %>),
       show_pii: <%= show_pii_query_param ? "true" : "false" %>)
@@ -72,7 +72,7 @@
   <pre style="font-size:0.9em; padding:10px"><code><%= hearing_as_text %></code></pre>
   <hr/>
 
-  <h3>Appeal Narrative (contains PII)</h3>
+  <h3>Appeal Narrative (<span class="show_pii_true">contains PII</span>)</h3>
   
   <details>
     <summary id="narrative_table" style="color: purple">Narrative table</summary>

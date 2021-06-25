@@ -240,10 +240,15 @@ class SanitizedJsonConfiguration
     [
       appeal.cavc_remand&.source_appeal,
       appeal.appellant_substitution&.source_appeal,
-      appeal.request_issues.includes(:contested_decision_issue).map do |rqi|
-        rqi.contested_decision_issue&.decision_review
-      end
+      decision_reviews_associated_with(appeal)[Appeal]
     ].flatten.compact
+  end
+
+  # To-do: export other decision_reviews, i.e., HLRs and SCs
+  def self.decision_reviews_associated_with(appeal)
+    appeal.request_issues.includes(:contested_decision_issue).map do |rqi|
+      rqi.contested_decision_issue&.decision_review
+    end.compact.group_by(&:class)
   end
 
   def before_sanitize(record, obj_hash)
