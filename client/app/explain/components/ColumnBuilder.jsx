@@ -102,7 +102,7 @@ const formatJson = (obj) => {
   return JSON.stringify(obj, null, ' ').
     replace('{\n', '').
     replace('\n}', '');
-}
+};
 
 export const relevantDataColumn = (column) => {
   return {
@@ -135,8 +135,8 @@ export const detailsColumn = (column, handleModalOpen) => {
       if (count > 0) {
         const onClick = () => handleModalOpen(rowData[column.name]);
         const expandableDetail = <details className="jsonDetails"><summary>(details)</summary>
-                                   <pre>{ formatJson(rowData[column.name]) }</pre>
-                                 </details>
+          <pre>{ formatJson(rowData[column.name]) }</pre>
+        </details>;
 
         return <span {...linkStyling}>
           <Link onClick={onClick}>
