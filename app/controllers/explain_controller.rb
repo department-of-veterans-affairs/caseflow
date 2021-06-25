@@ -27,7 +27,7 @@ class ExplainController < ApplicationController
   private
 
   helper_method :legacy_appeal?, :appeal, :appeal_status,
-                :show_pii_query_param, :treee_fields,
+                :show_pii_query_param, :fields_query_param, :treee_fields,
                 :available_fields,
                 :task_tree_as_text, :intake_as_text, :hearing_as_text,
                 :event_table_data, :appeal_object_id,
@@ -39,9 +39,11 @@ class ExplainController < ApplicationController
 
   def explain_as_text
     [
+      "show_pii = #{show_pii_query_param}",
       task_tree_as_text,
       intake_as_text,
-      hearing_as_text
+      hearing_as_text,
+      JSON.pretty_generate(event_table_data)
     ].join("\n\n")
   end
 
@@ -50,8 +52,10 @@ class ExplainController < ApplicationController
   end
 
   def task_tree_as_text
-    [appeal.tree(*treee_fields),
-     legacy_task_tree_as_text].compact.join("\n\n")
+    [
+      appeal.tree(*treee_fields),
+      legacy_task_tree_as_text
+    ].compact.join("\n\n")
   end
 
   DEFAULT_TREEE_FIELDS = [:id, :status, :ASGN_BY, :ASGN_TO, :ASGN_DATE, :UPD_DATE, :CRE_DATE, :CLO_DATE].freeze
@@ -130,7 +134,7 @@ class ExplainController < ApplicationController
   end
 
   def show_pii_query_param
-    request.query_parameters.key?("show_pii")
+    request.query_parameters.key?("show_pii") && request.query_parameters["show_pii"]&.downcase != "false"
   end
 
   def fields_query_param
