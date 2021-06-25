@@ -42,7 +42,7 @@ class Claimant < CaseflowRecord
            to: :power_of_attorney,
            allow_nil: true
 
-  delegate :participant_id, to: :power_of_attorney, prefix: :representative
+  delegate :participant_id, to: :power_of_attorney, prefix: :representative, allow_nil: true
 
   def self.create_without_intake!(participant_id:, payee_code:, type:)
     create!(
