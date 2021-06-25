@@ -153,7 +153,7 @@ class UnidentifiedIssuesModal extends React.Component {
 
   render() {
     const { intakeData, onCancel, featureToggles, editPage } = this.props;
-    const { unidentifiedIssueDecisionDate, verifyUnidentifiedIssue } = featureToggles;
+    const { verifyUnidentifiedIssue } = featureToggles;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
 
@@ -167,7 +167,7 @@ class UnidentifiedIssuesModal extends React.Component {
             value={this.state.description}
             onChange={this.onDescriptionChange}
           />
-          {unidentifiedIssueDecisionDate && this.getDecisionDate()}
+          {this.getDecisionDate()}
           <TextField name="Notes"
             optional={!this.state.verifiedUnidentifiedIssue}
             strongLabel
