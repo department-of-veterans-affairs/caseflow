@@ -109,8 +109,8 @@ module Caseflow::Error
       @task_type = args[:task_type]
       @code = args[:code] || 400
       @title = "Error assigning tasks"
-      @message = args[:message] || "This appeal cannot have multiple open tasks of type #{@task_type}. Please close " \
-                            "this browser window and return to your previous window."
+      @message = args[:message] || "Looks like this appeal already has an open #{@task_type} and this action cannot " \
+                              "be completed."
     end
   end
 
