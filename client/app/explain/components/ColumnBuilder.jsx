@@ -49,6 +49,7 @@ export const objectTypeColumn = (column, filterOptions, narratives) => {
     tableData: narratives,
     columnName: 'category',
     enableFilter: true,
+    label: 'Filter by category',
     anyFiltersAreSet: true,
   };
 };
@@ -68,6 +69,7 @@ export const eventTypeColumn = (column, filterOptions, narratives) => {
     tableData: narratives,
     columnName: 'event_type',
     enableFilter: true,
+    label: 'Filter by event type',
     anyFiltersAreSet: true,
   };
 };
