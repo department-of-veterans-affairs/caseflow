@@ -63,7 +63,7 @@ feature "duplicate JudgeAssignTask investigation" do
         fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "cancel once")
         click_on "Submit"
         expect(page).to have_content("Error assigning tasks")
-        expect(page).to have_content("This appeal cannot have more than one open task of type JudgeAssignTask")
+        expect(page).to have_content("Looks like this appeal already has an open JudgeAssignTask")
       end
     end
   end
