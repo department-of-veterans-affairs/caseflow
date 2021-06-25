@@ -32,10 +32,10 @@ class JudgeAssignTaskCreator
 
   def reassign_existing_open_task(open_judge_assign_task)
     new_task, _old_task, _new_children = open_judge_assign_task.reassign({
-                                                                        assigned_to_type: @judge.class.name,
-                                                                        assigned_to_id: @judge.id,
-                                                                        appeal: appeal
-                                                                      }, current_user)
+                                                                           assigned_to_type: @judge.class.name,
+                                                                           assigned_to_id: @judge.id,
+                                                                           appeal: appeal
+                                                                         }, current_user)
     new_task
   end
 
