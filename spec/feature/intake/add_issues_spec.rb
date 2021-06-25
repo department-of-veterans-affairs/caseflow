@@ -617,6 +617,5 @@ feature "Intake Add Issues Page", :all_dbs do
         expect(page).to have_content("Active Duty Adjustments")
       end
     end
-
   end
 end

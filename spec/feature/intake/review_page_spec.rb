@@ -369,7 +369,6 @@ feature "Intake Review Page", :postgres do
           Array.new(15) { create(:bgs_attorney) }
         end
 
-
         it "doesn't allow adding new claimants" do
           start_appeal(veteran, claim_participant_id: claim_participant_id)
 
