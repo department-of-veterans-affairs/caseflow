@@ -82,7 +82,7 @@ export const SubstituteAppellantReviewContainer = () => {
       substitution_date: existingValues.substitutionDate,
       claimant_type: existingValues.claimantType,
       substitute_participant_id: existingValues.participantId,
-      poa_participant_id: poa.poa_participant_id,
+      poa_participant_id: poa ? poa.poa_participant_id : null,
       selected_task_ids: existingValues.taskIds,
       task_params: buildTaskCreationParameters()
     };
