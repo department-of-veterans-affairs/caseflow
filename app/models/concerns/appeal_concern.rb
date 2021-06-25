@@ -114,12 +114,12 @@ module AppealConcern
     address_obj = addr.is_a?(Hash) ? Address.new(addr) : addr
 
     # Some appellant addresses have empty country values but valid city, state, and zip codes.
-    # If the address has a zip code and a state value then we make the best guess that the address
-    # is within the US (TimezoneService.address_to_timezone will raise an error if this guess is
-    # wrong and the zip code is not a valid US zip code), otherwise we return nil without attempting
-    # to get the timezone identifier.
+    # If the address has a zip code then we make the best guess that the address is within the US
+    # (TimezoneService.address_to_timezone will raise an error if this guess is wrong and the zip
+    # code is not a valid US zip code), otherwise we return nil without attempting to get
+    # thetimezone identifier.
     if address_obj.country.blank?
-      return if address_obj.zip.blank? || address_obj.state.blank?
+      return if address_obj.zip.blank?
 
       new_address_hash = address_obj.as_json.symbolize_keys.merge(country: "USA")
       address_obj = Address.new(**new_address_hash)

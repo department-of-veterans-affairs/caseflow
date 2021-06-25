@@ -42,7 +42,7 @@ describe WorkQueue::LegacyAppealSerializer, :all_dbs do
       end
     end
 
-    context "When appellant_address country is nil but zip and state are provided" do
+    context "When appellant_address country is nil but zip is provided" do
       let(:address) do
         {
           addrs_one_txt: [nil, FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_1].sample,
@@ -50,7 +50,7 @@ describe WorkQueue::LegacyAppealSerializer, :all_dbs do
           addrs_three_txt: [nil, FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_3].sample,
           city_nm: [nil, FakeConstants.BGS_SERVICE.DEFAULT_CITY].sample,
           cntry_nm: nil,
-          postal_cd: FakeConstants.BGS_SERVICE.DEFAULT_STATE,
+          postal_cd: [nil, FakeConstants.BGS_SERVICE.DEFAULT_STATE].sample,
           zip_prefix_nbr: FakeConstants.BGS_SERVICE.DEFAULT_ZIP,
           ptcpnt_addrs_type_nm: "Mailing"
         }
