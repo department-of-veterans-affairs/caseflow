@@ -108,6 +108,20 @@ RSpec.feature "Explain JSON" do
     end
     it "present realistic appeal events" do
       visit "explain/appeals/#{real_appeal.uuid}"
+      expect(page).to have_content("show_pii = false")
+      expect(page).to have_content("status: dispatched")
+      expect(page).to have_content("priority: false (AOD: false, CAVC: false)")
+      expect(page).to have_content("Intake (no PII)")
+      expect(page).to have_content("Hearing (no PII)")
+      expect(page).to have_content("show_pii: false")
+      expect(page).to have_content("Appeal Narrative (contains PII)")
+
+      click_link('toggle show_pii')
+      expect(page).to have_content("show_pii = true")
+      expect(page).to have_content("Intake (showing PII)")
+      expect(page).to have_content("Hearing (showing PII)")
+      expect(page).to have_content("show_pii: true")
+      expect(page).to have_content("Appeal Narrative (contains PII)")
       page.find("#narrative_table").click
       task = real_appeal.tasks.sample
       expect(page).to have_content("#{task.type}_#{task.id}")
