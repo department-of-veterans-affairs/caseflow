@@ -94,7 +94,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
       end
       subject { generate_hearing_days_schedule_removed_ro_na }
 
-      it "assigns ros to initial available days", skip: "to be fixed in a future PR" do
+      it "assigns ros to initial available days" do
         subject.ros.map { |key, _value| expect(subject.ros[key][:available_days]).to eq subject.available_days }
       end
 
@@ -161,27 +161,6 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
     end
   end
 
-  context ".monthly_distributed_days" do
-    let(:allocated_days) { 118.0 }
-    subject { generate_hearing_days_schedule.monthly_distributed_days(allocated_days) }
-
-    it do
-      expect(subject).to eq([4, 2018] => 20, [5, 2018] => 19, [6, 2018] => 20,
-                            [7, 2018] => 20, [8, 2018] => 19, [9, 2018] => 20)
-    end
-    it { expect(subject.values.inject(:+).to_f).to eq(allocated_days) }
-
-    context "for a few hearing days" do
-      let(:allocated_days) { 3.0 }
-
-      it do
-        expect(subject).to eq([4, 2018] => 1, [5, 2018] => 0, [6, 2018] => 1,
-                              [7, 2018] => 0, [8, 2018] => 1, [9, 2018] => 0)
-      end
-      it { expect(subject.values.inject(:+).to_f).to eq(allocated_days) }
-    end
-  end
-
   context "RO hearing days allocation" do
     let(:ro_schedule_period) { create(:ro_schedule_period) }
 
@@ -194,24 +173,9 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
         HearingSchedule::GenerateHearingDaysSchedule.new(schedule_period)
       end
 
-      subject { generate_invalid_hearing_days_schedule.allocate_hearing_days_to_ros }
-
-      context "too many allocated days for an RO with multiple rooms", skip: "This test is failing intermittently" do
-        let!(:ro_allocations) do
-          [
-            create(:allocation, regional_office: "RO17", allocated_days: 255, schedule_period: schedule_period)
-          ]
-        end
-        it { expect { subject }.to raise_error(HearingSchedule::Errors::NotEnoughAvailableDays) }
-      end
-
-      context "too many allocated days for an RO with one room", skip: "This test is failing intermittently" do
-        let!(:ro_allocations) do
-          [
-            create(:allocation, regional_office: "RO16", allocated_days: 128, schedule_period: schedule_period)
-          ]
-        end
-        it { expect { subject }.to raise_error(HearingSchedule::Errors::NotEnoughAvailableDays) }
+      subject do
+        generate_invalid_hearing_days_schedule.allocate_hearing_days_to_ros
+        generate_hearing_days_schedule.allocation_result
       end
 
       context "too many ro non-availability days" do
@@ -248,50 +212,37 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
       end
     end
 
-    context "with an associated room", skip: "Temporarily skipping to push a change to PROD #16010" do
-      subject { generate_hearing_days_schedule.allocate_hearing_days_to_ros }
+    context "video hearing days" do
+      subject do
+        generate_hearing_days_schedule.allocate_hearing_days_to_ros
+        generate_hearing_days_schedule.allocation_results
+      end
 
-      context "allocated days to ros" do
-        it "assigned as rooms" do
-          allocations = ro_schedule_period.allocations.reduce({}) do |acc, ro|
-            acc[ro.regional_office] = ro.allocated_days
-            acc
-          end
-
-          # Calculate how many assignments were made
-          total_assignments = subject.reduce(0) do |acc, (_k, v)|
-            acc += v[:allocated_dates].values.map(&:values).flatten.count
-            acc
-          end
-
-          # Ensure there are the correct number of allocations for each RO
-          expect(subject.keys.sort).to eq(allocations.keys.sort)
-
-          # Ensure that only allocations with rooms were applied
-          expect(total_assignments).to eq(allocations.values.sum.to_i)
-
-          subject.each_key do |ro_key|
-            rooms = subject[ro_key][:allocated_dates].reduce({}) do |acc, (k, v)|
-              acc[k] = acc[k] || 0
-              acc[k] += v.values.map(&:size).inject(:+)
-              acc
-            end
-
-            # making sure rooms are filled
-            if subject[ro_key][:allocated_days].ceil % subject[ro_key][:num_of_rooms] == 0
-              expect(rooms.map { |_key, num| num % subject[ro_key][:num_of_rooms] == 0 }.all?).to eq(true)
-            else
-              expect(rooms.map { |_key, num| num % subject[ro_key][:num_of_rooms] == 0 }.count(false)).to eq(1)
-            end
-
-            expect(rooms.values.inject(:+)).to eq(allocations[ro_key].ceil)
-          end
+      it "assigns hearing days" do
+        allocations = ro_schedule_period.allocations.reduce({}) do |acc, ro|
+          acc[ro.regional_office] = ro.allocated_days
+          acc
         end
+
+        # Calculate how many assignments were made
+        total_assignments = subject.reduce(0) do |acc, (_k, v)|
+          acc += v[:allocated_dates].values.map(&:values).flatten.count
+          acc
+        end
+
+        # Ensure there are the correct number of allocations for each RO
+        expect(subject.keys.sort).to eq(allocations.keys.sort)
+
+        # Ensure that only video days were allocated
+        expect(total_assignments).to eq(allocations.values.sum.to_i)
       end
     end
 
-    context "without an associated room (currently used as Virtual)" do
-      subject { generate_hearing_days_schedule.allocate_no_room_hearing_days_to_ros }
+    context "virtual hearing days" do
+      subject do
+        generate_hearing_days_schedule.allocate_hearing_days_to_ros(:allocated_days_without_room)
+        generate_hearing_days_schedule.allocation_results
+      end
 
       context "allocated days to ros" do
         it "allocates hearing days based on allocated_days_without_room" do
@@ -310,7 +261,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
           # Ensure there are the correct number of allocations for each RO
           expect(subject.keys.sort).to eq(allocations.keys.sort)
 
-          # Ensure that only allocations with rooms were applied
+          # Ensure that only virtual days were allocated
           expect(total_assignments).to eq(allocations.values.sum.to_i)
 
           subject.each_key do |ro_key|
@@ -335,6 +286,218 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
         # 22 wednesdays between 2018-01-01 and 2018-06-30; due to holidays
         # it picks another day
         expect(subject.count).to eq(22)
+      end
+    end
+
+    context "combined allocation (video, virtual, central)" do
+      # Take a list of hearing_days and condense them per ro, date, and type,
+      # results look like this.
+      # {"RO39" => {
+      #   "08-18-2021" => {
+      #     "V" => 3,
+      #     "R" => 8,
+      #     "C" => 0}
+      #   }
+      # }
+      def condense_hearing_days(hearing_days)
+        # Generate day_counts for each date/type from the hearing_days
+        day_counts = {}
+        hearing_days.each do |hearing_day|
+          # Extract the keys we will use to create nested hashes
+          scheduled_for = hearing_day[:scheduled_for]
+          type = hearing_day[:request_type]
+          # Deal with central hearings by creating "C" as an RO (which it's not really)
+          ro = (hearing_day[:request_type] == "C") ? "C" : hearing_day[:regional_office]
+
+          # Create the hashes/keys if they don't exist
+          day_counts[ro] = {} unless day_counts.key?(ro)
+          day_counts[ro][scheduled_for] = {} unless day_counts[ro].key?(scheduled_for)
+          day_counts[ro][scheduled_for][type] = 0 unless day_counts[ro][scheduled_for].key?(type)
+
+          # Update the count for this ro, date, type combo
+          day_counts[ro][scheduled_for][type] += 1
+        end
+        day_counts
+      end
+
+      # If count < min then update min, if count > max update max
+      # If max is nil, set it to count
+      # if min is nil, set it to count
+      def calculate_min_max(count, current_min, current_max)
+        # If count is nil, return nothing.
+        if count.nil?
+          return [current_min, current_max]
+        end
+
+        # If current min or max are nil, set them to count
+        if current_min.nil?
+          current_min = count
+        end
+        if current_max.nil?
+          current_max = count
+        end
+
+        # Compare count and new min/max, return appropriate value
+        new_min = (count < current_min) ? count : current_min
+        new_max = (count > current_max) ? count : current_max
+
+        [new_min, new_max]
+      end
+
+      def calculate_total_min_max(count, current_total, current_min, current_max)
+        current_total = 0 if current_total.nil?
+        new_total = count.present? ? current_total + count : current_total
+
+        new_min, new_max = calculate_min_max(count, current_min, current_max)
+
+        [new_min, new_max, new_total]
+      end
+
+      def per_ro_summarization(counts)
+        total = counts.size
+        sum = counts.sum(0.0)
+        average = sum / total
+
+        [total, sum, average]
+      end
+
+      # Take the condensed list of hearing_days and generate summary statistics
+      # Some summary stats are per date, some are for every date the ro has
+      # {"RO39" => {
+      #   "summary" => {
+      #     # Video days
+      #     "avg_V" => "2",
+      #     "min_V" => "2",
+      #     "max_V" => "2",
+      #
+      #     # Virtual days
+      #     "avg_R" => "6",
+      #     "min_R" => "1",
+      #     "max_R" => "14",
+      #   },
+      # rubocop:disable Metrics/AbcSize
+      def summarize_condensed_hearing_days(condensed_hearing_days)
+        all_ros_all_types = {}
+        condensed_hearing_days.each do |ro, hearing_days|
+          summary = {}
+          types = %w[R V C]
+          summary["date_total"] = {}
+          all_type_min_label = "min_days_on_date_all_types"
+          all_type_max_label = "max_days_on_date_all_types"
+          all_type_total_label = "date_total"
+
+          # Each type of hearing
+          types.each do |type|
+            min_label = "min_#{type}"
+            max_label = "max_#{type}"
+            counts_label = "counts_#{type}"
+            total_label = "total_#{type}"
+            sum_label = "sum_#{type}"
+            avg_label = "avg_#{type}"
+
+            summary[counts_label] = []
+
+            # Each date that has hearing_days
+            hearing_days.each do |date, type_info|
+              count = type_info[type]
+              next if count.nil?
+
+              if type != "C"
+                all_ros_all_types[date] = 0 if all_ros_all_types[date].nil?
+                all_ros_all_types[date] += count
+                all_ros_all_types["total"] = 0 if all_ros_all_types["total"].nil?
+                all_ros_all_types["total"] += count
+              end
+
+              # For each ro, update min and max days per date
+              new_min, new_max = calculate_min_max(count, summary[min_label], summary[max_label])
+              summary[min_label] = new_min
+              summary[max_label] = new_max
+
+              # Store the count for later per_ro_summarization
+              summary[counts_label].push(count)
+
+              # Across all hearing_day types for this ro
+              new_all_type_min, new_all_type_max, new_all_type_total = calculate_total_min_max(
+                count,
+                summary[all_type_total_label][date],
+                summary[all_type_min_label],
+                summary[all_type_max_label]
+              )
+              summary[all_type_min_label] = new_all_type_min
+              summary[all_type_max_label] = new_all_type_max
+              summary[all_type_total_label][date] = new_all_type_total
+            end
+
+            # Take the array of hearing_day_counts per type and generate summary stats
+            # per_ro_summary_stats(hearing_day_counts)
+            if summary[counts_label].count > 0
+              total, sum, average = per_ro_summarization(summary[counts_label])
+              summary[total_label] = total
+              summary[sum_label] = sum
+              summary[avg_label] = average
+            end
+            # Clean up the intermediate array of counts
+            summary.delete(counts_label)
+          end
+          condensed_hearing_days[ro]["summary_statistics"] = summary
+        end
+        [condensed_hearing_days, all_ros_all_types]
+      end
+      # rubocop:enable Metrics/AbcSize
+
+      let(:ro_schedule_period) { create(:real_ro_schedule_period) }
+      let(:day_counts_and_summary_per_ro) do
+        displayed_hearing_days = ro_schedule_period.algorithm_assignments
+        condensed_hearing_days = condense_hearing_days(displayed_hearing_days)
+        summarize_condensed_hearing_days(condensed_hearing_days)[0]
+      end
+      let(:all_ros_all_types) do
+        displayed_hearing_days = ro_schedule_period.algorithm_assignments
+        condensed_hearing_days = condense_hearing_days(displayed_hearing_days)
+        summarize_condensed_hearing_days(condensed_hearing_days)[1]
+      end
+
+      # Test that the sum of all dockets on a given date, for all ros, is within 5 of the average
+      it "creates an even distribution across all ros and all dates" do
+        # Pop the total out of the hash
+        total = all_ros_all_types["total"]
+        all_ros_all_types.delete("total")
+        # Calculate the average
+        number_of_days = all_ros_all_types.count
+        average = total / number_of_days
+        # For each ro
+        all_ros_all_types.each do |_date, count|
+          expect(count).to be_within(5).of(average)
+        end
+      end
+
+      # Test each type Vi(R)tual and (V)ideo and see that for each RO the docket allocation
+      # on each date is fairly even (min - max is within three)
+      it "allocates each type of days evenly across available dates for each ro" do
+        day_counts_and_summary_per_ro.each do |_ro_key, info|
+          types = %w[R V]
+          types.each do |type|
+            min_label = "min_#{type}"
+            max_label = "max_#{type}"
+            min = info["summary_statistics"][min_label]
+            max = info["summary_statistics"][max_label]
+
+            ro_has_days_of_type = max.present? || min.present?
+            expect(max - min).to be <= 3 if ro_has_days_of_type
+          end
+        end
+      end
+
+      it "allocates central days exactly a week apart" do
+        central_dates = day_counts_and_summary_per_ro["C"]["summary_statistics"]["date_total"].to_a
+        central_dates.each_with_index do |current_date, index|
+          # Dont compare the last date to 'nil', dont run off the end
+          if index < central_dates.count - 2
+            next_date = central_dates[index + 1][0]
+            expect(next_date).to eq(current_date[0].advance(days: 7))
+          end
+        end
       end
     end
   end
