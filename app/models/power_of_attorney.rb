@@ -68,11 +68,11 @@ class PowerOfAttorney
     @bgs_power_of_attorney = nil
   end
 
-  private
-
   def bgs_power_of_attorney
     @bgs_power_of_attorney ||= fetch_bgs_power_of_attorney || BgsPowerOfAttorney.new(file_number: file_number)
   end
+
+  private
 
   def fetch_bgs_power_of_attorney
     if claimant_participant_id.present?

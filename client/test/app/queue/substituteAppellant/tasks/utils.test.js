@@ -1,4 +1,3 @@
-import { format } from 'date-fns';
 import { uniq } from 'lodash';
 
 import {
@@ -285,12 +284,23 @@ describe('calculateEvidenceSubmissionEndDate', () => {
 
   it('outputs the expected result', () => {
     const args = {
-      substitutionDate: new Date('2021-03-25'),
-      veteranDateOfDeath: new Date('2021-03-20'),
+      substitutionDate: '2021-03-25',
+      veteranDateOfDeath: '2021-03-20',
       selectedTasks: tasks
     };
     const result = calculateEvidenceSubmissionEndDate(args);
 
-    expect(format(result, 'yyyy-MM-dd')).toBe('2021-06-04');
+    expect(result).toBe('2021-06-04');
+  });
+
+  it('ensures the evidence submission window is not more than 90 days when date of death precedes the NOD date', () => {
+    const args = {
+      substitutionDate: '2021-03-25',
+      veteranDateOfDeath: '2021-02-01',
+      selectedTasks: tasks
+    };
+    const result = calculateEvidenceSubmissionEndDate(args);
+
+    expect(result).toBe('2021-06-23');
   });
 });
