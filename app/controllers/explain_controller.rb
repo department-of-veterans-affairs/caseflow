@@ -39,9 +39,11 @@ class ExplainController < ApplicationController
 
   def explain_as_text
     [
+      "show_pii = #{show_pii_query_param}",
       task_tree_as_text,
       intake_as_text,
-      hearing_as_text
+      hearing_as_text,
+      JSON.pretty_generate(event_table_data)
     ].join("\n\n")
   end
 
@@ -130,7 +132,7 @@ class ExplainController < ApplicationController
   end
 
   def show_pii_query_param
-    request.query_parameters.key?("show_pii")
+    request.query_parameters.key?("show_pii") && request.query_parameters["show_pii"]&.downcase != "false"
   end
 
   def fields_query_param
