@@ -320,7 +320,7 @@ class SanitizedJsonConfiguration
       # Typed polymorphic association fields will be associated based on the '_type' field
       type: reassociate_types.map do |klass|
         [klass,
-         AssocationWrapper.new(klass).typed_associations(excluding: offset_id_fields[klass]).fieldnames.presence]
+         AssocationWrapper.new(klass).fieldnames_of_typed_associations(excluding: offset_id_fields[klass]).presence]
       end.to_h.compact
     }.merge(
       # Untyped association fields (ie, without the matching '_type' field) will associate to their corresponding type
@@ -329,7 +329,7 @@ class SanitizedJsonConfiguration
           assoc_class.name,
           reassociate_types.map do |klass|
             [klass,
-             AssocationWrapper.new(klass).untyped_associations_with(assoc_class).fieldnames.presence]
+             AssocationWrapper.new(klass).fieldnames_of_untyped_associations_with(assoc_class).presence]
           end.to_h.compact
         ]
       end .to_h
