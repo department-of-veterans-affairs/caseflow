@@ -10,6 +10,7 @@ import {
   GENERIC_FORM_ERRORS,
   DECEASED_PAYEE_CODES,
   LIVING_PAYEE_CODES,
+  VBMS_BENEFIT_TYPES
 } from '../constants';
 import { convertStringToBoolean } from '../util';
 import {
@@ -117,10 +118,7 @@ export const SelectClaimant = (props) => {
 
   const shouldShowPayeeCode = useMemo(() => {
     return (
-      !isAppeal &&
-      (benefitType === 'compensation' ||
-        benefitType === 'pension' ||
-        benefitType === 'fiduciary')
+      !isAppeal && VBMS_BENEFIT_TYPES.includes(benefitType)
     );
   }, [formType, benefitType]);
 
