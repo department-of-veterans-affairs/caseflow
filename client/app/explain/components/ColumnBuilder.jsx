@@ -98,19 +98,19 @@ export const commentColumn = (column) => {
   };
 };
 
+const formatJson = (obj) => {
+  return JSON.stringify(obj, null, ' ').
+    replace('{\n', '').
+    replace('\n}', '');
+}
+
 export const relevantDataColumn = (column) => {
   return {
     header: column.header,
     name: column.name,
     cellClass: column.class,
     valueFunction: (rowData) => {
-      if (rowData[column.name]) {
-        return JSON.stringify(rowData[column.name], null, ' ')
-          .replace('{\n', '')
-          .replace('\n}', '');
-      }
-
-      return '';
+      return rowData[column.name] ? formatJson(rowData[column.name]) : '';
     }
   };
 };
@@ -134,11 +134,15 @@ export const detailsColumn = (column, handleModalOpen) => {
       }
       if (count > 0) {
         const onClick = () => handleModalOpen(rowData[column.name]);
+        const expandableDetail = <details className="jsonDetails"><summary>(details)</summary>
+                                   <pre>{ formatJson(rowData[column.name]) }</pre>
+                                 </details>
 
         return <span {...linkStyling}>
           <Link onClick={onClick}>
             {count}
           </Link>
+          {expandableDetail}
         </span>;
       }
     }
