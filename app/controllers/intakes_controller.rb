@@ -106,7 +106,6 @@ class IntakesController < ApplicationController
         useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
         rampIntake: FeatureToggle.enabled?(:ramp_intake, user: current_user),
         restrictAppealIntakes: FeatureToggle.enabled?(:restrict_appeal_intakes, user: current_user),
-        unidentifiedIssueDecisionDate: FeatureToggle.enabled?(:unidentified_issue_decision_date, user: current_user),
         covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
         verifyUnidentifiedIssue: FeatureToggle.enabled?(:verify_unidentified_issue, user: current_user),
         attorneyFees: FeatureToggle.enabled?(:attorney_fees, user: current_user),

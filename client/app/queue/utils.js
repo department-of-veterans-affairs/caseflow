@@ -433,6 +433,7 @@ export const prepareAppealForStore = (appeals) => {
       docketSwitch: appeal.attributes.docket_switch,
       switchedDockets: appeal.attributes.switched_dockets,
       appellantSubstitution: appeal.attributes.appellant_substitution,
+      substitutions: appeal.attributes.substitutions,
       remandSourceAppealId: appeal.attributes.remand_source_appeal_id,
       remandJudgeName: appeal.attributes.remand_judge_name,
     };
