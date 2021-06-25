@@ -105,9 +105,7 @@ export const relevantDataColumn = (column) => {
     cellClass: column.class,
     valueFunction: (rowData) => {
       if (rowData[column.name]) {
-        let jsonString = JSON.stringify(rowData[column.name], null, ' ');
-
-        return jsonString.replace('{\n', '').replace('\n}', '');
+        return JSON.stringify(rowData[column.name], null, ' ').replace('{\n', '').replace('\n}', '');
       }
 
       return '';
@@ -126,23 +124,19 @@ export const detailsColumn = (column, handleModalOpen) => {
     cellClass: column.class,
     valueFunction: (rowData) => {
       let count = 0;
-      const onClick = () => handleModalOpen(rowData[column.name]);
-
       for (let prop in rowData[column.name]) {
         if (Object.hasOwnProperty.call(rowData[column.name], prop)) {
           count += 1;
         }
       }
       if (count > 0) {
+        const onClick = () => handleModalOpen(rowData[column.name]);
         return <span {...linkStyling}>
           <Link onClick={onClick}>
             {count}
           </Link>
         </span>;
       }
-
-      return count;
-
     }
   };
 };
