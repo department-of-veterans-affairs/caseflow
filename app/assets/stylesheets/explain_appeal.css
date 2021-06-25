@@ -111,3 +111,48 @@ summary {
   color: rgb(0, 90, 0)
 }
 
+/* Timeline */
+
+#timeline .vis-item {
+  border-width: 0px;
+  border-color: #585858;
+}
+
+#timeline .vis-item .vis-item-overflow {
+  overflow: visible; /* allow event labels to overflow its timeline box */
+}
+
+/* These task_<status> colors should roughly match with those for #events_table above */
+#timeline .task_assigned {
+  background-color: rgb(197, 194, 5)
+}
+#timeline .task_in_progress {
+  background-color: #00ff00
+}
+#timeline .task_on_hold {
+  background-color: #ffff80
+}
+#timeline .task_cancelled {
+  background-color: rgb(192, 135, 135)
+}
+#timeline .task_completed {
+  background-color: rgb(0, 184, 0)
+}
+
+/* events with "type=background" */
+#timeline div.vis-background {
+  font-style: italic;
+  /* background-color: rgb(238, 238, 238) */
+}
+#timeline div.DistributionTask {
+  background-color: rgb(238, 238, 238)
+}
+#timeline div.JudgeDecisionReviewTask {
+  background-color: rgb(196, 196, 196)
+}
+
+#timeline div.RootTask,
+#timeline div.TrackVeteranTask {
+  font-size: 0.7em;
+  background-color: rgb(168, 168, 168)
+}

@@ -98,13 +98,23 @@
 
   <% unless legacy_appeal? %>
     <h3>Timeline</h3>
+    <input type="button" id="fit" value="Fit all items">
+    <br/>
     <div id="timeline"></div>
+    <details open>
+      <summary style="color: red">Timeline data</summary>
+      <pre style="font-size:0.84em; padding:10px"><code><%= JSON.pretty_generate(timeline_data) %></code></pre>
+    </details>
     <hr/>
 
     <script type="text/javascript">
       // Timeline
-      var timeline_data = <%= timeline_data.to_json.html_safe %>;
-      addTimeline('timeline', timeline_data);
+      const timeline_data = <%= timeline_data.to_json.html_safe %>;
+      const timeline = addTimeline('timeline', timeline_data);
+
+      document.getElementById('fit').onclick = function() {
+        timeline.fit();
+      };
     </script>
     <hr/>
   <% end %>
