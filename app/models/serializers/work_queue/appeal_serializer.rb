@@ -103,6 +103,12 @@ class WorkQueue::AppealSerializer
     end
   end
 
+  attribute :substitutions do |object|
+    object.substitutions.map do |substitution|
+      WorkQueue::AppellantSubstitutionSerializer.new(substitution).serializable_hash[:data][:attributes]
+    end
+  end
+
   attribute :veteran_death_date
 
   attribute :veteran_file_number

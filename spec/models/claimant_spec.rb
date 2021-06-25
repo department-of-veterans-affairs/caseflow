@@ -220,8 +220,8 @@ describe Claimant, :postgres do
         expect(claimant.name).to eq "JOHN SMITH"
       end
 
-      it "returns BgsPowerOfAttorney" do
-        expect(subject).to be_a BgsPowerOfAttorney
+      it "does not return a power of attorney" do
+        expect(subject).to be nil
       end
     end
   end
