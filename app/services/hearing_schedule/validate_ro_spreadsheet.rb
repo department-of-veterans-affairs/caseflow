@@ -196,31 +196,21 @@ class HearingSchedule::ValidateRoSpreadsheet
     end
   end
 
+  def virtual_docket_allocations
+    @allocation_spreadsheet_data.reject { |row| row["allocated_days_without_room"] == 0 }
+  end
+
   def filter_missing_time_slot_details
-    @allocation_spreadsheet_data.select do |row|
+    virtual_docket_allocations.select do |row|
       row["first_slot_time"].nil? || row["slot_length_minutes"].nil? || row["number_of_slots"].nil?
     end.pluck("ro_code").uniq
   end
 
-  def filter_invalid_number_of_slots
-    @allocation_spreadsheet_data.select do |row|
+  def filter_invalid_range(key, max)
+    virtual_docket_allocations.select do |row|
       begin
-        row["number_of_slots"] > HearingDay::SLOTS_BY_REQUEST_TYPE[HearingDay::REQUEST_TYPES[:virtual]][:maximum] ||
-          row["number_of_slots"] < 0 ||
-          (row["allocated_days_without_room"] > 0 && row["number_of_slots"] == 0)
-      rescue StandardError => error
-        Rails.logger.error(error)
-        row
-      end
-    end.pluck("ro_code").uniq
-  end
-
-  def filter_invalid_slot_lengths
-    @allocation_spreadsheet_data.select do |row|
-      begin
-        row["slot_length_minutes"] > MAX_DURATION_IN_MINUTES ||
-          row["slot_length_minutes"] < 0 ||
-          (row["allocated_days_without_room"] > 0 && row["slot_length_minutes"] == 0)
+        # Ensure non-negative values that are below the max slots per day
+        row[key] > max || row[key] <= 0
       rescue StandardError => error
         Rails.logger.error(error)
         row
@@ -229,9 +219,7 @@ class HearingSchedule::ValidateRoSpreadsheet
   end
 
   def filter_incorrectly_formatted_start_times
-    @allocation_spreadsheet_data.select do |row|
-      next if row["allocated_days_without_room"] == 0 && row["first_slot_time"] == 0
-
+    virtual_docket_allocations.select do |row|
       row["first_slot_time"].to_s.match(HearingDay::HEARING_TIME_STRING_PATTERN).blank?
     end.pluck("ro_code").uniq
   end
@@ -241,7 +229,10 @@ class HearingSchedule::ValidateRoSpreadsheet
     if missing_time_slot_details.count > 0
       @errors << MissingTimeSlotDetails.new(MISSING_TIME_SLOT_DETAILS + missing_time_slot_details.to_s)
     else
-      invalid_number_of_slots = filter_invalid_number_of_slots
+      invalid_number_of_slots = filter_invalid_range(
+        "number_of_slots",
+        HearingDay::SLOTS_BY_REQUEST_TYPE[HearingDay::REQUEST_TYPES[:virtual]][:maximum]
+      )
       if invalid_number_of_slots.count > 0
         @errors << InvalidNumberOfSlots.new(INVALID_NUMBER_OF_SLOTS + invalid_number_of_slots.to_s)
       end
@@ -251,7 +242,7 @@ class HearingSchedule::ValidateRoSpreadsheet
         @errors << StartTimeNotValidTime.new(START_TIME_NOT_VALID_TIME + incorrectly_formatted_start_times.to_s)
       end
 
-      slot_lengths_over_duration_limit = filter_invalid_slot_lengths
+      slot_lengths_over_duration_limit = filter_invalid_range("slot_length_minutes", MAX_DURATION_IN_MINUTES)
       if slot_lengths_over_duration_limit.count > 0
         @errors << SlotDurationExceedsMax.new(SLOT_DURATION_EXCEEDS_MAX + slot_lengths_over_duration_limit.to_s)
       end
