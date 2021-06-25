@@ -7,18 +7,18 @@
 
 <div style="font-size:0.875em; padding:10px">
   Currently, <code>show_pii = <%= show_pii_query_param %></code>.
-  To toggle PII for all sections, click <%= link_to('toggle show_pii', {action: 'show', show_pii: !show_pii_query_param}) %>.
+  To toggle PII, click <%= link_to('toggle show_pii', {action: 'show', show_pii: !show_pii_query_param}) %>.
   (Other formats:
-  <%= link_to((show_pii_query_param ? "unsanitized" : "sanitized") + ' text', {action: 'show', show_pii: show_pii_query_param, format: "text"}) %>,
+  <%= link_to((show_pii_query_param ? "text showing PII" : "sanitized text"), {action: 'show', show_pii: show_pii_query_param, format: "text"}) %>,
   <%= link_to('sanitized json export', {action: 'show', format: "json"}) %>
   )
   <hr/>
 
-  <h2>Basic Info about this Appeal</h2>
-  <ul>
+  <h3>Appeal <%=appeal.id%> (<%=appeal.uuid%>)</h3>
+  <ul id="appeal_info">
     <li>status: <%= appeal_status.to_s %></li>
-    <li>priority? AOD: <%= appeal.aod? %>, CAVC: <%= appeal.cavc? %></li>
-    <% unless legacy_appeal? %>
+    <li>priority: <%= appeal.aod? && appeal.cavc? %> (AOD: <%= appeal.aod? %>, CAVC: <%= appeal.cavc? %>)</li>
+    <% if sje.records_hash["appeals"].length > 1 %>
     <li>Related Appeals:
       <ul>
         <% sje.records_hash["appeals"].each do |appeal| %>
@@ -30,15 +30,17 @@
   </ul>
 
   <h3>Task tree</h3>
+  <code style="color: green">
+    Appeal.find(<%= appeal.id %>).treee(<%= treee_fields.map{|f| f.to_s.prepend(":")}.join(", ") %>)
+    <% if appeal.is_a?(LegacyAppeal) %>
+      <br/>la = LegacyWorkQueue.tasks_by_appeal_id(<%= appeal.vacols_id %>)
+      <br/>la.location_history.map(&:summary)
+    <% end %>
+  </code>
+  <pre style="font-size:0.84em; padding:10px"><code><%= task_tree_as_text %></code></pre>
   <details>
-    <summary style="color: blue">Task tree help</summary>
+    <summary style="color: blue">Task tree configuration</summary>
 
-    URL query parameter options:
-    <ul>
-      <li><code><%= link_to('fields=id,status,updated_at', {action: 'show', fields: "id,status,updated_at"}) %></code>:
-        custom fields to show in the Task tree section
-      </li>
-    </ul>
     <div id="treeefields" style="width: 200px; height: 300px; overflow-y: scroll; padding:10px">
       <% available_fields.each do |field_name| %>
         <% if treee_fields.include?(field_name.to_sym) %>
@@ -51,14 +53,6 @@
     </div>
     <p/><a id="task_tree_link" href="">Update task tree</a>
   </details>
-  <code style="color: green">
-    Appeal.find(<%= appeal.id %>).treee(<%= treee_fields.map{|f| f.to_s.prepend(":")}.join(", ") %>)
-    <% if appeal.is_a?(LegacyAppeal) %>
-      <br/>la = LegacyWorkQueue.tasks_by_appeal_id(<%= appeal.vacols_id %>)
-      <br/>la.location_history.map(&:summary)
-    <% end %>
-  </code>
-  <pre style="font-size:0.84em; padding:10px"><code><%= task_tree_as_text %></code></pre>
   <hr/>
 
   <h3>Intake (<%= show_pii_query_param ? "showing PII" : "no PII" %>)</h3>

@@ -11,11 +11,16 @@
  * file per style scope.
  */
 
- summary {
+li,
+li ul {
+  margin-bottom: 0px
+}
+
+summary {
   display: list-item;
  }
 
- #events_table {
+#events_table {
   margin: 5px;
 }
 
@@ -79,30 +84,18 @@
 
 /* Table cells */
 
-#events_table .milestone .category,
-#events_table .milestone .event_type,
-#events_table .milestone .narrative,
 #events_table [role="cell"] span.milestone {
   color: blue;
 }
 
-#events_table .task_assigned .category,
-#events_table .task_assigned .event_type,
-#events_table .task_assigned .narrative,
 #events_table [role="cell"] span.task_assigned {
   color: rgb(134, 132, 1)
 }
 
-#events_table .task_cancelled .category,
-#events_table .task_cancelled .event_type,
-#events_table .task_cancelled .narrative,
 #events_table [role="cell"] span.task_cancelled  {
   color: rgb(143, 80, 80)
 }
 
-#events_table .task_completed .category,
-#events_table .task_completed .event_type,
-#events_table .task_completed .narrative,
 #events_table [role="cell"] span.task_completed {
   color: rgb(0, 90, 0)
 }
