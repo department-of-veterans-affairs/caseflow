@@ -142,7 +142,7 @@ class SanitizedJsonConfiguration
       }
     }.each do |clazz, class_configuration|
       class_configuration[:sanitize_fields] ||= self.class.select_sanitize_fields(clazz).tap do |fields|
-        puts "  Inferring #{clazz} sanitize_fields: #{fields}" unless fields.blank?
+        Rails.logger.info "  Inferring #{clazz} sanitize_fields: #{fields}" unless fields.blank?
       end
     end
   end

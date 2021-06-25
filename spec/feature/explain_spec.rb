@@ -51,7 +51,7 @@ RSpec.feature "Explain JSON" do
 
   # 3 appeals are involved: `source_appeal` goes through CAVC remand to create `cavc_remand.remand_appeal`,
   # which goes through appellant substitution to create `appellant_substitution.target_appeal`.
-  let(:source_appeal) { create(:appeal, :dispatched, :type_cavc_remand, :advanced_on_docket_due_to_motion) }
+  let(:source_appeal) { create(:appeal, :dispatched, :type_cavc_remand) }
   let(:created_by) { create(:user) }
   let(:substitute) { create(:claimant) }
   let(:poa_participant_id) { "13579" }
@@ -87,6 +87,16 @@ RSpec.feature "Explain JSON" do
   scenario "admin visits explain page for appellant_substitution CAVC-remanded appeal" do
     visit "explain/appeals/#{appellant_substitution.target_appeal.uuid}"
     expect(page).to have_content("Appeal.find(#{appellant_substitution.target_appeal.id})")
+    expect(page).to have_content("priority: true (AOD: false, CAVC: true)")
+
+    visit "explain/appeals/#{appellant_substitution.source_appeal.uuid}"
+    expect(page).to have_content("Appeal.find(#{appellant_substitution.source_appeal.id})")
+    expect(page).to have_content("priority: true (AOD: false, CAVC: true)")
+
+    cavc_remand = appellant_substitution.source_appeal.cavc_remand
+    visit "explain/appeals/#{cavc_remand.source_appeal.uuid}"
+    expect(page).to have_content("Appeal.find(#{cavc_remand.source_appeal.id})")
+    expect(page).to have_content("priority: false (AOD: false, CAVC: false)")
   end
 
   context "for a realistic appeal" do
