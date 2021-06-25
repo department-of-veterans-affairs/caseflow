@@ -20,6 +20,8 @@ class Explain::AppealRecordEventMapper < Explain::RecordEventMapper
   end
 
   def timing_events(last_timestamp)
+    return [] if last_timestamp.nil?
+
     number_of_months = (last_timestamp.year * 12 + last_timestamp.month) -
                        (receipt_date.year * 12 + receipt_date.month) + 2
     number_of_months.times.each_with_object([]) do |count, events|

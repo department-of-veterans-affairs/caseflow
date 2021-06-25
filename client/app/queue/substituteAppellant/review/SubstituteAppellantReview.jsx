@@ -10,6 +10,7 @@ import CheckoutButtons from 'app/queue/docketSwitch/grant/CheckoutButtons';
 import { pageHeader } from '../styles';
 import { format, parseISO } from 'date-fns';
 import { css } from 'glamor';
+import { formatDateStr } from '../../../util/DateUtil';
 
 const styles = {
   mainTable: css({
@@ -92,7 +93,7 @@ export const SubstituteAppellantReview = ({
                           <span className="bolded-header">End date: </span>
                         )}
                         {task.type === 'EvidenceSubmissionWindowTask' &&
-                          format(evidenceSubmissionEndDate, 'MM/dd/yyyy')}
+                          formatDateStr(evidenceSubmissionEndDate, 'YYYY-MM-DD', 'MM/DD/YYYY')}
                       </td>
                     </tr>
                   );
@@ -125,7 +126,7 @@ SubstituteAppellantReview.propTypes = {
     participantId: PropTypes.string,
     taskIds: PropTypes.array,
   }),
-  evidenceSubmissionEndDate: PropTypes.instanceOf(Date),
+  evidenceSubmissionEndDate: PropTypes.string,
   relationship: PropTypes.shape({
     fullName: PropTypes.string,
     relationshipType: PropTypes.string,

@@ -11,9 +11,68 @@
  * file per style scope.
  */
 
+li,
+li ul {
+  margin-bottom: 0px
+}
+
+summary {
+  display: list-item;
+ }
+
+#events_table {
+  margin: 5px;
+}
+
+/* Table columns */
+
+#events_table .timestamp {
+  column-width: 120px;
+}
+
+#events_table .timestamp,
+#events_table .category,
+#events_table .event_type {
+  padding-right: 2px;
+  padding-left: 1px;
+}
+
+#events_table td.category {
+  text-align: right;
+}
+
+#events_table .rel_data,
+#events_table .narrative {
+  max-width: 300px;
+  word-wrap: break-word;
+}
+
+#events_table td.rel_data {
+  margin: 0px;
+  font-size: 0.8em;
+  white-space: pre-line;
+}
+
+#events_table details.jsonDetails summary {
+  font-size: 0.8em;
+}
+#events_table details.jsonDetails pre {
+  margin: 0px;
+  font-size: 0.7em;
+  white-space: pre-line;
+}
+
+/* Table rows */
+
+#events_table td {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
 #events_table tr.clock {
   color: rgb(173, 173, 173);
   font-size: 0.7em;
+  border-style: none;
 }
 
 #events_table tr.milestone {
@@ -32,26 +91,21 @@
   border-style: dashed;
 }
 
-#events_table .milestone .event_type,
-#events_table .milestone .category,
-#events_table .milestone .narrative {
+/* Table cells */
+
+#events_table [role="cell"] span.milestone {
   color: blue;
 }
 
-#events_table .task_assigned .event_type,
-#events_table .task_assigned .category,
-#events_table .task_assigned .narrative {
+#events_table [role="cell"] span.task_assigned {
   color: rgb(134, 132, 1)
 }
 
-#events_table .task_cancelled .event_type,
-#events_table .task_cancelled .category,
-#events_table .task_cancelled .narrative {
+#events_table [role="cell"] span.task_cancelled  {
   color: rgb(143, 80, 80)
 }
 
-#events_table .task_completed .event_type,
-#events_table .task_completed .category,
-#events_table .task_completed .narrative {
+#events_table [role="cell"] span.task_completed {
   color: rgb(0, 90, 0)
 }
+
