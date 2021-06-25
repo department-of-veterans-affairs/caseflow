@@ -36,6 +36,7 @@ import IntakeEdit from './intakeEdit';
 import NonComp from './nonComp';
 import AsyncableJobs from './asyncableJobs';
 import Inbox from './inbox';
+import Explain from './explain';
 
 const COMPONENTS = {
   BaseContainer,
@@ -64,7 +65,8 @@ const COMPONENTS = {
   IntakeEdit,
   NonComp,
   AsyncableJobs,
-  Inbox
+  Inbox,
+  Explain
 };
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
@@ -96,7 +98,8 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
         './queue/index',
         './intakeManager/index',
         './intakeEdit/index',
-        './nonComp/index'
+        './nonComp/index',
+        './explain/index'
       ],
       () => renderApp(component)
     );

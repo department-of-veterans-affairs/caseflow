@@ -32,7 +32,6 @@ describe SchedulePeriod, :postgres do
       expect(assignments.count).to eq(total_allocation_days)
       expect(assignments[0].key?(:request_type)).to be_truthy
       expect(assignments[0].key?(:scheduled_for)).to be_truthy
-      expect(assignments[0].key?(:room)).to be_truthy
       expect(assignments[0].key?(:regional_office)).to be_truthy if assignments[0][:request_type] ==
                                                                     HearingDay::REQUEST_TYPES[:video]
     end
