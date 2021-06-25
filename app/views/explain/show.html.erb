@@ -18,7 +18,7 @@
   <h3>Appeal <%=appeal.id%> (<%=appeal.uuid%>)</h3>
   <ul id="appeal_info">
     <li>status: <%= appeal_status.to_s %></li>
-    <li>priority: <%= appeal.aod? && appeal.cavc? %> (AOD: <%= appeal.aod? %>, CAVC: <%= appeal.cavc? %>)</li>
+    <li>priority: <%= appeal.aod? || appeal.cavc? %> (AOD: <%= appeal.aod? %>, CAVC: <%= appeal.cavc? %>)</li>
     <% if sje.records_hash["appeals"].length > 1 %>
     <li>Related Appeals:
       <ul>
