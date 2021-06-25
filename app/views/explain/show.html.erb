@@ -9,7 +9,8 @@
   Currently, <code>show_pii = <%= show_pii_query_param %></code>.
   To toggle PII, click <%= link_to('toggle show_pii', {action: 'show', show_pii: !show_pii_query_param}) %>.
   (Other formats:
-  <%= link_to((show_pii_query_param ? "text showing PII" : "sanitized text"), {action: 'show', show_pii: show_pii_query_param, format: "text"}) %>,
+  <%= link_to((show_pii_query_param ? "text showing PII" : "sanitized text"),
+    {action: 'show', show_pii: show_pii_query_param, fields: fields_query_param.to_s, format: "text"}) %>,
   <%= link_to('sanitized json export', {action: 'show', format: "json"}) %>
   )
   <hr/>

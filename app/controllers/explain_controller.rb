@@ -27,7 +27,7 @@ class ExplainController < ApplicationController
   private
 
   helper_method :legacy_appeal?, :appeal, :appeal_status,
-                :show_pii_query_param, :treee_fields,
+                :show_pii_query_param, :fields_query_param, :treee_fields,
                 :available_fields,
                 :task_tree_as_text, :intake_as_text, :hearing_as_text,
                 :event_table_data, :appeal_object_id,
@@ -53,7 +53,8 @@ class ExplainController < ApplicationController
 
   def task_tree_as_text
     [appeal.tree(*treee_fields),
-     legacy_task_tree_as_text].compact.join("\n\n")
+     legacy_task_tree_as_text
+    ].compact.join("\n\n")
   end
 
   DEFAULT_TREEE_FIELDS = [:id, :status, :ASGN_BY, :ASGN_TO, :ASGN_DATE, :UPD_DATE, :CRE_DATE, :CLO_DATE].freeze
