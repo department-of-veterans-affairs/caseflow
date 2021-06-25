@@ -6,11 +6,6 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
   before do
     Timecop.freeze(Time.zone.today)
     User.authenticate!(roles: ["Admin Intake"])
-    FeatureToggle.enable!(:edit_ep_claim_labels)
-  end
-
-  after do
-    FeatureToggle.disable!(:edit_ep_claim_labels)
   end
 
   let!(:current_user) { User.authenticate!(roles: ["Mail Intake"]) }
