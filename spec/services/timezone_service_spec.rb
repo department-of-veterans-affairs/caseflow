@@ -67,6 +67,15 @@ describe TimezoneService do
       include_examples "zip code resolves to equivalent timezone", "96898",
                        "Wake Island, HI", "Pacific/Wake"
 
+      context "Country name of US" do
+        let(:country) { "US" }
+        let(:zip) { "68107" }
+
+        it "Valid zip code with country 'US' resolves to valid timezone" do
+          expect(subject.identifier).to eq("America/Chicago")
+        end
+      end
+
       context "invalid zip code input" do
         let(:zip) { "934" }
 
@@ -195,6 +204,7 @@ describe TimezoneService do
     include_examples "it throws an error if not a valid country name", "F R A N C E"
     include_examples "it throws an error if not a valid country name", "New York"
     include_examples "it throws an error if not a valid country name", "United St."
+    include_examples "it throws an error if not a valid country name", "US"
   end
 
   describe "#iso3166_alpha2_code_to_timezone" do
