@@ -409,6 +409,7 @@
 
   "MODAL_SUBMIT_BUTTON": "Submit",
   "MODAL_CANCEL_BUTTON": "Cancel",
+  "MODAL_CLOSE_BUTTON": "Close",
   "MODAL_CONFIRM_BUTTON": "Confirm",
 
   "BULK_ASSIGN_BUTTON_TEXT": "Assign Tasks",
