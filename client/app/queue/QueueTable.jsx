@@ -178,7 +178,7 @@ export const HeaderRow = (props) => {
           return (
             <th
               {...sortProps}
-              {...(column?.sortProps || {})}
+              {...(column?.sortProps || sortProps)}
               {...(ariaLabel ? { 'aria-labelledby': ariaLabel } : {})}
               role="columnheader"
               scope="col"

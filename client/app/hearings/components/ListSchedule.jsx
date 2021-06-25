@@ -178,6 +178,7 @@ class ListSchedule extends React.Component {
         name: 'Date',
         align: 'left',
         valueName: 'scheduledFor',
+        columnName: 'date',
         valueFunction: (row) => <Link to={`/schedule/docket/${row.id}`}>
           {moment(row.scheduledFor).format('ddd M/DD/YYYY')}
         </Link>,
@@ -215,6 +216,7 @@ class ListSchedule extends React.Component {
         name: 'Room',
         align: 'left',
         valueName: 'room',
+        columnName: 'room',
         tableData: hearingScheduleRows,
         getSortValue: (hearingDay) => {
           return hearingDay.room;
