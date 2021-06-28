@@ -2,6 +2,6 @@
 
 class VhaRegionalOffice < Organization
   def self.singleton
-    VhaRegionalOffice.first || VhaRegionalOffice.create(name: "VHA REGIONAL OFFICE", url: "vha-regional-office")
+    VhaRegionalOffice.first || VhaRegionalOffice.create(name: "VHA Regional Office", url: "vha-regional-office")
   end
 end
