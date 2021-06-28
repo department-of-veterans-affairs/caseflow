@@ -189,6 +189,7 @@ describe TimezoneService do
     include_examples "it resolves to a valid ISO 3166 country code", "Switzerland", "CH"
     include_examples "it resolves to a valid ISO 3166 country code", "Taiwan", "TW"
     include_examples "it resolves to a valid ISO 3166 country code", "United Kingdom", "GB"
+    include_examples "it resolves to a valid ISO 3166 country code", "United Kingdom ", "GB"
 
     shared_examples "it throws an error if not a valid country name" do |country_name|
       it "#{country_name.inspect} raises InvalidCountryNameError" do
