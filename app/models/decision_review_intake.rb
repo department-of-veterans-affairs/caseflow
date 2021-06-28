@@ -47,7 +47,6 @@ class DecisionReviewIntake < Intake
       decision_review: detail,
       participant_id: participant_id,
       payee_code: (need_payee_code? ? request_params[:payee_code] : nil),
-      notes: request_params[:claimant_notes]
     )
 
     if claimant.is_a?(OtherClaimant)
