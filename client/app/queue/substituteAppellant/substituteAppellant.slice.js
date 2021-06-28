@@ -56,12 +56,14 @@ const initialState = {
   poa: null
 };
 
+const resetState = () => ({ ...initialState });
+
 const substituteAppellantSlice = createSlice({
   name: 'substituteAppellant',
   initialState,
   reducers: {
-    cancel: () => ({ ...initialState }),
-    reset: () => ({ ...initialState }),
+    cancel: resetState,
+    reset: resetState,
     stepForward: (state) => ({ ...state, step: state.step + 1 }),
     stepBack: (state) => ({ ...state, step: state.step ? state.step - 1 : 0 }),
     updateData: (state, action) => {
