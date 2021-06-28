@@ -434,7 +434,5 @@ describe AppealStatusApiDecorator, :all_dbs do
         expect(subject).to be_nil
       end
     end
-
-
   end
 end
