@@ -51,7 +51,7 @@ describe ColocatedTask, :all_dbs do
           expect(user_task.assigned_at).to_not eq nil
           expect(user_task.assigned_by).to eq attorney
           expect(user_task).to be_a(AojColocatedTask)
-          expect(user_task.assigned_to).to eq User.find_by(css_id: colocated_members[0].css_id)
+          expect(user_task.assigned_to).to eq User.find_by_css_id(colocated_members[0].css_id)
           expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
           expect(ColocatedTask.count).to eq(2)
           expect(AojColocatedTask.count).to eq(2)
@@ -63,38 +63,38 @@ describe ColocatedTask, :all_dbs do
         expect(user_tasks.first.valid?).to be true
         expect(user_tasks.first.status).to eq "assigned"
         expect(user_tasks.first).to be_a(AojColocatedTask)
-        expect(user_tasks.first.assigned_to).to eq User.find_by(css_id: colocated_members[0].css_id)
+        expect(user_tasks.first.assigned_to).to eq User.find_by_css_id(colocated_members[0].css_id)
 
         expect(user_tasks.second.valid?).to be true
         expect(user_tasks.second.status).to eq "assigned"
         expect(user_tasks.second).to be_a(PoaClarificationColocatedTask)
-        expect(user_tasks.second.assigned_to).to eq User.find_by(css_id: colocated_members[0].css_id)
+        expect(user_tasks.second.assigned_to).to eq User.find_by_css_id(colocated_members[0].css_id)
       end
 
       it "assigns tasks on the same appeal to the same user when they're not the next assignee" do
         user_tasks = subject.select { |t| t.assigned_to.is_a?(User) }
-        expect(user_tasks.first.assigned_to).to eq User.find_by(css_id: colocated_members[0].css_id)
-        expect(user_tasks.second.assigned_to).to eq User.find_by(css_id: colocated_members[0].css_id)
+        expect(user_tasks.first.assigned_to).to eq User.find_by_css_id(colocated_members[0].css_id)
+        expect(user_tasks.second.assigned_to).to eq User.find_by_css_id(colocated_members[0].css_id)
 
         record = ColocatedTask.create_many_from_params(
           [{ assigned_by: attorney, type: AojColocatedTask.name, appeal: appeal_2 }], attorney
         )
-        expect(record.second.assigned_to).to eq User.find_by(css_id: colocated_members[1].css_id)
+        expect(record.second.assigned_to).to eq User.find_by_css_id(colocated_members[1].css_id)
 
         record = ColocatedTask.create_many_from_params(
           [{ assigned_by: attorney, type: AojColocatedTask.name, appeal: appeal_3 }], attorney
         )
-        expect(record.second.assigned_to).to eq User.find_by(css_id: colocated_members[2].css_id)
+        expect(record.second.assigned_to).to eq User.find_by_css_id(colocated_members[2].css_id)
 
         record = ColocatedTask.create_many_from_params(
           [{ assigned_by: attorney, type: AojColocatedTask.name, appeal: appeal_4 }], attorney
         )
-        expect(record.second.assigned_to).to eq User.find_by(css_id: colocated_members[0].css_id)
+        expect(record.second.assigned_to).to eq User.find_by_css_id(colocated_members[0].css_id)
 
         record = ColocatedTask.create_many_from_params(
           [{ assigned_by: attorney, type: PoaClarificationColocatedTask.name, appeal: appeal_3 }], attorney
         )
-        expect(record.second.assigned_to).to eq User.find_by(css_id: colocated_members[2].css_id)
+        expect(record.second.assigned_to).to eq User.find_by_css_id(colocated_members[2].css_id)
       end
     end
 
@@ -121,7 +121,7 @@ describe ColocatedTask, :all_dbs do
         expect(subject.second.assigned_at).to_not eq nil
         expect(subject.second.assigned_by).to eq attorney
         expect(subject.second).to be_a(AojColocatedTask)
-        expect(subject.second.assigned_to).to eq User.find_by(css_id: colocated_members[0].css_id)
+        expect(subject.second.assigned_to).to eq User.find_by_css_id(colocated_members[0].css_id)
 
         expect(AppealRepository).to_not receive(:update_location!)
       end
@@ -625,7 +625,9 @@ describe ColocatedTask, :all_dbs do
     let(:post_decision_motion_updater) do
       PostDecisionMotionUpdater.new(judge_address_motion_to_vacate_task, post_decision_motion_params)
     end
-    let(:vacate_stream) { Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "vacate") }
+    let(:vacate_stream) do
+      Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: Constants.AMA_STREAM_TYPES.vacate)
+    end
     let(:attorney_task) { AttorneyTask.find_by(assigned_to: attorney) }
     let(:parent) { create(:ama_judge_decision_review_task, assigned_to: judge, appeal: vacate_stream ) }
 

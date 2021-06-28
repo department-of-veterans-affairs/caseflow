@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FilterOption renders correctly 1`] = `
+<div>
+  <ul
+    data-css-rbmpqz=""
+  >
+    <li
+      class="cf-filter-option-row"
+      data-css-ewovsq=""
+    >
+      <input
+        checked=""
+        id="0-AttorneyLegacyTask"
+        type="checkbox"
+        value="AttorneyLegacyTask"
+      />
+      <label
+        for="0-AttorneyLegacyTask"
+      >
+        Attorney Legacy Tasks
+      </label>
+    </li>
+    <li
+      class="cf-filter-option-row"
+      data-css-ewovsq=""
+    >
+      <input
+        id="1-EstablishClaim"
+        type="checkbox"
+        value="EstablishClaim"
+      />
+      <label
+        for="1-EstablishClaim"
+      >
+        Establish Claim
+      </label>
+    </li>
+  </ul>
+</div>
+`;

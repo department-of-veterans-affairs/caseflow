@@ -5,33 +5,40 @@ require "console_tree_renderer"
 # Usage instructions at https://github.com/department-of-veterans-affairs/caseflow/wiki/Task-Tree-Render
 # :nocov:
 module TaskTreeRenderModule
-  def self.new_renderer # rubocop:disable all
+  PRESET_VALUE_FUNCS = {
+    CRE_DATE: ->(task) { task.created_at&.strftime("%Y-%m-%d") },
+    CRE_TIME: ->(task) { task.created_at&.strftime("%H-%M-%S") },
+    UPD_DATE: ->(task) { task.updated_at&.strftime("%Y-%m-%d") },
+    UPD_TIME: ->(task) { task.updated_at&.strftime("%H-%M-%S") },
+    CLO_DATE: ->(task) { task.closed_at&.strftime("%Y-%m-%d") },
+    CLO_TIME: ->(task) { task.closed_at&.strftime("%H-%M-%S") },
+    ASGN_DATE: ->(task) { task.assigned_at&.strftime("%Y-%m-%d") },
+    ASGN_TIME: ->(task) { task.assigned_at&.strftime("%H-%M-%S") },
+    ASGN_BY: lambda { |task|
+      ConsoleTreeRenderer.send_chain(task, [:assigned_by, :type])&.to_s ||
+        ConsoleTreeRenderer.send_chain(task, [:assigned_by, :name])&.to_s ||
+        ConsoleTreeRenderer.send_chain(task, [:assigned_by, :css_id])&.to_s
+    },
+    ASGN_TO: lambda { |task|
+      ConsoleTreeRenderer.send_chain(task, [:assigned_to, :type])&.to_s ||
+        ConsoleTreeRenderer.send_chain(task, [:assigned_to, :name])&.to_s ||
+        ConsoleTreeRenderer.send_chain(task, [:assigned_to, :css_id])&.to_s
+    }
+  }.freeze
+
+  def self.new_renderer
     ConsoleTreeRenderer::ConsoleRenderer.new.tap do |ttr|
-      ttr.config.value_funcs_hash.merge!(
-        CRE_DATE: ->(task) { task.created_at&.strftime("%Y-%m-%d") },
-        CRE_TIME: ->(task) { task.created_at&.strftime("%H-%M-%S") },
-        UPD_DATE: ->(task) { task.updated_at&.strftime("%Y-%m-%d") },
-        UPD_TIME: ->(task) { task.updated_at&.strftime("%H-%M-%S") },
-        CLO_DATE: ->(task) { task.updated_at&.strftime("%Y-%m-%d") },
-        CLO_TIME: ->(task) { task.updated_at&.strftime("%H-%M-%S") },
-        ASGN_DATE: ->(task) { task.created_at&.strftime("%Y-%m-%d") },
-        ASGN_TIME: ->(task) { task.created_at&.strftime("%H-%M-%S") },
-        ASGN_BY: lambda { |task|
-          ConsoleTreeRenderer.send_chain(task, [:assigned_by, :type])&.to_s ||
-            ConsoleTreeRenderer.send_chain(task, [:assigned_by, :name])&.to_s ||
-            ConsoleTreeRenderer.send_chain(task, [:assigned_by, :css_id])&.to_s
-        },
-        ASGN_TO: lambda { |task|
-          ConsoleTreeRenderer.send_chain(task, [:assigned_to, :type])&.to_s ||
-            ConsoleTreeRenderer.send_chain(task, [:assigned_to, :name])&.to_s ||
-            ConsoleTreeRenderer.send_chain(task, [:assigned_to, :css_id])&.to_s
-        }
-      )
       ttr.config.default_atts = [:id, :status, :ASGN_BY, :ASGN_TO, :updated_at]
+      ttr.config.value_funcs_hash.merge!(PRESET_VALUE_FUNCS)
       ttr.config.heading_label_template = lambda { |appeal|
-        docket = (defined?(appeal.docket_type) && appeal.docket_type) ||
-                 (defined?(appeal.docket_name) && appeal.docket_name)
-        "#{appeal.class.name} #{appeal.id} (#{docket}) "
+        docket = appeal.docket_name.first.titleize
+        docket_number = if appeal.is_a?(LegacyAppeal)
+                          appeal.cached_vacols_case&.docket_number || appeal.docket_number
+                        else
+                          appeal.docket_number
+                        end
+        parenthetical = [docket, docket_number, appeal.type].compact.join(" ")
+        "#{appeal.class.name} #{appeal.id} (#{parenthetical}) "
       }
       ttr.config.custom["show_all_tasks"] = true
     end
@@ -74,7 +81,9 @@ module TaskTreeRenderModule
 
   # called by rows and used by config.value_funcs_hash
   def row_objects(_config)
-    is_a?(Task) ? appeal.tasks : tasks
+    rows = is_a?(Task) ? appeal.tasks : tasks
+    # eager load for later calls to assigned_by, assigned_to, and cancelled_by
+    rows.includes(:assigned_by, :assigned_to, :cancelled_by)
   end
 
   def row_label(_config)
@@ -97,7 +106,7 @@ module TaskTreeRenderModule
     roottask_ids = appeal.tasks.where(parent_id: nil).pluck(:id)
     if config.custom["show_all_tasks"]
       # in some tests, parent tasks are (erroneously) not in the same appeal
-      task_ids = appeal.tasks.reject { |tsk| tsk.parent&.appeal_id == appeal.id }.pluck(:id)
+      task_ids = appeal.tasks.includes(:parent).reject { |tsk| tsk.parent&.appeal_id == appeal.id }.pluck(:id)
     end
     roottask_ids |= task_ids if task_ids
     Task.where(id: roottask_ids.compact.sort)

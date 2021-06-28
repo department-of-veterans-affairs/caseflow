@@ -180,10 +180,10 @@ paths:
                           decisionIssueId:
                             type: integer
                             nullable: true
-                          ratingIssueId:
+                          ratingIssueReferenceId:
                             type: string
                             nullable: true
-                          ratingDecisionIssueId:
+                          ratingDecisionReferenceId:
                             type: string
                             nullable: true
             examples:
@@ -368,7 +368,7 @@ paths:
                     "errors": [
                       {
                         "status": "422",
-                        "title": "A contestable issue must have at least one of the following: decisionIssueId, ratingIssueId, ratingDecisionIssueId",
+                        "title": "A contestable issue must have at least one of the following: decisionIssueId, ratingIssueReferenceId, ratingDecisionReferenceId",
                         "code": "contestable_issue_params_must_have_ids"
                       }
                     ]
@@ -829,14 +829,14 @@ paths:
                                 diagnosticCode:
                                   type: string
                                   nullable: true
-                                ratingIssueId: # rating_issue_reference_id
+                                ratingIssueReferenceId:
                                   type: string
                                   nullable: true
                                 ratingIssueProfileDate:
                                   type: string
                                   format: date
                                   nullable: true
-                                ratingDecisionId:
+                                ratingDecisionReferenceId:
                                   type: string
                                   nullable: true
                                 description:
@@ -914,10 +914,14 @@ paths:
       parameters:
         - name: X-VA-SSN
           in: header
-          required: true
-          description: The SSN of the veteran.
+          description: The SSN of the veteran. Either SSN or file number must be passed.
           schema:
             type : string
+        - name: X-VA-File-Number
+          in: header
+          description: The file number of the veteran. Either SSN or file number must be passed.
+          schema:
+            type: string
         - name: X-VA-Receipt-Date
           in: header
           required: true
@@ -950,7 +954,7 @@ paths:
                         attributes:
                           type: object
                           properties:
-                            ratingIssueId:
+                            ratingIssueReferenceId:
                               type: string
                               nullable: true
                               description: "RatingIssue ID"
@@ -963,7 +967,7 @@ paths:
                               type: string
                               nullable: true
                               description: "RatingIssue diagnostic code"
-                            ratingDecisionId:
+                            ratingDecisionReferenceId:
                               type: string
                               nullable: true
                               description: "The BGS ID for the contested rating decision. This may be populated while ratingIssueId is nil"

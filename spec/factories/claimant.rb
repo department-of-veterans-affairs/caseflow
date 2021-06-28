@@ -25,6 +25,12 @@ FactoryBot.define do
       end
     end
 
+    trait :with_unrecognized_appellant_detail do
+      after(:create) do |claimant, _evaluator|
+        create(:unrecognized_appellant, claimant: claimant)
+      end
+    end
+
     after(:create) do |claimant, _evaluator|
       # ensure that an associated person record is created in our DB
       # & date_of_birth is populated

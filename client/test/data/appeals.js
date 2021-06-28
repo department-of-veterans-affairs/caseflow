@@ -20,7 +20,7 @@ export const defaultAssignHearing = {
 
 export const powerOfAttorney = {
   representative_type: 'Attorney',
-  representative_name: 'Attorney McAttorneyFace',
+  representative_name: 'Clarence Darrow',
   representative_address: {
     address_line_1: '9999 MISSION ST',
     address_line_2: 'UBER',
@@ -50,7 +50,7 @@ export const veteranInfo = {
       country: 'USA'
     }
   }
-}
+};
 
 export const appealData = {
   docketName: 'hearing',
@@ -70,7 +70,15 @@ export const appealData = {
   vacateType: null,
   completedHearingOnPreviousAppeal: false,
   issues: [],
-  decisionIssues: [],
+  decisionIssues: [
+    {
+      id: 1,
+      description: 'This is a description of the decision'
+    }, {
+      id: 2,
+      description: 'This is a description of another decision'
+    }
+  ],
   canEditRequestIssues: false,
   appellantIsNotVeteran: false,
   appellantFullName: 'Abellona Valtas',
@@ -97,6 +105,7 @@ export const appealData = {
   documentID: null,
   caseReviewId: null,
   canEditDocumentId: false,
+  veteranDateOfDeath: null,
   attorneyCaseRewriteDetails: {
     note_from_attorney: null,
     untimely_evidence: null
@@ -122,7 +131,7 @@ export const legacyAppeal = {
   docketName: 'Legacy',
   hearings: [],
   isLegacyAppeal: true
-}
+};
 
 export const legacyAppealForTravelBoard = {
   ...legacyAppeal,
@@ -132,7 +141,7 @@ export const legacyAppealForTravelBoard = {
   },
   readableHearingRequestType: 'Travel',
   readableOriginalHearingRequestType: 'Travel'
-}
+};
 
 export const veteranInfoWithoutEmail = {
   veteranInfo: {
@@ -141,7 +150,7 @@ export const veteranInfoWithoutEmail = {
       email_address: null
     }
   }
-}
+};
 
 export const openHearingAppeal = {
   ...appealData,
@@ -155,7 +164,8 @@ export const openHearingAppeal = {
       type: 'Central',
       externalId: '29e88a5d-8f00-47ea-b178-95a01d912b96',
       disposition: null,
-      isVirtual: false
+      isVirtual: false,
+      createdAt: '2020-04-07T03:30:00.000-04:00'
     }
   ],
 };
@@ -207,5 +217,15 @@ export const scheduleHearingDetails = {
       facility_type: 'va_health_facility'
     }
   }
+};
+
+export const amaAppealHearingData = {
+  heldBy: 'Stacy Yellow',
+  viewedByJudge: false,
+  date: '2020-08-07T03:30:00.000-04:00',
+  createdAt: '2020-04-07T03:30:00.000-04:00',
+  type: 'Central',
+  externalId: '29e88a5d-8f00-47ea-b178-95a01d912b96',
+  disposition: null,
+  isVirtual: false
 }
-;

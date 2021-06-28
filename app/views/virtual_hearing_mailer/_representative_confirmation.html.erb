@@ -11,7 +11,7 @@
     <%= formatted_appellant_name(@virtual_hearing.hearing.appeal) %>
   </h3>
   <p>
-    <a href="https://appeals.cf.ds.va.gov/queue/appeals/<%= @virtual_hearing.hearing.appeal.external_id %>">
+    <a href="<%= caseflow_url(@virtual_hearing.hearing.appeal) %>">
       View the case details
     </a> (Note: You must be logged in to the VA network to access case details.)
   </p>

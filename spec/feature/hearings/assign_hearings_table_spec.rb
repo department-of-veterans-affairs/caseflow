@@ -267,6 +267,8 @@ RSpec.feature "Assign Hearings Table" do
       Appeal.all.each_with_index do |appeal, idx|
         create(
           :bgs_power_of_attorney,
+          :with_name_cached,
+          appeal: appeal,
           claimant_participant_id: appeal.claimant.participant_id,
           representative_name: "Attorney #{idx}"
         )
@@ -424,7 +426,7 @@ RSpec.feature "Assign Hearings Table" do
               folder: create(:folder, tinum: "3") # docket number
             ),
             closest_regional_office: closest_regional_office,
-            changed_request_type: HearingDay::REQUEST_TYPES[:virtual]
+            changed_hearing_request_type: HearingDay::REQUEST_TYPES[:virtual]
           )
         )
       end

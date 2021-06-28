@@ -121,4 +121,22 @@ describe('TextareaField', () => {
     expect(textField.find('i')).toHaveLength(0);
     expect(textField).toMatchSnapshot();
   });
+
+  test('Respects characterLimitTopRight prop on the textarea field', () => {
+    // Setup the test
+    const textField = mount(
+      <TextareaField
+        maxlength={limit}
+        onChange={changeSpy}
+        name={name}
+        characterLimitTopRight={true}
+        value={'Notes'}
+      />
+    );
+    expect(textField.find('i')).toHaveLength(1);
+    expect(textField.find('p').first().props().style).toEqual(
+      { float: 'right', marginBottom: 0, lineHeight: 'inherit' }
+    );
+    expect(textField).toMatchSnapshot();
+  })
 });

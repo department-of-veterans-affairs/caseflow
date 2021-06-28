@@ -5,8 +5,8 @@
 # case distribution
 
 class SpecialCaseMovementTask < Task
-  before_create :verify_parent_task_type,
-                :verify_user_organization,
+  validates :parent, presence: true, parentTask: { task_type: DistributionTask }, on: :create
+  before_create :verify_user_organization,
                 :verify_appeal_distributable
   after_create :distribute_to_judge
 
@@ -35,15 +35,6 @@ class SpecialCaseMovementTask < Task
   def verify_appeal_distributable
     if !appeal.ready_for_distribution?
       fail(Caseflow::Error::IneligibleForSpecialCaseMovement, appeal_id: appeal.id)
-    end
-  end
-
-  def verify_parent_task_type
-    # For now, we expect the parent to always be the distribution task.
-    #   This may change as we add more 'from' scenarios
-    if !parent.is_a?(DistributionTask)
-      fail(Caseflow::Error::InvalidParentTask,
-           message: "Case Movement task must have a Distribution task parent")
     end
   end
 

@@ -42,6 +42,15 @@
 #
 .DEFAULT_GOAL := help
 
+# https://stackoverflow.com/a/14061796/2237879
+#
+# This hack allows you to run make commands with any set of arguments.
+#
+# For example, these lines are the same:
+#   > make one-test spec/path/here.rb
+#   > bundle exec rspec spec/path/here.rb
+RUN_ARGS := $(wordlist 2, $(words $(MAKECMDGOALS)), $(MAKECMDGOALS))
+
 whats-next:  ## TODO
 	scripts/whats-next
 
@@ -172,8 +181,14 @@ client-build-demo client-demo: ## Builds webpack for local server
 
 client-build-all client-all: client-test client-demo ## Builds webpack for both tests and local server
 
-one-test:  ## run the test passed in
-	bundle exec rspec $$T
+one-test:  ## run the rspec test passed in
+	bundle exec rspec $(RUN_ARGS)
+
+jest: ## Run jest tests
+	cd client && yarn jest
+
+one-jest:  ## run the jest test passed in (leave off client/)
+	cd client && yarn jest $(RUN_ARGS)
 
 unsafe:  ## TODO
 	mv .git/hooks/pre-commit .git/hooks/pre-commit-linter
@@ -188,13 +203,13 @@ karma:  ## TODO
 	cd client && node_modules/.bin/karma start
 
 erd-etl:	## Create ERD diagram for the ETL database
-	ERD_BASE=ETL::Record bundle exec erd --filename etl-erd --title 'ODS/ETL Data Model'
+	ERD_BASE=ETL::Record bundle exec erd --filename docs/schema/etl-erd --title 'ODS/ETL Data Model'
 
 erd-vacols:	## Create ERD diagram for the VACOLS database
-	ERD_BASE=VACOLS::Record bundle exec erd --filename vacols-erd --title 'VACOLS Data Model'
+	ERD_BASE=VACOLS::Record bundle exec erd --filename docs/schema/vacols-erd --title 'VACOLS Data Model'
 
 erd-caseflow:	## Create ERD diagram for the Caseflow database
-	ERD_BASE=CaseflowRecord bundle exec erd --filename caseflow-erd --title 'Caseflow Data Model'
+	ERD_BASE=CaseflowRecord bundle exec erd --filename docs/schema/caseflow-erd --title 'Caseflow Data Model'
 
 erd: erd-etl erd-vacols erd-caseflow ## Create all ERD diagrams
 
@@ -207,6 +222,9 @@ doc-schema-etl:	# Create docs/schema/etl.csv
 doc-schema:	doc-schema-caseflow doc-schema-etl	# Create all docs/schema csv files
 
 docs: erd doc-schema	# Build all documentation
+
+check-fks: # Check for missing foreign keys
+	bundle exec rake immigrant:check_keys
 
 # Self-documented makefile from https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:  ## Shows help

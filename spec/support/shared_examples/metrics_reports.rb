@@ -7,6 +7,9 @@ shared_context "Metrics Reports", shared_context: :metadata do
   end
 
   let(:veteran) { create(:veteran) }
+  let(:start_date) { 2.months.ago }
+  let(:end_date) { 1.month.ago }
+  let(:date_range) { Metrics::DateRange.new(start_date, end_date) }
 
   let!(:hlrs) do
     create(:higher_level_review, veteran_file_number: veteran.file_number)
@@ -83,5 +86,33 @@ shared_context "Metrics Reports", shared_context: :metadata do
   let!(:appeals) do
     create(:appeal, established_at: 35.days.ago)
     create(:appeal, established_at: Time.zone.today)
+  end
+
+  let!(:paperless_cases) do
+    10.times do
+      vacols_case = create(:case, :certified, :type_original, bf41stat: 37.days.ago)
+      vacols_case.folder.update!(tivbms: "Y")
+    end
+  end
+
+  let!(:paper_cases) do
+    5.times do
+      vacols_case = create(:case, :certified, :type_original, bf41stat: 37.days.ago)
+      vacols_case.folder.update!(tivbms: "N")
+    end
+  end
+
+  let!(:paperless_not_caseflow_cases) do
+    5.times do
+      vacols_case = create(:case, :type_original, bf41stat: 37.days.ago)
+      vacols_case.folder.update!(tivbms: "Y")
+    end
+  end
+
+  let!(:paper_not_caseflow_cases) do
+    5.times do
+      vacols_case = create(:case, :type_original, bf41stat: 37.days.ago)
+      vacols_case.folder.update!(tivbms: "N")
+    end
   end
 end

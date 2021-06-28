@@ -1,0 +1,554 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CancelTaskModal for cancel change hearing request type action 1`] = `
+<withRouter(Connect(CancelTaskModal))
+  match={
+    Object {
+      "path": "modal/cancel_task",
+    }
+  }
+  requestPatch={[MockFunction]}
+  taskId="2"
+>
+  <Connect(CancelTaskModal)
+    history={
+      Object {
+        "action": "POP",
+        "block": [Function],
+        "canGo": [Function],
+        "createHref": [Function],
+        "entries": Array [
+          Object {
+            "hash": "",
+            "pathname": "modal/cancel_task",
+            "search": "",
+            "state": undefined,
+          },
+        ],
+        "go": [Function],
+        "goBack": [Function],
+        "goForward": [Function],
+        "index": 0,
+        "length": 1,
+        "listen": [Function],
+        "location": Object {
+          "hash": "",
+          "pathname": "modal/cancel_task",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [Function],
+        "replace": [Function],
+      }
+    }
+    location={
+      Object {
+        "hash": "",
+        "pathname": "modal/cancel_task",
+        "search": "",
+        "state": undefined,
+      }
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "modal/cancel_task",
+        "url": "modal/cancel_task",
+      }
+    }
+    requestPatch={[MockFunction]}
+    taskId="2"
+  >
+    <CancelTaskModal
+      highlightFormItems={false}
+      history={
+        Object {
+          "action": "POP",
+          "block": [Function],
+          "canGo": [Function],
+          "createHref": [Function],
+          "entries": Array [
+            Object {
+              "hash": "",
+              "pathname": "modal/cancel_task",
+              "search": "",
+              "state": undefined,
+            },
+          ],
+          "go": [Function],
+          "goBack": [Function],
+          "goForward": [Function],
+          "index": 0,
+          "length": 1,
+          "listen": [Function],
+          "location": Object {
+            "hash": "",
+            "pathname": "modal/cancel_task",
+            "search": "",
+            "state": undefined,
+          },
+          "push": [Function],
+          "replace": [Function],
+        }
+      }
+      location={
+        Object {
+          "hash": "",
+          "pathname": "modal/cancel_task",
+          "search": "",
+          "state": undefined,
+        }
+      }
+      match={
+        Object {
+          "isExact": true,
+          "params": Object {},
+          "path": "modal/cancel_task",
+          "url": "modal/cancel_task",
+        }
+      }
+      requestPatch={[Function]}
+      task={
+        Object {
+          "addedByCssId": null,
+          "appeal": Object {},
+          "appealId": "123",
+          "appealType": "LegacyAppeal",
+          "assignedBy": Object {
+            "cssId": null,
+            "firstName": null,
+            "lastName": null,
+            "pgId": "1",
+          },
+          "assignedOn": "2020-09-08T10:02:49.210-04:00",
+          "assignedTo": Object {
+            "cssId": null,
+            "id": "1",
+            "isOrganization": true,
+            "name": "Board of Veterans' Appeals",
+            "type": "Bva",
+          },
+          "assigneeName": "Board of Veterans' Appeals",
+          "availableActions": Array [
+            Object {
+              "data": Object {
+                "message_detail": "You have successfully cancelled the convert hearing to virtual task",
+                "message_title": "Task for Merlin V Langworth's case has been cancelled",
+                "modal_title": "Cancel convert hearing to virtual task",
+                "redirect_after": "/queue/appeals/1986897",
+                "show_instructions": false,
+              },
+              "func": "cancel_convert_hearing_request_type_data",
+              "label": "Cancel convert hearing to virtual",
+              "value": "modal/cancel_task",
+            },
+          ],
+          "availableHearingLocations": null,
+          "cancelledBy": Object {
+            "cssId": null,
+          },
+          "caseReviewId": null,
+          "closedAt": "2020-09-08T14:13:33.878-04:00",
+          "closestRegionalOffice": Object {
+            "key": "RO17",
+            "location_hash": Object {
+              "alternate_locations": Array [
+                "vba_317a",
+                "vc_0742V",
+                "vba_317",
+                "vba_317",
+                "vba_317",
+              ],
+              "city": "St. Petersburg",
+              "facility_locator_id": "vba_317",
+              "hold_hearings": true,
+              "label": "St. Petersburg regional office",
+              "state": "FL",
+              "timezone": "America/New_York",
+            },
+          },
+          "convertedBy": Object {
+            "cssId": "BVASYELLOW",
+          },
+          "convertedOn": "2020-09-08T14:13:33.878-04:00",
+          "createdAt": "2020-09-08T10:02:49.210-04:00",
+          "decisionPreparedBy": null,
+          "docketName": "hearing",
+          "documentId": null,
+          "externalAppealId": "23423534",
+          "externalHearingId": "93897397",
+          "hearingRequestType": null,
+          "hideFromCaseTimeline": false,
+          "hideFromQueueTableView": false,
+          "hideFromTaskSnapshot": false,
+          "instructions": Array [
+            "Change hearing request type for a Travel Board hearing",
+          ],
+          "isFormerTravel": null,
+          "isLegacy": false,
+          "label": "Change hearing request type",
+          "onHoldDuration": null,
+          "parentId": "1",
+          "placedOnHoldAt": null,
+          "powerOfAttorneyName": null,
+          "previousTaskAssignedOn": null,
+          "startedAt": "2020-09-08T10:02:49.210-04:00",
+          "status": "completed",
+          "suggestedHearingLocation": null,
+          "taskId": null,
+          "timelineTitle": "Hearing type converted from Travel to Virtual",
+          "type": "ChangeHearingRequestTypeTask",
+          "uniqueId": "2",
+          "workProduct": null,
+        }
+      }
+      taskId="2"
+    >
+      <withRouter(Connect(QueueFlowModal))
+        pathAfterSubmit="/queue/appeals/1986897"
+        submit={[Function]}
+        title="Cancel convert hearing to virtual task"
+        validateForm={[Function]}
+      >
+        <Connect(QueueFlowModal)
+          history={
+            Object {
+              "action": "POP",
+              "block": [Function],
+              "canGo": [Function],
+              "createHref": [Function],
+              "entries": Array [
+                Object {
+                  "hash": "",
+                  "pathname": "modal/cancel_task",
+                  "search": "",
+                  "state": undefined,
+                },
+              ],
+              "go": [Function],
+              "goBack": [Function],
+              "goForward": [Function],
+              "index": 0,
+              "length": 1,
+              "listen": [Function],
+              "location": Object {
+                "hash": "",
+                "pathname": "modal/cancel_task",
+                "search": "",
+                "state": undefined,
+              },
+              "push": [Function],
+              "replace": [Function],
+            }
+          }
+          location={
+            Object {
+              "hash": "",
+              "pathname": "modal/cancel_task",
+              "search": "",
+              "state": undefined,
+            }
+          }
+          match={
+            Object {
+              "isExact": true,
+              "params": Object {},
+              "path": "modal/cancel_task",
+              "url": "modal/cancel_task",
+            }
+          }
+          pathAfterSubmit="/queue/appeals/1986897"
+          submit={[Function]}
+          title="Cancel convert hearing to virtual task"
+          validateForm={[Function]}
+        >
+          <QueueFlowModal
+            highlightInvalidFormItems={[Function]}
+            history={
+              Object {
+                "action": "POP",
+                "block": [Function],
+                "canGo": [Function],
+                "createHref": [Function],
+                "entries": Array [
+                  Object {
+                    "hash": "",
+                    "pathname": "modal/cancel_task",
+                    "search": "",
+                    "state": undefined,
+                  },
+                ],
+                "go": [Function],
+                "goBack": [Function],
+                "goForward": [Function],
+                "index": 0,
+                "length": 1,
+                "listen": [Function],
+                "location": Object {
+                  "hash": "",
+                  "pathname": "modal/cancel_task",
+                  "search": "",
+                  "state": undefined,
+                },
+                "push": [Function],
+                "replace": [Function],
+              }
+            }
+            location={
+              Object {
+                "hash": "",
+                "pathname": "modal/cancel_task",
+                "search": "",
+                "state": undefined,
+              }
+            }
+            match={
+              Object {
+                "isExact": true,
+                "params": Object {},
+                "path": "modal/cancel_task",
+                "url": "modal/cancel_task",
+              }
+            }
+            pathAfterSubmit="/queue/appeals/1986897"
+            resetSaveState={[Function]}
+            submit={[Function]}
+            title="Cancel convert hearing to virtual task"
+            validateForm={[Function]}
+          >
+            <FlowModal
+              button="Submit"
+              highlightInvalidFormItems={[Function]}
+              history={
+                Object {
+                  "action": "POP",
+                  "block": [Function],
+                  "canGo": [Function],
+                  "createHref": [Function],
+                  "entries": Array [
+                    Object {
+                      "hash": "",
+                      "pathname": "modal/cancel_task",
+                      "search": "",
+                      "state": undefined,
+                    },
+                  ],
+                  "go": [Function],
+                  "goBack": [Function],
+                  "goForward": [Function],
+                  "index": 0,
+                  "length": 1,
+                  "listen": [Function],
+                  "location": Object {
+                    "hash": "",
+                    "pathname": "modal/cancel_task",
+                    "search": "",
+                    "state": undefined,
+                  },
+                  "push": [Function],
+                  "replace": [Function],
+                }
+              }
+              location={
+                Object {
+                  "hash": "",
+                  "pathname": "modal/cancel_task",
+                  "search": "",
+                  "state": undefined,
+                }
+              }
+              match={
+                Object {
+                  "isExact": true,
+                  "params": Object {},
+                  "path": "modal/cancel_task",
+                  "url": "modal/cancel_task",
+                }
+              }
+              pathAfterSubmit="/queue/appeals/1986897"
+              resetSaveState={[Function]}
+              submit={[Function]}
+              submitDisabled={false}
+              title="Cancel convert hearing to virtual task"
+              validateForm={[Function]}
+            >
+              <Modal
+                buttons={
+                  Array [
+                    Object {
+                      "classNames": Array [
+                        "usa-button",
+                        "cf-btn-link",
+                      ],
+                      "name": "Cancel",
+                      "onClick": [Function],
+                    },
+                    Object {
+                      "classNames": Array [
+                        "usa-button-secondary",
+                        "usa-button-hover",
+                        "usa-button-warning",
+                      ],
+                      "disabled": false,
+                      "loading": false,
+                      "name": "Submit",
+                      "onClick": [Function],
+                    },
+                  ]
+                }
+                className=""
+                closeHandler={[Function]}
+                scrollLock={true}
+                title="Cancel convert hearing to virtual task"
+              >
+                <section
+                  aria-describedby="modal_id-desc"
+                  aria-labelledby="modal_id-title"
+                  aria-modal="true"
+                  className="cf-modal active "
+                  id="modal_id"
+                  role="dialog"
+                >
+                  <TouchProvider>
+                    <ScrollLock
+                      accountForScrollbars={true}
+                    >
+                      <Sheet
+                        styles="body {
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+      position: relative !important;
+      
+      padding-right: 1024px !important;
+    }"
+                      />
+                    </ScrollLock>
+                  </TouchProvider>
+                  <div
+                    className="cf-modal-body"
+                    id=""
+                  >
+                    <button
+                      className="cf-modal-close"
+                      id="Cancel-convert-hearing-to-virtual-task-button-id-close"
+                      onClick={[Function]}
+                      type="button"
+                    >
+                      <span
+                        className="usa-sr-only"
+                      >
+                        Close
+                      </span>
+                      <svg
+                        className="cf-icon-close"
+                        height="55"
+                        viewBox="0 0 55 55"
+                        width="55"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <title>
+                          close
+                        </title>
+                        <path
+                          d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
+                        />
+                      </svg>
+                    </button>
+                    <div
+                      style={
+                        Object {
+                          "display": "flex",
+                        }
+                      }
+                    >
+                      <div
+                        data-css-1gs0ko2=""
+                      >
+                        <h1
+                          id="modal_id-title"
+                        >
+                          Cancel convert hearing to virtual task
+                        </h1>
+                        <div
+                          data-css-o98ubo=""
+                        />
+                      </div>
+                    </div>
+                    <div
+                      className="cf-modal-divider"
+                    />
+                    <div
+                      className="cf-modal-controls"
+                    >
+                      <Button
+                        classNames={
+                          Array [
+                            "usa-button",
+                            "cf-btn-link",
+                            "cf-push-left",
+                          ]
+                        }
+                        id="Cancel-convert-hearing-to-virtual-task-button-id-0"
+                        key="0"
+                        linkStyling={false}
+                        loading={false}
+                        name="Cancel"
+                        onClick={[Function]}
+                        type="button"
+                        willNeverBeLoading={false}
+                      >
+                        <span>
+                          <button
+                            className="usa-button cf-btn-link cf-push-left usa-button"
+                            id="Cancel-convert-hearing-to-virtual-task-button-id-0"
+                            onClick={[Function]}
+                            type="button"
+                          >
+                            Cancel
+                          </button>
+                        </span>
+                      </Button>
+                      <Button
+                        classNames={
+                          Array [
+                            "usa-button-secondary",
+                            "usa-button-hover",
+                            "usa-button-warning",
+                            "cf-push-right",
+                          ]
+                        }
+                        disabled={false}
+                        id="Cancel-convert-hearing-to-virtual-task-button-id-1"
+                        key="1"
+                        linkStyling={false}
+                        loading={false}
+                        name="Submit"
+                        onClick={[Function]}
+                        type="button"
+                        willNeverBeLoading={false}
+                      >
+                        <span>
+                          <button
+                            className="usa-button-secondary usa-button-hover usa-button-warning cf-push-right usa-button"
+                            disabled={false}
+                            id="Cancel-convert-hearing-to-virtual-task-button-id-1"
+                            onClick={[Function]}
+                            type="button"
+                          >
+                            Submit
+                          </button>
+                        </span>
+                      </Button>
+                    </div>
+                  </div>
+                </section>
+              </Modal>
+            </FlowModal>
+          </QueueFlowModal>
+        </Connect(QueueFlowModal)>
+      </withRouter(Connect(QueueFlowModal))>
+    </CancelTaskModal>
+  </Connect(CancelTaskModal)>
+</withRouter(Connect(CancelTaskModal))>
+`;

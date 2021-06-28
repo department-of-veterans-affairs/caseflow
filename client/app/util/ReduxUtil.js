@@ -9,7 +9,7 @@ const debounceFns = {};
  *    const action = {
  *      type: string
  *      meta: {
- *        anaytics: {
+ *        analytics: {
  *          category: string?, // defaults to defaultCategory
  *          action: string?, // defaults to action.type
  *          label: string?|function(state: redux state): string,
@@ -38,7 +38,7 @@ export const getReduxAnalyticsMiddleware = (defaultCategory) => (store) => (next
   const dispatchedAction = next(action);
   const { meta } = action;
 
-  if (meta) {
+  if (meta?.analytics) {
     if (isFunction(meta.analytics)) {
       meta.analytics(window.analyticsEvent, defaultCategory, action.type);
     } else {
@@ -56,6 +56,8 @@ export const getReduxAnalyticsMiddleware = (defaultCategory) => (store) => (next
 
       debounceFns[action.type](label);
     }
+  } else {
+    console.warn('No analytics present for action: ', action.type);
   }
 
   return dispatchedAction;

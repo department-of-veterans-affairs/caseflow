@@ -9,6 +9,9 @@ class TasksController < ApplicationController
   before_action :verify_task_access, only: [:create]
   skip_before_action :deny_vso_access, only: [:create, :index, :update, :for_appeal]
 
+  # Tasks that are allowed to be created by a user.
+  # If a task type is not sent to the frontend via TaskActionRepository's `type` or `options` parameters,
+  # then it doesn't need to be included here.
   TASK_CLASSES_LOOKUP = {
     AttorneyDispatchReturnTask: AttorneyDispatchReturnTask,
     AttorneyQualityReviewTask: AttorneyQualityReviewTask,
@@ -17,7 +20,11 @@ class TasksController < ApplicationController
     BlockedSpecialCaseMovementTask: BlockedSpecialCaseMovementTask,
     ChangeHearingDispositionTask: ChangeHearingDispositionTask,
     ColocatedTask: ColocatedTask,
-    EvidenceSubmissionWindowTask: EvidenceSubmissionWindowTask,
+    CavcPoaClarificationTask: CavcPoaClarificationTask,
+    CavcRemandProcessedLetterResponseWindowTask: CavcRemandProcessedLetterResponseWindowTask,
+    DocketSwitchRulingTask: DocketSwitchRulingTask,
+    DocketSwitchDeniedTask: DocketSwitchDeniedTask,
+    DocketSwitchGrantedTask: DocketSwitchGrantedTask,
     FoiaTask: FoiaTask,
     HearingAdminActionTask: HearingAdminActionTask,
     InformalHearingPresentationTask: InformalHearingPresentationTask,
@@ -30,8 +37,10 @@ class TasksController < ApplicationController
     PulacCerulloTask: PulacCerulloTask,
     QualityReviewTask: QualityReviewTask,
     ScheduleHearingTask: ScheduleHearingTask,
+    SendCavcRemandProcessedLetterTask: SendCavcRemandProcessedLetterTask,
     SpecialCaseMovementTask: SpecialCaseMovementTask,
-    Task: Task,
+    Task: Task, # Consider for removal, after cleaning up occurrences in prod
+    TranscriptionTask: TranscriptionTask,
     TranslationTask: TranslationTask
   }.freeze
 
@@ -109,12 +118,13 @@ class TasksController < ApplicationController
   rescue ActiveRecord::RecordInvalid => error
     invalid_record_error(error.record)
   rescue AssignHearingDispositionTask::HearingAssociationMissing => error
-    Raven.capture_exception(error)
+    Raven.capture_exception(error, extra: { application: "hearings" })
+
     render json: {
       "errors": ["title": "Missing Associated Hearing", "detail": error]
     }, status: :bad_request
   rescue Caseflow::Error::VirtualHearingConversionFailed => error
-    Raven.capture_exception(error)
+    Raven.capture_exception(error, extra: { application: "hearings" })
 
     render json: {
       "errors": ["title": COPY::FAILED_HEARING_UPDATE, "message": error.message, "code": error.code]

@@ -16,26 +16,23 @@ FactoryBot.define do
     end
 
     trait :disposition_held do
-      hearing_disp { "H" }
+      hearing_disp { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:held] }
     end
 
     trait :disposition_cancelled do
-      hearing_disp { "C" }
+      hearing_disp { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:cancelled] }
     end
 
     trait :disposition_postponed do
-      hearing_disp { "P" }
+      hearing_disp { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:postponed] }
     end
 
     trait :disposition_no_show do
-      hearing_disp { "N" }
+      hearing_disp { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:no_show] }
     end
 
-    after(:create) do |hearing, _evaluator|
-      # For some reason the returned record's sequence is one less than what is actually saved.
-      # We need to reload the correct record before trying to modify it.
-      hearing.hearing_pkseq = hearing.hearing_pkseq + 1
-      hearing.reload
+    trait :disposition_scheduled_in_error do
+      hearing_disp { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:scheduled_in_error] }
     end
 
     after(:build) do |hearing, evaluator|

@@ -120,57 +120,124 @@ describe AdvanceOnDocketMotion, :postgres do
     let(:claimant) { create(:claimant) }
     let(:reason) { described_class.reasons[:financial_distress] }
     let(:appeal_on_motion) { create(:appeal) }
-    let(:attrs) { { reason: described_class.reasons[:other], granted: true } }
-
-    before do
-      described_class.create!(
-        person_id: claimant.person.id,
-        granted: false,
-        reason: reason,
-        user_id: user_id,
-        appeal: appeal_on_motion
-      )
-    end
+    let(:attrs) { { reason: reason, granted: true } }
 
     subject { described_class.create_or_update_by_appeal(appeal, attrs) }
 
-    context "when has no motion associated with the appeal" do
-      it "creates a new motion" do
-        subject
-        motions = appeal.claimant.person.advance_on_docket_motions
-        expect(motions.count).to eq 2
-        expect(motions.first.granted).to be(false)
-        expect(motions.first.reason).to eq(described_class.reasons[:financial_distress])
-        expect(motions.second.granted).to be(true)
-        expect(motions.second.reason).to eq(described_class.reasons[:other])
-      end
-    end
-
-    context "and the motion was granted after the appeal receipt date" do
-      let(:appeal_on_motion) { appeal }
-
-      context "when the motion reason is not age" do
-        it "updates the previous motion" do
+    context "when there is no motion associated with the appeal" do
+      context "when the motion is not age-related" do
+        it "creates a new motion" do
           subject
           motions = appeal.claimant.person.advance_on_docket_motions
           expect(motions.count).to eq 1
           expect(motions.first.granted).to be(true)
-          expect(motions.first.reason).to eq(described_class.reasons[:other])
+          expect(motions.first.reason).to eq(described_class.reasons[:financial_distress])
         end
       end
 
-      context "when the motion reason is age" do
-        let(:reason) {  described_class.reasons[:age] }
-
+      context "when the motion is age-related" do
+        let(:reason) { described_class.reasons[:age] }
         it "creates a new motion" do
           subject
           motions = appeal.claimant.person.advance_on_docket_motions
-          expect(motions.count).to eq 2
-          expect(motions.first.granted).to be(false)
+          expect(motions.count).to eq 1
+          expect(motions.first.granted).to be(true)
           expect(motions.first.reason).to eq(described_class.reasons[:age])
-          expect(motions.second.granted).to be(true)
-          expect(motions.second.reason).to eq(attrs[:reason])
         end
+      end
+    end
+
+    context "when there is an existing motion for the appeal" do
+      let(:appeal_on_motion) { appeal }
+
+      # Because we're mostly testing updates, create an initial AOD motion first:
+      before do
+        described_class.create!(
+          person_id: claimant.person.id,
+          granted: false,
+          reason: initial_reason,
+          user_id: user_id,
+          appeal: appeal_on_motion
+        )
+      end
+
+      context "whose previous motion reason is not age" do
+        let(:initial_reason) { described_class.reasons[:other] }
+        context "creating an age-related motion" do
+          let(:reason) { described_class.reasons[:age] }
+
+          it "creates a new age-related motion" do
+            subject
+            motions = appeal.claimant.person.advance_on_docket_motions
+            expect(motions.count).to eq 2
+            expect(motions.first.granted).to be(false)
+            expect(motions.first.reason).to eq(described_class.reasons[:other])
+            expect(motions.second.granted).to eq(true)
+            expect(motions.second.reason).to eq(described_class.reasons[:age])
+          end
+        end
+
+        context "creating a non-age-related motion" do
+          let(:reason) { described_class.reasons[:serious_illness] }
+
+          it "updates the existing motion" do
+            subject
+            motions = appeal.claimant.person.advance_on_docket_motions
+            expect(motions.count).to eq 1
+            expect(motions.first.granted).to be(true)
+            expect(motions.first.reason).to eq(described_class.reasons[:serious_illness])
+          end
+        end
+      end
+
+      context "whose reason is age" do
+        let(:initial_reason) { described_class.reasons[:age] }
+
+        context "creating an age-related motion" do
+          let(:reason) { described_class.reasons[:age] }
+
+          it "updates the existing motion" do
+            subject
+            motions = appeal.claimant.person.advance_on_docket_motions
+            expect(motions.count).to eq 1
+            expect(motions.first.granted).to be(true)
+            expect(motions.first.reason).to eq(described_class.reasons[:age])
+          end
+        end
+
+        context "creating a non-age-related motion" do
+          let(:reason) { described_class.reasons[:other] }
+
+          it "creates a non-age-related motion" do
+            subject
+            motions = appeal.claimant.person.advance_on_docket_motions
+            expect(motions.count).to eq 2
+            expect(motions.first.granted).to be(false)
+            expect(motions.first.reason).to eq(described_class.reasons[:age])
+            expect(motions.second.granted).to be(true)
+            expect(motions.second.reason).to eq(described_class.reasons[:other])
+          end
+        end
+      end
+    end
+  end
+
+  describe "#non_age_related_motion?" do
+    subject { described_class.new(reason: reason).non_age_related_motion? }
+
+    context "when the reason is 'age'" do
+      let(:reason) { described_class.reasons[:age] }
+      it { is_expected.to be false }
+    end
+
+    [
+      described_class.reasons[:serious_illness],
+      described_class.reasons[:financial_distress],
+      described_class.reasons[:other]
+    ].each do |reason|
+      context "When the reason is '#{reason}'" do
+        let(:reason) { reason }
+        it { is_expected.to be true }
       end
     end
   end

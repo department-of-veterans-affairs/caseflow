@@ -78,7 +78,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
     let!(:central_virtual_hearing) do
       create(:virtual_hearing,
              :all_emails_sent,
-             :previously_central,
+             :timezones_initialized,
              status: :active,
              hearing: central_hearing)
     end

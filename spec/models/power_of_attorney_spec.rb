@@ -50,7 +50,7 @@ describe PowerOfAttorney, :all_dbs do
       end
 
       it "returns BGS values" do
-        expect(power_of_attorney.bgs_representative_name).to eq "Attorney McAttorneyFace"
+        expect(power_of_attorney.bgs_representative_name).to eq "Clarence Darrow"
       end
 
       it "returns BGS address" do

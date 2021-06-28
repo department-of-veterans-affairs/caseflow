@@ -118,6 +118,47 @@ describe AppealIntake, :all_dbs do
       )
     end
 
+    context "when claimant is unlisted non-veteran" do
+      before { FeatureToggle.enable!(:non_veteran_claimants) }
+      after { FeatureToggle.disable!(:non_veteran_claimants) }
+
+      let(:request_params) do
+        ActionController::Parameters.new(
+          receipt_date: receipt_date,
+          docket_type: docket_type,
+          claimant: nil,
+          claimant_type: "other",
+          payee_code: payee_code,
+          legacy_opt_in_approved: legacy_opt_in_approved,
+          unlisted_claimant: {
+            relationship: "child",
+            party_type: "individual",
+            first_name: "John",
+            last_name: "Smith",
+            address_line_1: "1600 Pennsylvania Ave",
+            city: "Springfield",
+            state: "NY",
+            zip: "12345",
+            country: "USA",
+            poa_form: false
+          }
+        )
+      end
+
+      it "adds unlisted claimant and saves additional details" do
+        expect(subject).to be_truthy
+        expect(intake.detail.claimants.count).to eq 1
+        expect(intake.detail.claimant).to have_attributes(
+          participant_id: intake.veteran.participant_id,
+          payee_code: nil,
+          decision_review: intake.detail,
+          type: "OtherClaimant",
+          name: "John Smith",
+          relationship: "Child"
+        )
+      end
+    end
+
     context "receipt date is blank" do
       let(:receipt_date) { nil }
 
@@ -209,12 +250,6 @@ describe AppealIntake, :all_dbs do
       context "claimant is other" do
         let(:claimant_type) { "other" }
         let(:claimant) { nil }
-
-        context "when notes are empty" do
-          it "is invalid" do
-            expect(subject).to_not be_truthy
-          end
-        end
 
         context "when notes are set" do
           let(:claimant_notes) { "foo" }

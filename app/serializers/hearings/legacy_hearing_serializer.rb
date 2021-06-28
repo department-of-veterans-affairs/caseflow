@@ -22,6 +22,7 @@ class LegacyHearingSerializer
   attribute :appellant_last_name
   attribute :appellant_state
   attribute :appellant_zip
+  attribute :appellant_relationship, if: for_full
   attribute :available_hearing_locations
   attribute :bva_poc
   attribute :cached_number_of_documents, if: for_worksheet
@@ -86,5 +87,7 @@ class LegacyHearingSerializer
   end
   attribute :email_events, if: for_full, &:serialized_email_events
   attribute :was_virtual, &:was_virtual?
+  attribute :hearing_disposition_task_id, &:open_hearing_disposition_task_id
   attribute :witness
+  attribute :veteran_date_of_death_info, &:rescue_and_check_toggle_veteran_date_of_death_info
 end

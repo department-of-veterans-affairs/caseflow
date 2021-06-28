@@ -463,7 +463,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
       expect(json["data"][2]["attributes"]["appealIds"].length).to eq(1)
       expect(json["data"][2]["attributes"]["appealIds"].first).to include("A")
       expect(json["data"][2]["attributes"]["updated"]).to eq("2018-11-27T19:00:00-05:00")
-      expect(json["data"][2]["attributes"]["type"]).to eq("original")
+      expect(json["data"][2]["attributes"]["type"]).to eq(Constants.AMA_STREAM_TYPES.original.titleize)
       expect(json["data"][2]["attributes"]["active"]).to eq(true)
       expect(json["data"][2]["attributes"]["incompleteHistory"]).to eq(false)
       expect(json["data"][2]["attributes"]["description"]).to eq("2 issues")

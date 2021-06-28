@@ -39,16 +39,22 @@ class DecisionReviewIntake < Intake
   private
 
   def create_claimant!
-    # This is essentially a find_or_initialize_by, but ensures that the save! below kicks off the
-    # validations for the intended subclass.
-    (Claimant.find_by(decision_review: detail) || claimant_class_name.constantize.new).tap do |claimant|
-      # Ensure that the claimant model can set validation errors on the same detail object
-      claimant.decision_review = detail
-      claimant.type = claimant_class_name
-      claimant.participant_id = participant_id
-      claimant.payee_code = (need_payee_code? ? request_params[:payee_code] : nil)
-      claimant.notes = request_params[:claimant_notes]
-      claimant.save!
+    # Existing claimant can be changed in any way, including their class type. Destroying and
+    # re-creating ensures that associated records get cleaned up and the correct validations run.
+    Claimant.find_by(decision_review: detail)&.destroy!
+
+    claimant = claimant_class_name.constantize.create!(
+      decision_review: detail,
+      participant_id: participant_id,
+      payee_code: (need_payee_code? ? request_params[:payee_code] : nil),
+      notes: request_params[:claimant_notes]
+    )
+
+    if FeatureToggle.enabled?(:non_veteran_claimants, user: user) && claimant.is_a?(OtherClaimant)
+      claimant.save_unrecognized_details!(
+        request_params[:unlisted_claimant],
+        request_params[:poa]
+      )
     end
     update_person!
   end

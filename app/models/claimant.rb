@@ -9,38 +9,11 @@ class Claimant < CaseflowRecord
 
   belongs_to :decision_review, polymorphic: true
   belongs_to :person, primary_key: :participant_id, foreign_key: :participant_id
+  has_one :unrecognized_appellant, dependent: :destroy
 
   validates :participant_id,
             uniqueness: { scope: [:decision_review_id, :decision_review_type],
                           on: :create }
-
-  def self.create_without_intake!(participant_id:, payee_code:, type:)
-    create!(
-      participant_id: participant_id,
-      payee_code: payee_code,
-      type: type
-    )
-    Person.find_or_create_by_participant_id(participant_id)
-  end
-
-  def power_of_attorney
-    @power_of_attorney ||= find_power_of_attorney
-  end
-
-  delegate :representative_name,
-           :representative_type,
-           :representative_address,
-           :representative_email_address,
-           to: :power_of_attorney,
-           allow_nil: true
-
-  def representative_participant_id
-    power_of_attorney&.participant_id
-  end
-
-  def person
-    @person ||= Person.find_or_create_by_participant_id(participant_id)
-  end
 
   delegate :date_of_birth,
            :advanced_on_docket?,
@@ -61,24 +34,44 @@ class Claimant < CaseflowRecord
            :state,
            :zip,
            to: :bgs_address_service
+  delegate :representative_name,
+           :representative_type,
+           :representative_address,
+           :representative_email_address,
+           :poa_last_synced_at,
+           to: :power_of_attorney,
+           allow_nil: true
 
-  private
+  delegate :participant_id, to: :power_of_attorney, prefix: :representative, allow_nil: true
+
+  def self.create_without_intake!(participant_id:, payee_code:, type:)
+    create!(
+      participant_id: participant_id,
+      payee_code: payee_code,
+      type: type
+    )
+    Person.find_or_create_by_participant_id(participant_id)
+  end
+
+  def power_of_attorney
+    @power_of_attorney ||= find_power_of_attorney
+  end
+
+  def should_delete_power_of_attorney?
+    return true if power_of_attorney && power_of_attorney.bgs_record == :not_found
+
+    false
+  end
+
+  def person
+    @person ||= Person.find_or_create_by_participant_id(participant_id)
+  end
 
   def find_power_of_attorney
-    find_power_of_attorney_by_pid || find_power_of_attorney_by_file_number
+    # no-op except on BgsRelatedClaimants
   end
 
-  def find_power_of_attorney_by_pid
-    BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(participant_id)
-  rescue ActiveRecord::RecordInvalid # not found at BGS by PID
-    nil
-  end
-
-  def find_power_of_attorney_by_file_number
-    BgsPowerOfAttorney.find_or_create_by_file_number(decision_review.veteran_file_number)
-  rescue ActiveRecord::RecordInvalid # not found at BGS
-    nil
-  end
+  private
 
   def bgs_address_service
     @bgs_address_service ||= BgsAddressService.new(participant_id: participant_id)

@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+##
+# SchedulePeriod represents data related to a schedule period for bulk assigning hearing days or assigning judges to
+# those hearing day. The record stores the start and end date, filename and whether or not it was
+# finalized by the user. SchedulePeriod can be a type of `RoSchedulePeriod` or `JudgeSchedulePeriod`.
+# A User cannot upload a spreadsheet for a date period if they've already uploaded and confirmed the schedule. If
+# not confirmed, they can re-upload a spreadsheet.
+##
 class SchedulePeriod < CaseflowRecord
   validate :validate_schedule_period, on: :create
 
@@ -14,6 +21,7 @@ class SchedulePeriod < CaseflowRecord
   delegate :full_name, to: :user, prefix: true
   attr_accessor :confirming_to_vacols
 
+  # NOTE: The schedule is NOT actually uploaded to VACOLS; confirming_to_vacols is just a boolean we set
   cache_attribute :submitting_to_vacols, expires_in: 1.day do
     confirming_to_vacols
   end

@@ -11,6 +11,14 @@ module RunAsyncable
 
   private
 
+  def perform_later_or_now(job_class, *args)
+    if run_async?
+      job_class.perform_later(*args)
+    else
+      job_class.perform_now(*args)
+    end
+  end
+
   def run_async?
     self.class.run_async?
   end

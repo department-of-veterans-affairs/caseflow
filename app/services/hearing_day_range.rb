@@ -16,10 +16,10 @@ class HearingDayRange
               HearingDay.where(
                 "DATE(scheduled_for) between ? and ?", start_date, end_date
               )
-            elsif regional_office == HearingDay::REQUEST_TYPES[:central]
+            elsif [HearingDay::REQUEST_TYPES[:central], HearingDay::REQUEST_TYPES[:virtual]].include?(regional_office)
               HearingDay.where(
-                "request_type = ? and DATE(scheduled_for) between ? and ?",
-                HearingDay::REQUEST_TYPES[:central],
+                "request_type = ? and DATE(scheduled_for) between ? and ? and regional_office IS NULL",
+                regional_office, # regional_office stores the hearing request type in this case
                 start_date,
                 end_date
               )
@@ -53,7 +53,12 @@ class HearingDayRange
       self.class.ama_hearing_day_for_vso_user?(hearing_day, user)
     end
 
-    remaining_days = days_in_range.where.not(id: ama_days.pluck(:id)).order(:scheduled_for).limit(1000)
+    remaining_days = days_in_range.where.not(id: ama_days.pluck(:id)).order(
+      Arel.sql(
+        "CASE WHEN regional_office = '#{user.regional_office}' THEN 1 ELSE 2 END, "\
+        "scheduled_for"
+      )
+    ).limit(1000)
 
     vacols_hearings_for_remaining_days = HearingRepository.fetch_hearings_for_parents(remaining_days.map(&:id))
 
@@ -99,7 +104,6 @@ class HearingDayRange
     video_hearing_days_request_types = HearingDayRequestTypeQuery.new.call
 
     all_hearing_days
-      .select { |hearing_day, scheduled_hearings| self.class.open_hearing_day?(hearing_day, scheduled_hearings) }
       .map do |hearing_day, scheduled_hearings|
         hearing_day_serialized = ::HearingDaySerializer.new(
           hearing_day,
@@ -146,9 +150,13 @@ class HearingDayRange
     def filter_non_scheduled_hearings(hearings)
       hearings.select do |hearing|
         if hearing.is_a?(Hearing)
-          !%w[postponed cancelled].include?(hearing.disposition)
+          %w[postponed cancelled].exclude?(hearing.disposition)
         else
-          hearing.vacols_record.hearing_disp != "P" && hearing.vacols_record.hearing_disp != "C"
+          [
+            VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:postponed],
+            VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:cancelled],
+            VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:scheduled_in_error]
+          ].exclude?(hearing.vacols_record.hearing_disp)
         end
       end
     end

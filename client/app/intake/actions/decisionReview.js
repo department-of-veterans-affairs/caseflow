@@ -13,12 +13,14 @@ export const submitReview = (intakeId, intakeData, intakeType) => (dispatch) => 
   });
 
   const validationErrors = validateReviewData(intakeData, intakeType);
+
   if (validationErrors) {
     dispatch({
       type: ACTIONS.SUBMIT_REVIEW_FAIL,
       payload: { responseErrorCodes: validationErrors },
       meta: { analytics }
     });
+
     return Promise.reject();
   }
 

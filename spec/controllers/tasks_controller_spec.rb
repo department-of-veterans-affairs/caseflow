@@ -206,11 +206,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           create(:ama_task, assigned_to: user, appeal: legacy_appeal)
         end
 
-        it "does not make a BGS call" do
-          BGSService.instance_methods(false).each do |method_name|
-            expect_any_instance_of(BGSService).not_to receive(method_name)
-          end
-
+        it "returns tasks" do
           get :index, params: { user_id: user.id, role: "unknown" }
           expect(response).to be_successful
 
@@ -860,6 +856,18 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         include_examples "returns alerts"
 
         it_behaves_like "request with invalid attributes"
+
+        # See https://github.com/department-of-veterans-affairs/caseflow/issues/15430
+        context "when virtual hearing payload includes virtual hearing status" do
+          let(:virtual_hearing_attributes) do
+            {
+              appellant_email: "valid@caseflow.va.gov",
+              status: "pending"
+            }
+          end
+
+          it_behaves_like "request with invalid attributes"
+        end
       end
 
       context "when task is ChangeHearingRequestTypeTask" do
@@ -869,14 +877,16 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
             :case,
             :assigned,
             bfcorlid: "0000000000S",
-            bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing]
+            bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing],
+            bfhr: VACOLS::Case::HEARING_PREFERENCE_TYPES_V2[:TRAVEL_BOARD][:vacols_value],
+            bfdocind: nil
           )
         end
         let!(:legacy_appeal) do
           create(:legacy_appeal, vacols_case: vacols_case)
         end
 
-        let(:task_type) { :changed_hearing_request_type }
+        let(:task_type) { :change_hearing_request_type_task }
         let(:action) do
           create(task_type, appeal: legacy_appeal, assigned_by: assigned_by_user, assigned_to: assigned_to_user)
         end
@@ -887,7 +897,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
               status: Constants.TASK_STATUSES.completed,
               business_payloads: {
                 values: {
-                  changed_request_type: HearingDay::REQUEST_TYPES[:video]
+                  changed_hearing_request_type: HearingDay::REQUEST_TYPES[:video]
                 }
               }
             },
@@ -897,17 +907,22 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
         it "sucessfully updates appeal and closes related tasks", :aggregate_failures do
           # Ensure that the changed request type is nil before we take action
-          expect(legacy_appeal.changed_request_type).to eq(nil)
+          expect(legacy_appeal.changed_hearing_request_type).to eq(nil)
           subject
 
           # Ensure the update successfully completed the task and changed the appeal
           expect(response.status).to eq 200
-          expect(legacy_appeal.reload.changed_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
+          expect(legacy_appeal.reload.changed_hearing_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
           expect(action.reload.status).to eq(Constants.TASK_STATUSES.completed)
           expect(ChangeHearingRequestTypeTask.find_by(
             appeal: legacy_appeal
           ).status).to eq(Constants.TASK_STATUSES.completed)
           expect(ScheduleHearingTask.find_by(appeal: legacy_appeal).status).to eq(Constants.TASK_STATUSES.assigned)
+          expect(CachedAppeal.count).to eq(1)
+          expect(CachedAppeal.first.vacols_id).to eq(legacy_appeal.vacols_id)
+          expect(CachedAppeal.first.former_travel).to eq(true)
+          expect(CachedAppeal.first.hearing_request_type).to eq("Video")
+          expect(CachedAppeal.first.closest_regional_office_key).to eq("RO17") # Default RO based on address geomatch
         end
 
         it "changes the vacols location to CASEFLOW" do
@@ -1074,6 +1089,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
         colocated_task = response_body["tasks"].find { |task| task["attributes"]["type"] == "IhpColocatedTask" }
         expect(colocated_task).to_not be_nil
+        expect(colocated_task["attributes"]["timer_ends_at"]).to be_nil
         expect(colocated_task["attributes"]["assigned_to"]["css_id"]).to eq colocated_user.css_id
         expect(colocated_task["attributes"]["appeal_id"]).to eq appeal.id
         expect(colocated_task["attributes"]["status"]).to eq Task.statuses[:in_progress]

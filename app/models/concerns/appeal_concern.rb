@@ -60,11 +60,79 @@ module AppealConcern
     end
   end
 
+  def appellant_tz
+    timezone_identifier_for_address(appellant_address)
+  end
+
+  def representative_tz
+    timezone_identifier_for_address(representative_address)
+  end
+
+  #
+  # This section was added to deal with displaying FNOD information in various places.
+  # Currently, the FNOD information is used by both queue and hearings in:
+  # - FnodBanner.jsx
+  # - FnodBadge.jsx
+  #
+  # veteran_is_not_claimant is implemented differently in Appeal and LegacyAppeal
+  # - Appeal: The result depends on 'veteran_is_not_claimant' field in the caseflow DB
+  # - LegacyAppeal: The result depends on if 'appellant_first_name' exists in VACOLS
+
+  def appellant_is_veteran
+    !veteran_is_not_claimant
+  end
+
+  def veteran_is_deceased
+    veteran_death_date.present?
+  end
+
+  def veteran_appellant_deceased?
+    veteran_is_deceased && appellant_is_veteran
+  end
+
+  def veteran_death_date
+    veteran&.date_of_death
+  end
+
+  def veteran_death_date_reported_at
+    veteran&.date_of_death_reported_at
+  end
+
+  # End FNOD section
+
   private
 
   # TODO: this is named "veteran_name_object" to avoid name collision, refactor
   # the naming of the helper methods.
   def veteran_name_object
     FullName.new(veteran_first_name, veteran_middle_initial, veteran_last_name)
+  end
+
+  def timezone_identifier_for_address(addr)
+    return if addr.blank?
+
+    address_obj = addr.is_a?(Hash) ? Address.new(addr) : addr
+
+    # Some appellant addresses have empty country values but valid city, state, and zip codes.
+    # If the address has a zip code then we make the best guess that the address is within the US
+    # (TimezoneService.address_to_timezone will raise an error if this guess is wrong and the zip
+    # code is not a valid US zip code), otherwise we return nil without attempting to get
+    # thetimezone identifier.
+    if address_obj.country.blank?
+      return if address_obj.zip.blank?
+
+      new_address_hash = address_obj.as_json.symbolize_keys.merge(country: "USA")
+      address_obj = Address.new(**new_address_hash)
+    end
+
+    # APO/FPO/DPO addresses do not have time zones so we don't attempt to fetch them.
+    return if address_obj.military_or_diplomatic_address?
+
+    begin
+      TimezoneService.address_to_timezone(address_obj).identifier
+    rescue StandardError => error
+      Raven.capture_exception(error)
+      nil
+    end
   end
 end

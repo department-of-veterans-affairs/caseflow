@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+##
+# The series_id is the series_id provided by VBMS;
+# otherwise, it is the document.vbms_document_id
+# (aka `external_document_id` or `version_id` from eFolder;
+#  aka `document_id` from VBMS).
+
 class DocumentSeriesIdAssigner
   def initialize(appeal)
     @appeal = appeal

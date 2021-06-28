@@ -15,13 +15,16 @@ class AppealsUpdatedSinceQuery
   private
 
   SKIP_ASSOCIATIONS = %w[
+    versions
     appeal_views
     claims_folder_searches
     job_notes
+    nod_date_updates
     record_synced_by_job
     request_decision_issues
     request_issues_updates
     work_mode
+    appellant_substitution
   ].freeze
 
   attr_reader :since_date

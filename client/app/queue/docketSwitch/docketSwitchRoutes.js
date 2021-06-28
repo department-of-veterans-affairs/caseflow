@@ -1,9 +1,12 @@
 import React from 'react';
-import { Route } from 'react-router';
+import { Route, Switch } from 'react-router';
 import PageRoute from '../../components/PageRoute';
 
 import TASK_ACTIONS from '../../../constants/TASK_ACTIONS';
 import { RecommendDocketSwitchContainer } from './recommendDocketSwitch/RecommendDocketSwitchContainer';
+import { DocketSwitchRulingContainer } from './judgeRuling/DocketSwitchRulingContainer';
+import { DocketSwitchDenialContainer } from './denial/DocketSwitchDenialContainer';
+import { DocketSwitchGrantContainer } from './grant/DocketSwitchGrantContainer';
 
 const PageRoutes = [
   <PageRoute
@@ -21,14 +24,30 @@ const PageRoutes = [
     }`}
     title={`${TASK_ACTIONS.DOCKET_SWITCH_JUDGE_RULING.label} | Caseflow`}
   >
-    {/* Replace with actual component */}
-    <h2>Judge Ruling</h2>
+    <DocketSwitchRulingContainer />
   </PageRoute>,
 
   // This route handles the remaining checkout flow
   <Route path="/queue/appeals/:appealId/tasks/:taskId/docket_switch/checkout">
     {/* The component here will add additional `Switch` and child routes */}
-    <h2>Checkout Container</h2>
+    <Switch>
+      <PageRoute
+        path={`/queue/appeals/:appealId/tasks/:taskId/${
+      TASK_ACTIONS.DOCKET_SWITCH_DENIED.value
+    }`}
+        title={`${TASK_ACTIONS.DOCKET_SWITCH_DENIED.label} | Caseflow`}
+      >
+        <DocketSwitchDenialContainer />
+      </PageRoute>
+      <PageRoute
+        path={`/queue/appeals/:appealId/tasks/:taskId/${
+      TASK_ACTIONS.DOCKET_SWITCH_GRANTED.value
+    }`}
+        title={`${TASK_ACTIONS.DOCKET_SWITCH_GRANTED.label} | Caseflow`}
+      >
+        <DocketSwitchGrantContainer />
+      </PageRoute>
+    </Switch>
   </Route>,
 ];
 

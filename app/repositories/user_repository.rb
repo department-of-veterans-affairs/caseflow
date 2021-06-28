@@ -72,6 +72,7 @@ class UserRepository
       end
     end
 
+    # User#pure_judge_in_vacols? relies on "judge" being the first element
     def roles_based_on_staff_fields(staff_record)
       case staff_record.svlj
       when "J"

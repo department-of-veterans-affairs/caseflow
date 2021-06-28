@@ -99,7 +99,7 @@ const HeaderRow = (props) => {
           </span>;
         }
 
-        return <th scope="col" key={columnNumber} className={cellClasses(column)}>
+        return <th scope="col" key={columnNumber} className={cellClasses(column)} {...column?.sortProps}>
           { column.tooltip ?
             <Tooltip id={`tooltip-${columnNumber}`} text={column.tooltip}>{columnContent}</Tooltip> :
             <React.Fragment>{columnContent}</React.Fragment>
@@ -252,7 +252,7 @@ export default class Table extends React.PureComponent {
 
     return <table
       id={id}
-      className={`usa-table-borderless ${this.props.className}`}
+      className={`usa-table-borderless ${this.props.className ?? ''}`}
       summary={summary}
       {...styling} >
 
@@ -281,6 +281,42 @@ export default class Table extends React.PureComponent {
   }
 }
 
+HeaderRow.propTypes = {
+  headerClassName: PropTypes.string,
+  columns: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.object),
+    PropTypes.func]).isRequired,
+  setSortOrder: PropTypes.func,
+  sortColIdx: PropTypes.number,
+  sortAscending: PropTypes.bool
+};
+
+Row.propTypes = {
+  footer: PropTypes.bool,
+  rowId: PropTypes.number,
+  rowClassNames: PropTypes.func,
+  rowObject: PropTypes.arrayOf(PropTypes.object).isRequired
+};
+
+BodyRows.propTypes = {
+  rowObjects: PropTypes.arrayOf(PropTypes.object).isRequired,
+  bodyClassName: PropTypes.string,
+  columns: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.object),
+    PropTypes.func]).isRequired,
+  rowClassNames: PropTypes.func,
+  tbodyRef: PropTypes.func,
+  id: PropTypes.string,
+  getKeyForRow: PropTypes.func,
+  bodyStyling: PropTypes.array
+};
+
+FooterRow.propTypes = {
+  columns: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.object),
+    PropTypes.func]).isRequired
+};
+
 Table.propTypes = {
   tbodyId: PropTypes.string,
   tbodyRef: PropTypes.func,
@@ -289,7 +325,7 @@ Table.propTypes = {
     PropTypes.func]).isRequired,
   rowObjects: PropTypes.arrayOf(PropTypes.object).isRequired,
   rowClassNames: PropTypes.func,
-  keyGetter: PropTypes.func,
+  getKeyForRow: PropTypes.func,
   slowReRendersAreOk: PropTypes.bool,
   summary: PropTypes.string,
   headerClassName: PropTypes.string,
@@ -300,5 +336,7 @@ Table.propTypes = {
   defaultSort: PropTypes.shape({
     sortColIdx: PropTypes.number,
     sortAscending: PropTypes.bool
-  })
+  }),
+  bodyClassName: PropTypes.string,
+  bodyStyling: PropTypes.array
 };

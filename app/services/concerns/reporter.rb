@@ -12,6 +12,9 @@ module Reporter
   def median(times)
     return 0 if times.empty?
 
+    # This algorithm only works if the array is sorted, and our input isn't reliably sorted:
+    times.sort!
+
     len = times.length
     (times[(len - 1) / 2] + times[len / 2]) / 2.0
   end

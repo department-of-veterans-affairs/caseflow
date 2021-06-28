@@ -34,7 +34,16 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
       "closestRegionalOfficeLabel": "Nashville Regional office",
       "completedHearingOnPreviousAppeal": false,
       "decisionDate": null,
-      "decisionIssues": Array [],
+      "decisionIssues": Array [
+        Object {
+          "description": "This is a description of the decision",
+          "id": 1,
+        },
+        Object {
+          "description": "This is a description of another decision",
+          "id": 2,
+        },
+      ],
       "docketName": "Legacy",
       "docketNumber": "200805-541",
       "documentID": null,
@@ -59,7 +68,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
           "zip": "94103",
         },
         "representative_email_address": "tom.brady@caseflow.gov",
-        "representative_name": "Attorney McAttorneyFace",
+        "representative_name": "Clarence Darrow",
         "representative_type": "Attorney",
       },
       "readableHearingRequestType": "Travel",
@@ -68,6 +77,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
       "removed": false,
       "status": "not_distributed",
       "vacateType": null,
+      "veteranDateOfDeath": null,
       "veteranFileNumber": "123456789",
       "veteranFullName": "Abellona Valtas",
       "veteranInfo": Object {
@@ -130,12 +140,13 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
           Object {
             "appellantFullName": "Abellona Valtas",
             "appellantIsNotVeteran": false,
-            "representative": "Attorney McAttorneyFace",
+            "representative": "Clarence Darrow",
             "representativeType": "Attorney",
             "veteranFullName": "Abellona Valtas",
           }
         }
         readOnly={true}
+        schedulingToVirtual={true}
         showDivider={false}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
@@ -217,9 +228,6 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
                     <div
                       className="usa-alert-body"
                     >
-                      <h2
-                        className="usa-alert-heading"
-                      />
                       <div
                         className="usa-alert-text"
                       >
@@ -239,12 +247,13 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
           Object {
             "appellantFullName": "Abellona Valtas",
             "appellantIsNotVeteran": false,
-            "representative": "Attorney McAttorneyFace",
+            "representative": "Clarence Darrow",
             "representativeType": "Attorney",
             "veteranFullName": "Abellona Valtas",
           }
         }
         readOnly={true}
+        schedulingToVirtual={true}
         showDivider={false}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
@@ -269,11 +278,11 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
           </h2>
           <AddressLine
             label="Attorney"
-            name="Attorney McAttorneyFace"
+            name="Clarence Darrow"
           >
             <ReadOnly
               label="Attorney"
-              text="Attorney McAttorneyFace
+              text="Clarence Darrow
 "
             >
               <div
@@ -283,7 +292,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
                   Attorney
                 </strong>
                 <pre>
-                  Attorney McAttorneyFace
+                  Clarence Darrow
 
                 </pre>
               </div>
@@ -420,7 +429,16 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
       "closestRegionalOfficeLabel": null,
       "completedHearingOnPreviousAppeal": false,
       "decisionDate": null,
-      "decisionIssues": Array [],
+      "decisionIssues": Array [
+        Object {
+          "description": "This is a description of the decision",
+          "id": 1,
+        },
+        Object {
+          "description": "This is a description of another decision",
+          "id": 2,
+        },
+      ],
       "docketName": "Legacy",
       "docketNumber": "200805-541",
       "documentID": null,
@@ -445,7 +463,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
           "zip": "94103",
         },
         "representative_email_address": "tom.brady@caseflow.gov",
-        "representative_name": "Attorney McAttorneyFace",
+        "representative_name": "Clarence Darrow",
         "representative_type": "Attorney",
       },
       "readableHearingRequestType": "Travel",
@@ -454,6 +472,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
       "removed": false,
       "status": "not_distributed",
       "vacateType": null,
+      "veteranDateOfDeath": null,
       "veteranFileNumber": "123456789",
       "veteranFullName": "Abellona Valtas",
       "veteranInfo": Object {
@@ -514,12 +533,13 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
           Object {
             "appellantFullName": "Abellona Valtas",
             "appellantIsNotVeteran": false,
-            "representative": "Attorney McAttorneyFace",
+            "representative": "Clarence Darrow",
             "representativeType": "Attorney",
             "veteranFullName": "Abellona Valtas",
           }
         }
         readOnly={true}
+        schedulingToVirtual={true}
         showDivider={false}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
@@ -598,12 +618,13 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
           Object {
             "appellantFullName": "Abellona Valtas",
             "appellantIsNotVeteran": false,
-            "representative": "Attorney McAttorneyFace",
+            "representative": "Clarence Darrow",
             "representativeType": "Attorney",
             "veteranFullName": "Abellona Valtas",
           }
         }
         readOnly={true}
+        schedulingToVirtual={true}
         showDivider={false}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
@@ -628,11 +649,11 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
           </h2>
           <AddressLine
             label="Attorney"
-            name="Attorney McAttorneyFace"
+            name="Clarence Darrow"
           >
             <ReadOnly
               label="Attorney"
-              text="Attorney McAttorneyFace
+              text="Clarence Darrow
 "
             >
               <div
@@ -642,7 +663,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
                   Attorney
                 </strong>
                 <pre>
-                  Attorney McAttorneyFace
+                  Clarence Darrow
 
                 </pre>
               </div>
@@ -779,7 +800,16 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
       "closestRegionalOfficeLabel": "Nashville Regional office",
       "completedHearingOnPreviousAppeal": false,
       "decisionDate": null,
-      "decisionIssues": Array [],
+      "decisionIssues": Array [
+        Object {
+          "description": "This is a description of the decision",
+          "id": 1,
+        },
+        Object {
+          "description": "This is a description of another decision",
+          "id": 2,
+        },
+      ],
       "docketName": "Legacy",
       "docketNumber": "200805-541",
       "documentID": null,
@@ -804,7 +834,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
           "zip": "94103",
         },
         "representative_email_address": "tom.brady@caseflow.gov",
-        "representative_name": "Attorney McAttorneyFace",
+        "representative_name": "Clarence Darrow",
         "representative_type": "Attorney",
       },
       "readableHearingRequestType": "Travel",
@@ -813,6 +843,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
       "removed": false,
       "status": "not_distributed",
       "vacateType": null,
+      "veteranDateOfDeath": null,
       "veteranFileNumber": "123456789",
       "veteranFullName": "Abellona Valtas",
       "veteranInfo": Object {
@@ -873,12 +904,13 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
           Object {
             "appellantFullName": "Abellona Valtas",
             "appellantIsNotVeteran": false,
-            "representative": "Attorney McAttorneyFace",
+            "representative": "Clarence Darrow",
             "representativeType": "Attorney",
             "veteranFullName": "Abellona Valtas",
           }
         }
         readOnly={true}
+        schedulingToVirtual={true}
         showDivider={false}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
@@ -957,12 +989,13 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
           Object {
             "appellantFullName": "Abellona Valtas",
             "appellantIsNotVeteran": false,
-            "representative": "Attorney McAttorneyFace",
+            "representative": "Clarence Darrow",
             "representativeType": "Attorney",
             "veteranFullName": "Abellona Valtas",
           }
         }
         readOnly={true}
+        schedulingToVirtual={true}
         showDivider={false}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
@@ -987,11 +1020,11 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
           </h2>
           <AddressLine
             label="Attorney"
-            name="Attorney McAttorneyFace"
+            name="Clarence Darrow"
           >
             <ReadOnly
               label="Attorney"
-              text="Attorney McAttorneyFace
+              text="Clarence Darrow
 "
             >
               <div
@@ -1001,7 +1034,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
                   Attorney
                 </strong>
                 <pre>
-                  Attorney McAttorneyFace
+                  Clarence Darrow
 
                 </pre>
               </div>
@@ -1138,7 +1171,16 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
       "closestRegionalOfficeLabel": "Nashville Regional office",
       "completedHearingOnPreviousAppeal": false,
       "decisionDate": null,
-      "decisionIssues": Array [],
+      "decisionIssues": Array [
+        Object {
+          "description": "This is a description of the decision",
+          "id": 1,
+        },
+        Object {
+          "description": "This is a description of another decision",
+          "id": 2,
+        },
+      ],
       "docketName": "Legacy",
       "docketNumber": "200805-541",
       "documentID": null,
@@ -1163,7 +1205,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
           "zip": "94103",
         },
         "representative_email_address": "tom.brady@caseflow.gov",
-        "representative_name": "Attorney McAttorneyFace",
+        "representative_name": "Clarence Darrow",
         "representative_type": "Attorney",
       },
       "readableHearingRequestType": "Travel",
@@ -1172,6 +1214,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
       "removed": false,
       "status": "not_distributed",
       "vacateType": null,
+      "veteranDateOfDeath": null,
       "veteranFileNumber": "123456789",
       "veteranFullName": "Abellona Valtas",
       "veteranInfo": Object {
@@ -1232,12 +1275,13 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
           Object {
             "appellantFullName": "Abellona Valtas",
             "appellantIsNotVeteran": false,
-            "representative": "Attorney McAttorneyFace",
+            "representative": "Clarence Darrow",
             "representativeType": "Attorney",
             "veteranFullName": "Abellona Valtas",
           }
         }
         readOnly={true}
+        schedulingToVirtual={true}
         showDivider={false}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
@@ -1316,12 +1360,13 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
           Object {
             "appellantFullName": "Abellona Valtas",
             "appellantIsNotVeteran": false,
-            "representative": "Attorney McAttorneyFace",
+            "representative": "Clarence Darrow",
             "representativeType": "Attorney",
             "veteranFullName": "Abellona Valtas",
           }
         }
         readOnly={true}
+        schedulingToVirtual={true}
         showDivider={false}
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
@@ -1346,11 +1391,11 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
           </h2>
           <AddressLine
             label="Attorney"
-            name="Attorney McAttorneyFace"
+            name="Clarence Darrow"
           >
             <ReadOnly
               label="Attorney"
-              text="Attorney McAttorneyFace
+              text="Clarence Darrow
 "
             >
               <div
@@ -1360,7 +1405,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
                   Attorney
                 </strong>
                 <pre>
-                  Attorney McAttorneyFace
+                  Clarence Darrow
 
                 </pre>
               </div>

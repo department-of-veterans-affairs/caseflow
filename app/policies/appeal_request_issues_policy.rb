@@ -8,7 +8,7 @@ class AppealRequestIssuesPolicy
 
   def editable?
     editable_by_case_review_team_member? || case_is_in_active_review_by_current_user? ||
-      hearing_is_assigned_to_judge_user
+      hearing_is_assigned_to_judge_user? || editable_by_cavc_team_member?
   end
 
   private
@@ -19,15 +19,24 @@ class AppealRequestIssuesPolicy
     current_user_can_edit_issues? && case_is_not_in_active_review?
   end
 
+  def editable_by_cavc_team_member?
+    CavcLitigationSupport.singleton.users.include?(user) &&
+      appeal.tasks.open.where(type: :CavcTask).any?
+  end
+
   def current_user_can_edit_issues?
     user&.can_edit_issues?
   end
 
   def case_is_not_in_active_review?
-    Task.where(appeal: appeal, type: "AttorneyTask").empty?
+    Task.where(
+      appeal: appeal,
+      type: "AttorneyTask",
+      status: [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.in_progress]
+    ).empty?
   end
 
-  def hearing_is_assigned_to_judge_user
+  def hearing_is_assigned_to_judge_user?
     appeal.hearings.last&.judge == user
   end
 

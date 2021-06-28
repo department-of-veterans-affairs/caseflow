@@ -18,7 +18,7 @@ export class PdfUIPageNumInput extends React.PureComponent {
     };
   }
 
-  UNSAFE_componentWillUpdate = (nextProps) => {
+  UNSAFE_componentWillUpdate = (nextProps) => { // eslint-disable-line camelcase
     if (nextProps.currentPage !== this.props.currentPage) {
       this.setPageNumber(nextProps.currentPage);
     }
@@ -59,7 +59,7 @@ export class PdfUIPageNumInput extends React.PureComponent {
     return (
       <div style={{ display: 'inline-block' }}>
         <TextField
-          maxLength="4"
+          maxLength={4}
           name="page-progress-indicator-input"
           label="Page"
           onChange={this.setPageNumber}

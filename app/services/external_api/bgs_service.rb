@@ -58,6 +58,31 @@ class ExternalApi::BGSService
       end
   end
 
+  # rubocop:disable Metrics/ParameterLists
+  def update_benefit_claim(veteran_file_number:, payee_code:, claim_date:, benefit_type_code:, modifier:, new_code:)
+    DBService.release_db_connections
+
+    MetricsService.record("BGS: update benefit claim: \
+                          file_number = #{veteran_file_number}, \
+                          payee_code = #{payee_code}, \
+                          claim_date = #{claim_date}, \
+                          benefit_claim_type = #{benefit_type_code}, \
+                          modifier = #{modifier}, \
+                          code = #{new_code}",
+                          service: :bgs,
+                          name: "claims.update_benefit_claim") do
+      client.claims.update_benefit_claim(
+        file_number: veteran_file_number,
+        payee_code: payee_code,
+        claim_date: claim_date.strftime("%m/%d/%Y"),
+        benefit_claim_type: benefit_type_code,
+        modifier: modifier,
+        code: new_code
+      )
+    end
+  end
+  # rubocop:enable Metrics/ParameterLists
+
   def fetch_veteran_info(vbms_id)
     DBService.release_db_connections
 
@@ -225,6 +250,19 @@ class ExternalApi::BGSService
                           service: :bgs,
                           name: "data.find_power_of_attorneys") do
       client.data.find_power_of_attorneys
+    end
+  end
+
+  def get_security_profile(username:, station_id:)
+    DBService.release_db_connections
+    MetricsService.record("BGS: get security profile",
+                          service: :bgs,
+                          name: "common_security.get_security_profile") do
+      client.common_security.get_security_profile(
+        username: username,
+        station_id: station_id,
+        application: "CASEFLOW"
+      )
     end
   end
 
@@ -463,7 +501,8 @@ class ExternalApi::BGSService
       ssl_ca_cert: ENV["BGS_CA_CERT_LOCATION"],
       forward_proxy_url: forward_proxy_url,
       jumpbox_url: ENV["RUBY_BGS_JUMPBOX_URL"],
-      log: true
+      log: true,
+      logger: Rails.logger
     )
   end
 

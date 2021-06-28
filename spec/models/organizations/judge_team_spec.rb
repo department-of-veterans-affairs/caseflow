@@ -41,14 +41,6 @@ describe JudgeTeam, :postgres do
       expect(JudgeTeam.for_judge(judge)).not_to eq(nil)
       expect(JudgeTeam.for_judge(judge).accepts_priority_pushed_cases).to eq(true)
     end
-
-    it "creates association with a JudgeTeamLead role with the judge" do
-      expect(JudgeTeamLead.where(organizations_user: judge.organizations_users).count).to eq(0)
-
-      subject
-
-      expect(JudgeTeamLead.where(organizations_user: judge.organizations_users).count).to eq(1)
-    end
   end
 
   shared_examples "judge team already exists" do
@@ -135,27 +127,18 @@ describe JudgeTeam, :postgres do
     end
   end
 
-  describe "feature use_judge_team_roles activated" do
+  describe "feature judge_admin_scm activated" do
     before { FeatureToggle.enable!(:judge_admin_scm) }
     after { FeatureToggle.disable!(:judge_admin_scm) }
 
     describe ".create_for_judge" do
       subject { JudgeTeam.create_for_judge(judge) }
 
-      context "when user is neither admin nor JudgeTeamLead of an existing JudgeTeam" do
+      context "when user is not an admin of an existing JudgeTeam" do
         it_behaves_like "successful judge team creation"
       end
 
-      context "when user is already an admin of an existing JudgeTeam, but not JudgeTeamLead" do
-        let(:other_judge) { create(:user) }
-        let(:judge) { create(:user) }
-        let(:other_judge_team) { create(:judge_team) }
-        before { populate_judge_team_for_testing(other_judge_team, other_judge, [judge]) }
-
-        it_behaves_like "successful judge team creation"
-      end
-
-      context "when user is already a JudgeTeamLead for a JudgeTeam" do
+      context "when user is already an admin for a JudgeTeam" do
         before { JudgeTeam.create_for_judge(judge) }
 
         it_behaves_like "judge team already exists"
@@ -173,18 +156,7 @@ describe JudgeTeam, :postgres do
         end
       end
 
-      context "when user is an admin member of JudgeTeam, but not JudgeTeamLead" do
-        let(:judge) { create(:user) }
-        let(:user) { create(:user) }
-        let(:judge_team) { create(:judge_team) }
-        before { populate_judge_team_for_testing(judge_team, judge, [user]) }
-
-        it "returns nil, indicating user is not the Judge of this team" do
-          expect(JudgeTeam.for_judge(user)).to eq(nil)
-        end
-      end
-
-      context "when user is a non admin member of JudgeTeam" do
+      context "when user is a non-admin member of JudgeTeam" do
         let(:judge) { create(:user) }
         let(:user) { create(:user) }
         let!(:judge_team) { create(:judge_team) }
@@ -195,7 +167,7 @@ describe JudgeTeam, :postgres do
         end
       end
 
-      context "when user is JudgeTeamLead of JudgeTeam" do
+      context "when user is admin of JudgeTeam" do
         let(:judge) { create(:user) }
         let(:user) { create(:user) }
         let!(:judge_team) { create(:judge_team) }
@@ -204,24 +176,6 @@ describe JudgeTeam, :postgres do
         it "returns the judge team" do
           judge.reload
           expect(JudgeTeam.for_judge(judge)).to eq(judge_team)
-        end
-      end
-
-      context "when user is admin of two JudgeTeams and JudgeTeamLead of one" do
-        let(:dvc_judge) { create(:user) }
-        let(:judge) { create(:user) }
-        let(:user) { create(:user) }
-        let(:judge_team_reg) { create(:judge_team) }
-        let(:judge_team_dvc) { create(:judge_team) }
-        before do
-          populate_judge_team_for_testing(judge_team_reg, judge, [dvc_judge, user])
-          populate_judge_team_for_testing(judge_team_dvc, dvc_judge, [user]) # create_for_judge?
-        end
-
-        it "returns the JudgeTeamLead team, not the admin'd team" do
-          dvc_judge.reload
-          expect(JudgeTeam.for_judge(dvc_judge)).to eq(judge_team_dvc)
-          expect(JudgeTeam.for_judge(judge)).to eq(judge_team_reg)
         end
       end
     end
@@ -250,7 +204,7 @@ describe JudgeTeam, :postgres do
 
     subject { judge_team.add_user(attorney) }
 
-    it "adds an associated DecisionDraftingAttorney record for the newly added user" do
+    it "adds an associated non-admin user record for the newly added user" do
       # Before we add the user to the judge team, the only member of the judge team should be the judge.
       expect(judge_team.users.count).to eq(1)
       expect(judge_team.users.first).to eq(judge)
@@ -261,35 +215,42 @@ describe JudgeTeam, :postgres do
       expect(judge_team.users.first).to eq(judge)
       expect(judge_team.users.second).to eq(attorney)
 
-      # Make sure that the user we just added has the JudgeTeamRole of DecisionDraftingAttorney for the judge team.
       expect(attorney.organizations_users.length).to eq(1)
-      expect(attorney.organizations_users.first.judge_team_role).to be_a(DecisionDraftingAttorney)
       expect(attorney.organizations_users.first.organization).to eq(judge_team)
+    end
+  end
+
+  describe ".admin" do
+    let(:judge_team) { JudgeTeam.create_for_judge(judge) }
+
+    context "when the user is the judge" do
+      it "judge is the admin" do
+        expect(judge_team.admin).to eq(judge)
+      end
+    end
+
+    context "when the user is an attorney" do
+      let(:attorney) { create(:user) }
+      before { judge_team.add_user(attorney) }
+
+      it "judge is still the admin" do
+        expect(judge_team.admin).not_to eq(attorney)
+      end
     end
   end
 
   private
 
-  # Create a JudgeTeam with a JudgeTeamLead admin, a DecisionDraftingAttorney admin, and several
-  # other DecisionDrafting Attorneys
+  # Create a JudgeTeam with an admin and several non-admins (acting as decision-drafting attorneys).
   #
-  # Sneakily make the `first` admin not the JudgeTeamLead, which forces the old code expectations to fail
-  # Otherwise, if the first admin is also JudgeTeamLead, old code expectations don't validly test
-  #
-  # Expects an empty judge team, the user you want to be JudgeTeamLead,
-  # and an array of users to make DecisionDraftingAttorneys
-  # The first user in that array will also be an admin on the JudgeTeam
+  # Method expects an empty judge team, the user you want to be admin,
+  # and an array of non-admin users.
   def populate_judge_team_for_testing(judge_team, judge_user, attorneys)
+    judge_team.users << judge_user
     attorneys.each do |u|
       judge_team.users << u
-      attorney_orgsuser = OrganizationsUser.existing_record(u, judge_team)
-      DecisionDraftingAttorney.create!(organizations_user: attorney_orgsuser)
     end
-    judge_team.users << judge_user
-    attorney_orgsuser = OrganizationsUser.existing_record(attorneys.first, judge_team)
-    attorney_orgsuser.update!(admin: true)
     judge_orguser = OrganizationsUser.existing_record(judge_user, judge_team)
     judge_orguser.update!(admin: true)
-    JudgeTeamLead.create!(organizations_user: judge_orguser)
   end
 end

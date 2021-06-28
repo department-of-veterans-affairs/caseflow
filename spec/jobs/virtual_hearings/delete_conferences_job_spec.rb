@@ -89,6 +89,12 @@ describe VirtualHearings::DeleteConferencesJob do
       include_examples "doesn't create email events"
     end
 
+    shared_examples "no error when sending emails" do
+      it "does not raise error" do
+        expect { subject }.to_not raise_error
+      end
+    end
+
     let(:job) { VirtualHearings::DeleteConferencesJob.new }
     let(:fake_pexip) { Fakes::PexipService.new }
     let(:fake_pexip_with_error) { Fakes::PexipService.new(status_code: 501) }
@@ -129,7 +135,7 @@ describe VirtualHearings::DeleteConferencesJob do
     context "for virtual hearing that was cancelled" do
       let(:scheduled_for) { Time.zone.now + 7.days }
       let!(:virtual_hearing) do
-        create(:virtual_hearing, status: :cancelled, hearing: hearing, conference_deleted: false)
+        create(:virtual_hearing, :initialized, status: :cancelled, hearing: hearing, conference_deleted: false)
       end
 
       include_examples "job is not retried"
@@ -332,6 +338,24 @@ describe VirtualHearings::DeleteConferencesJob do
         end
 
         include_examples "job is retried", 5
+      end
+    end
+
+    context "for hearings that are postponed or cancelled" do
+      context "cancelled hearing" do
+        let(:cancelled_hearing) { create(:hearing, disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled) }
+        let!(:virtual_hearing) { create(:virtual_hearing, status: :active, hearing: cancelled_hearing) }
+
+        include_examples "doesn't send any emails"
+        include_examples "no error when sending emails"
+      end
+
+      context "postponed hearing" do
+        let(:postponed_hearing) { create(:hearing, disposition: Constants.HEARING_DISPOSITION_TYPES.postponed) }
+        let!(:virtual_hearing) { create(:virtual_hearing, status: :active, hearing: postponed_hearing) }
+
+        include_examples "doesn't send any emails"
+        include_examples "no error when sending emails"
       end
     end
   end

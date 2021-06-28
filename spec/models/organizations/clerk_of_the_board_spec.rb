@@ -12,4 +12,10 @@ describe ClerkOfTheBoard do
       expect(ClerkOfTheBoard.singleton.users_can_create_mail_task?).to eq(true)
     end
   end
+
+  describe ".can_receive_task?" do
+    it "returns false because the COB hasn't started using Queue yet" do
+      expect(ClerkOfTheBoard.singleton.can_receive_task?(nil)).to eq(false)
+    end
+  end
 end

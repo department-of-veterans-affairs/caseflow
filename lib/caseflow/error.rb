@@ -104,6 +104,16 @@ module Caseflow::Error
     end
   end
 
+  class MultipleOpenTasksOfSameTypeError < SerializableError
+    def initialize(args)
+      @task_type = args[:task_type]
+      @code = args[:code] || 400
+      @title = "Error assigning tasks"
+      @message = args[:message] || "Looks like this appeal already has an open #{@task_type} and this action cannot " \
+                              "be completed."
+    end
+  end
+
   class InvalidUserId < SerializableError
     def initialize(args)
       @user_id = args[:user_id]
@@ -147,11 +157,19 @@ module Caseflow::Error
     end
   end
 
+  class IneligibleForCavcCorrespondence < SerializableError; end
+
   class InvalidParentTask < SerializableError
     def initialize(args)
       @task_type = args[:task_type]
       @code = args[:code] || 500
       @message = args[:message] || "Invalid parent type for task #{@task_type}"
+    end
+  end
+
+  class CannotUpdateMandatedRemands < SerializableError
+    def initialize
+      @message = "Cavc Remands can only be updated if they did not have mandate"
     end
   end
 
@@ -255,7 +273,7 @@ module Caseflow::Error
   class ChildTaskAssignedToSameUser < SerializableError
     def initialize
       @code = 500
-      @message = "A task cannot be assigned to the same user as the parent."
+      @message = "A task of the same type as the parent task cannot be assigned to the same user."
     end
   end
 
@@ -364,8 +382,8 @@ module Caseflow::Error
 
     def initialize(args = {})
       @error_type = args[:error_type]
-      @code = (@error_type == ActiveRecord::RecordNotUnique) ? :conflict : args[:code]
-      @message = (@error_type == ActiveRecord::RecordNotUnique) ? COPY::VIRTUAL_HEARING_ALREADY_CREATED : args[:message]
+      @code = args[:code]
+      @message = args[:message]
     end
   end
 end

@@ -125,6 +125,20 @@ class Fakes::BGSService
     records.values
   end
 
+  # Util method for further filtering a veteran's EPs by code, modifier, payee code, or claim date.
+  # Each parameter is optional; if omitted or set to nil, it won't be used for filtering.
+  def select_end_products(file_number, code: nil, modifier: nil, payee_code: nil, claim_date: nil)
+    requirements = {
+      claim_type_code: code,
+      end_product_type_code: modifier,
+      payee_type_code: payee_code,
+      claim_receive_date: claim_date&.strftime("%m/%d/%Y")
+    }.compact
+    get_end_products(file_number).select do |ep|
+      requirements.map { |key, value| ep[key] == value }.all?
+    end
+  end
+
   def find_contentions_by_claim_id(claim_id)
     contentions = self.class.end_product_store.inflated_bgs_contentions_for(claim_id)
 
@@ -175,15 +189,52 @@ class Fakes::BGSService
   # benefit_type_code is not available data on end product data we fetch from BGS,
   # and isn't part of the end product store in fakes
   def cancel_end_product(file_number, end_product_code, end_product_modifier, payee_code, _benefit_type)
-    end_products = get_end_products(file_number)
-    matching_eps = end_products.select do |ep|
-      ep[:claim_type_code] == end_product_code && ep[:modifier] == end_product_modifier && ep[:payee_code] == payee_code
-    end
+    matching_eps = select_end_products(file_number,
+                                       code: end_product_code,
+                                       modifier: end_product_modifier,
+                                       payee_code: payee_code)
     matching_eps.each do |ep|
       ep[:status_type_code] = "CAN"
       self.class.store_end_product_record(file_number, ep)
     end
   end
+
+  # rubocop:disable Metrics/ParameterLists
+  # rubocop:disable Metrics/MethodLength
+  def update_benefit_claim(veteran_file_number:, payee_code:, claim_date:, benefit_type_code:, modifier:, new_code:)
+    matching_eps = select_end_products(veteran_file_number,
+                                       modifier: modifier,
+                                       payee_code: payee_code,
+                                       claim_date: claim_date)
+
+    # BGS throws a ShareError if matching_ep is blank
+    veteran = Veteran.find_by(file_number: veteran_file_number)
+    fail BGS::ShareError, "No Veteran Found" unless veteran
+
+    if matching_eps.blank?
+      return { benefit_claim_record: { pre_dschrg_type_cd: nil },
+               life_cycle_record: nil,
+               participant_record: nil,
+               return_cod: "GUIE50004",
+               return_message: "Benefit Claim not found on Corporate Database",
+               suspence_record: nil }
+    end
+
+    matching_eps.each do |ep|
+      ep[:claim_type_code] = new_code
+      self.class.store_end_product_record(veteran_file_number, ep)
+    end
+
+    # Actual success message
+    { benefit_claim_record: { pre_dschrg_type_cd: nil },
+      life_cycle_record: nil,
+      participant_record: nil,
+      return_code: "GUIE02210",
+      return_message: "A benefit claim has been changed",
+      suspence_record: nil }
+  end
+  # rubocop:enable Metrics/ParameterLists
+  # rubocop:enable Metrics/MethodLength
 
   def fetch_veteran_info(vbms_id)
     # BGS throws a ShareError if the veteran has too high sensitivity
@@ -194,11 +245,12 @@ class Fakes::BGSService
 
   # rubocop:disable Metrics/MethodLength
   def fetch_person_info(participant_id)
+    veteran = Veteran.find_by(participant_id: participant_id)
     # This is a limited set of test data, more fields are available.
     if participant_id == "5382910292"
       # This claimant is over 75 years old so they get automatic AOD
       {
-        birth_date: "Sun, 05 Sep 1943 00:00:00 -0500",
+        birth_date: DateTime.new(1943, 9, 5),
         first_name: "Bob",
         middle_name: "Billy",
         last_name: "Vance",
@@ -207,7 +259,7 @@ class Fakes::BGSService
       }
     elsif participant_id == "1129318238"
       {
-        birth_date: "Sat, 05 Sep 1998 00:00:00 -0500",
+        birth_date: DateTime.new(1998, 9, 5),
         first_name: "Cathy",
         middle_name: "",
         last_name: "Smith",
@@ -217,16 +269,36 @@ class Fakes::BGSService
       }
     elsif participant_id == "600153863"
       {
-        birth_date: "Sat, 05 Sep 1998 00:00:00 -0500",
+        birth_date: DateTime.new(1998, 9, 5),
         fist_name: "Clarence",
         middle_name: "",
         last_name: "Darrow",
         ssn_nbr: "666003333",
         email_address: "clarence.darrow@caseflow.gov"
       }
+    elsif participant_id.starts_with?("RANDOM_CLAIMANT_PID")
+      first_name = Faker::Name.first_name
+      last_name = Faker::Name.last_name
+      {
+        birth_date: Faker::Date.birthday(min_age: 35, max_age: 80).to_datetime,
+        first_name: first_name,
+        middle_name: "",
+        last_name: last_name,
+        ssn_nbr: "666005555",
+        email_address: "#{first_name}.#{last_name}@email.com"
+      }
+    elsif veteran.present?
+      {
+        birth_date: veteran&.date_of_birth && Date.strptime(veteran&.date_of_birth, "%m/%d/%Y"),
+        first_name: veteran.first_name,
+        middle_name: veteran.middle_name,
+        last_name: veteran.last_name,
+        ssn_nbr: veteran.ssn,
+        email_address: veteran.email_address
+      }
     else
       {
-        birth_date: "Sat, 05 Sep 1998 00:00:00 -0500",
+        birth_date: DateTime.new(1998, 9, 5),
         first_name: "Tom",
         middle_name: "Edward",
         last_name: "Brady",
@@ -300,9 +372,9 @@ class Fakes::BGSService
               else
                 {
                   legacy_poa_cd: "100",
-                  nm: "Attorney McAttorneyFace",
+                  nm: "Clarence Darrow",
                   org_type_nm: "POA Attorney",
-                  ptcpnt_id: "1234567"
+                  ptcpnt_id: "600153863"
                 }
               end
 
@@ -360,6 +432,14 @@ class Fakes::BGSService
     ]
   end
 
+  def get_security_profile(username:, station_id:)
+    if username == "BVAAABSHIRE"
+      { job_title: "Senior Veterans Service Representative" }
+    else
+      { job_title: "Legal Clerk" }
+    end
+  end
+
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
     address = (self.class.address_records || {})[participant_id]
@@ -368,8 +448,21 @@ class Fakes::BGSService
     get_address_from_bgs_address(address)
   end
 
-  def fetch_claimant_info_by_participant_id(_participant_id)
-    default_claimant_info
+  def fetch_claimant_info_by_participant_id(participant_id)
+    veteran = Veteran.find_by(participant_id: participant_id)
+    if veteran.present?
+      {
+        relationship: "Veteran",
+        payee_code: "00"
+      }
+    else
+      claimant = Array.wrap(find_all_relationships(participant_id)).find { |rel| rel.dig(:ptcpnt_id) == participant_id }
+
+      {
+        relationship: claimant&.dig(:relationship_type) || "Spouse",
+        payee_code: claimant&.dig(:default_payee_code) || "10"
+      }
+    end
   end
 
   def fetch_person_by_ssn(ssn)
@@ -547,6 +640,34 @@ class Fakes::BGSService
         ssn: nil,
         ssn_verified_ind: nil,
         terminate_reason: nil
+      },
+      {
+        authzn_change_clmant_addrs_ind: nil,
+        authzn_poa_access_ind: nil,
+        award_begin_date: nil,
+        award_end_date: nil,
+        award_ind: "N",
+        award_type: "CPL",
+        date_of_birth: "09051998",
+        date_of_death: nil,
+        dependent_reason: nil,
+        dependent_terminate_date: nil,
+        email_address: "tom.brady@caseflow.gov",
+        fiduciary: nil,
+        file_number: nil,
+        first_name: "TOM",
+        gender: nil,
+        last_name: "BRADY",
+        middle_name: "EDWARD",
+        poa: nil,
+        proof_of_dependecy_ind: nil,
+        ptcpnt_id: "no-such-pid",
+        relationship_begin_date: "09121999",
+        relationship_end_date: nil,
+        relationship_type: "Child",
+        ssn: "666004444",
+        ssn_verified_ind: nil,
+        terminate_reason: nil
       }
     ]
   end
@@ -576,13 +697,6 @@ class Fakes::BGSService
 
   def current_user
     RequestStore[:current_user]
-  end
-
-  def default_claimant_info
-    {
-      relationship: "Spouse",
-      payee_code: "10"
-    }
   end
 
   def default_power_of_attorney_record

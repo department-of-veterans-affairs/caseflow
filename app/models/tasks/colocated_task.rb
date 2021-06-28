@@ -54,8 +54,7 @@ class ColocatedTask < Task
         begin
           super(user, parent)
         rescue Caseflow::Error::ActionForbiddenError => error
-          # We want to allow task creation if done from attorney checkout on a vacate & de novo
-          raise error unless de_novo_atty_checkout?(user, parent)
+          raise error unless allow_creation_exception?(user, parent)
 
           true
         end
@@ -64,15 +63,18 @@ class ColocatedTask < Task
       end
     end
 
-    def de_novo_atty_checkout?(user, parent)
-      (parent.appeal.vacate_type == "vacate_and_de_novo") && user.attorney_in_vacols?
+    # We want to allow task creation if done from attorney checkout on a vacate & de novo or during a docket switch
+    def allow_creation_exception?(user, parent)
+      return unless user.attorney_in_vacols?
+
+      (parent.appeal.vacate_type == "vacate_and_de_novo") || parent.appeal.docket_switch.present?
     end
 
     def default_assignee
       Colocated.singleton
     end
 
-    # Intentionally not including all descendants as we do not want to create any more of the old style
+    # Intentionally not including all descendant as we do not want to create any more of the old style
     # FoiaColocatedTasks, MissingHearingTranscriptsColocatedTasks, or TranslationColocatedTasks as their
     # PreRoutingColocatedTask versions exist only to allow tasks currently in that state in production to live
     # out their days with their old colocated task workflow

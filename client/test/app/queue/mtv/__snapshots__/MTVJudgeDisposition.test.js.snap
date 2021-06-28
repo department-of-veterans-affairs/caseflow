@@ -1,0 +1,1630 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MTVJudgeDisposition default view renders correctly 1`] = `
+<div>
+  <div
+    class="address-motion-to-vacate"
+  >
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <h1>
+        Address Abellona Valtas's Motion to Vacate
+      </h1>
+      <div
+        class="case-meta"
+      >
+        <span>
+          <strong>
+            Veteran ID:
+          </strong>
+           
+          123456789
+        </span>
+        <span
+          style="margin-left: 3rem;"
+        >
+          <strong>
+            Task:
+          </strong>
+           
+        </span>
+      </div>
+      <div
+        class="cf-help-divider"
+        style="margin: 15px 0px;"
+      />
+      <p>
+        Determine how you would like to address this motion to vacate.
+        <br />
+        
+        <br />
+        If you are granting all issues for vacatur or a partial vacatur for this motion, you will then assign this case to an attorney on your team.
+        <br />
+        
+        <br />
+        If you are choosing to deny or dismiss this motion, it will be automatically returned to the original Motions Attorney on the case.
+        <br />
+        
+        <br />
+        If they are no longer active, it will be placed in the Litigation Support team queue for reassignment.
+      </p>
+      <h2
+        class="css-mynltj"
+      >
+        Motion Attorney's Notes
+      </h2>
+      <p
+        class="mtv-task-instructions"
+      >
+        Lorem ipsum dolor sit amet, consectetur adipiscing
+      </p>
+      <div
+        class="cf-help-divider"
+      />
+      <fieldset
+        class="mtv-disposition-selection cf-form-radio "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              How will you address this motion to vacate?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_granted"
+              name="disposition"
+              type="radio"
+              value="granted"
+            />
+            <label
+              class=""
+              for="disposition_granted"
+            >
+              Grant all issues for vacatur
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_partially_granted"
+              name="disposition"
+              type="radio"
+              value="partially_granted"
+            />
+            <label
+              class=""
+              for="disposition_partially_granted"
+            >
+              Grant partial vacatur
+            </label>
+            <div
+              class="cf-form-radio-help helpText"
+            >
+              e.g. if you do not want to vacate all the issues the veteran is requesting
+            </div>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_denied"
+              name="disposition"
+              type="radio"
+              value="denied"
+            />
+            <label
+              class=""
+              for="disposition_denied"
+            >
+              Deny all issues for vacatur
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_dismissed"
+              name="disposition"
+              type="radio"
+              value="dismissed"
+            />
+            <label
+              class=""
+              for="disposition_dismissed"
+            >
+              Dismiss
+            </label>
+            <div
+              class="cf-form-radio-help helpText"
+            >
+              e.g. if the veteran has passed away or has withdrawn their motion
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      <div
+        style="max-width: 46rem; margin-bottom: 1.5em;"
+      >
+        <div
+          class="usa-alert usa-alert-warning"
+          role="alert"
+        >
+          <div
+            class="usa-alert-body"
+          >
+            <h2
+              class="usa-alert-heading"
+            >
+              Please Note
+            </h2>
+            <div
+              class="usa-alert-text"
+            >
+              If you weren't provided the draft ruling letter, or would like to request that the motions attorney make changes, please 
+              <a
+                href="/modal/return_to_lit_support"
+              >
+                return to the motions attorney
+              </a>
+              .
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="cf-form-textarea"
+      >
+        <label
+          class="question-label"
+          for="instructions"
+        >
+          <strong>
+            <span>
+              Provide context and instructions on which issues should be granted
+              <span
+                class="cf-optional"
+              >
+                Optional
+              </span>
+            </span>
+          </strong>
+        </label>
+        <textarea
+          id="instructions"
+          name="instructions"
+        />
+      </div>
+    </section>
+    <div
+      class="controls cf-app-segment"
+    >
+      <span>
+        <button
+          class="cf-right-side usa-button-disabled usa-button"
+          data-css-wn5k45=""
+          disabled=""
+          id="button-submit"
+          type="button"
+        >
+          Submit
+        </button>
+      </span>
+      <a
+        href="/queue/appeals/23423534"
+      >
+        <span>
+          <button
+            class="cf-right-side usa-button-secondary usa-button"
+            id="button-Cancel"
+            type="button"
+          >
+            Cancel
+          </button>
+        </span>
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`MTVJudgeDisposition with denied disposition selected renders correctly 1`] = `
+<div>
+  <div
+    class="address-motion-to-vacate"
+  >
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <h1>
+        Address Abellona Valtas's Motion to Vacate
+      </h1>
+      <div
+        class="case-meta"
+      >
+        <span>
+          <strong>
+            Veteran ID:
+          </strong>
+           
+          123456789
+        </span>
+        <span
+          style="margin-left: 3rem;"
+        >
+          <strong>
+            Task:
+          </strong>
+           
+        </span>
+      </div>
+      <div
+        class="cf-help-divider"
+        style="margin: 15px 0px;"
+      />
+      <p>
+        Determine how you would like to address this motion to vacate.
+        <br />
+        
+        <br />
+        If you are granting all issues for vacatur or a partial vacatur for this motion, you will then assign this case to an attorney on your team.
+        <br />
+        
+        <br />
+        If you are choosing to deny or dismiss this motion, it will be automatically returned to the original Motions Attorney on the case.
+        <br />
+        
+        <br />
+        If they are no longer active, it will be placed in the Litigation Support team queue for reassignment.
+      </p>
+      <h2
+        class="css-mynltj"
+      >
+        Motion Attorney's Notes
+      </h2>
+      <p
+        class="mtv-task-instructions"
+      >
+        Lorem ipsum dolor sit amet, consectetur adipiscing
+      </p>
+      <div
+        class="cf-help-divider"
+      />
+      <fieldset
+        class="mtv-disposition-selection cf-form-radio "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              How will you address this motion to vacate?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_granted"
+              name="disposition"
+              type="radio"
+              value="granted"
+            />
+            <label
+              class=""
+              for="disposition_granted"
+            >
+              Grant all issues for vacatur
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_partially_granted"
+              name="disposition"
+              type="radio"
+              value="partially_granted"
+            />
+            <label
+              class=""
+              for="disposition_partially_granted"
+            >
+              Grant partial vacatur
+            </label>
+            <div
+              class="cf-form-radio-help helpText"
+            >
+              e.g. if you do not want to vacate all the issues the veteran is requesting
+            </div>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_denied"
+              name="disposition"
+              type="radio"
+              value="denied"
+            />
+            <label
+              class=""
+              for="disposition_denied"
+            >
+              Deny all issues for vacatur
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_dismissed"
+              name="disposition"
+              type="radio"
+              value="dismissed"
+            />
+            <label
+              class=""
+              for="disposition_dismissed"
+            >
+              Dismiss
+            </label>
+            <div
+              class="cf-form-radio-help helpText"
+            >
+              e.g. if the veteran has passed away or has withdrawn their motion
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      <div
+        style="max-width: 46rem; margin-bottom: 1.5em;"
+      >
+        <div
+          class="usa-alert usa-alert-warning"
+          role="alert"
+        >
+          <div
+            class="usa-alert-body"
+          >
+            <h2
+              class="usa-alert-heading"
+            >
+              Please Note
+            </h2>
+            <div
+              class="usa-alert-text"
+            >
+              If you weren't provided the draft ruling letter, or would like to request that the motions attorney make changes, please 
+              <a
+                href="/modal/return_to_lit_support"
+              >
+                return to the motions attorney
+              </a>
+              .
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="mtv-review-hyperlink cf-margin-bottom-2rem   "
+      >
+        <label
+          for="hyperlink"
+        >
+          <strong>
+            <span>
+              Insert Caseflow Reader document hyperlink to denial draft
+              <span
+                class="cf-optional"
+              >
+                Optional
+              </span>
+            </span>
+          </strong>
+        </label>
+        <input
+          class="mtv-review-hyperlink,cf-margin-bottom-2rem"
+          id="hyperlink"
+          name="hyperlink"
+          type="text"
+          value=""
+        />
+      </div>
+      <div
+        class="cf-form-textarea"
+      >
+        <label
+          class="question-label"
+          for="instructions"
+        >
+          <strong>
+            <span>
+              Provide context and instructions on which issues should be denied
+              <span
+                class="cf-optional"
+              >
+                Optional
+              </span>
+            </span>
+          </strong>
+        </label>
+        <textarea
+          id="instructions"
+          name="instructions"
+        />
+      </div>
+    </section>
+    <div
+      class="controls cf-app-segment"
+    >
+      <span>
+        <button
+          class="cf-right-side usa-button"
+          data-css-wn5k45=""
+          id="button-submit"
+          type="button"
+        >
+          Submit
+        </button>
+      </span>
+      <a
+        href="/queue/appeals/23423534"
+      >
+        <span>
+          <button
+            class="cf-right-side usa-button-secondary usa-button"
+            id="button-Cancel"
+            type="button"
+          >
+            Cancel
+          </button>
+        </span>
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`MTVJudgeDisposition with dismissed disposition selected renders correctly 1`] = `
+<div>
+  <div
+    class="address-motion-to-vacate"
+  >
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <h1>
+        Address Abellona Valtas's Motion to Vacate
+      </h1>
+      <div
+        class="case-meta"
+      >
+        <span>
+          <strong>
+            Veteran ID:
+          </strong>
+           
+          123456789
+        </span>
+        <span
+          style="margin-left: 3rem;"
+        >
+          <strong>
+            Task:
+          </strong>
+           
+        </span>
+      </div>
+      <div
+        class="cf-help-divider"
+        style="margin: 15px 0px;"
+      />
+      <p>
+        Determine how you would like to address this motion to vacate.
+        <br />
+        
+        <br />
+        If you are granting all issues for vacatur or a partial vacatur for this motion, you will then assign this case to an attorney on your team.
+        <br />
+        
+        <br />
+        If you are choosing to deny or dismiss this motion, it will be automatically returned to the original Motions Attorney on the case.
+        <br />
+        
+        <br />
+        If they are no longer active, it will be placed in the Litigation Support team queue for reassignment.
+      </p>
+      <h2
+        class="css-mynltj"
+      >
+        Motion Attorney's Notes
+      </h2>
+      <p
+        class="mtv-task-instructions"
+      >
+        Lorem ipsum dolor sit amet, consectetur adipiscing
+      </p>
+      <div
+        class="cf-help-divider"
+      />
+      <fieldset
+        class="mtv-disposition-selection cf-form-radio "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              How will you address this motion to vacate?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_granted"
+              name="disposition"
+              type="radio"
+              value="granted"
+            />
+            <label
+              class=""
+              for="disposition_granted"
+            >
+              Grant all issues for vacatur
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_partially_granted"
+              name="disposition"
+              type="radio"
+              value="partially_granted"
+            />
+            <label
+              class=""
+              for="disposition_partially_granted"
+            >
+              Grant partial vacatur
+            </label>
+            <div
+              class="cf-form-radio-help helpText"
+            >
+              e.g. if you do not want to vacate all the issues the veteran is requesting
+            </div>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_denied"
+              name="disposition"
+              type="radio"
+              value="denied"
+            />
+            <label
+              class=""
+              for="disposition_denied"
+            >
+              Deny all issues for vacatur
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_dismissed"
+              name="disposition"
+              type="radio"
+              value="dismissed"
+            />
+            <label
+              class=""
+              for="disposition_dismissed"
+            >
+              Dismiss
+            </label>
+            <div
+              class="cf-form-radio-help helpText"
+            >
+              e.g. if the veteran has passed away or has withdrawn their motion
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      <div
+        style="max-width: 46rem; margin-bottom: 1.5em;"
+      >
+        <div
+          class="usa-alert usa-alert-warning"
+          role="alert"
+        >
+          <div
+            class="usa-alert-body"
+          >
+            <h2
+              class="usa-alert-heading"
+            >
+              Please Note
+            </h2>
+            <div
+              class="usa-alert-text"
+            >
+              If you weren't provided the draft ruling letter, or would like to request that the motions attorney make changes, please 
+              <a
+                href="/modal/return_to_lit_support"
+              >
+                return to the motions attorney
+              </a>
+              .
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="mtv-review-hyperlink cf-margin-bottom-2rem   "
+      >
+        <label
+          for="hyperlink"
+        >
+          <strong>
+            <span>
+              Insert Caseflow Reader document hyperlink to dismissal draft
+              <span
+                class="cf-optional"
+              >
+                Optional
+              </span>
+            </span>
+          </strong>
+        </label>
+        <input
+          class="mtv-review-hyperlink,cf-margin-bottom-2rem"
+          id="hyperlink"
+          name="hyperlink"
+          type="text"
+          value=""
+        />
+      </div>
+      <div
+        class="cf-form-textarea"
+      >
+        <label
+          class="question-label"
+          for="instructions"
+        >
+          <strong>
+            <span>
+              Provide context and instructions on which issues should be dismissed
+              <span
+                class="cf-optional"
+              >
+                Optional
+              </span>
+            </span>
+          </strong>
+        </label>
+        <textarea
+          id="instructions"
+          name="instructions"
+        />
+      </div>
+    </section>
+    <div
+      class="controls cf-app-segment"
+    >
+      <span>
+        <button
+          class="cf-right-side usa-button"
+          data-css-wn5k45=""
+          id="button-submit"
+          type="button"
+        >
+          Submit
+        </button>
+      </span>
+      <a
+        href="/queue/appeals/23423534"
+      >
+        <span>
+          <button
+            class="cf-right-side usa-button-secondary usa-button"
+            id="button-Cancel"
+            type="button"
+          >
+            Cancel
+          </button>
+        </span>
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`MTVJudgeDisposition with granted disposition selected renders correctly 1`] = `
+<div>
+  <div
+    class="address-motion-to-vacate"
+  >
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <h1>
+        Address Abellona Valtas's Motion to Vacate
+      </h1>
+      <div
+        class="case-meta"
+      >
+        <span>
+          <strong>
+            Veteran ID:
+          </strong>
+           
+          123456789
+        </span>
+        <span
+          style="margin-left: 3rem;"
+        >
+          <strong>
+            Task:
+          </strong>
+           
+        </span>
+      </div>
+      <div
+        class="cf-help-divider"
+        style="margin: 15px 0px;"
+      />
+      <p>
+        Determine how you would like to address this motion to vacate.
+        <br />
+        
+        <br />
+        If you are granting all issues for vacatur or a partial vacatur for this motion, you will then assign this case to an attorney on your team.
+        <br />
+        
+        <br />
+        If you are choosing to deny or dismiss this motion, it will be automatically returned to the original Motions Attorney on the case.
+        <br />
+        
+        <br />
+        If they are no longer active, it will be placed in the Litigation Support team queue for reassignment.
+      </p>
+      <h2
+        class="css-mynltj"
+      >
+        Motion Attorney's Notes
+      </h2>
+      <p
+        class="mtv-task-instructions"
+      >
+        Lorem ipsum dolor sit amet, consectetur adipiscing
+      </p>
+      <div
+        class="cf-help-divider"
+      />
+      <fieldset
+        class="mtv-disposition-selection cf-form-radio "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              How will you address this motion to vacate?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_granted"
+              name="disposition"
+              type="radio"
+              value="granted"
+            />
+            <label
+              class=""
+              for="disposition_granted"
+            >
+              Grant all issues for vacatur
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_partially_granted"
+              name="disposition"
+              type="radio"
+              value="partially_granted"
+            />
+            <label
+              class=""
+              for="disposition_partially_granted"
+            >
+              Grant partial vacatur
+            </label>
+            <div
+              class="cf-form-radio-help helpText"
+            >
+              e.g. if you do not want to vacate all the issues the veteran is requesting
+            </div>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_denied"
+              name="disposition"
+              type="radio"
+              value="denied"
+            />
+            <label
+              class=""
+              for="disposition_denied"
+            >
+              Deny all issues for vacatur
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_dismissed"
+              name="disposition"
+              type="radio"
+              value="dismissed"
+            />
+            <label
+              class=""
+              for="disposition_dismissed"
+            >
+              Dismiss
+            </label>
+            <div
+              class="cf-form-radio-help helpText"
+            >
+              e.g. if the veteran has passed away or has withdrawn their motion
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      <div
+        style="max-width: 46rem; margin-bottom: 1.5em;"
+      >
+        <div
+          class="usa-alert usa-alert-warning"
+          role="alert"
+        >
+          <div
+            class="usa-alert-body"
+          >
+            <h2
+              class="usa-alert-heading"
+            >
+              Please Note
+            </h2>
+            <div
+              class="usa-alert-text"
+            >
+              If you weren't provided the draft ruling letter, or would like to request that the motions attorney make changes, please 
+              <a
+                href="/modal/return_to_lit_support"
+              >
+                return to the motions attorney
+              </a>
+              .
+            </div>
+          </div>
+        </div>
+      </div>
+      <fieldset
+        class="mtv-vacate-type cf-form-radio "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              What type of vacate?
+               
+              <span
+                class="cf-required"
+              >
+                 Required
+              </span>
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="vacate-type_vacate_and_readjudication"
+              name="vacate_type"
+              type="radio"
+              value="vacate_and_readjudication"
+            />
+            <label
+              class=""
+              for="vacate-type_vacate_and_readjudication"
+            >
+              Vacate and Readjudication (1 document)
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="vacate-type_straight_vacate"
+              name="vacate_type"
+              type="radio"
+              value="straight_vacate"
+            />
+            <label
+              class=""
+              for="vacate-type_straight_vacate"
+            >
+              Straight Vacate (1 document)
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="vacate-type_vacate_and_de_novo"
+              name="vacate_type"
+              type="radio"
+              value="vacate_and_de_novo"
+            />
+            <label
+              class=""
+              for="vacate-type_vacate_and_de_novo"
+            >
+              Vacate and De Novo (2 documents)
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <div
+        class="cf-form-textarea"
+      >
+        <label
+          class="question-label"
+          for="instructions"
+        >
+          <strong>
+            <span>
+              Provide context and instructions on which issues should be granted
+              <span
+                class="cf-optional"
+              >
+                Optional
+              </span>
+            </span>
+          </strong>
+        </label>
+        <textarea
+          id="instructions"
+          name="instructions"
+        />
+      </div>
+      <div
+        class=""
+      >
+        <div
+          class="cf-form-dropdown dropdown-attorney"
+          data-css-33yksw=""
+        >
+          <label
+            class="question-label"
+            for="attorney"
+            id="attorney-label"
+          >
+            <strong>
+              <span>
+                Assign to decisions attorney
+              </span>
+            </strong>
+          </label>
+          <div
+            class="cf-select"
+          >
+            <div
+              class=" css-2b097c-container"
+            >
+              <div
+                class="cf-select__control css-yk16xz-control"
+              >
+                <div
+                  class="cf-select__value-container css-g1d714-ValueContainer"
+                >
+                  <div
+                    class="cf-select__placeholder css-1wa3eu0-placeholder"
+                  >
+                    Select attorney
+                  </div>
+                  <div
+                    class="css-81nyic-Input"
+                  >
+                    <div
+                      class="cf-select__input"
+                      style="display: inline-block;"
+                    >
+                      <input
+                        aria-autocomplete="list"
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                        aria-labelledby="attorney-label"
+                        aria-owns="attorney-listbox"
+                        autocapitalize="none"
+                        autocomplete="off"
+                        autocorrect="off"
+                        id="attorney"
+                        role="combobox"
+                        spellcheck="false"
+                        style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                        tabindex="0"
+                        type="text"
+                        value=""
+                      />
+                      <div
+                        style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                >
+                  <span
+                    class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                  />
+                  <div
+                    aria-hidden="true"
+                    class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="css-6q0nyr-Svg"
+                      focusable="false"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      width="20"
+                    >
+                      <path
+                        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <input
+                name="attorney"
+                type="hidden"
+                value=""
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div
+      class="controls cf-app-segment"
+    >
+      <span>
+        <button
+          class="cf-right-side usa-button-disabled usa-button"
+          data-css-wn5k45=""
+          disabled=""
+          id="button-submit"
+          type="button"
+        >
+          Submit
+        </button>
+      </span>
+      <a
+        href="/queue/appeals/23423534"
+      >
+        <span>
+          <button
+            class="cf-right-side usa-button-secondary usa-button"
+            id="button-Cancel"
+            type="button"
+          >
+            Cancel
+          </button>
+        </span>
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`MTVJudgeDisposition with partially_granted disposition selected renders correctly 1`] = `
+<div>
+  <div
+    class="address-motion-to-vacate"
+  >
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <h1>
+        Address Abellona Valtas's Motion to Vacate
+      </h1>
+      <div
+        class="case-meta"
+      >
+        <span>
+          <strong>
+            Veteran ID:
+          </strong>
+           
+          123456789
+        </span>
+        <span
+          style="margin-left: 3rem;"
+        >
+          <strong>
+            Task:
+          </strong>
+           
+        </span>
+      </div>
+      <div
+        class="cf-help-divider"
+        style="margin: 15px 0px;"
+      />
+      <p>
+        Determine how you would like to address this motion to vacate.
+        <br />
+        
+        <br />
+        If you are granting all issues for vacatur or a partial vacatur for this motion, you will then assign this case to an attorney on your team.
+        <br />
+        
+        <br />
+        If you are choosing to deny or dismiss this motion, it will be automatically returned to the original Motions Attorney on the case.
+        <br />
+        
+        <br />
+        If they are no longer active, it will be placed in the Litigation Support team queue for reassignment.
+      </p>
+      <h2
+        class="css-mynltj"
+      >
+        Motion Attorney's Notes
+      </h2>
+      <p
+        class="mtv-task-instructions"
+      >
+        Lorem ipsum dolor sit amet, consectetur adipiscing
+      </p>
+      <div
+        class="cf-help-divider"
+      />
+      <fieldset
+        class="mtv-disposition-selection cf-form-radio "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              How will you address this motion to vacate?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_granted"
+              name="disposition"
+              type="radio"
+              value="granted"
+            />
+            <label
+              class=""
+              for="disposition_granted"
+            >
+              Grant all issues for vacatur
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_partially_granted"
+              name="disposition"
+              type="radio"
+              value="partially_granted"
+            />
+            <label
+              class=""
+              for="disposition_partially_granted"
+            >
+              Grant partial vacatur
+            </label>
+            <div
+              class="cf-form-radio-help helpText"
+            >
+              e.g. if you do not want to vacate all the issues the veteran is requesting
+            </div>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_denied"
+              name="disposition"
+              type="radio"
+              value="denied"
+            />
+            <label
+              class=""
+              for="disposition_denied"
+            >
+              Deny all issues for vacatur
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_dismissed"
+              name="disposition"
+              type="radio"
+              value="dismissed"
+            />
+            <label
+              class=""
+              for="disposition_dismissed"
+            >
+              Dismiss
+            </label>
+            <div
+              class="cf-form-radio-help helpText"
+            >
+              e.g. if the veteran has passed away or has withdrawn their motion
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset
+        class="checkbox-wrapper-issues cf-form-checkboxes cf-checkbox-group"
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Which issues would you like to vacate?
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="1"
+            name="1"
+            type="checkbox"
+          />
+          <label
+            for="1"
+          >
+            1. This is a description of the decision
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="2"
+            name="2"
+            type="checkbox"
+          />
+          <label
+            for="2"
+          >
+            2. This is a description of another decision
+          </label>
+        </div>
+      </fieldset>
+      <div
+        style="max-width: 46rem; margin-bottom: 1.5em;"
+      >
+        <div
+          class="usa-alert usa-alert-warning"
+          role="alert"
+        >
+          <div
+            class="usa-alert-body"
+          >
+            <h2
+              class="usa-alert-heading"
+            >
+              Please Note
+            </h2>
+            <div
+              class="usa-alert-text"
+            >
+              If you weren't provided the draft ruling letter, or would like to request that the motions attorney make changes, please 
+              <a
+                href="/modal/return_to_lit_support"
+              >
+                return to the motions attorney
+              </a>
+              .
+            </div>
+          </div>
+        </div>
+      </div>
+      <fieldset
+        class="mtv-vacate-type cf-form-radio "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              What type of vacate?
+               
+              <span
+                class="cf-required"
+              >
+                 Required
+              </span>
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="vacate-type_vacate_and_readjudication"
+              name="vacate_type"
+              type="radio"
+              value="vacate_and_readjudication"
+            />
+            <label
+              class=""
+              for="vacate-type_vacate_and_readjudication"
+            >
+              Vacate and Readjudication (1 document)
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="vacate-type_straight_vacate"
+              name="vacate_type"
+              type="radio"
+              value="straight_vacate"
+            />
+            <label
+              class=""
+              for="vacate-type_straight_vacate"
+            >
+              Straight Vacate (1 document)
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="vacate-type_vacate_and_de_novo"
+              name="vacate_type"
+              type="radio"
+              value="vacate_and_de_novo"
+            />
+            <label
+              class=""
+              for="vacate-type_vacate_and_de_novo"
+            >
+              Vacate and De Novo (2 documents)
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <div
+        class="cf-form-textarea"
+      >
+        <label
+          class="question-label"
+          for="instructions"
+        >
+          <strong>
+            <span>
+              Provide context and instructions on which issues should be partially_granted
+              <span
+                class="cf-optional"
+              >
+                Optional
+              </span>
+            </span>
+          </strong>
+        </label>
+        <textarea
+          id="instructions"
+          name="instructions"
+        />
+      </div>
+      <div
+        class=""
+      >
+        <div
+          class="cf-form-dropdown dropdown-attorney"
+          data-css-33yksw=""
+        >
+          <label
+            class="question-label"
+            for="attorney"
+            id="attorney-label"
+          >
+            <strong>
+              <span>
+                Assign to decisions attorney
+              </span>
+            </strong>
+          </label>
+          <div
+            class="cf-select"
+          >
+            <div
+              class=" css-2b097c-container"
+            >
+              <div
+                class="cf-select__control css-yk16xz-control"
+              >
+                <div
+                  class="cf-select__value-container css-g1d714-ValueContainer"
+                >
+                  <div
+                    class="cf-select__placeholder css-1wa3eu0-placeholder"
+                  >
+                    Select attorney
+                  </div>
+                  <div
+                    class="css-81nyic-Input"
+                  >
+                    <div
+                      class="cf-select__input"
+                      style="display: inline-block;"
+                    >
+                      <input
+                        aria-autocomplete="list"
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                        aria-labelledby="attorney-label"
+                        aria-owns="attorney-listbox"
+                        autocapitalize="none"
+                        autocomplete="off"
+                        autocorrect="off"
+                        id="attorney"
+                        role="combobox"
+                        spellcheck="false"
+                        style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                        tabindex="0"
+                        type="text"
+                        value=""
+                      />
+                      <div
+                        style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                >
+                  <span
+                    class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                  />
+                  <div
+                    aria-hidden="true"
+                    class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="css-6q0nyr-Svg"
+                      focusable="false"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      width="20"
+                    >
+                      <path
+                        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <input
+                name="attorney"
+                type="hidden"
+                value=""
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div
+      class="controls cf-app-segment"
+    >
+      <span>
+        <button
+          class="cf-right-side usa-button-disabled usa-button"
+          data-css-wn5k45=""
+          disabled=""
+          id="button-submit"
+          type="button"
+        >
+          Submit
+        </button>
+      </span>
+      <a
+        href="/queue/appeals/23423534"
+      >
+        <span>
+          <button
+            class="cf-right-side usa-button-secondary usa-button"
+            id="button-Cancel"
+            type="button"
+          >
+            Cancel
+          </button>
+        </span>
+      </a>
+    </div>
+  </div>
+</div>
+`;

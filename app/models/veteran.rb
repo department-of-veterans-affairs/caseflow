@@ -37,6 +37,8 @@ class Veteran < CaseflowRecord
 
   delegate :full_address, to: :address
 
+  before_save :set_date_of_death_reported_at!, if: :will_save_change_to_date_of_death?
+
   CHARACTER_OF_SERVICE_CODES = {
     "HON" => "Honorable",
     "UHC" => "Under Honorable Conditions",
@@ -178,6 +180,8 @@ class Veteran < CaseflowRecord
 
   # Postal code might be stored in address line 3 for international addresses
   def zip_code
+    return nil unless bgs_record_found?
+
     zip_code = bgs_record&.[](:zip_code)
     zip_code ||= (@address_line3 if (@address_line3 || "").match?(Address::ZIP_CODE_REGEX))
 
@@ -271,7 +275,21 @@ class Veteran < CaseflowRecord
   end
 
   def date_of_death
-    super || (bgs_record_found? ? bgs_record[:date_of_death] : nil)
+    cached_date_of_death = super
+    return cached_date_of_death if cached_date_of_death.present? || RequestStore.store[:current_user]&.vso_employee?
+
+    dod = bgs_record[:date_of_death] if bgs_record_found?
+    if dod.present?
+      dod = Date.strptime(dod, "%m/%d/%Y")
+      update(date_of_death: dod)
+    end
+    dod
+  rescue ArgumentError
+    nil
+  end
+
+  def set_date_of_death_reported_at!
+    self.date_of_death_reported_at = Time.zone.now
   end
 
   def address
@@ -313,8 +331,17 @@ class Veteran < CaseflowRecord
 
   def update_cached_attributes!
     CACHED_BGS_ATTRIBUTES.each do |local_attr, bgs_attr|
-      self[local_attr] = bgs_record[bgs_attr]
+      fetched_attr = bgs_record[bgs_attr]
+      if bgs_attr == :date_of_death && fetched_attr.present?
+        fetched_attr = begin
+                         Date.strptime(fetched_attr, "%m/%d/%Y")
+                       rescue ArgumentError
+                         nil
+                       end
+      end
+      self[local_attr] = fetched_attr
     end
+    self.bgs_last_synced_at = Time.zone.now
     save!
   end
 

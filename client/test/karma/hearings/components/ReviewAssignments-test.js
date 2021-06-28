@@ -12,7 +12,7 @@ describe('ReviewAssignments', () => {
       </MemoryRouter>
     );
 
-    expect(wrapper.text()).to.include('We have assigned your video hearings');
+    expect(wrapper.text()).to.include('We have assigned your hearings days');
   });
 
   it('renders the judge alert', () => {

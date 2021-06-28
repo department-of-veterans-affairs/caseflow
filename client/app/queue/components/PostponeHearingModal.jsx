@@ -6,10 +6,10 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 import { taskById, appealWithDetailSelector } from '../selectors';
-import { onReceiveAmaTasks, onReceiveAppealDetails } from '../QueueActions';
+import { onReceiveAmaTasks } from '../QueueActions';
 import { requestPatch, showErrorMessage } from '../uiReducer/uiActions';
 import QueueFlowModal from './QueueFlowModal';
-import { taskActionData, prepareAppealForStore } from '../utils';
+import { taskActionData } from '../utils';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import { setScheduledHearing } from '../../components/common/actions';
 
@@ -17,7 +17,8 @@ import RadioField from '../../components/RadioField';
 import AssignHearingForm from '../../hearings/components/modalForms/AssignHearingForm';
 import ScheduleHearingLaterWithAdminActionForm
   from '../../hearings/components/modalForms/ScheduleHearingLaterWithAdminActionForm';
-import ApiUtil from '../../util/ApiUtil';
+
+import HEARING_DISPOSITION_TYPES from '../../../constants/HEARING_DISPOSITION_TYPES';
 
 const ACTIONS = {
   RESCHEDULE: 'reschedule',
@@ -129,7 +130,7 @@ class PostponeHearingModal extends React.Component {
           status: TASK_STATUSES.cancelled,
           business_payloads: {
             values: {
-              disposition: 'postponed',
+              disposition: HEARING_DISPOSITION_TYPES.postponed,
               after_disposition_update:
                 afterDispositionUpdateAction === ACTIONS.RESCHEDULE ?
                   this.getReschedulePayload() :
@@ -175,7 +176,11 @@ class PostponeHearingModal extends React.Component {
     // Determine whether to redirect to the ful page schedule veteran flow
     if (this.state.afterDispositionUpdateAction === ACTIONS.RESCHEDULE && userCanScheduleVirtualHearings) {
       // Change the disposition in the store
-      this.props.setScheduledHearing({ disposition: ACTIONS.RESCHEDULE, taskId: task.taskId });
+      this.props.setScheduledHearing({
+        action: ACTIONS.RESCHEDULE,
+        taskId: task.taskId,
+        disposition: HEARING_DISPOSITION_TYPES.postponed
+      });
 
       this.props.history.push(
         `/queue/appeals/${appeal.externalId}/tasks/${task.taskId}/${taskData.schedule_hearing_action_path}`
@@ -211,16 +216,6 @@ class PostponeHearingModal extends React.Component {
           });
         }
       );
-  };
-
-  resetAppealDetails = () => {
-    const { appeal } = this.props;
-
-    ApiUtil.get(`/appeals/${appeal.externalId}`).then((response) => {
-      this.props.onReceiveAppealDetails(
-        prepareAppealForStore([response.body.appeal])
-      );
-    });
   };
 
   render = () => {
@@ -289,7 +284,6 @@ PostponeHearingModal.propTypes = {
     }),
   }),
   onReceiveAmaTasks: PropTypes.func,
-  onReceiveAppealDetails: PropTypes.func,
   history: PropTypes.object,
   requestPatch: PropTypes.func,
   scheduleHearingLaterWithAdminAction: PropTypes.shape({
@@ -322,8 +316,7 @@ const mapDispatchToProps = (dispatch) =>
       setScheduledHearing,
       requestPatch,
       onReceiveAmaTasks,
-      showErrorMessage,
-      onReceiveAppealDetails,
+      showErrorMessage
     },
     dispatch
   );

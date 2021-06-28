@@ -1,0 +1,504 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AddClaimantConfirmationModal individual claimant missing last name shows alert 1`] = `
+<div>
+  <section
+    aria-describedby="modal_id-desc"
+    aria-labelledby="modal_id-title"
+    aria-modal="true"
+    class="cf-modal active "
+    id="modal_id"
+    role="dialog"
+  >
+    <div
+      class="cf-modal-body"
+      id="add_claimant_modal"
+    >
+      <button
+        class="cf-modal-close"
+        id="Review-and-confirm-claimant-information-button-id-close"
+        type="button"
+      >
+        <span
+          class="usa-sr-only"
+        >
+          Close
+        </span>
+        <svg
+          class="cf-icon-close"
+          height="55"
+          viewBox="0 0 55 55"
+          width="55"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <title>
+            close
+          </title>
+          <path
+            d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
+          />
+        </svg>
+      </button>
+      <div
+        style="display: flex;"
+      >
+        <div
+          data-css-1gs0ko2=""
+        >
+          <h1
+            id="modal_id-title"
+          >
+            Review and confirm claimant information
+          </h1>
+          <div
+            data-css-o98ubo=""
+          >
+            <p>
+              Please review the claimant and their POA's information (if applicable) to ensure it matches the form(s). If you need to make edits, please click "cancel and edit" and make the edits accordingly.
+            </p>
+            <section>
+              <div
+                class="css-td0hbt"
+              >
+                <strong>
+                  Claimant
+                </strong>
+              </div>
+              <div>
+                 Jane 
+        McClaimant 
+              </div>
+              <div />
+              <div>
+                San Francisco, CA 94123 USA
+              </div>
+              <div>
+                555-123-4567
+              </div>
+              <div
+                class="usa-alert usa-alert-warning usa-alert-slim"
+                role="alert"
+              >
+                <div
+                  class="usa-alert-body"
+                >
+                  <div
+                    class="usa-alert-text"
+                  >
+                    We noticed that you didn't enter a last name for the claimant. Are you sure they haven't included a last name?
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section>
+              <div
+                class="css-td0hbt"
+              >
+                <strong>
+                  Claimant's POA
+                </strong>
+              </div>
+              <div>
+                Intake does not have a Form 21-22
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+      <div
+        class="cf-modal-divider"
+      />
+      <div
+        class="cf-modal-controls"
+      >
+        <span>
+          <button
+            class="cf-modal-link cf-btn-link cf-push-left usa-button"
+            id="Review-and-confirm-claimant-information-button-id-0"
+            type="button"
+          >
+            Cancel and edit
+          </button>
+        </span>
+        <span>
+          <button
+            class="usa-button usa-button-primary cf-push-right usa-button"
+            id="Review-and-confirm-claimant-information-button-id-1"
+            type="button"
+          >
+            Confirm
+          </button>
+        </span>
+      </div>
+    </div>
+  </section>
+</div>
+`;
+
+exports[`AddClaimantConfirmationModal organization claimant renders correctly 1`] = `
+<div>
+  <section
+    aria-describedby="modal_id-desc"
+    aria-labelledby="modal_id-title"
+    aria-modal="true"
+    class="cf-modal active "
+    id="modal_id"
+    role="dialog"
+  >
+    <div
+      class="cf-modal-body"
+      id="add_claimant_modal"
+    >
+      <button
+        class="cf-modal-close"
+        id="Review-and-confirm-claimant-information-button-id-close"
+        type="button"
+      >
+        <span
+          class="usa-sr-only"
+        >
+          Close
+        </span>
+        <svg
+          class="cf-icon-close"
+          height="55"
+          viewBox="0 0 55 55"
+          width="55"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <title>
+            close
+          </title>
+          <path
+            d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
+          />
+        </svg>
+      </button>
+      <div
+        style="display: flex;"
+      >
+        <div
+          data-css-1gs0ko2=""
+        >
+          <h1
+            id="modal_id-title"
+          >
+            Review and confirm claimant information
+          </h1>
+          <div
+            data-css-o98ubo=""
+          >
+            <p>
+              Please review the claimant and their POA's information (if applicable) to ensure it matches the form(s). If you need to make edits, please click "cancel and edit" and make the edits accordingly.
+            </p>
+            <section>
+              <div
+                class="css-td0hbt"
+              >
+                <strong>
+                  Claimant
+                </strong>
+              </div>
+              <div />
+              <div />
+              <div>
+                San Francisco, CA 94123 USA
+              </div>
+              <div>
+                555-123-4567
+              </div>
+            </section>
+            <section>
+              <div
+                class="css-td0hbt"
+              >
+                <strong>
+                  Claimant's POA
+                </strong>
+              </div>
+              <div>
+                Intake does not have a Form 21-22
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+      <div
+        class="cf-modal-divider"
+      />
+      <div
+        class="cf-modal-controls"
+      >
+        <span>
+          <button
+            class="cf-modal-link cf-btn-link cf-push-left usa-button"
+            id="Review-and-confirm-claimant-information-button-id-0"
+            type="button"
+          >
+            Cancel and edit
+          </button>
+        </span>
+        <span>
+          <button
+            class="usa-button usa-button-primary cf-push-right usa-button"
+            id="Review-and-confirm-claimant-information-button-id-1"
+            type="button"
+          >
+            Confirm
+          </button>
+        </span>
+      </div>
+    </div>
+  </section>
+</div>
+`;
+
+exports[`AddClaimantConfirmationModal with POA renders correctly 1`] = `
+<div>
+  <section
+    aria-describedby="modal_id-desc"
+    aria-labelledby="modal_id-title"
+    aria-modal="true"
+    class="cf-modal active "
+    id="modal_id"
+    role="dialog"
+  >
+    <div
+      class="cf-modal-body"
+      id="add_claimant_modal"
+    >
+      <button
+        class="cf-modal-close"
+        id="Review-and-confirm-claimant-information-button-id-close"
+        type="button"
+      >
+        <span
+          class="usa-sr-only"
+        >
+          Close
+        </span>
+        <svg
+          class="cf-icon-close"
+          height="55"
+          viewBox="0 0 55 55"
+          width="55"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <title>
+            close
+          </title>
+          <path
+            d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
+          />
+        </svg>
+      </button>
+      <div
+        style="display: flex;"
+      >
+        <div
+          data-css-1gs0ko2=""
+        >
+          <h1
+            id="modal_id-title"
+          >
+            Review and confirm claimant information
+          </h1>
+          <div
+            data-css-o98ubo=""
+          >
+            <p>
+              Please review the claimant and their POA's information (if applicable) to ensure it matches the form(s). If you need to make edits, please click "cancel and edit" and make the edits accordingly.
+            </p>
+            <section>
+              <div
+                class="css-td0hbt"
+              >
+                <strong>
+                  Claimant
+                </strong>
+              </div>
+              <div>
+                 Jane 
+        McClaimant Doe
+              </div>
+              <div />
+              <div>
+                San Francisco, CA 94123 USA
+              </div>
+              <div>
+                555-123-4567
+              </div>
+            </section>
+            <section>
+              <div
+                class="css-td0hbt"
+              >
+                <strong>
+                  Claimant's POA
+                </strong>
+              </div>
+              <div>
+                 Paul 
+        Ern O'Attorney
+              </div>
+              <div />
+              <div>
+                Washington, DC 20001 USA
+              </div>
+              <div>
+                555-321-4567
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+      <div
+        class="cf-modal-divider"
+      />
+      <div
+        class="cf-modal-controls"
+      >
+        <span>
+          <button
+            class="cf-modal-link cf-btn-link cf-push-left usa-button"
+            id="Review-and-confirm-claimant-information-button-id-0"
+            type="button"
+          >
+            Cancel and edit
+          </button>
+        </span>
+        <span>
+          <button
+            class="usa-button usa-button-primary cf-push-right usa-button"
+            id="Review-and-confirm-claimant-information-button-id-1"
+            type="button"
+          >
+            Confirm
+          </button>
+        </span>
+      </div>
+    </div>
+  </section>
+</div>
+`;
+
+exports[`AddClaimantConfirmationModal without POA renders correctly 1`] = `
+<div>
+  <section
+    aria-describedby="modal_id-desc"
+    aria-labelledby="modal_id-title"
+    aria-modal="true"
+    class="cf-modal active "
+    id="modal_id"
+    role="dialog"
+  >
+    <div
+      class="cf-modal-body"
+      id="add_claimant_modal"
+    >
+      <button
+        class="cf-modal-close"
+        id="Review-and-confirm-claimant-information-button-id-close"
+        type="button"
+      >
+        <span
+          class="usa-sr-only"
+        >
+          Close
+        </span>
+        <svg
+          class="cf-icon-close"
+          height="55"
+          viewBox="0 0 55 55"
+          width="55"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <title>
+            close
+          </title>
+          <path
+            d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
+          />
+        </svg>
+      </button>
+      <div
+        style="display: flex;"
+      >
+        <div
+          data-css-1gs0ko2=""
+        >
+          <h1
+            id="modal_id-title"
+          >
+            Review and confirm claimant information
+          </h1>
+          <div
+            data-css-o98ubo=""
+          >
+            <p>
+              Please review the claimant and their POA's information (if applicable) to ensure it matches the form(s). If you need to make edits, please click "cancel and edit" and make the edits accordingly.
+            </p>
+            <section>
+              <div
+                class="css-td0hbt"
+              >
+                <strong>
+                  Claimant
+                </strong>
+              </div>
+              <div>
+                 Jane 
+        McClaimant Doe
+              </div>
+              <div />
+              <div>
+                San Francisco, CA 94123 USA
+              </div>
+              <div>
+                555-123-4567
+              </div>
+            </section>
+            <section>
+              <div
+                class="css-td0hbt"
+              >
+                <strong>
+                  Claimant's POA
+                </strong>
+              </div>
+              <div>
+                Intake does not have a Form 21-22
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+      <div
+        class="cf-modal-divider"
+      />
+      <div
+        class="cf-modal-controls"
+      >
+        <span>
+          <button
+            class="cf-modal-link cf-btn-link cf-push-left usa-button"
+            id="Review-and-confirm-claimant-information-button-id-0"
+            type="button"
+          >
+            Cancel and edit
+          </button>
+        </span>
+        <span>
+          <button
+            class="usa-button usa-button-primary cf-push-right usa-button"
+            id="Review-and-confirm-claimant-information-button-id-1"
+            type="button"
+          >
+            Confirm
+          </button>
+        </span>
+      </div>
+    </div>
+  </section>
+</div>
+`;

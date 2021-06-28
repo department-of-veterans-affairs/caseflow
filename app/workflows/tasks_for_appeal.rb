@@ -58,9 +58,13 @@ class TasksForAppeal
 
   def initialize_hearing_tasks_for_travel_board?
     appeal.is_a?(LegacyAppeal) &&
-      appeal.current_hearing_request_type == :travel_board &&
       user.can_change_hearing_request_type? &&
-      appeal.active?
+      appeal.tasks.open.where(type: HearingTask.name).empty? &&
+      appeal.tasks.closed.where(type: ChangeHearingRequestTypeTask.name).empty? &&
+      appeal.current_hearing_request_type == :travel_board &&
+      appeal.active? &&
+      appeal.original? &&
+      !appeal.any_held_hearings?
   end
 
   def legacy_appeal_tasks
@@ -75,7 +79,8 @@ class TasksForAppeal
       :assigned_by,
       :assigned_to,
       :cancelled_by,
-      :parent
+      :parent,
+      :children
     ]
   end
 end

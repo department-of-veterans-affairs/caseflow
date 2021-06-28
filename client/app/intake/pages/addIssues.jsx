@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
@@ -17,7 +18,8 @@ import InlineForm from '../../components/InlineForm';
 import DateSelector from '../../components/DateSelector';
 import ErrorAlert from '../components/ErrorAlert';
 import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES, FORM_TYPES } from '../constants';
-import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
+import EP_CLAIM_TYPES from '../../../constants/EP_CLAIM_TYPES';
+import { formatAddedIssues, getAddIssuesFields, formatIssuesBySection } from '../util/issues';
 import Table from '../../components/Table';
 import IssueList from '../components/IssueList';
 
@@ -36,7 +38,10 @@ import {
   toggleLegacyOptInModal,
   toggleCorrectionTypeModal
 } from '../actions/addIssues';
+import { editEpClaimLabel } from '../../intakeEdit/actions/edit';
 import COPY from '../../../COPY';
+import { EditClaimLabelModal } from '../../intakeEdit/components/EditClaimLabelModal';
+import { ConfirmClaimLabelModal } from '../../intakeEdit/components/ConfirmClaimLabelModal';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -52,7 +57,8 @@ class AddIssuesPage extends React.Component {
       originalIssueLength,
       issueRemoveIndex: 0,
       issueIndex: 0,
-      addingIssue: false
+      addingIssue: false,
+      loading: false
     };
   }
 
@@ -102,9 +108,7 @@ class AddIssuesPage extends React.Component {
     const { correctClaimReviews } = featureToggles;
 
     return (
-      !formType ||
-      (this.editingClaimReview() && !processedAt) ||
-      intakeData.isOutcoded ||
+      !formType || (this.editingClaimReview() && !processedAt) || intakeData.isOutcoded ||
       (hasClearedEp && !correctClaimReviews)
     );
   }
@@ -136,24 +140,77 @@ class AddIssuesPage extends React.Component {
   establishmentCredits() {
     return <div className="cf-intake-establish-credits">
       Established {this.establishmentCreditsTimestamp()}
-      <span> by <a href={`/intake/manager?user_css_id=${this.props.intakeUser}`}>{this.props.intakeUser}</a></span>
+      { this.props.intakeUser &&
+        <span> by <a href={`/intake/manager?user_css_id=${this.props.intakeUser}`}>{this.props.intakeUser}</a></span>
+      }
     </div>;
   }
 
+  // Methods for handling editing of claim label
+  openEditClaimLabelModal = (endProductCode) => {
+    this.setState({
+      showEditClaimLabelModal: true,
+      selectedEpCode: endProductCode
+    });
+  }
+  closeEditClaimLabelModal = () => {
+    this.setState({
+      showEditClaimLabelModal: false,
+      showConfirmClaimLabelModal: false,
+      previousEpCode: null,
+      selectedEpCode: null
+    });
+  }
+
+  handleEditClaimLabel = (data) => {
+    this.setState({
+      showEditClaimLabelModal: false,
+      showConfirmClaimLabelModal: true,
+      previousEpCode: data.oldCode,
+      selectedEpCode: data.newCode
+    });
+  }
+
+  submitClaimLabelEdit = () => {
+    this.props.editEpClaimLabel(
+      this.props.intakeForms[this.props.formType].claimId,
+      this.props.formType,
+      this.state.previousEpCode,
+      this.state.selectedEpCode
+    );
+    this.setState({
+      showConfirmClaimLabelModal: true,
+      previousEpCode: this.state.previousEpCode,
+      selectedEpCode: this.state.selectedEpCode,
+      loading: true
+    });
+  }
+
   render() {
-    const { intakeForms, formType, veteran, featureToggles, editPage, addingIssue, userCanWithdrawIssues } = this.props;
+    const { intakeForms,
+      formType,
+      veteran,
+      featureToggles,
+      editPage,
+      addingIssue,
+      userCanWithdrawIssues
+    } = this.props;
     const intakeData = intakeForms[formType];
-    const { useAmaActivationDate } = featureToggles;
+    const { useAmaActivationDate, nonVeteranClaimants } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
 
     if (this.willRedirect(intakeData, hasClearedEp)) {
       return this.redirect(intakeData, hasClearedEp);
-    }
 
-    const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
+    }
+    const requestStatus = intakeData.requestStatus;
+    const requestState =
+      requestStatus.completeIntake || requestStatus.requestIssuesUpdate || requestStatus.editClaimLabelUpdate;
+    const endProductWithError = intakeData.editEpUpdateError;
+
     const requestErrorCode =
       intakeData.requestStatus.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
-    const requestErrorUUID = intakeData.requestStatus.completeIntakeErrorUUID;
+    const requestErrorUUID = requestStatus.completeIntakeErrorUUID;
     const showInvalidVeteranError =
       !intakeData.veteranValid &&
       _.some(
@@ -162,10 +219,9 @@ class AddIssuesPage extends React.Component {
       );
 
     const issues = formatAddedIssues(intakeData.addedIssues, useAmaActivationDate);
-    const requestedIssues = issues.filter((issue) => !issue.withdrawalPending && !issue.withdrawalDate);
-    const previouslywithdrawnIssues = issues.filter((issue) => issue.withdrawalDate);
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
-    const withdrawnIssues = previouslywithdrawnIssues.concat(issuesPendingWithdrawal);
+    const issuesBySection = formatIssuesBySection(issues);
+
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
 
@@ -186,6 +242,10 @@ class AddIssuesPage extends React.Component {
 
       return false;
     };
+
+    const issuesChanged = !_.isEqual(
+      intakeData.addedIssues, intakeData.originalIssues
+    );
 
     const addIssueButton = () => {
       return (
@@ -225,6 +285,14 @@ class AddIssuesPage extends React.Component {
     const columns = [{ valueName: 'field' }, { valueName: 'content' }];
 
     let fieldsForFormType = getAddIssuesFields(formType, veteran, intakeData);
+
+    if (formType === 'appeal' && nonVeteranClaimants) {
+      fieldsForFormType = fieldsForFormType.concat({
+        field: 'Claimant\'s POA',
+        content: intakeData.powerOfAttorneyName || COPY.ADD_CLAIMANT_CONFIRM_MODAL_NO_POA
+      });
+    }
+
     let issueChangeClassname = () => {
       // no-op unless the issue banner needs to be displayed
     };
@@ -242,39 +310,68 @@ class AddIssuesPage extends React.Component {
 
     let rowObjects = fieldsForFormType;
 
-    if (!_.isEmpty(requestedIssues)) {
-      rowObjects = fieldsForFormType.concat({
-        field: 'Requested issues',
+    const issueSectionRow = (sectionIssues, fieldTitle) => {
+      return {
+        field: fieldTitle,
         content: (
-          <IssueList
-            onClickIssueAction={this.onClickIssueAction}
-            issues={requestedIssues}
-            intakeData={intakeData}
-            formType={formType}
-            featureToggles={featureToggles}
-            userCanWithdrawIssues={userCanWithdrawIssues}
-            editPage={editPage}
-          />
+          <div>
+            {endProductWithError && (
+              <ErrorAlert errorCode="unable_to_edit_ep" />
+            )}
+            { !fieldTitle.includes('issues') && <span><strong>Requested issues</strong></span> }
+            <IssueList
+              onClickIssueAction={this.onClickIssueAction}
+              withdrawReview={withdrawReview}
+              issues={sectionIssues}
+              intakeData={intakeData}
+              formType={formType}
+              featureToggles={featureToggles}
+              userCanWithdrawIssues={userCanWithdrawIssues}
+              editPage={editPage}
+            />
+          </div>
         )
-      });
-    }
+      };
+    };
 
-    if (!_.isEmpty(withdrawnIssues)) {
-      rowObjects = rowObjects.concat({
-        field: 'Withdrawn issues',
+    const endProductLabelRow = (endProductCode, editDisabled) => {
+      return {
+        field: 'EP Claim Label',
         content: (
-          <IssueList
-            withdrawReview={withdrawReview}
-            issues={withdrawnIssues}
-            intakeData={intakeData}
-            formType={formType}
-            featureToggles={featureToggles}
-            userCanWithdrawIssues={userCanWithdrawIssues}
-            editPage={editPage}
-          />
+          <div className="claim-label-row" key={`claim-label-${endProductCode}`}>
+            <div className="claim-label">
+              <strong>{ EP_CLAIM_TYPES[endProductCode].official_label }</strong>
+            </div>
+            <div className="edit-claim-label">
+              <Button
+                classNames={['usa-button-secondary']}
+                onClick={() => this.openEditClaimLabelModal(endProductCode)}
+                disabled={editDisabled}
+              >
+              Edit claim label
+              </Button>
+            </div>
+          </div>
         )
+      };
+    };
+
+    Object.keys(issuesBySection).sort().
+      map((key) => {
+        const sectionIssues = issuesBySection[key];
+        const endProductCleared = sectionIssues[0]?.endProductCleared;
+
+        if (key === 'requestedIssues') {
+          rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, 'Requested issues'));
+        } else if (key === 'withdrawnIssues') {
+          rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, 'Withdrawn issues'));
+        } else {
+          rowObjects = rowObjects.concat(endProductLabelRow(key, endProductCleared || issuesChanged));
+          rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, ' ', key));
+        }
+
+        return rowObjects;
       });
-    }
 
     const hideAddIssueButton = intakeData.isDtaError && _.isEmpty(intakeData.contestableIssues);
 
@@ -322,6 +419,22 @@ class AddIssuesPage extends React.Component {
               });
               this.props.toggleCorrectionTypeModal();
             }}
+          />
+        )}
+        {this.state.showEditClaimLabelModal && (
+          <EditClaimLabelModal
+            selectedEpCode={this.state.selectedEpCode}
+            onCancel={this.closeEditClaimLabelModal}
+            onSubmit={this.handleEditClaimLabel}
+          />
+        )}
+        {this.state.showConfirmClaimLabelModal && (
+          <ConfirmClaimLabelModal
+            previousEpCode={this.state.previousEpCode}
+            newEpCode={this.state.selectedEpCode}
+            onCancel={this.closeEditClaimLabelModal}
+            onSubmit={this.submitClaimLabelEdit}
+            loading={this.state.loading}
           />
         )}
         <h1 className="cf-txt-c">{messageHeader}</h1>
@@ -439,7 +552,8 @@ export const EditAddIssuesPage = connect(
         setIssueWithdrawalDate,
         correctIssue,
         undoCorrection,
-        toggleUnidentifiedIssuesModal
+        toggleUnidentifiedIssuesModal,
+        editEpClaimLabel,
       },
       dispatch
     )

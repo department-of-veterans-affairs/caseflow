@@ -1,0 +1,875 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TimeSlotDetail Displays details when showDetails is true 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      Something
+      <div
+        class="time-slot-details"
+      >
+        0 issues
+         
+        <span
+          style="margin: 0px 0px;"
+        >
+          ·
+        </span>
+         
+        <span
+          aria-describedby="badge-200624-614"
+          aria-label="Hearing Request"
+          currentitem="false"
+          data-css-2moai0=""
+          data-event="focus mouseenter"
+          data-event-off="mouseleave keydown"
+          data-for="badge-200624-614"
+          data-tip="true"
+          tabindex="0"
+        >
+          H
+        </span>
+        <span
+          data-css-1ediyry=""
+        >
+          <div
+            class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+            data-id="tooltip"
+            id="badge-200624-614"
+            role="tooltip"
+          >
+            <style>
+              
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+            </style>
+            Hearing Request
+          </div>
+        </span>
+         
+         
+        <span
+          style="margin: 0px 0px;"
+        >
+          ·
+        </span>
+         
+        AMERICAN LEGION
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    Something
+    <div
+      class="time-slot-details"
+    >
+      0 issues
+       
+      <span
+        style="margin: 0px 0px;"
+      >
+        ·
+      </span>
+       
+      <span
+        aria-describedby="badge-200624-614"
+        aria-label="Hearing Request"
+        currentitem="false"
+        data-css-2moai0=""
+        data-event="focus mouseenter"
+        data-event-off="mouseleave keydown"
+        data-for="badge-200624-614"
+        data-tip="true"
+        tabindex="0"
+      >
+        H
+      </span>
+      <span
+        data-css-1ediyry=""
+      >
+        <div
+          class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+          data-id="tooltip"
+          id="badge-200624-614"
+          role="tooltip"
+        >
+          <style>
+            
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+          </style>
+          Hearing Request
+        </div>
+      </span>
+       
+       
+      <span
+        style="margin: 0px 0px;"
+      >
+        ·
+      </span>
+       
+      AMERICAN LEGION
+    </div>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`TimeSlotDetail Displays hearing info and details when showType and showDetails are true 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      Something
+      <div
+        class="time-slot-details"
+      >
+        0 issues
+         
+        <span
+          style="margin: 0px 0px;"
+        >
+          ·
+        </span>
+         
+        <span
+          aria-describedby="badge-200624-614"
+          aria-label="Hearing Request"
+          currentitem="false"
+          data-css-2moai0=""
+          data-event="focus mouseenter"
+          data-event-off="mouseleave keydown"
+          data-for="badge-200624-614"
+          data-tip="true"
+          tabindex="0"
+        >
+          H
+        </span>
+        <span
+          data-css-1ediyry=""
+        >
+          <div
+            class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+            data-id="tooltip"
+            id="badge-200624-614"
+            role="tooltip"
+          >
+            <style>
+              
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+            </style>
+            Hearing Request
+          </div>
+        </span>
+         
+        200624-614
+         
+        <span
+          style="margin: 0px 0px;"
+        >
+          ·
+        </span>
+         
+        AMERICAN LEGION
+      </div>
+      <div
+        class="time-slot-details"
+      >
+        <span>
+          Original
+        </span>
+         
+        <span
+          style="margin: 0px 0px;"
+        >
+          ·
+        </span>
+         
+        <span>
+          Video
+        </span>
+         
+        <span
+          style="margin: 0px 0px;"
+        >
+          ·
+        </span>
+         
+        <a
+          href="/queue/appeals/0bf0263c-d863-4405-9b2e-f55cff77c6c4/?hearingDate=2020-08-15&regionalOffice=RO17"
+          id="0bf0263c-d863-4405-9b2e-f55cff77c6c4"
+        >
+          View Case Details
+        </a>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    Something
+    <div
+      class="time-slot-details"
+    >
+      0 issues
+       
+      <span
+        style="margin: 0px 0px;"
+      >
+        ·
+      </span>
+       
+      <span
+        aria-describedby="badge-200624-614"
+        aria-label="Hearing Request"
+        currentitem="false"
+        data-css-2moai0=""
+        data-event="focus mouseenter"
+        data-event-off="mouseleave keydown"
+        data-for="badge-200624-614"
+        data-tip="true"
+        tabindex="0"
+      >
+        H
+      </span>
+      <span
+        data-css-1ediyry=""
+      >
+        <div
+          class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+          data-id="tooltip"
+          id="badge-200624-614"
+          role="tooltip"
+        >
+          <style>
+            
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+          </style>
+          Hearing Request
+        </div>
+      </span>
+       
+      200624-614
+       
+      <span
+        style="margin: 0px 0px;"
+      >
+        ·
+      </span>
+       
+      AMERICAN LEGION
+    </div>
+    <div
+      class="time-slot-details"
+    >
+      <span>
+        Original
+      </span>
+       
+      <span
+        style="margin: 0px 0px;"
+      >
+        ·
+      </span>
+       
+      <span>
+        Video
+      </span>
+       
+      <span
+        style="margin: 0px 0px;"
+      >
+        ·
+      </span>
+       
+      <a
+        href="/queue/appeals/0bf0263c-d863-4405-9b2e-f55cff77c6c4/?hearingDate=2020-08-15&regionalOffice=RO17"
+        id="0bf0263c-d863-4405-9b2e-f55cff77c6c4"
+      >
+        View Case Details
+      </a>
+    </div>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`TimeSlotDetail Displays hearing info when showType is true 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      Something
+      <div
+        class="time-slot-details"
+      >
+        <span>
+          Original
+        </span>
+         
+        <span
+          style="margin: 0px 0px;"
+        >
+          ·
+        </span>
+         
+        <span>
+          Video
+        </span>
+         
+        <span
+          style="margin: 0px 0px;"
+        >
+          ·
+        </span>
+         
+        <a
+          href="/queue/appeals/0bf0263c-d863-4405-9b2e-f55cff77c6c4/?hearingDate=2020-08-15&regionalOffice=RO17"
+          id="0bf0263c-d863-4405-9b2e-f55cff77c6c4"
+        >
+          View Case Details
+        </a>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    Something
+    <div
+      class="time-slot-details"
+    >
+      <span>
+        Original
+      </span>
+       
+      <span
+        style="margin: 0px 0px;"
+      >
+        ·
+      </span>
+       
+      <span>
+        Video
+      </span>
+       
+      <span
+        style="margin: 0px 0px;"
+      >
+        ·
+      </span>
+       
+      <a
+        href="/queue/appeals/0bf0263c-d863-4405-9b2e-f55cff77c6c4/?hearingDate=2020-08-15&regionalOffice=RO17"
+        id="0bf0263c-d863-4405-9b2e-f55cff77c6c4"
+      >
+        View Case Details
+      </a>
+    </div>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`TimeSlotDetail Matches snapshot with default props 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      Something
+    </div>
+  </body>,
+  "container": <div>
+    Something
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;

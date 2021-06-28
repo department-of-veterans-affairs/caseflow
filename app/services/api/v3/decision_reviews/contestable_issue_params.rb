@@ -6,8 +6,8 @@
 #      type: "ContestableIssue",
 #      attributes: {
 #        decisionIssueId: integer,
-#        ratingIssueId: string,
-#        ratingDecisionIssueId: string,
+#        ratingIssueReferenceId: string,
+#        ratingDecisionReferenceId: string,
 #      }
 #    }
 #
@@ -31,9 +31,9 @@ class Api::V3::DecisionReviews::ContestableIssueParams
     @receipt_date = receipt_date
     @benefit_type = benefit_type
     @ids = {
-      rating_issue_id: params[:attributes][:ratingIssueId],
+      rating_issue_id: params[:attributes][:ratingIssueReferenceId],
       decision_issue_id: params[:attributes][:decisionIssueId],
-      rating_decision_issue_id: params[:attributes][:ratingDecisionIssueId]
+      rating_decision_issue_id: params[:attributes][:ratingDecisionReferenceId]
     }
   end
 

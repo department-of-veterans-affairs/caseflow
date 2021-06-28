@@ -6,19 +6,45 @@ RSpec.shared_examples "contestable issues index requests" do
   describe "#index" do
     include_context "contestable issues request index context", include_shared: true
 
-    it "should return a 200 OK" do
-      get_issues
-      expect(response).to have_http_status(:ok)
-    end
-
-    it "should return a list of issues in JSON:API format" do
+    let(:promulgated_ratings) do
       Generators::PromulgatedRating.build(
         participant_id: veteran.ptcpnt_id,
         profile_date: Time.zone.today - 10.days # must be before receipt_date
       )
-      get_issues
-      expect(response_data).to be_an Array
-      expect(response_data).not_to be_empty
+    end
+
+    context "when SSN is used" do
+      let(:file_number) { nil }
+      let(:ssn) { veteran.ssn }
+
+      it "should return 200 OK" do
+        get_issues
+        expect(response).to have_http_status(:ok)
+      end
+
+      it "should return a list of issues in JSON:API format" do
+        promulgated_ratings
+        get_issues
+        expect(response_data).to be_an Array
+        expect(response_data).not_to be_empty
+      end
+    end
+
+    context "when file_number is used" do
+      let(:file_number) { veteran.file_number }
+      let(:ssn) { nil }
+
+      it "should return 200 OK" do
+        get_issues
+        expect(response).to have_http_status(:ok)
+      end
+
+      it "should return a list of issues in JSON:API format" do
+        promulgated_ratings
+        get_issues
+        expect(response_data).to be_an Array
+        expect(response_data).not_to be_empty
+      end
     end
 
     context "returned issues" do
@@ -272,6 +298,16 @@ RSpec.shared_examples "contestable issues index requests" do
     context do
       let(:receipt_date) { "January 8" }
       it "should return a 422 when the receipt date is not ISO 8601 date format" do
+        get_issues
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+
+    context "when no ssn or file_number is present" do
+      let(:ssn) { nil }
+      let(:file_number) { nil }
+
+      it "should return a 422" do
         get_issues
         expect(response).to have_http_status(:unprocessable_entity)
       end

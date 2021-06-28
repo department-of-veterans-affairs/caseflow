@@ -1,5 +1,5 @@
 import React from 'react';
-import _ from 'lodash';
+import { isNil, isEmpty, values } from 'lodash';
 import { css } from 'glamor';
 import moment from 'moment';
 
@@ -15,6 +15,12 @@ import VirtualHearingLink from '../VirtualHearingLink';
 import { DISPOSITION_OPTIONS } from '../../constants';
 import { COLORS } from '../../../constants/AppConstants';
 import COPY from '../../../../COPY';
+import HEARING_DISPOSITION_TYPES from '../../../../constants/HEARING_DISPOSITION_TYPES';
+import {
+  virtualHearingRoleForUser,
+  virtualHearingLinkLabelFull,
+  VIRTUAL_HEARING_HOST
+} from '../../utils';
 
 const staticSpacing = css({ marginTop: '5px' });
 
@@ -31,10 +37,11 @@ export const DispositionDropdown = ({ hearing, update, readOnly, openDisposition
           return;
         }
 
-        const fromDisposition = hearing.disposition;
+        const fromDisposition = hearing?.disposition;
         const toDisposition = option.value;
 
         openDispositionModal({
+          update,
           hearing,
           fromDisposition,
           toDisposition,
@@ -168,13 +175,13 @@ AmaAodDropdown.propTypes = {
 
 export const AodReasonDropdown = ({ hearing, readOnly, updateAodMotion, userId, invalid }) => {
   const aodMotion = hearing.advanceOnDocketMotion;
-  const aodGrantableByThisUser = aodMotion && (aodMotion.userId === userId || _.isNil(aodMotion.userId));
+  const aodGrantableByThisUser = aodMotion && (aodMotion.userId === userId || isNil(aodMotion.userId));
 
   return (
     <SearchableDropdown
       label="AOD Reason"
       readOnly={readOnly || !aodGrantableByThisUser}
-      required={aodMotion && !_.isNil(aodMotion.granted)}
+      required={aodMotion && !isNil(aodMotion.granted)}
       name={`${hearing.externalId}-aodReason`}
       errorMessage={invalid ? 'Please select an AOD reason' : null}
       strongLabel
@@ -232,7 +239,8 @@ StaticRegionalOffice.propTypes = {
 };
 
 export const NotesField = ({ hearing, update, readOnly }) => {
-  const disabled = readOnly || ['postponed', 'cancelled'].indexOf(hearing.disposition) > -1;
+  const disabled = readOnly ||
+    [HEARING_DISPOSITION_TYPES.postponed, HEARING_DISPOSITION_TYPES.cancelled].indexOf(hearing.disposition) > -1;
 
   return (
     <TextareaField
@@ -242,7 +250,7 @@ export const NotesField = ({ hearing, update, readOnly }) => {
       strongLabel
       disabled={disabled}
       onChange={(notes) => update({ notes })}
-      textAreaStyling={css({ height: '50px' })}
+      textAreaStyling={css({ height: '100px' })}
       value={hearing.notes || ''}
     />
   );
@@ -256,9 +264,9 @@ NotesField.propTypes = {
 
 export const HearingLocationDropdown = ({ hearing, readOnly, regionalOffice, update }) => {
   const roIsDifferent = regionalOffice !== hearing.closestRegionalOffice;
-  let staticHearingLocations = _.isEmpty(hearing.availableHearingLocations) ?
+  let staticHearingLocations = isEmpty(hearing.availableHearingLocations) ?
     [hearing.location] :
-    _.values(hearing.availableHearingLocations);
+    values(hearing.availableHearingLocations);
 
   if (roIsDifferent) {
     staticHearingLocations = null;
@@ -270,7 +278,7 @@ export const HearingLocationDropdown = ({ hearing, readOnly, regionalOffice, upd
       appealId={hearing.appealExternalId}
       regionalOffice={regionalOffice}
       staticHearingLocations={staticHearingLocations}
-      dynamic={_.isEmpty(hearing.availableHearingLocations) || roIsDifferent}
+      dynamic={isEmpty(hearing.availableHearingLocations) || roIsDifferent}
       value={hearing.location ? hearing.location.facilityId : null}
       onChange={(location) => update({ location })}
     />
@@ -343,12 +351,16 @@ PreppedCheckbox.propTypes = {
 export const StaticVirtualHearing = ({ hearing, user }) => (
   <div>
     <VirtualHearingLink
-      label={COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL_FULL}
+      label={virtualHearingLinkLabelFull(virtualHearingRoleForUser(user, hearing))}
       user={user}
       hearing={hearing}
       isVirtual={hearing.isVirtual}
       virtualHearing={hearing.virtualHearing}
-      link={hearing?.virtualHearing?.hostLink}
+      link={
+        virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST ?
+        hearing?.virtualHearing?.hostLink :
+        hearing?.virtualHearing?.guestLink
+      }
     />
     {hearing?.virtualHearing?.status === 'pending' && (
       <div {...staticSpacing}>

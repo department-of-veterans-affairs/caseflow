@@ -22,17 +22,19 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
   let(:type) { "HigherLevelReview" }
 
   let(:attributes) do
-    {
+    attrs = {
       receiptDate: formatted_receipt_date,
       informalConference: informal_conference,
       sameOffice: same_office,
       legacyOptInApproved: legacy_opt_in_approved,
       benefitType: benefit_type,
       informalConferenceTimes: informal_conference_times,
-      informalConferenceRep: informal_conference_rep,
-      veteran: veteran_hash,
-      claimant: claimant
+      veteran: veteran_hash
     }
+
+    attrs[:informalConferenceRep] = informal_conference_rep if informal_conference_rep
+    attrs[:claimant] = claimant if claimant
+    attrs
   end
 
   let(:formatted_receipt_date) { receipt_date.strftime("%F") }
@@ -43,16 +45,18 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
   let(:benefit_type) { "compensation" }
 
   let(:informal_conference_times) do
-    ["", ""]
+    ["800-1000 ET", "1000-1230 ET"]
   end
 
   let(:informal_conference_rep) do
-    {
+    attrs = {
       name: rep_name,
-      phoneNumber: rep_phone_number,
-      phoneNumberCountryCode: rep_phone_number_country_code,
-      phoneNumberExt: rep_phone_number_ext
+      phoneNumber: rep_phone_number
     }
+
+    attrs[:phoneNumberCountryCode] = rep_phone_number_country_code if rep_phone_number_country_code
+    attrs[:phoneNumberExt] = rep_phone_number_ext if rep_phone_number_ext
+    attrs
   end
 
   let(:rep_name) { "Jane Doe" }
@@ -76,32 +80,12 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
   let(:claimant) do
     {
       participantId: participant_id,
-      payeeCode: payee_code,
-      addressLine1: claimant_address_line_1,
-      addressLine2: claimant_address_line_2,
-      city: claimant_city,
-      stateProvinceCode: claimant_state_province_code,
-      countryCode: claimant_country_code,
-      zipPostalCode: claimant_zip_postal_code,
-      phoneNumber: claimant_phone_number,
-      phoneNumberCountryCode: claimant_phone_number_country_code,
-      phoneNumberExt: claimant_phone_number_ext,
-      emailAddress: claimant_email_address
+      payeeCode: payee_code
     }
   end
 
   let(:participant_id) { "44" }
   let(:payee_code) { "10" }
-  let(:claimant_address_line_1) { nil }
-  let(:claimant_address_line_2) { nil }
-  let(:claimant_city) { nil }
-  let(:claimant_state_province_code) { nil }
-  let(:claimant_country_code) { nil }
-  let(:claimant_zip_postal_code) { nil }
-  let(:claimant_phone_number) { nil }
-  let(:claimant_phone_number_country_code) { nil }
-  let(:claimant_phone_number_ext) { nil }
-  let(:claimant_email_address) { nil }
 
   let(:included) { [first_contestable_issue] }
 
@@ -114,16 +98,20 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
 
   let(:first_contestable_issue_type) { "ContestableIssue" }
   let(:first_contestable_issue_attributes) do
-    {
-      decisionIssueId: first_contestable_issue_decision_issue_id,
-      ratingIssueId: first_contestable_issue_rating_issue_id,
-      ratingDecisionIssueId: first_contestable_issue_rating_decision_issue_id
+    attrs = {
+      issue: "Broken elbow",
+      decisionDate: "2019-12-24"
     }
+
+    attrs[:decisionIssueId] = first_contestable_issue_decision_issue_id if first_contestable_issue_decision_issue_id
+    attrs[:ratingIssueReferenceId] = first_contestable_issue_rating_issue_id if first_contestable_issue_rating_issue_id
+    attrs[:ratingDecisionReferenceId] = first_c_issue_rating_decision_issue_id if first_c_issue_rating_decision_issue_id
+    attrs
   end
 
   let(:first_contestable_issue_decision_issue_id) { contestable_issues.first&.decision_issue&.id }
   let(:first_contestable_issue_rating_issue_id) { contestable_issues.first&.rating_issue_reference_id }
-  let(:first_contestable_issue_rating_decision_issue_id) { contestable_issues.first&.rating_decision_reference_id }
+  let(:first_c_issue_rating_decision_issue_id) { contestable_issues.first&.rating_decision_reference_id }
 
   let(:promulgation_date) { receipt_date - 10.days }
   let(:profile_date) { (receipt_date - 8.days).to_datetime }
@@ -139,57 +127,54 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
     ).contestable_issues
   end
 
-  let(:object) { Api::V3::DecisionReviews::HigherLevelReviewIntakeParams::OBJECT }
-  let(:bool) { Api::V3::DecisionReviews::HigherLevelReviewIntakeParams::BOOL }
-
   let(:included_with_lots_of_contestable_issues) do
     [
       {
         type: "ContestableIssue",
         attributes: {
           decisionIssueId: 1,
-          ratingIssueId: "1",
-          ratingDecisionIssueId: "1"
+          ratingIssueReferenceId: "1",
+          ratingDecisionReferenceId: "1"
         }
       },
       {
         type: "ContestableIssue",
         attributes: {
           decisionIssueId: 2,
-          ratingIssueId: "2",
-          ratingDecisionIssueId: "2"
+          ratingIssueReferenceId: "2",
+          ratingDecisionReferenceId: "2"
         }
       },
       {
         type: "ContestableIssue",
         attributes: {
           decisionIssueId: 3,
-          ratingIssueId: "3",
-          ratingDecisionIssueId: "3"
+          ratingIssueReferenceId: "3",
+          ratingDecisionReferenceId: "3"
         }
       },
       {
         type: "ContestableIssue",
         attributes: {
           decisionIssueId: 4,
-          ratingIssueId: "4",
-          ratingDecisionIssueId: "4"
+          ratingIssueReferenceId: "4",
+          ratingDecisionReferenceId: "4"
         }
       },
       {
         type: "ContestableIssue",
         attributes: {
           decisionIssueId: 5,
-          ratingIssueId: "5",
-          ratingDecisionIssueId: "5"
+          ratingIssueReferenceId: "5",
+          ratingDecisionReferenceId: "5"
         }
       },
       {
         type: "ContestableIssue",
         attributes: {
           decisionIssueId: 6,
-          ratingIssueId: "6",
-          ratingDecisionIssueId: "6"
+          ratingIssueReferenceId: "6",
+          ratingDecisionReferenceId: "6"
         }
       }
     ]
@@ -197,47 +182,6 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
 
   context "contestable_issues" do
     it { expect(contestable_issues).not_to be_empty }
-  end
-
-  describe ".prepend_path_to_paths" do
-    let(:prepend_path) { [:data, :attributes] }
-    let(:types_and_paths) do
-      [
-        [[Hash],   []],
-        [[String], [:name]],
-        [[Hash],   [:coord]],
-        [[Float],  [:coord, :x]],
-        [[Float],  [:coord, :y]]
-      ]
-    end
-    subject do
-      Api::V3::DecisionReviews::HigherLevelReviewIntakeParams.prepend_path_to_paths(
-        prepend_path: prepend_path,
-        types_and_paths: types_and_paths
-      )
-    end
-
-    it do
-      is_expected.to eq(
-        [
-          [[Hash],   [:data, :attributes]],
-          [[String], [:data, :attributes, :name]],
-          [[Hash],   [:data, :attributes, :coord]],
-          [[Float],  [:data, :attributes, :coord, :x]],
-          [[Float],  [:data, :attributes, :coord, :y]]
-        ]
-      )
-    end
-
-    context "empty prepend path" do
-      let(:prepend_path) { [] }
-      it { is_expected.to eq types_and_paths }
-    end
-
-    context "empty types_and_paths" do
-      let(:types_and_paths) { [] }
-      it { is_expected.to eq [] }
-    end
   end
 
   describe "#intake_errors" do
@@ -252,7 +196,7 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
           [
             Api::V3::DecisionReviews::IntakeError.new(
               :malformed_request,
-              "payload must be an object"
+              [{ detail: "payload must be an object" }]
             ).as_json
           ]
         )
@@ -506,7 +450,10 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
   end
 
   describe "#shape_error_message" do
-    subject { hlr_intake_params.shape_error_message }
+    subject do
+      errors = hlr_intake_params.shape_error_message
+      errors[0][:detail] if errors.present?
+    end
 
     it { is_expected.to be nil }
 
@@ -518,10 +465,7 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
     context "no data" do
       let(:data) { nil }
       it do
-        is_expected.to eq(
-          "[\"data\"]" \
-            " should be one of #{object.inspect}. Got: #{data.inspect}."
-        )
+        is_expected.to include("The property /data did not match the following requirements")
       end
     end
 
@@ -529,8 +473,8 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
       let(:type) { nil }
       it do
         is_expected.to eq(
-          "[\"data\"][\"type\"]" \
-            " should be \"HigherLevelReview\". Got: #{type.inspect}."
+          "The property /data/type did not match the following requirements " \
+            "{\"type\"=>\"string\", \"enum\"=>[\"HigherLevelReview\"]}"
         )
       end
     end
@@ -538,10 +482,7 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
     context "no attributes" do
       let(:attributes) { nil }
       it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"]" \
-            " should be one of #{object.inspect}. Got: #{attributes.inspect}."
-        )
+        is_expected.to include("The property /data/attributes did not match the following requirements")
       end
     end
 
@@ -549,8 +490,8 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
       let(:formatted_receipt_date) { 12 }
       it do
         is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"receiptDate\"]" \
-            " should be one of [String, nil]. Got: #{formatted_receipt_date.inspect}."
+          "The property /data/attributes/receiptDate did not match the following requirements" \
+        " {\"type\"=>\"string\", \"pattern\"=>\"^[0-9]{4}-[0-9]{2}-[0-9]{2}$\"}"
         )
       end
     end
@@ -559,8 +500,8 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
       let(:informal_conference) { nil }
       it do
         is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"informalConference\"]" \
-            " should be one of [true, false]. Got: #{informal_conference.inspect}."
+          "The property /data/attributes/informalConference did not match the following requirements" \
+" {\"type\"=>\"boolean\"}"
         )
       end
     end
@@ -568,64 +509,75 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
     context "no informal conference times" do
       let(:informal_conference_times) { "dog" }
       it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"informalConferenceTimes\"]" \
-            " should be one of [Array, nil]. Got: #{informal_conference_times.inspect}."
-        )
+        is_expected.to include("The property /data/attributes/informalConferenceTimes did not match" \
+" the following requirements")
       end
     end
 
     context "invalid informal conference time" do
       let(:informal_conference_times) { [13] }
       it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"informalConferenceTimes\"][0]" \
-            " should be one of [String, nil]. Got: #{informal_conference_times[0].inspect}."
-        )
+        is_expected.to include("The property /data/attributes/informalConferenceTimes/0 did not match" \
+" the following requirements")
       end
     end
 
     context "invalid informal conference time" do
       let(:informal_conference_times) { [nil, 24] }
       it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"informalConferenceTimes\"][1]" \
-            " should be one of [String, nil]. Got: #{informal_conference_times[1].inspect}."
-        )
+        is_expected.to include("The property /data/attributes/informalConferenceTimes/0 did not match" \
+" the following requirements")
       end
     end
 
     context "too many informal conference times" do
       let(:informal_conference_times) { [nil, nil, 87] }
       it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"informalConferenceTimes\"][2]" \
-            " should be nil. Got: #{informal_conference_times[2].inspect}."
-        )
+        is_expected.to include("The property /data/attributes/informalConferenceTimes did not match" \
+" the following requirements")
       end
     end
 
     context "invalid informal conference rep" do
       let(:informal_conference_rep) { 33 }
+
       it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"informalConferenceRep\"]" \
-            " should be one of #{object.inspect[0...-1] + ', nil]'}. Got: #{informal_conference_rep.inspect}."
-        )
+        is_expected.to include("The property /data/attributes/informalConferenceRep did not match" \
+" the following requirements")
+      end
+    end
+
+    describe "informal_conference_rep" do
+      let(:informal_conference_rep) { nil }
+
+      context "when informal_conference is true" do
+        let(:informal_conference) { true }
+
+        it "should return errors for informal_conference_rep" do
+          is_expected.to include("The property /data/attributes did not contain the required key informalConferenceRep")
+        end
+      end
+
+      context "when informal_conference is false" do
+        let(:informal_conference) { false }
+
+        it "should not return any errors for informal_conference_rep" do
+          is_expected.to eq(nil)
+        end
       end
     end
 
     context "no rep name" do
       let(:rep_name) { nil }
       it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"informalConferenceRep\"][\"name\"]" \
-            " should be a(n) string. Got: #{rep_name.inspect}."
-        )
+        is_expected.to include("The property /data/attributes/informalConferenceRep/name did not match the following" \
+" requirements")
       end
 
-      context "requirement not imposed when informal_conference_rep: nil" do
+      context "requirement not imposed when informal_conference: nil" do
         let(:informal_conference_rep) { nil }
+        let(:informal_conference) { false }
+
         it { is_expected.to be nil }
       end
     end
@@ -633,14 +585,14 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
     context "no rep phone number" do
       let(:rep_phone_number) { nil }
       it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"informalConferenceRep\"][\"phoneNumber\"]" \
-            " should be one of [String, Integer]. Got: #{rep_phone_number.inspect}."
-        )
+        is_expected.to include("The property /data/attributes/informalConferenceRep/phoneNumber did not match the "\
+"following requirements")
       end
 
       context "requirement not imposed when informal_conference_rep: nil" do
         let(:informal_conference_rep) { nil }
+        let(:informal_conference) { false }
+
         it { is_expected.to be nil }
       end
     end
@@ -648,20 +600,16 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
     context "no rep country code" do
       let(:rep_phone_number_country_code) { [] }
       it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"informalConferenceRep\"][\"phoneNumberCountryCode\"]" \
-            " should be one of [String, Integer, nil]. Got: #{rep_phone_number_country_code.inspect}."
-        )
+        is_expected.to include("The property /data/attributes/informalConferenceRep/phoneNumberCountryCode did not" \
+" match the following requirements")
       end
     end
 
     context "no rep phone number extension" do
       let(:rep_phone_number_ext) { true }
       it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"informalConferenceRep\"][\"phoneNumberExt\"]" \
-            " should be one of [String, Integer, nil]. Got: #{rep_phone_number_ext.inspect}."
-        )
+        is_expected.to include("The property /data/attributes/informalConferenceRep/phoneNumberExt did not" \
+" match the following requirements")
       end
     end
 
@@ -669,8 +617,7 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
       let(:same_office) { nil }
       it do
         is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"sameOffice\"]" \
-            " should be one of [true, false]. Got: #{same_office.inspect}."
+          "The property /data/attributes/sameOffice did not match the following requirements {\"type\"=>\"boolean\"}"
         )
       end
     end
@@ -679,8 +626,8 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
       let(:legacy_opt_in_approved) { nil }
       it do
         is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"legacyOptInApproved\"]" \
-            " should be one of [true, false]. Got: #{legacy_opt_in_approved.inspect}."
+          "The property /data/attributes/legacyOptInApproved did not match the following requirements" \
+" {\"type\"=>\"boolean\"}"
         )
       end
     end
@@ -688,20 +635,14 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
     context "no benefit type" do
       let(:benefit_type) { nil }
       it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"benefitType\"]" \
-            " should be a(n) string. Got: #{benefit_type.inspect}."
-        )
+        is_expected.to include("The property /data/attributes/benefitType did not match the following requirements")
       end
     end
 
     context "no veteran" do
       let(:veteran_hash) { nil }
       it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"veteran\"]" \
-            " should be one of #{object.inspect}. Got: #{veteran_hash.inspect}."
-        )
+        is_expected.to include("The property /data/attributes/veteran did not match the following requirements")
       end
     end
 
@@ -712,8 +653,8 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
       let(:ssn) { nil }
       it do
         is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"veteran\"][\"ssn\"]" \
-            " should be a(n) string. Got: #{ssn.inspect}."
+          "The property /data/attributes/veteran/ssn did not match the following requirements" \
+" {\"type\"=>\"string\", \"pattern\"=>\"^[0-9]{9}$\"}"
         )
       end
     end
@@ -721,20 +662,15 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
     context "invalid type for claimant" do
       let(:claimant) { true }
       it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"claimant\"]" \
-            " should be one of #{object.inspect[0...-1] + ', nil]'}. Got: #{claimant.inspect}."
-        )
+        is_expected.to include("The property /data/attributes/claimant did not match the following requirements")
       end
     end
 
     context "no claimant participant id" do
       let(:participant_id) { nil }
       it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"claimant\"][\"participantId\"]" \
-            " should be a(n) string. Got: #{participant_id.inspect}."
-        )
+        is_expected.to include("The property /data/attributes/claimant/participantId did not match the following" \
+" requirements")
       end
 
       context "requirement not imposed when claimant: nil" do
@@ -746,10 +682,8 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
     context "no claimant payee code" do
       let(:payee_code) { nil }
       it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"claimant\"][\"payeeCode\"]" \
-            " should be a(n) string. Got: #{payee_code.inspect}."
-        )
+        is_expected.to include("The property /data/attributes/claimant/payeeCode did not match the following" \
+" requirements")
       end
 
       context "requirement not imposed when claimant: nil" do
@@ -758,123 +692,17 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
       end
     end
 
-    context "no claimant address (line 1)" do
-      let(:claimant_address_line_1) { true }
-      it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"claimant\"][\"addressLine1\"]" \
-            " should be one of [String, nil]. Got: #{claimant_address_line_1.inspect}."
-        )
-      end
-    end
-
-    context "no claimant address (line 2)" do
-      let(:claimant_address_line_2) { true }
-      it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"claimant\"][\"addressLine2\"]" \
-            " should be one of [String, nil]. Got: #{claimant_address_line_2.inspect}."
-        )
-      end
-    end
-
-    context "invalid type for claimant city" do
-      let(:claimant_city) { true }
-      it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"claimant\"][\"city\"]" \
-            " should be one of [String, nil]. Got: #{claimant_city.inspect}."
-        )
-      end
-    end
-
-    context "invalid claimant state / province code" do
-      let(:claimant_state_province_code) { true }
-      it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"claimant\"][\"stateProvinceCode\"]" \
-            " should be one of [String, nil]. Got: #{claimant_state_province_code.inspect}."
-        )
-      end
-    end
-
-    context "invalid claimant country code" do
-      let(:claimant_country_code) { true }
-      it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"claimant\"][\"countryCode\"]" \
-            " should be one of [String, nil]. Got: #{claimant_country_code.inspect}."
-        )
-      end
-    end
-
-    context "invalid claimant zip / postal code" do
-      let(:claimant_zip_postal_code) { true }
-      it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"claimant\"][\"zipPostalCode\"]" \
-            " should be one of [String, nil]. Got: #{claimant_zip_postal_code.inspect}."
-        )
-      end
-    end
-
-    context "invalid claimant phone number" do
-      let(:claimant_phone_number) { true }
-      it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"claimant\"][\"phoneNumber\"]" \
-            " should be one of [String, nil]. Got: #{claimant_phone_number.inspect}."
-        )
-      end
-    end
-
-    context "invalid claimant phone number country code" do
-      let(:claimant_phone_number_country_code) { true }
-      it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"claimant\"][\"phoneNumberCountryCode\"]" \
-            " should be one of [String, nil]. Got: #{claimant_phone_number_country_code.inspect}."
-        )
-      end
-    end
-
-    context "invalid claimant phone number extension" do
-      let(:claimant_phone_number_ext) { true }
-      it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"claimant\"][\"phoneNumberExt\"]" \
-            " should be one of [String, nil]. Got: #{claimant_phone_number_ext.inspect}."
-        )
-      end
-    end
-
-    context "invalid type for claimant email address" do
-      let(:claimant_email_address) { true }
-      it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"claimant\"][\"emailAddress\"]" \
-            " should be one of [String, nil]. Got: #{claimant_email_address.inspect}."
-        )
-      end
-    end
-
     context "included not an array" do
       let(:included) { nil }
       it do
-        is_expected.to eq(
-          "[\"included\"]" \
-            " should be a(n) array. Got: #{included.inspect}."
-        )
+        is_expected.to include("The property /included did not match the following requirements")
       end
     end
 
     context "included element not an object" do
       let(:included) { [nil] }
       it do
-        is_expected.to eq(
-          "[\"included\"][0]" \
-            " should be one of #{object.inspect}. Got: #{included[0].inspect}."
-        )
+        is_expected.to include("The property /included/0 did not match the following requirements")
       end
     end
 
@@ -882,8 +710,8 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
       let(:first_contestable_issue_type) { nil }
       it do
         is_expected.to eq(
-          "[\"included\"][0][\"type\"]" \
-            " should be \"ContestableIssue\". Got: #{first_contestable_issue_type.inspect}."
+          "The property /included/0/type did not match the following requirements {\"type\"=>\"string\"," \
+" \"enum\"=>[\"ContestableIssue\"]}"
         )
       end
     end
@@ -891,10 +719,8 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
     context "decision issue id wrong type" do
       let(:first_contestable_issue_decision_issue_id) { true }
       it do
-        is_expected.to eq(
-          "[\"included\"][0][\"attributes\"][\"decisionIssueId\"]" \
-            " should be one of [String, Integer, nil]. Got: #{first_contestable_issue_decision_issue_id.inspect}."
-        )
+        is_expected.to eq("The property /included/0/attributes/decisionIssueId did not match the following " \
+"requirements {\"type\"=>\"integer\"}")
       end
     end
 
@@ -902,19 +728,18 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
       let(:first_contestable_issue_rating_issue_id) { true }
       it do
         is_expected.to eq(
-          "[\"included\"][0][\"attributes\"][\"ratingIssueId\"]" \
-            " should be one of [String, Integer, nil]. Got: #{first_contestable_issue_rating_issue_id.inspect}."
+          "The property /included/0/attributes/ratingIssueReferenceId did not match the following requirements" \
+" {\"type\"=>\"string\"}"
         )
       end
     end
 
     context "rating decision issue id wrong type" do
-      let(:first_contestable_issue_rating_decision_issue_id) { true }
+      let(:first_c_issue_rating_decision_issue_id) { true }
       it do
         is_expected.to eq(
-          "[\"included\"][0][\"attributes\"][\"ratingDecisionIssueId\"]" \
-          " should be one of [String, Integer, nil]." \
-          " Got: #{first_contestable_issue_rating_decision_issue_id.inspect}."
+          "The property /included/0/attributes/ratingDecisionReferenceId did not match the following requirements" \
+" {\"type\"=>\"string\"}"
         )
       end
     end
@@ -941,248 +766,9 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
     context "no IDs" do
       let(:first_contestable_issue_decision_issue_id) { nil }
       let(:first_contestable_issue_rating_issue_id) { nil }
-      let(:first_contestable_issue_rating_decision_issue_id) { nil }
+      let(:first_c_issue_rating_decision_issue_id) { nil }
 
       it { is_expected.not_to be_empty }
-    end
-  end
-
-  describe "#types_and_paths" do
-    subject { hlr_intake_params.types_and_paths }
-
-    let(:expected_array) do
-      [
-        [object, ["data"]],
-        [["HigherLevelReview"], %w[data type]],
-        [object,         %w[data attributes]],
-        [[String, nil],  %w[data attributes receiptDate]],
-        [bool,           %w[data attributes informalConference]],
-        [[Array, nil],   %w[data attributes informalConferenceTimes]],
-        [[String, nil],  ["data", "attributes", "informalConferenceTimes", 0]],
-        [[String, nil],  ["data", "attributes", "informalConferenceTimes", 1]],
-        [[nil],          ["data", "attributes", "informalConferenceTimes", 2]],
-        [[*object, nil], %w[data attributes informalConferenceRep]],
-        [[String],       %w[data attributes informalConferenceRep name]],
-        [[String, Integer], %w[data attributes informalConferenceRep phoneNumber]],
-        [[String, Integer, nil],  %w[data attributes informalConferenceRep phoneNumberCountryCode]],
-        [[String, Integer, nil],  %w[data attributes informalConferenceRep phoneNumberExt]],
-        [bool,           %w[data attributes sameOffice]],
-        [bool,           %w[data attributes legacyOptInApproved]],
-        [[String],       %w[data attributes benefitType]],
-        [object,         %w[data attributes veteran]],
-        [[String],       %w[data attributes veteran ssn]],
-        [[*object, nil], %w[data attributes claimant]],
-        [[String],       %w[data attributes claimant participantId]],
-        [[String],       %w[data attributes claimant payeeCode]],
-        [[String, nil],  %w[data attributes claimant addressLine1]],
-        [[String, nil],  %w[data attributes claimant addressLine2]],
-        [[String, nil],  %w[data attributes claimant city]],
-        [[String, nil],  %w[data attributes claimant stateProvinceCode]],
-        [[String, nil],  %w[data attributes claimant countryCode]],
-        [[String, nil],  %w[data attributes claimant zipPostalCode]],
-        [[String, nil],  %w[data attributes claimant phoneNumber]],
-        [[String, nil],  %w[data attributes claimant phoneNumberCountryCode]],
-        [[String, nil],  %w[data attributes claimant phoneNumberExt]],
-        [[String, nil],  %w[data attributes claimant emailAddress]],
-        [[Array],                ["included"]],
-        [object,                 ["included", 0]],
-        [["ContestableIssue"],   ["included", 0, "type"]],
-        [[String, Integer, nil], ["included", 0, "attributes", "decisionIssueId"]],
-        [[String, Integer, nil], ["included", 0, "attributes", "ratingIssueId"]],
-        [[String, Integer, nil], ["included", 0, "attributes", "ratingDecisionIssueId"]]
-      ]
-    end
-
-    it do
-      expect(subject.length).to eq(expected_array.length)
-      expected_array.each.with_index do |expected, index|
-        expect(subject[index]).to eq(expected)
-      end
-    end
-
-    context "an empty included array is ignored" do
-      let(:included) { [] }
-      let(:expected_array_without_included) { expected_array[0...-5] }
-
-      it do
-        expect(subject.length).to eq(expected_array_without_included.length)
-        expected_array_without_included.each.with_index do |expected, index|
-          expect(subject[index]).to eq(expected)
-        end
-      end
-
-      context "no included" do
-        let(:included) { nil }
-
-        it do
-          expect(subject.length).to eq(expected_array_without_included.length)
-          expected_array_without_included.each.with_index do |expected, index|
-            expect(subject[index]).to eq(expected)
-          end
-        end
-      end
-    end
-
-    context "a more interesting included array" do
-      let(:included) { included_with_lots_of_contestable_issues }
-
-      let(:expected_array_with_interesting_included) do
-        expected_array[0...-5] +
-          [
-            [object,                 ["included", 0]],
-            [["ContestableIssue"],   ["included", 0, "type"]],
-            [[String, Integer, nil], ["included", 0, "attributes", "decisionIssueId"]],
-            [[String, Integer, nil], ["included", 0, "attributes", "ratingIssueId"]],
-            [[String, Integer, nil], ["included", 0, "attributes", "ratingDecisionIssueId"]],
-            [object,                 ["included", 1]],
-            [["ContestableIssue"],   ["included", 1, "type"]],
-            [[String, Integer, nil], ["included", 1, "attributes", "decisionIssueId"]],
-            [[String, Integer, nil], ["included", 1, "attributes", "ratingIssueId"]],
-            [[String, Integer, nil], ["included", 1, "attributes", "ratingDecisionIssueId"]],
-            [object,                 ["included", 2]],
-            [["ContestableIssue"],   ["included", 2, "type"]],
-            [[String, Integer, nil], ["included", 2, "attributes", "decisionIssueId"]],
-            [[String, Integer, nil], ["included", 2, "attributes", "ratingIssueId"]],
-            [[String, Integer, nil], ["included", 2, "attributes", "ratingDecisionIssueId"]],
-            [object,                 ["included", 3]],
-            [["ContestableIssue"],   ["included", 3, "type"]],
-            [[String, Integer, nil], ["included", 3, "attributes", "decisionIssueId"]],
-            [[String, Integer, nil], ["included", 3, "attributes", "ratingIssueId"]],
-            [[String, Integer, nil], ["included", 3, "attributes", "ratingDecisionIssueId"]],
-            [object,                 ["included", 4]],
-            [["ContestableIssue"],   ["included", 4, "type"]],
-            [[String, Integer, nil], ["included", 4, "attributes", "decisionIssueId"]],
-            [[String, Integer, nil], ["included", 4, "attributes", "ratingIssueId"]],
-            [[String, Integer, nil], ["included", 4, "attributes", "ratingDecisionIssueId"]],
-            [object,                 ["included", 5]],
-            [["ContestableIssue"],   ["included", 5, "type"]],
-            [[String, Integer, nil], ["included", 5, "attributes", "decisionIssueId"]],
-            [[String, Integer, nil], ["included", 5, "attributes", "ratingIssueId"]],
-            [[String, Integer, nil], ["included", 5, "attributes", "ratingDecisionIssueId"]]
-          ]
-      end
-
-      it do
-        expect(subject.length).to eq(expected_array_with_interesting_included.length)
-        expected_array_with_interesting_included.each.with_index do |expected, index|
-          expect(subject[index]).to eq(expected)
-        end
-      end
-    end
-  end
-
-  describe "#for_array_at_path_enumerate_types_and_paths" do
-    subject do
-      hlr_intake_params.for_array_at_path_enumerate_types_and_paths(
-        array_path: array_path,
-        types_and_paths: types_and_paths
-      )
-    end
-    let(:array_path) { ["included"] }
-    let(:types_and_paths) do
-      [
-        [[Hash],                 []],
-        [["ContestableIssue"],   ["type"]],
-        [[String, Integer, nil], %w[attributes decisionIssueId]],
-        [[String, Integer, nil], %w[attributes ratingIssueId]],
-        [[String, Integer, nil], %w[attributes ratingDecisionIssueId]]
-      ]
-    end
-
-    it do
-      is_expected.to eq(
-        [
-          [[Hash],                 ["included", 0]],
-          [["ContestableIssue"],   ["included", 0, "type"]],
-          [[String, Integer, nil], ["included", 0, "attributes", "decisionIssueId"]],
-          [[String, Integer, nil], ["included", 0, "attributes", "ratingIssueId"]],
-          [[String, Integer, nil], ["included", 0, "attributes", "ratingDecisionIssueId"]]
-        ]
-      )
-    end
-
-    context "types shouldn't matter" do
-      let(:types_and_paths) do
-        [
-          [[],     []],
-          [{},     ["type"]],
-          ["a",    %w[attributes decisionIssueId]],
-          [12,     %w[attributes ratingIssueId]],
-          [String, %w[attributes ratingDecisionIssueId]]
-        ]
-      end
-
-      it do
-        is_expected.to eq(
-          [
-            [[],     ["included", 0]],
-            [{},     ["included", 0, "type"]],
-            ["a",    ["included", 0, "attributes", "decisionIssueId"]],
-            [12,     ["included", 0, "attributes", "ratingIssueId"]],
-            [String, ["included", 0, "attributes", "ratingDecisionIssueId"]]
-          ]
-        )
-      end
-    end
-
-    context "more interesting path" do
-      let(:params) do
-        { a: [{ b: [{ c: [1, 2, 3, 4, 5, 6, 7] }] }] }
-      end
-      let(:array_path) { [:a, 0, :b, 0, :c] }
-      let(:types_and_paths) do
-        [
-          [[Integer], []]
-        ]
-      end
-
-      it do
-        is_expected.to eq(
-          [
-            [[Integer], [:a, 0, :b, 0, :c, 0]],
-            [[Integer], [:a, 0, :b, 0, :c, 1]],
-            [[Integer], [:a, 0, :b, 0, :c, 2]],
-            [[Integer], [:a, 0, :b, 0, :c, 3]],
-            [[Integer], [:a, 0, :b, 0, :c, 4]],
-            [[Integer], [:a, 0, :b, 0, :c, 5]],
-            [[Integer], [:a, 0, :b, 0, :c, 6]]
-          ]
-        )
-      end
-    end
-
-    context "another interesting path" do
-      let(:params) do
-        { a: [{ b: [{ c: [{ x: 8.8, y: 1.2 }, { x: 9, y: 22.9 }, {}] }] }] }
-      end
-      let(:array_path) { [:a, 0, :b, 0, :c] }
-      let(:types_and_paths) do
-        [
-          [[Hash], []],
-          [[Float], [:x]],
-          [[Float], [:y]]
-        ]
-      end
-
-      it do
-        is_expected.to eq(
-          [
-            [[Hash],    [:a, 0, :b, 0, :c, 0]],
-            [[Float],   [:a, 0, :b, 0, :c, 0, :x]],
-            [[Float],   [:a, 0, :b, 0, :c, 0, :y]],
-            [[Hash],    [:a, 0, :b, 0, :c, 1]],
-            [[Float],   [:a, 0, :b, 0, :c, 1, :x]],
-            [[Float],   [:a, 0, :b, 0, :c, 1, :y]],
-            [[Hash],    [:a, 0, :b, 0, :c, 2]],
-            [[Float],   [:a, 0, :b, 0, :c, 2, :x]],
-            [[Float],   [:a, 0, :b, 0, :c, 2, :y]]
-          ]
-          # in a real scenario, you could use the
-          # resulting array ^^^ and HashPathValidator
-          # to catch that the third element is empty
-          # (see params)
-        )
-      end
     end
   end
 end

@@ -3,21 +3,23 @@
 FactoryBot.define do
   factory :veteran do
     first_name { "Bob" }
-    last_name { "Smith" }
-    name_suffix { "II" }
+    last_name { "Smith#{Faker::Name.last_name.downcase.tr('\'', '')}" }
+    name_suffix { (bob_smith_count == 1) ? "II" : bob_smith_count.to_s }
     ssn { Generators::Random.unique_ssn }
     email_address { "#{first_name}.#{last_name}@test.com" }
     date_of_death { nil }
 
     transient do
+      sequence(:bob_smith_count)
+      sex { Faker::Gender.short_binary_type.upcase }
       bgs_veteran_record do
         {
-          first_name: "Bob",
-          last_name: "Smith",
-          date_of_birth: "01/10/1935",
-          date_of_death: nil,
-          name_suffix: "II",
-          sex: "M",
+          first_name: first_name,
+          last_name: last_name,
+          date_of_birth: 30.years.ago.to_date.strftime("%m/%d/%Y"),
+          date_of_death: date_of_death,
+          name_suffix: name_suffix,
+          sex: sex,
           address_line1: "1234 Main Street",
           country: "USA",
           zip_code: "12345",

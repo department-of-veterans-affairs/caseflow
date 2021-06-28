@@ -1,94 +1,96 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Button from './Button';
 
-export default class EditableField extends React.Component {
-  constructor(props) {
-    super(props);
+/**
+ * A field that displays a value that can be edited and saved
+ */
+export const EditableField = (props) => {
+  const {
+    className,
+    errorMessage,
+    inputProps,
+    inputRef,
+    label,
+    maxLength,
+    name,
+    onCancel,
+    onChange,
+    onSave,
+    placeholder,
+    title,
+    type,
+    value
+  } = props;
+  const buttonClasses = ['cf-btn-link', 'editable-field-btn-link'];
+  let actionLinks, textDisplay;
 
-    this.state = {
-      editing: false
-    };
-  }
+  // Initialize with the editable field displayed if these is an error
+  const [editing, setEditing] = useState(errorMessage && errorMessage.length);
 
-  startEditing = () => this.setState({ editing: true });
-  stopEditing = () => this.setState({ editing: false });
+  const startEditing = () => setEditing(true);
+  const stopEditing = () => setEditing(false);
 
-  saveOnEnter = (event) => {
+  const onSaveClick = () => {
+    stopEditing();
+    onSave?.(value);
+  };
+
+  const saveOnEnter = (event) => {
     if (event.key === 'Enter') {
-      this.onSave();
+      onSaveClick();
     }
-  }
-  onSave = () => {
-    this.props.onSave(this.props.value);
-    this.stopEditing();
-  }
-  onCancel = () => {
-    this.props.onCancel();
-    this.stopEditing();
-  }
-  onChange = (event) => this.props.onChange(event.target.value);
+  };
 
-  componentDidUpdate = () => {
-    if (this.props.errorMessage && !this.state.editing) {
-      this.setState({ editing: true });
-    }
+  const onCancelClick = () => {
+    stopEditing();
+    onCancel?.();
+  };
+
+  const onValueChange = (event) => onChange?.(event.target.value);
+
+  if (editing) {
+    actionLinks = <span>
+      <Button onClick={onCancelClick} id={`${name}-cancel`} classNames={buttonClasses}>
+        Cancel
+      </Button>&nbsp;|&nbsp;
+      <Button onClick={onSaveClick} id={`${name}-save`} classNames={buttonClasses}>
+        Save
+      </Button>
+    </span>;
+    textDisplay = <input
+      ref={inputRef}
+      className={className}
+      name={name}
+      id={name}
+      onChange={onValueChange}
+      onKeyDown={saveOnEnter}
+      type={type}
+      value={value}
+      placeholder={placeholder}
+      title={title}
+      maxLength={maxLength}
+      {...inputProps}
+    />;
+  } else {
+    actionLinks = <span>
+      <Button onClick={startEditing} id={`${name}-edit`} classNames={buttonClasses}>
+        Edit
+      </Button>
+    </span>;
+    textDisplay = <span id={name}>{value}</span>;
   }
 
-  render() {
-    const {
-      errorMessage,
-      className,
-      label,
-      name,
-      type,
-      value,
-      placeholder,
-      title,
-      maxLength
-    } = this.props;
-    const buttonClasses = ['cf-btn-link', 'editable-field-btn-link'];
-    let actionLinks, textDisplay;
-
-    if (this.state.editing) {
-      actionLinks = <span>
-        <Button onClick={this.onCancel} id={`${name}-cancel`} classNames={buttonClasses}>
-          Cancel
-        </Button>&nbsp;|&nbsp;
-        <Button onClick={this.onSave} id={`${name}-save`} classNames={buttonClasses}>
-          Save
-        </Button>
-      </span>;
-      textDisplay = <input
-        className={className}
-        name={name}
-        id={name}
-        onChange={this.onChange}
-        onKeyDown={this.saveOnEnter}
-        type={type}
-        value={value}
-        placeholder={placeholder}
-        title={title}
-        maxLength={maxLength}
-      />;
-    } else {
-      actionLinks = <span>
-        <Button onClick={this.startEditing} id={`${name}-edit`} classNames={buttonClasses}>
-          Edit
-        </Button>
-      </span>;
-      textDisplay = <span id={name}>{value}</span>;
-    }
-
-    return <div className={classNames(className, { 'usa-input-error': errorMessage })}>
+  return (
+    <div className={classNames(className, { 'usa-input-error': errorMessage })}>
       <strong>{label}</strong>
       {actionLinks}<br />
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
       {textDisplay}
-    </div>;
-  }
-}
+    </div>
+  );
+};
 
 EditableField.defaultProps = {
   type: 'text',
@@ -96,15 +98,81 @@ EditableField.defaultProps = {
 };
 
 EditableField.propTypes = {
-  name: PropTypes.string,
-  onSave: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired,
-  errorMessage: PropTypes.string,
+
+  /**
+   * Class to apply to the wrapping div and input field of the component
+   */
   className: PropTypes.string,
+
+  /**
+   * Error string to show. Will style entire component as invalid if defined
+   */
+  errorMessage: PropTypes.string,
+
+  /**
+   * Props to be applied to the `input` element
+   */
+  inputProps: PropTypes.object,
+
+  /**
+   * Pass a ref to the `input` element
+   */
+  inputRef: PropTypes.oneOfType([
+    // Either a function
+    PropTypes.func,
+    // Or the instance of a DOM native element (see the note about SSR)
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+  ]),
+
+  /**
+   * Text (or other node) to display in associated `label` element
+   */
   label: PropTypes.string,
-  type: PropTypes.string,
-  value: PropTypes.string,
+
+  /**
+   * The maximum number of characters allowed in the `input` element. Default value is 524288.
+   */
+  maxLength: PropTypes.number,
+
+  /**
+   * String to be applied to the `name` attribute of the `input` element
+   */
+  name: PropTypes.string,
+
+  /**
+   * Callback fired when the cancel button is clicked
+   */
+  onCancel: PropTypes.func.isRequired,
+
+  /**
+   * Callback fired when value in the text field is changed
+   */
+  onChange: PropTypes.func,
+
+  /**
+   * Callback fired when the cancel button is clicked
+   */
+  onSave: PropTypes.func.isRequired,
+
+  /**
+   * Text to display when `value` is empty
+   */
   placeholder: PropTypes.string,
+
+  /**
+   * String to be applied to the `title` attribute of the `input` element
+   */
   title: PropTypes.string,
-  maxLength: PropTypes.number
+
+  /**
+   * String to be applied to the `type` attribute of the `input` element
+   */
+  type: PropTypes.string,
+
+  /**
+   * The value of the `input` element
+   */
+  value: PropTypes.string
 };
+
+export default EditableField;

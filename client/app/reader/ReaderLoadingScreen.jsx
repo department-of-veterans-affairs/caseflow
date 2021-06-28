@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { ENDPOINT_NAMES } from './analytics';
 import ApiUtil from '../util/ApiUtil';
+import { getMinutesToMilliseconds } from '../util/DateUtil';
 import { onReceiveManifests } from './DocumentList/DocumentListActions';
 import { onReceiveDocs } from '../reader/Documents/DocumentsActions';
 import { onReceiveAnnotations } from './AnnotationLayer/AnnotationActions';
@@ -16,7 +17,11 @@ export class ReaderLoadingScreen extends React.Component {
       return Promise.resolve();
     }
 
-    return ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents?json`, {}, ENDPOINT_NAMES.DOCUMENTS).
+    const reqOptions = {
+      timeout: { response: getMinutesToMilliseconds(5) }
+    };
+
+    return ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents?json`, reqOptions, ENDPOINT_NAMES.DOCUMENTS).
       then((response) => {
         const returnedObject = response.body;
         const documents = returnedObject.appealDocuments;

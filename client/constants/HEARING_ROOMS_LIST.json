@@ -52,5 +52,35 @@
   },
   "18": {
     "label": "18 (4W325)"
+  },
+  "19" : {
+    "label": "Utah"
+  },
+  "20" : {
+    "label": "Gold"
+  },
+  "21" : {
+    "label": "Juno"
+  },
+  "22" : {
+    "label": "Sword"
+  },
+  "23" : {
+    "label": "Omaha"
+  },
+  "24" : {
+    "label": "Anzio"
+  },
+  "25" : {
+    "label": "Coral Sea"
+  },
+  "26" : {
+    "label": "Hue City"
+  },
+  "27" : {
+    "label": "Antietam"
+  },
+  "28" : {
+    "label": "Mogadishu"
   }
 }

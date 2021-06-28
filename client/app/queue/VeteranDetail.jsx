@@ -2,7 +2,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
-import _ from 'lodash';
+import { get } from 'lodash';
 
 import { DateString } from '../util/DateUtil';
 import { appealWithDetailSelector } from './selectors';
@@ -10,88 +10,91 @@ import { detailListStyling, getDetailField } from './Detail';
 import { getAppealValue } from './QueueActions';
 import Address from './components/Address';
 import BareList from '../components/BareList';
+import { AppealHasSubstitutionAlert } from './substituteAppellant/caseDetails/AppealHasSubstitutionAlert';
 import COPY from '../../COPY';
 
-const VeteranState = ({ veteran }) => {
-  const state = veteran?.address?.state;
+/**
+ * A component to display various details about the veteran including name, gender, date of birth, date of death,
+ * address and email.
+ */
+export const VeteranDetail = ({ veteran, substitutionAppealId, stateOnly }) => {
+  const {
+    address,
+    full_name: fullName,
+    gender,
+    date_of_birth: dob,
+    date_of_death: dod,
+    email_address: email
+  } = veteran;
 
-  if (state) {
-    return <>{state}</>;
+  if (stateOnly) {
+    return <>{address?.state}</>;
   }
 
-  return null;
+  const details = [{
+    label: 'Name',
+    value: fullName
+  }];
+
+  const genderValue = gender === 'F' ? COPY.CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE :
+    COPY.CASE_DETAILS_GENDER_FIELD_VALUE_MALE;
+
+  if (genderValue) {
+    details.push({
+      label: COPY.CASE_DETAILS_GENDER_FIELD_LABEL,
+      value: genderValue
+    });
+  }
+
+  if (dob) {
+    details.push({
+      label: 'Date of birth',
+      value: <DateString date={dob} inputFormat="MM/DD/YYYY" dateFormat="M/D/YYYY" />
+    });
+  }
+
+  if (dod) {
+    details.push({
+      label: 'Date of death',
+      value: <DateString date={dod} inputFormat="YYYY-MM-DD" dateFormat="M/D/YYYY" />
+    });
+  }
+
+  if (address) {
+    details.push({
+      label: 'Mailing Address',
+      value: <Address address={address} />
+    });
+  }
+
+  if (email) {
+    details.push({
+      label: 'Email Address',
+      value: email
+    });
+  }
+
+  return (
+    <>
+      <div {...detailListStyling}>
+        <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
+        <p><em>{COPY.CASE_DETAILS_VETERAN_ADDRESS_SOURCE}</em></p>
+        {substitutionAppealId && <AppealHasSubstitutionAlert targetAppealId={substitutionAppealId} />}
+      </div>
+    </>
+  );
 };
 
-class VeteranDetail extends React.PureComponent {
-  getDetails = () => {
-    const {
-      veteran: {
-        address,
-        full_name: fullName,
-        gender,
-        date_of_birth: dob,
-        date_of_death: dod,
-        email_address: email
-      }
-    } = this.props;
+VeteranDetail.propTypes = {
 
-    const details = [{
-      label: 'Name',
-      value: fullName
-    }];
+  /**
+   * Determines whether to display alert regarding presence of substitution appeal
+   */
+  substitutionAppealId: PropTypes.string,
 
-    const genderValue = gender === 'F' ? COPY.CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE :
-      COPY.CASE_DETAILS_GENDER_FIELD_VALUE_MALE;
-
-    if (genderValue) {
-      details.push({
-        label: COPY.CASE_DETAILS_GENDER_FIELD_LABEL,
-        value: genderValue
-      });
-    }
-
-    if (dob) {
-      details.push({
-        label: 'Date of birth',
-        value: <DateString date={dob} inputFormat="MM/DD/YYYY" dateFormat="M/D/YYYY" />
-      });
-    }
-
-    if (dod) {
-      details.push({
-        label: 'Date of death',
-        value: <DateString date={dod} inputFormat="MM/DD/YYYY" dateFormat="M/D/YYYY" />
-      });
-    }
-
-    if (address) {
-      details.push({
-        label: 'Mailing Address',
-        value: <Address address={address} />
-      });
-    }
-
-    if (email) {
-      details.push({
-        label: 'Email Address',
-        value: email
-      });
-    }
-
-    return <BareList ListElementComponent="ul" items={details.map(getDetailField)} />;
-  };
-
-  render = () => {
-    return (
-      <ul {...detailListStyling}>
-        {this.getDetails()}
-        <p><em>{COPY.CASE_DETAILS_VETERAN_ADDRESS_SOURCE}</em></p>
-      </ul>
-    );
-  };
-}
-
-VeteranState.propTypes = VeteranDetail.propTypes = {
+  /**
+   * Veteran object returned from the back end
+   */
   veteran: PropTypes.shape({
     address: PropTypes.shape({
       state: PropTypes.string
@@ -101,11 +104,16 @@ VeteranState.propTypes = VeteranDetail.propTypes = {
     email_address: PropTypes.string,
     full_name: PropTypes.string,
     gender: PropTypes.string
-  })
+  }),
+
+  /**
+   * Whether or not to display only the veteran's state of residence
+   */
+  stateOnly: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const loadingVeteranInfo = _.get(state.queue.loadingAppealDetail[ownProps.appealId], 'veteranInfo');
+  const loadingVeteranInfo = get(state.queue.loadingAppealDetail[ownProps.appealId], 'veteranInfo');
 
   if (loadingVeteranInfo?.loading) {
     return { loading: true };
@@ -115,6 +123,7 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     veteranInfo: appeal?.veteranInfo,
+    substitutions: appeal?.substitutions,
     loading: !appeal,
     error: loadingVeteranInfo?.error
   };
@@ -124,50 +133,53 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   getAppealValue
 }, dispatch);
 
-// Wraps a component inside of a container component that calls the veteran info
-// endpoint.
-//
-// Uses this pattern for higher order components:
-//
-//   https://reactjs.org/docs/higher-order-components.html
-//
-const wrapVeteranDetailComponent = _.flow(
-  (WrappedComponent) => (
-    class extends React.PureComponent {
-      static propTypes = {
-        appealId: PropTypes.string,
-        error: PropTypes.object,
-        getAppealValue: PropTypes.func,
-        loading: PropTypes.bool,
-        veteranInfo: PropTypes.object
-      }
+/**
+ * Wrapper for veteran components that handles requesting veteran information from the back end, displaying a loading
+ * icon while waiting, an error if it exists, and finally the wrapped component
+ *
+ * Uses this pattern for higher order components: https://reactjs.org/docs/higher-order-components.html
+ */
+const wrapVeteranDetailComponent = (WrappedComponent) => (
+  class extends React.PureComponent {
+    static propTypes = {
+      appealId: PropTypes.string,
+      error: PropTypes.object,
+      getAppealValue: PropTypes.func,
+      loading: PropTypes.bool,
+      veteranInfo: PropTypes.object,
+      substitutions: PropTypes.arrayOf(PropTypes.object),
+      stateOnly: PropTypes.bool
+    }
 
-      componentDidMount = () => {
-        if (!this.props.veteranInfo) {
-          this.props.getAppealValue(this.props.appealId, 'veteran', 'veteranInfo');
-        }
-      }
-
-      render() {
-        if (!this.props.veteranInfo) {
-          if (this.props.loading) {
-            return <>{COPY.CASE_DETAILS_LOADING}</>;
-          }
-
-          if (this.props.error) {
-            return <>{COPY.CASE_DETAILS_UNABLE_TO_LOAD}</>;
-          }
-
-          return null;
-        }
-
-        return <WrappedComponent {...this.props.veteranInfo} />;
+    componentDidMount = () => {
+      if (!this.props.veteranInfo) {
+        this.props.getAppealValue(this.props.appealId, 'veteran', 'veteranInfo');
       }
     }
-  ),
-  connect(mapStateToProps, mapDispatchToProps)
+
+    render() {
+      if (!this.props.veteranInfo) {
+        if (this.props.loading) {
+          return <>{COPY.CASE_DETAILS_LOADING}</>;
+        }
+
+        if (this.props.error) {
+          return <>{COPY.CASE_DETAILS_UNABLE_TO_LOAD}</>;
+        }
+
+        return null;
+      }
+
+      return (
+        <WrappedComponent
+          stateOnly={this.props.stateOnly}
+          substitutionAppealId={this.props.substitutions?.[0]?.target_appeal_uuid} // eslint-disable-line camelcase
+          {...this.props.veteranInfo}
+        />
+      );
+    }
+  }
 );
 
-export const VeteranStateDetail = wrapVeteranDetailComponent(VeteranState);
-
-export default wrapVeteranDetailComponent(VeteranDetail);
+export const UnconnectedVeteranDetail = wrapVeteranDetailComponent(VeteranDetail);
+export default connect(mapStateToProps, mapDispatchToProps)(UnconnectedVeteranDetail);

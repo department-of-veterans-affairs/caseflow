@@ -71,7 +71,7 @@ RSpec.feature "Users management page", :postgres do
       end
 
       step "user marks another user active" do
-        find(".cf-select").click
+        visit "/user_management"
         fill_in COPY::USER_MANAGEMENT_FIND_USER_DROPDOWN_NAME, with: inactive_user.css_id
         expect(page).to have_content(inactive_user.full_name)
 

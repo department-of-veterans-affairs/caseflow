@@ -1,47 +1,43 @@
-import React from 'react';
-import { Route } from 'react-router-dom';
-import ProgressBar from '../../components/ProgressBar';
-import { PAGE_PATHS } from '../constants';
-import _ from 'lodash';
+import React, { useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
+import ProgressBar from 'app/components/ProgressBar';
+import { PAGE_PATHS } from 'app/intake/constants';
 
-class IntakeProgressBarInner extends React.PureComponent {
-  render() {
-    const progressBarSections = [
-      {
-        title: '1. Select Form',
-        path: PAGE_PATHS.BEGIN
-      },
-      {
-        title: '2. Search',
-        path: PAGE_PATHS.SEARCH
-      },
-      {
-        title: '3. Review',
-        path: PAGE_PATHS.REVIEW
-      },
-      {
-        title: '4. Add Issues',
-        path: (currentPath) => currentPath === PAGE_PATHS.ADD_ISSUES || currentPath === PAGE_PATHS.FINISH
-      },
-      {
-        title: '5. Confirmation',
-        path: PAGE_PATHS.COMPLETED
-      }
-    ];
+const progressBarSections = [
+  {
+    title: '1. Select Form',
+    paths: [PAGE_PATHS.BEGIN],
+  },
+  {
+    title: '2. Search',
+    paths: [PAGE_PATHS.SEARCH],
+  },
+  {
+    title: '3. Review',
+    paths: [PAGE_PATHS.REVIEW, PAGE_PATHS.ADD_CLAIMANT, PAGE_PATHS.ADD_POWER_OF_ATTORNEY],
+  },
+  {
+    title: '4. Add Issues',
+    paths: [PAGE_PATHS.ADD_ISSUES, PAGE_PATHS.FINISH],
+  },
+  {
+    title: '5. Confirmation',
+    paths: [PAGE_PATHS.COMPLETED],
+  },
+];
 
-    const progressBarSectionsWithCurrentMarked = progressBarSections.map((section) =>
-      _({ current: _.isFunction(section.path) ?
-        section.path(this.props.location.pathname) :
-        section.path === this.props.location.pathname }).
-        merge(section).
-        omit('path').
-        value()
-    );
+export const IntakeProgressBar = () => {
+  const { pathname } = useLocation();
+  const sections = useMemo(
+    () =>
+      progressBarSections.map(({ title, paths }) => ({
+        title,
+        current: paths?.includes(pathname),
+      })),
+    [pathname]
+  );
 
-    return <ProgressBar sections={progressBarSectionsWithCurrentMarked} />;
-  }
-}
+  return <ProgressBar sections={sections} />;
+};
 
-export default class IntakeProgressBar extends React.Component {
-  render = () => <Route path="/" component={IntakeProgressBarInner} />;
-}
+export default IntakeProgressBar;

@@ -107,7 +107,7 @@ RSpec.feature "Postpone hearing" do
         click_button("Submit")
 
         expect(page).to have_content(
-          "Successfully sent Bob Smith's case to a Hearings Branch administrator for review."
+          /Successfully sent Bob Smith.*'s case to a Hearings Branch administrator for review./
         )
       end
     end
@@ -143,6 +143,8 @@ RSpec.feature "Postpone hearing" do
         expect(Hearing.where(hearing_day: hearing_day_earlier).count).to eq 1
         expect(Hearing.find_by(hearing_day: hearing_day_earlier).hearing_location.facility_id).to eq "vba_339"
         expect(Hearing.first.disposition).to eq "postponed"
+        expect(Hearing.second.disposition).to be_nil
+        expect(Hearing.second.uuid).to_not eq Hearing.first.uuid
         expect(HearingTask.count).to eq 2
       end
     end
@@ -166,6 +168,8 @@ RSpec.feature "Postpone hearing" do
         expect(page).to have_content("You have successfully assigned")
         expect(LegacyHearing.second.hearing_day.id).to eq hearing_day_earlier.id
         expect(LegacyHearing.first.disposition).to eq "postponed"
+        expect(LegacyHearing.second.disposition).to be_nil
+        expect(LegacyHearing.second.vacols_id).to_not eq LegacyHearing.first.vacols_id
         expect(HearingTask.first.hearing.id).to eq legacy_hearing.id
         expect(HearingTask.second.hearing.id).to eq LegacyHearing.second.id
       end
@@ -290,6 +294,8 @@ RSpec.feature "Postpone hearing" do
         expect(page).to have_content("You have successfully assigned")
         expect(LegacyHearing.second.hearing_day.id).to eq hearing_day_earlier.id
         expect(LegacyHearing.first.disposition).to eq "postponed"
+        expect(LegacyHearing.second.disposition).to be_nil
+        expect(LegacyHearing.second.vacols_id).to_not eq LegacyHearing.first.vacols_id
         expect(HearingTask.first.hearing.id).to eq legacy_hearing.id
         expect(HearingTask.second.hearing.id).to eq LegacyHearing.second.id
       end

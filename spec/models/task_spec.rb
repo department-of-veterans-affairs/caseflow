@@ -839,7 +839,9 @@ describe Task, :all_dbs do
       }
     end
 
-    before { allow_any_instance_of(Organization).to receive(:user_has_access?).and_return(true) }
+    before do
+      allow_any_instance_of(Organization).to receive(:user_has_access?).and_return(true)
+    end
 
     subject { task.reassign(params, old_assignee) }
 
@@ -1440,10 +1442,11 @@ describe Task, :all_dbs do
         expect(task.closed_at).to_not eq(nil)
       end
 
+      let(:some_user) { create(:user) }
       it "does not set the cancelled_by_id if there is no logged in user" do
-        task.update!(cancelled_by_id: 1)
+        task.update!(cancelled_by_id: some_user.id)
         task.update!(status: status)
-        expect(task.cancelled_by_id).to eq(1)
+        expect(task.cancelled_by_id).to eq(some_user.id)
       end
 
       context "when a user is logged in" do
@@ -1743,6 +1746,82 @@ describe Task, :all_dbs do
         expect(subject.keys).to match_array [:id, :assigned_to_email, :assigned_to_name, :type]
         expect(subject[:assigned_to_email]).to eq assignee.email
         expect(subject[:assigned_to_name]).to eq "#{assignee.full_name.titleize} (#{assignee.css_id})"
+      end
+    end
+  end
+
+  describe "#copy_with_ancestors_to_stream" do
+    subject { selected_task.copy_with_ancestors_to_stream(new_stream) }
+
+    let!(:old_stream) { create(:appeal, :evidence_submission_docket, :with_post_intake_tasks) }
+    let!(:new_stream) { create(:appeal, :hearing_docket, :with_post_intake_tasks) }
+    let!(:organization) { Organization.create!(name: "Other organization", url: "other") }
+    let!(:selected_task) do
+      create(
+        :foia_task,
+        appeal: old_stream,
+        parent: parent_task
+      )
+    end
+    let(:parent_task) { create(:foia_task, appeal: old_stream, parent: parent_of_parent, assigned_to: organization) }
+
+    context "branch is off of root task" do
+      let(:parent_of_parent) { old_stream.root_task }
+
+      it "copies branch and connects to new root task" do
+        expect { subject }.to change(new_stream.tasks, :count).by(2)
+
+        new_stream.reload
+        task_copy = new_stream.tasks.find { |task| task.type == selected_task.type && task.assigned_to.is_a?(User) }
+        parent_copy = task_copy.parent
+
+        expect(parent_copy.appeal_id).to eq new_stream.id
+        expect(parent_copy.parent).to eq new_stream.root_task
+      end
+    end
+
+    context "branch is off of distribution task" do
+      let(:parent_of_parent) { old_stream.tasks.find_by(type: DistributionTask.name) }
+
+      it "copies branch and connects to new distribution task" do
+        expect { subject }.to change(new_stream.tasks, :count).by(2)
+
+        new_stream_distribution_task = new_stream.reload.tasks.open.find_by(type: DistributionTask.name)
+        task_copy = new_stream.tasks.find { |task| task.type == selected_task.type && task.assigned_to.is_a?(User) }
+        parent_copy = task_copy.parent
+
+        expect(parent_copy.appeal_id).to eq new_stream.id
+        expect(parent_copy.parent).to eq new_stream_distribution_task
+      end
+    end
+
+    context "branch has multiple layers" do
+      let(:parent_of_parent) do
+        create(
+          :colocated_task,
+          assigned_to: create(:user),
+          appeal: old_stream,
+          parent: create(:colocated_task, parent: old_stream.root_task, assigned_to: create(:organization))
+        )
+      end
+
+      it "copies the entire branch" do
+        expect { subject }.to change(new_stream.tasks, :count).by(4)
+
+        new_stream.reload
+
+        task_copy = new_stream.tasks.find { |task| task.type == selected_task.type && task.assigned_to.is_a?(User) }
+        root_task_child = new_stream.root_task.children.find { |task| task.same_task_type?(parent_of_parent.parent) }
+
+        expect(root_task_child.descendants).to include(task_copy)
+      end
+    end
+
+    context "parent of parent is nil, branch is orphaned (not connected to a root or other task)" do
+      let(:parent_of_parent) { nil }
+
+      it "does not copy tasks" do
+        expect { subject }.to change(new_stream.tasks, :count).by(0)
       end
     end
   end

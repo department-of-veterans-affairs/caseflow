@@ -29,6 +29,7 @@ class Hearings::SchedulePeriodsController < HearingsApplicationController
     render_error_for_show_action(error)
   end
 
+  # Route to create a hearing schedule
   def create
     file_name = params["schedule_period"]["type"] + Time.zone.now.to_s + ".xlsx"
     uploaded_file = Base64Service.to_file(params["schedule_period"]["file"], file_name)
@@ -36,19 +37,37 @@ class Hearings::SchedulePeriodsController < HearingsApplicationController
     schedule_period = SchedulePeriod.create!(schedule_period_params.merge(user_id: current_user.id,
                                                                           file_name: file_name))
     render json: { id: schedule_period.id }
-  rescue ActiveRecord::RecordInvalid => error
-    render json: { error: error.message }
+  rescue StandardError => error
+    render(
+      json: {
+        errors: [
+          title: error.class.to_s,
+          details: error.message
+        ]
+      },
+      status: :bad_request
+    )
   end
 
+  # Route to finalize and confirm a hearing schedule
   def update
     if schedule_period.can_be_finalized?
       schedule_period.schedule_confirmed(schedule_period.algorithm_assignments)
       render json: { id: schedule_period.id }
     else
-      render json: { error: "This schedule period cannot be finalized." }, status: :unprocessable_entity
+      render(
+        json: {
+          errors: [
+            title: "Finalize Schedule Period",
+            details: "This schedule period cannot be finalized."
+          ]
+        },
+        status: :unprocessable_entity
+      )
     end
   end
 
+  # Route to download uploaded spreadsheets
   def download
     schedule_period = SchedulePeriod.find(params[:schedule_period_id])
     schedule_period.spreadsheet
@@ -72,7 +91,11 @@ class Hearings::SchedulePeriodsController < HearingsApplicationController
   def render_error_for_show_action(error)
     render(
       json: {
-        error: error.message, details: error.details, type: schedule_period.type
+        errors: [
+          title: error.message,
+          details: error.details,
+          type: schedule_period.type
+        ]
       },
       status: :unprocessable_entity
     )

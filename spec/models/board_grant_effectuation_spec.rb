@@ -93,6 +93,28 @@ describe BoardGrantEffectuation, :postgres do
           )
           expect(board_grant_effectuation).to be_processed
         end
+
+        context "when a decision issue already exists for the matching rating issue" do
+          let!(:existing_decision_issue) do
+            create(
+              :decision_issue,
+              rating_issue_reference_id: "ref_id1",
+              disposition: granted_decision_issue.disposition,
+              participant_id: granted_decision_issue.participant_id
+            )
+          end
+
+          it "Updates the granted decision issue" do
+            subject
+            expect(granted_decision_issue).to have_attributes(
+              rating_promulgation_date: rating.promulgation_date,
+              rating_profile_date: rating.profile_date,
+              decision_text: "PTSD denied",
+              rating_issue_reference_id: "ref_id1"
+            )
+            expect(board_grant_effectuation).to be_processed
+          end
+        end
       end
 
       context "when a matching rating issue is not found" do

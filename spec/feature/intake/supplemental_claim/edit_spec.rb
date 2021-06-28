@@ -180,9 +180,6 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     end
 
     context "when it is created due to a DTA error" do
-      before { FeatureToggle.enable!(:edit_contention_text) }
-      after { FeatureToggle.disable!(:edit_contention_text) }
-
       let(:decision_review_remanded) { create(:higher_level_review) }
       let(:contested_decision_issue) { create(:decision_issue, :nonrating, disposition: "remanded") }
 
@@ -236,9 +233,6 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     end
 
     context "when it is created due to a DTA error" do
-      before { FeatureToggle.enable!(:edit_contention_text) }
-      after { FeatureToggle.disable!(:edit_contention_text) }
-
       let(:decision_review_remanded) { create(:higher_level_review) }
       let(:contested_decision_issue) { create(:decision_issue, disposition: "remanded") }
 
@@ -505,12 +499,14 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       )
 
       # reload to verify that the new issues populate the form
-      visit "supplemental_claims/#{rating_ep_claim_id}/edit"
+      click_on "correct the issues"
+      supplemental_claim.reload
+      expect(page).to have_current_path("/supplemental_claims/#{supplemental_claim.uuid}/edit")
       expect(page).to have_content("Left knee granted")
       expect(page).to_not have_content("PTSD denied")
 
       # assert server has updated data
-      new_request_issue = supplemental_claim.reload.request_issues.active.first
+      new_request_issue = supplemental_claim.request_issues.active.first
       expect(new_request_issue.description).to eq("Left knee granted")
       expect(request_issue.reload.decision_review).to_not be_nil
       expect(request_issue.contention_removed_at).to eq(Time.zone.now)

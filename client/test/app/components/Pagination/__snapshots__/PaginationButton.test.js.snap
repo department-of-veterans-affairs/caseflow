@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PaginationButton button for page other than current renders correctly 1`] = `
+<div>
+  <button
+    class=""
+    name="page-button-0"
+  >
+    1
+  </button>
+</div>
+`;
+
+exports[`PaginationButton button for the current page renders correctly 1`] = `
+<div>
+  <button
+    class="cf-current-page"
+    name="page-button-0"
+  >
+    1
+  </button>
+</div>
+`;

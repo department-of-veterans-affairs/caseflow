@@ -3,26 +3,19 @@ import { formatDateStr } from '../../util/DateUtil';
 import DATES from '../../../constants/DATES';
 import { FORM_TYPES } from '../constants';
 
-const getDependentClaimant = (intakeData) => {
-  const relation = intakeData.relationships.find(({ value }) => value === intakeData.claimant);
-
-  if (!intakeData.payeeCode) {
-    return relation.displayText;
-  }
-
-  return `${relation.displayText} (payee code ${intakeData.payeeCode})`;
-};
-
 const getClaimantField = (veteran, intakeData) => {
-  const claimantMap = {
-    veteran: () => veteran.name,
-    dependent: () => getDependentClaimant(intakeData),
-    attorney: () => `${intakeData.claimantName}, Attorney`,
-    other: () => intakeData.claimantNotes
-  };
+  const {
+    claimantName,
+    claimantRelationship,
+    claimantType,
+    payeeCode
+  } = intakeData;
 
-  const claimantType = intakeData.claimantType;
-  const claimantDisplayText = claimantMap[claimantType ?? 'veteran']?.();
+  let claimantDisplayText = [claimantName, claimantRelationship].filter(Boolean).join(', ');
+
+  if (payeeCode) {
+    claimantDisplayText += ` (payee code ${payeeCode})`
+  }
 
   return [{
     field: 'Claimant',
@@ -330,6 +323,22 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
   return fields.concat(claimantField);
 };
 
+export const formatIssuesBySection = (issues) => {
+  return issues.reduce(
+    (result, issue) => {
+      if (issue.withdrawalDate || issue.withdrawalPending) {
+        (result.withdrawnIssues || (result.withdrawnIssues = [])).push(issue);
+      } else if (issue.endProductCode) {
+        (result[issue.endProductCode] || (result[issue.endProductCode] = [])).push(issue);
+      } else {
+        (result.requestedIssues || (result.requestedIssues = [])).push(issue);
+      }
+
+      return result;
+    }, {}
+  );
+};
+
 export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => {
   const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST);
 
@@ -349,6 +358,7 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
         withdrawalPending: issue.withdrawalPending,
         withdrawalDate: issue.withdrawalDate,
         endProductCleared: issue.endProductCleared,
+        endProductCode: issue.endProductCode,
         correctionType: issue.correctionType,
         editable: issue.editable,
         examRequested: issue.examRequested,
@@ -396,6 +406,7 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
         withdrawalPending: issue.withdrawalPending,
         withdrawalDate: issue.withdrawalDate,
         endProductCleared: issue.endProductCleared,
+        endProductCode: issue.endProductCode,
         editedDescription: issue.editedDescription,
         correctionType: issue.correctionType,
         editable: issue.editable,
@@ -430,6 +441,7 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
       withdrawalPending: issue.withdrawalPending,
       withdrawalDate: issue.withdrawalDate,
       endProductCleared: issue.endProductCleared,
+      endProductCode: issue.endProductCode,
       category: issue.category,
       editedDescription: issue.editedDescription,
       correctionType: issue.correctionType,

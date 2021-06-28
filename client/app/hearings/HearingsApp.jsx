@@ -36,6 +36,8 @@ export default class HearingsApp extends React.PureComponent {
       userCanVsoHearingSchedule,
       userHasHearingPrepRole,
       userInHearingOrTranscriptionOrganization,
+      userCanAddVirtualHearingDays,
+      userCanViewFnodBadgeInHearings,
       userId,
       userCssId
     } = this.props;
@@ -50,6 +52,8 @@ export default class HearingsApp extends React.PureComponent {
       userCanVsoHearingSchedule,
       userHasHearingPrepRole,
       userInHearingOrTranscriptionOrganization,
+      userCanAddVirtualHearingDays,
+      userCanViewFnodBadgeInHearings,
       userId,
       userCssId
     });
@@ -67,7 +71,9 @@ export default class HearingsApp extends React.PureComponent {
     });
   };
 
-  routeForListScheduleContainer = () => <ListScheduleContainer user={this.userPermissionProps()} />;
+  routeForListScheduleContainer = ({ location, history }) =>
+    <ListScheduleContainer location={location} history={history} user={this.userPermissionProps()} />;
+
   routeForAssignHearingsContainer = () => (
     // Also remove where this gets set in the view. (#11757)
     <AssignHearingsContainer
@@ -140,6 +146,12 @@ export default class HearingsApp extends React.PureComponent {
             />
             <PageRoute
               exact
+              path="/schedule/add_hearing_day"
+              title="Add Hearing Day"
+              render={this.routeForListScheduleContainer}
+            />
+            <PageRoute
+              exact
               path="/schedule/docket/:hearingDayId"
               title="Daily Docket"
               render={this.routeForDailyDocket(false)}
@@ -200,6 +212,8 @@ HearingsApp.propTypes = {
   userCanVsoHearingSchedule: PropTypes.bool,
   userHasHearingPrepRole: PropTypes.bool,
   userInHearingOrTranscriptionOrganization: PropTypes.bool,
+  userCanAddVirtualHearingDays: PropTypes.bool,
+  userCanViewFnodBadgeInHearings: PropTypes.bool,
   userRole: PropTypes.string,
   userId: PropTypes.number,
   userCssId: PropTypes.string

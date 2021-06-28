@@ -85,7 +85,11 @@ class Docket
   private
 
   def docket_appeals
-    Appeal.where(docket_type: docket_type).extending(Scopes)
+    Appeal.joins(:claimants)
+      .joins("left join unrecognized_appellants on claimants.id = unrecognized_appellants.claimant_id")
+      .where(docket_type: docket_type)
+      .where("unrecognized_appellants.id is null")
+      .extending(Scopes)
   end
 
   def assign_judge_tasks_for_appeals(appeals, judge)
@@ -95,7 +99,7 @@ class Docket
       Rails.logger.info("Assigned judge task with task id #{task.id} to #{task.assigned_to.css_id}")
 
       Rails.logger.info("Closing distribution task for appeal #{appeal.id}")
-      appeal.tasks.where(type: DistributionTask.name).update(status: :completed)
+      appeal.tasks.of_type(:DistributionTask).update(status: :completed)
       Rails.logger.info("Closing distribution task with task id #{task.id} to #{task.assigned_to.css_id}")
 
       task
@@ -104,24 +108,25 @@ class Docket
 
   module Scopes
     def priority
-      join_aod_motions
+      include_aod_motions
         .where("advance_on_docket_motions.created_at > appeals.established_at")
         .where("advance_on_docket_motions.granted = ?", true)
-        .or(join_aod_motions
-          .where("people.date_of_birth <= ?", 75.years.ago))
+        .or(include_aod_motions.where("people.date_of_birth <= ?", 75.years.ago))
+        .or(include_aod_motions.where("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.court_remand))
         .group("appeals.id")
     end
 
     # rubocop:disable Metrics/LineLength
     def nonpriority
-      join_aod_motions
+      include_aod_motions
         .where("people.date_of_birth > ?", 75.years.ago)
+        .where.not("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.court_remand)
         .group("appeals.id")
         .having("count(case when advance_on_docket_motions.granted and advance_on_docket_motions.created_at > appeals.established_at then 1 end) = ?", 0)
     end
     # rubocop:enable Metrics/LineLength
 
-    def join_aod_motions
+    def include_aod_motions
       joins(claimants: :person)
         .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
     end

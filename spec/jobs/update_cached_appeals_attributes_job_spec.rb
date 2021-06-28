@@ -18,8 +18,8 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
 
     before do
       open_appeals.each do |appeal|
-        create_list(:bva_dispatch_task, 3, appeal: appeal)
-        create_list(:ama_judge_assign_task, 8, appeal: appeal)
+        create(:bva_dispatch_task, appeal: appeal)
+        create(:ama_judge_assign_task, appeal: appeal)
       end
     end
 
@@ -29,6 +29,12 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
       subject
 
       expect(CachedAppeal.all.count).to eq(open_appeals.length)
+
+      expect(CachedAppeal.ama_appeal.count).to eq(appeals.size)
+      expect(CachedAppeal.docket(:evidence_submission).count).to eq(appeals.size)
+
+      expect(CachedAppeal.legacy_appeal.count).to eq(legacy_appeals.size)
+      expect(CachedAppeal.docket(:legacy).count).to eq(legacy_appeals.size)
     end
 
     it "does not cache appeals when all appeal tasks are closed" do
@@ -90,14 +96,15 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
     end
 
     it "sends a message to Slack that includes the error" do
-      slack_msg = ""
-      allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+      allow_any_instance_of(SlackService).to receive(:send_notification) do |_, msg, title|
+        @slack_msg = msg
+        @slack_title = title
+      end
 
       subject
 
-      expected_msg = "UpdateCachedAppealsAttributesJob failed after running for .*. See Sentry event .*"
-
-      expect(slack_msg).to match(/#{expected_msg}/)
+      expect(@slack_title).to match(/\[ERROR\] UpdateCachedAppealsAttributesJob failed after running for .*/)
+      expect(@slack_msg).to match(/See Sentry event .*/)
     end
   end
 
@@ -107,7 +114,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
       create(
         :legacy_appeal,
         vacols_case: vacols_case3,
-        changed_request_type: HearingDay::REQUEST_TYPES[:virtual]
+        changed_hearing_request_type: HearingDay::REQUEST_TYPES[:virtual]
       )
     end
 
@@ -118,7 +125,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
     before do
       open_appeals.each do |appeal|
         create_list(:bva_dispatch_task, 3, appeal: appeal)
-        create_list(:ama_judge_assign_task, 8, appeal: appeal)
+        create(:ama_judge_assign_task, appeal: appeal)
       end
     end
 

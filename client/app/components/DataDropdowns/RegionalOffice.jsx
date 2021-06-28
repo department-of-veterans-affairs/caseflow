@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { onReceiveDropdownData, onFetchDropdownData } from '../common/actions';
 import ApiUtil from '../../util/ApiUtil';
-import _ from 'lodash';
+import { filter, isEqual, forEach, find } from 'lodash';
 import LoadingLabel from './LoadingLabel';
-
+import HEARING_REQUEST_TYPES from '../../../constants/HEARING_REQUEST_TYPES';
 import SearchableDropdown from '../SearchableDropdown';
 
 class RegionalOfficeDropdown extends React.Component {
@@ -17,7 +17,7 @@ class RegionalOfficeDropdown extends React.Component {
   componentDidUpdate(prevProps) {
     const { regionalOffices: { options }, validateValueOnMount, onChange } = this.props;
 
-    if (!_.isEqual(prevProps.regionalOffices.options, options) && validateValueOnMount) {
+    if (!isEqual(prevProps.regionalOffices.options, options) && validateValueOnMount) {
       const option = this.getSelectedOption();
 
       onChange(option.value, option.label);
@@ -25,7 +25,9 @@ class RegionalOfficeDropdown extends React.Component {
   }
 
   getRegionalOffices = () => {
-    const { regionalOffices: { options, isFetching } } = this.props;
+    const {
+      regionalOffices: { options, isFetching }
+    } = this.props;
 
     if (options || isFetching) {
       return;
@@ -38,12 +40,23 @@ class RegionalOfficeDropdown extends React.Component {
 
       let regionalOfficeOptions = [];
 
-      _.forEach(resp.regionalOffices, (value, key) => {
-        regionalOfficeOptions.push({
-          label: value.state === 'DC' ? 'Central' : `${value.city}, ${value.state}`,
-          value: { key, ...value }
-        });
-      });
+      forEach(
+        resp.regionalOffices,
+        (value, key) => {
+          let label;
+
+          if (!value.state && !value.city) {
+            label = value.label;
+          } else {
+            label = value.state === 'DC' ? 'Central' : `${value.city}, ${value.state}`;
+          }
+
+          regionalOfficeOptions.push({
+            label,
+            value: { key, ...value }
+          });
+        }
+      );
 
       regionalOfficeOptions.sort((first, second) => (first.label < second.label ? -1 : 1));
 
@@ -54,18 +67,26 @@ class RegionalOfficeDropdown extends React.Component {
   getSelectedOption = () => {
     const { value, regionalOffices: { options } } = this.props;
 
-    return _.find(options, (opt) => opt.value.key === value) ||
+    return find(options, (opt) => opt.value.key === value) ||
       {
         value: null,
         label: null
       };
   }
 
+  filterOptions = (options, excludeVirtualHearingsOption) => {
+    if (excludeVirtualHearingsOption) {
+      return filter(options, (option) => option?.value.key !== HEARING_REQUEST_TYPES.virtual);
+    }
+
+    return options;
+  }
+
   render() {
     const {
       name, label, onChange,
       regionalOffices: { options, isFetching },
-      readOnly, errorMessage, placeholder } = this.props;
+      readOnly, errorMessage, placeholder, excludeVirtualHearingsOption } = this.props;
 
     return (
       <SearchableDropdown
@@ -75,7 +96,7 @@ class RegionalOfficeDropdown extends React.Component {
         readOnly={readOnly}
         value={this.getSelectedOption()}
         onChange={(option) => onChange((option || {}).value, (option || {}).label)}
-        options={options}
+        options={this.filterOptions(options, excludeVirtualHearingsOption)}
         errorMessage={errorMessage}
         placeholder={placeholder} />
     );
@@ -84,6 +105,10 @@ class RegionalOfficeDropdown extends React.Component {
 
 RegionalOfficeDropdown.propTypes = {
   errorMessage: PropTypes.string,
+
+  // Whether or not to hide the "Virtual Hearings" option from the dropdown.
+  excludeVirtualHearingsOption: PropTypes.bool,
+
   label: PropTypes.string,
   name: PropTypes.string,
   onChange: PropTypes.func.isRequired,
@@ -102,6 +127,7 @@ RegionalOfficeDropdown.propTypes = {
 };
 
 RegionalOfficeDropdown.defaultProps = {
+  excludeVirtualHearingsOption: false,
   name: 'regionalOffice',
   label: 'Regional Office'
 };

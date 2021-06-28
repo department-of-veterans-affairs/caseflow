@@ -41,14 +41,29 @@ module Api
         end
 
         def veteran_valid?
-          unless veteran_ssn_is_formatted_correctly?
+          if veteran_ssn.present? && !veteran_ssn_is_formatted_correctly?
             render_invalid_veteran_ssn
             return false
           end
-          unless veteran
+          if veteran_identifier.nil?
+            render_missing_headers
+            return false
+          end
+          unless veteran.present? && veteran_matches
             render_veteran_not_found
             return false
           end
+          true
+        end
+
+        def veteran_matches
+          if veteran_ssn.present? && veteran_ssn != veteran.ssn
+            return false
+          end
+          if veteran_file_number.present? && veteran_file_number != veteran.file_number
+            return false
+          end
+
           true
         end
 
@@ -69,11 +84,19 @@ module Api
         end
 
         def veteran
-          @veteran ||= VeteranFinder.find_best_match veteran_ssn
+          @veteran ||= VeteranFinder.find_best_match veteran_identifier
         end
 
         def veteran_ssn
-          @veteran_ssn ||= request.headers["X-VA-SSN"].to_s.strip
+          @veteran_ssn ||= request.headers["X-VA-SSN"].presence&.strip
+        end
+
+        def veteran_file_number
+          @veteran_file_number ||= request.headers["X-VA-File-Number"].presence&.strip
+        end
+
+        def veteran_identifier
+          veteran_file_number || veteran_ssn
         end
 
         def veteran_ssn_is_formatted_correctly?
@@ -94,6 +117,14 @@ module Api
             status: 404,
             code: :veteran_not_found,
             title: "Veteran Not Found"
+          )
+        end
+
+        def render_missing_headers
+          render_errors(
+            status: 422,
+            code: :missing_identifying_headers,
+            title: "Veteran file number or SSN header is required"
           )
         end
 

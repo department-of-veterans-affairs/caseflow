@@ -1,65 +1,58 @@
 # frozen_string_literal: true
 
 describe IntakeStartValidator, :postgres do
+  let(:user) { create(:user, station_id: "283") }
+  let(:veteran) { create(:veteran) }
+  # IntakeStartValidator expects an uncommitted intake (hence new)
+  let(:intake) { HigherLevelReviewIntake.new(veteran_file_number: veteran.file_number, user: user) }
+
   context "#validate" do
-    let(:user) { create(:user, station_id: "283") }
+    let(:validator) { described_class.new(intake: intake) }
+    before { allow_any_instance_of(Fakes::BGSService).to receive(:station_conflict?) { station_conflict } }
 
-    let(:veteran) { create(:veteran) }
+    subject { validator.validate }
 
-    let(:review) { HigherLevelReview.new }
+    context "when BGS does not show station conflict and allows modification" do
+      let(:station_conflict) { false }
 
-    let(:intake) do
-      # IntakeStartValidator expects an uncommitted intake (hence new)
-      HigherLevelReviewIntake.new(veteran_file_number: veteran.file_number, detail: review, user: user)
+      it { is_expected.to be_truthy }
     end
 
-    let(:validator) do
-      described_class.new(intake: intake)
-    end
+    context "when BGS shows a station conflict" do
+      let(:station_conflict) { true }
 
-    let(:validate_error_code) do
-      validator.validate
-      intake.error_code
-    end
+      it "sets error_code \"veteran_not_modifiable\" when BGS shows a station conflict" do
+        subject
 
-    it "sets no error_code when BGS allows modification" do
-      allow_any_instance_of(BGSService).to receive(:station_conflict?) { false }
-      expect(validate_error_code).to be nil
-    end
-
-    it "sets error_code \"veteran_not_modifiable\" when BGS shows a station conflict" do
-      allow_any_instance_of(BGSService).to receive(:station_conflict?) { true }
-      expect(validate_error_code).to eq "veteran_not_modifiable"
-    end
-
-    context "intaking an Appeal with a same-station conflict" do
-      before do
-        allow_any_instance_of(BGSService).to receive(:station_conflict?) { true }
+        expect(intake.error_code).to eq "veteran_not_modifiable"
       end
 
-      let(:intake) do
-        AppealIntake.new(veteran_file_number: veteran.file_number, detail: review, user: user)
-      end
-      subject { validate_error_code }
+      context "for an Appeal" do
+        let(:intake) { AppealIntake.new(veteran_file_number: veteran.file_number, user: user) }
 
-      context "intake user is on the BVA Intake team" do
-        it "sets a veteran_not_modifiable error code" do
-          BvaIntake.singleton.add_user(user)
-          is_expected.to eq "veteran_not_modifiable"
-        end
-      end
+        context "intake user is on the BVA Intake team" do
+          before { BvaIntake.singleton.add_user(user) }
 
-      context "intake user is at Station 101" do
-        let(:user) { create(:user, station_id: User::BOARD_STATION_ID) }
+          it "sets a veteran_not_modifiable error code" do
+            subject
 
-        it "sets a veteran_not_modifiable error code" do
-          is_expected.to eq "veteran_not_modifiable"
+            expect(intake.error_code).to eq "veteran_not_modifiable"
+          end
+
+          context "user is also at station 101" do
+            let(:user) { create(:user, station_id: User::BOARD_STATION_ID) }
+
+            it { is_expected.to be_truthy }
+          end
         end
 
-        context "intake user at Station 101 is also on the BVA Intake team" do
-          it "sets no error_code" do
-            BvaIntake.singleton.add_user(user)
-            is_expected.to be nil
+        context "intake user is only at Station 101 but not a BvaIntake user" do
+          let(:user) { create(:user, station_id: User::BOARD_STATION_ID) }
+
+          it "sets a veteran_not_modifiable error code" do
+            subject
+
+            expect(intake.error_code).to eq "veteran_not_modifiable"
           end
         end
       end
@@ -68,9 +61,7 @@ describe IntakeStartValidator, :postgres do
     context "user is api_user" do
       let(:user) { User.api_user }
 
-      it "sets no error_code when user is User.api_user" do
-        expect(validate_error_code).to be nil
-      end
+      it { is_expected.to be_truthy }
     end
   end
 end

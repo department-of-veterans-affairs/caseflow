@@ -141,11 +141,18 @@ RSpec.feature "Bulk task assignment", :postgres do
   context "when there are more tasks than will fit on a single page for any org" do
     let(:org) { create(:organization) }
     let(:task_count) { TaskPager::TASKS_PER_PAGE + 2 }
-    let(:regional_offices) { RegionalOffice::CITIES.keys.last(task_count) }
+    let(:regional_offices) do
+      RegionalOffice
+        .ros_with_hearings
+        .keys
+        .reject { |ro_key| ro_key == HearingDay::REQUEST_TYPES[:virtual] }
+        .map { |ro_key| RegionalOffice.find!(ro_key) }
+        .last(task_count)
+    end
 
     before do
       regional_offices.each do |ro|
-        appeal = create(:appeal, :hearing_docket, closest_regional_office: ro)
+        appeal = create(:appeal, :hearing_docket, closest_regional_office: ro.key)
         create(:no_show_hearing_task, appeal: appeal, assigned_to: org)
       end
     end
@@ -164,7 +171,7 @@ RSpec.feature "Bulk task assignment", :postgres do
       regional_office_options = options.last(task_count).map(&:text)
 
       # Sort the regional offices we expect to see by city name.
-      sorted_regional_offices = regional_offices.map { |ro| RegionalOffice::CITIES[ro][:city] }.sort
+      sorted_regional_offices = regional_offices.map(&:city).sort
       expect(regional_office_options).to eq(sorted_regional_offices)
     end
   end

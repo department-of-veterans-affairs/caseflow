@@ -7,11 +7,12 @@
 class TimedHoldTask < Task
   include TimeableTask
 
-  before_create :verify_parent_task_presence
+  validates :parent, presence: true, on: :create
+  validates :days_on_hold, presence: true, inclusion: { in: 1..120 }, on: :create
+
   after_create :cancel_active_siblings
 
   attr_accessor :days_on_hold
-  validates :days_on_hold, presence: true, inclusion: { in: 1..120 }, on: :create
 
   def self.create_from_parent(parent_task, days_on_hold:, assigned_by: nil, instructions: nil)
     multi_transaction do
@@ -72,10 +73,6 @@ class TimedHoldTask < Task
   end
 
   private
-
-  def verify_parent_task_presence
-    fail(Caseflow::Error::InvalidParentTask, message: "TimedHoldTasks must have parent tasks") unless parent
-  end
 
   # We cancel the siblings after we have created the new task so that the parent task stays on hold.
   def cancel_active_siblings

@@ -1,28 +1,30 @@
 # frozen_string_literal: true
 
+##
 # GenerateHearingDaysSchedule is used to generate the dates available for RO
-# video hearings in a specified date range after filtering out weekends,
-# holidays, and board non-availability dates
-#
-
+# video hearings and CO hearings in a specified date range after filtering out weekends,
+# holidays, and board non-availability dates. Full details of the algorithm can be
+# found `HearingSchedule.md` in Appeals-team repo (link: https://github.com/department-of-veterans-affairs/appeals-team/
+# blob/master/Project%20Folders/Caseflow%20Projects/Hearings/Hearing%20Schedule/Tech%20Specs/HearingSchedule.md).
+# WIKI : https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Hearings#build-hearing-schedule
+##
 class HearingSchedule::GenerateHearingDaysSchedule
-  include HearingSchedule::RoAllocation
-  include HearingSchedule::RoDistribution
-
   class NoDaysAvailableForRO < StandardError; end
 
   attr_reader :available_days, :ros
 
-  MAX_NUMBER_OF_DAYS_PER_DATE = 12
-  BVA_VIDEO_ROOMS = [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].freeze
-
-  CO_DAYS_OF_WEEK = [1, 2, 3, 4].freeze
+  CO_DAYS_OF_WEEK = [3].freeze # only create 1 Central docket(Wednesday) per week
+  CO_FALLBACK_DAYS_OF_WEEK = [1, 2, 4].freeze # if wednesday is a holiday, pick a another non-holiday starting monday
 
   def initialize(schedule_period)
-    @amortized = 0
+    @schedule_period = schedule_period
+
+    @availability_coocurrence = {}
     @co_non_availability_days = []
     @ro_non_available_days = {}
-    @schedule_period = schedule_period
+    @ros = {}
+    @request_type_allocations = :allocated_days
+
     extract_non_available_days
 
     @holidays = Holidays.between(schedule_period.start_date, schedule_period.end_date, :federal_reserve)
@@ -31,6 +33,170 @@ class HearingSchedule::GenerateHearingDaysSchedule
     assign_and_filter_ro_days(schedule_period)
   end
 
+  # {"RO44"=>
+  #   {:state=>"CA",
+  #   :city=>"Los Angeles",
+  #   :hold_hearings=>true,
+  #   :timezone=>"America/Los_Angeles",
+  #   :facility_locator_id=>"vba_344",
+  #   :label=>"Los Angeles regional office",
+  #   :alternate_locations=>nil,
+  #   :allocated_days=>0.0,
+  #   :allocated_days_without_room=>53.0,
+  #   :available_days=>["Thu, 01 Apr 2021", "Fri, 02 Apr 2021"],
+  #   :allocated_dates=>{[4, 2021]=>{Thu, 01 Apr 2021=>[{:room_num=>nil}]}, [5, 2021]=>{}, [6, 2021]=>{}}}}
+  def allocation_results
+    # Return the list of ROs containing the hearing days per date
+    @ros
+  end
+
+  def allocate_hearing_days_to_ros(request_type_allocations = :allocated_days)
+    @request_type_allocations = request_type_allocations
+
+    # Add up all the hearing days we need to distribute for the request type
+    days_to_allocate = @ros.values.pluck(@request_type_allocations).sum.to_i
+
+    # Create a lookup table of available days to track the number of allocations per date
+    available_days = @available_days.product([0]).to_h
+
+    # Apply the initial sort to the RO list
+    ro_list = sort_ro_list(@ros.values)
+
+    # Distribute all of the hearing days to each RO in the list
+    allocate_hearing_days(days_to_allocate, ro_list, available_days)
+  end
+
+  #
+  # Start CO algorithm
+  #
+  def generate_co_hearing_days_schedule
+    co_schedule = []
+    co_schedule_args = {
+      request_type: HearingDay::REQUEST_TYPES[:central],
+      bva_poc: "CAROL COLEMAN-DEW"
+    }
+
+    (@schedule_period.start_date..@schedule_period.end_date).each do |scheduled_for|
+      # if CO_DAYS_OF_WEEK falls on an invalid day, pick a day of the week that is valid
+      if CO_DAYS_OF_WEEK.include?(scheduled_for.cwday) && weekend_or_holiday_or_not_available?(scheduled_for)
+        fallback_date_for_co = get_fallback_date_for_co(
+          scheduled_for, @schedule_period.start_date, @schedule_period.end_date
+        )
+        if fallback_date_for_co
+          co_schedule.push(**co_schedule_args, scheduled_for: fallback_date_for_co)
+        end
+      else
+        next unless valid_day_to_schedule_co(scheduled_for)
+
+        co_schedule.push(**co_schedule_args, scheduled_for: scheduled_for)
+      end
+    end
+    co_schedule
+  end
+
+  private
+
+  #
+  # Video/Virtual docket day helper functions
+  #
+  def allocate_hearing_days(days_to_allocate, ro_list, available_days)
+    days_to_allocate.times do |index|
+      # Find the next RO and hearing day
+      available_ro_and_day = get_ro_for_hearing_day(available_days, ro_list, index)
+
+      # Extract the hearing day and RO
+      hearing_day = available_ro_and_day.first
+      ro = available_ro_and_day.last
+
+      # Add the hearing day to this RO
+      docket_type = (@request_type_allocations == :allocated_days) ? :video : :virtual
+      @ros[ro[:ro_key]][:allocated_dates][[hearing_day.month, hearing_day.year]][hearing_day]
+        .push(docket_type: docket_type)
+
+      # Decrement the requested days for this RO
+      ro[@request_type_allocations] -= 1
+
+      # Increase the lookup table value for this date
+      available_days[hearing_day] += 1
+
+      # Move the selected RO to last and remove if it has no more requests
+      ro_list = sort_ro_list(ro_list, ro)
+    end
+  end
+
+  # :reek:FeatureEnvy
+  def sort_ro_list(ro_list, ro_info = {})
+    # Remove any ROs that don't have any allocation requested
+    ros_with_request = ro_list.reject { |ro| ro[@request_type_allocations].to_i == 0 }
+
+    # If we are shuffling the list, move the first element to the last
+    if ro_info.any? && ros_with_request.pluck(:ro_key).include?(ro_info[:ro_key])
+      ros_with_request.push(ros_with_request.delete_at(ros_with_request.index(ro_info)))
+    else
+      # Sort the list so the RO with the fewest requests is first
+      ros_with_request.sort_by { |ro| ro[@request_type_allocations] }
+    end
+  end
+
+  def get_ro_for_hearing_day(available_days, ro_list, index)
+    hearing_day_index = index
+
+    # If the index is out of bounds circle the array back to index 0 to get the next index
+    if hearing_day_index >= @available_days.count
+      hearing_day_index -= ((hearing_day_index / available_days.count) * available_days.count)
+    end
+
+    # Set the hearing day based on the index
+    hearing_day = available_days.keys[hearing_day_index]
+
+    # Check if there is an available Regional office for this day
+    ro = get_next_available_ro(ro_list, hearing_day)
+
+    # Move to the next hearing day of no ROs are available
+    if ro.nil?
+      get_ro_for_hearing_day(available_days, ro_list, index + 1)
+    else
+      [hearing_day, ro]
+    end
+  end
+
+  def get_next_available_ro(ro_list, hearing_day)
+    # Select only ROs that are available for this day
+    ros_for_hearing_day = ro_list.select { |ro| ro[:available_days].include?(hearing_day) }
+
+    # Reject any ROs that have greater than 1 day difference between days scheduled per daye
+    least_scheduled_ros = ros_for_hearing_day.reject { |ro| check_even_distribution(ro).count > 1 }
+
+    # If there are no ROs that have 1 day difference, use RO with the minimum days scheduled
+    if least_scheduled_ros.count == 0
+      ros_for_hearing_day.min_by { |ro| allocated_for_hearing_day?(ro, hearing_day) }
+    else
+      least_scheduled_ros.min_by { |ro| allocated_for_hearing_day?(ro, hearing_day) }
+    end
+  end
+
+  def get_all_days_for_ro(ro_info)
+    ro_info[:allocated_dates].values.inject(&:merge).values
+  end
+
+  def check_even_distribution(ro_info)
+    get_all_days_for_ro(ro_info).map(&:count).uniq
+  end
+
+  def check_total_allocations(ro_info)
+    get_all_days_for_ro(ro_info).map(&:count).sum
+  end
+
+  def allocated_for_hearing_day?(ro_info, hearing_day)
+    allocations = ro_info[:allocated_dates].values.inject(&:merge)[hearing_day]
+    allocations.count
+  end
+
+  #
+  # Initialization functions
+  #
+
+  # Extract non-available days for RO and CO from CoNonAvailability and RoNonAvailability objects
   def extract_non_available_days
     @schedule_period.non_availabilities.each do |non_availability|
       obj_id = non_availability.object_identifier
@@ -44,12 +210,28 @@ class HearingSchedule::GenerateHearingDaysSchedule
     end
   end
 
+  # Sets @ros which is later in the algo; @ros is a hash with ro id (e.g "RO01") as key
+  # Example:
+  # {
+  #  "RO49"=>
+  #  {
+  #    :state=>"TX", :timezone=>"America/Chicago", :city=>"Waco", :hold_hearings=>true, :label=>"Waco regional office",
+  #    :facility_locator_id=>"vba_349", :alternate_locations=>["vba_349i"],
+  #    :allocated_days=>57.0,
+  #    :available_days=> [Tue, 05 Jan 2021, Wed, 06 Jan 2021...],
+  #  },
+  #  "RO03"=> ...
+  # }
+  #
   def assign_and_filter_ro_days(schedule_period)
-    @ros = assign_ro_hearing_day_allocations(RegionalOffice.ros_with_hearings, schedule_period.allocations)
-    filter_non_available_ro_days
-    @ros = filter_travel_board_hearing_days(schedule_period.start_date, schedule_period.end_date)
+    assign_ro_hearing_day_allocations(RegionalOffice.ros_with_hearings, schedule_period.allocations)
+    filter_non_available_ro_days # modifies @ros in-place
+    filter_travel_board_hearing_days(schedule_period.start_date, schedule_period.end_date)
+    group_availability_coocurrence
+    group_monthly_available_dates
   end
 
+  # Total available days; filtering weekends, holidays and board non-available days
   def filter_non_availability_days(start_date, end_date)
     business_days = []
     current_day = start_date
@@ -63,257 +245,82 @@ class HearingSchedule::GenerateHearingDaysSchedule
     business_days
   end
 
-  # Distributes the allocated days through out the scheduled period months based
-  # on the weights (weights are calcuated based on the number of days in that period
-  # for the month).
-  #
-  # Decimal values are currenly converted to a full day for allocated days. 118.5 -> 119
-  #
-  # Schedule period of (2018-Apr-01, 2018-Sep-30), allocated_days of (118.0) returns ->
-  #   {[4, 2018]=>20, [5, 2018]=>19, [6, 2018]=>20, [7, 2018]=>20, [8, 2018]=>19, [9, 2018]=>20}
-  #
-  def monthly_distributed_days(allocated_days)
-    monthly_percentages = self.class.montly_percentage_for_period(@schedule_period.start_date,
-                                                                  @schedule_period.end_date)
-    self.class.weight_by_percentages(monthly_percentages).map do |month, weight|
-      [month, distribute(weight, allocated_days)]
-    end.to_h
-  end
-
-  def allocate_hearing_days_to_ros
-    @ros = sort_ros_by_rooms_and_allocated_days
-    do_allocate_hearing_days
-  end
-
-  def sort_ros_by_rooms_and_allocated_days
-    @ros.sort_by do |_k, v|
-      v[:allocated_days].to_f / v[:num_of_rooms] / v[:available_days].count
-    end.reverse.to_h
-  end
-
-  def generate_co_hearing_days_schedule
-    co_schedule = []
-    (@schedule_period.start_date..@schedule_period.end_date).each do |scheduled_for|
-      next unless valid_day_to_schedule_co(scheduled_for)
-
-      co_schedule.push(
-        scheduled_for: scheduled_for,
-        request_type: HearingDay::REQUEST_TYPES[:central],
-        room: "2",
-        bva_poc: "CAROL COLEMAN-DEW"
-      )
-    end
-    co_schedule
-  end
-
-  private
-
-  def do_allocate_hearing_days
-    @date_allocated = {}
-    @amortized = 0
-
-    @availability_coocurrence = @ros.inject({}) do |h, (_k, v)|
-      v[:available_days].each do |date|
-        h[date] ||= 0
-        h[date] += 1
+  def group_availability_coocurrence
+    # counts number of ROs available on each day and put them in hash
+    # Example:
+    #  {
+    #    Tue, 05 Jan 2021=>45,
+    #    Wed, 06 Jan 2021=>47,
+    #    ...
+    #  }
+    @availability_coocurrence = @ros.inject({}) do |availability, (_ro_key, ro_details)|
+      ro_details[:available_days].each do |date|
+        availability[date] ||= 0
+        availability[date] += 1
       end
-      h
-    end
-
-    ros = @ros.each_key do |ro_key|
-      allocate_all_ro_monthly_hearing_days(ro_key)
-    end
-
-    ros
-  end
-
-  def allocate_all_ro_monthly_hearing_days(ro_key)
-    grouped_monthly_avail_dates = group_dates_by_month(@ros[ro_key][:available_days])
-    @ros[ro_key][:allocated_dates] = grouped_monthly_avail_dates.map do |k, dates|
-      [k, dates.sort_by { |date| @availability_coocurrence[date] }.reduce({}) do |acc, date|
-        acc[date] = []
-        acc
-      end]
-    end.to_h
-    assign_hearing_days(ro_key)
-    add_allocated_days_and_format(ro_key)
-  end
-
-  def assign_hearing_days(ro_key)
-    i = 0
-    date_index = 0
-
-    monthly_allocations = allocations_by_month(ro_key)
-
-    # Keep allocating the days until all monthly allocations are 0
-    while i < 31 && monthly_allocations.values.inject(:+) != 0
-      i += 1
-      allocate_hearing_days_to_individual_ro(
-        ro_key,
-        monthly_allocations,
-        date_index
-      )
-      date_index += 1
+      availability
     end
   end
 
-  def allocated_days_for_ro(ro_key)
-    @ros[ro_key][:allocated_days].ceil
-  end
+  def group_monthly_available_dates
+    @ros.each_key do |ro_key|
+      # Ex, {[1, 2021]=>[Tue, 05 Jan 2021, Wed, 06 Jan 2021...], [2, 2021]=> [Mon, 01 Feb 2021, Tue, 02 Feb 2021,..]}
+      monthly_available_dates = group_dates_by_month(@ros[ro_key][:available_days])
 
-  def allocations_by_month(ro_key)
-    # raise error if there are not enough available days
-    verify_total_available_days(ro_key)
-
-    self.class.validate_and_evenly_distribute_monthly_allocations(
-      @ros[ro_key][:allocated_dates],
-      monthly_distributed_days(allocated_days_for_ro(ro_key)),
-      @ros[ro_key][:num_of_rooms]
-    )
-  end
-
-  def get_max_hearing_days_assignments(ro_key)
-    @ros[ro_key][:available_days].count * @ros[ro_key][:num_of_rooms]
-  end
-
-  def verify_total_available_days(ro_key)
-    max_allocation = get_max_hearing_days_assignments(ro_key)
-
-    unless allocated_days_for_ro(ro_key).to_i <= max_allocation
-      fail HearingSchedule::Errors::NotEnoughAvailableDays.new(
-        "#{ro_key} can only hold #{max_allocation} hearing days.",
-        ro_key: ro_key, max_allocation: max_allocation
-      )
+      # For available days in each month, sort the available days in ascending order of least co-occurrences
+      # and iterate through each date to set an empty array.
+      # Example:
+      # {
+      #   "RO01": {[1, 2021]=> {Tue, 05 Jan 2021=>[], Fri, 29 Jan 2021=>[],...}},
+      #    ...
+      # }
+      @ros[ro_key][:allocated_dates] = monthly_available_dates.map do |month, available_dates|
+        [month, dates_sorted_and_formatted(available_dates)]
+      end.to_h
     end
   end
 
-  def add_allocated_days_and_format(ro_key)
-    @ros[ro_key][:allocated_dates] = @ros[ro_key][:allocated_dates].reduce({}) do |acc, (k, v)|
-      acc[k] = v.to_a.sort.to_h
-      acc
+  def dates_sorted_and_formatted(dates)
+    sorted_dates = dates.sort_by { |date| @availability_coocurrence[date] }
+    sorted_dates.reduce({}) do |formatted_dates, date|
+      formatted_dates[date] = []
+      formatted_dates
     end
   end
 
   # groups dates of each month from an array of dates
   # {[1, 2018] => [Tue, 02 Jan 2018, Thu, 04 Jan 2018], [2, 2018] => [Thu, 01 Feb 2018] }
   def group_dates_by_month(dates)
-    dates.group_by { |d| [d.month, d.year] }
+    dates.group_by { |date| [date.month, date.year] }
   end
 
-  # allocated hearing days for each RO
-  #
-  # @ros[ro_key][:allocated_dates]: is a hash with months as keys and date has with rooms array value
-  # as values.
-  #
-  # rooms array is initally empty.
-  #
-  # Sample @ros[ro_key][:allocated_dates] -> {[1, 2018]=> {Thu, 04 Jan 2018=>[], Tue, 02 Jan 2018=>[]}}
-  #
-  def allocate_hearing_days_to_individual_ro(ro_key, monthly_allocations, date_index)
-    grouped_shuffled_monthly_dates = @ros[ro_key][:allocated_dates]
-
-    # looping through all the monthly allocations
-    # and assigning rooms to the datess
-    monthly_allocations.each_key do |month|
-      next if allocation_not_possible?(grouped_shuffled_monthly_dates, monthly_allocations, month)
-
-      allocated_days = monthly_allocations[month]
-      monthly_date_keys = (grouped_shuffled_monthly_dates[month] || {}).keys
-      num_of_rooms = @ros[ro_key][:num_of_rooms]
-
-      if allocated_days > 0 &&
-         grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]]
-
-        @date_allocated[monthly_date_keys[date_index]] ||= 0
-        rooms_to_allocate = get_num_of_rooms_to_allocate(monthly_date_keys[date_index],
-                                                         num_of_rooms, allocated_days,
-                                                         grouped_shuffled_monthly_dates[month])
-        grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]] =
-          get_room_numbers(monthly_date_keys[date_index], rooms_to_allocate)
-        allocated_days -= rooms_to_allocate
-        remove_available_day_from_ros(monthly_date_keys[date_index])
-      end
-
-      monthly_allocations[month] = allocated_days
-    end
-    @ros[ro_key][:allocated_dates] = grouped_shuffled_monthly_dates
-  end
-
-  def remove_available_day_from_ros(date)
-    if @date_allocated[date] >= MAX_NUMBER_OF_DAYS_PER_DATE
-      @ros.each do |k, v|
-        @ros[k][:available_days] -= [date] if !v[:assigned]
-      end
-    end
-  end
-
-  def allocation_not_possible?(grouped_shuffled_monthly_dates, monthly_allocations, month)
-    grouped_shuffled_monthly_dates[month].nil? || monthly_allocations[month] == 0
-  end
-
-  def any_other_days_a_better_fit?(monthly_grouped_days, num_of_rooms)
-    monthly_grouped_days.any? do |_k, v|
-      (v.length + num_of_rooms) <= MAX_NUMBER_OF_DAYS_PER_DATE
-    end
-  end
-
-  def get_num_of_rooms_to_allocate(date, num_of_rooms, allocated_days, monthly_grouped_days)
-    num_left_to_max = MAX_NUMBER_OF_DAYS_PER_DATE - @date_allocated[date]
-
-    if num_of_rooms > num_left_to_max
-      if any_other_days_a_better_fit?(monthly_grouped_days, num_of_rooms)
-        return 0
-      end
-
-      num_left_to_max
-    else
-      (num_of_rooms <= allocated_days) ? num_of_rooms : allocated_days
-    end
-  end
-
-  def get_room_numbers(date, num_of_rooms)
-    Array.new(num_of_rooms) do |_room_num|
-      @date_allocated[date] ||= 0
-      value = { room_num: BVA_VIDEO_ROOMS[@date_allocated[date]] }
-      @date_allocated[date] += 1
-      value
-    end
-  end
-
-  def distribute(percentage, total)
-    real = (percentage * total) + @amortized
-    natural = real.round
-    @amortized = real - natural
-
-    natural
-  end
-
+  # Initialize allocated_days, available_days for each RO
   def assign_ro_hearing_day_allocations(ro_cities, ro_allocations)
-    ro_allocations.reduce({}) do |acc, allocation|
-      acc[allocation.regional_office] = ro_cities[allocation.regional_office].merge(
+    @ros = ro_allocations.reduce({}) do |acc, allocation|
+      ro_key = (allocation.regional_office == "NVHQ") ? HearingDay::REQUEST_TYPES[:virtual] : allocation.regional_office
+
+      acc[allocation.regional_office] = ro_cities[ro_key].merge(
+        ro_key: allocation.regional_office,
         allocated_days: allocation.allocated_days,
+        allocated_days_without_room: allocation.allocated_days_without_room,
         available_days: @available_days,
-        num_of_rooms: get_num_of_rooms(allocation.regional_office)
+        number_of_slots: allocation.number_of_slots,
+        slot_length_minutes: allocation.slot_length_minutes,
+        first_slot_time: allocation.first_slot_time
       )
       acc
     end
   end
 
-  def get_num_of_rooms(regional_office)
-    if RegionalOffice::MULTIPLE_ROOM_ROS.include?(regional_office)
-      RegionalOffice::MULTIPLE_NUM_OF_RO_ROOMS
-    else
-      RegionalOffice::DEFAULT_NUM_OF_RO_ROOMS
-    end
-  end
-
+  # Gets a list of upcoming travel board hearings for the schedule period and if a RO
+  # has any travel days, subtract those days from its available days
   def filter_travel_board_hearing_days(start_date, end_date)
     travel_board_hearing_days = TravelBoardScheduleRepository.load_tb_days_for_range(start_date, end_date)
     tb_hearing_days = TravelBoardScheduleMapper.convert_from_vacols_format(travel_board_hearing_days)
 
     tb_hearing_days.select { |tb_hearing_day| @ros.key?(tb_hearing_day[:ro]) }
       .map do |tb_hearing_day|
-        tb_days = (tb_hearing_day[:start_date]..tb_hearing_day[:end_date]).to_a
+        tb_days = (tb_hearing_day[:start_date]..tb_hearing_day[:end_date]).to_a # travel days have start and end date
         @ros[tb_hearing_day[:ro]][:available_days] -= tb_days
       end
     @ros
@@ -331,11 +338,25 @@ class HearingSchedule::GenerateHearingDaysSchedule
     @co_non_availability_days.find { |non_availability_day| non_availability_day.date == day }.present?
   end
 
+  def weekend_or_holiday_or_not_available?(date)
+    weekend?(date) || holiday?(date) || co_not_available?(date)
+  end
+
+  # pick the first day from fallback days that is valid
+  def get_fallback_date_for_co(scheduled_for, start_date, end_date)
+    valid_cwday = CO_FALLBACK_DAYS_OF_WEEK.detect do |cwday|
+      # i.e, if cwday is 1 and since begining of week is always monday, this will evauluate to monday
+      date = scheduled_for.beginning_of_week + (cwday - 1).day
+
+      # fallback date we choose has to valid as well as within the scheduling period range
+      !weekend_or_holiday_or_not_available?(date) && date >= start_date && date <= end_date
+    end
+
+    valid_cwday ? scheduled_for.beginning_of_week + (valid_cwday - 1).day : nil
+  end
+
   def valid_day_to_schedule_co(scheduled_for)
-    CO_DAYS_OF_WEEK.include?(scheduled_for.cwday) &&
-      !weekend?(scheduled_for) &&
-      !holiday?(scheduled_for) &&
-      !co_not_available?(scheduled_for)
+    CO_DAYS_OF_WEEK.include?(scheduled_for.cwday) && !weekend_or_holiday_or_not_available?(scheduled_for)
   end
 
   # Filters out the non-available RO days from the board available days for

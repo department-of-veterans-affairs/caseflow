@@ -14,6 +14,9 @@ import { AddClaimantModal } from 'app/intake/components/AddClaimantModal';
 
 const DEBOUNCE = 250;
 
+// Specify seed for faker to ensure consistent results
+faker.seed(321);
+
 // Set up sample data & async fn for performing fuzzy search
 // Actual implementation performs fuzzy search via backend ruby gem
 const totalRecords = 500;
@@ -24,6 +27,7 @@ const data = Array.from({ length: totalRecords }, () => ({
     max: 600000000 + totalRecords,
   }),
 }));
+
 const performQuery = async (search = '') => {
   const regex = RegExp(search, 'i');
 
@@ -81,7 +85,7 @@ describe('AddClaimantModal', () => {
     expect(screen.queryByLabelText(/notes.*/i)).toBeTruthy();
   });
 
-it('should clear dropdown', async () => {
+  it('should clear dropdown', async () => {
     render(
       <AddClaimantModal
         onSearch={performQuery}

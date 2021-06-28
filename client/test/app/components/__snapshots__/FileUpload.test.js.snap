@@ -1,0 +1,75 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FileUpload display text displays formatted value when set 1`] = `
+<div>
+  <div>
+    <label
+      for="testing-file-upload"
+    >
+      <b>
+        uploadedFile.pdf
+         
+      </b>
+      <a>
+        Choose a different file
+      </a>
+    </label>
+    <div
+      data-css-gyrv08=""
+    >
+      <input
+        id="testing-file-upload"
+        type="file"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`FileUpload display text displays postUploadText when value is set 1`] = `
+<div>
+  <div>
+    <label
+      for="testing-file-upload"
+    >
+      <b>
+        uploadedFile.pdf
+         
+      </b>
+      <a>
+        Choose a different file
+      </a>
+    </label>
+    <div
+      data-css-gyrv08=""
+    >
+      <input
+        id="testing-file-upload"
+        type="file"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`FileUpload display text displays preUploadText when value is not set 1`] = `
+<div>
+  <div>
+    <label
+      for="testing-file-upload"
+    >
+      <a>
+        Select a file for upload
+      </a>
+    </label>
+    <div
+      data-css-gyrv08=""
+    >
+      <input
+        id="testing-file-upload"
+        type="file"
+      />
+    </div>
+  </div>
+</div>
+`;

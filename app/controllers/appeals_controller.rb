@@ -2,7 +2,7 @@
 
 class AppealsController < ApplicationController
   before_action :react_routed
-  before_action :set_application, only: [:document_count, :power_of_attorney]
+  before_action :set_application, only: [:document_count, :power_of_attorney, :update_power_of_attorney]
   # Only whitelist endpoints VSOs should have access to.
   skip_before_action :deny_vso_access, only: [
     :index,
@@ -58,12 +58,27 @@ class AppealsController < ApplicationController
   end
 
   def power_of_attorney
-    render json: {
-      representative_type: appeal.representative_type,
-      representative_name: appeal.representative_name,
-      representative_address: appeal.representative_address,
-      representative_email_address: appeal.representative_email_address
-    }
+    render json: power_of_attorney_data
+  end
+
+  def update_power_of_attorney
+    clear_poa_not_found_cache
+    if cooldown_period_remaining > 0
+      render json: {
+        alert_type: "info",
+        message: "Information is current at this time. Please try again in #{cooldown_period_remaining} minutes",
+        power_of_attorney: power_of_attorney_data
+      }
+    else
+      message, result = update_or_delete_power_of_attorney!
+      render json: {
+        alert_type: result,
+        message: message,
+        power_of_attorney: power_of_attorney_data
+      }
+    end
+  rescue StandardError => error
+    render_error(error)
   end
 
   def most_recent_hearing
@@ -83,7 +98,10 @@ class AppealsController < ApplicationController
   # the only data that is being pulled from BGS, the rest are from VACOLS for now
   def veteran
     render json: {
-      veteran: ::WorkQueue::VeteranSerializer.new(appeal).serializable_hash[:data][:attributes]
+      veteran: ::WorkQueue::VeteranSerializer.new(
+        appeal,
+        params: { relationships: params["relationships"] }
+      ).serializable_hash[:data][:attributes]
     }
   end
 
@@ -170,7 +188,7 @@ class AppealsController < ApplicationController
   def json_appeals(appeal)
     if appeal.is_a?(Appeal)
       WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
-    elsif appeal.is_a?(LegacyAppeal)
+    else
       WorkQueue::LegacyAppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
     end
   end
@@ -234,5 +252,54 @@ class AppealsController < ApplicationController
 
   def docket_number?(search)
     !search.nil? && search.match?(/\d{6}-{1}\d+$/)
+  end
+
+  def update_or_delete_power_of_attorney!
+    appeal.power_of_attorney&.try(:clear_bgs_power_of_attorney!) # clear memoization on legacy appeals
+    poa = appeal.bgs_power_of_attorney
+
+    if poa.blank?
+      ["Successfully refreshed. No power of attorney information was found at this time.", "success"]
+    elsif poa.bgs_record == :not_found
+      poa.destroy!
+      ["Successfully refreshed. No power of attorney information was found at this time.", "success"]
+    else
+      poa.save_with_updated_bgs_record!
+      ["POA Updated Successfully", "success"]
+    end
+  end
+
+  def power_of_attorney_data
+    {
+      representative_type: appeal.representative_type,
+      representative_name: appeal.representative_name,
+      representative_address: appeal.representative_address,
+      representative_email_address: appeal.representative_email_address,
+      representative_tz: appeal.representative_tz,
+      poa_last_synced_at: appeal.poa_last_synced_at
+    }
+  end
+
+  def clear_poa_not_found_cache
+    Rails.cache.delete("bgs-participant-poa-not-found-#{appeal&.veteran&.file_number}")
+    Rails.cache.delete("bgs-participant-poa-not-found-#{appeal&.claimant_participant_id}")
+  end
+
+  def cooldown_period_remaining
+    next_update_allowed_at = appeal.poa_last_synced_at + 10.minutes if appeal.poa_last_synced_at.present?
+    if next_update_allowed_at && next_update_allowed_at > Time.zone.now
+      return ((next_update_allowed_at - Time.zone.now) / 60).ceil
+    end
+
+    0
+  end
+
+  def render_error(error)
+    Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
+    Raven.capture_exception(error, extra: { appeal_type: appeal.type, appeal_id: appeal.id })
+    render json: {
+      alert_type: "error",
+      message: "Something went wrong"
+    }, status: :unprocessable_entity
   end
 end

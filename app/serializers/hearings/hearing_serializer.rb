@@ -29,6 +29,7 @@ class HearingSerializer
   attribute :appellant_last_name
   attribute :appellant_state
   attribute :appellant_zip
+  attribute :appellant_relationship, if: for_full
   attribute :available_hearing_locations
   attribute :bva_poc
   attribute :central_office_time_string
@@ -90,4 +91,6 @@ class HearingSerializer
   attribute :was_virtual, &:was_virtual?
   attribute :witness
   attribute :worksheet_issues
+  attribute :veteran_date_of_death_info, &:rescue_and_check_toggle_veteran_date_of_death_info
+  attribute :hearing_disposition_task_id, &:open_hearing_disposition_task_id
 end

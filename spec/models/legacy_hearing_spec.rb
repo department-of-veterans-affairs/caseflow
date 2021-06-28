@@ -620,4 +620,51 @@ describe LegacyHearing, :all_dbs do
       end
     end
   end
+
+  context "#rescue_and_check_toggle_veteran_date_of_death_info" do
+    let(:vacols_case) { create(:case) }
+    let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+    let!(:legacy_hearing) do
+      create(
+        :legacy_hearing,
+        appeal: legacy_appeal,
+        case_hearing: create(:case_hearing, folder_nr: legacy_appeal.vacols_id)
+      )
+    end
+
+    subject { legacy_hearing.rescue_and_check_toggle_veteran_date_of_death_info }
+
+    context "feature toggle disabled" do
+      it "returns nil" do
+        expect(subject).to eq(nil)
+      end
+    end
+
+    context "feature toggle enabled" do
+      before { FeatureToggle.enable!(:view_fnod_badge_in_hearings) }
+      after { FeatureToggle.disable!(:view_fnod_badge_in_hearings) }
+
+      it "returns non nil values" do
+        expect(subject).not_to eq(nil)
+        expect(subject.keys).to include(
+          :veteran_full_name,
+          :veteran_appellant_deceased,
+          :veteran_death_date,
+          :veteran_death_date_reported_at
+        )
+      end
+
+      context "when error is thrown" do
+        before do
+          allow_any_instance_of(BGSService).to receive(:fetch_veteran_info)
+            .and_raise(StandardError.new)
+        end
+
+        it "rescues error and returns nil" do
+          expect(Raven).to receive(:capture_exception)
+          expect(subject).to eq(nil)
+        end
+      end
+    end
+  end
 end

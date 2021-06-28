@@ -37,6 +37,16 @@ describe EvidenceSubmissionWindowTask, :postgres do
       .with([participant_id_with_no_vso]).and_return({})
   end
 
+  shared_examples "works for all remand subtypes" do
+    context "if the appeal doesn't have a vso" do
+      it "marks appeal as ready for distribution" do
+        InitialTasksFactory.new(appeal_no_vso).create_root_and_sub_tasks!
+        EvidenceSubmissionWindowTask.find_by(appeal: appeal_no_vso).update!(status: "completed")
+        expect(DistributionTask.find_by(appeal: appeal_no_vso).status).to eq("assigned")
+      end
+    end
+  end
+
   context "on complete" do
     it "creates an ihp task if the appeal has a vso" do
       InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
@@ -46,11 +56,54 @@ describe EvidenceSubmissionWindowTask, :postgres do
       expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
     end
 
-    it "marks appeal as ready for distribution if the appeal doesn't have a vso" do
-      InitialTasksFactory.new(appeal_no_vso).create_root_and_sub_tasks!
-      EvidenceSubmissionWindowTask.find_by(appeal: appeal_no_vso).update!(status: "completed")
-      expect(DistributionTask.find_by(appeal: appeal_no_vso).status).to eq("assigned")
+    context "appeal with no vso and hearing disposition is no_show" do
+      let(:docket_type) { Constants.AMA_DOCKETS.hearing }
+      let(:hearing) { create(:hearing, :no_show, :with_completed_tasks, appeal: appeal_no_vso) }
+
+      let!(:task) do
+        EvidenceSubmissionWindowTask.create!(
+          appeal: appeal_no_vso,
+          assigned_to: MailTeam.singleton,
+          parent: HearingTaskAssociation.find_by(hearing_id: hearing.id).hearing_task
+        )
+      end
+
+      subject { task.when_timer_ends }
+
+      it "closes parent HearingTask and assigns grandparent DistributionTask" do
+        subject
+        task.reload
+
+        expect(task.parent.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(task.parent.parent.status).to eq(Constants.TASK_STATUSES.assigned)
+      end
     end
+
+    include_examples "works for all remand subtypes"
+  end
+
+  context "on manual completion by user" do
+    let(:mail_user) { create(:user) }
+    let(:mail_team) { MailTeam.singleton }
+    let(:instructions) { "here are the instructions" }
+    let(:params) do
+      {
+        status: Constants.TASK_STATUSES.completed,
+        instructions: [instructions]
+      }
+    end
+    before do
+      mail_team.add_user(mail_user)
+    end
+    it "creates an ihp task if appeal has vso" do
+      InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+      expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq(0)
+      EvidenceSubmissionWindowTask.find_by(appeal: appeal).update_from_params(params, mail_user)
+      expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq(1)
+      expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
+    end
+
+    include_examples "works for all remand subtypes"
   end
 
   context "timer_delay" do

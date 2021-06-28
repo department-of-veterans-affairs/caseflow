@@ -1,6 +1,7 @@
 {
-  "held": "held",
   "cancelled": "cancelled",
+  "held": "held",
+  "no_show": "no_show",
   "postponed": "postponed",
-  "no_show": "no_show"
+  "scheduled_in_error": "scheduled_in_error"
 }

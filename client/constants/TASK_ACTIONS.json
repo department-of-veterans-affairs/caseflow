@@ -8,9 +8,19 @@
     "label": "Change hearing disposition",
     "value": "modal/change_hearing_disposition"
   },
+  "CANCEL_CONVERT_HEARING_REQUEST_TYPE_TO_VIRTUAL": {
+    "label": "Cancel convert hearing to virtual",
+    "value": "modal/cancel_task",
+    "func": "cancel_convert_hearing_request_type_data"
+  },
+  "CHANGE_HEARING_REQUEST_TYPE_TO_CENTRAL": {
+    "label": "Convert hearing to Central",
+    "value": "modal/change_hearing_request_type_to_central",
+    "func": "change_hearing_request_type_data"
+  },
   "CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO": {
     "label": "Convert hearing to video",
-    "value": "<placeholder>modal/change_hearing_request_type</placeholder>",
+    "value": "modal/change_hearing_request_type_to_video",
     "func": "change_hearing_request_type_data"
   },
   "CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL": {
@@ -82,15 +92,23 @@
   },
   "DOCKET_SWITCH_SEND_TO_JUDGE": {
     "label": "Send to Judge",
-    "value": "docket_switch/recommend"
+    "value": "docket_switch/recommend",
+    "func": "docket_switch_send_to_judge_data"
   },
   "DOCKET_SWITCH_JUDGE_RULING": {
-    "label": "Send to Judge",
-    "value": "docket_switch/ruling"
+    "label": "Rule on Docket Switch",
+    "value": "docket_switch/ruling",
+    "func": "docket_switch_ruling_data"
   },
-  "DOCKET_SWITCH_CHECKOUT": {
-    "label": "Send to Judge",
-    "value": "docket_switch/checkout/review"
+  "DOCKET_SWITCH_DENIED": {
+    "label": "Deny Docket Switch",
+    "value": "docket_switch/checkout/deny",
+    "func": "docket_switch_denied_data"
+  },
+  "DOCKET_SWITCH_GRANTED": {
+    "label": "Grant Docket Switch",
+    "value": "docket_switch/checkout/grant",
+    "func": "docket_switch_granted_data"
   },
   "CANCEL_FOREIGN_VETERANS_CASE_TASK": {
     "label": "Cancel hearing request",
@@ -191,6 +209,18 @@
     "label": "End hold early",
     "value": "modal/end_hold"
   },
+  "CAVC_EXTENSION_REQUEST": {
+    "label": "Extension request",
+    "value": "modal/cavc_extension_request"
+  },
+  "CAVC_REMAND_RECEIVED_MDR": {
+    "label": "Remand ready for 90-day letter",
+    "value": "modal/cavc_remand_received"
+  },
+  "CAVC_REMAND_RECEIVED_VLJ": {
+    "label": "Ready for VLJ",
+    "value": "modal/cavc_remand_received"
+  },
   "SPECIAL_CASE_MOVEMENT": {
     "label": "Case Movement: Advance to judge",
     "value": "modal/distribute_to_judge",
@@ -277,10 +307,35 @@
     "value": "modal/send_to_schedule_veterans_list",
     "func": "send_to_schedule_veterans_list"
   },
-  "SEND_TO_TRANSLATION": {
-    "label": "Assign to Translation team",
+  "SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION": {
+    "label": "Assign Translation Task to Translation team",
     "value": "modal/assign_to_translation_team",
-    "func": "assign_to_translation_team_data"
+    "func": "assign_to_translation_team_blocking_distribution_data"
+  },
+  "SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION": {
+    "label": "Assign Hearing Transcription Task to Transcription team",
+    "value": "modal/assign_to_transcription_team",
+    "func": "assign_to_transciption_team_blocking_distribution_data"
+  },
+  "SEND_TO_PRIVACY_TEAM_BLOCKING_DISTRIBUTION": {
+    "label": "Assign Privacy Act Task to Privacy team",
+    "value": "modal/assign_to_privacy_team",
+    "func": "assign_to_privacy_team_blocking_distribution_data"
+  },
+  "SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION": {
+    "label": "Assign IHP task to VLJ Support team",
+    "value": "modal/assign_ihp_to_colocated_team",
+    "func": "assign_ihp_to_colocated_blocking_distribution_data"
+  },
+  "SEND_TO_HEARINGS_BLOCKING_DISTRIBUTION": {
+    "label": "Assign Schedule Hearing task to Hearings team",
+    "value": "modal/assign_schedule_hearing_to_hearings_team",
+    "func": "assign_schedule_hearing_to_hearings_blocking_distribution_data"
+  },
+  "CLARIFY_POA_BLOCKING_CAVC": {
+    "label": "Assign POA Clarification task to CAVC team",
+    "value": "modal/assign_poa_to_cavc_team",
+    "func": "assign_poa_to_cavc_blocking_cavc_data"
   },
   "SUBMIT_OMO_REQUEST_FOR_REVIEW": {
     "label": "Medical Request Ready for Review",
@@ -295,5 +350,9 @@
     "label": "Postpone hearing",
     "value": "modal/postpone_hearing",
     "func": "add_schedule_hearing_task_admin_actions_data"
+  },
+  "REMOVE_HEARING_SCHEDULED_IN_ERROR": {
+    "label": "Remove hearing to correct a scheduling error",
+    "value": "modal/hearing_scheduled_in_error"
   }
 }

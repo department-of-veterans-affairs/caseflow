@@ -29,14 +29,16 @@ Please explain the changes you made here.
 ### Database Changes
 *Only for Schema Changes*
 
-* [ ] Timestamps (created_at, updated_at) for new tables
-* [ ] Column comments updated
+* [ ] Add typical timestamps (`created_at`, `updated_at`) for new tables
+* [ ] Update column comments
 * [ ] Have your migration classes inherit from `Caseflow::Migration`, especially when adding indexes (use `add_safe_index`)
 * [ ] Verify that `migrate:rollback` works as desired ([`change` supported functions](https://edgeguides.rubyonrails.org/active_record_migrations.html#using-the-change-method))
-* [ ] Query profiling performed (eyeball Rails log, check bullet and fasterer output)
-* [ ] Appropriate indexes added (especially for foreign keys, polymorphic columns, unique constraints, and Rails scopes)
-* [ ] DB schema docs updated with `make docs` (after running `make migrate`)
-* [ ] #appeals-schema notified with summary and link to this PR
+* [ ] Perform query profiling (eyeball Rails log, check bullet and fasterer output)
+* [ ] Add appropriate indexes (especially for foreign keys, polymorphic columns, unique constraints, and Rails scopes)
+* [ ] Run `make check-fks`; add any missing foreign keys or add to `config/initializers/immigrant.rb`
+* [ ] Run `make docs` (after running `make migrate`) to update DB schema docs
+* [ ] Post this PR in #appeals-schema with a summary
+* [ ] Document any non-obvious semantics or logic useful for interpreting database data at [Caseflow Data Model and Dictionary](https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Data-Model-and-Dictionary)
 
 ### Integrations: Adding endpoints for external APIs
 * [ ] Check that Caseflow's external API code for the endpoint matches the code in the relevant integration repo

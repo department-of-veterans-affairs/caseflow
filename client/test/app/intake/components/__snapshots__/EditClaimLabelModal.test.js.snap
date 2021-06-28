@@ -1,0 +1,194 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditClaimLabelModal renders correctly 1`] = `
+<div>
+  <section
+    aria-describedby="modal_id-desc"
+    aria-labelledby="modal_id-title"
+    aria-modal="true"
+    class="cf-modal active "
+    id="modal_id"
+    role="dialog"
+  >
+    <div
+      class="cf-modal-body"
+      id="edit-claim-label-modal"
+    >
+      <button
+        class="cf-modal-close"
+        id="Edit-Claim-Label-button-id-close"
+        type="button"
+      >
+        <span
+          class="usa-sr-only"
+        >
+          Close
+        </span>
+        <svg
+          class="cf-icon-close"
+          height="55"
+          viewBox="0 0 55 55"
+          width="55"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <title>
+            close
+          </title>
+          <path
+            d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
+          />
+        </svg>
+      </button>
+      <div
+        style="display: flex;"
+      >
+        <div
+          data-css-1gs0ko2=""
+        >
+          <h1
+            id="modal_id-title"
+          >
+            Edit Claim Label
+          </h1>
+          <div
+            data-css-o98ubo=""
+          >
+            <div>
+              <strong>
+                You are editing a 040 HLR DTA Error - Non-Rating claim
+              </strong>
+            </div>
+            <p>
+              Please note: you will only be able to select claim labels within the same EP family (e.g. 040, 030). If you need to switch to another EP family, please cancel and re-establish the claim.
+            </p>
+            <div
+              class=""
+            >
+              <div
+                class="cf-form-dropdown dropdown-select-claim-label"
+              >
+                <label
+                  class="question-label"
+                  for="select-claim-label"
+                  id="select-claim-label-label"
+                >
+                  <strong>
+                    <span>
+                      Select the correct EP claim label
+                    </span>
+                  </strong>
+                </label>
+                <div
+                  class="cf-select"
+                >
+                  <div
+                    class=" css-2b097c-container"
+                  >
+                    <div
+                      class="cf-select__control css-yk16xz-control"
+                    >
+                      <div
+                        class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                      >
+                        <div
+                          class="cf-select__single-value css-1uccc91-singleValue"
+                        >
+                          040HDENR
+                        </div>
+                        <div
+                          class="css-81nyic-Input"
+                        >
+                          <div
+                            class="cf-select__input"
+                            style="display: inline-block;"
+                          >
+                            <input
+                              aria-autocomplete="list"
+                              aria-expanded="false"
+                              aria-haspopup="true"
+                              aria-labelledby="select-claim-label-label"
+                              aria-owns="select-claim-label-listbox"
+                              autocapitalize="none"
+                              autocomplete="off"
+                              autocorrect="off"
+                              id="select-claim-label"
+                              role="combobox"
+                              spellcheck="false"
+                              style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                              tabindex="0"
+                              type="text"
+                              value=""
+                            />
+                            <div
+                              style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                      >
+                        <span
+                          class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                        />
+                        <div
+                          aria-hidden="true"
+                          class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="css-6q0nyr-Svg"
+                            focusable="false"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            width="20"
+                          >
+                            <path
+                              d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    <input
+                      name="select-claim-label"
+                      type="hidden"
+                      value="[object Object]"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="cf-modal-divider"
+      />
+      <div
+        class="cf-modal-controls"
+      >
+        <span>
+          <button
+            class="cf-modal-link cf-btn-link cf-push-left usa-button"
+            id="Edit-Claim-Label-button-id-0"
+            type="button"
+          >
+            Cancel
+          </button>
+        </span>
+        <span>
+          <button
+            class="cf-push-right usa-button-disabled usa-button"
+            disabled=""
+            id="Edit-Claim-Label-button-id-1"
+            type="button"
+          >
+            Continue
+          </button>
+        </span>
+      </div>
+    </div>
+  </section>
+</div>
+`;

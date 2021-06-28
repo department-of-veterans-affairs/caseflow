@@ -170,6 +170,7 @@ exports[`QueueTable HeaderRow Can filter when not using task pages API and filte
     role="row"
   >
     <th
+      aria-sort="descending"
       className="testClasses"
       key="0"
       role="columnheader"
@@ -185,6 +186,7 @@ exports[`QueueTable HeaderRow Can filter when not using task pages API and filte
       </span>
     </th>
     <th
+      aria-sort="descending"
       className="testClasses"
       key="1"
       role="columnheader"
@@ -200,6 +202,8 @@ exports[`QueueTable HeaderRow Can filter when not using task pages API and filte
       </span>
     </th>
     <th
+      aria-labelledby="header-type"
+      aria-sort="descending"
       className="testClasses"
       key="2"
       role="columnheader"
@@ -209,7 +213,9 @@ exports[`QueueTable HeaderRow Can filter when not using task pages API and filte
         aria-label=""
         data-css-9shxm7=""
       >
-        <span>
+        <span
+          id="header-type"
+        >
           Third
         </span>
         <TableFilter
@@ -251,6 +257,7 @@ exports[`QueueTable HeaderRow Can filter when not using task pages API and getti
     role="row"
   >
     <th
+      aria-sort="descending"
       className="testClasses"
       key="0"
       role="columnheader"
@@ -266,6 +273,7 @@ exports[`QueueTable HeaderRow Can filter when not using task pages API and getti
       </span>
     </th>
     <th
+      aria-sort="descending"
       className="testClasses"
       key="1"
       role="columnheader"
@@ -281,6 +289,8 @@ exports[`QueueTable HeaderRow Can filter when not using task pages API and getti
       </span>
     </th>
     <th
+      aria-labelledby="header-type"
+      aria-sort="descending"
       className="testClasses"
       key="2"
       role="columnheader"
@@ -290,7 +300,9 @@ exports[`QueueTable HeaderRow Can filter when not using task pages API and getti
         aria-label=""
         data-css-9shxm7=""
       >
-        <span>
+        <span
+          id="header-type"
+        >
           Third
         </span>
         <TableFilter
@@ -332,6 +344,7 @@ exports[`QueueTable HeaderRow Can filter when using task pages API and column ha
     role="row"
   >
     <th
+      aria-sort="descending"
       className="testClasses"
       key="0"
       role="columnheader"
@@ -347,6 +360,7 @@ exports[`QueueTable HeaderRow Can filter when using task pages API and column ha
       </span>
     </th>
     <th
+      aria-sort="descending"
       className="testClasses"
       key="1"
       role="columnheader"
@@ -362,6 +376,8 @@ exports[`QueueTable HeaderRow Can filter when using task pages API and column ha
       </span>
     </th>
     <th
+      aria-labelledby="header-type"
+      aria-sort="descending"
       className="testClasses"
       key="2"
       role="columnheader"
@@ -371,7 +387,9 @@ exports[`QueueTable HeaderRow Can filter when using task pages API and column ha
         aria-label=""
         data-css-9shxm7=""
       >
-        <span>
+        <span
+          id="header-type"
+        >
           Third
         </span>
         <TableFilter
@@ -415,6 +433,7 @@ exports[`QueueTable HeaderRow Can sort when not using the tasks API and getting 
     role="row"
   >
     <th
+      aria-sort="descending"
       className="testClasses"
       key="0"
       role="columnheader"
@@ -430,6 +449,7 @@ exports[`QueueTable HeaderRow Can sort when not using the tasks API and getting 
       </span>
     </th>
     <th
+      aria-sort="descending"
       className="testClasses"
       key="1"
       role="columnheader"
@@ -481,6 +501,7 @@ exports[`QueueTable HeaderRow Can sort when the backend can sort and getting col
     role="row"
   >
     <th
+      aria-sort="descending"
       className="testClasses"
       key="0"
       role="columnheader"
@@ -496,6 +517,7 @@ exports[`QueueTable HeaderRow Can sort when the backend can sort and getting col
       </span>
     </th>
     <th
+      aria-sort="descending"
       className="testClasses"
       key="1"
       role="columnheader"
@@ -547,6 +569,7 @@ exports[`QueueTable HeaderRow Matches snapshot with default props 1`] = `
     role="row"
   >
     <th
+      aria-sort="descending"
       className="testClasses"
       key="0"
       role="columnheader"
@@ -562,6 +585,7 @@ exports[`QueueTable HeaderRow Matches snapshot with default props 1`] = `
       </span>
     </th>
     <th
+      aria-sort="descending"
       className="testClasses"
       key="1"
       role="columnheader"
@@ -577,6 +601,7 @@ exports[`QueueTable HeaderRow Matches snapshot with default props 1`] = `
       </span>
     </th>
     <th
+      aria-sort="descending"
       className="testClasses"
       key="2"
       role="columnheader"
@@ -601,6 +626,7 @@ exports[`QueueTable HeaderRow Renders tooltip when present on the column 1`] = `
     role="row"
   >
     <th
+      aria-sort="descending"
       className="testClasses"
       key="0"
       role="columnheader"
@@ -616,6 +642,7 @@ exports[`QueueTable HeaderRow Renders tooltip when present on the column 1`] = `
       </span>
     </th>
     <th
+      aria-sort="descending"
       className="testClasses"
       key="1"
       role="columnheader"
@@ -850,7 +877,6 @@ exports[`QueueTable render() Can filter rows 1`] = `
         }
         currentPage={0}
         filteredByList={Object {}}
-        headerClassName=""
         needsTaskRequest={true}
         rowObjects={
           Array [
@@ -877,9 +903,7 @@ exports[`QueueTable render() Can filter rows 1`] = `
         tasksFromApi={null}
         updateFilteredByList={[Function]}
       >
-        <thead
-          className=""
-        >
+        <thead>
           <tr
             role="row"
           >
@@ -914,6 +938,7 @@ exports[`QueueTable render() Can filter rows 1`] = `
               </span>
             </th>
             <th
+              aria-labelledby="header-type"
               className="testClasses"
               key="2"
               role="columnheader"
@@ -923,7 +948,9 @@ exports[`QueueTable render() Can filter rows 1`] = `
                 aria-label=""
                 data-css-9shxm7=""
               >
-                <span>
+                <span
+                  id="header-type"
+                >
                   Third
                 </span>
                 <TableFilter
@@ -1496,7 +1523,6 @@ exports[`QueueTable render() Can sort rows 1`] = `
         }
         currentPage={0}
         filteredByList={Object {}}
-        headerClassName=""
         needsTaskRequest={true}
         rowObjects={
           Array [
@@ -1523,9 +1549,7 @@ exports[`QueueTable render() Can sort rows 1`] = `
         tasksFromApi={null}
         updateFilteredByList={[Function]}
       >
-        <thead
-          className=""
-        >
+        <thead>
           <tr
             role="row"
           >
@@ -1609,7 +1633,6 @@ exports[`QueueTable render() Can sort rows 1`] = `
                             >
                               <path
                                 d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
-                                id="Shape"
                               />
                             </g>
                           </g>
@@ -1622,7 +1645,6 @@ exports[`QueueTable render() Can sort rows 1`] = `
                             >
                               <path
                                 d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
-                                id="Shape"
                               />
                             </g>
                           </g>
@@ -2045,7 +2067,6 @@ exports[`QueueTable render() Matches snapshot with default props 1`] = `
       }
       currentPage={0}
       filteredByList={Object {}}
-      headerClassName=""
       needsTaskRequest={true}
       rowObjects={
         Array [
@@ -8483,7 +8504,6 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
         }
         currentPage={0}
         filteredByList={Object {}}
-        headerClassName=""
         needsTaskRequest={true}
         rowObjects={
           Array [
@@ -8690,9 +8710,7 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
         tasksFromApi={null}
         updateFilteredByList={[Function]}
       >
-        <thead
-          className=""
-        >
+        <thead>
           <tr
             role="row"
           >

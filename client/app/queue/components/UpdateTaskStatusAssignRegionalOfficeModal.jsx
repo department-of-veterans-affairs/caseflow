@@ -71,6 +71,7 @@ class UpdateTaskStatusAssignRegionalOfficeModal extends React.Component {
         {actionConfiguration.modal_body && <p>{actionConfiguration.modal_body}</p>}
         <RegionalOfficeDropdown
           errorMessage={hasError ? COPY.REGIONAL_OFFICE_REQUIRED_MESSAGE : null}
+          excludeVirtualHearingsOption
           value={this.state.regionalOffice}
           onChange={this.onRegionalOfficeSelected}
         />

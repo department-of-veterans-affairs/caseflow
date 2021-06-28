@@ -30,6 +30,33 @@ feature "Intake Review Page", :postgres do
     end
   end
 
+  describe "Validating receipt date not blank or before AMA when claimant not listed" do
+    before do
+      FeatureToggle.enable!(:use_ama_activation_date)
+      FeatureToggle.enable!(:non_veteran_claimants)
+    end
+    after do
+      FeatureToggle.disable!(:use_ama_activation_date)
+      FeatureToggle.disable!(:non_veteran_claimants)
+    end
+    it "shows correct error with blank or pre-AMA dates" do
+      start_appeal(veteran, receipt_date: nil)
+      visit "/intake"
+      expect(page).to have_current_path("/intake/review_request")
+      click_intake_continue
+
+      fill_in "What is the Receipt Date of this form?", with: "01/01/2019"
+      within_fieldset("Is the claimant someone other than the Veteran?") do
+        find("label", text: "Yes", match: :prefer_exact).click
+      end
+      find("label", text: "Claimant not listed", match: :prefer_exact).click
+      click_intake_continue
+
+      expect(page).to have_current_path("/intake/review_request")
+      expect(page).to have_content("Receipt Date cannot be prior to 02/19/2019")
+    end
+  end
+
   context "when the Veteran is not valid" do
     let!(:veteran) do
       Generators::Veteran.build(
@@ -91,21 +118,98 @@ feature "Intake Review Page", :postgres do
     end
 
     context "when veteran is deceased" do
+      # before do
+      #   allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return([])
+      # end
       let(:veteran) do
-        Generators::Veteran.build(file_number: "123121234", date_of_death: 2.years.ago)
+        create(:veteran, file_number: "123121234", date_of_death: 1.month.ago)
+      end
+      let(:intake) { create(:intake, veteran_file_number: veteran.file_number, user: current_user, detail: detail) }
+      let(:receipt_date) { 2.months.ago }
+      let(:decision_date) { 3.months.ago.mdY }
+
+      context "on an appeal" do
+        let(:detail) do
+          create(
+            :appeal,
+            veteran_file_number: veteran.file_number,
+            receipt_date: receipt_date,
+            docket_type: Constants.AMA_DOCKETS.evidence_submission,
+            legacy_opt_in_approved: false
+          )
+        end
+
+        it "disables letting the veteran claimant option" do
+          check_deceased_veteran_claimant(intake)
+        end
+
+        context "when the deceased appellants toggle is enabled" do
+          before { FeatureToggle.enable!(:deceased_appellants) }
+          after { FeatureToggle.disable!(:deceased_appellants) }
+
+          scenario "veteran can be claimant" do
+            check_deceased_veteran_claimant(intake)
+          end
+        end
       end
 
       context "higher level review" do
+        let(:detail) do
+          create(
+            :higher_level_review,
+            veteran_file_number: veteran.file_number,
+            receipt_date: receipt_date,
+            informal_conference: false,
+            legacy_opt_in_approved: false,
+            same_office: false
+          )
+        end
+
         scenario "do not show veteran as a valid payee code" do
           start_higher_level_review(veteran)
           check_deceased_veteran_cant_be_payee
         end
+
+        it "disables letting the veteran claimant option" do
+          check_deceased_veteran_claimant(intake)
+        end
+
+        context "when the deceased appellants toggle is enabled" do
+          before { FeatureToggle.enable!(:deceased_appellants) }
+          after { FeatureToggle.disable!(:deceased_appellants) }
+
+          scenario "veteran can still not be claimant" do
+            check_deceased_veteran_claimant(intake)
+          end
+        end
       end
 
       context "supplemental claim" do
+        let(:detail) do
+          create(
+            :supplemental_claim,
+            veteran_file_number: veteran.file_number,
+            receipt_date: receipt_date,
+            legacy_opt_in_approved: false
+          )
+        end
+
         scenario "do not show veteran as a valid payee code" do
           start_supplemental_claim(veteran)
           check_deceased_veteran_cant_be_payee
+        end
+
+        it "disables letting the veteran claimant option" do
+          check_deceased_veteran_claimant(intake)
+        end
+
+        context "when the deceased appellants toggle is enabled" do
+          before { FeatureToggle.enable!(:deceased_appellants) }
+          after { FeatureToggle.disable!(:deceased_appellants) }
+
+          scenario "veteran can still not be claimant" do
+            check_deceased_veteran_claimant(intake)
+          end
         end
       end
     end
@@ -260,7 +364,7 @@ feature "Intake Review Page", :postgres do
         end
       end
 
-      context "when adding a new claimant" do
+      context "when adding a new attorney claimant" do
         let(:attorneys) do
           Array.new(15) { create(:bgs_attorney) }
         end
@@ -492,6 +596,24 @@ feature "Intake Review Page", :postgres do
           click_dropdown({ index: index }, find(".dropdown-claimant"))
         end
       end
+
+      context "adding a new claimant" do
+        context "without non_veteran_claimants feature toggle" do
+          it "doesn't allow adding new claimants" do
+            start_appeal(veteran, claim_participant_id: claim_participant_id)
+
+            visit "/intake"
+
+            expect(page).to have_current_path("/intake/review_request")
+
+            within_fieldset("Is the claimant someone other than the Veteran?") do
+              find("label", text: "Yes", match: :prefer_exact).click
+            end
+
+            expect(page).to_not have_selector("label[for=claimant-options_claimant_not_listed]")
+          end
+        end
+      end
     end
   end
 end
@@ -507,12 +629,47 @@ def check_no_relationships_behavior
   expect(page).to_not have_content("What is the payee code for this claimant?")
 end
 
-def check_deceased_veteran_cant_be_payee
+def check_deceased_veteran_claimant(intake)
   visit "/intake"
 
-  within_fieldset("Is the claimant someone other than the Veteran?") do
-    find("label", text: "Yes", match: :prefer_exact).click
+  allow_deceased_appellants = intake.detail.is_a?(Appeal) && FeatureToggle.enabled?(:deceased_appellants)
+  if allow_deceased_appellants
+    # ability to select veteran claimant is enabled
+    expect(page).to have_css("input[id=different-claimant-option_false]", visible: false)
+    expect(page).to_not have_content(COPY::DECEASED_CLAIMANT_TITLE)
+
+    within_fieldset("Is the claimant someone other than the Veteran?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
+
+    expect(page).to have_content(COPY::DECEASED_CLAIMANT_TITLE)
+  else
+    # ability to select veteran claimant is disabled
+    expect(page).to have_css("input[disabled][id=different-claimant-option_false]", visible: false)
+    expect(page).to_not have_content(COPY::DECEASED_CLAIMANT_TITLE)
+
+    find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
   end
+
+  click_intake_continue
+
+  expect(page).to have_content("Add Issues")
+
+  click_intake_add_issue
+  add_intake_nonrating_issue(date: decision_date)
+  click_intake_finish
+
+  expect(page).to have_current_path("/intake/completed")
+
+  if allow_deceased_appellants
+    expect(page).to have_content(COPY::DECEASED_CLAIMANT_TITLE)
+  else
+    expect(page).to_not have_content(COPY::DECEASED_CLAIMANT_TITLE)
+  end
+end
+
+def check_deceased_veteran_cant_be_payee
+  visit "/intake"
 
   # click on payee code dropdown
   find(".cf-select__control").click

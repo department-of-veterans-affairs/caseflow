@@ -54,6 +54,7 @@ export const HearingTime = ({
   disableRadioOptions,
   label,
   vertical,
+  hideLabel,
 }) => {
   const timeOptions = getTimeOptions(regionalOffice, readOnly);
   const isOther = _.isUndefined(
@@ -89,7 +90,7 @@ export const HearingTime = ({
         <SearchableDropdown
           readOnly={readOnly}
           name={`optionalHearingTime${componentIndex}`}
-          label="Hearing Time"
+          label={label}
           strongLabel
           placeholder="Select a time"
           options={
@@ -99,7 +100,7 @@ export const HearingTime = ({
           }
           value={value}
           onChange={(option) => onChange(option ? option.value : null)}
-          hideLabel={!disableRadioOptions}
+          hideLabel={!disableRadioOptions || hideLabel}
         />
       )}
     </React.Fragment>
@@ -107,6 +108,7 @@ export const HearingTime = ({
 };
 
 HearingTime.defaultProps = {
+  label: 'Hearing Time',
   componentIndex: 0,
   enableZone: false,
 };
@@ -123,4 +125,5 @@ HearingTime.propTypes = {
   value: PropTypes.string,
   label: PropTypes.string,
   localZone: PropTypes.string,
+  hideLabel: PropTypes.bool,
 };

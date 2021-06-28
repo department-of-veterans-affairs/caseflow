@@ -7,10 +7,6 @@ end
 class RegionalOffice
   class NotFoundError < StandardError; end
 
-  MULTIPLE_ROOM_ROS = %w[RO17 RO18].freeze
-  MULTIPLE_NUM_OF_RO_ROOMS = 2
-  DEFAULT_NUM_OF_RO_ROOMS = 1
-
   # Maps CSS Station # to RO id
   STATIONS = convert_top_level_key_to_string(Constants.REGIONAL_OFFICE_FOR_CSS_STATION.to_h).freeze
 
@@ -85,7 +81,11 @@ class RegionalOffice
   end
 
   def valid?
-    !!location_hash[:city]
+    !!location_hash[:timezone] # the timezone field is currently set for all ROs
+  end
+
+  def virtual?
+    key == HearingDay::REQUEST_TYPES[:virtual]
   end
 
   private
