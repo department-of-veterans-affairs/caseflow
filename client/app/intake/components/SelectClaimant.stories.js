@@ -8,9 +8,6 @@ const relationships = [
   { value: '654321', displayText: 'Jen Doe, Child' },
 ];
 
-const featureToggles = {
-  establishFiduciaryEps: false
-};
 const defaultArgs = {
   appellantName: 'Jane Doe',
   formType: 'appeal',
@@ -18,7 +15,6 @@ const defaultArgs = {
   veteranIsNotClaimant: true,
   enableAddClaimant: true,
   relationships,
-  featureToggles,
 };
 
 export default {

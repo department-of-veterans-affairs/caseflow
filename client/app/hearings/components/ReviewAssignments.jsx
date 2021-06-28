@@ -155,11 +155,6 @@ export default class ReviewAssignments extends React.Component {
         align: 'left',
         valueName: 'regionalOffice'
       },
-      {
-        header: 'Room',
-        align: 'left',
-        valueName: 'room'
-      },
     ];
 
     if (this.props.schedulePeriod.type === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {

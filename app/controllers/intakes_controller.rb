@@ -108,9 +108,7 @@ class IntakesController < ApplicationController
         restrictAppealIntakes: FeatureToggle.enabled?(:restrict_appeal_intakes, user: current_user),
         covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
         verifyUnidentifiedIssue: FeatureToggle.enabled?(:verify_unidentified_issue, user: current_user),
-        establishFiduciaryEps: FeatureToggle.enabled?(:establish_fiduciary_eps, user: current_user),
-        editEpClaimLabels: FeatureToggle.enabled?(:edit_ep_claim_labels, user: current_user),
-        deceasedAppellants: FeatureToggle.enabled?(:deceased_appellants, user: current_user)
+        deceasedAppellants: FeatureToggle.enabled?(:deceased_appellants, user: current_user),
       }
     }
   rescue StandardError => error

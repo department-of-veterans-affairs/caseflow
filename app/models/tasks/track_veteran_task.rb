@@ -59,13 +59,20 @@ class TrackVeteranTask < Task
 
     # Create a TrackVeteranTask for each VSO that does not already have one.
     new_representatives.each do |new_vso|
-      params = { appeal: appeal, parent: appeal.root_task, assigned_to: new_vso }
-      TrackVeteranTask.create!(**params)
+      TrackVeteranTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: new_vso)
       new_task_count += 1
 
-      if appeal.is_a?(Appeal) && new_vso.should_write_ihp?(appeal)
-        InformalHearingPresentationTask.create!(**params)
-      end
+      next unless appeal.is_a?(Appeal) && new_vso.should_write_ihp?(appeal)
+
+      previous_ihp_task = tasks_to_sync.find { |task| task.is_a?(InformalHearingPresentationTask) }
+
+      dist_task = appeal.tasks.open.find_by(type: :DistributionTask)
+
+      parent_task = previous_ihp_task&.parent || dist_task || appeal.root_task
+
+      InformalHearingPresentationTask.create!(
+        appeal: appeal, parent: parent_task, assigned_to: new_vso
+      )
     end
 
     # Close all TrackVeteranTasks and InformalHearingPresentationTasks for now-former VSO representatives.

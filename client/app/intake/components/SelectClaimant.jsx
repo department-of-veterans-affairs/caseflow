@@ -10,6 +10,7 @@ import {
   GENERIC_FORM_ERRORS,
   DECEASED_PAYEE_CODES,
   LIVING_PAYEE_CODES,
+  VBMS_BENEFIT_TYPES
 } from '../constants';
 import { convertStringToBoolean } from '../util';
 import {
@@ -82,8 +83,14 @@ export const SelectClaimant = (props) => {
   } = props;
 
   const {
+<<<<<<< HEAD
     establishFiduciaryEps,
     deceasedAppellants
+=======
+    attorneyFees,
+    deceasedAppellants,
+    nonVeteranClaimants,
+>>>>>>> b5d02cde2524b60a693f143a2fb85e64d3f9e79f
   } = featureToggles;
 
   const [newClaimant] = useState(null);
@@ -103,18 +110,11 @@ export const SelectClaimant = (props) => {
     ];
   }, [newClaimant, relationships, enableAddClaimant]);
 
-  const allowFiduciary = useMemo(
-    () => establishFiduciaryEps && benefitType === 'fiduciary',
-    [benefitType, establishFiduciaryEps]
-  );
   const shouldShowPayeeCode = useMemo(() => {
     return (
-      !isAppeal &&
-      (benefitType === 'compensation' ||
-        benefitType === 'pension' ||
-        allowFiduciary)
+      !isAppeal && VBMS_BENEFIT_TYPES.includes(benefitType)
     );
-  }, [formType, benefitType, allowFiduciary]);
+  }, [formType, benefitType]);
 
   const handleVeteranIsNotClaimantChange = (value) => {
     const boolValue = convertStringToBoolean(value);
@@ -263,7 +263,6 @@ export const SelectClaimant = (props) => {
 SelectClaimant.propTypes = {
   benefitType: PropTypes.string,
   featureToggles: PropTypes.shape({
-    establishFiduciaryEps: PropTypes.bool,
     deceasedAppellants: PropTypes.bool,
   }),
   formType: PropTypes.string,

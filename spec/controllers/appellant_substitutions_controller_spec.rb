@@ -64,6 +64,25 @@ RSpec.describe AppellantSubstitutionsController, type: :controller do
       end
     end
 
+    context "when the substitute appellant does not have a power of attorney" do
+      let(:poa_participant_id) { nil }
+      it "creates the Appellant Substitution and a new appeal" do
+        substitution_count = AppellantSubstitution.count
+        subject
+
+        expect(response.status).to eq(201)
+        response_body = JSON.parse(response.body)
+
+        expect(response_body["substitution"]["source_appeal_id"]).to eq(source_appeal.id)
+        expect(AppellantSubstitution.count).to eq(substitution_count + 1)
+
+        expect(response_body["targetAppeal"]["id"])
+          .to eq(AppellantSubstitution.find(response_body["substitution"]["id"]).target_appeal_id)
+        expect(response_body["targetAppeal"]["stream_docket_number"]).to eq(source_appeal.docket_number)
+        expect(response_body["targetAppeal"]["stream_type"]).to eq(source_appeal.stream_type)
+      end
+    end
+
     context "with a ClerkOfTheBoard user" do
       context "when insufficient parameters are provided" do
         let(:substitute_participant_id) { nil }

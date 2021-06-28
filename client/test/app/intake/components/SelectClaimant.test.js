@@ -19,10 +19,7 @@ const defaultRelationships = [
   },
 ];
 
-const defaultFeatureToggles = {
-  establishFiduciaryEps: false,
-  deceasedAppellants: false,
-};
+const defaultFeatureToggles = { deceasedAppellants: false };
 
 describe('SelectClaimant', () => {
   beforeEach(() => {

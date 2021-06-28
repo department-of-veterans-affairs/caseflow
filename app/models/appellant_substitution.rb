@@ -10,7 +10,6 @@ class AppellantSubstitution < CaseflowRecord
   validates :created_by, :source_appeal, :substitution_date,
             :claimant_type, # Claimant record type for the substitute
             :substitute_participant_id,
-            :poa_participant_id,
             presence: true
   validates :selected_task_ids,
             :task_params,
@@ -28,7 +27,7 @@ class AppellantSubstitution < CaseflowRecord
   end
 
   def power_of_attorney
-    BgsPowerOfAttorney.find_by(poa_participant_id: poa_participant_id)
+    poa_participant_id ? BgsPowerOfAttorney.find_by(poa_participant_id: poa_participant_id) : nil
   end
 
   private
