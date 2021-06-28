@@ -13,34 +13,37 @@ module ExplainTimelineConcern
     tasks_as_timeline_data + intakes_as_timeline_data
   end
 
+  # integer values correspond with those defined in function `groupEventItems` of explain-appeal.js
   EVENT_GROUPS = {
-
-  }
+    "phase" => 0,
+    Task.table_name => 1,
+    Intake.table_name => 2
+  }.freeze
 
   BACKGROUND_TASK_TYPES = %w[DistributionTask JudgeDecisionReviewTask].freeze
 
   # :reek:FeatureEnvy
+  # :reek:Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def tasks_as_timeline_data
     sje.records_hash[Task.table_name].map do |record|
-      significant_duration = record["closed_at"] - record["created_at"] > 120 if record["closed_at"]
       record.clone.tap do |clone_record|
         clone_record["id"] = "#{Task.name}#{record['id']}"
         clone_record["record_id"] = record["id"]
         clone_record["tableName"] = Task.table_name
         clone_record["content"] = "#{record['type']}_#{record['id']}"
         clone_record["start"] = record["created_at"]
-        clone_record["end"] = significant_duration ? record["closed_at"] : nil
         clone_record["taskType"] = record["type"]
 
-        # clear these values to prevent conflict the Timeline Item's fields
-        # clone_record["type"] = "point" unless significant_duration
         if BACKGROUND_TASK_TYPES.include?(record["type"])
           clone_record["type"] = "background"
           clone_record["group"] = nil # so that background is visible in all groups
-          clone_record["end"] ||= record["closed_at"] || Date.today # needs to be set for 'background' types
+          clone_record["end"] ||= Time.zone.today # needs to be set for 'background' types
         else
-          clone_record["type"] = nil
-          clone_record["group"] = 1
+          significant_duration = record["closed_at"] - record["created_at"] > 60 if record["closed_at"]
+          clone_record["type"] = significant_duration ? "range" : "point"
+          clone_record["group"] = EVENT_GROUPS[Task.table_name]
+          clone_record["end"] = significant_duration ? record["closed_at"] : nil
         end
 
         # for visualization
@@ -50,23 +53,24 @@ module ExplainTimelineConcern
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize
 
   # :reek:FeatureEnvy
   def intakes_as_timeline_data
     sje.records_hash[Intake.table_name].map do |record|
-      significant_duration = record["completed_at"] - record["started_at"] > 120 if record["completed_at"]
       record.clone.tap do |clone_record|
         clone_record["id"] = "#{record['type']}#{record['id']}"
         clone_record["record_id"] = record["id"]
         clone_record["tableName"] = Intake.table_name
         clone_record["content"] = "#{record['type']}_#{record['id']}"
         clone_record["start"] = record["started_at"]
-        clone_record["end"] = significant_duration ? record["completed_at"] : nil
+        clone_record["end"] = record["completed_at"]
         clone_record["intakeType"] = record["type"]
 
         # clear these values to prevent conflict the Timeline Item's fields
-        clone_record["type"] = nil
-        clone_record["group"] = 2
+        significant_duration = record["completed_at"] - record["started_at"] > 120 if record["completed_at"]
+        clone_record["type"] = significant_duration ? "range" : "point"
+        clone_record["group"] = EVENT_GROUPS[Intake.table_name]
       end
     end
   end

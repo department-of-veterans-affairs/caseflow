@@ -117,30 +117,47 @@ summary {
 
 /* Timeline */
 
-#timeline .vis-item {
-  border-width: 0px;
-  border-color: #585858;
-}
-
 #timeline .vis-item .vis-item-overflow {
   overflow: visible; /* allow event labels to overflow its timeline box */
 }
 
 /* These task_<status> colors should roughly match with those for #events_table above */
-#timeline .task_assigned {
-  background-color: rgb(197, 194, 5)
+#timeline .vis-range.task_assigned {
+  background-color: rgb(197, 194, 5);
+  border-color: rgb(197, 194, 5);
 }
-#timeline .task_in_progress {
-  background-color: #00ff00
+#timeline .vis-range.task_in_progress {
+  background-color: #00ff00;
+  border-color: #00ff00;
 }
-#timeline .task_on_hold {
-  background-color: #ffff80
+#timeline .vis-range.task_on_hold {
+  background-color: #ffff80;
+  border-color: #ffff80;
 }
-#timeline .task_cancelled {
-  background-color: rgb(192, 135, 135)
+#timeline .vis-range.task_cancelled {
+  background-color: rgb(192, 135, 135);
+  border-color: rgb(192, 135, 135);
 }
-#timeline .task_completed {
-  background-color: rgb(0, 184, 0)
+#timeline .vis-range.task_completed {
+  background-color: rgb(0, 184, 0);
+  border-color: rgb(0, 184, 0);
+}
+
+/* Color dots simlar to ranges above */
+#timeline .vis-dot.task_assigned {
+  border-color: rgb(197, 194, 5);
+}
+#timeline .vis-dot.task_in_progress {
+  border-color: #00ff00;
+}
+#timeline .vis-dot.task_on_hold {
+  border-color: #ffff80;
+}
+#timeline .vis-dot.task_cancelled {
+  border-color: rgb(192, 135, 135);
+}
+#timeline .vis-dot.task_completed {
+  border-color: rgb(0, 184, 0);
 }
 
 /* events with "type=background" */
