@@ -369,7 +369,26 @@ $form-width: 575px;
   }
 }
 
+.assign-hearings-table {
+  table-layout: fixed;
+}
+
+.table-row-number {
+  width: 25px;
+}
+
 @media screen and (min-width: 1224px) and (max-width: 1680px) {
+  .usa-width-three-fourths.assign-hearing-tabs {
+    width: 70%;
+  }
+
+  .assign-hearings-table th > span:first-child {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+@media screen and (max-width: 1280px) {
   .usa-width-three-fourths.assign-hearing-tabs {
     width: 65%;
   }
