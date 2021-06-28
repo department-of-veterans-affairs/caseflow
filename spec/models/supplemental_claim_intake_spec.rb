@@ -167,7 +167,7 @@ describe SupplementalClaimIntake, :all_dbs do
 
     context "when benefit type is non comp" do
       before { RequestStore[:current_user] = user }
-      let(:benefit_type) { "fiduciary" }
+      let(:benefit_type) { "voc_rehab" }
 
       it "creates DecisionReviewTask" do
         subject

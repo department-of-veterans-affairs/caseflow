@@ -683,7 +683,7 @@ describe Appeal, :all_dbs do
     context "request issue has non-comp business line" do
       let!(:appeal) do
         create(:appeal, request_issues: [
-                 create(:request_issue, benefit_type: :fiduciary),
+                 create(:request_issue, benefit_type: :education),
                  create(:request_issue, benefit_type: :compensation),
                  create(:request_issue, :unidentified)
                ])
