@@ -83,14 +83,7 @@ export const SelectClaimant = (props) => {
   } = props;
 
   const {
-<<<<<<< HEAD
-    establishFiduciaryEps,
-    deceasedAppellants
-=======
-    attorneyFees,
     deceasedAppellants,
-    nonVeteranClaimants,
->>>>>>> b5d02cde2524b60a693f143a2fb85e64d3f9e79f
   } = featureToggles;
 
   const [newClaimant] = useState(null);
