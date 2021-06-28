@@ -14,9 +14,6 @@ const updateFromServerFeatures = (state, featureToggles) => {
     verifyUnidentifiedIssue: {
       $set: Boolean(featureToggles.verifyUnidentifiedIssue)
     },
-    restrictAppealIntakes: {
-      $set: Boolean(featureToggles.restrictAppealIntakes)
-    },
     attorneyFees: {
       $set: Boolean(featureToggles.attorneyFees)
     },
@@ -35,7 +32,8 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
       useAmaActivationDate: false,
       correctClaimReviews: false,
       verifyUnidentifiedIssue: false,
-      restrictAppealIntakes: false,
+      establishFiduciaryEps: false,
+      editEpClaimLabels: false,
       deceasedAppellants: false
     },
     data.featureToggles

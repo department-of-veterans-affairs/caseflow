@@ -77,9 +77,6 @@ feature "Intake", :all_dbs do
     end
 
     context "when restrict appeal intakes enabled" do
-      before { FeatureToggle.enable!(:restrict_appeal_intakes) }
-      after { FeatureToggle.disable!(:restrict_appeal_intakes) }
-
       it "does not allow user to intake appeals" do
         visit "/intake"
         select_form(Constants.INTAKE_FORM_NAMES.appeal)
