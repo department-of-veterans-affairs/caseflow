@@ -23,6 +23,6 @@ class UnrecognizedAppellant < CaseflowRecord
   end
 
   def original_version
-    versions.first || self
+    versions.where.not(id: current_version_id).first || self
   end
 end

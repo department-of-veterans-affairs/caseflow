@@ -31,6 +31,7 @@ describe UnrecognizedAppellant do
         ua_detail = create(:unrecognized_party_detail, :individual) 
         # Initial creation of UA
         ua_current = create(:unrecognized_appellant, unrecognized_party_detail: ua_detail)
+        ua_current.update(current_version: ua_current)
 
         expect(ua_current.original_version).to eq ua_current
 
@@ -49,10 +50,19 @@ describe UnrecognizedAppellant do
         ua_old_version_2.update(current_version: ua_current, unrecognized_party_detail: ua_details_old_version)
         ua_current.unrecognized_party_detail.update(name: "Updated Again")
 
-        expect(ua_current.versions.count).to eq 2
+        # Should have 3 versions: original + 2 updates
+        expect(ua_current.versions.count).to eq 3
+
+        # Any old version .current_version should be the current version
         expect(ua_old_version_1.current_version).to eq ua_current
+        expect(ua_old_version_2.current_version).to eq ua_current
+
+        # Current version should be the second updated value
         expect(ua_current.unrecognized_party_detail.name).to eq "Updated Again Smith"
+
+        # Ensure original versions are all the value we started at
         expect(ua_current.original_version.unrecognized_party_detail.name).to eq "Jane Smith"
+        expect(ua_current.versions.second.original_version.unrecognized_party_detail.name).to eq "Jane Smith"
       end
     end
   end
