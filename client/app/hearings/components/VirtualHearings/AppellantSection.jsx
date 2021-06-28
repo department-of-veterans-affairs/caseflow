@@ -19,6 +19,7 @@ export const AppellantSection = ({
   errors,
   type,
   readOnly,
+  fullWidth,
   showDivider,
   update,
   appellantTitle,
@@ -35,6 +36,9 @@ export const AppellantSection = ({
 
   // determine whether to show a missing email underneath readonly email
   const showMissingAlert = readOnly && showMissingEmailAlert && !virtualHearing?.appellantEmail;
+
+  // Set the grid column width to respect fullWidth prop
+  const columnWidthClass = fullWidth ? 'usa-width-one-whole' : 'usa-width-one-half';
 
   return (
     <VirtualHearingSection label={appellantTitle} showDivider={showDivider}>
@@ -74,7 +78,7 @@ export const AppellantSection = ({
         */}
       {showTimezoneField && schedulingToVirtual && (
         <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
-          <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
+          <div className={classNames(columnWidthClass, { [noMaxWidth]: true })} >
             <Timezone
               required
               value={virtualHearing?.appellantTz}
@@ -93,7 +97,7 @@ export const AppellantSection = ({
         * Email fields
         */}
       <div id="email-section" className={classNames('usa-grid', { [marginTop(30)]: true })}>
-        <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
+        <div className={classNames(columnWidthClass, { [noMaxWidth]: true })} >
           <VirtualHearingEmail
             required
             readOnly={readOnly}
@@ -130,6 +134,7 @@ AppellantSection.propTypes = {
   type: PropTypes.string,
   update: PropTypes.func,
   readOnly: PropTypes.bool,
+  fullWidth: PropTypes.bool,
   appellantTitle: PropTypes.string,
   showOnlyAppellantName: PropTypes.bool,
   showDivider: PropTypes.bool,

@@ -194,8 +194,8 @@ export const ScheduleVeteranForm = ({
         </div>
         {virtual && (
           <div className="usa-width-one-whole" {...marginTop(25)}>
-            <AppellantSection {...sectionProps} />
-            <RepresentativeSection {...sectionProps} />
+            <AppellantSection {...sectionProps} fullWidth />
+            <RepresentativeSection {...sectionProps} fullWidth />
           </div>
         )}
       </div>
