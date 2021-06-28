@@ -125,7 +125,6 @@ export const SelectClaimant = (props) => {
       setClaimant({
         claimant: value || null,
         claimantName: newClaimant.claimantName,
-        claimantNotes: newClaimant.claimantNotes,
         claimantType: newClaimant.claimantType,
       });
     } else {
@@ -270,7 +269,6 @@ SelectClaimant.propTypes = {
   payeeCode: PropTypes.string,
   payeeCodeError: PropTypes.string,
   setPayeeCode: PropTypes.func,
-  claimantNotes: PropTypes.string,
   register: PropTypes.func,
   errors: PropTypes.array
 };
