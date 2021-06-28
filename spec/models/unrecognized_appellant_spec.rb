@@ -53,8 +53,6 @@ describe UnrecognizedAppellant do
         expect(ua_old_version_1.current_version).to eq ua_current
         expect(ua_current.unrecognized_party_detail.name).to eq "Updated Again Smith"
         expect(ua_current.original_version.unrecognized_party_detail.name).to eq "Jane Smith"
-
-        binding.pry
       end
     end
   end
