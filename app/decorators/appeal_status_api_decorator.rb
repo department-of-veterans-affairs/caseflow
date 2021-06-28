@@ -179,7 +179,8 @@ class AppealStatusApiDecorator < ApplicationDecorator
   end
 
   def alerts
-    @alerts ||= ApiStatusAlerts.new(decision_review: self).all.sort_by { |alert| alert[:details][:decisionDate] }
+    # " or 0" sorts all alerts (like scheduled_hearing alerts) that do not have decisionDates first.
+    @alerts ||= ApiStatusAlerts.new(decision_review: self).all.sort_by { |alert| alert[:details][:decisionDate] or 0 }
   end
 
   def aoj
