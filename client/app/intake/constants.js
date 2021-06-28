@@ -349,4 +349,4 @@ const getValidPayeeCodes = (isDeceased) => {
 export const DECEASED_PAYEE_CODES = (() => getValidPayeeCodes(true))();
 export const LIVING_PAYEE_CODES = (() => getValidPayeeCodes(false))();
 
-export const VBMS_BENEFIT_TYPES = ['compensation', 'pension'];
+export const VBMS_BENEFIT_TYPES = ['compensation', 'pension', 'fiduciary'];
