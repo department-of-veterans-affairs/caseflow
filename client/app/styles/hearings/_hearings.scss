@@ -366,10 +366,15 @@ $form-width: 575px;
     padding-top: 10px;
     width: 100%;
     background-color: $color-white;
+    margin-bottom: 5px;
   }
 
   li {
-    padding: 5px;
+    padding-left: 5px;
+
+    button:focus {
+      outline-offset: 0px;
+    }
   }
 }
 
