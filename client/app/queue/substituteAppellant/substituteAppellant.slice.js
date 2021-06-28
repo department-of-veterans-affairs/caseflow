@@ -120,6 +120,7 @@ export const completeSubstituteAppellant = createAsyncThunk(
 
 export const {
   cancel,
+  reset,
   stepForward,
   stepBack,
   updateData,
