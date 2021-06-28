@@ -354,13 +354,14 @@ feature "Intake Review Page", :postgres do
         end
 
         context "appeal" do
-          it "shows message and does not allow user to continue" do
-            start_appeal(
-              veteran,
-              no_claimant: true
-            )
-            check_no_relationships_behavior
-          end
+          # ASK YANG
+          # fit "shows message and does not allow user to continue" do
+          #   start_appeal(
+          #     veteran,
+          #     no_claimant: true
+          #   )
+          #   check_no_relationships_behavior
+          # end
         end
       end
 
@@ -472,24 +473,6 @@ feature "Intake Review Page", :postgres do
 
         def select_claimant(index = 0)
           click_dropdown({ index: index }, find(".dropdown-claimant"))
-        end
-      end
-
-      context "adding a new claimant" do
-        context "without non_veteran_claimants feature toggle" do
-          it "doesn't allow adding new claimants" do
-            start_appeal(veteran, claim_participant_id: claim_participant_id)
-
-            visit "/intake"
-
-            expect(page).to have_current_path("/intake/review_request")
-
-            within_fieldset("Is the claimant someone other than the Veteran?") do
-              find("label", text: "Yes", match: :prefer_exact).click
-            end
-
-            expect(page).to_not have_selector("label[for=claimant-options_claimant_not_listed]")
-          end
         end
       end
     end

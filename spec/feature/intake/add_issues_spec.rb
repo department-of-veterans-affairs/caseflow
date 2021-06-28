@@ -13,6 +13,12 @@ feature "Intake Add Issues Page", :all_dbs do
   end
   let(:profile_date) { 10.days.ago }
   let(:promulgation_date) { 9.days.ago.to_date }
+  let(:veteran_no_ratings) do
+    Generators::Veteran.build(file_number: "55555555",
+                              first_name: "Nora",
+                              last_name: "Attings",
+                              participant_id: "44444444")
+  end
   let!(:rating) do
     Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
@@ -245,12 +251,6 @@ feature "Intake Add Issues Page", :all_dbs do
   end
 
   context "show decision date on unidentified issues" do
-    let(:veteran_no_ratings) do
-      Generators::Veteran.build(file_number: "55555555",
-                                first_name: "Nora",
-                                last_name: "Attings",
-                                participant_id: "44444444")
-    end
     let(:decision_date) { 50.days.ago.to_date.mdY }
     let(:untimely_days) { 2.years.ago.to_date.mdY }
 
@@ -603,19 +603,17 @@ feature "Intake Add Issues Page", :all_dbs do
       end
     end
 
-    context "when attorney_fees featureToggle is permanently disabled" do
-      scenario "checks that attorney categories do not exist on compensation" do
-        start_higher_level_review(veteran_no_ratings)
-        visit "/intake"
-        click_intake_continue
-        expect(page).to have_current_path("/intake/add_issues")
+    scenario "checks that attorney categories do not exist on claim reviews" do
+      start_higher_level_review(veteran_no_ratings)
+      visit "/intake"
+      click_intake_continue
+      expect(page).to have_current_path("/intake/add_issues")
 
-        click_intake_add_issue
-        expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
-        find(".cf-select__control").click
-        expect(page).to_not have_content("Contested Claims - Attorney fees")
-        expect(page).to have_content("Active Duty Adjustments")
-      end
+      click_intake_add_issue
+      expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
+      find(".cf-select__control").click
+      expect(page).to_not have_content("Contested Claims - Attorney fees")
+      expect(page).to have_content("Active Duty Adjustments")
     end
   end
 end

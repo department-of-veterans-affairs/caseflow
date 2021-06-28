@@ -31,8 +31,6 @@ feature "Non-veteran claimants", :postgres do
   let(:decision_date) { 3.months.ago.mdY }
 
   context "with non_veteran_claimants feature toggle" do
-    before { FeatureToggle.enable!(:non_veteran_claimants) }
-    after { FeatureToggle.disable!(:non_veteran_claimants) }
 
     let(:attorneys) do
       Array.new(15) { create(:bgs_attorney) }
