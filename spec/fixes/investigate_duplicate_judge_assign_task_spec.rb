@@ -56,17 +56,15 @@ feature "duplicate JudgeAssignTask investigation" do
       click_on "Submit"
       expect(page).to have_content("case has been cancelled")
 
-      # Repeat same actions in second_window
+      # Attempt to repeat same actions in second_window.
+      # Should fail due to limit on number of open tasks of type JudgeAssignTask.
       within_window second_window do
         click_dropdown(prompt: "Select an action", text: "Cancel task and return to judge")
         fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "cancel once")
         click_on "Submit"
-        expect(page).to have_content("case has been cancelled")
+        expect(page).to have_content("Error assigning tasks")
+        expect(page).to have_content("Looks like this appeal already has an open JudgeAssignTask")
       end
-
-      # Notice there are 2 open JudgeAssignTasks
-      appeal.reload.treee
-      # binding.pry # Uncomment to examine the browser tabs
     end
   end
 end
