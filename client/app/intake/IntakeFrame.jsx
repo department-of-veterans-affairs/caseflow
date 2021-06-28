@@ -34,14 +34,12 @@ export const IntakeFrame = (props) => {
 
   let rightNavElements = <CaseSearchLink newWindow />;
 
-  if (props.featureToggles.inbox) {
     rightNavElements = (
       <span>
         <InboxLink youveGotMail={props.unreadMessages} />
         <CaseSearchLink newWindow />
       </span>
     );
-  }
 
   return (
     <div>
