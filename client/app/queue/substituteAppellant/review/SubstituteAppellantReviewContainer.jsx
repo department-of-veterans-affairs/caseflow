@@ -39,7 +39,7 @@ export const SubstituteAppellantReviewContainer = () => {
 
   const { relationships } = useSelector((state) => state.substituteAppellant);
   const relationship = useMemo(() => {
-    return relationships.find((rel) => String(rel.value) === String(existingValues.participantId));
+    return relationships?.find((rel) => String(rel.value) === String(existingValues.participantId)) ?? null;
   }, [relationships, existingValues?.participantId]);
 
   const evidenceSubmissionEndDate = calculateEvidenceSubmissionEndDate(
@@ -98,11 +98,11 @@ export const SubstituteAppellantReviewContainer = () => {
         })
       );
 
-      // Reset Redux store
-      dispatch(reset());
-
       // Route to new appeal stream
       history.push(`/queue/appeals/${res.payload.targetAppeal.uuid}`);
+
+      // Reset Redux store after route transition begins to avoid rendering errors
+      dispatch(reset());
     } catch (error) {
       console.error('Error during substitute appellant appeal creation', error);
       dispatch(
