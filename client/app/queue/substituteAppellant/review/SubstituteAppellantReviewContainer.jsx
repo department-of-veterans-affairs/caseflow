@@ -6,7 +6,7 @@ import { showSuccessMessage, showErrorMessage } from 'app/queue/uiReducer/uiActi
 import { SubstituteAppellantReview } from './SubstituteAppellantReview';
 import { calculateEvidenceSubmissionEndDate } from '../tasks/utils';
 
-import { cancel, stepBack, completeSubstituteAppellant } from '../substituteAppellant.slice';
+import { cancel, reset, stepBack, completeSubstituteAppellant } from '../substituteAppellant.slice';
 import { getAllTasksForAppeal, appealWithDetailSelector } from 'app/queue/selectors';
 
 import COPY from 'app/../COPY';
@@ -97,6 +97,11 @@ export const SubstituteAppellantReviewContainer = () => {
           detail: COPY.SUBSTITUTE_APPELLANT_SUCCESS_DETAIL,
         })
       );
+
+      // Reset Redux store
+      dispatch(reset());
+
+      // Route to new appeal stream
       history.push(`/queue/appeals/${res.payload.targetAppeal.uuid}`);
     } catch (error) {
       console.error('Error during substitute appellant appeal creation', error);

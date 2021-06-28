@@ -61,6 +61,7 @@ const substituteAppellantSlice = createSlice({
   initialState,
   reducers: {
     cancel: () => ({ ...initialState }),
+    reset: () => ({ ...initialState }),
     stepForward: (state) => ({ ...state, step: state.step + 1 }),
     stepBack: (state) => ({ ...state, step: state.step ? state.step - 1 : 0 }),
     updateData: (state, action) => {
