@@ -11,8 +11,7 @@
       useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
       correctClaimReviews: FeatureToggle.enabled?(:correct_claim_reviews, user: current_user),
       verifyUnidentifiedIssue: FeatureToggle.enabled?(:verify_unidentified_issue, user: current_user),
-      covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
-      editEpClaimLabels: FeatureToggle.enabled?(:edit_ep_claim_labels, user: current_user)
+      covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user)
     }
   }) %>
 <% end %>
