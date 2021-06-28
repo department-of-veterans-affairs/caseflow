@@ -41,6 +41,12 @@ export const docketCutoffLineStyle = (_index, scheduledForText) => {
       '& td:first-child::before': {
         transform: 'translateY(-215%)',
         content: `All veterans have been scheduled through ${scheduledForText}`
+      },
+      '@media screen and (min-width: 1224px) and (max-width: 1680px)': {
+        '& td:first-child::before': {
+          height: 'auto',
+          paddingBottom: '20px',
+        },
       }
     }
   } : {};
