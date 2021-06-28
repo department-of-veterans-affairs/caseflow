@@ -34,12 +34,12 @@ export const IntakeFrame = (props) => {
 
   let rightNavElements = <CaseSearchLink newWindow />;
 
-    rightNavElements = (
-      <span>
-        <InboxLink youveGotMail={props.unreadMessages} />
-        <CaseSearchLink newWindow />
-      </span>
-    );
+  rightNavElements = (
+    <span>
+      <InboxLink youveGotMail={props.unreadMessages} />
+      <CaseSearchLink newWindow />
+    </span>
+  );
 
   return (
     <div>
