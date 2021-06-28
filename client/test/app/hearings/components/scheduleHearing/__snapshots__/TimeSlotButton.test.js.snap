@@ -129,7 +129,29 @@ Object {
                   ·
                 </span>
                  
-                Something
+                <span
+                  aria-describedby="tooltip-id"
+                  currentitem="false"
+                  data-event="focus mouseenter"
+                  data-event-off="mouseleave keydown"
+                  data-for="tooltip-id"
+                  data-tip="true"
+                  tabindex="0"
+                >
+                  Something
+                </span>
+                <span
+                  data-css-rmx6hr=""
+                >
+                  <div
+                    class="__react_component_tooltip place-bottom type-dark "
+                    data-id="tooltip"
+                    id="tooltip-id"
+                    role="tooltip"
+                  >
+                    Something
+                  </div>
+                </span>
               </div>
             </div>
             <div />
@@ -170,7 +192,29 @@ Object {
                 ·
               </span>
                
-              Something
+              <span
+                aria-describedby="tooltip-id"
+                currentitem="false"
+                data-event="focus mouseenter"
+                data-event-off="mouseleave keydown"
+                data-for="tooltip-id"
+                data-tip="true"
+                tabindex="0"
+              >
+                Something
+              </span>
+              <span
+                data-css-rmx6hr=""
+              >
+                <div
+                  class="__react_component_tooltip place-bottom type-dark "
+                  data-id="tooltip"
+                  id="tooltip-id"
+                  role="tooltip"
+                >
+                  Something
+                </div>
+              </span>
             </div>
           </div>
           <div />

@@ -143,88 +143,11 @@ Object {
               data-css-1jzzn6r=""
             >
               <div
-                class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+                class="__react_component_tooltip place-bottom type-dark "
                 data-id="tooltip"
                 id="badge-200628-4"
                 role="tooltip"
               >
-                <style>
-                  
-  	.t00000000-0000-0000-0000-000000000000 {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t00000000-0000-0000-0000-000000000000.place-top {
-        margin-top: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::before {
-        border-top: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-bottom {
-        margin-top: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-left {
-        margin-left: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-right {
-        margin-left: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  
-                </style>
                 Hearing Request
               </div>
             </span>
@@ -237,7 +160,29 @@ Object {
               ·
             </span>
              
-            AMERICAN LEGION
+            <span
+              aria-describedby="tooltip-id"
+              currentitem="false"
+              data-event="focus mouseenter"
+              data-event-off="mouseleave keydown"
+              data-for="tooltip-id"
+              data-tip="true"
+              tabindex="0"
+            >
+              AMERICAN LEGION
+            </span>
+            <span
+              data-css-rmx6hr=""
+            >
+              <div
+                class="__react_component_tooltip place-bottom type-dark "
+                data-id="tooltip"
+                id="tooltip-id"
+                role="tooltip"
+              >
+                AMERICAN LEGION
+              </div>
+            </span>
           </div>
           <div
             class="time-slot-details"
@@ -333,88 +278,11 @@ Object {
               data-css-12vz59a=""
             >
               <div
-                class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+                class="__react_component_tooltip place-bottom type-dark "
                 data-id="tooltip"
                 id="badge-200624-613"
                 role="tooltip"
               >
-                <style>
-                  
-  	.t00000000-0000-0000-0000-000000000000 {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t00000000-0000-0000-0000-000000000000.place-top {
-        margin-top: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::before {
-        border-top: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-bottom {
-        margin-top: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-left {
-        margin-left: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-right {
-        margin-left: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  
-                </style>
                 Legacy
               </div>
             </span>
@@ -427,7 +295,29 @@ Object {
               ·
             </span>
              
-            AMERICAN LEGION
+            <span
+              aria-describedby="tooltip-id"
+              currentitem="false"
+              data-event="focus mouseenter"
+              data-event-off="mouseleave keydown"
+              data-for="tooltip-id"
+              data-tip="true"
+              tabindex="0"
+            >
+              AMERICAN LEGION
+            </span>
+            <span
+              data-css-rmx6hr=""
+            >
+              <div
+                class="__react_component_tooltip place-bottom type-dark "
+                data-id="tooltip"
+                id="tooltip-id"
+                role="tooltip"
+              >
+                AMERICAN LEGION
+              </div>
+            </span>
           </div>
           <div
             class="time-slot-details"
@@ -523,88 +413,11 @@ Object {
               data-css-1ediyry=""
             >
               <div
-                class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+                class="__react_component_tooltip place-bottom type-dark "
                 data-id="tooltip"
                 id="badge-200624-614"
                 role="tooltip"
               >
-                <style>
-                  
-  	.t00000000-0000-0000-0000-000000000000 {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t00000000-0000-0000-0000-000000000000.place-top {
-        margin-top: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::before {
-        border-top: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-bottom {
-        margin-top: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-left {
-        margin-left: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-right {
-        margin-left: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  
-                </style>
                 Hearing Request
               </div>
             </span>
@@ -617,7 +430,29 @@ Object {
               ·
             </span>
              
-            AMERICAN LEGION
+            <span
+              aria-describedby="tooltip-id"
+              currentitem="false"
+              data-event="focus mouseenter"
+              data-event-off="mouseleave keydown"
+              data-for="tooltip-id"
+              data-tip="true"
+              tabindex="0"
+            >
+              AMERICAN LEGION
+            </span>
+            <span
+              data-css-rmx6hr=""
+            >
+              <div
+                class="__react_component_tooltip place-bottom type-dark "
+                data-id="tooltip"
+                id="tooltip-id"
+                role="tooltip"
+              >
+                AMERICAN LEGION
+              </div>
+            </span>
           </div>
           <div
             class="time-slot-details"
@@ -719,88 +554,11 @@ Object {
             data-css-1jzzn6r=""
           >
             <div
-              class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+              class="__react_component_tooltip place-bottom type-dark "
               data-id="tooltip"
               id="badge-200628-4"
               role="tooltip"
             >
-              <style>
-                
-  	.t00000000-0000-0000-0000-000000000000 {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t00000000-0000-0000-0000-000000000000.place-top {
-        margin-top: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::before {
-        border-top: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-bottom {
-        margin-top: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-left {
-        margin-left: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-right {
-        margin-left: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  
-              </style>
               Hearing Request
             </div>
           </span>
@@ -813,7 +571,29 @@ Object {
             ·
           </span>
            
-          AMERICAN LEGION
+          <span
+            aria-describedby="tooltip-id"
+            currentitem="false"
+            data-event="focus mouseenter"
+            data-event-off="mouseleave keydown"
+            data-for="tooltip-id"
+            data-tip="true"
+            tabindex="0"
+          >
+            AMERICAN LEGION
+          </span>
+          <span
+            data-css-rmx6hr=""
+          >
+            <div
+              class="__react_component_tooltip place-bottom type-dark "
+              data-id="tooltip"
+              id="tooltip-id"
+              role="tooltip"
+            >
+              AMERICAN LEGION
+            </div>
+          </span>
         </div>
         <div
           class="time-slot-details"
@@ -909,88 +689,11 @@ Object {
             data-css-12vz59a=""
           >
             <div
-              class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+              class="__react_component_tooltip place-bottom type-dark "
               data-id="tooltip"
               id="badge-200624-613"
               role="tooltip"
             >
-              <style>
-                
-  	.t00000000-0000-0000-0000-000000000000 {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t00000000-0000-0000-0000-000000000000.place-top {
-        margin-top: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::before {
-        border-top: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-bottom {
-        margin-top: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-left {
-        margin-left: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-right {
-        margin-left: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  
-              </style>
               Legacy
             </div>
           </span>
@@ -1003,7 +706,29 @@ Object {
             ·
           </span>
            
-          AMERICAN LEGION
+          <span
+            aria-describedby="tooltip-id"
+            currentitem="false"
+            data-event="focus mouseenter"
+            data-event-off="mouseleave keydown"
+            data-for="tooltip-id"
+            data-tip="true"
+            tabindex="0"
+          >
+            AMERICAN LEGION
+          </span>
+          <span
+            data-css-rmx6hr=""
+          >
+            <div
+              class="__react_component_tooltip place-bottom type-dark "
+              data-id="tooltip"
+              id="tooltip-id"
+              role="tooltip"
+            >
+              AMERICAN LEGION
+            </div>
+          </span>
         </div>
         <div
           class="time-slot-details"
@@ -1099,88 +824,11 @@ Object {
             data-css-1ediyry=""
           >
             <div
-              class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+              class="__react_component_tooltip place-bottom type-dark "
               data-id="tooltip"
               id="badge-200624-614"
               role="tooltip"
             >
-              <style>
-                
-  	.t00000000-0000-0000-0000-000000000000 {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t00000000-0000-0000-0000-000000000000.place-top {
-        margin-top: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::before {
-        border-top: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-bottom {
-        margin-top: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-left {
-        margin-left: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-right {
-        margin-left: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  
-              </style>
               Hearing Request
             </div>
           </span>
@@ -1193,7 +841,29 @@ Object {
             ·
           </span>
            
-          AMERICAN LEGION
+          <span
+            aria-describedby="tooltip-id"
+            currentitem="false"
+            data-event="focus mouseenter"
+            data-event-off="mouseleave keydown"
+            data-for="tooltip-id"
+            data-tip="true"
+            tabindex="0"
+          >
+            AMERICAN LEGION
+          </span>
+          <span
+            data-css-rmx6hr=""
+          >
+            <div
+              class="__react_component_tooltip place-bottom type-dark "
+              data-id="tooltip"
+              id="tooltip-id"
+              role="tooltip"
+            >
+              AMERICAN LEGION
+            </div>
+          </span>
         </div>
         <div
           class="time-slot-details"

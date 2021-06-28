@@ -407,6 +407,17 @@ $form-width: 575px;
   border: 2px solid $color-gray-lighter;
   color: $color-gray;
   font-weight: 600;
+  pointer-events: all;
+
+  div:first-child {
+    line-height: 50%;
+    margin-top: 5px;
+  }
+
+  &:hover {
+    background-color: $caseflow-background;
+    border: 2px solid $color-gray-lighter;
+  }
 }
 
 .time-slot-arrow {
@@ -414,6 +425,7 @@ $form-width: 575px;
 }
 
 .time-slot-details {
+  padding: 5px 0;
   font-weight: 400;
   font-size: 15px;
   white-space: nowrap;
