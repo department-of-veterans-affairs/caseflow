@@ -75,23 +75,27 @@ describe('SelectClaimant', () => {
     });
   });
 
+  describe("with formType", () => {
+    const setupProps = { toggled: true };
+
+    it('renders correctly', () => {
+      const { container } = setupDeceasedAppellants(setupProps);
+
+      expect(container).toMatchSnapshot();
+    });
+
+    it('passes a11y testing', async () => {
+      const { container } = setupDeceasedAppellants(setupProps);
+
+      const results = await axe(container);
+
+      expect(results).toHaveNoViolations();
+    });
+  });
+
   describe("with formType 'appeal'", () => {
     const formType = { formType: 'appeal' };
     const setupProps = { ...formType, toggled: true };
-
-      it('renders correctly', () => {
-        const { container } = setupDeceasedAppellants(setupProps);
-
-        expect(container).toMatchSnapshot();
-      });
-
-      it('passes a11y testing', async () => {
-        const { container } = setupDeceasedAppellants(setupProps);
-
-        const results = await axe(container);
-
-        expect(results).toHaveNoViolations();
-      });
 
       it('disables different-claimant-option_false radio button and does NOT fire off setVeteranIsNotClaimant', () => {
         setupDeceasedAppellants(setupProps);
@@ -155,20 +159,6 @@ describe('SelectClaimant', () => {
 
   describe("with formType not 'appeal'", () => {
     const setupProps = { toggled: true };
-
-    it('renders correctly', () => {
-      const { container } = setupDeceasedAppellants(setupProps);
-
-      expect(container).toMatchSnapshot();
-    });
-
-    it('passes a11y testing', async () => {
-      const { container } = setupDeceasedAppellants(setupProps);
-
-      const results = await axe(container);
-
-      expect(results).toHaveNoViolations();
-    });
 
     it('disables different-claimant-option_false radio button & fires off setVeteranIsNotClaimant', () => {
       setupDeceasedAppellants(setupProps);

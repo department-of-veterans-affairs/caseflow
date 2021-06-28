@@ -107,7 +107,6 @@ feature "Intake", :all_dbs do
     end
 
     context "user has unread Inbox messages" do
-
       scenario "user sees Alert on Intake start page" do
         create(:message, user: current_user)
 
