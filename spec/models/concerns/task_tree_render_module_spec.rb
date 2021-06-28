@@ -120,6 +120,7 @@ describe TaskTreeRenderModule do
       initial_count = appeal.tasks.count + 3
       expect(appeal.tree.lines.count).to eq initial_count
 
+      ama_judge_assign_task.cancelled!
       create(:ama_judge_assign_task, appeal: appeal, parent: nil, created_at: 1.day.ago.round)
       appeal.reload
       expect(appeal.tree.lines.count).to eq initial_count + 1
