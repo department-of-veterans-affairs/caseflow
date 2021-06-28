@@ -73,8 +73,8 @@ export const shouldDisable = (taskInfo) => {
   return alwaysDisabled.includes(taskInfo.type);
 };
 
-export const shouldHideBasedOnPoaType = (taskInfo, poaType) => {
-  return ['Attorney', 'Agent'].includes(poaType) && taskInfo.type === 'InformalHearingPresentationTask';
+export const shouldHideBasedOnPoa = (taskInfo, powerOfAttorney) => {
+  return taskInfo.type === 'InformalHearingPresentationTask' && !powerOfAttorney.ihp_allowed;
 };
 
 // We can have a case where a particular task's inclusion depends upon other tasks
@@ -89,12 +89,12 @@ export const shouldShowBasedOnOtherTasks = (taskInfo, allTasks) => {
 };
 
 // The following governs which tasks should not actually appear in list of available tasks
-export const shouldHide = (taskInfo, poaType, allTasks) => {
+export const shouldHide = (taskInfo, powerOfAttorney, allTasks) => {
   if (automatedTasks.includes(taskInfo.type)) {
     return true;
   }
 
-  return (taskInfo.hideFromCaseTimeline || shouldHideBasedOnPoaType(taskInfo, poaType)) && !shouldShowBasedOnOtherTasks(taskInfo, allTasks);
+  return (taskInfo.hideFromCaseTimeline || shouldHideBasedOnPoa(taskInfo, powerOfAttorney)) && !shouldShowBasedOnOtherTasks(taskInfo, allTasks);
 };
 
 export const shouldAutoSelect = (taskInfo) => {
@@ -136,14 +136,14 @@ export const sortTasks = (taskData) => {
 };
 
 // This returns array of tasks with relevant booleans for hidden/disabled
-export const prepTaskDataForUi = (taskData, poaType) => {
+export const prepTaskDataForUi = (taskData, powerOfAttorney) => {
   const uniqTasks = filterTasks(taskData);
 
   const sortedTasks = sortTasks(uniqTasks);
 
   return sortedTasks.map((taskInfo) => ({
     ...taskInfo,
-    hidden: shouldHide(taskInfo, poaType, taskData),
+    hidden: shouldHide(taskInfo, powerOfAttorney, taskData),
     disabled: shouldDisable(taskInfo, taskData),
     selected: shouldAutoSelect(taskInfo),
   }));
