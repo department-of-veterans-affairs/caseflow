@@ -27,8 +27,7 @@ describe UnrecognizedAppellant do
   describe "#current_version" do
     fcontext "when there is more than one version of the unrecognized appellant" do
       it "returns a list of versions" do
-        current_user = User.last
-        ua_detail = create(:unrecognized_party_detail, :individual) 
+        ua_detail = create(:unrecognized_party_detail, :individual)
         # Initial creation of UA
         ua_current = create(:unrecognized_appellant, unrecognized_party_detail: ua_detail)
         ua_current.update(current_version: ua_current)
@@ -63,6 +62,10 @@ describe UnrecognizedAppellant do
         # Ensure original versions are all the value we started at
         expect(ua_current.original_version.unrecognized_party_detail.name).to eq "Jane Smith"
         expect(ua_current.versions.second.original_version.unrecognized_party_detail.name).to eq "Jane Smith"
+
+        # Ensure claimant relationship is accurate
+        claimant = ua_current.original_version.claimant
+        expect(claimant.unrecognized_appellant).to eq ua_current
       end
     end
   end
