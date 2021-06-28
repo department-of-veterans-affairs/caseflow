@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 feature "Inbox", :postgres do
-  before { FeatureToggle.enable!(:inbox) }
-  after { FeatureToggle.disable!(:inbox) }
 
   let!(:user) { User.authenticate!(roles: ["Mail Intake"]) }
   let!(:hlr) { create(:higher_level_review, :requires_processing, intake: create(:intake, user: user)) }

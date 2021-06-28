@@ -102,7 +102,6 @@ class IntakesController < ApplicationController
       feedbackUrl: feedback_url,
       buildDate: build_date,
       featureToggles: {
-        inbox: FeatureToggle.enabled?(:inbox, user: current_user),
         useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
         rampIntake: FeatureToggle.enabled?(:ramp_intake, user: current_user),
         restrictAppealIntakes: FeatureToggle.enabled?(:restrict_appeal_intakes, user: current_user),
