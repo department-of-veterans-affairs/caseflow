@@ -252,10 +252,8 @@ class NonratingRequestIssueModal extends React.Component {
         this.getAdditionalDetails() :
         null;
 
-    // remove this logic when attorney_fee featureToggle is turned on
-    // and instead call nonratingRequestIssueCategories(benefitType)
     const compensationCategories = nonratingRequestIssueCategories(
-      benefitType === 'compensation' ? 'compensation_all' : benefitType);
+      benefitType === 'compensation' && formType === 'appeal' ? 'compensation_all' : benefitType);
 
     const benefitTypeElement =
       formType === 'appeal' ? <BenefitType value={benefitType} onChange={this.benefitTypeOnChange} asDropdown /> : null;
