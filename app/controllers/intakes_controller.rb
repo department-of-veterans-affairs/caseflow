@@ -106,12 +106,9 @@ class IntakesController < ApplicationController
         useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
         rampIntake: FeatureToggle.enabled?(:ramp_intake, user: current_user),
         restrictAppealIntakes: FeatureToggle.enabled?(:restrict_appeal_intakes, user: current_user),
-        unidentifiedIssueDecisionDate: FeatureToggle.enabled?(:unidentified_issue_decision_date, user: current_user),
         covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
         verifyUnidentifiedIssue: FeatureToggle.enabled?(:verify_unidentified_issue, user: current_user),
         attorneyFees: FeatureToggle.enabled?(:attorney_fees, user: current_user),
-        establishFiduciaryEps: FeatureToggle.enabled?(:establish_fiduciary_eps, user: current_user),
-        editEpClaimLabels: FeatureToggle.enabled?(:edit_ep_claim_labels, user: current_user),
         deceasedAppellants: FeatureToggle.enabled?(:deceased_appellants, user: current_user),
         nonVeteranClaimants: FeatureToggle.enabled?(:non_veteran_claimants, user: current_user)
       }

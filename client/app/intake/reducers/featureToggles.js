@@ -8,9 +8,6 @@ const updateFromServerFeatures = (state, featureToggles) => {
     correctClaimReviews: {
       $set: Boolean(featureToggles.correctClaimReviews)
     },
-    unidentifiedIssueDecisionDate: {
-      $set: Boolean(featureToggles.unidentifiedIssueDecisionDate)
-    },
     covidTimelinessExemption: {
       $set: Boolean(featureToggles.covidTimelinessExemption)
     },
@@ -26,14 +23,8 @@ const updateFromServerFeatures = (state, featureToggles) => {
     nonVeteranClaimants: {
       $set: Boolean(featureToggles.nonVeteranClaimants)
     },
-    establishFiduciaryEps: {
-      $set: Boolean(featureToggles.establishFiduciaryEps)
-    },
     deceasedAppellants: {
       $set: Boolean(featureToggles.deceasedAppellants)
-    },
-    editEpClaimLabels: {
-      $set: Boolean(featureToggles.editEpClaimLabels)
     },
   });
 };
@@ -43,11 +34,8 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
     {
       useAmaActivationDate: false,
       correctClaimReviews: false,
-      unidentifiedIssueDecisionDate: false,
       verifyUnidentifiedIssue: false,
       restrictAppealIntakes: false,
-      establishFiduciaryEps: false,
-      editEpClaimLabels: false,
       deceasedAppellants: false
     },
     data.featureToggles

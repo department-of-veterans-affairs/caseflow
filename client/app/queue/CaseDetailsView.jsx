@@ -145,6 +145,7 @@ export const CaseDetailsView = (props) => {
   const decisionHasDismissedDeathDisposition = (decisionIssue) =>
     decisionIssue.disposition === 'dismissed_death';
 
+  const hasSubstitution = appeal.substitutions?.length;
   const supportSubstituteAppellant =
     currentUserOnClerkOfTheBoard &&
     !appeal.appellantIsNotVeteran &&
@@ -152,6 +153,8 @@ export const CaseDetailsView = (props) => {
     appeal.caseType === 'Original' &&
     // Substitute appellants for hearings will be supported later, but aren't yet:
     appeal.docketName !== 'hearing' &&
+    // For now, only allow a single substitution from a given appeal
+    !hasSubstitution &&
     (userIsCobAdmin || appeal.decisionIssues.some(decisionHasDismissedDeathDisposition)) &&
     !appeal.isLegacyAppeal;
 
@@ -241,7 +244,7 @@ export const CaseDetailsView = (props) => {
             <AppellantDetail
               title="About the Appellant"
               appeal={appeal}
-              substitutionDate={appeal.appellantSubstitution && appeal.appellantSubstitution.substitution_date}
+              substitutionDate={appeal.appellantSubstitution?.substitution_date} // eslint-disable-line camelcase
             />
           ) }
 
