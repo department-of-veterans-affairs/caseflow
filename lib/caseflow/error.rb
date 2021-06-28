@@ -104,6 +104,16 @@ module Caseflow::Error
     end
   end
 
+  class MultipleOpenTasksOfSameTypeError < SerializableError
+    def initialize(args)
+      @task_type = args[:task_type]
+      @code = args[:code] || 400
+      @title = "Error assigning tasks"
+      @message = args[:message] || "Looks like this appeal already has an open #{@task_type} and this action cannot " \
+                              "be completed."
+    end
+  end
+
   class InvalidUserId < SerializableError
     def initialize(args)
       @user_id = args[:user_id]
