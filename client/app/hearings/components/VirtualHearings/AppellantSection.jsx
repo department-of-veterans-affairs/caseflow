@@ -10,7 +10,7 @@ import { VirtualHearingSection } from './Section';
 import { HelperText } from './HelperText';
 import { VirtualHearingEmail } from './Emails';
 import { Timezone } from './Timezone';
-import { marginTop, noMaxWidth } from '../details/style';
+import { marginTop } from '../details/style';
 import { ReadOnly } from '../details/ReadOnly';
 
 export const AppellantSection = ({
@@ -78,7 +78,7 @@ export const AppellantSection = ({
         */}
       {showTimezoneField && schedulingToVirtual && (
         <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
-          <div className={classNames(columnWidthClass, { [noMaxWidth]: true })} >
+          <div className={classNames(columnWidthClass)} >
             <Timezone
               required
               value={virtualHearing?.appellantTz}
@@ -97,7 +97,7 @@ export const AppellantSection = ({
         * Email fields
         */}
       <div id="email-section" className={classNames('usa-grid', { [marginTop(30)]: true })}>
-        <div className={classNames(columnWidthClass, { [noMaxWidth]: true })} >
+        <div className={classNames(columnWidthClass)} >
           <VirtualHearingEmail
             required
             readOnly={readOnly}
