@@ -349,6 +349,12 @@ $form-width: 575px;
   min-height: 680px;
 }
 
+.appeal-information-docket-type-badge {
+  div {
+    line-height: 150%;
+  }
+}
+
 // Hearings Schedule Styles
 .hearing-day-list {
   // Each item = 73px * 10 = 730px
