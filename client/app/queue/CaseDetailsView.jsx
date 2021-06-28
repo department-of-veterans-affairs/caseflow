@@ -151,8 +151,8 @@ export const CaseDetailsView = (props) => {
     !appeal.appellantIsNotVeteran &&
     props.featureToggles.recognized_granted_substitution_after_dd &&
     appeal.caseType === 'Original' &&
-    // Substitute appellants for hearings will be supported later, but aren't yet:
-    appeal.docketName !== 'hearing' &&
+    // Substitute appellants for hearings require separate feature toggle
+    (appeal.docketName !== 'hearing' || props.featureToggles.hearings_substitution_death_dismissal) &&
     // For now, only allow a single substitution from a given appeal
     !hasSubstitution &&
     (userIsCobAdmin || appeal.decisionIssues.some(decisionHasDismissedDeathDisposition)) &&
