@@ -340,8 +340,10 @@ describe AppellantSubstitution do
 
       context "for poa_participant_id" do
         let(:poa_participant_id) { nil }
-        it "raises an error" do
-          expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+        it "creates the appellant substitution successfully" do
+          expect { subject }.not_to raise_error
+          expect(subject.target_appeal.appellant_substitution).to eq subject
+          expect(subject.target_appeal.appellant_substitution?).to eq true
         end
       end
     end

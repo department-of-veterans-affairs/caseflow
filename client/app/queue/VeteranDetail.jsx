@@ -10,13 +10,14 @@ import { detailListStyling, getDetailField } from './Detail';
 import { getAppealValue } from './QueueActions';
 import Address from './components/Address';
 import BareList from '../components/BareList';
+import { AppealHasSubstitutionAlert } from './substituteAppellant/caseDetails/AppealHasSubstitutionAlert';
 import COPY from '../../COPY';
 
 /**
  * A component to display various details about the veteran including name, gender, date of birth, date of death,
  * address and email.
  */
-const VeteranDetail = ({ veteran, stateOnly }) => {
+export const VeteranDetail = ({ veteran, substitutionAppealId, stateOnly }) => {
   const {
     address,
     full_name: fullName,
@@ -74,14 +75,22 @@ const VeteranDetail = ({ veteran, stateOnly }) => {
   }
 
   return (
-    <ul {...detailListStyling}>
-      <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
-      <p><em>{COPY.CASE_DETAILS_VETERAN_ADDRESS_SOURCE}</em></p>
-    </ul>
+    <>
+      <div {...detailListStyling}>
+        <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
+        <p><em>{COPY.CASE_DETAILS_VETERAN_ADDRESS_SOURCE}</em></p>
+        {substitutionAppealId && <AppealHasSubstitutionAlert targetAppealId={substitutionAppealId} />}
+      </div>
+    </>
   );
 };
 
 VeteranDetail.propTypes = {
+
+  /**
+   * Determines whether to display alert regarding presence of substitution appeal
+   */
+  substitutionAppealId: PropTypes.string,
 
   /**
    * Veteran object returned from the back end
@@ -114,6 +123,7 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     veteranInfo: appeal?.veteranInfo,
+    substitutions: appeal?.substitutions,
     loading: !appeal,
     error: loadingVeteranInfo?.error
   };
@@ -137,6 +147,7 @@ const wrapVeteranDetailComponent = (WrappedComponent) => (
       getAppealValue: PropTypes.func,
       loading: PropTypes.bool,
       veteranInfo: PropTypes.object,
+      substitutions: PropTypes.arrayOf(PropTypes.object),
       stateOnly: PropTypes.bool
     }
 
@@ -159,7 +170,13 @@ const wrapVeteranDetailComponent = (WrappedComponent) => (
         return null;
       }
 
-      return <WrappedComponent stateOnly={this.props.stateOnly} {...this.props.veteranInfo} />;
+      return (
+        <WrappedComponent
+          stateOnly={this.props.stateOnly}
+          substitutionAppealId={this.props.substitutions?.[0]?.target_appeal_uuid} // eslint-disable-line camelcase
+          {...this.props.veteranInfo}
+        />
+      );
     }
   }
 );
