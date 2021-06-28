@@ -141,6 +141,10 @@ class HearingDay < CaseflowRecord
     lock || open_hearings.count >= total_slots
   end
 
+  def filled_slots
+    open_hearings.count
+  end
+
   def total_slots
     # Check if we have a stored value
     return number_of_slots unless number_of_slots.nil?

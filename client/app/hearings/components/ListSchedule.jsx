@@ -71,7 +71,9 @@ const exportHeaders = [
   { label: 'Room',
     key: 'room' },
   { label: 'VLJ',
-    key: 'vlj' }
+    key: 'vlj' },
+  { label: 'Hearings Scheduled',
+    key: 'hearingsScheduled' }
 ];
 
 const SwitchViewDropdown = ({ onSwitchView }) => {
@@ -157,6 +159,10 @@ class ListSchedule extends React.Component {
     this.setState({ dateRangeKey: `${this.props.startDate}->${this.props.endDate}` });
   }
 
+  formatHearingsScheduled = (filledSlots, totalSlots) => {
+    return `${filledSlots} of ${totalSlots}`;
+  }
+
   getHearingScheduleRows = () => {
     const { hearingSchedule } = this.props;
 
@@ -167,7 +173,8 @@ class ListSchedule extends React.Component {
         readableRequestType: hearingDay.readableRequestType,
         regionalOffice: hearingDay.regionalOffice,
         room: hearingDay.room,
-        vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName)
+        vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName),
+        hearingsScheduled: this.formatHearingsScheduled(hearingDay.filledSlots, hearingDay.totalSlots)
       }));
   };
 
@@ -225,12 +232,21 @@ class ListSchedule extends React.Component {
       {
         header: 'VLJ',
         name: 'VLJ',
+        align: 'left',
         tableData: hearingScheduleRows,
         enableFilter: true,
         anyFiltersAreSet: true,
         label: 'Filter by VLJ',
         columnName: 'vlj',
         valueName: 'vlj'
+      },
+      {
+        header: 'Hearings Scheduled',
+        name: 'Hearings Scheduled',
+        align: 'left',
+        tableData: hearingScheduleRows,
+        columnName: 'hearingsScheduled',
+        valueName: 'hearingsScheduled'
       }
     ];
   }

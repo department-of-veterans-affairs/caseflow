@@ -25,6 +25,9 @@ class HearingDaySerializer
     HearingRooms.find!(object.room).label unless object.room.nil?
   end
   attribute :scheduled_for
+  attribute :filled_slots do |object|
+    object.open_hearings.count
+  end
   attribute :total_slots
   attribute :slot_length_minutes
   attribute :begins_at
