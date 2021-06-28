@@ -155,7 +155,8 @@ export const CaseDetailsView = (props) => {
     (appeal.docketName !== 'hearing' || props.featureToggles.hearings_substitution_death_dismissal) &&
     // For now, only allow a single substitution from a given appeal
     !hasSubstitution &&
-    (userIsCobAdmin || appeal.decisionIssues.some(decisionHasDismissedDeathDisposition)) &&
+    // Only admins can perform sub on cases w/o all issues having disposition `dismissed_death`
+    (userIsCobAdmin || appeal.decisionIssues.every(decisionHasDismissedDeathDisposition)) &&
     !appeal.isLegacyAppeal;
 
   const showPostDispatch =
