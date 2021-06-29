@@ -9,8 +9,8 @@ class Claimant < CaseflowRecord
 
   belongs_to :decision_review, polymorphic: true
   belongs_to :person, primary_key: :participant_id, foreign_key: :participant_id
-  has_one :unrecognized_appellant, ->(claimant) { 
-    where(id: UnrecognizedAppellant.order(:id).find_by(claimant: claimant).id) 
+  has_one :unrecognized_appellant, lambda {|claimant|
+    where(id: UnrecognizedAppellant.order(:id).find_by(claimant: claimant)&.id)
   }, dependent: :destroy
 
   validates :participant_id,
