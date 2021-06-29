@@ -135,7 +135,6 @@ RSpec.feature "Explain JSON" do
       end
       it "present realistic appeal events" do
         visit "explain/appeals/#{real_appeal.uuid}"
-        binding.pry
         page.find("#narrative_table").click
         req_issue = real_appeal.request_issues.sample
         expect(page).to have_content("#{req_issue.type}_#{req_issue.id}")
