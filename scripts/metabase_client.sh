@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # This script queries our Metabase's API.
+# See reports/sql_queries/README.md
 
 : ${CURL_CMD:=curl}
 : ${CF_SOCKS_URI:=127.0.0.1:2001}

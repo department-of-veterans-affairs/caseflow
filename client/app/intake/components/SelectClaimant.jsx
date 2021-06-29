@@ -1,13 +1,16 @@
 import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
+import * as yup from 'yup';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import {
   BOOLEAN_RADIO_OPTIONS,
   BOOLEAN_RADIO_OPTIONS_DISABLED_FALSE,
+  GENERIC_FORM_ERRORS,
   DECEASED_PAYEE_CODES,
   LIVING_PAYEE_CODES,
+  VBMS_BENEFIT_TYPES
 } from '../constants';
 import { convertStringToBoolean } from '../util';
 import {
@@ -85,7 +88,6 @@ export const SelectClaimant = (props) => {
 
   const {
     attorneyFees,
-    establishFiduciaryEps,
     deceasedAppellants,
     nonVeteranClaimants,
   } = featureToggles;
@@ -93,15 +95,16 @@ export const SelectClaimant = (props) => {
   const [showClaimantModal, setShowClaimantModal] = useState(false);
   const [newClaimant, setNewClaimant] = useState(null);
   const openAddClaimantModal = () => setShowClaimantModal(true);
+  const isAppeal = (formType === 'appeal');
 
   const enableAddClaimantModal = useMemo(
-    () => formType === 'appeal' && attorneyFees && veteranIsNotClaimant && !nonVeteranClaimants,
-    [formType, veteranIsNotClaimant, attorneyFees, nonVeteranClaimants]
+    () => isAppeal && attorneyFees && veteranIsNotClaimant && !nonVeteranClaimants,
+    [isAppeal, veteranIsNotClaimant, attorneyFees, nonVeteranClaimants]
   );
 
   const enableAddClaimant = useMemo(
-    () => formType === 'appeal' && nonVeteranClaimants && veteranIsNotClaimant,
-    [formType, veteranIsNotClaimant, nonVeteranClaimants]
+    () => isAppeal && nonVeteranClaimants && veteranIsNotClaimant,
+    [isAppeal, veteranIsNotClaimant, nonVeteranClaimants]
   );
 
   const radioOpts = useMemo(() => {
@@ -113,18 +116,11 @@ export const SelectClaimant = (props) => {
     ];
   }, [newClaimant, relationships, enableAddClaimant]);
 
-  const allowFiduciary = useMemo(
-    () => establishFiduciaryEps && benefitType === 'fiduciary',
-    [benefitType, establishFiduciaryEps]
-  );
   const shouldShowPayeeCode = useMemo(() => {
     return (
-      formType !== 'appeal' &&
-      (benefitType === 'compensation' ||
-        benefitType === 'pension' ||
-        allowFiduciary)
+      !isAppeal && VBMS_BENEFIT_TYPES.includes(benefitType)
     );
-  }, [formType, benefitType, allowFiduciary]);
+  }, [formType, benefitType]);
 
   const handleVeteranIsNotClaimantChange = (value) => {
     const boolValue = convertStringToBoolean(value);
@@ -198,7 +194,7 @@ export const SelectClaimant = (props) => {
     return (
       <p
         id="claimantLabel"
-        style={{ marginTop: '8.95px', marginBottom: '0px' }}
+        style={{ marginTop: '8.95px', marginBottom: '-25px' }}
       >
         {nonVeteranClaimants ?
           SELECT_CLAIMANT_LABEL :
@@ -206,7 +202,7 @@ export const SelectClaimant = (props) => {
 
         <br />
         <br />
-        {enableAddClaimantModal && formType === 'appeal' && !(claimant || claimantNotes) ?
+        {enableAddClaimantModal && !(claimant || claimantNotes) ?
           ADD_CLAIMANT_TEXT :
           ''}
       </p>
@@ -222,7 +218,7 @@ export const SelectClaimant = (props) => {
         {CLAIMANT_NOT_FOUND_END}
         <br />
         <br />
-        {enableAddClaimantModal && formType === 'appeal' ? ADD_CLAIMANT_TEXT : ''}
+        {enableAddClaimantModal ? ADD_CLAIMANT_TEXT : ''}
       </p>
     );
   };
@@ -238,7 +234,8 @@ export const SelectClaimant = (props) => {
           options={radioOpts}
           onChange={handleSelectNonVeteran}
           value={claimant ?? ''}
-          errorMessage={claimantError}
+          errorMessage={claimantError || props.errors?.['claimant-options']?.message}
+          inputRef={props.register}
         />
 
         {shouldShowPayeeCode && (
@@ -275,7 +272,7 @@ export const SelectClaimant = (props) => {
   };
 
   let veteranClaimantOptions = BOOLEAN_RADIO_OPTIONS;
-  const allowDeceasedAppellants = deceasedAppellants && formType === 'appeal';
+  const allowDeceasedAppellants = deceasedAppellants && isAppeal;
   const showDeceasedVeteranAlert = isVeteranDeceased && veteranIsNotClaimant === false && allowDeceasedAppellants;
 
   if (isVeteranDeceased && !allowDeceasedAppellants) {
@@ -286,7 +283,7 @@ export const SelectClaimant = (props) => {
   }
 
   return (
-    <div className="cf-different-claimant" style={{ marginTop: '18.95px' }}>
+    <div className="cf-different-claimant" style={{ marginTop: '10px' }}>
       <RadioField
         name="different-claimant-option"
         label="Is the claimant someone other than the Veteran?"
@@ -294,17 +291,21 @@ export const SelectClaimant = (props) => {
         vertical
         options={veteranClaimantOptions}
         onChange={handleVeteranIsNotClaimantChange}
-        errorMessage={veteranIsNotClaimantError}
+        errorMessage={veteranIsNotClaimantError || props.errors?.['different-claimant-option']?.message}
         value={
           veteranIsNotClaimant === null ?
             null :
             veteranIsNotClaimant?.toString()
         }
+        inputRef={props.register}
       />
 
       {showDeceasedVeteranAlert && deceasedVeteranAlert()}
-      {showClaimants && (hasRelationships || newClaimant) && claimantOptions()}
-      {showClaimants && !hasRelationships && !newClaimant && noClaimantsCopy()}
+      {showClaimants && (
+        (enableAddClaimant || hasRelationships || newClaimant) ?
+          claimantOptions() :
+          noClaimantsCopy()
+      )}
 
       {enableAddClaimantModal && !newClaimant && (
         <>
@@ -331,7 +332,6 @@ SelectClaimant.propTypes = {
   benefitType: PropTypes.string,
   featureToggles: PropTypes.shape({
     attorneyFees: PropTypes.bool,
-    establishFiduciaryEps: PropTypes.bool,
     deceasedAppellants: PropTypes.bool,
     nonVeteranClaimants: PropTypes.bool,
   }),
@@ -348,6 +348,17 @@ SelectClaimant.propTypes = {
   payeeCodeError: PropTypes.string,
   setPayeeCode: PropTypes.func,
   claimantNotes: PropTypes.string,
+  register: PropTypes.func,
+  errors: PropTypes.array
 };
 
+const selectClaimantValidations = () => ({
+  'claimant-options': yup.string().notRequired().
+    when('different-claimant-option', {
+      is: 'true',
+      then: yup.string().required(GENERIC_FORM_ERRORS.blank)
+    }),
+});
+
+export { selectClaimantValidations };
 export default SelectClaimant;

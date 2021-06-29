@@ -1,5 +1,8 @@
 /* eslint-disable max-lines */
+import { times } from 'lodash';
 import { scheduleHearingTask } from './tasks';
+import moment from 'moment';
+import regionalOfficesJsonResponse from './regionalOfficesJsonResponse';
 
 export const virtualHearingEmails = {
   emailEvents: [
@@ -70,7 +73,23 @@ export const amaHearing = {
   externalId: '9bb8e27e-9b89-48cd-8b0b-2e75cfa5627a',
   hearingDayId: 4,
   id: 4,
-  judgeId: '3',
+  judgeId: 3,
+  judge: {
+    id: 3,
+    createdAt: '2020-06-25T11:00:43.257-04:00',
+    cssId: 'BVAAABSHIRE',
+    efolderDocumentsFetchedAt: null,
+    email: null,
+    fullName: 'Aaron Judge_HearingsAndCases Abshire',
+    lastLoginAt: null,
+    roles: {},
+    selectedRegionalOffice: null,
+    stationId: '101',
+    status: 'active',
+    statusUpdatedAt: null,
+    updatedAt: '2020-06-25T11:00:43.257-04:00',
+    displayName: 'BVAAABSHIRE (VACO)',
+  },
   location: null,
   militaryService: '',
   notes: null,
@@ -487,5 +506,30 @@ export const getHearingDetails = (hearing, showNumber) => {
 
   return secondRowLabel;
 };
+
+export const getHearingDetailsArray = (hearing, showNumber) => {
+  const docketNumber = showNumber && ` ${hearing.docketNumber}`;
+  const issues = `${hearing.currentIssueCount} issues`;
+  const docket = `${hearing.docketName.toUpperCase().charAt(0)} Hearing Request${docketNumber}`;
+  const secondRowLabel = `${issues} · ${docket} · ${hearing.poaName}`;
+
+  return secondRowLabel.split(' ');
+};
+
+export const generateHearingDays = (regionalOffice, count) =>
+  Object.assign({}, times(count).map((index) => ({
+    regionalOffice,
+    id: index,
+    readableRequestType: regionalOffice === 'C' ? 'Central' : 'Video',
+    hearingId: index,
+    timezone: regionalOfficesJsonResponse.regional_offices[regionalOffice].timezone,
+    scheduledFor: moment().add(index, 'days').
+      format('MM-DD-YYYY'),
+    requestType: regionalOffice === 'C' ? 'C' : 'V',
+    room: '1',
+    roomLabel: '1 (1W200A)',
+    filledSlots: 2,
+    totalSlots: 12,
+  })));
 
 /* eslint-enable max-lines */

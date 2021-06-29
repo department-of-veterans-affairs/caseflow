@@ -18,8 +18,8 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
 
     before do
       open_appeals.each do |appeal|
-        create_list(:bva_dispatch_task, 3, appeal: appeal)
-        create_list(:ama_judge_assign_task, 8, appeal: appeal)
+        create(:bva_dispatch_task, appeal: appeal)
+        create(:ama_judge_assign_task, appeal: appeal)
       end
     end
 
@@ -29,6 +29,12 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
       subject
 
       expect(CachedAppeal.all.count).to eq(open_appeals.length)
+
+      expect(CachedAppeal.ama_appeal.count).to eq(appeals.size)
+      expect(CachedAppeal.docket(:evidence_submission).count).to eq(appeals.size)
+
+      expect(CachedAppeal.legacy_appeal.count).to eq(legacy_appeals.size)
+      expect(CachedAppeal.docket(:legacy).count).to eq(legacy_appeals.size)
     end
 
     it "does not cache appeals when all appeal tasks are closed" do
@@ -119,7 +125,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
     before do
       open_appeals.each do |appeal|
         create_list(:bva_dispatch_task, 3, appeal: appeal)
-        create_list(:ama_judge_assign_task, 8, appeal: appeal)
+        create(:ama_judge_assign_task, appeal: appeal)
       end
     end
 

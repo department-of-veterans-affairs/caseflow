@@ -51,6 +51,10 @@ class Task < CaseflowRecord
     Constants.TASK_STATUSES.cancelled.to_sym => Constants.TASK_STATUSES.cancelled
   }
 
+  enum cancellation_reason: {
+    Constants.TASK_CANCELLATION_REASONS.poa_change.to_sym => Constants.TASK_CANCELLATION_REASONS.poa_change
+  }
+
   # This suppresses a warning about the :open scope overwriting the Kernel#open method
   # https://ruby-doc.org/core-2.6.3/Kernel.html#method-i-open
   class << self; undef_method :open; end
@@ -66,6 +70,11 @@ class Task < CaseflowRecord
   scope :recently_completed, -> { completed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now) }
 
   scope :incomplete_or_recently_completed, -> { open.or(recently_completed) }
+
+  scope :of_type, ->(task_type) { where(type: task_type) }
+
+  scope :assigned_to_any_user, -> { where(assigned_to_type: "User") }
+  scope :assigned_to_any_org, -> { where(assigned_to_type: "Organization") }
 
   # Equivalent to .reject(&:hide_from_queue_table_view) but offloads that to the database.
   scope :visible_in_queue_table_view, lambda {
@@ -545,25 +554,38 @@ class Task < CaseflowRecord
     end
   end
 
+  # rubocop:disable Metrics/AbcSize
   def reassign(reassign_params, current_user)
-    sibling = dup.tap do |task|
-      task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
-      task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
-      task.instructions = flattened_instructions(reassign_params)
-      task.status = Constants.TASK_STATUSES.assigned
-      task.save!
+    # We do not validate the number of tasks in this scenario because when a
+    # task is reassigned, more than one open task of the same type must exist during the reassignment.
+    Thread.current.thread_variable_set(:skip_check_for_only_open_task_of_type, true)
+    replacement = dup.tap do |task|
+      begin
+        ActiveRecord::Base.transaction do
+          task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
+          task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
+          task.instructions = flattened_instructions(reassign_params)
+          task.status = Constants.TASK_STATUSES.assigned
+
+          task.save!
+        end
+      # The ensure block guarantees that the thread-local variable check_for_open_task_type
+      # does not leak outside of this method
+      ensure
+        Thread.current.thread_variable_set(:skip_check_for_only_open_task_of_type, nil)
+      end
     end
 
     # Preserve the open children and status of the old task
-    children.select(&:stays_with_reassigned_parent?).each { |child| child.update!(parent_id: sibling.id) }
-    sibling.update!(status: status)
-
+    children.select(&:stays_with_reassigned_parent?).each { |child| child.update!(parent_id: replacement.id) }
+    replacement.update!(status: status)
     update_with_instructions(status: Constants.TASK_STATUSES.cancelled, instructions: reassign_params[:instructions])
 
     appeal.overtime = false if appeal.overtime? && reassign_clears_overtime?
 
-    [sibling, self, sibling.children].flatten
+    [replacement, self, replacement.children].flatten
   end
+  # rubocop:enable Metrics/AbcSize
 
   def can_move_on_docket_switch?
     return false unless open_with_no_children?
@@ -575,11 +597,13 @@ class Task < CaseflowRecord
     true
   end
 
+  ATTRIBUTES_EXCLUDED_FROM_TASK_COPY = %w[id created_at updated_at appeal_id parent_id].freeze
+
   # This method is for copying a task and its ancestors to a new appeal stream
-  def copy_with_ancestors_to_stream(new_appeal_stream)
+  def copy_with_ancestors_to_stream(new_appeal_stream, extra_excluded_attributes: [])
     return unless parent
 
-    new_task_attributes = attributes.reject { |attr| %w[id created_at updated_at appeal_id parent_id].include?(attr) }
+    new_task_attributes = attributes.except(*ATTRIBUTES_EXCLUDED_FROM_TASK_COPY, *extra_excluded_attributes)
     new_task_attributes["appeal_id"] = new_appeal_stream.id
 
     # This method recurses until the parent is nil or a task of its type is already present on the new stream
@@ -593,6 +617,9 @@ class Task < CaseflowRecord
 
     # Skip validation since these are not new tasks (and don't need to have a status of assigned, for example)
     new_stream_task = self.class.new(new_task_attributes)
+    # Note that if we also want to skip 'before_create', 'after_create', 'before_save', and 'after_save' callbacks
+    # (such as in TimedHoldTask) or even things like 'validate :status_is_valid_on_create on: :create',
+    # see SanitizedJsonImporter::SkipCallbacks for a possible solution.
     new_stream_task.save(validate: false)
 
     new_stream_task
@@ -801,6 +828,16 @@ class Task < CaseflowRecord
     end
 
     true
+  end
+
+  def skip_check_for_only_open_task_of_type?
+    Thread.current.thread_variable_get(:skip_check_for_only_open_task_of_type)
+  end
+
+  def only_open_task_of_type
+    if appeal.reload.tasks.open.of_type(type).any?
+      fail Caseflow::Error::MultipleOpenTasksOfSameTypeError, task_type: type
+    end
   end
 
   def parent_can_have_children

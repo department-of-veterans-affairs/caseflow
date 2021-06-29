@@ -10,9 +10,9 @@ class NodDateUpdatesController < ApplicationController
   validates :update, using: NodDateUpdatesSchemas.update
   def update
     new_date = params[:receipt_date]
-    timeliness_issues_report = appeal.validate_all_issues_timely!(new_date)
+    untimely_issues_report = appeal.untimely_issues_report(new_date)
 
-    if !timeliness_issues_report
+    if untimely_issues_report.blank?
       nod_date_update = NodDateUpdate.create!(updated_params)
       appeal.update_receipt_date!(receipt_date: params[:receipt_date])
       render json: {
@@ -22,10 +22,9 @@ class NodDateUpdatesController < ApplicationController
         nodDateUpdate: WorkQueue::NodDateUpdateSerializer.new(nod_date_update).serializable_hash[:data][:attributes]
       }, status: :created
     else
-
       render json: {
-        affectedIssues: timeliness_issues_report[:affected_issues].map(&:serialize),
-        unaffectedIssues: timeliness_issues_report[:unaffected_issues].map(&:serialize)
+        affectedIssues: untimely_issues_report[:affected_issues].map(&:serialize),
+        unaffectedIssues: untimely_issues_report[:unaffected_issues].map(&:serialize)
       }
     end
   end

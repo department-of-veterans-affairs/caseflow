@@ -50,8 +50,7 @@ class SanitizedJsonExporter
   private
 
   def sanitize_records(records)
-    # keep records in order so that comparisons can be done after import
-    records.sort_by(&:id).map { |record| sanitize(record) }
+    records.map { |record| sanitize(record) }
   end
 
   def supported_classes

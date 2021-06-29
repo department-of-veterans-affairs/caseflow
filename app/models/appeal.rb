@@ -24,15 +24,14 @@ class Appeal < DecisionReview
   has_many :decision_documents, as: :appeal
   has_many :vbms_uploaded_documents
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
-
   has_many :nod_date_updates
-
   has_one :special_issue_list
   has_one :post_decision_motion
 
   # The has_one here provides the docket_switch object to the newly created appeal upon completion of the docket switch
   has_one :docket_switch, class_name: "DocketSwitch", foreign_key: :new_docket_stream_id
 
+  has_one :appellant_substitution, foreign_key: :target_appeal_id
   has_many :record_synced_by_job, as: :record
   has_one :work_mode, as: :appeal
   has_one :latest_informal_hearing_presentation_task, lambda {
@@ -41,12 +40,34 @@ class Appeal < DecisionReview
       .where(type: [InformalHearingPresentationTask.name, IhpColocatedTask.name], appeal_type: Appeal.name)
   }, class_name: "Task", foreign_key: :appeal_id
 
+  delegate :address_line_1,
+           :address_line_2,
+           :address_line_3,
+           :city,
+           :state,
+           :zip,
+           :gender,
+           :date_of_birth,
+           :age,
+           :available_hearing_locations,
+           :email_address,
+           :country, to: :veteran, prefix: true
+
+  delegate :power_of_attorney, to: :claimant
+  delegate :representative_name,
+           :representative_type,
+           :representative_address,
+           :representative_email_address,
+           :poa_last_synced_at,
+           :update_cached_attributes!,
+           :save_with_updated_bgs_record!,
+           to: :power_of_attorney, allow_nil: true
+
   enum stream_type: {
     Constants.AMA_STREAM_TYPES.original.to_sym => Constants.AMA_STREAM_TYPES.original,
     Constants.AMA_STREAM_TYPES.vacate.to_sym => Constants.AMA_STREAM_TYPES.vacate,
     Constants.AMA_STREAM_TYPES.de_novo.to_sym => Constants.AMA_STREAM_TYPES.de_novo,
-    Constants.AMA_STREAM_TYPES.court_remand.to_sym => Constants.AMA_STREAM_TYPES.court_remand,
-    Constants.AMA_STREAM_TYPES.substitution.to_sym => Constants.AMA_STREAM_TYPES.substitution
+    Constants.AMA_STREAM_TYPES.court_remand.to_sym => Constants.AMA_STREAM_TYPES.court_remand
   }
 
   after_create :conditionally_set_aod_based_on_age
@@ -122,6 +143,9 @@ class Appeal < DecisionReview
       )).tap do |stream|
         if new_claimants
           new_claimants.each { |claimant| claimant.update(decision_review: stream) }
+
+          # Why isn't this a calculated value instead of stored in the DB?
+          stream.update(veteran_is_not_claimant: !new_claimants.map(&:person).include?(veteran.person))
         else
           stream.copy_claimants!(claimants)
         end
@@ -163,7 +187,7 @@ class Appeal < DecisionReview
   end
 
   def active_request_issues_or_decision_issues
-    decision_issues.empty? ? request_issues.active.all : fetch_all_decision_issues
+    decision_issues.empty? ? active_request_issues : fetch_all_decision_issues
   end
 
   def fetch_all_decision_issues
@@ -179,7 +203,7 @@ class Appeal < DecisionReview
   end
 
   def every_request_issue_has_decision?
-    eligible_request_issues.all? { |request_issue| request_issue.decision_issues.present? }
+    active_request_issues.all? { |request_issue| request_issue.decision_issues.present? }
   end
 
   def latest_attorney_case_review
@@ -191,11 +215,11 @@ class Appeal < DecisionReview
   end
 
   def reviewing_judge_name
-    task = tasks.not_cancelled.where(type: JudgeDecisionReviewTask.name).order(created_at: :desc).first
+    task = tasks.not_cancelled.of_type(:JudgeDecisionReviewTask).order(created_at: :desc).first
     task ? task.assigned_to.try(:full_name) : ""
   end
 
-  def eligible_request_issues
+  def active_request_issues
     # It's possible that two users create issues around the same time and the sequencer gets thrown off
     # (https://stackoverflow.com/questions/5818463/rails-created-at-timestamp-order-disagrees-with-id-order)
     request_issues.active.all.sort_by(&:id)
@@ -232,29 +256,16 @@ class Appeal < DecisionReview
   end
 
   def active?
-    tasks.open.where(type: RootTask.name).any?
+    tasks.open.of_type(:RootTask).any?
   end
 
   def ready_for_distribution?
-    tasks.active.where(type: DistributionTask.name).any?
+    tasks.active.of_type(:DistributionTask).any?
   end
 
   def ready_for_distribution_at
     tasks.select { |t| t.type == "DistributionTask" }.map(&:assigned_at).max
   end
-
-  delegate :address_line_1,
-           :address_line_2,
-           :address_line_3,
-           :city,
-           :state,
-           :zip,
-           :gender,
-           :date_of_birth,
-           :age,
-           :available_hearing_locations,
-           :email_address,
-           :country, to: :veteran, prefix: true
 
   def regional_office_key
     nil
@@ -295,32 +306,8 @@ class Appeal < DecisionReview
            :state,
            :email_address, to: :appellant, prefix: true, allow_nil: true
 
-  def appellant_tz
-    return if address.blank?
-
-    # Use an address object if this is a hash
-    appellant_address = address.is_a?(Hash) ? Address.new(address) : address
-
-    begin
-      TimezoneService.address_to_timezone(appellant_address).identifier
-    rescue StandardError => error
-      Raven.capture_exception(error)
-      nil
-    end
-  end
-
-  def representative_tz
-    return if representative_address.blank?
-
-    # Use an address object if this is a hash
-    rep_address = representative_address.is_a?(Hash) ? Address.new(representative_address) : representative_address
-
-    begin
-      TimezoneService.address_to_timezone(rep_address).identifier
-    rescue StandardError => error
-      Raven.capture_exception(error)
-      nil
-    end
+  def appellant_address
+    appellant&.address
   end
 
   def appellant_middle_initial
@@ -345,7 +332,21 @@ class Appeal < DecisionReview
   def cavc_remand
     return nil if !cavc?
 
-    CavcRemand.find_by(remand_appeal: self)
+    # If this appeal is a direct result of a CavcRemand, then return it
+    return CavcRemand.find_by(remand_appeal: self) if CavcRemand.find_by(remand_appeal: self)
+
+    # If this appeal went through appellant_substitution after a CavcRemand, then use the source_appeal,
+    # which is the same stream_type (cavc? == true) as this appeal.
+    appellant_substitution.source_appeal.cavc_remand if appellant_substitution?
+  end
+
+  def appellant_substitution?
+    !!appellant_substitution
+  end
+
+  # This method allows the source appeal stream to access the appellant_substitution objects
+  def substitutions
+    AppellantSubstitution.where(source_appeal_id: id)
   end
 
   def status
@@ -360,7 +361,7 @@ class Appeal < DecisionReview
     fail "benefit_type on Appeal is set per RequestIssue"
   end
 
-  def create_issues!(new_issues)
+  def create_issues!(new_issues, _request_issues_update = nil)
     new_issues.each do |issue|
       issue.benefit_type ||= issue.contested_benefit_type || issue.guess_benefit_type
       issue.veteran_participant_id = veteran.participant_id
@@ -382,38 +383,34 @@ class Appeal < DecisionReview
     update!(stream_docket_number: default_docket_number_from_receipt_date)
   end
 
-  def validate_all_issues_timely!(new_date)
-    affected_issues = request_issues.reject { |request_issue| request_issue.timely_issue?(new_date.to_date) }
-    unaffected_issues = request_issues - affected_issues
+  def untimely_issues_report(new_date)
+    affected_issues = active_request_issues.reject { |request_issue| request_issue.timely_issue?(new_date.to_date) }
+    unaffected_issues = active_request_issues - affected_issues
 
     return if affected_issues.blank?
 
-    timeliness_issues_report = {
+    issues_report = {
       affected_issues: affected_issues,
       unaffected_issues: unaffected_issues
     }
 
-    timeliness_issues_report
+    issues_report
   end
 
-  # Currently AMA only supports one claimant per decision review
-  def power_of_attorney
-    claimant&.power_of_attorney
+  def bgs_power_of_attorney
+    claimant&.is_a?(BgsRelatedClaimant) ? power_of_attorney : nil
   end
 
-  delegate :representative_name,
-           :representative_type,
-           :representative_address,
-           :representative_email_address,
-           :poa_last_synced_at,
-           to: :power_of_attorney, allow_nil: true
-
+  # Note: Currently Caseflow only supports one claimant per decision review
   def power_of_attorneys
     claimants.map(&:power_of_attorney).compact
   end
 
   def representatives
     vso_participant_ids = power_of_attorneys.map(&:participant_id).compact.uniq
+    # Representatives are returned for Vso or PrivateBar POAs (i.e., subclasses of Representative)
+    # and typically not for POAs with `BgsPowerOfAttorney.representative_type` = 'Agent' or 'Attorney'.
+    # To get all POAs, call `power_of_attorneys`.
     Representative.where(participant_id: vso_participant_ids)
   end
 

@@ -52,9 +52,7 @@ class Hearings::HearingDayController < HearingsApplicationController
   def create
     return no_available_rooms unless hearing_day_rooms.rooms_are_available?
 
-    hearing_day = HearingDay.create(
-      create_params.merge(room: hearing_day_rooms.available_room)
-    )
+    hearing_day = HearingDay.create(create_params.merge(room: hearing_day_rooms.available_room))
 
     render json: { hearing: hearing_day.to_hash }, status: :created
   rescue ActiveRecord::RecordInvalid => error
@@ -92,7 +90,8 @@ class Hearings::HearingDayController < HearingsApplicationController
   ## action is either index or index_with_hearings
   def default_range_start_date
     default = Time.zone.today.beginning_of_day
-    default -= 30.days if params[:action] == "index"
+    # if vso users visit hearings/schedule page, show hearing days starting from today by default
+    default -= 30.days if params[:action] == "index" && !current_user&.vso_employee?
     default
   end
 
@@ -104,8 +103,12 @@ class Hearings::HearingDayController < HearingsApplicationController
 
   def default_range_end_date
     default = Time.zone.today.beginning_of_day
-    default += ((params[:action] == "index") ? 365.days : 182.days)
-    default
+    # if vso users visit hearings/schedule page, only show hearings 2 months out by default
+    default + if params[:action] == "index"
+                current_user&.vso_employee? ? 60.days : 365.days
+              else
+                182.days
+              end
   end
 
   def range_end_date
@@ -154,6 +157,9 @@ class Hearings::HearingDayController < HearingsApplicationController
                   :judge_id,
                   :regional_office,
                   :notes,
+                  :number_of_slots,
+                  :first_slot_time,
+                  :slot_length_minutes,
                   :bva_poc)
       .merge(created_by: current_user, updated_by: current_user)
   end

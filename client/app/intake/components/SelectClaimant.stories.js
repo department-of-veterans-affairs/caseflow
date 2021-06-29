@@ -10,7 +10,6 @@ const relationships = [
 
 const featureToggles = {
   attorneyFees: false,
-  establishFiduciaryEps: false,
   nonVeteranClaimants: false,
 };
 const defaultArgs = {

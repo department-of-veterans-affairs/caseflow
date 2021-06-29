@@ -27,10 +27,6 @@ class AttorneyClaimant < Claimant
 
   private
 
-  def find_power_of_attorney
-    find_power_of_attorney_by_pid
-  end
-
   def bgs_attorney
     @bgs_attorney ||= begin
       BgsAttorney.find_by_participant_id(participant_id)

@@ -109,7 +109,7 @@ describe('DocketSwitchEditTasksForm', () => {
 
       // Cancel modal
       userEvent.click(
-        within(screen.getByRole('alertdialog')).getByRole('button', {
+        within(screen.getByRole('dialog')).getByRole('button', {
           name: /cancel/i,
         })
       );
@@ -122,7 +122,7 @@ describe('DocketSwitchEditTasksForm', () => {
 
       // Confirm/submit modal
       userEvent.click(
-        within(screen.getByRole('alertdialog')).getByRole('button', {
+        within(screen.getByRole('dialog')).getByRole('button', {
           name: /confirm/i,
         })
       );
@@ -141,7 +141,7 @@ describe('DocketSwitchEditTasksForm', () => {
 
       // Cancel modal
       userEvent.click(
-        within(screen.getByRole('alertdialog')).getByRole('button', {
+        within(screen.getByRole('dialog')).getByRole('button', {
           name: /cancel/i,
         })
       );
@@ -160,7 +160,7 @@ describe('DocketSwitchEditTasksForm', () => {
 
       // Confirm/submit modal
       userEvent.click(
-        within(screen.getByRole('alertdialog')).getByRole('button', {
+        within(screen.getByRole('dialog')).getByRole('button', {
           name: /confirm/i,
         })
       );
@@ -211,7 +211,7 @@ describe('DocketSwitchEditTasksForm', () => {
       clickAddTask();
 
       expect(
-        screen.getByRole('textbox', { name: /select the type of task/i })
+        screen.getByRole('combobox', { name: /select the type of task/i })
       ).toBeInTheDocument();
 
       expect(
@@ -234,7 +234,7 @@ describe('DocketSwitchEditTasksForm', () => {
       clickAddTask();
 
       expect(
-        screen.queryAllByRole('textbox', { name: /select the type of task/i }).
+        screen.queryAllByRole('combobox', { name: /select the type of task/i }).
           length
       ).toBe(1);
 
@@ -246,7 +246,7 @@ describe('DocketSwitchEditTasksForm', () => {
       clickAddTask();
 
       expect(
-        screen.queryAllByRole('textbox', { name: /select the type of task/i }).
+        screen.queryAllByRole('combobox', { name: /select the type of task/i }).
           length
       ).toBe(2);
 

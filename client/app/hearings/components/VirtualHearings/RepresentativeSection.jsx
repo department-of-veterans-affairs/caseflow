@@ -48,6 +48,7 @@ export const RepresentativeSection = ({
               update('virtualHearing', { representativeTz })
             }
             time={hearing.scheduledTimeString}
+            roTimezone={hearing?.regionalOfficeTimezone}
             label="POA/Representative Timezone"
             name="representativeTz"
           />

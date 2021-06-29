@@ -16,6 +16,11 @@ import { DISPOSITION_OPTIONS } from '../../constants';
 import { COLORS } from '../../../constants/AppConstants';
 import COPY from '../../../../COPY';
 import HEARING_DISPOSITION_TYPES from '../../../../constants/HEARING_DISPOSITION_TYPES';
+import {
+  virtualHearingRoleForUser,
+  virtualHearingLinkLabelFull,
+  VIRTUAL_HEARING_HOST
+} from '../../utils';
 
 const staticSpacing = css({ marginTop: '5px' });
 
@@ -245,7 +250,7 @@ export const NotesField = ({ hearing, update, readOnly }) => {
       strongLabel
       disabled={disabled}
       onChange={(notes) => update({ notes })}
-      textAreaStyling={css({ height: '50px' })}
+      textAreaStyling={css({ height: '100px' })}
       value={hearing.notes || ''}
     />
   );
@@ -346,12 +351,16 @@ PreppedCheckbox.propTypes = {
 export const StaticVirtualHearing = ({ hearing, user }) => (
   <div>
     <VirtualHearingLink
-      label={COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL_FULL}
+      label={virtualHearingLinkLabelFull(virtualHearingRoleForUser(user, hearing))}
       user={user}
       hearing={hearing}
       isVirtual={hearing.isVirtual}
       virtualHearing={hearing.virtualHearing}
-      link={hearing?.virtualHearing?.hostLink}
+      link={
+        virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST ?
+        hearing?.virtualHearing?.hostLink :
+        hearing?.virtualHearing?.guestLink
+      }
     />
     {hearing?.virtualHearing?.status === 'pending' && (
       <div {...staticSpacing}>

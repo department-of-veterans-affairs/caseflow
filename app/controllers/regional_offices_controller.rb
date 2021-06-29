@@ -29,14 +29,17 @@ class RegionalOfficesController < ApplicationController
     def hearing_day_hash(regional_office, day, hearings)
       {
         hearing_id: day.id,
+        vlj: day.judge ? "VLJ #{day.judge&.full_name&.split(' ')&.last}" : nil,
         regional_office: regional_office,
         timezone: RegionalOffice::CITIES[regional_office][:timezone],
         scheduled_for: day.scheduled_for,
-        request_type: day.request_type,
+        readable_request_type: Hearing::HEARING_TYPES[day.request_type.to_sym],
         room: day.room,
         room_label: HearingRooms.find!(day.room)&.label || "",
         filled_slots: hearings.size,
-        total_slots: day.total_slots
+        total_slots: day.total_slots,
+        begins_at: day.begins_at,
+        slot_length_minutes: day.slot_length_minutes
       }
     end
   end

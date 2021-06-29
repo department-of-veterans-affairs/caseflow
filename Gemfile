@@ -26,17 +26,12 @@ gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
 gem "icalendar"
 gem "kaminari"
+gem "logstasher"
 gem "moment_timezone-rails"
 # Rails 6 has native support for multiple dbs, so prefer that over multiverse after upgrade.
 # https://github.com/ankane/multiverse#upgrading-to-rails-6
 gem "multiverse"
 gem "newrelic_rpm"
-# nokogiri versions before 1.10.4 are vulnerable to CVE-2019-5477.
-# https://github.com/sparklemotion/nokogiri/issues/1915
-# nokogiri 1.10.4 is vulnerable to CVE-2019-13117, CVE-2019-13118, CVE-2019-18197.
-# https://github.com/sparklemotion/nokogiri/issues/1943
-# Nokogiri <= 1.10.10 vulnerable to CVE-2020-26247
-# https://github.com/sparklemotion/nokogiri/security/advisories/GHSA-vr8q-g5c7-m54m
 gem "nokogiri", ">= 1.11.0.rc4"
 gem "paper_trail", "~> 10"
 # Used to speed up reporting
@@ -50,10 +45,9 @@ gem "pg", platforms: :ruby
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
-# We are not yet at version 4.x because we have not tested.
-gem "puma", "~> 3.12.6"
+gem "puma", "~> 5"
 gem "rack", "~> 2.2.3"
-gem "rails", "5.2.4.5"
+gem "rails", "5.2.4.6"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
@@ -101,6 +95,7 @@ group :test, :development, :demo do
   gem "factory_bot_rails", "~> 5.2"
   gem "faker"
   gem "guard-rspec"
+  gem "immigrant"
   # Linters
   gem "jshint", platforms: :ruby
   gem "pry"

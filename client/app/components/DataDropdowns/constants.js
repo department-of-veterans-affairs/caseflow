@@ -13,3 +13,18 @@ export const HEARING_ROOM_OPTIONS = [
     value: key.toString()
   }))
 );
+
+export const TIME_SLOT_LENGTHS = [
+  {
+    value: 60,
+    label: '60 minutes'
+  },
+  {
+    value: 45,
+    label: '45 minutes'
+  },
+  {
+    value: 30,
+    label: '30 minutes'
+  },
+];

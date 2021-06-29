@@ -144,7 +144,15 @@ class VirtualHearing < CaseflowRecord
 
   def test_link(title)
     if use_vc_test_link?
-      "https://vc.va.gov/bva-app?conference=test_call&name=#{email_recipient_name(title)}&join=1"
+      if ENV["VIRTUAL_HEARING_URL_HOST"].blank?
+        fail(VirtualHearings::LinkService::URLHostMissingError, message: COPY::URL_HOST_MISSING_ERROR_MESSAGE)
+      end
+      if ENV["VIRTUAL_HEARING_URL_PATH"].blank?
+        fail(VirtualHearings::LinkService::URLPathMissingError, message: COPY::URL_PATH_MISSING_ERROR_MESSAGE)
+      end
+
+      host_and_path = "#{ENV['VIRTUAL_HEARING_URL_HOST']}#{ENV['VIRTUAL_HEARING_URL_PATH']}"
+      "https://#{host_and_path}?conference=test_call&name=#{email_recipient_name(title)}&join=1"
     else
       "https://care.va.gov/webapp2/conference/test_call?name=#{email_recipient_name(title)}&join=1"
     end

@@ -78,6 +78,10 @@ class WorkQueue::AppealSerializer
 
   attribute :appellant_relationship, &:appellant_relationship
 
+  attribute :appellant_type do |appeal|
+    appeal.claimant&.type
+  end
+
   attribute :cavc_remand do |object|
     if object.cavc_remand
       WorkQueue::CavcRemandSerializer.new(object.cavc_remand).serializable_hash[:data][:attributes]
@@ -90,6 +94,19 @@ class WorkQueue::AppealSerializer
 
   attribute :remand_judge_name do |appeal|
     appeal.cavc_remand&.source_appeal&.reviewing_judge_name
+  end
+
+  attribute :appellant_substitution do |object|
+    if object.appellant_substitution
+      WorkQueue::AppellantSubstitutionSerializer.new(object.appellant_substitution)
+        .serializable_hash[:data][:attributes]
+    end
+  end
+
+  attribute :substitutions do |object|
+    object.substitutions.map do |substitution|
+      WorkQueue::AppellantSubstitutionSerializer.new(substitution).serializable_hash[:data][:attributes]
+    end
   end
 
   attribute :veteran_death_date

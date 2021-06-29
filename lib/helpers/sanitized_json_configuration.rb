@@ -7,6 +7,10 @@ require "helpers/sanitation_transforms.rb"
 # Needed by SanitizedJsonExporter and SanitizedJsonImporter.
 
 class SanitizedJsonConfiguration
+  def self.select_sanitize_fields(clazz)
+    clazz.columns.select { |column| column.comment&.starts_with?("PII") }.map(&:name)
+  end
+
   # For exporting, the :retrieval lambda is run according to the ordering in this hash.
   # Results of running each lambda are added to the `records` hash for use by later retrieval lambdas.
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
@@ -17,121 +21,149 @@ class SanitizedJsonConfiguration
         # i.e., DecisionReview has no table_name and hence cannot be used
         # when reassociating using polymorphic associations.
         track_imported_ids: true,
-        sanitize_fields: %w[veteran_file_number],
         retrieval: lambda do |records|
-          initial_appeals = records[Appeal]
-          (initial_appeals +
-          initial_appeals.map { |appeal| self.class.appeals_associated_with(appeal) }.flatten.uniq.compact
-          ).uniq
+          (records[Appeal] +
+            records[Appeal].map { |appeal| self.class.appeals_associated_with(appeal) }.flatten.uniq.compact
+          ).uniq.sort_by(&:id)
         end
       },
       Veteran => {
         track_imported_ids: true,
-        sanitize_fields: %w[file_number first_name last_name middle_name ssn],
-        retrieval: ->(records) { records[Appeal].map(&:veteran) }
+        retrieval: ->(records) { records[Appeal].map(&:veteran).sort_by(&:id) }
       },
       AppealIntake => {
-        sanitize_fields: %w[veteran_file_number],
-        retrieval: ->(records) { records[Appeal].map(&:intake) }
+        retrieval: ->(records) { records[Appeal].map(&:intake).compact.sort_by(&:id) }
+      },
+      DecisionDocument => {
+        # citation_number must be unique and doesn't reference anything else in Caseflow,
+        # so transform the number so we can import into the same DB as the original record
+        sanitize_fields: %w[citation_number],
+        retrieval: ->(records) { DecisionDocument.where(appeal: records[Appeal]).order(:id) }
       },
       Claimant => {
-        retrieval: ->(records) { records[Appeal].map(&:claimants).flatten }
+        retrieval: ->(records) { records[Appeal].map(&:claimants).flatten.sort_by(&:id) }
       },
       Task => {
         sanitize_fields: %w[instructions],
-        retrieval: ->(records) { records[Appeal].map(&:tasks).flatten.sort_by(&:id).extend(TaskAssignment) }
+        retrieval: ->(records) { reorder_for_import(Task.where(appeal: records[Appeal])) }
       },
       TaskTimer => {
-        retrieval: ->(records) { TaskTimer.where(task_id: records[Task].map(&:id)) }
+        retrieval: ->(records) { TaskTimer.where(task_id: records[Task].map(&:id)).order(:id) }
+      },
+      JudgeCaseReview => {
+        sanitize_fields: %w[comment],
+        retrieval: ->(records) { JudgeCaseReview.where(task_id: records[Task].map(&:id)).order(:id) }
+      },
+      AttorneyCaseReview => {
+        retrieval: ->(records) { AttorneyCaseReview.where(task_id: records[Task].map(&:id)).order(:id) }
+      },
+      DecisionIssue => {
+        # In order to import DecisionIssues before RequestIssues (since RequestIssue records refer to DecisionIssue),
+        # export DecisionIssue records first.
+        sanitize_fields: %w[decision_text description],
+        retrieval: lambda do |records|
+          appeal_decision_issue_ids = records[Appeal].map(&:decision_issues).flatten.map(&:id)
+          request_issues = records[Appeal].map(&:request_issues).flatten
+          other_decision_issues_ids = request_issues.compact.map(&:contested_decision_issue).compact.map(&:id)
+
+          DecisionIssue.where(id: appeal_decision_issue_ids + other_decision_issues_ids).order(:id)
+        end
       },
       RequestIssue => {
         sanitize_fields: ["notes", "contested_issue_description", /_(notes|text|description)/],
-        retrieval: ->(records) { records[Appeal].map(&:request_issues).flatten }
-      },
-      DecisionIssue => {
-        sanitize_fields: %w[decision_text description],
-        retrieval: ->(records) { records[Appeal].map(&:decision_issues).flatten }
+        retrieval: ->(records) { records[Appeal].map(&:request_issues).flatten.sort_by(&:id) }
       },
       RequestDecisionIssue => {
-        retrieval: ->(records) { RequestDecisionIssue.where(request_issue: records[RequestIssue]) }
+        retrieval: ->(records) { RequestDecisionIssue.where(request_issue: records[RequestIssue]).order(:id) }
       },
       CavcRemand => { # dependent on DecisionIssue records
         # cavc_judge_full_name is selected from Constants::CAVC_JUDGE_FULL_NAMES; no need to sanitize
         sanitize_fields: %w[instructions],
-        retrieval: ->(records) { records[Appeal].map(&:cavc_remand).compact }
+        retrieval: ->(records) { records[Appeal].map(&:cavc_remand).compact.sort_by(&:id) }
       },
       Hearing => {
         sanitize_fields: %w[bva_poc military_service notes representative_name summary witness],
         retrieval: lambda do |records|
-          (records[Appeal].map(&:hearings) + records[Task].with_type("HearingTask").map(&:hearing)).flatten.uniq.compact
+          (records[Appeal].map(&:hearings) +
+            Task.where(id: records[Task].map(&:id), type: :HearingTask).map(&:hearing)
+          ).flatten.uniq.compact.sort_by(&:id)
         end
       },
       HearingDay => {
         sanitize_fields: %w[bva_poc notes],
-        retrieval: ->(records) { records[Hearing].map(&:hearing_day).uniq.compact }
+        retrieval: ->(records) { records[Hearing].map(&:hearing_day).uniq.compact.sort_by(&:id) }
       },
       VirtualHearing => {
         sanitize_fields: %w[alias alias_with_host appellant_email conference_id guest_hearing_link guest_pin
                             guest_pin_long host_hearing_link host_pin host_pin_long judge_email representative_email],
-        retrieval: ->(records) { records[Hearing].map(&:virtual_hearing).uniq.compact }
+        retrieval: ->(records) { records[Hearing].map(&:virtual_hearing).uniq.compact.sort_by(&:id) }
       },
       HearingTaskAssociation => {
-        retrieval: ->(records) { HearingTaskAssociation.where(hearing: records[Hearing]) }
+        retrieval: ->(records) { HearingTaskAssociation.where(hearing: records[Hearing]).order(:id) }
       },
 
       User => {
         track_imported_ids: true,
         sanitize_fields: %w[css_id email full_name],
         retrieval: lambda do |records|
-          tasks = records[Task]
+          # eager load task associations
+          tasks = Task.where(id: records[Task].map(&:id)).includes(:assigned_by, :assigned_to, :cancelled_by)
           cavc_remands = records[CavcRemand]
           hearings = records[Hearing]
 
-          tasks.map(&:assigned_by).compact + tasks.map(&:cancelled_by).compact +
-            tasks.assigned_to_user.map(&:assigned_to) +
-            cavc_remands.map { |cavc_remand| [cavc_remand.created_by, cavc_remand.updated_by] }.flatten.uniq.compact +
-            records[Appeal].map(&:intake).compact.map(&:user).uniq.compact +
-            records[AppealIntake].map { |intake| intake&.user }.uniq.compact +
-            records[HearingDay].map { |hday| [hday.created_by, hday.updated_by, hday.judge] }.flatten.uniq.compact +
-            hearings.map { |hearing| [hearing.created_by, hearing.updated_by, hearing.judge] }.flatten.uniq.compact +
-            hearings.map(&:virtual_hearing).uniq.compact.map do |vh|
-              [vh.created_by, vh.updated_by]
-            end.flatten.uniq.compact
-        end
-      },
-      Organization => {
-        track_imported_ids: true,
-        retrieval: lambda do |records|
-          records[Task].assigned_to_org.map(&:assigned_to) + records[User].map(&:organizations).flatten.uniq
+          users = tasks.map(&:assigned_by).compact + tasks.map(&:cancelled_by).compact +
+                  tasks.assigned_to_any_user.map(&:assigned_to) +
+                  cavc_remands.map { |cavc_remand| [cavc_remand.created_by, cavc_remand.updated_by] }.flatten +
+                  records[Appeal].map(&:intake).compact.map(&:user) +
+                  records[AppealIntake].map { |intake| intake&.user } +
+                  records[HearingDay].map { |hday| [hday.created_by, hday.updated_by, hday.judge] }.flatten +
+                  hearings.map { |hearing| [hearing.created_by, hearing.updated_by, hearing.judge] }.flatten +
+                  hearings.map(&:virtual_hearing).uniq.compact.map { |vh| [vh.created_by, vh.updated_by] }.flatten
+
+          users.uniq.compact.sort_by(&:id)
         end
       },
       OrganizationsUser => {
         retrieval: ->(records) { OrganizationsUser.where(user: records[User]) }
       },
+      Organization => {
+        track_imported_ids: true,
+        retrieval: lambda do |records|
+          # eager load task associations
+          org_tasks = Task.where(id: records[Task].map(&:id)).includes(:assigned_to).assigned_to_any_org
+          org_ids = records[OrganizationsUser].map(&:organization_id) + org_tasks.map(&:assigned_to_id)
+          # Use Organization.unscoped to include inactive organizations when exporting
+          Organization.unscoped.where(id: org_ids).order(:id)
+        end
+      },
       Person => {
         track_imported_ids: true,
-        sanitize_fields: %w[date_of_birth email_address first_name last_name middle_name ssn],
         retrieval: ->(records) { (records[Veteran] + records[Claimant]).map(&:person).uniq.compact }
       }
-    }
+    }.each do |clazz, class_configuration|
+      class_configuration[:sanitize_fields] ||= self.class.select_sanitize_fields(clazz).tap do |fields|
+        Rails.logger.info "  Inferring #{clazz} sanitize_fields: #{fields}" unless fields.blank?
+      end
+    end
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
-  module TaskAssignment
-    def assigned_to_user
-      select { |task| task.assigned_to_type == "User" }
-    end
-
-    def assigned_to_org
-      select { |task| task.assigned_to_type == "Organization" }
-    end
-
-    def with_type(task_type)
-      select { |task| task.type == task_type }
-    end
-  end
-
   private
+
+  def reorder_for_import(tasks)
+    tasks = tasks.sort_by(&:id)
+    reordered_tasks = tasks.select { |task| task.parent_id.nil? }
+    tasks -= reordered_tasks
+    while tasks.any?
+      task_ids = reordered_tasks.pluck("id")
+      child_tasks = tasks.select { |task| task_ids.include?(task.parent_id) }
+      fail "Tasks with unknown parent task still remain" if child_tasks.blank?
+
+      reordered_tasks += child_tasks
+      tasks -= child_tasks
+    end
+    reordered_tasks
+  end
 
   def extract_configuration(config_field, configuration, default_value = nil)
     configuration.select { |klass, _| klass < ActiveRecord::Base }
@@ -192,8 +224,11 @@ class SanitizedJsonConfiguration
       Appeal => initial_appeals
     }
 
+    # This is just a reminder for how we can handle legacy appeals, i.e. by using :legacy_retrieval.
+    # Currently no :legacy_retrieval lambdas have been defined.
+    retrieval_key = initial_appeals.first.is_a?(LegacyAppeal) ? :legacy_retrieval : :retrieval
     # incrementally update export_records as subsequent calls may rely on prior updates to export_records
-    extract_configuration(:retrieval, configuration).map do |klass, retrieval_lambda|
+    extract_configuration(retrieval_key, configuration).map do |klass, retrieval_lambda|
       export_records[klass] = retrieval_lambda.call(export_records)
     end
 
@@ -201,8 +236,19 @@ class SanitizedJsonConfiguration
   end
 
   def self.appeals_associated_with(appeal)
-    appeal.cavc_remand&.source_appeal
     # To-do: include other source appeals, e.g., those with the same docket number
+    [
+      appeal.cavc_remand&.source_appeal,
+      appeal.appellant_substitution&.source_appeal,
+      decision_reviews_associated_with(appeal)[Appeal]
+    ].flatten.compact
+  end
+
+  # To-do: export other decision_reviews, i.e., HLRs and SCs
+  def self.decision_reviews_associated_with(appeal)
+    appeal.request_issues.includes(:contested_decision_issue).map do |rqi|
+      rqi.contested_decision_issue&.decision_review
+    end.compact.group_by(&:class)
   end
 
   def before_sanitize(record, obj_hash)
@@ -237,10 +283,11 @@ class SanitizedJsonConfiguration
     @id_offset ||= 2_000_000_000
   end
 
-  # Start with important types that other records will reassociate with
+  # Start with important types that other records will reassociate with.
+  # Then import according to the order in the Json file
   def first_types_to_import
     # HearingDay is needed by Hearing
-    @first_types_to_import ||= [Appeal, Organization, User, HearingDay]
+    @first_types_to_import ||= [Appeal, Organization, User, HearingDay, Task]
   end
 
   # During record creation, types where validation and callbacks should be avoided
@@ -280,7 +327,7 @@ class SanitizedJsonConfiguration
       # Typed polymorphic association fields will be associated based on the '_type' field
       type: reassociate_types.map do |klass|
         [klass,
-         AssocationWrapper.new(klass).typed_associations(excluding: offset_id_fields[klass]).fieldnames.presence]
+         AssocationWrapper.new(klass).fieldnames_of_typed_associations(excluding: offset_id_fields[klass]).presence]
       end.to_h.compact
     }.merge(
       # Untyped association fields (ie, without the matching '_type' field) will associate to their corresponding type
@@ -289,7 +336,7 @@ class SanitizedJsonConfiguration
           assoc_class.name,
           reassociate_types.map do |klass|
             [klass,
-             AssocationWrapper.new(klass).untyped_associations_with(assoc_class).fieldnames.presence]
+             AssocationWrapper.new(klass).fieldnames_of_untyped_associations_with(assoc_class).presence]
           end.to_h.compact
         ]
       end .to_h

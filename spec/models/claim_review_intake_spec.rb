@@ -145,10 +145,21 @@ describe ClaimReviewIntake, :postgres do
             expect(detail.claimants).to be_empty
           end
         end
+
+        context "And benefit type is fiduciary" do
+          let(:benefit_type) { "fiduciary" }
+
+          it "is expected to add an error that payee_code cannot be blank" do
+            expect(subject).to be_falsey
+            expect(detail.errors[:payee_code]).to include("blank")
+            expect(detail.errors[:receipt_date]).to include("in_future")
+            expect(detail.claimants).to be_empty
+          end
+        end
       end
 
-      context "And benefit type is not compensation or pension" do
-        let(:benefit_type) { "fiduciary" }
+      context "And benefit type is not compensation, pension, or fiduciary" do
+        let(:benefit_type) { "insurance" }
 
         it "sets payee_code to nil" do
           subject
@@ -157,24 +168,6 @@ describe ClaimReviewIntake, :postgres do
           expect(intake.detail.claimant).to have_attributes(
             participant_id: "1234",
             payee_code: nil,
-            decision_review: intake.detail
-          )
-        end
-      end
-
-      context "And fiduciary featureToggle turned on" do
-        before { FeatureToggle.enable!(:establish_fiduciary_eps) }
-        after { FeatureToggle.disable!(:establish_fiduciary_eps) }
-
-        let(:benefit_type) { "fiduciary" }
-
-        it "sets payee_code" do
-          subject
-
-          expect(intake.detail.claimants.count).to eq 1
-          expect(intake.detail.claimant).to have_attributes(
-            participant_id: "1234",
-            payee_code: "10",
             decision_review: intake.detail
           )
         end

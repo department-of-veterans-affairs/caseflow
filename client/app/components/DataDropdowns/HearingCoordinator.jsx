@@ -49,12 +49,13 @@ class HearingCoordinatorDropdown extends React.Component {
 
   render() {
     const {
-      name, label, onChange, readOnly, errorMessage, placeholder,
+      optional, name, label, onChange, readOnly, errorMessage, placeholder,
       hearingCoordinators: { isFetching }
     } = this.props;
 
     return (
       <SearchableDropdown
+        optional={optional}
         name={name}
         label={isFetching ? <LoadingLabel text="Loading hearing coordinators..." /> : label}
         strongLabel
@@ -69,6 +70,7 @@ class HearingCoordinatorDropdown extends React.Component {
 }
 
 HearingCoordinatorDropdown.propTypes = {
+  optional: PropTypes.bool,
   name: PropTypes.string,
   label: PropTypes.string,
   value: PropTypes.string,

@@ -22,7 +22,7 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
           </strong>
         </p>
         <p>
-          The hyperlink takes you to a draft ruling letter based on the recommended ruling. Please feel free to make any necessary edits to the ruling letter. You may then sign the letter. Inserting a hyperlink to a signed ruling letter is recommended, but optional.
+          The hyperlink takes you to a draft ruling letter based on the recommended ruling. Please feel free to make any necessary edits to the ruling letter. You may then sign the letter.
         </p>
         <p>
           If you have any questions, or need assistance making edits to the ruling letter, please 
@@ -149,31 +149,6 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
         </div>
       </fieldset>
       <div
-        class="cf-form-textinput   "
-      >
-        <label
-          for="hyperlink"
-        >
-          <strong>
-            <span>
-              Insert hyperlink to signed ruling letter
-              <span
-                class="cf-optional"
-              >
-                Optional
-              </span>
-            </span>
-          </strong>
-        </label>
-        <input
-          class="cf-form-textinput"
-          id="hyperlink"
-          name="hyperlink"
-          type="text"
-          value=""
-        />
-      </div>
-      <div
         class="cf-form-textarea"
       >
         <label
@@ -203,6 +178,7 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
             <label
               class="question-label"
               for="attorney"
+              id="attorney-label"
             >
               <strong>
                 <span>
@@ -236,10 +212,15 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
                       >
                         <input
                           aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="attorney-label"
+                          aria-owns="attorney-listbox"
                           autocapitalize="none"
                           autocomplete="off"
                           autocorrect="off"
                           id="attorney"
+                          role="combobox"
                           spellcheck="false"
                           style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                           tabindex="0"
@@ -277,6 +258,11 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
                     </div>
                   </div>
                 </div>
+                <input
+                  name="attorney"
+                  type="hidden"
+                  value=""
+                />
               </div>
             </div>
           </div>

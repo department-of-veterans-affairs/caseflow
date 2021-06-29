@@ -26,6 +26,20 @@ a:visited {
   color: $color-primary; // Override USWDS
 }
 
+// Override USWDS v1 focus properties with USWDS v2 styling
+*:focus,
+a:focus,
+.usa-focus {
+  outline: .25rem solid $color-focus-outline;
+}
+
+[type=radio]:focus + label::before,
+[type=checkbox]:focus + label::before {
+  outline: .25rem solid $color-focus-outline;
+  outline-offset: 6px;
+}
+
+
 abbr {
   border: 0;
   text-decoration: none;
@@ -605,6 +619,7 @@ svg title {
 .cf-logo {
   color: $color-gray-dark;
   font-size: 1.7rem;
+  font-weight: 900;
   display: inline;
 
   &:hover {

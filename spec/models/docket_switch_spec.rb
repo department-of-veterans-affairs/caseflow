@@ -60,7 +60,7 @@ RSpec.describe DocketSwitch, type: :model do
         let(:disposition) { "granted" }
         let(:granted_request_issue_ids) { nil }
 
-        it "moves all request issues to a new appeal stream and archives the original appeal" do
+        it "moves all request issues to a new appeal stream and marks the original appeal as docket switched" do
           expect(docket_switch_task).to be_assigned
 
           subject
@@ -77,8 +77,8 @@ RSpec.describe DocketSwitch, type: :model do
           # Docket switch task gets completed
           expect(docket_switch_task).to be_completed
 
-          # Appeal Status API shows original stream's status of archived
-          expect(appeal.status.to_sym).to eq :archived
+          # Appeal Status API shows original stream's status of docket switched
+          expect(appeal.status.to_sym).to eq :docket_switched
 
           # Docket switch task has been copied to new appeal stream
           new_completed_task = DocketSwitchGrantedTask.find_by(appeal: docket_switch.new_docket_stream)
@@ -110,9 +110,8 @@ RSpec.describe DocketSwitch, type: :model do
           expect(docket_switch_task).to be_completed
 
           # Docket switch task has been copied to new appeal stream
-          new_completed_task = DocketSwitchGrantedTask.find_by(
-            appeal: docket_switch.new_docket_stream,
-            assigned_to_type: "User"
+          new_completed_task = DocketSwitchGrantedTask.assigned_to_any_user.find_by(
+            appeal: docket_switch.new_docket_stream
           )
           expect(new_completed_task).to_not be_nil
           expect(new_completed_task).to be_completed

@@ -2,7 +2,6 @@ import { formatDocketSwitchRuling } from 'app/queue/docketSwitch/judgeRuling/Doc
 
 describe('formatDocketSwitchRuling', () => {
   const context = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...';
-  const hyperlink = 'https://example.com/file.txt';
 
   let disposition = 'granted';
 
@@ -14,14 +13,12 @@ describe('formatDocketSwitchRuling', () => {
     it('properly formats', () => {
       const res = formatDocketSwitchRuling({
         context,
-        hyperlink,
         disposition,
       });
 
       expect(res).toMatch(
         new RegExp('I am proceeding with a full switch\\. {2}\\n {2}\\n')
       );
-      expect(res).toMatch(new RegExp(`Signed ruling letter: {2}\\n${hyperlink} {2}\\n {2}\\n`));
       expect(res).toMatch(
         new RegExp(context)
       );
@@ -37,7 +34,6 @@ describe('formatDocketSwitchRuling', () => {
     it('properly formats', () => {
       const res = formatDocketSwitchRuling({
         context,
-        hyperlink,
         disposition,
       });
 
@@ -47,7 +43,6 @@ describe('formatDocketSwitchRuling', () => {
           'I am proceeding with a partial switch\\. {2}\\n {2}\\n'
         )
       );
-      expect(res).toMatch(new RegExp(`Signed ruling letter: {2}\\n${hyperlink} {2}\\n {2}\\n`));
       expect(res).toMatch(
         new RegExp(context)
       );
@@ -63,14 +58,12 @@ describe('formatDocketSwitchRuling', () => {
     it('properly formats', () => {
       const res = formatDocketSwitchRuling({
         context,
-        hyperlink,
         disposition,
       });
 
       expect(res).toMatch(
         new RegExp('I am proceeding with a denial\\. {2}\\n {2}\\n')
       );
-      expect(res).toMatch(new RegExp(`Signed ruling letter: {2}\\n${hyperlink} {2}\\n {2}\\n`));
       expect(res).toMatch(
         new RegExp(context)
       );

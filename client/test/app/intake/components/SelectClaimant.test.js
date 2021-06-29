@@ -21,7 +21,6 @@ const defaultRelationships = [
 
 const defaultFeatureToggles = {
   attorneyFees: false,
-  establishFiduciaryEps: false,
   deceasedAppellants: false,
 };
 

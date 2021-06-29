@@ -11,6 +11,7 @@ import StringUtil from '../util/StringUtil';
 import {
   setCanEditAod,
   setCanEditNodDate,
+  setUserIsCobAdmin,
   setCanViewOvertimeStatus,
   setCanEditCavcRemands,
   setFeatureToggles,
@@ -88,6 +89,7 @@ import { FlashAlerts } from '../nonComp/components/Alerts';
 import { PulacCerulloReminderModal } from './pulacCerullo/PulacCerulloReminderModal';
 import { motionToVacateRoutes } from './mtv/motionToVacateRoutes';
 import { docketSwitchRoutes } from './docketSwitch/docketSwitchRoutes';
+import { substituteAppellantRoutes } from './substituteAppellant/routes';
 import ScheduleVeteran from '../hearings/components/ScheduleVeteran';
 import HearingTypeConversion from '../hearings/components/HearingTypeConversion';
 import HearingTypeConversionModal from '../hearings/components/HearingTypeConversionModal';
@@ -99,6 +101,7 @@ class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setCanEditAod(this.props.canEditAod);
     this.props.setCanEditNodDate(this.props.userCanViewEditNodDate);
+    this.props.setUserIsCobAdmin(this.props.userIsCobAdmin);
     this.props.setCanEditCavcRemands(this.props.canEditCavcRemands);
     this.props.setCanViewOvertimeStatus(this.props.userCanViewOvertimeStatus);
     this.props.setFeatureToggles(this.props.featureToggles);
@@ -254,9 +257,7 @@ class QueueApp extends React.PureComponent {
     <AddCavcRemandView {...props.match.params} />
   );
 
-  routedEditCavcRemand = () => (
-    <EditCavcRemandView />
-  );
+  routedEditCavcRemand = () => <EditCavcRemandView />;
 
   routedAdvancedOnDocketMotion = (props) => (
     <AdvancedOnDocketMotionView {...props.match.params} />
@@ -346,7 +347,9 @@ class QueueApp extends React.PureComponent {
             appealId={props.match.params.appealId}
           >
             <ScheduleVeteran
-              userCanViewTimeSlots={this.props.featureToggles.enable_hearing_time_slots}
+              userCanViewTimeSlots={
+                this.props.featureToggles.enable_hearing_time_slots
+              }
               params={params}
               userId={this.props.userId}
               {...props.match.params}
@@ -354,7 +357,9 @@ class QueueApp extends React.PureComponent {
           </CaseDetailsLoadingScreen>
         ) : (
           <ScheduleVeteran
-            userCanViewTimeSlots={this.props.featureToggles.enable_hearing_time_slots}
+            userCanViewTimeSlots={
+              this.props.featureToggles.enable_hearing_time_slots
+            }
             params={params}
             userId={this.props.userId}
             {...props.match.params}
@@ -383,7 +388,7 @@ class QueueApp extends React.PureComponent {
       userId={this.props.userId}
       {...props.match.params}
     />
-  )
+  );
 
   routedChangeTaskTypeModal = (props) => (
     <ChangeTaskTypeModal {...props.match.params} />
@@ -394,8 +399,11 @@ class QueueApp extends React.PureComponent {
   );
 
   routedChangeHearingRequestTypeModal = (props) => (
-    <HearingTypeConversionModal hearingType={props.hearingType} {...props.match.params} />
-  )
+    <HearingTypeConversionModal
+      hearingType={props.hearingType}
+      {...props.match.params}
+    />
+  );
 
   routedSetOvertimeStatusModal = (props) => (
     <SetOvertimeStatusModal {...props.match.params} />
@@ -479,7 +487,9 @@ class QueueApp extends React.PureComponent {
     />
   );
 
-  routedCavcRemandReceived = (props) => <AddCavcDatesModal {...props.match.params} />;
+  routedCavcRemandReceived = (props) => (
+    <AddCavcDatesModal {...props.match.params} />
+  );
 
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
@@ -522,7 +532,6 @@ class QueueApp extends React.PureComponent {
 
             {/* Base/page (non-modal) routes */}
             <Switch>
-
               <PageRoute
                 exact
                 path={['/search', '/cases/:caseflowVeteranIds']}
@@ -692,6 +701,8 @@ class QueueApp extends React.PureComponent {
               {motionToVacateRoutes.page}
 
               {docketSwitchRoutes.page}
+
+              {substituteAppellantRoutes.page}
             </Switch>
 
             {/* Modal routes are in their own Switch so they will display above the base routes */}
@@ -981,19 +992,29 @@ class QueueApp extends React.PureComponent {
               />
               <PageRoute
                 exact
-                path={
-                  `/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO.value}`
-                }
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO.value
+                }`}
                 title="Change Hearing Request Type to Video | Caseflow"
-                render={(props) => this.routedChangeHearingRequestTypeModal({ ...props, hearingType: 'Video' })}
+                render={(props) =>
+                  this.routedChangeHearingRequestTypeModal({
+                    ...props,
+                    hearingType: 'Video',
+                  })
+                }
               />
               <PageRoute
                 exact
-                path={
-                  `/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_CENTRAL.value}`
-                }
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_CENTRAL.value
+                }`}
                 title="Change Hearing Request Type to Central | Caseflow"
-                render={(props) => this.routedChangeHearingRequestTypeModal({ ...props, hearingType: 'Central' })}
+                render={(props) =>
+                  this.routedChangeHearingRequestTypeModal({
+                    ...props,
+                    hearingType: 'Central',
+                  })
+                }
               />
 
               <Route
@@ -1048,6 +1069,7 @@ QueueApp.propTypes = {
   setCanEditAod: PropTypes.func,
   setCanViewOvertimeStatus: PropTypes.func,
   setCanEditNodDate: PropTypes.func,
+  setUserIsCobAdmin: PropTypes.func,
   setCanEditCavcRemands: PropTypes.func,
   canEditAod: PropTypes.bool,
   setFeatureToggles: PropTypes.func,
@@ -1069,6 +1091,7 @@ QueueApp.propTypes = {
   userCanViewEditNodDate: PropTypes.bool,
   userCanAssignHearingSchedule: PropTypes.bool,
   canEditCavcRemands: PropTypes.bool,
+  userIsCobAdmin: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({
@@ -1080,6 +1103,7 @@ const mapDispatchToProps = (dispatch) =>
     {
       setCanEditAod,
       setCanEditNodDate,
+      setUserIsCobAdmin,
       setCanEditCavcRemands,
       setCanViewOvertimeStatus,
       setFeatureToggles,

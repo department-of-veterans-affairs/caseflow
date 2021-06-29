@@ -42,6 +42,7 @@ export const PAGE_PATHS = {
   SEARCH: '/search',
   REVIEW: '/review_request',
   ADD_CLAIMANT: '/add_claimant',
+  ADD_POWER_OF_ATTORNEY: '/add_power_of_attorney',
   FINISH: '/finish',
   ADD_ISSUES: '/add_issues',
   COMPLETED: '/completed',
@@ -50,7 +51,13 @@ export const PAGE_PATHS = {
   CONFIRMATION: '/confirmation',
   CLEARED_EPS: '/cleared_eps',
   OUTCODED: '/outcoded',
-  ADD_POWER_OF_ATTORNEY: '/add_power_of_attorney'
+};
+
+export const INTAKE_STATES = {
+  NONE: 'NONE',
+  STARTED: 'STARTED',
+  REVIEWED: 'REVIEWED',
+  COMPLETED: 'COMPLETED'
 };
 
 export const BOOLEAN_RADIO_OPTIONS = [
@@ -97,6 +104,7 @@ export const ACTIONS = {
   SET_SAME_OFFICE: 'SET_SAME_OFFICE',
   SET_BENEFIT_TYPE: 'SET_BENEFIT_TYPE',
   SET_RECEIPT_DATE: 'SET_RECEIPT_DATE',
+  SET_RECEIPT_DATE_ERROR: 'SET_RECEIPT_DATE_ERROR',
   SET_VETERAN_IS_NOT_CLAIMANT: 'SET_VETERAN_IS_NOT_CLAIMANT',
   SET_CLAIMANT: 'SET_CLAIMANT',
   SET_PAYEE_CODE: 'SET_PAYEE_CODE',
@@ -144,13 +152,6 @@ export const ACTIONS = {
   PROCESS_FINISH_ERROR: 'PROCESS_FINISH_ERROR',
   NO_ISSUES_SELECTED_ERROR: 'NO_ISSUES_SELECTED_ERROR',
   SET_EDIT_CONTENTION_TEXT: 'SET_EDIT_CONTENTION_TEXT'
-};
-
-export const INTAKE_STATES = {
-  NONE: 'NONE',
-  STARTED: 'STARTED',
-  REVIEWED: 'REVIEWED',
-  COMPLETED: 'COMPLETED'
 };
 
 export const REVIEW_OPTIONS = {
@@ -203,6 +204,15 @@ export const REVIEW_DATA_FIELDS = {
     legacy_opt_in_approved: { key: 'legacyOptInApproved', required: true },
   },
 };
+
+export const GENERIC_FORM_ERRORS = {
+  blank: 'Please select an option.'
+}
+
+export const RECEIPT_DATE_ERRORS = {
+  invalid: 'Please enter a valid receipt date.',
+  in_future: 'Receipt date cannot be in the future.'
+}
 
 export const CLAIMANT_ERRORS = {
   blank: 'Please select an option.',
@@ -339,4 +349,4 @@ const getValidPayeeCodes = (isDeceased) => {
 export const DECEASED_PAYEE_CODES = (() => getValidPayeeCodes(true))();
 export const LIVING_PAYEE_CODES = (() => getValidPayeeCodes(false))();
 
-export const VBMS_BENEFIT_TYPES = ['compensation', 'pension'];
+export const VBMS_BENEFIT_TYPES = ['compensation', 'pension', 'fiduciary'];
