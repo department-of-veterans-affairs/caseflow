@@ -554,25 +554,38 @@ class Task < CaseflowRecord
     end
   end
 
+  # rubocop:disable Metrics/AbcSize
   def reassign(reassign_params, current_user)
-    sibling = dup.tap do |task|
-      task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
-      task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
-      task.instructions = flattened_instructions(reassign_params)
-      task.status = Constants.TASK_STATUSES.assigned
-      task.save!
+    # We do not validate the number of tasks in this scenario because when a
+    # task is reassigned, more than one open task of the same type must exist during the reassignment.
+    Thread.current.thread_variable_set(:skip_check_for_only_open_task_of_type, true)
+    replacement = dup.tap do |task|
+      begin
+        ActiveRecord::Base.transaction do
+          task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
+          task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
+          task.instructions = flattened_instructions(reassign_params)
+          task.status = Constants.TASK_STATUSES.assigned
+
+          task.save!
+        end
+      # The ensure block guarantees that the thread-local variable check_for_open_task_type
+      # does not leak outside of this method
+      ensure
+        Thread.current.thread_variable_set(:skip_check_for_only_open_task_of_type, nil)
+      end
     end
 
     # Preserve the open children and status of the old task
-    children.select(&:stays_with_reassigned_parent?).each { |child| child.update!(parent_id: sibling.id) }
-    sibling.update!(status: status)
-
+    children.select(&:stays_with_reassigned_parent?).each { |child| child.update!(parent_id: replacement.id) }
+    replacement.update!(status: status)
     update_with_instructions(status: Constants.TASK_STATUSES.cancelled, instructions: reassign_params[:instructions])
 
     appeal.overtime = false if appeal.overtime? && reassign_clears_overtime?
 
-    [sibling, self, sibling.children].flatten
+    [replacement, self, replacement.children].flatten
   end
+  # rubocop:enable Metrics/AbcSize
 
   def can_move_on_docket_switch?
     return false unless open_with_no_children?
@@ -815,6 +828,16 @@ class Task < CaseflowRecord
     end
 
     true
+  end
+
+  def skip_check_for_only_open_task_of_type?
+    Thread.current.thread_variable_get(:skip_check_for_only_open_task_of_type)
+  end
+
+  def only_open_task_of_type
+    if appeal.reload.tasks.open.of_type(type).any?
+      fail Caseflow::Error::MultipleOpenTasksOfSameTypeError, task_type: type
+    end
   end
 
   def parent_can_have_children

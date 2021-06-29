@@ -142,7 +142,7 @@ class SanitizedJsonConfiguration
       }
     }.each do |clazz, class_configuration|
       class_configuration[:sanitize_fields] ||= self.class.select_sanitize_fields(clazz).tap do |fields|
-        puts "  Inferring #{clazz} sanitize_fields: #{fields}" unless fields.blank?
+        Rails.logger.info "  Inferring #{clazz} sanitize_fields: #{fields}" unless fields.blank?
       end
     end
   end
@@ -240,8 +240,15 @@ class SanitizedJsonConfiguration
     [
       appeal.cavc_remand&.source_appeal,
       appeal.appellant_substitution&.source_appeal,
-      appeal.request_issues.map { |rqi| rqi.contested_decision_issue&.decision_review }
+      decision_reviews_associated_with(appeal)[Appeal]
     ].flatten.compact
+  end
+
+  # To-do: export other decision_reviews, i.e., HLRs and SCs
+  def self.decision_reviews_associated_with(appeal)
+    appeal.request_issues.includes(:contested_decision_issue).map do |rqi|
+      rqi.contested_decision_issue&.decision_review
+    end.compact.group_by(&:class)
   end
 
   def before_sanitize(record, obj_hash)
@@ -320,7 +327,7 @@ class SanitizedJsonConfiguration
       # Typed polymorphic association fields will be associated based on the '_type' field
       type: reassociate_types.map do |klass|
         [klass,
-         AssocationWrapper.new(klass).typed_associations(excluding: offset_id_fields[klass]).fieldnames.presence]
+         AssocationWrapper.new(klass).fieldnames_of_typed_associations(excluding: offset_id_fields[klass]).presence]
       end.to_h.compact
     }.merge(
       # Untyped association fields (ie, without the matching '_type' field) will associate to their corresponding type
@@ -329,7 +336,7 @@ class SanitizedJsonConfiguration
           assoc_class.name,
           reassociate_types.map do |klass|
             [klass,
-             AssocationWrapper.new(klass).untyped_associations_with(assoc_class).fieldnames.presence]
+             AssocationWrapper.new(klass).fieldnames_of_untyped_associations_with(assoc_class).presence]
           end.to_h.compact
         ]
       end .to_h

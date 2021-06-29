@@ -94,7 +94,7 @@ appellant_substitutions,claimant_type,string ∗,x,,,,,Claimant type of substi
 appellant_substitutions,created_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
 appellant_substitutions,created_by_id,integer (8) ∗ FK,x,,x,,,User that created this record
 appellant_substitutions,id,integer (8) PK,x,x,,,,
-appellant_substitutions,poa_participant_id,string ∗,x,,,,,"Identifier of the appellant's POA, if they have a CorpDB participant_id"
+appellant_substitutions,poa_participant_id,string,,,,,,"Identifier of the appellant's POA, if they have a CorpDB participant_id. Null if the substitute appellant has no POA."
 appellant_substitutions,selected_task_ids,integer (8) ∗,x,,,,,User-selected task ids from source appeal
 appellant_substitutions,source_appeal_id,integer (8) ∗ FK,x,,x,,x,The relevant source appeal for this substitution
 appellant_substitutions,substitute_participant_id,string ∗,x,,,,,Participant ID of substitute appellant

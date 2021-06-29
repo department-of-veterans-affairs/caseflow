@@ -21,6 +21,12 @@ class TimezoneService
     # Fails if there are multiple timezones for a country outside of the US.
     # Fails if country name or zip code are formatted incorrectly.
     def address_to_timezone(address)
+      # Return addresses for addresses in US using zip code before calling
+      # iso3166_alpha2_code_from_name() because that method will raise an error given country "US".
+      if address.country == "US"
+        return TimezoneService.zip5_to_timezone(address.zip)
+      end
+
       iso3166_code = TimezoneService.iso3166_alpha2_code_from_name(address.country)
 
       if iso3166_code == "US"
@@ -70,7 +76,9 @@ class TimezoneService
 
     # Finds the ISO 3166 country code corresponding to the given country name, or fails
     # with an error if not found.
-    def iso3166_alpha2_code_from_name(country_name)
+    def iso3166_alpha2_code_from_name(orig_country_name)
+      country_name = orig_country_name&.strip
+
       iso3166_code = ISO3166::Country.find_country_by_name(country_name)
       iso3166_code = ISO3166::Country.find_country_by_alpha3(country_name) if iso3166_code.blank?
 
