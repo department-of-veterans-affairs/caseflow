@@ -8,6 +8,7 @@ import React, { useEffect, useMemo } from 'react';
 import _ from 'lodash';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
+import { PAGE_PATHS } from 'app/intake/constants';
 import { COLORS } from '../constants/AppConstants';
 import {
   appealWithDetailSelector,
@@ -63,6 +64,12 @@ const anchorEditLinkStyling = css({
 
 const alertPaddingStyle = css({
   marginTop: '2rem',
+});
+
+const editInformationLinkStyling = css({
+  fontSize: '2rem',
+  fontWeight: 'normal',
+  margin: '5px',
 });
 
 export const CaseDetailsView = (props) => {
@@ -138,6 +145,9 @@ export const CaseDetailsView = (props) => {
   );
 
   const appealIsDispatched = appeal.status === 'dispatched';
+
+  const editInformation =
+  appeal.appellantType !== 'VeteranClaimant' && props.featureToggles.edit_unrecognized_appellant;
 
   const supportCavcRemand =
     currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand && !appeal.isLegacyAppeal;
@@ -245,6 +255,15 @@ export const CaseDetailsView = (props) => {
               title="About the Appellant"
               appeal={appeal}
               substitutionDate={appeal.appellantSubstitution?.substitution_date} // eslint-disable-line camelcase
+              additionalHeaderContent={
+                editInformation && (
+                  <span className="cf-push-right" {...editInformationLinkStyling}>
+                    <Link to={`/appeals/${appealId}/${PAGE_PATHS.EDIT_APPELLANT_INFORMATION}`}>
+                      {COPY.EDIT_APPELLANT_INFORMATION_LINK}
+                    </Link>
+                  </span>
+                )
+              }
             />
           ) }
 
