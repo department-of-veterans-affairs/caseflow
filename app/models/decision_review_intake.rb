@@ -46,7 +46,7 @@ class DecisionReviewIntake < Intake
     claimant = claimant_class_name.constantize.create!(
       decision_review: detail,
       participant_id: participant_id,
-      payee_code: (need_payee_code? ? request_params[:payee_code] : nil),
+      payee_code: (need_payee_code? ? request_params[:payee_code] : nil)
     )
 
     if claimant.is_a?(OtherClaimant)
