@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import {
   TRAVEL_BOARD_HEARING_LABEL,
   VIDEO_HEARING_LABEL,
@@ -125,45 +126,51 @@ export const ScheduleVeteranForm = ({
               }
             />
           )}
-          <RegionalOfficeDropdown
-            errorMessage={errors?.regionalOffice}
-            excludeVirtualHearingsOption={!virtual}
-            onChange={(regionalOffice) =>
-              props.onChange('regionalOffice', regionalOffice)
-            }
-            value={ro}
-            validateValueOnMount
-          />
+          <div style={{ marginTop: '30px' }}>
+            <RegionalOfficeDropdown
+              errorMessage={errors?.regionalOffice}
+              excludeVirtualHearingsOption={!virtual}
+              onChange={(regionalOffice) =>
+                props.onChange('regionalOffice', regionalOffice)
+              }
+              value={ro}
+              validateValueOnMount
+            />
+          </div>
           {ro && (
             <React.Fragment>
               {!virtual && (
-                <AppealHearingLocationsDropdown
-                  errorMessage={errors?.hearingLocation}
-                  key={`hearingLocation__${ro}`}
-                  regionalOffice={ro}
-                  appealId={appeal.externalId}
-                  value={location}
-                  onChange={(hearingLocation) =>
-                    props.onChange('hearingLocation', hearingLocation)
-                  }
-                  dynamic={dynamic}
-                  staticHearingLocations={availableHearingLocations}
-                />
+                <div style={{ marginTop: '30px' }}>
+                  <AppealHearingLocationsDropdown
+                    errorMessage={errors?.hearingLocation}
+                    key={`hearingLocation__${ro}`}
+                    regionalOffice={ro}
+                    appealId={appeal.externalId}
+                    value={location}
+                    onChange={(hearingLocation) =>
+                      props.onChange('hearingLocation', hearingLocation)
+                    }
+                    dynamic={dynamic}
+                    staticHearingLocations={availableHearingLocations}
+                  />
+                </div>
               )}
-              <HearingDateDropdown
-                errorMessage={errors?.hearingDay}
-                key={`hearingDate__${ro}`}
-                regionalOffice={ro}
-                value={hearing.hearingDay || initialHearingDate}
-                onChange={(hearingDay) => {
-                // Call fetch scheduled hearings only if passed
-                  fetchScheduledHearings(hearingDay)(dispatch);
+              <div style={{ marginTop: '30px' }}>
+                <HearingDateDropdown
+                  errorMessage={errors?.hearingDay}
+                  key={`hearingDate__${ro}`}
+                  regionalOffice={ro}
+                  value={hearing.hearingDay || initialHearingDate}
+                  onChange={(hearingDay) => {
+                    // Call fetch scheduled hearings only if passed
+                    fetchScheduledHearings(hearingDay)(dispatch);
 
-                  props.onChange('hearingDay', hearingDay);
-                }}
-              />
+                    props.onChange('hearingDay', hearingDay);
+                  }}
+                />
+              </div>
               {hearing.hearingDay?.hearingId && (
-                <React.Fragment>
+                <div style={{ marginTop: '30px' }}>
                   {hearingDayIsVirtual && userCanViewTimeSlots ? (
                     <TimeSlot
                       {...props}
@@ -186,7 +193,7 @@ export const ScheduleVeteranForm = ({
                       value={hearing.scheduledTimeString}
                     />
                   )}
-                </React.Fragment>
+                </div>
               )}
 
             </React.Fragment>
