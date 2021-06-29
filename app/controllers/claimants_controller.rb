@@ -7,6 +7,6 @@ class ClaimantsController < ApplicationController
     # updates the poa before saving it
     poa&.save!
 
-    render json: { poa: ::WorkQueue::PowerOfAttorneySerializer.new(poa) }
+    render json: { poa: ::WorkQueue::PowerOfAttorneySerializer.new(poa).serializable_hash.dig(:data, :attributes) }
   end
 end
