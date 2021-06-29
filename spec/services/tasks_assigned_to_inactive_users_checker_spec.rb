@@ -17,26 +17,31 @@ describe TasksAssignedToInactiveUsersChecker, :postgres do
   end
   let!(:appeal_with_fully_on_hold_subtree) do
     appeal = create(:appeal, :with_post_intake_tasks)
-    task = create(:privacy_act_task, appeal: appeal, parent: appeal.root_task)
+    task = create(:privacy_act_task, parent: appeal.root_task)
     task.descendants.each(&:on_hold!)
-    appeal.tasks.open.find_by(type: :PrivacyActTask).assigned_to.inactive!
+    task.assigned_to.inactive!
     appeal
   end
   let!(:appeal_with_closed_root_open_child) do
     appeal = create(:appeal, :with_post_intake_tasks)
     appeal.root_task.completed!
+    task = create(:docket_switch_mail_task, parent: appeal.root_task, assigned_to: create(:user))
+    task.assigned_to.inactive!
     appeal
   end
 
   describe "#call" do
     it "reports 1 appeals stuck" do
       subject.call
-binding.pry
       expect(subject.report?).to eq(true)
-      inactive_task_ids = [
-        appeal_with_fully_on_hold_subtree.tasks.open.find_by(type: :PrivacyActTask).id
+
+      inactive_tasks = [
+        appeal_with_fully_on_hold_subtree.tasks.open.find_by(type: :PrivacyActTask),
+        appeal_with_closed_root_open_child.tasks.open.find_by(type: :DocketSwitchMailTask)
       ]
-      expect(subject.report).to include(inactive_task_ids.join(","))
+      expect(subject.inactive_tasks).to match_array(inactive_tasks)
+      expect(subject.report).to match(/#{inactive_tasks[0].type}, .*#{inactive_tasks[0].id}/)
+      expect(subject.report).to match(/#{inactive_tasks[1].type}, .*#{inactive_tasks[1].id}/)
     end
   end
 end
