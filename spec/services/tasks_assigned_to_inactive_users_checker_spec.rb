@@ -32,7 +32,7 @@ describe TasksAssignedToInactiveUsersChecker, :postgres do
         appeal_with_fully_on_hold_subtree.tasks.open.find_by(type: :PrivacyActTask),
         appeal_with_closed_root_open_child.tasks.open.find_by(type: :DocketSwitchMailTask)
       ]
-      expect(subject.inactive_tasks).to match_array(inactive_tasks)
+      expect(subject.tasks_for_inactive_users).to match_array(inactive_tasks)
       expect(subject.report).to match(/#{inactive_tasks[0].type}, .*#{inactive_tasks[0].id}/)
       expect(subject.report).to match(/#{inactive_tasks[1].type}, .*#{inactive_tasks[1].id}/)
     end
