@@ -132,7 +132,7 @@ class AppealStatusApiDecorator < ApplicationDecorator
   def scheduled_hearing
     # Appeal Status api assumes that there can be multiple hearings that have happened in the past but only
     # one that is currently scheduled. Will get this by getting the hearing whose scheduled date is in the future.
-    @scheduled_hearing ||= hearings.find { |hearing| hearing.scheduled_for >= Time.zone.today }
+    @scheduled_hearing ||= hearings.with_no_disposition.find { |hearing| hearing.scheduled_for >= Time.zone.today }
   end
 
   def api_scheduled_hearing_type
@@ -179,7 +179,8 @@ class AppealStatusApiDecorator < ApplicationDecorator
   end
 
   def alerts
-    @alerts ||= ApiStatusAlerts.new(decision_review: self).all.sort_by { |alert| alert[:details][:decisionDate] }
+    # " || 0" sorts all alerts (like scheduled_hearing alerts) that do not have decisionDates first.
+    @alerts ||= ApiStatusAlerts.new(decision_review: self).all.sort_by { |alert| alert[:details][:decisionDate] || 0 }
   end
 
   def aoj
