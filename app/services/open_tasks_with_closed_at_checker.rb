@@ -17,6 +17,10 @@ class OpenTasksWithClosedAtChecker < DataIntegrityChecker
     end
   end
 
+  def slack_channel
+    "#appeals-echo"
+  end
+
   private
 
   def open_tasks_with_closed_at_defined

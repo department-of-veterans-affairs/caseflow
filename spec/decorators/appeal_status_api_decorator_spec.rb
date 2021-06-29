@@ -395,4 +395,44 @@ describe AppealStatusApiDecorator, :all_dbs do
       end
     end
   end
+
+  context "#scheduled_hearing" do
+    subject { described_class.new(appeal).scheduled_hearing }
+    let(:receipt_date) { Time.zone.today - 10.days }
+    let!(:appeal) { create(:appeal, :hearing_docket, receipt_date: receipt_date) }
+
+    let(:hearing_scheduled_for) { Time.zone.today + 15.days }
+    let!(:hearing_day) do
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             regional_office: "RO18",
+             scheduled_for: hearing_scheduled_for)
+    end
+
+    let!(:hearing) do
+      create(
+        :hearing,
+        appeal: appeal,
+        disposition: disposition,
+        evidence_window_waived: nil,
+        hearing_day: hearing_day
+      )
+    end
+
+    context "when a hearing scheduled for the future has not been held" do
+      let(:disposition) { nil }
+
+      it "returns that hearing" do
+        expect(subject).to eq(hearing)
+      end
+    end
+
+    context "when a hearing scheduled for the future has been cancelled" do
+      let(:disposition) { "cancelled" }
+
+      it "returns no hearing" do
+        expect(subject).to be_nil
+      end
+    end
+  end
 end
