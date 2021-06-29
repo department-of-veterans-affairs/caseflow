@@ -12,7 +12,7 @@ const config = {
     filename: 'webpack-bundle.js',
     sourceMapFilename: 'sourcemap-[file].map',
     path: path.join(__dirname, '../app/assets/javascripts'),
-    publicPath: devBuild && !testBuild ? 'http://localhost:3500/' : '/assets/'
+    publicPath: devBuild && !testBuild ? 'http://localhost:3500/' : '/assets/javascripts/'
   },
   plugins: [
     new webpack.EnvironmentPlugin({ NODE_ENV: 'development' }),
