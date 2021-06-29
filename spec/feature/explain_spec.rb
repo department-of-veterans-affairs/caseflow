@@ -100,11 +100,15 @@ RSpec.feature "Explain JSON" do
   end
 
   context "for a realistic appeal" do
-    let(:json_filename) { "appeal-21430.json" }
+    let(:json_filename) { "appeal-121304-dup_jatasks.json" }
     let(:real_appeal) do
       sji = SanitizedJsonImporter.from_file("spec/records/#{json_filename}", verbosity: 0)
       sji.import
       sji.imported_records[Appeal.table_name].first
+    end
+    it "present realistic appeal events" do
+      visit "explain/appeals/#{real_appeal.uuid}"
+      scroll_to(page.find("h3", text: "Timeline"))
     end
     it "present realistic appeal events" do
       visit "explain/appeals/#{real_appeal.uuid}"

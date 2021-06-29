@@ -13,7 +13,7 @@ module ExplainTimelineConcern
     tasks_as_timeline_data + intakes_as_timeline_data
   end
 
-  BACKGROUND_TASK_TYPES = %w[DistributionTask JudgeDecisionReviewTask].freeze
+  BACKGROUND_TASK_TYPES = %w[DistributionTask JudgeDecisionReviewTask BvaDispatchTask].freeze
 
   # clone_record["type"] is one of the vis-timeline item types: range, box, point, background
   # clone_record["title"] is displayed as the tooltip
@@ -27,23 +27,51 @@ module ExplainTimelineConcern
   # rubocop:disable Metrics/AbcSize
   def tasks_as_timeline_data
     sje.records_hash[Task.table_name].map do |record|
+      if BACKGROUND_TASK_TYPES.include?(record["type"])
+        record.clone.tap do |clone_record|
+          clone_record["id"] = "#{Task.name}#{record['id']}_bkgd"
+          clone_record["record_id"] = record["id"]
+          clone_record["tableName"] = Task.table_name
+          clone_record["taskType"] = record["type"]
+          clone_record["start"] = record["created_at"]
+          clone_record["end"] = Time.zone.now if record["closed_at"].nil?
+
+          clone_record["group"] = nil
+          clone_record["type"] = "background"
+          clone_record["end"] ||= record["closed_at"] # needs to be set for 'background' types
+
+          clone_record["content"] = ""
+          clone_record["title"] = "<pre><code style='font-size:0.7em; white-space: pre-line; width: 100px;'>#{JSON.pretty_generate(clone_record)}</code></pre>"
+          clone_record["className"] = "#{record['type']} task_#{record['status']}"
+          end
+      end
+    end.compact +
+    sje.records_hash[Task.table_name].map do |record|
       record.clone.tap do |clone_record|
         clone_record["id"] = "#{Task.name}#{record['id']}"
         clone_record["record_id"] = record["id"]
         clone_record["tableName"] = Task.table_name
         clone_record["content"] = "#{record['type']}_#{record['id']}"
-        clone_record["start"] = record["created_at"]
         clone_record["taskType"] = record["type"]
+        clone_record["start"] = record["created_at"]
+        clone_record["end"] = Time.zone.now if record["closed_at"].nil?
+        clone_record["type"] = "range"
 
-        if BACKGROUND_TASK_TYPES.include?(record["type"])
+        if false && BACKGROUND_TASK_TYPES.include?(record["type"]) # TODO: make this configurable
           clone_record["group"] = nil # so that background is visible in all groups
           clone_record["type"] = "background"
-          clone_record["end"] ||= Time.zone.today # needs to be set for 'background' types
+          clone_record["end"] ||= record["closed_at"] # needs to be set for 'background' types
         else
           clone_record["group"] = (clone_record["status"] == "cancelled") ? "cancelled_tasks" : Task.table_name
-          significant_duration = record["closed_at"] - record["created_at"] > 60 if record["closed_at"]
-          clone_record["type"] = significant_duration ? "range" : "point"
-          clone_record["end"] = significant_duration ? record["closed_at"] : nil
+          if clone_record["end"].nil?
+            significant_duration = record["closed_at"] - record["created_at"] > 60 if record["closed_at"]
+            clone_record["type"] = significant_duration ? "range" : "point"
+            clone_record["end"] = significant_duration ? record["closed_at"] : nil
+          end
+
+          if BACKGROUND_TASK_TYPES.include?(record["type"])
+            clone_record["group"] = "phase"
+          end
         end
 
         # for visualization
@@ -62,13 +90,17 @@ module ExplainTimelineConcern
         clone_record["record_id"] = record["id"]
         clone_record["tableName"] = Intake.table_name
         clone_record["content"] = "#{record['type']}_#{record['id']}"
-        clone_record["start"] = record["started_at"]
         clone_record["intakeType"] = record["type"]
+        clone_record["start"] = record["started_at"]
+        clone_record["end"] = Time.zone.now if record["completed_at"].nil?
+        clone_record["type"] = "range" 
 
         clone_record["group"] = Intake.table_name
-        significant_duration = record["completed_at"] - record["started_at"] > 360 if record["completed_at"]
-        clone_record["type"] = significant_duration ? "range" : nil
-        clone_record["end"] = significant_duration ? record["completed_at"] : nil
+        if clone_record["end"].nil?
+          significant_duration = record["completed_at"] - record["started_at"] > 360 if record["completed_at"]
+          clone_record["type"] = significant_duration ? "range" : nil
+          clone_record["end"] = significant_duration ? record["completed_at"] : nil
+        end
 
         # for visualization
         clone_record["title"] = "<pre><code style='font-size:0.7em'>#{JSON.pretty_generate(clone_record)}</code></pre>"

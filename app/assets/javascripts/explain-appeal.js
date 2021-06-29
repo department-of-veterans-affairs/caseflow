@@ -17,13 +17,15 @@ function addTimeline(elementId, timeline_data){
   items.add(decorateTimelineItems(timeline_data))
   const groups = groupEventItems(timeline_data);
   const startDates = items.get({fields: ['start']}).map((str)=> new Date(str.start));
+  const endDates = items.get({fields: ['end']}).map((str)=> new Date(str.end));
+  const millisInAMonth = 1000*60*60*24*30 // an approximate month in milliseconds
   const timeline_options = {
     width: '95%',
     // maxHeight: 800,
     horizontalScroll: true,
     verticalScroll: true,
-    min: new Date(Math.min(...startDates) - 1000*60*60*24*30*6), // add extra time so that entire label is visible
-    max: new Date((new Date()).valueOf() + 1000*60*60*24*30*12), // add exta time so that labels are visible
+    min: new Date(Math.min(...startDates) - millisInAMonth*6), // add extra time so that entire label is visible
+    max: new Date(Math.min(Math.max(...endDates), new Date()) + millisInAMonth*12), // add exta time so that labels are visible
     zoomMin: 1000 * 60 * 60, // 1 hour in milliseconds
     orientation: {axis: 'both'},  // show time axis on both the top and bottom
     stack: true,
@@ -69,7 +71,7 @@ var groups = new vis.DataSet();
 function groupEventItems(items){
   groups.add({
       id: 'phase',
-      content: 'phase',
+      content: 'phases',
       className: 'group_phase',
       order: 0,
   });
