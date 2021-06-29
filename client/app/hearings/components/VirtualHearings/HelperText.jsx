@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import { helperLabel } from '../details/style';
 
 export const HelperText = ({ label }) => (
-  <span {...helperLabel}>
+  <div {...helperLabel}>
     {label}
-  </span>
+  </div>
 );
 
 HelperText.propTypes = {
