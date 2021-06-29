@@ -132,7 +132,7 @@ class AppealStatusApiDecorator < ApplicationDecorator
   def scheduled_hearing
     # Appeal Status api assumes that there can be multiple hearings that have happened in the past but only
     # one that is currently scheduled. Will get this by getting the hearing whose scheduled date is in the future.
-    @scheduled_hearing ||= hearings.find { |hearing| hearing.scheduled_for >= Time.zone.today }
+    @scheduled_hearing ||= hearings.with_no_disposition.find { |hearing| hearing.scheduled_for >= Time.zone.today }
   end
 
   def api_scheduled_hearing_type
