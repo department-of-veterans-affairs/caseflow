@@ -46,6 +46,7 @@ import VeteranCasesView from './VeteranCasesView';
 import VeteranDetail from './VeteranDetail';
 import { startPolling } from '../hearings/utils';
 import FnodBanner from './components/FnodBanner';
+import { shouldSupportSubstituteAppellant } from './substituteAppellant/caseDetails/utils';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
@@ -72,7 +73,7 @@ const editInformationLinkStyling = css({
 });
 
 export const CaseDetailsView = (props) => {
-  const { appealId } = props;
+  const { appealId, featureToggles } = props;
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
@@ -151,21 +152,14 @@ export const CaseDetailsView = (props) => {
   const supportCavcRemand =
     currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand && !appeal.isLegacyAppeal;
 
-  const decisionHasDismissedDeathDisposition = (decisionIssue) =>
-    decisionIssue.disposition === 'dismissed_death';
-
   const hasSubstitution = appeal.substitutions?.length;
-  const supportSubstituteAppellant =
-    currentUserOnClerkOfTheBoard &&
-    !appeal.appellantIsNotVeteran &&
-    props.featureToggles.recognized_granted_substitution_after_dd &&
-    appeal.caseType === 'Original' &&
-    // Substitute appellants for hearings will be supported later, but aren't yet:
-    appeal.docketName !== 'hearing' &&
-    // For now, only allow a single substitution from a given appeal
-    !hasSubstitution &&
-    (userIsCobAdmin || appeal.decisionIssues.some(decisionHasDismissedDeathDisposition)) &&
-    !appeal.isLegacyAppeal;
+  const supportSubstituteAppellant = shouldSupportSubstituteAppellant({
+    appeal,
+    currentUserOnClerkOfTheBoard,
+    featureToggles,
+    hasSubstitution,
+    userIsCobAdmin
+  });
 
   const showPostDispatch =
     appealIsDispatched && (supportCavcRemand || supportSubstituteAppellant);

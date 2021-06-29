@@ -11,6 +11,10 @@
  * file per style scope.
  */
 
+.show_pii_true {
+  color: red;
+}
+
 li,
 li ul {
   margin-bottom: 0px
@@ -18,7 +22,7 @@ li ul {
 
 summary {
   display: list-item;
- }
+}
 
 #events_table {
   margin: 5px;

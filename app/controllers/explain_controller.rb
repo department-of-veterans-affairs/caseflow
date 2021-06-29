@@ -58,7 +58,7 @@ class ExplainController < ApplicationController
     ].compact.join("\n\n")
   end
 
-  DEFAULT_TREEE_FIELDS = [:id, :status, :ASGN_BY, :ASGN_TO, :ASGN_DATE, :UPD_DATE, :CRE_DATE, :CLO_DATE].freeze
+  DEFAULT_TREEE_FIELDS = [:id, :status, :ASGN_BY, :ASGN_TO, :CRE_DATE, :ASGN_DATE, :UPD_DATE, :CLO_DATE].freeze
 
   def treee_fields
     return DEFAULT_TREEE_FIELDS unless fields_query_param
