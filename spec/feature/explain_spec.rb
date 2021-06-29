@@ -126,5 +126,20 @@ RSpec.feature "Explain JSON" do
       task = real_appeal.tasks.sample
       expect(page).to have_content("#{task.type}_#{task.id}")
     end
+
+    context "appeal with request issue contesting an HLR decision" do
+      let(:json_filename) { "appeal-106435.json" }
+      before do
+        # 106435.json requires this HLR to exist because a decision_issue references it
+        FactoryBot.create(:higher_level_review, id: 2_000_085_625)
+      end
+      it "present realistic appeal events" do
+        visit "explain/appeals/#{real_appeal.uuid}"
+        binding.pry
+        page.find("#narrative_table").click
+        req_issue = real_appeal.request_issues.sample
+        expect(page).to have_content("#{req_issue.type}_#{req_issue.id}")
+      end
+    end
   end
 end
