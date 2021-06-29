@@ -104,9 +104,6 @@ feature "Intake", :all_dbs do
     end
 
     context "user has unread Inbox messages" do
-      before { FeatureToggle.enable!(:inbox, users: [current_user.css_id]) }
-      after { FeatureToggle.disable!(:inbox) }
-
       scenario "user sees Alert on Intake start page" do
         create(:message, user: current_user)
 
