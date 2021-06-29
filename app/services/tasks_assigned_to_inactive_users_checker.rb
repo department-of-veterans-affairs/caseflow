@@ -22,7 +22,7 @@ class TasksAssignedToInactiveUsersChecker < DataIntegrityChecker
   def inactive_tasks_report
     inactive_tasks.order(:type, :appeal_type, :appeal_id, :id, :assigned_to_id)
       .pluck(:type, :appeal_type, :appeal_id, :id, :assigned_to_id, :status)
-      .map{ |task_attribs| task_attribs.join(", ") }
+      .map { |task_attribs| task_attribs.join(", ") }
       .join("\n")
   end
 
