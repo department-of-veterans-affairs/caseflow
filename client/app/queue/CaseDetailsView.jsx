@@ -46,6 +46,7 @@ import VeteranCasesView from './VeteranCasesView';
 import VeteranDetail from './VeteranDetail';
 import { startPolling } from '../hearings/utils';
 import FnodBanner from './components/FnodBanner';
+import { shouldSupportSubstituteAppellant } from './substituteAppellant/caseDetails/utils';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
@@ -66,7 +67,7 @@ const alertPaddingStyle = css({
 });
 
 export const CaseDetailsView = (props) => {
-  const { appealId } = props;
+  const { appealId, featureToggles } = props;
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
@@ -142,22 +143,14 @@ export const CaseDetailsView = (props) => {
   const supportCavcRemand =
     currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand && !appeal.isLegacyAppeal;
 
-  const decisionHasDismissedDeathDisposition = (decisionIssue) =>
-    decisionIssue.disposition === 'dismissed_death';
-
   const hasSubstitution = appeal.substitutions?.length;
-  const supportSubstituteAppellant =
-    currentUserOnClerkOfTheBoard &&
-    !appeal.appellantIsNotVeteran &&
-    props.featureToggles.recognized_granted_substitution_after_dd &&
-    appeal.caseType === 'Original' &&
-    // Substitute appellants for hearings require separate feature toggle
-    (appeal.docketName !== 'hearing' || props.featureToggles.hearings_substitution_death_dismissal) &&
-    // For now, only allow a single substitution from a given appeal
-    !hasSubstitution &&
-    // Only admins can perform sub on cases w/o all issues having disposition `dismissed_death`
-    (userIsCobAdmin || appeal.decisionIssues.every(decisionHasDismissedDeathDisposition)) &&
-    !appeal.isLegacyAppeal;
+  const supportSubstituteAppellant = shouldSupportSubstituteAppellant({
+    appeal,
+    currentUserOnClerkOfTheBoard,
+    featureToggles,
+    hasSubstitution,
+    userIsCobAdmin
+  });
 
   const showPostDispatch =
     appealIsDispatched && (supportCavcRemand || supportSubstituteAppellant);
