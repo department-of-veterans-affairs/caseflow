@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`HelperText Matches snapshot with default props 1`] = `
-<span
-  data-css-tgxxqt=""
+<div
+  data-css-cl1hud=""
 >
   Something helpful
-</span>
+</div>
 `;

@@ -9129,11 +9129,11 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
           <HelperText
             label="The time at the Board of Veterans' Appeals in Washington, DC"
           >
-            <span
-              data-css-tgxxqt=""
+            <div
+              data-css-cl1hud=""
             >
               The time at the Board of Veterans' Appeals in Washington, DC
-            </span>
+            </div>
           </HelperText>
         </div>
       </div>
@@ -9337,7 +9337,7 @@ SAN FRANCISCO, CA 94103
             id="email-section"
           >
             <div
-              className="usa-width-one-half css-uplrl8"
+              className="usa-width-one-half"
             >
               <VirtualHearingEmail
                 email="Bob.Smith@test.com"
@@ -9558,7 +9558,7 @@ SAN FRANCISCO, CA 94103
             className="usa-grid css-1jfbwxw"
           >
             <div
-              className="usa-width-one-half css-uplrl8"
+              className="usa-width-one-half"
             >
               <VirtualHearingEmail
                 email="tom.brady@caseflow.gov"
@@ -18627,11 +18627,11 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
           <HelperText
             label="The time at the Board of Veterans' Appeals in Washington, DC"
           >
-            <span
-              data-css-tgxxqt=""
+            <div
+              data-css-cl1hud=""
             >
               The time at the Board of Veterans' Appeals in Washington, DC
-            </span>
+            </div>
           </HelperText>
         </div>
       </div>
@@ -18834,7 +18834,7 @@ SAN FRANCISCO, CA 94103
             className="usa-grid css-1jfbwxw"
           >
             <div
-              className="usa-width-one-half css-uplrl8"
+              className="usa-width-one-half"
             >
               <Timezone
                 label="Veteran Timezone"
@@ -34928,11 +34928,11 @@ SAN FRANCISCO, CA 94103
               <HelperText
                 label="The hearing time in email notifications is calculated based on the timezone"
               >
-                <span
-                  data-css-tgxxqt=""
+                <div
+                  data-css-cl1hud=""
                 >
                   The hearing time in email notifications is calculated based on the timezone
-                </span>
+                </div>
               </HelperText>
             </div>
           </div>
@@ -34941,7 +34941,7 @@ SAN FRANCISCO, CA 94103
             id="email-section"
           >
             <div
-              className="usa-width-one-half css-uplrl8"
+              className="usa-width-one-half"
             >
               <VirtualHearingEmail
                 email="Bob.Smith@test.com"
@@ -34974,11 +34974,6 @@ SAN FRANCISCO, CA 94103
                     Array [
                       "cf-form-textinput cf-inline-field",
                     ]
-                  }
-                  inputStyling={
-                    Object {
-                      "data-css-d0z96": "",
-                    }
                   }
                   name="Veteran Email"
                   onChange={[Function]}
@@ -35018,7 +35013,6 @@ SAN FRANCISCO, CA 94103
                           "cf-form-textinput cf-inline-field",
                         ]
                       }
-                      data-css-d0z96=""
                       id="Veteran Email"
                       name="Veteran Email"
                       onChange={[Function]}
@@ -35030,11 +35024,11 @@ SAN FRANCISCO, CA 94103
                 <HelperText
                   label="Changes to the email are used to send notifications for this hearing only"
                 >
-                  <span
-                    data-css-tgxxqt=""
+                  <div
+                    data-css-cl1hud=""
                   >
                     Changes to the email are used to send notifications for this hearing only
-                  </span>
+                  </div>
                 </HelperText>
               </VirtualHearingEmail>
             </div>
@@ -35214,7 +35208,7 @@ SAN FRANCISCO, CA 94103
             className="usa-grid css-1jfbwxw"
           >
             <div
-              className="usa-width-one-half css-uplrl8"
+              className="usa-width-one-half"
             >
               <Timezone
                 label="POA/Representative Timezone"
@@ -51308,11 +51302,11 @@ SAN FRANCISCO, CA 94103
               <HelperText
                 label="The hearing time in email notifications is calculated based on the timezone"
               >
-                <span
-                  data-css-tgxxqt=""
+                <div
+                  data-css-cl1hud=""
                 >
                   The hearing time in email notifications is calculated based on the timezone
-                </span>
+                </div>
               </HelperText>
             </div>
           </div>
@@ -51320,7 +51314,7 @@ SAN FRANCISCO, CA 94103
             className="usa-grid css-1jfbwxw"
           >
             <div
-              className="usa-width-one-half css-uplrl8"
+              className="usa-width-one-half"
             >
               <VirtualHearingEmail
                 email="tom.brady@caseflow.gov"
@@ -51352,11 +51346,6 @@ SAN FRANCISCO, CA 94103
                     Array [
                       "cf-form-textinput cf-inline-field",
                     ]
-                  }
-                  inputStyling={
-                    Object {
-                      "data-css-d0z96": "",
-                    }
                   }
                   name="POA/Representative Email"
                   onChange={[Function]}
@@ -51391,7 +51380,6 @@ SAN FRANCISCO, CA 94103
                           "cf-form-textinput cf-inline-field",
                         ]
                       }
-                      data-css-d0z96=""
                       id="POA/Representative Email"
                       name="POA/Representative Email"
                       onChange={[Function]}
@@ -51403,11 +51391,11 @@ SAN FRANCISCO, CA 94103
                 <HelperText
                   label="Changes to the email are used to send notifications for this hearing only"
                 >
-                  <span
-                    data-css-tgxxqt=""
+                  <div
+                    data-css-cl1hud=""
                   >
                     Changes to the email are used to send notifications for this hearing only
-                  </span>
+                  </div>
                 </HelperText>
               </VirtualHearingEmail>
             </div>

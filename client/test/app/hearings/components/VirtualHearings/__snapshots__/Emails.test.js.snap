@@ -21,11 +21,6 @@ exports[`VirtualHearingEmails Does not show required when ReadOnly 1`] = `
         "cf-form-textinput cf-inline-field",
       ]
     }
-    inputStyling={
-      Object {
-        "data-css-d0z96": "",
-      }
-    }
     name="Appellant Email"
     onChange={[Function]}
     optional={false}
@@ -60,7 +55,6 @@ exports[`VirtualHearingEmails Does not show required when ReadOnly 1`] = `
             "cf-form-textinput cf-inline-field",
           ]
         }
-        data-css-d0z96=""
         id="Appellant Email"
         name="Appellant Email"
         onChange={[Function]}
@@ -73,11 +67,11 @@ exports[`VirtualHearingEmails Does not show required when ReadOnly 1`] = `
   <HelperText
     label="Changes to the email are used to send notifications for this hearing only"
   >
-    <span
-      data-css-tgxxqt=""
+    <div
+      data-css-cl1hud=""
     >
       Changes to the email are used to send notifications for this hearing only
-    </span>
+    </div>
   </HelperText>
 </VirtualHearingEmail>
 `;
@@ -89,11 +83,6 @@ exports[`VirtualHearingEmails Matches snapshot with default props 1`] = `
       Array [
         "cf-form-textinput cf-inline-field",
       ]
-    }
-    inputStyling={
-      Object {
-        "data-css-d0z96": "",
-      }
     }
     name="Appellant Email"
     onChange={[Function]}
@@ -122,11 +111,6 @@ exports[`VirtualHearingEmails Respects required prop 1`] = `
       Array [
         "cf-form-textinput cf-inline-field",
       ]
-    }
-    inputStyling={
-      Object {
-        "data-css-d0z96": "",
-      }
     }
     name="Appellant Email"
     onChange={[Function]}
@@ -166,7 +150,6 @@ exports[`VirtualHearingEmails Respects required prop 1`] = `
             "cf-form-textinput cf-inline-field",
           ]
         }
-        data-css-d0z96=""
         id="Appellant Email"
         name="Appellant Email"
         onChange={[Function]}
@@ -178,11 +161,11 @@ exports[`VirtualHearingEmails Respects required prop 1`] = `
   <HelperText
     label="Changes to the email are used to send notifications for this hearing only"
   >
-    <span
-      data-css-tgxxqt=""
+    <div
+      data-css-cl1hud=""
     >
       Changes to the email are used to send notifications for this hearing only
-    </span>
+    </div>
   </HelperText>
 </VirtualHearingEmail>
 `;
