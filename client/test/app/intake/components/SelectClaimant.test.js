@@ -20,8 +20,7 @@ const defaultRelationships = [
 ];
 
 const defaultFeatureToggles = {
-  attorneyFees: false,
-  deceasedAppellants: false,
+  attorneyFees: false
 };
 
 describe('SelectClaimant', () => {
@@ -51,10 +50,7 @@ describe('SelectClaimant', () => {
     return render(
       <SelectClaimant
         isVeteranDeceased
-        featureToggles={{
-          ...defaultFeatureToggles,
-          deceasedAppellants: props.toggled,
-        }}
+        featureToggles={{defaultFeatureToggles}}
         relationships={defaultRelationships}
         formType={props.formType}
         veteranIsNotClaimant={props.veteranIsNotClaimant}
@@ -79,50 +75,27 @@ describe('SelectClaimant', () => {
     });
   });
 
-  describe("with formType 'appeal'", () => {
-    const formType = { formType: 'appeal' };
+  describe("with formType", () => {
+    const setupProps = { toggled: true };
 
-    describe('deceasedAppellants toggled OFF', () => {
-      it('renders correctly', () => {
-        const { container } = setupDeceasedAppellants(formType);
+    it('renders correctly', () => {
+      const { container } = setupDeceasedAppellants(setupProps);
 
-        expect(container).toMatchSnapshot();
-      });
-
-      it('passes a11y testing', async () => {
-        const { container } = setupDeceasedAppellants(formType);
-
-        const results = await axe(container);
-
-        expect(results).toHaveNoViolations();
-      });
-
-      it('disables different-claimant-option_false radio button and fires off setVeteranIsNotClaimant', () => {
-        setupDeceasedAppellants(formType);
-
-        const radioNo = screen.getByRole('radio', { name: /no/i });
-
-        expect(radioNo).toBeDisabled();
-        expect(setVeteranIsNotClaimant).toHaveBeenCalled();
-      });
+      expect(container).toMatchSnapshot();
     });
 
-    describe('deceasedAppellants toggled ON', () => {
-      const setupProps = { ...formType, toggled: true };
+    it('passes a11y testing', async () => {
+      const { container } = setupDeceasedAppellants(setupProps);
 
-      it('renders correctly', () => {
-        const { container } = setupDeceasedAppellants(setupProps);
+      const results = await axe(container);
 
-        expect(container).toMatchSnapshot();
-      });
+      expect(results).toHaveNoViolations();
+    });
+  });
 
-      it('passes a11y testing', async () => {
-        const { container } = setupDeceasedAppellants(setupProps);
-
-        const results = await axe(container);
-
-        expect(results).toHaveNoViolations();
-      });
+  describe("with formType 'appeal'", () => {
+    const formType = { formType: 'appeal' };
+    const setupProps = { ...formType, toggled: true };
 
       it('disables different-claimant-option_false radio button and does NOT fire off setVeteranIsNotClaimant', () => {
         setupDeceasedAppellants(setupProps);
@@ -140,7 +113,6 @@ describe('SelectClaimant', () => {
 
         expect(alert).toBeInTheDocument();
       });
-    });
 
     describe('nonVeteranClaimants enabled', () => {
       const featureToggles = {
@@ -186,56 +158,15 @@ describe('SelectClaimant', () => {
   });
 
   describe("with formType not 'appeal'", () => {
-    describe('deceasedAppellants toggled OFF', () => {
-      it('renders correctly', () => {
-        const { container } = setupDeceasedAppellants();
+    const setupProps = { toggled: true };
 
-        expect(container).toMatchSnapshot();
-      });
+    it('disables different-claimant-option_false radio button & fires off setVeteranIsNotClaimant', () => {
+      setupDeceasedAppellants(setupProps);
 
-      it('passes a11y testing', async () => {
-        const { container } = setupDeceasedAppellants();
+      const radioNo = screen.getByRole('radio', { name: /no/i });
 
-        const results = await axe(container);
-
-        expect(results).toHaveNoViolations();
-      });
-
-      it('does disable different-claimant-option_false radio button and fires off setVeteranIsNotClaimant', () => {
-        setupDeceasedAppellants();
-
-        const radioNo = screen.getByRole('radio', { name: /no/i });
-
-        expect(radioNo).toBeDisabled();
-        expect(setVeteranIsNotClaimant).toHaveBeenCalled();
-      });
-    });
-
-    describe('deceasedAppellants toggled ON', () => {
-      const setupProps = { toggled: true };
-
-      it('renders correctly', () => {
-        const { container } = setupDeceasedAppellants(setupProps);
-
-        expect(container).toMatchSnapshot();
-      });
-
-      it('passes a11y testing', async () => {
-        const { container } = setupDeceasedAppellants(setupProps);
-
-        const results = await axe(container);
-
-        expect(results).toHaveNoViolations();
-      });
-
-      it('disables different-claimant-option_false radio button & fires off setVeteranIsNotClaimant', () => {
-        setupDeceasedAppellants(setupProps);
-
-        const radioNo = screen.getByRole('radio', { name: /no/i });
-
-        expect(radioNo).toBeDisabled();
-        expect(setVeteranIsNotClaimant).toBeCalled();
-      });
+      expect(radioNo).toBeDisabled();
+      expect(setVeteranIsNotClaimant).toBeCalled();
     });
   });
 });

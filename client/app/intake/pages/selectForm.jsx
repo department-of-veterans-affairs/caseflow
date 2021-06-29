@@ -20,7 +20,6 @@ class SelectForm extends React.PureComponent {
 
   render() {
     const { formType, featureToggles, userCanIntakeAppeals } = this.props;
-    const inboxFeature = featureToggles.inbox;
     const unreadMessages = this.props.unreadMessages;
     const rampEnabled = featureToggles.rampIntake;
     const enabledFormTypes = rampEnabled ? FORM_TYPES : _.pickBy(FORM_TYPES, { category: 'decisionReview' });
@@ -50,7 +49,7 @@ class SelectForm extends React.PureComponent {
       </Alert>
       }
 
-      { inboxFeature && unreadMessages && <Alert
+      { unreadMessages && <Alert
         title="Intake Jobs"
         type="warning"
         lowerMargin>You have <a href="/inbox">unread messages</a>.
