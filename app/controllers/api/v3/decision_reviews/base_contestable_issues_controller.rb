@@ -19,9 +19,9 @@ module Api
         end
 
         def serialized_contestable_issues
-          contestable_issues.map do |issue|
-            Api::V3::ContestableIssueSerializer.new(issue).serializable_hash[:data]
-          end
+          contestable_issues.map { |issue| Api::V3::ContestableIssueSerializer.new(issue).serializable_hash[:data] }
+            .sort_by { |issue| Date.strptime(issue[:attributes][:approxDecisionDate], "%Y-%m-%d") }
+            .reverse
         end
 
         def contestable_issues

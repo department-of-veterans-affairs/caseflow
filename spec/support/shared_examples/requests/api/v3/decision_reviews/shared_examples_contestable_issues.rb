@@ -87,6 +87,18 @@ RSpec.shared_examples "contestable issues index requests" do
         create :decision_issue, args
       end
 
+      let(:decision_issue_3) do
+        args = {
+          decision_review: source,
+          rating_profile_date: source.receipt_date - 10.days,
+          end_product_last_action_date: source.receipt_date - 10.days,
+          participant_id: veteran.ptcpnt_id,
+          decision_text: "a past decision issue from another review"
+        }
+        args[:benefit_type] = source.benefit_type if source.class.to_s != "Appeal"
+        create :decision_issue, args
+      end
+
       let(:disability_dis_sn) { "98765" }
       let(:diagnostic_code) { "777" }
       let(:disability_id) { "123" }
@@ -133,6 +145,7 @@ RSpec.shared_examples "contestable issues index requests" do
           profile_date: date - 10.days # must be before receipt_date
         ) # this is a contestable_rating_issues
         another_decision_issue # instantiate this
+        decision_issue_3
         get_issues
         response_data
       end
@@ -218,6 +231,13 @@ RSpec.shared_examples "contestable issues index requests" do
           expect(issue["attributes"].keys).to include("approxDecisionDate")
           expect(issue["attributes"]["approxDecisionDate"]).to match(/^\d{4}-\d{2}-\d{2}$/)
         end
+      end
+
+      it "should be sorted by approxDecisionDate" do
+        date_format = "%Y-%m-%d"
+        expect(issues[0]["attributes"]["approxDecisionDate"]).to eq(30.days.ago.strftime(date_format))
+        expect(issues[1]["attributes"]["approxDecisionDate"]).to eq(32.days.ago.strftime(date_format))
+        expect(issues[2]["attributes"]["approxDecisionDate"]).to eq(41.days.ago.strftime(date_format))
       end
 
       it "should have rampClaimId attribute" do
