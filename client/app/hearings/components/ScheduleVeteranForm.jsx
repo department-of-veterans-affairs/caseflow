@@ -97,7 +97,7 @@ export const ScheduleVeteranForm = ({
           updatedByCssId={hearingTask?.unscheduledHearingNotes?.updatedByCssId}
           uniqueId={hearingTask?.taskId}
         />
-        <div className="cf-help-divider usa-width-two-thirds" />
+        <div className="cf-help-divider usa-width-one-whole" />
         <div className="usa-width-one-whole">
           <HearingTypeDropdown
             enableFullPageConversion
@@ -106,7 +106,7 @@ export const ScheduleVeteranForm = ({
             virtualHearing={hearing?.virtualHearing}
           />
         </div>
-        <div className="cf-help-divider usa-width-two-thirds" />
+        <div className="cf-help-divider usa-width-one-whole" />
         <div className="usa-width-one-whole">
           {virtual ? (
             <ReadOnly spacing={15} label="Hearing Location" text="Virtual" />
