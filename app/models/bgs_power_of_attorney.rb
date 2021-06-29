@@ -177,8 +177,7 @@ class BgsPowerOfAttorney < CaseflowRecord
 
   def related_appeals
     appeal_claimants = claimants.where(decision_review_type: "Appeal")
-    returned_appeals = Appeal.where(id: appeal_claimants.pluck(:decision_review_id))
-    returned_appeals
+    Appeal.where(id: appeal_claimants.pluck(:decision_review_id))
   end
 
   def fetch_bgs_record
