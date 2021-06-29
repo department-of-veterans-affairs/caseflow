@@ -16,4 +16,9 @@ class UnrecognizedAppellant < CaseflowRecord
       end
     end
   end
+
+  def update_with_versioning!(params)
+    # Needs to be filled in with update stuff
+    return self
+  end
 end
