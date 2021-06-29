@@ -15,9 +15,9 @@ class WorkQueue::PowerOfAttorneySerializer
   attribute :created_at
   attribute :updated_at
 
-  non_ihp_writing_org_types = %w[FieldVso PrivateBar]
+
   attribute :ihp_allowed do |object|
     org = Organization.find_by(participant_id: object.poa_participant_id)
-    !org.nil? && !(non_ihp_writing_org_types.include? org.type)
+    !org.nil? && !(InformalHearingPresentationTask.NON_IHP_WRITING_ORG_TYPES.include? org.type)
   end
 end
