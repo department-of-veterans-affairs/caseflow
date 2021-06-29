@@ -13,17 +13,16 @@ module ExplainTimelineConcern
     tasks_as_timeline_data + intakes_as_timeline_data
   end
 
-  # integer values correspond with those defined in function `groupEventItems` of explain-appeal.js
-  EVENT_GROUPS = {
-    "phase" => 0,
-    Task.table_name => 1,
-    Intake.table_name => 2
-  }.freeze
-
   BACKGROUND_TASK_TYPES = %w[DistributionTask JudgeDecisionReviewTask].freeze
 
+  # clone_record["type"] is one of the vis-timeline item types: range, box, point, background
+  # See https://visjs.github.io/vis-timeline/docs/timeline/#items
+
+  # clone_record["group"] corresponds with a group defined in function `groupEventItems` of explain-appeal.js
+  # See https://visjs.github.io/vis-timeline/docs/timeline/#groups
+
+  # rubocop:disable Metrics/MethodLength
   # :reek:FeatureEnvy
-  # :reek:Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def tasks_as_timeline_data
     sje.records_hash[Task.table_name].map do |record|
@@ -36,19 +35,18 @@ module ExplainTimelineConcern
         clone_record["taskType"] = record["type"]
 
         if BACKGROUND_TASK_TYPES.include?(record["type"])
-          clone_record["type"] = "background"
           clone_record["group"] = nil # so that background is visible in all groups
+          clone_record["type"] = "background"
           clone_record["end"] ||= Time.zone.today # needs to be set for 'background' types
         else
+          clone_record["group"] = clone_record["status"] == "cancelled" ?  "cancelled_tasks" : Task.table_name
           significant_duration = record["closed_at"] - record["created_at"] > 60 if record["closed_at"]
           clone_record["type"] = significant_duration ? "range" : "point"
-          clone_record["group"] = EVENT_GROUPS[Task.table_name]
           clone_record["end"] = significant_duration ? record["closed_at"] : nil
         end
 
         # for visualization
-        # clone_record["group"] = Task.table_name
-        clone_record["title"] = "<pre style='font-size:0.84em'><code>#{JSON.pretty_generate(clone_record)}</code></pre>"
+        clone_record["title"] = "<pre style='font-size:0.7em'><code>#{JSON.pretty_generate(clone_record)}</code></pre>"
         clone_record["className"] = "#{record['type']} task_#{record['status']}"
       end
     end
@@ -64,14 +62,18 @@ module ExplainTimelineConcern
         clone_record["tableName"] = Intake.table_name
         clone_record["content"] = "#{record['type']}_#{record['id']}"
         clone_record["start"] = record["started_at"]
-        clone_record["end"] = record["completed_at"]
         clone_record["intakeType"] = record["type"]
 
-        # clear these values to prevent conflict the Timeline Item's fields
-        significant_duration = record["completed_at"] - record["started_at"] > 120 if record["completed_at"]
-        clone_record["type"] = significant_duration ? "range" : "point"
-        clone_record["group"] = EVENT_GROUPS[Intake.table_name]
+        clone_record["group"] = Intake.table_name
+        significant_duration = record["completed_at"] - record["started_at"] > 360 if record["completed_at"]
+        clone_record["type"] = significant_duration ? "range" : nil
+        clone_record["end"] = significant_duration ? record["completed_at"] : nil
+
+        # for visualization
+        clone_record["title"] = "<pre style='font-size:0.84em'><code>#{JSON.pretty_generate(clone_record)}</code></pre>"
+        clone_record["className"] = record['type']
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
 end

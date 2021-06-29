@@ -15,7 +15,7 @@ function addTimeline(elementId, timeline_data){
   const groups = groupEventItems(timeline_data);
   const timeline_options = {
     width: '95%',
-    maxHeight: 800,
+    // maxHeight: 800,
     horizontalScroll: true,
     verticalScroll: true,
     min: new Date(2018, 0, 1), // TODO: calculate earliest
@@ -59,28 +59,37 @@ function decorateTimelineItems(items){
   return items;
 }
 
+
 // https://visjs.github.io/vis-timeline/docs/timeline/#groups
+var groups = new vis.DataSet();
 function groupEventItems(items){
-  var groups = new vis.DataSet();
-  // TODO: add checkboxes to set 'visible' value on groups
   groups.add({
-      id: 0,
+      id: 'phase',
       content: 'phase',
       className: 'group_phase',
       order: 0,
-      visible: true
   });
   groups.add({
-      id: 1,
+      id: 'tasks',
       content: 'tasks',
       className: 'group_tasks',
       order: 1,
   });
   groups.add({
-    id: 2,
+    id: 'cancelled_tasks',
+    content: 'cancelled<br/> tasks',
+    className: 'group_cancelled_tasks',
+    order: 3,
+  });
+  groups.add({
+    id: 'intakes',
     content: 'intakes',
     className: 'group_intakes',
-    order: 2,
+    order: 9,
   });
-return groups;
+  return groups;
+}
+
+function toggleTimelineEventGroup(checkbox, group_id){
+  groups.update({id: group_id, visible: checkbox.checked})
 }

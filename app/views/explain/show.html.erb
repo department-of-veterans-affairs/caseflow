@@ -40,14 +40,14 @@
   </code>
   <pre style="font-size:0.84em; padding:10px"><code><%= task_tree_as_text %></code></pre>
   <details>
-    <summary style="color: blue">Task tree configuration</summary>
+    <summary id="treee_config" style="color: blue">Task tree configuration</summary>
 
     <div id="treeefields" style="width: 200px; height: 300px; overflow-y: scroll; padding:10px">
       <% available_fields.each do |field_name| %>
         <% if treee_fields.include?(field_name.to_sym) %>
-          <input type="checkbox" name="<%=field_name%>" id="<%=field_name%>" checked />
+          <input type="checkbox" id="<%=field_name%>" checked />
         <% else %>
-          <input type="checkbox" name="<%=field_name%>" id="<%=field_name%>" />
+          <input type="checkbox" id="<%=field_name%>" />
         <% end %>
         <label for="<%=field_name%>"><%=field_name%></label>
       <% end %>
@@ -98,7 +98,20 @@
 
   <% unless legacy_appeal? %>
     <h3>Timeline</h3>
-    <input type="button" id="fit" value="Fit all items">
+    <input type="button" id="fit" value="Fit all items" />
+    <details>
+      <summary id="timeline_config" style="color: purple">Timeline configuration</summary>
+
+      <input id="tasks_group_visible" type="checkbox" checked onchange="toggleTimelineEventGroup(this, 'tasks')" />
+      <label for="tasks_group_visible">Tasks</label>
+
+      <input id="cancelled_tasks_group_visible" type="checkbox" checked onchange="toggleTimelineEventGroup(this, 'cancelled_tasks')" />
+      <label for="cancelled_tasks_group_visible">Cancelled tasks</label>
+
+      <input id="intakes_group_visible" type="checkbox" checked onchange="toggleTimelineEventGroup(this, 'intakes')" />
+      <label for="intakes_group_visible">Intakes</label>
+    </details>
+
     <br/>
     <div id="timeline"></div>
     <details open>

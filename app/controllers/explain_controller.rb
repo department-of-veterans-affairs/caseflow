@@ -45,7 +45,8 @@ class ExplainController < ApplicationController
       task_tree_as_text,
       intake_as_text,
       hearing_as_text,
-      JSON.pretty_generate(event_table_data)
+      JSON.pretty_generate(event_table_data),
+      JSON.pretty_generate(timeline_data)
     ].join("\n\n")
   end
 
