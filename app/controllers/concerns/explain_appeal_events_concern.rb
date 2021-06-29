@@ -60,7 +60,11 @@ module ExplainAppealEventsConcern
       req_issues.delete(req_dec_issue["request_issue_id"])
       dec_issues.delete(req_dec_issue["decision_issue_id"])
     end
-    fail "Remaining DecisionIssue are not associated: #{dec_issues}" unless dec_issues.blank?
+
+    # Remaining DecisionIssue are associated with another decision review, e.g., HLR or SC
+    dec_issues.each do |dec_issue|
+      events += Explain::DecisionIssueRecordEventMapper.new(dec_issue, req_issue).events
+    end
 
     # Process remaining req_issues
     req_issues.values.map do |req_issue|
