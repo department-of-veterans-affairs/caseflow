@@ -8,17 +8,21 @@
  * These are added to the application in config/initializers/assets.rb.
  */
 
+const items = new vis.DataSet();
+
 // called from app/views/explain/show.html.erb
 function addTimeline(elementId, timeline_data){
   const timelineElement = document.getElementById(elementId);
-  const items = new vis.DataSet(decorateTimelineItems(timeline_data));
+  // const items = new vis.DataSet(decorateTimelineItems(timeline_data));
+  items.add(decorateTimelineItems(timeline_data))
   const groups = groupEventItems(timeline_data);
+  const startDates = items.get({fields: ['start']}).map((str)=> new Date(str.start));
   const timeline_options = {
     width: '95%',
     // maxHeight: 800,
     horizontalScroll: true,
     verticalScroll: true,
-    min: new Date(2018, 0, 1), // TODO: calculate earliest
+    min: new Date(Math.min(...startDates) - 1000*60*60*24*30*6), // add extra time so that entire label is visible
     max: new Date((new Date()).valueOf() + 1000*60*60*24*30*12), // add exta time so that labels are visible
     zoomMin: 1000 * 60 * 60, // 1 hour in milliseconds
     orientation: {axis: 'both'},  // show time axis on both the top and bottom

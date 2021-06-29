@@ -16,6 +16,7 @@ module ExplainTimelineConcern
   BACKGROUND_TASK_TYPES = %w[DistributionTask JudgeDecisionReviewTask].freeze
 
   # clone_record["type"] is one of the vis-timeline item types: range, box, point, background
+  # clone_record["title"] is displayed as the tooltip
   # See https://visjs.github.io/vis-timeline/docs/timeline/#items
 
   # clone_record["group"] corresponds with a group defined in function `groupEventItems` of explain-appeal.js
@@ -39,14 +40,14 @@ module ExplainTimelineConcern
           clone_record["type"] = "background"
           clone_record["end"] ||= Time.zone.today # needs to be set for 'background' types
         else
-          clone_record["group"] = clone_record["status"] == "cancelled" ?  "cancelled_tasks" : Task.table_name
+          clone_record["group"] = (clone_record["status"] == "cancelled") ? "cancelled_tasks" : Task.table_name
           significant_duration = record["closed_at"] - record["created_at"] > 60 if record["closed_at"]
           clone_record["type"] = significant_duration ? "range" : "point"
           clone_record["end"] = significant_duration ? record["closed_at"] : nil
         end
 
         # for visualization
-        clone_record["title"] = "<pre style='font-size:0.7em'><code>#{JSON.pretty_generate(clone_record)}</code></pre>"
+        clone_record["title"] = "<pre><code style='font-size:0.7em'>#{JSON.pretty_generate(clone_record)}</code></pre>"
         clone_record["className"] = "#{record['type']} task_#{record['status']}"
       end
     end
@@ -70,8 +71,8 @@ module ExplainTimelineConcern
         clone_record["end"] = significant_duration ? record["completed_at"] : nil
 
         # for visualization
-        clone_record["title"] = "<pre style='font-size:0.84em'><code>#{JSON.pretty_generate(clone_record)}</code></pre>"
-        clone_record["className"] = record['type']
+        clone_record["title"] = "<pre><code style='font-size:0.7em'>#{JSON.pretty_generate(clone_record)}</code></pre>"
+        clone_record["className"] = record["type"]
       end
     end
   end
