@@ -689,10 +689,10 @@ class QueueApp extends React.PureComponent {
 
             <PageRoute
               exact
-              path={`/queue/appeals/:appealId/edit_appellant_information`}
+              path="/queue/appeals/:appealId/edit_appellant_information"
               title="Edit Appellant Information | Caseflow"
               component={EditAppellantInformation}
-             />
+            />
 
             <PageRoute
               path="/team_management"
