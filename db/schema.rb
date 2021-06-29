@@ -132,7 +132,7 @@ ActiveRecord::Schema.define(version: 2021_06_28_142005) do
     t.string "claimant_type", null: false, comment: "Claimant type of substitute; needed to create Claimant record"
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.bigint "created_by_id", null: false, comment: "User that created this record"
-    t.string "poa_participant_id", comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id. Null if the substitute appellant has no POA."
+    t.string "poa_participant_id", comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id"
     t.bigint "selected_task_ids", default: [], null: false, comment: "User-selected task ids from source appeal", array: true
     t.bigint "source_appeal_id", null: false, comment: "The relevant source appeal for this substitution"
     t.string "substitute_participant_id", null: false, comment: "Participant ID of substitute appellant"
@@ -1443,7 +1443,8 @@ ActiveRecord::Schema.define(version: 2021_06_28_142005) do
   create_table "unrecognized_appellants", comment: "Unrecognized non-veteran appellants", force: :cascade do |t|
     t.bigint "claimant_id", null: false, comment: "The OtherClaimant record associating this appellant to a DecisionReview"
     t.datetime "created_at", null: false
-    t.bigint "current_version_id", comment: "The ID of the user who most recently updated the virtual hearing"
+    t.bigint "created_by_id", comment: "The ID of the user that created this version of the unrecognized appellant"
+    t.bigint "current_version_id", comment: "The current version ID for this unrecognized appellant"
     t.string "poa_participant_id", comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id"
     t.string "relationship", null: false, comment: "Relationship to veteran. Allowed values: attorney, child, spouse, other"
     t.bigint "unrecognized_party_detail_id", comment: "Contact details"
@@ -1725,6 +1726,7 @@ ActiveRecord::Schema.define(version: 2021_06_28_142005) do
   add_foreign_key "unrecognized_appellants", "unrecognized_appellants", column: "current_version_id"
   add_foreign_key "unrecognized_appellants", "unrecognized_party_details"
   add_foreign_key "unrecognized_appellants", "unrecognized_party_details", column: "unrecognized_power_of_attorney_id"
+  add_foreign_key "unrecognized_appellants", "users", column: "created_by_id"
   add_foreign_key "user_quotas", "team_quotas"
   add_foreign_key "user_quotas", "users"
   add_foreign_key "virtual_hearing_establishments", "virtual_hearings"
