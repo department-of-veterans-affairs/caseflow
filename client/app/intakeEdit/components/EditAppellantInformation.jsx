@@ -1,6 +1,7 @@
 import React from 'react';
 
-export default class EditAppellantInformation extends React.PureComponent {
-  render = () =>
-    <h1>Edit Appellant Information</h1>;
+const EditAppellantInformation =() => {
+  return (<h1>Edit Appellant Information</h1>)  
 }
+
+export default EditAppellantInformation;

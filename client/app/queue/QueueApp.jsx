@@ -97,7 +97,6 @@ import CavcReviewExtensionRequestModal from './components/CavcReviewExtensionReq
 import { PrivateRoute } from '../components/PrivateRoute';
 import { EditCavcRemandView } from './cavc/EditCavcRemandView';
 import EditAppellantInformation from '../intakeEdit/components/EditAppellantInformation';
-import { PAGE_PATHS } from '../intake/constants';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -679,11 +678,10 @@ class QueueApp extends React.PureComponent {
               />
               <PageRoute
                 exact
-                path={`/appeals/:appealId/${PAGE_PATHS.EDIT_APPELLANT_INFORMATION}`}
-                title="Edit Appellant Information | Caseflow Intake"
-              >
-                <EditAppellantInformation />
-              </PageRoute>
+                path={`/queue/appeals/:appealId/edit_appellant_information`}
+                title="Edit Appellant Information | Caseflow"
+                component={EditAppellantInformation}
+               />
               <PageRoute
                 exact
                 path="/organizations/:organization/users"

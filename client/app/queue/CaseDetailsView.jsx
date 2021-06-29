@@ -8,7 +8,6 @@ import React, { useEffect, useMemo } from 'react';
 import _ from 'lodash';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
-import { PAGE_PATHS } from 'app/intake/constants';
 import { COLORS } from '../constants/AppConstants';
 import {
   appealWithDetailSelector,
@@ -258,7 +257,7 @@ export const CaseDetailsView = (props) => {
               additionalHeaderContent={
                 editInformation && (
                   <span className="cf-push-right" {...editInformationLinkStyling}>
-                    <Link to={`/appeals/${appealId}/${PAGE_PATHS.EDIT_APPELLANT_INFORMATION}`}>
+                    <Link to={`/queue/appeals/${appealId}/edit_appellant_information`}>
                       {COPY.EDIT_APPELLANT_INFORMATION_LINK}
                     </Link>
                   </span>

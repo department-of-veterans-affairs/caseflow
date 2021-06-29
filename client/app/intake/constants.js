@@ -51,7 +51,6 @@ export const PAGE_PATHS = {
   CONFIRMATION: '/confirmation',
   CLEARED_EPS: '/cleared_eps',
   OUTCODED: '/outcoded',
-  EDIT_APPELLANT_INFORMATION: 'edit_appellant_information'
 };
 
 export const INTAKE_STATES = {
