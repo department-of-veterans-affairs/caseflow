@@ -22,7 +22,7 @@ export const shouldSupportSubstituteAppellant = ({
       !hasSubstitution &&
       // Only admins can perform sub on cases w/o all issues having disposition `dismissed_death`
       (userIsCobAdmin ||
-        appeal.decisionIssues.every(decisionHasDismissedDeathDisposition)) &&
+        appeal.decisionIssues.some(decisionHasDismissedDeathDisposition)) &&
       !appeal.isLegacyAppeal
   );
 };
