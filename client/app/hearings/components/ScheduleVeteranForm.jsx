@@ -1,7 +1,6 @@
 /* eslint-disable camelcase */
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import {
   TRAVEL_BOARD_HEARING_LABEL,
   VIDEO_HEARING_LABEL,
