@@ -66,7 +66,7 @@ module ExplainAppealEventsConcern
       events += Explain::RequestIssueRecordEventMapper.new(req_issue).events
     end
 
-    # Remaining DecisionIssue are likely req_issues.contested_decision_issues, 
+    # Remaining DecisionIssue are likely req_issues.contested_decision_issues,
     # which are associated with another decision review, e.g., Appeal, HLR, or SC.
     # These will be presented in other visualizations.
     exported_records(RequestIssue).each { |req_issue| dec_issues.delete(req_issue["contested_decision_issue_id"]) }
