@@ -66,6 +66,12 @@ const alertPaddingStyle = css({
   marginTop: '2rem',
 });
 
+const editInformationLinkStyling = css({
+  fontSize: '2rem',
+  fontWeight: 'normal',
+  margin: '5px',
+});
+
 export const CaseDetailsView = (props) => {
   const { appealId, featureToggles } = props;
   const appeal = useSelector((state) =>
@@ -139,6 +145,9 @@ export const CaseDetailsView = (props) => {
   );
 
   const appealIsDispatched = appeal.status === 'dispatched';
+
+  const editInformation =
+  appeal.appellantType !== 'VeteranClaimant' && props.featureToggles.edit_unrecognized_appellant;
 
   const supportCavcRemand =
     currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand && !appeal.isLegacyAppeal;
@@ -239,6 +248,15 @@ export const CaseDetailsView = (props) => {
               title="About the Appellant"
               appeal={appeal}
               substitutionDate={appeal.appellantSubstitution?.substitution_date} // eslint-disable-line camelcase
+              additionalHeaderContent={
+                editInformation && (
+                  <span className="cf-push-right" {...editInformationLinkStyling}>
+                    <Link to={`/queue/appeals/${appealId}/edit_appellant_information`}>
+                      {COPY.EDIT_APPELLANT_INFORMATION_LINK}
+                    </Link>
+                  </span>
+                )
+              }
             />
           ) }
 
