@@ -125,7 +125,7 @@ export const ScheduleVeteranForm = ({
               }
             />
           )}
-          <div style={{ ...marginTop(30) }}>
+          <div {...marginTop(30)}>
             <RegionalOfficeDropdown
               errorMessage={errors?.regionalOffice}
               excludeVirtualHearingsOption={!virtual}
@@ -139,7 +139,7 @@ export const ScheduleVeteranForm = ({
           {ro && (
             <React.Fragment>
               {!virtual && (
-                <div style={{ ...marginTop(30) }}>
+                <div {...marginTop(30)}>
                   <AppealHearingLocationsDropdown
                     errorMessage={errors?.hearingLocation}
                     key={`hearingLocation__${ro}`}
@@ -154,7 +154,7 @@ export const ScheduleVeteranForm = ({
                   />
                 </div>
               )}
-              <div style={{ ...marginTop(30) }}>
+              <div {...marginTop(30)}>
                 <HearingDateDropdown
                   errorMessage={errors?.hearingDay}
                   key={`hearingDate__${ro}`}
@@ -169,7 +169,7 @@ export const ScheduleVeteranForm = ({
                 />
               </div>
               {hearing.hearingDay?.hearingId && (
-                <div style={{ ...marginTop(30) }}>
+                <div {...marginTop(30)}>
                   {hearingDayIsVirtual && userCanViewTimeSlots ? (
                     <TimeSlot
                       {...props}
