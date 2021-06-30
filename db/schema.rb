@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_29_174248) do
+ActiveRecord::Schema.define(version: 2021_06_30_135428) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1454,21 +1454,21 @@ ActiveRecord::Schema.define(version: 2021_06_29_174248) do
   end
 
   create_table "unrecognized_party_details", comment: "For an appellant or POA, name and contact details for an unrecognized person or organization", force: :cascade do |t|
-    t.string "address_line_1", null: false
-    t.string "address_line_2"
-    t.string "address_line_3"
+    t.string "address_line_1", null: false, comment: "PII"
+    t.string "address_line_2", comment: "PII"
+    t.string "address_line_3", comment: "PII"
     t.string "city", null: false
     t.string "country", null: false
     t.datetime "created_at", null: false
     t.date "date_of_birth", comment: "PII"
-    t.string "email_address"
-    t.string "last_name"
-    t.string "middle_name"
-    t.string "name", null: false, comment: "Name of organization, or first name or mononym of person"
+    t.string "email_address", comment: "PII"
+    t.string "last_name", comment: "PII"
+    t.string "middle_name", comment: "PII"
+    t.string "name", null: false, comment: "PII. Name of organization, or first name or mononym of person"
     t.string "party_type", null: false, comment: "The type of this party. Allowed values: individual, organization"
-    t.string "phone_number"
+    t.string "phone_number", comment: "PII"
     t.string "state", null: false
-    t.string "suffix"
+    t.string "suffix", comment: "PII"
     t.datetime "updated_at", null: false
     t.string "zip", null: false
   end
