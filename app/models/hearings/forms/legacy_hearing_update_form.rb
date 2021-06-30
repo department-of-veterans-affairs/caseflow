@@ -42,7 +42,6 @@ class LegacyHearingUpdateForm < BaseHearingUpdateForm
       witness: witness
     }.compact
 
-    Rails.cache.write("legacy_hearing_disposition_#{hearing.vacols_id}", disposition)
     HearingTimeService.build_legacy_params_with_time(hearing, updates)
   end
 end
