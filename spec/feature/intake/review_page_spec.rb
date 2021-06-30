@@ -352,17 +352,6 @@ feature "Intake Review Page", :postgres do
             check_no_relationships_behavior
           end
         end
-
-        context "appeal" do
-          # ASK YANG
-          # fit "shows message and does not allow user to continue" do
-          #   start_appeal(
-          #     veteran,
-          #     no_claimant: true
-          #   )
-          #   check_no_relationships_behavior
-          # end
-        end
       end
 
       context "when adding a new attorney claimant" do
