@@ -18,7 +18,7 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
 
     context "as COTB user" do
       include_context "with Clerk of the Board user"
-      include_context "with feature toggle"
+      include_context "with recognized_granted_substitution_after_dd feature toggle"
       include_context "with existing relationships"
 
       context "with evidence submission docket" do
@@ -31,6 +31,20 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
         let(:docket_type) { "direct_review" }
 
         it_should_behave_like "fill substitution form"
+      end
+
+      context "with direct review docket" do
+        let(:docket_type) { Constants.AMA_DOCKETS.hearing }
+
+        context "without hearings feature toggle" do
+          it_should_behave_like "substitution unavailable"
+        end
+
+        context "with hearings feature toggle" do
+          include_context "with hearings_substitution_death_dismissal feature toggle"
+
+          it_should_behave_like "fill substitution form"
+        end
       end
     end
   end
