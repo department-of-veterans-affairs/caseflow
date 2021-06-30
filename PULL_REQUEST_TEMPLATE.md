@@ -30,7 +30,7 @@ Please explain the changes you made here.
 *Only for Schema Changes*
 
 * [ ] Add typical timestamps (`created_at`, `updated_at`) for new tables
-* [ ] Update column comments
+* [ ] Update column comments; include a "PII" prefix to indicate definite or potential [PII data content](https://github.com/department-of-veterans-affairs/appeals-team/blob/master/caseflow-team/0-how-we-work/pii-handbook.md#what-is-pii)
 * [ ] Have your migration classes inherit from `Caseflow::Migration`, especially when adding indexes (use `add_safe_index`)
 * [ ] Verify that `migrate:rollback` works as desired ([`change` supported functions](https://edgeguides.rubyonrails.org/active_record_migrations.html#using-the-change-method))
 * [ ] Perform query profiling (eyeball Rails log, check bullet and fasterer output)

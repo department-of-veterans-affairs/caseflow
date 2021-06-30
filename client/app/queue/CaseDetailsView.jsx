@@ -46,6 +46,7 @@ import VeteranCasesView from './VeteranCasesView';
 import VeteranDetail from './VeteranDetail';
 import { startPolling } from '../hearings/utils';
 import FnodBanner from './components/FnodBanner';
+import { shouldSupportSubstituteAppellant } from './substituteAppellant/caseDetails/utils';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
@@ -65,8 +66,14 @@ const alertPaddingStyle = css({
   marginTop: '2rem',
 });
 
+const editInformationLinkStyling = css({
+  fontSize: '2rem',
+  fontWeight: 'normal',
+  margin: '5px',
+});
+
 export const CaseDetailsView = (props) => {
-  const { appealId } = props;
+  const { appealId, featureToggles } = props;
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
@@ -139,24 +146,20 @@ export const CaseDetailsView = (props) => {
 
   const appealIsDispatched = appeal.status === 'dispatched';
 
+  const editInformation =
+  appeal.appellantType !== 'VeteranClaimant' && props.featureToggles.edit_unrecognized_appellant;
+
   const supportCavcRemand =
     currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand && !appeal.isLegacyAppeal;
 
-  const decisionHasDismissedDeathDisposition = (decisionIssue) =>
-    decisionIssue.disposition === 'dismissed_death';
-
   const hasSubstitution = appeal.substitutions?.length;
-  const supportSubstituteAppellant =
-    currentUserOnClerkOfTheBoard &&
-    !appeal.appellantIsNotVeteran &&
-    props.featureToggles.recognized_granted_substitution_after_dd &&
-    appeal.caseType === 'Original' &&
-    // Substitute appellants for hearings will be supported later, but aren't yet:
-    appeal.docketName !== 'hearing' &&
-    // For now, only allow a single substitution from a given appeal
-    !hasSubstitution &&
-    (userIsCobAdmin || appeal.decisionIssues.some(decisionHasDismissedDeathDisposition)) &&
-    !appeal.isLegacyAppeal;
+  const supportSubstituteAppellant = shouldSupportSubstituteAppellant({
+    appeal,
+    currentUserOnClerkOfTheBoard,
+    featureToggles,
+    hasSubstitution,
+    userIsCobAdmin
+  });
 
   const showPostDispatch =
     appealIsDispatched && (supportCavcRemand || supportSubstituteAppellant);
@@ -245,6 +248,15 @@ export const CaseDetailsView = (props) => {
               title="About the Appellant"
               appeal={appeal}
               substitutionDate={appeal.appellantSubstitution?.substitution_date} // eslint-disable-line camelcase
+              additionalHeaderContent={
+                editInformation && (
+                  <span className="cf-push-right" {...editInformationLinkStyling}>
+                    <Link to={`/queue/appeals/${appealId}/edit_appellant_information`}>
+                      {COPY.EDIT_APPELLANT_INFORMATION_LINK}
+                    </Link>
+                  </span>
+                )
+              }
             />
           ) }
 
