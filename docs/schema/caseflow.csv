@@ -1116,6 +1116,7 @@ unrecognized_party_details,address_line_3,string,,,,,,
 unrecognized_party_details,city,string ∗,x,,,,,
 unrecognized_party_details,country,string ∗,x,,,,,
 unrecognized_party_details,created_at,datetime ∗,x,,,,,
+unrecognized_party_details,date_of_birth,date,,,,,,PII
 unrecognized_party_details,email_address,string,,,,,,
 unrecognized_party_details,id,integer (8) PK,x,x,,,,
 unrecognized_party_details,last_name,string,,,,,,
