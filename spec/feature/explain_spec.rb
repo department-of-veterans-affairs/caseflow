@@ -100,38 +100,60 @@ RSpec.feature "Explain JSON" do
   end
 
   context "for a realistic appeal" do
-    let(:json_filename) { "appeal-121304-dup_jatasks.json" }
     let(:real_appeal) do
       sji = SanitizedJsonImporter.from_file("spec/records/#{json_filename}", verbosity: 0)
       sji.import
       sji.imported_records[Appeal.table_name].first
     end
-    it "present realistic appeal events" do
-      visit "explain/appeals/#{real_appeal.uuid}"
-      scroll_to(page.find("h3", text: "Timeline"))
-    end
-    it "present realistic appeal events" do
-      visit "explain/appeals/#{real_appeal.uuid}"
-      expect(page).to have_content("show_pii = false")
-      expect(page).to have_content("status: dispatched")
-      expect(page).to have_content("priority: false (AOD: false, CAVC: false)")
-      expect(page).to have_content("Intake (no PII)")
-      expect(page).to have_content("Hearing (no PII)")
-      expect(page).to have_content("show_pii: false")
-      expect(page).to have_content("Appeal Narrative (contains PII)")
+    context "given a dispatched appeal" do
+      let(:json_filename) { "appeal-21430.json" }
+      it "present realistic appeal events" do
+        visit "explain/appeals/#{real_appeal.uuid}"
+        expect(page).to have_content("show_pii = false")
+        expect(page).to have_content("status: dispatched")
 
-      click_link("toggle show_pii")
-      expect(page).to have_content("show_pii = true")
-      expect(page).to have_content("Intake (showing PII)")
-      expect(page).to have_content("Hearing (showing PII)")
-      expect(page).to have_content("show_pii: true")
-      expect(page).to have_content("Appeal Narrative (contains PII)")
-      page.find("#narrative_table").click
-      task = real_appeal.tasks.sample
-      expect(page).to have_content("#{task.type}_#{task.id}")
+        expect(page).to have_content("priority: false (AOD: false, CAVC: false)")
+        expect(page).to have_content("Intake (no PII)")
+        expect(page).to have_content("Hearing (no PII)")
+        expect(page).to have_content("show_pii: false")
+        expect(page).to have_content("Appeal Narrative (contains PII)")
+
+        click_link("toggle show_pii")
+        expect(page).to have_content("show_pii = true")
+        expect(page).to have_content("Intake (showing PII)")
+        expect(page).to have_content("Hearing (showing PII)")
+        expect(page).to have_content("show_pii: true")
+        expect(page).to have_content("Appeal Narrative (contains PII)")
+        page.find("#narrative_table").click
+        task = real_appeal.tasks.sample
+        expect(page).to have_content("#{task.type}_#{task.id}")
+      end
     end
 
-    context "appeal with request issue contesting an HLR decision" do
+    context "given an AOD appeal" do
+      let(:json_filename) { "appeal-121304-dup_jatasks.json" }
+      it "present realistic appeal events" do
+        visit "explain/appeals/#{real_appeal.uuid}"
+        expect(page).to have_content("status: distributed_to_judge")
+        expect(page).to have_content("priority: true (AOD: true, CAVC: false)")
+        # scroll_to(page.find("h3", text: "Timeline"))
+        # binding.pry
+      end
+    end
+
+    context "given an appeal dispatched before quality review is complete" do
+      before do
+        Organization.create!(id: 212, url: "bvajlmarch", name: "BVAJLMARCH")
+      end
+      let(:json_filename) { "appeal-dispatch_before_quality_review_complete.json" }
+      it "present realistic appeal events" do
+        visit "explain/appeals/#{real_appeal.uuid}"
+        expect(page).to have_content("status: assigned_to_colocated")
+        expect(page).to have_content("priority: false (AOD: false, CAVC: false)")
+      end
+    end
+
+    context "given an appeal with request issue contesting an HLR decision" do
       let(:json_filename) { "appeal-106435.json" }
       before do
         # 106435.json requires this HLR to exist because a decision_issue references it
