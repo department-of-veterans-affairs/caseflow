@@ -18,7 +18,7 @@ class UnrecognizedAppellant < CaseflowRecord
   end
 
   def update_with_versioning!(_params)
-    # Needs to be filled in with update stuff. _params, not params, being used here to pass code climate inspection
+    # Needs to be filled in with update stuff. _params, not params, being used as argument here to pass code climate inspection
     self
   end
 end
