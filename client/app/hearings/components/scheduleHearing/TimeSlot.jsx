@@ -87,7 +87,7 @@ export const TimeSlot = ({
             >{customText}</Button>
           </div>}
           <div className="time-slot-button-container">
-            <div className="time-slot-container" >
+            <div className="time-slot-container time-slot-container-left" >
               {slots.slice(0, columnLength).map((slot) => (
                 <TimeSlotButton
                   {...slot}
@@ -99,7 +99,7 @@ export const TimeSlot = ({
                 />
               ))}
             </div>
-            <div className="time-slot-container">
+            <div className="time-slot-container time-slot-container-right">
               {slots.slice(columnLength, slots.length).map((slot) => (
                 <TimeSlotButton
                   {...slot}

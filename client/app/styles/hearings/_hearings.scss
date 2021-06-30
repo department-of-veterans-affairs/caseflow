@@ -433,8 +433,17 @@ $form-width: 575px;
   flex-direction: column;
   flex-wrap: wrap;
   line-height: normal;
+}
 
-  > span {
+.time-slot-container-left {
+  span {
+    margin-right: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+}
+.time-slot-container-right {
+  span {
     margin: 5px;
   }
 }
