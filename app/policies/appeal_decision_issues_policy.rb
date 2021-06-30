@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppealDecisionIssuesPolicy
   def initialize(user:, appeal:)
     @user = user
@@ -6,7 +8,14 @@ class AppealDecisionIssuesPolicy
 
   def visible_decision_issues
     if @user.roles.include?("VSO")
-      @appeal.decision_issues.select { |issue| Time.now.utc > issue.caseflow_decision_date }
+      visible_issues = @appeal.decision_issues.select do |issue|
+        Time.now.utc > issue.caseflow_decision_date
+      end
+      modified_issues = visible_issues.map do |issue|
+        issue.description = nil
+        issue
+      end
+      modified_issues
     else
       @appeal.decision_issues
     end

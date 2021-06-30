@@ -14,10 +14,15 @@ describe AppealDecisionIssuesPolicy, :postgres do
     end
 
     context "when a decision date has reached or passed its decision date" do
-      # below appeal has a decision issue whose decision date has already occurred
       let(:appeal) { create(:appeal, :dispatched_with_decision_issue) }
+      let(:result) { subject }
       it "can be seen by a VSO user" do
-        expect(subject).to match_array(appeal.decision_issues)
+        expect(result[0].id).to eq(appeal.decision_issues[0].id)
+        expect(result[1].id).to eq(appeal.decision_issues[1].id)
+      end
+
+      it "VSO user cannot see the issue description or notes" do
+        expect(result[0].description).to be_nil
       end
     end
   end
