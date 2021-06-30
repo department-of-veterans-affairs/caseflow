@@ -1121,7 +1121,7 @@ unrecognized_party_details,email_address,string,,,,,,PII
 unrecognized_party_details,id,integer (8) PK,x,x,,,,
 unrecognized_party_details,last_name,string,,,,,,PII
 unrecognized_party_details,middle_name,string,,,,,,PII
-unrecognized_party_details,name,string ∗,x,,,,,PII
+unrecognized_party_details,name,string ∗,x,,,,,"PII. Name of organization, or first name or mononym of person"
 unrecognized_party_details,party_type,string ∗,x,,,,,"The type of this party. Allowed values: individual, organization"
 unrecognized_party_details,phone_number,string,,,,,,PII
 unrecognized_party_details,state,string ∗,x,,,,,

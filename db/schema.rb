@@ -1464,7 +1464,7 @@ ActiveRecord::Schema.define(version: 2021_06_30_145428) do
     t.string "email_address", comment: "PII"
     t.string "last_name", comment: "PII"
     t.string "middle_name", comment: "PII"
-    t.string "name", null: false, comment: "PII"
+    t.string "name", null: false, comment: "PII. Name of organization, or first name or mononym of person"
     t.string "party_type", null: false, comment: "The type of this party. Allowed values: individual, organization"
     t.string "phone_number", comment: "PII"
     t.string "state", null: false

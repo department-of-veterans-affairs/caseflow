@@ -6,7 +6,7 @@ class AddPiiCommentOnUnrecognizedPartyDetails < Caseflow::Migration
     change_column_comment :unrecognized_party_details, :email_address, "PII"
     change_column_comment :unrecognized_party_details, :last_name, "PII"
     change_column_comment :unrecognized_party_details, :middle_name, "PII"
-    change_column_comment :unrecognized_party_details, :name, "PII"
+    change_column_comment :unrecognized_party_details, :name, "PII. Name of organization, or first name or mononym of person"
     change_column_comment :unrecognized_party_details, :phone_number, "PII"
     change_column_comment :unrecognized_party_details, :suffix, "PII"
   end
@@ -18,7 +18,7 @@ class AddPiiCommentOnUnrecognizedPartyDetails < Caseflow::Migration
     change_column_comment :unrecognized_party_details, :email_address, nil
     change_column_comment :unrecognized_party_details, :last_name, nil
     change_column_comment :unrecognized_party_details, :middle_name, nil
-    change_column_comment :unrecognized_party_details, :name, nil
+    change_column_comment :unrecognized_party_details, :name, "Name of organization, or first name or mononym of person"
     change_column_comment :unrecognized_party_details, :phone_number, nil
     change_column_comment :unrecognized_party_details, :suffix, nil
   end
