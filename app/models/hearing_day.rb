@@ -108,9 +108,9 @@ class HearingDay < CaseflowRecord
   # Optimization: In order to access disposition for LegacyHearing objects
   # without hitting VACOLS, we read from the rails cache.
   def filled_slots
-    vacols_ids = LegacyHearing.where(hearing_day_id: self.id).pluck(:vacols_id)
+    vacols_ids = LegacyHearing.where(hearing_day_id: id).pluck(:vacols_id)
     legacy_dispositions = vacols_ids.map do |vacols_id|
-      LegacyHearing.cache_key_for_field(:disposition, vacols_id)
+      Rails.cache.read(LegacyHearing.cache_key_for_field(:disposition, vacols_id))
     end
 
     (hearings.pluck(:disposition) + legacy_dispositions).count do |disposition|
