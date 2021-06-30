@@ -110,7 +110,7 @@ class HearingDay < CaseflowRecord
   def filled_slots
     ama_and_legacy_hearings.reject do |hearing|
       disposition = if hearing.is_a?(LegacyHearing)
-                      disposition = Rails.cache.fetch("legacy_hearing_disposition_#{hearing.vacols_id}")
+                      disposition = Rails.cache.read(hearing.cache_key_for_field(:disposition))
                     else
                       hearing.disposition
                     end
