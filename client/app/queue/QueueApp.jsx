@@ -96,6 +96,7 @@ import HearingTypeConversionModal from '../hearings/components/HearingTypeConver
 import CavcReviewExtensionRequestModal from './components/CavcReviewExtensionRequestModal';
 import { PrivateRoute } from '../components/PrivateRoute';
 import { EditCavcRemandView } from './cavc/EditCavcRemandView';
+import EditAppellantInformation from '../intakeEdit/components/EditAppellantInformation';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -684,6 +685,13 @@ class QueueApp extends React.PureComponent {
               path="/organizations/:organization"
               title="Organization Queue | Caseflow"
               render={this.routedOrganization}
+            />
+
+            <PageRoute
+              exact
+              path="/queue/appeals/:appealId/edit_appellant_information"
+              title="Edit Appellant Information | Caseflow"
+              component={EditAppellantInformation}
             />
 
             <PageRoute
