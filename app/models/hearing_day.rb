@@ -114,7 +114,7 @@ class HearingDay < CaseflowRecord
     end
 
     (hearings.pluck(:disposition) + legacy_dispositions).count do |disposition|
-      !Hearing::CLOSED_HEARING_DISPOSITIONS.include?(disposition)
+      !Hearing::CLOSED_HEARING_DISPOSITIONS.exclude?(disposition)
     end
   end
 
