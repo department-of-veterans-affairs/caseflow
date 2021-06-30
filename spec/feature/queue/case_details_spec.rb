@@ -400,7 +400,7 @@ RSpec.feature "Case details", :all_dbs do
 
         let(:ua) { create(:unrecognized_appellant) }
 
-        scenario "details view contains POA information" do
+        scenario "details view contains POA information", skip: "flake" do
           visit "/queue/appeals/#{appeal.uuid}"
           expect(page).to_not have_content(COPY::CASE_DETAILS_UNRECOGNIZED_POA)
           expect(page).to have_content(appeal.representative_name)
