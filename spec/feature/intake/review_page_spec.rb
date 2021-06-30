@@ -142,15 +142,6 @@ feature "Intake Review Page", :postgres do
         it "disables letting the veteran claimant option" do
           check_deceased_veteran_claimant(intake)
         end
-
-        context "when the deceased appellants toggle is enabled" do
-          before { FeatureToggle.enable!(:deceased_appellants) }
-          after { FeatureToggle.disable!(:deceased_appellants) }
-
-          scenario "veteran can be claimant" do
-            check_deceased_veteran_claimant(intake)
-          end
-        end
       end
 
       context "higher level review" do
@@ -173,15 +164,6 @@ feature "Intake Review Page", :postgres do
         it "disables letting the veteran claimant option" do
           check_deceased_veteran_claimant(intake)
         end
-
-        context "when the deceased appellants toggle is enabled" do
-          before { FeatureToggle.enable!(:deceased_appellants) }
-          after { FeatureToggle.disable!(:deceased_appellants) }
-
-          scenario "veteran can still not be claimant" do
-            check_deceased_veteran_claimant(intake)
-          end
-        end
       end
 
       context "supplemental claim" do
@@ -201,15 +183,6 @@ feature "Intake Review Page", :postgres do
 
         it "disables letting the veteran claimant option" do
           check_deceased_veteran_claimant(intake)
-        end
-
-        context "when the deceased appellants toggle is enabled" do
-          before { FeatureToggle.enable!(:deceased_appellants) }
-          after { FeatureToggle.disable!(:deceased_appellants) }
-
-          scenario "veteran can still not be claimant" do
-            check_deceased_veteran_claimant(intake)
-          end
         end
       end
     end
@@ -482,7 +455,7 @@ end
 def check_deceased_veteran_claimant(intake)
   visit "/intake"
 
-  allow_deceased_appellants = intake.detail.is_a?(Appeal) && FeatureToggle.enabled?(:deceased_appellants)
+  allow_deceased_appellants = intake.detail.is_a?(Appeal)
   if allow_deceased_appellants
     # ability to select veteran claimant is enabled
     expect(page).to have_css("input[id=different-claimant-option_false]", visible: false)

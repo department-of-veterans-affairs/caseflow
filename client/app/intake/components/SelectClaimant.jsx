@@ -66,7 +66,6 @@ const claimantNotListedOpt = {
 
 export const SelectClaimant = (props) => {
   const {
-    featureToggles = {},
     formType,
     benefitType,
     isVeteranDeceased,
@@ -81,10 +80,6 @@ export const SelectClaimant = (props) => {
     payeeCodeError,
     setPayeeCode,
   } = props;
-
-  const {
-    deceasedAppellants,
-  } = featureToggles;
 
   const [newClaimant] = useState(null);
   const isAppeal = (formType === 'appeal');
@@ -214,10 +209,9 @@ export const SelectClaimant = (props) => {
   };
 
   let veteranClaimantOptions = BOOLEAN_RADIO_OPTIONS;
-  const allowDeceasedAppellants = deceasedAppellants && isAppeal;
-  const showDeceasedVeteranAlert = isVeteranDeceased && veteranIsNotClaimant === false && allowDeceasedAppellants;
+  const showDeceasedVeteranAlert = isVeteranDeceased && veteranIsNotClaimant === false && isAppeal;
 
-  if (isVeteranDeceased && !allowDeceasedAppellants) {
+  if (isVeteranDeceased && !isAppeal) {
     // disable veteran claimant option if veteran is deceased
     veteranClaimantOptions = BOOLEAN_RADIO_OPTIONS_DISABLED_FALSE;
     // set claimant value to someone other than the veteran
@@ -254,9 +248,6 @@ export const SelectClaimant = (props) => {
 
 SelectClaimant.propTypes = {
   benefitType: PropTypes.string,
-  featureToggles: PropTypes.shape({
-    deceasedAppellants: PropTypes.bool,
-  }),
   formType: PropTypes.string,
   isVeteranDeceased: PropTypes.bool,
   veteranIsNotClaimant: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),

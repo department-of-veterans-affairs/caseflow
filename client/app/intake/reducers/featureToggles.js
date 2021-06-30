@@ -16,10 +16,7 @@ const updateFromServerFeatures = (state, featureToggles) => {
     },
     restrictAppealIntakes: {
       $set: Boolean(featureToggles.restrictAppealIntakes)
-    },
-    deceasedAppellants: {
-      $set: Boolean(featureToggles.deceasedAppellants)
-    },
+    }
   });
 };
 
@@ -29,8 +26,7 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
       useAmaActivationDate: false,
       correctClaimReviews: false,
       verifyUnidentifiedIssue: false,
-      restrictAppealIntakes: false,
-      deceasedAppellants: false
+      restrictAppealIntakes: false
     },
     data.featureToggles
   );
