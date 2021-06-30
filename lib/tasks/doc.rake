@@ -5,6 +5,8 @@ require "csv"
 
 # required for ERD diagrams
 require "ruby-graphviz"
+require "tasks/support/erd_record_associations.rb"
+require "tasks/support/erd_graph_styling.rb"
 
 namespace :doc do
   desc "prepare environment"
