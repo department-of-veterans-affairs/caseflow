@@ -25,7 +25,7 @@ describe UnrecognizedAppellant do
   end
 
   describe "#current_version" do
-    fcontext "when there is more than one version of the unrecognized appellant" do
+    context "when there is more than one version of the unrecognized appellant" do
       it "returns a list of versions" do
         ua_detail = create(:unrecognized_party_detail, :individual)
         # Initial creation of UA
