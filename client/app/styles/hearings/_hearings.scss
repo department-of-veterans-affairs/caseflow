@@ -347,6 +347,26 @@ $form-width: 575px;
 // Schedule Veteran Styles
 .schedule-veteran-page {
   min-height: 680px;
+  .cf-form-textarea {
+    max-width: $form-width;
+  }
+  .cf-form-textinput {
+    max-width: $form-width;
+  }
+
+  label {
+    max-width: $form-width;
+  }
+
+  .cf-select {
+    .cf-select__control {
+      max-width: $form-width;
+    }
+
+    .cf-select__menu {
+      max-width: $form-width;
+    }
+  }
 }
 
 // Hearings Schedule Styles
