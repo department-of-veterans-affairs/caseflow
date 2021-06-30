@@ -45,7 +45,7 @@ module Seeds
     def create_deceased_vet_and_dismissed_appeals
       ActiveRecord::Base.transaction do
         # Create appeals for each docket type
-        %w[direct_review evidence_submission hearings].each do |docket_type|
+        %w[direct_review evidence_submission hearing].each do |docket_type|
           create_appeal_with_death_dismissal(veteran: deceased_vet, docket_type: docket_type)
         end
 

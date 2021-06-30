@@ -5,9 +5,19 @@ import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import perfLogger from 'redux-perf-middleware';
 import { getReduxAnalyticsMiddleware } from '../util/ReduxUtil';
 
-const setupStore = ({ reducer, initialState, analyticsMiddlewareArgs }) => {
+const setupStore = ({
+  reducer,
+  initialState,
+  analyticsMiddlewareArgs,
+  thunkArgs = {},
+}) => {
   const middleware = [
-    ...getDefaultMiddleware({ immutableCheck: false }),
+    ...getDefaultMiddleware({
+      immutableCheck: false,
+      thunk: {
+        extraArgument: { ...thunkArgs },
+      },
+    }),
     getReduxAnalyticsMiddleware(...analyticsMiddlewareArgs),
   ];
 
@@ -35,12 +45,14 @@ export default function ReduxBase(props) {
     initialState,
     analyticsMiddlewareArgs,
     getStoreRef,
+    thunkArgs = {},
   } = props;
 
   const store = setupStore({
     reducer,
     initialState,
     analyticsMiddlewareArgs,
+    thunkArgs,
   });
 
   // Dispatch relies on direct access to the store. It would be better to use connect(),
@@ -61,6 +73,9 @@ ReduxBase.propTypes = {
   initialState: PropTypes.object,
   analyticsMiddlewareArgs: PropTypes.array,
   getStoreRef: PropTypes.func,
+  thunkArgs: PropTypes.shape({
+    history: PropTypes.object,
+  }),
 };
 
 ReduxBase.defaultProps = {
