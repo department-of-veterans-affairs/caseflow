@@ -261,6 +261,15 @@ export const getOptionsFromObject = (object, noneOption, transformer) =>
   _.concat(_.map(_.values(object), transformer), [noneOption]);
 
 /**
+ * Method to normalize the Regional Office Timezone names
+ * @param {string} name -- Name of the Regional Office timezone
+ */
+export const getFriendlyZoneName = (name) => {
+  // There is not a friendly name for some of the Regional Office zones, choose the city name instead for those
+  return Object.keys(REGIONAL_OFFICE_ZONE_ALIASES).includes(name) ? REGIONAL_OFFICE_ZONE_ALIASES[name] : name;
+};
+
+/**
  * Method to get the Timezone label of a Timezone value
  * @param {string} time -- The time to which the zone is being added
  * @param {string} name -- Name of the zone, defaults to New York
@@ -268,7 +277,7 @@ export const getOptionsFromObject = (object, noneOption, transformer) =>
  */
 export const zoneName = (time, name, format) => {
   // Default to using America/New_York
-  const timezone = name ? name : COMMON_TIMEZONES[3];
+  const timezone = name ? getFriendlyZoneName(name) : COMMON_TIMEZONES[3];
 
   // Filter the zone name
   const [zone] = Object.keys(TIMEZONES).filter((tz) => TIMEZONES[tz] === timezone);
@@ -310,15 +319,6 @@ export const hearingTimeOptsWithZone = (options, local) =>
       [label]: local && localTime !== time ? `${localTime} / ${time}` : time
     };
   });
-
-/**
- * Method to normalize the Regional Office Timezone names
- * @param {string} name -- Name of the Regional Office timezone
- */
-export const getFriendlyZoneName = (name) => {
-  // There is not a friendly name for some of the Regional Office zones, choose the city name instead for those
-  return Object.keys(REGIONAL_OFFICE_ZONE_ALIASES).includes(name) ? REGIONAL_OFFICE_ZONE_ALIASES[name] : name;
-};
 
 /**
  * Method to return a list of Regional Office Timezones sorted with common timezones at the top

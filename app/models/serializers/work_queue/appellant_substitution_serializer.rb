@@ -22,13 +22,14 @@ class WorkQueue::AppellantSubstitutionSerializer
     object.source_appeal&.claimant&.name
   end
 
+  attribute :target_appeal_uuid do |object|
+    object.target_appeal&.uuid
+  end
+
   # Uncomment the following as needed and write corresponding tests
 
   # attribute :source_appeal_uuid do |object|
   #   object.source_appeal&.uuid
-  # end
-  # attribute :target_appeal_uuid do |object|
-  #   object.target_appeal&.uuid
   # end
 
   # attribute :source_decision_issues do |object|

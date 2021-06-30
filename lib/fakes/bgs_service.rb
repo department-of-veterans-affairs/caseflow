@@ -374,7 +374,7 @@ class Fakes::BGSService
                   legacy_poa_cd: "100",
                   nm: "Clarence Darrow",
                   org_type_nm: "POA Attorney",
-                  ptcpnt_id: "1234567"
+                  ptcpnt_id: "600153863"
                 }
               end
 
@@ -638,6 +638,34 @@ class Fakes::BGSService
         relationship_end_date: nil,
         relationship_type: "Child",
         ssn: nil,
+        ssn_verified_ind: nil,
+        terminate_reason: nil
+      },
+      {
+        authzn_change_clmant_addrs_ind: nil,
+        authzn_poa_access_ind: nil,
+        award_begin_date: nil,
+        award_end_date: nil,
+        award_ind: "N",
+        award_type: "CPL",
+        date_of_birth: "09051998",
+        date_of_death: nil,
+        dependent_reason: nil,
+        dependent_terminate_date: nil,
+        email_address: "tom.brady@caseflow.gov",
+        fiduciary: nil,
+        file_number: nil,
+        first_name: "TOM",
+        gender: nil,
+        last_name: "BRADY",
+        middle_name: "EDWARD",
+        poa: nil,
+        proof_of_dependecy_ind: nil,
+        ptcpnt_id: "no-such-pid",
+        relationship_begin_date: "09121999",
+        relationship_end_date: nil,
+        relationship_type: "Child",
+        ssn: "666004444",
         ssn_verified_ind: nil,
         terminate_reason: nil
       }

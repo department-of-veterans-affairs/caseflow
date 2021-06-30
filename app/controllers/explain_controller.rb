@@ -20,7 +20,6 @@ class ExplainController < ApplicationController
         format.json { render json: sanitized_json }
       end
     rescue StandardError => error
-      # binding.pry
       raise error.full_message
     end
   end
@@ -28,9 +27,9 @@ class ExplainController < ApplicationController
   private
 
   helper_method :legacy_appeal?, :appeal, :appeal_status,
-                :show_pii_query_param, :treee_fields,
+                :show_pii_query_param, :fields_query_param, :treee_fields,
                 :available_fields,
-                :task_tree_as_text, :intake_as_text,
+                :task_tree_as_text, :intake_as_text, :hearing_as_text,
                 :event_table_data, :appeal_object_id,
                 :sje
 
@@ -40,8 +39,11 @@ class ExplainController < ApplicationController
 
   def explain_as_text
     [
+      "show_pii = #{show_pii_query_param}",
       task_tree_as_text,
-      intake_as_text
+      intake_as_text,
+      hearing_as_text,
+      JSON.pretty_generate(event_table_data)
     ].join("\n\n")
   end
 
@@ -50,11 +52,13 @@ class ExplainController < ApplicationController
   end
 
   def task_tree_as_text
-    [appeal.tree(*treee_fields),
-     legacy_task_tree_as_text].compact.join("\n\n")
+    [
+      appeal.tree(*treee_fields),
+      legacy_task_tree_as_text
+    ].compact.join("\n\n")
   end
 
-  DEFAULT_TREEE_FIELDS = [:id, :status, :ASGN_BY, :ASGN_TO, :ASGN_DATE, :UPD_DATE, :CRE_DATE, :CLO_DATE].freeze
+  DEFAULT_TREEE_FIELDS = [:id, :status, :ASGN_BY, :ASGN_TO, :CRE_DATE, :ASGN_DATE, :UPD_DATE, :CLO_DATE].freeze
 
   def treee_fields
     return DEFAULT_TREEE_FIELDS unless fields_query_param
@@ -89,6 +93,10 @@ class ExplainController < ApplicationController
 
   def intake_as_text
     IntakeRenderer.render(appeal, show_pii: show_pii_query_param)
+  end
+
+  def hearing_as_text
+    HearingRenderer.render(appeal, show_pii: show_pii_query_param)
   end
 
   def sanitized_json
@@ -126,7 +134,7 @@ class ExplainController < ApplicationController
   end
 
   def show_pii_query_param
-    request.query_parameters.key?("show_pii")
+    request.query_parameters.key?("show_pii") && request.query_parameters["show_pii"]&.downcase != "false"
   end
 
   def fields_query_param

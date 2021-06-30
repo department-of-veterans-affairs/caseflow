@@ -4,9 +4,18 @@ class BgsPowerOfAttorney < CaseflowRecord
   include AssociatedBgsRecord
   include BgsService
 
-  class BgsPOANotFound < StandardError; end
-
   has_many :claimants, primary_key: :claimant_participant_id, foreign_key: :participant_id
+  has_one :representative, primary_key: :poa_participant_id, foreign_key: :participant_id
+
+  delegate :email_address, to: :person, prefix: :representative, allow_nil: true
+
+  validates :claimant_participant_id,
+            :poa_participant_id,
+            :representative_name,
+            :representative_type, presence: true
+
+  before_save :update_cached_attributes!
+  after_save :update_ihp_task, if: :update_ihp_enabled?
 
   CACHED_BGS_ATTRIBUTES = [
     :representative_name,
@@ -19,13 +28,7 @@ class BgsPowerOfAttorney < CaseflowRecord
     :file_number
   ].freeze
 
-  validates :claimant_participant_id,
-            :poa_participant_id,
-            :representative_name,
-            :representative_type, presence: true
-
-  before_save :update_cached_attributes!
-  after_save :update_ihp_task, if: :update_ihp_enabled?
+  class BgsPOANotFound < StandardError; end
 
   class << self
     # Neither file_number nor claimant_participant_id is unique by itself,
@@ -34,7 +37,7 @@ class BgsPowerOfAttorney < CaseflowRecord
     # data integrity to them.
     def find_or_create_by_file_number(file_number)
       poa = find_or_create_by!(file_number: file_number)
-      if FeatureToggle.enabled?(:poa_auto_refresh)
+      if FeatureToggle.enabled?(:poa_auto_refresh, user: RequestStore.store[:current_user])
         poa.save_with_updated_bgs_record! if poa&.expired?
       end
       poa
@@ -48,7 +51,7 @@ class BgsPowerOfAttorney < CaseflowRecord
 
     def find_or_create_by_claimant_participant_id(claimant_participant_id)
       poa = find_or_create_by!(claimant_participant_id: claimant_participant_id)
-      if FeatureToggle.enabled?(:poa_auto_refresh)
+      if FeatureToggle.enabled?(:poa_auto_refresh, user: RequestStore.store[:current_user])
         poa.save_with_updated_bgs_record! if poa&.expired?
       end
       poa
@@ -85,10 +88,6 @@ class BgsPowerOfAttorney < CaseflowRecord
         end
       end
     end
-  end
-
-  def representative_email_address
-    person&.email_address
   end
 
   def representative_name
@@ -168,21 +167,6 @@ class BgsPowerOfAttorney < CaseflowRecord
     last_synced_at && last_synced_at < 16.hours.ago
   end
 
-  def update_or_delete(claimant)
-    # If the BGS Power of Attorney record is not found, destroy it.
-    if bgs_record == :not_found
-      destroy!
-      # If the claimaint's power of attorney record is also not found, destroy it.
-      if !claimant.is_a?(Hash) && claimant.power_of_attorney&.bgs_record == :not_found
-        claimant.power_of_attorney.destroy!
-      end
-      ["Successfully refreshed. No power of attorney information was found at this time.", "deleted"]
-    else
-      save_with_updated_bgs_record!
-      ["POA Updated Successfully", "updated"]
-    end
-  end
-
   private
 
   def person
@@ -192,12 +176,8 @@ class BgsPowerOfAttorney < CaseflowRecord
   end
 
   def related_appeals
-    returned_appeals = []
-    appeal_claimants = claimants.select { |appeal_claimant| appeal_claimant.decision_review_type == "Appeal" }
-    appeal_claimants.each do |matching_claimant|
-      returned_appeals << Appeal.find_by(id: matching_claimant.decision_review_id)
-    end
-    returned_appeals
+    appeal_claimants = claimants.where(decision_review_type: "Appeal")
+    Appeal.where(id: appeal_claimants.pluck(:decision_review_id))
   end
 
   def fetch_bgs_record

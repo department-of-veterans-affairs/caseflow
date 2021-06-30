@@ -46,6 +46,7 @@ import VeteranCasesView from './VeteranCasesView';
 import VeteranDetail from './VeteranDetail';
 import { startPolling } from '../hearings/utils';
 import FnodBanner from './components/FnodBanner';
+import { shouldSupportSubstituteAppellant } from './substituteAppellant/caseDetails/utils';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
@@ -66,7 +67,7 @@ const alertPaddingStyle = css({
 });
 
 export const CaseDetailsView = (props) => {
-  const { appealId } = props;
+  const { appealId, featureToggles } = props;
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
@@ -142,18 +143,14 @@ export const CaseDetailsView = (props) => {
   const supportCavcRemand =
     currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand && !appeal.isLegacyAppeal;
 
-  const decisionHasDismissedDeathDisposition = (decisionIssue) =>
-    decisionIssue.disposition === 'dismissed_death';
-
-  const supportSubstituteAppellant =
-    currentUserOnClerkOfTheBoard &&
-    !appeal.appellantIsNotVeteran &&
-    props.featureToggles.recognized_granted_substitution_after_dd &&
-    appeal.caseType === 'Original' &&
-    // Substitute appellants for hearings will be supported later, but aren't yet:
-    appeal.docketName !== 'hearing' &&
-    (userIsCobAdmin || appeal.decisionIssues.some(decisionHasDismissedDeathDisposition)) &&
-    !appeal.isLegacyAppeal;
+  const hasSubstitution = appeal.substitutions?.length;
+  const supportSubstituteAppellant = shouldSupportSubstituteAppellant({
+    appeal,
+    currentUserOnClerkOfTheBoard,
+    featureToggles,
+    hasSubstitution,
+    userIsCobAdmin
+  });
 
   const showPostDispatch =
     appealIsDispatched && (supportCavcRemand || supportSubstituteAppellant);
@@ -241,7 +238,7 @@ export const CaseDetailsView = (props) => {
             <AppellantDetail
               title="About the Appellant"
               appeal={appeal}
-              substitutionDate={appeal.appellantSubstitution && appeal.appellantSubstitution.substitution_date}
+              substitutionDate={appeal.appellantSubstitution?.substitution_date} // eslint-disable-line camelcase
             />
           ) }
 
