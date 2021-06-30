@@ -1,18 +1,23 @@
+// Runtime Dependencies
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
+// Style dependencies
+import 'app/styles/app.scss';
+import 'pdfjs-dist/web/pdf_viewer.css';
+
+// External Dependencies
 import React, { Suspense } from 'react';
 import ReactOnRails from 'react-on-rails';
 import { render } from 'react-dom';
-import _ from 'lodash';
-
-// Local Dependencies
-import './styles/app.scss';
-import '../node_modules/pdfjs-dist/web/pdf_viewer.css';
+import { forOwn } from 'lodash';
 import { BrowserRouter, Switch } from 'react-router-dom';
-import BaseLayout from 'layouts/BaseLayout';
+
+// Redux Store Dependencies
 import ReduxBase from 'app/components/ReduxBase';
 import rootReducer from 'store/root';
+
+// Shared Component Dependencies
 import { ErrorBoundary } from 'components/shared/ErrorBoundary';
 import Loadable from 'components/shared/Loadable';
 import { LOGO_COLORS } from 'app/constants/AppConstants';
@@ -99,9 +104,9 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
         <ReduxBase reducer={rootReducer}>
           <BrowserRouter>
             <Switch>
-            <Loadable spinnerColor={LOGO_COLORS[props.appName.toUpperCase()].ACCENT}>
+              <Loadable spinnerColor={LOGO_COLORS[props.appName.toUpperCase()].ACCENT}>
                 <Component {...props} />
-            </Loadable>
+              </Loadable>
             </Switch>
           </BrowserRouter>
         </ReduxBase>
@@ -112,7 +117,6 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
       )}
     </ErrorBoundary>
   );
-
   /* eslint-enable */
 
   const renderApp = (Component) => {
@@ -140,12 +144,13 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
         './intakeManager/index',
         './intakeEdit/index',
         './nonComp/index',
+        './2.0/router'
       ],
       () => renderApp(component)
     );
   }
 };
 
-_.forOwn(COMPONENTS, (component, name) =>
+forOwn(COMPONENTS, (component, name) =>
   ReactOnRails.register({ [name]: componentWrapper(component) })
 );
