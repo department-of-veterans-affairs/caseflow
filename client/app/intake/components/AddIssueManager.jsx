@@ -231,12 +231,12 @@ class AddIssueManager extends React.Component {
         formType,
         featureToggles,
         editPage,
-        submitText: this.hasLegacyAppeals() && featureToggles.verifyUnidentifiedIssue ? 'Next' : 'Add this issue',
+        submitText: this.hasLegacyAppeals() ? 'Next' : 'Add this issue',
         onCancel: () => this.cancel(),
         onSubmit: ({ currentIssue }) => {
           if (isCorrection(true, this.props.intakeData)) {
             this.setState({ currentIssue, currentModal: 'CorrectionTypeModal' });
-          } else if (featureToggles.verifyUnidentifiedIssue && this.hasLegacyAppeals()) {
+          } else if (this.hasLegacyAppeals()) {
             this.setState({ currentIssue, currentModal: 'LegacyOptInModal', addtlProps: { currentIssue } });
           } else if (currentIssue.timely === false) {
             this.setState({ currentIssue, currentModal: 'UntimelyExemptionModal', addtlProps: { currentIssue } });

@@ -1431,12 +1431,10 @@ feature "Higher-Level Review", :all_dbs do
 
         context "with unidentified issue on legacy opt-in" do
           before do
-            FeatureToggle.enable!(:verify_unidentified_issue)
             FeatureToggle.enable!(:unidentified_issue_decision_date)
           end
 
           after do
-            FeatureToggle.disable!(:verify_unidentified_issue)
             FeatureToggle.enable!(:unidentified_issue_decision_date)
           end
 
