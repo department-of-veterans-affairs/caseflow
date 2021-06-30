@@ -37,7 +37,7 @@ class BgsPowerOfAttorney < CaseflowRecord
     # data integrity to them.
     def find_or_create_by_file_number(file_number)
       poa = find_or_create_by!(file_number: file_number)
-      if FeatureToggle.enabled?(:poa_auto_refresh)
+      if FeatureToggle.enabled?(:poa_auto_refresh, user: RequestStore.store[:current_user])
         poa.save_with_updated_bgs_record! if poa&.expired?
       end
       poa
@@ -51,7 +51,7 @@ class BgsPowerOfAttorney < CaseflowRecord
 
     def find_or_create_by_claimant_participant_id(claimant_participant_id)
       poa = find_or_create_by!(claimant_participant_id: claimant_participant_id)
-      if FeatureToggle.enabled?(:poa_auto_refresh)
+      if FeatureToggle.enabled?(:poa_auto_refresh, user: RequestStore.store[:current_user])
         poa.save_with_updated_bgs_record! if poa&.expired?
       end
       poa
@@ -176,12 +176,8 @@ class BgsPowerOfAttorney < CaseflowRecord
   end
 
   def related_appeals
-    returned_appeals = []
-    appeal_claimants = claimants.select { |appeal_claimant| appeal_claimant.decision_review_type == "Appeal" }
-    appeal_claimants.each do |matching_claimant|
-      returned_appeals << Appeal.find_by(id: matching_claimant.decision_review_id)
-    end
-    returned_appeals
+    appeal_claimants = claimants.where(decision_review_type: "Appeal")
+    Appeal.where(id: appeal_claimants.pluck(:decision_review_id))
   end
 
   def fetch_bgs_record

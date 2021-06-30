@@ -112,8 +112,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       formType,
       intakeStatus,
       asyncJobUrl,
-      editIssuesUrl,
-      deceasedAppellants
+      editIssuesUrl
     } = this.props;
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const completedReview = this.props.decisionReviews[selectedForm.key];
@@ -160,9 +159,8 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       );
     };
 
-    const allowDeceasedAppellants = deceasedAppellants && formType === 'appeal';
     const showDeceasedVeteranAlert = veteran.isDeceased &&
-      allowDeceasedAppellants && !completedReview.veteranIsNotClaimant;
+      formType === 'appeal' && !completedReview.veteranIsNotClaimant;
 
     return <div><StatusMessage
       title="Intake completed"
@@ -210,7 +208,6 @@ export default connect(
       supplemental_claim: state.supplementalClaim,
       appeal: state.appeal
     },
-    intakeStatus: getIntakeStatus(state),
-    deceasedAppellants: state.featureToggles.deceasedAppellants
+    intakeStatus: getIntakeStatus(state)
   })
 )(DecisionReviewIntakeCompleted);
