@@ -25,10 +25,8 @@ class HearingDaySerializer
     HearingRooms.find!(object.room).label unless object.room.nil?
   end
   attribute :scheduled_for
-  attribute :filled_slots do |object, params|
-    if params[:request_from_index]
-      object.filled_slots
-    end
+  attribute :filled_slots do |object|
+    object.filled_slots
   end
   attribute :total_slots
   attribute :slot_length_minutes
@@ -52,16 +50,13 @@ class HearingDaySerializer
     Hearing::HEARING_TYPES[hearing_day.request_type.to_sym]
   end
 
-  def self.serialize_collection(hearing_days, request_from_index: false)
+  def self.serialize_collection(hearing_days)
     video_hearing_days_request_types = HearingDayRequestTypeQuery.new.call
 
     ::HearingDaySerializer.new(
       hearing_days,
       collection: true,
-      params: {
-        video_hearing_days_request_types: video_hearing_days_request_types,
-        request_from_index: request_from_index
-      }
+      params: { video_hearing_days_request_types: video_hearing_days_request_types }
     ).serializable_hash[:data].map { |hearing_day| hearing_day[:attributes] }
   end
 end
