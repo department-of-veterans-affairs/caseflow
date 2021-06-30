@@ -455,16 +455,18 @@ $form-width: 575px;
   line-height: normal;
 }
 
-.time-slot-container-left {
-  span {
-    margin-right: 5px;
+// Don't have a margin-left on the left column of timeslot buttons
+.time-slot-button-container :first-child {
+  > span {
     margin-top: 5px;
+    margin-right: 5px;
     margin-bottom: 5px;
   }
 }
 
-.time-slot-container-right {
-  span {
+// Do have a margin-left on the right column of timeslot buttons
+.time-slot-button-container :last-child {
+  > span {
     margin: 5px;
   }
 }
