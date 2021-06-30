@@ -95,7 +95,7 @@ class LegacyHearing < CaseflowRecord
   alias aod? aod
 
   def cache_key_for_field(field)
-    "legacy_hearing_#{field.to_s}_#{vacols_id}"
+    "legacy_hearing_#{field}_#{vacols_id}"
   end
 
   def judge

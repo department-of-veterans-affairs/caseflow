@@ -95,7 +95,7 @@ class HearingRepository
     def set_vacols_values(hearing, vacols_record)
       hearing.assign_from_vacols(
         vacols_attributes(hearing, vacols_record),
-        cache_keys: { :disposition =>  hearing.cache_key_for_field(:disposition) }
+        cache_keys: { disposition: hearing.cache_key_for_field(:disposition) }
       )
       hearing
     end
