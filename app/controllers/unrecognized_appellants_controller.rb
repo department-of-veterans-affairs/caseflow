@@ -22,6 +22,5 @@ class UnrecognizedAppellantsController < ApplicationController
 			:city, :state, :zip, :country, :phone_number, :email_address
 		]
 	)
-	end
   end
 end

@@ -3,8 +3,7 @@
 RSpec.describe UnrecognizedAppellantsController, :postgres, type: :controller do
   describe "PATCH /" do
     context "when user updates unrecognized appellant information" do
-
-    	let(:params) do
+      let(:params) do
         {
           relationship: "child",
           unrecognized_party_detail: {}
