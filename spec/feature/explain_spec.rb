@@ -11,7 +11,6 @@ RSpec.feature "Explain JSON" do
   before do
     User.authenticate!(roles: user_roles)
   end
-  let(:veteran) { create(:veteran, file_number: "111447777", middle_name: "Middle") }
 
   context "given Legacy appeal" do
     let(:legacy_appeal) do
@@ -31,6 +30,7 @@ RSpec.feature "Explain JSON" do
   end
 
   context "given AMA appeal" do
+    let(:veteran) { create(:veteran, file_number: "111447777", middle_name: "Middle") }
     let(:appeal) do
       create(:appeal,
              :advanced_on_docket_due_to_motion,
