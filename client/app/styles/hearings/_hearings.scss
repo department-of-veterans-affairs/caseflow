@@ -369,6 +369,13 @@ $form-width: 575px;
   }
 }
 
+.helper-text {
+  max-width: $form-width;
+  margin-top: 15;
+  color: $color-gray-dark;
+  line-height: 1.5em;
+}
+
 // Hearings Schedule Styles
 .hearing-day-list {
   // Each item = 73px * 10 = 730px

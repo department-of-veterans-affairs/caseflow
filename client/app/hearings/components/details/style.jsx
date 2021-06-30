@@ -113,12 +113,6 @@ export const marginTop = (margin) =>
     marginTop: margin
   });
 
-export const helperLabel = css({
-  marginTop: 15,
-  color: COLORS.GREY_DARK,
-  lineHeight: '1.5em',
-  width: '60%'
-});
 export const timezoneDropdownStyles = (count) => ({
   height: `${count * 39}px !important`,
   maxHeight: 'none'
