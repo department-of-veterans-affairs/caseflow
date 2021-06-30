@@ -17,8 +17,8 @@ class UnrecognizedAppellantsController < ApplicationController
     params.require("unrecognized_appellant").permit(
       :relationship,
       unrecognized_party_detail: [
-                                   :name, :middle_name, :last_name, :suffix, :address_line_1, :address_line_2,
-                                   :address_line_3, :city, :state, :zip, :country, :phone_number, :email_address
+        :name, :middle_name, :last_name, :suffix, :address_line_1, :address_line_2,
+        :address_line_3, :city, :state, :zip, :country, :phone_number, :email_address
       ]
     )
   end
