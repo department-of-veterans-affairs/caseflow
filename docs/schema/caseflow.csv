@@ -1110,22 +1110,22 @@ unrecognized_appellants,unrecognized_party_detail_id,integer (8) FK,,,x,,x,Conta
 unrecognized_appellants,unrecognized_power_of_attorney_id,integer (8) FK,,,x,,x,"Appellant's POA, if they aren't in CorpDB."
 unrecognized_appellants,updated_at,datetime ∗,x,,,,,
 unrecognized_party_details,,,,,,,,"For an appellant or POA, name and contact details for an unrecognized person or organization"
-unrecognized_party_details,address_line_1,string ∗,x,,,,,
-unrecognized_party_details,address_line_2,string,,,,,,
-unrecognized_party_details,address_line_3,string,,,,,,
+unrecognized_party_details,address_line_1,string ∗,x,,,,,PII
+unrecognized_party_details,address_line_2,string,,,,,,PII
+unrecognized_party_details,address_line_3,string,,,,,,PII
 unrecognized_party_details,city,string ∗,x,,,,,
 unrecognized_party_details,country,string ∗,x,,,,,
 unrecognized_party_details,created_at,datetime ∗,x,,,,,
 unrecognized_party_details,date_of_birth,date,,,,,,PII
-unrecognized_party_details,email_address,string,,,,,,
+unrecognized_party_details,email_address,string,,,,,,PII
 unrecognized_party_details,id,integer (8) PK,x,x,,,,
-unrecognized_party_details,last_name,string,,,,,,
-unrecognized_party_details,middle_name,string,,,,,,
-unrecognized_party_details,name,string ∗,x,,,,,"Name of organization, or first name or mononym of person"
+unrecognized_party_details,last_name,string,,,,,,PII
+unrecognized_party_details,middle_name,string,,,,,,PII
+unrecognized_party_details,name,string ∗,x,,,,,"PII. Name of organization, or first name or mononym of person"
 unrecognized_party_details,party_type,string ∗,x,,,,,"The type of this party. Allowed values: individual, organization"
-unrecognized_party_details,phone_number,string,,,,,,
+unrecognized_party_details,phone_number,string,,,,,,PII
 unrecognized_party_details,state,string ∗,x,,,,,
-unrecognized_party_details,suffix,string,,,,,,
+unrecognized_party_details,suffix,string,,,,,,PII
 unrecognized_party_details,updated_at,datetime ∗,x,,,,,
 unrecognized_party_details,zip,string ∗,x,,,,,
 users,,,,,,,,Authenticated Caseflow users
