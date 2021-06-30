@@ -362,7 +362,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
               label="Review and update the following information in VBMS if needed. Caseflow won't send email notifications until you schedule the hearing."
             >
               <div
-                data-css-cl1hud=""
+                className="helper-text"
               >
                 Review and update the following information in VBMS if needed. Caseflow won't send email notifications until you schedule the hearing.
               </div>

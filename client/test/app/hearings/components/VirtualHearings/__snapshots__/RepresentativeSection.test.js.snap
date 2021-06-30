@@ -16248,7 +16248,7 @@ SAN FRANCISCO, CA 94103
           label="The hearing time in email notifications is calculated based on the timezone"
         >
           <div
-            data-css-cl1hud=""
+            className="helper-text"
           >
             The hearing time in email notifications is calculated based on the timezone
           </div>
@@ -16319,7 +16319,7 @@ SAN FRANCISCO, CA 94103
             label="Changes to the email are used to send notifications for this hearing only"
           >
             <div
-              data-css-cl1hud=""
+              className="helper-text"
             >
               Changes to the email are used to send notifications for this hearing only
             </div>
@@ -16728,7 +16728,7 @@ SAN FRANCISCO, CA 94103
             label="Changes to the email are used to send notifications for this hearing only"
           >
             <div
-              data-css-cl1hud=""
+              className="helper-text"
             >
               Changes to the email are used to send notifications for this hearing only
             </div>
@@ -16971,7 +16971,7 @@ exports[`RepresentativeSection Shows Representative name when representative add
             label="Changes to the email are used to send notifications for this hearing only"
           >
             <div
-              data-css-cl1hud=""
+              className="helper-text"
             >
               Changes to the email are used to send notifications for this hearing only
             </div>
@@ -17207,7 +17207,7 @@ exports[`RepresentativeSection Shows Representative not present message when no 
             label="Changes to the email are used to send notifications for this hearing only"
           >
             <div
-              data-css-cl1hud=""
+              className="helper-text"
             >
               Changes to the email are used to send notifications for this hearing only
             </div>

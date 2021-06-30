@@ -2,7 +2,7 @@
 
 exports[`HelperText Matches snapshot with default props 1`] = `
 <div
-  data-css-cl1hud=""
+  className="helper-text"
 >
   Something helpful
 </div>

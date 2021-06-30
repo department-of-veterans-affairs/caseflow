@@ -68,7 +68,7 @@ exports[`VirtualHearingEmails Does not show required when ReadOnly 1`] = `
     label="Changes to the email are used to send notifications for this hearing only"
   >
     <div
-      data-css-cl1hud=""
+      className="helper-text"
     >
       Changes to the email are used to send notifications for this hearing only
     </div>
@@ -162,7 +162,7 @@ exports[`VirtualHearingEmails Respects required prop 1`] = `
     label="Changes to the email are used to send notifications for this hearing only"
   >
     <div
-      data-css-cl1hud=""
+      className="helper-text"
     >
       Changes to the email are used to send notifications for this hearing only
     </div>

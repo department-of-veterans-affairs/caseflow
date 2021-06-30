@@ -9130,7 +9130,7 @@ exports[`HearingConversion Displays read-only when hearing type is switched from
             label="The time at the Board of Veterans' Appeals in Washington, DC"
           >
             <div
-              data-css-cl1hud=""
+              className="helper-text"
             >
               The time at the Board of Veterans' Appeals in Washington, DC
             </div>
@@ -18628,7 +18628,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
             label="The time at the Board of Veterans' Appeals in Washington, DC"
           >
             <div
-              data-css-cl1hud=""
+              className="helper-text"
             >
               The time at the Board of Veterans' Appeals in Washington, DC
             </div>
@@ -34929,7 +34929,7 @@ SAN FRANCISCO, CA 94103
                 label="The hearing time in email notifications is calculated based on the timezone"
               >
                 <div
-                  data-css-cl1hud=""
+                  className="helper-text"
                 >
                   The hearing time in email notifications is calculated based on the timezone
                 </div>
@@ -35025,7 +35025,7 @@ SAN FRANCISCO, CA 94103
                   label="Changes to the email are used to send notifications for this hearing only"
                 >
                   <div
-                    data-css-cl1hud=""
+                    className="helper-text"
                   >
                     Changes to the email are used to send notifications for this hearing only
                   </div>
@@ -51303,7 +51303,7 @@ SAN FRANCISCO, CA 94103
                 label="The hearing time in email notifications is calculated based on the timezone"
               >
                 <div
-                  data-css-cl1hud=""
+                  className="helper-text"
                 >
                   The hearing time in email notifications is calculated based on the timezone
                 </div>
@@ -51392,7 +51392,7 @@ SAN FRANCISCO, CA 94103
                   label="Changes to the email are used to send notifications for this hearing only"
                 >
                   <div
-                    data-css-cl1hud=""
+                    className="helper-text"
                   >
                     Changes to the email are used to send notifications for this hearing only
                   </div>

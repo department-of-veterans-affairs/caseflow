@@ -17220,7 +17220,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                 label="The hearing time in email notifications is calculated based on the timezone"
               >
                 <div
-                  data-css-cl1hud=""
+                  className="helper-text"
                 >
                   The hearing time in email notifications is calculated based on the timezone
                 </div>
@@ -17295,7 +17295,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                   label="Changes to the email are used to send notifications for this hearing only"
                 >
                   <div
-                    data-css-cl1hud=""
+                    className="helper-text"
                   >
                     Changes to the email are used to send notifications for this hearing only
                   </div>
@@ -33409,7 +33409,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                 label="The hearing time in email notifications is calculated based on the timezone"
               >
                 <div
-                  data-css-cl1hud=""
+                  className="helper-text"
                 >
                   The hearing time in email notifications is calculated based on the timezone
                 </div>
@@ -33478,7 +33478,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                   label="Changes to the email are used to send notifications for this hearing only"
                 >
                   <div
-                    data-css-cl1hud=""
+                    className="helper-text"
                   >
                     Changes to the email are used to send notifications for this hearing only
                   </div>

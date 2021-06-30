@@ -16126,7 +16126,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
         label="The hearing time in email notifications is calculated based on the timezone"
       >
         <div
-          data-css-cl1hud=""
+          className="helper-text"
         >
           The hearing time in email notifications is calculated based on the timezone
         </div>
@@ -16197,7 +16197,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
           label="Changes to the email are used to send notifications for this hearing only"
         >
           <div
-            data-css-cl1hud=""
+            className="helper-text"
           >
             Changes to the email are used to send notifications for this hearing only
           </div>
@@ -32310,7 +32310,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
         label="The hearing time in email notifications is calculated based on the timezone"
       >
         <div
-          data-css-cl1hud=""
+          className="helper-text"
         >
           The hearing time in email notifications is calculated based on the timezone
         </div>
@@ -32376,7 +32376,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
           label="Changes to the email are used to send notifications for this hearing only"
         >
           <div
-            data-css-cl1hud=""
+            className="helper-text"
           >
             Changes to the email are used to send notifications for this hearing only
           </div>
@@ -48513,7 +48513,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
         label="The hearing time in email notifications is calculated based on the timezone"
       >
         <div
-          data-css-cl1hud=""
+          className="helper-text"
         >
           The hearing time in email notifications is calculated based on the timezone
         </div>
@@ -48584,7 +48584,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
           label="Changes to the email are used to send notifications for this hearing only"
         >
           <div
-            data-css-cl1hud=""
+            className="helper-text"
           >
             Changes to the email are used to send notifications for this hearing only
           </div>
@@ -64697,7 +64697,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
         label="The hearing time in email notifications is calculated based on the timezone"
       >
         <div
-          data-css-cl1hud=""
+          className="helper-text"
         >
           The hearing time in email notifications is calculated based on the timezone
         </div>
@@ -64763,7 +64763,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
           label="Changes to the email are used to send notifications for this hearing only"
         >
           <div
-            data-css-cl1hud=""
+            className="helper-text"
           >
             Changes to the email are used to send notifications for this hearing only
           </div>
