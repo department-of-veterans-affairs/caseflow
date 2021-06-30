@@ -76,7 +76,9 @@ class TimezoneService
 
     # Finds the ISO 3166 country code corresponding to the given country name, or fails
     # with an error if not found.
-    def iso3166_alpha2_code_from_name(country_name)
+    def iso3166_alpha2_code_from_name(orig_country_name)
+      country_name = orig_country_name&.strip
+
       iso3166_code = ISO3166::Country.find_country_by_name(country_name)
       iso3166_code = ISO3166::Country.find_country_by_alpha3(country_name) if iso3166_code.blank?
 
