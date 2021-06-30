@@ -1,5 +1,4 @@
 import { css } from 'glamor';
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 export const labelPaddingFirst = css({
   paddingBottom: 5,

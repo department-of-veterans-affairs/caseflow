@@ -347,9 +347,11 @@ $form-width: 575px;
 // Schedule Veteran Styles
 .schedule-veteran-page {
   min-height: 680px;
+
   .cf-form-textarea {
     max-width: $form-width;
   }
+
   .cf-form-textinput {
     max-width: $form-width;
   }
@@ -448,11 +450,6 @@ $form-width: 575px;
   margin-top: 5px;
 }
 
-.time-slot-button-container {
-  display: flex;
-  width: 800px;
-}
-
 .time-slot-container {
   flex: 0;
   max-width: 46rem;
@@ -462,19 +459,24 @@ $form-width: 575px;
   line-height: normal;
 }
 
-// Don't have a margin-left on the left column of timeslot buttons
-.time-slot-button-container :first-child {
-  > span {
-    margin-top: 5px;
-    margin-right: 5px;
-    margin-bottom: 5px;
-  }
-}
 
-// Do have a margin-left on the right column of timeslot buttons
-.time-slot-button-container :last-child {
-  > span {
-    margin: 5px;
+// Don't have a margin-left on the left column of timeslot buttons
+.time-slot-button-container {
+  display: flex;
+  width: 800px;
+
+  :first-child {
+    > span {
+      margin-top: 5px;
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
+  }
+
+  :last-child {
+    > span {
+      margin: 5px;
+    }
   }
 }
 
