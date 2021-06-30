@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe UnrecognizedAppellantsController, :postgres, type: :controller do
   describe "PATCH /" do
     context "when user updates unrecognized appellant information" do
