@@ -839,7 +839,9 @@ describe Task, :all_dbs do
       }
     end
 
-    before { allow_any_instance_of(Organization).to receive(:user_has_access?).and_return(true) }
+    before do
+      allow_any_instance_of(Organization).to receive(:user_has_access?).and_return(true)
+    end
 
     subject { task.reassign(params, old_assignee) }
 

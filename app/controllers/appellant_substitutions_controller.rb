@@ -11,11 +11,11 @@ class AppellantSubstitutionsController < ApplicationController
     :substitution_date,
     :claimant_type,
     :substitute_participant_id,
-    :poa_participant_id,
     :created_by_id
   ].freeze
 
   PERMITTED_PARAMS = {
+    poa_participant_id: nil,
     # blank or empty values for these params will fail the required validation, so put them here instead
     selected_task_ids: [],
     task_params: {}

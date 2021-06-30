@@ -90,7 +90,8 @@ class Hearings::HearingDayController < HearingsApplicationController
   ## action is either index or index_with_hearings
   def default_range_start_date
     default = Time.zone.today.beginning_of_day
-    default -= 30.days if params[:action] == "index"
+    # if vso users visit hearings/schedule page, show hearing days starting from today by default
+    default -= 30.days if params[:action] == "index" && !current_user&.vso_employee?
     default
   end
 
@@ -102,8 +103,12 @@ class Hearings::HearingDayController < HearingsApplicationController
 
   def default_range_end_date
     default = Time.zone.today.beginning_of_day
-    default += ((params[:action] == "index") ? 365.days : 182.days)
-    default
+    # if vso users visit hearings/schedule page, only show hearings 2 months out by default
+    default + if params[:action] == "index"
+                current_user&.vso_employee? ? 60.days : 365.days
+              else
+                182.days
+              end
   end
 
   def range_end_date

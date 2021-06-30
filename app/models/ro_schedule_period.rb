@@ -47,23 +47,20 @@ class RoSchedulePeriod < SchedulePeriod
 
   private
 
-  # Disabling rubocop/reek to allow minimal changes for bug fix
-  # rubocop:disable Metrics/CyclomaticComplexity
-  # :reek:RepeatedConditionals
   # Validate fields for each video or virtual hearing day
+  # :reek:RepeatedConditionals
   def format_ro_hearing_data(ro_allocations)
     ro_allocations.reduce([]) do |acc, (ro_key, ro_info)|
       ro_info[:allocated_dates].each_value do |dates|
-        dates.each do |date, rooms|
-          rooms.each do |room|
+        dates.each do |date, dockets|
+          dockets.each do |docket|
             # Determine if this is a virtual or video hearing day
-            request_type = (ro_key == "NVHQ" || room[:room_num].nil?) ? :virtual : :video
+            request_type = docket[:docket_type]
             virtual_request_type = request_type == :virtual
             # Validate
             acc << HearingDayMapper.hearing_day_field_validations(
               request_type: request_type,
               scheduled_for: Date.new(date.year, date.month, date.day),
-              room: room[:room_num],
               regional_office: (ro_key == "NVHQ") ? nil : ro_key,
               number_of_slots: virtual_request_type ? ro_info[:number_of_slots] : nil,
               slot_length_minutes: virtual_request_type ? ro_info[:slot_length_minutes] : nil,
@@ -75,18 +72,20 @@ class RoSchedulePeriod < SchedulePeriod
       acc
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   # Generate hearing days for ROs and CO based on non-availibility days and allocated days
   def generate_ro_hearing_schedule
     # Initialize the hearing day schedule
     generate_hearings_days = HearingSchedule::GenerateHearingDaysSchedule.new(self)
 
-    # Distribute the requested days adding the room constraint per RO
+    # Allocate the requested video docket days, mutates the @ros instance variable
     generate_hearings_days.allocate_hearing_days_to_ros
 
-    # Distribute the requested days without the room constraint per RO
-    non_co_hearing_days = format_ro_hearing_data(generate_hearings_days.allocate_no_room_hearing_days_to_ros)
+    # Allocate the requested virtual docket days, mutates the @ros instance variable
+    generate_hearings_days.allocate_hearing_days_to_ros(:allocated_days_without_room)
+
+    # Get the allocated video and virtual days (the @ros variable), add HearingDay info
+    non_co_hearing_days = format_ro_hearing_data(generate_hearings_days.allocation_results)
 
     # Distribute the available Central Office hearing days
     co_hearing_days = generate_hearings_days.generate_co_hearing_days_schedule

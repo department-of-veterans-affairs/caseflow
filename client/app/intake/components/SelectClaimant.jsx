@@ -10,6 +10,7 @@ import {
   GENERIC_FORM_ERRORS,
   DECEASED_PAYEE_CODES,
   LIVING_PAYEE_CODES,
+  VBMS_BENEFIT_TYPES
 } from '../constants';
 import { convertStringToBoolean } from '../util';
 import {
@@ -87,8 +88,6 @@ export const SelectClaimant = (props) => {
 
   const {
     attorneyFees,
-    establishFiduciaryEps,
-    deceasedAppellants,
     nonVeteranClaimants,
   } = featureToggles;
 
@@ -116,18 +115,11 @@ export const SelectClaimant = (props) => {
     ];
   }, [newClaimant, relationships, enableAddClaimant]);
 
-  const allowFiduciary = useMemo(
-    () => establishFiduciaryEps && benefitType === 'fiduciary',
-    [benefitType, establishFiduciaryEps]
-  );
   const shouldShowPayeeCode = useMemo(() => {
     return (
-      !isAppeal &&
-      (benefitType === 'compensation' ||
-        benefitType === 'pension' ||
-        allowFiduciary)
+      !isAppeal && VBMS_BENEFIT_TYPES.includes(benefitType)
     );
-  }, [formType, benefitType, allowFiduciary]);
+  }, [formType, benefitType]);
 
   const handleVeteranIsNotClaimantChange = (value) => {
     const boolValue = convertStringToBoolean(value);
@@ -279,10 +271,9 @@ export const SelectClaimant = (props) => {
   };
 
   let veteranClaimantOptions = BOOLEAN_RADIO_OPTIONS;
-  const allowDeceasedAppellants = deceasedAppellants && isAppeal;
-  const showDeceasedVeteranAlert = isVeteranDeceased && veteranIsNotClaimant === false && allowDeceasedAppellants;
+  const showDeceasedVeteranAlert = isVeteranDeceased && veteranIsNotClaimant === false && isAppeal;
 
-  if (isVeteranDeceased && !allowDeceasedAppellants) {
+  if (isVeteranDeceased && !isAppeal) {
     // disable veteran claimant option if veteran is deceased
     veteranClaimantOptions = BOOLEAN_RADIO_OPTIONS_DISABLED_FALSE;
     // set claimant value to someone other than the veteran
@@ -339,9 +330,7 @@ SelectClaimant.propTypes = {
   benefitType: PropTypes.string,
   featureToggles: PropTypes.shape({
     attorneyFees: PropTypes.bool,
-    establishFiduciaryEps: PropTypes.bool,
-    deceasedAppellants: PropTypes.bool,
-    nonVeteranClaimants: PropTypes.bool,
+    nonVeteranClaimants: PropTypes.bool
   }),
   formType: PropTypes.string,
   isVeteranDeceased: PropTypes.bool,

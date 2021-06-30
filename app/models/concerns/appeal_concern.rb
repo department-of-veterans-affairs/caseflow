@@ -111,8 +111,19 @@ module AppealConcern
   def timezone_identifier_for_address(addr)
     return if addr.blank?
 
-    # Use an address object if this is a hash
     address_obj = addr.is_a?(Hash) ? Address.new(addr) : addr
+
+    # Some appellant addresses have empty country values but valid city, state, and zip codes.
+    # If the address has a zip code then we make the best guess that the address is within the US
+    # (TimezoneService.address_to_timezone will raise an error if this guess is wrong and the zip
+    # code is not a valid US zip code), otherwise we return nil without attempting to get
+    # thetimezone identifier.
+    if address_obj.country.blank?
+      return if address_obj.zip.blank?
+
+      new_address_hash = address_obj.as_json.symbolize_keys.merge(country: "USA")
+      address_obj = Address.new(**new_address_hash)
+    end
 
     # APO/FPO/DPO addresses do not have time zones so we don't attempt to fetch them.
     return if address_obj.military_or_diplomatic_address?

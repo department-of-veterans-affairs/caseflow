@@ -9,11 +9,14 @@ RSpec.shared_context("with Clerk of the Board user") do
   end
 end
 
-RSpec.shared_context("with feature toggle") do
-  before do
-    FeatureToggle.enable!(:recognized_granted_substitution_after_dd)
-  end
+RSpec.shared_context("with recognized_granted_substitution_after_dd feature toggle") do
+  before { FeatureToggle.enable!(:recognized_granted_substitution_after_dd) }
   after { FeatureToggle.disable!(:recognized_granted_substitution_after_dd) }
+end
+
+RSpec.shared_context("with hearings_substitution_death_dismissal feature toggle") do
+  before { FeatureToggle.enable!(:hearings_substitution_death_dismissal) }
+  after { FeatureToggle.disable!(:hearings_substitution_death_dismissal) }
 end
 
 RSpec.shared_context "with existing relationships" do
@@ -34,6 +37,14 @@ RSpec.shared_context "with existing relationships" do
     if docket_type.eql?("evidence_submission")
       EvidenceSubmissionWindowTask.find_or_create_by(appeal: appeal).update!(status: "completed")
     end
+  end
+end
+
+RSpec.shared_examples("substitution unavailable") do
+  it "does not show button to start substitution" do
+    visit "/queue/appeals/#{appeal.uuid}"
+
+    expect(page).to_not have_content "+ Add Substitute"
   end
 end
 
@@ -159,6 +170,8 @@ RSpec.shared_examples("fill substitution form") do
       visit "/queue/appeals/#{appeal.uuid}"
 
       expect(page).to_not have_content "+ Add Substitute"
+
+      expect(page).to have_content COPY::SUBSTITUTE_APPELLANT_SOURCE_APPEAL_ALERT_DESCRIPTION
     end
   end
 end

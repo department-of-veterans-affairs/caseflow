@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_15_221829) do
+ActiveRecord::Schema.define(version: 2021_06_29_174248) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -132,7 +132,7 @@ ActiveRecord::Schema.define(version: 2021_06_15_221829) do
     t.string "claimant_type", null: false, comment: "Claimant type of substitute; needed to create Claimant record"
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.bigint "created_by_id", null: false, comment: "User that created this record"
-    t.string "poa_participant_id", null: false, comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id"
+    t.string "poa_participant_id", comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id. Null if the substitute appellant has no POA."
     t.bigint "selected_task_ids", default: [], null: false, comment: "User-selected task ids from source appeal", array: true
     t.bigint "source_appeal_id", null: false, comment: "The relevant source appeal for this substitution"
     t.string "substitute_participant_id", null: false, comment: "Participant ID of substitute appellant"
@@ -1460,6 +1460,7 @@ ActiveRecord::Schema.define(version: 2021_06_15_221829) do
     t.string "city", null: false
     t.string "country", null: false
     t.datetime "created_at", null: false
+    t.date "date_of_birth", comment: "PII"
     t.string "email_address"
     t.string "last_name"
     t.string "middle_name"
