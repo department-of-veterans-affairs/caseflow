@@ -8,9 +8,9 @@ class UnrecognizedAppellant < CaseflowRecord
   belongs_to :unrecognized_power_of_attorney, class_name: "UnrecognizedPartyDetail", dependent: :destroy
 
   has_many :versions, class_name: "UnrecognizedAppellant", foreign_key: "current_version_id"
-  belongs_to :current_version, class_name: "UnrecognizedAppellant", optional: true
+  belongs_to :current_version, class_name: "UnrecognizedAppellant"
 
-  belongs_to :created_by, class_name: "User", optional: true
+  belongs_to :created_by, class_name: "User"
 
   def power_of_attorney
     @power_of_attorney ||= begin
@@ -22,7 +22,8 @@ class UnrecognizedAppellant < CaseflowRecord
     end
   end
 
-  def original_version
+  # Returns the initially created unrecognized appellant. Returns itself if no other versions
+  def first_version
     versions.where.not(id: current_version_id).first || self
   end
 end

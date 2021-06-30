@@ -25,6 +25,15 @@ describe UnrecognizedAppellant do
   end
 
   describe "#current_version" do
+    context "when there is only one version of the unrecognized appellant" do
+      it "returns itself when there is no previous versions" do
+        ua_detail = create(:unrecognized_party_detail, :individual)
+        # Initial creation of UA
+        ua_current = create(:unrecognized_appellant, unrecognized_party_detail: ua_detail)
+
+        expect(ua_current.first_version).to eq ua_current
+      end
+    end
     context "when there is more than one version of the unrecognized appellant" do
       it "returns a list of versions" do
         ua_detail = create(:unrecognized_party_detail, :individual)
@@ -32,7 +41,7 @@ describe UnrecognizedAppellant do
         ua_current = create(:unrecognized_appellant, unrecognized_party_detail: ua_detail)
         ua_current.update(current_version: ua_current)
 
-        expect(ua_current.original_version).to eq ua_current
+        expect(ua_current.first_version).to eq ua_current
 
         ## Begin update process
         # Duplicate the current UA and UA details
@@ -60,11 +69,11 @@ describe UnrecognizedAppellant do
         expect(ua_current.unrecognized_party_detail.name).to eq "Updated Again Smith"
 
         # Ensure original versions are all the value we started at
-        expect(ua_current.original_version.unrecognized_party_detail.name).to eq "Jane Smith"
-        expect(ua_current.versions.second.original_version.unrecognized_party_detail.name).to eq "Jane Smith"
+        expect(ua_current.first_version.unrecognized_party_detail.name).to eq "Jane Smith"
+        expect(ua_current.versions.second.first_version.unrecognized_party_detail.name).to eq "Jane Smith"
 
         # Ensure claimant relationship is accurate
-        claimant = ua_current.original_version.claimant
+        claimant = ua_current.first_version.claimant
         expect(claimant.unrecognized_appellant).to eq ua_current
       end
     end
