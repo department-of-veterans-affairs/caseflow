@@ -99,22 +99,22 @@ class HearingDay < CaseflowRecord
   end
 
   def open_hearings
-    ama_and_legacy_hearings.reject do|hearing|
+    ama_and_legacy_hearings.reject do |hearing|
       Hearing::CLOSED_HEARING_DISPOSITIONS.include?(hearing.disposition)
     end
   end
 
   # Count how many open hearings are on the docket
-  # Optimzation: In order to access disposition for LegacyHearing objects
+  # Optimization: In order to access disposition for LegacyHearing objects
   # without hitting VACOLS, we read from the rails cache.
   def filled_slots
-    ama_and_legacy_hearings.count do |hearing|
-      disposition = if hearing.is_a?(LegacyHearing)
-                      Rails.cache.read(hearing.cache_key_for_field(:disposition))
-                    else
-                      hearing.disposition
-                    end
-      !Hearing::CLOSED_HEARING_DISPOSITIONS.include?(hearing.disposition)
+    vacols_ids = LegacyHearing.where(hearing_day_id: self.id).pluck(:vacols_id)
+    legacy_dispositions = vacols_ids.map do |vacols_id|
+      LegacyHearing.cache_key_for_field(:disposition, vacols_id)
+    end
+
+    (hearings.pluck(:disposition) + legacy_dispositions).count do |disposition|
+      !Hearing::CLOSED_HEARING_DISPOSITIONS.include?(disposition)
     end
   end
 

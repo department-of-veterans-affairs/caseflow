@@ -94,10 +94,6 @@ class LegacyHearing < CaseflowRecord
 
   alias aod? aod
 
-  def cache_key_for_field(field)
-    "legacy_hearing_#{field}_#{vacols_id}"
-  end
-
   def judge
     user
   end
@@ -344,6 +340,10 @@ class LegacyHearing < CaseflowRecord
   end
 
   class << self
+    def cache_key_for_field(field, vacols_id)
+      "legacy_hearing_#{field}_#{vacols_id}"
+    end
+
     def venues
       RegionalOffice::CITIES.merge(RegionalOffice::SATELLITE_OFFICES)
     end
