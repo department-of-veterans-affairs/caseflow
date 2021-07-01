@@ -26,4 +26,9 @@ class UnrecognizedAppellant < CaseflowRecord
   def first_version
     versions.where.not(id: current_version_id).first || self
   end
+  
+  def update_with_versioning!(_params)
+    # Will be modified to perform update. _params being used as argument here to pass code climate inspection
+    self
+  end
 end
