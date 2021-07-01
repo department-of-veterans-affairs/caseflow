@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_28_174527) do
+ActiveRecord::Schema.define(version: 2021_06_30_142005) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1443,6 +1443,8 @@ ActiveRecord::Schema.define(version: 2021_06_28_174527) do
   create_table "unrecognized_appellants", comment: "Unrecognized non-veteran appellants", force: :cascade do |t|
     t.bigint "claimant_id", null: false, comment: "The OtherClaimant record associating this appellant to a DecisionReview"
     t.datetime "created_at", null: false
+    t.bigint "created_by_id", comment: "The user that created this version of the unrecognized appellant"
+    t.bigint "current_version_id", comment: "The current version for this unrecognized appellant"
     t.string "poa_participant_id", comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id"
     t.string "relationship", null: false, comment: "Relationship to veteran. Allowed values: attorney, child, spouse, other"
     t.bigint "unrecognized_party_detail_id", comment: "Contact details"
@@ -1454,20 +1456,21 @@ ActiveRecord::Schema.define(version: 2021_06_28_174527) do
   end
 
   create_table "unrecognized_party_details", comment: "For an appellant or POA, name and contact details for an unrecognized person or organization", force: :cascade do |t|
-    t.string "address_line_1", null: false
-    t.string "address_line_2"
-    t.string "address_line_3"
+    t.string "address_line_1", null: false, comment: "PII"
+    t.string "address_line_2", comment: "PII"
+    t.string "address_line_3", comment: "PII"
     t.string "city", null: false
     t.string "country", null: false
     t.datetime "created_at", null: false
-    t.string "email_address"
-    t.string "last_name"
-    t.string "middle_name"
-    t.string "name", null: false, comment: "Name of organization, or first name or mononym of person"
+    t.date "date_of_birth", comment: "PII"
+    t.string "email_address", comment: "PII"
+    t.string "last_name", comment: "PII"
+    t.string "middle_name", comment: "PII"
+    t.string "name", null: false, comment: "PII. Name of organization, or first name or mononym of person"
     t.string "party_type", null: false, comment: "The type of this party. Allowed values: individual, organization"
-    t.string "phone_number"
+    t.string "phone_number", comment: "PII"
     t.string "state", null: false
-    t.string "suffix"
+    t.string "suffix", comment: "PII"
     t.datetime "updated_at", null: false
     t.string "zip", null: false
   end
@@ -1721,8 +1724,10 @@ ActiveRecord::Schema.define(version: 2021_06_28_174527) do
   add_foreign_key "tasks", "users", column: "cancelled_by_id"
   add_foreign_key "transcriptions", "hearings"
   add_foreign_key "unrecognized_appellants", "claimants"
+  add_foreign_key "unrecognized_appellants", "unrecognized_appellants", column: "current_version_id"
   add_foreign_key "unrecognized_appellants", "unrecognized_party_details"
   add_foreign_key "unrecognized_appellants", "unrecognized_party_details", column: "unrecognized_power_of_attorney_id"
+  add_foreign_key "unrecognized_appellants", "users", column: "created_by_id"
   add_foreign_key "user_quotas", "team_quotas"
   add_foreign_key "user_quotas", "users"
   add_foreign_key "virtual_hearing_establishments", "virtual_hearings"

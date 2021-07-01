@@ -9,9 +9,6 @@ class Intake::DecisionReviewSerializer
   attribute :claimant_name do |object|
     object.claimant&.name
   end
-  attribute :claimant_notes do |object|
-    object.claimant&.notes
-  end
   attribute :veteran_is_not_claimant
   attribute :processed_in_caseflow, &:processed_in_caseflow?
   attribute :legacy_opt_in_approved

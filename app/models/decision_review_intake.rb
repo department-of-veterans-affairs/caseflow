@@ -46,11 +46,10 @@ class DecisionReviewIntake < Intake
     claimant = claimant_class_name.constantize.create!(
       decision_review: detail,
       participant_id: participant_id,
-      payee_code: (need_payee_code? ? request_params[:payee_code] : nil),
-      notes: request_params[:claimant_notes]
+      payee_code: (need_payee_code? ? request_params[:payee_code] : nil)
     )
 
-    if FeatureToggle.enabled?(:non_veteran_claimants, user: user) && claimant.is_a?(OtherClaimant)
+    if claimant.is_a?(OtherClaimant)
       claimant.save_unrecognized_details!(
         request_params[:unlisted_claimant],
         request_params[:poa]

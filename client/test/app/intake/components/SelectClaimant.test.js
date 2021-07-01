@@ -19,10 +19,6 @@ const defaultRelationships = [
   },
 ];
 
-const defaultFeatureToggles = {
-  attorneyFees: false
-};
-
 describe('SelectClaimant', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -33,8 +29,7 @@ describe('SelectClaimant', () => {
   const defaultProps = {
     formType: 'appeal',
     relationships: defaultRelationships,
-    featureToggles: defaultFeatureToggles,
-    setVeteranIsNotClaimant,
+    setVeteranIsNotClaimant
   };
 
   const setupDefault = (props = { ...defaultProps }) => {
@@ -50,7 +45,6 @@ describe('SelectClaimant', () => {
     return render(
       <SelectClaimant
         isVeteranDeceased
-        featureToggles={{defaultFeatureToggles}}
         relationships={defaultRelationships}
         formType={props.formType}
         veteranIsNotClaimant={props.veteranIsNotClaimant}
@@ -75,7 +69,7 @@ describe('SelectClaimant', () => {
     });
   });
 
-  describe("with formType", () => {
+  describe('with formType', () => {
     const setupProps = { toggled: true };
 
     it('renders correctly', () => {
@@ -97,35 +91,29 @@ describe('SelectClaimant', () => {
     const formType = { formType: 'appeal' };
     const setupProps = { ...formType, toggled: true };
 
-      it('disables different-claimant-option_false radio button and does NOT fire off setVeteranIsNotClaimant', () => {
-        setupDeceasedAppellants(setupProps);
+    it('disables different-claimant-option_false radio button and does NOT fire off setVeteranIsNotClaimant', () => {
+      setupDeceasedAppellants(setupProps);
 
-        const radioNo = screen.getByRole('radio', { name: /no/i });
+      const radioNo = screen.getByRole('radio', { name: /no/i });
 
-        expect(radioNo).toBeEnabled();
-        expect(setVeteranIsNotClaimant).toBeCalledTimes(0);
-      });
+      expect(radioNo).toBeEnabled();
+      expect(setVeteranIsNotClaimant).toBeCalledTimes(0);
+    });
 
-      it('renders deceasedVeteranAlert', () => {
-        setupDeceasedAppellants({ ...setupProps, veteranIsNotClaimant: false });
+    it('renders deceasedVeteranAlert', () => {
+      setupDeceasedAppellants({ ...setupProps, veteranIsNotClaimant: false });
 
-        const alert = screen.getByRole('alert');
+      const alert = screen.getByRole('alert');
 
-        expect(alert).toBeInTheDocument();
-      });
+      expect(alert).toBeInTheDocument();
+    });
 
     describe('nonVeteranClaimants enabled', () => {
-      const featureToggles = {
-        ...defaultFeatureToggles,
-        nonVeteranClaimants: true,
-      };
-
       it('renders correctly', async () => {
         // Component only differs when veteranIsNotClaimant is set
         const veteranIsNotClaimant = true;
         const { container } = setupDefault({
           ...defaultProps,
-          featureToggles,
           veteranIsNotClaimant,
         });
 
@@ -148,7 +136,7 @@ describe('SelectClaimant', () => {
       });
 
       it('passes a11y testing', async () => {
-        const { container } = setupDefault({ ...defaultProps, featureToggles });
+        const { container } = setupDefault({ ...defaultProps });
 
         const results = await axe(container);
 

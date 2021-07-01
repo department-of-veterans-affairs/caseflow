@@ -25,7 +25,7 @@ export const sectionNavigationListStyling = css({
   }
 });
 
-export const roSelectionStyling = css({ marginTop: '10px', minWidth: 300 });
+export const roSelectionStyling = css({ marginTop: '10px', minWidth: 310 });
 
 // Used by HearingDayInfoButton
 const buttonCommonStyle = {
