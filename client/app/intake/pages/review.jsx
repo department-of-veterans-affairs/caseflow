@@ -171,7 +171,7 @@ const ReviewNextButton = (props) => {
   const needsClaimant =
     intakeDataState?.veteranIsNotClaimant &&
     intakeDataState.relationships.length === 0 &&
-    !(intakeDataState?.claimant || intakeDataState.claimantNotes);
+    !intakeDataState?.claimant;
   const disableSubmit = rampRefilingIneligibleOption() || needsClaimant || invalidVet;
 
   return <Button

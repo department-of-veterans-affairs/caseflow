@@ -2,17 +2,11 @@ import React from 'react';
 import {
   screen,
   render,
-  fireEvent,
-  within,
-  act,
   waitFor,
 } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import userEvent from '@testing-library/user-event';
 import selectEvent from 'react-select-event';
-import { STATES } from 'app/constants/AppConstants';
-
-import COPY from 'app/../COPY';
 
 import { AddClaimantPage } from 'app/intake/addClaimant/AddClaimantPage';
 import { IntakeProviders } from '../../testUtils';

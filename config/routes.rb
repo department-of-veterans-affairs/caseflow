@@ -228,6 +228,8 @@ Rails.application.routes.draw do
   end
   match '/decision_reviews/:business_line_slug' => 'decision_reviews#index', via: [:get]
 
+  resources :unrecognized_appellants, param: :unrecognized_appellant_id, only: [:update]
+
   resources :asyncable_jobs, param: :klass, only: [] do
     resources :jobs, controller: :asyncable_jobs, param: :id, only: [:index, :show, :update]
     post "jobs/:id/note", to: "asyncable_jobs#add_note"

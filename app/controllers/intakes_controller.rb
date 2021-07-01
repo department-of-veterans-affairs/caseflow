@@ -105,9 +105,6 @@ class IntakesController < ApplicationController
         useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
         rampIntake: FeatureToggle.enabled?(:ramp_intake, user: current_user),
         covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
-        verifyUnidentifiedIssue: FeatureToggle.enabled?(:verify_unidentified_issue, user: current_user),
-        attorneyFees: FeatureToggle.enabled?(:attorney_fees, user: current_user),
-        nonVeteranClaimants: FeatureToggle.enabled?(:non_veteran_claimants, user: current_user)
       }
     }
   rescue StandardError => error
