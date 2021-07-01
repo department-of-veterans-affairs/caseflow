@@ -78,4 +78,27 @@ describe UnrecognizedAppellant do
       end
     end
   end
+  describe "update_with_versioning!" do
+    context "when unrecognized_appellant is updated" do
+      let(:user){ User.first }
+      let(:update_params) do 
+        {
+          relationship: "updated",
+          unrecognized_party_detail: {
+            address_line_1: "updated_address_1",
+            address_line_2: "updated_address_2"
+          }
+        } 
+      end
+      it "updates the unrecognized appellant and creates a new version" do
+        ua_detail = create(:unrecognized_party_detail, :individual)
+        ua_current = create(:unrecognized_appellant, unrecognized_party_detail: ua_detail)
+
+        ua_current.update_with_versioning!(update_params, user)
+
+        expect(ua_current.relationship).to eq update_params[:relationship]
+        expect(ua_current.versions.length).to eq 2
+      end
+    end
+  end
 end
