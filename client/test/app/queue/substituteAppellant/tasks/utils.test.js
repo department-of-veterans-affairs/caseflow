@@ -127,7 +127,7 @@ describe('utility functions for task manipulation', () => {
       it.each(automatedTasks)('should hide %s', (type) => {
         const task = { id: 1, type, assignedTo: { isOrganization: false } };
 
-        expect(shouldHide(task, type, [])).toBe(true);
+        expect(shouldHide(task, null, [])).toBe(true);
       });
     });
 
