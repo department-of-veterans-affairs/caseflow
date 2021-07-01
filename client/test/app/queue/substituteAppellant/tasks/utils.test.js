@@ -1,6 +1,7 @@
 import { uniq } from 'lodash';
 
 import {
+  automatedTasks,
   calculateEvidenceSubmissionEndDate,
   filterTasks,
   prepTaskDataForUi,
@@ -122,8 +123,21 @@ describe('utility functions for task manipulation', () => {
       });
     });
 
-    describe('tasks with a type in the automatedTasks array', () => {
-      const userTaskInfo = { taskId: 1, hideFromCaseTimeline: false, type: 'JudgeDecisionReviewTask', assignedTo: { isOrganization: false } };
+    describe('tasks in automatedTasks array', () => {
+      it.each(automatedTasks)('should hide %s', (type) => {
+        const task = { id: 1, type, assignedTo: { isOrganization: false } };
+
+        expect(shouldHide(task, type, [])).toBe(true);
+      });
+    });
+
+    describe('tasks with a type in the automatedTasks array by poaType', () => {
+      const userTaskInfo = {
+        taskId: 1,
+        hideFromCaseTimeline: false,
+        type: 'JudgeDecisionReviewTask',
+        assignedTo: { isOrganization: false },
+      };
       const allTasks = [userTaskInfo, otherOrgTask, otherUserTask];
       const poaTypes = ['Attorney', 'Agent', null];
 
