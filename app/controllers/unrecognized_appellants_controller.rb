@@ -4,7 +4,7 @@ class UnrecognizedAppellantsController < ApplicationController
   def update
     unrecognized_appellant = UnrecognizedAppellant.find(params[:unrecognized_appellant_id])
 
-    if unrecognized_appellant.update_with_versioning!(unrecognized_appellant_params)
+    if unrecognized_appellant.update_with_versioning!(unrecognized_appellant_params, current_user)
       render json: unrecognized_appellant, include: [:unrecognized_party_detail]
     else
       render json: unrecognized_appellant, status: :bad_request

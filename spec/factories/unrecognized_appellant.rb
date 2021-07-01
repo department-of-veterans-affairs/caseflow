@@ -9,7 +9,7 @@ FactoryBot.define do
     association :unrecognized_power_of_attorney, factory: :unrecognized_party_detail
 
     after(:create) do |unrecognized_appellant, _evaluator|
-      unrecognized_appellant.update(current_version_id: unrecognized_appellant.id)
+      unrecognized_appellant.update(current_version_id: unrecognized_appellant.id, created_by: User.first)
     end
   end
 end
