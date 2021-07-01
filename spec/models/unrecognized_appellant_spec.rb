@@ -80,15 +80,15 @@ describe UnrecognizedAppellant do
   end
   describe "update_with_versioning!" do
     context "when unrecognized_appellant is updated" do
-      let(:user){ User.first }
-      let(:update_params) do 
+      let(:user) { User.first }
+      let(:update_params) do
         {
           relationship: "updated",
           unrecognized_party_detail: {
             address_line_1: "updated_address_1",
             address_line_2: "updated_address_2"
           }
-        } 
+        }
       end
       it "updates the unrecognized appellant and creates a new version" do
         ua_detail = create(:unrecognized_party_detail, :individual)
