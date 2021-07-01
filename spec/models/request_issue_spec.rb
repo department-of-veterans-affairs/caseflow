@@ -1349,7 +1349,6 @@ describe RequestIssue, :all_dbs do
 
     context "when duplicate request issue is a correction" do
       let(:correction_type) { "control" }
-      let(:contested_decision_issue_id) { 12 }
 
       it "does not flag the correction issue as a duplicate" do
         rating_request_issue.validate_eligibility!

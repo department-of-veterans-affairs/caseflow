@@ -78,6 +78,10 @@ class WorkQueue::AppealSerializer
 
   attribute :appellant_relationship, &:appellant_relationship
 
+  attribute :appellant_type do |appeal|
+    appeal.claimant&.type
+  end
+
   attribute :cavc_remand do |object|
     if object.cavc_remand
       WorkQueue::CavcRemandSerializer.new(object.cavc_remand).serializable_hash[:data][:attributes]
@@ -96,6 +100,12 @@ class WorkQueue::AppealSerializer
     if object.appellant_substitution
       WorkQueue::AppellantSubstitutionSerializer.new(object.appellant_substitution)
         .serializable_hash[:data][:attributes]
+    end
+  end
+
+  attribute :substitutions do |object|
+    object.substitutions.map do |substitution|
+      WorkQueue::AppellantSubstitutionSerializer.new(substitution).serializable_hash[:data][:attributes]
     end
   end
 

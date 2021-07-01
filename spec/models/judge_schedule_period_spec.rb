@@ -38,7 +38,6 @@ describe JudgeSchedulePeriod, :all_dbs do
       expect(subject[0].id).to be_truthy
       expect(subject[0].request_type).to be_truthy
       expect(subject[0].scheduled_for).to be_truthy
-      expect(subject[0].room).to be_truthy
       expect(subject[0].regional_office).to be_truthy
       expect(subject[0].judge_id).to be_truthy
       expect(subject[0].judge.full_name).to be_truthy
@@ -51,7 +50,7 @@ describe JudgeSchedulePeriod, :all_dbs do
                                  single_nonavail_date_judge_schedule_period.end_date, 4).map do |date|
         create(:hearing_day,
                request_type: HearingDay::REQUEST_TYPES[:video],
-               scheduled_for: date, regional_office: "RO13", room: 4)
+               scheduled_for: date, regional_office: "RO13")
       end
     end
 
@@ -91,8 +90,7 @@ describe JudgeSchedulePeriod, :all_dbs do
         create(:hearing_day,
                request_type: HearingDay::REQUEST_TYPES[:video],
                scheduled_for: date,
-               regional_office: "RO13",
-               room: 4)
+               regional_office: "RO13")
       end
     end
 
@@ -125,27 +123,27 @@ describe JudgeSchedulePeriod, :all_dbs do
         create(:hearing_day,
                request_type: HearingDay::REQUEST_TYPES[:video],
                scheduled_for: DateTime.new(2018, 7, 22, 9, 0, 0, "+0"),
-               regional_office: "RO13", room: 4),
+               regional_office: "RO13"),
         create(:hearing_day,
                request_type: HearingDay::REQUEST_TYPES[:video],
                scheduled_for: DateTime.new(2018, 7, 29, 9, 0, 0, "+0"),
-               regional_office: "RO13", room: 4),
+               regional_office: "RO13"),
         create(:hearing_day,
                request_type: HearingDay::REQUEST_TYPES[:video],
                scheduled_for: DateTime.new(2018, 8, 1, 9, 0, 0, "+0"),
-               regional_office: "RO13", room: 4),
+               regional_office: "RO13"),
         create(:hearing_day,
                request_type: HearingDay::REQUEST_TYPES[:video],
                scheduled_for: DateTime.new(2018, 8, 6, 9, 0, 0, "+0"),
-               regional_office: "RO13", room: 4),
+               regional_office: "RO13"),
         create(:hearing_day,
                request_type: HearingDay::REQUEST_TYPES[:video],
                scheduled_for: DateTime.new(2018, 8, 13, 9, 0, 0, "+0"),
-               regional_office: "RO13", room: 4),
+               regional_office: "RO13"),
         create(:hearing_day,
                request_type: HearingDay::REQUEST_TYPES[:video],
                scheduled_for: DateTime.new(2018, 8, 17, 9, 0, 0, "+0"),
-               regional_office: "RO13", room: 4)
+               regional_office: "RO13")
       ]
     end
 
@@ -173,13 +171,11 @@ describe JudgeSchedulePeriod, :all_dbs do
         create(:hearing_day,
                request_type: HearingDay::REQUEST_TYPES[:video],
                scheduled_for: date,
-               regional_office: "RO13",
-               room: 4)
+               regional_office: "RO13")
         create(:hearing_day,
                request_type: HearingDay::REQUEST_TYPES[:video],
                scheduled_for: date,
-               regional_office: "RO17",
-               room: 5)
+               regional_office: "RO17")
       end
     end
 

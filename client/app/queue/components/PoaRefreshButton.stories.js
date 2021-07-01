@@ -11,12 +11,10 @@ export default {
   parameters: { controls: { expanded: true } },
   args: {
     PoaRefreshButtonFeature: true,
-    appealId: amaAppeal.externalId,
-    poaId: 1
+    appealId: amaAppeal.externalId
   },
   argTypes: {
-    appealId: { control: { type: 'number' } },
-    poaId: { control: { type: 'number' } }
+    appealId: { control: { type: 'number' } }
   }
 };
 

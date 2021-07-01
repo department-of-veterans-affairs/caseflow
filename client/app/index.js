@@ -56,6 +56,7 @@ const IntakeEdit = React.lazy(() => import('app/intakeEdit'));
 const NonComp = React.lazy(() => import('app/nonComp'));
 const AsyncableJobs = React.lazy(() => import('app/asyncableJobs'));
 const Inbox = React.lazy(() => import('app/inbox'));
+const Explain = React.lazy(() => import('app/Explain'));
 
 const COMPONENTS = {
   // New Version 2.0 Root Component
@@ -87,6 +88,7 @@ const COMPONENTS = {
   NonComp,
   AsyncableJobs,
   Inbox,
+  Explain
 };
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
@@ -138,6 +140,7 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
         './intakeManager/index',
         './intakeEdit/index',
         './nonComp/index',
+        './explain/index'
       ],
       () => renderApp(component)
     );

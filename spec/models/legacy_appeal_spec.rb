@@ -1891,7 +1891,7 @@ describe LegacyAppeal, :all_dbs do
       let(:vacols_case) { create(:case, :representative_american_legion, correspondent: correspondent) }
       let(:appellant_ssn) { "666001234" }
       let(:appellant_pid) { "1234" }
-      let(:poa_pid) { "1234567" } # defined in Fakes::BGSService
+      let(:poa_pid) { "600153863" } # defined in Fakes::BGSService
       let(:correspondent) do
         create(
           :correspondent,
@@ -2485,7 +2485,7 @@ describe LegacyAppeal, :all_dbs do
             name: "Attorney B Lawyer",
             type: "Attorney",
             code: "T",
-            participant_id: "1234567",
+            participant_id: "600153863",
             address: {
               address_line_1: "111 Magnolia St.",
               address_line_2: "Suite 222",

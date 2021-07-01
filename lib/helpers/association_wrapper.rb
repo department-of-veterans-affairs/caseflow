@@ -6,62 +6,85 @@
 ##
 
 class AssocationWrapper
-  attr_reader :associations
-
   def initialize(klass)
     @associations = klass.reflect_on_all_associations
+    @selects = []
   end
 
-  def belongs_to
-    @associations = @associations.select { |assoc| assoc.macro == :belongs_to }
-    self
-  end
-
-  def without_type_field
-    # Ignoring case where assoc.foreign_key.is_a?(Symbol)
-    @associations = @associations.select { |assoc| assoc.foreign_type.nil? && assoc.foreign_key.is_a?(String) }
-    self
-  end
-
-  def having_type_field
-    @associations = @associations.select(&:foreign_type)
-    self
-  end
-
-  def associated_with_type(assoc_class)
-    @associations = @associations.select { |assoc| assoc.class_name == assoc_class.name }
-    self
-  end
-
-  def except_fieldnames(ignore_fieldnames)
-    if ignore_fieldnames.any?
-      @associations = @associations.reject { |assoc| ignore_fieldnames&.include?(assoc.foreign_key) }
+  module BuilderMethods
+    def belongs_to
+      @selects << ->(assoc) { assoc.macro == :belongs_to }
+      self
     end
-    self
+
+    def without_type_field
+      # Ignoring scenario where assoc.foreign_key.is_a?(Symbol)
+      @selects << ->(assoc) { assoc.foreign_type.nil? && assoc.foreign_key.is_a?(String) }
+      self
+    end
+
+    def having_type_field
+      @selects << ->(assoc) { assoc.foreign_type }
+      self
+    end
+
+    def associated_with_type(assoc_class)
+      @selects << ->(assoc) { assoc.class_name == assoc_class.name }
+      self
+    end
+
+    def except_fieldnames(ignore_fieldnames)
+      @selects << ->(assoc) { !ignore_fieldnames.include?(assoc.foreign_key) } if ignore_fieldnames&.any?
+      self
+    end
   end
+
+  include BuilderMethods
 
   def fieldnames
-    @associations.map(&:foreign_key)
+    select_associations.map(&:foreign_key)
   end
 
-  def typed_associations(excluding: [])
-    belongs_to.having_type_field.except_fieldnames(excluding)
+  # Return associations that satisfy all specified select clauses
+  def select_associations
+    @associations.select { |assoc| @selects.map { |select_clause| select_clause.call(assoc) }.all? }
   end
 
-  def typed_associations_with(assoc_class)
-    belongs_to.having_type_field.associated_with_type(assoc_class)
+  module ConvenienceMethods
+    # and usage examples
+
+    def fieldnames_of_typed_associations(excluding: [])
+      belongs_to.having_type_field.except_fieldnames(excluding).fieldnames
+    end
+
+    def fieldnames_of_typed_associations_with(assoc_class)
+      belongs_to.having_type_field.associated_with_type(assoc_class).fieldnames
+    end
+
+    def fieldnames_of_untyped_associations_with(assoc_class)
+      belongs_to.without_type_field.associated_with_type(assoc_class).fieldnames
+    end
+
+    def grouped_fieldnames_of_typed_associations_with(known_classes)
+      # Foreign keys that are not strings (e.g., Claimant.participant_id) involves
+      # more complex association that isn't currently handled (and may not need to be)
+      belongs_to.select_associations.group_by(&:class_name)
+        .slice(*known_classes)
+        .transform_values { |assocs| assocs.map(&:foreign_key).select { |fk| fk.is_a?(String) } }
+        .compact
+    end
   end
 
-  def untyped_associations_with(assoc_class)
-    belongs_to.without_type_field.associated_with_type(assoc_class)
-  end
+  include ConvenienceMethods
 
-  def grouped_fieldnames_of_typed_associations_with(known_classes)
-    # Foreign keys that are not strings (e.g., Claimant.participant_id) involves
-    # more complex association that isn't currently handled (and may not need to be)
-    belongs_to.associations.group_by(&:class_name)
-      .slice(*known_classes)
-      .transform_values { |assocs| assocs.map(&:foreign_key).select { |fk| fk.is_a?(String) } }
-      .compact
-  end
+  # To-do: bootstrap Jailer schema-documentation generator with polymorphic associations
+  # clazz=VACOLS::Case
+  # ag=AssocationWrapper.new(clazz).belongs_to.select_associations.group_by(&:class_name);
+  # ag.transform_values { |assocs| assocs.map{|assoc| [assoc.foreign_key, assoc.foreign_type] } }
+  # def to_jailer_association_csv
+  #   assocs = belongs_to.associations.transform_values { |assocs|
+  #     assocs.map{|assoc| [assoc.foreign_key, assoc.foreign_type] }
+  #   }
+  #   ...
+  # end
 end

@@ -9,7 +9,9 @@ class Claimant < CaseflowRecord
 
   belongs_to :decision_review, polymorphic: true
   belongs_to :person, primary_key: :participant_id, foreign_key: :participant_id
-  has_one :unrecognized_appellant, dependent: :destroy
+  has_one :unrecognized_appellant, lambda { |claimant|
+    where(id: UnrecognizedAppellant.order(:id).find_by(claimant: claimant)&.id)
+  }, dependent: :destroy
 
   validates :participant_id,
             uniqueness: { scope: [:decision_review_id, :decision_review_type],
@@ -42,6 +44,8 @@ class Claimant < CaseflowRecord
            to: :power_of_attorney,
            allow_nil: true
 
+  delegate :participant_id, to: :power_of_attorney, prefix: :representative, allow_nil: true
+
   def self.create_without_intake!(participant_id:, payee_code:, type:)
     create!(
       participant_id: participant_id,
@@ -61,20 +65,15 @@ class Claimant < CaseflowRecord
     false
   end
 
-  def representative_participant_id
-    power_of_attorney&.participant_id
-  end
-
   def person
     @person ||= Person.find_or_create_by_participant_id(participant_id)
   end
 
-  private
-
-  # to be overridden by any subclasses if a different approach is preferable
   def find_power_of_attorney
-    BgsPowerOfAttorney.find_or_fetch_by(participant_id: participant_id)
+    # no-op except on BgsRelatedClaimants
   end
+
+  private
 
   def bgs_address_service
     @bgs_address_service ||= BgsAddressService.new(participant_id: participant_id)
