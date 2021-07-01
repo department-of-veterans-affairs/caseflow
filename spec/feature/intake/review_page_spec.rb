@@ -325,16 +325,6 @@ feature "Intake Review Page", :postgres do
             check_no_relationships_behavior
           end
         end
-
-        context "appeal" do
-          it "shows message and does not allow user to continue" do
-            start_appeal(
-              veteran,
-              no_claimant: true
-            )
-            check_no_relationships_behavior
-          end
-        end
       end
 
       context "when adding a new attorney claimant" do
@@ -342,140 +332,18 @@ feature "Intake Review Page", :postgres do
           Array.new(15) { create(:bgs_attorney) }
         end
 
-        context "without attorney_fees feature toggle" do
-          it "doesn't allow adding new claimants" do
-            start_appeal(veteran, claim_participant_id: claim_participant_id)
+        it "doesn't allow adding new claimants" do
+          start_appeal(veteran, claim_participant_id: claim_participant_id)
 
-            visit "/intake"
+          visit "/intake"
 
-            expect(page).to have_current_path("/intake/review_request")
+          expect(page).to have_current_path("/intake/review_request")
 
-            within_fieldset("Is the claimant someone other than the Veteran?") do
-              find("label", text: "Yes", match: :prefer_exact).click
-            end
-
-            expect(page).to_not have_content("+ Add Claimant")
-          end
-        end
-
-        context "with attorney_fees feature toggle" do
-          before { FeatureToggle.enable!(:attorney_fees) }
-          after { FeatureToggle.disable!(:attorney_fees) }
-
-          let(:attorney) { attorneys.last }
-
-          it "allows adding new claimants" do
-            appeal, _intake = start_appeal(
-              veteran,
-              claim_participant_id: claim_participant_id,
-              no_claimant: true
-            )
-
-            visit "/intake"
-
-            expect(page).to have_current_path("/intake/review_request")
-
-            within_fieldset("Is the claimant someone other than the Veteran?") do
-              find("label", text: "Yes", match: :prefer_exact).click
-            end
-
-            expect(page).to have_content("+ Add Claimant")
-
-            add_existing_attorney(attorney)
-
-            # Verify that this can be removed
-            find(".remove-item").click
-            expect(page).to_not have_content("#{attorney.name}, Attorney")
-
-            # Add again
-            add_existing_attorney(attorney)
-
-            click_button "Continue to next step"
-
-            expect(page).to have_current_path("/intake/add_issues")
-
-            expect(Claimant.count).to eq(1)
-            expect(appeal.claimant).to have_attributes(
-              type: "AttorneyClaimant",
-              participant_id: attorney.participant_id
-            )
-
-            expect(page).to have_content("#{attorney.name}, Attorney")
+          within_fieldset("Is the claimant someone other than the Veteran?") do
+            find("label", text: "Yes", match: :prefer_exact).click
           end
 
-          scenario "when claimant is not listed", skip: "Unlisted claimants are disabled for now" do
-            appeal, _intake = start_appeal(
-              veteran,
-              claim_participant_id: claim_participant_id,
-              no_claimant: true
-            )
-
-            visit "/intake"
-
-            expect(page).to have_current_path("/intake/review_request")
-
-            within_fieldset("Is the claimant someone other than the Veteran?") do
-              find("label", text: "Yes", match: :prefer_exact).click
-            end
-
-            expect(page).to have_content("+ Add Claimant")
-
-            notes = "Unlisted claimant: Sandra Smith"
-            add_unlisted_claimant(notes)
-
-            # Verify removal
-            find(".remove-item").click
-            expect(page).to_not have_content(notes)
-
-            # Add again
-            add_unlisted_claimant(notes)
-
-            click_button "Continue to next step"
-
-            expect(page).to have_current_path("/intake/add_issues")
-
-            expect(Claimant.count).to eq(1)
-            expect(appeal.claimant).to have_attributes(
-              type: "OtherClaimant",
-              participant_id: veteran.participant_id,
-              notes: notes
-            )
-
-            expect(page).to have_content(notes)
-          end
-
-          scenario "when veteran has no relationships", skip: "Unlisted claimants are disabled for now" do
-            allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return([])
-
-            start_appeal(
-              veteran,
-              claim_participant_id: claim_participant_id,
-              no_claimant: true
-            )
-
-            visit "/intake"
-
-            expect(page).to have_current_path("/intake/review_request")
-
-            within_fieldset("Is the claimant someone other than the Veteran?") do
-              find("label", text: "Yes", match: :prefer_exact).click
-            end
-
-            expect(page).to have_content("+ Add Claimant")
-            expect(page).to have_content("This Veteran currently has no known relationships")
-            expect(page).to have_button("Continue to next step", disabled: true)
-
-            notes = "Unlisted claimant: Sandra Smith"
-            add_unlisted_claimant(notes)
-            expect(page).to have_button("Continue to next step", disabled: false)
-
-            # Verify removal
-            find(".remove-item").click
-            expect(page).to_not have_content(notes)
-
-            # Verify button is disabled.
-            expect(page).to have_button("Continue to next step", disabled: true)
-          end
+          expect(page).to_not have_content("+ Add Claimant")
         end
 
         context "establish_fiduciary_eps feature toggle" do
@@ -567,24 +435,6 @@ feature "Intake Review Page", :postgres do
 
         def select_claimant(index = 0)
           click_dropdown({ index: index }, find(".dropdown-claimant"))
-        end
-      end
-
-      context "adding a new claimant" do
-        context "without non_veteran_claimants feature toggle" do
-          it "doesn't allow adding new claimants" do
-            start_appeal(veteran, claim_participant_id: claim_participant_id)
-
-            visit "/intake"
-
-            expect(page).to have_current_path("/intake/review_request")
-
-            within_fieldset("Is the claimant someone other than the Veteran?") do
-              find("label", text: "Yes", match: :prefer_exact).click
-            end
-
-            expect(page).to_not have_selector("label[for=claimant-options_claimant_not_listed]")
-          end
         end
       end
     end
