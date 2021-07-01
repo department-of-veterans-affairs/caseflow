@@ -22,7 +22,7 @@ module ErdGraphStyling
 
   private
 
-  DECISION_REVIEW_POLYTYPES = %w[
+  DECISION_REVIEW_POLYTYPES ||= %w[
     decision_review_type review_type decision_review_remanded_type
     appeal_type
     original_decision_review_type
@@ -31,7 +31,7 @@ module ErdGraphStyling
 
   # Records that can act as join tables (has foreign keys to exactly 2 other tables)
   # Would be great to automatically identify these
-  JOIN_TABLE_RECORDS = %w[
+  JOIN_TABLE_RECORDS ||= %w[
     OrganizationsUser
     RequestDecisionIssue
     IhpDraft
@@ -43,7 +43,7 @@ module ErdGraphStyling
     Message
   ].freeze
 
-  NODE_STYLES = {
+  NODE_STYLES ||= {
     abstract_records: {
       node_names: %w[DecisionReview ClaimReview],
       attribs: {
@@ -78,7 +78,7 @@ module ErdGraphStyling
   }.freeze
 
   # Records that indicate completion of a significant step
-  COMPLETION_RECORDS = %w[
+  COMPLETION_RECORDS ||= %w[
     JudgeCaseReview AttorneyCaseReview
     DecisionDocument VbmsUploadedDocument
     DecisionIssue
