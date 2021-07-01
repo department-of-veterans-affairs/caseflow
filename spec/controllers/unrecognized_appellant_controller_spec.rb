@@ -3,9 +3,9 @@
 RSpec.describe UnrecognizedAppellantsController, :postgres, type: :controller do
   describe "PATCH /" do
     context "when user updates unrecognized appellant information" do
-      let(:updated_relationship) {"updated"}
-      let(:updated_address_1) {"updated_address_1"}
-      let(:updated_address_2) {"updated_address_2"}
+      let(:updated_relationship) { "updated" }
+      let(:updated_address_1) { "updated_address_1" }
+      let(:updated_address_2) { "updated_address_2" }
       let(:params) do
         {
           relationship: updated_relationship,
@@ -35,9 +35,9 @@ RSpec.describe UnrecognizedAppellantsController, :postgres, type: :controller do
         original_created_by = ua.created_by
 
         patch :update, params: { unrecognized_appellant_id: ua.id, unrecognized_appellant: params }
-        
+
         response_body = JSON.parse(response.body)
-        
+
         ua.reload
 
         expect(response_body["relationship"]).to eq updated_relationship
