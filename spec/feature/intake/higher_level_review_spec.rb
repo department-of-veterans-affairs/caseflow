@@ -133,6 +133,7 @@ feature "Higher-Level Review", :all_dbs do
 
     click_intake_continue
 
+    # uncomment this test when when caseflow-1285 is resolved
     # expect(page).to have_content(
     #   "If the claimant is a Veteran's dependant (spouse, child, or parent) and they are not listed"
     # )
