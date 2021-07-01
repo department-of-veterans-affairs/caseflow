@@ -400,9 +400,9 @@ export const prepareAppealForStore = (appeals) => {
       appellantIsNotVeteran: appeal.attributes.appellant_is_not_veteran,
       appellantFullName: appeal.attributes.appellant_full_name,
       appellantAddress: appeal.attributes.appellant_address,
+      appellantType: appeal.attributes.appellant_type,
       appellantTz: appeal.attributes.appellant_tz,
       appellantRelationship: appeal.attributes.appellant_relationship,
-      appellantSubstitution: appeal.attributes.appellant_substitution,
       assignedToLocation: appeal.attributes.assigned_to_location,
       veteranDateOfBirth: appeal.attributes.veteran_date_of_birth,
       veteranDateOfDeath: appeal.attributes.veteran_death_date,
@@ -433,6 +433,7 @@ export const prepareAppealForStore = (appeals) => {
       docketSwitch: appeal.attributes.docket_switch,
       switchedDockets: appeal.attributes.switched_dockets,
       appellantSubstitution: appeal.attributes.appellant_substitution,
+      substitutions: appeal.attributes.substitutions,
       remandSourceAppealId: appeal.attributes.remand_source_appeal_id,
       remandJudgeName: appeal.attributes.remand_judge_name,
     };

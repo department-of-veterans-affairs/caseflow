@@ -62,20 +62,23 @@ class AppealsController < ApplicationController
   end
 
   def update_power_of_attorney
+    clear_poa_not_found_cache
     if cooldown_period_remaining > 0
-      message = "Information is current at this time. Please try again in #{cooldown_period_remaining} minutes"
       render json: {
-        status: "info",
+        alert_type: "info",
+        message: "Information is current at this time. Please try again in #{cooldown_period_remaining} minutes",
+        power_of_attorney: power_of_attorney_data
+      }
+    else
+      message, result = update_or_delete_power_of_attorney!
+      render json: {
+        alert_type: result,
         message: message,
         power_of_attorney: power_of_attorney_data
       }
-    elsif appeal.is_a?(Appeal)
-      poa = BgsPowerOfAttorney.find(params[:poaId])
-      render json: update_ama_poa(poa)
-    else
-      poa = appeal.power_of_attorney
-      render json: update_legacy_poa(poa)
     end
+  rescue StandardError => error
+    render_error(error)
   end
 
   def most_recent_hearing
@@ -251,8 +254,23 @@ class AppealsController < ApplicationController
     !search.nil? && search.match?(/\d{6}-{1}\d+$/)
   end
 
+  def update_or_delete_power_of_attorney!
+    appeal.power_of_attorney&.try(:clear_bgs_power_of_attorney!) # clear memoization on legacy appeals
+    poa = appeal.bgs_power_of_attorney
+
+    if poa.blank?
+      ["Successfully refreshed. No power of attorney information was found at this time.", "success"]
+    elsif poa.bgs_record == :not_found
+      poa.destroy!
+      ["Successfully refreshed. No power of attorney information was found at this time.", "success"]
+    else
+      poa.save_with_updated_bgs_record!
+      ["POA Updated Successfully", "success"]
+    end
+  end
+
   def power_of_attorney_data
-    poa_data = {
+    {
       representative_type: appeal.representative_type,
       representative_name: appeal.representative_name,
       representative_address: appeal.representative_address,
@@ -260,50 +278,11 @@ class AppealsController < ApplicationController
       representative_tz: appeal.representative_tz,
       poa_last_synced_at: appeal.poa_last_synced_at
     }
-    unless appeal.claimant.is_a?(OtherClaimant)
-      poa_data[:representative_id] = appeal.power_of_attorney&.id if appeal.is_a?(Appeal)
-      poa_data[:representative_id] = appeal.power_of_attorney&.bgs_id if appeal.is_a?(LegacyAppeal)
-    end
-    poa_data
   end
 
-  def update_ama_poa(poa)
-    begin
-      claimant = if appeal.claimant.is_a?(Hash)
-                   BgsPowerOfAttorney.find_or_fetch_by(participant_id: claimant.dig(:representative, :participant_id))
-                 else
-                   appeal.claimant
-                 end
-      message, result = poa.update_or_delete(claimant)
-      {
-        status: "success",
-        message: message,
-        power_of_attorney: (result == "updated") ? power_of_attorney_data : {}
-      }
-    rescue ActiveRecord::RecordNotUnique
-      {
-        status: "error",
-        message: "Something went wrong"
-      }
-    end
-  end
-
-  def update_legacy_poa(poa)
-    begin
-      bgs_poa = BgsPowerOfAttorney.find_or_create_by_file_number(poa.file_number)
-      message, result = bgs_poa.update_or_delete(appeal.claimant)
-      appeal.power_of_attorney.clear_bgs_power_of_attorney!
-      {
-        status: "success",
-        message: message,
-        power_of_attorney: (result == "updated") ? power_of_attorney_data : {}
-      }
-    rescue ActiveRecord::RecordNotUnique
-      {
-        status: "error",
-        message: "Something went wrong"
-      }
-    end
+  def clear_poa_not_found_cache
+    Rails.cache.delete("bgs-participant-poa-not-found-#{appeal&.veteran&.file_number}")
+    Rails.cache.delete("bgs-participant-poa-not-found-#{appeal&.claimant_participant_id}")
   end
 
   def cooldown_period_remaining
@@ -313,5 +292,14 @@ class AppealsController < ApplicationController
     end
 
     0
+  end
+
+  def render_error(error)
+    Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
+    Raven.capture_exception(error, extra: { appeal_type: appeal.type, appeal_id: appeal.id })
+    render json: {
+      alert_type: "error",
+      message: "Something went wrong"
+    }, status: :unprocessable_entity
   end
 end

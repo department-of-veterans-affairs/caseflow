@@ -218,6 +218,7 @@ class DocumentsTable extends React.Component {
           'receivedAt' && { 'aria-sort': sortDirectionAriaLabel },
         header: (
           <Button
+            styling={{ 'aria-roledescription': 'sort button' }}
             name="Receipt Date"
             id="receipt-date-header"
             classNames={['cf-document-list-button-header']}
@@ -244,6 +245,7 @@ class DocumentsTable extends React.Component {
         header: (
           <Button
             id="type-header"
+            styling={{ 'aria-roledescription': 'sort button' }}
             name="Document Type"
             classNames={['cf-document-list-button-header']}
             onClick={() => this.props.changeSortState('type')}
