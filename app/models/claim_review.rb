@@ -82,13 +82,15 @@ class ClaimReview < DecisionReview
     end
   end
 
-  # Save issues and assign it the appropriate end product establishment.
-  # Create that end product establishment if it doesn't exist.
+  # Save issues and assign them to the appropriate end product establishment, creating if necessary.
+  # Do creation and assignment in two phases, because EP code may depend on all issues being created.
   def create_issues!(new_issues, request_issues_update = nil)
     new_issues.each do |issue|
-      issue.create_for_claim_review!(request_issues_update)
+      issue.create_for_claim_review!
     end
-    request_issues.reload
+    request_issues.reload.each do |issue|
+      issue.assign_to_end_product_establishment_for_claim_review!(request_issues_update)
+    end
   end
 
   def add_user_to_business_line!
