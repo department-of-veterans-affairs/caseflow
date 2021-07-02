@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_30_142005) do
+ActiveRecord::Schema.define(version: 2021_07_01_201156) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1443,8 +1443,8 @@ ActiveRecord::Schema.define(version: 2021_06_30_142005) do
   create_table "unrecognized_appellants", comment: "Unrecognized non-veteran appellants", force: :cascade do |t|
     t.bigint "claimant_id", null: false, comment: "The OtherClaimant record associating this appellant to a DecisionReview"
     t.datetime "created_at", null: false
-    t.bigint "created_by_id", comment: "The user that created this version of the unrecognized appellant"
-    t.bigint "current_version_id", comment: "The current version for this unrecognized appellant"
+    t.bigint "created_by_id", null: false, comment: "The user that created this version of the unrecognized appellant"
+    t.bigint "current_version_id", null: false, comment: "The current version for this unrecognized appellant"
     t.string "poa_participant_id", comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id"
     t.string "relationship", null: false, comment: "Relationship to veteran. Allowed values: attorney, child, spouse, other"
     t.bigint "unrecognized_party_detail_id", comment: "Contact details"

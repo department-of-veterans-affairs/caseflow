@@ -15,7 +15,7 @@ class RampRefilingIntake < Intake
     ramp_elections.map(&:recreate_issues_from_contentions!)
   end
 
-  def review!(request_params)
+  def review!(request_params, _current_user)
     detail.start_review!
     detail.update(request_params.permit(:receipt_date, :option_selected, :appeal_docket))
   end

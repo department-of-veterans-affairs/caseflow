@@ -127,7 +127,7 @@ class Intake < CaseflowRecord
     fail Caseflow::Error::MustImplementInSubclass
   end
 
-  def review!(_review_params)
+  def review!(_review_params, _current_user)
     fail Caseflow::Error::MustImplementInSubclass
   end
 

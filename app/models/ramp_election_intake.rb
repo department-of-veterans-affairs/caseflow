@@ -28,7 +28,7 @@ class RampElectionIntake < Intake
     new_intake_ramp_election
   end
 
-  def review!(request_params)
+  def review!(request_params, _current_user)
     ramp_election.start_review!
     ramp_election.update(request_params.permit(:receipt_date, :option_selected))
   end
