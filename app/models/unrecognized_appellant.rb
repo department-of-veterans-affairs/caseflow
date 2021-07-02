@@ -29,6 +29,7 @@ class UnrecognizedAppellant < CaseflowRecord
 
   def set_current_version_to_self!
     update!(current_version: self)
+    self
   end
 
   def update_with_versioning!(params, user)

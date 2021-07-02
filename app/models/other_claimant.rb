@@ -33,7 +33,6 @@ class OtherClaimant < Claimant
     poa_form = params.delete(:poa_form)
     params.delete(:listed_attorney)
     appellant = create_appellant!(params, current_user)
-    appellant.set_current_version_to_self!
 
     if poa_form
       poa_participant_id = poa_params&.delete(:listed_attorney)&.dig(:value)
@@ -58,7 +57,7 @@ class OtherClaimant < Claimant
       claimant_id: id,
       unrecognized_party_detail: create_party_detail!(params.permit!),
       created_by: current_user
-    )
+    ).set_current_version_to_self!
   end
 
   def create_party_detail!(params)
