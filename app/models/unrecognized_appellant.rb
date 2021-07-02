@@ -26,4 +26,25 @@ class UnrecognizedAppellant < CaseflowRecord
   def first_version
     versions.where.not(id: current_version_id).first || self
   end
+
+  def update_with_versioning!(params, user)
+    transaction do
+      create_version
+      update(params.except(:unrecognized_party_detail).merge(created_by: user))
+      unrecognized_party_detail.update(params[:unrecognized_party_detail])
+    end
+  rescue ActiveRecord::RecordInvalid
+    false
+  end
+
+  private
+
+  def create_version
+    # Make a copy of self
+    version = dup
+    # Make a copy of self's unrecognized_party_detail
+    version_party_detail = unrecognized_party_detail.dup
+    # Point the copied self at the copy of unrecognized_party_detail and set current_version to self
+    version.update(unrecognized_party_detail: version_party_detail, current_version: self)
+  end
 end
