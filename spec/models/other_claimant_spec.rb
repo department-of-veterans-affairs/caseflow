@@ -45,6 +45,8 @@ describe OtherClaimant, :postgres do
           party_type: "individual",
           name: "John Smith"
         )
+        expect(subject.current_version).to eq subject
+        expect(subject.created_by).to eq user
       end
     end
 

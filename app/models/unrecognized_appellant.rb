@@ -27,6 +27,10 @@ class UnrecognizedAppellant < CaseflowRecord
     versions.where.not(id: current_version_id).first || self
   end
 
+  def set_current_version_to_self!
+    update!(current_version: self)
+  end
+
   def update_with_versioning!(params, user)
     transaction do
       create_version
