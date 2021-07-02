@@ -8,14 +8,12 @@ class ChangeUnrecognizedAppellantCurrentVersion < ActiveRecord::Migration[5.2]
       )
     end
     safety_assured do
-      change_column :unrecognized_appellants, :current_version_id, :bigint, null: false
       change_column :unrecognized_appellants, :created_by_id, :bigint, null: false
     end
   end
 
   def down
     safety_assured do
-      change_column :unrecognized_appellants, :current_version_id, :bigint, null: true
       change_column :unrecognized_appellants, :created_by_id, :bigint, null: true
     end
   end

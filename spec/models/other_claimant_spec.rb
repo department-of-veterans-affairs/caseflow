@@ -26,8 +26,9 @@ describe OtherClaimant, :postgres do
     end
     let(:poa_params) { nil }
     let(:poa_participant_id) { nil }
+    let(:user) { create(:user) }
 
-    subject { claimant.save_unrecognized_details!(params, poa_params) }
+    subject { claimant.save_unrecognized_details!(params, poa_params, user) }
 
     context "when appellant is an unlisted individual" do
       let(:relationship) { "child" }
