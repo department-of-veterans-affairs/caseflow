@@ -71,7 +71,7 @@ describe AppealIntake, :all_dbs do
   end
 
   context "#review!" do
-    subject { intake.review!(request_params) }
+    subject { intake.review!(request_params, user) }
 
     let(:receipt_date) { "2018-05-25" }
     let(:docket_type) { Constants.AMA_DOCKETS.hearing }
