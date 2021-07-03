@@ -88,8 +88,8 @@ function groupEventItems(items){
     order: 3,
   });
   groups.add({
-    id: 'intakes',
-    content: 'intakes',
+    id: 'intakes', // TODO: rename to events
+    content: 'events',
     className: 'group_intakes',
     order: 9,
   });

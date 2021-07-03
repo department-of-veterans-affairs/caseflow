@@ -108,6 +108,10 @@ class ExplainController < ApplicationController
     SanitizedJsonExporter.new(appeal, sanitize: !show_pii_query_param, verbosity: 0).file_contents
   end
 
+  def exported_records(klass)
+    sje.records_hash[klass.table_name] || []
+  end
+
   def sje
     @sje ||= SanitizedJsonExporter.new(appeal, sanitize: false, verbosity: 0)
   end

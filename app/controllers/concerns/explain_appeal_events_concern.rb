@@ -5,6 +5,7 @@ require "action_view"
 ##
 # Used by ExplainController to build the data for presenting events based on
 # exported data from SanitizedJsonExporter sje.
+# Specifically, this data is used to build the Appeal Narrative.
 
 # :reek:FeatureEnvy
 module ExplainAppealEventsConcern
@@ -93,10 +94,6 @@ module ExplainAppealEventsConcern
   end
 
   private
-
-  def exported_records(klass)
-    sje.records_hash[klass.table_name] || []
-  end
 
   # # :reek:NestedIterators
   # def records_hash_for(appeal)
