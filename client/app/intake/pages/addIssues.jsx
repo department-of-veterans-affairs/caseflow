@@ -196,7 +196,7 @@ class AddIssuesPage extends React.Component {
       userCanWithdrawIssues
     } = this.props;
     const intakeData = intakeForms[formType];
-    const { useAmaActivationDate, nonVeteranClaimants } = featureToggles;
+    const { useAmaActivationDate } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
 
     if (this.willRedirect(intakeData, hasClearedEp)) {
@@ -286,7 +286,7 @@ class AddIssuesPage extends React.Component {
 
     let fieldsForFormType = getAddIssuesFields(formType, veteran, intakeData);
 
-    if (formType === 'appeal' && nonVeteranClaimants) {
+    if (formType === 'appeal') {
       fieldsForFormType = fieldsForFormType.concat({
         field: 'Claimant\'s POA',
         content: intakeData.powerOfAttorneyName || COPY.ADD_CLAIMANT_CONFIRM_MODAL_NO_POA
