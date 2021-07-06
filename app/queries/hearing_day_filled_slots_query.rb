@@ -15,7 +15,7 @@ class HearingDayFilledSlotsQuery
   def call
     result = ama_hearings_count_per_day
     legacy_hearings_count_per_day.each do |hearing_day_id, filled_slots_count|
-      result[hearing_day_id] = 0 unless result[hearing_day_id].present?
+      result[hearing_day_id] = 0 if result[hearing_day_id].blank?
 
       result[hearing_day_id] += filled_slots_count
     end
@@ -44,7 +44,7 @@ class HearingDayFilledSlotsQuery
     end
 
     filtered_hearings
-      .group_by { |item| item.shift }
-      .transform_values { |h_day_ids| h_day_ids.count }
+      .group_by(&:shift)
+      .transform_values(&:count)
   end
 end
