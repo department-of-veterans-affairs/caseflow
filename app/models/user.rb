@@ -13,6 +13,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   has_many :organizations_users, dependent: :destroy
   has_many :organizations, through: :organizations_users
   has_many :messages
+  has_many :unrecognized_appellants, foreign_key: :created_by_id
   has_one :vacols_user, class_name: "CachedUser", foreign_key: :sdomainid, primary_key: :css_id
 
   # Alternative: where("roles @> ARRAY[?]::varchar[]", role)

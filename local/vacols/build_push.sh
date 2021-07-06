@@ -26,7 +26,7 @@ if [[ $1 == "-h" ]]; then
   exit 0
 fi
 
-if [[ -z "${AWS_SECURITY_TOKEN}" ]]; then
+if ! aws s3 ls --region us-gov-west-1 s3://shared-s3/dsva-appeals/facols/ > /dev/null ; then
   echo "Please run issue_mfa.sh first"
   exit 1
 fi
@@ -91,7 +91,7 @@ build(){
 }
 
 push(){
-  eval $(aws ecr get-login --no-include-email --region us-gov-west-1)
+  aws ecr get-login-password --region us-gov-west-1 | docker login --username AWS --password-stdin 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com
   docker tag vacols_db:latest vacols_db:${today}
   docker tag vacols_db:${today} 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:${today}
   docker tag vacols_db:latest 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
@@ -107,7 +107,7 @@ push(){
 download(){
   # get circleci latest image from this same repo
   facols_image=$(cat ${THIS_SCRIPT_DIR}/../../.circleci/config.yml| grep -m 1 facols | awk '{print $3}')
-  eval $(aws ecr get-login --no-include-email --region us-gov-west-1)
+  aws ecr get-login-password --region us-gov-west-1 | docker login --username AWS --password-stdin 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com
   docker pull $facols_image
   docker tag $facols_image vacols_db:latest
 }
