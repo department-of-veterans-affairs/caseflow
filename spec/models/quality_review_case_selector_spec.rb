@@ -32,11 +32,11 @@ describe QualityReviewCaseSelector, :all_dbs do
         expect(subject).to be(true)
       end
 
-      context "but some tasks are cancelled" do
+      context "some tasks are cancelled" do
         before { qr_tasks.last.update_columns(status: Constants.TASK_STATUSES.cancelled) }
 
-        it "returns false" do
-          expect(subject).to be(false)
+        it "returns true" do
+          expect(subject).to be(true)
         end
       end
 
