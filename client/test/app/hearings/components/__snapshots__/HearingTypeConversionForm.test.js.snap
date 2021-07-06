@@ -128,11 +128,11 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
       <HelperText
         label="Review and update the following information in VBMS if needed. Caseflow won't send email notifications until you schedule the hearing."
       >
-        <span
-          data-css-tgxxqt=""
+        <div
+          className="helper-text"
         >
           Review and update the following information in VBMS if needed. Caseflow won't send email notifications until you schedule the hearing.
-        </span>
+        </div>
       </HelperText>
       <AppellantSection
         appellantTitle="Veteran"
@@ -189,7 +189,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
             id="email-section"
           >
             <div
-              className="usa-width-one-half css-uplrl8"
+              className="usa-width-one-half"
             >
               <VirtualHearingEmail
                 emailType="appellantEmail"
@@ -302,7 +302,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
             className="usa-grid css-1jfbwxw"
           >
             <div
-              className="usa-width-one-half css-uplrl8"
+              className="usa-width-one-half"
             >
               <VirtualHearingEmail
                 email="tom.brady@caseflow.gov"
@@ -521,11 +521,11 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
       <HelperText
         label="Review and update the following information in VBMS if needed. Caseflow won't send email notifications until you schedule the hearing."
       >
-        <span
-          data-css-tgxxqt=""
+        <div
+          className="helper-text"
         >
           Review and update the following information in VBMS if needed. Caseflow won't send email notifications until you schedule the hearing.
-        </span>
+        </div>
       </HelperText>
       <AppellantSection
         appellantTitle="Veteran"
@@ -582,7 +582,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
             id="email-section"
           >
             <div
-              className="usa-width-one-half css-uplrl8"
+              className="usa-width-one-half"
             >
               <VirtualHearingEmail
                 email="Abellona.Valtas@test.com"
@@ -673,7 +673,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
             className="usa-grid css-1jfbwxw"
           >
             <div
-              className="usa-width-one-half css-uplrl8"
+              className="usa-width-one-half"
             >
               <VirtualHearingEmail
                 email="tom.brady@caseflow.gov"
@@ -892,11 +892,11 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
       <HelperText
         label="Review and update the following information in VBMS if needed. Caseflow won't send email notifications until you schedule the hearing."
       >
-        <span
-          data-css-tgxxqt=""
+        <div
+          className="helper-text"
         >
           Review and update the following information in VBMS if needed. Caseflow won't send email notifications until you schedule the hearing.
-        </span>
+        </div>
       </HelperText>
       <AppellantSection
         appellantTitle="Veteran"
@@ -953,7 +953,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
             id="email-section"
           >
             <div
-              className="usa-width-one-half css-uplrl8"
+              className="usa-width-one-half"
             >
               <VirtualHearingEmail
                 email="Abellona.Valtas@test.com"
@@ -1044,7 +1044,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
             className="usa-grid css-1jfbwxw"
           >
             <div
-              className="usa-width-one-half css-uplrl8"
+              className="usa-width-one-half"
             >
               <VirtualHearingEmail
                 email="tom.brady@caseflow.gov"
@@ -1263,11 +1263,11 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
       <HelperText
         label="Review and update the following information in VBMS if needed. Caseflow won't send email notifications until you schedule the hearing."
       >
-        <span
-          data-css-tgxxqt=""
+        <div
+          className="helper-text"
         >
           Review and update the following information in VBMS if needed. Caseflow won't send email notifications until you schedule the hearing.
-        </span>
+        </div>
       </HelperText>
       <AppellantSection
         appellantTitle="Veteran"
@@ -1324,7 +1324,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
             id="email-section"
           >
             <div
-              className="usa-width-one-half css-uplrl8"
+              className="usa-width-one-half"
             >
               <VirtualHearingEmail
                 email="Abellona.Valtas@test.com"
@@ -1415,7 +1415,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
             className="usa-grid css-1jfbwxw"
           >
             <div
-              className="usa-width-one-half css-uplrl8"
+              className="usa-width-one-half"
             >
               <VirtualHearingEmail
                 email="tom.brady@caseflow.gov"

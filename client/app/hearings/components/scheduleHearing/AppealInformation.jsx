@@ -68,16 +68,18 @@ export const AppealInformation = ({ appeal }) => {
         text={<AppealStreamDetails {...appeal} />}
       />
       <ReadOnly
+        unformatted
+        className="appeal-information-docket-type-badge"
         spacing={15}
         label="Docket Number"
         text={
-          <span>
+          <React.Fragment>
             <DocketTypeBadge
               name={appeal?.docketName}
               number={appeal?.docketNumber}
             />
             {appeal?.docketNumber}
-          </span>
+          </React.Fragment>
         }
       />
       <ReadOnly

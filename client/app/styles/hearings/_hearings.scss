@@ -347,6 +347,41 @@ $form-width: 575px;
 // Schedule Veteran Styles
 .schedule-veteran-page {
   min-height: 680px;
+
+  .cf-form-textarea {
+    max-width: $form-width;
+  }
+
+  .cf-form-textinput {
+    max-width: $form-width;
+  }
+
+  label {
+    max-width: $form-width;
+  }
+
+  .cf-select {
+    .cf-select__control {
+      max-width: $form-width;
+    }
+
+    .cf-select__menu {
+      max-width: $form-width;
+    }
+  }
+}
+
+.helper-text {
+  max-width: $form-width;
+  margin-top: 15;
+  color: $color-gray-dark;
+  line-height: 1.5em;
+}
+
+.appeal-information-docket-type-badge {
+  div {
+    line-height: 150%;
+  }
 }
 
 // Hearings Schedule Styles
@@ -452,6 +487,17 @@ $form-width: 575px;
   border: 2px solid $color-gray-lighter;
   color: $color-gray;
   font-weight: 600;
+  pointer-events: all;
+
+  div:first-child {
+    line-height: 70%;
+    margin-top: 3px;
+  }
+
+  &:hover {
+    background-color: $caseflow-background;
+    border: 2px solid $color-gray-lighter;
+  }
 }
 
 .time-slot-arrow {
@@ -459,16 +505,12 @@ $form-width: 575px;
 }
 
 .time-slot-details {
+  padding: 5px 0;
   font-weight: 400;
   font-size: 15px;
   white-space: nowrap;
   width: 295px;
   margin-top: 5px;
-}
-
-.time-slot-button-container {
-  display: flex;
-  width: 800px;
 }
 
 .time-slot-container {
@@ -478,9 +520,26 @@ $form-width: 575px;
   flex-direction: column;
   flex-wrap: wrap;
   line-height: normal;
+}
 
-  > span {
-    margin: 5px;
+
+// Don't have a margin-left on the left column of timeslot buttons
+.time-slot-button-container {
+  display: flex;
+  width: 800px;
+
+  :first-child {
+    > span {
+      margin-top: 5px;
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
+  }
+
+  :last-child {
+    > span {
+      margin: 5px;
+    }
   }
 }
 
