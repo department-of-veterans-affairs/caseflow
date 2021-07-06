@@ -5,6 +5,8 @@ import { detailListStyling, getDetailField } from './Detail';
 import Address from './components/Address';
 import BareList from '../components/BareList';
 import { DateString } from 'app/util/DateUtil';
+import Alert from '../components/Alert';
+import { CASE_TIMELINE_APPELLANT_IS_A_SUBSTITUTE, CASE_TIMELINE_APPELLANT_SUBSTITUTION } from 'app/../COPY';
 
 /**
  * A component to display various details about the appeal's appellant including name, address and their relation to the
@@ -38,15 +40,21 @@ export const AppellantDetail = ({ appeal, substitutionDate }) => {
 
   if (substitutionDate) {
     details.push({
-      label: 'Substitution granted by the RO',
+      label: CASE_TIMELINE_APPELLANT_SUBSTITUTION,
       value: <DateString date={substitutionDate} inputFormat="YYYY-MM-DD" dateFormat="M/D/YYYY" />
     });
   }
 
   return (
-    <ul {...detailListStyling}>
-      <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
-    </ul>
+    <React.Fragment>
+      <ul {...detailListStyling}>
+        <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
+      </ul>
+      {substitutionDate && <Alert
+        message={CASE_TIMELINE_APPELLANT_IS_A_SUBSTITUTE}
+        type="info"
+      />}
+    </React.Fragment>
   );
 };
 
