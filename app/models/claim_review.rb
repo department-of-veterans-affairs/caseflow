@@ -85,8 +85,10 @@ class ClaimReview < DecisionReview
   # Save issues and assign it the appropriate end product establishment.
   # Create that end product establishment if it doesn't exist.
   def create_issues!(new_issues, request_issues_update = nil)
-    new_issues.each(&:save!).each do |issue|
-      issue.create_for_claim_review!(request_issues_update)
+    new_issues.each do |new_issue|
+      new_issue.update!(benefit_type: "")
+    end.each do |created_issue|
+      created_issue.create_for_claim_review!(request_issues_update)
     end
     request_issues.reload
   end
