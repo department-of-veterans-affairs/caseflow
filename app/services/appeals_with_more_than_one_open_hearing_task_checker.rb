@@ -2,11 +2,6 @@
 
 # Data integrity checker for notifying when an appeal has multiple open HearingTask children
 class AppealsWithMoreThanOneOpenHearingTaskChecker < DataIntegrityChecker
-  #   AppealsWithMoreThanOneOpenHearingTaskChecker
-  #   appeals_with_more_than_one_open_hearing_task_checker
-  # For time_ago_in_words()
-  include ActionView::Helpers::DateHelper
-
   def call
     build_report(appeals_with_more_than_one_open_hearing_task)
   end
