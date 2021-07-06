@@ -7,7 +7,7 @@ class AppealDecisionIssuesPolicy
   end
 
   def visible_decision_issues
-    if @user.roles.include?("VSO")
+    if @user.vso_employee?
       visible_issues = @appeal.decision_issues.select do |issue|
         Time.now.utc > issue.caseflow_decision_date
       end

@@ -12,7 +12,7 @@ describe AppealDecisionIssuesPolicy, :postgres do
         let(:appeal) { create(:appeal, :decision_issue_with_future_date) }
 
         it "cannot be seen" do
-          expect(result).to match_array([])
+          expect(result).to be_empty
         end
       end
 

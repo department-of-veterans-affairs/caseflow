@@ -9,7 +9,7 @@ describe WorkQueue::AppealSerializer, :all_dbs do
 
     describe "decision_issues" do
       it "does not display decision issues with a decision date in the future" do
-        expect(subject.serializable_hash[:data][:attributes][:decision_issues]).to match_array([])
+        expect(subject.serializable_hash[:data][:attributes][:decision_issues]).to be_empty
       end
     end
   end
