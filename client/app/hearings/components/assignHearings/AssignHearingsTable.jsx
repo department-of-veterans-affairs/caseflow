@@ -102,6 +102,7 @@ export default class AssignHearingsTable extends React.PureComponent {
       {
         header: '',
         align: 'left',
+        cellClass: 'table-row-number',
         // Since this column isn't tied to anything in the input row, _value will
         // always be undefined.
         valueFunction: (_value, rowId) => <span>{rowId + this.state.rowOffset}.</span>
@@ -256,6 +257,7 @@ export default class AssignHearingsTable extends React.PureComponent {
 
     return (
       <QueueTable
+        className="assign-hearings-table"
         columns={this.getColumns()}
         rowObjects={[]}
         key={tabName}

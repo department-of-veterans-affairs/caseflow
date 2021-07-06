@@ -394,5 +394,140 @@ describe AppealStatusApiDecorator, :all_dbs do
         expect(subject[0][:details][:type]).to eq("video")
       end
     end
+
+    context "has a remand and effectuation tracked in VBMS and a hearing scheduled" do
+      # the effectuation
+      let(:decision_date) { receipt_date + 30.days }
+      let!(:decision_document) { create(:decision_document, appeal: appeal, decision_date: decision_date) }
+      let!(:decision_issue) do
+        create(:decision_issue,
+               decision_review: appeal, disposition: "allowed", caseflow_decision_date: decision_date)
+      end
+      let(:effectuation_ep_cleared_date) { receipt_date + 250.days }
+      let!(:effectuation_ep) do
+        create(:end_product_establishment,
+               :cleared, source: decision_document, last_synced_at: effectuation_ep_cleared_date)
+      end
+      # the remand
+      let!(:remanded_decision_issue) do
+        create(:decision_issue,
+               decision_review: appeal,
+               disposition: "remanded",
+               benefit_type: "compensation",
+               caseflow_decision_date: decision_date)
+      end
+      let!(:remanded_sc) { create(:supplemental_claim, decision_review_remanded: appeal) }
+      let(:remanded_ep_clr_date) { receipt_date + 200.days }
+      let!(:remanded_ep) { create(:end_product_establishment, :cleared, source: remanded_sc) }
+      let!(:remanded_sc_decision_issue) do
+        create(:decision_issue,
+               decision_review: remanded_sc,
+               end_product_last_action_date: remanded_ep_clr_date)
+      end
+
+      # Video hearing after remand.
+      let!(:appeal_root_task) { create(:root_task, :in_progress, appeal: appeal) }
+      let!(:hearing_task) { create(:hearing_task, parent: appeal_root_task) }
+      let(:hearing_scheduled_for) { remanded_ep_clr_date + 15.days }
+      let!(:hearing_day) do
+        create(:hearing_day,
+               request_type: HearingDay::REQUEST_TYPES[:video],
+               regional_office: "RO18",
+               scheduled_for: hearing_scheduled_for)
+      end
+
+      let!(:hearing) do
+        create(
+          :hearing,
+          appeal: appeal,
+          disposition: nil,
+          evidence_window_waived: nil,
+          hearing_day: hearing_day
+        )
+      end
+      let!(:hearing_task_association) do
+        create(
+          :hearing_task_association,
+          hearing: hearing,
+          hearing_task: hearing_task
+        )
+      end
+      let!(:schedule_hearing_task) do
+        create(
+          :schedule_hearing_task,
+          :completed,
+          parent: hearing_task,
+          appeal: appeal
+        )
+      end
+      let!(:disposition_task) do
+        create(
+          :assign_hearing_disposition_task,
+          :in_progress,
+          parent: hearing_task,
+          appeal: appeal
+        )
+      end
+
+      it "has 2 ama_post_decision alerts and a scheduled_hearing alert" do
+        expect(subject.count).to eq(3)
+
+        # Schedule hearing alerts may not have decisionDate so they will sort first.
+        expect(subject[0][:type]).to eq("scheduled_hearing")
+        expect(subject[0][:details][:date]).to eq(hearing_scheduled_for.to_date)
+        expect(subject[0][:details][:type]).to eq("video")
+        expect(subject[0][:details][:decisionDate]).to be_nil
+
+        expect(subject[1][:type]).to eq("ama_post_decision")
+        expect(subject[1][:details][:availableOptions]).to eq(%w[supplemental_claim cavc])
+        expect(subject[1][:details][:dueDate].to_date).to eq((decision_date + 365.days).to_date)
+        expect(subject[1][:details][:cavcDueDate].to_date).to eq((decision_date + 120.days).to_date)
+
+        expect(subject[2][:type]).to eq("ama_post_decision")
+        expect(subject[2][:details][:availableOptions]).to eq(%w[supplemental_claim cavc])
+        expect(subject[2][:details][:dueDate].to_date).to eq((effectuation_ep_cleared_date + 365.days).to_date)
+        expect(subject[2][:details][:cavcDueDate].to_date).to eq((effectuation_ep_cleared_date + 120.days).to_date)
+      end
+    end
+  end
+
+  context "#scheduled_hearing" do
+    subject { described_class.new(appeal).scheduled_hearing }
+    let(:receipt_date) { Time.zone.today - 10.days }
+    let!(:appeal) { create(:appeal, :hearing_docket, receipt_date: receipt_date) }
+
+    let(:hearing_scheduled_for) { Time.zone.today + 15.days }
+    let!(:hearing_day) do
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             regional_office: "RO18",
+             scheduled_for: hearing_scheduled_for)
+    end
+
+    let!(:hearing) do
+      create(
+        :hearing,
+        appeal: appeal,
+        disposition: disposition,
+        evidence_window_waived: nil,
+        hearing_day: hearing_day
+      )
+    end
+
+    context "when a hearing scheduled for the future has not been held" do
+      let(:disposition) { nil }
+
+      it "returns that hearing" do
+        expect(subject).to eq(hearing)
+      end
+    end
+
+    context "when a hearing scheduled for the future has been cancelled" do
+      let(:disposition) { "cancelled" }
+
+      it "returns no hearing" do
+        expect(subject).to be_nil
+      end
+    end
   end
 end

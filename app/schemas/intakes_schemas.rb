@@ -33,7 +33,6 @@ class IntakesSchemas
         string :appeal_docket, optional: true, nullable: true, included_in?: DOCKET_OPTIONS, doc: "RAMP refiling only"
 
         # applicable when :claimant_type is "other"
-        string :claimant_notes, optional: true, nullable: true, doc: "Appeals only"
         nested :unlisted_claimant, optional: true, nullable: true
         nested :poa, optional: true, nullable: true
       end

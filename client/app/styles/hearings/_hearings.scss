@@ -378,12 +378,19 @@ $form-width: 575px;
   line-height: 1.5em;
 }
 
+.appeal-information-docket-type-badge {
+  div {
+    line-height: 150%;
+  }
+}
+
 // Hearings Schedule Styles
 .hearing-day-list {
   // Each item = 73px * 10 = 730px
   max-height: 730px;
   overflow: hidden;
   overflow-y: auto;
+  padding-bottom: 5px;
 
   label {
     color: $cf-hearing-day-label-color;
@@ -392,15 +399,59 @@ $form-width: 575px;
     position: sticky;
     // Fixes strange behavior where the list text is slightly visible on scroll
     top: -1px;
-    padding-top: 10px;
     width: 100%;
     background-color: $color-white;
+    margin-top: 10px;
+    margin-bottom: 5px;
   }
+
+  li {
+    padding-left: 5px;
+
+    button:focus {
+      outline-offset: 0;
+    }
+  }
+}
+
+.assign-hearings-table {
+  table-layout: fixed;
+}
+
+.table-row-number {
+  width: 25px;
 }
 
 @media screen and (min-width: 1224px) and (max-width: 1680px) {
   .usa-width-three-fourths.assign-hearing-tabs {
+    width: 70%;
+  }
+
+  .assign-hearings-table th > span:first-child {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+@media screen and (max-width: 1280px) {
+  .usa-width-three-fourths.assign-hearing-tabs {
     width: 65%;
+  }
+
+  .assign-hearings-table th > span:first-child {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+@media screen and (min-width: 600px) and (max-width: 1280px) {
+  .usa-width-three-fourths.assign-hearing-tabs {
+    width: 60%;
+  }
+
+  .assign-hearings-table th > span:first-child {
+    display: flex;
+    flex-wrap: wrap;
   }
 }
 
