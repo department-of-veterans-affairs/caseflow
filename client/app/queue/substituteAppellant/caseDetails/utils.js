@@ -11,8 +11,8 @@ export const shouldSupportSubstituteAppellant = ({
     decisionIssue.disposition === 'dismissed_death';
 
   return (
-    currentUserOnClerkOfTheBoard &&
-      !appeal.isLegacyAppeal &&
+    !appeal.isLegacyAppeal &&
+      currentUserOnClerkOfTheBoard &&
       !appeal.appellantIsNotVeteran &&
       featureToggles.recognized_granted_substitution_after_dd &&
       appeal.caseType === 'Original' &&
