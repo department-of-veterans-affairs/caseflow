@@ -15,7 +15,7 @@
   )
   <hr/>
 
-  <h3>Appeal <%=appeal.id%> (<%=appeal.uuid%>)</h3>
+  <h3>Appeal <%=appeal.id%> (<%=legacy_appeal? ? appeal.vacols_id : appeal.uuid%>)</h3>
   <ul id="appeal_info">
     <li>status: <%= appeal_status.to_s %></li>
     <li>priority: <%= appeal.aod? || appeal.cavc? %> (AOD: <%= appeal.aod? %>, CAVC: <%= appeal.cavc? %>)</li>
@@ -23,7 +23,7 @@
     <li>Related Appeals:
       <ul>
         <% sje.records_hash["appeals"].each do |appeal| %>
-          <li>Appeal id: <%= appeal["id"] %>, uuid: <%= appeal["uuid"] %></li>
+          <li>Appeal id: <%= appeal["id"] %>, <%= appeal["uuid"] || appeal["vacols_id"] %></li>
         <% end %>
       </ul>
     </li>
@@ -33,7 +33,7 @@
   <h3>Task tree</h3>
   <code style="color: green">
     Appeal.find(<%= appeal.id %>).treee(<%= treee_fields.map{|f| f.to_s.prepend(":")}.join(", ") %>)
-    <% if appeal.is_a?(LegacyAppeal) %>
+    <% if legacy_appeal? %>
       <br/>la = LegacyWorkQueue.tasks_by_appeal_id(<%= appeal.vacols_id %>)
       <br/>la.location_history.map(&:summary)
     <% end %>

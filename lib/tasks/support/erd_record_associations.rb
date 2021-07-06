@@ -29,7 +29,7 @@ module ErdRecordAssociations
     end
   end
 
-  POLYMORPHIC_COLOR = "#0000ff" # blue
+  POLYMORPHIC_COLOR ||= "#0000ff" # blue
 
   #:reek:UtilityFunction
   def add_polymorphic_node(graph, node_name, subclasses)
@@ -60,7 +60,7 @@ module ErdRecordAssociations
 
   private
 
-  SUBCLASS_COLOR = "#000099" # dark blue
+  SUBCLASS_COLOR ||= "#000099" # dark blue
 
   def add_subclass_edges_for(graph, klass)
     (klass.subclasses & record_classes).each do |subclass|
@@ -108,7 +108,7 @@ module ErdRecordAssociations
     end
   end
 
-  DECISION_REVIEW_TYPES = %w[Appeal SupplementalClaim HigherLevelReview].freeze
+  DECISION_REVIEW_TYPES ||= %w[Appeal SupplementalClaim HigherLevelReview].freeze
 
   def polymorphic_nodes_config
     @polymorphic_nodes_config ||= {
@@ -197,7 +197,7 @@ module ErdRecordAssociations
   end
 
   # for custom edges
-  CUSTOM_POLYMORPHIC_EDGE_COLORS = {
+  CUSTOM_POLYMORPHIC_EDGE_COLORS ||= {
     color: "#6600cc",
     fontcolor: "#6600cc"
   }.freeze
