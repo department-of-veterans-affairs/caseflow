@@ -36,7 +36,9 @@
       poa_button_refresh: FeatureToggle.enabled?(:poa_button_refresh, user: current_user),
       poa_auto_refresh: FeatureToggle.enabled?(:poa_auto_refresh, user: current_user),
       poa_auto_ihp_update: FeatureToggle.enabled?(:poa_auto_ihp_update, user: current_user),
-      recognized_granted_substitution_after_dd: FeatureToggle.enabled?(:recognized_granted_substitution_after_dd, user: current_user)
+      recognized_granted_substitution_after_dd: FeatureToggle.enabled?(:recognized_granted_substitution_after_dd, user: current_user),
+      edit_unrecognized_appellant: FeatureToggle.enabled?(:edit_unrecognized_appellant, user: current_user),
+      hearings_substitution_death_dismissal: FeatureToggle.enabled?(:hearings_substitution_death_dismissal, user: current_user)
     }
   }) %>
 <% end %>

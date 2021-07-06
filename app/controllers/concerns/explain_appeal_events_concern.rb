@@ -55,17 +55,24 @@ module ExplainAppealEventsConcern
     end
 
     # Remove records after processing them.
-    # Don't remove them while processing because multiple request_issues can map to same decision_issue.
+    # Don't remove them while processing because multiple request_issues can map to the same decision_issue.
     exported_records(RequestDecisionIssue).each do |req_dec_issue|
       req_issues.delete(req_dec_issue["request_issue_id"])
       dec_issues.delete(req_dec_issue["decision_issue_id"])
     end
-    fail "Remaining DecisionIssue are not associated: #{dec_issues}" unless dec_issues.blank?
 
     # Process remaining req_issues
     req_issues.values.map do |req_issue|
       events += Explain::RequestIssueRecordEventMapper.new(req_issue).events
     end
+
+    # Remaining DecisionIssue are likely req_issues.contested_decision_issues,
+    # which are associated with another decision review, e.g., Appeal, HLR, or SC.
+    # These will be presented in other visualizations.
+    exported_records(RequestIssue).each { |req_issue| dec_issues.delete(req_issue["contested_decision_issue_id"]) }
+
+    # Warn in case we missed processing some
+    Rails.logger.warn("Remaining unaccounted DecisionIssues: #{dec_issues}") unless dec_issues.blank?
 
     events.flatten.compact.sort
   end
