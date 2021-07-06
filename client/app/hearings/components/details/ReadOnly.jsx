@@ -7,15 +7,17 @@ import PropTypes from 'prop-types';
  * @param {Object} props -- Label and child nodes
  * @component
  */
-export const ReadOnly = ({ className, label, text, spacing = 25 }) => (
+export const ReadOnly = ({ className, label, text, unformatted, spacing = 25 }) => (
   <div {...marginTop(spacing)} className={className}>
     {label && <strong>{label}</strong>}
-    {text && <pre>{text}</pre>}
+    {text && !unformatted && <pre>{text}</pre>}
+    {text && unformatted && <div>{text}</div>}
   </div>
 );
 
 ReadOnly.propTypes = {
   spacing: PropTypes.number,
+  unformatted: PropTypes.bool,
   text: PropTypes.node,
   label: PropTypes.string,
   className: PropTypes.string,
