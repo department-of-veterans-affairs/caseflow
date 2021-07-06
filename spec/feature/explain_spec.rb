@@ -12,91 +12,110 @@ RSpec.feature "Explain JSON" do
     User.authenticate!(roles: user_roles)
   end
 
-  let(:veteran) { create(:veteran, file_number: "111447777", middle_name: "Middle") }
-  let(:appeal) do
-    create(:appeal,
-           :advanced_on_docket_due_to_motion,
-           :with_schedule_hearing_tasks,
-           :with_post_intake_tasks,
-           veteran: veteran)
-  end
-  let!(:intake) do
-    AppealIntake.create(
-      user: create(:user),
-      detail: appeal,
-      veteran_file_number: veteran.file_number,
-      started_at: 2.days.ago,
-      completed_at: 1.day.ago
-    )
-  end
-  # let(:params) { { request_issues: issue_data } }
-  # let(:issue_data) do
-  #   [
-  #     {
-  #       rating_issue_reference_id: "reference-id",
-  #       decision_text: "decision text"
-  #     },
-  #     { decision_text: "nonrating request issue decision text",
-  #       nonrating_issue_category: "test issue category",
-  #       benefit_type: "compensation",
-  #       decision_date: "2018-12-25" }
-  #   ]
-  # end
-  scenario "admin visits explain page for intaken appeal" do
-    # intake.complete!(params)
+  context "given Legacy appeal" do
+    let(:legacy_appeal) do
+      create(:legacy_appeal, :with_veteran,
+             :with_schedule_hearing_tasks,
+             :with_judge_assign_task,
+             vacols_case: create(:case, :aod))
+    end
+    scenario "admin visits explain page for legacy appeal" do
+      visit "explain/appeals/#{legacy_appeal.vacols_id}"
+      expect(page).to have_content("priority: true (AOD: true, CAVC: false)")
+      expect(page).to have_content("Unscheduled Hearing (SCH Task ID: ")
 
-    visit "explain/appeals/#{appeal.uuid}"
-    expect(page).to have_content("Appeal.find(#{appeal.id})")
+      page.find("#narrative_table").click
+      expect(page).to have_content("NOD received")
+    end
   end
 
-  # 3 appeals are involved: `source_appeal` goes through CAVC remand to create `cavc_remand.remand_appeal`,
-  # which goes through appellant substitution to create `appellant_substitution.target_appeal`.
-  let(:source_appeal) { create(:appeal, :dispatched, :type_cavc_remand) }
-  let(:created_by) { create(:user) }
-  let(:substitute) { create(:claimant) }
-  let(:poa_participant_id) { "13579" }
-  let(:appellant_substitution) do
-    AppellantSubstitution.create!(
-      created_by: created_by,
-      source_appeal: source_appeal,
-      substitution_date: 5.days.ago.to_date,
-      claimant_type: substitute&.type,
-      substitute_participant_id: substitute&.participant_id,
-      poa_participant_id: poa_participant_id
-    )
-  end
+  context "given AMA appeal" do
+    let(:veteran) { create(:veteran, file_number: "111447777", middle_name: "Middle") }
+    let(:appeal) do
+      create(:appeal,
+             :advanced_on_docket_due_to_motion,
+             :with_schedule_hearing_tasks,
+             :with_post_intake_tasks,
+             veteran: veteran)
+    end
+    let!(:intake) do
+      AppealIntake.create(
+        user: create(:user),
+        detail: appeal,
+        veteran_file_number: veteran.file_number,
+        started_at: 2.days.ago,
+        completed_at: 1.day.ago
+      )
+    end
+    # let(:params) { { request_issues: issue_data } }
+    # let(:issue_data) do
+    #   [
+    #     {
+    #       rating_issue_reference_id: "reference-id",
+    #       decision_text: "decision text"
+    #     },
+    #     { decision_text: "nonrating request issue decision text",
+    #       nonrating_issue_category: "test issue category",
+    #       benefit_type: "compensation",
+    #       decision_date: "2018-12-25" }
+    #   ]
+    # end
+    scenario "admin visits explain page for intaken appeal" do
+      # intake.complete!(params)
 
-  before do
-    attorney_task = source_appeal.tasks.of_type(:AttorneyTask).last
-    create(:attorney_case_review, task: attorney_task, attorney: attorney_task.assigned_to)
-    JudgeCaseReview.complete(
-      location: "bva_dispatch",
-      task_id: attorney_task.parent.id,
-      judge: attorney_task.parent.assigned_to,
-      attorney: attorney_task.assigned_to,
-      complexity: "hard",
-      quality: "meets_expectations",
-      comment: "do this",
-      factors_not_considered: %w[theory_contention relevant_records],
-      areas_for_improvement: ["process_violations"],
-      issues: [{ disposition: "allowed", description: "something1",
-                 benefit_type: "compensation", diagnostic_code: "9999",
-                 request_issue_ids: source_appeal.request_issues.ids }]
-    )
-  end
-  scenario "admin visits explain page for appellant_substitution CAVC-remanded appeal" do
-    visit "explain/appeals/#{appellant_substitution.target_appeal.uuid}"
-    expect(page).to have_content("Appeal.find(#{appellant_substitution.target_appeal.id})")
-    expect(page).to have_content("priority: true (AOD: false, CAVC: true)")
+      visit "explain/appeals/#{appeal.uuid}"
+      expect(page).to have_content("Appeal.find(#{appeal.id})")
+    end
 
-    visit "explain/appeals/#{appellant_substitution.source_appeal.uuid}"
-    expect(page).to have_content("Appeal.find(#{appellant_substitution.source_appeal.id})")
-    expect(page).to have_content("priority: true (AOD: false, CAVC: true)")
+    # 3 appeals are involved: `source_appeal` goes through CAVC remand to create `cavc_remand.remand_appeal`,
+    # which goes through appellant substitution to create `appellant_substitution.target_appeal`.
+    let(:source_appeal) { create(:appeal, :dispatched, :type_cavc_remand) }
+    let(:created_by) { create(:user) }
+    let(:substitute) { create(:claimant) }
+    let(:poa_participant_id) { "13579" }
+    let(:appellant_substitution) do
+      AppellantSubstitution.create!(
+        created_by: created_by,
+        source_appeal: source_appeal,
+        substitution_date: 5.days.ago.to_date,
+        claimant_type: substitute&.type,
+        substitute_participant_id: substitute&.participant_id,
+        poa_participant_id: poa_participant_id
+      )
+    end
 
-    cavc_remand = appellant_substitution.source_appeal.cavc_remand
-    visit "explain/appeals/#{cavc_remand.source_appeal.uuid}"
-    expect(page).to have_content("Appeal.find(#{cavc_remand.source_appeal.id})")
-    expect(page).to have_content("priority: false (AOD: false, CAVC: false)")
+    before do
+      attorney_task = source_appeal.tasks.of_type(:AttorneyTask).last
+      create(:attorney_case_review, task: attorney_task, attorney: attorney_task.assigned_to)
+      JudgeCaseReview.complete(
+        location: "bva_dispatch",
+        task_id: attorney_task.parent.id,
+        judge: attorney_task.parent.assigned_to,
+        attorney: attorney_task.assigned_to,
+        complexity: "hard",
+        quality: "meets_expectations",
+        comment: "do this",
+        factors_not_considered: %w[theory_contention relevant_records],
+        areas_for_improvement: ["process_violations"],
+        issues: [{ disposition: "allowed", description: "something1",
+                   benefit_type: "compensation", diagnostic_code: "9999",
+                   request_issue_ids: source_appeal.request_issues.ids }]
+      )
+    end
+    scenario "admin visits explain page for appellant_substitution CAVC-remanded appeal" do
+      visit "explain/appeals/#{appellant_substitution.target_appeal.uuid}"
+      expect(page).to have_content("Appeal.find(#{appellant_substitution.target_appeal.id})")
+      expect(page).to have_content("priority: true (AOD: false, CAVC: true)")
+
+      visit "explain/appeals/#{appellant_substitution.source_appeal.uuid}"
+      expect(page).to have_content("Appeal.find(#{appellant_substitution.source_appeal.id})")
+      expect(page).to have_content("priority: true (AOD: false, CAVC: true)")
+
+      cavc_remand = appellant_substitution.source_appeal.cavc_remand
+      visit "explain/appeals/#{cavc_remand.source_appeal.uuid}"
+      expect(page).to have_content("Appeal.find(#{cavc_remand.source_appeal.id})")
+      expect(page).to have_content("priority: false (AOD: false, CAVC: false)")
+    end
   end
 
   context "for a realistic appeal" do

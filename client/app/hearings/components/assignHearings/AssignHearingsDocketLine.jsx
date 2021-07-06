@@ -39,8 +39,27 @@ export const docketCutoffLineStyle = (_index, scheduledForText) => {
         paddingBottom: '15px'
       },
       '& td:first-child::before': {
+        backgroundColor: 'transparent',
         transform: 'translateY(-215%)',
         content: `All veterans have been scheduled through ${scheduledForText}`
+      },
+      '@media screen and (min-width: 1224px) and (max-width: 1680px)': {
+        '& td:first-child::before': {
+          height: 'auto',
+          paddingBottom: '20px',
+        },
+      },
+      '@media screen and (max-width: 1280px)': {
+        '& td:first-child::before': {
+          height: 'auto',
+          paddingBottom: '20px',
+        },
+      },
+      '@media screen and (min-width: 600px) and (max-width: 1280px)': {
+        '& td:first-child::before': {
+          height: 'auto',
+          paddingBottom: '20px',
+        },
       }
     }
   } : {};
