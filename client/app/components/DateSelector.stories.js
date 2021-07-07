@@ -11,13 +11,9 @@ export default {
   args: {
     name: 'datefield',
     label: 'Enter Date',
-    type: 'date',
   },
   argTypes: {
     onChange: { action: 'onChange' },
-    type: {
-      control: { type: 'select', options: ['date', 'datetime-local', 'text'] },
-    },
   },
 };
 
