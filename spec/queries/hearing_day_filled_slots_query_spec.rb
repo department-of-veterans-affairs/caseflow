@@ -1,22 +1,9 @@
 # frozen_string_literal: true
 
-RSpec.feature "List Schedule for Build HearSched", :all_dbs do
-  let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"]) }
+describe HearingDayFilledSlotsQuery do
+  subject { HearingDayFilledSlotsQuery.new([hearing_day_one, hearing_day_two]).call }
 
-  context "Correct buttons are displayed" do
-    let!(:hearing) { create(:hearing) }
-
-    scenario "All buttons are visible" do
-      visit "hearings/schedule"
-
-      expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
-      expect(page).to have_content("Schedule Veterans")
-      expect(page).to have_content("Build Schedule")
-      expect(page).to have_content("Add Hearing Day")
-    end
-  end
-
-  context "Hearing Scheduled column" do
+  context "hearings days with mix of hearings and legacy hearings" do
     let(:hearing_day_one) { create(:hearing_day) }
     let(:hearing_day_two) { create(:hearing_day) }
     let!(:hearings) do
@@ -47,18 +34,12 @@ RSpec.feature "List Schedule for Build HearSched", :all_dbs do
     before do
       # cache dispositions
       LegacyHearing.all.each { |lh| lh.disposition }
-      FeatureToggle.enable!(:view_and_download_hearing_scheduled_column)
     end
 
-    scenario "Column displays with correct values" do
-      visit "hearings/schedule"
-
-      expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
-      expect(page).to have_content("Hearings Scheduled")
-      table_row = page.find("tr", id: "table-row-0")
-      expect(table_row).to have_content("2 of #{hearing_day_one.total_slots}")
-      table_row = page.find("tr", id: "table-row-1")
-      expect(table_row).to have_content("2 of #{hearing_day_two.total_slots}")
+    it "returns correct values", :aggregate_failures do
+      subject
+      expect(subject[hearing_day_one.id]).to eq 2
+      expect(subject[hearing_day_two.id]).to eq 2
     end
   end
 end
