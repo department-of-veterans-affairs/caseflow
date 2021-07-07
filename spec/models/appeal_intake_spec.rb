@@ -117,7 +117,10 @@ describe AppealIntake, :all_dbs do
     end
 
     context "when claimant is unlisted non-veteran" do
-      before { FeatureToggle.enable!(:non_veteran_claimants) }
+      before do
+        FeatureToggle.enable!(:non_veteran_claimants)
+        RequestStore[:current_user] = user
+      end
       after { FeatureToggle.disable!(:non_veteran_claimants) }
 
       let(:request_params) do
