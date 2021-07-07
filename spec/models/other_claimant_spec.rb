@@ -28,7 +28,11 @@ describe OtherClaimant, :postgres do
     let(:poa_participant_id) { nil }
     let(:user) { create(:user) }
 
-    subject { claimant.save_unrecognized_details!(params, poa_params, user) }
+    before do
+      RequestStore[:current_user] = user
+    end
+
+    subject { claimant.save_unrecognized_details!(params, poa_params) }
 
     context "when appellant is an unlisted individual" do
       let(:relationship) { "child" }

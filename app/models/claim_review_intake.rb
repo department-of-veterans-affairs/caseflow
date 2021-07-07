@@ -7,7 +7,7 @@ class ClaimReviewIntake < DecisionReviewIntake
     Intake::ClaimReviewIntakeSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
-  def review!(request_params, _current_user = nil)
+  def review!(request_params)
     detail.start_review!
 
     @request_params = request_params

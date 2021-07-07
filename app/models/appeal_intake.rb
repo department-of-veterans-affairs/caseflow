@@ -12,9 +12,8 @@ class AppealIntake < DecisionReviewIntake
     Intake::AppealIntakeSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
-  def review!(request_params, current_user)
+  def review!(request_params)
     @request_params = request_params
-    @current_user = current_user
 
     transaction do
       detail.assign_attributes(review_params)

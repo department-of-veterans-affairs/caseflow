@@ -52,8 +52,7 @@ class DecisionReviewIntake < Intake
     if claimant.is_a?(OtherClaimant)
       claimant.save_unrecognized_details!(
         request_params[:unlisted_claimant],
-        request_params[:poa],
-        current_user
+        request_params[:poa]
       )
     end
     update_person!
