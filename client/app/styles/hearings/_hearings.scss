@@ -347,6 +347,35 @@ $form-width: 575px;
 // Schedule Veteran Styles
 .schedule-veteran-page {
   min-height: 680px;
+
+  .cf-form-textarea {
+    max-width: $form-width;
+  }
+
+  .cf-form-textinput {
+    max-width: $form-width;
+  }
+
+  label {
+    max-width: $form-width;
+  }
+
+  .cf-select {
+    .cf-select__control {
+      max-width: $form-width;
+    }
+
+    .cf-select__menu {
+      max-width: $form-width;
+    }
+  }
+}
+
+.helper-text {
+  max-width: $form-width;
+  margin-top: 15;
+  color: $color-gray-dark;
+  line-height: 1.5em;
 }
 
 .appeal-information-docket-type-badge {
@@ -484,11 +513,6 @@ $form-width: 575px;
   margin-top: 5px;
 }
 
-.time-slot-button-container {
-  display: flex;
-  width: 800px;
-}
-
 .time-slot-container {
   flex: 0;
   max-width: 46rem;
@@ -496,9 +520,26 @@ $form-width: 575px;
   flex-direction: column;
   flex-wrap: wrap;
   line-height: normal;
+}
 
-  > span {
-    margin: 5px;
+
+// Don't have a margin-left on the left column of timeslot buttons
+.time-slot-button-container {
+  display: flex;
+  width: 800px;
+
+  :first-child {
+    > span {
+      margin-top: 5px;
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
+  }
+
+  :last-child {
+    > span {
+      margin: 5px;
+    }
   }
 }
 

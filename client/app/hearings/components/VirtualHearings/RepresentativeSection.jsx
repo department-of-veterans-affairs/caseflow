@@ -9,7 +9,7 @@ import { ReadOnly } from '../details/ReadOnly';
 import { HelperText } from './HelperText';
 import { VirtualHearingEmail } from './Emails';
 import { Timezone } from './Timezone';
-import { marginTop, noMaxWidth } from '../details/style';
+import { marginTop } from '../details/style';
 
 export const RepresentativeSection = ({
   hearing,
@@ -17,6 +17,7 @@ export const RepresentativeSection = ({
   errors,
   type,
   readOnly,
+  fullWidth,
   update,
   appellantTitle,
   showTimezoneField,
@@ -39,7 +40,7 @@ export const RepresentativeSection = ({
     )}
     {showTimezoneField && schedulingToVirtual && (
       <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
-        <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })}>
+        <div className={classNames(fullWidth ? 'usa-width-one-whole' : 'usa-width-one-half')}>
           <Timezone
             errorMessage={errors?.representativeTz}
             required={Boolean(virtualHearing?.representativeEmail)}
@@ -57,7 +58,7 @@ export const RepresentativeSection = ({
       </div>
     )}
     <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
-      <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
+      <div className={classNames(fullWidth ? 'usa-width-one-whole' : 'usa-width-one-half')} >
         <VirtualHearingEmail
           readOnly={readOnly}
           emailType="representativeEmail"
@@ -83,6 +84,7 @@ RepresentativeSection.propTypes = {
   type: PropTypes.string,
   update: PropTypes.func,
   readOnly: PropTypes.bool,
+  fullWidth: PropTypes.bool,
   appellantTitle: PropTypes.string,
   showTimezoneField: PropTypes.bool,
   schedulingToVirtual: PropTypes.bool
