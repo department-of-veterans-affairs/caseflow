@@ -8980,7 +8980,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                 name="sentToTranscriberDate"
                 onChange={[Function]}
                 strongLabel={true}
-                type="date"
               >
                 <TextField
                   className={
@@ -9039,7 +9038,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                 name="expectedReturnDate"
                 onChange={[Function]}
                 strongLabel={true}
-                type="date"
               >
                 <TextField
                   className={
@@ -9098,7 +9096,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                 name="uploadedToVbmsDate"
                 onChange={[Function]}
                 strongLabel={true}
-                type="date"
               >
                 <TextField
                   className={
@@ -11032,7 +11029,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                 onChange={[Function]}
                 readOnly={true}
                 strongLabel={true}
-                type="date"
               >
                 <TextField
                   className={
@@ -11362,7 +11358,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                 name="copySentDate"
                 onChange={[Function]}
                 strongLabel={true}
-                type="date"
               >
                 <TextField
                   className={
@@ -20437,7 +20432,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                 name="sentToTranscriberDate"
                 onChange={[Function]}
                 strongLabel={true}
-                type="date"
               >
                 <TextField
                   className={
@@ -20496,7 +20490,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                 name="expectedReturnDate"
                 onChange={[Function]}
                 strongLabel={true}
-                type="date"
               >
                 <TextField
                   className={
@@ -20555,7 +20548,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                 name="uploadedToVbmsDate"
                 onChange={[Function]}
                 strongLabel={true}
-                type="date"
               >
                 <TextField
                   className={
@@ -22489,7 +22481,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                 onChange={[Function]}
                 readOnly={true}
                 strongLabel={true}
-                type="date"
               >
                 <TextField
                   className={
@@ -22829,7 +22820,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                 name="copySentDate"
                 onChange={[Function]}
                 strongLabel={true}
-                type="date"
               >
                 <TextField
                   className={
@@ -33527,7 +33517,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                 name="sentToTranscriberDate"
                 onChange={[Function]}
                 strongLabel={true}
-                type="date"
               >
                 <TextField
                   className={
@@ -33586,7 +33575,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                 name="expectedReturnDate"
                 onChange={[Function]}
                 strongLabel={true}
-                type="date"
               >
                 <TextField
                   className={
@@ -33645,7 +33633,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                 name="uploadedToVbmsDate"
                 onChange={[Function]}
                 strongLabel={true}
-                type="date"
               >
                 <TextField
                   className={
@@ -35579,7 +35566,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                 onChange={[Function]}
                 readOnly={true}
                 strongLabel={true}
-                type="date"
               >
                 <TextField
                   className={
@@ -35919,7 +35905,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                 name="copySentDate"
                 onChange={[Function]}
                 strongLabel={true}
-                type="date"
               >
                 <TextField
                   className={
@@ -46618,7 +46603,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                 name="sentToTranscriberDate"
                 onChange={[Function]}
                 strongLabel={true}
-                type="date"
               >
                 <TextField
                   className={
@@ -46677,7 +46661,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                 name="expectedReturnDate"
                 onChange={[Function]}
                 strongLabel={true}
-                type="date"
               >
                 <TextField
                   className={
@@ -46736,7 +46719,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                 name="uploadedToVbmsDate"
                 onChange={[Function]}
                 strongLabel={true}
-                type="date"
               >
                 <TextField
                   className={
@@ -48670,7 +48652,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                 onChange={[Function]}
                 readOnly={true}
                 strongLabel={true}
-                type="date"
               >
                 <TextField
                   className={
@@ -49010,7 +48991,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                 name="copySentDate"
                 onChange={[Function]}
                 strongLabel={true}
-                type="date"
               >
                 <TextField
                   className={

@@ -18,7 +18,7 @@ exports[`DateSelector renders correctly 1`] = `
       max="9999-12-31"
       name="date1"
       placeholder="mm/dd/yyyy"
-      type="text"
+      type="date"
       value=""
     />
   </div>

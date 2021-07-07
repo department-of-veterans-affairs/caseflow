@@ -379,7 +379,6 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                             name="judgement-date"
                             onChange={[Function]}
                             strongLabel={true}
-                            type="date"
                             value={null}
                           >
                             <TextField
@@ -443,7 +442,6 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                             name="mandate-date"
                             onChange={[Function]}
                             strongLabel={true}
-                            type="date"
                             value={null}
                           >
                             <TextField
@@ -1000,7 +998,6 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                             name="judgement-date"
                             onChange={[Function]}
                             strongLabel={true}
-                            type="date"
                             value="03/27/2020"
                           >
                             <TextField
@@ -1064,7 +1061,6 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                             name="mandate-date"
                             onChange={[Function]}
                             strongLabel={true}
-                            type="date"
                             value="03/31/2019"
                           >
                             <TextField

@@ -3746,7 +3746,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   name="decision-date"
                   onChange={[Function]}
                   strongLabel={true}
-                  type="date"
                   value={null}
                 >
                   <TextField
