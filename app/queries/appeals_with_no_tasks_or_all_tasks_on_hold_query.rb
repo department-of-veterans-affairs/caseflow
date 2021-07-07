@@ -31,9 +31,13 @@ class AppealsWithNoTasksOrAllTasksOnHoldQuery
   end
 
   def dispatched_appeals_on_hold
-    Appeal.where(id: tasks_for(Appeal.name)
+    suspect_appeals = Appeal.where(id: tasks_for(Appeal.name)
       .where(type: RootTask.name, status: on_hold))
       .where(id: completed_dispatch_tasks(Appeal.name))
+
+    # Ignore appeals without a decision document as they are not fully dispatched.
+    # So return only appeals with a decision document since they are successfully dispatched.
+    suspect_appeals.select(&:decision_document)
   end
 
   def completed_dispatch_tasks(klass_name)
