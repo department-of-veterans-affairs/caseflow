@@ -15,11 +15,6 @@ const config = {
     chunkFilename: '[name].[contenthash].webpack.chunk.js',
     publicPath: devBuild && !testBuild ? 'http://localhost:3500/' : 'assets/'
   },
-  optimization: {
-    splitChunks: {
-      chunks: 'all',
-    },
-  },
   plugins: [
     new webpack.EnvironmentPlugin({ NODE_ENV: 'development' }),
     devBuild && new webpack.HotModuleReplacementPlugin(),
