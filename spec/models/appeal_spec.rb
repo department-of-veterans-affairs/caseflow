@@ -1068,6 +1068,7 @@ describe Appeal, :all_dbs do
       let(:appeal) do
         appeal = create(:appeal, :with_post_intake_tasks)
         create(:bva_dispatch_task, :completed, appeal: appeal)
+        create(:decision_document, citation_number: "A18123456", appeal: appeal)
         appeal
       end
 

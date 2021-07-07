@@ -1,7 +1,7 @@
 import { formatISO } from 'date-fns';
 import parseISO from 'date-fns/parseISO';
 
-const automatedTasks = [
+export const automatedTasks = [
   'QualityReviewTask',
   'JudgeQualityReviewTask',
   'AttorneyQualityReviewTask',
@@ -11,7 +11,8 @@ const automatedTasks = [
   'AttorneyRewriteTask',
   'BvaDispatchTask',
   'JudgeDispatchReturnTask',
-  'AttorneyDispatchReturnTask'
+  'AttorneyDispatchReturnTask',
+  'HearingTask'
 ];
 
 // Generic function to determine if a task (`current`) is a descendent of another task (`target`)
