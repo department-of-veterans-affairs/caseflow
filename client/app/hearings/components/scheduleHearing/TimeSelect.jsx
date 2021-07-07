@@ -18,6 +18,8 @@ export const TimeSelect = ({ roTimezone, onSelect, error, clearError, hearingDay
     // Set the height of the select component
     valueContainer: (styles) => ({
       ...styles,
+      // Cascading lineHeight is 200%, which makes the selected text vertically uncentered
+      lineHeight: 'normal',
       border: error ? '2px solid red' : styles.border,
       height: '44px',
       minHeight: '44px',
