@@ -1985,6 +1985,7 @@ RSpec.feature "Case details", :all_dbs do
           expect(page).to have_content("About the Appellant")
           expect(page).to have_content("Substitution granted by the RO")
           expect(page).to have_content(substitution_date)
+          expect(page).to have_content(COPY::CASE_TIMELINE_APPELLANT_IS_A_SUBSTITUTE)
         end
       end
     end

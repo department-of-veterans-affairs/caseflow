@@ -28,6 +28,7 @@ Object {
             Issues
           </strong>
           0
+          0
         </div>
         <div
           class="schedule-veteran-appeals-info-stream"
@@ -52,187 +53,13 @@ Object {
           </pre>
         </div>
         <div
+          class="appeal-information-docket-type-badge"
           data-css-acl5jg=""
         >
           <strong>
             Docket Number
           </strong>
-          <pre>
-            <span>
-              <span
-                aria-describedby="badge-200805-541"
-                aria-label="Hearing Request"
-                currentitem="false"
-                data-css-2moai0=""
-                data-event="focus mouseenter"
-                data-event-off="mouseleave keydown"
-                data-for="badge-200805-541"
-                data-tip="true"
-                tabindex="0"
-              >
-                H
-              </span>
-              <span
-                data-css-lflsmu=""
-              >
-                <div
-                  class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
-                  data-id="tooltip"
-                  id="badge-200805-541"
-                  role="tooltip"
-                >
-                  <style>
-                    
-  	.t00000000-0000-0000-0000-000000000000 {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t00000000-0000-0000-0000-000000000000.place-top {
-        margin-top: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::before {
-        border-top: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-bottom {
-        margin-top: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-left {
-        margin-left: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-right {
-        margin-left: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  
-                  </style>
-                  Hearing Request
-                </div>
-              </span>
-              200805-541
-            </span>
-          </pre>
-        </div>
-        <div
-          data-css-acl5jg=""
-        >
-          <strong>
-            Power of Attorney
-          </strong>
-          <pre>
-            Clarence Darrow
-          </pre>
-        </div>
-      </div>
-    </div>
-  </body>,
-  "container": <div>
-    <div
-      class="schedule-veteran-appeals-info"
-    >
-      <h2>
-        Appeal Information
-      </h2>
-      <div
-        data-css-1j4x2ld=""
-      >
-        <strong>
-          Veteran Name
-        </strong>
-        <pre>
-          Abellona Valtas
-        </pre>
-      </div>
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Issues
-        </strong>
-        0
-      </div>
-      <div
-        class="schedule-veteran-appeals-info-stream"
-        data-css-acl5jg=""
-      >
-        <strong>
-          Appeal Stream
-        </strong>
-        <pre>
-          <span>
-            <span
-              data-css-1ptmrda=""
-            >
-              AOD
-            </span>
-            ,
-             
-          </span>
-          <span>
-            Original
-          </span>
-        </pre>
-      </div>
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Docket Number
-        </strong>
-        <pre>
-          <span>
+          <div>
             <span
               aria-describedby="badge-200805-541"
               aria-label="Hearing Request"
@@ -336,8 +163,181 @@ Object {
               </div>
             </span>
             200805-541
+          </div>
+        </div>
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            Power of Attorney
+          </strong>
+          <pre>
+            Clarence Darrow
+          </pre>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class="schedule-veteran-appeals-info"
+    >
+      <h2>
+        Appeal Information
+      </h2>
+      <div
+        data-css-1j4x2ld=""
+      >
+        <strong>
+          Veteran Name
+        </strong>
+        <pre>
+          Abellona Valtas
+        </pre>
+      </div>
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          Issues
+        </strong>
+        0
+        0
+      </div>
+      <div
+        class="schedule-veteran-appeals-info-stream"
+        data-css-acl5jg=""
+      >
+        <strong>
+          Appeal Stream
+        </strong>
+        <pre>
+          <span>
+            <span
+              data-css-1ptmrda=""
+            >
+              AOD
+            </span>
+            ,
+             
+          </span>
+          <span>
+            Original
           </span>
         </pre>
+      </div>
+      <div
+        class="appeal-information-docket-type-badge"
+        data-css-acl5jg=""
+      >
+        <strong>
+          Docket Number
+        </strong>
+        <div>
+          <span
+            aria-describedby="badge-200805-541"
+            aria-label="Hearing Request"
+            currentitem="false"
+            data-css-2moai0=""
+            data-event="focus mouseenter"
+            data-event-off="mouseleave keydown"
+            data-for="badge-200805-541"
+            data-tip="true"
+            tabindex="0"
+          >
+            H
+          </span>
+          <span
+            data-css-lflsmu=""
+          >
+            <div
+              class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+              data-id="tooltip"
+              id="badge-200805-541"
+              role="tooltip"
+            >
+              <style>
+                
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+              </style>
+              Hearing Request
+            </div>
+          </span>
+          200805-541
+        </div>
       </div>
       <div
         data-css-acl5jg=""
@@ -433,6 +433,7 @@ Object {
             Issues
           </strong>
           0
+          0
         </div>
         <div
           class="schedule-veteran-appeals-info-stream"
@@ -448,188 +449,13 @@ Object {
           </pre>
         </div>
         <div
+          class="appeal-information-docket-type-badge"
           data-css-acl5jg=""
         >
           <strong>
             Docket Number
           </strong>
-          <pre>
-            <span>
-              <span
-                aria-describedby="badge-200805-541"
-                aria-label="Hearing Request"
-                currentitem="false"
-                data-css-2moai0=""
-                data-event="focus mouseenter"
-                data-event-off="mouseleave keydown"
-                data-for="badge-200805-541"
-                data-tip="true"
-                tabindex="0"
-              >
-                H
-              </span>
-              <span
-                data-css-lflsmu=""
-              >
-                <div
-                  class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
-                  data-id="tooltip"
-                  id="badge-200805-541"
-                  role="tooltip"
-                >
-                  <style>
-                    
-  	.t00000000-0000-0000-0000-000000000000 {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t00000000-0000-0000-0000-000000000000.place-top {
-        margin-top: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::before {
-        border-top: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-bottom {
-        margin-top: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-left {
-        margin-left: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-right {
-        margin-left: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  
-                  </style>
-                  Hearing Request
-                </div>
-              </span>
-              200805-541
-            </span>
-          </pre>
-        </div>
-        <div
-          data-css-acl5jg=""
-        >
-          <strong>
-            Power of Attorney
-          </strong>
-          <pre>
-            Clarence Darrow
-          </pre>
-        </div>
-        <div
-          data-css-acl5jg=""
-        >
-          <strong>
-            Date of Death
-          </strong>
-          <pre>
-            01/01/2021
-          </pre>
-        </div>
-      </div>
-    </div>
-  </body>,
-  "container": <div>
-    <div
-      class="schedule-veteran-appeals-info"
-    >
-      <h2>
-        Appeal Information
-      </h2>
-      <div
-        data-css-1j4x2ld=""
-      >
-        <strong>
-          Veteran Name
-        </strong>
-        <pre>
-          Abellona Valtas
-        </pre>
-      </div>
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Issues
-        </strong>
-        0
-      </div>
-      <div
-        class="schedule-veteran-appeals-info-stream"
-        data-css-acl5jg=""
-      >
-        <strong>
-          Appeal Stream
-        </strong>
-        <pre>
-          <span>
-            Original
-          </span>
-        </pre>
-      </div>
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Docket Number
-        </strong>
-        <pre>
-          <span>
+          <div>
             <span
               aria-describedby="badge-200805-541"
               aria-label="Hearing Request"
@@ -733,8 +559,182 @@ Object {
               </div>
             </span>
             200805-541
+          </div>
+        </div>
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            Power of Attorney
+          </strong>
+          <pre>
+            Clarence Darrow
+          </pre>
+        </div>
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            Date of Death
+          </strong>
+          <pre>
+            01/01/2021
+          </pre>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class="schedule-veteran-appeals-info"
+    >
+      <h2>
+        Appeal Information
+      </h2>
+      <div
+        data-css-1j4x2ld=""
+      >
+        <strong>
+          Veteran Name
+        </strong>
+        <pre>
+          Abellona Valtas
+        </pre>
+      </div>
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          Issues
+        </strong>
+        0
+        0
+      </div>
+      <div
+        class="schedule-veteran-appeals-info-stream"
+        data-css-acl5jg=""
+      >
+        <strong>
+          Appeal Stream
+        </strong>
+        <pre>
+          <span>
+            Original
           </span>
         </pre>
+      </div>
+      <div
+        class="appeal-information-docket-type-badge"
+        data-css-acl5jg=""
+      >
+        <strong>
+          Docket Number
+        </strong>
+        <div>
+          <span
+            aria-describedby="badge-200805-541"
+            aria-label="Hearing Request"
+            currentitem="false"
+            data-css-2moai0=""
+            data-event="focus mouseenter"
+            data-event-off="mouseleave keydown"
+            data-for="badge-200805-541"
+            data-tip="true"
+            tabindex="0"
+          >
+            H
+          </span>
+          <span
+            data-css-lflsmu=""
+          >
+            <div
+              class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+              data-id="tooltip"
+              id="badge-200805-541"
+              role="tooltip"
+            >
+              <style>
+                
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+              </style>
+              Hearing Request
+            </div>
+          </span>
+          200805-541
+        </div>
       </div>
       <div
         data-css-acl5jg=""
@@ -840,6 +840,7 @@ Object {
             Issues
           </strong>
           0
+          0
         </div>
         <div
           class="schedule-veteran-appeals-info-stream"
@@ -855,178 +856,13 @@ Object {
           </pre>
         </div>
         <div
+          class="appeal-information-docket-type-badge"
           data-css-acl5jg=""
         >
           <strong>
             Docket Number
           </strong>
-          <pre>
-            <span>
-              <span
-                aria-describedby="badge-200805-541"
-                aria-label="Hearing Request"
-                currentitem="false"
-                data-css-2moai0=""
-                data-event="focus mouseenter"
-                data-event-off="mouseleave keydown"
-                data-for="badge-200805-541"
-                data-tip="true"
-                tabindex="0"
-              >
-                H
-              </span>
-              <span
-                data-css-lflsmu=""
-              >
-                <div
-                  class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
-                  data-id="tooltip"
-                  id="badge-200805-541"
-                  role="tooltip"
-                >
-                  <style>
-                    
-  	.t00000000-0000-0000-0000-000000000000 {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t00000000-0000-0000-0000-000000000000.place-top {
-        margin-top: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::before {
-        border-top: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-bottom {
-        margin-top: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-left {
-        margin-left: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-right {
-        margin-left: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  
-                  </style>
-                  Hearing Request
-                </div>
-              </span>
-              200805-541
-            </span>
-          </pre>
-        </div>
-        <div
-          data-css-acl5jg=""
-        >
-          <strong>
-            Power of Attorney
-          </strong>
-          <pre>
-            No representative
-          </pre>
-        </div>
-      </div>
-    </div>
-  </body>,
-  "container": <div>
-    <div
-      class="schedule-veteran-appeals-info"
-    >
-      <h2>
-        Appeal Information
-      </h2>
-      <div
-        data-css-1j4x2ld=""
-      >
-        <strong>
-          Veteran Name
-        </strong>
-        <pre>
-          Abellona Valtas
-        </pre>
-      </div>
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Issues
-        </strong>
-        0
-      </div>
-      <div
-        class="schedule-veteran-appeals-info-stream"
-        data-css-acl5jg=""
-      >
-        <strong>
-          Appeal Stream
-        </strong>
-        <pre>
-          <span>
-            Original
-          </span>
-        </pre>
-      </div>
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Docket Number
-        </strong>
-        <pre>
-          <span>
+          <div>
             <span
               aria-describedby="badge-200805-541"
               aria-label="Hearing Request"
@@ -1130,8 +966,172 @@ Object {
               </div>
             </span>
             200805-541
+          </div>
+        </div>
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            Power of Attorney
+          </strong>
+          <pre>
+            No representative
+          </pre>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class="schedule-veteran-appeals-info"
+    >
+      <h2>
+        Appeal Information
+      </h2>
+      <div
+        data-css-1j4x2ld=""
+      >
+        <strong>
+          Veteran Name
+        </strong>
+        <pre>
+          Abellona Valtas
+        </pre>
+      </div>
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          Issues
+        </strong>
+        0
+        0
+      </div>
+      <div
+        class="schedule-veteran-appeals-info-stream"
+        data-css-acl5jg=""
+      >
+        <strong>
+          Appeal Stream
+        </strong>
+        <pre>
+          <span>
+            Original
           </span>
         </pre>
+      </div>
+      <div
+        class="appeal-information-docket-type-badge"
+        data-css-acl5jg=""
+      >
+        <strong>
+          Docket Number
+        </strong>
+        <div>
+          <span
+            aria-describedby="badge-200805-541"
+            aria-label="Hearing Request"
+            currentitem="false"
+            data-css-2moai0=""
+            data-event="focus mouseenter"
+            data-event-off="mouseleave keydown"
+            data-for="badge-200805-541"
+            data-tip="true"
+            tabindex="0"
+          >
+            H
+          </span>
+          <span
+            data-css-lflsmu=""
+          >
+            <div
+              class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+              data-id="tooltip"
+              id="badge-200805-541"
+              role="tooltip"
+            >
+              <style>
+                
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+              </style>
+              Hearing Request
+            </div>
+          </span>
+          200805-541
+        </div>
       </div>
       <div
         data-css-acl5jg=""
@@ -1227,6 +1227,7 @@ Object {
             Issues
           </strong>
           0
+          0
         </div>
         <div
           class="schedule-veteran-appeals-info-stream"
@@ -1258,194 +1259,13 @@ Object {
           </pre>
         </div>
         <div
+          class="appeal-information-docket-type-badge"
           data-css-acl5jg=""
         >
           <strong>
             Docket Number
           </strong>
-          <pre>
-            <span>
-              <span
-                aria-describedby="badge-200805-541"
-                aria-label="Hearing Request"
-                currentitem="false"
-                data-css-2moai0=""
-                data-event="focus mouseenter"
-                data-event-off="mouseleave keydown"
-                data-for="badge-200805-541"
-                data-tip="true"
-                tabindex="0"
-              >
-                H
-              </span>
-              <span
-                data-css-lflsmu=""
-              >
-                <div
-                  class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
-                  data-id="tooltip"
-                  id="badge-200805-541"
-                  role="tooltip"
-                >
-                  <style>
-                    
-  	.t00000000-0000-0000-0000-000000000000 {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t00000000-0000-0000-0000-000000000000.place-top {
-        margin-top: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::before {
-        border-top: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-bottom {
-        margin-top: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-left {
-        margin-left: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-right {
-        margin-left: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  
-                  </style>
-                  Hearing Request
-                </div>
-              </span>
-              200805-541
-            </span>
-          </pre>
-        </div>
-        <div
-          data-css-acl5jg=""
-        >
-          <strong>
-            Power of Attorney
-          </strong>
-          <pre>
-            Clarence Darrow
-          </pre>
-        </div>
-      </div>
-    </div>
-  </body>,
-  "container": <div>
-    <div
-      class="schedule-veteran-appeals-info"
-    >
-      <h2>
-        Appeal Information
-      </h2>
-      <div
-        data-css-1j4x2ld=""
-      >
-        <strong>
-          Veteran Name
-        </strong>
-        <pre>
-          Abellona Valtas
-        </pre>
-      </div>
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Issues
-        </strong>
-        0
-      </div>
-      <div
-        class="schedule-veteran-appeals-info-stream"
-        data-css-acl5jg=""
-      >
-        <strong>
-          Appeal Stream
-        </strong>
-        <pre>
-          <span>
-            <span
-              data-css-1ptmrda=""
-            >
-              CAVC
-            </span>
-            ,
-          </span>
-          <a
-            href="/queue/appeals/123"
-          >
-            <span>
-              Court Remand
-            </span>
-            <div>
-              VLJ 
-              Judge Name
-            </div>
-          </a>
-        </pre>
-      </div>
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Docket Number
-        </strong>
-        <pre>
-          <span>
+          <div>
             <span
               aria-describedby="badge-200805-541"
               aria-label="Hearing Request"
@@ -1549,8 +1369,188 @@ Object {
               </div>
             </span>
             200805-541
-          </span>
+          </div>
+        </div>
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            Power of Attorney
+          </strong>
+          <pre>
+            Clarence Darrow
+          </pre>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class="schedule-veteran-appeals-info"
+    >
+      <h2>
+        Appeal Information
+      </h2>
+      <div
+        data-css-1j4x2ld=""
+      >
+        <strong>
+          Veteran Name
+        </strong>
+        <pre>
+          Abellona Valtas
         </pre>
+      </div>
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          Issues
+        </strong>
+        0
+        0
+      </div>
+      <div
+        class="schedule-veteran-appeals-info-stream"
+        data-css-acl5jg=""
+      >
+        <strong>
+          Appeal Stream
+        </strong>
+        <pre>
+          <span>
+            <span
+              data-css-1ptmrda=""
+            >
+              CAVC
+            </span>
+            ,
+          </span>
+          <a
+            href="/queue/appeals/123"
+          >
+            <span>
+              Court Remand
+            </span>
+            <div>
+              VLJ 
+              Judge Name
+            </div>
+          </a>
+        </pre>
+      </div>
+      <div
+        class="appeal-information-docket-type-badge"
+        data-css-acl5jg=""
+      >
+        <strong>
+          Docket Number
+        </strong>
+        <div>
+          <span
+            aria-describedby="badge-200805-541"
+            aria-label="Hearing Request"
+            currentitem="false"
+            data-css-2moai0=""
+            data-event="focus mouseenter"
+            data-event-off="mouseleave keydown"
+            data-for="badge-200805-541"
+            data-tip="true"
+            tabindex="0"
+          >
+            H
+          </span>
+          <span
+            data-css-lflsmu=""
+          >
+            <div
+              class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+              data-id="tooltip"
+              id="badge-200805-541"
+              role="tooltip"
+            >
+              <style>
+                
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+              </style>
+              Hearing Request
+            </div>
+          </span>
+          200805-541
+        </div>
       </div>
       <div
         data-css-acl5jg=""
@@ -1646,6 +1646,7 @@ Object {
             Issues
           </strong>
           0
+          0
         </div>
         <div
           class="schedule-veteran-appeals-info-stream"
@@ -1661,178 +1662,13 @@ Object {
           </pre>
         </div>
         <div
+          class="appeal-information-docket-type-badge"
           data-css-acl5jg=""
         >
           <strong>
             Docket Number
           </strong>
-          <pre>
-            <span>
-              <span
-                aria-describedby="badge-200805-541"
-                aria-label="Hearing Request"
-                currentitem="false"
-                data-css-2moai0=""
-                data-event="focus mouseenter"
-                data-event-off="mouseleave keydown"
-                data-for="badge-200805-541"
-                data-tip="true"
-                tabindex="0"
-              >
-                H
-              </span>
-              <span
-                data-css-lflsmu=""
-              >
-                <div
-                  class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
-                  data-id="tooltip"
-                  id="badge-200805-541"
-                  role="tooltip"
-                >
-                  <style>
-                    
-  	.t00000000-0000-0000-0000-000000000000 {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t00000000-0000-0000-0000-000000000000.place-top {
-        margin-top: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::before {
-        border-top: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-bottom {
-        margin-top: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-left {
-        margin-left: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-right {
-        margin-left: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  
-                  </style>
-                  Hearing Request
-                </div>
-              </span>
-              200805-541
-            </span>
-          </pre>
-        </div>
-        <div
-          data-css-acl5jg=""
-        >
-          <strong>
-            Power of Attorney
-          </strong>
-          <pre>
-            No representative
-          </pre>
-        </div>
-      </div>
-    </div>
-  </body>,
-  "container": <div>
-    <div
-      class="schedule-veteran-appeals-info"
-    >
-      <h2>
-        Appeal Information
-      </h2>
-      <div
-        data-css-1j4x2ld=""
-      >
-        <strong>
-          Appellant Name
-        </strong>
-        <pre>
-          Abellona Valtas
-        </pre>
-      </div>
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Issues
-        </strong>
-        0
-      </div>
-      <div
-        class="schedule-veteran-appeals-info-stream"
-        data-css-acl5jg=""
-      >
-        <strong>
-          Appeal Stream
-        </strong>
-        <pre>
-          <span>
-            Original
-          </span>
-        </pre>
-      </div>
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Docket Number
-        </strong>
-        <pre>
-          <span>
+          <div>
             <span
               aria-describedby="badge-200805-541"
               aria-label="Hearing Request"
@@ -1936,8 +1772,172 @@ Object {
               </div>
             </span>
             200805-541
+          </div>
+        </div>
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            Power of Attorney
+          </strong>
+          <pre>
+            No representative
+          </pre>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class="schedule-veteran-appeals-info"
+    >
+      <h2>
+        Appeal Information
+      </h2>
+      <div
+        data-css-1j4x2ld=""
+      >
+        <strong>
+          Appellant Name
+        </strong>
+        <pre>
+          Abellona Valtas
+        </pre>
+      </div>
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          Issues
+        </strong>
+        0
+        0
+      </div>
+      <div
+        class="schedule-veteran-appeals-info-stream"
+        data-css-acl5jg=""
+      >
+        <strong>
+          Appeal Stream
+        </strong>
+        <pre>
+          <span>
+            Original
           </span>
         </pre>
+      </div>
+      <div
+        class="appeal-information-docket-type-badge"
+        data-css-acl5jg=""
+      >
+        <strong>
+          Docket Number
+        </strong>
+        <div>
+          <span
+            aria-describedby="badge-200805-541"
+            aria-label="Hearing Request"
+            currentitem="false"
+            data-css-2moai0=""
+            data-event="focus mouseenter"
+            data-event-off="mouseleave keydown"
+            data-for="badge-200805-541"
+            data-tip="true"
+            tabindex="0"
+          >
+            H
+          </span>
+          <span
+            data-css-lflsmu=""
+          >
+            <div
+              class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+              data-id="tooltip"
+              id="badge-200805-541"
+              role="tooltip"
+            >
+              <style>
+                
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+              </style>
+              Hearing Request
+            </div>
+          </span>
+          200805-541
+        </div>
       </div>
       <div
         data-css-acl5jg=""
@@ -2033,6 +2033,7 @@ Object {
             Issues
           </strong>
           0
+          0
         </div>
         <div
           class="schedule-veteran-appeals-info-stream"
@@ -2048,178 +2049,13 @@ Object {
           </pre>
         </div>
         <div
+          class="appeal-information-docket-type-badge"
           data-css-acl5jg=""
         >
           <strong>
             Docket Number
           </strong>
-          <pre>
-            <span>
-              <span
-                aria-describedby="badge-200805-541"
-                aria-label="Hearing Request"
-                currentitem="false"
-                data-css-2moai0=""
-                data-event="focus mouseenter"
-                data-event-off="mouseleave keydown"
-                data-for="badge-200805-541"
-                data-tip="true"
-                tabindex="0"
-              >
-                H
-              </span>
-              <span
-                data-css-lflsmu=""
-              >
-                <div
-                  class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
-                  data-id="tooltip"
-                  id="badge-200805-541"
-                  role="tooltip"
-                >
-                  <style>
-                    
-  	.t00000000-0000-0000-0000-000000000000 {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t00000000-0000-0000-0000-000000000000.place-top {
-        margin-top: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::before {
-        border-top: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-bottom {
-        margin-top: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-left {
-        margin-left: -10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t00000000-0000-0000-0000-000000000000.place-right {
-        margin-left: 10px;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t00000000-0000-0000-0000-000000000000.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  
-                  </style>
-                  Hearing Request
-                </div>
-              </span>
-              200805-541
-            </span>
-          </pre>
-        </div>
-        <div
-          data-css-acl5jg=""
-        >
-          <strong>
-            Power of Attorney
-          </strong>
-          <pre>
-            Clarence Darrow
-          </pre>
-        </div>
-      </div>
-    </div>
-  </body>,
-  "container": <div>
-    <div
-      class="schedule-veteran-appeals-info"
-    >
-      <h2>
-        Appeal Information
-      </h2>
-      <div
-        data-css-1j4x2ld=""
-      >
-        <strong>
-          Veteran Name
-        </strong>
-        <pre>
-          Abellona Valtas
-        </pre>
-      </div>
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Issues
-        </strong>
-        0
-      </div>
-      <div
-        class="schedule-veteran-appeals-info-stream"
-        data-css-acl5jg=""
-      >
-        <strong>
-          Appeal Stream
-        </strong>
-        <pre>
-          <span>
-            Original
-          </span>
-        </pre>
-      </div>
-      <div
-        data-css-acl5jg=""
-      >
-        <strong>
-          Docket Number
-        </strong>
-        <pre>
-          <span>
+          <div>
             <span
               aria-describedby="badge-200805-541"
               aria-label="Hearing Request"
@@ -2323,8 +2159,172 @@ Object {
               </div>
             </span>
             200805-541
+          </div>
+        </div>
+        <div
+          data-css-acl5jg=""
+        >
+          <strong>
+            Power of Attorney
+          </strong>
+          <pre>
+            Clarence Darrow
+          </pre>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class="schedule-veteran-appeals-info"
+    >
+      <h2>
+        Appeal Information
+      </h2>
+      <div
+        data-css-1j4x2ld=""
+      >
+        <strong>
+          Veteran Name
+        </strong>
+        <pre>
+          Abellona Valtas
+        </pre>
+      </div>
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          Issues
+        </strong>
+        0
+        0
+      </div>
+      <div
+        class="schedule-veteran-appeals-info-stream"
+        data-css-acl5jg=""
+      >
+        <strong>
+          Appeal Stream
+        </strong>
+        <pre>
+          <span>
+            Original
           </span>
         </pre>
+      </div>
+      <div
+        class="appeal-information-docket-type-badge"
+        data-css-acl5jg=""
+      >
+        <strong>
+          Docket Number
+        </strong>
+        <div>
+          <span
+            aria-describedby="badge-200805-541"
+            aria-label="Hearing Request"
+            currentitem="false"
+            data-css-2moai0=""
+            data-event="focus mouseenter"
+            data-event-off="mouseleave keydown"
+            data-for="badge-200805-541"
+            data-tip="true"
+            tabindex="0"
+          >
+            H
+          </span>
+          <span
+            data-css-lflsmu=""
+          >
+            <div
+              class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+              data-id="tooltip"
+              id="badge-200805-541"
+              role="tooltip"
+            >
+              <style>
+                
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+              </style>
+              Hearing Request
+            </div>
+          </span>
+          200805-541
+        </div>
       </div>
       <div
         data-css-acl5jg=""
