@@ -65,6 +65,7 @@ export class EstablishClaimForm extends React.Component {
           <DateSelector
             label="Decision Date"
             name="date"
+            type="date"
             readOnly
             value={decisionDate}
           />

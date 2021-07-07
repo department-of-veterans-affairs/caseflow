@@ -22,6 +22,7 @@ export default class TestPage extends React.Component {
       <DateSelector
         label="Test Date"
         name="testDate"
+        type="date"
         onChange={(value) => {
           this.setState({ testDate: value });
         }}

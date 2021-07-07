@@ -206,6 +206,7 @@ export class SignAndCertify extends React.Component {
           <DateSelector
             name="Date:"
             value={formatDateStr(certificationDate)}
+            type="date"
             readOnly
           />
         </div>
