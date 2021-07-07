@@ -1,7 +1,7 @@
 class ChangeUnrecognizedAppellantCurrentVersion < ActiveRecord::Migration[5.2]
   def up
-    UnrecognizedAppellant.where(current_version: nil).where(created_by: nil)
-    .all.each do |unrecognized_appellant|
+    UnrecognizedAppellant.where(current_version: nil, created_by: nil)
+      .each do |unrecognized_appellant|
       unrecognized_appellant.update(
         current_version: unrecognized_appellant,
         created_by: unrecognized_appellant.claimant.decision_review.intake.user
