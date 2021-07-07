@@ -79,14 +79,8 @@ module AssociatedVacolsModel
 
   # Setter method for assigning a hash of values
   # to their corresponding instance variables
-  # Note: cache_keys is a hash like { :disposition => "legacy_hearing_disposition_1344" }
-  #       If passed in, we can cache the value from VACOLS in Rails Cache. This is used for
-  #       optimization to avoid VACOLS trips.
-  def assign_from_vacols(values, cache_keys: {})
+  def assign_from_vacols(values)
     values.each do |key, value|
-      if cache_keys[key].present?
-        Rails.cache.write(cache_keys[key], value)
-      end
       setter = method("#{key}=")
       setter.call(value)
     end

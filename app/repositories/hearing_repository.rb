@@ -93,10 +93,7 @@ class HearingRepository
     end
 
     def set_vacols_values(hearing, vacols_record)
-      hearing.assign_from_vacols(
-        vacols_attributes(hearing, vacols_record),
-        cache_keys: { disposition: LegacyHearing.cache_key_for_field(:disposition, hearing.vacols_id) }
-      )
+      hearing.assign_from_vacols(vacols_attributes(hearing, vacols_record))
       hearing
     end
 
