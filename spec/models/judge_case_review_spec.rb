@@ -61,7 +61,7 @@ describe JudgeCaseReview, :all_dbs do
     end
 
     subject { JudgeCaseReview.reached_monthly_limit_in_quality_reviews? }
-    let(:limit) { JudgeCaseReview::MONTHLY_LIMIT_OF_QUAILITY_REVIEWS }
+    let(:limit) { JudgeCaseReview::MONTHLY_LIMIT_OF_QUALITY_REVIEWS }
 
     context "when more than monthly limit" do
       before do
