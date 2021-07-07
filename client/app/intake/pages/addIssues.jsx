@@ -460,7 +460,6 @@ class AddIssuesPage extends React.Component {
                 value={intakeData.withdrawalDate}
                 onChange={this.withdrawalDateOnChange}
                 dateErrorMessage={withdrawError()}
-                type="date"
               />
             </InlineForm>
           </div>

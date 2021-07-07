@@ -245,7 +245,6 @@ export const AddHearingDay = ({
             errorMessage={dateError ? getErrorMessage() : null}
             value={selectedHearingDay}
             onChange={onHearingDateChange}
-            type="date"
           />
           <SearchableDropdown
             name="requestType"

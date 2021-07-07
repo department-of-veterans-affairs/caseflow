@@ -45,7 +45,6 @@ const TranscriptionProblemInputs = ({ transcription, update, readOnly }) => (
       name="problemNoticeSentDate"
       label="Problem Notice Sent"
       strongLabel
-      type="date"
       readOnly={readOnly || _.isEmpty(transcription?.problemType)}
       value={transcription?.problemNoticeSentDate}
       onChange={(problemNoticeSentDate) => update({ problemNoticeSentDate })}

@@ -295,7 +295,6 @@ const AddCavcRemandView = (props) => {
 
   const decisionField = <DateSelector
     label={COPY.CAVC_COURT_DECISION_DATE}
-    type="date"
     name="decision-date"
     value={decisionDate}
     onChange={(val) => setDecisionDate(val)}
@@ -322,7 +321,6 @@ const AddCavcRemandView = (props) => {
 
   const judgementField = <DateSelector
     label={COPY.CAVC_JUDGEMENT_DATE}
-    type="date"
     name="judgement-date"
     value={judgementDate}
     onChange={(val) => setJudgementDate(val)}
@@ -332,7 +330,6 @@ const AddCavcRemandView = (props) => {
 
   const mandateField = <DateSelector
     label={COPY.CAVC_MANDATE_DATE}
-    type="date"
     name="mandate-date"
     value={mandateDate}
     onChange={(val) => setMandateDate(val)}

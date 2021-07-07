@@ -230,7 +230,6 @@ class NonratingRequestIssueModal extends React.Component {
             value={decisionDate}
             errorMessage={this.state.dateError}
             onChange={this.decisionDateOnChange}
-            type="date"
           />
         </div>
 

@@ -74,7 +74,6 @@ const AddCavcDatesModal = ({ appealId, decisionType, error, highlightInvalid, hi
 
   const judgementField = <DateSelector
     label={COPY.CAVC_JUDGEMENT_DATE}
-    type="date"
     name="judgement-date"
     value={judgementDate}
     onChange={(val) => setJudgementDate(val)}
@@ -84,7 +83,6 @@ const AddCavcDatesModal = ({ appealId, decisionType, error, highlightInvalid, hi
 
   const mandateField = <DateSelector
     label={COPY.CAVC_MANDATE_DATE}
-    type="date"
     name="mandate-date"
     value={mandateDate}
     onChange={(val) => setMandateDate(val)}

@@ -21,7 +21,6 @@ const TranscriptionRequestInputs = ({ hearing, update, readOnly }) => (
       name="copySentDate"
       label="Copy Sent to Appellant/Rep"
       strongLabel
-      type="date"
       readOnly={readOnly}
       value={hearing?.transcriptSentDate}
       onChange={(transcriptSentDate) => update({ transcriptSentDate })}

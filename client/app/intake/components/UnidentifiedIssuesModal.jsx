@@ -122,7 +122,6 @@ class UnidentifiedIssuesModal extends React.Component {
             value={decisionDate}
             errorMessage={this.state.dateError}
             onChange={this.decisionDateOnChange}
-            type="date"
             optional={!this.state.verifiedUnidentifiedIssue}
           />
         </div>

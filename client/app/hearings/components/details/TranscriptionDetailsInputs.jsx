@@ -51,7 +51,6 @@ const TranscriptionDetailsInputs = ({ transcription, update, readOnly }) => (
         name="sentToTranscriberDate"
         label="Sent to Transcriber"
         strongLabel
-        type="date"
         readOnly={readOnly}
         value={transcription?.sentToTranscriberDate}
         onChange={(sentToTranscriberDate) => update({ sentToTranscriberDate })}
@@ -60,7 +59,6 @@ const TranscriptionDetailsInputs = ({ transcription, update, readOnly }) => (
         name="expectedReturnDate"
         label="Expected Return Date"
         strongLabel
-        type="date"
         readOnly={readOnly}
         value={transcription?.expectedReturnDate}
         onChange={(expectedReturnDate) => update({ expectedReturnDate })}
@@ -69,7 +67,6 @@ const TranscriptionDetailsInputs = ({ transcription, update, readOnly }) => (
         name="uploadedToVbmsDate"
         label="Transcript Uploaded to VBMS"
         strongLabel
-        type="date"
         readOnly={readOnly}
         value={transcription?.uploadedToVbmsDate}
         onChange={(uploadedToVbmsDate) => update({ uploadedToVbmsDate })}

@@ -45,7 +45,6 @@ export const DocketSwitchDenialForm = ({
 
         <DateSelector
           inputRef={register}
-          type="date"
           name="receiptDate"
           label="What is the Receipt Date of the docket switch request?"
           strongLabel

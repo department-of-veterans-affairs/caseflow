@@ -152,7 +152,6 @@ export const DocketSwitchReviewRequestForm = ({
 
         <DateSelector
           inputRef={register}
-          type="date"
           errorMessage={touched.receiptDate && errors.receiptDate?.message}
           name="receiptDate"
           label="What is the Receipt Date of the docket switch request?"

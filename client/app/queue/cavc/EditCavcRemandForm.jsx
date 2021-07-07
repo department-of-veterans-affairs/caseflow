@@ -287,7 +287,6 @@ export const EditCavcRemandForm = ({
         <DateSelector
           inputRef={register}
           label={COPY.CAVC_COURT_DECISION_DATE}
-          type="date"
           name="decisionDate"
           errorMessage={errors?.decisionDate && COPY.CAVC_DECISION_DATE_ERROR}
           strongLabel
@@ -312,7 +311,6 @@ export const EditCavcRemandForm = ({
             <DateSelector
               inputRef={register}
               label={COPY.CAVC_JUDGEMENT_DATE}
-              type="date"
               name="judgementDate"
               errorMessage={
                 errors?.judgementDate && COPY.CAVC_JUDGEMENT_DATE_ERROR
@@ -323,7 +321,6 @@ export const EditCavcRemandForm = ({
             <DateSelector
               inputRef={register}
               label={COPY.CAVC_MANDATE_DATE}
-              type="date"
               name="mandateDate"
               errorMessage={errors?.mandateDate && COPY.CAVC_MANDATE_DATE_ERROR}
               strongLabel

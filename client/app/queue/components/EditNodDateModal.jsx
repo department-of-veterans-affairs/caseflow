@@ -230,7 +230,6 @@ export const EditNodDateModal = ({
           errorMessage={errors.nodDate?.message}
           label={COPY.EDIT_NOD_DATE_LABEL}
           strongLabel
-          type="date"
         />
         <Controller
           name="reason"
