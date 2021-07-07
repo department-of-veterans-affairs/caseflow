@@ -2,7 +2,6 @@
 
 class AppealIntake < DecisionReviewIntake
   attr_reader :request_params
-  attr_reader :current_user
 
   def find_or_build_initial_detail
     Appeal.new(veteran_file_number: veteran_file_number)
