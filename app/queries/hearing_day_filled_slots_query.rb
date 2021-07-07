@@ -15,9 +15,9 @@ class HearingDayFilledSlotsQuery
   def call
     result = ama_hearings_count_per_day
     legacy_hearings_count_per_day.each do |hearing_day_id, filled_slots_count|
-      result[hearing_day_id] = 0 if result[hearing_day_id].blank?
+      result[hearing_day_id.to_i] = 0 if result[hearing_day_id.to_i].blank?
 
-      result[hearing_day_id] += filled_slots_count
+      result[hearing_day_id.to_i] += filled_slots_count
     end
 
     result
@@ -31,20 +31,15 @@ class HearingDayFilledSlotsQuery
   end
 
   def legacy_hearings_count_per_day
-    vacols_ids = LegacyHearing.where(hearing_day_id: @hearing_days.pluck(:id)).pluck(:hearing_day_id, :vacols_id)
-    legacy_dispositions = vacols_ids.map do |_h_day_id, vacols_id|
-      [
-        vacols_id, Rails.cache.read(LegacyHearing.cache_key_for_field(:disposition, vacols_id))
-      ]
-    end.to_h
+    vacols_ids = LegacyHearing.where(hearing_day_id: @hearing_days.pluck(:id)).pluck(:vacols_id)
 
-    filtered_hearings = vacols_ids.select do |_h_day_id, vacols_id|
-      disposition = legacy_dispositions[vacols_id]
-      Hearing::CLOSED_HEARING_DISPOSITIONS.exclude?(disposition)
+    vacols_ids.in_groups_of(1000, false).reduce({}) do |acc, vacols_batched_ids|
+      acc.merge(
+        VACOLS::CaseHearing.where(hearing_pkseq: vacols_batched_ids)
+         .where("hearing_disp NOT in (?) or hearing_disp is null", VACOLS::CaseHearing::CLOSED_HEARING_DISPOSITIONS)
+         .group(:vdkey)
+         .count
+      )
     end
-
-    filtered_hearings
-      .group_by(&:shift)
-      .transform_values(&:count)
   end
 end

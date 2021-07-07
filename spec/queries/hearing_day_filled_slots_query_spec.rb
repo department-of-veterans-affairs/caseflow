@@ -31,11 +31,6 @@ describe HearingDayFilledSlotsQuery do
       ]
     end
 
-    before do
-      # cache dispositions
-      LegacyHearing.all.each(&:disposition)
-    end
-
     it "returns correct values", :aggregate_failures do
       subject
       expect(subject[hearing_day_one.id]).to eq 2

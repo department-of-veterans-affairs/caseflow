@@ -119,8 +119,8 @@ describe Hearings::HearingDayController, :all_dbs do
           create(:legacy_hearing, hearing_day: hearing_day) # nil disposition
         ]
       end
+
       before do
-        LegacyHearing.all.each(&:disposition)
         FeatureToggle.enable!(:view_and_download_hearing_scheduled_column)
       end
 

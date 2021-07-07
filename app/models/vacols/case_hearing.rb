@@ -38,6 +38,8 @@ class VACOLS::CaseHearing < VACOLS::Record
     E: Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
   }.freeze
 
+  CLOSED_HEARING_DISPOSITIONS = [:C, :P, :E].freeze
+
   # flip {:H => "held", ...} to {:held => "H", ...}
   HEARING_DISPOSITION_CODES = HEARING_DISPOSITIONS.each_with_object({}) do |(key, value), obj|
     obj[value.to_sym] = key.to_s
