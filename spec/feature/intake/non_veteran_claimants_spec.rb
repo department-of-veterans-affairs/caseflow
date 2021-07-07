@@ -318,8 +318,10 @@ feature "Non-veteran claimants", :postgres do
     end
 
     it "returns to review page if data is reloaded before saving" do
+      BvaIntake.singleton.add_user(current_user)
       visit "/intake"
       select_form(Constants.INTAKE_FORM_NAMES.appeal)
+      binding.pry
       safe_click ".cf-submit.usa-button"
       expect(page).to have_content(search_page_title)
       fill_in search_bar_title, with: veteran_file_number

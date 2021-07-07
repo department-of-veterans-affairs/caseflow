@@ -76,6 +76,16 @@ feature "Intake", :all_dbs do
       User.authenticate!(roles: ["Mail Intake"])
     end
 
+    before { BvaIntake.singleton.add_user(current_user) }
+
+    scenario "can intake appeals" do
+      visit "/intake"
+      select_form(Constants.INTAKE_FORM_NAMES.appeal)
+
+      expect(page).to_not have_content(COPY::INTAKE_APPEAL_PERMISSIONS_ALERT)
+      expect(page).to_not have_css(".cf-submit[disabled]")
+    end
+
     context "user has unread Inbox messages" do
       scenario "user sees Alert on Intake start page" do
         create(:message, user: current_user)
