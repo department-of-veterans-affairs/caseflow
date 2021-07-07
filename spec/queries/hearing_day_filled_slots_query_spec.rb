@@ -33,7 +33,7 @@ describe HearingDayFilledSlotsQuery do
 
     before do
       # cache dispositions
-      LegacyHearing.all.each { |lh| lh.disposition }
+      LegacyHearing.all.each(&:disposition)
     end
 
     it "returns correct values", :aggregate_failures do

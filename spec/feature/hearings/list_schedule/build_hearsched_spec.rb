@@ -46,7 +46,7 @@ RSpec.feature "List Schedule for Build HearSched", :all_dbs do
 
     before do
       # cache dispositions
-      LegacyHearing.all.each { |lh| lh.disposition }
+      LegacyHearing.all.each(&:disposition)
       FeatureToggle.enable!(:view_and_download_hearing_scheduled_column)
     end
 
