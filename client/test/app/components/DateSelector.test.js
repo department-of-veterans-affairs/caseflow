@@ -127,32 +127,4 @@ describe('DateSelector', () => {
       expect(input).toHaveValue(defaults.value);
     });
   });
-
-  // These tests were originally karma tests, but those karma tests
-  // were commented out for 4 years. They test the regex's behavior.
-  describe('regex behaviors', () => {
-    // I would like to write for this test:
-    // expect(stateICantFind).toEqual('12/dd/yyyy')
-    it('adds a slash and doesnt error when a month is entered', async () => {
-      const { input } = setup();
-
-      expect(input).toHaveValue('');
-      await userEvent.type(input, '12');
-
-      expect(input.value).toEqual('12'); // This gets formatted to 12/dd/yyyy
-      expect(handleChange).toHaveBeenLastCalledWith('12/');
-    });
-
-    // I would like to write for this test:
-    // expect(stateICantFind).toEqual('02/02/yyyy')
-    it('rejects a two digit month that doesnt start with 1', async () => {
-      const { input } = setup();
-
-      expect(input).toHaveValue('');
-      await userEvent.type(input, '22');
-
-      expect(input.value).toEqual('22'); // This gets formatted to 02/02/yyyy
-      expect(handleChange).toHaveBeenLastCalledWith('');
-    });
-  });
 });
