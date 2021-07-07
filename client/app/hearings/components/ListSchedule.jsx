@@ -280,13 +280,15 @@ class ListSchedule extends React.Component {
 
   getExportHeaders = () => {
     if (this.props.user.userCanViewAndDownloadHearingScheduledColumn) {
-      exportHeaders.concat(
+      return exportHeaders.concat(
         [{
           label: 'Hearings Scheduled',
           key: 'hearingsScheduled'
         }]
       );
     }
+
+    return exportHeaders;
   }
 
   render() {
