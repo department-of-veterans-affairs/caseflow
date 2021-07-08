@@ -38,6 +38,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     E: Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
   }.freeze
 
+  # C => "cancelled", P => "postponed", E => "scheduled_in_error"
   CLOSED_HEARING_DISPOSITIONS = [:C, :P, :E].freeze
 
   # flip {:H => "held", ...} to {:held => "H", ...}
