@@ -25,7 +25,10 @@ class WorkQueue::AppealSerializer
   attribute :status
 
   attribute :decision_issues do |object, params|
-    decision_issues = AppealDecisionIssuesPolicy.new(appeal: object, user: params[:user]).visible_decision_issues
+    decision_issues = object.decision_issues.uniq
+    if FeatureToggle.enabled?(:restrict_poa_visibility)
+      decision_issues = AppealDecisionIssuesPolicy.new(appeal: object, user: params[:user]).visible_decision_issues
+    end
     decision_issues.uniq.map do |issue|
       {
         id: issue.id,
