@@ -421,9 +421,7 @@ FactoryBot.define do
       end
     end
 
-    trait :dispatched_with_decision_issue do
-      dispatched
-
+    trait :with_decision_issue do
       description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
       notes = "Pain disorder with 100\% evaluation per examination"
       after(:create) do |appeal, evaluator|

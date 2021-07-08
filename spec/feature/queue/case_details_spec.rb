@@ -1892,9 +1892,9 @@ RSpec.feature "Case details", :all_dbs do
         let(:docket_type) { "evidence_submission" }
         let(:case_type) { "original" }
         let(:disposition) { "allowed" }
-        let(:appeal_trait) { :dispatched_with_decision_issue }
+        let(:status) { :dispatched }
         let(:appeal) do
-          create(:appeal, appeal_trait,
+          create(:appeal, status, :with_decision_issue,
                  docket_type: docket_type,
                  stream_type: case_type,
                  disposition: disposition)
@@ -1937,7 +1937,8 @@ RSpec.feature "Case details", :all_dbs do
         end
 
         context "When the appeal is in post-dispatch state" do
-          let(:appeal_trait) { :post_dispatch }
+          let(:disposition) { "dismissed_death" }
+          let(:status) { :post_dispatch }
 
           it_behaves_like "the button is shown"
         end
