@@ -24,19 +24,19 @@ describe QualityReviewCaseSelector, :all_dbs do
     end
 
     context "after reaching the monthly limit" do
-      before { stub_const("QualityReviewCaseSelector::MONTHLY_LIMIT_OF_QUAILITY_REVIEWS", 5) }
+      before { stub_const("QualityReviewCaseSelector::MONTHLY_LIMIT_OF_QUALITY_REVIEWS", 5) }
 
-      let!(:qr_tasks) { create_list(:qr_task, QualityReviewCaseSelector::MONTHLY_LIMIT_OF_QUAILITY_REVIEWS) }
+      let!(:qr_tasks) { create_list(:qr_task, QualityReviewCaseSelector::MONTHLY_LIMIT_OF_QUALITY_REVIEWS) }
 
       it "returns true" do
         expect(subject).to be(true)
       end
 
-      context "but some tasks are cancelled" do
+      context "some tasks are cancelled" do
         before { qr_tasks.last.update_columns(status: Constants.TASK_STATUSES.cancelled) }
 
-        it "returns false" do
-          expect(subject).to be(false)
+        it "returns true" do
+          expect(subject).to be(true)
         end
       end
 

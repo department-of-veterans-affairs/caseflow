@@ -26,6 +26,11 @@ describe OtherClaimant, :postgres do
     end
     let(:poa_params) { nil }
     let(:poa_participant_id) { nil }
+    let(:user) { create(:user) }
+
+    before do
+      RequestStore[:current_user] = user
+    end
 
     subject { claimant.save_unrecognized_details!(params, poa_params) }
 
@@ -44,6 +49,8 @@ describe OtherClaimant, :postgres do
           party_type: "individual",
           name: "John Smith"
         )
+        expect(subject.current_version).to eq subject
+        expect(subject.created_by).to eq user
       end
     end
 

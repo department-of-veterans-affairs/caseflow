@@ -55,8 +55,9 @@ class OtherClaimant < Claimant
     UnrecognizedAppellant.create!(
       relationship: relationship,
       claimant_id: id,
-      unrecognized_party_detail: create_party_detail!(params.permit!)
-    )
+      unrecognized_party_detail: create_party_detail!(params.permit!),
+      created_by: RequestStore[:current_user]
+    ).set_current_version_to_self!
   end
 
   def create_party_detail!(params)
