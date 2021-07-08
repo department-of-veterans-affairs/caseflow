@@ -21,6 +21,7 @@ import { setUserCssId } from '../../queue/uiReducer/uiActions';
 import ApiUtil from '../../util/ApiUtil';
 import COPY from '../../../COPY';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
+import { ENDPOINT_NAMES } from '../constants';
 
 const centralOfficeStaticEntry = [{
   label: 'Central',
@@ -61,7 +62,8 @@ class AssignHearingsContainer extends React.PureComponent {
 
     const requestUrl = `/hearings/schedule/assign/hearing_days?regional_office=${selectedRegionalOffice}`;
 
-    return ApiUtil.get(requestUrl, { timeout: { response: getMinutesToMilliseconds(5) } }
+    return ApiUtil.get(requestUrl, { timeout: { response: getMinutesToMilliseconds(5) } },
+      ENDPOINT_NAMES.UPCOMING_HEARING_DAYS
     ).then((response) => {
       const resp = ApiUtil.convertToCamelCase(response.body);
 
