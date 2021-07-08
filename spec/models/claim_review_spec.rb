@@ -441,7 +441,7 @@ describe ClaimReview, :postgres do
     end
   end
 
-  context "#create_issues!" do
+  describe "#create_issues!" do
     before { claim_review.save! }
     subject { claim_review.create_issues!(issues) }
 
@@ -515,6 +515,37 @@ describe ClaimReview, :postgres do
           expect(non_rating_request_issue.reload.end_product_establishment).to have_attributes(code: "030HLRNRPMC")
           expect(rating_request_issue_with_rating_decision.reload.end_product_establishment).to \
             have_attributes(code: "030HLRRPMC")
+        end
+      end
+
+      context "when EP code depends on all issues being present" do
+        before { FeatureToggle.enable!(:itf_supplemental_claims) }
+        after { FeatureToggle.disable!(:itf_supplemental_claims) }
+
+        let(:claim_review) do
+          build(
+            :supplemental_claim,
+            veteran_file_number: veteran_file_number,
+            receipt_date: receipt_date,
+            benefit_type: benefit_type
+          )
+        end
+        let(:issues) do
+          [Time.zone.yesterday, 2.years.ago].map do |decision_date|
+            # use .new to ensure issues aren't all saved to DB initially
+            RequestIssue.new(
+              decision_review: claim_review,
+              benefit_type: benefit_type,
+              contested_rating_issue_reference_id: "reference-id",
+              decision_date: decision_date
+            )
+          end
+        end
+
+        it "creates issues and assigns the correct EP code" do
+          subject
+
+          expect(issues.map(&:reload).map(&:end_product_establishment).uniq.map(&:code)).to eq(["040SCRGTY"])
         end
       end
     end
