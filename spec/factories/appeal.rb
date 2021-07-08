@@ -368,6 +368,17 @@ FactoryBot.define do
       end
     end
 
+    # An appeal which was dispatched, but has then had other open tasks added.
+    # Note that the -ed suffix in 'dispatched' does not carry over to 'post_dispatch', which is how
+    # it is referred to elsewhere in the code.
+    trait :post_dispatch do
+      dispatched
+      after(:create) do |appeal|
+        # TODO: Is this a realistic example of something added post-dispatch?
+        new_task = create(:congressional_interest_mail_task, parent: appeal.root_task)
+      end
+    end
+
     trait :with_straight_vacate_stream do
       dispatched
       after(:create) do |appeal, evaluator|

@@ -1892,8 +1892,9 @@ RSpec.feature "Case details", :all_dbs do
         let(:docket_type) { "evidence_submission" }
         let(:case_type) { "original" }
         let(:disposition) { "allowed" }
+        let(:appeal_trait) { :dispatched_with_decision_issue }
         let(:appeal) do
-          create(:appeal, :dispatched_with_decision_issue,
+          create(:appeal, appeal_trait,
                  docket_type: docket_type,
                  stream_type: case_type,
                  disposition: disposition)
@@ -1933,6 +1934,12 @@ RSpec.feature "Case details", :all_dbs do
           let(:case_type) { "de_novo" }
 
           it_behaves_like "the button is not shown"
+        end
+
+        context "When the appeal is in post-dispatch state" do
+          let(:appeal_trait) { :post_dispatch }
+
+          it_behaves_like "the button is shown"
         end
 
         context "when the docket type is 'hearing'" do
