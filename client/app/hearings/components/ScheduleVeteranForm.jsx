@@ -96,7 +96,7 @@ export const ScheduleVeteranForm = ({
           updatedByCssId={hearingTask?.unscheduledHearingNotes?.updatedByCssId}
           uniqueId={hearingTask?.taskId}
         />
-        <div className="cf-help-divider usa-width-two-thirds" />
+        <div className="cf-help-divider usa-width-one-whole" />
         <div className="usa-width-one-whole">
           <HearingTypeDropdown
             enableFullPageConversion
@@ -105,7 +105,7 @@ export const ScheduleVeteranForm = ({
             virtualHearing={hearing?.virtualHearing}
           />
         </div>
-        <div className="cf-help-divider usa-width-two-thirds" />
+        <div className="cf-help-divider usa-width-one-whole" />
         <div className="usa-width-one-whole">
           {virtual ? (
             <ReadOnly spacing={15} label="Hearing Location" text="Virtual" />
@@ -125,45 +125,51 @@ export const ScheduleVeteranForm = ({
               }
             />
           )}
-          <RegionalOfficeDropdown
-            errorMessage={errors?.regionalOffice}
-            excludeVirtualHearingsOption={!virtual}
-            onChange={(regionalOffice) =>
-              props.onChange('regionalOffice', regionalOffice)
-            }
-            value={ro}
-            validateValueOnMount
-          />
+          <div {...marginTop(30)}>
+            <RegionalOfficeDropdown
+              errorMessage={errors?.regionalOffice}
+              excludeVirtualHearingsOption={!virtual}
+              onChange={(regionalOffice) =>
+                props.onChange('regionalOffice', regionalOffice)
+              }
+              value={ro}
+              validateValueOnMount
+            />
+          </div>
           {ro && (
             <React.Fragment>
               {!virtual && (
-                <AppealHearingLocationsDropdown
-                  errorMessage={errors?.hearingLocation}
-                  key={`hearingLocation__${ro}`}
-                  regionalOffice={ro}
-                  appealId={appeal.externalId}
-                  value={location}
-                  onChange={(hearingLocation) =>
-                    props.onChange('hearingLocation', hearingLocation)
-                  }
-                  dynamic={dynamic}
-                  staticHearingLocations={availableHearingLocations}
-                />
+                <div {...marginTop(30)}>
+                  <AppealHearingLocationsDropdown
+                    errorMessage={errors?.hearingLocation}
+                    key={`hearingLocation__${ro}`}
+                    regionalOffice={ro}
+                    appealId={appeal.externalId}
+                    value={location}
+                    onChange={(hearingLocation) =>
+                      props.onChange('hearingLocation', hearingLocation)
+                    }
+                    dynamic={dynamic}
+                    staticHearingLocations={availableHearingLocations}
+                  />
+                </div>
               )}
-              <HearingDateDropdown
-                errorMessage={errors?.hearingDay}
-                key={`hearingDate__${ro}`}
-                regionalOffice={ro}
-                value={hearing.hearingDay || initialHearingDate}
-                onChange={(hearingDay) => {
-                // Call fetch scheduled hearings only if passed
-                  fetchScheduledHearings(hearingDay)(dispatch);
+              <div {...marginTop(30)}>
+                <HearingDateDropdown
+                  errorMessage={errors?.hearingDay}
+                  key={`hearingDate__${ro}`}
+                  regionalOffice={ro}
+                  value={hearing.hearingDay || initialHearingDate}
+                  onChange={(hearingDay) => {
+                    // Call fetch scheduled hearings only if passed
+                    fetchScheduledHearings(hearingDay)(dispatch);
 
-                  props.onChange('hearingDay', hearingDay);
-                }}
-              />
+                    props.onChange('hearingDay', hearingDay);
+                  }}
+                />
+              </div>
               {hearing.hearingDay?.hearingId && (
-                <React.Fragment>
+                <div {...marginTop(30)}>
                   {hearingDayIsVirtual && userCanViewTimeSlots ? (
                     <TimeSlot
                       {...props}
@@ -186,7 +192,7 @@ export const ScheduleVeteranForm = ({
                       value={hearing.scheduledTimeString}
                     />
                   )}
-                </React.Fragment>
+                </div>
               )}
 
             </React.Fragment>
@@ -194,8 +200,8 @@ export const ScheduleVeteranForm = ({
         </div>
         {virtual && (
           <div className="usa-width-one-whole" {...marginTop(25)}>
-            <AppellantSection {...sectionProps} />
-            <RepresentativeSection {...sectionProps} />
+            <AppellantSection {...sectionProps} fullWidth />
+            <RepresentativeSection {...sectionProps} fullWidth />
           </div>
         )}
       </div>

@@ -136,6 +136,8 @@ module IntakeHelpers
       detail: appeal
     )
 
+    BvaIntake.singleton.add_user(intake.user)
+
     unless no_claimant
       stub_valid_address
       participant_id = claim_participant_id || test_veteran.participant_id

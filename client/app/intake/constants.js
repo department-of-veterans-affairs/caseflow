@@ -180,7 +180,6 @@ export const REVIEW_DATA_FIELDS = {
     claimant: { key: 'claimant' },
     unlisted_claimant: { key: 'unlistedClaimant' },
     poa: { key: 'poa' },
-    claimant_notes: { key: 'claimantNotes' },
     claimant_type: { key: 'claimantType', required: true },
     payee_code: { key: 'payeeCode' },
     legacy_opt_in_approved: { key: 'legacyOptInApproved', required: true },
