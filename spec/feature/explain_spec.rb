@@ -109,6 +109,8 @@ RSpec.feature "Explain JSON" do
       let(:json_filename) { "appeal-21430.json" }
       it "present realistic appeal events" do
         visit "explain/appeals/#{real_appeal.uuid}"
+        scroll_to(page.find("h3", text: "Timeline"))
+        # binding.pry
         expect(page).to have_content("show_pii = false")
         expect(page).to have_content("status: dispatched")
 
@@ -116,14 +118,14 @@ RSpec.feature "Explain JSON" do
         expect(page).to have_content("Intake (no PII)")
         expect(page).to have_content("Hearing (no PII)")
         expect(page).to have_content("show_pii: false")
-        expect(page).to have_content("Appeal Narrative (contains PII)")
+        expect(page).to have_content("Appeal Narrative (showing PII)")
 
         click_link("toggle show_pii")
         expect(page).to have_content("show_pii = true")
         expect(page).to have_content("Intake (showing PII)")
         expect(page).to have_content("Hearing (showing PII)")
         expect(page).to have_content("show_pii: true")
-        expect(page).to have_content("Appeal Narrative (contains PII)")
+        expect(page).to have_content("Appeal Narrative (showing PII)")
         page.find("#narrative_table").click
         task = real_appeal.tasks.sample
         expect(page).to have_content("#{task.type}_#{task.id}")

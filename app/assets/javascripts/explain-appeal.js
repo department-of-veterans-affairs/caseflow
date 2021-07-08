@@ -60,6 +60,7 @@ function decorateTimelineItems(items){
       }
       item[key] = value
     }
+    item["className"] = item["record_type"]
   });
   // console.log(items)
   return items;
@@ -88,9 +89,9 @@ function groupEventItems(items){
     order: 3,
   });
   groups.add({
-    id: 'intakes', // TODO: rename to events
-    content: 'events',
-    className: 'group_intakes',
+    id: 'others',
+    content: 'others',
+    className: 'group_others',
     order: 9,
   });
   return groups;

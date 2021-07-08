@@ -10,7 +10,7 @@ module ExplainTimelineConcern
   def timeline_data
     return "(LegacyAppeals are not yet supported)".to_json if legacy_appeal?
 
-    tasks_timeline_data + intake_timeline_data + hearings_timeline_data
+    (tasks_timeline_data + intake_timeline_data + hearings_timeline_data).map(&:as_json)
   end
 
   BACKGROUND_TASK_TYPES = %w[DistributionTask JudgeDecisionReviewTask BvaDispatchTask].freeze
@@ -24,154 +24,103 @@ module ExplainTimelineConcern
 
   # rubocop:disable Metrics/MethodLength
   # :reek:FeatureEnvy
-  # rubocop:disable Metrics/AbcSize
   def tasks_timeline_data
-    exported_records(Task).map do |record|
-      if BACKGROUND_TASK_TYPES.include?(record["type"])
-        record.clone.tap do |clone_record|
-          clone_record["id"] = "#{Task.name}#{record['id']}_bkgd"
-          clone_record["record_id"] = record["id"]
-          clone_record["tableName"] = Task.table_name
-          clone_record["taskType"] = record["type"]
-          clone_record["start"] = record["created_at"]
-          clone_record["end"] = Time.zone.now if record["closed_at"].nil?
-
-          clone_record["group"] = nil
-          clone_record["type"] = "background"
-          clone_record["end"] ||= record["closed_at"] # needs to be set for 'background' types
-
-          clone_record["content"] = ""
-          clone_record["title"] = "<pre><code style='font-size:0.7em; white-space: pre-line; width: 100px;'>#{JSON.pretty_generate(clone_record)}</code></pre>"
-          clone_record["className"] = "#{record['type']} task_#{record['status']}"
-          end
-      end
-    end.compact +
-    exported_records(Task).map do |record|
-      record.clone.tap do |clone_record|
-        clone_record["id"] = "#{Task.name}#{record['id']}"
-        clone_record["record_id"] = record["id"]
-        clone_record["tableName"] = Task.table_name
-        clone_record["content"] = "#{record['type']}_#{record['id']}"
-        clone_record["taskType"] = record["type"]
-        clone_record["start"] = record["created_at"]
-        clone_record["end"] = Time.zone.now if record["closed_at"].nil?
-        clone_record["type"] = "range"
-
-        if false && BACKGROUND_TASK_TYPES.include?(record["type"]) # TODO: make this configurable
-          clone_record["group"] = nil # so that background is visible in all groups
-          clone_record["type"] = "background"
-          clone_record["end"] ||= record["closed_at"] # needs to be set for 'background' types
-        else
-          clone_record["group"] = (clone_record["status"] == "cancelled") ? "cancelled_tasks" : Task.table_name
-          if clone_record["end"].nil?
-            significant_duration = record["closed_at"] - record["created_at"] > 60 if record["closed_at"]
-            clone_record["type"] = significant_duration ? "range" : "point"
-            clone_record["end"] = significant_duration ? record["closed_at"] : nil
-          end
-
-          if BACKGROUND_TASK_TYPES.include?(record["type"])
-            clone_record["group"] = "phase"
-          end
+    exported_records(Task)
+      .select { |record| BACKGROUND_TASK_TYPES.include?(record["type"]) }
+      .map do |record|
+        TimelineSpanData.new(Task, record,
+                             id: "#{record['type']}#{record['id']}_bkgd",
+                             type: "background",
+                             group: nil,
+                             label: "").tap do |event|
+          # for visualization
+          event.styling_classes += " task_#{record['status']}" # TODO: check this
         end
-
-        TimelineEventData.new(Task, record).tap do |event|
+      end.compact +
+      exported_records(Task).map do |record|
+        TimelineSpanData.new(Task, record).tap do |event|
           if BACKGROUND_TASK_TYPES.include?(record["type"])
             event.group = "phase"
-          else
-            event.group = (record["status"] == "cancelled") ? "cancelled_tasks" : Task.table_name
-          end          
+          elsif record["status"] == "cancelled"
+            event.group = "cancelled_tasks"
+          end
 
-          significant_duration = record["closed_at"] - record["created_at"] > 60 if record["closed_at"]
-          if !significant_duration
-            event.type = "point"
-            event.end = nil
+          if record["closed_at"]
+            significant_duration = record["closed_at"] - record["created_at"] > 60
+            if !significant_duration
+              event.type = "point"
+              event.end = nil
+            end
           end
 
           # for visualization
-          event.className += " task_#{record['status']}"
+          event.styling_classes += " task_#{record['status']}" # TODO: check this
         end
       end
-    end
   end
-  # rubocop:enable Metrics/AbcSize
 
   # :reek:TooManyInstanceVariables
-  class TimelineEventData
-    attr_reader :id, :recordId
-    attr_accessor :start, :end, :group, :type, :className
-  
-    def initialize(klass, record, 
-                   start_time: record["created_at"], 
+  class TimelineSpanData
+    attr_reader :id, :record_id
+    attr_accessor :start, :end, :group, :type, :styling_classes
+
+    TOOLTIP_STYLE = "font-size:0.7em; white-space: pre-line; width: 100px;"
+    # rubocop:disable Metrics/ParameterLists
+    def initialize(klass, record,
+                   record_type: record["type"],
+                   id: "#{record['type']}#{record['id']}",
+                   start_time: record["created_at"],
                    end_time: record["closed_at"],
-                   renderType: "range",
-                   recordType: record["type"], 
+                   type: "range",
+                   group: klass.table_name,
                    label: "#{record['type']}_#{record['id']}",
-                   tooltip: "<pre><code style='font-size:0.7em'>#{JSON.pretty_generate(record)}</code></pre>")
-      @id = "#{klass.name}#{record['id']}"
-      @recordId = record["id"]
-      @tableName = klass.table_name
+                   tooltip: "<pre><code style=#{TOOLTIP_STYLE}>#{JSON.pretty_generate(record)}</code></pre>")
+      @record_type = record_type
+      @id = id
+      @record_id = record["id"]
+      @table_name = klass.table_name
       @content = label
-      @recordType = recordType
       @start = start_time
-      @end = Time.zone.now if end_time.nil?
-      @type = renderType
+      @end = end_time || Time.zone.now
+      @type = type
 
       # for visualization
       @title = tooltip
-      @className = record['type']
+      @group = group
+      @styling_classes = record["type"]
     end
+    # rubocop:enable Metrics/ParameterLists
   end
 
   # :reek:FeatureEnvy
   def intake_timeline_data
     exported_records(Intake).map do |record|
-      record.clone.tap do |clone_record|
-        clone_record["id"] = "#{record['type']}#{record['id']}"
-        clone_record["record_id"] = record["id"]
-        clone_record["tableName"] = Intake.table_name
-        clone_record["content"] = "#{record['type']}_#{record['id']}"
-        clone_record["intakeType"] = record["type"]
-        clone_record["start"] = record["started_at"]
-        clone_record["end"] = Time.zone.now if record["completed_at"].nil?
-        clone_record["type"] = "range" 
-
-        clone_record["group"] = Intake.table_name
-        if clone_record["end"].nil?
-          significant_duration = record["completed_at"] - record["started_at"] > 360 if record["completed_at"]
-          clone_record["type"] = significant_duration ? "range" : nil
-          clone_record["end"] = significant_duration ? record["completed_at"] : nil
+      TimelineSpanData.new(Intake, record,
+                           start_time: record["started_at"],
+                           end_time: record["completed_at"],
+                           group: "others").tap do |event|
+        if record["completed_at"]
+          significant_duration = record["completed_at"] - record["started_at"] > 360
+          if !significant_duration
+            event.type = nil
+            event.end = nil
+          end
         end
-
-        # for visualization
-        clone_record["title"] = "<pre><code style='font-size:0.7em'>#{JSON.pretty_generate(clone_record)}</code></pre>"
-        clone_record["className"] = record["type"]
       end
     end
   end
 
   # :reek:FeatureEnvy
   def hearings_timeline_data
-    exported_records(Intake).map do |record|
-      record.clone.tap do |clone_record|
-        clone_record["id"] = "HEARING#{record['type']}#{record['id']}"
-        clone_record["record_id"] = record["id"]
-        clone_record["tableName"] = Intake.table_name
-        clone_record["content"] = "#{record['type']}_#{record['id']}"
-        clone_record["intakeType"] = record["type"]
-        clone_record["start"] = record["started_at"]
-        clone_record["end"] = Time.zone.now if record["completed_at"].nil?
-        clone_record["type"] = "range" 
+    exported_records(Hearing).map do |record|
+      TimelineSpanData.new(Hearing, record, end_time: record["updated_at"]).tap do |_event|
+        # slot_time = record["scheduled_time"]&.strftime("%H:%M")
 
-        clone_record["group"] = Intake.table_name
-        if clone_record["end"].nil?
-          significant_duration = record["completed_at"] - record["started_at"] > 360 if record["completed_at"]
-          clone_record["type"] = significant_duration ? "range" : nil
-          clone_record["end"] = significant_duration ? record["completed_at"] : nil
-        end
-
-        # for visualization
-        clone_record["title"] = "<pre><code style='font-size:0.7em'>#{JSON.pretty_generate(clone_record)}</code></pre>"
-        clone_record["className"] = record["type"]
+        # significant_duration = record["completed_at"] - record["started_at"] > 60 if record["completed_at"]
+        # if !significant_duration
+        #   event.type = nil
+        #   event.end = nil
+        # end
       end
     end
   end

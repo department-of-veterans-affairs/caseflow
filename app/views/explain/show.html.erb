@@ -108,8 +108,8 @@
       <input id="cancelled_tasks_group_visible" type="checkbox" checked onchange="toggleTimelineEventGroup(this, 'cancelled_tasks')" />
       <label for="cancelled_tasks_group_visible">Cancelled tasks</label>
 
-      <input id="intakes_group_visible" type="checkbox" checked onchange="toggleTimelineEventGroup(this, 'intakes')" />
-      <label for="intakes_group_visible">Intakes</label>
+      <input id="other_group_visible" type="checkbox" checked onchange="toggleTimelineEventGroup(this, 'others')" />
+      <label for="other_group_visible">Others</label>
     </details>
 
     <details>
@@ -137,7 +137,7 @@
     </details>
     <br/>
     <div id="timeline"></div>
-    <details open>
+    <details>
       <summary style="color: red">Timeline data</summary>
       <pre style="font-size:0.84em; padding:10px"><code><%= JSON.pretty_generate(timeline_data) %></code></pre>
     </details>
