@@ -2,6 +2,7 @@
 
 require "helpers/sanitized_json_configuration.rb"
 require "helpers/sanitized_json_importer.rb"
+require "helpers/intake_renderer.rb"
 
 ##
 # This RSpec provides an example of how to backfill
@@ -132,7 +133,7 @@ describe "Backfill early AMA appeal" do
       decision_doc = DecisionDocument.create!(params)
       expect(appeal.decision_document).to eq decision_doc
 
-      binding.pry
+      expect(BVAAppealStatus.new(appeal: appeal).status).to eq :dispatched
     end
   end
 end
