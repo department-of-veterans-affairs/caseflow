@@ -15,9 +15,7 @@ class HearingDayFilledSlotsQuery
   def call
     result = ama_hearings_count_per_day
     legacy_hearings_count_per_day.each do |hearing_day_id, filled_slots_count|
-      result[hearing_day_id.to_i] = 0 if result[hearing_day_id.to_i].blank?
-
-      result[hearing_day_id.to_i] += filled_slots_count
+      result[hearing_day_id.to_i] = result.fetch(hearing_day_id.to_i, 0) + filled_slots_count
     end
 
     result
