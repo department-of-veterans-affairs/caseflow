@@ -24,13 +24,9 @@ module Seeds
     end
 
     def setup_decision_issue_seeds
-      original_appeal = build_appeal(veteran: deceased_vet, docket_type: docket_type)
+      build_original_appeal(veteran: deceased_vet, docket_type: "evidence_submission")
 
-      @vet.update!(date_of_death: 5.days.ago)
-
-      create(source_appeal: original_appeal, substitution_date: Time.utc.today, claimant_type: "DependentClaimant",
-             substitute_participant_id: 2, poa_participant_id: 2,
-             created_by: User.last)
+      deceased_vet.update!(date_of_death: 5.days.ago)
     end
   end
 end
