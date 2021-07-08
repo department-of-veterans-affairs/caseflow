@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "Logging in to ECR"
-eval $(aws ecr get-login --no-include-email --region us-gov-west-1)
+aws ecr get-login-password --region us-gov-west-1 | docker login --username AWS --password-stdin 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com
 
 tag_name="latest"
 

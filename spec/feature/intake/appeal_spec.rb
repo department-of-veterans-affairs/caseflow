@@ -5,6 +5,7 @@ feature "Appeal Intake", :all_dbs do
 
   before do
     Timecop.freeze(post_ama_start_date)
+    BvaIntake.singleton.add_user(current_user)
   end
 
   let!(:current_user) do

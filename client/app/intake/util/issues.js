@@ -323,12 +323,12 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
   return fields.concat(claimantField);
 };
 
-export const formatIssuesBySection = (issues, editClaimLabelFeatureToggle) => {
+export const formatIssuesBySection = (issues) => {
   return issues.reduce(
     (result, issue) => {
       if (issue.withdrawalDate || issue.withdrawalPending) {
         (result.withdrawnIssues || (result.withdrawnIssues = [])).push(issue);
-      } else if (issue.endProductCode && editClaimLabelFeatureToggle) {
+      } else if (issue.endProductCode) {
         (result[issue.endProductCode] || (result[issue.endProductCode] = [])).push(issue);
       } else {
         (result.requestedIssues || (result.requestedIssues = [])).push(issue);

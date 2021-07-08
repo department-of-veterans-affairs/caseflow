@@ -7,6 +7,7 @@ class DataIntegrityChecksJob < CaseflowJob
   CHECKERS = %w[
     DecisionReviewTasksForInactiveAppealsChecker
     DecisionDateChecker
+    AppealsWithMoreThanOneOpenHearingTaskChecker
     ExpiredAsyncJobsChecker
     LegacyAppealsWithNoVacolsCase
     OpenHearingTasksWithoutActiveDescendantsChecker
@@ -15,6 +16,7 @@ class DataIntegrityChecksJob < CaseflowJob
     ReviewsWithDuplicateEpErrorChecker
     StuckAppealsChecker
     StuckVirtualHearingsChecker
+    TasksAssignedToInactiveUsersChecker
     UntrackedLegacyAppealsChecker
   ].freeze
 
