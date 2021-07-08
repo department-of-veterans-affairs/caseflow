@@ -21,6 +21,8 @@ class HearingDayFilledSlotsQuery
     result
   end
 
+  private
+
   def ama_hearings_count_per_day
     Hearing.where(hearing_day: @hearing_days).where(
       "disposition NOT in (?) or disposition is null",
