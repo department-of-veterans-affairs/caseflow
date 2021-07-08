@@ -51,6 +51,7 @@ describe "Fixing dispatched appeals" do
       # Close out appeal
       appeal.root_task.completed!
       appeal.tasks.of_type(:TrackVeteranTask).map(&:completed!)
+      # appeal.reload.treee
 
       # 5. Recreate and reattach the decision document to the appeal because it was sent to the Veteran
       # and no edits have been made
@@ -69,7 +70,6 @@ describe "Fixing dispatched appeals" do
 
       decision_doc = DecisionDocument.create!(params)
       expect(appeal.decision_document).to eq decision_doc
-      appeal.reload.treee
     end
   end
 end
