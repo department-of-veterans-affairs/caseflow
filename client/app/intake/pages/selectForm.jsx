@@ -23,8 +23,7 @@ class SelectForm extends React.PureComponent {
     const unreadMessages = this.props.unreadMessages;
     const rampEnabled = featureToggles.rampIntake;
     const enabledFormTypes = rampEnabled ? FORM_TYPES : _.pickBy(FORM_TYPES, { category: 'decisionReview' });
-    const restrictAppealIntakes = featureToggles.restrictAppealIntakes;
-    const appealPermissionError = restrictAppealIntakes && !userCanIntakeAppeals && formType === FORM_TYPES.APPEAL.key;
+    const appealPermissionError = !userCanIntakeAppeals && formType === FORM_TYPES.APPEAL.key;
 
     const radioOptions = _.map(enabledFormTypes, (form) => ({
       value: form.key,
@@ -96,8 +95,8 @@ class SelectFormButtonUnconnected extends React.PureComponent {
   }
 
   render() {
-    const { formType, restrictAppealIntakes, userCanIntakeAppeals } = this.props;
-    const appealPermissionError = restrictAppealIntakes && !userCanIntakeAppeals && formType === FORM_TYPES.APPEAL.key;
+    const { formType, userCanIntakeAppeals } = this.props;
+    const appealPermissionError = !userCanIntakeAppeals && formType === FORM_TYPES.APPEAL.key;
 
     return <Button
       name="continue-to-search"
@@ -110,8 +109,8 @@ class SelectFormButtonUnconnected extends React.PureComponent {
 }
 
 export const SelectFormButton = connect(
-  ({ intake, featureToggles }) => ({
-    formType: intake.formType, restrictAppealIntakes: featureToggles.restrictAppealIntakes }),
+  ({ intake }) => ({
+    formType: intake.formType }),
   (dispatch) => bindActionCreators({
     clearSearchErrors
   }, dispatch)

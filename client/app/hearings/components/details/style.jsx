@@ -1,5 +1,4 @@
 import { css } from 'glamor';
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 export const labelPaddingFirst = css({
   paddingBottom: 5,
@@ -113,7 +112,6 @@ export const marginTop = (margin) =>
     marginTop: margin
   });
 
-export const helperLabel = css({ marginTop: 15, color: COLORS.GREY_DARK });
 export const timezoneDropdownStyles = (count) => ({
   height: `${count * 39}px !important`,
   maxHeight: 'none'
