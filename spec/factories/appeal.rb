@@ -374,8 +374,7 @@ FactoryBot.define do
     trait :post_dispatch do
       dispatched
       after(:create) do |appeal|
-        # TODO: Is this a realistic example of something added post-dispatch?
-        new_task = create(:congressional_interest_mail_task, parent: appeal.root_task)
+        create(:congressional_interest_mail_task, parent: appeal.root_task)
       end
     end
 
