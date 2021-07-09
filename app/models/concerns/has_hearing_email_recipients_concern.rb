@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module HasHearingEmailRecipients
+module HasHearingEmailRecipientsConcern
   extend ActiveSupport::Concern
 
   def appellant_recipient
