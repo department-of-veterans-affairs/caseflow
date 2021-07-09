@@ -25,6 +25,8 @@
   userHasHearingPrepRole: current_user.can?('Hearing Prep'),
   userInHearingOrTranscriptionOrganization: current_user.in_hearing_or_transcription_organization?,
   userCanViewFnodBadgeInHearings: FeatureToggle.enabled?(:view_fnod_badge_in_hearings, user: current_user),
+  userCanViewAndDownloadHearingScheduledColumn:
+    FeatureToggle.enabled?(:view_and_download_hearing_scheduled_column, user: current_user),
   userId: current_user.id,
   userCssId: current_user.css_id
 }) %>
