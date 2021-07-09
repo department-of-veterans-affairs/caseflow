@@ -37,7 +37,7 @@ import AddHearingDay from '../components/AddHearingDay';
 import { onRegionalOfficeChange } from '../../components/common/actions';
 import moment from 'moment';
 
-import { LIST_SCHEDULE_VIEWS } from '../constants';
+import { LIST_SCHEDULE_VIEWS, ENDPOINT_NAMES } from '../constants';
 
 const dateFormatString = 'YYYY-MM-DD';
 
@@ -89,7 +89,7 @@ export class ListScheduleContainer extends React.Component {
       timeout: { response: getMinutesToMilliseconds(2) }
     };
 
-    return ApiUtil.get(requestUrl, requestOptions).then((response) => {
+    return ApiUtil.get(requestUrl, requestOptions, ENDPOINT_NAMES.HEARINGS_SCHEDULE).then((response) => {
       const resp = ApiUtil.convertToCamelCase(response.body);
 
       this.props.onReceiveHearingSchedule(resp.hearings);
