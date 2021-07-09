@@ -15,7 +15,8 @@ module Seeds
         :veteran,
         file_number: 42_424_242,
         first_name: "Joe",
-        last_name: "Dead"
+        last_name: "Dead",
+        participant_id: "330000000"
       )
     end
 
