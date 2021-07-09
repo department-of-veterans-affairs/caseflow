@@ -12,7 +12,7 @@ describe AppealDecisionIssuesPolicy, :postgres do
         let(:appeal) { create(:appeal, :decision_issue_with_future_date) }
 
         it "cannot be seen" do
-          expect(subject).to be_empty
+          expect(result).to be_empty
         end
       end
 
@@ -31,7 +31,7 @@ describe AppealDecisionIssuesPolicy, :postgres do
     end
 
     context "when user has no VSO role" do
-      let(:user) { create(:user) }
+      let(:user) { create(:user, :reader_role) }
 
       context "when a decision issue has not yet reached its decision date" do
         let(:appeal) { create(:appeal, :decision_issue_with_future_date) }
