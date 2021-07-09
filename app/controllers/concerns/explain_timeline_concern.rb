@@ -13,11 +13,40 @@ module ExplainTimelineConcern
     (tasks_timeline_data + intake_timeline_data + hearings_timeline_data).map(&:as_json)
   end
 
+  private
+
   PHASES_TASK_TYPES = %w[DistributionTask JudgeDecisionReviewTask BvaDispatchTask].freeze
 
   # :reek:FeatureEnvy
   def tasks_timeline_data
     phases_tasks + nonphases_tasks
+  end
+
+  # :reek:FeatureEnvy
+  def intake_timeline_data
+    exported_records(Intake).map do |record|
+      TimelineSpanData.new(Intake, record,
+                           start_time: record["started_at"],
+                           end_time: record["completed_at"],
+                           short_duration_threshold: 360,
+                           short_duration_display_type: nil,
+                           group: "others")
+    end
+  end
+
+  # :reek:FeatureEnvy
+  def hearings_timeline_data
+    exported_records(Hearing).map do |record|
+      TimelineSpanData.new(Hearing, record, end_time: record["updated_at"]).tap do |_event|
+        # slot_time = record["scheduled_time"]&.strftime("%H:%M")
+
+        # significant_duration = record["completed_at"] - record["started_at"] > 60 if record["completed_at"]
+        # if !significant_duration
+        #   event.type = nil
+        #   event.end = nil
+        # end
+      end
+    end
   end
 
   def phases_tasks
@@ -99,33 +128,6 @@ module ExplainTimelineConcern
 
     def short_duration?(end_time, short_duration_threshold)
       end_time && (end_time - @start < short_duration_threshold)
-    end
-  end
-
-  # :reek:FeatureEnvy
-  def intake_timeline_data
-    exported_records(Intake).map do |record|
-      TimelineSpanData.new(Intake, record,
-                           start_time: record["started_at"],
-                           end_time: record["completed_at"],
-                           short_duration_threshold: 360,
-                           short_duration_display_type: nil,
-                           group: "others")
-    end
-  end
-
-  # :reek:FeatureEnvy
-  def hearings_timeline_data
-    exported_records(Hearing).map do |record|
-      TimelineSpanData.new(Hearing, record, end_time: record["updated_at"]).tap do |_event|
-        # slot_time = record["scheduled_time"]&.strftime("%H:%M")
-
-        # significant_duration = record["completed_at"] - record["started_at"] > 60 if record["completed_at"]
-        # if !significant_duration
-        #   event.type = nil
-        #   event.end = nil
-        # end
-      end
     end
   end
 end
