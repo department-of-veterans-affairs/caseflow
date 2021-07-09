@@ -10,8 +10,8 @@ module Seeds
 
     private
 
-    def deceased_vet
-      @deceased_vet ||= create(
+    def vet
+      @vet ||= create(
         :veteran,
         file_number: 42_424_242,
         first_name: "Joe",
@@ -20,14 +20,12 @@ module Seeds
       )
     end
 
-    def build_original_appeal(veteran: deceased_vet, docket_type: "evidence_submission")
+    def build_original_appeal(veteran: vet, docket_type: "evidence_submission")
       create(:appeal, :decision_issue_with_future_date, veteran: veteran, docket_type: docket_type)
     end
 
     def setup_decision_issue_seeds
-      build_original_appeal(veteran: deceased_vet, docket_type: "evidence_submission")
-
-      deceased_vet.update!(date_of_death: 5.days.ago)
+      build_original_appeal(veteran: vet, docket_type: "evidence_submission")
     end
   end
 end
