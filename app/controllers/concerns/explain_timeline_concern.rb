@@ -36,16 +36,19 @@ module ExplainTimelineConcern
 
   # :reek:FeatureEnvy
   def hearings_timeline_data
+    hearing_days = exported_records(HearingDay).index_by { |rec| rec["id"] }
+    # virtual_hearings = exported_records(VirtualHearing).index_by { |rec| rec["hearing_id"] }
     exported_records(Hearing).map do |record|
-      TimelineSpanData.new(Hearing, record, end_time: record["updated_at"]).tap do |_event|
-        # slot_time = record["scheduled_time"]&.strftime("%H:%M")
-
-        # significant_duration = record["completed_at"] - record["started_at"] > 60 if record["completed_at"]
-        # if !significant_duration
-        #   event.type = nil
-        #   event.end = nil
-        # end
-      end
+      hearing_day = hearing_days[record["hearing_day_id"]]
+      # virtual_hearing = virtual_hearings[hearing["id"]]
+      # slot_time = record["scheduled_time"]&.strftime("%H:%M")
+      TimelineSpanData.new(Hearing, record,
+                           status: record["disposition"],
+                           start_time: hearing_day["scheduled_for"],
+                           end_time: hearing_day["scheduled_for"],
+                           short_duration_threshold: 1,
+                           short_duration_display_type: nil,
+                           group: "others")
     end
   end
 
@@ -65,8 +68,8 @@ module ExplainTimelineConcern
   end
 
   def create_nonphase_task_data(record)
-    TimelineSpanData.new(Task, record, short_duration_threshold: 60).tap do |event|
-      event.group = "cancelled_tasks" if record["status"] == "cancelled"
+    group = (record["status"] == "cancelled") ? "cancelled_tasks" : "tasks"
+    TimelineSpanData.new(Task, record, group: group, short_duration_threshold: 60).tap do |event|
     end
   end
 
@@ -90,21 +93,22 @@ module ExplainTimelineConcern
     # rubocop:disable Metrics/ParameterLists
     # :reek:LongParameterList
     def initialize(klass, record,
-                   record_type: record["type"],
-                   id: "#{record['type']}#{record['id']}",
+                   record_type = record["type"] || klass.table_name.singularize,
+                   id: "#{record_type}#{record['id']}",
                    start_time: record["created_at"],
                    end_time: record["closed_at"],
                    type: "range",
                    short_duration_threshold: 0, # in seconds
                    short_duration_display_type: "point",
-                   group: klass.table_name,
-                   label: "#{record['type']}_#{record['id']}",
+                   status: record["status"],
+                   group: "others",
+                   label: "#{record_type}_#{record['id']}",
                    tooltip: "<pre><code style=#{TOOLTIP_STYLE}>#{JSON.pretty_generate(record)}</code></pre>")
       @record_type = record_type
       @id = id
       @record_id = record["id"]
       @table_name = klass.table_name
-      @status = record["status"]
+      @status = status
       @content = label
       @start = start_time
 

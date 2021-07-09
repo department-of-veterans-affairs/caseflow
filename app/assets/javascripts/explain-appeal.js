@@ -47,23 +47,26 @@ const taskNodeColor = {
 }
 
 const itemDecoration = {
-  tasks: { style: (item)=>"OLD-background-color: "+taskNodeColor[item.status] }
+  tasks: {
+    className: (item)=> item.className + " task_" + item.status
+  },
+  hearings: {
+    className: (item)=> item.className + " hearing_" + item.status
+  }
 };
 
 // https://visjs.github.io/vis-timeline/docs/timeline/#items
 function decorateTimelineItems(items){
   items.forEach(item => {
+    item.className = item.record_type
+
     if(!itemDecoration.hasOwnProperty(item.table_name)) return;
+
     for ([key, value] of Object.entries(itemDecoration[item.table_name])) {
       if (typeof value === 'function') {
         value = value(item)
       }
       item[key] = value
-    }
-
-    item["className"] = item["record_type"]
-    if(item["table_name"] == "tasks") {
-      item["className"] += " task_" + item["status"]
     }
   });
   // console.log(items)

@@ -84,8 +84,8 @@ module ExplainAppealEventsConcern
   # rubocop:enable Metrics/AbcSize
 
   def hearings_as_event_data
-    hearing_days = exported_records(HearingDay).index_by { |req| req["id"] }
-    virtual_hearings = exported_records(VirtualHearing).index_by { |req| req["hearing_id"] }
+    hearing_days = exported_records(HearingDay).index_by { |rec| rec["id"] }
+    virtual_hearings = exported_records(VirtualHearing).index_by { |rec| rec["hearing_id"] }
     exported_records(Hearing).map do |hearing|
       hearing_day = hearing_days[hearing["hearing_day_id"]]
       virtual_hearing = virtual_hearings[hearing["id"]]

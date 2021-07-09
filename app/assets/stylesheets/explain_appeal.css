@@ -183,15 +183,18 @@ summary {
   background-color: var(--inprogress-task-color);;
   border-color: var(--inprogress-task-color);;
 }
-#timeline .vis-range.task_on_hold {
+#timeline .vis-range.task_on_hold,
+#timeline .vis-box.hearing_postponed {
   background-color: var(--onhold-task-color);;
   border-color: var(--onhold-task-color);;
 }
-#timeline .vis-range.task_cancelled {
+#timeline .vis-range.task_cancelled,
+#timeline .vis-box.hearing_cancelled {
   background-color: var(--cancelled-task-color);;
   border-color: var(--cancelled-task-color);;
 }
-#timeline .vis-range.task_completed {
+#timeline .vis-range.task_completed,
+#timeline .vis-box.hearing_held {
   background-color: var(--completed-task-color);;
   border-color: var(--completed-task-color);;
 }
