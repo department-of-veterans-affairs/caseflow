@@ -60,7 +60,11 @@ function decorateTimelineItems(items){
       }
       item[key] = value
     }
-    item["className"] = item["styling_classes"]
+
+    item["className"] = item["record_type"]
+    if(item["table_name"] == "tasks") {
+      item["className"] += " task_" + item["status"]
+    }
   });
   // console.log(items)
   return items;

@@ -13,58 +13,51 @@ module ExplainTimelineConcern
     (tasks_timeline_data + intake_timeline_data + hearings_timeline_data).map(&:as_json)
   end
 
-  BACKGROUND_TASK_TYPES = %w[DistributionTask JudgeDecisionReviewTask BvaDispatchTask].freeze
+  PHASES_TASK_TYPES = %w[DistributionTask JudgeDecisionReviewTask BvaDispatchTask].freeze
 
-  # clone_record["type"] is one of the vis-timeline item types: range, box, point, background
-  # clone_record["title"] is displayed as the tooltip
-  # See https://visjs.github.io/vis-timeline/docs/timeline/#items
-
-  # clone_record["group"] corresponds with a group defined in function `groupEventItems` of explain-appeal.js
-  # See https://visjs.github.io/vis-timeline/docs/timeline/#groups
-
-  # rubocop:disable Metrics/MethodLength
   # :reek:FeatureEnvy
   def tasks_timeline_data
-    exported_records(Task)
-      .select { |record| BACKGROUND_TASK_TYPES.include?(record["type"]) }
-      .map do |record|
-        TimelineSpanData.new(Task, record,
-                             id: "#{record['type']}#{record['id']}_bkgd",
-                             type: "background",
-                             group: nil,
-                             label: "").tap do |event|
-          # for visualization
-          event.styling_classes += " task_#{record['status']}"
-        end
-      end.compact +
-      exported_records(Task).map do |record|
-        TimelineSpanData.new(Task, record).tap do |event|
-          if BACKGROUND_TASK_TYPES.include?(record["type"])
-            event.group = "phase"
-          elsif record["status"] == "cancelled"
-            event.group = "cancelled_tasks"
-          end
-
-          if record["closed_at"]
-            significant_duration = record["closed_at"] - record["created_at"] > 60
-            if !significant_duration
-              event.type = "point"
-              event.end = nil
-            end
-          end
-
-          # for visualization
-          event.styling_classes += " task_#{record['status']}"
-        end
-      end
+    phases_tasks + nonphases_tasks
   end
 
+  def phases_tasks
+    exported_records(Task)
+      .select { |record| PHASES_TASK_TYPES.include?(record["type"]) }
+      .map do |record|
+      [TimelineSpanData.new(Task, record, group: "phase"),
+       create_background_task(record)]
+    end.flatten
+  end
+
+  def nonphases_tasks
+    exported_records(Task)
+      .reject { |record| PHASES_TASK_TYPES.include?(record["type"]) }
+      .map { |record| create_nonphase_task_data(record) }
+  end
+
+  def create_nonphase_task_data(record)
+    TimelineSpanData.new(Task, record, short_duration_threshold: 60).tap do |event|
+      event.group = "cancelled_tasks" if record["status"] == "cancelled"
+    end
+  end
+
+  def create_background_task(record)
+    TimelineSpanData.new(Task, record,
+                         id: "#{record['type']}#{record['id']}_bkgd",
+                         type: "background",
+                         group: nil, # show across all groups
+                         # a corresponding labeled task lines up with this background, so use empty label
+                         label: "")
+  end
+
+  # To-do: consider moving visualization code to explain-appeal.js
   # :reek:TooManyInstanceVariables
   class TimelineSpanData
     attr_reader :id, :record_id
     attr_accessor :start, :end, :group, :type, :styling_classes
 
     TOOLTIP_STYLE = "font-size:0.7em; white-space: pre-line; width: 100px;"
+
     # rubocop:disable Metrics/ParameterLists
     # :reek:LongParameterList
     def initialize(klass, record,
@@ -73,6 +66,8 @@ module ExplainTimelineConcern
                    start_time: record["created_at"],
                    end_time: record["closed_at"],
                    type: "range",
+                   short_duration_threshold: 0, # in seconds
+                   short_duration_display_type: "point",
                    group: klass.table_name,
                    label: "#{record['type']}_#{record['id']}",
                    tooltip: "<pre><code style=#{TOOLTIP_STYLE}>#{JSON.pretty_generate(record)}</code></pre>")
@@ -80,17 +75,31 @@ module ExplainTimelineConcern
       @id = id
       @record_id = record["id"]
       @table_name = klass.table_name
+      @status = record["status"]
       @content = label
       @start = start_time
-      @end = end_time || Time.zone.now
-      @type = type
 
-      # for visualization
+      # `title` is displayed as the tooltip
       @title = tooltip
+      # `type` is one of the vis-timeline item types: range, box, point, background
+      # See https://visjs.github.io/vis-timeline/docs/timeline/#items
+      if short_duration?(end_time, short_duration_threshold)
+        @end = nil
+        @type = short_duration_display_type
+      else
+        @end = end_time || Time.zone.now
+        @type = type
+      end
+
+      # `group` corresponds with a group defined in function `groupEventItems` of explain-appeal.js
+      # See https://visjs.github.io/vis-timeline/docs/timeline/#groups
       @group = group
-      @styling_classes = record["type"]
     end
     # rubocop:enable Metrics/ParameterLists
+
+    def short_duration?(end_time, short_duration_threshold)
+      end_time && (end_time - @start < short_duration_threshold)
+    end
   end
 
   # :reek:FeatureEnvy
@@ -99,15 +108,9 @@ module ExplainTimelineConcern
       TimelineSpanData.new(Intake, record,
                            start_time: record["started_at"],
                            end_time: record["completed_at"],
-                           group: "others").tap do |event|
-        if record["completed_at"]
-          significant_duration = record["completed_at"] - record["started_at"] > 360
-          if !significant_duration
-            event.type = nil
-            event.end = nil
-          end
-        end
-      end
+                           short_duration_threshold: 360,
+                           short_duration_display_type: nil,
+                           group: "others")
     end
   end
 
@@ -125,5 +128,4 @@ module ExplainTimelineConcern
       end
     end
   end
-  # rubocop:enable Metrics/MethodLength
 end
