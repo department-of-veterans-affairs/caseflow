@@ -5,6 +5,7 @@ feature "Appeal time zone", :all_dbs do
 
   before do
     Timecop.freeze(now_utc)
+    BvaIntake.singleton.add_user(current_user)
   end
 
   let!(:current_user) do

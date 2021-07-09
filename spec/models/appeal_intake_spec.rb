@@ -77,7 +77,6 @@ describe AppealIntake, :all_dbs do
     let(:docket_type) { Constants.AMA_DOCKETS.hearing }
     let(:claimant) { nil }
     let(:claimant_type) { "veteran" }
-    let(:claimant_notes) { nil }
     let(:payee_code) { nil }
     let(:legacy_opt_in_approved) { true }
 
@@ -89,7 +88,6 @@ describe AppealIntake, :all_dbs do
         docket_type: docket_type,
         claimant: claimant,
         claimant_type: claimant_type,
-        claimant_notes: claimant_notes,
         payee_code: payee_code,
         legacy_opt_in_approved: legacy_opt_in_approved
       )
@@ -119,7 +117,10 @@ describe AppealIntake, :all_dbs do
     end
 
     context "when claimant is unlisted non-veteran" do
-      before { FeatureToggle.enable!(:non_veteran_claimants) }
+      before do
+        FeatureToggle.enable!(:non_veteran_claimants)
+        RequestStore[:current_user] = user
+      end
       after { FeatureToggle.disable!(:non_veteran_claimants) }
 
       let(:request_params) do
@@ -171,30 +172,6 @@ describe AppealIntake, :all_dbs do
       it { is_expected.to be_falsey }
     end
 
-    context "Claimant has notes saved" do
-      let(:claimant_notes) { "This is a claimant note" }
-      let(:request_params) do
-        ActionController::Parameters.new(
-          receipt_date: receipt_date,
-          docket_type: docket_type,
-          claimant: claimant,
-          claimant_type: claimant_type,
-          payee_code: payee_code,
-          legacy_opt_in_approved: legacy_opt_in_approved,
-          claimant_notes: claimant_notes
-        )
-      end
-
-      it "adds note to unlisted claimants" do
-        subject
-        expect(intake.detail.claimant).to have_attributes(
-          payee_code: nil,
-          decision_review: intake.detail,
-          notes: "This is a claimant note"
-        )
-      end
-    end
-
     context "Claimant is different than Veteran" do
       let(:claimant) { "1234" }
       let(:payee_code) { "10" }
@@ -244,23 +221,6 @@ describe AppealIntake, :all_dbs do
         it "sets correct claimant type" do
           expect(subject).to be_truthy
           expect(intake.detail.claimant).to have_attributes(type: "AttorneyClaimant")
-        end
-      end
-
-      context "claimant is other" do
-        let(:claimant_type) { "other" }
-        let(:claimant) { nil }
-
-        context "when notes are set" do
-          let(:claimant_notes) { "foo" }
-
-          it "sets correct claimant type" do
-            expect(subject).to be_truthy
-            expect(intake.detail.claimant).to have_attributes(
-              type: "OtherClaimant",
-              notes: claimant_notes
-            )
-          end
         end
       end
     end

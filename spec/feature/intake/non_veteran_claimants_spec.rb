@@ -30,10 +30,7 @@ feature "Non-veteran claimants", :postgres do
 
   let(:decision_date) { 3.months.ago.mdY }
 
-  context "with non_veteran_claimants feature toggle" do
-    before { FeatureToggle.enable!(:non_veteran_claimants) }
-    after  { FeatureToggle.disable!(:non_veteran_claimants) }
-
+  context "when intaking appeals with non_veteran_claimants" do
     let(:attorneys) do
       Array.new(15) { create(:bgs_attorney) }
     end
@@ -321,6 +318,7 @@ feature "Non-veteran claimants", :postgres do
     end
 
     it "returns to review page if data is reloaded before saving" do
+      BvaIntake.singleton.add_user(current_user)
       visit "/intake"
       select_form(Constants.INTAKE_FORM_NAMES.appeal)
       safe_click ".cf-submit.usa-button"
