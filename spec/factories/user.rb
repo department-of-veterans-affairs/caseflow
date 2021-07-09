@@ -40,6 +40,10 @@ FactoryBot.define do
       roles { ["VSO"] }
     end
 
+    trait :reader_role do
+      roles { ["Reader"] }
+    end
+
     trait :judge do
       roles { ["Hearing Prep"] }
     end

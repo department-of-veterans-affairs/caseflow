@@ -41,7 +41,6 @@ class SeedDB
     call_and_log_seed_step Seeds::Dispatch
     call_and_log_seed_step Seeds::Jobs
     call_and_log_seed_step Seeds::Substitutions
-    call_and_log_seed_step Seeds::DecisionIssues
     call_and_log_seed_step Seeds::CavcAmaAppeals
     call_and_log_seed_step Seeds::SanitizedJsonSeeds
     call_and_log_seed_step Seeds::MTV

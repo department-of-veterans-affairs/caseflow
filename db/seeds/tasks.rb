@@ -627,9 +627,9 @@ module Seeds
       JudgeTeam.for_judge(judge).add_user(acting_judge)
 
       create_appeal_at_judge_assignment(judge: acting_judge)
-      create_task_at_attorney_review(create(:appeal), judge, attorney)
+      create_task_at_attorney_review(create(:appeal), judge, acting_judge)
       create_task_at_attorney_review(create(:appeal), acting_judge, attorney)
-      create_task_at_judge_review(create(:appeal), judge, attorney)
+      create_task_at_judge_review(create(:appeal), judge, acting_judge)
       create_task_at_judge_review(create(:appeal), acting_judge, attorney)
 
       # Create Acting Judge Legacy Appeals
