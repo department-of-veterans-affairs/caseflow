@@ -34,7 +34,7 @@ module ExplainTimelineConcern
                              group: nil,
                              label: "").tap do |event|
           # for visualization
-          event.styling_classes += " task_#{record['status']}" # TODO: check this
+          event.styling_classes += " task_#{record['status']}"
         end
       end.compact +
       exported_records(Task).map do |record|
@@ -54,7 +54,7 @@ module ExplainTimelineConcern
           end
 
           # for visualization
-          event.styling_classes += " task_#{record['status']}" # TODO: check this
+          event.styling_classes += " task_#{record['status']}"
         end
       end
   end
@@ -66,6 +66,7 @@ module ExplainTimelineConcern
 
     TOOLTIP_STYLE = "font-size:0.7em; white-space: pre-line; width: 100px;"
     # rubocop:disable Metrics/ParameterLists
+    # :reek:LongParameterList
     def initialize(klass, record,
                    record_type: record["type"],
                    id: "#{record['type']}#{record['id']}",

@@ -53,14 +53,14 @@ const itemDecoration = {
 // https://visjs.github.io/vis-timeline/docs/timeline/#items
 function decorateTimelineItems(items){
   items.forEach(item => {
-    if(!itemDecoration.hasOwnProperty(item.tableName)) return;
-    for ([key, value] of Object.entries(itemDecoration[item.tableName])) {
+    if(!itemDecoration.hasOwnProperty(item.table_name)) return;
+    for ([key, value] of Object.entries(itemDecoration[item.table_name])) {
       if (typeof value === 'function') {
         value = value(item)
       }
       item[key] = value
     }
-    item["className"] = item["record_type"]
+    item["className"] = item["styling_classes"]
   });
   // console.log(items)
   return items;
