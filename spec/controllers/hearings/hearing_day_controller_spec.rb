@@ -105,6 +105,34 @@ describe Hearings::HearingDayController, :all_dbs do
       end
     end
 
+    context "with mix of hearings and legacy hearings returns the correct filled slot count" do
+      let(:hearing_day) { create(:hearing_day) }
+      let!(:hearings) do
+        [
+          create(:hearing, :held, hearing_day: hearing_day),
+          create(:hearing, :cancelled, hearing_day: hearing_day),
+          create(
+            :legacy_hearing,
+            hearing_day: hearing_day,
+            disposition: VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:postponed]
+          ),
+          create(:legacy_hearing, hearing_day: hearing_day) # nil disposition
+        ]
+      end
+
+      before do
+        FeatureToggle.enable!(:view_and_download_hearing_scheduled_column)
+      end
+
+      it "returns 200 and the has expected filled slot count", :aggregate_failures do
+        expect(subject.status).to eq 200
+        hearing_days = JSON.parse(subject.body)
+        expect(hearing_days["hearings"].size).to eq 1
+        expect(hearing_days["hearings"][0]["id"]).to eq hearing_day.id
+        expect(hearing_days["hearings"][0]["filled_slots"]).to eq 2
+      end
+    end
+
     context "vso user" do
       let(:station_id) { "301" }
       let(:user) { create(:user, roles: ["VSO"], station_id: station_id, regional_office: "RO02") }

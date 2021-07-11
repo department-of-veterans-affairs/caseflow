@@ -141,3 +141,8 @@ export const REQUEST_TYPE_OPTIONS = [
   { label: 'Virtual',
     value: HEARING_REQUEST_TYPES.virtual }
 ];
+
+export const ENDPOINT_NAMES = {
+  HEARINGS_SCHEDULE: 'hearings-schedule',
+  UPCOMING_HEARING_DAYS: 'upcoming-hearing-days'
+}
