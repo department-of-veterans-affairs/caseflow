@@ -23,6 +23,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     cache_legacy_appeals
     datadog_report_time_segment(segment: "cache_legacy_appeals", start_time: legacy_appeals_start)
 
+    record_success_in_datadog
     datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   rescue StandardError => error
     log_error(@start_time, error)
@@ -114,10 +115,29 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
     Raven.capture_exception(err)
 
-    slack_msg = "See Sentry event #{Raven.last_event_id}"
-    slack_service.send_notification(slack_msg,
-                                    "[ERROR] UpdateCachedAppealsAttributesJob failed after running for #{duration}.")
+    # We do not log every job failure since we expect the job to occasionally fail when we lose
+    # database connections. Since this job runs regularly, we will continue to cache appeals and we
+    # have set up alerts to notify us if we have cached too few appeals over the past day:
+    # * (Too little Postgres data cached) https://app.datadoghq.com/monitors/41233260
+    # * (Too little VACOLS data cached) https://app.datadoghq.com/monitors/41234223
+    record_error_in_datadog
 
     datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
+  end
+
+  def record_success_in_datadog
+    DataDogService.increment_counter(
+      app_name: APP_NAME,
+      metric_group: METRIC_GROUP_NAME,
+      metric_name: "success"
+    )
+  end
+
+  def record_error_in_datadog
+    DataDogService.increment_counter(
+      app_name: APP_NAME,
+      metric_group: METRIC_GROUP_NAME,
+      metric_name: "error"
+    )
   end
 end
