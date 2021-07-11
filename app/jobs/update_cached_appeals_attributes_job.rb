@@ -96,7 +96,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         metric_group: METRIC_GROUP_NAME,
         metric_name: "appeals_to_cache",
         attrs: {
-          type: appeal_type
+          appeal_type: appeal_type
         }
       )
     end
