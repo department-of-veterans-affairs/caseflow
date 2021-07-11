@@ -111,7 +111,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
     end
 
     before do
-      allow_any_instance_of(UpdateCachedAppealsAttributesJob).to receive(:cache_ama_appeals).and_raise("Some dummy error")
+      allow_any_instance_of(UpdateCachedAppealsAttributesJob).to receive(:cache_ama_appeals).and_raise("Some error")
     end
 
     it "increments the job error Datadog gauge" do
