@@ -18,7 +18,6 @@ class TimezoneService
     end
   end
 
-
   class << self
     # Attempts to find a timezone based on an address. For addresses within the United States,
     # this does a lookup of timezone based on zip code. For addresses outisde of the US,
