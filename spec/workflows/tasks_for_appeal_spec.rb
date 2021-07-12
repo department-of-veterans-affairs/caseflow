@@ -83,12 +83,12 @@ describe TasksForAppeal do
         end
       end
 
-      VACOLS::Case::TYPES.drop(1).each do |code, readable|
+      VACOLS::Case::TYPES.each do |code, readable|
         context "appeal is #{readable}" do
           let(:appeal_type) { code }
 
-          it "doesn't call the hearing task tree initializer" do
-            expect(HearingTaskTreeInitializer).to_not receive(:for_appeal_with_pending_travel_board_hearing)
+          it "calls the hearing task tree initializer" do
+            expect(HearingTaskTreeInitializer).to receive(:for_appeal_with_pending_travel_board_hearing)
 
             subject
           end
@@ -105,8 +105,8 @@ describe TasksForAppeal do
         context "hearing was held" do
           let(:disposition) { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:held] }
 
-          it "doesn't call the hearing task tree intitializer" do
-            expect(HearingTaskTreeInitializer).to_not receive(:for_appeal_with_pending_travel_board_hearing)
+          it "calls the hearing task tree initializer" do
+            expect(HearingTaskTreeInitializer).to receive(:for_appeal_with_pending_travel_board_hearing)
 
             subject
           end
