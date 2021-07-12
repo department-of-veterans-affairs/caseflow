@@ -29,7 +29,7 @@ describe TasksForAppeal do
       context "the appeal is not a legacy appeal" do
         let!(:appeal) { create(:appeal) }
 
-        it "doesn't call the hearing task tree intitializer" do
+        it "doesn't call the hearing task tree initializer" do
           expect(HearingTaskTreeInitializer).to_not receive(:for_appeal_with_pending_travel_board_hearing)
 
           subject
@@ -41,7 +41,7 @@ describe TasksForAppeal do
         let!(:hearing_task) { create(:hearing_task, appeal: appeal, parent: root_task) }
 
         context "the hearing task is open" do
-          it "doesn't call the hearing task tree intitializer" do
+          it "doesn't call the hearing task tree initializer" do
             expect(HearingTaskTreeInitializer).to_not receive(:for_appeal_with_pending_travel_board_hearing)
 
             subject
@@ -56,7 +56,7 @@ describe TasksForAppeal do
 
           before { hearing_task.cancel_task_and_child_subtasks }
 
-          it "doesn't call the hearing task tree intitializer" do
+          it "doesn't call the hearing task tree initializer" do
             expect(HearingTaskTreeInitializer).to_not receive(:for_appeal_with_pending_travel_board_hearing)
 
             subject
@@ -67,7 +67,7 @@ describe TasksForAppeal do
       context "the appeal doesn't have a travel board hearing request type" do
         let(:vacols_case) { create(:case, :video_hearing_requested) }
 
-        it "doesn't call the hearing task tree intitializer" do
+        it "doesn't call the hearing task tree initializer" do
           expect(HearingTaskTreeInitializer).to_not receive(:for_appeal_with_pending_travel_board_hearing)
 
           subject
@@ -75,7 +75,7 @@ describe TasksForAppeal do
       end
 
       context "the appeal isn't active" do
-        it "doesn't call the hearing task tree intitializer" do
+        it "doesn't call the hearing task tree initializer" do
           allow(appeal).to receive(:active?).and_return(false)
           expect(HearingTaskTreeInitializer).to_not receive(:for_appeal_with_pending_travel_board_hearing)
 
