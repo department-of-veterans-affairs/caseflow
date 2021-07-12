@@ -677,7 +677,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
         create(
           :request_issue,
           :nonrating,
-          decision_review: higher_level_review
+          decision_review: another_higher_level_review,
+          nonrating_issue_category: "Accrued Benefits"
         )
       end
 
