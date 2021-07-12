@@ -59,6 +59,9 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
       let(:cached_vacols_legacy_cases_gauges) do
         job_gauges.select { |gauge| gauge[:metric_name] == "vacols_cases_cached" }
       end
+      let(:job_success_gauge) do
+        job_gauges.select { |gauge| gauge[:metric_name] == "success" }
+      end
 
       it "records the jobs runtime" do
         allow(DataDogService).to receive(:emit_gauge) do |args|
@@ -85,26 +88,40 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
         expect(cached_appeals_count_gauges.count).to eq(open_appeals.length)
         expect(cached_vacols_legacy_cases_gauges.count).to eq(legacy_appeals.length)
       end
+
+      it "records a successful run of the job" do
+        allow(DataDogService).to receive(:increment_counter) do |args|
+          emitted_gauges.push(args)
+        end
+
+        subject
+
+        expect(job_success_gauge.count).to eq(1)
+      end
     end
   end
 
   context "when the entire job fails" do
-    let(:error_msg) { "Some dummy error" }
-
-    before do
-      allow_any_instance_of(UpdateCachedAppealsAttributesJob).to receive(:cache_ama_appeals).and_raise(error_msg)
+    let(:emitted_gauges) { [] }
+    let(:job_gauges) do
+      emitted_gauges.select { |gauge| gauge[:metric_group] == "update_cached_appeals_attributes_job" }
+    end
+    let(:job_error_gauge) do
+      job_gauges.select { |gauge| gauge[:metric_name] == "error" }
     end
 
-    it "sends a message to Slack that includes the error" do
-      allow_any_instance_of(SlackService).to receive(:send_notification) do |_, msg, title|
-        @slack_msg = msg
-        @slack_title = title
+    before do
+      allow_any_instance_of(UpdateCachedAppealsAttributesJob).to receive(:cache_ama_appeals).and_raise("Some error")
+    end
+
+    it "increments the job error Datadog gauge" do
+      allow(DataDogService).to receive(:increment_counter) do |args|
+        emitted_gauges.push(args)
       end
 
       subject
 
-      expect(@slack_title).to match(/\[ERROR\] UpdateCachedAppealsAttributesJob failed after running for .*/)
-      expect(@slack_msg).to match(/See Sentry event .*/)
+      expect(job_error_gauge.count).to eq(1)
     end
   end
 
