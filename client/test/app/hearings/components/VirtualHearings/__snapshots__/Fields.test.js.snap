@@ -16125,11 +16125,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
       <HelperText
         label="The hearing time in email notifications is calculated based on the timezone"
       >
-        <span
-          data-css-tgxxqt=""
+        <div
+          className="helper-text"
         >
           The hearing time in email notifications is calculated based on the timezone
-        </span>
+        </div>
       </HelperText>
     </div>
     <div
@@ -16146,11 +16146,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
             Array [
               "cf-form-textinput cf-inline-field",
             ]
-          }
-          inputStyling={
-            Object {
-              "data-css-d0z96": "",
-            }
           }
           name="Veteran Email"
           onChange={[Function]}
@@ -16190,7 +16185,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                   "cf-form-textinput cf-inline-field",
                 ]
               }
-              data-css-d0z96=""
               id="Veteran Email"
               name="Veteran Email"
               onChange={[Function]}
@@ -16202,11 +16196,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
         <HelperText
           label="Changes to the email are used to send notifications for this hearing only"
         >
-          <span
-            data-css-tgxxqt=""
+          <div
+            className="helper-text"
           >
             Changes to the email are used to send notifications for this hearing only
-          </span>
+          </div>
         </HelperText>
       </VirtualHearingEmail>
     </div>
@@ -32315,11 +32309,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
       <HelperText
         label="The hearing time in email notifications is calculated based on the timezone"
       >
-        <span
-          data-css-tgxxqt=""
+        <div
+          className="helper-text"
         >
           The hearing time in email notifications is calculated based on the timezone
-        </span>
+        </div>
       </HelperText>
     </div>
     <div
@@ -32336,11 +32330,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
             Array [
               "cf-form-textinput cf-inline-field",
             ]
-          }
-          inputStyling={
-            Object {
-              "data-css-d0z96": "",
-            }
           }
           name="POA/Representative Email"
           onChange={[Function]}
@@ -32375,7 +32364,6 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                   "cf-form-textinput cf-inline-field",
                 ]
               }
-              data-css-d0z96=""
               id="POA/Representative Email"
               name="POA/Representative Email"
               onChange={[Function]}
@@ -32387,11 +32375,11 @@ exports[`Fields Display timezone and divider for Central 1`] = `
         <HelperText
           label="Changes to the email are used to send notifications for this hearing only"
         >
-          <span
-            data-css-tgxxqt=""
+          <div
+            className="helper-text"
           >
             Changes to the email are used to send notifications for this hearing only
-          </span>
+          </div>
         </HelperText>
       </VirtualHearingEmail>
     </div>
@@ -48524,11 +48512,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
       <HelperText
         label="The hearing time in email notifications is calculated based on the timezone"
       >
-        <span
-          data-css-tgxxqt=""
+        <div
+          className="helper-text"
         >
           The hearing time in email notifications is calculated based on the timezone
-        </span>
+        </div>
       </HelperText>
     </div>
     <div
@@ -48545,11 +48533,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
             Array [
               "cf-form-textinput cf-inline-field",
             ]
-          }
-          inputStyling={
-            Object {
-              "data-css-d0z96": "",
-            }
           }
           name="Veteran Email"
           onChange={[Function]}
@@ -48589,7 +48572,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                   "cf-form-textinput cf-inline-field",
                 ]
               }
-              data-css-d0z96=""
               id="Veteran Email"
               name="Veteran Email"
               onChange={[Function]}
@@ -48601,11 +48583,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
         <HelperText
           label="Changes to the email are used to send notifications for this hearing only"
         >
-          <span
-            data-css-tgxxqt=""
+          <div
+            className="helper-text"
           >
             Changes to the email are used to send notifications for this hearing only
-          </span>
+          </div>
         </HelperText>
       </VirtualHearingEmail>
     </div>
@@ -64714,11 +64696,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
       <HelperText
         label="The hearing time in email notifications is calculated based on the timezone"
       >
-        <span
-          data-css-tgxxqt=""
+        <div
+          className="helper-text"
         >
           The hearing time in email notifications is calculated based on the timezone
-        </span>
+        </div>
       </HelperText>
     </div>
     <div
@@ -64735,11 +64717,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
             Array [
               "cf-form-textinput cf-inline-field",
             ]
-          }
-          inputStyling={
-            Object {
-              "data-css-d0z96": "",
-            }
           }
           name="POA/Representative Email"
           onChange={[Function]}
@@ -64774,7 +64751,6 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                   "cf-form-textinput cf-inline-field",
                 ]
               }
-              data-css-d0z96=""
               id="POA/Representative Email"
               name="POA/Representative Email"
               onChange={[Function]}
@@ -64786,11 +64762,11 @@ exports[`Fields Display timezone and divider for Video 1`] = `
         <HelperText
           label="Changes to the email are used to send notifications for this hearing only"
         >
-          <span
-            data-css-tgxxqt=""
+          <div
+            className="helper-text"
           >
             Changes to the email are used to send notifications for this hearing only
-          </span>
+          </div>
         </HelperText>
       </VirtualHearingEmail>
     </div>

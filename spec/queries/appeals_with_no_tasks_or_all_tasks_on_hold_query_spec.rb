@@ -40,6 +40,12 @@ describe AppealsWithNoTasksOrAllTasksOnHoldQuery, :postgres do
   let!(:dispatched_appeal_on_hold) do
     appeal = create(:appeal, :with_post_intake_tasks)
     create(:bva_dispatch_task, :completed, appeal: appeal)
+    create(:decision_document, citation_number: "A18123456", appeal: appeal)
+    appeal
+  end
+  let!(:incompletely_dispatched_appeal_on_hold) do
+    appeal = create(:appeal, :with_post_intake_tasks)
+    create(:bva_dispatch_task, :completed, appeal: appeal)
     appeal
   end
 
@@ -106,6 +112,12 @@ describe AppealsWithNoTasksOrAllTasksOnHoldQuery, :postgres do
       let(:appeal) { dispatched_appeal_on_hold }
 
       it { is_expected.to eq(true) }
+    end
+
+    context "incompletely_dispatched_appeal_on_hold" do
+      let(:appeal) { incompletely_dispatched_appeal_on_hold }
+
+      it { is_expected.to eq(false) }
     end
   end
 end

@@ -94,14 +94,14 @@ class HearingDay < CaseflowRecord
     HearingRepository.fetch_hearings_for_parent(id)
   end
 
-  def open_hearings
-    closed_hearing_dispositions = [
-      Constants.HEARING_DISPOSITION_TYPES.postponed,
-      Constants.HEARING_DISPOSITION_TYPES.cancelled,
-      Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
-    ]
+  def ama_and_legacy_hearings
+    hearings + vacols_hearings
+  end
 
-    (hearings + vacols_hearings).reject { |hearing| closed_hearing_dispositions.include?(hearing.disposition) }
+  def open_hearings
+    ama_and_legacy_hearings.reject do |hearing|
+      Hearing::CLOSED_HEARING_DISPOSITIONS.include?(hearing.disposition)
+    end
   end
 
   def hearings_for_user(current_user)

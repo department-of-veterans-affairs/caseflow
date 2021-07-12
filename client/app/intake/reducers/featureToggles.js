@@ -11,9 +11,6 @@ const updateFromServerFeatures = (state, featureToggles) => {
     covidTimelinessExemption: {
       $set: Boolean(featureToggles.covidTimelinessExemption)
     },
-    restrictAppealIntakes: {
-      $set: Boolean(featureToggles.restrictAppealIntakes)
-    }
   });
 };
 
@@ -22,7 +19,6 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
     {
       useAmaActivationDate: false,
       correctClaimReviews: false,
-      restrictAppealIntakes: false
     },
     data.featureToggles
   );
