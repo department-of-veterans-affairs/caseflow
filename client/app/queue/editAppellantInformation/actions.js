@@ -3,7 +3,6 @@ import { ACTIONS } from './constants';
 import { mapAppellantDataFromApi, mapAppellantDataToApi } from './utils';
 
 export const updateAppellantInformation = (appellantFormData, appellantId) => (dispatch) => {
-  console.log(appellantId)
   const appellantData = mapAppellantDataToApi(appellantFormData);
 
   ApiUtil.patch(`/unrecognized_appellants/${appellantId}`, appellantData).then((response) => {
@@ -12,6 +11,6 @@ export const updateAppellantInformation = (appellantFormData, appellantId) => (d
       payload: mapAppellantDataFromApi(response.body)
     });
   }, (error) => {
-    console.log(error)
+    return error
   })
 }
