@@ -30,6 +30,7 @@ class Hearing < CaseflowRecord
   include HasSimpleAppealUpdatedSince
   include UpdatedByUserConcern
   include HearingConcern
+  include HasHearingEmailRecipientsConcern
 
   belongs_to :hearing_day
   belongs_to :appeal
