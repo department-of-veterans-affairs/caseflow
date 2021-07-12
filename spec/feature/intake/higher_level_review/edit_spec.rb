@@ -630,14 +630,15 @@ feature "Higher Level Review Edit issues", :all_dbs do
       let!(:active_nonrating_request_issue) do
         create(:request_issue,
                :nonrating,
-               decision_review: another_higher_level_review)
+               decision_review: another_higher_level_review,
+               nonrating_issue_category: "Accrued Benefits")
       end
 
       before do
         another_higher_level_review.create_issues!([active_nonrating_request_issue])
       end
 
-      scenario "shows ineligibility message and saves conflicting request issue id" do
+      fscenario "shows ineligibility message and saves conflicting request issue id" do
         visit "higher_level_reviews/#{nonrating_ep_claim_id}/edit"
         click_intake_add_issue
         click_intake_no_matching_issues
