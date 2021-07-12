@@ -82,13 +82,10 @@ module ExplainTimelineConcern
                          label: "")
   end
 
-  # To-do: consider moving visualization code to explain-appeal.js
   # :reek:TooManyInstanceVariables
   class TimelineSpanData
     attr_reader :id, :record_id
     attr_accessor :start, :end, :group, :type, :styling_classes
-
-    TOOLTIP_STYLE = "font-size:0.7em; white-space: pre-line; width: 100px;"
 
     # rubocop:disable Metrics/ParameterLists
     # :reek:LongParameterList
@@ -102,18 +99,15 @@ module ExplainTimelineConcern
                    short_duration_display_type: "point",
                    status: record["status"],
                    group: "others",
-                   label: "#{record_type}_#{record['id']}",
-                   tooltip: "<pre><code style=#{TOOLTIP_STYLE}>#{JSON.pretty_generate(record)}</code></pre>")
+                   label: "#{record_type}_#{record['id']}")
+      @record = record
       @record_type = record_type
       @id = id
-      @record_id = record["id"]
       @table_name = klass.table_name
       @status = status
       @content = label
       @start = start_time
 
-      # `title` is displayed as the tooltip
-      @title = tooltip
       # `type` is one of the vis-timeline item types: range, box, point, background
       # See https://visjs.github.io/vis-timeline/docs/timeline/#items
       if short_duration?(end_time, short_duration_threshold)

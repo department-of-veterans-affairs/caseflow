@@ -235,3 +235,11 @@ summary {
 #timeline div.TrackVeteranTask {
   font-size: 0.7em;
 }
+
+#timeline .event_detail {
+  max-width: 100px;
+  word-wrap: break-word;
+  margin: 0px;
+  font-size: 0.7em;
+  white-space: pre-line;
+}

@@ -30,7 +30,7 @@ function addTimeline(elementId, timeline_data){
     orientation: {axis: 'both'},  // show time axis on both the top and bottom
     stack: true,
     zoomKey: 'ctrlKey',
-    order: (a, b) => b.record_id - a.record_id,
+    order: (a, b) => b.record.id - a.record.id,
     tooltip: {
       followMouse: true
     }
@@ -55,24 +55,32 @@ const itemDecoration = {
   }
 };
 
+const formatJson = (obj) => {
+  return JSON.stringify(obj, null, ' ').
+    replace('{\n', '').
+    replace('\n}', '');
+};
+
 // https://visjs.github.io/vis-timeline/docs/timeline/#items
 function decorateTimelineItems(items){
   items.forEach(item => {
-    item.className = item.record_type
+    item.className = item.record_type;
 
     if(!itemDecoration.hasOwnProperty(item.table_name)) return;
 
     for ([key, value] of Object.entries(itemDecoration[item.table_name])) {
       if (typeof value === 'function') {
-        value = value(item)
+        value = value(item);
       }
-      item[key] = value
+      item[key] = value;
     }
+
+    // `title` is displayed as the tooltip
+    item.title = "<pre class='event_detail'>"+formatJson(item.record)+"</pre>";
   });
   // console.log(items)
   return items;
 }
-
 
 // https://visjs.github.io/vis-timeline/docs/timeline/#groups
 var groups = new vis.DataSet();
