@@ -19,11 +19,19 @@ describe WorkQueue::AppealSerializer, :all_dbs do
       end
 
       context "when the restrict_poa_visibility feature toggle is off" do
-        before { FeatureToggle.disable!(:restrict_poa_visibility) }
+        before do
+          FeatureToggle.disable!(:restrict_poa_visibility)
+          allow(User).to receive(:current_user).and_throw("Error!")
+        end
         after { FeatureToggle.enable!(:restrict_poa_visibility) }
+
         describe "decision_issues" do
           it "does display decision issues with a decision date in the future" do
             expect(subject.serializable_hash[:data][:attributes][:decision_issues].count).to eq(1)
+          end
+
+          it "accesses user information without breaking on the user passed into the policy" do
+            expect { subject.serializable_hash[:data][:attributes][:decision_issues] }.not_to raise_error
           end
         end
       end
