@@ -84,8 +84,8 @@ export const ClaimantForm = ({
 
   return (
     <>
-      <h1>{props.header || "Add Claimant"}</h1>
-      <p>{props.description || ADD_CLAIMANT_PAGE_DESCRIPTION}</p>
+      <h1>{props.editAppellantHeader || 'Add Claimant'}</h1>
+      <p>{props.editAppellantDescription || ADD_CLAIMANT_PAGE_DESCRIPTION}</p>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Controller
           control={control}
@@ -242,6 +242,8 @@ ClaimantForm.propTypes = {
   onAttorneySearch: PropTypes.func,
   onBack: PropTypes.func,
   onSubmit: PropTypes.func,
+  editAppellantHeader: PropTypes.substring,
+  editAppellantDescription: PropTypes.substring
 };
 
 const FieldDiv = styled.div`

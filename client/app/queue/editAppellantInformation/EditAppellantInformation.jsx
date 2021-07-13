@@ -23,12 +23,12 @@ const EditAppellantInformation = () => {
     dispatch(updateAppellantInformation({ formData, id }));
   };
 
-  const header = 'Edit Appellant Information'
-  const description = EDIT_CLAIMANT_PAGE_DESCRIPTION
+  const editAppellantHeader = 'Edit Appellant Information';
+  const editAppellantDescription = EDIT_CLAIMANT_PAGE_DESCRIPTION;
 
   return <div>
     <FormProvider {...methods}>
-      <EditClaimantForm header={header} description={description}/>
+      <EditClaimantForm header={header} description={description} />
       <Button onClick={handleSubmit(handleUpdate)}>Submit</Button>
     </FormProvider>
   </div>;
