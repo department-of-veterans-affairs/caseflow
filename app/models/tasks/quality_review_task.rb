@@ -4,6 +4,8 @@
 # Task to track when an appeal has been randomly selected to be quality reviewed by the Quality Review team.
 
 class QualityReviewTask < Task
+  before_create :prevent_quality_review_task_creation_for_unrecognized_appellants
+
   scope :created_this_month, -> { where(created_at: Time.zone.now.beginning_of_month..Time.zone.now.end_of_month) }
 
   def available_actions(user)
@@ -27,5 +29,13 @@ class QualityReviewTask < Task
     # individual). To prevent creating duplicate BvaDispatchTasks only create one for the organization task.
     BvaDispatchTask.create_from_root_task(root_task) if assigned_to == QualityReview.singleton
     super
+  end
+
+  private
+
+  def prevent_quality_review_task_creation_for_unrecognized_appellants
+    unless FeatureToggle.enabled?(:allow_unrecognized_appellant_dispatch)
+      fail NotImplementedError if appeal.claimant.is_a?(OtherClaimant)
+    end
   end
 end
