@@ -98,53 +98,56 @@
 
   <% unless legacy_appeal? %>
     <h3>Timeline</h3>
-    <input type="button" id="fit" value="Fit all items" />
     <details>
-      <summary id="timeline_config" style="color: purple">Timeline configuration</summary>
+      <summary id="timeline_viz" style="color: purple">Timeline visualization</summary>
 
-      <input id="tasks_group_visible" type="checkbox" checked onchange="toggleTimelineEventGroup(this, 'tasks')" />
-      <label for="tasks_group_visible">Tasks</label>
+      <input type="button" id="fit" value="Fit all items" />
+      <details>
+        <summary id="timeline_config" style="color: purple">Timeline configuration</summary>
 
-      <input id="cancelled_tasks_group_visible" type="checkbox" checked onchange="toggleTimelineEventGroup(this, 'cancelled_tasks')" />
-      <label for="cancelled_tasks_group_visible">Cancelled tasks</label>
+        <input id="tasks_group_visible" type="checkbox" checked onchange="toggleTimelineEventGroup(this, 'tasks')" />
+        <label for="tasks_group_visible">Tasks</label>
 
-      <input id="other_group_visible" type="checkbox" checked onchange="toggleTimelineEventGroup(this, 'others')" />
-      <label for="other_group_visible">Others</label>
-    </details>
+        <input id="cancelled_tasks_group_visible" type="checkbox" checked onchange="toggleTimelineEventGroup(this, 'cancelled_tasks')" />
+        <label for="cancelled_tasks_group_visible">Cancelled tasks</label>
 
-    <details>
-      <summary>Color-coding</summary>
-      <table id="timelineColors" style="margin: 0px">
-        <tr><td>
-          <table>
-            <tr><td><b>Task colors</b></td></tr>
-            <tr><td class="assigned_task">Assigned task</td></tr>
-            <tr><td class="onhold_task">On-hold task</td></tr>
-            <tr><td class="inprogress_task">In-progress task</td></tr>
-            <tr><td class="completed_task">Completed task</td></tr>
-            <tr><td class="cancelled_task">Cancelled task</td></tr>
-          </table>
-        </td><td>
-        </td><td>
-          <table>
-            <tr><td><b>Background colors</b></td></tr>
-            <tr><td class="distribution_phase">Pre-distribution phase</td></tr>
-            <tr><td class="decision_phase">Decision phase</td></tr>
-            <tr><td class="dispatch_phase">Dispatch phase</td></tr>
-          </table>
-        </td></tr>
-      </table>
-    </details>
-    <br/>
-    <div id="timeline"></div>
-    <details>
-      <summary style="color: red">Timeline data</summary>
-      <pre style="font-size:0.84em; padding:10px"><code><%= JSON.pretty_generate(timeline_data) %></code></pre>
+        <input id="other_group_visible" type="checkbox" checked onchange="toggleTimelineEventGroup(this, 'others')" />
+        <label for="other_group_visible">Others</label>
+      </details>
+
+      <details>
+        <summary>Color-coding</summary>
+        <table id="timelineColors" style="margin: 0px">
+          <tr><td>
+            <table>
+              <tr><td><b>Task colors</b></td></tr>
+              <tr><td class="assigned_task">Assigned task</td></tr>
+              <tr><td class="onhold_task">On-hold task</td></tr>
+              <tr><td class="inprogress_task">In-progress task</td></tr>
+              <tr><td class="completed_task">Completed task</td></tr>
+              <tr><td class="cancelled_task">Cancelled task</td></tr>
+            </table>
+          </td><td>
+          </td><td>
+            <table>
+              <tr><td><b>Background colors</b></td></tr>
+              <tr><td class="distribution_phase">Pre-distribution phase</td></tr>
+              <tr><td class="decision_phase">Decision phase</td></tr>
+              <tr><td class="dispatch_phase">Dispatch phase</td></tr>
+            </table>
+          </td></tr>
+        </table>
+      </details>
+      <br/>
+      <div id="timeline"></div>
+      <details>
+        <summary style="color: red">Timeline data</summary>
+        <pre style="font-size:0.84em; padding:10px"><code><%= JSON.pretty_generate(timeline_data) %></code></pre>
+      </details>
     </details>
     <hr/>
 
     <script type="text/javascript">
-      // Timeline
       const timeline_data = <%= timeline_data.to_json.html_safe %>;
       const timeline = addTimeline('timeline', timeline_data);
 
