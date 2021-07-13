@@ -7,7 +7,7 @@ import Button from '../../components/Button';
 import { updateAppellantInformation } from './editAppellantInformationSlice';
 import { useDispatch } from 'react-redux';
 import { EDIT_CLAIMANT_PAGE_DESCRIPTION } from 'app/../COPY';
-import { IntakeLayout } from '../../intake/components/IntakeLayout';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 const EditAppellantInformation = () => {
   const dispatch = useDispatch();
@@ -31,10 +31,10 @@ const EditAppellantInformation = () => {
 
   return <div>
     <FormProvider {...methods}>
-      <IntakeLayout>
+      <AppSegment filledBackground>
         <EditClaimantForm editAppellantHeader={editAppellantHeader} editAppellantDescription={editAppellantDescription} />
         <Button onClick={handleSubmit(handleUpdate)}>Submit</Button>
-      </IntakeLayout>
+      </AppSegment>
     </FormProvider>
   </div>;
 };
