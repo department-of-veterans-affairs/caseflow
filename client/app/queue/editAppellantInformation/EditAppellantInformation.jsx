@@ -32,7 +32,10 @@ const EditAppellantInformation = () => {
   return <div>
     <FormProvider {...methods}>
       <AppSegment filledBackground>
-        <EditClaimantForm editAppellantHeader={editAppellantHeader} editAppellantDescription={editAppellantDescription} />
+        <EditClaimantForm 
+          editAppellantHeader={editAppellantHeader} 
+          editAppellantDescription={editAppellantDescription} 
+        />
         <Button onClick={handleSubmit(handleUpdate)}>Submit</Button>
       </AppSegment>
     </FormProvider>
