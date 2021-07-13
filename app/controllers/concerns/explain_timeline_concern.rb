@@ -69,8 +69,7 @@ module ExplainTimelineConcern
 
   def create_nonphase_task_data(record)
     group = (record["status"] == "cancelled") ? "cancelled_tasks" : "tasks"
-    TimelineSpanData.new(Task, record, group: group, short_duration_threshold: 60).tap do |event|
-    end
+    TimelineSpanData.new(Task, record, group: group, short_duration_threshold: 60)
   end
 
   def create_background_task(record)
@@ -84,9 +83,6 @@ module ExplainTimelineConcern
 
   # :reek:TooManyInstanceVariables
   class TimelineSpanData
-    attr_reader :id, :record_id
-    attr_accessor :start, :end, :group, :type, :styling_classes
-
     # rubocop:disable Metrics/ParameterLists
     # :reek:LongParameterList
     def initialize(klass, record,

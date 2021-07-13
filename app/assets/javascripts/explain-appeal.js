@@ -38,14 +38,6 @@ function addTimeline(elementId, timeline_data){
   return new vis.Timeline(timelineElement, items, groups, timeline_options);
 }
 
-const taskNodeColor = {
-  assigned: "#00dd00",
-  in_progress: "#00ff00",
-  on_hold: "#cccc00",
-  cancelled: "#8a8",
-  completed: "#00bb00"
-};
-
 const itemDecoration = {
   tasks: {
     className: (item)=> item.className + " task_" + item.status
