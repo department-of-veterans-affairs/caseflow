@@ -11,7 +11,9 @@ import { EDIT_CLAIMANT_PAGE_DESCRIPTION } from 'app/../COPY';
 const EditAppellantInformation = () => {
   const dispatch = useDispatch();
   // CASEFLOW-1921: Pass in the existing appellant information as default values
+
   const methods = useClaimantForm({ defaultValues: {} });
+  
   const {
     handleSubmit,
   } = methods;
