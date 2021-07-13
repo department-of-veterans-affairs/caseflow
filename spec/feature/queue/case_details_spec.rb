@@ -2014,10 +2014,9 @@ RSpec.feature "Case details", :all_dbs do
                disposition: disposition)
       end
       let(:user) { create(:user, css_id: 'CAVC_LIT_USER') }
-      let(:cavc_lit_team) { CavcLitigationSupport.singleton }
 
       before do
-        OrganizationsUser.make_user_admin(user, cavc_lit_team)
+        CavcLitigationSupport.singleton.add_user(user)
         User.authenticate!(user: user)
         FeatureToggle.enable!(:cavc_remand)
       end
