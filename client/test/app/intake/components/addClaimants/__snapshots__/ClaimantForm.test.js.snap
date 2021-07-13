@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AddClaimantForm default values prepopulates with default values 1`] = `
+exports[`ClaimantForm default values prepopulates with default values 1`] = `
 <div>
   <h1>
     Add Claimant
@@ -623,7 +623,7 @@ exports[`AddClaimantForm default values prepopulates with default values 1`] = `
 </div>
 `;
 
-exports[`AddClaimantForm renders default state correctly 1`] = `
+exports[`ClaimantForm renders default state correctly 1`] = `
 <div>
   <h1>
     Add Claimant
