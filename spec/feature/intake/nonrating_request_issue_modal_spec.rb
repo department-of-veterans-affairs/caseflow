@@ -60,7 +60,7 @@ feature "Nonrating Request Issue Modal", :postgres do
       test_issue_categories(
         decision_review_type: "higher_level_review",
         benefit_type: "pension",
-        included_category: "Eligibility | Wartime service",
+        included_category: "Eligibility | Wartime Service",
         excluded_category: "Entitlement to Services"
       )
 
