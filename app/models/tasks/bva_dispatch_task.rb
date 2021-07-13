@@ -51,6 +51,8 @@ class BvaDispatchTask < Task
   private
 
   def prevent_dispatch_task_creation_for_unrecognized_appellants
-    fail NotImplementedError if appeal.claimant.is_a?(OtherClaimant)
+    unless FeatureToggle.enabled?(:allow_unrecognized_appellant_dispatch)
+      fail NotImplementedError if appeal.claimant.is_a?(OtherClaimant)
+    end
   end
 end
