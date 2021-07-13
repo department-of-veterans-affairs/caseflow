@@ -13,7 +13,7 @@ const EditAppellantInformation = () => {
   // CASEFLOW-1921: Pass in the existing appellant information as default values
 
   const methods = useClaimantForm({ defaultValues: {} });
-  
+
   const {
     handleSubmit,
   } = methods;

@@ -242,8 +242,8 @@ ClaimantForm.propTypes = {
   onAttorneySearch: PropTypes.func,
   onBack: PropTypes.func,
   onSubmit: PropTypes.func,
-  editAppellantHeader: PropTypes.substring,
-  editAppellantDescription: PropTypes.substring
+  editAppellantHeader: PropTypes.string,
+  editAppellantDescription: PropTypes.string
 };
 
 const FieldDiv = styled.div`
