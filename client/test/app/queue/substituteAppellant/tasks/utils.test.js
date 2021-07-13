@@ -7,7 +7,7 @@ import {
   prepTaskDataForUi,
   shouldAutoSelect,
   shouldDisable,
-  shouldHideBasedOnPoaType,
+  shouldHideBasedOnPoa,
   shouldHide,
   shouldShowBasedOnOtherTasks,
 } from 'app/queue/substituteAppellant/tasks/utils';
@@ -74,20 +74,15 @@ describe('utility functions for task manipulation', () => {
     });
   });
 
-  describe('shouldHideBasedOnPoaType', () => {
+  const poa = { ihp_allowed: true };
+
+  describe('shouldHideBasedOnPoa', () => {
+
     describe('task type is InformalHearingPresentationTask', () => {
       const taskInfo = { type: 'InformalHearingPresentationTask' };
 
-      it('should hide if the poa is an attorney', () => {
-        expect(shouldHideBasedOnPoaType(taskInfo, 'Attorney')).toBe(true);
-      });
-
-      it('should hide if the poa is an agent', () => {
-        expect(shouldHideBasedOnPoaType(taskInfo, 'Agent')).toBe(true);
-      });
-
-      it('should not hide if the poa is not an agent/attorney', () => {
-        expect(shouldHideBasedOnPoaType(taskInfo, 'other poa type')).toBe(false);
+      it('should hide if the backend says rep is non-ihp-writing', () => {
+        expect(shouldHideBasedOnPoa(taskInfo, { ihp_allowed: false })).toBe(true);
       });
     });
 
@@ -95,13 +90,13 @@ describe('utility functions for task manipulation', () => {
       const taskInfo = { type: 'JudgeAssignTask' };
 
       it('should not hide', () => {
-        expect(shouldHideBasedOnPoaType(taskInfo, 'other POA type')).toBe(false);
+        expect(shouldHideBasedOnPoa(taskInfo, { ihp_allowed: false })).toBe(false);
       });
     });
   });
 
   describe('shouldHide', () => {
-    let poaType = 'other poa type';
+
     const otherOrgTask = { hideFromCaseTimeline: false, assignedTo: { isOrganization: true }, type: 'other task type' };
     const otherUserTask = { hideFromCaseTimeline: false, assignedTo: { isOrganization: false }, type: 'other task type' };
 
@@ -110,7 +105,7 @@ describe('utility functions for task manipulation', () => {
       const allTasks = [userTaskInfo, otherOrgTask, otherUserTask];
 
       it('returns true', () => {
-        expect(shouldHide(userTaskInfo, poaType, allTasks)).toBe(true);
+        expect(shouldHide(userTaskInfo, poa, allTasks)).toBe(true);
       });
     });
 
@@ -119,7 +114,7 @@ describe('utility functions for task manipulation', () => {
       const allTasks = [userTaskInfo, otherOrgTask, otherUserTask];
 
       it('returns false', () => {
-        expect(shouldHide(userTaskInfo, poaType, allTasks)).toBe(false);
+        expect(shouldHide(userTaskInfo, poa, allTasks)).toBe(false);
       });
     });
 
@@ -139,12 +134,9 @@ describe('utility functions for task manipulation', () => {
         assignedTo: { isOrganization: false },
       };
       const allTasks = [userTaskInfo, otherOrgTask, otherUserTask];
-      const poaTypes = ['Attorney', 'Agent', null];
 
-      describe.each(poaTypes)(' poaType: %s', (type) => {
-        it('should hide these tasks', () => {
-          expect(shouldHide(userTaskInfo, type, allTasks)).toBe(true);
-        });
+      it('should hide these tasks', () => {
+        expect(shouldHide(userTaskInfo, poa, allTasks)).toBe(true);
       });
 
     });
@@ -153,11 +145,10 @@ describe('utility functions for task manipulation', () => {
       describe('the task type is only assigned to a user', () => {
         const userTaskInfo = { hideFromCaseTimeline: false, type: 'RootTask', assignedTo: { isOrganization: false } };
 
-        poaType = 'Attorney';
         const allTasks = [userTaskInfo, otherOrgTask, otherUserTask];
 
         it('should not hide these tasks', () => {
-          expect(shouldHide(userTaskInfo, poaType, allTasks)).toBe(false);
+          expect(shouldHide(userTaskInfo, poa, allTasks)).toBe(false);
         });
       });
     });
@@ -167,11 +158,9 @@ describe('utility functions for task manipulation', () => {
       const orgTaskInfo = { taskId: 2, hideFromCaseTimeline: true, type: 'BvaDispatchTask', assignedTo: { isOrganization: true } };
       const allTasks = [orgTaskInfo, userTaskInfo, otherOrgTask, otherUserTask];
 
-      poaType = 'other poa type';
-
       it('should hide both organization and user Bva Dispatch tasks', () => {
-        expect(shouldHide(userTaskInfo, poaType, allTasks)).toBe(true);
-        expect(shouldHide(orgTaskInfo, poaType, allTasks)).toBe(true);
+        expect(shouldHide(userTaskInfo, poa, allTasks)).toBe(true);
+        expect(shouldHide(orgTaskInfo, poa, allTasks)).toBe(true);
       });
 
     });

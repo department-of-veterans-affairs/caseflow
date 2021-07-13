@@ -16,4 +16,17 @@ describe FieldVso, :postgres do
       expect(tabs.first).to be_a(OrganizationTrackingTasksTab)
     end
   end
+
+  describe "should_write_ihp?" do
+    let(:appeal) { create(:appeal) }
+
+    before do
+      allow(appeal).to receive(:representatives).and_return(FieldVso.where(id: vso.id))
+    end
+
+    it "a field vso does not write IHPs for appeals they represent" do
+      expect(appeal.representatives.include?(vso)).to eq(true)
+      expect(vso.should_write_ihp?(appeal)).to eq(false)
+    end
+  end
 end

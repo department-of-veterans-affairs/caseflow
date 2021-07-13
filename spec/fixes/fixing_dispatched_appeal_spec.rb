@@ -59,7 +59,7 @@ describe "Fixing dispatched appeals" do
         appeal_type: "Appeal",
         citation_number: "A20011064",
         decision_date: DateTime.new(2020, 6, 26),
-        redacted_document_location: "\\vacohsm01.dva.va.gov\vaco_workgroups\BVA\archdata\arch2006\A20011064.txt",
+        redacted_document_location: "\\\\vacohsm01.dva.va.gov\\vaco_workgroups\\BVA\\archdata\\arch2006\\A20011064.txt",
         submitted_at: DateTime.new(2020, 6, 26, 16, 54, 45),
         attempted_at: DateTime.new(2020, 6, 26, 16, 54, 46),
         processed_at: DateTime.new(2020, 6, 26, 16, 55, 5),
@@ -69,8 +69,6 @@ describe "Fixing dispatched appeals" do
 
       decision_doc = DecisionDocument.create!(params)
       expect(appeal.decision_document).to eq decision_doc
-
-      appeal.reload.treee
     end
   end
 end

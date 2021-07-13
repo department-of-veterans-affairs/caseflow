@@ -233,6 +233,17 @@ FactoryBot.define do
       end
     end
 
+    trait :with_ihp_task do
+      after(:create) do |appeal, _evaluator|
+        org = Organization.find_by(type: "Vso")
+        FactoryBot.create(
+          :informal_hearing_presentation_task,
+          appeal: appeal,
+          assigned_to: org
+        )
+      end
+    end
+
     ## Appeal with a realistic task tree
     ## Appeal has finished intake
     trait :with_post_intake_tasks do
