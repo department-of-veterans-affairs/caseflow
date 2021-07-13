@@ -63,6 +63,6 @@ export const Basic = Template.bind({});
 Basic.parameters = {
   docs: {
     storyDescription:
-      'This is used to add claimants not already associated with the appeal',
+      'This is used to add or edit claimants not already associated with the appeal',
   },
 };
