@@ -1997,6 +1997,60 @@ RSpec.feature "Case details", :all_dbs do
         end
       end
     end
+
+    describe "Add CAVC Remand button" do
+      let(:docket_type) { "evidence_submission" }
+      let(:case_type) { "original" }
+      let(:disposition) { "allowed" }
+
+      let(:appeal) do
+        create(:appeal, status, :with_decision_issue,
+               docket_type: docket_type,
+               stream_type: case_type,
+               disposition: disposition)
+      end
+      let(:user) { create(:user, css_id: 'CAVC_LIT_USER') }
+      let(:cavc_lit_team) { CavcLitigationSupport.singleton }
+
+      before do
+        OrganizationsUser.make_user_admin(user, cavc_lit_team)
+        User.authenticate!(user: user)
+        FeatureToggle.enable!(:cavc_remand)
+      end
+
+      shared_examples "the button is not shown" do
+        it "the 'Add CAVC Remand' button is not shown" do
+          visit "/queue/appeals/#{appeal.external_id}"
+          find("div", id: "caseTitleDetailsSubheader")
+          expect(page).to have_no_content(COPY::ADD_CAVC_BUTTON)
+        end
+      end
+
+      shared_examples "the button is shown" do
+        it "The 'Add CAVC Remand' button is shown" do
+          puts appeal.status.status
+
+          visit "/queue/appeals/#{appeal.external_id}"
+          find("div", id: "caseTitleDetailsSubheader")
+          expect(page).to have_content(COPY::ADD_CAVC_BUTTON)
+        end
+      end
+
+      context "when the appeal is in dispatch state" do
+        let(:status) { :dispatched }
+        it_behaves_like "the button is shown"
+      end
+
+      context "when the appeal is in post-dispatch state" do
+        let(:status) { :post_dispatch }
+        it_behaves_like "the button is shown"
+      end
+
+      context "when the appeal is not yet dispatched" do
+        let(:status) { :assigned_to_judge }
+        it_behaves_like "the button is not shown"
+      end
+    end
   end
 
   describe "task snapshot" do
