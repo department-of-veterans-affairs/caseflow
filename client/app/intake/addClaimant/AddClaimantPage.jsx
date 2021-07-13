@@ -11,10 +11,10 @@ import {
   editClaimantInformation,
 } from '../reducers/addClaimantSlice';
 import { AddClaimantConfirmationModal } from './AddClaimantConfirmationModal';
-import { AddClaimantForm } from './AddClaimantForm';
+import { ClaimantForm } from './ClaimantForm';
 import { IntakeLayout } from '../components/IntakeLayout';
 import { AddClaimantButtons } from './AddClaimantButtons';
-import { useAddClaimantForm, fetchAttorneys } from './utils';
+import { useClaimantForm, fetchAttorneys } from './utils';
 import { submitReview } from '../actions/decisionReview';
 import { FORM_TYPES, PAGE_PATHS, INTAKE_STATES } from '../constants';
 import { getIntakeStatus } from '../selectors';
@@ -49,7 +49,7 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
     return <Redirect to={PAGE_PATHS.REVIEW} />;
   }
 
-  const methods = useAddClaimantForm({ defaultValues: claimant });
+  const methods = useClaimantForm({ defaultValues: claimant });
   const {
     formState: { isValid },
     handleSubmit,
@@ -113,7 +113,7 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
           />
         }
       >
-        <AddClaimantForm
+        <ClaimantForm
           onBack={handleBack}
           onSubmit={onSubmit}
           onAttorneySearch={onAttorneySearch}

@@ -1,8 +1,8 @@
 import React from 'react';
 import faker from 'faker';
 
-import { AddClaimantForm } from './AddClaimantForm';
-import { useAddClaimantForm } from './utils';
+import { ClaimantForm } from './ClaimantForm';
+import { useClaimantForm } from './utils';
 import { FormProvider } from 'react-hook-form';
 
 // Set up sample data & async fn for performing fuzzy search
@@ -31,14 +31,14 @@ export const performQuery = async (search = '') => {
 
 // eslint-disable-next-line react/prop-types
 const Wrapper = ({ children }) => {
-  const methods = useAddClaimantForm();
+  const methods = useClaimantForm();
 
   return <FormProvider {...methods}>{children}</FormProvider>;
 };
 
 export default {
-  title: 'Intake/Add Claimant/AddClaimantForm',
-  component: AddClaimantForm,
+  title: 'Intake/Add Claimant/ClaimantForm',
+  component: ClaimantForm,
   decorators: [
     (Story) => (
       <Wrapper>
@@ -56,7 +56,7 @@ export default {
   },
 };
 
-const Template = (args) => <AddClaimantForm {...args} />;
+const Template = (args) => <ClaimantForm {...args} />;
 
 export const Basic = Template.bind({});
 
