@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+def wait_for_page_render
+  # This find forces a wait for the page to render. Without it, a test asserting presence or absence of content
+  # may pass whether the content is present or not!
+  find("div", id: "caseTitleDetailsSubheader")
+end
+
 RSpec.feature "Case details", :all_dbs do
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
@@ -1909,9 +1915,7 @@ RSpec.feature "Case details", :all_dbs do
         shared_examples "the button is not shown" do
           it "the 'Add Substitute' button is not shown" do
             visit "/queue/appeals/#{appeal.external_id}"
-            # This find forces a wait for the page to render. Without it, this test will always pass,
-            # whether the content is present or not!
-            find("div", id: "caseTitleDetailsSubheader")
+            wait_for_page_render
             expect(page).to have_no_content(COPY::SUBSTITUTE_APPELLANT_BUTTON)
           end
         end
@@ -1919,7 +1923,7 @@ RSpec.feature "Case details", :all_dbs do
         shared_examples "the button is shown" do
           it "the 'Add Substitute' button is shown" do
             visit "/queue/appeals/#{appeal.external_id}"
-            find("div", id: "caseTitleDetailsSubheader")
+            wait_for_page_render
             expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_BUTTON)
           end
         end
@@ -2021,17 +2025,15 @@ RSpec.feature "Case details", :all_dbs do
       shared_examples "the button is not shown" do
         it "the 'Add CAVC Remand' button is not shown" do
           visit "/queue/appeals/#{appeal.external_id}"
-          find("div", id: "caseTitleDetailsSubheader")
+          wait_for_page_render
           expect(page).to have_no_content(COPY::ADD_CAVC_BUTTON)
         end
       end
 
       shared_examples "the button is shown" do
         it "The 'Add CAVC Remand' button is shown" do
-          puts appeal.status.status
-
           visit "/queue/appeals/#{appeal.external_id}"
-          find("div", id: "caseTitleDetailsSubheader")
+          wait_for_page_render
           expect(page).to have_content(COPY::ADD_CAVC_BUTTON)
         end
       end
