@@ -9,6 +9,7 @@
   "UNASSIGNED_TASKS_TAB_NAME": "unassignedTab",
   "AMA_ASSIGN_HEARINGS_TAB_NAME": "amaAssignHearingsTab",
   "LEGACY_ASSIGN_HEARINGS_TAB_NAME": "legacyAssignHearingsTab",
+  "IN_PROGRESS_TASKS_TAB_NAME": "inProgressTab",
   "SUGGESTED_HEARING_LOCATION_COLUMN_NAME": "suggestedLocation",
   "POWER_OF_ATTORNEY_COLUMN_NAME": "powerOfAttorneyName",
   "HEARING_REQUEST_TYPE_COLUMN_NAME": "hearingRequestType",
@@ -94,6 +95,9 @@
       "name": "taskColumn",
       "sorting_table": "tasks",
       "sorting_columns": ["type", "action", "created_at"]
+    },
+    "OFFICE": {
+      "name": "officeColumn"
     }
   },
 

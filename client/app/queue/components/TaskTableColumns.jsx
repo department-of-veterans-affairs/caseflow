@@ -182,6 +182,29 @@ export const typeColumn = (tasks, filterOptions, requireDasRecord) => {
   };
 };
 
+export const officeColumn = (tasks, filterOptions, requireDasRecord) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_OFFICE_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.OFFICE.name,
+    enableFilter: true,
+    tableData: tasks,
+    columnName: 'appeal.office',
+    backendCanSort: true,
+    anyFiltersAreSet: true,
+    filterOptions,
+    label: 'Filter by office',
+    valueName: 'caseOffice',
+    valueFunction: (task) => hasDASRecord(task, requireDasRecord) ?
+      renderAppealType(task.appeal) :
+      <span {...redText}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE}</span>,
+    span: (task) => hasDASRecord(task, requireDasRecord) ? 1 : 5,
+    getSortValue: (task) => {
+      const sortString = `${task.appeal.caseType} ${task.appeal.docketNumber}`;
+      return task.appeal.isAdvancedOnDocket ? `*${sortString}` : sortString;
+    }
+  };
+};
+
 export const assignedToColumn = (tasks, filterOptions) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
