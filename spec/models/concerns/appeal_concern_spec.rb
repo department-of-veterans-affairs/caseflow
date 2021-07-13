@@ -55,10 +55,10 @@ describe AppealConcern do
     subject { model.appellant_tz }
 
     context "when the foreign address has a single time zone" do
-      let(:country) { "Tanzania" }
+      let(:country) { "Philippines" }
 
       it "Returns the expected timezone identifier" do
-        expect(subject).to eq("Africa/Dar_es_Salaam")
+        expect(subject).to eq("Asia/Manila")
       end
     end
 
