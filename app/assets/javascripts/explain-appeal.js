@@ -12,10 +12,7 @@ const items = new vis.DataSet();
 
 // called from app/views/explain/show.html.erb
 function addTimeline(elementId, timeline_data){
-  const timelineElement = document.getElementById(elementId);
-  // const items = new vis.DataSet(decorateTimelineItems(timeline_data));
-  items.add(decorateTimelineItems(timeline_data))
-  const groups = groupEventItems(timeline_data);
+  items.add(decorateTimelineItems(timeline_data));
   const startDates = items.get({fields: ['start']}).map((str)=> new Date(str.start));
   const endDates = items.get({fields: ['end']}).map((str)=> new Date(str.end));
   const millisInAMonth = 1000*60*60*24*30 // an approximate month in milliseconds
@@ -35,6 +32,9 @@ function addTimeline(elementId, timeline_data){
       followMouse: true
     }
   };
+  const timelineElement = document.getElementById(elementId);
+  const groups = groupEventItems(timeline_data);
+
   return new vis.Timeline(timelineElement, items, groups, timeline_options);
 }
 
@@ -44,7 +44,7 @@ const taskNodeColor = {
   on_hold: "#cccc00",
   cancelled: "#8a8",
   completed: "#00bb00"
-}
+};
 
 const itemDecoration = {
   tasks: {
@@ -66,19 +66,17 @@ function decorateTimelineItems(items){
   items.forEach(item => {
     item.className = item.record_type;
 
-    if(!itemDecoration.hasOwnProperty(item.table_name)) return;
-
-    for ([key, value] of Object.entries(itemDecoration[item.table_name])) {
-      if (typeof value === 'function') {
-        value = value(item);
+    if(itemDecoration.hasOwnProperty(item.table_name)){
+      for ([key, value] of Object.entries(itemDecoration[item.table_name])) {
+        item[key] = (typeof value === 'function') ? value(item) : value;
       }
-      item[key] = value;
     }
 
-    // `title` is displayed as the tooltip
-    item.title = "<pre class='event_detail'>"+formatJson(item.record)+"</pre>";
+    // `item.title` is displayed as the tooltip
+    if(!item.title){
+      item.title = "<pre class='event_detail'>"+formatJson(item.record)+"</pre>";
+    }
   });
-  // console.log(items)
   return items;
 }
 
@@ -113,5 +111,5 @@ function groupEventItems(items){
 }
 
 function toggleTimelineEventGroup(checkbox, group_id){
-  groups.update({id: group_id, visible: checkbox.checked})
+  groups.update({id: group_id, visible: checkbox.checked});
 }
