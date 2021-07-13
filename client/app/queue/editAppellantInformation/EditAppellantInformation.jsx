@@ -7,6 +7,7 @@ import Button from '../../components/Button';
 import { updateAppellantInformation } from './editAppellantInformationSlice';
 import { useDispatch } from 'react-redux';
 import { EDIT_CLAIMANT_PAGE_DESCRIPTION } from 'app/../COPY';
+import { IntakeLayout } from '../../intake/components/IntakeLayout';
 
 const EditAppellantInformation = () => {
   const dispatch = useDispatch();
@@ -30,8 +31,10 @@ const EditAppellantInformation = () => {
 
   return <div>
     <FormProvider {...methods}>
-      <EditClaimantForm editAppellantHeader={editAppellantHeader} editAppellantDescription={editAppellantDescription} />
-      <Button onClick={handleSubmit(handleUpdate)}>Submit</Button>
+      <IntakeLayout>
+        <EditClaimantForm editAppellantHeader={editAppellantHeader} editAppellantDescription={editAppellantDescription} />
+        <Button onClick={handleSubmit(handleUpdate)}>Submit</Button>
+      </IntakeLayout>
     </FormProvider>
   </div>;
 };
