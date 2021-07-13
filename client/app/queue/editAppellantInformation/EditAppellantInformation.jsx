@@ -28,7 +28,7 @@ const EditAppellantInformation = () => {
 
   return <div>
     <FormProvider {...methods}>
-      <EditClaimantForm header={header} description={description} />
+      <EditClaimantForm editAppellantHeader={editAppellantHeader} editAppellantDescription={editAppellantDescription} />
       <Button onClick={handleSubmit(handleUpdate)}>Submit</Button>
     </FormProvider>
   </div>;
