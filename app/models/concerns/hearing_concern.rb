@@ -6,6 +6,12 @@
 module HearingConcern
   extend ActiveSupport::Concern
 
+  CLOSED_HEARING_DISPOSITIONS = [
+    Constants.HEARING_DISPOSITION_TYPES.postponed,
+    Constants.HEARING_DISPOSITION_TYPES.cancelled,
+    Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
+  ].freeze
+
   # NOTE: for LegacyHearing, this makes a call to VACOLS
   def postponed?
     disposition == Constants.HEARING_DISPOSITION_TYPES.postponed
