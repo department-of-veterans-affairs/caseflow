@@ -96,7 +96,7 @@ import HearingTypeConversionModal from '../hearings/components/HearingTypeConver
 import CavcReviewExtensionRequestModal from './components/CavcReviewExtensionRequestModal';
 import { PrivateRoute } from '../components/PrivateRoute';
 import { EditCavcRemandView } from './cavc/EditCavcRemandView';
-import EditAppellantInformation from '../intakeEdit/components/EditAppellantInformation';
+import EditAppellantInformation from './editAppellantInformation/EditAppellantInformation';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
