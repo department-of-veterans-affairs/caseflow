@@ -6,7 +6,7 @@
 # It also sends cancellation emails to hearing participants if latter is case.
 
 class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
-  include VirtualHearings::EnsureCurrentUserIsSet
+  include Hearings::EnsureCurrentUserIsSet
 
   queue_with_priority :low_priority
   application_attr :hearing_schedule

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-class HearingMailer < ApplicationMailer
+class HearingMailer < ActionMailer::Base
   default from: "Board of Veterans' Appeals <BoardofVeteransAppealsHearings@messages.va.gov>"
   layout "hearing_mailer"
-  helper Hearings::LinkHelper
+  helper VirtualHearings::LinkHelper
   helper Hearings::AppellantLocationHelper
   helper Hearings::AppellantNameHelper
   helper Hearings::CalendarTemplateHelper
