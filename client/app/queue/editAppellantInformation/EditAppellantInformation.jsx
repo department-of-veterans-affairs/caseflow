@@ -9,7 +9,6 @@ import { updateAppellantInformation } from './editAppellantInformationSlice';
 import { useDispatch } from 'react-redux';
 import { EDIT_CLAIMANT_PAGE_DESCRIPTION } from 'app/../COPY';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import { AddClaimantButtons } from '../../intake/addClaimant/AddClaimantButtons';
 
 const EditAppellantInformation = () => {
   const dispatch = useDispatch();
@@ -19,7 +18,6 @@ const EditAppellantInformation = () => {
   const { goBack } = useHistory();
 
   const {
-    formState: { isValid },
     handleSubmit,
   } = methods;
 
