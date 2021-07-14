@@ -148,8 +148,8 @@ class BoardGrantEffectuation < CaseflowRecord
   end
 
   def claimant_participant_id
-    # For Board Grants relating to Attorney Fees work, the Board determined that VBA needs to pay the attorney and the claim
-    # should be created with the Veteran participant ID
+    # For Board Grants relating to Attorney Fees work, the Board determined that the 
+    # claim should be created with the Veteran participant ID
     claimant.is_a?(AttorneyClaimant) ? veteran&.participant_id : claimant&.participant_id
   end
 
