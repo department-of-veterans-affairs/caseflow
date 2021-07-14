@@ -81,11 +81,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     create_conference unless virtual_hearing.active?
 
     # when a conference has been created and emails sent, the virtual hearing can be established
-    begin
-      send_emails(email_type) if virtual_hearing.active?
-    rescue StandardError => error
-      Raven.capture_exception(error, extra: { virtual_hearing_id: virtual_hearing.id, email_type: email_type })
-    end
+    send_emails(email_type) if virtual_hearing.active?
 
     if virtual_hearing.can_be_established?
       Rails.logger.info("Attempting to flag virtual hearing establishment as processed...")
@@ -165,10 +161,15 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   end
 
   def send_emails(email_type)
-    VirtualHearings::SendEmail.new(
-      virtual_hearing: virtual_hearing,
-      type: email_type
-    ).call
+    begin
+      VirtualHearings::SendEmail.new(
+        virtual_hearing: virtual_hearing,
+        type: email_type
+      ).call
+    rescue StandardError => error
+      extra = { application: "hearings", email_type: email_type, virtual_hearing_id: virtual_hearing.id }
+      Raven.capture_exception(error, extra: extra)
+    end
   end
 
   def pexip_error_display(response)
