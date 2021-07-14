@@ -1,6 +1,5 @@
 import React from 'react';
 import { FormProvider } from 'react-hook-form';
-import { lowerCase } from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -11,28 +10,7 @@ import Button from '../../components/Button';
 import { updateAppellantInformation } from './editAppellantInformationSlice';
 import { EDIT_CLAIMANT_PAGE_DESCRIPTION } from 'app/../COPY';
 import { appealWithDetailSelector } from '../selectors';
-
-const prepareAppellantInformation = (appeal) => {
-  return {
-    relationship: lowerCase(appeal.appellantRelationship),
-    partyType: appeal.appellantPartyType,
-    name: appeal.appellantFullName,
-    firstName: appeal.appellantFirstName,
-    middleName: appeal.appellantMiddleName,
-    lastName: appeal.appellantLastName,
-    suffix: appeal.appellantSuffix,
-    addressLine1: appeal.appellantAddress.address_line_1,
-    addressLine2: appeal.appellantAddress.address_line_2,
-    addressLine3: appeal.appellantAddress.address_line_3,
-    city: appeal.appellantAddress.city,
-    state: appeal.appellantAddress.state,
-    zip: appeal.appellantAddress.zip,
-    country: appeal.appellantAddress.country,
-    phoneNumber: appeal.appellantPhoneNumber,
-    emailAddress: appeal.appellantEmailAddress,
-    poaForm: (appeal.appellantUnrecognizedPOAId !== null).toString()
-  };
-};
+import { mapAppellantDataFromApi } from './utils';
 
 const EditAppellantInformation = ({ appealId }) => {
   const dispatch = useDispatch();
@@ -40,7 +18,7 @@ const EditAppellantInformation = ({ appealId }) => {
     appealWithDetailSelector(state, { appealId })
   );
 
-  const methods = useClaimantForm({ defaultValues: prepareAppellantInformation(appeal) });
+  const methods = useClaimantForm({ defaultValues: mapAppellantDataFromApi(appeal) });
   const {
     handleSubmit,
   } = methods;
