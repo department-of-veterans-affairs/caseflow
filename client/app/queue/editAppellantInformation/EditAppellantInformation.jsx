@@ -46,8 +46,7 @@ const EditAppellantInformation = ({ appealId }) => {
 };
 
 EditAppellantInformation.propTypes = {
-  appealId: PropTypes.string,
-  testCallback: PropTypes.func
+  appealId: PropTypes.string
 };
 
 export default connect()(EditAppellantInformation);

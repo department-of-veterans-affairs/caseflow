@@ -7,7 +7,6 @@ import { queueWrapper } from 'test/data/stores/queueStore';
 import { amaAppeal } from '../../../data/appeals';
 
 describe('EditAppellantInformation', () => {
-  const mockSubmit = jest.fn()
   const setup = () => {
     return mount(<EditAppellantInformation appealId={amaAppeal.externalId} />,
       {

@@ -3,12 +3,10 @@
 exports[`EditAppellantInformation renders default state correctly 1`] = `
 <Connect(EditAppellantInformation)
   appealId="2afefa82-5736-47c8-a977-0b4b8586f73e"
-  testCallback={[MockFunction]}
 >
   <EditAppellantInformation
     appealId="2afefa82-5736-47c8-a977-0b4b8586f73e"
     dispatch={[Function]}
-    testCallback={[MockFunction]}
   >
     <div>
       <FormProvider
