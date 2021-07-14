@@ -174,7 +174,7 @@ class DecisionReview < CaseflowRecord
   end
 
   def claimant_participant_id
-    claimant&.participant_id
+    claimant.is_a?(AttorneyClaimant) ? veteran&.participant_id : claimant&.participant_id
   end
 
   def claimant_type
