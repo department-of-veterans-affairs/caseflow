@@ -70,8 +70,32 @@ class WorkQueue::AppealSerializer
     object.claimant&.name
   end
 
+  attribute :appellant_first_name do |object|
+    object.claimant&.first_name
+  end
+
+  attribute :appellant_middle_name do |object|
+    object.claimant&.middle_name
+  end
+
+  attribute :appellant_last_name do |object|
+    object.claimant&.last_name
+  end
+
+  attribute :appellant_suffix do |object|
+    object.claimant&.suffix
+  end
+
   attribute :appellant_address do |object|
     object.claimant&.address
+  end
+
+  attribute :appellant_phone_number do |object|
+    object.claimant&.phone_number
+  end
+
+  attribute :appellant_email_address do |object|
+    object.claimant&.email_address
   end
 
   attribute :appellant_tz, &:appellant_tz
@@ -80,6 +104,18 @@ class WorkQueue::AppealSerializer
 
   attribute :appellant_type do |appeal|
     appeal.claimant&.type
+  end
+
+  attribute :appellant_party_type do |appeal|
+    appeal.claimant&.party_type
+  end
+
+  attribute :unrecognized_appellant_id do |appeal|
+    appeal.claimant&.unrecognized_appellant&.id
+  end
+
+  attribute :appellant_unrecognized_power_of_attorney_id do |appeal|
+    appeal.claimant&.power_of_attorney&.id
   end
 
   attribute :cavc_remand do |object|
