@@ -115,8 +115,8 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :appellant_unrecognized_power_of_attorney_id do |appeal|
-    appeal.claimant.power_of_attorney.is_a?(UnrecognizedPowerOfAttorney) && 
-      appeal.claimant&.power_of_attorney&.unrecognized_party_detail.id
+    appeal.claimant.power_of_attorney.is_a?(UnrecognizedPowerOfAttorney) &&
+      appeal.claimant&.power_of_attorney&.unrecognized_party_detail&.id
   end
 
   attribute :cavc_remand do |object|
