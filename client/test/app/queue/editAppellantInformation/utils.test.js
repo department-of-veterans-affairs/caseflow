@@ -33,7 +33,6 @@ describe('mapAppellantDataFromApi', () => {
       "name": undefined,
       "partyType": "Individual",
       "phoneNumber": undefined,
-      "poaForm": "true",
       "relationship": "child",
       "state": "state",
       "suffix": undefined,
