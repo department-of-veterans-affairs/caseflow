@@ -41,12 +41,12 @@ const EditAppellantInformation = () => {
           editAppellantDescription={editAppellantDescription}
         />
       </AppSegment>
-        <Button
-          onClick={handleSubmit(handleUpdate)}
-          classNames={['cf-right-side']}
-        >
-          Save
-        </Button>
+      <Button
+        onClick={handleSubmit(handleUpdate)}
+        classNames={['cf-right-side']}
+      >
+        Save
+      </Button>
       <Button
         onClick={handleBack}
         classNames={['cf-right-side', 'usa-button-secondary']}
