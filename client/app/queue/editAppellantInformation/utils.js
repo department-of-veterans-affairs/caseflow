@@ -24,7 +24,6 @@ export const mapAppellantDataFromApi = (appeal) => {
     zip: appeal.appellantAddress.zip,
     country: appeal.appellantAddress.country,
     phoneNumber: appeal.appellantPhoneNumber,
-    emailAddress: appeal.appellantEmailAddress,
-    poaForm: (appeal.appellantUnrecognizedPOAId !== null).toString()
+    emailAddress: appeal.appellantEmailAddress
   };
 };

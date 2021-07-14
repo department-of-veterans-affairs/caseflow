@@ -411,7 +411,6 @@ export const prepareAppealForStore = (appeals) => {
       appellantPartyType: appeal.attributes.appellant_party_type,
       appellantTz: appeal.attributes.appellant_tz,
       appellantRelationship: appeal.attributes.appellant_relationship,
-      appellantUnrecognizedPOAId: appeal.attributes.appellant_unrecognized_power_of_attorney_id,
       assignedToLocation: appeal.attributes.assigned_to_location,
       veteranDateOfBirth: appeal.attributes.veteran_date_of_birth,
       veteranDateOfDeath: appeal.attributes.veteran_death_date,

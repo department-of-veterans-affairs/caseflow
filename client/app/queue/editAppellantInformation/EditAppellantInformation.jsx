@@ -42,6 +42,7 @@ const EditAppellantInformation = ({ appealId }) => {
         <EditClaimantForm
           editAppellantHeader={editAppellantHeader}
           editAppellantDescription={editAppellantDescription}
+          hidePOAForm
         />
       </AppSegment>
       <Button

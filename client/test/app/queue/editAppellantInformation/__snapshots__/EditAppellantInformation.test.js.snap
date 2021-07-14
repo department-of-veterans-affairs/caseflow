@@ -27,7 +27,6 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                 "name": "Abellona Valtas",
                 "partyType": undefined,
                 "phoneNumber": undefined,
-                "poaForm": "true",
                 "relationship": "spouse",
                 "state": "CA",
                 "suffix": undefined,
@@ -125,30 +124,6 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                     type="text"
                     value=""
                   />,
-                },
-                "poaForm": Object {
-                  "options": Array [
-                    Object {
-                      "ref": <input
-                        id="poaForm_false"
-                        name="poaForm"
-                        type="radio"
-                        value="false"
-                      />,
-                    },
-                    Object {
-                      "ref": <input
-                        id="poaForm_true"
-                        name="poaForm"
-                        type="radio"
-                        value="true"
-                      />,
-                    },
-                  ],
-                  "ref": Object {
-                    "name": "poaForm",
-                    "type": "radio",
-                  },
                 },
                 "relationship": Object {
                   "ref": Object {
@@ -301,6 +276,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
             <ClaimantForm
               editAppellantDescription="Make any necessary changes to the information and click \\"save\\" to confirm your changes."
               editAppellantHeader="Edit Appellant Information"
+              hidePOAForm={true}
             >
               <h1>
                 Edit Appellant Information
@@ -328,7 +304,6 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                           "name": "Abellona Valtas",
                           "partyType": undefined,
                           "phoneNumber": undefined,
-                          "poaForm": "true",
                           "relationship": "spouse",
                           "state": "CA",
                           "suffix": undefined,
@@ -426,30 +401,6 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                               type="text"
                               value=""
                             />,
-                          },
-                          "poaForm": Object {
-                            "options": Array [
-                              Object {
-                                "ref": <input
-                                  id="poaForm_false"
-                                  name="poaForm"
-                                  type="radio"
-                                  value="false"
-                                />,
-                              },
-                              Object {
-                                "ref": <input
-                                  id="poaForm_true"
-                                  name="poaForm"
-                                  type="radio"
-                                  value="true"
-                                />,
-                              },
-                            ],
-                            "ref": Object {
-                              "name": "poaForm",
-                              "type": "radio",
-                            },
                           },
                           "relationship": Object {
                             "ref": Object {
@@ -2650,7 +2601,6 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                           "name": "Abellona Valtas",
                           "partyType": undefined,
                           "phoneNumber": undefined,
-                          "poaForm": "true",
                           "relationship": "spouse",
                           "state": "CA",
                           "suffix": undefined,
@@ -2748,30 +2698,6 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                               type="text"
                               value=""
                             />,
-                          },
-                          "poaForm": Object {
-                            "options": Array [
-                              Object {
-                                "ref": <input
-                                  id="poaForm_false"
-                                  name="poaForm"
-                                  type="radio"
-                                  value="false"
-                                />,
-                              },
-                              Object {
-                                "ref": <input
-                                  id="poaForm_true"
-                                  name="poaForm"
-                                  type="radio"
-                                  value="true"
-                                />,
-                              },
-                            ],
-                            "ref": Object {
-                              "name": "poaForm",
-                              "type": "radio",
-                            },
                           },
                           "relationship": Object {
                             "ref": Object {
@@ -3093,7 +3019,6 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                                 "name": "Abellona Valtas",
                                 "partyType": undefined,
                                 "phoneNumber": undefined,
-                                "poaForm": "true",
                                 "relationship": "spouse",
                                 "state": "CA",
                                 "suffix": undefined,
@@ -3191,30 +3116,6 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                                     type="text"
                                     value=""
                                   />,
-                                },
-                                "poaForm": Object {
-                                  "options": Array [
-                                    Object {
-                                      "ref": <input
-                                        id="poaForm_false"
-                                        name="poaForm"
-                                        type="radio"
-                                        value="false"
-                                      />,
-                                    },
-                                    Object {
-                                      "ref": <input
-                                        id="poaForm_true"
-                                        name="poaForm"
-                                        type="radio"
-                                        value="true"
-                                      />,
-                                    },
-                                  ],
-                                  "ref": Object {
-                                    "name": "poaForm",
-                                    "type": "radio",
-                                  },
                                 },
                                 "relationship": Object {
                                   "ref": Object {
@@ -10321,88 +10222,6 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                     </TextField>
                   </div>
                 </styled.div>
-                <RadioField
-                  className={
-                    Array [
-                      "usa-fieldset-inputs",
-                    ]
-                  }
-                  inputRef={[Function]}
-                  label="Do you have a VA Form 21-22 for this claimant?"
-                  name="poaForm"
-                  options={
-                    Array [
-                      Object {
-                        "displayText": "No",
-                        "value": "false",
-                      },
-                      Object {
-                        "displayText": "Yes",
-                        "value": "true",
-                      },
-                    ]
-                  }
-                  required={false}
-                  strongLabel={true}
-                  vertical={true}
-                >
-                  <fieldset
-                    className="usa-fieldset-inputs cf-form-radio "
-                  >
-                    <legend
-                      className=""
-                    >
-                      <strong>
-                        <span>
-                          Do you have a VA Form 21-22 for this claimant?
-                           
-                        </span>
-                      </strong>
-                    </legend>
-                    <div
-                      className="cf-form-radio-options"
-                    >
-                      <div
-                        className="cf-form-radio-option"
-                        key="poaForm-false-0"
-                      >
-                        <input
-                          disabled={false}
-                          id="poaForm_false"
-                          name="poaForm"
-                          onChange={[Function]}
-                          type="radio"
-                          value="false"
-                        />
-                        <label
-                          className=""
-                          htmlFor="poaForm_false"
-                        >
-                          No
-                        </label>
-                      </div>
-                      <div
-                        className="cf-form-radio-option"
-                        key="poaForm-true-1"
-                      >
-                        <input
-                          disabled={false}
-                          id="poaForm_true"
-                          name="poaForm"
-                          onChange={[Function]}
-                          type="radio"
-                          value="true"
-                        />
-                        <label
-                          className=""
-                          htmlFor="poaForm_true"
-                        >
-                          Yes
-                        </label>
-                      </div>
-                    </div>
-                  </fieldset>
-                </RadioField>
               </form>
             </ClaimantForm>
           </section>
