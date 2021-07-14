@@ -52,7 +52,7 @@ class VirtualHearings::LinkService
   end
 
   def conference_id
-    @conference_id = Hearings::SequenceConferenceId.next if @conference_id.blank?
+    @conference_id = VirtualHearings::SequenceConferenceId.next if @conference_id.blank?
     @conference_id
   end
 

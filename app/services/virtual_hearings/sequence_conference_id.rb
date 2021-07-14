@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 ##
-# Call Hearings::SequenceConferenceId.next to get a number as a
+# Call VirtualHearings::SequenceConferenceId.next to get a number as a
 # string between "0000001" and "9999999" for use as a virtual hearing
 # conference ID. When the sequence hits its maximum value of "9999999",
 # it will loop back to "0000001".
 ##
-module Hearings::SequenceConferenceId
+module VirtualHearings::SequenceConferenceId
   SEQUENCE_NAME = "virtual_hearing_conference_id_seq"
   MAXIMUM_VALUE = 9_999_999
 
