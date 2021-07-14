@@ -185,7 +185,7 @@ describe BoardGrantEffectuation, :postgres do
         end
       end
 
-      fcontext "the claimant is not the veteran" do
+      context "the claimant is not the veteran" do
         let(:veteran_is_not_claimant) { true }
         let(:relationship_type) { "" }
         let(:gender) { "" }
@@ -262,7 +262,6 @@ describe BoardGrantEffectuation, :postgres do
           let(:claimant) { create(:claimant, :attorney, participant_id: claimant_participant_id) }
 
           it "is created with the veteran's participant id" do
-            binding.pry
             expect(subject.end_product_establishment).to have_attributes(
               claimant_participant_id: veteran.participant_id
             )
