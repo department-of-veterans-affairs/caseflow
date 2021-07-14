@@ -58,11 +58,22 @@ export default {
 
 const Template = (args) => <ClaimantForm {...args} />;
 
-export const Basic = Template.bind({});
-
-Basic.parameters = {
+export const AddClaimant = Template.bind({});
+AddClaimant.parameters = {
   docs: {
     storyDescription:
-      'This is used to add or edit claimants not already associated with the appeal',
-  },
+      'This is used to add claimants not already associated with the appeal'
+  }
+};
+
+export const EditClaimant = Template.bind({});
+EditClaimant.args = {
+  editAppellantHeader: 'Edit Appellant Information',
+  editAppellantDescription: 'Make any necessary changes to the information and click "save" to confirm your changes.'
+};
+EditClaimant.parameters = {
+  docs: {
+    storyDescription:
+      'This is used to edit the unrecognized appellant associated with the appeal'
+  }
 };
