@@ -42,15 +42,12 @@ const EditAppellantInformation = () => {
         />
       </AppSegment>
         <Button
-          type="button"
           onClick={handleSubmit(handleUpdate)}
           classNames={['cf-right-side']}
         >
           Save
         </Button>
       <Button
-        type="button"
-        name="go-back"
         onClick={handleBack}
         classNames={['cf-right-side', 'usa-button-secondary']}
         styling={{ style: { marginRight: '1em' } }}
