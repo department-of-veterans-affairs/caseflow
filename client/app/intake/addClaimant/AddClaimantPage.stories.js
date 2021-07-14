@@ -6,7 +6,7 @@ import { AddClaimantPage } from './AddClaimantPage';
 import ReduxBase from 'app/components/ReduxBase';
 import { reducer, generateInitialState } from 'app/intake';
 import { PAGE_PATHS } from '../constants';
-import { performQuery } from './AddClaimantForm.stories';
+import { performQuery } from './ClaimantForm.stories';
 
 const RouterDecorator = (Story) => (
   <MemoryRouter initialEntries={[PAGE_PATHS.ADD_CLAIMANT]}>

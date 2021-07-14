@@ -1,16 +1,20 @@
 import React from 'react';
 import { FormProvider } from 'react-hook-form';
 
-import { AddClaimantForm as EditClaimantForm } from '../../intake/addClaimant/AddClaimantForm';
-import { useAddClaimantForm } from '../../intake/addClaimant/utils';
+import { ClaimantForm as EditClaimantForm } from '../../intake/addClaimant/ClaimantForm';
+import { useClaimantForm } from '../../intake/addClaimant/utils';
 import Button from '../../components/Button';
 import { updateAppellantInformation } from './editAppellantInformationSlice';
 import { useDispatch } from 'react-redux';
+import { EDIT_CLAIMANT_PAGE_DESCRIPTION } from 'app/../COPY';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 const EditAppellantInformation = () => {
   const dispatch = useDispatch();
   // CASEFLOW-1921: Pass in the existing appellant information as default values
-  const methods = useAddClaimantForm({ defaultValues: {} });
+
+  const methods = useClaimantForm({ defaultValues: {} });
+
   const {
     handleSubmit,
   } = methods;
@@ -22,11 +26,18 @@ const EditAppellantInformation = () => {
     dispatch(updateAppellantInformation({ formData, id }));
   };
 
+  const editAppellantHeader = 'Edit Appellant Information';
+  const editAppellantDescription = EDIT_CLAIMANT_PAGE_DESCRIPTION;
+
   return <div>
-    <h1>Edit Appellant Information</h1>
     <FormProvider {...methods}>
-      <EditClaimantForm />
-      <Button onClick={handleSubmit(handleUpdate)}>Submit</Button>
+      <AppSegment filledBackground>
+        <EditClaimantForm
+          editAppellantHeader={editAppellantHeader}
+          editAppellantDescription={editAppellantDescription}
+        />
+        <Button onClick={handleSubmit(handleUpdate)}>Submit</Button>
+      </AppSegment>
     </FormProvider>
   </div>;
 };
