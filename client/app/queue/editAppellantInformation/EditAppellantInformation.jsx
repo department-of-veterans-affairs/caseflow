@@ -3,6 +3,7 @@ import { FormProvider } from 'react-hook-form';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
+import { useHistory } from 'react-router';
 
 import { ClaimantForm as EditClaimantForm } from '../../intake/addClaimant/ClaimantForm';
 import { useClaimantForm } from '../../intake/addClaimant/utils';
@@ -17,6 +18,7 @@ const EditAppellantInformation = ({ appealId }) => {
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
+  const { goBack } = useHistory();
 
   const methods = useClaimantForm({ defaultValues: mapAppellantDataFromApi(appeal) });
   const {
@@ -29,6 +31,8 @@ const EditAppellantInformation = ({ appealId }) => {
     dispatch(updateAppellantInformation({ formData, id }));
   };
 
+  const handleBack = () => goBack();
+
   const editAppellantHeader = 'Edit Appellant Information';
   const editAppellantDescription = EDIT_CLAIMANT_PAGE_DESCRIPTION;
 
@@ -39,8 +43,20 @@ const EditAppellantInformation = ({ appealId }) => {
           editAppellantHeader={editAppellantHeader}
           editAppellantDescription={editAppellantDescription}
         />
-        <Button onClick={handleSubmit(handleUpdate)}>Submit</Button>
       </AppSegment>
+      <Button
+        onClick={handleSubmit(handleUpdate)}
+        classNames={['cf-right-side']}
+      >
+        Save
+      </Button>
+      <Button
+        onClick={handleBack}
+        classNames={['cf-right-side', 'usa-button-secondary']}
+        styling={{ style: { marginRight: '1em' } }}
+      >
+        Cancel
+      </Button>
     </FormProvider>
   </div>;
 };
