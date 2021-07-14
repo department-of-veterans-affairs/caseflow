@@ -2013,7 +2013,7 @@ RSpec.feature "Case details", :all_dbs do
                stream_type: case_type,
                disposition: disposition)
       end
-      let(:user) { create(:user, css_id: 'CAVC_LIT_USER') }
+      let(:user) { create(:user, css_id: "CAVC_LIT_USER") }
 
       before do
         CavcLitigationSupport.singleton.add_user(user)
