@@ -28,7 +28,7 @@ class TimezoneService
     def address_to_timezone(address)
       # Return addresses for addresses in US using zip code before calling
       # iso3166_alpha2_code_from_name() because that method will raise an error given country "US".
-      if address.country == "US"
+      if address.country.in? ["US", "U.S."]
         return TimezoneService.zip5_to_timezone(address.zip)
       end
 
