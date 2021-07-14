@@ -4,7 +4,7 @@
 # Helpers for use inside a template for virtual hearings
 # emails and calendar invites.
 
-module VirtualHearings::AppellantNameHelper
+module Hearings::AppellantNameHelper
   def formatted_appellant_name(appeal)
     return appeal.appellant_fullname_readable || "the appellant" if appeal.appellant_is_not_veteran
 

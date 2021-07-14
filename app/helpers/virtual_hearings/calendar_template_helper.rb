@@ -4,7 +4,7 @@
 # Helpers for use inside a template for a calendar invite or
 # email related to virtual hearings.
 
-module VirtualHearings::CalendarTemplateHelper
+module Hearings::CalendarTemplateHelper
   class << self
     # "Monday, 9 March 2020 at 5:10pm UTC"
     HEARING_TIME_DISPLAY_FORMAT = "%A, %-d %B %Y at %-l:%M%P %Z"
