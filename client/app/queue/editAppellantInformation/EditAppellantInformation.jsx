@@ -1,5 +1,6 @@
 import React from 'react';
 import { FormProvider } from 'react-hook-form';
+import { useHistory } from 'react-router';
 
 import { ClaimantForm as EditClaimantForm } from '../../intake/addClaimant/ClaimantForm';
 import { useClaimantForm } from '../../intake/addClaimant/utils';
@@ -14,6 +15,7 @@ const EditAppellantInformation = () => {
   // CASEFLOW-1921: Pass in the existing appellant information as default values
 
   const methods = useClaimantForm({ defaultValues: {} });
+  const { goBack } = useHistory();
 
   const {
     handleSubmit,
@@ -26,6 +28,8 @@ const EditAppellantInformation = () => {
     dispatch(updateAppellantInformation({ formData, id }));
   };
 
+  const handleBack = () => goBack();
+
   const editAppellantHeader = 'Edit Appellant Information';
   const editAppellantDescription = EDIT_CLAIMANT_PAGE_DESCRIPTION;
 
@@ -36,8 +40,20 @@ const EditAppellantInformation = () => {
           editAppellantHeader={editAppellantHeader}
           editAppellantDescription={editAppellantDescription}
         />
-        <Button onClick={handleSubmit(handleUpdate)}>Submit</Button>
       </AppSegment>
+      <Button
+        onClick={handleSubmit(handleUpdate)}
+        classNames={['cf-right-side']}
+      >
+        Save
+      </Button>
+      <Button
+        onClick={handleBack}
+        classNames={['cf-right-side', 'usa-button-secondary']}
+        styling={{ style: { marginRight: '1em' } }}
+      >
+        Cancel
+      </Button>
     </FormProvider>
   </div>;
 };

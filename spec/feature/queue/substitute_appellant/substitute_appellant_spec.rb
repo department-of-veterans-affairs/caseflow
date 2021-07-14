@@ -7,7 +7,7 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
     let(:veteran) { create(:veteran, date_of_death: 30.days.ago) }
     let(:appeal) do
       create(:appeal,
-             :dispatched_with_decision_issue,
+             :dispatched, :with_decision_issue,
              docket_type: docket_type,
              disposition: "dismissed_death",
              receipt_date: veteran.date_of_death + 5.days,
