@@ -62,9 +62,7 @@ class TasksForAppeal
       appeal.tasks.open.where(type: HearingTask.name).empty? &&
       appeal.tasks.closed.where(type: ChangeHearingRequestTypeTask.name).empty? &&
       appeal.current_hearing_request_type == :travel_board &&
-      appeal.active? &&
-      appeal.original? &&
-      !appeal.any_held_hearings?
+      appeal.active?
   end
 
   def legacy_appeal_tasks
