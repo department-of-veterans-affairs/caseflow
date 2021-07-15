@@ -42,7 +42,7 @@ describe VirtualHearings::SendReminderEmailsJob do
       let(:hearing_date) { Time.zone.now + 6.days } # at most 7 days out
 
       it "sends reminder emails", :aggregate_failures do
-        expect(VirtualHearingMailer).to receive(:reminder).twice.and_call_original
+        expect(HearingMailer).to receive(:reminder).twice.and_call_original
 
         subject
         virtual_hearing.reload
@@ -62,7 +62,7 @@ describe VirtualHearings::SendReminderEmailsJob do
         let(:representative_reminder_sent_at) { hearing_date - 3.days }
 
         it "sends reminder email for the appellant", :aggregate_failures do
-          expect(VirtualHearingMailer).to receive(:reminder).once.and_call_original
+          expect(HearingMailer).to receive(:reminder).once.and_call_original
 
           subject
           virtual_hearing.reload
@@ -77,7 +77,7 @@ describe VirtualHearings::SendReminderEmailsJob do
         let(:appellant_reminder_sent_at) { hearing_date - 4.days }
 
         it "sends reminder email for the representative", :aggregate_failures do
-          expect(VirtualHearingMailer).to receive(:reminder).once.and_call_original
+          expect(HearingMailer).to receive(:reminder).once.and_call_original
 
           subject
           virtual_hearing.reload
@@ -92,7 +92,7 @@ describe VirtualHearings::SendReminderEmailsJob do
         let(:representative_email) { nil }
 
         it "sends reminder email to the appellant only", :aggregate_failures do
-          expect(VirtualHearingMailer).to receive(:reminder).once.and_call_original
+          expect(HearingMailer).to receive(:reminder).once.and_call_original
 
           subject
           virtual_hearing.reload
@@ -102,7 +102,7 @@ describe VirtualHearings::SendReminderEmailsJob do
       end
 
       it "doesn't double send the email", :aggregate_failures do
-        expect(VirtualHearingMailer).to receive(:reminder).twice.and_call_original
+        expect(HearingMailer).to receive(:reminder).twice.and_call_original
 
         subject # First Send
 
@@ -131,7 +131,7 @@ describe VirtualHearings::SendReminderEmailsJob do
         let(:representative_reminder_sent_at) { hearing_date - 4.days }
 
         it "sends reminder emails", :aggregate_failures do
-          expect(VirtualHearingMailer).to receive(:reminder).twice.and_call_original
+          expect(HearingMailer).to receive(:reminder).twice.and_call_original
 
           subject
           virtual_hearing.reload
@@ -159,7 +159,7 @@ describe VirtualHearings::SendReminderEmailsJob do
         let(:representative_reminder_sent_at) { hearing_date - 2.days }
 
         it "does not send reminder emails", :aggregate_failures do
-          expect(VirtualHearingMailer).not_to receive(:reminder)
+          expect(HearingMailer).not_to receive(:reminder)
 
           subject
           virtual_hearing.reload

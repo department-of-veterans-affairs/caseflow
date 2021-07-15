@@ -37,7 +37,7 @@ namespace :emails do
           :cancellation,
           :reminder
         ].each do |func|
-          email = VirtualHearingMailer.send(
+          email = HearingMailer.send(
             func,
             mail_recipient: recipient,
             virtual_hearing: hearing.virtual_hearing

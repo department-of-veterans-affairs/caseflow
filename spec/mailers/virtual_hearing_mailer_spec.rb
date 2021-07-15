@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe VirtualHearingMailer do
+describe HearingMailer do
   let(:nyc_ro_eastern) { "RO06" }
   let(:oakland_ro_pacific) { "RO43" }
   let(:regional_office) { nyc_ro_eastern }
@@ -81,22 +81,22 @@ describe VirtualHearingMailer do
   end
 
   shared_context "cancellation_email" do
-    subject { VirtualHearingMailer.cancellation(mail_recipient: recipient, virtual_hearing: virtual_hearing) }
+    subject { HearingMailer.cancellation(mail_recipient: recipient, virtual_hearing: virtual_hearing) }
   end
 
   shared_context "confirmation_email" do
-    subject { VirtualHearingMailer.confirmation(mail_recipient: recipient, virtual_hearing: virtual_hearing) }
+    subject { HearingMailer.confirmation(mail_recipient: recipient, virtual_hearing: virtual_hearing) }
   end
 
   shared_context "updated_time_confirmation_email" do
     subject do
-      VirtualHearingMailer.updated_time_confirmation(mail_recipient: recipient, virtual_hearing: virtual_hearing)
+      HearingMailer.updated_time_confirmation(mail_recipient: recipient, virtual_hearing: virtual_hearing)
     end
   end
 
   shared_context "reminder_email" do
     subject do
-      VirtualHearingMailer.reminder(mail_recipient: recipient, virtual_hearing: virtual_hearing)
+      HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: virtual_hearing)
     end
   end
 

@@ -67,20 +67,20 @@ describe VirtualHearings::SendEmail do
       context "a cancellation email" do
         let(:email_type) { :cancellation }
 
-        it "calls VirtualHearingMailer.cancellation for everyone but the judge", :aggregate_failures do
+        it "calls HearingMailer.cancellation for everyone but the judge", :aggregate_failures do
           # YES for veteran and representative
-          expect(VirtualHearingMailer)
+          expect(HearingMailer)
             .to receive(:cancellation)
             .once
             .with(mail_recipient: appellant_recipient, virtual_hearing: virtual_hearing)
 
-          expect(VirtualHearingMailer)
+          expect(HearingMailer)
             .to receive(:cancellation)
             .once
             .with(mail_recipient: representative_recipient, virtual_hearing: virtual_hearing)
 
           # NO for judge
-          expect(VirtualHearingMailer)
+          expect(HearingMailer)
             .to_not receive(:cancellation)
             .with(mail_recipient: judge_recipient, virtual_hearing: virtual_hearing)
 
