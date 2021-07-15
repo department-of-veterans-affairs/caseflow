@@ -58,6 +58,10 @@ describe TimezoneService do
       include_examples "zip code resolves to timezone", "00601", "Puerto Rico", "America/Puerto_Rico"
       include_examples "zip code resolves to timezone", "96799", "American Samoa", "Pacific/Pago_Pago"
 
+      # Zip codes with leading and trailing spaces resolve to the proper time zone.
+      include_examples "zip code resolves to timezone", " 27605", "Raleigh, NC", "America/New_York"
+      include_examples "zip code resolves to timezone", "78744 ", "Austin, TX", "America/Chicago"
+
       # Note: These tests resolve to the incorrect IANA timezone (ex. 00803 should resolve to America/St_Thomas),
       # but the offsets from UTC are the same.
       include_examples "zip code resolves to equivalent timezone", "00803",
@@ -178,6 +182,8 @@ describe TimezoneService do
 
     include_examples "it resolves to a valid ISO 3166 country code", "USA", "US"
     include_examples "it resolves to a valid ISO 3166 country code", "united states", "US"
+    include_examples "it resolves to a valid ISO 3166 country code", "US", "US"
+    include_examples "it resolves to a valid ISO 3166 country code", "u.s. ", "US"
     include_examples "it resolves to a valid ISO 3166 country code", "Australia", "AU"
     include_examples "it resolves to a valid ISO 3166 country code", "Canada", "CA"
     include_examples "it resolves to a valid ISO 3166 country code", "Colombia", "CO"
@@ -209,7 +215,6 @@ describe TimezoneService do
     include_examples "it throws an error if not a valid country name", "F R A N C E"
     include_examples "it throws an error if not a valid country name", "New York"
     include_examples "it throws an error if not a valid country name", "United St."
-    include_examples "it throws an error if not a valid country name", "US"
   end
 
   describe "#iso3166_alpha2_code_to_timezone" do
