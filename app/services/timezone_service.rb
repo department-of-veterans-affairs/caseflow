@@ -11,7 +11,12 @@ class TimezoneService
   class InvalidZip5Error < StandardError; end
 
   # There were multiple timezones for an address.
-  class AmbiguousTimezoneError < StandardError; end
+  class AmbiguousTimezoneError < StandardError
+    attr_accessor :country_code
+    def initialize(args)
+      @country_code = args[:country_code]
+    end
+  end
 
   class << self
     # Attempts to find a timezone based on an address. For addresses within the United States,
@@ -23,7 +28,7 @@ class TimezoneService
     def address_to_timezone(address)
       # Return addresses for addresses in US using zip code before calling
       # iso3166_alpha2_code_from_name() because that method will raise an error given country "US".
-      if address.country == "US"
+      if ["US", "U.S."].include?(address.country)
         return TimezoneService.zip5_to_timezone(address.zip)
       end
 
@@ -68,7 +73,7 @@ class TimezoneService
 
       return country.zones.first.canonical_zone if unambiguous_timezone
 
-      fail AmbiguousTimezoneError, "ambiguous timezone for #{iso3166_code}"
+      fail AmbiguousTimezoneError, country_code: iso3166_code
     rescue TZInfo::InvalidCountryCode
       # Re-raise custom error for more info.
       raise InvalidCountryCodeError, "invalid country code \"#{iso3166_code}\""
