@@ -207,13 +207,14 @@ class QueueTableBuilder extends React.PureComponent {
     let header = <QueueOrganizationDropdown organizations={this.props.organizations} />;
     if (window.location.pathname.includes("vha-camo")) {
       const intakeButton = <Button {...style}
+                              classNames={['intake-button']}
                               onClick={this.newIntake}>
                               + New Intake Form
                            </Button>;
       const downloadButton = <Button {...style}
-                               classNames={['usa-button-secondary']}
+                               classNames={['donwload-button', 'usa-button-secondary']}
                                onClick={this.downloadCsv}>
-                               Download completed tasks
+                               Download Completed Tasks
                              </Button>;
       header = <div {...style}>{intakeButton} {downloadButton}</div>
     }
