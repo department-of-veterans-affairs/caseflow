@@ -5,19 +5,19 @@ import selectEvent from 'react-select-event';
 import { axe } from 'jest-axe';
 import { FormProvider } from 'react-hook-form';
 
-import { AddClaimantForm } from 'app/intake/addClaimant/AddClaimantForm';
+import { ClaimantForm } from 'app/intake/addClaimant/ClaimantForm';
 
-import { useAddClaimantForm } from 'app/intake/addClaimant/utils';
+import { useClaimantForm } from 'app/intake/addClaimant/utils';
 import { fillForm, relationshipOpts } from './testUtils';
 import { ERROR_EMAIL_INVALID_FORMAT } from 'app/../COPY';
 
 const FormWrapper = ({ children, defaultValues }) => {
-  const methods = useAddClaimantForm({ defaultValues });
+  const methods = useClaimantForm({ defaultValues });
 
   return <FormProvider {...methods}>{children}</FormProvider>;
 };
 
-describe('AddClaimantForm', () => {
+describe('ClaimantForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -25,7 +25,7 @@ describe('AddClaimantForm', () => {
   const onSubmit = jest.fn();
 
   const setup = (props = { onSubmit }, wrapperProps = {}) => {
-    return render(<AddClaimantForm {...props} />, {
+    return render(<ClaimantForm {...props} />, {
       wrapper: ({ children }) => (
         <FormWrapper {...wrapperProps}>{children}</FormWrapper>
       ),

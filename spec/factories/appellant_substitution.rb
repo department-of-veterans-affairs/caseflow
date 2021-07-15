@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :appellant_substitution do
-    source_appeal { create(:appeal, :dispatched_with_decision_issue) }
+    source_appeal { create(:appeal, :dispatched, :with_decision_issue) }
     substitution_date { Time.zone.today }
     claimant_type { "DependentClaimant" }
     substitute_participant_id { 2 }
