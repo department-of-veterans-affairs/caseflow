@@ -3,7 +3,7 @@
 class IntakesController < ApplicationController
   include ValidationConcern
 
-  before_action :verify_access, except: %i[attorneys]
+  before_action :verify_access, except: [:attorneys]
   before_action :react_routed, :set_application, :check_intake_out_of_service
 
   attr_accessor :error_id
