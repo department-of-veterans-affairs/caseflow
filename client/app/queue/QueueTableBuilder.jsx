@@ -26,8 +26,7 @@ import {
   regionalOfficeColumn,
   taskColumn,
   taskCompletedDateColumn,
-  typeColumn,
-  officeColumn
+  typeColumn
 } from './components/TaskTableColumns';
 import { tasksWithAppealsFromRawTasks } from './utils';
 
@@ -154,8 +153,6 @@ class QueueTableBuilder extends React.PureComponent {
       );
     }
 
-    console.log(this.props);
-
     return {
       label: sprintf(tabConfig.label, totalTaskCount),
       page: (
@@ -194,35 +191,36 @@ class QueueTableBuilder extends React.PureComponent {
     );
 
   downloadCsv = () => {
-//    location.href = ``; // Set to Download URL
+    // location.href = ``; // Set to Download URL
   }
 
   newIntake = () => {
-   location.href = `/intake`;
+    location.href = `/intake`;
   }
 
   render = () => {
     const config = this.queueConfig();
-    console.log("QTB Props", this.props)
     let header = <QueueOrganizationDropdown organizations={this.props.organizations} />;
-    if (window.location.pathname.includes("vha-camo")) {
+
+    if (window.location.pathname.includes('vha-camo')) {
       const intakeButton = <Button {...style}
-                              classNames={['intake-button']}
-                              onClick={this.newIntake}>
-                              + New Intake Form
-                           </Button>;
+      classNames={['intake-button']}
+      onClick={this.newIntake}>
+        + New Intake Form
+      </Button>;
       const downloadButton = <Button {...style}
-                               classNames={['donwload-button', 'usa-button-secondary']}
-                               onClick={this.downloadCsv}>
-                               Download Completed Tasks
-                             </Button>;
-      header = <div {...style}>{intakeButton} {downloadButton}</div>
+        classNames={['donwload-button', 'usa-button-secondary']}
+        onClick={this.downloadCsv}>
+        Download Completed Tasks
+      </Button>;
+
+      header = <div {...style}>{intakeButton} {downloadButton}</div>;
     }
 
     return (
       <div className={rootStyles}>
         <h1 {...css({ display: 'inline-block' })}>{config.table_title}</h1>
-          {header}
+        {header}
         <TabWindow
           name="tasks-tabwindow"
           tabs={this.tabsFromConfig(config)}
