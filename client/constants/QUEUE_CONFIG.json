@@ -96,9 +96,6 @@
       "name": "taskColumn",
       "sorting_table": "tasks",
       "sorting_columns": ["type", "action", "created_at"]
-    },
-    "OFFICE": {
-      "name": "officeColumn"
     }
   },
 
