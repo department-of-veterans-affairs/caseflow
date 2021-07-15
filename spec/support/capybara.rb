@@ -29,6 +29,10 @@ Capybara.register_driver(:parallel_sniffybara) do |app|
   chrome_options.add_preference(:browser,
                                 disk_cache_dir: cache_directory)
 
+  chrome_options.add_extension('/Users/yoomlam/dev/caseflow/.yoom/rails_panel_0.3.3.crx')
+  chrome_options.add_extension('/Users/yoomlam/dev/caseflow/.yoom/react_devtools_4.11.0.crx')
+  chrome_options.add_extension('/Users/yoomlam/dev/caseflow/.yoom/redux_devtools_2.17.0.crx')
+
   options = {
     service: ::Selenium::WebDriver::Service.chrome(args: { port: 51_674 }),
     browser: :chrome,
