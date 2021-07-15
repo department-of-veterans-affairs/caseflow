@@ -20,16 +20,12 @@ class VhaCamo < Organization
     ::VhaCamoCompletedTasksTab.new(assignee: self)
   end
 
-  # rubocop:disable Metrics/AbcSize
-  def column_names
-    [
-      Constants.QUEUE_CONFIG.COLUMNS.BADGES.name,
-      Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
-      Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
-      Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name,
-      Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
-      Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name
-    ].compact
-  end
-  # rubocop:enable Metrics/AbcSize
+  COLUMN_NAMES = [
+    Constants.QUEUE_CONFIG.COLUMNS.BADGES.name,
+    Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
+    Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
+    Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name,
+    Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
+    Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name
+  ].compact
 end

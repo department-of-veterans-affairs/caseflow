@@ -195,7 +195,7 @@ class QueueTableBuilder extends React.PureComponent {
   }
 
   newIntake = () => {
-    location.href = `/intake`;
+    location.href = '/intake';
   }
 
   render = () => {
@@ -204,8 +204,8 @@ class QueueTableBuilder extends React.PureComponent {
 
     if (window.location.pathname.includes('vha-camo')) {
       const intakeButton = <Button {...style}
-      classNames={['intake-button']}
-      onClick={this.newIntake}>
+        classNames={['intake-button']}
+        onClick={this.newIntake}>
         + New Intake Form
       </Button>;
       const downloadButton = <Button {...style}

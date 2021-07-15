@@ -22,7 +22,7 @@ class VhaCamoCompletedTasksTab < QueueTab
     Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).active
   end
 
-  def vha_camo
-    @vha_camo || VhaCamo.new
+  def column_names
+    VhaCamo::COLUMN_NAMES
   end
 end
