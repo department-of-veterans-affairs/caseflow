@@ -144,10 +144,10 @@ export const CaseDetailsView = (props) => {
     [appeal, tasks]
   );
 
-  const appealIsDispatched = appeal.status === 'dispatched';
+  const appealIsDispatched = ['dispatched', 'post_dispatch'].includes(appeal.status);
 
   const editInformation =
-  appeal.appellantType !== 'VeteranClaimant' && props.featureToggles.edit_unrecognized_appellant;
+    appeal.appellantType !== 'VeteranClaimant' && props.featureToggles.edit_unrecognized_appellant;
 
   const supportCavcRemand =
     currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand && !appeal.isLegacyAppeal;
