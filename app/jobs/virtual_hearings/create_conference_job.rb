@@ -163,9 +163,9 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   def send_emails(email_type)
     begin
       Hearings::SendEmail.new(
-      virtual_hearing: virtual_hearing,
-      type: email_type
-    ).call
+        virtual_hearing: virtual_hearing,
+        type: email_type
+      ).call
     rescue StandardError => error
       extra = { application: "hearings", email_type: email_type, virtual_hearing_id: virtual_hearing.id }
       Raven.capture_exception(error, extra: extra)
