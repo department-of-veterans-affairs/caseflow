@@ -3,14 +3,13 @@
 describe WorkQueue::AppealSerializer, :all_dbs do
   context "when an appeal has a decision issue with a decision date in the future" do
     let(:appeal) { create(:appeal, :decision_issue_with_future_date) }
+    let(:user) { create(:user, :vso_role) }
     subject { described_class.new(appeal, params: { user: user }) }
 
     context "when a VSO user views an appeal" do
-      let(:user) { create(:user, :vso_role) }
-
       context "when the restrict_poa_visibility feature toggle is on" do
         before { FeatureToggle.enable!(:restrict_poa_visibility) }
-        after { FeatureToggle.enable!(:restrict_poa_visibility) }
+        after { FeatureToggle.disable!(:restrict_poa_visibility) }
         describe "decision_issues" do
           it "does not display decision issues with a decision date in the future" do
             expect(subject.serializable_hash[:data][:attributes][:decision_issues]).to be_empty

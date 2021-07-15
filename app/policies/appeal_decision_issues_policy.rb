@@ -22,12 +22,11 @@ class AppealDecisionIssuesPolicy
         # VSO users should not be able to see decision issues until the issue decision date
         Time.now.utc > issue.caseflow_decision_date
       end
-      modified_issues = visible_issues.map do |issue|
+      visible_issues.map do |issue|
         # VSO users should not be able to see decision issues' descriptions, regardless of the issue decision date
         issue.description = nil
         issue
       end
-      modified_issues
     else
       @appeal.decision_issues
     end
