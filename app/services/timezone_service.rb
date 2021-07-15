@@ -18,7 +18,7 @@ class TimezoneService
     end
   end
 
-  ACCEPTABLE_USA_VARIATIONS = ["us", "u.s."]
+  ACCEPTABLE_USA_VARIATIONS = ["us", "u.s."].freeze
 
   class << self
     # Attempts to find a timezone based on an address. For addresses within the United States,
