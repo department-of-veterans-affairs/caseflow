@@ -4,6 +4,7 @@ class VhaCamoCompletedTasksTab < QueueTab
   validate :assignee_is_organization
 
   attr_accessor :show_reader_link_column, :allow_bulk_assign
+  delegate :column_names, to: :vha_camo
 
   def label
     COPY::ORGANIZATIONAL_QUEUE_PAGE_COMPLETED_TAB_TITLE
@@ -21,17 +22,7 @@ class VhaCamoCompletedTasksTab < QueueTab
     Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).active
   end
 
-  # rubocop:disable Metrics/AbcSize
-  def column_names
-    [
-      Constants.QUEUE_CONFIG.COLUMNS.BADGES.name,
-      Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
-      Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
-      Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name,
-      Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
-      Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name,
-    ].compact
+  def vha_camo
+    @vha_camo || VhaCamo.new
   end
-  # rubocop:enable Metrics/AbcSize
-
 end
