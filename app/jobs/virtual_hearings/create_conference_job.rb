@@ -165,7 +165,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   end
 
   def send_emails(email_type)
-    VirtualHearings::SendEmail.new(
+    Hearings::SendEmail.new(
       virtual_hearing: virtual_hearing,
       type: email_type
     ).call

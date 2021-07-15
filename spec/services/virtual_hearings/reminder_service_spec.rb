@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe VirtualHearings::ReminderService do
+describe Hearings::ReminderService do
   let(:hearing_day) { build(:hearing_day, scheduled_for: hearing_date) }
   let(:hearing) { build(:hearing, hearing_day: hearing_day) } # scheduled_time is always 8:30 AM ET
   let(:virtual_hearing) do

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe VirtualHearings::SendEmail do
+describe Hearings::SendEmail do
   let(:nyc_ro_eastern) { "RO06" }
   let(:judge_email_sent) { false }
   let(:representative_email_sent) { false }
@@ -46,7 +46,7 @@ describe VirtualHearings::SendEmail do
     )
   end
   let(:send_email_job) do
-    VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: email_type)
+    Hearings::SendEmail.new(virtual_hearing: virtual_hearing, type: email_type)
   end
 
   describe ".call" do
