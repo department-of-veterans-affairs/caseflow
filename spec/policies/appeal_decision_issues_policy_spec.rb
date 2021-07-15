@@ -20,7 +20,7 @@ describe AppealDecisionIssuesPolicy, :postgres do
         end
 
         context "when a decision date has reached or passed its decision date" do
-          let(:appeal) { create(:appeal, :dispatched_with_decision_issue) }
+          let(:appeal) { create(:appeal, :dispatched, :with_decision_issue) }
 
           it "can be seen" do
             expect(result[0].id).to eq(appeal.decision_issues[0].id)
@@ -50,7 +50,7 @@ describe AppealDecisionIssuesPolicy, :postgres do
         end
 
         context "when a decision date has reached or passed its decision date" do
-          let(:appeal) { create(:appeal, :dispatched_with_decision_issue) }
+          let(:appeal) { create(:appeal, :dispatched, :with_decision_issue) }
           let(:result) { subject }
 
           it "can be seen" do
