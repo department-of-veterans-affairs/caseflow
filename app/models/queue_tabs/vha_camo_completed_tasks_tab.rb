@@ -14,7 +14,7 @@ class VhaCamoCompletedTasksTab < QueueTab
   end
 
   def description
-    format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, assignee.name)
+    format(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, assignee.name)
   end
 
   def tasks
@@ -34,7 +34,4 @@ class VhaCamoCompletedTasksTab < QueueTab
   end
   # rubocop:enable Metrics/AbcSize
 
-  def allow_bulk_assign?
-    true
-  end
 end

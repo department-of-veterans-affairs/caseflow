@@ -10,6 +10,7 @@ import QueueTable from './QueueTable';
 import TabWindow from '../components/TabWindow';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
+import Button from '../components/Button';
 import {
   assignedToColumn,
   badgesColumn,
@@ -38,6 +39,11 @@ const rootStyles = css({
   '.usa-alert + &': {
     marginTop: '1.5em'
   }
+});
+
+const style = css({
+  float: 'right',
+  margin: '10px'
 });
 
 /**
@@ -149,6 +155,8 @@ class QueueTableBuilder extends React.PureComponent {
       );
     }
 
+    console.log(this.props);
+
     return {
       label: sprintf(tabConfig.label, totalTaskCount),
       page: (
@@ -186,13 +194,35 @@ class QueueTableBuilder extends React.PureComponent {
       this.taskTableTabFactory(tabConfig, config)
     );
 
+  downloadCsv = () => {
+//    location.href = ``; // Set to Download URL
+  }
+
+  newIntake = () => {
+   location.href = `/intake`;
+  }
+
   render = () => {
     const config = this.queueConfig();
+    console.log("QTB Props", this.props)
+    let header = <QueueOrganizationDropdown organizations={this.props.organizations} />;
+    if (window.location.pathname.includes("vha-camo")) {
+      const intakeButton = <Button {...style}
+                              onClick={this.newIntake}>
+                              + New Intake Form
+                           </Button>;
+      const downloadButton = <Button {...style}
+                               classNames={['usa-button-secondary']}
+                               onClick={this.downloadCsv}>
+                               Download completed tasks
+                             </Button>;
+      header = <div {...style}>{intakeButton} {downloadButton}</div>
+    }
 
     return (
       <div className={rootStyles}>
         <h1 {...css({ display: 'inline-block' })}>{config.table_title}</h1>
-        <QueueOrganizationDropdown organizations={this.props.organizations} />
+          {header}
         <TabWindow
           name="tasks-tabwindow"
           tabs={this.tabsFromConfig(config)}
