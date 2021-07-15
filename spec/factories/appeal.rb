@@ -379,6 +379,16 @@ FactoryBot.define do
       end
     end
 
+    # An appeal which was dispatched, but has then had other open tasks added.
+    # Note that the -ed suffix in 'dispatched' does not carry over to 'post_dispatch', which is how
+    # it is referred to elsewhere in the code.
+    trait :post_dispatch do
+      dispatched
+      after(:create) do |appeal|
+        create(:congressional_interest_mail_task, parent: appeal.root_task)
+      end
+    end
+
     trait :with_straight_vacate_stream do
       dispatched
       after(:create) do |appeal, evaluator|
@@ -421,9 +431,7 @@ FactoryBot.define do
       end
     end
 
-    trait :dispatched_with_decision_issue do
-      dispatched
-
+    trait :with_decision_issue do
       description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
       notes = "Pain disorder with 100\% evaluation per examination"
       after(:create) do |appeal, evaluator|
