@@ -255,7 +255,7 @@ RSpec.feature "Postpone hearing" do
         expect(new_hearing.virtual_hearing).to eq VirtualHearing.first
 
         # Test the emails were sent
-        events = SentHearingEmailEvent.where(hearing_id: new_hearing.id)
+        events = Hearings::SentHearingEmailEvent.where(hearing_id: new_hearing.id)
         expect(events.count).to eq 2
         expect(events.where(sent_by_id: current_user.id).count).to eq 2
         expect(events.where(email_type: "confirmation").count).to eq 2

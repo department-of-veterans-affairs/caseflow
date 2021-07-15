@@ -65,7 +65,7 @@ class LegacyHearing < CaseflowRecord
   has_many :hearing_views, as: :hearing
   has_many :appeal_stream_snapshots, foreign_key: :hearing_id
   has_one :hearing_location, as: :hearing
-  has_many :email_events, class_name: "SentHearingEmailEvent", foreign_key: :hearing_id
+  has_many :email_events, class_name: "Hearings::SentHearingEmailEvent", foreign_key: :hearing_id
 
   alias_attribute :location, :hearing_location
   accepts_nested_attributes_for :hearing_location, reject_if: proc { |attributes| attributes.blank? }

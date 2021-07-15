@@ -46,7 +46,7 @@ describe VirtualHearings::DeleteConferencesJob do
       it "creates events for emails sent", :aggregate_failures do
         subject
         virtual_hearing.reload
-        events = SentHearingEmailEvent.where(hearing_id: hearing.id)
+        events = Hearings::SentHearingEmailEvent.where(hearing_id: hearing.id)
         expect(events.count).to eq 2
         expect(events.where(sent_by_id: virtual_hearing.updated_by_id).count).to eq 2
         expect(events.where(email_type: "cancellation").count).to eq 2

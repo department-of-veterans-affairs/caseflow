@@ -39,7 +39,7 @@ class Hearing < CaseflowRecord
   has_many :hearing_views, as: :hearing
   has_one :hearing_location, as: :hearing
   has_many :hearing_issue_notes
-  has_many :email_events, class_name: "SentHearingEmailEvent"
+  has_many :email_events, class_name: "Hearings::SentHearingEmailEvent"
 
   class HearingDayFull < StandardError; end
 
