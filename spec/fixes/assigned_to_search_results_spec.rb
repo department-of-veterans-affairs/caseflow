@@ -58,7 +58,7 @@ feature "Search results for AMA appeal" do
 
       BvaDispatchTask.outcode(appeal, params, bva_dispatcher)
       visit "/search?veteran_ids=#{appeal.veteran.id}"
-      expect(page).to have_content("Dispatched") # in the "Appellant Name" column 
+      expect(page).to have_content("Dispatched") # in the "Appellant Name" column
       expect(BVAAppealStatus.new(appeal: appeal).status).to eq :dispatched
       expect(page).to have_content("Post-decision") # in the "Assigned To" column
       expect(appeal.assigned_to_location).to eq "Post-decision"
