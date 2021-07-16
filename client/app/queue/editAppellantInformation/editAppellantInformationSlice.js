@@ -15,7 +15,7 @@ const editClaimantSlice = createSlice({
       
       // CASEFLOW-1923: Update the map function here to properly map the form data for the API
       const _appellantPayload = mapAppellantDataToApi(formData);
-
+      
       // CASEFLOW-1923: Make API call to update claimant information using the appellantPayload
     },
     clearClaimant: (state) => {
