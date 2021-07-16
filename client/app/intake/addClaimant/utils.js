@@ -87,7 +87,7 @@ export const defaultFormValues = {
   listedAttorney: null
 };
 
-export const useAddClaimantForm = ({ defaultValues = defaultFormValues } = {}) => {
+export const useClaimantForm = ({ defaultValues = defaultFormValues } = {}) => {
   const methods = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange',
