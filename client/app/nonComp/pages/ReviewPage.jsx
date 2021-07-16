@@ -70,7 +70,7 @@ class NonCompReviewsPage extends React.PureComponent {
           }
         </div>
       </div>
-      <NonCompTabs />
+      <NonCompTabs businessLine={this.props.businessLine} />
     </div>;
   }
 }

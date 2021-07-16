@@ -33,3 +33,19 @@ export const decisionReviewTypeColumn = (tasks) => {
     order: -1
   };
 };
+
+export const caseDetialsColumn = () => {
+  return {
+    header: 'Case Details',
+    valueFunction: (task) => `${task.claimant.name} (${task.veteranParticipantId})`,
+    getSortValue: (task) => task.claimant.name
+  }
+};
+
+export const tasksColumn = () => {
+  return {
+    header: 'Tasks',
+    valueFunction: (task) => task.type,
+    getSortValue: (task) => task.claimant.name
+  }
+};

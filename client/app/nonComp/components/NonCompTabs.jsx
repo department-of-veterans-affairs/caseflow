@@ -5,7 +5,12 @@ import PropTypes from 'prop-types';
 import SearchBar from '../../components/SearchBar';
 import TabWindow from '../../components/TabWindow';
 import { TaskTableUnconnected } from '../../queue/components/TaskTable';
-import { claimantColumn, veteranParticipantIdColumn, decisionReviewTypeColumn } from './TaskTableColumns';
+import {
+  claimantColumn,
+  veteranParticipantIdColumn,
+  decisionReviewTypeColumn,
+  caseDetialsColumn,
+  tasksColumn } from './TaskTableColumns';
 import COPY from '../../../COPY';
 
 class NonCompTabsUnconnected extends React.PureComponent {
@@ -16,7 +21,8 @@ class NonCompTabsUnconnected extends React.PureComponent {
         key="inprogress"
         predefinedColumns={{ includeDaysWaiting: true,
           defaultSortIdx: 3 }}
-        tasks={this.props.inProgressTasks} />
+        tasks={this.props.inProgressTasks}
+        businessLine={this.props.businessLine} />
     }, {
       label: 'Completed tasks',
       page: <TaskTableTab
@@ -24,7 +30,8 @@ class NonCompTabsUnconnected extends React.PureComponent {
         description={COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}
         predefinedColumns={{ includeCompletedDate: true,
           defaultSortIdx: 3 }}
-        tasks={this.props.completedTasks} />
+        tasks={this.props.completedTasks}
+        businessLine={this.props.businessLine} />
     }];
 
     return <TabWindow
@@ -40,6 +47,7 @@ NonCompTabsUnconnected.propTypes = {
   currentTab: PropTypes.node,
   dispatch: PropTypes.func,
   inProgressTasks: PropTypes.array,
+  businessLine: PropTypes.string,
 };
 
 class TaskTableTab extends React.PureComponent {
@@ -72,6 +80,13 @@ class TaskTableTab extends React.PureComponent {
   }
 
   render = () => {
+    let columns = [claimantColumn(), veteranParticipantIdColumn(),
+            decisionReviewTypeColumn(this.state.allTasks)];
+
+    if (this.props.businessLine == "VHA CAMO") {
+      columns = [caseDetialsColumn(), tasksColumn(), decisionReviewTypeColumn(this.state.allTasks)];
+    }
+
     return <React.Fragment>
       {this.props.description && <div className="cf-noncomp-queue-completed-task">{this.props.description}</div>}
       <div className="cf-search-ahead-parent cf-push-right cf-noncomp-search">
@@ -89,8 +104,7 @@ class TaskTableTab extends React.PureComponent {
         <TaskTableUnconnected
           {...this.state.predefinedColumns}
           getKeyForRow={(row, object) => object.id}
-          customColumns={[claimantColumn(), veteranParticipantIdColumn(),
-            decisionReviewTypeColumn(this.state.allTasks)]}
+          customColumns={columns}
           includeIssueCount
           tasks={this.state.shownTasks}
         />
@@ -103,6 +117,7 @@ TaskTableTab.propTypes = {
   description: PropTypes.node,
   predefinedColumns: PropTypes.object,
   tasks: PropTypes.array,
+  businessLine: PropTypes.string,
 };
 
 const NonCompTabs = connect(
