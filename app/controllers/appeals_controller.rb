@@ -128,6 +128,14 @@ class AppealsController < ApplicationController
 
   def edit
     # only AMA appeals may call /edit
+    appeal.request_issues.each do |issue|
+      begin
+        issue.approx_decision_date_of_issue_being_contested
+      rescue Caseflow::Error::MissingDecisionDate => error
+        render(error.serialize_response)
+        break
+      end
+    end
     return not_found if appeal.is_a?(LegacyAppeal)
   end
 
