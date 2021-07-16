@@ -3,7 +3,7 @@
 class AppealsWithNoTasksOrAllTasksOnHoldQuery
   def call
     [
-      stuck_appeals,
+      appeals_with_only_on_hold_tasks,
       appeals_with_zero_tasks,
       appeals_with_one_task,
       appeals_with_two_tasks_not_distribution,
@@ -75,7 +75,7 @@ class AppealsWithNoTasksOrAllTasksOnHoldQuery
     Task.select(:appeal_id).where(appeal_type: klass_name)
   end
 
-  def stuck_appeals
+  def appeals_with_only_on_hold_tasks
     Appeal.established.active
       .joins(:tasks)
       .group("appeals.id")
