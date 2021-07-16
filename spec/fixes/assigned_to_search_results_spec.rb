@@ -33,7 +33,7 @@ feature "Search results for AMA appeal" do
       expect(appeal.assigned_to_location).to eq "Case storage"
 
       # Code from Appeal#assigned_to_location
-      tasks=appeal.tasks
+      tasks = appeal.tasks
       recently_updated_task = Task.any_recently_updated(
         tasks.active.visible_in_queue_table_view,
         tasks.on_hold.visible_in_queue_table_view
@@ -45,7 +45,7 @@ feature "Search results for AMA appeal" do
       params = {
         appeal_id: appeal.external_id,
         citation_number: "12312312",
-        decision_date: Date.today.to_s,
+        decision_date: Time.zone.today.to_s,
         file: "longfilenamehere",
         redacted_document_location: "C://Windows/User/BVASWIFTT/Documents/NewDecision.docx"
       }
