@@ -80,7 +80,7 @@ class AppealsWithNoTasksOrAllTasksOnHoldQuery
       .joins(:tasks)
       .group("appeals.id")
       .having(
-        "count(case when tasks.status in (?) then 1 end) = count(case when tasks.status = ? then 1 end)",
+        "count(case when tasks.status in (?) AND tasks.type != 'TrackVeteranTask' then 1 end) = count(case when tasks.status = ? AND tasks.type != 'TrackVeteranTask' then 1 end)",
         Task.open_statuses,
         on_hold
       )
