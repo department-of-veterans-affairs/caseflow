@@ -7,12 +7,20 @@ class CaseflowJob < ApplicationJob
     job.start_time = Time.zone.now
   end
 
+  # Automatically report runtime to DataDog if job does not explicitly report to DataDog.
+  # Note: This block is not called if an error occurs when `perform` is executed --
+  # see https://stackoverflow.com/questions/50263787/does-active-job-call-after-perform-when-perform-raises-an-error
+  after_perform do |job|
+    datadog_report_runtime(metric_group_name: self.class.name.underscore) unless @reported_to_datadog
+  end
+
   def datadog_report_runtime(metric_group_name:)
     DataDogService.record_runtime(
       app_name: "caseflow_job",
       metric_group: metric_group_name,
       start_time: @start_time
     )
+    @reported_to_datadog = true
   end
 
   def datadog_report_time_segment(segment:, start_time:)
