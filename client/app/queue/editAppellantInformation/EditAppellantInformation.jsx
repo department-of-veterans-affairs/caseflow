@@ -18,7 +18,7 @@ const EditAppellantInformation = ({ appealId }) => {
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
-  const { goBack } = useHistory();
+  const { push, goBack } = useHistory();
 
   const methods = useClaimantForm({ defaultValues: mapAppellantDataFromApi(appeal) });
   const {
@@ -27,8 +27,9 @@ const EditAppellantInformation = ({ appealId }) => {
 
   const handleUpdate = (formData) => {
     const id = appeal.unrecognizedAppellantId;
-
+    debugger
     dispatch(updateAppellantInformation({ formData, id }));
+    push(`/queue/appeals/${appeal.externalId}`)
   };
 
   const handleBack = () => goBack();
@@ -43,6 +44,7 @@ const EditAppellantInformation = ({ appealId }) => {
           editAppellantHeader={editAppellantHeader}
           editAppellantDescription={editAppellantDescription}
           hidePOAForm
+          onSubmit={handleUpdate}
         />
       </AppSegment>
       <Button
