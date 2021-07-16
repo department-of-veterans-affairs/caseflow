@@ -73,6 +73,15 @@ module Caseflow::Error
     end
   end
 
+  class MissingDecisionDate < SerializableError
+    def initialize(args)
+      @code = args[:code] || 400
+      @request_issue_id = args[:request_issue_id]
+      @title = args[:title] || "Missing Decision Date"
+      @message = args[:message] || "Request issue #{@request_issue_id} does not have a decision date"
+    end
+  end
+
   class MissingRequiredProperty < SerializableError
     def initialize(args)
       @code = args[:code] || 400

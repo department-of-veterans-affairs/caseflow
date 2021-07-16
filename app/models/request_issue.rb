@@ -337,8 +337,7 @@ class RequestIssue < CaseflowRecord
     else
       return if is_unidentified
 
-      # in theory we should never get here
-      fail MissingDecisionDate, id
+      fail Caseflow::Error::MissingDecisionDate, request_issue_id: id
     end
   end
 

@@ -103,6 +103,24 @@ describe RequestIssue, :all_dbs do
     )
   end
 
+  let!(:rating_request_issue_without_contested_issue) do
+    create(
+      :request_issue,
+      decision_review: review,
+      ramp_claim_id: ramp_claim_id,
+      decision_sync_processed_at: decision_sync_processed_at,
+      end_product_establishment: end_product_establishment,
+      contention_reference_id: nil,
+      benefit_type: benefit_type,
+      vacols_id: vacols_id,
+      vacols_sequence_id: vacols_sequence_id,
+      closed_at: closed_at,
+      closed_status: closed_status,
+      ineligible_reason: ineligible_reason,
+      edited_description: edited_description
+    )
+  end
+
   let!(:nonrating_request_issue) do
     create(
       :request_issue,
@@ -1231,6 +1249,21 @@ describe RequestIssue, :all_dbs do
       let(:ineligible_reason) { :untimely }
       it "validates that the ineligible_reason can't be untimely" do
         expect(subject).to be_falsey
+      end
+    end
+  end
+
+  context "#approx_decision_date_of_issue_being_contested" do
+    subject { rating_request_issue_without_contested_issue.approx_decision_date_of_issue_being_contested }
+
+    context "when decision date is missing" do
+      it "raises a Caseflow Error for MissingDecisionDate" do
+        expect { subject }.to raise_error do |error|
+          expect(error).to be_a(Caseflow::Error::MissingDecisionDate)
+          expect(error.title).to eq("Missing Decision Date")
+          expect(error.message).to eq("Request issue #{rating_request_issue_without_contested_issue.id} does not " \
+             "have a decision date")
+        end
       end
     end
   end
