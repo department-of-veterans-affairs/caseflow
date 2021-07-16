@@ -25,7 +25,7 @@ describe FetchEfolderDocumentCountJob do
         expect(doc_count).to eq(10)
         expect(@emitted_gauges.first).to include(
           app_name: "caseflow_job",
-          metric_group: "efolder_fetch_document_count",
+          metric_group: "fetch_efolder_document_count_job",
           metric_name: "runtime",
           metric_value: anything
         )
