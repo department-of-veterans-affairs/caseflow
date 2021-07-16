@@ -17,7 +17,7 @@ exports[`VsoVisibilityAlert renders correctly 1`] = `
       <div
         class="usa-alert-text"
       >
-        In order to provide only timely and accurate appeals information, some changes have been made in Caseflow limiting the following: Pre-disposition data and draft decisions are no longer available until decisions have ben signed by a VLJ and dispatched.
+        In order to provide only timely and accurate appeals information, some changes have been made in Caseflow limiting the following: Pre-disposition data and draft decisions are no longer available until decisions have been signed by a VLJ and dispatched.
       </div>
     </div>
   </div>
