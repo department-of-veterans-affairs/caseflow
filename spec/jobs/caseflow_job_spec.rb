@@ -1,4 +1,4 @@
-
+# frozen_string_literal: true
 
 describe CaseflowJob, :postgres do
   include_context "Metrics Reports"
@@ -20,7 +20,7 @@ describe CaseflowJob, :postgres do
         metric_group: "some_caseflow_job",
         metric_name: "runtime",
         metric_value: anything
-      )
+      ).once
     end
 
     it "automatically reports runtime to DataDog" do
