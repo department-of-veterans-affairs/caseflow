@@ -109,7 +109,8 @@ export const CaseDetailsView = (props) => {
   );
   const modalIsOpen = window.location.pathname.includes('modal');
 
-  const limitVsoVisibility = userIsVsoEmployee && featureToggles?.restrict_poa_visibility; // eslint-disable-line camelcase
+  // eslint-disable-next-line camelcase
+  const limitVsoVisibility = userIsVsoEmployee && featureToggles?.restrict_poa_visibility;
 
   const resetState = () => {
     props.resetErrorMessages();
