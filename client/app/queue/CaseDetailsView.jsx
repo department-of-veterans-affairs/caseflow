@@ -47,6 +47,7 @@ import VeteranDetail from './VeteranDetail';
 import { startPolling } from '../hearings/utils';
 import FnodBanner from './components/FnodBanner';
 import { shouldSupportSubstituteAppellant } from './substituteAppellant/caseDetails/utils';
+import { VsoVisibilityAlert } from './caseDetails/VsoVisibilityAlert';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
@@ -72,6 +73,8 @@ const editInformationLinkStyling = css({
   margin: '5px',
 });
 
+const topAlertStyles = css({ marginBottom: '2.4rem' });
+
 export const CaseDetailsView = (props) => {
   const { appealId, featureToggles } = props;
   const appeal = useSelector((state) =>
@@ -85,6 +88,9 @@ export const CaseDetailsView = (props) => {
   );
   const userIsCobAdmin = useSelector(
     (state) => state.ui.userIsCobAdmin
+  );
+  const userIsVsoEmployee = useSelector(
+    (state) => state.ui.userIsVsoEmployee
   );
   const success = useSelector((state) => state.ui.messages.success);
   const error = useSelector((state) => state.ui.messages.error);
@@ -102,6 +108,8 @@ export const CaseDetailsView = (props) => {
     )
   );
   const modalIsOpen = window.location.pathname.includes('modal');
+
+  const limitVsoVisibility = userIsVsoEmployee && featureToggles?.restrict_poa_visibility; // eslint-disable-line camelcase
 
   const resetState = () => {
     props.resetErrorMessages();
@@ -200,6 +208,9 @@ export const CaseDetailsView = (props) => {
         <CaseTitle appeal={appeal} />
         {appeal.veteranDateOfDeath && props.featureToggles.fnod_banner && (
           <FnodBanner appeal={appeal} />
+        )}
+        {limitVsoVisibility && (
+          <div className={topAlertStyles}><VsoVisibilityAlert /></div>
         )}
         <CaseTitleDetails
           appealId={appealId}
