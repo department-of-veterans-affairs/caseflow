@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 describe CaseflowJob, :postgres do
-
   class SomeCaseflowJob < CaseflowJob
     queue_with_priority :low_priority
 
