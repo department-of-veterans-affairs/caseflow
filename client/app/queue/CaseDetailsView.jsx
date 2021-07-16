@@ -48,6 +48,7 @@ import { startPolling } from '../hearings/utils';
 import FnodBanner from './components/FnodBanner';
 import { shouldSupportSubstituteAppellant } from './substituteAppellant/caseDetails/utils';
 import { VsoVisibilityAlert } from './caseDetails/VsoVisibilityAlert';
+import { shouldShowVsoVisibilityAlert } from './caseDetails/utils';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
@@ -108,9 +109,6 @@ export const CaseDetailsView = (props) => {
     )
   );
   const modalIsOpen = window.location.pathname.includes('modal');
-
-  // eslint-disable-next-line camelcase
-  const limitVsoVisibility = userIsVsoEmployee && featureToggles?.restrict_poa_visibility;
 
   const resetState = () => {
     props.resetErrorMessages();
@@ -210,7 +208,7 @@ export const CaseDetailsView = (props) => {
         {appeal.veteranDateOfDeath && props.featureToggles.fnod_banner && (
           <FnodBanner appeal={appeal} />
         )}
-        {limitVsoVisibility && (
+        {shouldShowVsoVisibilityAlert({ featureToggles, userIsVsoEmployee }) && (
           <div className={topAlertStyles}><VsoVisibilityAlert /></div>
         )}
         <CaseTitleDetails
