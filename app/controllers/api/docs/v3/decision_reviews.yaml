@@ -1104,72 +1104,78 @@ components:
       type: string
       enum:
         # for benefit type:  compensation_all
-        - Unknown issue category
+        - Unknown Issue Category
         - Apportionment
         - Incarceration Adjustments
         - Audit Error Worksheet (DFAS)
         - Active Duty Adjustments
         - Drill Pay Adjustments
-        - Character of discharge determinations
+        - Character of Discharge Determinations
         - Contested Claims - Apportionment
-        - Contested Claims - Attorney fees
+        - Contested Claims - Attorney Fees
         - Contested Claims - Dependents Indemnity Compensation (DIC)
         - Contested Claims - Insurance
         - Contested Claims - Loan Guaranty (LGY)
-        - Contested Claims - Veteran death
-        - Income/net worth (pension)
-        - Dependent child - Adopted
-        - Dependent child - Stepchild
-        - Dependent child - Biological
-        - Dependency Spouse - Common law marriage
-        - Dependency Spouse - Inference of marriage
-        - Dependency Spouse - Deemed valid marriage
+        - Contested Claims - Veteran Death
+        - Income/Net Worth (Pension)
+        - Dependent Child - Adopted
+        - Dependent Child - Stepchild
+        - Dependent Child - Biological
+        - Dependency Spouse - Common Law Marriage
+        - Dependency Spouse - Inference of Marriage
+        - Dependency Spouse - Deemed Valid Marriage
         - Military Retired Pay
-        - Contested Claims (other than apportionment)
+        - Contested Claims (Other than Apportionment)
         - Lack of Qualifying Service
-        - Other non-rated
+        - Other Non-Rated
         # for benefit type:  compensation
-        - Unknown issue category
+        - Unknown Issue Category
         - Apportionment
         - Incarceration Adjustments
         - Audit Error Worksheet (DFAS)
         - Active Duty Adjustments
         - Drill Pay Adjustments
-        - Character of discharge determinations
-        - Income/net worth (pension)
-        - Dependent child - Adopted
-        - Dependent child - Stepchild
-        - Dependent child - Biological
-        - Dependency Spouse - Common law marriage
-        - Dependency Spouse - Inference of marriage
-        - Dependency Spouse - Deemed valid marriage
+        - Character of Discharge Determinations
+        - Income/Net Worth (Pension)
+        - Dependent Child - Adopted
+        - Dependent Child - Stepchild
+        - Dependent Child - Biological
+        - Dependency Spouse - Common Law Marriage
+        - Dependency Spouse - Inference of Marriage
+        - Dependency Spouse - Deemed Valid Marriage
         - Military Retired Pay
         - Lack of Qualifying Service
-        - Other non-rated
+        - DIC
+        - SC Death
+        - Accrued Benefits
+        - Other Non-Rated
         # for benefit type:  pension
-        - Eligibility | Wartime service
+        - Eligibility | Wartime Service
         - Eligibility | Veteran Status
         - Income/Net Worth | Countable Income
         - Income/Net Worth | Residential Lot Size
         - Income/Net Worth | Medical Expense Deductions
-        - Effective date | Liberalizing Legislation
-        - Effective date | 3.400(b)(ii)(B)
+        - Effective Date | Liberalizing Legislation
+        - Effective Date | 3.400(b)(ii)(B)
         - Dependent Eligibility | Adoption
         - Dependent Eligibility | Stepchild
-        - Dependent Eligibility | School child
-        - Dependent Eligibility | Validity of marriage
+        - Dependent Eligibility | School Child
+        - Dependent Eligibility | Validity of Marriage
         - Dependent Eligibility | Parent(s)
         - Dependent Eligibility | Other
         - Penalty Period
         - Post Award Audit
-        - Overpayment | Validity of debt
+        - Overpayment | Validity of Debt
         - Overpayment | Waiver
         - Apportionment
-        - Survivors pension eligibility
+        - Survivor's Pension Eligibility
         - Burial Benefits - NSC Burial
         - Burial Benefits - Plot or Interment Allowance
         - Burial Benefits - Transportation Allowance
         - Burial Benefits - VA Hospitalization Death
+        - NSC Live Pension
+        - Survivor's Pension
+        - Accrued Benefits
         # for benefit type:  fiduciary
         - Appointment of a Fiduciary (38 CFR 13.100)
         - Removal of a Fiduciary (38 CFR 13.500)
@@ -1212,7 +1218,7 @@ components:
         - Payment | 38 U.S.C. ch. 32
         - Payment | 38 U.S.C. ch. 33
         - Payment | 38 U.S.C. ch. 1606
-        - Overpayment | Validity of debt
+        - Overpayment | Validity of Debt
         - Vet Tec
         - Delimiting Date Issues | 38 U.S.C. ch. 30
         - Delimiting Date Issues | 38 U.S.C. ch. 35
@@ -1221,64 +1227,64 @@ components:
         - Delimiting Date Issues | 38 U.S.C. ch. 1606
         - Other
         # for benefit type:  insurance
-        - Waiver of premiums (1912-1914) | Date of total disability
-        - Waiver of premiums (1912-1914) | Effective date
-        - Waiver of premiums (1912-1914) | TDIP (1915)
-        - Waiver of premiums (1912-1914) | Other
+        - Waiver of Premiums (1912-1914) | Date of Total Disability
+        - Waiver of Premiums (1912-1914) | Effective Date
+        - Waiver of Premiums (1912-1914) | TDIP (1915)
+        - Waiver of Premiums (1912-1914) | Other
         - Reinstatement | Medically Qualified
         - Reinstatement | Other
-        - RH (1922(a) S-DVI) | Timely application
-        - RH (1922(a) S-DVI) | Medically qualified
+        - RH (1922(a) S-DVI) | Timely Application
+        - RH (1922(a) S-DVI) | Medically Qualified
         - RH (1922(a) S-DVI) | Discharged before 4/25/51
         - RH (1922(a) S-DVI) | Other
-        - SRH (1922(b) S-DVI) | Timely application
+        - SRH (1922(b) S-DVI) | Timely Application
         - SRH (1922(b) S-DVI) | Over age 65
         - SRH (1922(b) S-DVI) | Other
         - VMLI (2106) | LOC/Reverse Mortgage
         - VMLI (2106) | Over age 70
         - VMLI (2106) | Death Award
         - VMLI (2106) | Other
-        - Contested death claim | Relationships
-        - Contested death claim | Testamentary capacity
-        - Contested death claim | Undue influence
-        - Contested death claim | Intent of insured
-        - Contested death claim | Other
+        - Contested Death Claim | Relationships
+        - Contested Death Claim | Testamentary Capacity
+        - Contested Death Claim | Undue Influence
+        - Contested Death Claim | Intent of Insured
+        - Contested Death Claim | Other
         - Other
         # for benefit type:  loan_guaranty
-        - Basic eligibility - Certificate of Eligibility (COE) was denied for use of benefit
-        - Validity of debt - Existing debt indicated from loan termination is incorrect as stated
-        - Waiver of indebtedness - Existing debt should be waived to allow issuance of COE
-        - Restoration of entitlement - Remove a previous loan that was paid-in-full to allow all available entitlement on the COE
+        - Basic Eligibility - Certificate of Eligibility (COE) was denied for use of benefit
+        - Validity of Debt - Existing debt indicated from loan termination is incorrect as stated
+        - Waiver of Indebtedness - Existing debt should be waived to allow issuance of COE
+        - Restoration of Entitlement - Remove a previous loan that was paid-in-full to allow all available entitlement on the COE
         - Other
         # for benefit type:  nca
         - Entitlement | Reserves/National Guard
-        - Entitlement | Less than 24 months
-        - Entitlement | Character of service
+        - Entitlement | Less than 24 Months
+        - Entitlement | Character of Service
         - Entitlement | Merchant Marine
-        - Entitlement | No military information
-        - Entitlement | Cadet (service academies)
+        - Entitlement | No Military Information
+        - Entitlement | Cadet (Service Academies)
         - Entitlement | Unmarried Adult Child
-        - Entitlement | Allied forces and non-citizens
-        - Entitlement | Pre-need
+        - Entitlement | Allied Forces and Non-Citizens
+        - Entitlement | Pre-Need
         - Entitlement | Spouse/Surving Spouse
-        - Entitlement | Non-qualifying service
-        - Entitlement | ABMC/overseas burial
-        - Entitlement | Pre-WWI/burial site unknown
-        - Entitlement | Marked grave (death prior to 10-18-78)
-        - Entitlement | Marked grave (death on/after 10-18-78 to 10-31-90)
+        - Entitlement | Non-Qualifying Service
+        - Entitlement | ABMC/Overseas Burial
+        - Entitlement | Pre-WWI/Burial Site Unknown
+        - Entitlement | Marked Grave (Death prior to 10-18-78)
+        - Entitlement | Marked Grave (Death on/after 10-18-78 to 10-31-90)
         - Entitlement | Other
         - Entitlement | Voided Enlistment
         - Entitlement | Benefit Already Provided
         - Entitlement | Confederate IMO
-        - Entitlement | Cremains not interred
-        - Entitlement | Historic marker deemed serviceable
-        - Entitlement | Medallion (no grave)
-        - Entitlement | Medallion (unmarked grave)
+        - Entitlement | Cremains Not Interred
+        - Entitlement | Historic Marker Deemed Serviceable
+        - Entitlement | Medallion (No Grave)
+        - Entitlement | Medallion (Unmarked Grave)
         - Entitlement | Parent
         - Entitlement | Replacement
-        - Entitlement | Unauthorized applicant
+        - Entitlement | Unauthorized Applicant
         - Entitlement | Hmong
-        - Entitlement | Medallion (monetary allowance)
+        - Entitlement | Medallion (Monetary Allowance)
         - Entitlement | IMO in NC
         # for benefit type:  vha
         - Eligibility for Treatment | Dental

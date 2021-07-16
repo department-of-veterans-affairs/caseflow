@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+def wait_for_page_render
+  # This find forces a wait for the page to render. Without it, a test asserting presence or absence of content
+  # may pass whether the content is present or not!
+  find("div", id: "caseTitleDetailsSubheader")
+end
+
 RSpec.feature "Case details", :all_dbs do
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
@@ -1892,8 +1898,9 @@ RSpec.feature "Case details", :all_dbs do
         let(:docket_type) { "evidence_submission" }
         let(:case_type) { "original" }
         let(:disposition) { "allowed" }
+        let(:status) { :dispatched }
         let(:appeal) do
-          create(:appeal, :dispatched_with_decision_issue,
+          create(:appeal, status, :with_decision_issue,
                  docket_type: docket_type,
                  stream_type: case_type,
                  disposition: disposition)
@@ -1908,9 +1915,7 @@ RSpec.feature "Case details", :all_dbs do
         shared_examples "the button is not shown" do
           it "the 'Add Substitute' button is not shown" do
             visit "/queue/appeals/#{appeal.external_id}"
-            # This find forces a wait for the page to render. Without it, this test will always pass,
-            # whether the content is present or not!
-            find("div", id: "caseTitleDetailsSubheader")
+            wait_for_page_render
             expect(page).to have_no_content(COPY::SUBSTITUTE_APPELLANT_BUTTON)
           end
         end
@@ -1918,7 +1923,7 @@ RSpec.feature "Case details", :all_dbs do
         shared_examples "the button is shown" do
           it "the 'Add Substitute' button is shown" do
             visit "/queue/appeals/#{appeal.external_id}"
-            find("div", id: "caseTitleDetailsSubheader")
+            wait_for_page_render
             expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_BUTTON)
           end
         end
@@ -1933,6 +1938,13 @@ RSpec.feature "Case details", :all_dbs do
           let(:case_type) { "de_novo" }
 
           it_behaves_like "the button is not shown"
+        end
+
+        context "When the appeal is in post-dispatch state" do
+          let(:disposition) { "dismissed_death" }
+          let(:status) { :post_dispatch }
+
+          it_behaves_like "the button is shown"
         end
 
         context "when the docket type is 'hearing'" do
@@ -1987,6 +1999,57 @@ RSpec.feature "Case details", :all_dbs do
           expect(page).to have_content(substitution_date)
           expect(page).to have_content(COPY::CASE_TIMELINE_APPELLANT_IS_A_SUBSTITUTE)
         end
+      end
+    end
+
+    describe "Add CAVC Remand button" do
+      let(:docket_type) { "evidence_submission" }
+      let(:case_type) { "original" }
+      let(:disposition) { "allowed" }
+
+      let(:appeal) do
+        create(:appeal, status, :with_decision_issue,
+               docket_type: docket_type,
+               stream_type: case_type,
+               disposition: disposition)
+      end
+      let(:user) { create(:user, css_id: "CAVC_LIT_USER") }
+
+      before do
+        CavcLitigationSupport.singleton.add_user(user)
+        User.authenticate!(user: user)
+        FeatureToggle.enable!(:cavc_remand)
+      end
+
+      shared_examples "the button is not shown" do
+        it "the 'Add CAVC Remand' button is not shown" do
+          visit "/queue/appeals/#{appeal.external_id}"
+          wait_for_page_render
+          expect(page).to have_no_content(COPY::ADD_CAVC_BUTTON)
+        end
+      end
+
+      shared_examples "the button is shown" do
+        it "The 'Add CAVC Remand' button is shown" do
+          visit "/queue/appeals/#{appeal.external_id}"
+          wait_for_page_render
+          expect(page).to have_content(COPY::ADD_CAVC_BUTTON)
+        end
+      end
+
+      context "when the appeal is in dispatch state" do
+        let(:status) { :dispatched }
+        it_behaves_like "the button is shown"
+      end
+
+      context "when the appeal is in post-dispatch state" do
+        let(:status) { :post_dispatch }
+        it_behaves_like "the button is shown"
+      end
+
+      context "when the appeal is not yet dispatched" do
+        let(:status) { :assigned_to_judge }
+        it_behaves_like "the button is not shown"
       end
     end
   end
