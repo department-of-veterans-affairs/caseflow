@@ -153,7 +153,7 @@ class Hearings::SendEmail
       recipient.title == MailRecipient::RECIPIENT_TITLES[:appellant] &&
       !appeal.appellant_is_not_veteran
     )
-    Hearings::SentHearingEmailEvent.create!(
+    SentHearingEmailEvent.create!(
       hearing: hearing,
       email_type: type.ends_with?("reminder") ? "reminder" : type,
       email_address: recipient.email,
