@@ -30,4 +30,20 @@ describe EngineeringTask, :postgres do
       end
     end
   end
+
+  describe "#available_actions" do
+    let!(:mdr_task) { described_class.create_with_hold(cavc_task) }
+
+    context "immediately after MdrTask is created" do
+      it "returns available actions when MdrTask is on hold" do
+        expect(mdr_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
+        child_timed_hold_tasks = mdr_task.children.of_type(:TimedHoldTask)
+        expect(child_timed_hold_tasks.first.status).to eq Constants.TASK_STATUSES.assigned
+
+        expect(mdr_task.available_actions(org_admin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
+        expect(mdr_task.available_actions(org_nonadmin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
+        expect(mdr_task.available_actions(other_user)).to be_empty
+      end
+    end
+  end
 end

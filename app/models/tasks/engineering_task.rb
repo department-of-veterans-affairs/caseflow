@@ -3,7 +3,7 @@
 ##
 # Task to indicate that engineers are working on the appeal.
 # It prevent false positives when checking for stuck appeals (e.g., those without active tasks).
-# This task is assigned to a specific engineer when possible, 
+# This task is assigned to a specific engineer when possible,
 # otherwise it is assigned to the Caseflow user css_id: "CSFLOW".
 # Task instructions can be populated to further explain why an appeal has an EngineeringTask.
 # To indicate that we are not actively working on the appeal, the task can be put on hold via a TimedHoldTask.
@@ -23,6 +23,7 @@ class EngineeringTask < Task
 
   def create_timed_hold_task(days_to_hold, instructions: nil)
     return unless days_to_hold > 0
+
     TimedHoldTask.create_from_parent(self, days_on_hold: days_to_hold, instructions: instructions)
   end
 
