@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe EngineeringTask, :postgres do
-  let(:sys_admin) { create(:user, roles: ["System Admin"]) }
+  let(:sys_admin) { create(:user).tap {|user| Functions.grant!("System Admin", users: [user.css_id])} }
   before do
     User.authenticate!(user: sys_admin)
   end
@@ -10,15 +10,17 @@ describe EngineeringTask, :postgres do
   let(:other_user) { create(:user) }
 
   let(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
+  let(:parent_task) { appeal.root_task }
 
   describe ".create" do
     subject { described_class.create(parent: parent_task, appeal: appeal) }
-    let(:parent_task) { appeal.root_task }
-    let(:parent_task_class) { CavcTask }
 
-    it "creates task" do
+    it "creates task with available_actions" do
       new_task = subject
       expect(new_task.valid?).to eq true
+      expect(new_task.available_actions(sys_admin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
+      expect(new_task.available_actions(org_admin)).to be_empty
+      expect(new_task.available_actions(other_user)).to be_empty
     end
 
     context "parent is nil" do
@@ -31,19 +33,16 @@ describe EngineeringTask, :postgres do
     end
   end
 
-  describe "#available_actions" do
-    let!(:mdr_task) { described_class.create_with_hold(cavc_task) }
-
-    context "immediately after MdrTask is created" do
-      it "returns available actions when MdrTask is on hold" do
-        expect(mdr_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
-        child_timed_hold_tasks = mdr_task.children.of_type(:TimedHoldTask)
-        expect(child_timed_hold_tasks.first.status).to eq Constants.TASK_STATUSES.assigned
-
-        expect(mdr_task.available_actions(org_admin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
-        expect(mdr_task.available_actions(org_nonadmin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
-        expect(mdr_task.available_actions(other_user)).to be_empty
-      end
+  describe ".create_timed_hold_task" do
+    let(:task) { described_class.create(parent: parent_task, appeal: appeal) }
+    let(:days_on_hold) {30}
+    subject { task.create_timed_hold_task(days_on_hold) }
+    it "puts EngineeringTask on hold" do
+      timed_hold_task = subject
+      expect(timed_hold_task.parent).to eq task
+      expect(timed_hold_task.parent.status).to eq "on_hold"
+      expect(timed_hold_task.status).to eq "assigned"
+      expect(timed_hold_task.timer_end_time).to eq (timed_hold_task.created_at + days_on_hold.days)
     end
   end
 end

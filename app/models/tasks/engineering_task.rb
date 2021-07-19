@@ -15,18 +15,13 @@ class EngineeringTask < Task
 
   validates :parent, presence: true, on: :create
 
-  # def self.create_with_hold(parent_task)
-  #   ActiveRecord::Base.transaction do
-  #     create!(parent: parent_task, appeal: parent_task.appeal).tap(&:create_timed_hold_task)
-  #   end
-  # end
-
   def create_timed_hold_task(days_to_hold, instructions: nil)
     return unless days_to_hold > 0
 
     TimedHoldTask.create_from_parent(self, days_on_hold: days_to_hold, instructions: instructions)
   end
 
+  # To-do: seen in Case Details and timeline?
   def self.label
     "Caseflow Engineering Task"
   end
