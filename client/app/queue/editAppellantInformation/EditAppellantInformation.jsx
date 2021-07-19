@@ -18,8 +18,8 @@ const EditAppellantInformation = ({ appealId }) => {
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
-  const { push, goBack } = useHistory();
-  
+
+  const { goBack } = useHistory();
   
   const methods = useClaimantForm({ defaultValues: mapAppellantDataFromApi(appeal) }, true);
   const {
