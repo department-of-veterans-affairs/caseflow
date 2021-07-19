@@ -12,6 +12,16 @@ describe HearingMailer do
       regional_office: regional_office
     )
   end
+
+  let(:central_hearing_day) do
+    create(
+      :hearing_day,
+      scheduled_for: Date.tomorrow, # This is default, but making it explicit for the tests
+      request_type: HearingDay::REQUEST_TYPES[:central],
+      regional_office: "C"
+    )
+  end
+
   let(:appellant_tz) { nil }
   let(:representative_tz) { nil }
   let(:virtual_hearing) do
@@ -35,6 +45,18 @@ describe HearingMailer do
         scheduled_time: "8:30AM",
         hearing_day: hearing_day,
         regional_office: regional_office
+      )
+    end
+  end
+
+  shared_context "ama_central_hearing" do
+    let(:appeal) { create(:appeal, :hearing_docket) }
+    let(:hearing) do
+      create(
+        :hearing,
+        appeal: appeal,
+        scheduled_time: "8:30AM",
+        hearing_day: central_hearing_day
       )
     end
   end
@@ -80,6 +102,47 @@ describe HearingMailer do
     end
   end
 
+  shared_context "legacy_central_hearing" do
+    let(:correspondent) { create(:correspondent) }
+    let(:appellant_address) { nil }
+    let(:hearing_date) do
+      Time.use_zone("America/New_York") do
+        Time.zone.now.change(hour: 11, min: 30) + 1.day # Tomorrow. Matches the AMA hearing scheduled for.
+      end
+    end
+    let(:case_hearing) do
+      create(
+        :case_hearing,
+        hearing_type: central_hearing_day.request_type,
+        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date) # VACOLS always has EST time
+      )
+    end
+    let(:vacols_case) do
+      create(
+        :case_with_form_9,
+        correspondent: correspondent,
+        case_issues: [create(:case_issue), create(:case_issue)],
+        bfregoff: "C",
+        case_hearings: [case_hearing]
+      )
+    end
+    let(:hearing) do
+      create(
+        :legacy_hearing,
+        case_hearing: case_hearing,
+        hearing_day_id: central_hearing_day.id,
+        regional_office: "C",
+        appeal: create(
+          :legacy_appeal,
+          :with_veteran,
+          appellant_address: appellant_address,
+          closest_regional_office: "C",
+          vacols_case: vacols_case
+        )
+      )
+    end
+  end
+
   shared_context "cancellation_email" do
     subject { HearingMailer.cancellation(mail_recipient: recipient, virtual_hearing: virtual_hearing) }
   end
@@ -94,9 +157,21 @@ describe HearingMailer do
     end
   end
 
-  shared_context "reminder_email" do
+  shared_context "virtual_reminder_email" do
     subject do
       HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: virtual_hearing)
+    end
+  end
+
+  shared_context "video_reminder_email" do
+    subject do
+      HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: virtual_hearing)
+    end
+  end
+
+  shared_context "central_reminder_email" do
+    subject do
+      HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: nil, hearing: ama_hearing)
     end
   end
 
@@ -279,7 +354,7 @@ describe HearingMailer do
       ro_eastern_recipient_pacific: "8:30am PST"
     }
 
-    context "with ama hearing" do
+    context "with ama virtual hearing" do
       include_context "ama_hearing"
 
       describe "#cancellation" do
@@ -471,7 +546,7 @@ describe HearingMailer do
       end
 
       describe "#reminder" do
-        include_context "reminder_email"
+        include_context "virtual_reminder_email"
 
         context "regional office is in eastern timezone" do
           let(:regional_office) { nyc_ro_eastern }
@@ -517,7 +592,27 @@ describe HearingMailer do
       end
     end
 
-    context "with legacy hearing" do
+    context "with ama video hearing" do
+      include_context "ama_hearing"
+
+      describe "#reminder" do
+        subject do
+          HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: nil, hearing: ama_hearing)
+        end
+      end
+    end
+
+    context "with ama central hearing" do
+      include_context "ama_central_hearing"
+
+      describe "#reminder" do
+        subject do
+          HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: nil, hearing: ama_central_hearing)
+        end
+      end
+    end
+
+    context "with legacy virtual hearing" do
       include_context "legacy_hearing"
 
       describe "#cancellation" do
@@ -671,7 +766,7 @@ describe HearingMailer do
       end
 
       describe "#reminder" do
-        include_context "reminder_email"
+        include_context "virtual_reminder_email"
 
         context "regional office is in eastern timezone" do
           let(:regional_office) { nyc_ro_eastern }
@@ -716,6 +811,26 @@ describe HearingMailer do
         end
       end
     end
+
+    context "with legacy video hearing" do
+      include_context "legacy_hearing"
+
+      describe "#reminder" do
+        subject do
+          HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: nil, hearing: legacy_hearing)
+        end
+      end
+    end
+
+    context "with legacy central hearing" do
+      include_context "legacy_central_hearing"
+
+      describe "#reminder" do
+        subject do
+          HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: nil, hearing: legacy_central_hearing)
+        end
+      end
+    end
   end
 
   context "for representative" do
@@ -737,7 +852,7 @@ describe HearingMailer do
       ro_eastern_recipient_pacific: "8:30am PST"
     }
 
-    context "with ama hearing" do
+    context "with ama virtual hearing" do
       include_context "ama_hearing"
 
       describe "#cancellation" do
@@ -906,7 +1021,7 @@ describe HearingMailer do
       end
 
       describe "#reminder" do
-        include_context "reminder_email"
+        include_context "virtual_reminder_email"
 
         context "regional office is in eastern timezone" do
           let(:regional_office) { nyc_ro_eastern }
@@ -952,7 +1067,27 @@ describe HearingMailer do
       end
     end
 
-    context "with legacy hearing" do
+    context "with ama video hearing" do
+      include_context "ama_hearing"
+
+      describe "#reminder" do
+        subject do
+          HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: nil, hearing: ama_hearing)
+        end
+      end
+    end
+
+    context "with ama central hearing" do
+      include_context "ama_central_hearing"
+
+      describe "#reminder" do
+        subject do
+          HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: nil, hearing: ama_central_hearing)
+        end
+      end
+    end
+
+    context "with legacy virtual hearing" do
       include_context "legacy_hearing"
 
       describe "#cancellation" do
@@ -1073,7 +1208,7 @@ describe HearingMailer do
       end
 
       describe "#reminder" do
-        include_context "reminder_email"
+        include_context "virtual_reminder_email"
 
         context "regional office is in eastern timezone" do
           let(:regional_office) { nyc_ro_eastern }
@@ -1115,6 +1250,26 @@ describe HearingMailer do
               "#{expected_legacy_times[:ro_and_recipient_both_eastern]} – Do Not Reply"
             )
           end
+        end
+      end
+    end
+
+    context "with legacy video hearing" do
+      include_context "legacy_hearing"
+
+      describe "#reminder" do
+        subject do
+          HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: nil, hearing: legacy_hearing)
+        end
+      end
+    end
+
+    context "with legacy central hearing" do
+      include_context "legacy_central_hearing"
+
+      describe "#reminder" do
+        subject do
+          HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: nil, hearing: legacy_central_hearing)
         end
       end
     end
