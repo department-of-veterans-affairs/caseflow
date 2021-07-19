@@ -1,18 +1,19 @@
+# frozen_string_literal: true
+
 feature "Unrecognized appellants", :postgres do
 
   let(:veteran_file_number) { "123412345" }
-
   let!(:veteran) do
     Generators::Veteran.build(file_number: veteran_file_number, first_name: "Ed", last_name: "Merica")
   end
 
   let(:appeal) do
-      create(
-        :appeal,
-        has_unrecognized_appellant: true,
-        veteran: veteran,
-        veteran_is_not_claimant: true
-      )
+    create(
+      :appeal,
+      has_unrecognized_appellant: true,
+      veteran: veteran,
+      veteran_is_not_claimant: true
+    )
   end
 
   let!(:user) do
@@ -22,7 +23,6 @@ feature "Unrecognized appellants", :postgres do
   before do
     User.authenticate!(user: user)
   end
-
 
   context "with edit_unrecognized_appellant" do
     before { FeatureToggle.enable!(:edit_unrecognized_appellant) }

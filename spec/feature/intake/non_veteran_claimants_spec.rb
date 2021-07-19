@@ -433,7 +433,7 @@ feature "Non-veteran claimants", :postgres do
         expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
         expect(claimant.name).to eq("Darlyn Duck")
         expect(claimant.relationship).to eq("Spouse")
-        
+
         expect(page).to have_content("Edit Information")
         click_on "Edit Information"
 
