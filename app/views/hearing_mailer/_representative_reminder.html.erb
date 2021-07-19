@@ -4,24 +4,44 @@
   </p>
 
   <p>
-    You're scheduled for a virtual hearing with a Veterans Law Judge of the Board of Veterans' Appeals.
+    <% if @hearing&.request_type ==  "C" %>
+      You have a client scheduled for a hearing at the VA Central Office with a Veterans Law Judge of the Board of Veterans' Appeals.
+    <% elsif @hearing&.request_type == "V" %>
+      You have a client scheduled for a hearing at a VA Regional Office with a Veterans Law Judge of the Board of Veterans' Appeals.
+    <% else %>
+      You have a client scheduled for a virtual hearing with a Veterans Law Judge of the Board of Veterans' Appeals.
+    <% end %>
   </p>
+
+  <% if @virtual_hearing.nil? %>
+    <h3><%= @hearing&.appeal&.appellant_name %></h3>
+    <p>
+      <a href="<%= caseflow_url(@hearing&.appeal) %>">View the case details</a>
+      (Note: You must be logged into the VA network to access case details.)
+    </p>
+  <% end %>
 <% end %>
 
 <%= content_for :date_time do %>
   <%= render "hearing_mailer/sections/date_time" %>
 <% end %>
 
-<%= content_for :how_to_join do %>
-  <%= render "hearing_mailer/sections/how_to_join" %>
-<% end %>
+<% if @virtual_hearing.nil? %>
+  <% content_for :location do %>
+    <%= render "hearing_mailer/sections/location" %>
+  <% end %>
+<% else %>
+  <%= content_for :how_to_join do %>
+    <%= render "hearing_mailer/sections/how_to_join" %>
+  <% end %>
 
-<%= content_for :test_your_connection do %>
-  <%= render partial: "hearing_mailer/sections/test_your_connection", locals: { kind: :reminder } %>
-<% end %>
+  <%= content_for :test_your_connection do %>
+    <%= render partial: "hearing_mailer/sections/test_your_connection", locals: { kind: :reminder } %>
+  <% end %>
 
-<% content_for :help_desk do %>
-  <%= render "hearing_mailer/sections/help_desk" %>
+  <% content_for :help_desk do %>
+    <%= render "hearing_mailer/sections/help_desk" %>
+  <% end %>
 <% end %>
 
 <%= content_for :signature do %>
