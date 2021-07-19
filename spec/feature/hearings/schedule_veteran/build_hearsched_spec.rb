@@ -730,7 +730,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         expect(new_hearing.regional_office.key).to eq ro_key
 
         # Test the emails were sent
-        events = CaseflowRecord::SentHearingEmailEvent.where(hearing_id: new_hearing.id)
+        events = SentHearingEmailEvent.where(hearing_id: new_hearing.id)
         expect(events.count).to eq 2
         expect(events.where(sent_by_id: current_user.id).count).to eq 2
         expect(events.where(email_type: "confirmation").count).to eq 2

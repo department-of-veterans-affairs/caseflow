@@ -989,18 +989,18 @@
 <polygon fill="black" stroke="black" points="2382.4,-1405.37 2392.4,-1401.87 2382.4,-1398.37 2382.4,-1405.37"/>
 <text text-anchor="middle" x="2292.87" y="-1405.67" font-family="Times,serif" font-size="14.00">veteran</text>
 </g>
-<!-- CaseflowRecord::SentHearingEmailEvent -->
+<!-- SentHearingEmailEvent -->
 <g id="node57" class="node">
-<title>CaseflowRecord::SentHearingEmailEvent</title>
+<title>SentHearingEmailEvent</title>
 <polygon fill="#f2f2f2" stroke="#aaaaaa" points="2199.03,-1639.87 2034.03,-1639.87 2034.03,-1635.87 2030.03,-1635.87 2030.03,-1631.87 2034.03,-1631.87 2034.03,-1609.87 2030.03,-1609.87 2030.03,-1605.87 2034.03,-1605.87 2034.03,-1601.87 2199.03,-1601.87 2199.03,-1639.87"/>
 <polyline fill="none" stroke="#aaaaaa" points="2034.03,-1635.87 2038.03,-1635.87 2038.03,-1631.87 2034.03,-1631.87 "/>
 <polyline fill="none" stroke="#aaaaaa" points="2034.03,-1609.87 2038.03,-1609.87 2038.03,-1605.87 2034.03,-1605.87 "/>
-<text text-anchor="middle" x="2116.53" y="-1624.67" font-family="Times,serif" font-size="14.00">CaseflowRecord::SentHearingEmailEvent</text>
+<text text-anchor="middle" x="2116.53" y="-1624.67" font-family="Times,serif" font-size="14.00">SentHearingEmailEvent</text>
 <text text-anchor="middle" x="2116.53" y="-1609.67" font-family="Times,serif" font-size="14.00"> &#160;(assoc with sent_by User)</text>
 </g>
-<!-- CaseflowRecord::SentHearingEmailEvent&#45;&gt;hearing_type -->
+<!-- SentHearingEmailEvent&#45;&gt;hearing_type -->
 <g id="edge55" class="edge">
-<title>CaseflowRecord::SentHearingEmailEvent&#45;&gt;hearing_type</title>
+<title>SentHearingEmailEvent&#45;&gt;hearing_type</title>
 <path fill="none" stroke="black" d="M2199.18,-1637.35C2209.88,-1640.6 2220.54,-1644.42 2230.37,-1648.87 2288.43,-1675.15 2347.47,-1718.75 2385.94,-1749.91"/>
 <polygon fill="black" stroke="black" points="2383.88,-1752.74 2393.83,-1756.36 2388.31,-1747.32 2383.88,-1752.74"/>
 <text text-anchor="middle" x="2292.87" y="-1713.67" font-family="Times,serif" font-size="14.00">hearing</text>

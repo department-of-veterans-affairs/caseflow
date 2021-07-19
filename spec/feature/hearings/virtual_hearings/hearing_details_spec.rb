@@ -158,7 +158,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
 
         step "email notification history displays correctly" do
           # check for SentHearingEmailEvents
-          events = CaseflowRecord::SentHearingEmailEvent.where(hearing_id: hearing.id)
+          events = SentHearingEmailEvent.where(hearing_id: hearing.id)
           expect(events.count).to eq 2
           expect(events.where(sent_by_id: current_user.id).count).to eq 2
           expect(events.where(email_type: "confirmation").count).to eq 2
@@ -368,7 +368,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
         expect(page).to have_field("Veteran Email", with: fill_in_veteran_email)
         expect(page).to have_field("POA/Representative Email", with: fill_in_rep_email)
 
-        events = CaseflowRecord::SentHearingEmailEvent.where(hearing_id: hearing.id)
+        events = SentHearingEmailEvent.where(hearing_id: hearing.id)
         expect(events.count).to eq 2
         expect(events.where(sent_by_id: current_user.id).count).to eq 2
         expect(events.where(email_type: "confirmation").count).to eq 2
@@ -436,7 +436,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
 
         expect(page).to have_field("POA/Representative Email", with: fill_in_rep_email)
 
-        events = CaseflowRecord::SentHearingEmailEvent.where(hearing_id: hearing.id)
+        events = SentHearingEmailEvent.where(hearing_id: hearing.id)
         expect(events.count).to eq 1
         expect(events.where(sent_by_id: current_user.id).count).to eq 1
         expect(events.where(email_type: "confirmation").count).to eq 1
@@ -496,7 +496,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
 
         expect(page).to have_field("Veteran Email", with: fill_in_veteran_email)
 
-        events = CaseflowRecord::SentHearingEmailEvent.where(hearing_id: hearing.id)
+        events = SentHearingEmailEvent.where(hearing_id: hearing.id)
         expect(events.count).to eq 1
         expect(events.where(sent_by_id: current_user.id).count).to eq 1
         expect(events.where(email_type: "confirmation").count).to eq 1
@@ -530,7 +530,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
         visit "hearings/" + hearing.external_id.to_s + "/details"
 
         expect(page).to have_field("representative-tz")
-        events = CaseflowRecord::SentHearingEmailEvent.where(hearing_id: hearing.id)
+        events = SentHearingEmailEvent.where(hearing_id: hearing.id)
         expect(events.count).to eq 1
         expect(events.where(sent_by_id: current_user.id).count).to eq 1
         expect(events.where(email_type: "updated_time_confirmation").count).to eq 1
@@ -565,7 +565,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
 
         expect(page).to have_field("appellant-tz")
 
-        events = CaseflowRecord::SentHearingEmailEvent.where(hearing_id: hearing.id)
+        events = SentHearingEmailEvent.where(hearing_id: hearing.id)
         expect(events.count).to eq 1
         expect(events.where(sent_by_id: current_user.id).count).to eq 1
         expect(events.where(email_type: "updated_time_confirmation").count).to eq 1
@@ -601,7 +601,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
 
         expect(page).to have_field("appellant-tz")
 
-        events = CaseflowRecord::SentHearingEmailEvent.where(hearing_id: hearing.id)
+        events = SentHearingEmailEvent.where(hearing_id: hearing.id)
         expect(events.count).to eq 2
         expect(events.where(sent_by_id: current_user.id).count).to eq 2
         expect(events.where(email_type: "updated_time_confirmation").count).to eq 2
@@ -639,7 +639,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
 
         expect(page).to have_field("appellant-tz")
 
-        events = CaseflowRecord::SentHearingEmailEvent.where(hearing_id: hearing.id)
+        events = SentHearingEmailEvent.where(hearing_id: hearing.id)
         expect(events.count).to eq 2
         expect(events.where(sent_by_id: current_user.id).count).to eq 2
         expect(events.where(email_type: "confirmation").count).to eq 2

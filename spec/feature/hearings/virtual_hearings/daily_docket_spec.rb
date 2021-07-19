@@ -27,7 +27,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
   def check_email_events(hearing, current_user)
     expect(hearing.virtual_hearing.all_emails_sent?).to eq(true)
 
-    events = CaseflowRecord::SentHearingEmailEvent.where(hearing_id: hearing.id)
+    events = SentHearingEmailEvent.where(hearing_id: hearing.id)
     expect(events.count).to eq 3
     expect(events.where(sent_by_id: current_user.id).count).to eq 3
     expect(events.where(email_type: "updated_time_confirmation").count).to eq 3
