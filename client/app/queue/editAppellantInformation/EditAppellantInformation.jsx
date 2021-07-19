@@ -30,7 +30,7 @@ const EditAppellantInformation = ({ appealId }) => {
     const appellantId = appeal.unrecognizedAppellantId;
     const appId = appeal.externalId;
 
-    dispatch(updateAppellantInformation({ formData, appellantId, appId }))
+    dispatch(updateAppellantInformation({ formData, appellantId, appId }));
   };
 
   const handleBack = () => goBack();
