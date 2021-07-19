@@ -1,6 +1,21 @@
 # frozen_string_literal: true
 
 describe HearingRepository, :all_dbs do
+  let(:regional_office) { "RO42" }
+  let(:hearing_date) { Time.zone.now }
+  let(:ama_disposition) { nil }
+  let(:hearing_day) do
+    create(
+      :hearing_day,
+      regional_office: regional_office,
+      scheduled_for: hearing_date,
+      request_type: HearingDay::REQUEST_TYPES[:video]
+    )
+  end
+  let(:hearing) do
+    create(:hearing, regional_office: regional_office, hearing_day: hearing_day, disposition: ama_disposition)
+  end
+
   before do
     Timecop.freeze(Time.utc(2017, 10, 4))
     Time.zone = "America/Chicago"

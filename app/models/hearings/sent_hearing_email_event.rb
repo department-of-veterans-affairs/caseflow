@@ -4,7 +4,7 @@
 # Model to track the history of virtual hearing emails sent out hearing
 # recipients (judge, representative, appellant).
 
-class CaseflowRecord::SentHearingEmailEvent < CaseflowRecord
+class SentHearingEmailEvent < CaseflowRecord
   belongs_to :hearing, polymorphic: true
   belongs_to :sent_by, class_name: "User"
 
