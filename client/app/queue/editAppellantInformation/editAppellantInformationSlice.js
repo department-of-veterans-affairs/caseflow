@@ -17,7 +17,7 @@ const editClaimantSlice = createSlice({
       const _appellantPayload = mapAppellantDataToApi(formData);
       ApiUtil.patch(`/unrecognized_appellants/${appellantId}`, { data: _appellantPayload } ).then(
         (response) => {
-          console.log(response)
+          // CASEFLOW-1924
           window.location = `/queue/appeals/${appealId}`
         },
         // CASEFLOW-1925
