@@ -4,6 +4,9 @@ class WorkQueue::AppealSerializer
   include FastJsonapi::ObjectSerializer
   extend Helpers::AppealHearingHelper
 
+  # The empty initialize method is needed to make the serializer require two arguments.
+  def initialize(object, params) end
+
   attribute :assigned_attorney
   attribute :assigned_judge
 

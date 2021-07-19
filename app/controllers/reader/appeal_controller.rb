@@ -26,7 +26,7 @@ class Reader::AppealController < Reader::ApplicationController
 
   def json_appeal(appeal)
     if appeal.is_a?(Appeal)
-      WorkQueue::AppealSerializer.new(appeal)
+      WorkQueue::AppealSerializer.new(appeal, params: { user: current_user })
     elsif appeal.is_a?(LegacyAppeal)
       WorkQueue::LegacyAppealSerializer.new(appeal)
     end
