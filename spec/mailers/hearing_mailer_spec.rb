@@ -17,8 +17,7 @@ describe HearingMailer do
     create(
       :hearing_day,
       scheduled_for: Date.tomorrow, # This is default, but making it explicit for the tests
-      request_type: HearingDay::REQUEST_TYPES[:central],
-      regional_office: "C"
+      request_type: HearingDay::REQUEST_TYPES[:central]
     )
   end
 
@@ -163,15 +162,150 @@ describe HearingMailer do
     end
   end
 
-  shared_context "video_reminder_email" do
+  shared_context "non_virtual_reminder_email" do
     subject do
-      HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: virtual_hearing)
+      HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: nil, hearing: hearing)
     end
   end
 
-  shared_context "central_reminder_email" do
-    subject do
-      HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: nil, hearing: ama_hearing)
+  shared_examples "appellant virtual reminder intro" do
+    it "displays video hearing reminder email intro" do
+      expect(subject.body).to include("You're scheduled for a virtual hearing with a Veterans " \
+        "Law Judge of the Board of Veterans' Appeals.")
+    end
+  end
+
+  shared_examples "appellant video reminder intro" do
+    it "displays video hearing reminder email intro" do
+      expect(subject.body).to include("You're scheduled for a hearing with a Veterans Law Judge of " \
+        "the Board of Veterans' Appeals. You will arrive at #{hearing.location.full_address} and the " \
+        "Judge will meet with you via video conference.")
+    end
+  end
+
+  shared_examples "appellant central reminder intro" do
+    it "displays central hearing reminder email intro" do
+      expect(subject.body).to include("You're scheduled for a hearing with a Veterans Law Judge of " \
+        "the Board of Veterans' Appeals. You will arrive at " \
+        "#{hearing.hearing_location_or_regional_office.full_address} and the Judge will meet with you in person")
+    end
+  end
+
+  shared_examples "representative video reminder intro" do
+    it "displays central hearing reminder email intro" do
+      expect(subject.body).to include("You have a client scheduled for a hearing at a VA Regional " \
+        "Office with a Veterans Law Judge of the Board of Veterans' Appeals.")
+    end
+  end
+
+  shared_examples "representative central reminder intro" do
+    it "displays central hearing reminder email intro" do
+      expect(subject.body).to include("You have a client scheduled for a hearing at the VA Central" \
+        " Office with a Veterans Law Judge of the Board of Veterans' Appeals.")
+    end
+  end
+
+  shared_examples "representative shared reminder sections" do
+    it "displays shared reminder email sections" do
+      # Date and Time section
+      expect(subject.body).to include("Date and Time")
+      expect(subject.body).to include(
+        Hearings::CalendarTemplateHelper.format_hearing_time(hearing.time.appellant_time)
+      )
+
+      # Signature section
+      expect(subject.body).to include("Sincerely,")
+      expect(subject.body).to include("The Board of Veterans' Appeals")
+    end
+  end
+
+  shared_examples "representative non-virtual reminder sections" do
+    it "displays non-virtual reminder email sections" do
+      # Location section
+      expect(subject.body).to include("Location")
+      expect(subject.body).to include(hearing.hearing_location_or_regional_office.full_address)
+      expect(subject.body).to include(CGI.escapeHTML(hearing.hearing_location_or_regional_office.name))
+
+      # Sections not rendered
+      expect(subject.body).not_to include("How to Join")
+      expect(subject.body).not_to include("Test Your Connection")
+      expect(subject.body).not_to include("Help Desk")
+    end
+  end
+
+  shared_examples "representative virtual reminder sections" do
+    it "displays virtual reminder email sections" do
+      # How to Join section
+      expect(subject.body).to include("How to Join")
+
+      # Test your Connection section
+      expect(subject.body).to include("Test Your Connection")
+
+      # Help Desk section
+      expect(subject.body).to include("Help Desk")
+
+      # Internal Use section
+      expect(subject.body).to include("For internal Board use:")
+      expect(subject.body).to include(hearing.appeal.veteran_state)
+      expect(subject.body).to include("<a href=" \
+        "\"https://appeals.cf.ds.va.gov/queue/appeals/#{hearing.appeal.external_id}\">CF</a>")
+
+      # Sections not rendered
+      expect(subject.body).not_to include("Location")
+    end
+  end
+
+  shared_examples "appellant shared reminder sections" do
+    it "displays shared reminder email sections" do
+      # Date and Time section
+      expect(subject.body).to include("Date and Time")
+      expect(subject.body).to include(
+        Hearings::CalendarTemplateHelper.format_hearing_time(hearing.time.appellant_time)
+      )
+
+      # Signature section
+      expect(subject.body).to include("Sincerely,")
+      expect(subject.body).to include("The Board of Veterans' Appeals")
+
+      # Internal Use section
+      expect(subject.body).to include("For internal Board use:")
+      expect(subject.body).to include(hearing.appeal.veteran_state)
+      expect(subject.body).to include("<a href=" \
+        "\"https://appeals.cf.ds.va.gov/queue/appeals/#{hearing.appeal.external_id}\">CF</a>")
+    end
+  end
+
+  shared_examples "appellant non-virtual reminder sections" do
+    it "displays non-virtual reminder email sections" do
+      # What to expect section
+      expect(subject.body).to include("What should I expect on the day of my hearing?")
+
+      # Location section
+      expect(subject.body).to include("Location")
+      expect(subject.body).to include(hearing.hearing_location_or_regional_office.full_address)
+      expect(subject.body).to include(CGI.escapeHTML(hearing.hearing_location_or_regional_office.name))
+
+      # Sections not rendered
+      expect(subject.body).not_to include("How to Join")
+      expect(subject.body).not_to include("Test Your Connection")
+      expect(subject.body).not_to include("Help Desk")
+    end
+  end
+
+  shared_examples "appellant virtual reminder sections" do
+    it "displays virtual reminder email sections" do
+      # How to Join section
+      expect(subject.body).to include("How to Join")
+
+      # Test your Connection section
+      expect(subject.body).to include("Test Your Connection")
+
+      # Help Desk section
+      expect(subject.body).to include("Help Desk")
+
+      # Sections not rendered
+      expect(subject.body).not_to include("Location")
+      expect(subject.body).not_to include("What should I expect on the day of my hearing?")
     end
   end
 
@@ -589,6 +723,12 @@ describe HearingMailer do
             )
           end
         end
+
+        context "email body" do
+          include_examples "appellant virtual reminder intro"
+          include_examples "appellant shared reminder sections"
+          include_examples "appellant virtual reminder sections"
+        end
       end
     end
 
@@ -596,8 +736,16 @@ describe HearingMailer do
       include_context "ama_hearing"
 
       describe "#reminder" do
-        subject do
-          HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: nil, hearing: ama_hearing)
+        include_context "non_virtual_reminder_email"
+
+        it "sends an email" do
+          expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
+        end
+
+        context "email body" do
+          include_examples "appellant video reminder intro"
+          include_examples "appellant shared reminder sections"
+          include_examples "appellant non-virtual reminder sections"
         end
       end
     end
@@ -606,8 +754,16 @@ describe HearingMailer do
       include_context "ama_central_hearing"
 
       describe "#reminder" do
-        subject do
-          HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: nil, hearing: ama_central_hearing)
+        include_context "non_virtual_reminder_email"
+
+        it "sends an email" do
+          expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
+        end
+
+        context "email body" do
+          include_examples "appellant central reminder intro"
+          include_examples "appellant shared reminder sections"
+          include_examples "appellant non-virtual reminder sections"
         end
       end
     end
@@ -816,8 +972,16 @@ describe HearingMailer do
       include_context "legacy_hearing"
 
       describe "#reminder" do
-        subject do
-          HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: nil, hearing: legacy_hearing)
+        include_context "non_virtual_reminder_email"
+
+        it "sends an email" do
+          expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
+        end
+
+        context "email body" do
+          include_examples "appellant video reminder intro"
+          include_examples "appellant shared reminder sections"
+          include_examples "appellant non-virtual reminder sections"
         end
       end
     end
@@ -826,8 +990,16 @@ describe HearingMailer do
       include_context "legacy_central_hearing"
 
       describe "#reminder" do
-        subject do
-          HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: nil, hearing: legacy_central_hearing)
+        include_context "non_virtual_reminder_email"
+
+        it "sends an email" do
+          expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
+        end
+
+        context "email body" do
+          include_examples "appellant central reminder intro"
+          include_examples "appellant shared reminder sections"
+          include_examples "appellant non-virtual reminder sections"
         end
       end
     end
@@ -1064,6 +1236,12 @@ describe HearingMailer do
             )
           end
         end
+
+        context "email body" do
+          include_examples "representative virtual reminder intro"
+          include_examples "representative shared reminder sections"
+          include_examples "representative virtual reminder sections"
+        end
       end
     end
 
@@ -1071,8 +1249,16 @@ describe HearingMailer do
       include_context "ama_hearing"
 
       describe "#reminder" do
-        subject do
-          HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: nil, hearing: ama_hearing)
+        include_context "non_virtual_reminder_email"
+
+        it "sends an email" do
+          expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
+        end
+
+        context "email body" do
+          include_examples "representative video reminder intro"
+          include_examples "representative shared reminder sections"
+          include_examples "representative non-virtual reminder sections"
         end
       end
     end
@@ -1081,8 +1267,16 @@ describe HearingMailer do
       include_context "ama_central_hearing"
 
       describe "#reminder" do
-        subject do
-          HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: nil, hearing: ama_central_hearing)
+        include_context "non_virtual_reminder_email"
+
+        it "sends an email" do
+          expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
+        end
+
+        context "email body" do
+          include_examples "representative central reminder intro"
+          include_examples "representative shared reminder sections"
+          include_examples "representative non-virtual reminder sections"
         end
       end
     end
@@ -1251,6 +1445,12 @@ describe HearingMailer do
             )
           end
         end
+
+        context "email body" do
+          include_examples "representative virtual reminder intro"
+          include_examples "representative shared reminder sections"
+          include_examples "representative virtual reminder sections"
+        end
       end
     end
 
@@ -1258,8 +1458,16 @@ describe HearingMailer do
       include_context "legacy_hearing"
 
       describe "#reminder" do
-        subject do
-          HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: nil, hearing: legacy_hearing)
+        include_context "non_virtual_reminder_email"
+
+        it "sends an email" do
+          expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
+        end
+
+        context "email body" do
+          include_examples "representative video reminder intro"
+          include_examples "representative shared reminder sections"
+          include_examples "representative non-virtual reminder sections"
         end
       end
     end
@@ -1268,8 +1476,16 @@ describe HearingMailer do
       include_context "legacy_central_hearing"
 
       describe "#reminder" do
-        subject do
-          HearingMailer.reminder(mail_recipient: recipient, virtual_hearing: nil, hearing: legacy_central_hearing)
+        include_context "non_virtual_reminder_email"
+
+        it "sends an email" do
+          expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
+        end
+
+        context "email body" do
+          include_examples "representative central reminder intro"
+          include_examples "representative shared reminder sections"
+          include_examples "representative non-virtual reminder sections"
         end
       end
     end
