@@ -83,7 +83,7 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :appellant_suffix do |object|
-    object.claimant.is_a?(OtherClaimant) && object.claimant&.suffix
+    object.claimant.is_a?(OtherClaimant) ? object.claimant&.suffix : nil
   end
 
   attribute :appellant_address do |object|
@@ -91,7 +91,7 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :appellant_phone_number do |object|
-    object.claimant.is_a?(OtherClaimant) && object.claimant&.phone_number
+    object.claimant.is_a?(OtherClaimant) ? object.claimant&.phone_number : nil
   end
 
   attribute :appellant_email_address do |object|
@@ -107,11 +107,11 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :appellant_party_type do |appeal|
-    appeal.claimant.is_a?(OtherClaimant) && appeal.claimant&.party_type
+    appeal.claimant.is_a?(OtherClaimant) ? appeal.claimant&.party_type : nil
   end
 
   attribute :unrecognized_appellant_id do |appeal|
-    appeal.claimant.is_a?(OtherClaimant) && appeal.claimant&.unrecognized_appellant&.id
+    appeal.claimant.is_a?(OtherClaimant) ? appeal.claimant&.unrecognized_appellant&.id : nil
   end
 
   attribute :cavc_remand do |object|
