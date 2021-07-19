@@ -1,29 +1,32 @@
 import React from 'react';
 import { FormProvider } from 'react-hook-form';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import { connect, useDispatch, useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
 import { useHistory } from 'react-router';
 
 import { ClaimantForm as EditClaimantForm } from '../../intake/addClaimant/ClaimantForm';
 import { useClaimantForm } from '../../intake/addClaimant/utils';
 import Button from '../../components/Button';
 import { updateAppellantInformation } from './editAppellantInformationSlice';
-import { useDispatch } from 'react-redux';
 import { EDIT_CLAIMANT_PAGE_DESCRIPTION } from 'app/../COPY';
-import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import { appealWithDetailSelector } from '../selectors';
+import { mapAppellantDataFromApi } from './utils';
 
-const EditAppellantInformation = () => {
+const EditAppellantInformation = ({ appealId }) => {
   const dispatch = useDispatch();
-  // CASEFLOW-1921: Pass in the existing appellant information as default values
-
-  const methods = useClaimantForm({ defaultValues: {} });
+  const appeal = useSelector((state) =>
+    appealWithDetailSelector(state, { appealId })
+  );
   const { goBack } = useHistory();
 
+  const methods = useClaimantForm({ defaultValues: mapAppellantDataFromApi(appeal) });
   const {
     handleSubmit,
   } = methods;
 
   const handleUpdate = (formData) => {
-    // CASEFLOW-1921: Get the actual appellant ID
-    const id = 1;
+    const id = appeal.unrecognizedAppellantId;
 
     dispatch(updateAppellantInformation({ formData, id }));
   };
@@ -39,6 +42,7 @@ const EditAppellantInformation = () => {
         <EditClaimantForm
           editAppellantHeader={editAppellantHeader}
           editAppellantDescription={editAppellantDescription}
+          hidePOAForm
         />
       </AppSegment>
       <Button
@@ -58,4 +62,8 @@ const EditAppellantInformation = () => {
   </div>;
 };
 
-export default EditAppellantInformation;
+EditAppellantInformation.propTypes = {
+  appealId: PropTypes.string
+};
+
+export default connect()(EditAppellantInformation);

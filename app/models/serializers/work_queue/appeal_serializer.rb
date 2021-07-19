@@ -75,8 +75,32 @@ class WorkQueue::AppealSerializer
     object.claimant&.name
   end
 
+  attribute :appellant_first_name do |object|
+    object.claimant&.first_name
+  end
+
+  attribute :appellant_middle_name do |object|
+    object.claimant&.middle_name
+  end
+
+  attribute :appellant_last_name do |object|
+    object.claimant&.last_name
+  end
+
+  attribute :appellant_suffix do |object|
+    object.claimant.is_a?(OtherClaimant) ? object.claimant&.suffix : nil
+  end
+
   attribute :appellant_address do |object|
     object.claimant&.address
+  end
+
+  attribute :appellant_phone_number do |object|
+    object.claimant.is_a?(OtherClaimant) ? object.claimant&.phone_number : nil
+  end
+
+  attribute :appellant_email_address do |object|
+    object.claimant&.email_address
   end
 
   attribute :appellant_tz, &:appellant_tz
@@ -85,6 +109,14 @@ class WorkQueue::AppealSerializer
 
   attribute :appellant_type do |appeal|
     appeal.claimant&.type
+  end
+
+  attribute :appellant_party_type do |appeal|
+    appeal.claimant.is_a?(OtherClaimant) ? appeal.claimant&.party_type : nil
+  end
+
+  attribute :unrecognized_appellant_id do |appeal|
+    appeal.claimant.is_a?(OtherClaimant) ? appeal.claimant&.unrecognized_appellant&.id : nil
   end
 
   attribute :cavc_remand do |object|
