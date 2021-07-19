@@ -24,8 +24,13 @@ class WorkQueue::AppealSerializer
 
   attribute :status
 
-  attribute :decision_issues do |object|
-    object.decision_issues.uniq.map do |issue|
+  attribute :decision_issues do |object, params|
+    if params[:user].nil?
+      fail Caseflow::Error::MissingRequiredProperty, message: "Params[:user] is required"
+    end
+
+    decision_issues = AppealDecisionIssuesPolicy.new(appeal: object, user: params[:user]).visible_decision_issues
+    decision_issues.uniq.map do |issue|
       {
         id: issue.id,
         disposition: issue.disposition,
