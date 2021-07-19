@@ -24,6 +24,7 @@ class Reader::AppealController < Reader::ApplicationController
 
   private
 
+  # :reek:FeatureEnvy
   def json_appeal(appeal)
     if appeal.is_a?(Appeal)
       WorkQueue::AppealSerializer.new(appeal, params: { user: current_user })
