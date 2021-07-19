@@ -20,7 +20,7 @@ const EditAppellantInformation = ({ appealId }) => {
   );
 
   const { goBack } = useHistory();
-  
+
   const methods = useClaimantForm({ defaultValues: mapAppellantDataFromApi(appeal) }, true);
   const {
     handleSubmit,
@@ -28,9 +28,9 @@ const EditAppellantInformation = ({ appealId }) => {
 
   const handleUpdate = (formData) => {
     const appellantId = appeal.unrecognizedAppellantId;
-    const appId = appeal.externalId
+    const appId = appeal.externalId;
 
-    dispatch(updateAppellantInformation({ formData, appellantId, appId })) 
+    dispatch(updateAppellantInformation({ formData, appellantId, appId }))
   };
 
   const handleBack = () => goBack();
@@ -42,15 +42,12 @@ const EditAppellantInformation = ({ appealId }) => {
     <FormProvider {...methods}>
       <AppSegment filledBackground>
         <EditClaimantForm
-          id='edit-claimant-form'
           editAppellantHeader={editAppellantHeader}
           editAppellantDescription={editAppellantDescription}
           hidePOAForm
         />
       </AppSegment>
       <Button
-        type='submit'
-        form='edit-claimant-form'
         onClick={handleSubmit(handleUpdate)}
         classNames={['cf-right-side']}
       >
