@@ -17,7 +17,7 @@ class AppealDecisionIssuesPolicy
   private
 
   def restricted_decision_issues
-    if @user&.vso_employee?
+    if @user.vso_employee?
       visible_issues = @appeal.decision_issues.select do |issue|
         # VSO users should not be able to see decision issues until the issue decision date
         Time.now.utc > issue.caseflow_decision_date

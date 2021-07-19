@@ -4,9 +4,6 @@ class WorkQueue::AppealSerializer
   include FastJsonapi::ObjectSerializer
   extend Helpers::AppealHearingHelper
 
-  # The empty initialize method is needed to make the serializer require two arguments.
-  def initialize(_object, _params) end
-
   attribute :assigned_attorney
   attribute :assigned_judge
 
@@ -28,6 +25,10 @@ class WorkQueue::AppealSerializer
   attribute :status
 
   attribute :decision_issues do |object, params|
+    if params[:user].nil?
+      fail Caseflow::Error::MissingRequiredProperty, message: "Params[:user] is required"
+    end
+
     decision_issues = AppealDecisionIssuesPolicy.new(appeal: object, user: params[:user]).visible_decision_issues
     decision_issues.uniq.map do |issue|
       {
