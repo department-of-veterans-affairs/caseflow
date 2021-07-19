@@ -16,7 +16,7 @@ shared_examples_for "task requiring specific parent" do
     let(:parent_task) { create(:root_task) }
     it "fails to create task" do
       new_task = subject
-      expect(new_task.invalid?)
+      expect(new_task.invalid?).to eq true
       expect(new_task.errors.messages[:parent]).to include(/should be .*/)
     end
   end
@@ -25,7 +25,7 @@ shared_examples_for "task requiring specific parent" do
     let(:parent_task) { nil }
     it "fails to create task" do
       new_task = subject
-      expect(new_task.invalid?)
+      expect(new_task.invalid?).to eq true
       expect(new_task.errors.messages[:parent]).to include("can't be blank")
     end
   end
