@@ -880,18 +880,18 @@
 <polygon fill="black" stroke="black" points="1680.5,-1311.36 1690.65,-1308.32 1680.83,-1304.36 1680.5,-1311.36"/>
 <text text-anchor="middle" x="1598.2" y="-1309.8" font-family="Times,serif" font-size="14.00">veteran</text>
 </g>
-<!-- SentHearingEmailEvent -->
+<!-- CaseflowRecord::SentHearingEmailEvent -->
 <g id="node57" class="node">
-<title>SentHearingEmailEvent</title>
+<title>CaseflowRecord::SentHearingEmailEvent</title>
 <polygon fill="#f2f2f2" stroke="#aaaaaa" points="1504.36,-1612 1339.36,-1612 1339.36,-1608 1335.36,-1608 1335.36,-1604 1339.36,-1604 1339.36,-1582 1335.36,-1582 1335.36,-1578 1339.36,-1578 1339.36,-1574 1504.36,-1574 1504.36,-1612"/>
 <polyline fill="none" stroke="#aaaaaa" points="1339.36,-1608 1343.36,-1608 1343.36,-1604 1339.36,-1604 "/>
 <polyline fill="none" stroke="#aaaaaa" points="1339.36,-1582 1343.36,-1582 1343.36,-1578 1339.36,-1578 "/>
-<text text-anchor="middle" x="1421.86" y="-1596.8" font-family="Times,serif" font-size="14.00">SentHearingEmailEvent</text>
+<text text-anchor="middle" x="1421.86" y="-1596.8" font-family="Times,serif" font-size="14.00">CaseflowRecord::SentHearingEmailEvent</text>
 <text text-anchor="middle" x="1421.86" y="-1581.8" font-family="Times,serif" font-size="14.00"> &#160;(assoc with sent_by User)</text>
 </g>
-<!-- SentHearingEmailEvent&#45;&gt;hearing_type -->
+<!-- CaseflowRecord::SentHearingEmailEvent&#45;&gt;hearing_type -->
 <g id="edge55" class="edge">
-<title>SentHearingEmailEvent&#45;&gt;hearing_type</title>
+<title>CaseflowRecord::SentHearingEmailEvent&#45;&gt;hearing_type</title>
 <path fill="none" stroke="black" d="M1504.48,-1605.65C1545.97,-1612.36 1597.13,-1621.05 1642.7,-1630 1650.97,-1631.62 1659.67,-1633.45 1668.22,-1635.31"/>
 <polygon fill="black" stroke="black" points="1667.63,-1638.76 1678.15,-1637.5 1669.13,-1631.93 1667.63,-1638.76"/>
 <text text-anchor="middle" x="1598.2" y="-1633.8" font-family="Times,serif" font-size="14.00">hearing</text>

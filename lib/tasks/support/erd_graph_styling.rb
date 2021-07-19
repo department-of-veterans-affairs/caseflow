@@ -36,7 +36,7 @@ module ErdGraphStyling
     RequestDecisionIssue
     IhpDraft
     JudgeTeamRole
-    HearingTaskAssociation AppealStreamSnapshot HearingView HearingIssueNote SentHearingEmailEvent
+    HearingTaskAssociation AppealStreamSnapshot HearingView HearingIssueNote CaseflowRecord::SentHearingEmailEvent
     DocumentView DocumentsTag Annotation
     AppealView
     ClaimsFolderSearch

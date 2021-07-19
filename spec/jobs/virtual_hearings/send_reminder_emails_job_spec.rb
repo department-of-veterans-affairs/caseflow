@@ -53,9 +53,9 @@ describe Hearings::SendReminderEmailsJob do
       it "creates sent email events", :aggregate_failures do
         subject
 
-        expect(SentHearingEmailEvent.count).to eq(2)
-        expect(SentHearingEmailEvent.is_reminder.count).to eq(2)
-        expect(SentHearingEmailEvent.is_reminder.map(&:sent_by)).to all(eq(User.system_user))
+        expect(CaseflowRecord::SentHearingEmailEvent.count).to eq(2)
+        expect(CaseflowRecord::SentHearingEmailEvent.is_reminder.count).to eq(2)
+        expect(CaseflowRecord::SentHearingEmailEvent.is_reminder.map(&:sent_by)).to all(eq(User.system_user))
       end
 
       context "representative email was already sent" do

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe SentHearingEmailEvent do
+describe CaseflowRecord::SentHearingEmailEvent do
   context "#create" do
     let(:user) { create(:user) }
     let(:hearing) { create(:hearing) }
@@ -8,7 +8,7 @@ describe SentHearingEmailEvent do
     let(:recipient_role) { "appellant" }
 
     subject do
-      SentHearingEmailEvent.create(
+      CaseflowRecord::SentHearingEmailEvent.create(
         hearing: hearing,
         email_type: email_type,
         recipient_role: recipient_role,
