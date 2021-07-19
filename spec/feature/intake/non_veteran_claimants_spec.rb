@@ -434,13 +434,6 @@ feature "Non-veteran claimants", :postgres do
         expect(claimant.name).to eq("Darlyn Duck")
         expect(claimant.relationship).to eq("Spouse")
         expect(page).to have_content("Edit Information")
-
-        click_on "Edit Information"
-
-        expect(page).to have_content("Edit Appellant Information")
-        # Check that form is prepopulated with existing appellant information
-        expect(find("#firstName").value).to eq "Darlyn"
-        expect(find("#lastName").value).to eq "Duck"
       end
     end
 
