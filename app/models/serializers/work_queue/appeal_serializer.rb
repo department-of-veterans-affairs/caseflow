@@ -24,9 +24,8 @@ class WorkQueue::AppealSerializer
 
   attribute :status
 
-  attribute :decision_issues do |object, params|
-    decision_issues = AppealDecisionIssuesPolicy.new(appeal: object, user: params[:user]).visible_decision_issues
-    decision_issues.uniq.map do |issue|
+  attribute :decision_issues do |object|
+    object.decision_issues.uniq.map do |issue|
       {
         id: issue.id,
         disposition: issue.disposition,
@@ -84,7 +83,11 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :appellant_suffix do |object|
+<<<<<<< HEAD
     object.claimant.is_a?(OtherClaimant) && object.claimant&.suffix
+=======
+    object.claimant.is_a?(OtherClaimant) ? object.claimant&.suffix : nil
+>>>>>>> b72f8be08ca62f4e766795416d09e5c94b530d09
   end
 
   attribute :appellant_address do |object|
@@ -92,7 +95,11 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :appellant_phone_number do |object|
+<<<<<<< HEAD
     object.claimant.is_a?(OtherClaimant) && object.claimant&.phone_number
+=======
+    object.claimant.is_a?(OtherClaimant) ? object.claimant&.phone_number : nil
+>>>>>>> b72f8be08ca62f4e766795416d09e5c94b530d09
   end
 
   attribute :appellant_email_address do |object|
@@ -108,11 +115,19 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :appellant_party_type do |appeal|
+<<<<<<< HEAD
     appeal.claimant.is_a?(OtherClaimant) && appeal.claimant&.party_type
   end
 
   attribute :unrecognized_appellant_id do |appeal|
     appeal.claimant.is_a?(OtherClaimant) && appeal.claimant&.unrecognized_appellant&.id
+=======
+    appeal.claimant.is_a?(OtherClaimant) ? appeal.claimant&.party_type : nil
+  end
+
+  attribute :unrecognized_appellant_id do |appeal|
+    appeal.claimant.is_a?(OtherClaimant) ? appeal.claimant&.unrecognized_appellant&.id : nil
+>>>>>>> b72f8be08ca62f4e766795416d09e5c94b530d09
   end
 
   attribute :cavc_remand do |object|
