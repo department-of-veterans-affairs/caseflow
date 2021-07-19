@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe EngineeringTask, :postgres do
-  let(:sys_admin) { create(:user).tap {|user| Functions.grant!("System Admin", users: [user.css_id])} }
+  let(:sys_admin) { create(:user).tap { |user| Functions.grant!("System Admin", users: [user.css_id]) } }
   before do
     User.authenticate!(user: sys_admin)
   end
@@ -18,12 +18,20 @@ describe EngineeringTask, :postgres do
     it "creates task with available_actions" do
       new_task = subject
       expect(new_task.valid?).to eq true
+      expect(new_task.assigned_to).to eq User.system_user
+
       expect(new_task.available_actions(sys_admin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
       expect(new_task.available_actions(org_admin)).to be_empty
       expect(new_task.available_actions(other_user)).to be_empty
     end
 
-    context "parent is nil" do
+    it "creates task assigned to specific user" do
+      new_task = described_class.create!(parent: parent_task, appeal: appeal, assigned_to: sys_admin)
+      expect(new_task.valid?).to eq true
+      expect(new_task.assigned_to).to eq sys_admin
+    end
+
+    context "parent is not provided" do
       let(:parent_task) { nil }
       it "fails to create task" do
         new_task = subject
@@ -35,14 +43,14 @@ describe EngineeringTask, :postgres do
 
   describe ".create_timed_hold_task" do
     let(:task) { described_class.create(parent: parent_task, appeal: appeal) }
-    let(:days_on_hold) {30}
+    let(:days_on_hold) { 30 }
     subject { task.create_timed_hold_task(days_on_hold) }
-    it "puts EngineeringTask on hold" do
+    it "puts EngineeringTask on hold for #{days_on_hold} days" do
       timed_hold_task = subject
       expect(timed_hold_task.parent).to eq task
       expect(timed_hold_task.parent.status).to eq "on_hold"
       expect(timed_hold_task.status).to eq "assigned"
-      expect(timed_hold_task.timer_end_time).to eq (timed_hold_task.created_at + days_on_hold.days)
+      expect(timed_hold_task.timer_end_time).to be_within(5.minutes).of(timed_hold_task.created_at + days_on_hold.days)
     end
   end
 end
