@@ -46,9 +46,10 @@ const getAttorneyClaimantOpts = async (search = '', asyncFn) => {
 // We'll show all items returned from the backend instead of using default substring matching
 const filterOption = () => true;
 
-export const AddClaimantForm = ({
+export const ClaimantForm = ({
   onAttorneySearch = fetchAttorneys,
   onSubmit,
+  ...props
 }) => {
   const methods = useFormContext();
   const { control, register, watch, handleSubmit, setValue, errors } = methods;
@@ -83,8 +84,8 @@ export const AddClaimantForm = ({
 
   return (
     <>
-      <h1>Add Claimant</h1>
-      <p>{ADD_CLAIMANT_PAGE_DESCRIPTION}</p>
+      <h1>{props.editAppellantHeader || 'Add Claimant'}</h1>
+      <p>{props.editAppellantDescription || ADD_CLAIMANT_PAGE_DESCRIPTION}</p>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Controller
           control={control}
@@ -222,7 +223,7 @@ export const AddClaimantForm = ({
             </PhoneNumber>
           </>
         )}
-        {(partyType && !attorneyRelationship) && (
+        {(partyType && !attorneyRelationship && !props.hidePOAForm) && (
           <RadioField
             options={Constants.BOOLEAN_RADIO_OPTIONS}
             vertical
@@ -237,10 +238,13 @@ export const AddClaimantForm = ({
   );
 };
 
-AddClaimantForm.propTypes = {
+ClaimantForm.propTypes = {
   onAttorneySearch: PropTypes.func,
   onBack: PropTypes.func,
   onSubmit: PropTypes.func,
+  editAppellantHeader: PropTypes.string,
+  editAppellantDescription: PropTypes.string,
+  hidePOAForm: PropTypes.bool
 };
 
 const FieldDiv = styled.div`

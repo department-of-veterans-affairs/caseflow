@@ -18,6 +18,8 @@ class TimezoneService
     end
   end
 
+  ACCEPTABLE_USA_VARIATIONS = ["us", "u.s."].freeze
+
   class << self
     # Attempts to find a timezone based on an address. For addresses within the United States,
     # this does a lookup of timezone based on zip code. For addresses outisde of the US,
@@ -26,12 +28,6 @@ class TimezoneService
     # Fails if there are multiple timezones for a country outside of the US.
     # Fails if country name or zip code are formatted incorrectly.
     def address_to_timezone(address)
-      # Return addresses for addresses in US using zip code before calling
-      # iso3166_alpha2_code_from_name() because that method will raise an error given country "US".
-      if address.country == "US"
-        return TimezoneService.zip5_to_timezone(address.zip)
-      end
-
       iso3166_code = TimezoneService.iso3166_alpha2_code_from_name(address.country)
 
       if iso3166_code == "US"
@@ -42,7 +38,9 @@ class TimezoneService
     end
 
     # Maps a US 5-digit zip code to a timezone.
-    def zip5_to_timezone(zip)
+    def zip5_to_timezone(orig_zip)
+      zip = orig_zip&.strip
+
       Address.validate_zip5_code(zip)
 
       timezone_name = Ziptz.new.time_zone_name(zip)
@@ -83,6 +81,8 @@ class TimezoneService
     # with an error if not found.
     def iso3166_alpha2_code_from_name(orig_country_name)
       country_name = orig_country_name&.strip
+
+      return "US" if ACCEPTABLE_USA_VARIATIONS.include?(country_name&.downcase)
 
       iso3166_code = ISO3166::Country.find_country_by_name(country_name)
       iso3166_code = ISO3166::Country.find_country_by_alpha3(country_name) if iso3166_code.blank?

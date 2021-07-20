@@ -62,6 +62,7 @@ class Explain::RecordEventMapper
   end
   # rubocop:enable Metrics/ParameterLists
 
+  # Event data for the Appeal Narrative table
   # :reek:TooManyInstanceVariables
   class AppealEventData
     attr_reader :timestamp, :context_id, :category, :object_id, :event_type

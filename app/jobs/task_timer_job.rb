@@ -17,8 +17,6 @@ class TaskTimerJob < CaseflowJob
     TaskTimer.requires_cancelling.each do |task_timer|
       cancel(task_timer)
     end
-
-    datadog_report_runtime(metric_group_name: TaskTimerJob.name.underscore)
   end
 
   private
