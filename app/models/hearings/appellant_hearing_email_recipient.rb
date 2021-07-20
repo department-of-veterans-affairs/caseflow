@@ -7,7 +7,7 @@ class AppellantHearingEmailRecipient < HearingEmailRecipient
 
   # AppellantHearingEmailRecipient cannot have nil email address
   validates :email_address, presence: true, on: [:create, :update]
-  validates_email_format_of :email_address, allow_nil: false, :message => email_error_message
+  validates_email_format_of :email_address, allow_nil: false, message: email_error_message
 
   def role
     if hearing.appeal.appellant_is_not_veteran
