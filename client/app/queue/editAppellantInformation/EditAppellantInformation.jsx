@@ -21,7 +21,7 @@ const EditAppellantInformation = ({ appealId }) => {
 
   const { goBack } = useHistory();
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const methods = useClaimantForm({ defaultValues: mapAppellantDataFromApi(appeal) }, true);
   const {
@@ -30,7 +30,8 @@ const EditAppellantInformation = ({ appealId }) => {
 
   const handleUpdate = (formData) => {
     const appellantId = appeal.unrecognizedAppellantId;
-    setLoading(true)
+
+    setLoading(true);
     dispatch(updateAppellantInformation({ formData, appellantId, appealId }));
   };
 
@@ -52,7 +53,7 @@ const EditAppellantInformation = ({ appealId }) => {
         onClick={handleSubmit(handleUpdate)}
         classNames={['cf-right-side']}
         loading={loading}
-        name='Save'
+        name="Save"
       >
         Save
       </Button>
