@@ -78,7 +78,6 @@ module HasHearingEmailRecipientsConcern
 
     if recipient.blank?
       type.create!(
-        type: type.name,
         hearing: self,
         email_address: email_address,
         timezone: timezone,
