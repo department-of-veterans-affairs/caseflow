@@ -7,7 +7,7 @@ class ClaimReviewController < ApplicationController
 
   EDIT_ERRORS = {
     "Caseflow::Error::MissingDecisionDate" => COPY::CLAIM_REVIEW_EDIT_ERROR_MISSING_DECISION_DATE,
-    "StandardError" => COPY::CLAIM_REVIEW_EDIT_ERROR_DEFAULT,
+    "StandardError" => COPY::CLAIM_REVIEW_EDIT_ERROR_DEFAULT
   }.freeze
 
   def edit
