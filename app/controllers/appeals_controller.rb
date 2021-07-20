@@ -128,6 +128,8 @@ class AppealsController < ApplicationController
 
   def edit
     # only AMA appeals may call /edit
+    return not_found if appeal.is_a?(LegacyAppeal)
+
     appeal.request_issues.each do |issue|
       begin
         issue.approx_decision_date_of_issue_being_contested
@@ -136,7 +138,6 @@ class AppealsController < ApplicationController
         break
       end
     end
-    return not_found if appeal.is_a?(LegacyAppeal)
   end
 
   helper_method :appeal, :url_appeal_uuid

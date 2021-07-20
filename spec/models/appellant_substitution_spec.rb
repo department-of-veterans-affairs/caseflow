@@ -300,9 +300,9 @@ describe AppellantSubstitution do
           expect(target_appeal.request_issues.pluck(:contested_issue_description))
             .to eq source_appeal.request_issues.pluck(:contested_issue_description)
           expect(target_appeal.request_issues.pluck(:notes)).to eq source_appeal.request_issues.pluck(:notes)
+          expect(target_appeal.request_issues.pluck(:decision_date)).to eq source_appeal.request_issues.pluck(:decision_date)
 
           expect(target_appeal.decision_issues.count).to eq 0
-          expect(target_appeal.request_issues.pluck(:decision_date).uniq).to eq [nil]
         end
       end
     end
