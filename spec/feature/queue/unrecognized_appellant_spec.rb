@@ -93,7 +93,7 @@ feature "Unrecognized appellants", :postgres do
 
       fill_in "First name", with: "Updated First Name"
       click_on "Save"
-      
+
       expect(page).to have_current_path("/queue/appeals/#{appeal_with_unrecognized_appellant.uuid}")
       ua = appeal_with_unrecognized_appellant.claimant.unrecognized_appellant
       expect(ua.first_name).to eq("Updated First Name")
