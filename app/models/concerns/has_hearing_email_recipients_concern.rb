@@ -28,14 +28,14 @@ module HasHearingEmailRecipientsConcern
       rep_email = virtual_hearing[:representative_email]
 
       if rep_email.present?
-          recipient = create_or_update_recipients(
-            type: RepresentativeHearingEmailRecipient,
-            email_address: rep_email,
-            email_sent: virtual_hearing[:representative_email_sent],
-            timezone: virtual_hearing[:representative_tz]
-          )
+        recipient = create_or_update_recipients(
+          type: RepresentativeHearingEmailRecipient,
+          email_address: rep_email,
+          email_sent: virtual_hearing[:representative_email_sent],
+          timezone: virtual_hearing[:representative_tz]
+        )
 
-          update_email_events(recipient, HearingEmailRecipient::RECIPIENT_ROLES[:representative])
+        update_email_events(recipient, HearingEmailRecipient::RECIPIENT_ROLES[:representative])
       end
     end
 
@@ -49,13 +49,13 @@ module HasHearingEmailRecipientsConcern
       judge_email = virtual_hearing[:judge_email]
 
       if judge_email.present?
-          recipient = create_or_update_recipients(
-            type: JudgeHearingEmailRecipient,
-            email_address: judge_email,
-            email_sent: virtual_hearing[:judge_email_sent]
-          )
+        recipient = create_or_update_recipients(
+          type: JudgeHearingEmailRecipient,
+          email_address: judge_email,
+          email_sent: virtual_hearing[:judge_email_sent]
+        )
 
-          update_email_events(recipient, HearingEmailRecipient::RECIPIENT_ROLES[:judge])
+        update_email_events(recipient, HearingEmailRecipient::RECIPIENT_ROLES[:judge])
       end
     end
 
