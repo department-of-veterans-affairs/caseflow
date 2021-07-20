@@ -41,10 +41,20 @@ describe EngineeringTask, :postgres do
     end
   end
 
+  let(:task) { described_class.create(parent: parent_task, appeal: appeal) }
+  describe "#append_instruction" do
+    it "appends new instruction to task" do
+      task.append_instruction("first instruction")
+      expect(task.instructions).to eq ["first instruction"]
+      task.append_instruction("second instruction")
+      expect(task.instructions).to eq ["first instruction", "second instruction"]
+    end
+  end
+
   describe "#create_timed_hold_task" do
-    let(:task) { described_class.create(parent: parent_task, appeal: appeal) }
     let(:days_on_hold) { 30 }
     subject { task.create_timed_hold_task(days_on_hold) }
+
     it "puts EngineeringTask on hold" do
       timed_hold_task = subject
       expect(timed_hold_task.parent).to eq task
@@ -57,13 +67,17 @@ describe EngineeringTask, :postgres do
   describe "when checking for stuck appeals" do
     let(:hearing_task) { appeal.tasks.find_by(type: :HearingTask) }
     let(:schedule_task) { appeal.tasks.find_by(type: :ScheduleHearingTask) }
+
     before do
       schedule_task.cancelled!
     end
+
     it "does not cause a false alert from AppealsWithNoTasksOrAllTasksOnHoldQuery" do
+      # without EngineeringTask
       stuck_appeals = AppealsWithNoTasksOrAllTasksOnHoldQuery.new.call
       expect(stuck_appeals).to include appeal
 
+      # with EngineeringTask
       described_class.create(parent: hearing_task, appeal: appeal)
       stuck_appeals2 = AppealsWithNoTasksOrAllTasksOnHoldQuery.new.call
       expect(stuck_appeals2).to be_empty

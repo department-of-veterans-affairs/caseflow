@@ -464,6 +464,10 @@ class Task < CaseflowRecord
     [instructions, params.dig(:instructions).presence].flatten.compact
   end
 
+  def append_instruction(instruction)
+    update!(instructions: flattened_instructions(instructions: instruction))
+  end
+
   def hide_from_queue_table_view
     self.class.hide_from_queue_table_view
   end
