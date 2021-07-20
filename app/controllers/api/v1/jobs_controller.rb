@@ -13,7 +13,8 @@ class Api::V1::JobsController < Api::ApplicationController
     "docket_range_job" => DocketRangeJob,
     "etl_builder" => ETLBuilderJob,
     "heartbeat" => HeartbeatTasksJob,
-    "missed_job_sweeper" => MissedJobSweeperJob,
+    "missed_job_sweeper" => IncompleteDistributionsJob, # remove after deploying updated serverless.yml
+    "incomplete_distributions_job" => IncompleteDistributionsJob,
     "monthly_metrics" => MonthlyMetricsReportJob,
     "nightly_syncs" => NightlySyncsJob,
     "out_of_service_reminder" => OutOfServiceReminderJob,

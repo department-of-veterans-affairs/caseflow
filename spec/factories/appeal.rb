@@ -43,6 +43,14 @@ FactoryBot.define do
           decision_review: appeal,
           type: claimant_class_name
         )
+      elsif evaluator.has_unrecognized_appellant
+        create(
+          :claimant,
+          :with_unrecognized_appellant_detail,
+          participant_id: appeal.veteran.participant_id,
+          decision_review: appeal,
+          type: "OtherClaimant"
+        )
       elsif !Claimant.exists?(participant_id: appeal.veteran.participant_id, decision_review: appeal)
         create(
           :claimant,
@@ -93,6 +101,10 @@ FactoryBot.define do
     transient do
       number_of_claimants { nil }
       issue_count { nil }
+    end
+
+    transient do
+      has_unrecognized_appellant { false }
     end
 
     transient do
@@ -449,6 +461,22 @@ FactoryBot.define do
                                 description: "Issue description",
                                 decision_text: "Decision text")
         request_issue.decision_issues << decision_issue
+      end
+    end
+
+    trait :decision_issue_with_future_date do
+      description = "Service connection for pain disorder"
+      notes = "Pain disorder notes"
+      after(:create) do |appeal, evaluator|
+        request_issue = create(:request_issue,
+                               :rating,
+                               decision_review: appeal,
+                               veteran_participant_id: appeal.veteran.participant_id,
+                               contested_issue_description: description,
+                               notes: notes)
+        request_issue.create_decision_issue_from_params(disposition: evaluator.disposition,
+                                                        description: description,
+                                                        decision_date: 2.months.from_now)
       end
     end
   end
