@@ -74,7 +74,7 @@ feature "Unrecognized appellants", :postgres do
       expect(page).to have_content("Relation to Veteran: Other")
     end
   end
-  fcontext "with attorney unrecognized appellant" do
+  context "with attorney unrecognized appellant" do
     before { FeatureToggle.enable!(:edit_unrecognized_appellant) }
     after { FeatureToggle.disable!(:edit_unrecognized_appellant) }
 
