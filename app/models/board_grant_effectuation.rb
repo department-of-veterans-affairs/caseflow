@@ -148,6 +148,7 @@ class BoardGrantEffectuation < CaseflowRecord
   end
 
   def claimant_participant_id
+    # Board Grant EPs need to be created with the veteran's participant ID when claimant is an Attorney, per BVA
     claimant.is_a?(AttorneyClaimant) ? veteran&.participant_id : claimant&.participant_id
   end
 

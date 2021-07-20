@@ -174,6 +174,7 @@ class DecisionReview < CaseflowRecord
   end
 
   def claimant_participant_id
+    # EPs with an AttorneyClaimant need to be established with the veteran's participant ID, per BVA
     claimant.is_a?(AttorneyClaimant) ? veteran&.participant_id : claimant&.participant_id
   end
 
