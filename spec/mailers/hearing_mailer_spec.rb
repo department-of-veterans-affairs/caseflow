@@ -60,7 +60,7 @@ describe HearingMailer do
     end
   end
 
-  shared_context "legacy_hearing" do
+  shared_context "legacy_base_hearing" do
     let(:correspondent) { create(:correspondent) }
     let(:appellant_address) { nil }
     let(:hearing_date) do
@@ -71,7 +71,7 @@ describe HearingMailer do
     let(:case_hearing) do
       create(
         :case_hearing,
-        hearing_type: hearing_day.request_type,
+        hearing_type: legacy_hearing_hearing_day.request_type,
         hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date) # VACOLS always has EST time
       )
     end
@@ -80,7 +80,7 @@ describe HearingMailer do
         :case_with_form_9,
         correspondent: correspondent,
         case_issues: [create(:case_issue), create(:case_issue)],
-        bfregoff: regional_office,
+        bfregoff: legacy_hearing_regional_office,
         case_hearings: [case_hearing]
       )
     end
@@ -88,58 +88,31 @@ describe HearingMailer do
       create(
         :legacy_hearing,
         case_hearing: case_hearing,
-        hearing_day_id: hearing_day.id,
-        regional_office: regional_office,
+        hearing_day_id: legacy_hearing_hearing_day.id,
+        regional_office: legacy_hearing_regional_office,
         appeal: create(
           :legacy_appeal,
           :with_veteran,
           appellant_address: appellant_address,
-          closest_regional_office: regional_office,
+          closest_regional_office: legacy_hearing_regional_office,
           vacols_case: vacols_case
         )
       )
     end
   end
 
+  shared_context "legacy_hearing" do
+    let(:legacy_hearing_hearing_day) { hearing_day }
+    let(:legacy_hearing_regional_office) { regional_office }
+
+    include_context "legacy_base_hearing"
+  end
+
   shared_context "legacy_central_hearing" do
-    let(:correspondent) { create(:correspondent) }
-    let(:appellant_address) { nil }
-    let(:hearing_date) do
-      Time.use_zone("America/New_York") do
-        Time.zone.now.change(hour: 11, min: 30) + 1.day # Tomorrow. Matches the AMA hearing scheduled for.
-      end
-    end
-    let(:case_hearing) do
-      create(
-        :case_hearing,
-        hearing_type: central_hearing_day.request_type,
-        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date) # VACOLS always has EST time
-      )
-    end
-    let(:vacols_case) do
-      create(
-        :case_with_form_9,
-        correspondent: correspondent,
-        case_issues: [create(:case_issue), create(:case_issue)],
-        bfregoff: "C",
-        case_hearings: [case_hearing]
-      )
-    end
-    let(:hearing) do
-      create(
-        :legacy_hearing,
-        case_hearing: case_hearing,
-        hearing_day_id: central_hearing_day.id,
-        regional_office: "C",
-        appeal: create(
-          :legacy_appeal,
-          :with_veteran,
-          appellant_address: appellant_address,
-          closest_regional_office: "C",
-          vacols_case: vacols_case
-        )
-      )
-    end
+    let(:legacy_hearing_hearing_day) { central_hearing_day }
+    let(:legacy_hearing_regional_office) { "C" }
+
+    include_context "legacy_base_hearing"
   end
 
   shared_context "cancellation_email" do
