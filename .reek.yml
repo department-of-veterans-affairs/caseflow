@@ -121,6 +121,7 @@ detectors:
       - Seeds::Users#create_aod_user_and_tasks
       - SlackService#http_service
       - SyncReviewsJob
+      - TasksForAppeal#tasks_visible_to_vso_employee
       - TaskTimerJob
       - UpdateCachedAppealsAttributesJob
       - UserReporter#report_user_related_records
