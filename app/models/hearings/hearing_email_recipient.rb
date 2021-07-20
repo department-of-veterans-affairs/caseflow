@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 
 class HearingEmailRecipient < CaseflowRecord
-  belongs_to :hearing, polymorphic: true
-  has_many :email_events, class_name: "SentHearingEmailEvent", foreign_key: :email_recipient_id
-
-  # AppellantHearingEmailRecipient cannot have nil email address
-  validates_email_format_of :email_address, allow_nil: true
-
   RECIPIENT_ROLES = {
     appellant: "appellant",
     representative: "representative",
@@ -18,6 +12,9 @@ class HearingEmailRecipient < CaseflowRecord
     appellant: "Appellant",
     representative: "Representative"
   }.freeze
+
+  belongs_to :hearing, polymorphic: true
+  has_many :email_events, class_name: "SentHearingEmailEvent", foreign_key: :email_recipient_id
 
   def reminder_sent_at
     email_events
