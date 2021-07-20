@@ -7,12 +7,13 @@
 class SentHearingEmailEvent < CaseflowRecord
   belongs_to :hearing, polymorphic: true
   belongs_to :sent_by, class_name: "User"
+  belongs_to :email_recipient, class_name: "HearingEmailRecipient"
 
   before_create :assign_sent_at_time
 
   # Add compatibility with old data where the role was called veteran instead of
   # appellant.
-  RECIPIENT_ROLES = MailRecipient::RECIPIENT_TITLES.keys.append(:veteran)
+  RECIPIENT_ROLES = HearingEmailRecipient::RECIPIENT_TITLES.keys.append(:veteran)
 
   # Allows all keys specified in `MailRecipient::RECIPIENT_TITLES`
   enum recipient_role: RECIPIENT_ROLES.map { |key| [key, key.to_s] }.to_h,
@@ -32,10 +33,6 @@ class SentHearingEmailEvent < CaseflowRecord
       reminder: "reminder"
     }
   ), _prefix: :is
-
-  def readonly?
-    !new_record?
-  end
 
   def sent_to_role
     case recipient_role

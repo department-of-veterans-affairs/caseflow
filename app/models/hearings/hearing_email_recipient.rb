@@ -2,22 +2,29 @@
 
 class HearingEmailRecipient < CaseflowRecord
   belongs_to :hearing, polymorphic: true
-  has_many :email_events, class_name: "SentHearingEmailEvent"
+  has_many :email_events, class_name: "SentHearingEmailEvent",
+    foreign_key: :email_recipient_id
 
-  validates_email_format_of :email_address
-  validates :email_address, presence: true
+  # AppellantHearingEmailRecipient cannot have nil email address
+  validates_email_format_of :email_address, allow_nil: true
 
   RECIPIENT_ROLES = {
-    appellant: "appellant"
-    # representative: "representative",
-    # judge: "judge"
+    appellant: "appellant",
+    representative: "representative",
+    judge: "judge"
   }.freeze
 
-  def email_sent
-    # open question: can this be derived?
-  end
+  RECIPIENT_TITLES = {
+    judge: "Judge",
+    appellant: "Appellant",
+    representative: "Representative"
+  }.freeze
 
   def reminder_sent_at
-    email_events.where(email_type: "reminder").order(:sent_at).last.sent_at
+    email_events
+      .where(email_type: "reminder", recipient_role: self.role)
+      &.order(:sent_at)
+      &.last
+      &.sent_at
   end
 end
