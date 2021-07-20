@@ -13,8 +13,6 @@ class WarmBgsCachesJob < CaseflowJob
     warm_veteran_attribute_caches
     warm_people_caches
     warm_attorney_address_caches
-
-    datadog_report_runtime(metric_group_name: "warm_bgs_caches_job")
   end
 
   private
