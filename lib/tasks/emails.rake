@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 namespace :emails do
-  namespace :virtual_hearings do
+  namespace :hearings do
     desc "creates sample emails for hearings mailer"
     task sample: :environment do
       include FactoryBot::Syntax::Methods

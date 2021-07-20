@@ -13,15 +13,15 @@ module Hearings::CalendarTemplateHelper
       time.strftime(HEARING_TIME_DISPLAY_FORMAT)
     end
 
-    def central_office_display_time_for_virtual_hearing(hearing)
+    def central_office_display_time(hearing)
       format_hearing_time(hearing.time.central_office_time)
     end
 
-    def representative_display_time_for_virtual_hearing(hearing)
+    def representative_display_time(hearing)
       format_hearing_time(hearing.time.poa_time)
     end
 
-    def appellant_display_time_for_virtual_hearing(hearing)
+    def appellant_display_time(hearing)
       format_hearing_time(hearing.time.appellant_time)
     end
 
