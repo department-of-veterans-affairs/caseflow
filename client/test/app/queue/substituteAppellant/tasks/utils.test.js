@@ -9,7 +9,7 @@ import {
   shouldDisable,
   shouldHideBasedOnPoa,
   shouldHide,
-  shouldShowBasedOnOtherTasks,
+  shouldShowBasedOnOtherTasks, shouldDisableBasedOnTaskType,
 } from 'app/queue/substituteAppellant/tasks/utils';
 
 import { sampleTasksForEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
@@ -70,6 +70,80 @@ describe('utility functions for task manipulation', () => {
         const nonDt = { type: taskType };
 
         expect(shouldDisable(nonDt)).toBe(false);
+      });
+    });
+  });
+
+  describe('shouldDisableBasedOnTaskType', () => {
+    describe('when a ScheduleVeteranTask is selected', () => {
+      const selectedTaskTypes = ['ExampleTask', 'ScheduleVeteranTask'];
+
+      const shouldDisables = [
+        'SelectHearingDispositionTask',
+        'ChangeHearingDispositionTask',
+        'EvidenceSubmissionWindowTask',
+        'TranscriptionTask'
+      ];
+
+      const shouldNotDisables = [
+        'ScheduleVeteranTask',
+        'ExampleTask'
+      ];
+
+      it.each(shouldDisables)('should disable task type %s', (taskType) => {
+        expect(shouldDisableBasedOnTaskType(taskType, selectedTaskTypes)).toBe(true);
+      });
+
+      it.each(shouldNotDisables)('should not disable task type %s', (taskType) => {
+        expect(shouldDisableBasedOnTaskType(taskType, selectedTaskTypes)).toBe(false);
+      });
+    });
+
+    describe('when an EvidenceSubmissionWindow task is selected', () => {
+      const selectedTaskTypes = ['EvidenceSubmissionWindowTask'];
+
+      const shouldDisables = [
+        'ScheduleVeteranTask',
+        'SelectHearingDispositionTask',
+        'ChangeHearingDispositionTask'
+      ];
+
+      const shouldNotDisables = [
+        'EvidenceSubmissionWindowTask',
+        'TranscriptionTask'
+      ];
+
+      // This block is the same for each of the three; there's an opportunity to refactor further!
+      it.each(shouldDisables)('should disable task type %s', (taskType) => {
+        expect(shouldDisableBasedOnTaskType(taskType, selectedTaskTypes)).toBe(true);
+      });
+
+      it.each(shouldNotDisables)('should not disable task type %s', (taskType) => {
+        expect(shouldDisableBasedOnTaskType(taskType, selectedTaskTypes)).toBe(false);
+      });
+    });
+
+    describe('when a TranscriptionTask is selected', () => {
+      const selectedTaskTypes = ['TranscriptionTask'];
+
+      const shouldDisables = [
+        'ScheduleVeteranTask',
+        'SelectHearingDispositionTask',
+        'ChangeHearingDispositionTask'
+      ];
+
+      const shouldNotDisables = [
+        'TranscriptionTask',
+        'EvidenceSubmissionWindowTask'
+      ];
+
+      // This block is the same for each of the three; there's an opportunity to refactor further!
+      it.each(shouldDisables)('should disable task type %s', (taskType) => {
+        expect(shouldDisableBasedOnTaskType(taskType, selectedTaskTypes)).toBe(true);
+      });
+
+      it.each(shouldNotDisables)('should not disable task type %s', (taskType) => {
+        expect(shouldDisableBasedOnTaskType(taskType, selectedTaskTypes)).toBe(false);
       });
     });
   });

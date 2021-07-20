@@ -37,7 +37,7 @@ export const SubstituteAppellantTasksForm = ({
     resolver: yupResolver(schema),
     defaultValues: {
       ...existingValues,
-      taskIds:
+      taskIds: // array of selected task IDs
         // eslint-disable-next-line max-len
         existingValues?.taskIds?.length ? existingValues?.taskIds : (tasks?.filter((task) => task.selected)).map((task) => parseInt(task.taskId, 10)),
     },
