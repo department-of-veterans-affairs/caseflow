@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FormProvider } from 'react-hook-form';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { connect, useDispatch, useSelector } from 'react-redux';
@@ -21,6 +21,8 @@ const EditAppellantInformation = ({ appealId }) => {
 
   const { goBack } = useHistory();
 
+  const [loading, setLoading] = useState(false);
+
   const methods = useClaimantForm({ defaultValues: mapAppellantDataFromApi(appeal) }, true);
   const {
     handleSubmit,
@@ -29,6 +31,7 @@ const EditAppellantInformation = ({ appealId }) => {
   const handleUpdate = (formData) => {
     const appellantId = appeal.unrecognizedAppellantId;
 
+    setLoading(true);
     dispatch(updateAppellantInformation({ formData, appellantId, appealId }));
   };
 
@@ -49,6 +52,8 @@ const EditAppellantInformation = ({ appealId }) => {
       <Button
         onClick={handleSubmit(handleUpdate)}
         classNames={['cf-right-side']}
+        loading={loading}
+        name="Save"
       >
         Save
       </Button>
