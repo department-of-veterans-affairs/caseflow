@@ -6,8 +6,8 @@ class ClaimReviewController < ApplicationController
   before_action :verify_access, :react_routed, :set_application
 
   EDIT_ERRORS = {
-    "RequestIssue::MissingDecisionDate" => COPY::CLAIM_REVIEW_EDIT_ERROR_MISSING_DECISION_DATE,
-    "StandardError" => COPY::CLAIM_REVIEW_EDIT_ERROR_DEFAULT
+    "Caseflow::Error::MissingDecisionDate" => COPY::CLAIM_REVIEW_EDIT_ERROR_MISSING_DECISION_DATE,
+    "StandardError" => COPY::CLAIM_REVIEW_EDIT_ERROR_DEFAULT,
   }.freeze
 
   def edit
