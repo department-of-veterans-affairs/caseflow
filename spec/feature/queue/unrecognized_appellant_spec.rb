@@ -31,16 +31,17 @@ feature "Unrecognized appellants", :postgres do
       click_on "Edit Information"
 
       expect(page).to have_content("Edit Appellant Information")
-      # Check that form is prepopulated with existing appellant information
       expect(find("#firstName").value).to eq "Jane"
       expect(find("#lastName").value).to eq "Smith"
+      
       fill_in "First name", with: "Updated First Name"
       click_on "Save"
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+      
       ua = appeal.claimant.unrecognized_appellant
       expect(ua.first_name).to eq("Updated First Name")
       expect(ua.versions.count).to eq(2)
       expect(ua.first_version.first_name).to eq("Jane")
-      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
       expect(page).to have_content("Name: Updated First Name Smith")
     end
 
@@ -56,12 +57,12 @@ feature "Unrecognized appellants", :postgres do
       end
       fill_in "Organization name", with: "Organization 1"
       click_on "Save"
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
       ua = appeal.claimant.unrecognized_appellant
       expect(ua.name).to eq("Organization 1")
       expect(ua.party_type).to eq("organization")
       expect(ua.versions.count).to eq(2)
       expect(ua.first_version.first_name).to eq("Jane")
-      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
       expect(page).to have_content("Relation to Veteran: Other")
     end
   end

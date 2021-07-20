@@ -14,8 +14,8 @@ const editClaimantSlice = createSlice({
     updateAppellantInformation: (_state, action) => {
       const { formData, appellantId, appealId } = action.payload;
       
-      const _appellantPayload = mapAppellantDataToApi(formData);
-      ApiUtil.patch(`/unrecognized_appellants/${appellantId}`, { data: _appellantPayload } ).then(
+      const appellantPayload = mapAppellantDataToApi(formData);
+      ApiUtil.patch(`/unrecognized_appellants/${appellantId}`, { data: appellantPayload } ).then(
         (response) => {
           // CASEFLOW-1924
           window.location = `/queue/appeals/${appealId}`
