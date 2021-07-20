@@ -24,7 +24,6 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     datadog_report_time_segment(segment: "cache_legacy_appeals", start_time: legacy_appeals_start)
 
     record_success_in_datadog
-    datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   rescue StandardError => error
     log_error(@start_time, error)
   end
@@ -118,8 +117,9 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     # We do not log every job failure since we expect the job to occasionally fail when we lose
     # database connections. Since this job runs regularly, we will continue to cache appeals and we
     # have set up alerts to notify us if we have cached too few appeals over the past day:
-    # * (Too little Postgres data cached) https://app.datadoghq.com/monitors/41233260
+    # * (Too little Postgres data cached) https://app.datadoghq.com/monitors/41421962
     # * (Too little VACOLS data cached) https://app.datadoghq.com/monitors/41234223
+    # * (Job has not succeeded in the past day) https://app.datadoghq.com/monitors/41423568
     record_error_in_datadog
 
     datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)

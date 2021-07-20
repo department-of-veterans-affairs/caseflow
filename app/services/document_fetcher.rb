@@ -7,7 +7,7 @@ class DocumentFetcher
 
   def initialize(attributes)
     super(attributes)
-    fetch_documents_from_service!
+    patiently_fetch_documents_from_service!
   end
 
   attr_accessor :documents
@@ -101,6 +101,16 @@ class DocumentFetcher
     self.documents = deduplicate(doc_struct[:documents], "fetched_documents")
     self.manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at].try(:in_time_zone)
     self.manifest_vva_fetched_at = doc_struct[:manifest_vva_fetched_at].try(:in_time_zone)
+  end
+
+  # The default timeout is 30s:
+  #   ActiveRecord::Base.connection.execute("select setting from pg_settings where name = 'statement_timeout'").to_a
+  # This method waits much longer to enable documents to be loaded in Reader, such as for Appeal.find(145633)
+  def patiently_fetch_documents_from_service!
+    ActiveRecord::Base.transaction do
+      ActiveRecord::Base.connection.execute "SET LOCAL statement_timeout = '10min'"
+      fetch_documents_from_service!
+    end
   end
 
   # :reek:FeatureEnvy

@@ -47,6 +47,8 @@ import VeteranDetail from './VeteranDetail';
 import { startPolling } from '../hearings/utils';
 import FnodBanner from './components/FnodBanner';
 import { shouldSupportSubstituteAppellant } from './substituteAppellant/caseDetails/utils';
+import { VsoVisibilityAlert } from './caseDetails/VsoVisibilityAlert';
+import { shouldShowVsoVisibilityAlert } from './caseDetails/utils';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
@@ -72,6 +74,8 @@ const editInformationLinkStyling = css({
   margin: '5px',
 });
 
+const topAlertStyles = css({ marginBottom: '2.4rem' });
+
 export const CaseDetailsView = (props) => {
   const { appealId, featureToggles } = props;
   const appeal = useSelector((state) =>
@@ -85,6 +89,9 @@ export const CaseDetailsView = (props) => {
   );
   const userIsCobAdmin = useSelector(
     (state) => state.ui.userIsCobAdmin
+  );
+  const userIsVsoEmployee = useSelector(
+    (state) => state.ui.userIsVsoEmployee
   );
   const success = useSelector((state) => state.ui.messages.success);
   const error = useSelector((state) => state.ui.messages.error);
@@ -144,10 +151,10 @@ export const CaseDetailsView = (props) => {
     [appeal, tasks]
   );
 
-  const appealIsDispatched = appeal.status === 'dispatched';
+  const appealIsDispatched = ['dispatched', 'post_dispatch'].includes(appeal.status);
 
   const editInformation =
-  appeal.appellantType !== 'VeteranClaimant' && props.featureToggles.edit_unrecognized_appellant;
+    appeal.appellantType !== 'VeteranClaimant' && props.featureToggles.edit_unrecognized_appellant;
 
   const supportCavcRemand =
     currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand && !appeal.isLegacyAppeal;
@@ -200,6 +207,9 @@ export const CaseDetailsView = (props) => {
         <CaseTitle appeal={appeal} />
         {appeal.veteranDateOfDeath && props.featureToggles.fnod_banner && (
           <FnodBanner appeal={appeal} />
+        )}
+        {shouldShowVsoVisibilityAlert({ featureToggles, userIsVsoEmployee }) && (
+          <div className={topAlertStyles}><VsoVisibilityAlert /></div>
         )}
         <CaseTitleDetails
           appealId={appealId}

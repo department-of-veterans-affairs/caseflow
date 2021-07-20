@@ -379,6 +379,16 @@ FactoryBot.define do
       end
     end
 
+    # An appeal which was dispatched, but has then had other open tasks added.
+    # Note that the -ed suffix in 'dispatched' does not carry over to 'post_dispatch', which is how
+    # it is referred to elsewhere in the code.
+    trait :post_dispatch do
+      dispatched
+      after(:create) do |appeal|
+        create(:congressional_interest_mail_task, parent: appeal.root_task)
+      end
+    end
+
     trait :with_straight_vacate_stream do
       dispatched
       after(:create) do |appeal, evaluator|
@@ -421,9 +431,7 @@ FactoryBot.define do
       end
     end
 
-    trait :dispatched_with_decision_issue do
-      dispatched
-
+    trait :with_decision_issue do
       description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
       notes = "Pain disorder with 100\% evaluation per examination"
       after(:create) do |appeal, evaluator|
@@ -441,6 +449,22 @@ FactoryBot.define do
                                 description: "Issue description",
                                 decision_text: "Decision text")
         request_issue.decision_issues << decision_issue
+      end
+    end
+
+    trait :decision_issue_with_future_date do
+      description = "Service connection for pain disorder"
+      notes = "Pain disorder notes"
+      after(:create) do |appeal, evaluator|
+        request_issue = create(:request_issue,
+                               :rating,
+                               decision_review: appeal,
+                               veteran_participant_id: appeal.veteran.participant_id,
+                               contested_issue_description: description,
+                               notes: notes)
+        request_issue.create_decision_issue_from_params(disposition: evaluator.disposition,
+                                                        description: description,
+                                                        decision_date: 2.months.from_now)
       end
     end
   end
