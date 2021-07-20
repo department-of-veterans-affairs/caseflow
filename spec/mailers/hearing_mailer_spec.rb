@@ -191,6 +191,13 @@ describe HearingMailer do
     end
   end
 
+  shared_examples "representative virtual reminder intro" do
+    it "displays virtual hearing reminder email intro" do
+      expect(subject.body).to include("You have a client scheduled for a virtual hearing " \
+        "with a Veterans Law Judge of the Board of Veterans' Appeals.")
+    end
+  end
+
   shared_examples "representative video reminder intro" do
     it "displays central hearing reminder email intro" do
       expect(subject.body).to include("You have a client scheduled for a hearing at a VA Regional " \
