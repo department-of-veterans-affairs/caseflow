@@ -24,25 +24,25 @@ describe VirtualHearings::SendEmail do
     )
   end
   let(:email_type) { nil }
-  let(:judge_recipient) do
-    MailRecipient.new(
+  let(:judge_recipient_info) do
+    EmailRecipientInfo.new(
       name: "TEST",
-      email: "america@example.com",
-      title: MailRecipient::RECIPIENT_TITLES[:judge]
+      title: HearingEmailRecipient::RECIPIENT_TITLES[:judge],
+      hearing_email_recipient: hearing.judge_recipient
     )
   end
-  let(:appellant_recipient) do
-    MailRecipient.new(
+  let(:appellant_recipient_info) do
+    EmailRecipientInfo.new(
       name: "TEST",
-      email: "america@example.com",
-      title: MailRecipient::RECIPIENT_TITLES[:appellant]
+      title: HearingEmailRecipient::RECIPIENT_TITLES[:appellant],
+      hearing_email_recipient: hearing.appellant_recipient
     )
   end
-  let(:representative_recipient) do
-    MailRecipient.new(
+  let(:representative_recipient_info) do
+    EmailRecipientInfo.new(
       name: "TEST",
-      email: "america@example.com",
-      title: MailRecipient::RECIPIENT_TITLES[:representative]
+      title: HearingEmailRecipient::RECIPIENT_TITLES[:representative],
+      hearing_email_recipient: hearing.representative_recipient
     )
   end
   let(:send_email_job) do
@@ -55,13 +55,13 @@ describe VirtualHearings::SendEmail do
     end
 
     before do
-      allow(send_email_job).to receive(:judge_recipient).and_return(judge_recipient)
-      allow(send_email_job).to receive(:representative_recipient).and_return(representative_recipient)
+      allow(send_email_job).to receive(:judge_recipient_info).and_return(judge_recipient_info)
+      allow(send_email_job).to receive(:representative_recipient_info).and_return(representative_recipient_info)
     end
 
     context "veteran name is populated" do
       before do
-        allow(send_email_job).to receive(:appellant_recipient).and_return(appellant_recipient)
+        allow(send_email_job).to receive(:appellant_recipient_info).and_return(appellant_recipient_info)
       end
 
       context "a cancellation email" do
@@ -72,17 +72,17 @@ describe VirtualHearings::SendEmail do
           expect(VirtualHearingMailer)
             .to receive(:cancellation)
             .once
-            .with(mail_recipient: appellant_recipient, virtual_hearing: virtual_hearing)
+            .with(email_recipient: appellant_recipient_info, virtual_hearing: virtual_hearing)
 
           expect(VirtualHearingMailer)
             .to receive(:cancellation)
             .once
-            .with(mail_recipient: representative_recipient, virtual_hearing: virtual_hearing)
+            .with(email_recipient: representative_recipient_info, virtual_hearing: virtual_hearing)
 
           # NO for judge
           expect(VirtualHearingMailer)
             .to_not receive(:cancellation)
-            .with(mail_recipient: judge_recipient, virtual_hearing: virtual_hearing)
+            .with(email_recipient: judge_recipient_info, virtual_hearing: virtual_hearing)
 
           subject
         end
