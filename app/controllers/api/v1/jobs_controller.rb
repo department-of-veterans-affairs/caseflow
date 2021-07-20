@@ -13,7 +13,7 @@ class Api::V1::JobsController < Api::ApplicationController
     "docket_range_job" => DocketRangeJob,
     "etl_builder" => ETLBuilderJob,
     "heartbeat" => HeartbeatTasksJob,
-    "missed_job_sweeper" => MissedJobSweeperJob,
+    "incomplete_distributions_job" => IncompleteDistributionsJob,
     "monthly_metrics" => MonthlyMetricsReportJob,
     "nightly_syncs" => NightlySyncsJob,
     "out_of_service_reminder" => OutOfServiceReminderJob,
