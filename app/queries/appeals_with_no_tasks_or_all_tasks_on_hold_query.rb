@@ -75,6 +75,8 @@ class AppealsWithNoTasksOrAllTasksOnHoldQuery
     Task.select(:appeal_id).where(appeal_type: klass_name)
   end
 
+  # Active appeals should have some active task.
+  # Return appeals where all open tasks are on_hold, ignoring the TrackVeteranTask.
   def appeals_with_only_on_hold_tasks
     Appeal.established.active
       .joins(:tasks)
