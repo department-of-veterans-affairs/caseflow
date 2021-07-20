@@ -21,7 +21,7 @@ const EditAppellantInformation = ({ appealId }) => {
 
   const { goBack } = useHistory();
 
-  const methods = useClaimantForm({ defaultValues: mapAppellantDataFromApi(appeal) }, true);
+  const methods = useClaimantForm({ defaultValues: mapAppellantDataFromApi(appeal) }, true, true);
   const {
     handleSubmit,
   } = methods;
@@ -44,6 +44,7 @@ const EditAppellantInformation = ({ appealId }) => {
           editAppellantHeader={editAppellantHeader}
           editAppellantDescription={editAppellantDescription}
           hidePOAForm
+          hideListedAttorney
         />
       </AppSegment>
       <Button
