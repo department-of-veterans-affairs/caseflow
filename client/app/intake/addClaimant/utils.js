@@ -56,8 +56,8 @@ export const schema = yup.object().shape({
   }),
   emailAddress: yup.string().email(),
   phoneNumber: yup.string(),
-  poaForm: yup.string().when('relationship', {
-    is: (relationship) => relationship !== 'attorney',
+  poaForm: yup.string().when(['relationship', '$hidePOAForm'], {
+    is: (relationship, hidePOAForm) => relationship !== 'attorney' && !hidePOAForm, 
     then: yup.string().required(),
   }),
   listedAttorney: yup.object().when('relationship', {
@@ -87,9 +87,10 @@ export const defaultFormValues = {
   listedAttorney: null
 };
 
-export const useClaimantForm = ({ defaultValues = defaultFormValues } = {}) => {
+export const useClaimantForm = ({ defaultValues = defaultFormValues } = {}, hidePOAForm = false) => {
   const methods = useForm({
     resolver: yupResolver(schema),
+    context: { hidePOAForm },
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues

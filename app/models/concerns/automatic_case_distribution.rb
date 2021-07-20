@@ -134,7 +134,7 @@ module AutomaticCaseDistribution
   end
 
   def priority_target
-    proportion = [priority_count.to_f / total_batch_size, 1].min
+    proportion = [priority_count.to_f / total_batch_size, 1.0].reject(&:nan?).min
     (proportion * batch_size).ceil
   end
 
