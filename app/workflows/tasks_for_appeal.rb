@@ -45,10 +45,10 @@ class TasksForAppeal
   # and any tasks assigned to the user
   def tasks_visible_to_vso_employee
     appeal.tasks
-          .includes(*task_includes)
-          .select do |task|
+      .includes(*task_includes)
+      .select do |task|
       task.assigned_to.is_a?(Representative) || task.assigned_to_vso_user? || user == task.assigned_to ||
-        (task.is_a?(HearingTask) && task.disposition === Constants.HEARING_DISPOSITION_TYPES.held) ||
+        (task.is_a?(HearingTask) && task.disposition == Constants.HEARING_DISPOSITION_TYPES.held) ||
         task.is_a?(DistributionTask)
     end
   end

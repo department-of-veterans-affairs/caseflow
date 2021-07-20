@@ -3,7 +3,7 @@
 describe TasksForAppeal do
   describe "#call" do
     context "for a VSO user" do
-      let!(:org) { create(:vso )}
+      let!(:org) { create(:vso) }
       let(:user_roles) { ["VSO"] }
       let!(:user) { create(:user, roles: user_roles) }
       let(:appeal) do
