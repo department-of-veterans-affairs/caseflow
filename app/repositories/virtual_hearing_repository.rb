@@ -85,19 +85,6 @@ class VirtualHearingRepository
       ).where(hearing_pkseq: vacols_ids).pluck(:hearing_pkseq).map(&:to_s) || []
     end
 
-    # Returns a where clause that can be used to find all hearings that occur within
-    # a given timeframe (in days).
-    #
-    # @note Requires a join with the `hearing_days` table.
-    def scheduled_within_seven_days
-      <<-SQL
-        DATE_PART(
-        'day',
-        hearing_days.scheduled_for::timestamp - '#{Time.zone.today}'::timestamp
-        ) BETWEEN 1 AND 7
-      SQL
-    end
-
     private
 
     def pending_appellant_or_rep_emails

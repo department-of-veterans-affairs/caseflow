@@ -128,17 +128,19 @@ class HearingRepository
           "hearings.disposition NOT IN (:non_active_hearing_dispositions) OR hearings.disposition IS NULL",
           non_active_hearing_dispositions: [:postponed, :cancelled]
         )
-        .where(VirtualHearingRepository.scheduled_within_seven_days)
+        .where(scheduled_within_seven_days)
 
       legacy_ready = []
 
       # VACOLS can support a max of 1000 at a time which is the in_batches default
       VirtualHearingRepository.joins_hearing_and_hearing_day(LegacyHearing)
-        .not_cancelled.where(VirtualHearingRepository.scheduled_within_seven_days).in_batches do |vhs|
+        .not_cancelled.where(scheduled_within_seven_days).in_batches do |vhs|
           vacols_ids = vhs.pluck("legacy_hearings.vacols_id")
           # the subset of hearings that are postponed or cancelled in VACOLS
           # default to [""] if empty so the NOT IN clause in the query below will work
-          selected_vacols_ids = VirtualHearingRepository.vacols_select_postponed_or_cancelled(vacols_ids).presence || [""]
+          selected_vacols_ids =
+            VirtualHearingRepository.vacols_select_postponed_or_cancelled(vacols_ids).presence || [""]
+
           legacy_ready << vhs
             .where(
               "legacy_hearings.vacols_id NOT IN (:postponed_or_cancelled_vacols_ids)",
@@ -150,6 +152,19 @@ class HearingRepository
     end
 
     private
+
+    # Returns a where clause that can be used to find all hearings that occur within
+    # a given timeframe (in days).
+    #
+    # @note Requires a join with the `hearing_days` table.
+    def scheduled_within_seven_days
+      <<-SQL
+        DATE_PART(
+        'day',
+        hearing_days.scheduled_for::timestamp - '#{Time.zone.today}'::timestamp
+        ) BETWEEN 1 AND 7
+      SQL
+    end
 
     # Gets the regional office to use when mapping the VACOLS hearing date to
     # the local scheduled time.
