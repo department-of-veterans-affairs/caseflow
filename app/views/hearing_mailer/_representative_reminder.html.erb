@@ -4,9 +4,9 @@
   </p>
 
   <p>
-    <% if @hearing&.request_type ==  "C" %>
+    <% if @virtual_hearing.nil? && @hearing&.request_type ==  "C" %>
       You have a client scheduled for a hearing at the VA Central Office with a Veterans Law Judge of the Board of Veterans' Appeals.
-    <% elsif @hearing&.request_type == "V" %>
+    <% elsif @virtual_hearing.nil? && @hearing&.request_type == "V" %>
       You have a client scheduled for a hearing at a VA Regional Office with a Veterans Law Judge of the Board of Veterans' Appeals.
     <% else %>
       You have a client scheduled for a virtual hearing with a Veterans Law Judge of the Board of Veterans' Appeals.
