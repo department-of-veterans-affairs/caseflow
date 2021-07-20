@@ -31,6 +31,11 @@ FactoryBot.define do
       end
     end
 
+    trait :attorney do
+      initialize_with { AttorneyClaimant.new(attributes) }
+      type { AttorneyClaimant.name }
+    end
+
     after(:create) do |claimant, _evaluator|
       # ensure that an associated person record is created in our DB
       # & date_of_birth is populated

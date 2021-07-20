@@ -8,8 +8,8 @@ describe WorkQueue::AppealSerializer, :all_dbs do
 
     context "when a VSO user views an appeal" do
       context "when the restrict_poa_visibility feature toggle is on" do
-        before { FeatureToggle.enable!(:restrict_poa_visibility) }
-        after { FeatureToggle.disable!(:restrict_poa_visibility) }
+        before { FeatureToggle.enable!(:restrict_poa_visibility, users: [user.css_id]) }
+        after { FeatureToggle.disable!(:restrict_poa_visibility, users: [user.css_id]) }
         describe "decision_issues" do
           it "does not display decision issues with a decision date in the future" do
             expect(subject.serializable_hash[:data][:attributes][:decision_issues]).to be_empty
@@ -19,13 +19,13 @@ describe WorkQueue::AppealSerializer, :all_dbs do
 
       context "when the restrict_poa_visibility feature toggle is off" do
         before do
-          FeatureToggle.disable!(:restrict_poa_visibility)
+          FeatureToggle.disable!(:restrict_poa_visibility, users: [user.css_id])
           # The below setup catches an error where using the current_user method in AppealSerializer broke prod.
           # Previous tests did not catch this error because StubbableUser returned nil for current_user, even though
           # that method is not accessible in AppealSerializer
           allow(User).to receive(:current_user).and_throw("Error!")
         end
-        after { FeatureToggle.enable!(:restrict_poa_visibility) }
+        after { FeatureToggle.enable!(:restrict_poa_visibility, users: [user.css_id]) }
 
         describe "decision_issues" do
           it "does display decision issues with a decision date in the future" do
