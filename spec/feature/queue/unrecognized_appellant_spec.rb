@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 feature "Unrecognized appellants", :postgres do
-
   let(:veteran_file_number) { "123412345" }
   let!(:veteran) do
     Generators::Veteran.build(file_number: veteran_file_number, first_name: "Ed", last_name: "Merica")
