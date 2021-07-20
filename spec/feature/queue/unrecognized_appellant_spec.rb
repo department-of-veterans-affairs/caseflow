@@ -33,11 +33,11 @@ feature "Unrecognized appellants", :postgres do
       expect(page).to have_content("Edit Appellant Information")
       expect(find("#firstName").value).to eq "Jane"
       expect(find("#lastName").value).to eq "Smith"
-      
+
       fill_in "First name", with: "Updated First Name"
       click_on "Save"
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-      
+
       ua = appeal.claimant.unrecognized_appellant
       expect(ua.first_name).to eq("Updated First Name")
       expect(ua.versions.count).to eq(2)
