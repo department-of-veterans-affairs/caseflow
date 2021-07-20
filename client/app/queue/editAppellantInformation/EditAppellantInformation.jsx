@@ -18,17 +18,18 @@ const EditAppellantInformation = ({ appealId }) => {
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
+
   const { goBack } = useHistory();
 
-  const methods = useClaimantForm({ defaultValues: mapAppellantDataFromApi(appeal) });
+  const methods = useClaimantForm({ defaultValues: mapAppellantDataFromApi(appeal) }, true);
   const {
     handleSubmit,
   } = methods;
 
   const handleUpdate = (formData) => {
-    const id = appeal.unrecognizedAppellantId;
+    const appellantId = appeal.unrecognizedAppellantId;
 
-    dispatch(updateAppellantInformation({ formData, id }));
+    dispatch(updateAppellantInformation({ formData, appellantId, appealId }));
   };
 
   const handleBack = () => goBack();
