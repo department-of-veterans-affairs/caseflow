@@ -45,7 +45,7 @@ class Explain::HearingRecordEventMapper < Explain::RecordEventMapper
     "#{@hearing_day['scheduled_for']} #{hearing_type} hearing with judge #{user(record['judge_id'])}"
   end
 
-  RELEVANT_DATA_KEYS = %w[scheduled_time military_service representative_name bva_poc room].freeze
+  RELEVANT_DATA_KEYS = %w[scheduled_for scheduled_time military_service representative_name bva_poc room].freeze
 
   def hearing_creation_event
     new_event(record["created_at"], "created",

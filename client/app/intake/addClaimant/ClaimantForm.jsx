@@ -223,7 +223,7 @@ export const ClaimantForm = ({
             </PhoneNumber>
           </>
         )}
-        {(partyType && !attorneyRelationship) && (
+        {(partyType && !attorneyRelationship && !props.hidePOAForm) && (
           <RadioField
             options={Constants.BOOLEAN_RADIO_OPTIONS}
             vertical
@@ -243,7 +243,8 @@ ClaimantForm.propTypes = {
   onBack: PropTypes.func,
   onSubmit: PropTypes.func,
   editAppellantHeader: PropTypes.string,
-  editAppellantDescription: PropTypes.string
+  editAppellantDescription: PropTypes.string,
+  hidePOAForm: PropTypes.bool
 };
 
 const FieldDiv = styled.div`
