@@ -1,21 +1,6 @@
 # frozen_string_literal: true
 
 describe HearingRepository, :all_dbs do
-  let(:regional_office) { "RO42" }
-  let(:hearing_date) { Time.zone.now }
-  let(:ama_disposition) { nil }
-  let(:hearing_day) do
-    create(
-      :hearing_day,
-      regional_office: regional_office,
-      scheduled_for: hearing_date,
-      request_type: HearingDay::REQUEST_TYPES[:video]
-    )
-  end
-  let(:hearing) do
-    create(:hearing, regional_office: regional_office, hearing_day: hearing_day, disposition: ama_disposition)
-  end
-
   before do
     Timecop.freeze(Time.utc(2017, 10, 4))
     Time.zone = "America/Chicago"
@@ -171,6 +156,20 @@ describe HearingRepository, :all_dbs do
   end
 
   context ".maybe_ready_for_reminder_email" do
+    let(:regional_office) { "RO42" }
+    let(:hearing_date) { Time.zone.now }
+    let(:ama_disposition) { nil }
+    let(:hearing_day) do
+      create(
+        :hearing_day,
+        regional_office: regional_office,
+        scheduled_for: hearing_date,
+        request_type: HearingDay::REQUEST_TYPES[:video]
+      )
+    end
+    let(:hearing) do
+      create(:hearing, regional_office: regional_office, hearing_day: hearing_day, disposition: ama_disposition)
+    end
     let!(:virtual_hearing) { create(:virtual_hearing, :initialized, status: :active, hearing: hearing) }
 
     subject { described_class.maybe_ready_for_reminder_email }
