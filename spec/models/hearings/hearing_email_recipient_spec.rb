@@ -127,7 +127,7 @@ describe HearingEmailRecipient do
   end
 
   context "#reminder_sent_at" do
-    let(:reminder_sent_at) { Time.zone.now - 3.hours }
+    let!(:reminder_sent_at) { Time.zone.now - 3.days }
     let(:email_recipient) do
       create(
         :hearing_email_recipient,
