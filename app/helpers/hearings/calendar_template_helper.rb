@@ -13,16 +13,16 @@ module Hearings::CalendarTemplateHelper
       time.strftime(HEARING_TIME_DISPLAY_FORMAT)
     end
 
-    def central_office_display_time_for_virtual_hearing(virtual_hearing)
-      format_hearing_time(virtual_hearing.hearing.time.central_office_time)
+    def central_office_display_time(hearing)
+      format_hearing_time(hearing.time.central_office_time)
     end
 
-    def representative_display_time_for_virtual_hearing(virtual_hearing)
-      format_hearing_time(virtual_hearing.hearing.time.poa_time)
+    def representative_display_time(hearing)
+      format_hearing_time(hearing.time.poa_time)
     end
 
-    def appellant_display_time_for_virtual_hearing(virtual_hearing)
-      format_hearing_time(virtual_hearing.hearing.time.appellant_time)
+    def appellant_display_time(hearing)
+      format_hearing_time(hearing.time.appellant_time)
     end
 
     # time_zone is a TZInfo::DataTimezone object; date_time_utc is a Time object

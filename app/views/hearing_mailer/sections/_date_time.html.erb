@@ -3,10 +3,10 @@
 </h3>
 <p>
 <% if @recipient.title == MailRecipient::RECIPIENT_TITLES[:judge] %>
-  <%= Hearings::CalendarTemplateHelper.central_office_display_time_for_virtual_hearing(@virtual_hearing) %>
+  <%= Hearings::CalendarTemplateHelper.central_office_display_time(@hearing || @virtual_hearing&.hearing) %>
 <% elsif @recipient.title == MailRecipient::RECIPIENT_TITLES[:representative] %>
-  <%= Hearings::CalendarTemplateHelper.representative_display_time_for_virtual_hearing(@virtual_hearing) %>
+  <%= Hearings::CalendarTemplateHelper.representative_display_time(@hearing || @virtual_hearing&.hearing) %>
 <% elsif @recipient.title == MailRecipient::RECIPIENT_TITLES[:appellant] %>
-  <%= Hearings::CalendarTemplateHelper.appellant_display_time_for_virtual_hearing(@virtual_hearing) %>
+  <%= Hearings::CalendarTemplateHelper.appellant_display_time(@hearing || @virtual_hearing&.hearing) %>
 <% end %>
 </p>

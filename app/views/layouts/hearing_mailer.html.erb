@@ -11,11 +11,14 @@
     <%= yield %>
     <%= yield :intro %>
     <%= yield :date_time %>
+    <%= yield :location %>
     <%= yield :how_to_join %>
     <%= yield :test_your_connection %>
     <%= yield :help_desk %>
     <%= yield :rescheduling_or_canceling_your_hearing %>
     <%= yield :signature %>
-    <%= render "hearing_mailer/sections/internal_use" %>
+    <% if @representative_reminder != true %>
+      <%= render "hearing_mailer/sections/internal_use" %>
+    <% end %>
   </body>
 </html>
