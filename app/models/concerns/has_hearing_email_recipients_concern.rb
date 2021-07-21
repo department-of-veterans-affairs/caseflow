@@ -15,7 +15,7 @@ module HasHearingEmailRecipientsConcern
         email_sent: virtual_hearing[:appellant_email_sent]
       )
 
-      update_email_events(recipient, HearingEmailRecipient::RECIPIENT_ROLES[:appellant])
+      update_email_events(recipient, recipient.role)
     end
 
     recipient
@@ -35,7 +35,7 @@ module HasHearingEmailRecipientsConcern
           timezone: virtual_hearing[:representative_tz]
         )
 
-        update_email_events(recipient, HearingEmailRecipient::RECIPIENT_ROLES[:representative])
+        update_email_events(recipient, recipient.role)
       end
     end
 
@@ -55,7 +55,7 @@ module HasHearingEmailRecipientsConcern
           email_sent: virtual_hearing[:judge_email_sent]
         )
 
-        update_email_events(recipient, HearingEmailRecipient::RECIPIENT_ROLES[:judge])
+        update_email_events(recipient, recipient.role)
       end
     end
 
@@ -97,8 +97,6 @@ module HasHearingEmailRecipientsConcern
   def update_email_events(recipient, role)
     events = email_events.where(email_address: recipient.email_address, recipient_role: role)
 
-    if events.present?
-      events.update_all(email_recipient: recipient)
-    end
+    events.each { |event| event.update!(email_recipient: recipient) }
   end
 end
