@@ -106,6 +106,17 @@ export const shouldDisableBasedOnTaskType = (taskType, selectedTaskTypes) => {
   }
 };
 
+export const disabledTasksBasedOnSelections = ({tasks, selectedTaskIds}) => {
+  const selectedTaskTypes = tasks.filter((task) => selectedTaskIds.includes(task.taskId)).map((task) => task.type);
+
+  return tasks.map((task) => {
+    return ({
+      ...task,
+      disabled: task.disabled || shouldDisableBasedOnTaskType(task.type, selectedTaskTypes)
+    });
+  });
+};
+
 // The following governs what should always be programmatically disabled from selection
 export const alwaysDisabled = ['DistributionTask'];
 

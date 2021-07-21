@@ -33,7 +33,8 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
         it_should_behave_like "fill substitution form"
       end
 
-      context "with direct review docket" do
+      # use this for manual testing
+      context "with hearing docket" do
         let(:docket_type) { Constants.AMA_DOCKETS.hearing }
 
         context "without hearings feature toggle" do

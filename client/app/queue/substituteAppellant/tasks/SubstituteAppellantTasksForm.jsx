@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import PropTypes from 'prop-types';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -16,6 +16,7 @@ import CheckoutButtons from 'app/queue/docketSwitch/grant/CheckoutButtons';
 import { KeyDetails } from './KeyDetails';
 import { pageHeader, sectionStyle } from '../styles';
 import { TaskSelectionTable } from './TaskSelectionTable';
+import { disabledTasksBasedOnSelections } from "app/queue/substituteAppellant/tasks/utils";
 
 const schema = yup.object().shape({
   taskIds: yup.array(yup.number()),
@@ -37,13 +38,19 @@ export const SubstituteAppellantTasksForm = ({
     resolver: yupResolver(schema),
     defaultValues: {
       ...existingValues,
-      taskIds: // array of selected task IDs
+      taskIds:
         // eslint-disable-next-line max-len
         existingValues?.taskIds?.length ? existingValues?.taskIds : (tasks?.filter((task) => task.selected)).map((task) => parseInt(task.taskId, 10)),
     },
   });
 
-  const { handleSubmit } = methods;
+  const { handleSubmit, watch } = methods;
+  const selectedTaskIds = watch('taskIds');
+
+  const adjustedTasks = useMemo(() =>
+    disabledTasksBasedOnSelections({tasks, selectedTaskIds}),
+  [tasks, selectedTaskIds]
+  );
 
   return (
     <FormProvider {...methods}>
@@ -64,7 +71,7 @@ export const SubstituteAppellantTasksForm = ({
           <div className={sectionStyle}>
             <h2>{SUBSTITUTE_APPELLANT_TASK_SELECTION_TITLE}</h2>
             <div><ReactMarkdown source={SUBSTITUTE_APPELLANT_TASK_SELECTION_DESCRIPTION} /></div>
-            <TaskSelectionTable tasks={tasks} />
+            <TaskSelectionTable tasks={adjustedTasks} />
           </div>
         </AppSegment>
         <div className="controls cf-app-segment">
