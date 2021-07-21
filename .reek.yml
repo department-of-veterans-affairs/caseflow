@@ -90,7 +90,7 @@ detectors:
       - VirtualHearings::DeleteConferencesJob#perform
       - VirtualHearings::DeleteConferencesJob#process_virtual_hearing
       - VirtualHearings::DeleteConferencesJob#send_cancellation_emails
-      - VirtualHearings::SendEmail#external_message_id
+      - Hearings::SendEmail#external_message_id
       - Fakes::EndProductStore
       - Fakes::BGSService#get_participant_id_for_user
       - Fakes::BGSServiceRecordMaker
