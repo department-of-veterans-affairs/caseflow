@@ -1,36 +1,65 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FormProvider } from 'react-hook-form';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router';
+import { sprintf } from 'sprintf-js';
 
 import { ClaimantForm as EditClaimantForm } from '../../intake/addClaimant/ClaimantForm';
 import { useClaimantForm } from '../../intake/addClaimant/utils';
 import Button from '../../components/Button';
-import { updateAppellantInformation } from './editAppellantInformationSlice';
-import { EDIT_CLAIMANT_PAGE_DESCRIPTION } from 'app/../COPY';
+import { cancel } from './editAppellantInformationSlice';
+import COPY, { EDIT_CLAIMANT_PAGE_DESCRIPTION } from 'app/../COPY';
 import { appealWithDetailSelector } from '../selectors';
-import { mapAppellantDataFromApi } from './utils';
+import { mapAppellantDataFromApi, mapAppellantDataToApi } from './utils';
+import { resetSuccessMessages,
+  showSuccessMessage,
+} from '../uiReducer/uiActions';
+import ApiUtil from '../../util/ApiUtil';
 
 const EditAppellantInformation = ({ appealId }) => {
   const dispatch = useDispatch();
+  const { goBack, push } = useHistory();
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
 
-  const { goBack } = useHistory();
+  useEffect(() => {
+    dispatch(resetSuccessMessages());
+  }, []);
+
+  const handleUpdate = (formData) => {
+    const appellantId = appeal.unrecognizedAppellantId;
+    const appellantPayload = mapAppellantDataToApi(formData);
+
+    ApiUtil.patch(`/unrecognized_appellants/${appellantId}`, { data: appellantPayload }).then(() => {
+      const appellantName = formData.partyType && formData.partyType === 'organization' ?
+        formData.name :
+        `${formData.firstName } ${ formData.lastName}`;
+
+      const title = sprintf(COPY.EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_TITLE, { appellantName });
+      const detail = COPY.EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_MESSAGE;
+
+      const successMessage = {
+        title,
+        detail,
+      };
+
+      dispatch(showSuccessMessage(successMessage));
+      push(`/queue/appeals/${appealId}`);
+    },
+    // CASEFLOW-1925
+    (error) => {
+      console.log(error);
+    }
+    );
+  };
 
   const methods = useClaimantForm({ defaultValues: mapAppellantDataFromApi(appeal) }, true);
   const {
     handleSubmit,
   } = methods;
-
-  const handleUpdate = (formData) => {
-    const appellantId = appeal.unrecognizedAppellantId;
-
-    dispatch(updateAppellantInformation({ formData, appellantId, appealId }));
-  };
 
   const handleBack = () => goBack();
 
