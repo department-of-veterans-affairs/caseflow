@@ -144,7 +144,27 @@ describe HearingMailer do
 
   shared_context "non_virtual_reminder_email" do
     subject do
-      HearingMailer.reminder(email_recipient: recipient_info, virtual_hearing: virtual_hearing)
+      HearingMailer.reminder(email_recipient: recipient_info, virtual_hearing: nil, hearing: hearing)
+    end
+  end
+
+  shared_context "appellant_hearing_email_recipient" do
+    let(:hearing_email_recipient) do
+      AppellantHearingEmailRecipient.create!(
+        email_address: "test@email.com",
+        timezone: appellant_tz,
+        hearing: hearing
+      )
+    end
+  end
+
+  shared_context "representative_hearing_email_recipient" do
+    let(:hearing_email_recipient) do
+      RepresentativeHearingEmailRecipient.create!(
+        email_address: "test@email.com",
+        timezone: representative_tz,
+        hearing: hearing
+      )
     end
   end
 
@@ -459,7 +479,6 @@ describe HearingMailer do
 
   context "for appellant" do
     let(:recipient_title) { HearingEmailRecipient::RECIPIENT_TITLES[:appellant] }
-    let(:hearing_email_recipient) { virtual_hearing.hearing.appellant_recipient }
 
     # we expect the appellant to always see the hearing time in the regional office time zone
     # unless appellant_tz in VirtualHearing is set
@@ -478,6 +497,8 @@ describe HearingMailer do
     }
 
     context "with ama virtual hearing" do
+      let(:hearing_email_recipient) { virtual_hearing.hearing.appellant_recipient }
+
       include_context "ama_hearing"
 
       describe "#cancellation" do
@@ -722,6 +743,7 @@ describe HearingMailer do
     end
 
     context "with ama video hearing" do
+      include_context "appellant_hearing_email_recipient"
       include_context "ama_hearing"
 
       describe "#reminder" do
@@ -740,6 +762,7 @@ describe HearingMailer do
     end
 
     context "with ama central hearing" do
+      include_context "appellant_hearing_email_recipient"
       include_context "ama_central_hearing"
 
       describe "#reminder" do
@@ -758,6 +781,8 @@ describe HearingMailer do
     end
 
     context "with legacy virtual hearing" do
+      let(:hearing_email_recipient) { virtual_hearing.hearing.appellant_recipient }
+
       include_context "legacy_hearing"
 
       describe "#cancellation" do
@@ -958,6 +983,7 @@ describe HearingMailer do
     end
 
     context "with legacy video hearing" do
+      include_context "appellant_hearing_email_recipient"
       include_context "legacy_hearing"
 
       describe "#reminder" do
@@ -976,6 +1002,7 @@ describe HearingMailer do
     end
 
     context "with legacy central hearing" do
+      include_context "appellant_hearing_email_recipient"
       include_context "legacy_central_hearing"
 
       describe "#reminder" do
@@ -996,7 +1023,6 @@ describe HearingMailer do
 
   context "for representative" do
     let(:recipient_title) { HearingEmailRecipient::RECIPIENT_TITLES[:representative] }
-    let(:hearing_email_recipient) { virtual_hearing.hearing.representative_recipient }
 
     # we expect the representative to always see the hearing time in the regional office time zone
     # unless representative_tz in VirtualHearing is set
@@ -1015,6 +1041,8 @@ describe HearingMailer do
     }
 
     context "with ama virtual hearing" do
+      let(:hearing_email_recipient) { virtual_hearing.hearing.representative_recipient }
+
       include_context "ama_hearing"
 
       describe "#cancellation" do
@@ -1236,6 +1264,7 @@ describe HearingMailer do
     end
 
     context "with ama video hearing" do
+      include_context "representative_hearing_email_recipient"
       include_context "ama_hearing"
 
       describe "#reminder" do
@@ -1254,6 +1283,7 @@ describe HearingMailer do
     end
 
     context "with ama central hearing" do
+      include_context "representative_hearing_email_recipient"
       include_context "ama_central_hearing"
 
       describe "#reminder" do
@@ -1272,6 +1302,8 @@ describe HearingMailer do
     end
 
     context "with legacy virtual hearing" do
+      let(:hearing_email_recipient) { virtual_hearing.hearing.representative_recipient }
+
       include_context "legacy_hearing"
 
       describe "#cancellation" do
@@ -1445,6 +1477,7 @@ describe HearingMailer do
     end
 
     context "with legacy video hearing" do
+      include_context "representative_hearing_email_recipient"
       include_context "legacy_hearing"
 
       describe "#reminder" do
@@ -1463,6 +1496,7 @@ describe HearingMailer do
     end
 
     context "with legacy central hearing" do
+      include_context "representative_hearing_email_recipient"
       include_context "legacy_central_hearing"
 
       describe "#reminder" do
