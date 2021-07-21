@@ -15,7 +15,7 @@ class SentHearingEmailEvent < CaseflowRecord
   # appellant.
   RECIPIENT_ROLES = HearingEmailRecipient::RECIPIENT_TITLES.keys.append(:veteran)
 
-  # Allows all keys specified in `MailRecipient::RECIPIENT_TITLES`
+  # Allows all keys specified in `HearingEmailRecipient::RECIPIENT_TITLES`
   enum recipient_role: RECIPIENT_ROLES.map { |key| [key, key.to_s] }.to_h,
        _prefix: :sent_to
 
