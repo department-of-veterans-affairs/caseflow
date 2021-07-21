@@ -157,7 +157,7 @@ export const CaseDetailsView = (props) => {
     appeal.appellantType !== 'VeteranClaimant' && props.featureToggles.edit_unrecognized_appellant;
 
   const supportCavcRemand =
-    currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand && !appeal.isLegacyAppeal;
+  currentUserIsOnCavcLitSupport && !appeal.isLegacyAppeal;
 
   const hasSubstitution = appeal.substitutions?.length;
   const supportSubstituteAppellant = shouldSupportSubstituteAppellant({
