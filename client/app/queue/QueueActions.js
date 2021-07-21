@@ -71,13 +71,6 @@ export const fetchJudges = () => (dispatch) => {
   });
 };
 
-export const clearAppealFromStore = (appealId) => ({
-  type: ACTIONS.CLEAR_APPEAL_FROM_STORE,
-  payload: {
-    appealId
-  }
-});
-
 export const receiveNewDocumentsForAppeal = ({ appealId, newDocuments }) => ({
   type: ACTIONS.RECEIVE_NEW_FILES_FOR_APPEAL,
   payload: {

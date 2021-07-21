@@ -16,7 +16,7 @@ import { resetSuccessMessages,
   showSuccessMessage,
 } from '../uiReducer/uiActions';
 import ApiUtil from '../../util/ApiUtil';
-import { clearAppealFromStore } from '../QueueActions';
+import { clearAppealDetails } from '../QueueActions';
 
 const EditAppellantInformation = ({ appealId }) => {
   const dispatch = useDispatch();
@@ -46,7 +46,7 @@ const EditAppellantInformation = ({ appealId }) => {
         detail,
       };
 
-      dispatch(clearAppealFromStore(appealId));
+      dispatch(clearAppealDetails(appealId));
       dispatch(showSuccessMessage(successMessage));
       push(`/queue/appeals/${appealId}`);
     },
