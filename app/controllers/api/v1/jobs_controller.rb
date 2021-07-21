@@ -20,7 +20,7 @@ class Api::V1::JobsController < Api::ApplicationController
     "prepare_establish_claim" => PrepareEstablishClaimTasksJob,
     "push_priority_appeals_to_judges" => PushPriorityAppealsToJudgesJob,
     "reassign_old_tasks" => ReassignOldTasksJob,
-    "send_reminder_emails_job" => VirtualHearings::SendReminderEmailsJob,
+    "send_reminder_emails_job" => Hearings::SendReminderEmailsJob,
     "retrieve_documents_for_reader" => RetrieveDocumentsForReaderJob,
     "set_appeal_age_aod" => SetAppealAgeAodJob,
     "stats_collector" => StatsCollectorJob,
