@@ -42,10 +42,8 @@ const EditAppellantInformation = ({ appealId }) => {
 
     setLoading(true);
 
-    ApiUtil.patch(`/unrecognized_appellants/${appellantId}`, { data: appellantPayload }).then(() => {
-      const appellantName = formData.partyType && formData.partyType === 'organization' ?
-        formData.name :
-        `${formData.firstName } ${ formData.lastName}`;
+    ApiUtil.patch(`/unrecognized_appellants/${appellantId}`, { data: appellantPayload }).then((response) => {
+      const appellantName = response.body.unrecognized_party_detail.name;
 
       const title = sprintf(COPY.EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_TITLE, { appellantName });
       const detail = COPY.EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_MESSAGE;
