@@ -59,6 +59,12 @@ export const initialState = {
   queueConfig: {}
 };
 
+const clearAppealFromStore = (state, action) => {
+  return update(state, {
+    appealDetails: { $unset: action.payload.appealId }
+  });
+}
+
 const receiveQueueDetails = (state, action) => {
   return update(state, {
     appeals: {
@@ -766,7 +772,8 @@ export const workQueueReducer = createReducer({
   [ACTIONS.STARTED_LOADING_APPEAL_VALUE]: startedLoadingAppealValue,
   [ACTIONS.RECEIVE_APPEAL_VALUE]: receiveAppealValue,
   [ACTIONS.ERROR_ON_RECEIVE_APPEAL_VALUE]: errorOnReceiveAppealValue,
-  [ACTIONS.SET_QUEUE_CONFIG]: setQueueConfig
+  [ACTIONS.SET_QUEUE_CONFIG]: setQueueConfig,
+  [ACTIONS.CLEAR_APPEAL_FROM_STORE]: clearAppealFromStore,
 });
 
 const rootReducer = combineReducers({

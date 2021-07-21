@@ -9,7 +9,6 @@ import { sprintf } from 'sprintf-js';
 import { ClaimantForm as EditClaimantForm } from '../../intake/addClaimant/ClaimantForm';
 import { useClaimantForm } from '../../intake/addClaimant/utils';
 import Button from '../../components/Button';
-import { cancel } from './editAppellantInformationSlice';
 import COPY, { EDIT_CLAIMANT_PAGE_DESCRIPTION } from 'app/../COPY';
 import { appealWithDetailSelector } from '../selectors';
 import { mapAppellantDataFromApi, mapAppellantDataToApi } from './utils';
@@ -17,6 +16,7 @@ import { resetSuccessMessages,
   showSuccessMessage,
 } from '../uiReducer/uiActions';
 import ApiUtil from '../../util/ApiUtil';
+import { clearAppealFromStore } from '../QueueActions';
 
 const EditAppellantInformation = ({ appealId }) => {
   const dispatch = useDispatch();
@@ -46,14 +46,15 @@ const EditAppellantInformation = ({ appealId }) => {
         detail,
       };
 
+      dispatch(clearAppealFromStore(appealId));
       dispatch(showSuccessMessage(successMessage));
       push(`/queue/appeals/${appealId}`);
     },
     // CASEFLOW-1925
     (error) => {
+      // eslint-disable-next-line no-console
       console.log(error);
-    }
-    );
+    });
   };
 
   const methods = useClaimantForm({ defaultValues: mapAppellantDataFromApi(appeal) }, true);
