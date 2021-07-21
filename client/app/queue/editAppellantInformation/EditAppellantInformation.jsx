@@ -28,7 +28,6 @@ const EditAppellantInformation = ({ appealId }) => {
   useEffect(() => {
     dispatch(resetSuccessMessages());
   }, []);
-  const { goBack } = useHistory();
 
   const [loading, setLoading] = useState(false);
 
@@ -40,8 +39,9 @@ const EditAppellantInformation = ({ appealId }) => {
   const handleUpdate = (formData) => {
     const appellantId = appeal.unrecognizedAppellantId;
     const appellantPayload = mapAppellantDataToApi(formData);
+
     setLoading(true);
-    
+
     ApiUtil.patch(`/unrecognized_appellants/${appellantId}`, { data: appellantPayload }).then(() => {
       const appellantName = formData.partyType && formData.partyType === 'organization' ?
         formData.name :
@@ -66,13 +66,6 @@ const EditAppellantInformation = ({ appealId }) => {
     });
   };
 
-  const methods = useClaimantForm({ defaultValues: mapAppellantDataFromApi(appeal) }, true);
-  const {
-    handleSubmit,
-  } = methods;
-
-  const handleBack = () => goBack();
-
   const editAppellantHeader = 'Edit Appellant Information';
   const editAppellantDescription = EDIT_CLAIMANT_PAGE_DESCRIPTION;
 
@@ -94,7 +87,7 @@ const EditAppellantInformation = ({ appealId }) => {
         Save
       </Button>
       <Button
-        onClick={handleBack}
+        onClick={goBack}
         classNames={['cf-right-side', 'usa-button-secondary']}
         styling={{ style: { marginRight: '1em' } }}
       >
