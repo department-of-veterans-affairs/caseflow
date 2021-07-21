@@ -120,8 +120,8 @@ describe VirtualHearings::CreateConferenceJob do
           virtual_hearing: instance_of(VirtualHearing)
         }
 
-        allow(VirtualHearingMailer).to receive(:confirmation).with(any_args).and_call_original
-        allow(VirtualHearingMailer).to(
+        allow(HearingMailer).to receive(:confirmation).with(any_args).and_call_original
+        allow(HearingMailer).to(
           receive(:confirmation)
             .with(expected_mailer_args)
             .and_raise(GovDelivery::TMS::Request::Error.new(500))
