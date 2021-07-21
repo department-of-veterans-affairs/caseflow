@@ -23,6 +23,9 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                 "emailAddress": undefined,
                 "firstName": undefined,
                 "lastName": undefined,
+                "listedAttorney": Object {
+                  "value": "not_listed",
+                },
                 "middleName": undefined,
                 "name": "Abellona Valtas",
                 "partyType": undefined,
@@ -115,30 +118,6 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                     type="text"
                     value=""
                   />,
-                },
-                "partyType": Object {
-                  "options": Array [
-                    Object {
-                      "ref": <input
-                        id="partyType_organization"
-                        name="partyType"
-                        type="radio"
-                        value="organization"
-                      />,
-                    },
-                    Object {
-                      "ref": <input
-                        id="partyType_individual"
-                        name="partyType"
-                        type="radio"
-                        value="individual"
-                      />,
-                    },
-                  ],
-                  "ref": Object {
-                    "name": "partyType",
-                    "type": "radio",
-                  },
                 },
                 "phoneNumber": Object {
                   "ref": <input
@@ -325,6 +304,9 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                           "emailAddress": undefined,
                           "firstName": undefined,
                           "lastName": undefined,
+                          "listedAttorney": Object {
+                            "value": "not_listed",
+                          },
                           "middleName": undefined,
                           "name": "Abellona Valtas",
                           "partyType": undefined,
@@ -417,30 +399,6 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                               type="text"
                               value=""
                             />,
-                          },
-                          "partyType": Object {
-                            "options": Array [
-                              Object {
-                                "ref": <input
-                                  id="partyType_organization"
-                                  name="partyType"
-                                  type="radio"
-                                  value="organization"
-                                />,
-                              },
-                              Object {
-                                "ref": <input
-                                  id="partyType_individual"
-                                  name="partyType"
-                                  type="radio"
-                                  value="individual"
-                                />,
-                              },
-                            ],
-                            "ref": Object {
-                              "name": "partyType",
-                              "type": "radio",
-                            },
                           },
                           "phoneNumber": Object {
                             "ref": <input
@@ -2404,88 +2362,6 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                   </SearchableDropdown>
                 </Controller>
                 <br />
-                <RadioField
-                  className={
-                    Array [
-                      "usa-fieldset-inputs",
-                    ]
-                  }
-                  inputRef={[Function]}
-                  label="Is the claimant an organization or individual?"
-                  name="partyType"
-                  options={
-                    Array [
-                      Object {
-                        "displayText": "Organization",
-                        "value": "organization",
-                      },
-                      Object {
-                        "displayText": "Individual",
-                        "value": "individual",
-                      },
-                    ]
-                  }
-                  required={false}
-                  strongLabel={true}
-                  vertical={true}
-                >
-                  <fieldset
-                    className="usa-fieldset-inputs cf-form-radio "
-                  >
-                    <legend
-                      className=""
-                    >
-                      <strong>
-                        <span>
-                          Is the claimant an organization or individual?
-                           
-                        </span>
-                      </strong>
-                    </legend>
-                    <div
-                      className="cf-form-radio-options"
-                    >
-                      <div
-                        className="cf-form-radio-option"
-                        key="partyType-organization-0"
-                      >
-                        <input
-                          disabled={false}
-                          id="partyType_organization"
-                          name="partyType"
-                          onChange={[Function]}
-                          type="radio"
-                          value="organization"
-                        />
-                        <label
-                          className=""
-                          htmlFor="partyType_organization"
-                        >
-                          Organization
-                        </label>
-                      </div>
-                      <div
-                        className="cf-form-radio-option"
-                        key="partyType-individual-1"
-                      >
-                        <input
-                          disabled={false}
-                          id="partyType_individual"
-                          name="partyType"
-                          onChange={[Function]}
-                          type="radio"
-                          value="individual"
-                        />
-                        <label
-                          className=""
-                          htmlFor="partyType_individual"
-                        >
-                          Individual
-                        </label>
-                      </div>
-                    </div>
-                  </fieldset>
-                </RadioField>
                 <br />
                 <styled.div>
                   <div
@@ -2728,6 +2604,9 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                           "emailAddress": undefined,
                           "firstName": undefined,
                           "lastName": undefined,
+                          "listedAttorney": Object {
+                            "value": "not_listed",
+                          },
                           "middleName": undefined,
                           "name": "Abellona Valtas",
                           "partyType": undefined,
@@ -2820,30 +2699,6 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                               type="text"
                               value=""
                             />,
-                          },
-                          "partyType": Object {
-                            "options": Array [
-                              Object {
-                                "ref": <input
-                                  id="partyType_organization"
-                                  name="partyType"
-                                  type="radio"
-                                  value="organization"
-                                />,
-                              },
-                              Object {
-                                "ref": <input
-                                  id="partyType_individual"
-                                  name="partyType"
-                                  type="radio"
-                                  value="individual"
-                                />,
-                              },
-                            ],
-                            "ref": Object {
-                              "name": "partyType",
-                              "type": "radio",
-                            },
                           },
                           "phoneNumber": Object {
                             "ref": <input
@@ -3170,6 +3025,9 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                                 "emailAddress": undefined,
                                 "firstName": undefined,
                                 "lastName": undefined,
+                                "listedAttorney": Object {
+                                  "value": "not_listed",
+                                },
                                 "middleName": undefined,
                                 "name": "Abellona Valtas",
                                 "partyType": undefined,
@@ -3262,30 +3120,6 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                                     type="text"
                                     value=""
                                   />,
-                                },
-                                "partyType": Object {
-                                  "options": Array [
-                                    Object {
-                                      "ref": <input
-                                        id="partyType_organization"
-                                        name="partyType"
-                                        type="radio"
-                                        value="organization"
-                                      />,
-                                    },
-                                    Object {
-                                      "ref": <input
-                                        id="partyType_individual"
-                                        name="partyType"
-                                        type="radio"
-                                        value="individual"
-                                      />,
-                                    },
-                                  ],
-                                  "ref": Object {
-                                    "name": "partyType",
-                                    "type": "radio",
-                                  },
                                 },
                                 "phoneNumber": Object {
                                   "ref": <input
