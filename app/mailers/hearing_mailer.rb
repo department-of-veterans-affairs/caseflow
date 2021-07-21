@@ -56,7 +56,7 @@ class HearingMailer < ActionMailer::Base
     @virtual_hearing = virtual_hearing
 
     @test_link = virtual_hearing&.test_link(mail_recipient.title)
-    @link = hearing || link
+    @link = virtual_hearing.present? ? link : nil
     @hearing = hearing || virtual_hearing.hearing
     @representative_reminder =
       virtual_hearing.nil? && mail_recipient.title == MailRecipient::RECIPIENT_TITLES[:representative]
