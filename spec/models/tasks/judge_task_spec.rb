@@ -151,13 +151,13 @@ describe JudgeTask, :all_dbs do
           create(:ama_judge_decision_review_task, assigned_to: judge, parent: create(:root_task))
         end
 
-        it "returns the dispatch action" do
+        it "returns the dispatch action along with special issues" do
           expect(subject).to eq(
             [
               Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
               Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h,
               Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
-              Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.to_h,
+              Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT_SP_ISSUES.to_h,
               Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h
             ].map { |action| subject_task.build_action_hash(action, judge) }
           )
@@ -197,10 +197,10 @@ describe JudgeTask, :all_dbs do
                assigned_to: judge3)
       end
 
-      it "should show pulac cerullo task action" do
+      it "should show pulac cerullo task action along with special actions" do
         expect(task.additional_available_actions(user)).to eq(
           [Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h,
-           Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.to_h,
+           Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT_SP_ISSUES.to_h,
            Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h]
         )
       end
