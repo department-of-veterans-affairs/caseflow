@@ -13,20 +13,20 @@ namespace :emails do
       )
 
       recipients = [
-        MailRecipient.new(
+        EmailRecipientInfo.new(
           name: "Appellant", # Can't create a fake appellant without saving to the DB
-          email: hearing.virtual_hearing.appellant_email,
-          title: MailRecipient::RECIPIENT_TITLES[:appellant]
+          hearing_email_recipient: hearing.appellant_recipient,
+          title: HearingEmailRecipient::RECIPIENT_TITLES[:appellant]
         ),
-        MailRecipient.new(
+        EmailRecipientInfo.new(
           name: hearing.judge.full_name,
-          email: hearing.virtual_hearing.judge_email,
-          title: MailRecipient::RECIPIENT_TITLES[:judge]
+          HearingEmailRecipient: hearing.judge_recipient,
+          title: HearingEmailRecipient::RECIPIENT_TITLES[:judge]
         ),
-        MailRecipient.new(
+        EmailRecipientInfo.new(
           name: "Power of Attorney", # POA name is too complicated to fake for this
-          email: hearing.virtual_hearing.representative_email,
-          title: MailRecipient::RECIPIENT_TITLES[:representative]
+          HearingEmailRecipient: hearing.representative_recipient,
+          title: HearingEmailRecipient::RECIPIENT_TITLES[:representative]
         )
       ]
 
@@ -39,7 +39,7 @@ namespace :emails do
         ].each do |func|
           email = HearingMailer.send(
             func,
-            mail_recipient: recipient,
+            email_recipient: recipient,
             virtual_hearing: hearing.virtual_hearing
           )
           email_body = email.html_part&.decoded || email.body
@@ -92,20 +92,20 @@ namespace :emails do
       end
 
       recipients = [
-        MailRecipient.new(
+        EmailRecipientInfo.new(
           name: "Appellant Full Name", # Can't create a fake appellant without saving to the DB
-          email: "appellant@test.va.gov",
-          title: MailRecipient::RECIPIENT_TITLES[:appellant]
+          hearing_email_recipient: hearing.appellant_recipient,
+          title: HearingEmailRecipient::RECIPIENT_TITLES[:appellant]
         ),
-        MailRecipient.new(
+        EmailRecipientInfo.new(
           name: hearing.judge.full_name,
-          email: "judge@test.va.gov",
-          title: MailRecipient::RECIPIENT_TITLES[:judge]
+          hearing_email_recipient: hearing.judge_recipient,
+          title: HearingEmailRecipient::RECIPIENT_TITLES[:judge]
         ),
-        MailRecipient.new(
+        EmailRecipientInfo.new(
           name: "Power of Attorney", # POA name is too complicated to fake for this
-          email: "poa@test.va.gov",
-          title: MailRecipient::RECIPIENT_TITLES[:representative]
+          hearing_email_recipient: hearing.representative_recipient,
+          title: HearingEmailRecipient::RECIPIENT_TITLES[:representative]
         )
       ]
 
@@ -113,7 +113,7 @@ namespace :emails do
         email = HearingMailer.send(
           :reminder,
           hearing: (args.request_type != :virtual) ? hearing : nil,
-          mail_recipient: recipient,
+          email_recipient: recipient,
           virtual_hearing: hearing.virtual_hearing
         )
         email_body = email.html_part&.decoded || email.body
