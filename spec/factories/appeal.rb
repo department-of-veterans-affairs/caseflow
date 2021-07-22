@@ -43,6 +43,14 @@ FactoryBot.define do
           decision_review: appeal,
           type: claimant_class_name
         )
+      elsif evaluator.has_unrecognized_appellant
+        create(
+          :claimant,
+          :with_unrecognized_appellant_detail,
+          participant_id: appeal.veteran.participant_id,
+          decision_review: appeal,
+          type: "OtherClaimant"
+        )
       elsif !Claimant.exists?(participant_id: appeal.veteran.participant_id, decision_review: appeal)
         create(
           :claimant,
@@ -93,6 +101,10 @@ FactoryBot.define do
     transient do
       number_of_claimants { nil }
       issue_count { nil }
+    end
+
+    transient do
+      has_unrecognized_appellant { false }
     end
 
     transient do
