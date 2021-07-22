@@ -31,6 +31,17 @@ describe EngineeringTask, :postgres do
       expect(new_task.assigned_to).to eq sys_admin
     end
 
+    context "when appeal is ready for dispatch but engineering work is needed first" do
+      let(:appeal) { create(:appeal, :at_bva_dispatch) }
+      let(:parent_task) { appeal.tasks.find_by(type: :BvaDispatchTask, assigned_to_type: "User") }
+
+      it "blocks parent BvaDispatchTask" do
+        new_task = subject
+        expect(parent_task.status).to eq "on_hold"
+        expect(new_task.status).to eq "assigned"
+      end
+    end
+
     context "parent is not provided" do
       let(:parent_task) { nil }
       it "fails to create task" do
@@ -48,6 +59,34 @@ describe EngineeringTask, :postgres do
       expect(task.instructions).to eq ["first instruction"]
       task.append_instruction("second instruction")
       expect(task.instructions).to eq ["first instruction", "second instruction"]
+    end
+  end
+
+  describe "#reassign" do
+    subject { task.reassign(new_assignee) }
+
+    let(:appeal) { create(:appeal, :at_bva_dispatch) }
+    let(:parent_task) { appeal.tasks.find_by(type: :BvaDispatchTask, assigned_to_type: "User") }
+    let(:new_assignee) { create(:user) }
+
+    it "cancels original task and reassigns a new task to specified user" do
+      expect(task.status).to eq "assigned"
+      expect(task.assigned_to).to eq User.system_user
+      reassigned_task = subject
+      expect(task.status).to eq "cancelled"
+      expect(task.assigned_to).to eq User.system_user
+      expect(reassigned_task.status).to eq "assigned"
+      expect(reassigned_task.assigned_to).to eq new_assignee
+
+      task.append_instruction("reassigned to #{new_assignee.css_id}")
+      expect(task.instructions).to eq ["reassigned to #{new_assignee.css_id}"]
+    end
+
+    context "task is closed" do
+      before { task.cancelled! }
+      it "fails reassignment" do
+        expect { subject }.to raise_error(/Cannot reassign/)
+      end
     end
   end
 

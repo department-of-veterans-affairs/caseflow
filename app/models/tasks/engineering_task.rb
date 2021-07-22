@@ -11,7 +11,7 @@
 # Tech Spec: https://github.com/department-of-veterans-affairs/caseflow/issues/16445
 
 class EngineeringTask < Task
-  before_validation :set_assignee
+  before_validation :set_default_assignee
 
   validates :parent, presence: true, on: :create
 
@@ -37,9 +37,20 @@ class EngineeringTask < Task
     TASK_ACTIONS
   end
 
+  def reassign(user)
+    fail "Cannot reassign #{status} task!" if closed?
+
+    # To prevent parent task's status from changing, create new task before cancelling self
+    dup.tap do |dup_task|
+      dup_task.assigned_to = user
+      dup_task.save!
+      cancelled!
+    end
+  end
+
   private
 
-  def set_assignee
+  def set_default_assignee
     self.assigned_to = User.system_user if assigned_to.nil?
   end
 end
