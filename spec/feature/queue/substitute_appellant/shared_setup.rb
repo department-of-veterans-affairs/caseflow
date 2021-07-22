@@ -120,7 +120,7 @@ RSpec.shared_examples("fill substitution form") do
       # example appeal has an evidence submission task
       if docket_type.eql?("evidence_submission")
         expect(page).to have_css(".usa-table-borderless.css-nil tbody tr td", text: "Evidence Submission Window")
-        find("div", class: "checkbox-wrapper-taskIds[#{evidence_task_id}]").click
+        find("div", class: "checkbox-wrapper-taskIds[#{evidence_task_id}]").find("label").click
       end
 
       page.find("button", text: "Continue").click
@@ -151,6 +151,17 @@ RSpec.shared_examples("fill substitution form") do
       appellant_substitution = AppellantSubstitution.find_by(source_appeal_id: appeal.id)
       new_appeal = appellant_substitution.target_appeal
       expect(page).to have_current_path("/queue/appeals/#{new_appeal.uuid}")
+
+      # Verify that the Evidence Submission Window was stored correctly
+      if docket_type.eql?("evidence_submission")
+        # Ensure that our new window ends on specified date, accounting for user's time zone (not based on midnight UTC)
+        window_task = EvidenceSubmissionWindowTask.find_by(appeal: new_appeal)
+        expect(window_task.timer_ends_at).to be_between(
+          evidence_submission_window_end_time - 1.day,
+          evidence_submission_window_end_time + 1.day
+        )
+        expect(window_task.timer_ends_at.utc_offset).to eql(Time.zone.now.utc_offset)
+      end
 
       # New appeal should have the same docket
       expect(page).to have_content appeal.stream_docket_number
