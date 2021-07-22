@@ -25,7 +25,7 @@ FactoryBot.define do
 
     trait :judge_hearing_email_recipient do
       initialize_with { JudgeHearingEmailRecipient.new(attributes) }
-      type {JudgeHearingEmailRecipient.name }
+      type { JudgeHearingEmailRecipient.name }
     end
   end
 end

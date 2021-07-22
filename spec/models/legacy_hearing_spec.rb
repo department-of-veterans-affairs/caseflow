@@ -737,7 +737,7 @@ describe LegacyHearing, :all_dbs do
       let(:appellant_tz) { "America/New_York" }
       let(:email_address) { appellant_email }
       let(:timezone) { appellant_tz }
-      let(:recipient_role) { "veteran" }
+      let(:recipient_role) { HearingEmailRecipient::RECIPIENT_ROLES[:veteran] }
 
       subject { hearing.reload.appellant_recipient }
 
