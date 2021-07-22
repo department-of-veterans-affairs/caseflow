@@ -692,6 +692,7 @@ describe LegacyHearing, :all_dbs do
       end
 
       it "backfills virtual hearing data and returns recipient", :aggregate_failures do
+        expect(hearing.reload.email_recipients.empty?).to eq(true)
         expect(subject).not_to eq(nil)
         expect(subject.email_address).to eq(email_address)
         expect(subject.timezone).to eq(timezone)
