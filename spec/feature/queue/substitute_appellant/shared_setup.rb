@@ -106,6 +106,11 @@ RSpec.shared_examples("fill substitution form") do
         expect(evidence_submission_task.closed_at).to_not be_nil
       end
 
+      if docket_type.eql?("hearing")
+        #select scheduled hearing task
+        #expect page to display alert
+      end
+
       expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_TASK_SELECTION_TITLE)
       expect(page).to have_text("Listed below are all the tasks from the original appeal")
       expect(page).to have_css(".usa-table-borderless.css-nil")
