@@ -3,7 +3,7 @@
 class CreateHearingEmailRecipient < Caseflow::Migration
   def change
     create_table :hearing_email_recipients,
-                 comment: "Add reminder email recipients for non-virtual hearings" do |t|
+                 comment: "Recipients of hearings-related emails" do |t|
 
       t.belongs_to :hearing,
                    polymorphic: true,
