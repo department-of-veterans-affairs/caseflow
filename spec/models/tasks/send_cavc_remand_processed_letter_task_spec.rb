@@ -27,7 +27,7 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
       let!(:parent_task) { create(:send_cavc_remand_processed_letter_task, appeal: appeal) }
       it "creates child task with defaults" do
         new_task = subject
-        expect(new_task.valid?)
+        expect(new_task.valid?).to eq true
         expect(new_task.errors.messages[:parent]).to be_empty
 
         expect(appeal.tasks).to include new_task
