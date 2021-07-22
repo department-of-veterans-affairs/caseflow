@@ -10,7 +10,7 @@ import { ClaimantForm as EditClaimantForm } from '../../intake/addClaimant/Claim
 import { useClaimantForm } from '../../intake/addClaimant/utils';
 import Button from '../../components/Button';
 import Alert from '../../components/Alert'
-import COPY, { EDIT_CLAIMANT_PAGE_DESCRIPTION } from 'app/../COPY';
+import COPY from 'app/../COPY';
 import { appealWithDetailSelector } from '../selectors';
 import { mapAppellantDataFromApi, mapAppellantDataToApi } from './utils';
 import { resetSuccessMessages,
@@ -67,7 +67,7 @@ const EditAppellantInformation = ({ appealId }) => {
   };
 
   const editAppellantHeader = 'Edit Appellant Information';
-  const editAppellantDescription = EDIT_CLAIMANT_PAGE_DESCRIPTION;
+  const editAppellantDescription = COPY.EDIT_CLAIMANT_PAGE_DESCRIPTION;
 
   return <div>
     <FormProvider {...methods}>
@@ -75,7 +75,7 @@ const EditAppellantInformation = ({ appealId }) => {
         {error === true && 
           <Alert 
             type="error" 
-            title="Unable to edit appellant."
+            title={COPY.EDIT_UNRECOGNIZED_APPELLANT_FAILURE_ALERT_TITLE}
             message={
               <Fragment>Please try again and if this error persists,
                 <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer"> submit a YourIT ticket</a>

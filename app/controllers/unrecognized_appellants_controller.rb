@@ -9,6 +9,7 @@ class UnrecognizedAppellantsController < ApplicationController
     else
       render json: unrecognized_appellant, status: :bad_request
     end
+  rescue StandardError
   end
 
   private

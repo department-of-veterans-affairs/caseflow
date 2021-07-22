@@ -36,6 +36,7 @@ feature "Unrecognized appellants", :postgres do
 
       fill_in "First name", with: "Updated First Name"
       click_on "Save"
+
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
       ua = appeal.claimant.unrecognized_appellant
@@ -70,6 +71,18 @@ feature "Unrecognized appellants", :postgres do
       expect(page).to have_content(format(COPY::EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_TITLE
                                           .tr("(", "{").gsub(")s", "}"), appellantName: ua.name))
       expect(page).to have_content(COPY::EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_MESSAGE)
+    end
+
+    it "renders error alert when update fails" do
+      allow_any_instance_of(UnrecognizedAppellantsController).to receive(:update).and_raise(StandardError)
+
+      visit "/queue/appeals/#{appeal.uuid}"
+      click_on "Edit Information"
+
+      expect(page).to have_content("Edit Appellant Information")
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}/edit_appellant_information")
+      find("button", text: "Save").click
+      expect(page).to have_content(COPY::EDIT_UNRECOGNIZED_APPELLANT_FAILURE_ALERT_TITLE)
     end
   end
 end
