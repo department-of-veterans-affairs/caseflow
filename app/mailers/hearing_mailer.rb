@@ -96,7 +96,7 @@ class HearingMailer < ActionMailer::Base
   end
 
   def appellant_name
-    @virtual_hearing&.hearing&.appeal&.appellant_or_veteran_name
+    @hearing.appeal.appellant_or_veteran_name
   end
 
   def reminder_subject
