@@ -2203,6 +2203,75 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
 
+  describe "POA/VSO restricted visibility" do
+    let(:appeal) { create(:appeal) }
+
+    RSpec.shared_context("with restrict_poa_visibility feature toggle") do
+      before { FeatureToggle.enable!(:restrict_poa_visibility) }
+      after { FeatureToggle.disable!(:restrict_poa_visibility) }
+    end
+
+    RSpec.shared_examples("access Case Details") do
+      it "should view Case Details page" do
+        visit "/queue/appeals/#{appeal.uuid}"
+      end
+    end
+
+    RSpec.shared_examples("vso restricted") do
+      it "has VSO visibility alert" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        expect(page).to have_content(COPY::CASE_DETAILS_VSO_VISIBILITY_ALERT_TITLE)
+        expect(page).to have_content(COPY::CASE_DETAILS_VSO_VISIBILITY_ALERT_MESSAGE)
+      end
+    end
+
+    RSpec.shared_examples("vso unrestricted") do
+      it "does not have VSO visibility alert" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        expect(page).to_not have_content(COPY::CASE_DETAILS_VSO_VISIBILITY_ALERT_TITLE)
+        expect(page).to_not have_content(COPY::CASE_DETAILS_VSO_VISIBILITY_ALERT_MESSAGE)
+      end
+    end
+
+    context "as vso user" do
+      let(:user) { create(:user, :vso_role) }
+
+      before do
+        User.authenticate!(user: user)
+      end
+
+      context "with feature toggle" do
+        include_context "with restrict_poa_visibility feature toggle"
+
+        it_should_behave_like "vso restricted"
+      end
+
+      context "without feature toggle" do
+        it_should_behave_like "vso unrestricted"
+      end
+    end
+
+    context "as non-vso user" do
+      let(:user) { create(:default_user) }
+
+      before do
+        User.authenticate!(user: user)
+      end
+
+      context "with feature toggle" do
+        include_context "with restrict_poa_visibility feature toggle"
+
+        it_should_behave_like "vso unrestricted"
+      end
+
+      context "without feature toggle" do
+        it_should_behave_like "vso unrestricted"
+      end
+    end
+  end
+
   describe "case title details" do
     shared_examples "show hearing request type" do
       it "displays hearing request type" do

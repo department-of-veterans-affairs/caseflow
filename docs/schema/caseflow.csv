@@ -1103,8 +1103,8 @@ transcriptions,uploaded_to_vbms_date,date,,,,,,Date when the hearing transcripti
 unrecognized_appellants,,,,,,,,Unrecognized non-veteran appellants
 unrecognized_appellants,claimant_id,integer (8) ∗ FK,x,,x,,x,The OtherClaimant record associating this appellant to a DecisionReview
 unrecognized_appellants,created_at,datetime ∗,x,,,,,
-unrecognized_appellants,created_by_id,integer (8) FK,,,x,,,The ID of the user that created this version of the unrecognized appellant
-unrecognized_appellants,current_version_id,integer (8) FK,,,x,,,The current version ID for this unrecognized appellant
+unrecognized_appellants,created_by_id,integer (8) ∗ FK,x,,x,,,The user that created this version of the unrecognized appellant
+unrecognized_appellants,current_version_id,integer (8) FK,,,x,,,The current version for this unrecognized appellant
 unrecognized_appellants,id,integer (8) PK,x,x,,,,
 unrecognized_appellants,poa_participant_id,string,,,,,,"Identifier of the appellant's POA, if they have a CorpDB participant_id"
 unrecognized_appellants,relationship,string ∗,x,,,,,"Relationship to veteran. Allowed values: attorney, child, spouse, other"
