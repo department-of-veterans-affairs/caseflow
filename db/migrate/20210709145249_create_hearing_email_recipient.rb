@@ -18,7 +18,7 @@ class CreateHearingEmailRecipient < Caseflow::Migration
                    comment: "The recipient's timezone"
 
       t.string     :type,
-                   comment: "the subclass name (i.e. AppellantHearingEmailRecipient)"
+                   comment: "The subclass name (i.e. AppellantHearingEmailRecipient)"
 
       t.boolean    :email_sent,
                    default: false,
