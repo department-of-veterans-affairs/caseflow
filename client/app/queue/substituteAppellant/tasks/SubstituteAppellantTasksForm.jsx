@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -16,7 +16,7 @@ import CheckoutButtons from 'app/queue/docketSwitch/grant/CheckoutButtons';
 import { KeyDetails } from './KeyDetails';
 import { pageHeader, sectionStyle } from '../styles';
 import { TaskSelectionTable } from './TaskSelectionTable';
-import { disabledTasksBasedOnSelections } from "app/queue/substituteAppellant/tasks/utils";
+import { disabledTasksBasedOnSelections } from 'app/queue/substituteAppellant/tasks/utils';
 
 const schema = yup.object().shape({
   taskIds: yup.array(yup.number()),
@@ -48,7 +48,7 @@ export const SubstituteAppellantTasksForm = ({
   const selectedTaskIds = watch('taskIds');
 
   const adjustedTasks = useMemo(() =>
-    disabledTasksBasedOnSelections({tasks, selectedTaskIds}),
+    disabledTasksBasedOnSelections({ tasks, selectedTaskIds }),
   [tasks, selectedTaskIds]
   );
 
