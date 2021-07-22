@@ -11,7 +11,6 @@ class ETLBuilderJob < CaseflowJob
 
     sweep_etl
     build_etl
-    datadog_report_runtime(metric_group_name: "etl_builder_job")
   end
 
   private

@@ -109,6 +109,8 @@
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL_LINK": "View all cases",
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL_POST_LINK": " to see other cases associated with this Veteran.",
   "CASE_DETAILS_UNRECOGNIZED_POA": "This POA is not listed in VBMS. To update this information, please submit an admin action to the VLJ Support team.",
+  "CASE_DETAILS_UNRECOGNIZED_APPELLANT": "This appellant is not listed in VBMS. To update this information, please edit directly in Caseflow.",
+  "CASE_DETAILS_UNRECOGNIZED_ATTORNEY_APPELLANT": "This appellant data comes from VBMS. To edit this information, please submit an action to the VLJ Support team.",
   "CASE_DETAILS_NO_POA": "VA Form 21-22 was not received at Intake. To add the appellant's POA, please submit an admin action to the VLJ Support team.",
   "CASE_DETAILS_VETERAN_ADDRESS_SOURCE": "Veteran information comes from VBMS. To update the veteran's information, please send a request to the VLJ support staff.",
   "CASE_DETAILS_UNABLE_TO_LOAD": "We're unable to load this information. If the problem persists, please submit feedback through Caseflow",
@@ -122,6 +124,8 @@
   "CASE_DETAILS_POA_REFRESH_BUTTON_EXPLANATION": "To retrieve the latest POA information, please click the \"Refresh POA\" button.",
   "CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY": "Edit NOD Date",
   "CASE_DETAILS_FNOD_BANNER_TITLE": "Veteran Date of Death Reported",
+  "CASE_DETAILS_VSO_VISIBILITY_ALERT_TITLE": "Information Accuracy and Visibility Update",
+  "CASE_DETAILS_VSO_VISIBILITY_ALERT_MESSAGE": "In order to provide only timely and accurate appeals information, some changes have been made in Caseflow limiting the following: Pre-disposition data and draft decisions are no longer available until decisions have been signed by a VLJ and dispatched.",
   "FNOD_SOURCE": "VBMS",
 
   "CASE_DETAILS_GENDER_FIELD_LABEL": "Gender",
@@ -138,6 +142,9 @@
   "CASE_DETAILS_CAVC_MANDATE_DATE": "Mandate date",
   "CASE_DETAILS_CAVC_FEDERAL_CIRCUIT": "Appealed to Federal Circuit",
   "CASE_DETAILS_CAVC_REMAND_INSTRUCTIONS": "Remand Instructions",
+
+  "EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_TITLE": "You have successfully updated %(appellantName)s's information",
+  "EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_MESSAGE": "If you need to make further changes, select 'Edit information' in the About the Appellant section.",
 
   "POST_DISPATCH_TITLE": "Post-dispatch actions",
   "ADD_CAVC_BUTTON": "+ Add CAVC Remand",
@@ -833,6 +840,7 @@
   "ADD_CLAIMANT_MODAL_TITLE": "Add Claimant",
   "ADD_CLAIMANT_MODAL_DESCRIPTION": "To add a claimant, select their relationship to the Veteran and type to search for their name. **Please note:** at this time, you are only able to add attorneys as claimants.\n\nIf you are unable to find the attorney in the list of names below, please cancel the intake and [email](mailto:VACaseflowIntake@va.gov) for assistance. Remember to encrypt any emails that contain PII.",
   "ADD_CLAIMANT_POA_PAGE_DESCRIPTION": "Add the claimant’s POA information based on the VA Form 21-22, so they can be notified of any correspondence sent to the claimant. If you are unable to find their name in the list of options, please select \"Name not listed\" and add their information accordingly.",
+  "EDIT_CLAIMANT_PAGE_DESCRIPTION": "Make any necessary changes to the information and click \"save\" to confirm your changes.",
   "INTAKE_EDIT_WITHDRAW_DATE": "Please include the date the withdrawal was requested",
   "INTAKE_WITHDRAWN_BANNER": "This review will be withdrawn. You can intake these issues as a different type of decision review, if that was requested.",
   "INTAKE_RATING_MAY_BE_PROCESS": "Rating may be in progress",

@@ -96,7 +96,7 @@ import HearingTypeConversionModal from '../hearings/components/HearingTypeConver
 import CavcReviewExtensionRequestModal from './components/CavcReviewExtensionRequestModal';
 import { PrivateRoute } from '../components/PrivateRoute';
 import { EditCavcRemandView } from './cavc/EditCavcRemandView';
-import EditAppellantInformation from '../intakeEdit/components/EditAppellantInformation';
+import EditAppellantInformation from './editAppellantInformation/EditAppellantInformation';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -492,6 +492,13 @@ class QueueApp extends React.PureComponent {
     <AddCavcDatesModal {...props.match.params} />
   );
 
+  routedEditAppellantInformation = (props) => (
+    <EditAppellantInformation
+      appealId={props.match.params.appealId}
+      {...props.match.params}
+    />
+  )
+
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
       'Your Queue' :
@@ -691,7 +698,7 @@ class QueueApp extends React.PureComponent {
               exact
               path="/queue/appeals/:appealId/edit_appellant_information"
               title="Edit Appellant Information | Caseflow"
-              component={EditAppellantInformation}
+              render={this.routedEditAppellantInformation}
             />
 
             <PageRoute

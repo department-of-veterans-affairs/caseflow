@@ -15,8 +15,8 @@ RSpec.describe ClaimantsController, :all_dbs, type: :controller do
       subject { put(:refresh_claimant_poa, params: request_params) }
 
       it "updates poa information from BGS" do
-        expect(BgsPowerOfAttorney).to receive(:find_by)
-          .with(claimant_participant_id: participant_id)
+        expect(BgsPowerOfAttorney).to receive(:find_or_create_by_claimant_participant_id)
+          .with(participant_id)
           .and_return(original_poa)
         expect(original_poa).to receive(:update_cached_attributes!)
         subject
@@ -40,8 +40,8 @@ RSpec.describe ClaimantsController, :all_dbs, type: :controller do
       subject { put(:refresh_claimant_poa, params: request_params) }
 
       it "returns nil" do
-        expect(BgsPowerOfAttorney).to receive(:find_by)
-          .with(claimant_participant_id: participant_id)
+        expect(BgsPowerOfAttorney).to receive(:find_or_create_by_claimant_participant_id)
+          .with(participant_id)
           .and_return(nil)
         expect(subject.status).to eq 200
         expect(JSON.parse(subject.body)["poa"]).to be_nil

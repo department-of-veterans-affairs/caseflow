@@ -6,6 +6,7 @@
 
 class ExplainController < ApplicationController
   include ExplainAppealEventsConcern
+  include ExplainTimelineConcern
 
   def show
     return render_access_error unless current_user.admin?
@@ -31,6 +32,7 @@ class ExplainController < ApplicationController
                 :available_fields,
                 :task_tree_as_text, :intake_as_text, :hearing_as_text,
                 :event_table_data, :appeal_object_id,
+                :timeline_data,
                 :sje
 
   def appeal_object_id
@@ -43,7 +45,8 @@ class ExplainController < ApplicationController
       task_tree_as_text,
       intake_as_text,
       hearing_as_text,
-      JSON.pretty_generate(event_table_data)
+      JSON.pretty_generate(event_table_data),
+      JSON.pretty_generate(timeline_data)
     ].join("\n\n")
   end
 
@@ -103,6 +106,10 @@ class ExplainController < ApplicationController
     return "(LegacyAppeals are not yet supported)".to_json if legacy_appeal?
 
     SanitizedJsonExporter.new(appeal, sanitize: !show_pii_query_param, verbosity: 0).file_contents
+  end
+
+  def exported_records(klass)
+    sje.records_hash[klass.table_name] || []
   end
 
   def sje

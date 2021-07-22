@@ -25,11 +25,18 @@ class HearingDaySerializer
     HearingRooms.find!(object.room).label unless object.room.nil?
   end
   attribute :scheduled_for
+  attribute :filled_slots do |hearing_day, params|
+    get_filled_slots_count(hearing_day, params)
+  end
   attribute :total_slots
   attribute :slot_length_minutes
   attribute :begins_at
   attribute :updated_by_id
   attribute :updated_at
+
+  def self.get_filled_slots_count(hearing_day, params)
+    params[:filled_slots_count_for_days]&.dig(hearing_day.id) || 0
+  end
 
   def self.get_readable_request_type(hearing_day, params)
     if params[:video_hearing_days_request_types].nil?
@@ -47,13 +54,20 @@ class HearingDaySerializer
     Hearing::HEARING_TYPES[hearing_day.request_type.to_sym]
   end
 
-  def self.serialize_collection(hearing_days)
+  def self.serialize_collection(hearing_days, current_user)
     video_hearing_days_request_types = HearingDayRequestTypeQuery.new.call
+    filled_slots_count_for_days =
+      if FeatureToggle.enabled?(:view_and_download_hearing_scheduled_column, user: current_user)
+        HearingDayFilledSlotsQuery.new(hearing_days).call
+      end
 
     ::HearingDaySerializer.new(
       hearing_days,
       collection: true,
-      params: { video_hearing_days_request_types: video_hearing_days_request_types }
+      params: {
+        video_hearing_days_request_types: video_hearing_days_request_types,
+        filled_slots_count_for_days: filled_slots_count_for_days
+      }
     ).serializable_hash[:data].map { |hearing_day| hearing_day[:attributes] }
   end
 end
