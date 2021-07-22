@@ -15,7 +15,6 @@ FactoryBot.define do
     trait :reminder do
       email_type { "reminder" }
       sent_by { User.system_user }
-      recipient_role { email_recipient&.role }
     end
   end
 end
