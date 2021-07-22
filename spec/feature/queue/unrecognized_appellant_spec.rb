@@ -74,7 +74,7 @@ feature "Unrecognized appellants", :postgres do
     end
 
     it "renders error alert when update fails" do
-      allow_any_instance_of(UnrecognizedAppellantsController).to receive(:update).and_raise(StandardError)
+      allow_any_instance_of(UnrecognizedAppellantsController).to receive(:update).and_raise("Internal Server Error")
 
       visit "/queue/appeals/#{appeal.uuid}"
       click_on "Edit Information"
