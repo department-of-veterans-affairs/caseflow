@@ -42,6 +42,9 @@ feature "Unrecognized appellants", :postgres do
       expect(find("#firstName").value).to eq "Jane"
       expect(find("#lastName").value).to eq "Smith"
 
+      fill_in "First name", with: ""
+      expect(page).to have_button("Save", disabled: true)
+
       fill_in "First name", with: "Updated First Name"
       click_on "Save"
       expect(page).to have_current_path("/queue/appeals/#{appeal_with_unrecognized_appellant.uuid}")
