@@ -41,6 +41,9 @@ export const mapAppellantDataFromApi = (appeal) => {
     zip: appeal.appellantAddress.zip,
     country: appeal.appellantAddress.country,
     phoneNumber: appeal.appellantPhoneNumber,
-    emailAddress: appeal.appellantEmailAddress
+    emailAddress: appeal.appellantEmailAddress,
+    listedAttorney: {
+      value: 'not_listed'
+    }
   };
 };
