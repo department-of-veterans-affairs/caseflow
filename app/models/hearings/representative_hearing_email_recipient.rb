@@ -10,4 +10,11 @@ class RepresentativeHearingEmailRecipient < HearingEmailRecipient
   def roles
     [RECIPIENT_ROLES[:representative]]
   end
+
+  # Unsetting email address means this hearing once had this recipient.
+  # Instead of destroying this object, we want to keep it for
+  # tracking purposes.
+  def unset_email_address!
+    update!(email_address: nil)
+  end
 end
