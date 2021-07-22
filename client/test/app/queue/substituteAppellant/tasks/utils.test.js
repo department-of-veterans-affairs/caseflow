@@ -74,6 +74,7 @@ describe('utility functions for task manipulation', () => {
     });
   });
 
+  // I wonder if we need this or should just test disabledTasksBasedOnSelections
   describe('shouldDisableBasedOnTaskType', () => {
     describe('when a ScheduleVeteranTask is selected', () => {
       const selectedTaskTypes = ['ExampleTask', 'ScheduleVeteranTask'];
@@ -144,6 +145,64 @@ describe('utility functions for task manipulation', () => {
 
       it.each(shouldNotDisables)('should not disable task type %s', (taskType) => {
         expect(shouldDisableBasedOnTaskType(taskType, selectedTaskTypes)).toBe(false);
+      });
+    });
+  });
+
+  describe('disabledTasksBasedOnSelections', () => {
+    const tasks = [
+      { taskId: 1, type: 'EvidenceSubmissionWindowTask' },
+      { taskId: 2, type: 'ScheduleVeteranTask' },
+      { taskId: 3, type: 'SelectHearingDispositionTask' },
+      { taskId: 4, type: 'ChangeHearingDispositionTask' },
+      { taskId: 5, type: 'TranscriptionTask' }
+    ];
+
+    describe('when ScheduleVeteranTask is selected', () => {
+      const selectedTaskIds = [2];
+
+      it('disables the appropriate types', () => {
+        expect(disabledTasksBasedOnSelections({ tasks, selectedTaskIds })).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ type: 'EvidenceSubmissionWindowTask', disabled: true }),
+            expect.objectContaining({ type: 'ScheduleVeteranTask', disabled: false }),
+            expect.objectContaining({ type: 'SelectHearingDispositionTask', disabled: true }),
+            expect.objectContaining({ type: 'ChangeHearingDispositionTask', disabled: true }),
+            expect.objectContaining({ type: 'TranscriptionTask', disabled: true })
+          ])
+        );
+      });
+    });
+
+    describe('when EvidenceSubmissionWindowTask is selected', () => {
+      const selectedTaskIds = [1];
+
+      it('disables the appropriate types', () => {
+        expect(disabledTasksBasedOnSelections({ tasks, selectedTaskIds })).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ type: 'EvidenceSubmissionWindowTask', disabled: false }),
+            expect.objectContaining({ type: 'ScheduleVeteranTask', disabled: true }),
+            expect.objectContaining({ type: 'SelectHearingDispositionTask', disabled: true }),
+            expect.objectContaining({ type: 'ChangeHearingDispositionTask', disabled: true }),
+            expect.objectContaining({ type: 'TranscriptionTask', disabled: false })
+          ])
+        );
+      });
+    });
+
+    describe('when TranscriptionTask is selected', () => {
+      const selectedTaskIds = [5];
+
+      it('disables the appropriate types', () => {
+        expect(disabledTasksBasedOnSelections({ tasks, selectedTaskIds })).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ type: 'EvidenceSubmissionWindowTask', disabled: false }),
+            expect.objectContaining({ type: 'ScheduleVeteranTask', disabled: true }),
+            expect.objectContaining({ type: 'SelectHearingDispositionTask', disabled: true }),
+            expect.objectContaining({ type: 'ChangeHearingDispositionTask', disabled: true }),
+            expect.objectContaining({ type: 'TranscriptionTask', disabled: false })
+          ])
+        );
       });
     });
   });
