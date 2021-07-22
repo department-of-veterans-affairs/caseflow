@@ -644,8 +644,6 @@ class RequestIssue < CaseflowRecord
   def create_legacy_issue_optin!
     return unless legacy_issue_opted_in?
 
-    # look up vacols issue
-    binding.pry
     LegacyIssueOptin.create!(
       request_issue: self,
       original_disposition_code: vacols_issue.disposition_id,

@@ -133,9 +133,8 @@ class AppealsController < ApplicationController
     appeal.request_issues.each do |issue|
       begin
         issue.approx_decision_date_of_issue_being_contested
-      rescue MissingDecisionDate => error
-        render(error.serialize_response)
-        break
+      rescue RequestIssue::MissingDecisionDate => error
+        handle_non_critical_error("edit", error)
       end
     end
   end
