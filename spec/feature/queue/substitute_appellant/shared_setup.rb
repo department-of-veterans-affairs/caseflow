@@ -155,7 +155,12 @@ RSpec.shared_examples("fill substitution form") do
       # Verify that the Evidence Submission Window was stored correctly
       if docket_type.eql?("evidence_submission")
         # Ensure that our new window ends on specified date, accounting for user's time zone (not based on midnight UTC)
-        expect(window_task.timer_ends_at).to be_between(evidence_submission_window_end_time - 1.day, evidence_submission_window_end_time + 1.day)      
+        window_task = EvidenceSubmissionWindowTask.find_by(appeal: new_appeal)
+        expect(window_task.timer_ends_at).to be_between(
+          evidence_submission_window_end_time - 1.day,
+          evidence_submission_window_end_time + 1.day
+        )
+        expect(window_task.timer_ends_at.utc_offset).to eql(Time.zone.now.utc_offset)
       end
 
       # New appeal should have the same docket
