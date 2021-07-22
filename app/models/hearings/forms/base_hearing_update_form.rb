@@ -272,31 +272,37 @@ class BaseHearingUpdateForm
     update_judge_recipient
   end
 
-  def create_email_recipients
+  def create_or_update_email_recipients
     hearing.create_or_update_recipients(
       type: AppellantHearingEmailRecipient,
       email_address: appellant_email,
       timezone: virtual_hearing_updates[:appellant_tz]
     )
 
-    hearing.create_or_update_recipients(
-      type: RepresentativeHearingEmailRecipient,
-      email_address: representative_email,
-      timezone: virtual_hearing_updates[:representative_tz]
-    )
+    hearing.representative_recipient&.unset_email_address!
+    if representative_email.present?
+      hearing.create_or_update_recipients(
+        type: RepresentativeHearingEmailRecipient,
+        email_address: representative_email,
+        timezone: virtual_hearing_updates[:representative_tz]
+      )
+    end
 
-    hearing.create_or_update_recipients(
-      type: JudgeHearingEmailRecipient,
-      email_address: judge_email,
-      timezone: nil
-    )
+    hearing.judge_recipient&.unset_email_address!
+    if judge_email.present?
+      hearing.create_or_update_recipients(
+        type: JudgeHearingEmailRecipient,
+        email_address: judge_email,
+        timezone: nil
+      )
+    end
   end
 
   # rubocop:disable Metrics/AbcSize
   def create_or_update_virtual_hearing
     # TODO: All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.
     virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do |new_virtual_hearing|
-      create_email_recipients
+      create_or_update_email_recipients
 
       @virtual_hearing_created = true
     end
