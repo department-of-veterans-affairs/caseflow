@@ -742,14 +742,14 @@ ActiveRecord::Schema.define(version: 2021_07_13_161648) do
     t.index ["updated_by_id"], name: "index_hearing_days_on_updated_by_id"
   end
 
-  create_table "hearing_email_recipients", comment: "Add reminder email recipients for non-virtual hearings", force: :cascade do |t|
+  create_table "hearing_email_recipients", comment: "Recipients of hearings-related emails", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email_address", comment: "The recipient's email address"
     t.boolean "email_sent", default: false, null: false, comment: "Indicates whether or not a notification email was sent to the recipient."
     t.bigint "hearing_id", comment: "Associated hearing"
     t.string "hearing_type"
     t.string "timezone", limit: 50, comment: "The recipient's timezone"
-    t.string "type", comment: "the subclass name (i.e. AppellantHearingEmailRecipient)"
+    t.string "type", comment: "The subclass name (i.e. AppellantHearingEmailRecipient)"
     t.datetime "updated_at", null: false
     t.index ["hearing_type", "hearing_id"], name: "index_hearing_email_recipients_on_hearing_type_and_hearing_id"
   end
