@@ -9,7 +9,7 @@ import { sprintf } from 'sprintf-js';
 import { ClaimantForm as EditClaimantForm } from '../../intake/addClaimant/ClaimantForm';
 import { useClaimantForm } from '../../intake/addClaimant/utils';
 import Button from '../../components/Button';
-import Alert from '../../components/Alert'
+import Alert from '../../components/Alert';
 import COPY from 'app/../COPY';
 import { appealWithDetailSelector } from '../selectors';
 import { mapAppellantDataFromApi, mapAppellantDataToApi } from './utils';
@@ -30,11 +30,12 @@ const EditAppellantInformation = ({ appealId }) => {
     dispatch(resetSuccessMessages());
   }, []);
 
+  const methods = useClaimantForm({ defaultValues: mapAppellantDataFromApi(appeal) }, true, true);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false)
+  const [error, setError] = useState(false);
 
-  const methods = useClaimantForm({ defaultValues: mapAppellantDataFromApi(appeal) }, true);
   const {
+    formState: { isValid },
     handleSubmit,
   } = methods;
 
@@ -59,7 +60,7 @@ const EditAppellantInformation = ({ appealId }) => {
       dispatch(showSuccessMessage(successMessage));
       push(`/queue/appeals/${appealId}`);
     },
-    (error) => {
+    (_error) => {
       // eslint-disable-next-line no-console
       setError(true);
       setLoading(false);
@@ -72,9 +73,9 @@ const EditAppellantInformation = ({ appealId }) => {
   return <div>
     <FormProvider {...methods}>
       <AppSegment filledBackground>
-        {error === true && 
-          <Alert 
-            type="error" 
+        {error === true &&
+          <Alert
+            type="error"
             title={COPY.EDIT_UNRECOGNIZED_APPELLANT_FAILURE_ALERT_TITLE}
             message={
               <Fragment>Please try again and if this error persists,
@@ -87,12 +88,14 @@ const EditAppellantInformation = ({ appealId }) => {
           editAppellantHeader={editAppellantHeader}
           editAppellantDescription={editAppellantDescription}
           hidePOAForm
+          hideListedAttorney
         />
       </AppSegment>
       <Button
         onClick={handleSubmit(handleUpdate)}
         classNames={['cf-right-side']}
         loading={loading}
+        disabled={!isValid}
         name="Save"
       >
         Save
