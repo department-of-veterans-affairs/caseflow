@@ -7,11 +7,7 @@ class HearingEmailRecipient < CaseflowRecord
     judge: "judge"
   }.freeze
 
-  RECIPIENT_TITLES = {
-    judge: "Judge",
-    appellant: "Appellant",
-    representative: "Representative"
-  }.freeze
+  RECIPIENT_TITLES = RECIPIENT_ROLES.map { |key, role| [key, role.capitalize] }.to_h.freeze
 
   belongs_to :hearing, polymorphic: true
   has_many :email_events, class_name: "SentHearingEmailEvent", foreign_key: :email_recipient_id
