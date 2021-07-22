@@ -51,9 +51,6 @@ class SelectSpecialIssuesView extends React.PureComponent {
   }
 
   validateForm = () => {
-    if (!this.props.featureToggles.special_issues_revamp) {
-      return true;
-    }
 
     const { specialIssues } = this.props;
     const checkedIssues = Object.entries(specialIssues).filter((entry) => entry[1] === true);
@@ -89,18 +86,18 @@ class SelectSpecialIssuesView extends React.PureComponent {
 
   legacySpecialIssuesSections = () => {
     return [
-      specialIssueFilters(this.props.featureToggles.special_issues_revamp).noneSection(),
-      specialIssueFilters(this.props.featureToggles.special_issues_revamp).aboutSection(),
-      specialIssueFilters(this.props.featureToggles.special_issues_revamp).residenceSection(),
-      specialIssueFilters(this.props.featureToggles.special_issues_revamp).benefitTypeSection(),
-      specialIssueFilters(this.props.featureToggles.special_issues_revamp).issuesOnAppealSection(),
-      specialIssueFilters(this.props.featureToggles.special_issues_revamp).dicOrPensionSection()
+      specialIssueFilters(true).noneSection(),
+      specialIssueFilters(true).aboutSection(),
+      specialIssueFilters(true).residenceSection(),
+      specialIssueFilters(true).benefitTypeSection(),
+      specialIssueFilters(true).issuesOnAppealSection(),
+      specialIssueFilters(true).dicOrPensionSection()
     ];
   };
   amaSpecialIssuesSections = () => {
     return [
-      specialIssueFilters(this.props.featureToggles.special_issues_revamp).noneSection(),
-      specialIssueFilters(this.props.featureToggles.special_issues_revamp).amaIssuesOnAppealSection()
+      specialIssueFilters(true).noneSection(),
+      specialIssueFilters(true).amaIssuesOnAppealSection()
     ];
   };
 
@@ -145,7 +142,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
       <div {...flexContainer} className="special-options">
         <div {...flexColumn}>
           {
-            this.props.featureToggles.special_issues_revamp && sectionsMap.noSpecialIssues && <CheckboxGroup
+            sectionsMap.noSpecialIssues && <CheckboxGroup
               label=""
               name=""
               options={sectionsMap.noSpecialIssues}
@@ -235,9 +232,6 @@ SelectSpecialIssuesView.propTypes = {
     title: PropTypes.string,
     detail: PropTypes.string
   }),
-  featureToggles: PropTypes.shape({
-    special_issues_revamp: PropTypes.bool
-  }),
   requestSave: PropTypes.func,
   setSpecialIssues: PropTypes.func,
   clearSpecialIssues: PropTypes.func,
@@ -249,7 +243,6 @@ const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.stagedChanges.appeals[ownProps.appealId],
   specialIssues: state.queue.specialIssues,
   error: state.ui.messages.error,
-  featureToggles: state.ui.featureToggles
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
