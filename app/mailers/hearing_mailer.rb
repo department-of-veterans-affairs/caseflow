@@ -95,15 +95,8 @@ class HearingMailer < ActionMailer::Base
     @hearing.time.appellant_time.strftime(time_format)
   end
 
-  # TODO: Duplicate of the helper method, needs to be DRYed
-  def formatted_full_appellant_name(appeal)
-    return appeal.appellant_fullname_readable if appeal.appellant_is_not_veteran
-
-    appeal&.veteran_full_name
-  end
-
   def appellant_name
-    formatted_full_appellant_name(@virtual_hearing.hearing.appeal)
+    @virtual_hearing.hearing.appeal.appellant_or_veteran_name
   end
 
   def reminder_subject
