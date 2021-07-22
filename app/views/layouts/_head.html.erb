@@ -19,8 +19,11 @@
 
   <%= stylesheet_link_tag 'application', media: 'all' %>
 
+
+<% if !browser.ie?(">= 11") %>
   <%= env_javascript_include_tag(static: ['webpack-bundle'],
                                  hot: ['http://localhost:3500/webpack-bundle.js']) %>
+<% end %>
 
   <%= csrf_meta_tags %>
 
