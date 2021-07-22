@@ -30,11 +30,12 @@ const EditAppellantInformation = ({ appealId }) => {
     dispatch(resetSuccessMessages());
   }, []);
 
+  const methods = useClaimantForm({ defaultValues: mapAppellantDataFromApi(appeal) }, true, true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false)
 
-  const methods = useClaimantForm({ defaultValues: mapAppellantDataFromApi(appeal) }, true);
   const {
+    formState: { isValid },
     handleSubmit,
   } = methods;
 
@@ -87,12 +88,14 @@ const EditAppellantInformation = ({ appealId }) => {
           editAppellantHeader={editAppellantHeader}
           editAppellantDescription={editAppellantDescription}
           hidePOAForm
+          hideListedAttorney
         />
       </AppSegment>
       <Button
         onClick={handleSubmit(handleUpdate)}
         classNames={['cf-right-side']}
         loading={loading}
+        disabled={!isValid}
         name="Save"
       >
         Save
