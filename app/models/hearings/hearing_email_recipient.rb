@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class HearingEmailRecipient < CaseflowRecord
+  def self.email_error_message
+    fail Caseflow::Error::MustImplementInSubclass
+  end
+
   RECIPIENT_ROLES = {
     appellant: "appellant",
     veteran: "veteran",
@@ -19,5 +23,9 @@ class HearingEmailRecipient < CaseflowRecord
       &.order(:sent_at)
       &.last
       &.sent_at
+  end
+
+  def roles
+    fail Caseflow::Error::MustImplementInSubclass
   end
 end
