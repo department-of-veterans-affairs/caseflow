@@ -10245,6 +10245,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
               "cf-right-side",
             ]
           }
+          disabled={false}
           linkStyling={false}
           loading={false}
           name="Save"
@@ -10255,6 +10256,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
           <span>
             <button
               className="cf-right-side usa-button"
+              disabled={false}
               id="button-Save"
               onClick={[Function]}
               type="button"

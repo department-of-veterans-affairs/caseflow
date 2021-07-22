@@ -33,6 +33,7 @@ const EditAppellantInformation = ({ appealId }) => {
   const [loading, setLoading] = useState(false);
 
   const {
+    formState: { isValid },
     handleSubmit,
   } = methods;
 
@@ -81,6 +82,7 @@ const EditAppellantInformation = ({ appealId }) => {
         onClick={handleSubmit(handleUpdate)}
         classNames={['cf-right-side']}
         loading={loading}
+        disabled={!isValid}
         name="Save"
       >
         Save

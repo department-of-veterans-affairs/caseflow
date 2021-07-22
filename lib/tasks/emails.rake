@@ -43,12 +43,14 @@ namespace :emails do
             virtual_hearing: hearing.virtual_hearing
           )
           email_body = email.html_part&.decoded || email.body
+          email_subject = email.subject
 
           next if email_body.blank?
 
           output_file = Rails.root.join("tmp", "#{func}_#{recipient.title}.html")
 
-          File.write(output_file, email_body, mode: "w")
+          File.write(output_file, email_subject, mode: "w")
+          File.write(output_file, email_body, mode: "a")
         end
       end
     end
@@ -117,12 +119,14 @@ namespace :emails do
           virtual_hearing: hearing.virtual_hearing
         )
         email_body = email.html_part&.decoded || email.body
+        email_subject = email.subject
 
         next if email_body.blank?
 
         output_file = Rails.root.join("tmp", "reminder_#{recipient.title}.html")
 
-        File.write(output_file, email_body, mode: "w")
+        File.write(output_file, email_subject, mode: "w")
+        File.write(output_file, email_body, mode: "a")
       end
     end
   end
