@@ -71,9 +71,27 @@ describe HearingEmailRecipient do
     end
   end
 
+  context "#email_error_message" do
+    subject { described_class.email_error_message }
+
+    it "raises an error" do
+      expect { subject }.to raise_error(Caseflow::Error::MustImplementInSubclass)
+    end
+  end
+
   context "#roles" do
     let(:email_recipient) { nil }
     subject { email_recipient.roles }
+
+    context "HearingEmailRecipient" do
+      let(:email_recipient) do
+        create(:hearing_email_recipient)
+      end
+
+      it "raises an error" do
+        expect { subject }.to raise_error(Caseflow::Error::MustImplementInSubclass)
+      end
+    end
 
     context "AppellantHearingEmailRecipient" do
       let(:email_recipient) do
@@ -158,6 +176,43 @@ describe HearingEmailRecipient do
     context "no reminder email event is present" do
       it "returns correct value" do
         expect(subject).to eq(nil)
+      end
+    end
+  end
+
+  context "#unset_email_address!" do
+    let(:email_recipient) { nil }
+    subject { email_recipient.unset_email_address! }
+
+    context "RepresentativeHearingEmailRecipient" do
+      let(:email_recipient) do
+        create(
+          :hearing_email_recipient,
+          :initialized,
+          :representative_hearing_email_recipient
+        )
+      end
+
+      it "unsets the email address" do
+        expect(email_recipient.email_address).to_not be_nil
+        subject
+        expect(email_recipient.email_address).to be_nil
+      end
+    end
+
+    context "JudgeHearingEmailRecipient" do
+      let(:email_recipient) do
+        create(
+          :hearing_email_recipient,
+          :initialized,
+          :judge_hearing_email_recipient
+        )
+      end
+
+      it "unsets the email address" do
+        expect(email_recipient.email_address).to_not be_nil
+        subject
+        expect(email_recipient.email_address).to be_nil
       end
     end
   end
