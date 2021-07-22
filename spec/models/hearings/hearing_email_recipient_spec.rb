@@ -149,7 +149,9 @@ describe HearingEmailRecipient do
       end
 
       it "returns correct value" do
-        expect(subject).to eq(reminder_event.sent_at)
+        expect(subject).to(
+          be_within(1.second).of(reminder_event.sent_at)
+        )
       end
     end
 
