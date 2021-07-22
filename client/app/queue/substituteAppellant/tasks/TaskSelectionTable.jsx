@@ -69,7 +69,7 @@ export const TaskSelectionTable = ({ tasks }) => {
                       defaultValue={selectedTaskIds?.includes(task.taskId)}
                       name={`taskIds[${task.taskId}]`}
                       disabled={task.disabled}
-                      hideLabel
+                      label={<>&nbsp;<span className="usa-sr-only">Select {task.label}</span></>}
                     />
                   </td>
                   <td>{task.label.replace('Task', '')}</td>

@@ -23,6 +23,9 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                 "emailAddress": undefined,
                 "firstName": undefined,
                 "lastName": undefined,
+                "listedAttorney": Object {
+                  "value": "not_listed",
+                },
                 "middleName": undefined,
                 "name": "Abellona Valtas",
                 "partyType": undefined,
@@ -276,6 +279,7 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
             <ClaimantForm
               editAppellantDescription="Make any necessary changes to the information and click \\"save\\" to confirm your changes."
               editAppellantHeader="Edit Appellant Information"
+              hideListedAttorney={true}
               hidePOAForm={true}
             >
               <h1>
@@ -300,6 +304,9 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                           "emailAddress": undefined,
                           "firstName": undefined,
                           "lastName": undefined,
+                          "listedAttorney": Object {
+                            "value": "not_listed",
+                          },
                           "middleName": undefined,
                           "name": "Abellona Valtas",
                           "partyType": undefined,
@@ -2597,6 +2604,9 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                           "emailAddress": undefined,
                           "firstName": undefined,
                           "lastName": undefined,
+                          "listedAttorney": Object {
+                            "value": "not_listed",
+                          },
                           "middleName": undefined,
                           "name": "Abellona Valtas",
                           "partyType": undefined,
@@ -3015,6 +3025,9 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
                                 "emailAddress": undefined,
                                 "firstName": undefined,
                                 "lastName": undefined,
+                                "listedAttorney": Object {
+                                  "value": "not_listed",
+                                },
                                 "middleName": undefined,
                                 "name": "Abellona Valtas",
                                 "partyType": undefined,
@@ -10232,8 +10245,10 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
               "cf-right-side",
             ]
           }
+          disabled={false}
           linkStyling={false}
           loading={false}
+          name="Save"
           onClick={[Function]}
           type="button"
           willNeverBeLoading={false}
@@ -10241,6 +10256,8 @@ exports[`EditAppellantInformation renders default state correctly 1`] = `
           <span>
             <button
               className="cf-right-side usa-button"
+              disabled={false}
+              id="button-Save"
               onClick={[Function]}
               type="button"
             >

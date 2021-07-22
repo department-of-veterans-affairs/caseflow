@@ -37,6 +37,9 @@ describe('mapAppellantDataFromApi', () => {
       "state": "state",
       "suffix": undefined,
       "zip": "zip",
+      "listedAttorney": {
+        value: "not_listed"
+      },
     })
   })
 })

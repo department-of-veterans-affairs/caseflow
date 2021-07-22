@@ -32,6 +32,7 @@ class BoardGrantEffectuation < CaseflowRecord
 
   delegate :contention_text, to: :granted_decision_issue
   delegate :veteran, :claimant, to: :appeal
+  delegate :claimant_participant_id, to: :appeal
 
   # don't need to try as frequently as default 3 hours
   DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 12
@@ -145,10 +146,6 @@ class BoardGrantEffectuation < CaseflowRecord
       benefit_type_code: veteran.benefit_type_code,
       user: User.system_user
     )
-  end
-
-  def claimant_participant_id
-    claimant&.participant_id
   end
 
   def claimant_payee_code
