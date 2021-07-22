@@ -86,11 +86,11 @@ feature "Unrecognized appellants", :postgres do
     it "renders error alert when update fails" do
       allow_any_instance_of(UnrecognizedAppellantsController).to receive(:update).and_raise("Internal Server Error")
 
-      visit "/queue/appeals/#{appeal.uuid}"
+      visit "/queue/appeals/#{appeal_with_unrecognized_appellant.uuid}"
       click_on "Edit Information"
 
       expect(page).to have_content("Edit Appellant Information")
-      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}/edit_appellant_information")
+      expect(page).to have_current_path("/queue/appeals/#{appeal_with_unrecognized_appellant.uuid}/edit_appellant_information")
       find("button", text: "Save").click
       expect(page).to have_content(COPY::EDIT_UNRECOGNIZED_APPELLANT_FAILURE_ALERT_TITLE)
     end
