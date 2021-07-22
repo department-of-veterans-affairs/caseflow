@@ -51,6 +51,9 @@ feature "Unrecognized appellants", :postgres do
       expect(ua.versions.count).to eq(2)
       expect(ua.first_version.first_name).to eq("Jane")
       expect(page).to have_content("Name: Updated First Name Smith")
+      expect(page).to have_content(format(COPY::EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_TITLE
+        .tr("(", "{").gsub(")s", "}"), appellantName: ua.name))
+      expect(page).to have_content(COPY::EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_MESSAGE)
     end
 
     it "allows for updating the relationship of the unrecognized appellant" do
@@ -72,6 +75,9 @@ feature "Unrecognized appellants", :postgres do
       expect(ua.versions.count).to eq(2)
       expect(ua.first_version.first_name).to eq("Jane")
       expect(page).to have_content("Relation to Veteran: Other")
+      expect(page).to have_content(format(COPY::EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_TITLE
+                                          .tr("(", "{").gsub(")s", "}"), appellantName: ua.name))
+      expect(page).to have_content(COPY::EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_MESSAGE)
     end
   end
   context "with attorney unrecognized appellant" do

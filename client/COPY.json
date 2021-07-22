@@ -143,6 +143,9 @@
   "CASE_DETAILS_CAVC_FEDERAL_CIRCUIT": "Appealed to Federal Circuit",
   "CASE_DETAILS_CAVC_REMAND_INSTRUCTIONS": "Remand Instructions",
 
+  "EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_TITLE": "You have successfully updated %(appellantName)s's information",
+  "EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_MESSAGE": "If you need to make further changes, select 'Edit information' in the About the Appellant section.",
+
   "POST_DISPATCH_TITLE": "Post-dispatch actions",
   "ADD_CAVC_BUTTON": "+ Add CAVC Remand",
   "ADD_CAVC_PAGE_TITLE": "Add a Court remand",
