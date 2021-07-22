@@ -13,7 +13,7 @@
     <% end %>
   </p>
 
-  <h3><%= @hearing&.appeal&.appellant_name %></h3>
+  <h3><%= formatted_full_appellant_name(@virtual_hearing.hearing.appeal) %></h3>
   <p>
     <a href="<%= caseflow_url(@hearing&.appeal) %>">View the case details</a>
     (Note: You must be logged into the VA network to access case details.)
