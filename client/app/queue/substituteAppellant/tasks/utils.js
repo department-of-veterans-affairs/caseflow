@@ -88,13 +88,11 @@ export const transcriptionTaskDisableTypes = [
   'ChangeHearingDispositionTask'
 ];
 
-// spitballing here; call on form update
-// see also shouldShowBasedOnOtherTasks
-// remember to call this in a useMemo hook (incl. for mapping taskIds to tasks/types) -- in the form component
 export const shouldDisableBasedOnTaskType = (taskType, selectedTaskTypes) => {
   // This is not efficient; it'll make multiple passes through each array.
   // Realistically it's a small set, so get it working first and we can tweak later.
-  // Oh... Need to handle that there could be MULTIPLE of these.
+  // We _currently_ don't need to handle multiple selections because the latter two types
+  // disable the same things. But this code can be improved.
   if (selectedTaskTypes.includes('ScheduleVeteranTask')) {
     return scheduleVeteranTaskDisableTypes.includes(taskType);
   } else if (selectedTaskTypes.includes('EvidenceSubmissionWindowTask')) {
@@ -106,7 +104,7 @@ export const shouldDisableBasedOnTaskType = (taskType, selectedTaskTypes) => {
   }
 };
 
-export const disabledTasksBasedOnSelections = ({tasks, selectedTaskIds}) => {
+export const disabledTasksBasedOnSelections = ({ tasks, selectedTaskIds }) => {
   const selectedTaskTypes = tasks.filter((task) => selectedTaskIds.includes(task.taskId)).map((task) => task.type);
 
   return tasks.map((task) => {
@@ -120,10 +118,8 @@ export const disabledTasksBasedOnSelections = ({tasks, selectedTaskIds}) => {
 // The following governs what should always be programmatically disabled from selection
 export const alwaysDisabled = ['DistributionTask'];
 
-export const shouldDisable = (taskInfo, taskData) => {
-  // taskData is the WRONG thing to pass in! We want an array of selected task types... or something.
-  // I.e., we need to look at what tasks are checked in the UI, not just the raw list of serialized tasks!
-  return alwaysDisabled.includes(taskInfo.type) || shouldDisableBasedOnTaskType(taskInfo.type, taskData);
+export const shouldDisable = (taskInfo) => {
+  return alwaysDisabled.includes(taskInfo.type);
 };
 
 export const shouldHideBasedOnPoa = (taskInfo, claimantPoa) => {
@@ -194,14 +190,10 @@ export const prepTaskDataForUi = (taskData, claimantPoa) => {
 
   const sortedTasks = sortTasks(uniqTasks);
 
-  // So we get here from inside useMemo (though maybe we need selections included).
-  // Do we just need to compute and pass to shouldDisable() a list of checked types
-  // from the boxes?! Is it really that easy now?
-  // But where do we compute that?
   return sortedTasks.map((taskInfo) => ({
     ...taskInfo,
     hidden: shouldHide(taskInfo, claimantPoa, taskData),
-    disabled: shouldDisable(taskInfo, taskData),
+    disabled: shouldDisable(taskInfo),
     selected: shouldAutoSelect(taskInfo),
   }));
 };

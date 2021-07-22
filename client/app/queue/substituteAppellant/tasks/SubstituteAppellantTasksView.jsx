@@ -34,8 +34,6 @@ export const SubstituteAppellantTasksView = () => {
     getAllTasksForAppeal(state, { appealId })
   );
 
-  // filteredTasks is in useMemo.
-  // prepTaskDataForUi -> filterTasks + prepTaskDataForUi
   const filteredTasks = useMemo(() => {
     return prepTaskDataForUi(allTasks, poa);
   }, [allTasks, poa]);
