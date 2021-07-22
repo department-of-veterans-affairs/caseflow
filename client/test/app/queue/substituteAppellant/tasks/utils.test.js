@@ -13,6 +13,8 @@ import {
 } from 'app/queue/substituteAppellant/tasks/utils';
 
 import { sampleTasksForEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
+import { isSameDay } from 'date-fns';
+import parseISO from 'date-fns/parseISO';
 
 describe('utility functions for task manipulation', () => {
   const nonDistributionTaskTypes = [
@@ -426,7 +428,7 @@ describe('calculateEvidenceSubmissionEndDate', () => {
     };
     const result = calculateEvidenceSubmissionEndDate(args);
 
-    expect(result).toBe('2021-06-04');
+    expect(isSameDay(parseISO(result), parseISO('2021-06-04'))).toBe(true);
   });
 
   it('ensures the evidence submission window is not more than 90 days when date of death precedes the NOD date', () => {
@@ -437,6 +439,6 @@ describe('calculateEvidenceSubmissionEndDate', () => {
     };
     const result = calculateEvidenceSubmissionEndDate(args);
 
-    expect(result).toBe('2021-06-23');
+    expect(isSameDay(parseISO(result), parseISO('2021-06-23'))).toBe(true);
   });
 });

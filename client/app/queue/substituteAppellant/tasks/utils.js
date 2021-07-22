@@ -1,4 +1,4 @@
-import { formatISO } from 'date-fns';
+import { formatISO, startOfDay } from 'date-fns';
 import parseISO from 'date-fns/parseISO';
 
 export const automatedTasks = [
@@ -226,5 +226,6 @@ export const calculateEvidenceSubmissionEndDate = ({
 
   const newEndTime = substitutionDate.getTime() + remainingTime;
 
-  return formatISO(newEndTime, { representation: 'date' });
+  // We want to specify midnight in user's time zone (likely Eastern)
+  return formatISO(startOfDay(new Date(newEndTime)));
 };

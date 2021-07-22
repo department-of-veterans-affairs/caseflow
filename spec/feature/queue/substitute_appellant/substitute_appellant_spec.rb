@@ -23,6 +23,7 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
 
       context "with evidence submission docket" do
         let(:docket_type) { "evidence_submission" }
+        let(:evidence_submission_window_end_time) { Time.zone.parse("2021-10-05 00:00") }
 
         it_should_behave_like "fill substitution form"
       end

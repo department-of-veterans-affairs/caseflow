@@ -196,12 +196,12 @@ class Hearings::SendEmail
 
   def appellant_recipient
     recipient_name = if appeal.appellant_is_not_veteran
-                       appeal.appellant_first_name
+                       appeal.appellant_name
                      elsif veteran.present?
                        validate_veteran_deceased
                        validate_veteran_name
 
-                       veteran.first_name
+                       appeal.veteran_full_name
                      else
                        "Appellant"
                      end

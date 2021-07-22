@@ -60,6 +60,12 @@ module AppealConcern
     end
   end
 
+  def appellant_or_veteran_name
+    return appellant_fullname_readable if appellant_is_not_veteran
+
+    veteran_full_name
+  end
+
   def appellant_tz
     timezone_identifier_for_address(appellant_address)
   end
