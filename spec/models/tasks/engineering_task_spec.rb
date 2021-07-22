@@ -46,7 +46,7 @@ describe EngineeringTask, :postgres do
       let(:parent_task) { nil }
       it "fails to create task" do
         new_task = subject
-        expect(new_task.invalid?).to eq true
+        expect(new_task).to be_invalid
         expect(new_task.errors.messages[:parent]).to include("can't be blank")
       end
     end
