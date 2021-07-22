@@ -18,7 +18,6 @@ describe HearingEmailRecipient do
 
     shared_context "shared behaviors" do
       it "creates with right values", :aggregate_failures do
-        expect(subject.role).to eq(role)
         expect(subject.email_sent).to eq(false)
         expect(subject.email_address).to eq(email_address)
         expect(subject.timezone).to eq(timezone)
@@ -36,14 +35,6 @@ describe HearingEmailRecipient do
             )
         end
       end
-    end
-
-    context "AppellantHearingEmailRecipient" do
-      let(:type) { AppellantHearingEmailRecipient.name }
-      let(:role) { "veteran" }
-      let(:error_title) { HearingEmailRecipient::RECIPIENT_TITLES[:appellant] }
-
-      include_context "shared behaviors"
 
       context "nil email validation" do
         let(:email_address) { nil }
@@ -52,16 +43,21 @@ describe HearingEmailRecipient do
           expect { subject }
             .to raise_error(ActiveRecord::RecordInvalid)
             .with_message(
-              "Validation failed: Email address can't be blank, Email address Validation failed: " \
-              "#{error_title} email does not appear to be a valid e-mail address"
+              /Validation failed: Email address can't be blank/
             )
         end
       end
     end
 
+    context "AppellantHearingEmailRecipient" do
+      let(:type) { AppellantHearingEmailRecipient.name }
+      let(:error_title) { HearingEmailRecipient::RECIPIENT_TITLES[:appellant] }
+
+      include_context "shared behaviors"
+    end
+
     context "RepresentativeHearingEmailRecipient" do
       let(:type) { RepresentativeHearingEmailRecipient.name }
-      let(:role) { HearingEmailRecipient::RECIPIENT_ROLES[:representative] }
       let(:error_title) { HearingEmailRecipient::RECIPIENT_TITLES[:representative] }
 
       include_context "shared behaviors"
@@ -69,16 +65,15 @@ describe HearingEmailRecipient do
 
     context "JudgeHearingEmailRecipient" do
       let(:type) { JudgeHearingEmailRecipient.name }
-      let(:role) { HearingEmailRecipient::RECIPIENT_ROLES[:judge] }
       let(:error_title) { HearingEmailRecipient::RECIPIENT_TITLES[:judge] }
 
       include_context "shared behaviors"
     end
   end
 
-  context "#role" do
+  context "#roles" do
     let(:email_recipient) { nil }
-    subject { email_recipient.role }
+    subject { email_recipient.roles }
 
     context "AppellantHearingEmailRecipient" do
       let(:email_recipient) do
@@ -88,10 +83,15 @@ describe HearingEmailRecipient do
           :appellant_hearing_email_recipient
         )
       end
-      let(:role) { "veteran" }
+      let(:roles) do
+        [
+          HearingEmailRecipient::RECIPIENT_ROLES[:appellant],
+          HearingEmailRecipient::RECIPIENT_ROLES[:veteran],
+        ]
+      end
 
       it "returns correct value" do
-        expect(subject).to eq(role)
+        expect(subject).to eq(roles)
       end
     end
 
@@ -103,10 +103,10 @@ describe HearingEmailRecipient do
           :representative_hearing_email_recipient
         )
       end
-      let(:role) { HearingEmailRecipient::RECIPIENT_ROLES[:representative] }
+      let(:roles) { [HearingEmailRecipient::RECIPIENT_ROLES[:representative]] }
 
       it "returns correct value" do
-        expect(subject).to eq(role)
+        expect(subject).to eq(roles)
       end
     end
 
@@ -118,16 +118,15 @@ describe HearingEmailRecipient do
           :judge_hearing_email_recipient
         )
       end
-      let(:role) { HearingEmailRecipient::RECIPIENT_ROLES[:judge] }
+      let(:roles) { [HearingEmailRecipient::RECIPIENT_ROLES[:judge]] }
 
       it "returns correct value" do
-        expect(subject).to eq(role)
+        expect(subject).to eq(roles)
       end
     end
   end
 
   context "#reminder_sent_at" do
-    let!(:reminder_sent_at) { Time.zone.now - 3.days }
     let(:email_recipient) do
       create(
         :hearing_email_recipient,
@@ -143,13 +142,14 @@ describe HearingEmailRecipient do
         create(
           :sent_hearing_email_event,
           :reminder,
-          sent_at: reminder_sent_at,
+          recipient_role: HearingEmailRecipient::RECIPIENT_ROLES[:veteran],
+          sent_at: Time.zone.now - 3.days,
           email_recipient: email_recipient
         )
       end
 
       it "returns correct value" do
-        expect(subject).to eq(reminder_sent_at)
+        expect(subject).to eq(reminder_event.sent_at)
       end
     end
 

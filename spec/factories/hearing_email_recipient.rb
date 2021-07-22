@@ -4,12 +4,11 @@ FactoryBot.define do
   factory :hearing_email_recipient do
     hearing
     type { HearingEmailRecipient.name }
-    email_address { nil }
+    email_address { "test@email.com" }
     email_sent { false }
     timezone { nil }
 
     trait :initialized do
-      email_address { "test@gmail.com" }
       email_sent { true }
       timezone { "America/New_York" }
     end
