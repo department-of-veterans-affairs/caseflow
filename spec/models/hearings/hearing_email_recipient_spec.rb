@@ -31,8 +31,7 @@ describe HearingEmailRecipient do
           expect { subject }
             .to raise_error(ActiveRecord::RecordInvalid)
             .with_message("Validation failed: Email address Validation failed: " \
-              "#{error_title} email does not appear to be a valid e-mail address"
-            )
+              "#{error_title} email does not appear to be a valid e-mail address")
         end
       end
 
@@ -86,7 +85,7 @@ describe HearingEmailRecipient do
       let(:roles) do
         [
           HearingEmailRecipient::RECIPIENT_ROLES[:appellant],
-          HearingEmailRecipient::RECIPIENT_ROLES[:veteran],
+          HearingEmailRecipient::RECIPIENT_ROLES[:veteran]
         ]
       end
 
