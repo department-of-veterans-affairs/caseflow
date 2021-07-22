@@ -7,7 +7,14 @@ class JudgeHearingEmailRecipient < HearingEmailRecipient
 
   validates_email_format_of :email_address, allow_nil: true, message: email_error_message
 
-  def role
-    RECIPIENT_ROLES[:judge]
+  def roles
+    [RECIPIENT_ROLES[:judge]]
+  end
+
+  # Unsetting email address means this hearing once had this recipient.
+  # Instead of destroying this object, we want to keep it for
+  # tracking purposes.
+  def unset_email_address!
+    update!(email_address: nil)
   end
 end

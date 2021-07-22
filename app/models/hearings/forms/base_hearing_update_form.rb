@@ -223,17 +223,13 @@ class BaseHearingUpdateForm
   end
 
   def update_appellant_recipient
-    if appellant_email.present?
-      hearing.appellant_recipient.update!(email_address: appellant_email)
-    end
+    update_params = {
+      email_address: appellant_email.presence,
+      timezone: virtual_hearing_updates[:appellant_tz].presence,
+      email_sent: virtual_hearing_updates[:appellant_email_sent]
+    }.compact
 
-    if virtual_hearing_updates[:appellant_tz].present?
-      hearing.appellant_recipient.update!( timezone: virtual_hearing_updates[:appellant_tz])
-    end
-
-    if virtual_hearing_updates.key?(:appellant_email_sent)
-      hearing.appellant_recipient.update!(email_sent: virtual_hearing_updates[:appellant_email_sent])
-    end
+    hearing.appellant_recipient.update!(**update_params) if update_params.any?
   end
 
   def update_representative_recipient
@@ -244,12 +240,13 @@ class BaseHearingUpdateForm
       )
     end
 
-    if hearing.representative_recipient.present? && virtual_hearing_updates[:representative_tz].present?
-      hearing.representative_recipient.update!(timezone: virtual_hearing_updates[:representative_tz])
-    end
+    if hearing.representative_recipient.present?
+      update_params = {
+        timezone: virtual_hearing_updates[:representative_tz].presence,
+        email_sent: virtual_hearing_updates[:representative_email_sent]
+      }.compact
 
-    if virtual_hearing_updates.key?(:representative_email_sent)
-      hearing.representative_recipient.update!(email_sent: virtual_hearing_updates[:representative_email_sent])
+      hearing.representative_recipient.update!(**update_params) if update_params.any?
     end
   end
 
@@ -272,31 +269,36 @@ class BaseHearingUpdateForm
     update_judge_recipient
   end
 
-  def create_email_recipients
+  def create_or_update_email_recipients
     hearing.create_or_update_recipients(
       type: AppellantHearingEmailRecipient,
       email_address: appellant_email,
       timezone: virtual_hearing_updates[:appellant_tz]
     )
 
-    hearing.create_or_update_recipients(
-      type: RepresentativeHearingEmailRecipient,
-      email_address: representative_email,
-      timezone: virtual_hearing_updates[:representative_tz]
-    )
+    hearing.representative_recipient&.unset_email_address!
+    if representative_email.present?
+      hearing.create_or_update_recipients(
+        type: RepresentativeHearingEmailRecipient,
+        email_address: representative_email,
+        timezone: virtual_hearing_updates[:representative_tz]
+      )
+    end
 
-    hearing.create_or_update_recipients(
-      type: JudgeHearingEmailRecipient,
-      email_address: judge_email,
-      timezone: nil
-    )
+    hearing.judge_recipient&.unset_email_address!
+    if judge_email.present?
+      hearing.create_or_update_recipients(
+        type: JudgeHearingEmailRecipient,
+        email_address: judge_email,
+        timezone: nil
+      )
+    end
   end
 
-  # rubocop:disable Metrics/AbcSize
   def create_or_update_virtual_hearing
     # TODO: All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.
-    virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do |new_virtual_hearing|
-      create_email_recipients
+    virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do
+      create_or_update_email_recipients
 
       @virtual_hearing_created = true
     end
@@ -318,7 +320,6 @@ class BaseHearingUpdateForm
       DataDogService.increment_counter(metric_name: "created_virtual_hearing.successful", **updated_metric_info)
     end
   end
-  # rubocop:enable Metrics/AbcSize
 
   def only_emails_updated?
     email_changed = virtual_hearing_attributes&.key?(:appellant_email) ||
