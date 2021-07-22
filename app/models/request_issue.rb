@@ -337,7 +337,7 @@ class RequestIssue < CaseflowRecord
     else
       return if is_unidentified
 
-      fail Caseflow::Error::MissingDecisionDate, request_issue_id: id
+      fail MissingDecisionDate, id
     end
   end
 
@@ -644,6 +644,8 @@ class RequestIssue < CaseflowRecord
   def create_legacy_issue_optin!
     return unless legacy_issue_opted_in?
 
+    # look up vacols issue
+    binding.pry
     LegacyIssueOptin.create!(
       request_issue: self,
       original_disposition_code: vacols_issue.disposition_id,

@@ -42,17 +42,4 @@ describe "Caseflow::Error" do
       end
     end
   end
-
-  describe "MissingDecisionDate" do
-    let(:error_type) { Caseflow::Error::MissingDecisionDate }
-
-    subject { fail error_type, request_issue_id: 42 }
-
-    it "displays the correct title and message" do
-      expect { subject }.to raise_error do |error|
-        expect(error.title).to eq("Missing Decision Date")
-        expect(error.message).to eq("Request issue 42 does not have a decision date")
-      end
-    end
-  end
 end

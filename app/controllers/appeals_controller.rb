@@ -133,7 +133,7 @@ class AppealsController < ApplicationController
     appeal.request_issues.each do |issue|
       begin
         issue.approx_decision_date_of_issue_being_contested
-      rescue Caseflow::Error::MissingDecisionDate => error
+      rescue MissingDecisionDate => error
         render(error.serialize_response)
         break
       end
