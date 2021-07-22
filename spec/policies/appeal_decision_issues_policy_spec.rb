@@ -19,7 +19,7 @@ describe AppealDecisionIssuesPolicy, :postgres do
           end
         end
 
-        context "when a decision date has reached or passed its decision date" do
+        context "when a decision issue has reached or passed its decision date" do
           let(:appeal) { create(:appeal, :dispatched, :with_decision_issue) }
 
           it "can be seen" do
@@ -29,6 +29,14 @@ describe AppealDecisionIssuesPolicy, :postgres do
 
           it "its issue description is not visible" do
             expect(result[0].description).to be_nil
+          end
+        end
+
+        context "when a decision issue has no decision date" do
+          let(:appeal) { create(:appeal, :decision_issue_with_no_decision_date) }
+
+          it "cannot be seen" do
+            expect(subject).to be_empty
           end
         end
       end
@@ -49,7 +57,7 @@ describe AppealDecisionIssuesPolicy, :postgres do
           end
         end
 
-        context "when a decision date has reached or passed its decision date" do
+        context "when a decision issue has reached or passed its decision date" do
           let(:appeal) { create(:appeal, :dispatched, :with_decision_issue) }
           let(:result) { subject }
 
@@ -61,6 +69,18 @@ describe AppealDecisionIssuesPolicy, :postgres do
             expect(result[0].description).to eq(appeal.decision_issues[0].description)
           end
         end
+
+        context "when a decision issue has no decision date" do
+          let(:appeal) { create(:appeal, :decision_issue_with_no_decision_date) }
+
+          it "can be seen" do
+            expect(subject[0].id).to eq(appeal.decision_issues[0].id)
+          end
+
+          it "its issue description is visible" do
+            expect(subject[0].description).to eq(appeal.decision_issues[0].description)
+          end
+        end
       end
     end
 
@@ -70,6 +90,14 @@ describe AppealDecisionIssuesPolicy, :postgres do
 
         context "when a decision issue has not yet reached its decision date" do
           let(:appeal) { create(:appeal, :decision_issue_with_future_date) }
+
+          it "can be seen" do
+            expect(subject).to match_array(appeal.decision_issues)
+          end
+        end
+
+        context "when a decision issue has no decision date" do
+          let(:appeal) { create(:appeal, :decision_issue_with_no_decision_date) }
 
           it "can be seen" do
             expect(subject).to match_array(appeal.decision_issues)

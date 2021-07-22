@@ -479,5 +479,21 @@ FactoryBot.define do
                                                         decision_date: 2.months.from_now)
       end
     end
+
+    trait :decision_issue_with_no_decision_date do
+      description = "Service connection for pain disorder"
+      notes = "Pain disorder notes"
+      after(:create) do |appeal, evaluator|
+        request_issue = create(:request_issue,
+                               :rating,
+                               decision_review: appeal,
+                               veteran_participant_id: appeal.veteran.participant_id,
+                               contested_issue_description: description,
+                               notes: notes)
+        request_issue.create_decision_issue_from_params(disposition: evaluator.disposition,
+                                                        description: description,
+                                                        decision_date: nil)
+      end
+    end
   end
 end
