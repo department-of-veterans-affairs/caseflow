@@ -11,7 +11,7 @@ class CreateHearingEmailRecipient < Caseflow::Migration
                    comment: "Associated hearing"
 
       t.string     :email_address,
-                   comment: "The recipient's email address"
+                   comment: "PII. The recipient's email address"
 
       t.string     :timezone,
                    limit: 50,
@@ -23,7 +23,7 @@ class CreateHearingEmailRecipient < Caseflow::Migration
       t.boolean    :email_sent,
                    default: false,
                    null: false,
-                   comment: "Indicates whether or not a notification email was sent to the recipient."
+                   comment: "Indicates if a notification email was sent to the recipient."
 
       t.timestamps
     end
