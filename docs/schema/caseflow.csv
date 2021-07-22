@@ -591,8 +591,8 @@ hearing_days,updated_at,datetime ∗,x,,,,x,Automatic timestamp of when hearin
 hearing_days,updated_by_id,integer (8) ∗ FK,x,,x,,x,The ID of the user who most recently updated the Hearing Day
 hearing_email_recipients,,,,,,,,Recipients of hearings-related emails
 hearing_email_recipients,created_at,datetime ∗,x,,,,,
-hearing_email_recipients,email_address,string,,,,,,The recipient's email address
-hearing_email_recipients,email_sent,boolean ∗,x,,,,,Indicates whether or not a notification email was sent to the recipient.
+hearing_email_recipients,email_address,string,,,,,,PII. The recipient's email address
+hearing_email_recipients,email_sent,boolean ∗,x,,,,,Indicates if a notification email was sent to the recipient.
 hearing_email_recipients,hearing_id,integer (8) FK,,,x,,x,Associated hearing
 hearing_email_recipients,hearing_type,string,,,,,x,
 hearing_email_recipients,id,integer (8) PK,x,x,,,,

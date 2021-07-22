@@ -744,8 +744,8 @@ ActiveRecord::Schema.define(version: 2021_07_13_161648) do
 
   create_table "hearing_email_recipients", comment: "Recipients of hearings-related emails", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.string "email_address", comment: "The recipient's email address"
-    t.boolean "email_sent", default: false, null: false, comment: "Indicates whether or not a notification email was sent to the recipient."
+    t.string "email_address", comment: "PII. The recipient's email address"
+    t.boolean "email_sent", default: false, null: false, comment: "Indicates if a notification email was sent to the recipient."
     t.bigint "hearing_id", comment: "Associated hearing"
     t.string "hearing_type"
     t.string "timezone", limit: 50, comment: "The recipient's timezone"
