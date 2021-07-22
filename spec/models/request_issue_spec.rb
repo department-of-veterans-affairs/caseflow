@@ -1259,10 +1259,7 @@ describe RequestIssue, :all_dbs do
     context "when decision date is missing" do
       it "raises a Caseflow Error for MissingDecisionDate" do
         expect { subject }.to raise_error do |error|
-          expect(error).to be_a(Caseflow::Error::MissingDecisionDate)
-          expect(error.title).to eq("Missing Decision Date")
-          expect(error.message).to eq("Request issue #{rating_request_issue_without_contested_issue.id} does not " \
-             "have a decision date")
+          expect(error).to be_a(RequestIssue::MissingDecisionDate)
         end
       end
     end
