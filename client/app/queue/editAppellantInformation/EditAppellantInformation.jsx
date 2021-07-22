@@ -32,7 +32,7 @@ const EditAppellantInformation = ({ appealId }) => {
 
   const methods = useClaimantForm({ defaultValues: mapAppellantDataFromApi(appeal) }, true, true);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [editFailure, setEditFailure] = useState(false);
 
   const {
     formState: { isValid },
@@ -63,7 +63,7 @@ const EditAppellantInformation = ({ appealId }) => {
     // eslint-disable-next-line no-unused-vars
     (error) => {
       // eslint-disable-next-line no-console
-      setError(true);
+      setEditFailure(true);
       setLoading(false);
     });
   };
@@ -74,7 +74,7 @@ const EditAppellantInformation = ({ appealId }) => {
   return <div>
     <FormProvider {...methods}>
       <AppSegment filledBackground>
-        {error === true &&
+        {editFailure === true &&
           <Alert
             type="error"
             title={COPY.EDIT_UNRECOGNIZED_APPELLANT_FAILURE_ALERT_TITLE}
