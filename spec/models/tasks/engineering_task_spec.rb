@@ -17,7 +17,7 @@ describe EngineeringTask, :postgres do
 
     it "creates task with available_actions" do
       new_task = subject
-      expect(new_task.valid?).to eq true
+      expect(new_task).to be_valid
       expect(new_task.assigned_to).to eq User.system_user
 
       expect(new_task.available_actions(sys_admin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
@@ -27,7 +27,7 @@ describe EngineeringTask, :postgres do
 
     it "creates task assigned to specific user" do
       new_task = described_class.create!(parent: parent_task, appeal: appeal, assigned_to: sys_admin)
-      expect(new_task.valid?).to eq true
+      expect(new_task).to be_valid
       expect(new_task.assigned_to).to eq sys_admin
     end
 

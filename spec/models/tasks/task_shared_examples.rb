@@ -4,7 +4,7 @@ shared_examples_for "task requiring specific parent" do
   context "parent is the expected type" do
     it "creates task" do
       new_task = subject
-      expect(new_task.valid?).to eq true
+      expect(new_task).to be_valid
       expect(new_task.errors.messages[:parent]).to be_empty
 
       expect(appeal.tasks).to include new_task
