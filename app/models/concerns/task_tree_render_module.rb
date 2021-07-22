@@ -31,7 +31,7 @@ module TaskTreeRenderModule
       ttr.config.default_atts = [:id, :status, :ASGN_BY, :ASGN_TO, :updated_at]
       ttr.config.value_funcs_hash.merge!(PRESET_VALUE_FUNCS)
       ttr.config.heading_label_template = lambda { |appeal|
-        docket = appeal.docket_name&.first.titleize || "?"
+        docket = appeal.docket_name&.first&.titleize || "?"
         docket_number = if appeal.is_a?(LegacyAppeal)
                           appeal.cached_vacols_case&.docket_number || appeal.docket_number
                         else

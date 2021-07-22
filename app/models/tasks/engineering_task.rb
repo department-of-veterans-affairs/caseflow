@@ -21,12 +21,10 @@ class EngineeringTask < Task
     TimedHoldTask.create_from_parent(self, days_on_hold: days_to_hold, instructions: instructions)
   end
 
-  # To-do: seen in Case Details and timeline?
   def self.label
     "Caseflow Engineering Task"
   end
 
-  # Actions for both admins and non-admins
   TASK_ACTIONS = [
     Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
   ].freeze
