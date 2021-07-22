@@ -64,6 +64,7 @@ describe Hearings::SendReminderEmailsJob do
           create(
             :sent_hearing_email_event,
             :reminder,
+            recipient_role: HearingEmailRecipient::RECIPIENT_ROLES[:representative],
             sent_at: representative_reminder_sent_at,
             email_recipient: hearing.representative_recipient
           )
@@ -87,6 +88,7 @@ describe Hearings::SendReminderEmailsJob do
           create(
             :sent_hearing_email_event,
             :reminder,
+            recipient_role: HearingEmailRecipient::RECIPIENT_ROLES[:veteran],
             sent_at: appellant_reminder_sent_at,
             email_recipient: hearing.appellant_recipient
           )
@@ -148,6 +150,7 @@ describe Hearings::SendReminderEmailsJob do
           create(
             :sent_hearing_email_event,
             :reminder,
+            recipient_role: HearingEmailRecipient::RECIPIENT_ROLES[:veteran],
             sent_at: appellant_reminder_sent_at,
             email_recipient: hearing.appellant_recipient
           )
@@ -157,6 +160,7 @@ describe Hearings::SendReminderEmailsJob do
           create(
             :sent_hearing_email_event,
             :reminder,
+            recipient_role: HearingEmailRecipient::RECIPIENT_ROLES[:representative],
             sent_at: representative_reminder_sent_at,
             email_recipient: hearing.representative_recipient
           )
@@ -193,6 +197,7 @@ describe Hearings::SendReminderEmailsJob do
           create(
             :sent_hearing_email_event,
             :reminder,
+            recipient_role: HearingEmailRecipient::RECIPIENT_ROLES[:veteran],
             sent_at: appellant_reminder_sent_at,
             email_recipient: hearing.appellant_recipient
           )
@@ -202,6 +207,7 @@ describe Hearings::SendReminderEmailsJob do
           create(
             :sent_hearing_email_event,
             :reminder,
+            recipient_role: HearingEmailRecipient::RECIPIENT_ROLES[:representative],
             sent_at: representative_reminder_sent_at,
             email_recipient: hearing.representative_recipient
           )
