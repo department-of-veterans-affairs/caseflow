@@ -1312,7 +1312,6 @@ ActiveRecord::Schema.define(version: 2021_07_13_161648) do
     t.string "recipient_role", comment: "The role of the recipient: veteran, representative, judge"
     t.datetime "sent_at", null: false, comment: "The date and time the email was sent"
     t.bigint "sent_by_id", null: false, comment: "User who initiated sending the email"
-    t.index ["email_address"], name: "index_sent_hearing_email_events_on_email_address"
     t.index ["email_type"], name: "index_sent_hearing_email_events_on_email_type"
     t.index ["hearing_type", "hearing_id"], name: "index_sent_hearing_email_events_on_hearing_type_and_hearing_id"
     t.index ["recipient_role"], name: "index_sent_hearing_email_events_on_recipient_role"

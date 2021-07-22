@@ -591,7 +591,7 @@ hearing_days,updated_at,datetime ∗,x,,,,x,Automatic timestamp of when hearin
 hearing_days,updated_by_id,integer (8) ∗ FK,x,,x,,x,The ID of the user who most recently updated the Hearing Day
 hearing_email_recipients,,,,,,,,Recipients of hearings-related emails
 hearing_email_recipients,created_at,datetime ∗,x,,,,,
-hearing_email_recipients,email_address,string,,,,,,PII. The recipient's email address
+hearing_email_recipients,email_address,string ∗,x,,,,,PII. The recipient's email address
 hearing_email_recipients,email_sent,boolean ∗,x,,,,,Indicates if a notification email was sent to the recipient.
 hearing_email_recipients,hearing_id,integer (8) FK,,,x,,x,Associated hearing
 hearing_email_recipients,hearing_type,string,,,,,x,
@@ -992,7 +992,7 @@ schedule_periods,type,string ∗,x,,,,,
 schedule_periods,updated_at,datetime ∗,x,,,,x,
 schedule_periods,user_id,integer (8) ∗ FK,x,,x,,x,
 sent_hearing_email_events,,,,,,,,Events related to hearings notification emails
-sent_hearing_email_events,email_address,string,,,,,x,Address the email was sent to
+sent_hearing_email_events,email_address,string,,,,,,Address the email was sent to
 sent_hearing_email_events,email_recipient_id,integer (8) FK,,,x,,,Associated HearingEmailRecipient
 sent_hearing_email_events,email_type,string,,,,,x,"The type of email sent: cancellation, confirmation, updated_time_confirmation"
 sent_hearing_email_events,external_message_id,string,,,,,,The ID returned by the GovDelivery API when we send an email

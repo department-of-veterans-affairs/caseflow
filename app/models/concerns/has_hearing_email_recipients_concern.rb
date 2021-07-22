@@ -95,7 +95,7 @@ module HasHearingEmailRecipientsConcern
   private
 
   def update_email_events(recipient, roles)
-    events = email_events.where(email_address: recipient.email_address, recipient_role: roles)
+    events = email_events.where(recipient_role: roles)
 
     events.each { |event| event.update!(email_recipient: recipient) }
   end
