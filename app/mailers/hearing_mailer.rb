@@ -26,6 +26,7 @@ class HearingMailer < ActionMailer::Base
   def confirmation(mail_recipient:, virtual_hearing: nil)
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
+    @hearing = virtual_hearing.hearing
     @link = link
     @test_link = virtual_hearing&.test_link(mail_recipient.title)
 
@@ -61,13 +62,9 @@ class HearingMailer < ActionMailer::Base
     @representative_reminder =
       virtual_hearing.nil? && mail_recipient.title == MailRecipient::RECIPIENT_TITLES[:representative]
 
-    # Mon, Oct 19 at 10:30am CDT
-    time_format = "%a, %b %-d at %-l:%M%P %Z"
-    formatted_time = @hearing.time.appellant_time.strftime(time_format)
-
     mail(
       to: recipient.email,
-      subject: "Reminder: Your Board hearing is #{formatted_time} – Do Not Reply"
+      subject: reminder_subject
     )
   end
 
@@ -92,10 +89,30 @@ class HearingMailer < ActionMailer::Base
     end
   end
 
+  def formatted_time
+    # Mon, Oct 19 at 10:30am CDT
+    time_format = "%a, %b %-d at %-l:%M%P %Z"
+    @hearing.time.appellant_time.strftime(time_format)
+  end
+
+  def appellant_name
+    @hearing.appeal.appellant_or_veteran_name
+  end
+
+  def reminder_subject
+    if recipient.title == MailRecipient::RECIPIENT_TITLES[:representative]
+      "Reminder: #{appellant_name}'s Board hearing is #{formatted_time} – Do Not Reply"
+    else
+      "Reminder: Your Board hearing is #{formatted_time} – Do Not Reply"
+    end
+  end
+
   def confirmation_subject
     case recipient.title
-    when MailRecipient::RECIPIENT_TITLES[:appellant], MailRecipient::RECIPIENT_TITLES[:representative]
+    when MailRecipient::RECIPIENT_TITLES[:appellant]
       "Your Board hearing has been scheduled – Do Not Reply"
+    when MailRecipient::RECIPIENT_TITLES[:representative]
+      "Confirmation: #{appellant_name}'s Board hearing is #{formatted_time} – Do Not Reply"
     when MailRecipient::RECIPIENT_TITLES[:judge]
       hearing_date = virtual_hearing.hearing.scheduled_for.to_formatted_s(:short_date)
 

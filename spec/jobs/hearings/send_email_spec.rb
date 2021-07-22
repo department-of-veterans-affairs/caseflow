@@ -59,6 +59,33 @@ describe Hearings::SendEmail do
       allow(send_email_job).to receive(:representative_recipient).and_return(representative_recipient)
     end
 
+    context "appellant_recipient name is populated correctly" do
+      context "veteran is appellant" do
+        it "uses the full name of the veteran" do
+          recipient = send_email_job.send(:appellant_recipient)
+          expect(recipient.name).to eq appeal.veteran_full_name
+        end
+      end
+
+      context "veteran is not appellant" do
+        let(:veteran) { create(:veteran, first_name: "veteranfirst", last_name: "veteranlast") }
+        let(:appeal) do
+          create(
+            :appeal,
+            :hearing_docket,
+            number_of_claimants: 1,
+            veteran_is_not_claimant: true
+          )
+        end
+
+        it "uses the full name of the appellant, not the veteran" do
+          recipient = send_email_job.send(:appellant_recipient)
+          expect(recipient.name).to eq appeal.appellant_fullname_readable
+          expect(recipient.name).not_to eq appeal.veteran_full_name
+        end
+      end
+    end
+
     context "veteran name is populated" do
       before do
         allow(send_email_job).to receive(:appellant_recipient).and_return(appellant_recipient)

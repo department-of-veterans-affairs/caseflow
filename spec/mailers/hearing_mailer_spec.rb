@@ -1174,14 +1174,16 @@ describe HearingMailer do
 
       describe "#reminder" do
         include_context "virtual_reminder_email"
+        # Concatentated for each test to look like the reminder_subject in hearing_mailer.rb
+        let(:first_clause) { "Reminder: #{appeal.appellant_or_veteran_name}'s Board hearing is Tue, Jan 21 at" }
+        let(:do_not_reply_clause) { "– Do Not Reply" }
 
         context "regional office is in eastern timezone" do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at " \
-              "#{expected_ama_times[:ro_and_recipient_both_eastern]} – Do Not Reply"
+              "#{first_clause} #{expected_ama_times[:ro_and_recipient_both_eastern]} #{do_not_reply_clause}"
             )
           end
         end
@@ -1191,8 +1193,7 @@ describe HearingMailer do
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at " \
-              "#{expected_ama_times[:ro_and_recipient_both_pacific]} – Do Not Reply"
+              "#{first_clause} #{expected_ama_times[:ro_and_recipient_both_pacific]} #{do_not_reply_clause}"
             )
           end
         end
@@ -1202,8 +1203,7 @@ describe HearingMailer do
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at " \
-              "#{expected_ama_times[:ro_eastern_recipient_pacific]} – Do Not Reply"
+              "#{first_clause} #{expected_ama_times[:ro_eastern_recipient_pacific]} #{do_not_reply_clause}"
             )
           end
         end
@@ -1211,8 +1211,7 @@ describe HearingMailer do
         context "appellant_tz is not present" do
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at " \
-              "#{expected_ama_times[:ro_and_recipient_both_eastern]} – Do Not Reply"
+              "#{first_clause} #{expected_ama_times[:ro_and_recipient_both_eastern]} #{do_not_reply_clause}"
             )
           end
         end
@@ -1383,14 +1382,17 @@ describe HearingMailer do
 
       describe "#reminder" do
         include_context "virtual_reminder_email"
+        # Concatentated for each test to look like the reminder_subject in hearing_mailer.rb
+        let(:name) { virtual_hearing.hearing.appeal.appellant_or_veteran_name }
+        let(:first_clause) { "Reminder: #{name}'s Board hearing is Tue, Jan 21 at" }
+        let(:do_not_reply_clause) { "– Do Not Reply" }
 
         context "regional office is in eastern timezone" do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at " \
-              "#{expected_legacy_times[:ro_and_recipient_both_eastern]} – Do Not Reply"
+              "#{first_clause} #{expected_legacy_times[:ro_and_recipient_both_eastern]} #{do_not_reply_clause}"
             )
           end
         end
@@ -1400,8 +1402,7 @@ describe HearingMailer do
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at " \
-              "#{expected_legacy_times[:ro_and_recipient_both_pacific]} – Do Not Reply"
+              "#{first_clause} #{expected_legacy_times[:ro_and_recipient_both_pacific]} #{do_not_reply_clause}"
             )
           end
         end
@@ -1411,8 +1412,7 @@ describe HearingMailer do
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at "\
-              "#{expected_legacy_times[:ro_eastern_recipient_pacific]} – Do Not Reply"
+              "#{first_clause} #{expected_legacy_times[:ro_eastern_recipient_pacific]} #{do_not_reply_clause}"
             )
           end
         end
@@ -1420,8 +1420,7 @@ describe HearingMailer do
         context "appellant_tz is not present" do
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at "\
-              "#{expected_legacy_times[:ro_and_recipient_both_eastern]} – Do Not Reply"
+              "#{first_clause} #{expected_legacy_times[:ro_and_recipient_both_eastern]} #{do_not_reply_clause}"
             )
           end
         end
