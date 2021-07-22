@@ -60,7 +60,8 @@ const EditAppellantInformation = ({ appealId }) => {
       dispatch(showSuccessMessage(successMessage));
       push(`/queue/appeals/${appealId}`);
     },
-    (_error) => {
+    // eslint-disable-next-line no-unused-vars
+    (error) => {
       // eslint-disable-next-line no-console
       setError(true);
       setLoading(false);
