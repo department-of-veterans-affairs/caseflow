@@ -301,7 +301,7 @@ class BaseHearingUpdateForm
   # rubocop:disable Metrics/AbcSize
   def create_or_update_virtual_hearing
     # TODO: All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.
-    virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do |new_virtual_hearing|
+    virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do
       create_or_update_email_recipients
 
       @virtual_hearing_created = true
