@@ -127,7 +127,7 @@ describe HearingEmailRecipient do
   end
 
   context "#reminder_sent_at" do
-    let(:email_recipient) do
+    let!(:email_recipient) do
       create(
         :hearing_email_recipient,
         :initialized,
@@ -148,7 +148,7 @@ describe HearingEmailRecipient do
         )
       end
 
-      it "returns correct value" do
+      it "returns correct value", focus: true do
         expect(subject).to eq(reminder_event.sent_at)
       end
     end
