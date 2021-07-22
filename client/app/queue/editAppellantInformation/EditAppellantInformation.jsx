@@ -61,7 +61,6 @@ const EditAppellantInformation = ({ appealId }) => {
     },
     (error) => {
       // eslint-disable-next-line no-console
-      console.log(error);
       setError(true);
       setLoading(false);
     });
