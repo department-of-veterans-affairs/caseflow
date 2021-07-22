@@ -114,7 +114,7 @@ describe EngineeringTask, :postgres do
     it "does not cause a false alert from AppealsWithNoTasksOrAllTasksOnHoldQuery" do
       # without EngineeringTask
       stuck_appeals = AppealsWithNoTasksOrAllTasksOnHoldQuery.new.call
-      expect(stuck_appeals).to include appeal
+      expect(stuck_appeals).to include appeal # false alert
 
       # with EngineeringTask
       described_class.create(parent: hearing_task, appeal: appeal)
