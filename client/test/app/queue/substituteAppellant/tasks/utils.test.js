@@ -10,7 +10,6 @@ import {
   shouldHideBasedOnPoa,
   shouldHide,
   shouldShowBasedOnOtherTasks,
-  shouldShowScheduleHearingTaskAlert,
 } from 'app/queue/substituteAppellant/tasks/utils';
 
 import { sampleTasksForEvidenceSubmissionDocket } from 'test/data/queue/substituteAppellant/tasks';
@@ -93,14 +92,6 @@ describe('utility functions for task manipulation', () => {
       it('should not hide', () => {
         expect(shouldHideBasedOnPoa(taskInfo, { ihp_allowed: false })).toBe(false);
       });
-    });
-  });
-
-  describe('shouldShowScheduleHearingTaskAlert', () => {
-    const scheduleHearingTaskSelected = true;
-
-    it('returns true when ScheduleHearingTask is not selected', () => {
-      expect(shouldShowScheduleHearingTaskAlert({ scheduleHearingTaskSelected })).toBe(true);
     });
   });
 
