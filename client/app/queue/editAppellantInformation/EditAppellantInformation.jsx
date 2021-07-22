@@ -29,8 +29,6 @@ const EditAppellantInformation = ({ appealId }) => {
     dispatch(resetSuccessMessages());
   }, []);
 
-  console.log(appeal);
-
   const methods = useClaimantForm({ defaultValues: mapAppellantDataFromApi(appeal) }, true, true);
   const [loading, setLoading] = useState(false);
 
