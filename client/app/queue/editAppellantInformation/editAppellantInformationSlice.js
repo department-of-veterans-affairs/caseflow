@@ -17,7 +17,6 @@ const editClaimantSlice = createSlice({
 
 export const {
   cancel,
-  updateAppellantInformation,
   clearClaimant,
 } = editClaimantSlice.actions;
 

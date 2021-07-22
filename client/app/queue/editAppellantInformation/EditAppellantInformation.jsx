@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { FormProvider } from 'react-hook-form';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { connect, useDispatch, useSelector } from 'react-redux';
@@ -9,6 +9,7 @@ import { sprintf } from 'sprintf-js';
 import { ClaimantForm as EditClaimantForm } from '../../intake/addClaimant/ClaimantForm';
 import { useClaimantForm } from '../../intake/addClaimant/utils';
 import Button from '../../components/Button';
+import Alert from '../../components/Alert'
 import COPY, { EDIT_CLAIMANT_PAGE_DESCRIPTION } from 'app/../COPY';
 import { appealWithDetailSelector } from '../selectors';
 import { mapAppellantDataFromApi, mapAppellantDataToApi } from './utils';
@@ -30,6 +31,7 @@ const EditAppellantInformation = ({ appealId }) => {
   }, []);
 
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false)
 
   const methods = useClaimantForm({ defaultValues: mapAppellantDataFromApi(appeal) }, true);
   const {
@@ -57,10 +59,11 @@ const EditAppellantInformation = ({ appealId }) => {
       dispatch(showSuccessMessage(successMessage));
       push(`/queue/appeals/${appealId}`);
     },
-    // CASEFLOW-1925
     (error) => {
       // eslint-disable-next-line no-console
       console.log(error);
+      setError(true);
+      setLoading(false);
     });
   };
 
@@ -70,6 +73,17 @@ const EditAppellantInformation = ({ appealId }) => {
   return <div>
     <FormProvider {...methods}>
       <AppSegment filledBackground>
+        {error === true && 
+          <Alert 
+            type="error" 
+            title="Unable to edit appellant."
+            message={
+              <Fragment>Please try again and if this error persists,
+                <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer"> submit a YourIT ticket</a>
+              </Fragment>
+            }
+          />
+        }
         <EditClaimantForm
           editAppellantHeader={editAppellantHeader}
           editAppellantDescription={editAppellantDescription}
