@@ -3,6 +3,7 @@
 class HearingEmailRecipient < CaseflowRecord
   RECIPIENT_ROLES = {
     appellant: "appellant",
+    veteran: "veteran",
     representative: "representative",
     judge: "judge"
   }.freeze
@@ -14,7 +15,7 @@ class HearingEmailRecipient < CaseflowRecord
 
   def reminder_sent_at
     email_events
-      .where(email_type: "reminder", recipient_role: role)
+      .where(email_type: "reminder", recipient_role: roles)
       &.order(:sent_at)
       &.last
       &.sent_at

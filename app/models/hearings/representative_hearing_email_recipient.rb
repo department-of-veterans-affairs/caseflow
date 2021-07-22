@@ -7,7 +7,7 @@ class RepresentativeHearingEmailRecipient < HearingEmailRecipient
 
   validates_email_format_of :email_address, allow_nil: true, message: email_error_message
 
-  def role
-    RECIPIENT_ROLES[:representative]
+  def roles
+    [RECIPIENT_ROLES[:representative]]
   end
 end
