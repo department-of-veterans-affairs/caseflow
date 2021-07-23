@@ -3,6 +3,7 @@
 # Used by ExplainController to build the data for visualizing a network graph or
 # ERD (entity-relationship diagram) based on exported data from SanitizedJsonExporter.
 
+# rubocop:disable Metrics/ModuleLength
 module ExplainNetworkConcern
   extend ActiveSupport::Concern
 
