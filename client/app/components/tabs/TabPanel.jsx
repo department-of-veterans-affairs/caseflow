@@ -42,7 +42,7 @@ export const TabPanel = ({
       id={`${ctx.idPrefix}-tabpanel-${value}`}
       aria-hidden={!active}
       className={classNames}
-      tabIndex={active ? 0 : -1}
+      tabIndex={-1}
     >
       {contents}
     </Component>
