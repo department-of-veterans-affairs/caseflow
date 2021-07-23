@@ -75,7 +75,7 @@ export class IntakeEditFrame extends React.PureComponent {
   };
 
   displayDecisionDateMessage = () => {
-    return 'One or more request issues lack a decision date. Please contact the Caseflow team via the VA Enterprise Service Desk at 855-673-4357 or create a YourIT ticket to correct these issues.';
+    return 'One or more request issues lack a decision date. Please contact the Caseflow team via the VA Enterprise Service Desk at 855-673-4357 or create a YourIT ticket to correct these issues.'; // eslint-disable-line max-len
   }
 
   render() {
