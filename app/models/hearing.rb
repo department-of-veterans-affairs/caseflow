@@ -30,6 +30,7 @@ class Hearing < CaseflowRecord
   include HasSimpleAppealUpdatedSince
   include UpdatedByUserConcern
   include HearingConcern
+  include HasHearingEmailRecipientsConcern
 
   belongs_to :hearing_day
   belongs_to :appeal
@@ -40,6 +41,7 @@ class Hearing < CaseflowRecord
   has_one :hearing_location, as: :hearing
   has_many :hearing_issue_notes
   has_many :email_events, class_name: "SentHearingEmailEvent"
+  has_many :email_recipients, class_name: "HearingEmailRecipient"
 
   class HearingDayFull < StandardError; end
 

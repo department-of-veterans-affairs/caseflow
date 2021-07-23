@@ -667,4 +667,116 @@ describe LegacyHearing, :all_dbs do
       end
     end
   end
+
+  context "hearing email recipient" do
+    shared_context "when there is a virtual hearing" do
+      let!(:email_event) do
+        create(
+          :sent_hearing_email_event,
+          email_address: email_address,
+          recipient_role: recipient_role,
+          hearing: hearing
+        )
+      end
+
+      let!(:virtual_hearing) do
+        VirtualHearing.create!(
+          hearing: hearing,
+          appellant_email: appellant_email,
+          appellant_tz: appellant_tz,
+          judge_email: judge_email,
+          representative_email: representative_email,
+          representative_tz: representative_tz,
+          created_by: User.system_user
+        )
+      end
+
+      it "backfills virtual hearing data and returns recipient", :aggregate_failures do
+        expect(hearing.reload.email_recipients.empty?).to eq(true)
+        expect(subject).not_to eq(nil)
+        expect(subject.email_address).to eq(email_address)
+        expect(subject.timezone).to eq(timezone)
+
+        expect(email_event.reload.email_recipient).to eq(subject)
+      end
+    end
+
+    shared_context "returns existing recipient" do
+      let!(:email_recipient) do
+        create(
+          :hearing_email_recipient,
+          type,
+          hearing: hearing,
+          email_address: email_address,
+          timezone: timezone,
+        )
+      end
+
+      it "returns exisiting recipient" do
+        expect(subject).to eq(email_recipient)
+      end
+    end
+
+    let(:vacols_case) { create(:case) }
+    let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+    let(:hearing) do
+      create(
+        :legacy_hearing,
+        appeal: legacy_appeal,
+        case_hearing: create(:case_hearing, folder_nr: legacy_appeal.vacols_id)
+      )
+    end
+    let(:appellant_email) { nil }
+    let(:appellant_tz) { nil }
+    let(:representative_email) { nil }
+    let(:representative_tz) { nil }
+    let(:judge_email) { nil }
+
+    context "#appellant_recipient" do
+      let(:type) { :appellant_hearing_email_recipient }
+      let(:appellant_email) { "test1@email.com" }
+      let(:appellant_tz) { "America/New_York" }
+      let(:email_address) { appellant_email }
+      let(:timezone) { appellant_tz }
+      let(:recipient_role) { HearingEmailRecipient::RECIPIENT_ROLES[:veteran] }
+
+      subject { hearing.reload.appellant_recipient }
+
+      include_context "when there is a virtual hearing"
+      context "when there is an exisiting recipient" do
+        include_context "returns existing recipient"
+      end
+    end
+
+    context "#representative_recipient" do
+      let(:type) { :representative_hearing_email_recipient }
+      let(:representative_email) { "test2@email.com" }
+      let(:representative_tz) { "America/Los_Angeles" }
+      let(:email_address) { representative_email }
+      let(:timezone) { representative_tz }
+      let(:recipient_role) { HearingEmailRecipient::RECIPIENT_ROLES[:representative] }
+
+      subject { hearing.reload.representative_recipient }
+
+      include_context "when there is a virtual hearing"
+      context "when there is an exisiting recipient" do
+        include_context "returns existing recipient"
+      end
+    end
+
+    context "#judge_recipient" do
+      let(:type) { :judge_hearing_email_recipient }
+      let(:judge_email) { "test3@email.com" }
+      let(:email_address) { judge_email }
+      let(:timezone) { nil }
+      let(:recipient_role) { HearingEmailRecipient::RECIPIENT_ROLES[:judge] }
+
+      subject { hearing.reload.judge_recipient }
+
+      include_context "when there is a virtual hearing"
+      context "when there is an exisiting recipient" do
+        include_context "returns existing recipient"
+      end
+    end
+  end
 end

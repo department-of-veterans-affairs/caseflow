@@ -62,6 +62,10 @@ FactoryBot.define do
       # Calling reload after create fixes a problem where calling `virtual_hearing.hearing.virtual_hearing`
       # would return `nil`.
       virtual_hearing.reload
+
+      virtual_hearing.hearing.appellant_recipient
+      virtual_hearing.hearing.representative_recipient
+      virtual_hearing.hearing.judge_recipient
     end
 
     after(:create) do |virtual_hearing, evaluator|
