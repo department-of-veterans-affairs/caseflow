@@ -12,6 +12,7 @@ export const shouldSupportSubstituteAppellant = ({
 
   return (
     !appeal.isLegacyAppeal &&
+    appeal.veteranDateOfDeath &&
       currentUserOnClerkOfTheBoard &&
       !appeal.appellantIsNotVeteran &&
       featureToggles.recognized_granted_substitution_after_dd &&

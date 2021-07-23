@@ -1910,6 +1910,7 @@ RSpec.feature "Case details", :all_dbs do
         before do
           ClerkOfTheBoard.singleton.add_user(cob_user)
           User.authenticate!(user: cob_user)
+          appeal.veteran.update!(date_of_death: 1.week.ago)
         end
 
         shared_examples "the button is not shown" do
@@ -1965,7 +1966,17 @@ RSpec.feature "Case details", :all_dbs do
         context "when the disposition is 'Dismissed, Death'" do
           let(:disposition) { "dismissed_death" }
 
-          it_behaves_like "the button is shown"
+          # This is a nonsensical state but happens often in dev/demo:
+          context "when the veteran is living" do
+            before { appeal.veteran.update!(date_of_death: nil) }
+            after { appeal.veteran.update!(date_of_death: 1.week.ago) }
+
+            it_behaves_like "the button is not shown"
+          end
+
+          context "when the veteran is deceased" do
+            it_behaves_like "the button is shown"
+          end
 
           context "but if the claimant is not a veteran" do
             before { appeal.update(veteran_is_not_claimant: true) }
