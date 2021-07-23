@@ -28,6 +28,8 @@ checks:
   return-statements:
     config:
       threshold: 4
+    exclude_patterns:
+    - 'client/app/intake/pages/addIssues.jsx'
   similar-code:
     enabled: false
     config:
