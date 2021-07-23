@@ -199,6 +199,10 @@ class AddIssuesPage extends React.Component {
     const { useAmaActivationDate } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
 
+    if (intakeData.requestIssues.some((issue) => !issue.approx_decision_date)) {
+      return <Redirect to={PAGE_PATHS.REQUEST_ISSUE_MISSING_DECISION_DATE} />;
+    }
+
     if (this.willRedirect(intakeData, hasClearedEp)) {
       return this.redirect(intakeData, hasClearedEp);
 

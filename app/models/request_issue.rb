@@ -337,7 +337,7 @@ class RequestIssue < CaseflowRecord
     else
       return if is_unidentified
 
-      fail MissingDecisionDate, id
+      nil
     end
   end
 
