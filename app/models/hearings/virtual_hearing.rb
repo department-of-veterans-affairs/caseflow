@@ -61,11 +61,6 @@ class VirtualHearing < CaseflowRecord
   has_one :establishment, class_name: "VirtualHearingEstablishment"
 
   before_create :assign_created_by_user
-
-  validates :appellant_email, presence: true, on: :create
-  validates_email_format_of :judge_email, allow_nil: true
-  validates_email_format_of :appellant_email
-  validates_email_format_of :representative_email, allow_nil: true
   validate :hearing_is_not_virtual, on: :create
 
   scope :eligible_for_deletion,
@@ -90,12 +85,57 @@ class VirtualHearing < CaseflowRecord
     HearingDay::REQUEST_TYPES[:central]
   ].freeze
 
+  ## BEGIN Email Related accessors
+  def appellant_email
+    hearing.appellant_recipient.email_address
+  end
+
+  def appellant_tz
+    hearing.appellant_recipient.timezone
+  end
+
+  def appellant_email_sent
+    hearing.appellant_recipient.email_sent
+  end
+
+  def appellant_reminder_sent_at
+    hearing.appellant_recipient.reminder_sent_at
+  end
+
+  def representative_email
+    hearing.representative_recipient&.email_address
+  end
+
+  def representative_tz
+    hearing.representative_recipient&.timezone
+  end
+
+  def representative_email_sent
+    hearing.representative_recipient&.email_sent
+  end
+
+  def representative_reminder_sent_at
+    hearing.representative_recipient&.reminder_sent_at
+  end
+
+  def judge_email
+    hearing.judge_recipient&.email_address
+  end
+
+  def judge_email_sent
+    hearing.judge_recipient&.email_sent
+  end
+
   # Whether or not all non-reminder emails were sent.
   def all_emails_sent?
-    appellant_email_sent &&
-      (judge_email.nil? || judge_email_sent) &&
-      (representative_email.nil? || representative_email_sent)
+    hearing.all_emails_sent?
   end
+
+  # checks if emails were sent to appellant and reps
+  def cancellation_emails_sent?
+    hearing.cancellation_emails_sent?
+  end
+  ## END Email related accessors
 
   # After a certain point after this change gets merged, alias_with_host will never be nil
   # so we can rid of this logic then
@@ -218,11 +258,6 @@ class VirtualHearing < CaseflowRecord
     update(request_cancelled: true)
   end
 
-  # checks if emails were sent to appellant and reps
-  def cancellation_emails_sent?
-    appellant_email_sent && (representative_email.nil? || representative_email_sent)
-  end
-
   def use_vc_test_link?
     guest_hearing_link.present? && host_hearing_link.present?
   end
@@ -259,7 +294,7 @@ class VirtualHearing < CaseflowRecord
   end
 
   def email_recipient_name(title)
-    if title == MailRecipient::RECIPIENT_TITLES[:representative]
+    if title == HearingEmailRecipient::RECIPIENT_TITLES[:representative]
       "Representative"
     elsif hearing&.appeal&.appellant_is_not_veteran
       "Appellant"
