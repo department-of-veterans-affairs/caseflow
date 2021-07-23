@@ -20,6 +20,8 @@ import substituteAppellantReducer from './substituteAppellant/substituteAppellan
 // TODO: Remove this when we move entirely over to the appeals search.
 import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
 
+import editClaimantReducer from './editAppellantInformation/editAppellantInformationSlice';
+
 export const initialState = {
   judges: {},
   tasks: {},
@@ -777,6 +779,7 @@ const rootReducer = combineReducers({
   docketSwitch: docketSwitchReducer,
   mtv: mtvReducer,
   substituteAppellant: substituteAppellantReducer,
+  editClaimantReducer: editClaimantReducer
 });
 
 export default timeFunction(

@@ -1,4 +1,4 @@
-import { formatISO } from 'date-fns';
+import { formatISO, startOfDay } from 'date-fns';
 import parseISO from 'date-fns/parseISO';
 
 export const automatedTasks = [
@@ -74,8 +74,8 @@ export const shouldDisable = (taskInfo) => {
   return alwaysDisabled.includes(taskInfo.type);
 };
 
-export const shouldHideBasedOnPoaType = (taskInfo, poaType) => {
-  return ['Attorney', 'Agent'].includes(poaType) && taskInfo.type === 'InformalHearingPresentationTask';
+export const shouldHideBasedOnPoa = (taskInfo, claimantPoa) => {
+  return taskInfo.type === 'InformalHearingPresentationTask' && !claimantPoa?.ihp_allowed;
 };
 
 // We can have a case where a particular task's inclusion depends upon other tasks
@@ -90,12 +90,12 @@ export const shouldShowBasedOnOtherTasks = (taskInfo, allTasks) => {
 };
 
 // The following governs which tasks should not actually appear in list of available tasks
-export const shouldHide = (taskInfo, poaType, allTasks) => {
+export const shouldHide = (taskInfo, claimantPoa, allTasks) => {
   if (automatedTasks.includes(taskInfo.type)) {
     return true;
   }
 
-  return (taskInfo.hideFromCaseTimeline || shouldHideBasedOnPoaType(taskInfo, poaType)) && !shouldShowBasedOnOtherTasks(taskInfo, allTasks);
+  return (taskInfo.hideFromCaseTimeline || shouldHideBasedOnPoa(taskInfo, claimantPoa)) && !shouldShowBasedOnOtherTasks(taskInfo, allTasks);
 };
 
 export const shouldAutoSelect = (taskInfo) => {
@@ -137,14 +137,14 @@ export const sortTasks = (taskData) => {
 };
 
 // This returns array of tasks with relevant booleans for hidden/disabled
-export const prepTaskDataForUi = (taskData, poaType) => {
+export const prepTaskDataForUi = (taskData, claimantPoa) => {
   const uniqTasks = filterTasks(taskData);
 
   const sortedTasks = sortTasks(uniqTasks);
 
   return sortedTasks.map((taskInfo) => ({
     ...taskInfo,
-    hidden: shouldHide(taskInfo, poaType, taskData),
+    hidden: shouldHide(taskInfo, claimantPoa, taskData),
     disabled: shouldDisable(taskInfo, taskData),
     selected: shouldAutoSelect(taskInfo),
   }));
@@ -178,5 +178,6 @@ export const calculateEvidenceSubmissionEndDate = ({
 
   const newEndTime = substitutionDate.getTime() + remainingTime;
 
-  return formatISO(newEndTime, { representation: 'date' });
+  // We want to specify midnight in user's time zone (likely Eastern)
+  return formatISO(startOfDay(new Date(newEndTime)));
 };

@@ -60,6 +60,12 @@ module AppealConcern
     end
   end
 
+  def appellant_or_veteran_name
+    return appellant_fullname_readable if appellant_is_not_veteran
+
+    veteran_full_name
+  end
+
   def appellant_tz
     timezone_identifier_for_address(appellant_address)
   end
@@ -130,6 +136,20 @@ module AppealConcern
 
     begin
       TimezoneService.address_to_timezone(address_obj).identifier
+    rescue TimezoneService::AmbiguousTimezoneError => error
+      # TimezoneService raises an error for foreign countries that span multiple time zones since we
+      # only look up time zones by country for foreign addresses. We do not act on these errors (they
+      # are valid addresses, we just cannot determine the time zone) so we do not send the error to
+      # Sentry, only to Datadog for trend tracking.
+      DataDogService.increment_counter(
+        metric_group: "appeal_timezone_service",
+        metric_name: "ambiguous_timezone_error",
+        app_name: RequestStore[:application],
+        attrs: {
+          country_code: error.country_code
+        }
+      )
+      nil
     rescue StandardError => error
       Raven.capture_exception(error)
       nil
