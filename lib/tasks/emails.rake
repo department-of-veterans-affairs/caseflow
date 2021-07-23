@@ -93,20 +93,38 @@ namespace :emails do
         )
       end
 
+      appellant_recipient = build(
+        :hearing_email_recipient,
+        :appellant_hearing_email_recipient,
+        hearing: hearing
+      )
+
+      representative_recipient = build(
+        :hearing_email_recipient,
+        :representative_hearing_email_recipient,
+        hearing: hearing
+      )
+
+      judge_recipient = build(
+        :hearing_email_recipient,
+        :judge_hearing_email_recipient,
+        hearing: hearing
+      )
+
       recipients = [
         EmailRecipientInfo.new(
           name: "Appellant Full Name", # Can't create a fake appellant without saving to the DB
-          hearing_email_recipient: hearing.appellant_recipient,
+          hearing_email_recipient: appellant_recipient,
           title: HearingEmailRecipient::RECIPIENT_TITLES[:appellant]
         ),
         EmailRecipientInfo.new(
           name: hearing.judge.full_name,
-          hearing_email_recipient: hearing.judge_recipient,
+          hearing_email_recipient: judge_recipient,
           title: HearingEmailRecipient::RECIPIENT_TITLES[:judge]
         ),
         EmailRecipientInfo.new(
           name: "Power of Attorney", # POA name is too complicated to fake for this
-          hearing_email_recipient: hearing.representative_recipient,
+          hearing_email_recipient: representative_recipient,
           title: HearingEmailRecipient::RECIPIENT_TITLES[:representative]
         )
       ]
