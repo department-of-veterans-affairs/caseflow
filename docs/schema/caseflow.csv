@@ -589,6 +589,16 @@ hearing_days,scheduled_for,date ∗,x,,,,,The date when all associated hearing
 hearing_days,slot_length_minutes,integer,,,,,,The length in minutes of each time slot for this day
 hearing_days,updated_at,datetime ∗,x,,,,x,Automatic timestamp of when hearing day was updated
 hearing_days,updated_by_id,integer (8) ∗ FK,x,,x,,x,The ID of the user who most recently updated the Hearing Day
+hearing_email_recipients,,,,,,,,Recipients of hearings-related emails
+hearing_email_recipients,created_at,datetime ∗,x,,,,,
+hearing_email_recipients,email_address,string ∗,x,,,,,PII. The recipient's email address
+hearing_email_recipients,email_sent,boolean ∗,x,,,,,Indicates if a notification email was sent to the recipient.
+hearing_email_recipients,hearing_id,integer (8) FK,,,x,,x,Associated hearing
+hearing_email_recipients,hearing_type,string,,,,,x,
+hearing_email_recipients,id,integer (8) PK,x,x,,,,
+hearing_email_recipients,timezone,string (50),,,,,,The recipient's timezone
+hearing_email_recipients,type,string,,,,,,The subclass name (i.e. AppellantHearingEmailRecipient)
+hearing_email_recipients,updated_at,datetime ∗,x,,,,,
 hearing_issue_notes,,,,,,,,
 hearing_issue_notes,allow,boolean,,,,,,
 hearing_issue_notes,created_at,datetime,,,,,,
@@ -983,6 +993,7 @@ schedule_periods,updated_at,datetime ∗,x,,,,x,
 schedule_periods,user_id,integer (8) ∗ FK,x,,x,,x,
 sent_hearing_email_events,,,,,,,,Events related to hearings notification emails
 sent_hearing_email_events,email_address,string,,,,,,Address the email was sent to
+sent_hearing_email_events,email_recipient_id,integer (8) FK,,,x,,,Associated HearingEmailRecipient
 sent_hearing_email_events,email_type,string,,,,,,"The type of email sent: cancellation, confirmation, updated_time_confirmation"
 sent_hearing_email_events,external_message_id,string,,,,,,The ID returned by the GovDelivery API when we send an email
 sent_hearing_email_events,hearing_id,integer (8) ∗ FK,x,,x,,x,Associated hearing
@@ -1103,8 +1114,8 @@ transcriptions,uploaded_to_vbms_date,date,,,,,,Date when the hearing transcripti
 unrecognized_appellants,,,,,,,,Unrecognized non-veteran appellants
 unrecognized_appellants,claimant_id,integer (8) ∗ FK,x,,x,,x,The OtherClaimant record associating this appellant to a DecisionReview
 unrecognized_appellants,created_at,datetime ∗,x,,,,,
-unrecognized_appellants,created_by_id,integer (8) FK,,,x,,,The ID of the user that created this version of the unrecognized appellant
-unrecognized_appellants,current_version_id,integer (8) FK,,,x,,,The current version ID for this unrecognized appellant
+unrecognized_appellants,created_by_id,integer (8) ∗ FK,x,,x,,,The user that created this version of the unrecognized appellant
+unrecognized_appellants,current_version_id,integer (8) FK,,,x,,,The current version for this unrecognized appellant
 unrecognized_appellants,id,integer (8) PK,x,x,,,,
 unrecognized_appellants,poa_participant_id,string,,,,,,"Identifier of the appellant's POA, if they have a CorpDB participant_id"
 unrecognized_appellants,relationship,string ∗,x,,,,,"Relationship to veteran. Allowed values: attorney, child, spouse, other"

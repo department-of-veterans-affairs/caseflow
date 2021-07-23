@@ -7,13 +7,6 @@ Immigrant.ignore_keys = [
   # Add FK to legacy_appeals
   { from_table: "worksheet_issues", column: "appeal_id" },
 
-  # Seems to alway refer to AMA appeals - add FK to appeals table
-  { from_table: "board_grant_effectuations", column: "appeal_id" },
-  # Add FKs if appropriate
-  { from_table: "board_grant_effectuations", column: "decision_document_id" },
-  { from_table: "board_grant_effectuations", column: "end_product_establishment_id" },
-  { from_table: "board_grant_effectuations", column: "granted_decision_issue_id" },
-
   # Add FK to dispatch_tasks table (not the tasks table)
   { from_table: "claim_establishments", column: "task_id" },
 
@@ -35,6 +28,7 @@ Immigrant.ignore_keys = [
 
   # A job will check for orphaned records for these polymorphic associations:
   { from_table: "sent_hearing_email_events", column: "hearing_id" },
+  { from_table: "hearing_email_recipients", column: "hearing_id" },
   { from_table: "special_issue_lists", column: "appeal_id" },
   { from_table: "tasks", column: "appeal_id" },
   { from_table: "vbms_uploaded_documents", column: "appeal_id" },

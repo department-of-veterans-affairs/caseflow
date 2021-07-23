@@ -92,7 +92,8 @@ describe HearingTimeService, :all_dbs do
       shared_examples_for "returns normalized timezone" do
         context "timezone is present" do
           before do
-            virtual_hearing.update!(appellant_tz: timezone, representative_tz: timezone)
+            virtual_hearing.hearing.appellant_recipient.update!(timezone: timezone)
+            virtual_hearing.hearing.representative_recipient.update!(timezone: timezone)
           end
 
           it "changes to Appellant timezone (CT)" do
@@ -116,7 +117,8 @@ describe HearingTimeService, :all_dbs do
 
         context "timezone is invalid" do
           before do
-            virtual_hearing.update!(appellant_tz: invalid_tz, representative_tz: invalid_tz)
+            virtual_hearing.hearing.appellant_recipient.update!(timezone: invalid_tz)
+            virtual_hearing.hearing.representative_recipient.update!(timezone: invalid_tz)
           end
 
           it "throws an ArgumentError for Appellant" do
