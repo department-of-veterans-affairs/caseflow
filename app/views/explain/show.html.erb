@@ -105,7 +105,7 @@
       <div style="margin-left: 1em;">
         <input type="button" id="fit" value="Fit all items" />
         <details>
-          <summary id="timeline_config" style="color: purple">Timeline configuration</summary>
+          <summary id="timeline_config" style="color: blue">Timeline configuration</summary>
 
           <% ["phases", "tasks", "cancelled_tasks", "others"].each do |groupName| %>
             <input id="<%=groupName%>_group_visible" value="<%=groupName%>" 
@@ -142,7 +142,7 @@
         <br/>
         <div id="timeline"></div>
         <details>
-          <summary style="color: red">Timeline data</summary>
+          <summary style="color: gray">Timeline data</summary>
           <pre style="font-size:0.84em; padding:10px"><code><%= JSON.pretty_generate(timeline_data) %></code></pre>
         </details>
       </div>
@@ -154,7 +154,7 @@
       <summary id="network_viz" style="color: purple">Network graph</summary>
       <div style="margin-left: 1em;">
         <details>
-          <summary style="color: blue">Filter nodes</summary>
+          <summary style="color: blue">Network configuration</summary>
           <div id="nodeFilters" style="width: 200px; height: 300px; overflow-y: scroll; padding:10px">
             <% ["tasks", "users", "organizations"].each do |tableName| %>
               <input id="<%=tableName%>_node_visible" value="<%=tableName%>" type="checkbox" checked onchange="toggleNodeType(this)" />
@@ -164,7 +164,7 @@
         </details>
         <div id="netgraph"></div>
         <details>
-          <summary style="color: blue">Network graph data</summary>
+          <summary style="color: gray">Network graph data</summary>
           <pre style="font-size:0.75em; padding:10px"><code><%= JSON.pretty_generate(network_graph_data) %></code></pre>
         </details>
       </div>
@@ -184,7 +184,6 @@
       var network_graph_data = <%= network_graph_data.to_json.html_safe %>;
       addNetworkGraph("netgraph", network_graph_data);
     </script>
-    <hr/>
   <% end %>
 
 </div>

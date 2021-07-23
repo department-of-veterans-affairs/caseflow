@@ -112,43 +112,51 @@ function toggleTimelineEventGroup(checkbox){
 
 //================== Network graph ========================
 
+// These colors should match with those in export-appeal.css
 const taskNodeColor = {
-  assigned: "#00dd00",
-  in_progress: "#00ff00",
-  on_hold: "#cccc00",
-  cancelled: "#8a8",
-  completed: "#00bb00"
+  assigned: "#FFFF80",
+  on_hold: "#A3A303",
+  in_progress: "#00FF00",
+  completed: "#00B800",
+  cancelled: "#D89696"
 }
 
 // See icons at https://fontawesome.com/icons
 const nodeDecoration = {
   intakes: { shape: "diamond" },
   cavc_remands: { shape: "triangle" },
-  appeals: { shape: "star", size: 30, color: "#ff8888" },
+  appeals: { shape: "star", size: 30, color: "blue" },
   claimants: { shape: "ellipse", color: "#d3d3d3" },
   veterans: { shape: "icon", icon: { code: "\uf29a" } },
   people: { shape: "icon", icon: { code: "\uf2bb", color: "gray" } },
-  users: { shape: "icon", size: 10, icon: { code: "\uf007", color: "gray" } },
+  users: { shape: "icon", icon: { code: "\uf007", color: "gray" } },
   organizations: { shape: "icon", icon: { code: "\uf0e8", color: "#a3a3a3" } },
-  tasks: { shape: "box", color: (node)=>taskNodeColor[node.status] },
-  request_issues: { shape: "box", color: "#ffa500" },
-  decision_issues: { shape: "box", color: "#ffe100" },
+  tasks: { shape: "box", color: (node)=>taskNodeColor[node.status],
+           shapeProperties: { borderRadius: 1 }
+         },
+  request_issues: { shape: "ellipse", color: "#ffa500" },
+  decision_issues: { shape: "ellipse", color: "#ffe100" },
   decision_documents: { shape: "icon", icon: { code: "\uf15b", color: "#660000" } },
   attorney_case_reviews: { shape: "icon", icon: { code: "\uf07a", color: "#660033" } },
   judge_case_reviews: { shape: "icon", icon: { code: "\uf07a", color: "#660000" } }
 };
 
-// Using this approach (decorateNodes and decorateTimelineItems) instead of CSS styles because
-// I needed to specify shape and icon anyway.
-// export-appeal.css is available for other styling
+// Using decorateNodes instead of CSS styles because the graph is in a canvas and
+// the color is part of the shape and icon.
 function decorateNodes(nodes){
   nodes.forEach(node => {
     if(!nodeDecoration.hasOwnProperty(node.tableName)) return;
+
     for ([key, value] of Object.entries(nodeDecoration[node.tableName])) {
       if (typeof value === 'function') {
         value = value(node)
       }
       node[key] = value
+    }
+
+    // `node.title` is displayed as the tooltip on node mouseover
+    if(!node.title){
+      node.title = formatJson(node);
     }
   });
   // console.log(nodes)

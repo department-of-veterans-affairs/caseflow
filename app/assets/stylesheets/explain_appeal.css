@@ -76,7 +76,7 @@ summary {
 }
 
 #events_table tr.clock {
-  color: rgb(173, 173, 173);
+  color: #ADADAD;
   font-size: 0.7em;
   border-style: none;
 }
@@ -104,30 +104,30 @@ summary {
 }
 
 #events_table [role="cell"] span.task_assigned {
-  color: rgb(134, 132, 1)
+  color: #888800
 }
 
 #events_table [role="cell"] span.task_cancelled  {
-  color: rgb(143, 80, 80)
+  color: #AA0000
 }
 
 #events_table [role="cell"] span.task_completed {
-  color: rgb(0, 90, 0)
+  color: #005500
 }
 
 /* Timeline */
 
 /* https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties */
 :root {
-  --assigned-task-color: #ffff80;
-  --onhold-task-color: rgb(163, 161, 3);
-  --inprogress-task-color: #00ff00;
-  --completed-task-color: rgb(0, 184, 0);
-  --cancelled-task-color: rgb(192, 135, 135);
+  --assigned-task-color: #FFFF80;
+  --onhold-task-color: #A3A303;
+  --inprogress-task-color: #00FF00;
+  --completed-task-color: #00B800;
+  --cancelled-task-color: #D89696;
 
-  --background-distribution-phase-color: rgb(240, 240, 240);
-  --background-dispatch-phase-color: rgb(210, 210, 210);
-  --background-dispatch-phase-color: rgb(180, 180, 180);
+  --background-distribution-phase-color: #F0F0F0;
+  --background-decision-phase-color: #D2D2D2;
+  --background-dispatch-phase-color: #B4B4B4;
 }
 
 /* color-coding table */
@@ -224,7 +224,7 @@ summary {
   background-color: var(--background-distribution-phase-color);
 }
 #timeline div.JudgeDecisionReviewTask {
-  background-color: var(--background-dispatch-phase-color);
+  background-color: var(--background-decision-phase-color);
 }
 #timeline div.BvaDispatchTask {
   background-color: var(--background-dispatch-phase-color);
@@ -242,4 +242,10 @@ summary {
   margin: 0px;
   font-size: 0.7em;
   white-space: pre-line;
+}
+
+/* Network graph */
+
+.vis-network {
+  border: 1px solid lightgray;
 }

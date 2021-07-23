@@ -168,7 +168,7 @@ module ExplainNetworkConcern
   def prep_nodes(klass, label_for: nil, id_for: nil)
     id_for ||= NETWORK_GRAPH_CONFIG[:nodes][klass]&.[](:id_for) || ->(record) { "#{klass.name}#{record['id']}" }
     label_for ||= NETWORK_GRAPH_CONFIG[:nodes][klass]&.[](:label_for) || ->(record) { "#{klass.name}_#{record['id']}" }
-    sje.records_hash[klass.table_name].map do |record|
+    exported_records(klass).map do |record|
       record.clone.tap do |clone_record|
         clone_record["label"] = label_for.call(clone_record)
         clone_record["id"] = id_for.call(clone_record)
@@ -180,7 +180,7 @@ module ExplainNetworkConcern
   # :reek:FeatureEnvy
   def prep_edges(klass)
     NETWORK_GRAPH_CONFIG[:edges][klass].map do |edge_config|
-      sje.records_hash[klass.table_name].map do |record|
+      exported_records(klass).map do |record|
         { from: edge_config[:from_id_for].call(record),
           to: edge_config[:to_id_for].call(record),
           label: edge_config[:label_for]&.call(record) }
