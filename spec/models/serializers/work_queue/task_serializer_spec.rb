@@ -61,13 +61,14 @@ describe WorkQueue::TaskSerializer, :postgres do
       context "an task assigned to an inactive Organization" do
         before do
           org.inactive!
-          task.reload
+          task.reload # needed so that task.assigned_to returns nil
         end
         it "returns nil assigned_to values" do
           expect(subject[:assigned_to][:is_organization]).to eq true
           expect(subject[:assigned_to][:name]).to eq nil
           expect(subject[:assigned_to][:type]).to eq nil
           expect(subject[:assigned_to][:id]).to eq nil
+          expect(subject[:assignee_name].to eq nil
         end
       end
     end
