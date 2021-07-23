@@ -339,9 +339,9 @@ class RequestIssue < CaseflowRecord
 
       if rating?
         fail MissingDecisionDate, id
-      else
-        nil
       end
+
+      nil
     end
   end
 
