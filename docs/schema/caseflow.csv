@@ -994,12 +994,12 @@ schedule_periods,user_id,integer (8) ∗ FK,x,,x,,x,
 sent_hearing_email_events,,,,,,,,Events related to hearings notification emails
 sent_hearing_email_events,email_address,string,,,,,,Address the email was sent to
 sent_hearing_email_events,email_recipient_id,integer (8) FK,,,x,,,Associated HearingEmailRecipient
-sent_hearing_email_events,email_type,string,,,,,x,"The type of email sent: cancellation, confirmation, updated_time_confirmation"
+sent_hearing_email_events,email_type,string,,,,,,"The type of email sent: cancellation, confirmation, updated_time_confirmation"
 sent_hearing_email_events,external_message_id,string,,,,,,The ID returned by the GovDelivery API when we send an email
 sent_hearing_email_events,hearing_id,integer (8) ∗ FK,x,,x,,x,Associated hearing
 sent_hearing_email_events,hearing_type,string ∗,x,,,,x,'Hearing' or 'LegacyHearing'
 sent_hearing_email_events,id,integer (8) PK,x,x,,,,
-sent_hearing_email_events,recipient_role,string,,,,,x,"The role of the recipient: veteran, representative, judge"
+sent_hearing_email_events,recipient_role,string,,,,,,"The role of the recipient: veteran, representative, judge"
 sent_hearing_email_events,sent_at,datetime ∗,x,,,,,The date and time the email was sent
 sent_hearing_email_events,sent_by_id,integer (8) ∗ FK,x,,x,,x,User who initiated sending the email
 special_issue_lists,,,,,,,,Associates special issues to an AMA or legacy appeal for Caseflow Queue. Caseflow Dispatch uses special issues stored in legacy_appeals. They are intentionally disconnected.
