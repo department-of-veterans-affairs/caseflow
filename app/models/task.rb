@@ -25,7 +25,7 @@ class Task < CaseflowRecord
   has_many :task_timers, dependent: :destroy
   has_one :cached_appeal, ->(task) { where(appeal_type: task.appeal_type) }, foreign_key: :appeal_id
 
-  validates :assigned_to, :appeal, :type, :status, presence: true
+  validates :assigned_to, :appeal, :type, :status, presence: true, on: :create
   validate :status_is_valid_on_create, on: :create
   validate :assignee_status_is_valid_on_create, on: :create
   validate :parent_can_have_children
