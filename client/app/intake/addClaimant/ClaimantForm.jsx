@@ -64,7 +64,7 @@ export const ClaimantForm = ({
   const attorneyRelationship = watchRelationship === 'attorney';
   const attorneyNotListed = watchListedAttorney?.value === 'not_listed';
   const listedAttorney = attorneyRelationship && watchListedAttorney?.value && !attorneyNotListed;
-  const showPartyType = watchRelationship === 'other' || attorneyNotListed;
+  const showPartyType = watchRelationship === 'other' || (watchRelationship === 'attorney' && attorneyNotListed);
   const partyType = (showPartyType && watchPartyType) || (dependentRelationship && 'individual');
 
   const asyncFn = useCallback(
@@ -104,7 +104,7 @@ export const ClaimantForm = ({
           )}
         />
         <br />
-        {watchRelationship === 'attorney' && (
+        {watchRelationship === 'attorney' && !props.hideListedAttorney && (
           <Controller
             control={control}
             name="listedAttorney"
@@ -244,7 +244,8 @@ ClaimantForm.propTypes = {
   onSubmit: PropTypes.func,
   editAppellantHeader: PropTypes.string,
   editAppellantDescription: PropTypes.string,
-  hidePOAForm: PropTypes.bool
+  hidePOAForm: PropTypes.bool,
+  hideListedAttorney: PropTypes.bool
 };
 
 const FieldDiv = styled.div`

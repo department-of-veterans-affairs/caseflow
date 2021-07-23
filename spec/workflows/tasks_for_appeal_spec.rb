@@ -2,6 +2,28 @@
 
 describe TasksForAppeal do
   describe "#call" do
+    context "for a VSO user" do
+      let!(:org) { create(:vso) }
+      let(:user_roles) { ["VSO"] }
+      let!(:user) { create(:user, roles: user_roles) }
+      let(:appeal) do
+        create(:appeal, :with_ihp_task, :dispatched, :with_decision_issue,
+               docket_type: "direct_review",
+               stream_type: "original")
+      end
+      subject(:tasks) { TasksForAppeal.new(appeal: appeal, user: user, user_role: "VSO").call }
+
+      it "includes distribution tasks" do
+        dist_tasks = tasks.select { |t| t.is_a?(DistributionTask) }
+        expect(dist_tasks).not_to be_empty
+      end
+
+      it "includes tasks assigned to a vso" do
+        ihps = tasks.select { |t| t.is_a?(InformalHearingPresentationTask) }
+        expect(ihps).not_to be_empty
+      end
+    end
+
     context "for a legacy appeal with a travel board hearing request" do
       let(:user_roles) { ["Build HearSched"] }
       let!(:user) { create(:user, roles: user_roles) }

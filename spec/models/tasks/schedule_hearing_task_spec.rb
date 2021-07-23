@@ -136,11 +136,12 @@ describe ScheduleHearingTask, :all_dbs do
         context "with invalid params" do
           let(:appellant_email) { "blah" }
 
-          it "raises error and does not create a hearing object" do
+          it "raises error and does not create a hearing object", :aggregate_failures do
             expect { subject }
               .to raise_error(Caseflow::Error::VirtualHearingConversionFailed)
-              .with_message("Validation failed: Appellant email does not appear to be a valid e-mail address")
-
+              .with_message("Validation failed: Email address Validation failed: " \
+                "Appellant email does not appear to be a valid e-mail address"
+              )
             # does not create the hearing
             expect(Hearing.count).to eq(0)
             expect(AssignHearingDispositionTask.count).to eq(0)
