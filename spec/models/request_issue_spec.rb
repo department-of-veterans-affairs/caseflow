@@ -1257,10 +1257,8 @@ describe RequestIssue, :all_dbs do
     subject { rating_request_issue_without_contested_issue.approx_decision_date_of_issue_being_contested }
 
     context "when decision date is missing" do
-      it "raises a Caseflow Error for MissingDecisionDate" do
-        expect { subject }.to raise_error do |error|
-          expect(error).to be_a(RequestIssue::MissingDecisionDate)
-        end
+      it "returns nil" do
+        expect { subject }.to be_nil
       end
     end
   end
