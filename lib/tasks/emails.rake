@@ -93,19 +93,19 @@ namespace :emails do
         )
       end
 
-      appellant_recipient = build(
+      build(
         :hearing_email_recipient,
         :appellant_hearing_email_recipient,
         hearing: hearing
       )
 
-      representative_recipient = build(
+      build(
         :hearing_email_recipient,
         :representative_hearing_email_recipient,
         hearing: hearing
       )
 
-      judge_recipient = build(
+      build(
         :hearing_email_recipient,
         :judge_hearing_email_recipient,
         hearing: hearing
