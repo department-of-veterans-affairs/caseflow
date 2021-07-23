@@ -76,9 +76,11 @@
   
   <details>
     <summary id="narrative_table" style="color: purple">Narrative table</summary>
-    <%= react_component("Explain", props: {
-      eventData: event_table_data
-    }) %>
+    <div style="margin-left: 1em;">
+      <%= react_component("Explain", props: {
+        eventData: event_table_data
+      }) %>
+    </div>
   </details>
   <hr/>
 
@@ -100,69 +102,72 @@
     <h3>Timeline</h3>
     <details>
       <summary id="timeline_viz" style="color: purple">Timeline visualization</summary>
+      <div style="margin-left: 1em;">
+        <input type="button" id="fit" value="Fit all items" />
+        <details>
+          <summary id="timeline_config" style="color: purple">Timeline configuration</summary>
 
-      <input type="button" id="fit" value="Fit all items" />
-      <details>
-        <summary id="timeline_config" style="color: purple">Timeline configuration</summary>
+          <% ["phases", "tasks", "cancelled_tasks", "others"].each do |groupName| %>
+            <input id="<%=groupName%>_group_visible" value="<%=groupName%>" 
+              type="checkbox" checked onchange="toggleTimelineEventGroup(this)" />
+            <label for="<%=groupName%>_group_visible"><%=groupName%></label>
+          <% end %>
+        </details>
 
-        <% ["phases", "tasks", "cancelled_tasks", "others"].each do |groupName| %>
-          <input id="<%=groupName%>_group_visible" value="<%=groupName%>" 
-            type="checkbox" checked onchange="toggleTimelineEventGroup(this)" />
-          <label for="<%=groupName%>_group_visible"><%=groupName%></label>
-        <% end %>
-      </details>
+        <details>
+          <summary>Color-coding</summary>
+          <table id="timelineColors" style="margin: 0px">
+            <tr><td>
+              <table>
+                <tr><td><b>Task colors</b></td></tr>
+                <tr><td class="assigned_task">Assigned task</td></tr>
+                <tr><td class="onhold_task">On-hold task</td></tr>
+                <tr><td class="inprogress_task">In-progress task</td></tr>
+                <tr><td class="completed_task">Completed task</td></tr>
+                <tr><td class="cancelled_task">Cancelled task</td></tr>
+              </table>
+            </td><td>
+            </td><td>
+              <table>
+                <tr><td><b>Background colors</b></td></tr>
+                <tr><td class="distribution_phase">Pre-distribution phase</td></tr>
+                <tr><td class="decision_phase">Decision phase</td></tr>
+                <tr><td class="dispatch_phase">Dispatch phase</td></tr>
+              </table>
+            </td></tr>
+          </table>
 
-      <details>
-        <summary>Color-coding</summary>
-        <table id="timelineColors" style="margin: 0px">
-          <tr><td>
-            <table>
-              <tr><td><b>Task colors</b></td></tr>
-              <tr><td class="assigned_task">Assigned task</td></tr>
-              <tr><td class="onhold_task">On-hold task</td></tr>
-              <tr><td class="inprogress_task">In-progress task</td></tr>
-              <tr><td class="completed_task">Completed task</td></tr>
-              <tr><td class="cancelled_task">Cancelled task</td></tr>
-            </table>
-          </td><td>
-          </td><td>
-            <table>
-              <tr><td><b>Background colors</b></td></tr>
-              <tr><td class="distribution_phase">Pre-distribution phase</td></tr>
-              <tr><td class="decision_phase">Decision phase</td></tr>
-              <tr><td class="dispatch_phase">Dispatch phase</td></tr>
-            </table>
-          </td></tr>
-        </table>
-
-        Ctrl-scrollwheel zooms into the timeline.
-      </details>
-      <br/>
-      <div id="timeline"></div>
-      <details>
-        <summary style="color: red">Timeline data</summary>
-        <pre style="font-size:0.84em; padding:10px"><code><%= JSON.pretty_generate(timeline_data) %></code></pre>
-      </details>
+          Ctrl-scrollwheel zooms into the timeline.
+        </details>
+        <br/>
+        <div id="timeline"></div>
+        <details>
+          <summary style="color: red">Timeline data</summary>
+          <pre style="font-size:0.84em; padding:10px"><code><%= JSON.pretty_generate(timeline_data) %></code></pre>
+        </details>
+      </div>
     </details>
     <hr/>
 
     <h3>Network graph</h3>
     <details>
       <summary id="network_viz" style="color: purple">Network graph</summary>
-      <details>
-        <summary style="color: blue">Filter nodes</summary>
-        <div id="nodeFilters" style="width: 200px; height: 300px; overflow-y: scroll; padding:10px">
-          <% ["tasks", "users", "organizations"].each do |tableName| %>
-            <input id="<%=tableName%>_node_visible" value="<%=tableName%>" type="checkbox" checked onchange="toggleNodeType(this)" />
-            <label for="<%=tableName%>_node_visible"><%=tableName%></label>
-          <% end %>
-        </div>
-      </details>
-      <div id="netgraph"></div>
-      <details>
-        <summary style="color: blue">Network graph data</summary>
-        <pre style="font-size:0.75em; padding:10px"><code><%= JSON.pretty_generate(network_graph_data) %></code></pre>
-      </details>
+      <div style="margin-left: 1em;">
+        <details>
+          <summary style="color: blue">Filter nodes</summary>
+          <div id="nodeFilters" style="width: 200px; height: 300px; overflow-y: scroll; padding:10px">
+            <% ["tasks", "users", "organizations"].each do |tableName| %>
+              <input id="<%=tableName%>_node_visible" value="<%=tableName%>" type="checkbox" checked onchange="toggleNodeType(this)" />
+              <label for="<%=tableName%>_node_visible"><%=tableName%></label>
+            <% end %>
+          </div>
+        </details>
+        <div id="netgraph"></div>
+        <details>
+          <summary style="color: blue">Network graph data</summary>
+          <pre style="font-size:0.75em; padding:10px"><code><%= JSON.pretty_generate(network_graph_data) %></code></pre>
+        </details>
+      </div>
     </details>
     <hr/>
 
