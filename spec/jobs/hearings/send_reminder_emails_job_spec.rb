@@ -60,6 +60,15 @@ describe Hearings::SendReminderEmailsJob do
 
       context "representative email was already sent" do
         let(:representative_reminder_sent_at) { hearing_date - 3.days }
+        let!(:representative_reminder) do
+          create(
+            :sent_hearing_email_event,
+            :reminder,
+            recipient_role: HearingEmailRecipient::RECIPIENT_ROLES[:representative],
+            sent_at: representative_reminder_sent_at,
+            email_recipient: hearing.representative_recipient
+          )
+        end
 
         it "sends reminder email for the appellant", :aggregate_failures do
           expect(HearingMailer).to receive(:reminder).once.and_call_original
@@ -75,6 +84,15 @@ describe Hearings::SendReminderEmailsJob do
 
       context "appellant email was already sent" do
         let(:appellant_reminder_sent_at) { hearing_date - 4.days }
+        let!(:appellant_reminder) do
+          create(
+            :sent_hearing_email_event,
+            :reminder,
+            recipient_role: HearingEmailRecipient::RECIPIENT_ROLES[:veteran],
+            sent_at: appellant_reminder_sent_at,
+            email_recipient: hearing.appellant_recipient
+          )
+        end
 
         it "sends reminder email for the representative", :aggregate_failures do
           expect(HearingMailer).to receive(:reminder).once.and_call_original
@@ -128,7 +146,25 @@ describe Hearings::SendReminderEmailsJob do
 
       context "sent reminder emails 5 days out" do
         let(:appellant_reminder_sent_at) { hearing_date - 4.days }
+        let!(:appellant_reminder) do
+          create(
+            :sent_hearing_email_event,
+            :reminder,
+            recipient_role: HearingEmailRecipient::RECIPIENT_ROLES[:veteran],
+            sent_at: appellant_reminder_sent_at,
+            email_recipient: hearing.appellant_recipient
+          )
+        end
         let(:representative_reminder_sent_at) { hearing_date - 4.days }
+        let!(:representative_reminder) do
+          create(
+            :sent_hearing_email_event,
+            :reminder,
+            recipient_role: HearingEmailRecipient::RECIPIENT_ROLES[:representative],
+            sent_at: representative_reminder_sent_at,
+            email_recipient: hearing.representative_recipient
+          )
+        end
 
         it "sends reminder emails", :aggregate_failures do
           expect(HearingMailer).to receive(:reminder).twice.and_call_original
@@ -155,8 +191,27 @@ describe Hearings::SendReminderEmailsJob do
       let(:hearing_date) { Time.zone.now + 10.hours } #  Nov 5, 2020 12:00 ET + 10 hours
 
       context "sent reminder emails 2 days out" do
+
         let(:appellant_reminder_sent_at) { hearing_date - 2.days }
+        let!(:appellant_reminder) do
+          create(
+            :sent_hearing_email_event,
+            :reminder,
+            recipient_role: HearingEmailRecipient::RECIPIENT_ROLES[:veteran],
+            sent_at: appellant_reminder_sent_at,
+            email_recipient: hearing.appellant_recipient
+          )
+        end
         let(:representative_reminder_sent_at) { hearing_date - 2.days }
+        let!(:representative_reminder) do
+          create(
+            :sent_hearing_email_event,
+            :reminder,
+            recipient_role: HearingEmailRecipient::RECIPIENT_ROLES[:representative],
+            sent_at: representative_reminder_sent_at,
+            email_recipient: hearing.representative_recipient
+          )
+        end
 
         it "does not send reminder emails", :aggregate_failures do
           expect(HearingMailer).not_to receive(:reminder)

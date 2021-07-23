@@ -442,7 +442,7 @@ export const startPolling = (hearing, { setShouldStartPolling, resetState, dispa
 
 export const parseVirtualHearingErrors = (msg, hearing) => {
   // Remove the validation string from th error
-  const messages = msg.split(':')[1];
+  const messages = msg.split(':')[2];
 
   // Set inline errors for hearing conversion page
   return messages.split(',').reduce((list, message) => ({
