@@ -36,14 +36,15 @@ class WorkQueue::TaskSerializer
 
   attribute :assigned_to do |object|
     assignee = object.assigned_to
+    is_organization = object.assigned_to_type == "Organization"
 
     {
       css_id: assignee.try(:css_id),
       full_name: assignee.try(:full_name),
-      is_organization: assignee.is_a?(Organization),
-      name: assignee.is_a?(Organization) ? assignee.name : assignee.css_id,
-      type: assignee.class.name,
-      id: assignee.id
+      is_organization: is_organization,
+      name: is_organization ? assignee.try(:name) : assignee.try(:css_id),
+      type: assignee.try(:class)&.name,
+      id: assignee.try(:id)
     }
   end
 
@@ -68,7 +69,7 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :assignee_name do |object|
-    object.assigned_to.is_a?(Organization) ? object.assigned_to.name : object.assigned_to.css_id
+    (object.assigned_to_type == "Organization") ? object.assigned_to.try(:name) : object.assigned_to.try(:css_id)
   end
 
   attribute :placed_on_hold_at, &:calculated_placed_on_hold_at

@@ -44,4 +44,32 @@ describe WorkQueue::TaskSerializer, :postgres do
       end
     end
   end
+
+  describe "the attribute assigned_to" do
+    subject { described_class.new(task).serializable_hash[:data][:attributes] }
+
+    context "an task assigned to an Organization" do
+      let(:org) { Bva.singleton }
+      let(:task) { TrackVeteranTask.create!(appeal: parent.appeal, assigned_to: org, parent: parent) }
+      it "return a non-nil assigned_to values" do
+        expect(subject[:assigned_to][:is_organization]).to eq true
+        expect(subject[:assigned_to][:name]).to eq org.name
+        expect(subject[:assigned_to][:type]).to eq org.class.name
+        expect(subject[:assigned_to][:id]).to eq org.id
+      end
+
+      context "an task assigned to an inactive Organization" do
+        before do
+          org.inactive!
+          task.reload
+        end
+        it "returns nil assigned_to values" do
+          expect(subject[:assigned_to][:is_organization]).to eq true
+          expect(subject[:assigned_to][:name]).to eq nil
+          expect(subject[:assigned_to][:type]).to eq nil
+          expect(subject[:assigned_to][:id]).to eq nil
+        end
+      end
+    end
+  end
 end
