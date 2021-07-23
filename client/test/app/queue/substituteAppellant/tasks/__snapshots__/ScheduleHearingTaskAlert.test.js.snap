@@ -15,7 +15,7 @@ exports[`ScheduleHearingTaskAlert renders correctly 1`] = `
         <div
           data-css-r3kuda=""
         >
-          When Schedule Hearing task is selected, Transcription and Evidence Submission tasks will automatically be included and cannot be unselected.
+          When Schedule Hearing task is selected, Transcription and Evidence Submission tasks will automatically be included.
         </div>
       </div>
     </div>
