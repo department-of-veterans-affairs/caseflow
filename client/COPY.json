@@ -145,6 +145,7 @@
 
   "EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_TITLE": "You have successfully updated %(appellantName)s's information",
   "EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_MESSAGE": "If you need to make further changes, select 'Edit information' in the About the Appellant section.",
+  "EDIT_UNRECOGNIZED_APPELLANT_FAILURE_ALERT_TITLE": "Unable to edit appellant.",
 
   "POST_DISPATCH_TITLE": "Post-dispatch actions",
   "ADD_CAVC_BUTTON": "+ Add CAVC Remand",
