@@ -68,7 +68,7 @@ describe WorkQueue::TaskSerializer, :postgres do
           expect(subject[:assigned_to][:name]).to eq nil
           expect(subject[:assigned_to][:type]).to eq nil
           expect(subject[:assigned_to][:id]).to eq nil
-          expect(subject[:assignee_name].to eq nil
+          expect(subject[:assignee_name]).to eq nil
         end
       end
     end
