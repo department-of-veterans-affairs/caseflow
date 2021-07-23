@@ -20,12 +20,12 @@ namespace :emails do
         ),
         EmailRecipientInfo.new(
           name: hearing.judge.full_name,
-          HearingEmailRecipient: hearing.judge_recipient,
+          hearing_email_recipient: hearing.judge_recipient,
           title: HearingEmailRecipient::RECIPIENT_TITLES[:judge]
         ),
         EmailRecipientInfo.new(
           name: "Power of Attorney", # POA name is too complicated to fake for this
-          HearingEmailRecipient: hearing.representative_recipient,
+          hearing_email_recipient: hearing.representative_recipient,
           title: HearingEmailRecipient::RECIPIENT_TITLES[:representative]
         )
       ]
