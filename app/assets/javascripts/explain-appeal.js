@@ -1,7 +1,8 @@
-//= require vis-timeline/dist/vis-timeline-graph2d.min.js
-//= require vis-network/dist/vis-network.min.js
-
-// Example timeline visualizations: https://visjs.github.io/vis-timeline/examples/timeline/
+//= require moment/min/moment.min.js
+//= require vis-data/peer/umd/vis-data.min.js
+//= require vis-timeline/peer/umd/vis-timeline-graph2d.min.js
+//= require vis-network/peer/umd/vis-network.min.js
+// See https://visjs.github.io/vis-timeline/examples/timeline/peer-build.html
 
 /**
  * Support code for app/views/explain/show.html.erb,
@@ -11,6 +12,7 @@
  */
 
 //================== Timeline visualization ========================
+// Example timeline visualizations: https://visjs.github.io/vis-timeline/examples/timeline/
 
 const items = new vis.DataSet();
 
