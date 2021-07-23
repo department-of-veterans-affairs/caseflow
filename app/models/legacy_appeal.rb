@@ -46,7 +46,7 @@ class LegacyAppeal < CaseflowRecord
   # This allows us to easily call `appeal.veteran_first_name` and dynamically
   # fetch the data from VACOLS if it does not already exist in memory
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
-  vacols_attr_accessor :veteran_name_suffix, :veteran_date_of_birth
+  vacols_attr_accessor :veteran_name_suffix
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial
   vacols_attr_accessor :appellant_last_name, :appellant_name_suffix
   vacols_attr_accessor :outcoder_first_name, :outcoder_middle_initial, :outcoder_last_name
