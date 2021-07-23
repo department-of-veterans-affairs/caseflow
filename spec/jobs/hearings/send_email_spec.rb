@@ -62,7 +62,7 @@ describe Hearings::SendEmail do
     context "appellant_recipient name is populated correctly" do
       context "veteran is appellant" do
         it "uses the full name of the veteran" do
-          recipient = send_email_job.send(:appellant_recipient)
+          recipient = send_email_job.send(:appellant_recipient_info)
           expect(recipient.name).to eq appeal.veteran_full_name
         end
       end
@@ -79,7 +79,7 @@ describe Hearings::SendEmail do
         end
 
         it "uses the full name of the appellant, not the veteran" do
-          recipient = send_email_job.send(:appellant_recipient)
+          recipient = send_email_job.send(:appellant_recipient_info)
           expect(recipient.name).to eq appeal.appellant_fullname_readable
           expect(recipient.name).not_to eq appeal.veteran_full_name
         end
