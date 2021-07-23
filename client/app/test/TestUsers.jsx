@@ -103,10 +103,12 @@ export default class TestUsers extends React.PureComponent {
       tab.label = `${app.name}`;
 
       tab.page = <div>
-        <ul>
+        <ul role="presentation">
           {Object.keys(app.links).map((name) => {
-            return <li key={name}>
-              <a href={app.links[name]}>{StringUtil.snakeCaseToCapitalized(name)}</a>
+            let readableName = StringUtil.snakeCaseToCapitalized(name);
+
+            return <li key={name} aria-labeledBy={name}>
+              <a href={app.links[name]} id={name} role="link" aria-label={readableName}>{readableName}</a>
             </li>;
           })}
         </ul>
