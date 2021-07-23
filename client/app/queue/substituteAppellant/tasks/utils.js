@@ -68,33 +68,36 @@ export const isDescendantOfDistributionTask = (taskId, taskList) => {
   return isDescendant(tasksById, distributionTask, task, { id: 'taskId' });
 };
 
-// If we have a ScheduleVeteranTask, disable these types:
-export const scheduleVeteranTaskDisableTypes = [
-  'SelectHearingDispositionTask',
+export const scheduleHearingTaskDisableTypes = [
+  'AssignHearingDispositionTask',
   'ChangeHearingDispositionTask',
   'EvidenceSubmissionWindowTask',
   'TranscriptionTask'
 ];
 
 export const evidenceSubmissionWindowDisableTypes = [
-  'ScheduleVeteranTask',
-  'SelectHearingDispositionTask',
+  'ScheduleHearingTask',
+  'AssignHearingDispositionTask',
   'ChangeHearingDispositionTask'
 ];
 
 export const transcriptionTaskDisableTypes = [
-  'ScheduleVeteranTask',
-  'SelectHearingDispositionTask',
+  'ScheduleHearingTask',
+  'AssignHearingDispositionTask',
   'ChangeHearingDispositionTask'
 ];
+
+export const taskTypesSelected = ({ tasks, selectedTaskIds }) => {
+  return tasks.filter((task) => selectedTaskIds.includes(parseInt(task.taskId, 10))).map((task) => task.type);
+};
 
 export const shouldDisableBasedOnTaskType = (taskType, selectedTaskTypes) => {
   // This is not efficient; it'll make multiple passes through each array.
   // Realistically it's a small set, so get it working first and we can tweak later.
   // We _currently_ don't need to handle multiple selections because the latter two types
   // disable the same things. But this code can be improved.
-  if (selectedTaskTypes.includes('ScheduleVeteranTask')) {
-    return scheduleVeteranTaskDisableTypes.includes(taskType);
+  if (selectedTaskTypes.includes('ScheduleHearingTask')) {
+    return scheduleHearingTaskDisableTypes.includes(taskType);
   } else if (selectedTaskTypes.includes('EvidenceSubmissionWindowTask')) {
     return evidenceSubmissionWindowDisableTypes.includes(taskType);
   } else if (selectedTaskTypes.includes('TranscriptionTask')) {
@@ -104,22 +107,22 @@ export const shouldDisableBasedOnTaskType = (taskType, selectedTaskTypes) => {
   }
 };
 
-export const disabledTasksBasedOnSelections = ({ tasks, selectedTaskIds }) => {
-  const selectedTaskTypes = tasks.filter((task) => selectedTaskIds.includes(task.taskId)).map((task) => task.type);
-
-  return tasks.map((task) => {
-    return ({
-      ...task,
-      disabled: task.disabled || shouldDisableBasedOnTaskType(task.type, selectedTaskTypes)
-    });
-  });
-};
-
 // The following governs what should always be programmatically disabled from selection
 export const alwaysDisabled = ['DistributionTask'];
 
 export const shouldDisable = (taskInfo) => {
   return alwaysDisabled.includes(taskInfo.type);
+};
+
+export const disabledTasksBasedOnSelections = ({ tasks, selectedTaskIds }) => {
+  const selectedTaskTypes = taskTypesSelected({ tasks, selectedTaskIds });
+
+  return tasks.map((task) => {
+    return ({
+      ...task,
+      disabled: shouldDisable(task) || shouldDisableBasedOnTaskType(task.type, selectedTaskTypes)
+    });
+  });
 };
 
 export const shouldHideBasedOnPoa = (taskInfo, claimantPoa) => {

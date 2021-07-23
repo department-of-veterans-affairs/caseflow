@@ -76,20 +76,20 @@ describe('utility functions for task manipulation', () => {
     });
   });
 
-  // I wonder if we need this or should just test disabledTasksBasedOnSelections
+  // Arguably, this test is heavily duplicative of disabledTasksBasedOnSelections
   describe('shouldDisableBasedOnTaskType', () => {
     describe('when a ScheduleVeteranTask is selected', () => {
-      const selectedTaskTypes = ['ExampleTask', 'ScheduleVeteranTask'];
+      const selectedTaskTypes = ['ExampleTask', 'ScheduleHearingTask'];
 
       const shouldDisables = [
-        'SelectHearingDispositionTask',
+        'AssignHearingDispositionTask',
         'ChangeHearingDispositionTask',
         'EvidenceSubmissionWindowTask',
         'TranscriptionTask'
       ];
 
       const shouldNotDisables = [
-        'ScheduleVeteranTask',
+        'ScheduleHearingTask',
         'ExampleTask'
       ];
 
@@ -106,8 +106,8 @@ describe('utility functions for task manipulation', () => {
       const selectedTaskTypes = ['EvidenceSubmissionWindowTask'];
 
       const shouldDisables = [
-        'ScheduleVeteranTask',
-        'SelectHearingDispositionTask',
+        'ScheduleHearingTask',
+        'AssignHearingDispositionTask',
         'ChangeHearingDispositionTask'
       ];
 
@@ -130,8 +130,8 @@ describe('utility functions for task manipulation', () => {
       const selectedTaskTypes = ['TranscriptionTask'];
 
       const shouldDisables = [
-        'ScheduleVeteranTask',
-        'SelectHearingDispositionTask',
+        'ScheduleHearingTask',
+        'AssignHearingDispositionTask',
         'ChangeHearingDispositionTask'
       ];
 
@@ -154,8 +154,8 @@ describe('utility functions for task manipulation', () => {
   describe('disabledTasksBasedOnSelections', () => {
     const tasks = [
       { taskId: 1, type: 'EvidenceSubmissionWindowTask' },
-      { taskId: 2, type: 'ScheduleVeteranTask' },
-      { taskId: 3, type: 'SelectHearingDispositionTask' },
+      { taskId: 2, type: 'ScheduleHearingTask' },
+      { taskId: 3, type: 'AssignHearingDispositionTask' },
       { taskId: 4, type: 'ChangeHearingDispositionTask' },
       { taskId: 5, type: 'TranscriptionTask' }
     ];
@@ -167,8 +167,8 @@ describe('utility functions for task manipulation', () => {
         expect(disabledTasksBasedOnSelections({ tasks, selectedTaskIds })).toEqual(
           expect.arrayContaining([
             expect.objectContaining({ type: 'EvidenceSubmissionWindowTask', disabled: true }),
-            expect.objectContaining({ type: 'ScheduleVeteranTask', disabled: false }),
-            expect.objectContaining({ type: 'SelectHearingDispositionTask', disabled: true }),
+            expect.objectContaining({ type: 'ScheduleHearingTask', disabled: false }),
+            expect.objectContaining({ type: 'AssignHearingDispositionTask', disabled: true }),
             expect.objectContaining({ type: 'ChangeHearingDispositionTask', disabled: true }),
             expect.objectContaining({ type: 'TranscriptionTask', disabled: true })
           ])
@@ -183,8 +183,8 @@ describe('utility functions for task manipulation', () => {
         expect(disabledTasksBasedOnSelections({ tasks, selectedTaskIds })).toEqual(
           expect.arrayContaining([
             expect.objectContaining({ type: 'EvidenceSubmissionWindowTask', disabled: false }),
-            expect.objectContaining({ type: 'ScheduleVeteranTask', disabled: true }),
-            expect.objectContaining({ type: 'SelectHearingDispositionTask', disabled: true }),
+            expect.objectContaining({ type: 'ScheduleHearingTask', disabled: true }),
+            expect.objectContaining({ type: 'AssignHearingDispositionTask', disabled: true }),
             expect.objectContaining({ type: 'ChangeHearingDispositionTask', disabled: true }),
             expect.objectContaining({ type: 'TranscriptionTask', disabled: false })
           ])
@@ -199,8 +199,8 @@ describe('utility functions for task manipulation', () => {
         expect(disabledTasksBasedOnSelections({ tasks, selectedTaskIds })).toEqual(
           expect.arrayContaining([
             expect.objectContaining({ type: 'EvidenceSubmissionWindowTask', disabled: false }),
-            expect.objectContaining({ type: 'ScheduleVeteranTask', disabled: true }),
-            expect.objectContaining({ type: 'SelectHearingDispositionTask', disabled: true }),
+            expect.objectContaining({ type: 'ScheduleHearingTask', disabled: true }),
+            expect.objectContaining({ type: 'AssignHearingDispositionTask', disabled: true }),
             expect.objectContaining({ type: 'ChangeHearingDispositionTask', disabled: true }),
             expect.objectContaining({ type: 'TranscriptionTask', disabled: false })
           ])
