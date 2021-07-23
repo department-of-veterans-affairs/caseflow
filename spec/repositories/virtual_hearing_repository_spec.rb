@@ -149,15 +149,30 @@ describe VirtualHearingRepository, :all_dbs do
     subject { VirtualHearingRepository.cancelled_with_pending_emails }
 
     let!(:cancelled_vh_with_only_pending_judge_emails) do
-      create(:virtual_hearing, :all_emails_sent, status: :cancelled, hearing: hearing)
+      create(
+        :virtual_hearing,
+        :all_emails_sent,
+        status: :cancelled,
+        hearing: create(:hearing)
+      )
     end
 
     let!(:cancelled_vh_with_all_pending_emails) do
-      create(:virtual_hearing, :initialized, status: :cancelled, hearing: hearing)
+      create(
+        :virtual_hearing,
+        :initialized,
+        status: :cancelled,
+        hearing: create(:hearing)
+      )
     end
 
     let!(:cancelled_vh_with_only_pending_rep_email) do
-      create(:virtual_hearing, :initialized, status: :cancelled, hearing: hearing)
+      create(
+        :virtual_hearing,
+        :initialized,
+        status: :cancelled,
+        hearing: create(:hearing)
+      )
     end
 
     it "returns correct virtual hearings" do
@@ -171,12 +186,24 @@ describe VirtualHearingRepository, :all_dbs do
     subject { VirtualHearingRepository.with_pending_conference_or_emails }
 
     context "virtual hearings created with new link generation" do
-      let!(:vh_with_pending_link) { create(:virtual_hearing, hearing: hearing) }
+      let!(:vh_with_pending_link) do
+        create(:virtual_hearing, hearing: create(:hearing))
+      end
       let!(:vh_with_all_pending_emails) do
-        create(:virtual_hearing, :link_generation_initialized, status: :active, hearing: hearing)
+        create(
+          :virtual_hearing,
+          :link_generation_initialized,
+          status: :active,
+          hearing: create(:hearing)
+        )
       end
       let!(:vh_in_good_state) do
-        create(:virtual_hearing, :link_generation_initialized, :all_emails_sent, hearing: hearing)
+        create(
+          :virtual_hearing,
+          :link_generation_initialized,
+          :all_emails_sent,
+          hearing: create(:hearing)
+        )
       end
 
       it "returns correct virtual hearings" do
@@ -188,15 +215,21 @@ describe VirtualHearingRepository, :all_dbs do
 
     context "virtual hearings not created with new link generation" do
       let!(:vh_with_pending_conference) do
-        create(:virtual_hearing, hearing: hearing)
+        create(:virtual_hearing, hearing: create(:hearing))
       end
 
       let!(:vh_with_all_pending_emails) do
-        create(:virtual_hearing, :initialized, status: :active, hearing: hearing)
+        create(:virtual_hearing, :initialized, status: :active, hearing: create(:hearing))
       end
 
       let!(:vh_in_good_state) do
-        create(:virtual_hearing, :initialized, :all_emails_sent, status: :active, hearing: hearing)
+        create(
+          :virtual_hearing,
+          :initialized,
+          :all_emails_sent,
+          status: :active,
+          hearing: create(:hearing)
+        )
       end
 
       it "returns correct virtual hearings" do
