@@ -258,13 +258,6 @@ FactoryBot.define do
       end
     end
 
-    trait :with_transcription_task do
-      after(:create) do |appeal, _evaluator|
-        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
-        TranscriptionTask.create!(appeal: appeal, parent: root_task)
-      end
-    end
-
     trait :with_ihp_task do
       after(:create) do |appeal, _evaluator|
         org = Organization.find_by(type: "Vso")

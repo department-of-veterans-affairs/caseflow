@@ -160,7 +160,7 @@ describe('utility functions for task manipulation', () => {
       { taskId: 5, type: 'TranscriptionTask' }
     ];
 
-    describe('when ScheduleVeteranTask is selected', () => {
+    describe('when ScheduleHearingTask is selected', () => {
       const selectedTaskIds = [2];
 
       it('disables the appropriate types', () => {
