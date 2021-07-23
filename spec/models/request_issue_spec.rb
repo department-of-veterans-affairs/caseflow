@@ -1258,7 +1258,7 @@ describe RequestIssue, :all_dbs do
 
     context "when decision date is missing" do
       it "returns nil" do
-        expect { subject }.to be_nil
+        expect(subject).to be_nil
       end
     end
   end

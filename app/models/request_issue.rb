@@ -337,7 +337,11 @@ class RequestIssue < CaseflowRecord
     else
       return if is_unidentified
 
-      nil
+      if rating?
+        fail MissingDecisionDate, id
+      else
+        nil
+      end
     end
   end
 
