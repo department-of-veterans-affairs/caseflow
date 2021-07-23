@@ -3,7 +3,7 @@
 class AppealsWithNoTasksOrAllTasksOnHoldQuery
   def call
     [
-      stuck_appeals,
+      appeals_with_only_on_hold_tasks,
       appeals_with_zero_tasks,
       appeals_with_one_task,
       appeals_with_two_tasks_not_distribution,
@@ -83,12 +83,15 @@ class AppealsWithNoTasksOrAllTasksOnHoldQuery
     Task.select(:appeal_id).where(appeal_type: klass_name)
   end
 
-  def stuck_appeals
+  # Active appeals should have some active task.
+  # Return appeals where all open tasks are on_hold, ignoring the TrackVeteranTask.
+  def appeals_with_only_on_hold_tasks
     Appeal.established.active
       .joins(:tasks)
       .group("appeals.id")
       .having(
-        "count(case when tasks.status in (?) then 1 end) = count(case when tasks.status = ? then 1 end)",
+        "count(case when tasks.status in (?) AND tasks.type != 'TrackVeteranTask' then 1 end)" \
+        " = count(case when tasks.status = ? AND tasks.type != 'TrackVeteranTask' then 1 end)",
         Task.open_statuses,
         on_hold
       )
