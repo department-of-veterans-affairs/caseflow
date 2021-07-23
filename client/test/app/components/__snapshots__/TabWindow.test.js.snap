@@ -114,7 +114,7 @@ exports[`TabWindow Does not render tab content when a tab is disabled and clicke
                 className="tabPanel active"
                 id="main-tabpanel-0"
                 role="tabpanel"
-                tabIndex={0}
+                tabIndex={-1}
               >
                 Content
               </div>
@@ -254,7 +254,7 @@ exports[`TabWindow Matches snapshot with default props 1`] = `
                 className="tabPanel active"
                 id="main-tabpanel-0"
                 role="tabpanel"
-                tabIndex={0}
+                tabIndex={-1}
               >
                 Content
               </div>
@@ -404,7 +404,7 @@ exports[`TabWindow Renders full page when the \`fullPage\` prop is true 1`] = `
                 className="tabPanel active"
                 id="main-tabpanel-0"
                 role="tabpanel"
-                tabIndex={0}
+                tabIndex={-1}
               >
                 Content
               </div>
@@ -557,7 +557,7 @@ exports[`TabWindow Renders tab content when a tab is selected 1`] = `
                 className="tabPanel active"
                 id="main-tabpanel-1"
                 role="tabpanel"
-                tabIndex={0}
+                tabIndex={-1}
               >
                 Some other content
               </div>

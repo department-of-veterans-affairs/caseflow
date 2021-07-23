@@ -85,7 +85,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
           class="tabPanel active"
           id="tasks-tabwindow-tabpanel-0"
           role="tabpanel"
-          tabindex="0"
+          tabindex="-1"
         >
           <p
             class="cf-margin-top-0"
@@ -1236,7 +1236,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
           class="tabPanel active"
           id="tasks-tabwindow-tabpanel-1"
           role="tabpanel"
-          tabindex="0"
+          tabindex="-1"
         >
           <p
             class="cf-margin-top-0"
