@@ -123,6 +123,17 @@ RSpec.shared_examples("fill substitution form") do
         find("div", class: "checkbox-wrapper-taskIds[#{evidence_task_id}]").find("label").click
       end
 
+      if docket_type.eql?("hearing")
+        schedule_hearing_task = ScheduleHearingTask.find_by(appeal_id: appeal.id)
+        schedule_hearing_task_id = schedule_hearing_task.id
+        expect(page).to have_css(".usa-table-borderless.css-nil tbody tr td", text: "Schedule hearing")
+
+        find("div", class: "checkbox-wrapper-taskIds[#{schedule_hearing_task_id}]").find("label").click
+        expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_SCHEDULE_HEARING_TASK_ALERT_TEXT)
+
+        find("div", class: "checkbox-wrapper-taskIds[#{schedule_hearing_task_id}]").find("label").click
+        expect(page).to_not have_content(COPY::SUBSTITUTE_APPELLANT_SCHEDULE_HEARING_TASK_ALERT_TEXT)
+      end
       page.find("button", text: "Continue").click
     end
 

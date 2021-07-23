@@ -75,7 +75,12 @@ export const shouldDisable = (taskInfo) => {
 };
 
 export const shouldHideBasedOnPoa = (taskInfo, claimantPoa) => {
+  // eslint-disable-next-line camelcase
   return taskInfo.type === 'InformalHearingPresentationTask' && !claimantPoa?.ihp_allowed;
+};
+
+export const taskTypesSelected = ({ tasks, selectedTaskIds }) => {
+  return tasks.filter((task) => selectedTaskIds.includes(parseInt(task.taskId, 10))).map((task) => task.type);
 };
 
 // We can have a case where a particular task's inclusion depends upon other tasks
@@ -84,6 +89,7 @@ export const shouldHideBasedOnPoa = (taskInfo, claimantPoa) => {
 export const shouldShowBasedOnOtherTasks = (taskInfo, allTasks) => {
   const taskType = taskInfo.type;
 
+  // eslint-disable-next-line max-len
   const visibleUserTask = allTasks.find((item) => item.type === taskType && item.taskId !== taskInfo.taskId && !item.assignedTo?.isOrganization && !item.hideFromCaseTimeline);
 
   return Boolean(visibleUserTask);
@@ -95,6 +101,7 @@ export const shouldHide = (taskInfo, claimantPoa, allTasks) => {
     return true;
   }
 
+  // eslint-disable-next-line max-len
   return (taskInfo.hideFromCaseTimeline || shouldHideBasedOnPoa(taskInfo, claimantPoa)) && !shouldShowBasedOnOtherTasks(taskInfo, allTasks);
 };
 
