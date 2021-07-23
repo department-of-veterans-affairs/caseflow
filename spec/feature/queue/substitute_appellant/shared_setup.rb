@@ -130,7 +130,7 @@ RSpec.shared_examples("fill substitution form") do
 
         find("div", class: "checkbox-wrapper-taskIds[#{schedule_hearing_task_id}]").find("label").click
         expect(page).to have_content(COPY::SUBSTITUTE_APPELLANT_SCHEDULE_HEARING_TASK_TEXT)
-        
+
         find("div", class: "checkbox-wrapper-taskIds[#{schedule_hearing_task_id}]").find("label").click
         expect(page).to_not have_content(COPY::SUBSTITUTE_APPELLANT_SCHEDULE_HEARING_TASK_TEXT)
       end
