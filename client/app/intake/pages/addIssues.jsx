@@ -103,13 +103,19 @@ class AddIssuesPage extends React.Component {
     return (formType === 'higher_level_review' || formType === 'supplemental_claim') && editPage;
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  requestIssuesWithoutDecisionDates(intakeData) {
+    return intakeData.requestIssues?.some((issue) => !issue.ratingIssueReferenceId &&
+     !issue.isUnidentified && !issue.approx_decision_date);
+  }
+
   willRedirect(intakeData, hasClearedEp) {
     const { formType, processedAt, featureToggles } = this.props;
     const { correctClaimReviews } = featureToggles;
 
     return (
-      !formType || (this.editingClaimReview() && !processedAt) || intakeData.isOutcoded ||
-      (hasClearedEp && !correctClaimReviews)
+      !formType || this.requestIssuesWithoutDecisionDates(intakeData) || (this.editingClaimReview() && !processedAt) ||
+       intakeData.isOutcoded || (hasClearedEp && !correctClaimReviews)
     );
   }
 
@@ -124,6 +130,8 @@ class AddIssuesPage extends React.Component {
       return <Redirect to={PAGE_PATHS.CLEARED_EPS} />;
     } else if (intakeData.isOutcoded) {
       return <Redirect to={PAGE_PATHS.OUTCODED} />;
+    } else if (this.requestIssuesWithoutDecisionDates(intakeData)) {
+      return <Redirect to={PAGE_PATHS.REQUEST_ISSUE_MISSING_DECISION_DATE} />;
     }
   }
 
@@ -198,10 +206,6 @@ class AddIssuesPage extends React.Component {
     const intakeData = intakeForms[formType];
     const { useAmaActivationDate } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
-
-    if (intakeData.requestIssues.some((issue) => !issue.approx_decision_date)) {
-      return <Redirect to={PAGE_PATHS.REQUEST_ISSUE_MISSING_DECISION_DATE} />;
-    }
 
     if (this.willRedirect(intakeData, hasClearedEp)) {
       return this.redirect(intakeData, hasClearedEp);
