@@ -56,7 +56,7 @@ describe EndProductUpdate do
         subject
 
         expect(epu.request_issues).to all have_attributes(type: "NonratingRequestIssue")
-        expect(epu.request_issues).to all have_attributes(nonrating_issue_category: "Unknown issue category")
+        expect(epu.request_issues).to all have_attributes(nonrating_issue_category: "Unknown Issue Category")
       end
     end
 

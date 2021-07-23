@@ -65,6 +65,15 @@ describe BvaDispatchTask, :all_dbs do
       it "should raise an error" do
         expect { subject }.to raise_error(NotImplementedError)
       end
+
+      context "when allow_unrecognized_appellant_dispatch toggle is enabled" do
+        before { FeatureToggle.enable!(:allow_unrecognized_appellant_dispatch) }
+        after { FeatureToggle.disable!(:allow_unrecognized_appellant_dispatch) }
+
+        it "should not raise an error" do
+          subject
+        end
+      end
     end
   end
 

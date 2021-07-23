@@ -3,7 +3,8 @@
 class IntakesController < ApplicationController
   include ValidationConcern
 
-  before_action :verify_access, :react_routed, :set_application, :check_intake_out_of_service
+  before_action :verify_access, except: [:attorneys]
+  before_action :react_routed, :set_application, :check_intake_out_of_service
 
   attr_accessor :error_id
 
@@ -104,7 +105,6 @@ class IntakesController < ApplicationController
       featureToggles: {
         useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
         rampIntake: FeatureToggle.enabled?(:ramp_intake, user: current_user),
-        restrictAppealIntakes: FeatureToggle.enabled?(:restrict_appeal_intakes, user: current_user),
         covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user)
       }
     }

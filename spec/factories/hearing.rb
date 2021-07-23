@@ -38,6 +38,14 @@ FactoryBot.define do
       disposition { Constants.HEARING_DISPOSITION_TYPES.no_show }
     end
 
+    trait :scheduled_in_error do
+      disposition { Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error }
+    end
+
+    trait :cancelled do
+      disposition { Constants.HEARING_DISPOSITION_TYPES.cancelled }
+    end
+
     trait :with_tasks do
       after(:create) do |hearing, _evaluator|
         create(:hearing_task_association,
