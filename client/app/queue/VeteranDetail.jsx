@@ -36,10 +36,13 @@ export const VeteranDetail = ({ veteran, substitutionAppealId, stateOnly }) => {
     value: fullName
   }];
 
+  const genderValue = gender === 'F' ? COPY.CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE :
+    COPY.CASE_DETAILS_GENDER_FIELD_VALUE_MALE;
+
   if (gender) {
     details.push({
       label: COPY.CASE_DETAILS_GENDER_FIELD_LABEL,
-      value: 'F' ? COPY.CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE : COPY.CASE_DETAILS_GENDER_FIELD_VALUE_MALE
+      value: genderValue
     });
   }
 
