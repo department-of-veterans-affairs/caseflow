@@ -20,6 +20,7 @@ function addTimeline(elementId, timeline_data){
   const startDates = items.get({fields: ['start']}).map((str)=> new Date(str.start));
   const endDates = items.get({fields: ['end']}).map((str)=> new Date(str.end));
   const millisInAMonth = 1000*60*60*24*30 // an approximate month in milliseconds
+  // https://visjs.github.io/vis-timeline/docs/timeline/#Configuration_Options
   const timeline_options = {
     width: '95%',
     // maxHeight: 800,
@@ -30,7 +31,9 @@ function addTimeline(elementId, timeline_data){
     zoomMin: 1000 * 60 * 60, // 1 hour in milliseconds
     orientation: {axis: 'both'},  // show time axis on both the top and bottom
     stack: true,
-    zoomKey: 'ctrlKey',
+    zoomFriction: 15,
+    preferZoom: true,
+    zoomMin: 1000,
     order: (a, b) => b.record.id - a.record.id,
     tooltip: {
       followMouse: true
@@ -125,12 +128,12 @@ const taskNodeColor = {
 const nodeDecoration = {
   intakes: { shape: "diamond" },
   cavc_remands: { shape: "triangle" },
-  appeals: { shape: "star", size: 30, color: "blue" },
+  appeals: { shape: "star", size: 30, color: "blue", mass: 10 },
   claimants: { shape: "ellipse", color: "#d3d3d3" },
   veterans: { shape: "icon", icon: { code: "\uf29a" } },
   people: { shape: "icon", icon: { code: "\uf2bb", color: "gray" } },
   users: { shape: "icon", icon: { code: "\uf007", color: "gray" } },
-  organizations: { shape: "icon", icon: { code: "\uf0e8", color: "#a3a3a3" } },
+  organizations: { shape: "icon", icon: { code: "\uf0e8", color: "#a3a3a3" }, mass: 4 },
   tasks: { shape: "box", color: (node)=>taskNodeColor[node.status],
            shapeProperties: { borderRadius: 1 }
          },
@@ -183,6 +186,7 @@ const edgesView = new vis.DataView(edgesData, { filter: edgesFilter });
 function addNetworkGraph(elementId, network_graph_data){
   nodesData.add(decorateNodes(network_graph_data["nodes"]));
   edgesData.add(network_graph_data["edges"])
+  // https://visjs.github.io/vis-network/docs/network/#options
   const network_options = {
     width: '95%',
     height: '500px',
