@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_13_161648) do
+ActiveRecord::Schema.define(version: 2021_07_20_130851) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1312,9 +1312,7 @@ ActiveRecord::Schema.define(version: 2021_07_13_161648) do
     t.string "recipient_role", comment: "The role of the recipient: veteran, representative, judge"
     t.datetime "sent_at", null: false, comment: "The date and time the email was sent"
     t.bigint "sent_by_id", null: false, comment: "User who initiated sending the email"
-    t.index ["email_type"], name: "index_sent_hearing_email_events_on_email_type"
     t.index ["hearing_type", "hearing_id"], name: "index_sent_hearing_email_events_on_hearing_type_and_hearing_id"
-    t.index ["recipient_role"], name: "index_sent_hearing_email_events_on_recipient_role"
     t.index ["sent_by_id"], name: "index_sent_hearing_email_events_on_sent_by_id"
   end
 
@@ -1665,6 +1663,10 @@ ActiveRecord::Schema.define(version: 2021_07_13_161648) do
   add_foreign_key "appellant_substitutions", "appeals", column: "source_appeal_id"
   add_foreign_key "appellant_substitutions", "appeals", column: "target_appeal_id"
   add_foreign_key "appellant_substitutions", "users", column: "created_by_id"
+  add_foreign_key "board_grant_effectuations", "appeals"
+  add_foreign_key "board_grant_effectuations", "decision_documents"
+  add_foreign_key "board_grant_effectuations", "decision_issues", column: "granted_decision_issue_id"
+  add_foreign_key "board_grant_effectuations", "end_product_establishments"
   add_foreign_key "cavc_remands", "appeals", column: "remand_appeal_id"
   add_foreign_key "cavc_remands", "appeals", column: "source_appeal_id"
   add_foreign_key "cavc_remands", "users", column: "created_by_id"

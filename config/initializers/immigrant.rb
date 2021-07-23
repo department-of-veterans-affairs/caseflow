@@ -7,13 +7,6 @@ Immigrant.ignore_keys = [
   # Add FK to legacy_appeals
   { from_table: "worksheet_issues", column: "appeal_id" },
 
-  # Seems to alway refer to AMA appeals - add FK to appeals table
-  { from_table: "board_grant_effectuations", column: "appeal_id" },
-  # Add FKs if appropriate
-  { from_table: "board_grant_effectuations", column: "decision_document_id" },
-  { from_table: "board_grant_effectuations", column: "end_product_establishment_id" },
-  { from_table: "board_grant_effectuations", column: "granted_decision_issue_id" },
-
   # Add FK to dispatch_tasks table (not the tasks table)
   { from_table: "claim_establishments", column: "task_id" },
 

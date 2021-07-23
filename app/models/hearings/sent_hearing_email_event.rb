@@ -11,12 +11,8 @@ class SentHearingEmailEvent < CaseflowRecord
 
   before_create :assign_sent_at_time
 
-  # Add compatibility with old data where the role was called veteran instead of
-  # appellant.
-  RECIPIENT_ROLES = HearingEmailRecipient::RECIPIENT_TITLES.keys.append(:veteran)
-
-  # Allows all keys specified in `HearingEmailRecipient::RECIPIENT_TITLES`
-  enum recipient_role: RECIPIENT_ROLES.map { |key| [key, key.to_s] }.to_h,
+  # Allows all keys specified in `MailRecipient::RECIPIENT_TITLES`
+  enum recipient_role: HearingEmailRecipient::RECIPIENT_ROLES.keys.map { |key| [key, key.to_s] }.to_h,
        _prefix: :sent_to
 
   # Overrides the generated method for compatibility with old data prior to:
