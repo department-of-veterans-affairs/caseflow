@@ -32,183 +32,26 @@
   </ul>
   <hr/>
 
-<% ["tasks_section", "intake_section", "hearing_section", "narrative_section", "timeline_section", "network_section"].each do |sectionId| %>
-  <input id="<%=sectionId%>_section_visible" value="<%=sectionId%>" type="checkbox" onclick="toggleElement(this)" />
-  <label for="<%=sectionId%>_section_visible"><%=sectionId%></label>
-<% end %>
-<hr/>
+  <% sections = %w[task_tree intake_tree hearing_tree narrative_table] %>
+  <% sections += %w[timeline_chart network_graph] unless legacy_appeal? %>
 
-<div id="tasks_section" style="display:none">
-  <h3>Task tree</h3>
-  <code style="color: green">
-    Appeal.find(<%= appeal.id %>).treee(<%= treee_fields.map{|f| f.to_s.prepend(":")}.join(", ") %>)
-    <% if legacy_appeal? %>
-      <br/>la = LegacyWorkQueue.tasks_by_appeal_id(<%= appeal.vacols_id %>)
-      <br/>la.location_history.map(&:summary)
-    <% end %>
-  </code>
-  <pre style="font-size:0.84em; padding:10px"><code><%= task_tree_as_text %></code></pre>
-  <details>
-    <summary id="treee_config" style="color: blue">Task tree configuration</summary>
+  <% sections.each do |sectionId| %>
+    <input id="<%=sectionId%>_section_chkbox" value="<%=sectionId%>_section" type="checkbox" onclick="toggleElement(this)" />
+    <label for="<%=sectionId%>_section_chkbox"><%=sectionId%></label>
+  <% end %>
+  <hr/>
 
-    <div id="treeefields" style="width: 200px; height: 300px; overflow-y: scroll; padding:10px">
-      <% available_fields.each do |field_name| %>
-        <% if treee_fields.include?(field_name.to_sym) %>
-          <input type="checkbox" id="<%=field_name%>" checked onchange="updateTaskTreeLink()"/>
-        <% else %>
-          <input type="checkbox" id="<%=field_name%>" onchange="updateTaskTreeLink()"/>
-        <% end %>
-        <label for="<%=field_name%>"><%=field_name%></label>
-      <% end %>
+  <% sections.each do |sectionId|  %>
+    <div id="<%=sectionId%>_section" style="display:none">
+      <%= render sectionId %>
+      <hr/>
     </div>
-    <p/><a id="task_tree_link" href="">Update task tree</a>
-  </details>
-  <hr/>
-</div>
-
-<div id="intake_section" style="display:none">
-  <h3>Intake (<span class="show_pii_<%=show_pii_query_param%>"><%= show_pii_query_param ? "showing PII" : "no PII" %></span>)</h3>
-  <code style="color: green">
-    puts IntakeRenderer.render(Appeal.find(<%= appeal.id %>),
-      show_pii: <%= show_pii_query_param ? "true" : "false" %>)
-  </code>
-  <pre style="font-size:0.9em; padding:10px"><code><%= intake_as_text %></code></pre>
-  <hr/>
-</div>
-
-<div id="hearing_section" style="display:none">
-  <h3>Hearing (<span class="show_pii_<%=show_pii_query_param%>"><%= show_pii_query_param ? "showing PII" : "no PII" %></span>)</h3>
-  <code style="color: green">
-    puts HearingRenderer.render(Appeal.find(<%= appeal.id %>),
-      show_pii: <%= show_pii_query_param ? "true" : "false" %>)
-  </code>
-  <pre style="font-size:0.9em; padding:10px"><code><%= hearing_as_text %></code></pre>
-  <hr/>
-</div>
-
-<div id="narrative_section" style="display:none">
-    <h3>Appeal Narrative (<span class="show_pii_true">showing PII</span>)</h3>
-  
-  <details>
-    <summary id="narrative_table" style="color: purple">Narrative table</summary>
-    <div style="margin-left: 1em;">
-      <%= react_component("Explain", props: {
-        eventData: event_table_data
-      }) %>
-    </div>
-  </details>
-  <hr/>
-</div>
+  <% end %>
 
   <script type="text/javascript">
     function toggleElement(chkbox) {
         var vis = (chkbox.checked) ? "block" : "none";
         document.getElementById(chkbox.value).style.display = vis;
     }
-
-    // Handle Task Tree field checkboxes
-    function updateTaskTreeLink(){
-      const selected = Array.prototype.map.call(document.querySelectorAll('#treeefields input:checked'), elem => elem.id);
-      const newUrl = window.location.href.split('?')[0]+"?fields="+selected.join(',');
-      document.querySelector('#task_tree_link').setAttribute("href", newUrl);
-    }
-    updateTaskTreeLink();
   </script>
-
-  <% unless legacy_appeal? %>
-  <div id="timeline_section" style="display:none">
-    <h3>Timeline</h3>
-    <details>
-      <summary id="timeline_viz" style="color: purple">Timeline visualization</summary>
-      <div style="margin-left: 1em;">
-        <input type="button" id="fit" value="Fit all items" onclick="fitTimeline()"/>
-        <br/>
-        <div id="timeline"></div>
-        <details>
-          <summary id="timeline_config" style="color: blue">Timeline configuration</summary>
-
-          <% ["phases", "tasks", "cancelled_tasks", "others"].each do |groupName| %>
-            <input id="<%=groupName%>_group_visible" value="<%=groupName%>" 
-              type="checkbox" checked onchange="toggleTimelineEventGroup(this)" />
-            <label for="<%=groupName%>_group_visible"><%=groupName%></label>
-          <% end %>
-        </details>
-
-        <details>
-          <summary>Color-coding</summary>
-          <table id="timelineColors" style="margin: 0px">
-            <tr><td>
-              <table>
-                <tr><td><b>Task colors</b></td></tr>
-                <tr><td class="assigned_task">Assigned task</td></tr>
-                <tr><td class="onhold_task">On-hold task</td></tr>
-                <tr><td class="inprogress_task">In-progress task</td></tr>
-                <tr><td class="completed_task">Completed task</td></tr>
-                <tr><td class="cancelled_task">Cancelled task</td></tr>
-              </table>
-            </td><td>
-            </td><td>
-              <table>
-                <tr><td><b>Background colors</b></td></tr>
-                <tr><td class="distribution_phase">Pre-distribution phase</td></tr>
-                <tr><td class="decision_phase">Decision phase</td></tr>
-                <tr><td class="dispatch_phase">Dispatch phase</td></tr>
-              </table>
-            </td></tr>
-          </table>
-
-          Ctrl-scrollwheel zooms into the timeline.
-        </details>
-        <details>
-          <summary style="color: gray">Timeline data</summary>
-          <pre style="font-size:0.84em; padding:10px"><code><%= JSON.pretty_generate(timeline_data) %></code></pre>
-        </details>
-      </div>
-    </details>
-    <hr/>
-  </div>
-  <div id="network_section" style="display:none">
-    <h3>Network graph</h3>
-    <details>
-      <summary id="network_viz" style="color: purple">Network graph</summary>
-      <div style="margin-left: 1em;">
-        <div id="netgraph"></div>
-        <details>
-          <summary style="color: blue">Network configuration</summary>
-          <div id="nodeFilters" style="width: 200px; height: 300px; overflow-y: scroll; padding:10px">
-            <% ["tasks", "users", "organizations"].each do |tableName| %>
-              <input id="<%=tableName%>_node_visible" value="<%=tableName%>" type="checkbox" checked onchange="toggleNodeType(this)" />
-              <label for="<%=tableName%>_node_visible"><%=tableName%></label>
-            <% end %>
-          </div>
-        </details>
-        <details>
-          <summary style="color: gray">Network graph data</summary>
-          <pre style="font-size:0.75em; padding:10px"><code><%= JSON.pretty_generate(network_graph_data) %></code></pre>
-        </details>
-      </div>
-    </details>
-    <hr/>
-  </div>
-
-    <%= javascript_include_tag 'explain-appeal-timeline' %>
-    <%= javascript_include_tag 'explain-appeal-network' %>
-    <script type="text/javascript">
-      // Timeline
-      const timeline_data = <%= timeline_data.to_json.html_safe %>;
-      const timeline = addTimeline('timeline', timeline_data);
-
-      function fitTimeline(){ timeline.fit(); }
-
-      // Network graph
-      const network_graph_data = <%= network_graph_data.to_json.html_safe %>;
-      addNetworkGraph("netgraph", network_graph_data);
-
-      // To reduce clutter, hide organizations by default
-      const org_nodes_checkbox = document.getElementById('organizations_node_visible');
-      org_nodes_checkbox.checked = false;
-      toggleNodeType(org_nodes_checkbox);
-    </script>
-  <% end %>
-
 </div>

@@ -1,0 +1,34 @@
+<h3>Task tree</h3>
+<code style="color: green">
+  Appeal.find(<%= appeal.id %>).treee(<%= treee_fields.map{|f| f.to_s.prepend(":")}.join(", ") %>)
+  <% if legacy_appeal? %>
+    <br/>la = LegacyWorkQueue.tasks_by_appeal_id(<%= appeal.vacols_id %>)
+    <br/>la.location_history.map(&:summary)
+  <% end %>
+</code>
+<pre style="font-size:0.84em; padding:10px"><code><%= task_tree_as_text %></code></pre>
+<details>
+  <summary id="treee_config" style="color: blue">Task tree configuration</summary>
+
+  <div id="treeefields" style="width: 200px; height: 300px; overflow-y: scroll; padding:10px">
+    <% available_fields.each do |field_name| %>
+      <% if treee_fields.include?(field_name.to_sym) %>
+        <input type="checkbox" id="<%=field_name%>" checked onchange="updateTaskTreeLink()"/>
+      <% else %>
+        <input type="checkbox" id="<%=field_name%>" onchange="updateTaskTreeLink()"/>
+      <% end %>
+      <label for="<%=field_name%>"><%=field_name%></label>
+    <% end %>
+  </div>
+  <p/><a id="task_tree_link" href="">Update task tree</a>
+</details>
+
+<script type="text/javascript">
+  // Handle Task Tree field checkboxes
+  function updateTaskTreeLink(){
+    const selected = Array.prototype.map.call(document.querySelectorAll('#treeefields input:checked'), elem => elem.id);
+    const newUrl = window.location.href.split('?')[0]+"?fields="+selected.join(',');
+    document.querySelector('#task_tree_link').setAttribute("href", newUrl);
+  }
+  updateTaskTreeLink();
+</script>
