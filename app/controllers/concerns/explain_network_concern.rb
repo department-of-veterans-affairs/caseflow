@@ -47,9 +47,9 @@ module ExplainNetworkConcern
       DecisionIssue => {
         label_for: ->(record) { "#{record['benefit_type']}_decision#{record['id']}" }
       },
-      DecisionDocument => {},
-      AttorneyCaseReview => {},
-      JudgeCaseReview => {}
+      OrganizationsUser => { skip: true },
+      HearingTaskAssociation => { skip: true },
+      RequestDecisionIssue => { skip: true }
     },
     edges: {
       Appeal => [{
@@ -92,10 +92,60 @@ module ExplainNetworkConcern
       RequestIssue => [{
         from_id_for: ->(record) { "#{record['decision_review_type']}#{record['decision_review_id']}" },
         to_id_for: ->(record) { "#{RequestIssue.name}#{record['id']}" }
+      }, {
+        from_id_for: ->(record) { "#{DecisionIssue.name}#{record['contested_decision_issue_id']}" },
+        to_id_for: ->(record) { "#{RequestIssue.name}#{record['id']}" },
+        label_for: ->(_record) { "appealed by" }
       }],
       RequestDecisionIssue => [{
         from_id_for: ->(record) { "#{RequestIssue.name}#{record['request_issue_id']}" },
-        to_id_for: ->(record) { "#{DecisionIssue.name}#{record['decision_issue_id']}" }
+        to_id_for: ->(record) { "#{DecisionIssue.name}#{record['decision_issue_id']}" },
+        label_for: ->(_record) { "decided by" }
+      }],
+      Hearing => [{
+        from_id_for: ->(record) { record["created_by_id"] ? "#{User.name}#{record['created_by_id']}" : nil },
+        to_id_for: ->(record) { "#{Hearing.name}#{record['id']}" },
+        label_for: ->(_record) { "created" }
+      }, {
+        from_id_for: ->(record) { record["updated_by_id"] ? "#{User.name}#{record['updated_by_id']}" : nil },
+        to_id_for: ->(record) { "#{Hearing.name}#{record['id']}" },
+        label_for: ->(_record) { "updated" }
+      }, {
+        from_id_for: ->(record) { "#{Hearing.name}#{record['id']}" },
+        to_id_for: ->(record) { record["hearing_day_id"] ? "#{HearingDay.name}#{record['hearing_day_id']}" : nil },
+        label_for: ->(_record) { "on" }
+      }],
+      HearingTaskAssociation => [{
+        from_id_for: ->(record) { "#{Task.name}#{record['hearing_task_id']}" },
+        to_id_for: ->(record) { "#{Hearing.name}#{record['hearing_id']}" }
+      }],
+      HearingDay => [{
+        from_id_for: ->(record) { "#{Appeal.name}#{record['appeal_id']}" },
+        to_id_for: ->(record) { "#{HearingDay.name}#{record['id']}" }
+      }, {
+        from_id_for: ->(record) { record["created_by_id"] ? "#{User.name}#{record['created_by_id']}" : nil },
+        to_id_for: ->(record) { "#{HearingDay.name}#{record['id']}" },
+        label_for: ->(_record) { "created" }
+      }, {
+        from_id_for: ->(record) { record["updated_by_id"] ? "#{User.name}#{record['updated_by_id']}" : nil },
+        to_id_for: ->(record) { "#{HearingDay.name}#{record['id']}" },
+        label_for: ->(_record) { "updated" }
+      }, {
+        from_id_for: ->(record) { "#{HearingDay.name}#{record['id']}" },
+        to_id_for: ->(record) { record["judge_id"] ? "#{User.name}#{record['judge_id']}" : nil },
+        label_for: ->(_record) { "judge" }
+      }],
+      VirtualHearing => [{
+        from_id_for: ->(record) { "#{Hearing.name}#{record['hearing_id']}" },
+        to_id_for: ->(record) { "#{VirtualHearing.name}#{record['id']}" }
+      }, {
+        from_id_for: ->(record) { record["created_by_id"] ? "#{User.name}#{record['created_by_id']}" : nil },
+        to_id_for: ->(record) { "#{VirtualHearing.name}#{record['id']}" },
+        label_for: ->(_record) { "created" }
+      }, {
+        from_id_for: ->(record) { record["updated_by_id"] ? "#{User.name}#{record['updated_by_id']}" : nil },
+        to_id_for: ->(record) { "#{VirtualHearing.name}#{record['id']}" },
+        label_for: ->(_record) { "updated" }
       }],
       DecisionDocument => [{
         from_id_for: ->(record) { "#{record['appeal_type']}#{record['appeal_id']}" },
@@ -125,40 +175,37 @@ module ExplainNetworkConcern
                      end,
         to_id_for: ->(record) { "#{Task.name}#{record['id']}" }
       }, {
-        from_id_for: lambda do |record|
+        from_id_for: ->(record) { "#{Task.name}#{record['id']}" },
+        to_id_for: lambda do |record|
           record["assigned_to_id"] ? "#{record['assigned_to_type']}#{record['assigned_to_id']}" : nil
         end,
-        to_id_for: ->(record) { "#{Task.name}#{record['id']}" },
         label_for: ->(_record) { "assigned_to" }
       }, {
         from_id_for: ->(record) { record["assigned_by_id"] ? "#{User.name}#{record['assigned_by_id']}" : nil },
         to_id_for: ->(record) { "#{Task.name}#{record['id']}" },
-        label_for: ->(_record) { "assigned_by" }
+        label_for: ->(_record) { "assigned" }
       }, {
         from_id_for: ->(record) { record["cancelled_by_id"] ? "#{User.name}#{record['cancelled_by_id']}" : nil },
         to_id_for: ->(record) { "#{Task.name}#{record['id']}" },
-        label_for: ->(_record) { "cancelled_by" }
+        label_for: ->(_record) { "cancelled" }
       }]
     }
   }.freeze
 
-  # Returns list of tablenames for records that are not yet in the graph
-  def record_types_not_in_network_graph
-    sje.records_hash.keys - %w[metadata task_timers] -
-      NETWORK_GRAPH_CONFIG[:nodes].keys.map(&:table_name) -
-      NETWORK_GRAPH_CONFIG[:edges].keys.map(&:table_name)
+  # List of tablenames that are not explicitly listed in NETWORK_GRAPH_CONFIG
+  def remaining_table_names
+    sje.records_hash.keys - %w[metadata task_timers] - NETWORK_GRAPH_CONFIG[:nodes].keys.map(&:table_name)
   end
 
-  def extra_nodes
-    # Reminder of records to add
-    # pp "----- record_types_not_in_network_graph:", record_types_not_in_network_graph
-    record_types_not_in_network_graph.map { |tablename| prep_nodes(tablename.classify.constantize) }.flatten
+  # Nodes for remaining records to add to graph
+  def remaining_nodes
+    remaining_table_names.map { |tablename| prep_nodes(tablename.classify.constantize) }.flatten
   end
 
   # :reek:FeatureEnvy
   def create_network_graph_data
     {
-      nodes: NETWORK_GRAPH_CONFIG[:nodes].keys.map { |klass| prep_nodes(klass) }.flatten + extra_nodes,
+      nodes: NETWORK_GRAPH_CONFIG[:nodes].keys.map { |klass| prep_nodes(klass) }.flatten + remaining_nodes,
       edges: NETWORK_GRAPH_CONFIG[:edges].keys.map { |klass| prep_edges(klass) }.flatten
     }
   end
@@ -166,6 +213,8 @@ module ExplainNetworkConcern
   # :reek:FeatureEnvy
   # The `id` of the nodes are referenced by edges
   def prep_nodes(klass, label_for: nil, id_for: nil)
+    return [] if NETWORK_GRAPH_CONFIG[:nodes][klass]&.[](:skip)
+
     id_for ||= NETWORK_GRAPH_CONFIG[:nodes][klass]&.[](:id_for) || ->(record) { "#{klass.name}#{record['id']}" }
     label_for ||= NETWORK_GRAPH_CONFIG[:nodes][klass]&.[](:label_for) || ->(record) { "#{klass.name}_#{record['id']}" }
     exported_records(klass).map do |record|

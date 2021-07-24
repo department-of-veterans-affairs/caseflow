@@ -46,9 +46,9 @@
     <div id="treeefields" style="width: 200px; height: 300px; overflow-y: scroll; padding:10px">
       <% available_fields.each do |field_name| %>
         <% if treee_fields.include?(field_name.to_sym) %>
-          <input type="checkbox" id="<%=field_name%>" checked />
+          <input type="checkbox" id="<%=field_name%>" checked onchange="updateTaskTreeLink()"/>
         <% else %>
-          <input type="checkbox" id="<%=field_name%>" />
+          <input type="checkbox" id="<%=field_name%>" onchange="updateTaskTreeLink()"/>
         <% end %>
         <label for="<%=field_name%>"><%=field_name%></label>
       <% end %>
@@ -85,19 +85,14 @@
   </details>
   <hr/>
 
-  <%= javascript_include_tag 'explain-appeal-timeline' %>
-  <%= javascript_include_tag 'explain-appeal-network' %>
   <script type="text/javascript">
     // Handle Task Tree field checkboxes
     function updateTaskTreeLink(){
-      const selected = Array.prototype.map.call(document.querySelectorAll('#treeefields input:checked'), elem => elem.name);
+      const selected = Array.prototype.map.call(document.querySelectorAll('#treeefields input:checked'), elem => elem.id);
       const newUrl = window.location.href.split('?')[0]+"?fields="+selected.join(',');
       document.querySelector('#task_tree_link').setAttribute("href", newUrl);
     }
     updateTaskTreeLink();
-    document.querySelectorAll('#treeefields input').forEach((elem)=>{
-      elem.addEventListener('click', () => updateTaskTreeLink());
-    });
   </script>
 
   <% unless legacy_appeal? %>
@@ -105,7 +100,9 @@
     <details>
       <summary id="timeline_viz" style="color: purple">Timeline visualization</summary>
       <div style="margin-left: 1em;">
-        <input type="button" id="fit" value="Fit all items" />
+        <input type="button" id="fit" value="Fit all items" onclick="fitTimeline()"/>
+        <br/>
+        <div id="timeline"></div>
         <details>
           <summary id="timeline_config" style="color: blue">Timeline configuration</summary>
 
@@ -141,8 +138,6 @@
 
           Ctrl-scrollwheel zooms into the timeline.
         </details>
-        <br/>
-        <div id="timeline"></div>
         <details>
           <summary style="color: gray">Timeline data</summary>
           <pre style="font-size:0.84em; padding:10px"><code><%= JSON.pretty_generate(timeline_data) %></code></pre>
@@ -154,6 +149,7 @@
     <h3>Network graph</h3>
     <details>
       <summary id="network_viz" style="color: purple">Network graph</summary>
+      <div id="netgraph"></div>
       <div style="margin-left: 1em;">
         <details>
           <summary style="color: blue">Network configuration</summary>
@@ -164,7 +160,6 @@
             <% end %>
           </div>
         </details>
-        <div id="netgraph"></div>
         <details>
           <summary style="color: gray">Network graph data</summary>
           <pre style="font-size:0.75em; padding:10px"><code><%= JSON.pretty_generate(network_graph_data) %></code></pre>
@@ -173,14 +168,14 @@
     </details>
     <hr/>
 
+    <%= javascript_include_tag 'explain-appeal-timeline' %>
+    <%= javascript_include_tag 'explain-appeal-network' %>
     <script type="text/javascript">
       // Timeline
       const timeline_data = <%= timeline_data.to_json.html_safe %>;
       const timeline = addTimeline('timeline', timeline_data);
 
-      document.getElementById('fit').onclick = function() {
-        timeline.fit();
-      };
+      function fitTimeline(){ timeline.fit(); }
 
       // Network graph
       var network_graph_data = <%= network_graph_data.to_json.html_safe %>;

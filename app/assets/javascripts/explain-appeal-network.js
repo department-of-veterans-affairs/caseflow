@@ -85,7 +85,7 @@ function addNetworkGraph(elementId, network_graph_data){
   // https://visjs.github.io/vis-network/docs/network/#options
   const network_options = {
     width: '95%',
-    height: '500px',
+    height: '1000px',
     edges: {
       arrows: 'to'
     },
