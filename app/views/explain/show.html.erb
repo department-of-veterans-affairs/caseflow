@@ -178,8 +178,13 @@
       function fitTimeline(){ timeline.fit(); }
 
       // Network graph
-      var network_graph_data = <%= network_graph_data.to_json.html_safe %>;
+      const network_graph_data = <%= network_graph_data.to_json.html_safe %>;
       addNetworkGraph("netgraph", network_graph_data);
+
+      // To reduce clutter, hide organizations by default
+      const org_nodes_checkbox = document.getElementById('organizations_node_visible');
+      org_nodes_checkbox.checked = false;
+      toggleNodeType(org_nodes_checkbox);
     </script>
   <% end %>
 

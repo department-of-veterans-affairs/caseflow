@@ -99,7 +99,6 @@ function addNetworkGraph(elementId, network_graph_data){
 }
 
 function toggleNodeType(checkbox){
-  console.error("checkbox", checkbox);
   nodesFilterValues[checkbox.value] = checkbox.checked;
   nodesView.refresh();
 }

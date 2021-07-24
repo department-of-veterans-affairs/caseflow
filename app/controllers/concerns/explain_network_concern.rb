@@ -35,7 +35,7 @@ module ExplainNetworkConcern
         label_for: ->(record) { "#{record['type']}_#{record['participant_id']}" }
       },
       CavcRemand => {
-        label_for: ->(record) { [record["remand_subtype"], record["cavc_decision_type"], record["id"]].join("_") }
+        label_for: ->(record) { "#{record['remand_subtype']}_#{record['cavc_decision_type']}_#{record['id']}" }
       },
       DecisionIssue => {
         label_for: ->(record) { "#{record['benefit_type']}_Decision_#{record['id']}" }
@@ -110,7 +110,6 @@ module ExplainNetworkConcern
         from_id_for: ->(record) { record["updated_by_id"] ? "#{User.name}#{record['updated_by_id']}" : nil },
         label_for: ->(_record) { "updated" }
       }, {
-        from_id_for: ->(record) { "#{HearingDay.name}#{record['id']}" },
         to_id_for: ->(record) { record["judge_id"] ? "#{User.name}#{record['judge_id']}" : nil },
         label_for: ->(_record) { "judge" }
       }],
@@ -159,6 +158,14 @@ module ExplainNetworkConcern
     }
   }.freeze
 
+  # :reek:FeatureEnvy
+  def create_network_graph_data
+    {
+      nodes: NETWORK_GRAPH_CONFIG[:nodes].keys.map { |klass| prep_nodes(klass) }.flatten + remaining_nodes,
+      edges: NETWORK_GRAPH_CONFIG[:edges].keys.map { |klass| prep_edges(klass) }.flatten
+    }
+  end
+
   # List of tablenames that are not explicitly listed in NETWORK_GRAPH_CONFIG
   def remaining_table_names
     sje.records_hash.keys - %w[metadata task_timers] - NETWORK_GRAPH_CONFIG[:nodes].keys.map(&:table_name)
@@ -167,14 +174,6 @@ module ExplainNetworkConcern
   # Nodes for remaining records to add to graph
   def remaining_nodes
     remaining_table_names.map { |tablename| prep_nodes(tablename.classify.constantize) }.flatten
-  end
-
-  # :reek:FeatureEnvy
-  def create_network_graph_data
-    {
-      nodes: NETWORK_GRAPH_CONFIG[:nodes].keys.map { |klass| prep_nodes(klass) }.flatten + remaining_nodes,
-      edges: NETWORK_GRAPH_CONFIG[:edges].keys.map { |klass| prep_edges(klass) }.flatten
-    }
   end
 
   # Use `fetch` to raise error if key doesn't exist
@@ -188,18 +187,16 @@ module ExplainNetworkConcern
 
     id_for ||= NETWORK_GRAPH_CONFIG[:nodes][klass]&.[](:id_for) || DEFAULT_NODE_ID_LAMBDA
     label_for ||= NETWORK_GRAPH_CONFIG[:nodes][klass]&.[](:label_for) || DEFAULT_NODE_LABEL_LAMBDA
-    exported_records(klass).map do |record|
-      record.clone.tap do |clone_record|
-        # Set some attributes that can be used by lambdas
-        clone_record["record_id"] = record["id"]
-        clone_record["tableName"] = klass.table_name
-        clone_record["class"] = klass.name
+    exported_records(klass).map(&:clone).map do |record|
+      # Set some attributes that can be used by lambdas
+      record["tableName"] = klass.table_name
+      record["class"] = klass.name
 
-        # Now call lambdas
-        clone_record["label"] = label_for.call(clone_record)
-        # Run this lambda last since it overrides "id", which is possibly used by other lambdas
-        clone_record["id"] = id_for.call(clone_record)
-      end
+      # Now call lambdas
+      record["label"] = label_for.call(record)
+      # Run this lambda last since it overrides "id", which is possibly used by other lambdas
+      record["id"] = id_for.call(record)
+      record
     end
   end
 
@@ -213,13 +210,14 @@ module ExplainNetworkConcern
       from_id_for = edge_config&.[](:from_id_for) || DEFAULT_EDGE_FROM_ID_LAMBDA
       to_id_for = edge_config&.[](:to_id_for) || DEFAULT_EDGE_TO_ID_LAMBDA
 
-      exported_records(klass).map do |record|
-        clone_record = record.clone
-        clone_record["class"] = klass.name
+      exported_records(klass).map(&:clone).map do |record|
+        record["class"] = klass.name
 
-        { from: from_id_for.call(clone_record),
-          to: to_id_for.call(clone_record),
-          label: edge_config[:label_for]&.call(clone_record) }
+        {
+          from: from_id_for.call(record),
+          to: to_id_for.call(record),
+          label: edge_config[:label_for]&.call(record)
+        }
       end
     end.flatten
   end
