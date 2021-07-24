@@ -13,13 +13,39 @@
 
 @import 'vis-timeline/dist/vis-timeline-graph2d.min.css';
 
+body {
+  /* Always show scrollbar so page width doesn't change due to showing tall elements */
+  overflow-y: scroll;
+}
+
 .show_pii_true {
   color: red;
+}
+
+#header_table td {
+  border: none;
 }
 
 li,
 li ul {
   margin-bottom: 0px
+}
+
+#section_checkboxes label {
+  margin-top: 10px;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+#section_checkboxes label::before {
+  /* space between checkbox and label text */
+  margin-right: 0.3em;
+}
+
+.section_checkbox_row {
+  display: flex;
+  justify-content: flex-start;
+  border: 1px solid darkgray;
 }
 
 summary {

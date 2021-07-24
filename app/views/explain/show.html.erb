@@ -7,41 +7,67 @@
 <% end %>
 
 <div style="font-size:0.875em; padding:10px">
-  <code class="show_pii_<%=show_pii_query_param%>">show_pii = <%= show_pii_query_param %></code>.
-  To toggle PII, click <%= link_to('toggle show_pii', {action: 'show', show_pii: !show_pii_query_param}) %>.
-  (Other formats:
-  <%= link_to((show_pii_query_param ? "text showing PII" : "sanitized text"),
-    {action: 'show', show_pii: show_pii_query_param, fields: fields_query_param.to_s, format: "text"}) %>,
-  <%= link_to('sanitized json export', {action: 'show', format: "json"}) %>
-  )
-  <hr/>
-
-  <h3>Appeal <%=appeal.id%> (<%=legacy_appeal? ? appeal.vacols_id : appeal.uuid%>)</h3>
+  <table id="header_table" style="margin: 0em;">
+    <colgroup>
+      <col style="width: 60%;">
+      <col style="width: 40%;">
+   </colgroup>
+   <tbody>
+<tr><td>
+  <h3>Appeal <%=appeal.id%> (<%=legacy_appeal? ? "VACOLS id: #{appeal.vacols_id}" : appeal.uuid%>)</h3>
   <ul id="appeal_info">
-    <li>status: <%= appeal_status.to_s %></li>
+    <% if legacy_appeal? %>
+      <li>location: <%= appeal.location_code.to_s %></li>
+    <% else %>
+      <li>status: <%= appeal.status.status.to_s %></li>
+    <% end %>
     <li>priority: <%= appeal.aod? || appeal.cavc? %> (AOD: <%= appeal.aod? %>, CAVC: <%= appeal.cavc? %>)</li>
     <% if sje.records_hash["appeals"].length > 1 %>
-    <li>Related Appeals:
-      <ul>
-        <% sje.records_hash["appeals"].each do |appeal| %>
-          <li>Appeal id: <%= appeal["id"] %>, <%= appeal["uuid"] || appeal["vacols_id"] %></li>
-        <% end %>
-      </ul>
-    </li>
+      <li>Related Appeals:
+        <ul>
+          <% sje.records_hash["appeals"].each do |appeal| %>
+            <li>Appeal id: <%= appeal["id"] %>, <%= appeal["uuid"] || appeal["vacols_id"] %></li>
+          <% end %>
+        </ul>
+      </li>
     <% end %>
   </ul>
-  <hr/>
+</td><td style="border: 1px solid lightgray;">
+  <code class="show_pii_<%=show_pii_query_param%>">show_pii = <%= show_pii_query_param %></code>.
+  <br/>To toggle PII, click <%= link_to('toggle show_pii', {action: 'show', show_pii: !show_pii_query_param}) %>.
+  <br/>(
+        <%= link_to((show_pii_query_param ? "text showing PII" : "sanitized text"),
+          {action: 'show', show_pii: show_pii_query_param, fields: fields_query_param.to_s, format: "text"}) %>,
+        <%= link_to('sanitized json export', {action: 'show', format: "json"}) %>
+       )
+</td></tr>
+    </tbody>
+  </table>
 
-  <% sections = %w[task_tree intake_tree hearing_tree narrative_table] %>
-  <% sections += %w[timeline_chart network_graph] unless legacy_appeal? %>
+  <div id="section_checkboxes" style="display: flex; flex-direction: column; background-color: lightgrey;">
+    <% sections1 = %w[task_tree intake_tree hearing_tree] %>
+    <% sections2 = %w[narrative_table] %>
+    <% sections2 += %w[timeline_chart network_graph] unless legacy_appeal? %>
 
-  <% sections.each do |sectionId| %>
-    <input id="<%=sectionId%>_section_chkbox" value="<%=sectionId%>_section" type="checkbox" onclick="toggleElement(this)" />
-    <label for="<%=sectionId%>_section_chkbox"><%=sectionId%></label>
-  <% end %>
-  <hr/>
+    <div class="section_checkbox_row">
+      <% sections1.each do |sectionId| %>
+        <input id="<%=sectionId%>_section_chkbox" value="<%=sectionId%>_section" type="checkbox" onclick="toggleElement(this)">
+        <label for="<%=sectionId%>_section_chkbox"><%=sectionId.titleize%></label>
+      <% end %>
+      <% sections2.each do |sectionId| %>
+        <input id="<%=sectionId%>_section_chkbox" value="<%=sectionId%>_section" type="checkbox" onclick="toggleElement(this)">
+        <label for="<%=sectionId%>_section_chkbox"><%=sectionId.titleize%></label>
+      <% end %>
+    </div>
+    <div class="section_checkbox_row">
+      <% sections2.each do |sectionId| %>
+        <input id="<%=sectionId%>_section_chkbox" value="<%=sectionId%>_section" type="checkbox" onclick="toggleElement(this)">
+        <label for="<%=sectionId%>_section_chkbox"><%=sectionId.titleize%></label>
+      <% end %>
+    </div>
+  </div>
 
-  <% sections.each do |sectionId|  %>
+  <% (sections1 + sections2).each do |sectionId|  %>
     <div id="<%=sectionId%>_section" style="display:none">
       <%= render sectionId %>
       <hr/>

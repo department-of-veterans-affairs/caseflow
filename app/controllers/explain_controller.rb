@@ -28,7 +28,7 @@ class ExplainController < ApplicationController
 
   private
 
-  helper_method :legacy_appeal?, :appeal, :appeal_status,
+  helper_method :legacy_appeal?, :appeal,
                 :show_pii_query_param, :fields_query_param, :treee_fields,
                 :available_fields,
                 :task_tree_as_text, :intake_as_text, :hearing_as_text,
@@ -125,10 +125,6 @@ class ExplainController < ApplicationController
 
   def appeal
     @appeal ||= fetch_appeal
-  end
-
-  def appeal_status
-    @appeal.status.status unless legacy_appeal?
   end
 
   def fetch_appeal

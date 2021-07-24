@@ -7,7 +7,7 @@
       <summary style="color: blue">Network configuration</summary>
       <div id="nodeFilters" style="width: 200px; height: 300px; overflow-y: scroll; padding:10px">
         <% ["tasks", "users", "organizations"].each do |tableName| %>
-          <input id="<%=tableName%>_node_visible" value="<%=tableName%>" type="checkbox" checked onchange="toggleNodeType(this)" />
+          <input id="<%=tableName%>_node_visible" value="<%=tableName%>" type="checkbox" checked onchange="toggleNodeType(this)">
           <label for="<%=tableName%>_node_visible"><%=tableName%></label>
         <% end %>
       </div>

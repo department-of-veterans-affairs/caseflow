@@ -13,9 +13,9 @@
   <div id="treeefields" style="width: 200px; height: 300px; overflow-y: scroll; padding:10px">
     <% available_fields.each do |field_name| %>
       <% if treee_fields.include?(field_name.to_sym) %>
-        <input type="checkbox" id="<%=field_name%>" checked onchange="updateTaskTreeLink()"/>
+        <input type="checkbox" id="<%=field_name%>" checked onchange="updateTaskTreeLink()">
       <% else %>
-        <input type="checkbox" id="<%=field_name%>" onchange="updateTaskTreeLink()"/>
+        <input type="checkbox" id="<%=field_name%>" onchange="updateTaskTreeLink()">
       <% end %>
       <label for="<%=field_name%>"><%=field_name%></label>
     <% end %>
