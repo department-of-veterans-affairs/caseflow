@@ -31,21 +31,14 @@ module ExplainNetworkConcern
         label_for: ->(record) { "#{record['type']}_#{record['name']}" }
       },
       Claimant => {
+        # claimant is associated with person via participant_id, so show that as the label instead of the record id
         label_for: ->(record) { "#{record['type']}_#{record['participant_id']}" }
       },
-      Appeal => {},
-      AppealIntake => {},
       CavcRemand => {
         label_for: ->(record) { [record["remand_subtype"], record["cavc_decision_type"], record["id"]].join("_") }
       },
-      Task => {
-        label_for: ->(record) { "#{record['type']}_#{record['id']}" }
-      },
-      RequestIssue => {
-        label_for: ->(record) { "#{record['type']}_#{record['id']}" }
-      },
       DecisionIssue => {
-        label_for: ->(record) { "#{record['benefit_type']}_decision#{record['id']}" }
+        label_for: ->(record) { "#{record['benefit_type']}_Decision_#{record['id']}" }
       },
       OrganizationsUser => { skip: true },
       HearingTaskAssociation => { skip: true },
@@ -53,36 +46,30 @@ module ExplainNetworkConcern
     },
     edges: {
       Appeal => [{
-        from_id_for: ->(record) { "#{Appeal.name}#{record['id']}" },
         to_id_for: ->(record) { "#{Veteran.name}#{record['veteran_file_number']}" }
       }],
       AppealIntake => [{
-        from_id_for: ->(record) { "#{AppealIntake.name}#{record['id']}" },
-        to_id_for: ->(record) { "#{record['detail_type']}#{record['detail_id']}" }
+        from_id_for: ->(record) { "#{Intake.name}#{record['id']}" },
+        to_id_for: ->(record) { "#{Appeal.name}#{record['detail_id']}" }
       }, {
         from_id_for: ->(record) { "#{User.name}#{record['user_id']}" },
-        to_id_for: ->(record) { "#{AppealIntake.name}#{record['id']}" }
+        to_id_for: ->(record) { "#{Intake.name}#{record['id']}" }
       }],
       CavcRemand => [{
-        from_id_for: ->(record) { "#{CavcRemand.name}#{record['id']}" },
         to_id_for: ->(record) { "#{Appeal.name}#{record['remand_appeal_id']}" }
       }, {
-        from_id_for: ->(record) { "#{Appeal.name}#{record['source_appeal_id']}" },
-        to_id_for: ->(record) { "#{CavcRemand.name}#{record['id']}" }
+        from_id_for: ->(record) { "#{Appeal.name}#{record['source_appeal_id']}" }
       }, {
-        from_id_for: ->(record) { "#{User.name}#{record['created_by_id']}" },
-        to_id_for: ->(record) { "#{CavcRemand.name}#{record['id']}" }
+        from_id_for: ->(record) { "#{User.name}#{record['created_by_id']}" }
       }],
       Veteran => [{
         from_id_for: ->(record) { "#{Veteran.name}#{record['file_number']}" },
         to_id_for: ->(record) { "#{Person.name}#{record['participant_id']}" }
       }],
       Claimant => [{
-        from_id_for: ->(record) { "#{Claimant.name}#{record['id']}" },
         to_id_for: ->(record) { "#{Person.name}#{record['participant_id']}" }
       }, {
-        from_id_for: ->(record) { "#{record['decision_review_type']}#{record['decision_review_id']}" },
-        to_id_for: ->(record) { "#{Claimant.name}#{record['id']}" }
+        from_id_for: ->(record) { "#{record['decision_review_type']}#{record['decision_review_id']}" }
       }],
       OrganizationsUser => [{
         from_id_for: ->(record) { "#{Organization.name}#{record['organization_id']}" },
@@ -90,11 +77,9 @@ module ExplainNetworkConcern
         label_for: ->(record) { record["admin"] ? "admin" : nil }
       }],
       RequestIssue => [{
-        from_id_for: ->(record) { "#{record['decision_review_type']}#{record['decision_review_id']}" },
-        to_id_for: ->(record) { "#{RequestIssue.name}#{record['id']}" }
+        from_id_for: ->(record) { "#{record['decision_review_type']}#{record['decision_review_id']}" }
       }, {
         from_id_for: ->(record) { "#{DecisionIssue.name}#{record['contested_decision_issue_id']}" },
-        to_id_for: ->(record) { "#{RequestIssue.name}#{record['id']}" },
         label_for: ->(_record) { "appealed by" }
       }],
       RequestDecisionIssue => [{
@@ -104,14 +89,11 @@ module ExplainNetworkConcern
       }],
       Hearing => [{
         from_id_for: ->(record) { record["created_by_id"] ? "#{User.name}#{record['created_by_id']}" : nil },
-        to_id_for: ->(record) { "#{Hearing.name}#{record['id']}" },
         label_for: ->(_record) { "created" }
       }, {
         from_id_for: ->(record) { record["updated_by_id"] ? "#{User.name}#{record['updated_by_id']}" : nil },
-        to_id_for: ->(record) { "#{Hearing.name}#{record['id']}" },
         label_for: ->(_record) { "updated" }
       }, {
-        from_id_for: ->(record) { "#{Hearing.name}#{record['id']}" },
         to_id_for: ->(record) { record["hearing_day_id"] ? "#{HearingDay.name}#{record['hearing_day_id']}" : nil },
         label_for: ->(_record) { "on" }
       }],
@@ -120,15 +102,12 @@ module ExplainNetworkConcern
         to_id_for: ->(record) { "#{Hearing.name}#{record['hearing_id']}" }
       }],
       HearingDay => [{
-        from_id_for: ->(record) { "#{Appeal.name}#{record['appeal_id']}" },
-        to_id_for: ->(record) { "#{HearingDay.name}#{record['id']}" }
+        from_id_for: ->(record) { "#{Appeal.name}#{record['appeal_id']}" }
       }, {
         from_id_for: ->(record) { record["created_by_id"] ? "#{User.name}#{record['created_by_id']}" : nil },
-        to_id_for: ->(record) { "#{HearingDay.name}#{record['id']}" },
         label_for: ->(_record) { "created" }
       }, {
         from_id_for: ->(record) { record["updated_by_id"] ? "#{User.name}#{record['updated_by_id']}" : nil },
-        to_id_for: ->(record) { "#{HearingDay.name}#{record['id']}" },
         label_for: ->(_record) { "updated" }
       }, {
         from_id_for: ->(record) { "#{HearingDay.name}#{record['id']}" },
@@ -136,34 +115,26 @@ module ExplainNetworkConcern
         label_for: ->(_record) { "judge" }
       }],
       VirtualHearing => [{
-        from_id_for: ->(record) { "#{Hearing.name}#{record['hearing_id']}" },
-        to_id_for: ->(record) { "#{VirtualHearing.name}#{record['id']}" }
+        from_id_for: ->(record) { "#{Hearing.name}#{record['hearing_id']}" }
       }, {
         from_id_for: ->(record) { record["created_by_id"] ? "#{User.name}#{record['created_by_id']}" : nil },
-        to_id_for: ->(record) { "#{VirtualHearing.name}#{record['id']}" },
         label_for: ->(_record) { "created" }
       }, {
         from_id_for: ->(record) { record["updated_by_id"] ? "#{User.name}#{record['updated_by_id']}" : nil },
-        to_id_for: ->(record) { "#{VirtualHearing.name}#{record['id']}" },
         label_for: ->(_record) { "updated" }
       }],
       DecisionDocument => [{
-        from_id_for: ->(record) { "#{record['appeal_type']}#{record['appeal_id']}" },
-        to_id_for: ->(record) { "#{DecisionDocument.name}#{record['id']}" }
+        from_id_for: ->(record) { "#{record['appeal_type']}#{record['appeal_id']}" }
       }],
       JudgeCaseReview => [{
-        from_id_for: ->(record) { "#{Task.name}#{record['task_id']}" },
-        to_id_for: ->(record) { "#{JudgeCaseReview.name}#{record['id']}" }
+        from_id_for: ->(record) { "#{Task.name}#{record['task_id']}" }
       }, {
-        from_id_for: ->(record) { "#{User.name}#{record['judge_id']}" },
-        to_id_for: ->(record) { "#{JudgeCaseReview.name}#{record['id']}" }
+        from_id_for: ->(record) { "#{User.name}#{record['judge_id']}" }
       }],
       AttorneyCaseReview => [{
-        from_id_for: ->(record) { "#{Task.name}#{record['task_id']}" },
-        to_id_for: ->(record) { "#{AttorneyCaseReview.name}#{record['id']}" }
+        from_id_for: ->(record) { "#{Task.name}#{record['task_id']}" }
       }, {
-        from_id_for: ->(record) { "#{User.name}#{record['attorney_id']}" },
-        to_id_for: ->(record) { "#{AttorneyCaseReview.name}#{record['id']}" }
+        from_id_for: ->(record) { "#{User.name}#{record['attorney_id']}" }
       }],
       Task => [{
         from_id_for: lambda do |record|
@@ -172,21 +143,17 @@ module ExplainNetworkConcern
                        elsif record["appeal_id"]
                          "#{record['appeal_type']}#{record['appeal_id']}"
                        end
-                     end,
-        to_id_for: ->(record) { "#{Task.name}#{record['id']}" }
+                     end
       }, {
-        from_id_for: ->(record) { "#{Task.name}#{record['id']}" },
         to_id_for: lambda do |record|
           record["assigned_to_id"] ? "#{record['assigned_to_type']}#{record['assigned_to_id']}" : nil
         end,
         label_for: ->(_record) { "assigned_to" }
       }, {
         from_id_for: ->(record) { record["assigned_by_id"] ? "#{User.name}#{record['assigned_by_id']}" : nil },
-        to_id_for: ->(record) { "#{Task.name}#{record['id']}" },
         label_for: ->(_record) { "assigned" }
       }, {
         from_id_for: ->(record) { record["cancelled_by_id"] ? "#{User.name}#{record['cancelled_by_id']}" : nil },
-        to_id_for: ->(record) { "#{Task.name}#{record['id']}" },
         label_for: ->(_record) { "cancelled" }
       }]
     }
@@ -210,29 +177,49 @@ module ExplainNetworkConcern
     }
   end
 
+  # Use `fetch` to raise error if key doesn't exist
+  DEFAULT_NODE_ID_LAMBDA = ->(record) { "#{record.fetch('class')}#{record.fetch('id')}" }
+  DEFAULT_NODE_LABEL_LAMBDA = ->(record) { "#{record['type'] || record.fetch('class')}_#{record.fetch('id')}" }
+
   # :reek:FeatureEnvy
   # The `id` of the nodes are referenced by edges
   def prep_nodes(klass, label_for: nil, id_for: nil)
-    return [] if NETWORK_GRAPH_CONFIG[:nodes][klass]&.[](:skip)
+    return [] if NETWORK_GRAPH_CONFIG[:nodes][klass]&.fetch(:skip, false)
 
-    id_for ||= NETWORK_GRAPH_CONFIG[:nodes][klass]&.[](:id_for) || ->(record) { "#{klass.name}#{record['id']}" }
-    label_for ||= NETWORK_GRAPH_CONFIG[:nodes][klass]&.[](:label_for) || ->(record) { "#{klass.name}_#{record['id']}" }
+    id_for ||= NETWORK_GRAPH_CONFIG[:nodes][klass]&.[](:id_for) || DEFAULT_NODE_ID_LAMBDA
+    label_for ||= NETWORK_GRAPH_CONFIG[:nodes][klass]&.[](:label_for) || DEFAULT_NODE_LABEL_LAMBDA
     exported_records(klass).map do |record|
       record.clone.tap do |clone_record|
-        clone_record["label"] = label_for.call(clone_record)
-        clone_record["id"] = id_for.call(clone_record)
+        # Set some attributes that can be used by lambdas
+        clone_record["record_id"] = record["id"]
         clone_record["tableName"] = klass.table_name
+        clone_record["class"] = klass.name
+
+        # Now call lambdas
+        clone_record["label"] = label_for.call(clone_record)
+        # Run this lambda last since it overrides "id", which is possibly used by other lambdas
+        clone_record["id"] = id_for.call(clone_record)
       end
     end
   end
 
+  # Use `fetch` to raise error if key doesn't exist
+  DEFAULT_EDGE_FROM_ID_LAMBDA = ->(record) { "#{record.fetch('class')}#{record.fetch('id')}" }
+  DEFAULT_EDGE_TO_ID_LAMBDA = ->(record) { "#{record.fetch('class')}#{record.fetch('id')}" }
+
   # :reek:FeatureEnvy
   def prep_edges(klass)
     NETWORK_GRAPH_CONFIG[:edges][klass].map do |edge_config|
+      from_id_for = edge_config&.[](:from_id_for) || DEFAULT_EDGE_FROM_ID_LAMBDA
+      to_id_for = edge_config&.[](:to_id_for) || DEFAULT_EDGE_TO_ID_LAMBDA
+
       exported_records(klass).map do |record|
-        { from: edge_config[:from_id_for].call(record),
-          to: edge_config[:to_id_for].call(record),
-          label: edge_config[:label_for]&.call(record) }
+        clone_record = record.clone
+        clone_record["class"] = klass.name
+
+        { from: from_id_for.call(clone_record),
+          to: to_id_for.call(clone_record),
+          label: edge_config[:label_for]&.call(clone_record) }
       end
     end.flatten
   end
