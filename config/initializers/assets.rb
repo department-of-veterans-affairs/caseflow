@@ -14,6 +14,7 @@ Rails.application.config.assets.paths << Rails.root.join('client', 'node_modules
 # application.js, application.css, and all non-JS/CSS in the app/assets 
 # folder are already added.
 Rails.application.config.assets.precompile += %w( explain-appeal.js )
+Rails.application.config.assets.precompile += %w( explain-appeal-network.js )
 Rails.application.config.assets.precompile += %w( stats.js )
 Rails.application.config.assets.precompile += %w( task-tree.js )
 Rails.application.config.assets.precompile += %w( pdf.worker.js )
