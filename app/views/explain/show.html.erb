@@ -44,40 +44,63 @@
     </tbody>
   </table>
 
-  <div id="section_checkboxes" style="display: flex; flex-direction: column; background-color: lightgrey;">
+  <div id="section_checkboxes" style="display: flex; flex-direction: column; background-color: lightcyan;">
     <% sections1 = %w[task_tree intake_tree hearing_tree] %>
     <% sections2 = %w[narrative_table] %>
     <% sections2 += %w[timeline_chart network_graph] unless legacy_appeal? %>
+    <% sideSections = %w[details_panel] %>
 
     <div class="section_checkbox_row">
       <% sections1.each do |sectionId| %>
-        <input id="<%=sectionId%>_section_chkbox" value="<%=sectionId%>_section" type="checkbox" onclick="toggleElement(this)">
+        <input id="<%=sectionId%>_section_chkbox" value="<%=sectionId%>_section" type="checkbox"
+               onclick="toggleElement(this, 'main_panel')">
         <label for="<%=sectionId%>_section_chkbox"><%=sectionId.titleize%></label>
       <% end %>
       <% sections2.each do |sectionId| %>
-        <input id="<%=sectionId%>_section_chkbox" value="<%=sectionId%>_section" type="checkbox" onclick="toggleElement(this)">
+        <input id="<%=sectionId%>_section_chkbox" value="<%=sectionId%>_section" type="checkbox"
+               onclick="toggleElement(this, 'main_panel')">
         <label for="<%=sectionId%>_section_chkbox"><%=sectionId.titleize%></label>
       <% end %>
     </div>
     <div class="section_checkbox_row">
-      <% sections2.each do |sectionId| %>
-        <input id="<%=sectionId%>_section_chkbox" value="<%=sectionId%>_section" type="checkbox" onclick="toggleElement(this)">
+      <% sideSections.each do |sectionId| %>
+        <input id="<%=sectionId%>_section_chkbox" value="<%=sectionId%>_section" type="checkbox"
+               onclick="toggleElement(this, 'side_panel')">
         <label for="<%=sectionId%>_section_chkbox"><%=sectionId.titleize%></label>
       <% end %>
     </div>
   </div>
 
-  <% (sections1 + sections2).each do |sectionId|  %>
-    <div id="<%=sectionId%>_section" style="display:none">
-      <%= render sectionId %>
-      <hr/>
-    </div>
-  <% end %>
+  <div id="side_panel">
+    <% sideSections.each do |sectionId|  %>
+      <div id="<%=sectionId%>_section" style="display:none">
+        <%= render sectionId %>
+        <hr/>
+      </div>
+    <% end %>
+  </div>
+
+  <div id="main_panel">
+    <% (sections1 + sections2).each do |sectionId|  %>
+      <div id="<%=sectionId%>_section" style="display:none">
+        <%= render sectionId %>
+        <hr/>
+      </div>
+    <% end %>
+  </div>
 
   <script type="text/javascript">
-    function toggleElement(chkbox) {
-        var vis = (chkbox.checked) ? "block" : "none";
-        document.getElementById(chkbox.value).style.display = vis;
+    function toggleElement(chkbox, panelId) {
+      const section = document.getElementById(chkbox.value);
+
+      var vis = "none";
+      if(chkbox.checked){
+        const panel = document.getElementById(panelId);
+        panel.appendChild(section);
+        vis = "block"
+      }
+      section.style.display = vis;
+      document.getElementById("details_content").innerHTML = panelId+" Checkbox: "+chkbox.value;
     }
   </script>
 </div>
