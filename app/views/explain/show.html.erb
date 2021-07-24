@@ -71,23 +71,29 @@
     </div>
   </div>
 
-  <div id="side_panel">
-    <% sideSections.each do |sectionId|  %>
-      <div id="<%=sectionId%>_section" style="display:none">
-        <%= render sectionId %>
-        <hr/>
-      </div>
-    <% end %>
-  </div>
-
-  <div id="main_panel">
-    <% (sections1 + sections2).each do |sectionId|  %>
-      <div id="<%=sectionId%>_section" style="display:none">
-        <%= render sectionId %>
-        <hr/>
-      </div>
-    <% end %>
-  </div>
+  <table id="header_table" style="margin: 0em;">
+    <tbody>
+      <tr><td style="width: 100%;"> <!-- 100% width forces timeline to use available space -->
+        <div id="main_panel">
+          <% (sections1 + sections2).each do |sectionId|  %>
+            <div id="<%=sectionId%>_section" style="display:none">
+              <%= render sectionId %>
+              <hr/>
+            </div>
+          <% end %>
+        </div>
+      </td><td style="border: 1px solid lightgray;">
+        <div id="side_panel">
+          <% sideSections.each do |sectionId|  %>
+            <div id="<%=sectionId%>_section" style="display:none">
+              <%= render sectionId %>
+              <hr/>
+            </div>
+          <% end %>
+        </div>
+      </td></tr>
+    </tbody>
+  </table>
 
   <script type="text/javascript">
     function toggleElement(chkbox, panelId) {
