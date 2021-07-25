@@ -48,7 +48,7 @@
     <% sections1 = %w[task_tree intake_tree hearing_tree] %>
     <% sections2 = %w[narrative_table] %>
     <% sections2 += %w[timeline_chart network_graph] unless legacy_appeal? %>
-    <% sideSections = %w[details_panel] %>
+    <% sideSections = %w[details_section] %>
 
     <div class="section_checkbox_row">
       <% sections1.each do |sectionId| %>
@@ -63,6 +63,9 @@
       <% end %>
     </div>
     <div class="section_checkbox_row">
+      <input id="side_panel_chkbox" value="side_panel" type="checkbox"
+              onclick="toggleElement(this)">
+      <label for="side_panel_chkbox">Side Panel</label>
       <% sideSections.each do |sectionId| %>
         <input id="<%=sectionId%>_section_chkbox" value="<%=sectionId%>_section" type="checkbox"
                onclick="toggleElement(this, 'side_panel')">
@@ -71,29 +74,16 @@
     </div>
   </div>
 
-  <table id="header_table" style="margin: 0em;">
-    <tbody>
-      <tr><td style="width: 100%;"> <!-- 100% width forces timeline to use available space -->
-        <div id="main_panel">
-          <% (sections1 + sections2).each do |sectionId|  %>
-            <div id="<%=sectionId%>_section" style="display:none">
-              <%= render sectionId %>
-              <hr/>
-            </div>
-          <% end %>
-        </div>
-      </td><td style="border: 1px solid lightgray;">
-        <div id="side_panel">
-          <% sideSections.each do |sectionId|  %>
-            <div id="<%=sectionId%>_section" style="display:none">
-              <%= render sectionId %>
-              <hr/>
-            </div>
-          <% end %>
-        </div>
-      </td></tr>
-    </tbody>
-  </table>
+  <div id="main_panel">
+    <% (sections1 + sections2).each do |sectionId|  %>
+      <div id="<%=sectionId%>_section" style="display:none">
+        <%= render sectionId %>
+        <hr/>
+      </div>
+    <% end %>
+  </div>
+
+  <%= render "side_panel", sectionIds: sideSections %>
 
   <script type="text/javascript">
     function toggleElement(chkbox, panelId) {
@@ -101,12 +91,14 @@
 
       var vis = "none";
       if(chkbox.checked){
-        const panel = document.getElementById(panelId);
-        panel.appendChild(section);
+        if(panelId){
+          const panel = document.getElementById(panelId);
+          panel.appendChild(section);
+        }
         vis = "block"
       }
       section.style.display = vis;
-      document.getElementById("details_content").innerHTML = panelId+" Checkbox: "+chkbox.value;
+      document.getElementById("details_content").innerHTML = " Checkbox: "+chkbox.value;
     }
   </script>
 </div>
