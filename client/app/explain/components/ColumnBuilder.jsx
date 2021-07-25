@@ -1,4 +1,5 @@
 import * as React from 'react';
+import ReactDOM from 'react-dom';
 import Link from '../../components/Link';
 import { css } from 'glamor';
 
@@ -115,6 +116,31 @@ export const relevantDataColumn = (column) => {
   };
 };
 
+const linkToDetailsPane = (formattedData, handleModalOpen, data, count) => {
+  const showInDetailPane = function () {
+    const sidePanel = window.document.getElementById('side_panel');
+
+    if (sidePanel.style.display == "block") {
+      const detailsContentPane = window.document.getElementById('details_content');
+      ReactDOM.unmountComponentAtNode(detailsContentPane);
+      ReactDOM.render(formattedData, detailsContentPane);
+    } else {
+      handleModalOpen(data);
+    }
+  };
+
+  return <Link className="detailPaneLink" onClick={showInDetailPane}>{count} details</Link>;
+};
+
+const inlineDetail = (formattedData) => {
+  return <div>
+    <details className="jsonDetails">
+      <summary>(details)</summary>
+      { formattedData }
+    </details>
+  </div>;
+};
+
 export const detailsColumn = (column, handleModalOpen) => {
   const linkStyling = css({
     cursor: 'pointer',
@@ -133,16 +159,12 @@ export const detailsColumn = (column, handleModalOpen) => {
         }
       }
       if (count > 0) {
-        const onClick = () => handleModalOpen(rowData[column.name]);
-        const expandableDetail = <details className="jsonDetails"><summary>(details)</summary>
-          <pre>{ formatJson(rowData[column.name]) }</pre>
-        </details>;
+        const formattedData = <pre className="event_detail">{ formatJson(rowData[column.name]) }</pre>;
+        const detailLink = linkToDetailsPane(formattedData, handleModalOpen, rowData[column.name], count);
 
         return <span {...linkStyling}>
-          <Link onClick={onClick}>
-            {count}
-          </Link>
-          {expandableDetail}
+          <br />{detailLink}
+          {inlineDetail(formattedData)}
         </span>;
       }
     }

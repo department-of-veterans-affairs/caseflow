@@ -66,3 +66,12 @@ li ul {
 summary {
   display: list-item;
 }
+
+#details_content .event_detail {
+  max-width: 400px;
+  margin: 8px;
+  font-size: 0.9em;
+  white-space: pre-line;
+  text-align: left;
+  max-height: 600px;
+}

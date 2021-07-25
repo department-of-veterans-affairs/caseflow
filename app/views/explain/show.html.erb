@@ -118,8 +118,12 @@
         const mainSectionCheckedBtns = Array.prototype.filter.call(mainSectionBtns, (btn) => btn.checked);
         mainSectionCheckedBtns.length > 1 && section.scrollIntoView({behavior: "smooth", block: "start"});
       }
-      document.getElementById("details_content").innerHTML = " Checkbox: "+chkbox.value;
+      setDetailsContent(" Checkbox: "+chkbox.value);
     }
+
+    const setDetailsContent = (content)=>{
+      document.getElementById("details_content").innerHTML = content;
+    };
 
     const sidePanelSectionBtns = document.querySelectorAll('#side_panel_section_btns input')
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
